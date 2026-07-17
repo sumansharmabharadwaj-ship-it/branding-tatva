@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { ContactForm } from "@/components/ContactForm";
+import { Reveal } from "@/components/Reveal";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export default function ContactPage() {
       <main id="main-content">
         <section className="py-20 sm:py-28">
           <Container className="grid gap-12 lg:grid-cols-5">
-            <div className="lg:col-span-2">
+            <Reveal className="lg:col-span-2">
               <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
                 Contact
               </p>
@@ -47,11 +48,11 @@ export default function ContactPage() {
                   </a>
                 </p>
               </div>
-            </div>
+            </Reveal>
 
-            <div className="lg:col-span-3">
+            <Reveal delay={0.1} className="lg:col-span-3">
               <ContactForm />
-            </div>
+            </Reveal>
           </Container>
         </section>
       </main>

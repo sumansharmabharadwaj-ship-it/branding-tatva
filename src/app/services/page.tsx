@@ -19,14 +19,25 @@ export default function ServicesPage() {
     <>
       <Header />
       <main id="main-content">
-        <section className="py-20 sm:py-28">
+        <section className="bg-soil py-20 sm:py-28">
           <Container>
-            <SectionHeading
-              eyebrow="Services"
-              title="Everything a brand needs, in plain terms."
-              description="Strategy, identity, content, and the channels that carry it. Here's what I actually do, before we get into how I think about it."
-            />
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <Reveal>
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Services</p>
+              <h1 className="mt-2 max-w-2xl text-display-sm font-display font-semibold text-ivory">
+                Everything a brand needs, in plain terms.
+              </h1>
+              <p className="mt-4 max-w-2xl text-ivory/70">
+                Strategy, identity, content, and the channels that carry it.
+                Here&apos;s what I actually do, before we get into how I
+                think about it.
+              </p>
+            </Reveal>
+          </Container>
+        </section>
+
+        <section className="py-16">
+          <Container>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {offerings.map((offer, i) => (
                 <Reveal key={offer.name} delay={i * 0.06}>
                   <div className="rounded-lg border border-border bg-background-elevated p-6 transition-transform duration-300 hover:-translate-y-1">

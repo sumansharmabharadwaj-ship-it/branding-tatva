@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
-import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
 import { projects } from "@/data/projects";
 
@@ -17,13 +16,19 @@ export default function WorkPage() {
     <>
       <Header />
       <main id="main-content">
-        <section className="py-20 sm:py-28">
+        <section className="bg-soil py-20 sm:py-28">
           <Container>
-            <SectionHeading
-              eyebrow="Work"
-              title="Projects across very different categories."
-              description="Marketplaces, executive coaching, wellness, D2C supplements, enterprise technology: different industries, the same underlying method."
-            />
+            <Reveal>
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Work</p>
+              <h1 className="mt-2 max-w-2xl text-display-sm font-display font-semibold text-ivory">
+                Projects across very different categories.
+              </h1>
+              <p className="mt-4 max-w-2xl text-ivory/70">
+                Marketplaces, executive coaching, wellness, D2C supplements,
+                enterprise technology: different industries, the same
+                underlying method.
+              </p>
+            </Reveal>
           </Container>
         </section>
 

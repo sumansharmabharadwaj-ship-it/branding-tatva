@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
+import { Reveal } from "@/components/Reveal";
 import { projects } from "@/data/projects";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -43,20 +44,22 @@ export default async function CaseStudyPage({ params }: Props) {
     <>
       <Header />
       <main id="main-content">
-        <section className="py-20 sm:py-28">
+        <section className="bg-soil py-20 sm:py-28">
           <Container>
-            <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
-              {project.industry}
-            </p>
-            <h1 className="mt-3 max-w-2xl text-display-lg font-display font-semibold text-soil">
-              {project.title}
-            </h1>
+            <Reveal>
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
+                {project.industry}
+              </p>
+              <h1 className="mt-3 max-w-2xl text-display-lg font-display font-semibold text-ivory">
+                {project.title}
+              </h1>
+            </Reveal>
           </Container>
         </section>
 
         <section className="border-t border-border bg-background-alt py-16">
           <Container className="grid gap-12 md:grid-cols-3">
-            <div className="md:col-span-2 space-y-10">
+            <Reveal className="md:col-span-2 space-y-10">
               <Block title="The challenge">{project.challenge}</Block>
               {project.audience && <Block title="Audience">{project.audience}</Block>}
               {project.insight && <Block title="The insight">{project.insight}</Block>}
@@ -64,9 +67,9 @@ export default async function CaseStudyPage({ params }: Props) {
               {project.execution && <Block title="Execution">{project.execution}</Block>}
               <Block title="Outcome">{project.outcome}</Block>
               {project.reflection && <Block title="Reflection">{project.reflection}</Block>}
-            </div>
+            </Reveal>
 
-            <aside className="space-y-6 md:sticky md:top-24 md:self-start">
+            <Reveal delay={0.15} className="space-y-6 md:sticky md:top-24 md:self-start">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
                   Elements involved
@@ -80,23 +83,25 @@ export default async function CaseStudyPage({ params }: Props) {
               <LinkButton href="/contact" className="w-full">
                 Start a similar project
               </LinkButton>
-            </aside>
+            </Reveal>
           </Container>
         </section>
 
         {related && (
           <section className="py-16">
             <Container>
-              <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
-                Related work
-              </p>
-              <a
-                href={`/work/${related.slug}`}
-                className="mt-3 block max-w-md rounded-lg border border-border p-6 hover:border-action-primary/40"
-              >
-                <p className="font-display text-lg font-semibold text-soil">{related.title}</p>
-                <p className="mt-2 text-sm text-foreground-secondary">{related.challenge}</p>
-              </a>
+              <Reveal>
+                <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+                  Related work
+                </p>
+                <a
+                  href={`/work/${related.slug}`}
+                  className="mt-3 block max-w-md rounded-lg border border-border p-6 transition-transform duration-300 hover:-translate-y-1 hover:border-action-primary/40"
+                >
+                  <p className="font-display text-lg font-semibold text-soil">{related.title}</p>
+                  <p className="mt-2 text-sm text-foreground-secondary">{related.challenge}</p>
+                </a>
+              </Reveal>
             </Container>
           </section>
         )}

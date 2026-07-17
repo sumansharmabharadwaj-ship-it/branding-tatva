@@ -19,35 +19,35 @@ export default function AboutPage() {
     <>
       <Header />
       <main id="main-content">
-        <section className="py-20 sm:py-28">
+        <section className="bg-soil py-20 sm:py-28">
           <Container className="grid items-start gap-12 lg:grid-cols-[1.4fr_1fr]">
-            <div>
-              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
+            <Reveal>
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
                 About
               </p>
-              <h1 className="mt-3 max-w-xl text-display-lg font-display font-semibold text-soil">
+              <h1 className="mt-3 max-w-xl text-display-lg font-display font-semibold text-ivory">
                 {aboutIntro.opening}
               </h1>
-              <div className="mt-8 max-w-xl space-y-5 text-foreground-secondary">
+              <div className="mt-8 max-w-xl space-y-5 text-ivory/70">
                 {aboutIntro.body.map((para, i) => (
                   <p key={i}>{para}</p>
                 ))}
               </div>
               <div className="mt-8 flex flex-wrap gap-4">
                 <LinkButton href="/contact">Start a brand conversation</LinkButton>
-                <LinkButton href="/resume.pdf" variant="secondary">
+                <LinkButton href="/resume.pdf" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
                   Download résumé
                 </LinkButton>
               </div>
-            </div>
-            <div>
+            </Reveal>
+            <Reveal delay={0.15}>
               <ImagePlaceholder label="Portrait, pending upload" />
-              <p className="mt-3 text-xs text-foreground-secondary">
+              <p className="mt-3 text-xs text-ivory/50">
                 The same convergence the homepage opens with, elements
                 settling into form, once here as a person rather than a
                 composition.
               </p>
-            </div>
+            </Reveal>
           </Container>
         </section>
 
