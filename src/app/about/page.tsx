@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { ImagePlaceholder } from "@/components/ImagePlaceholder";
+import { Reveal } from "@/components/Reveal";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -52,7 +53,7 @@ export default function AboutPage() {
 
         <section className="border-t border-border bg-background-alt py-20">
           <Container className="grid gap-12 md:grid-cols-2">
-            <div>
+            <Reveal>
               <h2 className="text-display-sm font-display font-semibold text-soil">
                 Working method
               </h2>
@@ -68,9 +69,9 @@ export default function AboutPage() {
                 is a personal practice, and every project has my direct
                 attention.
               </p>
-            </div>
+            </Reveal>
 
-            <div>
+            <Reveal delay={0.1}>
               <h2 className="text-display-sm font-display font-semibold text-soil">
                 Recent experience
               </h2>
@@ -84,21 +85,25 @@ export default function AboutPage() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </Reveal>
           </Container>
         </section>
 
         <section className="py-20">
           <Container>
-            <h2 className="text-display-sm font-display font-semibold text-soil">
-              Credentials
-            </h2>
+            <Reveal>
+              <h2 className="text-display-sm font-display font-semibold text-soil">
+                Credentials
+              </h2>
+            </Reveal>
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
-              {credentials.map((c) => (
-                <div key={c.label} className="rounded-lg border border-border p-5">
-                  <p className="font-medium text-soil">{c.label}</p>
-                  <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
-                </div>
+              {credentials.map((c, i) => (
+                <Reveal key={c.label} delay={i * 0.06}>
+                  <div className="rounded-lg border border-border p-5 transition-transform duration-300 hover:-translate-y-1">
+                    <p className="font-medium text-soil">{c.label}</p>
+                    <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
+                  </div>
+                </Reveal>
               ))}
             </div>
           </Container>
@@ -106,23 +111,25 @@ export default function AboutPage() {
 
         <section className="border-t border-border bg-background-alt py-20">
           <Container>
-            <h2 className="text-display-sm font-display font-semibold text-soil">
-              Why this site looks the way it does
-            </h2>
-            <p className="mt-4 max-w-2xl text-foreground-secondary">
-              I could tell a prospective client what good branding looks
-              like, or I could just let this site be the example. Every
-              choice below was made on purpose, and I&apos;d make the same
-              case for yours.
-            </p>
+            <Reveal>
+              <h2 className="text-display-sm font-display font-semibold text-soil">
+                Why this site looks the way it does
+              </h2>
+              <p className="mt-4 max-w-2xl text-foreground-secondary">
+                I could tell a prospective client what good branding looks
+                like, or I could just let this site be the example. Every
+                choice below was made on purpose, and I&apos;d make the same
+                case for yours.
+              </p>
+            </Reveal>
             <div className="mt-10 grid gap-8 sm:grid-cols-2">
-              {designChoices.map((choice) => (
-                <div key={choice.title}>
+              {designChoices.map((choice, i) => (
+                <Reveal key={choice.title} delay={i * 0.08}>
                   <p className="font-medium text-soil">{choice.title}</p>
                   <p className="mt-2 text-sm text-foreground-secondary">
                     {choice.detail}
                   </p>
-                </div>
+                </Reveal>
               ))}
             </div>
           </Container>

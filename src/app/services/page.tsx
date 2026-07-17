@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { LinkButton } from "@/components/Button";
+import { Reveal } from "@/components/Reveal";
 import { elements } from "@/data/elements";
 import { serviceGroups } from "@/data/services";
 
@@ -31,22 +32,27 @@ export default function ServicesPage() {
         <section className="border-t border-border bg-background-alt py-16">
           <Container>
             <div className="grid gap-6 lg:grid-cols-5">
-              {elements.map((el) => (
-                <div key={el.slug} className="border-t-2 bg-background-elevated p-6" style={{ borderColor: el.color }}>
-                  <p className="font-display text-xl font-semibold text-soil">{el.name}</p>
-                  <p className="mt-2 font-display text-sm italic text-foreground-secondary">
-                    &ldquo;{el.poetic}&rdquo;
-                  </p>
-                  <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
-                  <ul className="mt-4 space-y-1.5">
-                    {el.services.map((s) => (
-                      <li key={s} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
-                        {s}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="mt-4 text-xs text-foreground-secondary/80 italic">{el.proof}</p>
-                </div>
+              {elements.map((el, i) => (
+                <Reveal key={el.slug} delay={i * 0.08}>
+                  <div
+                    className="border-t-2 bg-background-elevated p-6 transition-transform duration-300 hover:-translate-y-1"
+                    style={{ borderColor: el.color }}
+                  >
+                    <p className="font-display text-xl font-semibold text-soil">{el.name}</p>
+                    <p className="mt-2 font-display text-sm italic text-foreground-secondary">
+                      &ldquo;{el.poetic}&rdquo;
+                    </p>
+                    <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
+                    <ul className="mt-4 space-y-1.5">
+                      {el.services.map((s) => (
+                        <li key={s} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
+                          {s}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-4 text-xs text-foreground-secondary/80 italic">{el.proof}</p>
+                  </div>
+                </Reveal>
               ))}
             </div>
           </Container>
@@ -59,19 +65,21 @@ export default function ServicesPage() {
               title="Organised by where your brand is right now."
             />
             <div className="mt-10 grid gap-6 md:grid-cols-2">
-              {serviceGroups.map((group) => (
-                <div key={group.slug} id={group.slug} className="scroll-mt-24 rounded-lg border border-border p-6">
-                  <p className="font-display text-xl font-semibold text-soil">{group.name}</p>
-                  <p className="mt-1 text-sm font-medium text-action-secondary">{group.forWho}</p>
-                  <p className="mt-4 text-foreground-secondary">{group.description}</p>
-                  <ul className="mt-4 space-y-1.5">
-                    {group.includes.map((item) => (
-                      <li key={item} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              {serviceGroups.map((group, i) => (
+                <Reveal key={group.slug} delay={i * 0.08}>
+                  <div id={group.slug} className="scroll-mt-24 rounded-lg border border-border p-6 transition-transform duration-300 hover:-translate-y-1">
+                    <p className="font-display text-xl font-semibold text-soil">{group.name}</p>
+                    <p className="mt-1 text-sm font-medium text-action-secondary">{group.forWho}</p>
+                    <p className="mt-4 text-foreground-secondary">{group.description}</p>
+                    <ul className="mt-4 space-y-1.5">
+                      {group.includes.map((item) => (
+                        <li key={item} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </Reveal>
               ))}
             </div>
             <p className="mt-8 text-sm text-foreground-secondary">
