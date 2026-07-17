@@ -1,0 +1,105 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Container } from "@/components/Container";
+import { LinkButton } from "@/components/Button";
+import { projects } from "@/data/projects";
+
+type Props = { params: { slug: string } };
+
+export function generateStaticParams() {
+  return projects.map((p) => ({ slug: p.slug }));
+}
+
+export function generateMetadata({ params }: Props): Metadata {
+  const project = projects.find((p) => p.slug === params.slug);
+  if (!project) return {};
+  return {
+    title: project.title,
+    description: project.challenge,
+  };
+}
+
+function Block({ title, children }: { title: string; children?: string }) {
+  if (!children) return null;
+  return (
+    <div>
+      <h2 className="font-display text-xl font-semibold text-soil">{title}</h2>
+      <p className="mt-3 text-foreground-secondary">{children}</p>
+    </div>
+  );
+}
+
+export default function CaseStudyPage({ params }: Props) {
+  const project = projects.find((p) => p.slug === params.slug);
+  if (!project) notFound();
+
+  const related = projects.find((p) => p.slug !== project.slug && p.featured);
+
+  return (
+    <>
+      <Header />
+      <main id="main-content">
+        <section className="py-20 sm:py-28">
+          <Container>
+            <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
+              {project.industry}
+            </p>
+            <h1 className="mt-3 max-w-2xl text-display-lg font-display font-semibold text-soil">
+              {project.title}
+            </h1>
+          </Container>
+        </section>
+
+        <section className="border-t border-border bg-background-alt py-16">
+          <Container className="grid gap-12 md:grid-cols-3">
+            <div className="md:col-span-2 space-y-10">
+              <Block title="The challenge">{project.challenge}</Block>
+              {project.audience && <Block title="Audience">{project.audience}</Block>}
+              {project.insight && <Block title="The insight">{project.insight}</Block>}
+              {project.strategy && <Block title="Strategy">{project.strategy}</Block>}
+              {project.execution && <Block title="Execution">{project.execution}</Block>}
+              <Block title="Outcome">{project.outcome}</Block>
+              {project.reflection && <Block title="Reflection">{project.reflection}</Block>}
+            </div>
+
+            <aside className="space-y-6 md:sticky md:top-24 md:self-start">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+                  Elements involved
+                </p>
+                <ul className="mt-2 space-y-1">
+                  {project.services.map((s) => (
+                    <li key={s} className="text-sm text-soil">{s}</li>
+                  ))}
+                </ul>
+              </div>
+              <LinkButton href="/contact" className="w-full">
+                Start a similar project
+              </LinkButton>
+            </aside>
+          </Container>
+        </section>
+
+        {related && (
+          <section className="py-16">
+            <Container>
+              <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+                Related work
+              </p>
+              <a
+                href={`/work/${related.slug}`}
+                className="mt-3 block max-w-md rounded-lg border border-border p-6 hover:border-action-primary/40"
+              >
+                <p className="font-display text-lg font-semibold text-soil">{related.title}</p>
+                <p className="mt-2 text-sm text-foreground-secondary">{related.challenge}</p>
+              </a>
+            </Container>
+          </section>
+        )}
+      </main>
+      <Footer />
+    </>
+  );
+}

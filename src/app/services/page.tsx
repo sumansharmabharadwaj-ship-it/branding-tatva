@@ -1,0 +1,103 @@
+import type { Metadata } from "next";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Container } from "@/components/Container";
+import { SectionHeading } from "@/components/SectionHeading";
+import { LinkButton } from "@/components/Button";
+import { elements } from "@/data/elements";
+import { serviceGroups } from "@/data/services";
+
+export const metadata: Metadata = {
+  title: "Services",
+  description:
+    "Brand strategy organised through five elements — foundation, experience, expression, voice, and presence.",
+};
+
+export default function ServicesPage() {
+  return (
+    <>
+      <Header />
+      <main id="main-content">
+        <section className="py-20 sm:py-28">
+          <Container>
+            <SectionHeading
+              eyebrow="Services"
+              title="The elements that make a brand complete."
+              description="Every project draws on some combination of these five. None of them work well in isolation — that's usually the actual problem a brand walks in with."
+            />
+          </Container>
+        </section>
+
+        <section className="border-t border-border bg-background-alt py-16">
+          <Container>
+            <div className="grid gap-6 lg:grid-cols-5">
+              {elements.map((el) => (
+                <div key={el.slug} className="border-t-2 bg-background-elevated p-6" style={{ borderColor: el.color }}>
+                  <p className="font-display text-xl font-semibold text-soil">{el.name}</p>
+                  <p className="mt-2 font-display text-sm italic text-foreground-secondary">
+                    &ldquo;{el.poetic}&rdquo;
+                  </p>
+                  <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
+                  <ul className="mt-4 space-y-1.5">
+                    {el.services.map((s) => (
+                      <li key={s} className="text-sm text-foreground-secondary before:mr-2 before:content-['—']">
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-4 text-xs text-foreground-secondary/80 italic">{el.proof}</p>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </section>
+
+        <section className="py-20">
+          <Container>
+            <SectionHeading
+              eyebrow="By situation"
+              title="Organised by where your brand is right now."
+            />
+            <div className="mt-10 grid gap-6 md:grid-cols-2">
+              {serviceGroups.map((group) => (
+                <div key={group.slug} id={group.slug} className="scroll-mt-24 rounded-lg border border-border p-6">
+                  <p className="font-display text-xl font-semibold text-soil">{group.name}</p>
+                  <p className="mt-1 text-sm font-medium text-action-secondary">{group.forWho}</p>
+                  <p className="mt-4 text-foreground-secondary">{group.description}</p>
+                  <ul className="mt-4 space-y-1.5">
+                    {group.includes.map((item) => (
+                      <li key={item} className="text-sm text-foreground-secondary before:mr-2 before:content-['—']">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <p className="mt-8 text-sm text-foreground-secondary">
+              Pricing is discussed after understanding your project — every
+              engagement is scoped individually rather than sold off a fixed
+              menu.
+            </p>
+          </Container>
+        </section>
+
+        <section className="border-t border-border bg-background-alt py-20 text-center">
+          <Container>
+            <h2 className="text-display-sm font-display font-semibold text-soil">
+              Not sure which one you need?
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-foreground-secondary">
+              That&apos;s a completely normal place to start. Tell me where
+              your brand is right now and I&apos;ll tell you honestly what it needs.
+            </p>
+            <div className="mt-6">
+              <LinkButton href="/contact">Start a brand conversation</LinkButton>
+            </div>
+          </Container>
+        </section>
+      </main>
+      <Footer />
+    </>
+  );
+}
