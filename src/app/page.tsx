@@ -20,24 +20,26 @@ export default function Home() {
       <Header />
       <main id="main-content">
         {/* Hero — "The Elements Find Their Form" */}
-        <section className="py-16 sm:py-24">
+        <section className="bg-soil py-20 sm:py-28">
           <Container className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
             <div>
-              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
                 Brand strategy for founders &amp; existing businesses
               </p>
-              <h1 className="mt-4 max-w-xl text-display-xl font-display font-semibold text-soil">
+              <h1 className="mt-4 max-w-xl text-display-xl font-display font-semibold text-ivory">
                 {site.heroHeadline}
               </h1>
-              <p className="mt-6 max-w-xl text-lg text-foreground-secondary">
+              <p className="mt-6 max-w-xl text-lg text-ivory/70">
                 {site.tagline}
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <LinkButton href="/contact">Start a brand conversation</LinkButton>
-                <LinkButton href="/work" variant="secondary">Explore the work</LinkButton>
+                <LinkButton href="/work" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
+                  Explore the work
+                </LinkButton>
               </div>
             </div>
-            <AnimatedHero />
+            <AnimatedHero dark />
           </Container>
         </section>
 
@@ -250,11 +252,11 @@ export default function Home() {
         </section>
 
         {/* Final CTA — a widening threshold, marked with the lattice motif */}
-        <section className="relative overflow-hidden py-24">
-          <IndianPattern className="absolute inset-0" opacity={0.05} />
+        <section className="relative overflow-hidden bg-soil py-24">
+          <IndianPattern className="absolute inset-0" opacity={0.08} color="#F4EFE6" />
           <Reveal>
             <Container className="relative text-center">
-              <h2 className="mx-auto max-w-2xl text-display-md font-display font-semibold text-soil">
+              <h2 className="mx-auto max-w-2xl text-display-md font-display font-semibold text-ivory">
                 Let&apos;s find the Tatva of your business.
               </h2>
               <div className="mt-8">

@@ -114,7 +114,7 @@ function FragmentShape({ shape, size, color }: Pick<Fragment, "shape" | "size" |
   }
 }
 
-export function AnimatedHero() {
+export function AnimatedHero({ dark = false }: { dark?: boolean }) {
   const prefersReducedMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -174,14 +174,18 @@ export function AnimatedHero() {
             }
           >
             <div className="-translate-x-1/2 -translate-y-1/2">
-              <FragmentShape shape={f.shape} size={f.size} color={f.color} />
+              <FragmentShape
+                shape={f.shape}
+                size={f.size}
+                color={dark && f.id === "space" ? "#F4EFE6" : f.color}
+              />
             </div>
           </motion.div>
         ))}
 
         {/* Central bindu — point of origin/convergence */}
         <motion.div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-soil"
+          className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full ${dark ? "bg-ivory" : "bg-soil"}`}
           style={{ width: 8, height: 8 }}
           initial={prefersReducedMotion ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
