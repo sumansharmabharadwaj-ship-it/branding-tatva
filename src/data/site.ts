@@ -15,8 +15,8 @@ export const site = {
     "Branding Tatva finds the elements that make a business worth noticing, and shapes them into a brand people recognise, trust, and remember.",
   description:
     "A personal branding practice led by Suman Sharma, helping founders and existing businesses find clarity, voice, and consistency through an elemental approach to brand strategy.",
-  url: "https://brandingtatva.com", // placeholder — update once domain is confirmed
-  email: "hello@brandingtatva.com", // placeholder — confirm real public contact
+  url: "https://brandingtatva.com",
+  email: "suman@brandingtatva.com",
   social: {
     linkedin: "https://linkedin.com/in/suman-sharma-b6a682232",
     instagram: "", // add once confirmed
