@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Container } from "./Container";
+import { Logo } from "./Logo";
 import { site, navigation } from "@/data/site";
 
 export function Header() {
@@ -12,8 +13,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <Container className="flex h-16 items-center justify-between">
-        <Link href="/" className="font-display text-xl font-semibold tracking-tight text-soil">
-          {site.name}
+        <Link href="/" aria-label={site.name}>
+          <Logo size={30} />
         </Link>
 
         {/* Desktop nav */}

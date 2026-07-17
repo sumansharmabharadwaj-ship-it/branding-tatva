@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "./Container";
 import { IndianPattern } from "./IndianPattern";
+import { Logo } from "./Logo";
 import { site, navigation, footerLinks } from "@/data/site";
 
 export function Footer() {
@@ -12,8 +13,8 @@ export function Footer() {
       <Container className="py-12">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
-            <p className="font-display text-lg font-semibold text-soil">{site.name}</p>
-            <p className="mt-2 max-w-xs text-sm text-foreground-secondary">
+            <Logo size={26} />
+            <p className="mt-3 max-w-xs text-sm text-foreground-secondary">
               {site.positioning}
             </p>
           </div>

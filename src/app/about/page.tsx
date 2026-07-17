@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { ImagePlaceholder } from "@/components/ImagePlaceholder";
 import { aboutIntro, credentials, experience } from "@/data/about";
+import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -97,6 +98,30 @@ export default function AboutPage() {
                 <div key={c.label} className="rounded-lg border border-border p-5">
                   <p className="font-medium text-soil">{c.label}</p>
                   <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </section>
+
+        <section className="border-t border-border bg-background-alt py-20">
+          <Container>
+            <h2 className="text-display-sm font-display font-semibold text-soil">
+              Why this site looks the way it does
+            </h2>
+            <p className="mt-4 max-w-2xl text-foreground-secondary">
+              I could tell a prospective client what good branding looks
+              like, or I could just let this site be the example. Every
+              choice below was made on purpose, and I&apos;d make the same
+              case for yours.
+            </p>
+            <div className="mt-10 grid gap-8 sm:grid-cols-2">
+              {designChoices.map((choice) => (
+                <div key={choice.title}>
+                  <p className="font-medium text-soil">{choice.title}</p>
+                  <p className="mt-2 text-sm text-foreground-secondary">
+                    {choice.detail}
+                  </p>
                 </div>
               ))}
             </div>
