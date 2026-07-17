@@ -11,6 +11,7 @@ export type Project = {
   outcome: string; // only verified claims — no invented metrics
   reflection?: string;
   featured: boolean;
+  accent: string; // card accent color, varies per project so the grid isn't monotone
 };
 
 // Client names cleared for public use by Suman. Every field below is
@@ -37,6 +38,7 @@ export const projects: Project[] = [
     reflection:
       "The clearest signal was impressions barely dropping (down just 10%) despite posting 48% less. The platform was actively rewarding the more relevant content instead of just showing it to fewer people. That's the difference between reach and trust.",
     featured: true,
+    accent: "#79816D", // sage
   },
   {
     slug: "myshopineurope",
@@ -58,6 +60,7 @@ export const projects: Project[] = [
     reflection:
       "The sharpest strategic call was refusing to let 'MyShopInEurope' default to meaning 'cheap Indian goods.' Repositioning around craft and origin, not price, changes who the platform can credibly sell to.",
     featured: true,
+    accent: "#A65F46", // clay
   },
   {
     slug: "executive-springboard",
@@ -73,6 +76,7 @@ export const projects: Project[] = [
     outcome:
       "Delivered a structured content system, built platform by platform, specifically around driving webinar registrations rather than generic engagement metrics.",
     featured: true,
+    accent: "#31485A", // indigo
   },
   {
     slug: "herbalcart",
@@ -94,6 +98,7 @@ export const projects: Project[] = [
     reflection:
       "The work that landed best wasn't the most polished. It was the most native. Content that looked like a real person's Instagram, not an ad, consistently outperformed anything that read as produced.",
     featured: false,
+    accent: "#C9953D", // ochre
   },
   {
     slug: "plaxonic-content-portfolio",
@@ -109,5 +114,6 @@ export const projects: Project[] = [
     outcome:
       "Produced a complete content portfolio of sixteen pieces spanning research, opinion, education, and fast consumption formats, structured around a deliberate arc: validate, challenge, humanise, define, rather than a loose content calendar.",
     featured: false,
+    accent: "#C58267", // terracotta
   },
 ];

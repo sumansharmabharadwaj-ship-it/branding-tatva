@@ -180,7 +180,8 @@ export default function Home() {
                 <Reveal key={project.slug} delay={i * 0.1}>
                   <a
                     href={`/work/${project.slug}`}
-                    className="block rounded-lg border border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-action-primary/40 hover:shadow-md"
+                    className="block rounded-lg border-t-2 border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    style={{ borderTopColor: project.accent }}
                   >
                     <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
                       {project.industry}

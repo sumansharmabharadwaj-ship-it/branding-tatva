@@ -40,7 +40,10 @@ export default function ServicesPage() {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {offerings.map((offer, i) => (
                 <Reveal key={offer.name} delay={i * 0.06}>
-                  <div className="rounded-lg border border-border bg-background-elevated p-6 transition-transform duration-300 hover:-translate-y-1">
+                  <div
+                    className="rounded-lg border-t-2 border-border bg-background-elevated p-6 transition-transform duration-300 hover:-translate-y-1"
+                    style={{ borderTopColor: offer.color }}
+                  >
                     <p className="font-display text-lg font-semibold text-soil">{offer.name}</p>
                     <p className="mt-2 text-sm text-foreground-secondary">{offer.detail}</p>
                   </div>

@@ -35,9 +35,6 @@ export default function AboutPage() {
               </div>
               <div className="mt-8 flex flex-wrap gap-4">
                 <LinkButton href="/contact">Start a brand conversation</LinkButton>
-                <LinkButton href="/resume.pdf" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
-                  Download résumé
-                </LinkButton>
               </div>
             </Reveal>
             <Reveal delay={0.15}>
@@ -99,7 +96,10 @@ export default function AboutPage() {
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
               {credentials.map((c, i) => (
                 <Reveal key={c.label} delay={i * 0.06}>
-                  <div className="rounded-lg border border-border p-5 transition-transform duration-300 hover:-translate-y-1">
+                  <div
+                    className="rounded-lg border-t-2 border-border p-5 transition-transform duration-300 hover:-translate-y-1"
+                    style={{ borderTopColor: c.color }}
+                  >
                     <p className="font-medium text-soil">{c.label}</p>
                     <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
                   </div>

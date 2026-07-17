@@ -9,35 +9,44 @@ export type ServiceGroup = {
 export type Offering = {
   name: string;
   detail: string;
+  color: string;
 };
 
 // Plain-language list, no elemental framing. Sits above the deeper
 // elemental breakdown so a first-time visitor gets a clear answer to
-// "what do you actually do" in one glance.
+// "what do you actually do" in one glance. Each card carries a distinct
+// accent from the earthy palette (including sage green, previously
+// under-used) rather than repeating one color six times.
 export const offerings: Offering[] = [
   {
     name: "Brand Strategy & Identity",
     detail: "Positioning, naming direction, and the visual system that carries it.",
+    color: "#A65F46", // clay
   },
   {
     name: "Content Strategy",
     detail: "A plan for what gets said, where, and in what order, before a single post goes out.",
+    color: "#31485A", // indigo
   },
   {
     name: "Social Media Marketing",
     detail: "Ongoing management, growth, and campaign execution across the platforms that matter to your audience.",
+    color: "#79816D", // sage
   },
   {
     name: "Website Development",
     detail: "A site built to carry the brand consistently, not just a template with your logo dropped in.",
+    color: "#C9953D", // ochre
   },
   {
     name: "Content Creation",
     detail: "Writing, scripts, and copy built in your actual voice, not a generic template tone.",
+    color: "#B98278", // rose-earth
   },
   {
     name: "Marketing Strategy",
     detail: "The plan connecting content and campaigns to a real business outcome, not just activity.",
+    color: "#C58267", // terracotta
   },
 ];
 
