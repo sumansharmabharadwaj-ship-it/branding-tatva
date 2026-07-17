@@ -4,6 +4,13 @@ import { site } from "@/data/site";
 // converging on a central bindu — the same "elements finding their form"
 // idea as the homepage hero, distilled into a shape that still reads at
 // favicon size. See docs/brand-identity/BRAND_IDENTITY.md for the reasoning.
+//
+// The wordmark deliberately mixes two type styles, a tracked-out sans for
+// "BRANDING" against a large italic serif for "Tatva", the same trick that
+// makes a lot of strong studio logotypes feel considered rather than just
+// typed out in one weight. It's not decoration for its own sake: the
+// contrast mirrors the brand's whole premise, a plain-language practice
+// (the sans) built on something with real depth underneath (the serif).
 
 const petals = [
   { color: "#A65F46", rotate: 0 }, // earth — clay
@@ -25,6 +32,7 @@ export function LogoMark({ size = 32, className }: { size?: number; className?: 
       aria-label={`${site.name} mark`}
     >
       <title>{site.name}</title>
+      <circle cx="50" cy="50" r="47" stroke="#27221E" strokeOpacity="0.12" strokeWidth="1.5" />
       <g>
         {petals.map((p) => (
           <path
@@ -43,7 +51,7 @@ export function LogoMark({ size = 32, className }: { size?: number; className?: 
 }
 
 export function Logo({
-  size = 32,
+  size = 34,
   showWordmark = true,
   className,
 }: {
@@ -52,11 +60,16 @@ export function Logo({
   className?: string;
 }) {
   return (
-    <span className={`inline-flex items-center gap-2.5 ${className ?? ""}`}>
+    <span className={`inline-flex items-center gap-3 ${className ?? ""}`}>
       <LogoMark size={size} />
       {showWordmark && (
-        <span className="font-display text-xl font-semibold tracking-tight text-soil">
-          {site.name}
+        <span className="flex flex-col leading-none">
+          <span className="font-body text-[0.6rem] font-bold uppercase tracking-[0.28em] text-action-secondary">
+            Branding
+          </span>
+          <span className="-mt-0.5 font-display text-2xl font-semibold italic tracking-tight text-soil">
+            Tatva
+          </span>
         </span>
       )}
     </span>
