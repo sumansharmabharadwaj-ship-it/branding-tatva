@@ -43,3 +43,37 @@
     @apply mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-10;
   }
 }
+
+/* Bee cursor — replaces the system cursor with a bee that tracks the mouse.
+   Only active on fine-pointer (mouse/trackpad) devices; see BeeCursor.tsx. */
+.bee-cursor-active,
+.bee-cursor-active * {
+  cursor: none !important;
+}
+
+.bee-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 999;
+  pointer-events: none;
+  user-select: none;
+  font-size: 26px;
+  opacity: 0;
+  transition: transform 0.1s ease-out, opacity 0.15s ease-out;
+  will-change: transform;
+}
+
+.bee-cursor-bob {
+  animation: bee-bob 0.9s ease-in-out infinite;
+}
+
+@keyframes bee-bob {
+  0%, 100% {
+    filter: drop-shadow(0 2px 2px rgb(39 34 30 / 0.15));
+  }
+  50% {
+    translate: 0 -4px;
+    filter: drop-shadow(0 6px 4px rgb(39 34 30 / 0.1));
+  }
+}

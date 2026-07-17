@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
+import { BeeCursor } from "@/components/BeeCursor";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({
@@ -66,6 +67,7 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
+        <BeeCursor />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
