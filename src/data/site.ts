@@ -19,7 +19,8 @@ export const site = {
   email: "suman@brandingtatva.com",
   social: {
     linkedin: "https://linkedin.com/in/suman-sharma-b6a682232",
-    instagram: "", // add once confirmed
+    instagram: "https://instagram.com/brandingtatva",
+    facebook: "https://facebook.com/brandingtatva",
   },
 } as const;
 

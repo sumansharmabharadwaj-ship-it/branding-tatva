@@ -1,8 +1,15 @@
 import Link from "next/link";
+import { Instagram, Facebook, Linkedin } from "lucide-react";
 import { Container } from "./Container";
 import { IndianPattern } from "./IndianPattern";
 import { Logo } from "./Logo";
 import { site, navigation, footerLinks } from "@/data/site";
+
+const socialLinks = [
+  { href: site.social.linkedin, label: "LinkedIn", Icon: Linkedin },
+  { href: site.social.instagram, label: "Instagram", Icon: Instagram },
+  { href: site.social.facebook, label: "Facebook", Icon: Facebook },
+].filter((s) => s.href);
 
 export function Footer() {
   return (
@@ -44,17 +51,21 @@ export function Footer() {
                   {site.email}
                 </a>
               </li>
-              <li>
+            </ul>
+            <div className="mt-4 flex gap-3">
+              {socialLinks.map(({ href, label, Icon }) => (
                 <a
-                  href={site.social.linkedin}
+                  key={label}
+                  href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-foreground hover:text-action-primary"
+                  aria-label={`${site.name} on ${label}`}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:border-action-primary hover:text-action-primary"
                 >
-                  LinkedIn
+                  <Icon size={16} strokeWidth={1.75} />
                 </a>
-              </li>
-            </ul>
+              ))}
+            </div>
           </div>
         </div>
 
