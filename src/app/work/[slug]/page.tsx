@@ -6,14 +6,15 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { projects } from "@/data/projects";
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const project = projects.find((p) => p.slug === params.slug);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const project = projects.find((p) => p.slug === slug);
   if (!project) return {};
   return {
     title: project.title,
@@ -31,8 +32,9 @@ function Block({ title, children }: { title: string; children?: string }) {
   );
 }
 
-export default function CaseStudyPage({ params }: Props) {
-  const project = projects.find((p) => p.slug === params.slug);
+export default async function CaseStudyPage({ params }: Props) {
+  const { slug } = await params;
+  const project = projects.find((p) => p.slug === slug);
   if (!project) notFound();
 
   const related = projects.find((p) => p.slug !== project.slug && p.featured);
