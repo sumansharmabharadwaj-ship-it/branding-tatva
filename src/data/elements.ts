@@ -14,9 +14,9 @@ export type Element = {
 export const elements: Element[] = [
   {
     slug: "earth",
-    name: "Earth — Foundation",
+    name: "Earth · Foundation",
     poetic: "Where a brand stands before it speaks.",
-    meaning: "Purpose, audience, and positioning — the research most brands skip.",
+    meaning: "Purpose, audience, and positioning: the research most brands skip.",
     color: "#A65F46",
     services: [
       "Brand discovery",
@@ -25,11 +25,11 @@ export const elements: Element[] = [
       "Brand audit",
     ],
     proof:
-      "Full brand foundation work for MyShopInEurope — audience definition, market analysis, core belief/mission/promise.",
+      "Full brand foundation work for MyShopInEurope, including audience definition, market analysis, and a core belief, mission, and promise.",
   },
   {
     slug: "water",
-    name: "Water — Experience",
+    name: "Water · Experience",
     poetic: "How a brand moves through someone's day.",
     meaning: "Customer journey, touchpoints, and adaptability across platforms.",
     color: "#31485A",
@@ -39,11 +39,11 @@ export const elements: Element[] = [
       "Digital experience",
     ],
     proof:
-      "Platform-by-platform playbooks and webinar conversion sequencing for Executive Springboard.",
+      "Playbooks built for each platform, plus webinar conversion sequencing, for Executive Springboard.",
   },
   {
     slug: "fire",
-    name: "Fire — Expression",
+    name: "Fire · Expression",
     poetic: "What makes people look twice.",
     meaning: "Creative direction, campaigns, and the visibility that earns attention.",
     color: "#C9953D",
@@ -57,9 +57,9 @@ export const elements: Element[] = [
   },
   {
     slug: "air",
-    name: "Air — Voice",
+    name: "Air · Voice",
     poetic: "The language a brand is remembered by.",
-    meaning: "Messaging, narrative, and content — the words themselves.",
+    meaning: "Messaging, narrative, and content: the words themselves.",
     color: "#79816D",
     services: [
       "Brand voice",
@@ -68,11 +68,11 @@ export const elements: Element[] = [
       "SEO content",
     ],
     proof:
-      "A 16-piece thought-leadership content portfolio for Plaxonic.com, spanning research papers, perspective pieces, blogs, and articles.",
+      "A content portfolio of sixteen pieces for Plaxonic.com, spanning research papers, perspective pieces, blogs, and articles.",
   },
   {
     slug: "space",
-    name: "Space — Presence",
+    name: "Space · Presence",
     poetic: "What's left once the noise settles.",
     meaning: "Consistency and recognition, built over months rather than one campaign.",
     color: "#27221E",
@@ -82,6 +82,6 @@ export const elements: Element[] = [
       "Growth communication",
     ],
     proof:
-      "Sustained, measured social management for Dr. Haley Nutrition — verified follower and engagement growth over two consecutive months.",
+      "Sustained, measured social management for Dr. Haley Nutrition, with verified follower and engagement growth over two consecutive months.",
   },
 ];

@@ -10,7 +10,7 @@ import { site } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "About Suman Sharma",
-  description: `The thinking behind ${site.name} — brand strategy grounded in psychology and language.`,
+  description: `The thinking behind ${site.name}: brand strategy grounded in psychology and language.`,
 };
 
 export default function AboutPage() {
@@ -40,9 +40,9 @@ export default function AboutPage() {
               </div>
             </div>
             <div>
-              <ImagePlaceholder label="Portrait — pending upload" />
+              <ImagePlaceholder label="Portrait, pending upload" />
               <p className="mt-3 text-xs text-foreground-secondary">
-                The same convergence the homepage opens with — elements
+                The same convergence the homepage opens with, elements
                 settling into form, once here as a person rather than a
                 composition.
               </p>
@@ -60,11 +60,11 @@ export default function AboutPage() {
                 I don&apos;t start with mood boards. I start by asking what a
                 business believes, who it&apos;s actually speaking to, and
                 where its current story stops making sense. The elemental
-                system — earth, water, fire, air, space — is how I keep track
+                system, earth, water, fire, air, space, is how I keep track
                 of which part of that is solved and which isn&apos;t.
               </p>
               <p className="mt-4 text-foreground-secondary">
-                I use &ldquo;I,&rdquo; not &ldquo;we&rdquo; — Branding Tatva
+                I use &ldquo;I,&rdquo; not &ldquo;we.&rdquo; Branding Tatva
                 is a personal practice, and every project has my direct
                 attention.
               </p>

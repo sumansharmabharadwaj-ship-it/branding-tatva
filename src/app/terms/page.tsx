@@ -16,7 +16,7 @@ export default function TermsPage() {
         <section className="py-20">
           <Container className="max-w-2xl">
             <h1 className="text-display-md font-display font-semibold text-soil">Terms of Use</h1>
-            <p className="mt-4 text-sm text-foreground-secondary">Last updated: draft — pending your review</p>
+            <p className="mt-4 text-sm text-foreground-secondary">Last updated: draft, pending your review</p>
 
             <div className="mt-8 space-y-6 text-foreground-secondary">
               <p>
@@ -24,8 +24,8 @@ export default function TermsPage() {
                 {site.name}. By using this site, you agree to the following:
               </p>
               <p>
-                All content on this site — including written copy, brand
-                strategy frameworks, and portfolio descriptions — is the
+                All content on this site, including written copy, brand
+                strategy frameworks, and portfolio descriptions, is the
                 property of {site.founder} and may not be reproduced without
                 permission.
               </p>

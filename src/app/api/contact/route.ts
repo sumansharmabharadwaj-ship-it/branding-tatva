@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   if (!apiKey || !toEmail) {
     console.log("Contact form submission (email delivery not yet configured):", parsed.data);
     return NextResponse.json(
-      { ok: true, note: "Received — email delivery is not yet connected." },
+      { ok: true, note: "Received. Email delivery is not yet connected." },
       { status: 200 }
     );
   }

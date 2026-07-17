@@ -25,8 +25,8 @@ export default function ContactPage() {
                 Tell me what your brand is becoming.
               </h1>
               <p className="mt-5 text-foreground-secondary">
-                Fill in as much or as little as you know right now — I'll ask
-                follow-up questions where it helps. I read every enquiry
+                Fill in as much or as little as you know right now. I'll ask
+                a few more questions where it helps. I read every enquiry
                 personally.
               </p>
               <div className="mt-8 space-y-2 text-sm text-foreground-secondary">

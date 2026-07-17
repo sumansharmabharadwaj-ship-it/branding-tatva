@@ -55,7 +55,7 @@ export default function Home() {
               </p>
               <p>
                 That gap is usually not a visibility problem. It&apos;s a
-                clarity problem — somewhere between what the brand believes,
+                clarity problem, somewhere between what the brand believes,
                 what it says, and what it actually looks like day to day.
               </p>
             </div>
@@ -69,11 +69,11 @@ export default function Home() {
               Five elements. One brand.
             </h2>
             <p className="mt-5 max-w-xl text-foreground-secondary">
-              Earth is where a brand is grounded — its purpose, its audience,
+              Earth is where a brand is grounded: its purpose, its audience,
               what it&apos;s actually for. Water is how it moves through
               someone&apos;s day. Fire is what makes people look twice. Air
               is the language that carries it. Space is what&apos;s left
-              once the noise settles — the part people actually remember.
+              once the noise settles, the part people actually remember.
             </p>
             <p className="mt-4 max-w-xl font-medium text-soil">
               Most brands are built with one or two of these. The ones people
@@ -117,7 +117,7 @@ export default function Home() {
                   Starting with an idea
                 </p>
                 <p className="mt-3 text-foreground-secondary">
-                  Earth-first work — purpose, audience, and positioning —
+                  Earth first work: purpose, audience, and positioning,
                   before anything else gets built.
                 </p>
                 <LinkButton href="/services#brand-beginning" variant="secondary" className="mt-6">
@@ -132,7 +132,7 @@ export default function Home() {
                   Already in business
                 </p>
                 <p className="mt-3 text-foreground-secondary">
-                  An audit first — finding exactly where the story stops
+                  An audit first, finding exactly where the story stops
                   holding together.
                 </p>
                 <LinkButton href="/services#brand-clarity" variant="secondary" className="mt-6">

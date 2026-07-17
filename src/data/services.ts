@@ -14,7 +14,7 @@ export const serviceGroups: ServiceGroup[] = [
     name: "Brand Beginning",
     forWho: "For founders and businesses starting with an idea, before anything is built.",
     description:
-      "Before a website or a logo, a brand needs to know what it believes, who it's for, and why it matters. This is the foundation work — Earth — done first so nothing built afterward has to guess.",
+      "Before a website or a logo, a brand needs to know what it believes, who it's for, and why it matters. This is the foundation work, called Earth, done first so nothing built afterward has to guess.",
     includes: [
       "Brand discovery and positioning",
       "Audience definition",
@@ -27,7 +27,7 @@ export const serviceGroups: ServiceGroup[] = [
     name: "Brand Clarity",
     forWho: "For existing brands that feel unclear, inconsistent, or hard to explain in one sentence.",
     description:
-      "Usually the problem isn't visibility — it's that the story doesn't hold together across channels. This work finds the disagreement between how a brand looks, sounds, and actually behaves, and resolves it.",
+      "Usually the problem isn't visibility. It's that the story doesn't hold together across channels. This work finds the disagreement between how a brand looks, sounds, and actually behaves, and resolves it.",
     includes: [
       "Brand audit",
       "Repositioning",
@@ -40,7 +40,7 @@ export const serviceGroups: ServiceGroup[] = [
     name: "Brand Elevation",
     forWho: "For established brands ready for stronger recognition and sharper creative direction.",
     description:
-      "For a brand with a working foundation that needs its expression to catch up — campaigns, creative direction, and content built to earn attention on purpose rather than by accident.",
+      "For a brand with a working foundation that needs its expression to catch up: campaigns, creative direction, and content built to earn attention on purpose rather than by accident.",
     includes: [
       "Creative direction",
       "Campaign concepts",
@@ -53,7 +53,7 @@ export const serviceGroups: ServiceGroup[] = [
     name: "Brand Presence",
     forWho: "For brands that need ongoing content, consistency, and someone watching the whole system.",
     description:
-      "Recognition is built month over month, not in a single campaign. This is sustained content and consistency work — the kind that shows up as steady growth rather than a spike.",
+      "Recognition is built month over month, not in a single campaign. This is sustained content and consistency work, the kind that shows up as steady growth rather than a spike.",
     includes: [
       "Ongoing content management",
       "Consistency frameworks",

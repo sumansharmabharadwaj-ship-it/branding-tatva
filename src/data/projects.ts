@@ -24,18 +24,18 @@ export const projects: Project[] = [
     title: "Dr. Haley Nutrition",
     industry: "Nutrition & wellness",
     challenge:
-      "A nutrition brand's social presence was growing in volume but not in quality — more posts weren't translating into an audience that would actually stay. The two-month engagement (December 2025–January 2026) needed to prove whether fewer, sharper posts could outperform a heavier posting schedule.",
+      "A nutrition brand's social presence was growing in volume but not in quality. More posts weren't translating into an audience that would actually stay. The two month engagement, running December 2025 to January 2026, needed to prove whether fewer, sharper posts could outperform a heavier posting schedule.",
     insight:
       "The account was gaining reach but not trust. Impressions and follower counts looked fine in isolation, but the content wasn't earning the kind of engagement that signals an algorithm to keep showing it to new people.",
     strategy:
-      "Shifted the entire approach from volume-first to quality-first across Instagram, Facebook, and LinkedIn — deliberately posting less, but making every post earn its place.",
+      "Shifted the entire approach from volume first to quality first across Instagram, Facebook, and LinkedIn, deliberately posting less but making every post earn its place.",
     execution:
-      "Cut Instagram posting from 23 posts in December to 12 in January. Kept Facebook's cadence steady but tightened relevance. Used LinkedIn, previously dormant, to start building professional-audience visibility from a low base.",
-    services: ["Space — ongoing content management", "Air — content strategy"],
+      "Cut Instagram posting from 23 posts in December to 12 in January. Kept Facebook's cadence steady but tightened relevance. Used LinkedIn, previously dormant, to start building visibility with a professional audience from a low base.",
+    services: ["Space · ongoing content management", "Air · content strategy"],
     outcome:
-      "Instagram gained 126 new followers in January from 12 posts, more than December's 111 followers from 23 posts — a 104% increase in followers earned per post, alongside a 1,350% jump in comments per post. Facebook grew steadily from roughly 59 to 69 total fans over the same period, with engagement per post up 67%. LinkedIn impressions rose 365% and engagement rate climbed from 0.71% to 2.81%.",
+      "Instagram gained 126 new followers in January from 12 posts, more than December's 111 followers from 23 posts. That's a 104% increase in followers earned per post, alongside a 1,350% jump in comments per post. Facebook grew steadily from roughly 59 to 69 total fans over the same period, with engagement per post up 67%. LinkedIn impressions rose 365%, and engagement rate climbed from 0.71% to 2.81%.",
     reflection:
-      "The clearest signal was impressions barely dropping (down just 10%) despite posting 48% less — the platform was actively rewarding the more relevant content instead of just showing it to fewer people. That's the difference between reach and trust.",
+      "The clearest signal was impressions barely dropping (down just 10%) despite posting 48% less. The platform was actively rewarding the more relevant content instead of just showing it to fewer people. That's the difference between reach and trust.",
     featured: true,
   },
   {
@@ -43,18 +43,18 @@ export const projects: Project[] = [
     title: "MyShopInEurope",
     industry: "B2B marketplace",
     challenge:
-      "A new platform connecting Indian vendors with European buyers had a real opportunity but no brand foundation to build on — without one, it risked reading as a generic access-only marketplace with nothing to differentiate it from the next listings site.",
+      "A new platform connecting Indian vendors with European buyers had a real opportunity but no brand foundation to build on. Without one, it risked reading as a generic, access only marketplace with nothing to differentiate it from the next listings site.",
     audience:
-      "European retailers, boutique owners, décor businesses, Ayurveda stores, resellers, and importers — buyers who care about margin and reliability, but also about a product story they can pass on to their own customers.",
+      "European retailers, boutique owners, décor businesses, Ayurveda stores, resellers, and importers: buyers who care about margin and reliability, but also about a product story they can pass on to their own customers.",
     insight:
-      "Three shifts were converging at once: European buyers increasingly want origin and story, not just product; Indian vendors want a smoother, more credible path into European retail; and buyers generally are paying more attention to what a brand stands for, not just what it sells. A brand built only around 'access' would miss all three.",
+      "Three shifts were converging at once. European buyers increasingly want origin and story, not just product. Indian vendors want a smoother, more credible path into European retail. And buyers generally are paying more attention to what a brand stands for, not just what it sells. A brand built only around 'access' would miss all three.",
     strategy:
-      "Defined a real brand foundation — core belief, mission, promise, and value — anchored in a specific bet: Indian products have a genuine edge in craft heritage, wellness/Ayurveda roots, and shelf distinction, and the platform should sell that edge rather than compete on being cheap supply.",
+      "Defined a real brand foundation, including a core belief, mission, promise, and value, anchored in a specific bet: Indian products have a genuine edge in craft heritage, wellness and Ayurveda roots, and shelf distinction, and the platform should sell that edge rather than compete on being cheap supply.",
     execution:
-      "Built a content strategy split roughly 65% education and authority, 25% culture and people, 10% direct branding — deliberately weighted toward teaching and proving over promoting. Mapped specific playbooks per channel (LinkedIn for buyer-side authority, Instagram for visual recall, YouTube and Reddit for search value and audience listening) and sequenced the rollout across a year: foundation first, then audience pull, then lead quality, then market position.",
-    services: ["Earth — brand foundation", "Air — messaging"],
+      "Built a content strategy split roughly 65% education and authority, 25% culture and people, and 10% direct branding, deliberately weighted toward teaching and proving over promoting. Mapped specific playbooks per channel (LinkedIn for buyer side authority, Instagram for visual recall, YouTube and Reddit for search value and audience listening) and sequenced the rollout across a year: foundation first, then audience pull, then lead quality, then market position.",
+    services: ["Earth · brand foundation", "Air · messaging"],
     outcome:
-      "Delivered a complete brand foundation and a full content operating system — positioning, content pillars, channel-by-channel playbooks, and a quarter-by-quarter rollout plan connecting each phase to a specific business outcome (awareness, trust, leads, conversion).",
+      "Delivered a complete brand foundation and a full content operating system: positioning, content pillars, playbooks for each channel, and a rollout plan, quarter by quarter, connecting each phase to a specific business outcome (awareness, trust, leads, conversion).",
     reflection:
       "The sharpest strategic call was refusing to let 'MyShopInEurope' default to meaning 'cheap Indian goods.' Repositioning around craft and origin, not price, changes who the platform can credibly sell to.",
     featured: true,
@@ -64,14 +64,14 @@ export const projects: Project[] = [
     title: "Executive Springboard",
     industry: "Executive mentoring",
     challenge:
-      "An executive-mentoring platform needed its social presence to actually convert — not just build awareness, but turn content into webinar registrations and mentor engagement.",
+      "An executive mentoring platform needed its social presence to actually convert. Not just build awareness, but turn content into webinar registrations and mentor engagement.",
     strategy:
-      "Built a full competitive audit and an eight-pillar content system, with distinct playbooks for each platform rather than one strategy stretched across all of them.",
+      "Built a full competitive audit and an eight pillar content system, with distinct playbooks for each platform rather than one strategy stretched across all of them.",
     execution:
-      "Designed platform-specific sequencing that connected everyday content directly to webinar conversion — content wasn't treated as a separate workstream from the platform's core registration goal, but as the mechanism for it.",
-    services: ["Water — customer journey", "Air — content strategy"],
+      "Designed platform specific sequencing that connected everyday content directly to webinar conversion. Content wasn't treated as a separate workstream from the platform's core registration goal, but as the mechanism for it.",
+    services: ["Water · customer journey", "Air · content strategy"],
     outcome:
-      "Delivered a structured, platform-by-platform content system built specifically around driving webinar registrations rather than generic engagement metrics.",
+      "Delivered a structured content system, built platform by platform, specifically around driving webinar registrations rather than generic engagement metrics.",
     featured: true,
   },
   {
@@ -79,20 +79,20 @@ export const projects: Project[] = [
     title: "HerbalCart",
     industry: "D2C wellness & supplements",
     challenge:
-      "HerbalCart's actual product line — whey protein, pre-workout, protein bars — was being seen through a purely herbal or Ayurvedic lens the brand didn't intend. The gap between what people assumed HerbalCart sold and what it actually sold was undermining trust in its supplement range.",
+      "HerbalCart's actual product line, including whey protein, pre workout, and protein bars, was being seen through a purely herbal or Ayurvedic lens the brand didn't intend. The gap between what people assumed HerbalCart sold and what it actually sold was undermining trust in its supplement range.",
     audience:
-      "13–38 year olds in tier-1 and tier-2 Indian cities — health-conscious but not necessarily bodybuilders, closer to 'functional fitness,' wanting clean-label options that aren't preachy or priced like a premium import.",
+      "13 to 38 year olds in tier one and tier two Indian cities: health conscious but not necessarily bodybuilders, closer to 'functional fitness,' wanting clean label options that aren't preachy or priced like a premium import.",
     insight:
-      "The category HerbalCart was actually competing in (GNC, MyProtein, Raw Nutrition) runs on very different content instincts than a herbal/wellness brand — native, fast-cut, UGC-driven, comfortable with humour, allergic to anything that reads like a pharma insert.",
+      "The category HerbalCart was actually competing in (GNC, MyProtein, Raw Nutrition) runs on very different content instincts than a herbal or wellness brand: native, fast cut, driven by real user content, comfortable with humour, allergic to anything that reads like a pharma insert.",
     strategy:
-      "Reset the campaign around one clear argument: natural food alone isn't enough for an active lifestyle, and supplementation fills a specific, explainable gap — not a spiritual or ayurvedic one.",
+      "Reset the campaign around one clear argument: natural food alone isn't enough for an active lifestyle, and supplementation fills a specific, explainable gap, not a spiritual or ayurvedic one.",
     execution:
-      "Built five content formats around that argument: direct food-vs-supplement visual comparisons (e.g., 'one scoop = 24g protein' shown against the equivalent in eggs or dal), scripted 'why choose a supplement with food' narratives, DIY recipe content, honest UGC/transformation clips, and reaction-style reviews. Wrote Hinglish video scripts built on real cultural reference points rather than generic fitness-influencer tropes.",
-    services: ["Fire — creative direction", "Air — messaging"],
+      "Built five content formats around that argument: direct comparisons of food versus supplement (for example, 'one scoop = 24g protein' shown against the equivalent in eggs or dal), scripted 'why choose a supplement with food' narratives, DIY recipe content, honest transformation clips from real users, and reaction style reviews. Wrote Hinglish video scripts built on real cultural reference points rather than generic fitness influencer tropes.",
+    services: ["Fire · creative direction", "Air · messaging"],
     outcome:
-      "Delivered a full campaign reset — repositioned content themes, five ready-to-shoot content formats, and complete video scripts — moving the brand's public perception from 'herbal supplement' toward 'modern, supplement-first wellness brand.'",
+      "Delivered a full campaign reset: repositioned content themes, five formats ready to shoot, and complete video scripts, moving the brand's public perception from 'herbal supplement' toward 'modern, supplement first wellness brand.'",
     reflection:
-      "The work that landed best wasn't the most polished — it was the most native. Content that looked like a real person's Instagram, not an ad, consistently outperformed anything that read as produced.",
+      "The work that landed best wasn't the most polished. It was the most native. Content that looked like a real person's Instagram, not an ad, consistently outperformed anything that read as produced.",
     featured: false,
   },
   {
@@ -100,14 +100,14 @@ export const projects: Project[] = [
     title: "Plaxonic.com Content Portfolio",
     industry: "Enterprise technology",
     challenge:
-      "A technology company needed to build authority with audiences at very different levels of technical fluency — from HR and legal leaders encountering AI governance for the first time, to engineers who live in the subject daily. A single content tone couldn't credibly reach both.",
+      "A technology company needed to build authority with audiences at very different levels of technical fluency, from HR and legal leaders encountering AI governance for the first time, to engineers who live in the subject daily. A single content tone couldn't credibly reach both.",
     strategy:
-      "Built a 16-piece portfolio across four distinct content types, each doing a different job: Research Papers to validate claims with evidence, Perspective Pieces to challenge assumptions leaders hadn't questioned yet, Blogs to make emerging technology feel relevant to daily life, and Articles for fast, high-visibility consumption.",
+      "Built a portfolio of sixteen pieces across four distinct content types, each doing a different job: Research Papers to validate claims with evidence, Perspective Pieces to challenge assumptions leaders hadn't questioned yet, Blogs to make emerging technology feel relevant to daily life, and Articles for fast, high visibility consumption.",
     execution:
-      "Grounded the research pillar in a real proof of concept — an IoT edge-integration case study with the Delhi Jal Board showing a measurable drop in chemical over-dosing (15–20% down to under 3%) — rather than relying on abstract claims. Paired that rigor with a deliberately provocative perspective piece ('The SaaSpocalypse Is Not a Headline. It's a Warning.') built around three direct questions every technology leader has to answer.",
-    services: ["Air — content strategy"],
+      "Grounded the research pillar in a real proof of concept: an IoT edge integration case study with the Delhi Jal Board showing a measurable drop in chemical over dosing (15% to 20% down to under 3%), rather than relying on abstract claims. Paired that rigor with a deliberately provocative perspective piece ('The SaaSpocalypse Is Not a Headline. It's a Warning.') built around three direct questions every technology leader has to answer.",
+    services: ["Air · content strategy"],
     outcome:
-      "Produced a complete 16-piece content portfolio spanning research, opinion, education, and fast-consumption formats — structured around a deliberate arc (validate, challenge, humanise, define) rather than a loose content calendar.",
+      "Produced a complete content portfolio of sixteen pieces spanning research, opinion, education, and fast consumption formats, structured around a deliberate arc: validate, challenge, humanise, define, rather than a loose content calendar.",
     featured: false,
   },
 ];

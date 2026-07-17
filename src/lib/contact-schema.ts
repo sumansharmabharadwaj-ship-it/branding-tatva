@@ -11,14 +11,14 @@ export const brandStages = [
 
 export const contactSchema = z.object({
   name: z.string().min(2, "Please share your name."),
-  email: z.string().email("That doesn't look like a working email — mind checking it?"),
+  email: z.string().email("That doesn't look like a working email, mind checking it?"),
   phone: z.string().optional(),
   business: z.string().min(1, "Let me know your business or brand name."),
   website: z.string().optional(),
   brandStage: z.enum(brandStages, {
     errorMap: () => ({ message: "Pick the option closest to where you are." }),
   }),
-  servicesNeeded: z.string().min(1, "A rough idea is fine — what do you think you need?"),
+  servicesNeeded: z.string().min(1, "A rough idea is fine, what do you think you need?"),
   budget: z.string().optional(),
   timeline: z.string().optional(),
   description: z.string().min(10, "A few sentences helps me prepare before we talk."),

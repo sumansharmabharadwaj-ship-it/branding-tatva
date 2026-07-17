@@ -21,7 +21,7 @@ export default function WorkPage() {
             <SectionHeading
               eyebrow="Work"
               title="Projects across very different categories."
-              description="Marketplaces, executive coaching, wellness, D2C supplements, enterprise technology — different industries, the same underlying method."
+              description="Marketplaces, executive coaching, wellness, D2C supplements, enterprise technology: different industries, the same underlying method."
             />
           </Container>
         </section>

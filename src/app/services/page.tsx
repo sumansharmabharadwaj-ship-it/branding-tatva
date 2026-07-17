@@ -10,7 +10,7 @@ import { serviceGroups } from "@/data/services";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "Brand strategy organised through five elements — foundation, experience, expression, voice, and presence.",
+    "Brand strategy organised through five elements: foundation, experience, expression, voice, and presence.",
 };
 
 export default function ServicesPage() {
@@ -23,7 +23,7 @@ export default function ServicesPage() {
             <SectionHeading
               eyebrow="Services"
               title="The elements that make a brand complete."
-              description="Every project draws on some combination of these five. None of them work well in isolation — that's usually the actual problem a brand walks in with."
+              description="Every project draws on some combination of these five. None of them work well in isolation, and that's usually the actual problem a brand walks in with."
             />
           </Container>
         </section>
@@ -40,7 +40,7 @@ export default function ServicesPage() {
                   <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
                   <ul className="mt-4 space-y-1.5">
                     {el.services.map((s) => (
-                      <li key={s} className="text-sm text-foreground-secondary before:mr-2 before:content-['—']">
+                      <li key={s} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
                         {s}
                       </li>
                     ))}
@@ -66,7 +66,7 @@ export default function ServicesPage() {
                   <p className="mt-4 text-foreground-secondary">{group.description}</p>
                   <ul className="mt-4 space-y-1.5">
                     {group.includes.map((item) => (
-                      <li key={item} className="text-sm text-foreground-secondary before:mr-2 before:content-['—']">
+                      <li key={item} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
                         {item}
                       </li>
                     ))}
@@ -75,7 +75,7 @@ export default function ServicesPage() {
               ))}
             </div>
             <p className="mt-8 text-sm text-foreground-secondary">
-              Pricing is discussed after understanding your project — every
+              Pricing is discussed after understanding your project. Every
               engagement is scoped individually rather than sold off a fixed
               menu.
             </p>

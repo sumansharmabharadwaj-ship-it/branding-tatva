@@ -5,7 +5,7 @@ import { site } from "@/data/site";
 // standalone app-like window instead of a browser tab.
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: `${site.name} — Brand Strategy by ${site.founder}`,
+    name: `${site.name}: Brand Strategy by ${site.founder}`,
     short_name: site.name,
     description: site.description,
     start_url: "/",

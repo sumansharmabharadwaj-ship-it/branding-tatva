@@ -50,7 +50,7 @@ export function ContactForm() {
   if (status === "success") {
     return (
       <div className="rounded-lg border border-state-success/40 bg-state-success/10 p-6">
-        <p className="font-display text-xl font-semibold text-soil">Thank you — that's in.</p>
+        <p className="font-display text-xl font-semibold text-soil">Thank you, that's in.</p>
         <p className="mt-2 text-sm text-foreground-secondary">
           I read every enquiry personally and reply within a few days. If it's
           urgent, feel free to email directly too.

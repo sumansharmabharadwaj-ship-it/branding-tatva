@@ -21,8 +21,8 @@ const bodyFont = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — Brand Strategy by ${site.founder}`,
-    template: `%s — ${site.name}`,
+    default: `${site.name}: Brand Strategy by ${site.founder}`,
+    template: `%s | ${site.name}`,
   },
   description: site.description,
   openGraph: {
