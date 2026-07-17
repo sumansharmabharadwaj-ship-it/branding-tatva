@@ -6,6 +6,7 @@ import { FAQ } from "@/components/FAQ";
 import { AnimatedHero } from "@/components/AnimatedHero";
 import { IndianPattern } from "@/components/IndianPattern";
 import { Reveal } from "@/components/Reveal";
+import { Testimonials } from "@/components/Testimonials";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -193,8 +194,27 @@ export default function Home() {
           </Container>
         </section>
 
-        {/* Process */}
+        {/* Testimonials */}
         <section className="py-20">
+          <Container>
+            <Reveal>
+              <h2 className="text-display-sm font-display font-semibold text-soil">
+                What clients say
+              </h2>
+              <p className="mt-3 max-w-xl text-sm text-foreground-secondary">
+                Real quotes are being collected from recent projects. This
+                section fills in as they come in, rather than being filled
+                with anything invented in the meantime.
+              </p>
+              <div className="mt-8">
+                <Testimonials />
+              </div>
+            </Reveal>
+          </Container>
+        </section>
+
+        {/* Process */}
+        <section className="border-t border-border bg-background-alt py-20">
           <Container>
             <Reveal>
               <h2 className="text-display-sm font-display font-semibold text-soil">How a project moves</h2>
