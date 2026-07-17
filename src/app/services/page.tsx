@@ -6,12 +6,12 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { elements } from "@/data/elements";
-import { serviceGroups } from "@/data/services";
+import { serviceGroups, offerings } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "Brand strategy organised through five elements: foundation, experience, expression, voice, and presence.",
+    "Brand strategy, content strategy, social media marketing, and website development, all under one roof.",
 };
 
 export default function ServicesPage() {
@@ -23,13 +23,33 @@ export default function ServicesPage() {
           <Container>
             <SectionHeading
               eyebrow="Services"
+              title="Everything a brand needs, in plain terms."
+              description="Strategy, identity, content, and the channels that carry it. Here's what I actually do, before we get into how I think about it."
+            />
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {offerings.map((offer, i) => (
+                <Reveal key={offer.name} delay={i * 0.06}>
+                  <div className="rounded-lg border border-border bg-background-elevated p-6 transition-transform duration-300 hover:-translate-y-1">
+                    <p className="font-display text-lg font-semibold text-soil">{offer.name}</p>
+                    <p className="mt-2 text-sm text-foreground-secondary">{offer.detail}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </section>
+
+        <section className="border-t border-border bg-background-alt py-16">
+          <Container>
+            <SectionHeading
+              eyebrow="The deeper system"
               title="The elements that make a brand complete."
               description="Every project draws on some combination of these five. None of them work well in isolation, and that's usually the actual problem a brand walks in with."
             />
           </Container>
         </section>
 
-        <section className="border-t border-border bg-background-alt py-16">
+        <section className="py-16">
           <Container>
             <div className="grid gap-6 lg:grid-cols-5">
               {elements.map((el, i) => (

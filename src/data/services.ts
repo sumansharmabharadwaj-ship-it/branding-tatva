@@ -6,6 +6,41 @@ export type ServiceGroup = {
   includes: string[];
 };
 
+export type Offering = {
+  name: string;
+  detail: string;
+};
+
+// Plain-language list, no elemental framing. Sits above the deeper
+// elemental breakdown so a first-time visitor gets a clear answer to
+// "what do you actually do" in one glance.
+export const offerings: Offering[] = [
+  {
+    name: "Brand Strategy & Identity",
+    detail: "Positioning, naming direction, and the visual system that carries it.",
+  },
+  {
+    name: "Content Strategy",
+    detail: "A plan for what gets said, where, and in what order, before a single post goes out.",
+  },
+  {
+    name: "Social Media Marketing",
+    detail: "Ongoing management, growth, and campaign execution across the platforms that matter to your audience.",
+  },
+  {
+    name: "Website Development",
+    detail: "A site built to carry the brand consistently, not just a template with your logo dropped in.",
+  },
+  {
+    name: "Content Creation",
+    detail: "Writing, scripts, and copy built in your actual voice, not a generic template tone.",
+  },
+  {
+    name: "Marketing Strategy",
+    detail: "The plan connecting content and campaigns to a real business outcome, not just activity.",
+  },
+];
+
 // Organised by client need, per PROJECT_PLAN.md. Pricing intentionally
 // omitted until Suman approves an approach — see BRAND_STRATEGY open items.
 export const serviceGroups: ServiceGroup[] = [
