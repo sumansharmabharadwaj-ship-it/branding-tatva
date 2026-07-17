@@ -14,7 +14,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <Container className="flex h-16 items-center justify-between">
         <Link href="/" aria-label={site.name}>
-          <Logo size={30} />
+          <Logo />
         </Link>
 
         {/* Desktop nav */}
