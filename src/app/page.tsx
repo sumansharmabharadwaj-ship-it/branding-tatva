@@ -8,6 +8,7 @@ import { IndianPattern } from "@/components/IndianPattern";
 import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
 import { SectionThread } from "@/components/SectionThread";
+import { TexturedDark } from "@/components/TexturedDark";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -29,8 +30,8 @@ export default function Home() {
       <Header />
       <main id="main-content">
         {/* Hero — "The Elements Find Their Form" */}
-        <section className="bg-soil py-20 sm:py-28">
-          <Container className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+        <TexturedDark className="py-20 sm:py-28">
+          <Container className="relative grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
             <div>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
                 Brand strategy for founders &amp; existing businesses
@@ -50,7 +51,7 @@ export default function Home() {
             </div>
             <AnimatedHero dark />
           </Container>
-        </section>
+        </TexturedDark>
 
         <SectionThread />
 
@@ -283,7 +284,7 @@ export default function Home() {
         <SectionThread />
 
         {/* Final CTA — a widening threshold, marked with the lattice motif */}
-        <section className="relative overflow-hidden bg-soil py-24">
+        <TexturedDark className="py-24" image="/images/texture-sage.jpg">
           <IndianPattern className="absolute inset-0" opacity={0.08} color="#F4EFE6" />
           <Reveal>
             <Container className="relative text-center">
@@ -295,7 +296,7 @@ export default function Home() {
               </div>
             </Container>
           </Reveal>
-        </section>
+        </TexturedDark>
       </main>
       <Footer />
     </>

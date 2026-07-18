@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
+import { TexturedDark } from "@/components/TexturedDark";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
@@ -16,8 +17,8 @@ export default function WorkPage() {
     <>
       <Header />
       <main id="main-content">
-        <section className="bg-soil py-20 sm:py-28">
-          <Container>
+        <TexturedDark className="py-20 sm:py-28" image="/images/texture-terracotta.jpg">
+          <Container className="relative">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Work</p>
               <h1 className="mt-2 max-w-2xl text-display-sm font-display font-semibold text-ivory">
@@ -30,7 +31,7 @@ export default function WorkPage() {
               </p>
             </Reveal>
           </Container>
-        </section>
+        </TexturedDark>
 
         <section className="border-t border-border bg-background-alt py-16">
           <Container>

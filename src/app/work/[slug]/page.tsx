@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
+import { TexturedDark } from "@/components/TexturedDark";
 import { projects } from "@/data/projects";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -44,8 +45,8 @@ export default async function CaseStudyPage({ params }: Props) {
     <>
       <Header />
       <main id="main-content">
-        <section className="bg-soil py-20 sm:py-28">
-          <Container>
+        <TexturedDark className="py-20 sm:py-28" image="/images/texture-terracotta.jpg">
+          <Container className="relative">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
                 {project.industry}
@@ -55,7 +56,7 @@ export default async function CaseStudyPage({ params }: Props) {
               </h1>
             </Reveal>
           </Container>
-        </section>
+        </TexturedDark>
 
         <section className="border-t border-border bg-background-alt py-16">
           <Container className="grid gap-12 md:grid-cols-3">

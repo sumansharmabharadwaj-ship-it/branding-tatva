@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
+import { TexturedDark } from "@/components/TexturedDark";
 import { elements } from "@/data/elements";
 import { serviceGroups, offerings } from "@/data/services";
 
@@ -19,8 +20,8 @@ export default function ServicesPage() {
     <>
       <Header />
       <main id="main-content">
-        <section className="bg-soil py-20 sm:py-28">
-          <Container>
+        <TexturedDark className="py-20 sm:py-28" image="/images/texture-terracotta.jpg">
+          <Container className="relative">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Services</p>
               <h1 className="mt-2 max-w-2xl text-display-sm font-display font-semibold text-ivory">
@@ -33,7 +34,7 @@ export default function ServicesPage() {
               </p>
             </Reveal>
           </Container>
-        </section>
+        </TexturedDark>
 
         <section className="py-16">
           <Container>

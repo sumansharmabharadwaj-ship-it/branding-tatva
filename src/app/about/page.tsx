@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { ImagePlaceholder } from "@/components/ImagePlaceholder";
 import { Reveal } from "@/components/Reveal";
+import { TexturedDark } from "@/components/TexturedDark";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -19,8 +20,8 @@ export default function AboutPage() {
     <>
       <Header />
       <main id="main-content">
-        <section className="bg-soil py-20 sm:py-28">
-          <Container className="grid items-start gap-12 lg:grid-cols-[1.4fr_1fr]">
+        <TexturedDark className="py-20 sm:py-28" image="/images/texture-sage.jpg">
+          <Container className="relative grid items-start gap-12 lg:grid-cols-[1.4fr_1fr]">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
                 About
@@ -46,7 +47,7 @@ export default function AboutPage() {
               </p>
             </Reveal>
           </Container>
-        </section>
+        </TexturedDark>
 
         <section className="border-t border-border bg-background-alt py-20">
           <Container className="grid gap-12 md:grid-cols-2">
