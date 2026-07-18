@@ -13,6 +13,7 @@ import { GradientSections } from "@/components/GradientSections";
 import { TexturedDark } from "@/components/TexturedDark";
 import { CinematicHero } from "@/components/CinematicHero";
 import { ImageBreak } from "@/components/ImageBreak";
+import { VideoBreak } from "@/components/VideoBreak";
 import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
@@ -81,8 +82,9 @@ export default function Home() {
           </Container>
 
           <div className="mt-20 sm:mt-28">
-            <ImageBreak
-              image="/images/cinematic-sunrays.jpg"
+            <VideoBreak
+              src="/videos/cinematic-pines.mp4"
+              poster="/images/cinematic-pines-poster.jpg"
               quote="Attention is the first thing any brand has to earn."
               height="60vh"
             />
