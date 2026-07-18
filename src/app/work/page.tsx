@@ -17,7 +17,7 @@ export default function WorkPage() {
     <>
       <Header />
       <main id="main-content">
-        <PhotoHero image="/images/hero-landscape.jpg" minHeight="60vh">
+        <PhotoHero image="/images/campaign-path.jpg" minHeight="60vh">
           <Container className="relative py-20">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Work</p>

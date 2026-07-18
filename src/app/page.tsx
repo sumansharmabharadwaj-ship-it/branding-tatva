@@ -9,6 +9,7 @@ import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
 import { TexturedDark } from "@/components/TexturedDark";
 import { CinematicHero } from "@/components/CinematicHero";
+import { ImageBreak } from "@/components/ImageBreak";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -30,7 +31,7 @@ export default function Home() {
       <Header transparent />
       <main id="main-content">
         <CinematicHero
-          image="/images/hero-landscape.jpg"
+          image="/images/campaign-hero.jpg"
           eyebrow="Brand strategy for founders & existing businesses"
           headline={site.heroHeadline}
         >
@@ -68,7 +69,15 @@ export default function Home() {
             </Reveal>
           </Container>
 
-          <Container className="mt-28 sm:mt-40">
+          <div className="mt-20 sm:mt-28">
+            <ImageBreak
+              image="/images/campaign-detail.jpg"
+              quote="Attention is the first thing any brand has to earn."
+              height="60vh"
+            />
+          </div>
+
+          <Container className="mt-20 sm:mt-28">
             <Reveal>
               <h2 className="ml-auto max-w-2xl text-right font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
                 Five elements.
@@ -309,7 +318,7 @@ export default function Home() {
         </section>
 
         {/* Final CTA — a widening threshold, marked with the lattice motif */}
-        <TexturedDark className="py-24" image="/images/texture-sage.jpg">
+        <TexturedDark className="py-24" image="/images/campaign-path.jpg">
           <IndianPattern className="absolute inset-0" opacity={0.08} color="#F4EFE6" />
           <Reveal>
             <Container className="relative text-center">
