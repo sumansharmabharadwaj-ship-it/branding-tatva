@@ -45,7 +45,11 @@ export default async function CaseStudyPage({ params }: Props) {
     <>
       <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/green-valley.jpg" minHeight="60vh">
+        <PhotoHero
+          video="/videos/hero-valley.mp4"
+          poster="/images/hero-valley-poster.jpg"
+          minHeight="60vh"
+        >
           <Container className="relative py-20 text-center">
             <Reveal>
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">

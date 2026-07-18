@@ -2,23 +2,29 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 
-// Full-bleed photograph hero, the structure used across every reference
-// site (Nevada House, Haven, Sylvan): a real photo fills the section, a
-// dark gradient keeps text legible, content sits on top. Height varies
-// by page: tall on the homepage, shorter elsewhere so secondary pages
-// get to their content faster. The image itself holds a slow, continuous
-// Ken Burns drift, an infinite gentle mirror between two points rather
-// than a one-shot zoom, so the hero is never sitting completely still
-// even before anyone scrolls.
+// Full-bleed hero, the structure used across every reference site
+// (Nevada House, Haven, Sylvan): a real photo or video fills the
+// section, a dark gradient keeps text legible, content sits on top.
+// Height varies by page: tall on the homepage, shorter elsewhere so
+// secondary pages get to their content faster. When only a still image
+// is given, it holds a slow continuous Ken Burns drift so it's never
+// sitting completely still; a video background moves on its own.
+
+const gradient =
+  "linear-gradient(180deg, rgba(39,34,30,0.55) 0%, rgba(39,34,30,0.78) 60%, rgba(39,34,30,0.92) 100%)";
 
 export function PhotoHero({
   children,
   image,
+  video,
+  poster,
   minHeight = "60vh",
   className,
 }: {
   children?: React.ReactNode;
-  image: string;
+  image?: string;
+  video?: string;
+  poster?: string;
   minHeight?: string;
   className?: string;
 }) {
@@ -29,17 +35,32 @@ export function PhotoHero({
       className={`relative flex items-center overflow-hidden bg-soil ${className ?? ""}`}
       style={{ minHeight }}
     >
-      <motion.div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `linear-gradient(180deg, rgba(39,34,30,0.55) 0%, rgba(39,34,30,0.78) 60%, rgba(39,34,30,0.92) 100%), url(${image})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-        initial={{ scale: 1 }}
-        animate={prefersReducedMotion ? undefined : { scale: 1.07 }}
-        transition={{ duration: 22, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-      />
+      {video && !prefersReducedMotion ? (
+        <>
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            src={video}
+            poster={poster}
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
+        </>
+      ) : (
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `${gradient}, url(${poster ?? image})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+          initial={{ scale: 1 }}
+          animate={prefersReducedMotion ? undefined : { scale: 1.07 }}
+          transition={{ duration: 22, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+        />
+      )}
       {children}
     </section>
   );
