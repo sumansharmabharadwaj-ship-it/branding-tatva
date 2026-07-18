@@ -6,6 +6,7 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
+import { VideoBreak } from "@/components/VideoBreak";
 import { projects } from "@/data/projects";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -110,6 +111,13 @@ export default async function CaseStudyPage({ params }: Props) {
             </Reveal>
           </Container>
         </section>
+
+        <VideoBreak
+          src="/videos/own-misty-ridge.mp4"
+          poster="/images/own-misty-ridge-poster.jpg"
+          quote="Clarity doesn't arrive all at once. It clears the way this fog does — one layer at a time."
+          height="60vh"
+        />
 
         {related && (
           <section className="py-16">
