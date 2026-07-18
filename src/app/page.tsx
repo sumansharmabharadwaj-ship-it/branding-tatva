@@ -271,7 +271,7 @@ export default function Home() {
               <Reveal delay={0.1} className="mt-10">
                 <FeaturedWorkHero
                   href={`/work/${featured[0].slug}`}
-                  image="/images/cinematic-moss.jpg"
+                  image="/images/own-jagged-peaks.jpg"
                   industry={featured[0].industry}
                   title={featured[0].title}
                   outcome={featured[0].outcome}
