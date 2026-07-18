@@ -115,11 +115,17 @@ export default async function CaseStudyPage({ params }: Props) {
         {/* Video: I Am Sorin via Pexels, free for commercial use. About's
             cinematic-ridge.mp4 already owns the misty-pine-ridge mood one
             click away — this case-study closer needed a genuinely different
-            backdrop, not a second fog shot. */}
+            backdrop, not a second fog shot. The quote itself is per-project
+            (closingQuote in data/projects.ts) so the words actually tie back
+            to that project's own challenge/outcome, instead of one generic
+            line sitting under every case study regardless of industry. */}
         <VideoBreak
           src="/videos/own-forest-stream.mp4"
           poster="/images/own-forest-stream-poster.jpg"
-          quote="Good strategy doesn't force a path. It finds the one already there, the way water finds a way through stone."
+          quote={
+            project.closingQuote ??
+            "Good strategy doesn't force a path. It finds the one already there, the way water finds a way through stone."
+          }
           height="60vh"
         />
 

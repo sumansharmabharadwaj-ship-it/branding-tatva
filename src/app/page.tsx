@@ -12,7 +12,6 @@ import { GradientSections } from "@/components/GradientSections";
 import { KenBurnsImage } from "@/components/KenBurnsImage";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
-import { TexturedDark } from "@/components/TexturedDark";
 import { CinematicHero } from "@/components/CinematicHero";
 import { ImageBreak } from "@/components/ImageBreak";
 import { VideoBreak } from "@/components/VideoBreak";
@@ -370,29 +369,36 @@ export default function Home() {
           </section>
         </GradientSections>
 
+        {/* Closing chapter — the contemplative statement and the final CTA
+            used to be two separate sections (a video break, then a flat
+            dark panel cut in right below it). Merged into one continuous
+            video-backed section so the quiet moment carries straight
+            through into the invitation, instead of the visual abruptly
+            resetting between them. */}
         <VideoBreak
           src="/videos/own-moonlit-sea.mp4"
           poster="/images/own-moonlit-sea-poster.jpg"
           quote="Some things only become visible once everything else goes quiet."
-          height="65vh"
+          height="min(1100px, 145vh)"
           imagePosition="50% 2%"
           quoteVariant="statement"
-        />
-
-        {/* Final CTA — a widening threshold, marked with the lattice motif */}
-        <TexturedDark className="py-24" image="/images/own-dusk-ridge.jpg">
-          <IndianPattern className="absolute inset-0" opacity={0.08} color="#F4EFE6" />
-          <Reveal>
-            <Container className="relative text-center">
-              <h2 className="mx-auto max-w-2xl text-display-md font-display font-semibold text-ivory">
+          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0.3) 30%, rgba(20,17,14,0.3) 58%, rgba(20,17,14,0.9) 100%)"
+        >
+          <div className="relative">
+            <IndianPattern className="absolute inset-0 -m-10" opacity={0.1} color="#F4EFE6" />
+            <div className="relative">
+              <h2
+                className="mx-auto max-w-xl text-display-md font-display font-semibold text-ivory"
+                style={{ textShadow: "0 2px 14px rgba(0,0,0,0.85), 0 1px 4px rgba(0,0,0,0.9)" }}
+              >
                 Let&apos;s find the Tatva of your business.
               </h2>
               <div className="mt-8">
                 <LinkButton href="/contact">Start a brand conversation</LinkButton>
               </div>
-            </Container>
-          </Reveal>
-        </TexturedDark>
+            </div>
+          </div>
+        </VideoBreak>
       </main>
       <Footer />
     </>

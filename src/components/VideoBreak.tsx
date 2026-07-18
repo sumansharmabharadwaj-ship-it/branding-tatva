@@ -18,6 +18,8 @@ export function VideoBreak({
   height = "70vh",
   imagePosition = "center",
   quoteVariant = "center",
+  overlayGradient = BREAK_OVERLAY_GRADIENT,
+  children,
 }: {
   src: string;
   poster: string;
@@ -25,6 +27,8 @@ export function VideoBreak({
   height?: string;
   imagePosition?: string;
   quoteVariant?: QuoteVariant;
+  overlayGradient?: string;
+  children?: React.ReactNode;
 }) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -34,7 +38,7 @@ export function VideoBreak({
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: `${BREAK_OVERLAY_GRADIENT}, url(${poster})`,
+            backgroundImage: `${overlayGradient}, url(${poster})`,
             backgroundSize: "cover",
             backgroundPosition: imagePosition,
           }}
@@ -53,7 +57,7 @@ export function VideoBreak({
           />
           <div
             className="absolute inset-0"
-            style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }}
+            style={{ backgroundImage: overlayGradient }}
           />
         </>
       )}
@@ -64,7 +68,7 @@ export function VideoBreak({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="relative flex h-full items-center justify-center px-6 text-center"
+          className="relative flex h-full flex-col items-center justify-center gap-14 px-6 text-center"
         >
           <p
             className="max-w-4xl font-display text-4xl font-semibold leading-[1.1] text-ivory sm:text-5xl"
@@ -72,6 +76,7 @@ export function VideoBreak({
           >
             {quote}
           </p>
+          {children}
         </motion.div>
       )}
 
