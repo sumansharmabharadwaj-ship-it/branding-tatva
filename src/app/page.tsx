@@ -7,6 +7,8 @@ import { AnimatedHero } from "@/components/AnimatedHero";
 import { IndianPattern } from "@/components/IndianPattern";
 import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
+import { ElementsRail } from "@/components/ElementsRail";
+import { KineticMarquee } from "@/components/KineticMarquee";
 import { TexturedDark } from "@/components/TexturedDark";
 import { CinematicHero } from "@/components/CinematicHero";
 import { ImageBreak } from "@/components/ImageBreak";
@@ -44,7 +46,9 @@ export default function Home() {
                 Brand strategy for founders &amp; existing businesses
               </p>
               <h1 className="mt-6 max-w-3xl font-display text-[clamp(2.25rem,5.5vw,4.5rem)] font-semibold leading-[1.05] text-soil">
-                {site.heroHeadline}
+                Most brands are visible.
+                <br />
+                Very few are <span className="italic text-clay">remembered</span>.
               </h1>
               <p className="mt-6 max-w-md text-base text-foreground-secondary">{site.tagline}</p>
               <div className="mt-9 flex flex-wrap gap-4">
@@ -116,6 +120,8 @@ export default function Home() {
           </Container>
         </section>
 
+        <KineticMarquee text="EARTH · WATER · FIRE · AIR · SPACE" />
+
         {/* Five elements — a slow vertical unfolding, not a grid of cards */}
         <section className="border-t border-border bg-sandstone/15 py-28 sm:py-36">
           <Container>
@@ -136,11 +142,14 @@ export default function Home() {
             </div>
           </Container>
 
+          <ElementsRail elements={elements} />
+
           <div className="mt-16 divide-y divide-border sm:mt-24">
             {elements.map((el, i) => (
               <Reveal key={el.slug} delay={i * 0.06}>
                 <Container>
                   <div
+                    id={el.slug}
                     className={`relative grid items-baseline gap-4 py-10 sm:grid-cols-[auto_1fr_1.2fr] sm:gap-10 sm:py-14 ${
                       i % 2 === 1 ? "sm:text-right" : ""
                     }`}
