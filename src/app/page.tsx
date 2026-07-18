@@ -9,6 +9,7 @@ import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
 import { SectionThread } from "@/components/SectionThread";
 import { TexturedDark } from "@/components/TexturedDark";
+import { PhotoHero } from "@/components/PhotoHero";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -30,15 +31,7 @@ export default function Home() {
       <Header />
       <main id="main-content">
         {/* Hero — full-bleed photograph, the way the reference sites do it */}
-        <section
-          className="relative flex min-h-[88vh] items-center overflow-hidden bg-soil"
-          style={{
-            backgroundImage:
-              "linear-gradient(180deg, rgba(39,34,30,0.55) 0%, rgba(39,34,30,0.75) 55%, rgba(39,34,30,0.92) 100%), url(/images/hero-landscape.jpg)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
+        <PhotoHero image="/images/hero-landscape.jpg" minHeight="88vh">
           <Container className="relative py-20">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
@@ -62,7 +55,7 @@ export default function Home() {
             <span>Scroll</span>
             <span className="h-8 w-px bg-ivory/40" />
           </div>
-        </section>
+        </PhotoHero>
 
         <SectionThread />
 

@@ -5,7 +5,7 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { ImagePlaceholder } from "@/components/ImagePlaceholder";
 import { Reveal } from "@/components/Reveal";
-import { TexturedDark } from "@/components/TexturedDark";
+import { PhotoHero } from "@/components/PhotoHero";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -20,13 +20,13 @@ export default function AboutPage() {
     <>
       <Header />
       <main id="main-content">
-        <TexturedDark className="py-20 sm:py-28" image="/images/texture-sage.jpg">
-          <Container className="relative grid items-start gap-12 lg:grid-cols-[1.4fr_1fr]">
+        <PhotoHero image="/images/hero-river.jpg" minHeight="70vh">
+          <Container className="relative py-20">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
                 About
               </p>
-              <h1 className="mt-3 max-w-xl text-display-lg font-display font-semibold text-ivory">
+              <h1 className="mt-3 max-w-2xl text-display-lg font-display font-semibold text-ivory">
                 {aboutIntro.opening}
               </h1>
               <div className="mt-8 max-w-xl space-y-5 text-ivory/70">
@@ -38,52 +38,54 @@ export default function AboutPage() {
                 <LinkButton href="/contact">Start a brand conversation</LinkButton>
               </div>
             </Reveal>
-            <Reveal delay={0.15}>
-              <ImagePlaceholder label="Portrait, pending upload" />
-              <p className="mt-3 text-xs text-ivory/50">
-                The same convergence the homepage opens with, elements
-                settling into form, once here as a person rather than a
-                composition.
-              </p>
-            </Reveal>
           </Container>
-        </TexturedDark>
+        </PhotoHero>
 
         <section className="border-t border-border bg-background-alt py-20">
-          <Container className="grid gap-12 md:grid-cols-2">
+          <Container className="grid gap-12 md:grid-cols-[auto_1fr]">
             <Reveal>
-              <h2 className="text-display-sm font-display font-semibold text-soil">
-                Working method
-              </h2>
-              <p className="mt-4 text-foreground-secondary">
-                I don&apos;t start with mood boards. I start by asking what a
-                business believes, who it&apos;s actually speaking to, and
-                where its current story stops making sense. The elemental
-                system, earth, water, fire, air, space, is how I keep track
-                of which part of that is solved and which isn&apos;t.
-              </p>
-              <p className="mt-4 text-foreground-secondary">
-                I use &ldquo;I&rdquo; instead of &ldquo;we.&rdquo; Branding
-                Tatva is a personal practice, and every project has my
-                direct attention.
-              </p>
+              <ImagePlaceholder
+                label="Portrait, pending upload"
+                aspect="aspect-square"
+                className="w-40 rounded-full sm:w-48"
+              />
             </Reveal>
+            <div className="grid gap-12 sm:grid-cols-2">
+              <Reveal delay={0.1}>
+                <h2 className="text-display-sm font-display font-semibold text-soil">
+                  Working method
+                </h2>
+                <p className="mt-4 text-foreground-secondary">
+                  I don&apos;t start with mood boards. I start by asking what
+                  a business believes, who it&apos;s actually speaking to,
+                  and where its current story stops making sense. The
+                  elemental system, earth, water, fire, air, space, is how I
+                  keep track of which part of that is solved and which
+                  isn&apos;t.
+                </p>
+                <p className="mt-4 text-foreground-secondary">
+                  I use &ldquo;I&rdquo; instead of &ldquo;we.&rdquo; Branding
+                  Tatva is a personal practice, and every project has my
+                  direct attention.
+                </p>
+              </Reveal>
 
-            <Reveal delay={0.1}>
-              <h2 className="text-display-sm font-display font-semibold text-soil">
-                Recent experience
-              </h2>
-              <ul className="mt-4 space-y-4">
-                {experience.map((role) => (
-                  <li key={`${role.org}-${role.period}`} className="border-l-2 border-action-primary/30 pl-4">
-                    <p className="font-medium text-soil">{role.role}</p>
-                    <p className="text-sm text-foreground-secondary">
-                      {role.org} &middot; {role.period}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
+              <Reveal delay={0.15}>
+                <h2 className="text-display-sm font-display font-semibold text-soil">
+                  Recent experience
+                </h2>
+                <ul className="mt-4 space-y-4">
+                  {experience.map((role) => (
+                    <li key={`${role.org}-${role.period}`} className="border-l-2 border-action-primary/30 pl-4">
+                      <p className="font-medium text-soil">{role.role}</p>
+                      <p className="text-sm text-foreground-secondary">
+                        {role.org} &middot; {role.period}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            </div>
           </Container>
         </section>
 

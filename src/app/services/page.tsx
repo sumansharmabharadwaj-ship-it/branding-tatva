@@ -5,7 +5,7 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
-import { TexturedDark } from "@/components/TexturedDark";
+import { PhotoHero } from "@/components/PhotoHero";
 import { elements } from "@/data/elements";
 import { serviceGroups, offerings } from "@/data/services";
 
@@ -20,8 +20,8 @@ export default function ServicesPage() {
     <>
       <Header />
       <main id="main-content">
-        <TexturedDark className="py-20 sm:py-28" image="/images/texture-terracotta.jpg">
-          <Container className="relative">
+        <PhotoHero image="/images/hero-canyon.jpg" minHeight="60vh">
+          <Container className="relative py-20">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Services</p>
               <h1 className="mt-2 max-w-2xl text-display-sm font-display font-semibold text-ivory">
@@ -34,7 +34,7 @@ export default function ServicesPage() {
               </p>
             </Reveal>
           </Container>
-        </TexturedDark>
+        </PhotoHero>
 
         <section className="py-16">
           <Container>
