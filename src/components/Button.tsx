@@ -18,7 +18,7 @@ export function LinkButton({ href, children, variant = "primary", className }: B
   const base =
     "group/btn inline-flex items-center justify-center gap-1.5 rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 ease-earth focus-visible:outline-none";
   const styles = {
-    primary: "bg-action-primary text-warm-white hover:bg-action-primary-hover hover:-translate-y-0.5 hover:shadow-lg hover:shadow-action-primary/25",
+    primary: "bg-action-primary text-white hover:bg-action-primary-hover hover:-translate-y-0.5 hover:shadow-lg hover:shadow-action-primary/25",
     secondary:
       "border border-soil/30 text-soil hover:border-soil/50 hover:bg-soil/5 hover:-translate-y-0.5",
   };

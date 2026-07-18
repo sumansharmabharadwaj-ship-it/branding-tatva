@@ -76,7 +76,7 @@ export default function Home() {
                   recall.
                 </p>
                 <p>
-                  That gap is usually a <span className="font-medium text-clay">clarity problem</span>,
+                  That gap is usually a <span className="font-semibold text-action-primary-hover">clarity problem</span>,
                   far more often than a visibility one.
                 </p>
               </div>

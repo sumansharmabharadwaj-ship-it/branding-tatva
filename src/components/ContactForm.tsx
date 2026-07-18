@@ -50,9 +50,9 @@ export function ContactForm() {
   if (status === "success") {
     return (
       <div className="rounded-lg border border-state-success/40 bg-state-success/10 p-6">
-        <p className="font-display text-xl font-semibold text-soil">Thank you, that's in.</p>
+        <p className="font-display text-xl font-semibold text-soil">Thank you, that&apos;s in.</p>
         <p className="mt-2 text-sm text-foreground-secondary">
-          I read every enquiry personally and reply within a few days. If it's
+          I read every enquiry personally and reply within a few days. If it&apos;s
           urgent, feel free to email directly too.
         </p>
       </div>
@@ -137,7 +137,7 @@ export function ContactForm() {
         type="submit"
         disabled={status === "submitting"}
         className={cn(
-          "inline-flex items-center justify-center rounded-md bg-action-primary px-6 py-3 text-sm font-medium text-warm-white transition-colors hover:bg-action-primary-hover disabled:opacity-60"
+          "inline-flex items-center justify-center rounded-md bg-action-primary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-action-primary-hover disabled:opacity-60"
         )}
       >
         {status === "submitting" ? "Sending…" : "Send enquiry"}
