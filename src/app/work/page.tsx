@@ -17,7 +17,7 @@ export default function WorkPage() {
     <>
       <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/green-canopy.jpg" minHeight="60vh" />
+        <PhotoHero image="/images/cinematic-goldenpath.jpg" minHeight="60vh" />
 
         <section className="pb-16 pt-20 sm:pt-28">
           <Container>

@@ -88,7 +88,7 @@ export default function Home() {
 
           <div className="mt-20 sm:mt-28">
             <ImageBreak
-              image="/images/green-detail.jpg"
+              image="/images/cinematic-sunrays.jpg"
               quote="Attention is the first thing any brand has to earn."
               height="60vh"
             />
