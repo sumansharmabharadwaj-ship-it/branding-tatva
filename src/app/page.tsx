@@ -269,9 +269,13 @@ export default function Home() {
 
             {featured[0] && (
               <Reveal delay={0.1} className="mt-10">
+                {/* Photo: Andreas Schnabl via Pexels, free for commercial
+                    use. The two other real-photo mountain shots on this
+                    page needed a visually distinct backdrop here, not a
+                    third variation on the same dusk-peak look. */}
                 <FeaturedWorkHero
                   href={`/work/${featured[0].slug}`}
-                  image="/images/own-jagged-peaks.jpg"
+                  image="/images/pexels-forest-path.jpg"
                   industry={featured[0].industry}
                   title={featured[0].title}
                   outcome={featured[0].outcome}
