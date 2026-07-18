@@ -365,6 +365,13 @@ export default function Home() {
           </section>
         </GradientSections>
 
+        <VideoBreak
+          src="/videos/own-moonlit-sea.mp4"
+          poster="/images/own-moonlit-sea-poster.jpg"
+          quote="Some things only become visible once everything else goes quiet."
+          height="60vh"
+        />
+
         {/* Final CTA — a widening threshold, marked with the lattice motif */}
         <TexturedDark className="py-24" image="/images/own-dusk-ridge.jpg">
           <IndianPattern className="absolute inset-0" opacity={0.08} color="#F4EFE6" />
