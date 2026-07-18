@@ -88,7 +88,7 @@ export default function Home() {
               src="/videos/cinematic-pines.mp4"
               poster="/images/cinematic-pines-poster.jpg"
               quote="Attention is the first thing any brand has to earn."
-              height="60vh"
+              height="72vh"
             />
           </div>
 
@@ -176,7 +176,7 @@ export default function Home() {
           </div>
         </section>
 
-        <ImageBreak image="/images/own-peaks.jpg" height="60vh" />
+        <ImageBreak image="/images/own-peaks.jpg" height="72vh" />
 
         {/* Two brand pathways — a real diptych, not two bordered text blocks */}
         <section>
@@ -305,7 +305,7 @@ export default function Home() {
         <ImageBreak
           image="/images/own-cabin.jpg"
           quote="Every brand needs somewhere to stand before it can move."
-          height="60vh"
+          height="72vh"
         />
 
         <GradientSections colors={["#EFE4D9", "#F1EADE"]}>

@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/Reveal";
+import { VideoBreak } from "@/components/VideoBreak";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -26,9 +27,9 @@ export default function ContactPage() {
                 Tell me what your brand is becoming.
               </h1>
               <p className="mt-5 text-foreground-secondary">
-                Fill in as much or as little as you know right now. I'll ask
-                a few more questions where it helps. I read every enquiry
-                personally.
+                Fill in as much or as little as you know right now.
+                I&apos;ll ask a few more questions where it helps. I read
+                every enquiry personally.
               </p>
               <div className="mt-8 space-y-2 text-sm text-foreground-secondary">
                 <p>
@@ -55,6 +56,13 @@ export default function ContactPage() {
             </Reveal>
           </Container>
         </section>
+
+        <VideoBreak
+          src="/videos/own-leaves-cabin.mp4"
+          poster="/images/own-leaves-cabin-poster.jpg"
+          quote="A brand conversation is just the first clear view through the noise."
+          height="55vh"
+        />
 
         <section className="border-t border-border bg-sage/10 py-16">
           <Container>

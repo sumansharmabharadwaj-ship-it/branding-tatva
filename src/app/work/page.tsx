@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
+import { ImageBreak } from "@/components/ImageBreak";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ export default function WorkPage() {
         <PhotoHero
           video="/videos/hero-goldenpath.mp4"
           poster="/images/hero-goldenpath-poster.jpg"
-          minHeight="65vh"
+          minHeight="80vh"
         >
           <Container className="relative py-20 text-center">
             <Reveal>
@@ -72,6 +73,12 @@ export default function WorkPage() {
             </div>
           </Container>
         </section>
+
+        <ImageBreak
+          image="/images/own-canopy.jpg"
+          quote="Every one of these projects started in a forest of noise, the same place yours is starting from."
+          height="60vh"
+        />
       </main>
       <Footer />
     </>

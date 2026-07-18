@@ -6,6 +6,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
+import { VideoBreak } from "@/components/VideoBreak";
 import { elements } from "@/data/elements";
 import { serviceGroups, offerings } from "@/data/services";
 
@@ -23,7 +24,7 @@ export default function ServicesPage() {
         <PhotoHero
           video="/videos/hero-valley.mp4"
           poster="/images/hero-valley-poster.jpg"
-          minHeight="65vh"
+          minHeight="80vh"
         >
           <Container className="relative py-20 text-center">
             <Reveal>
@@ -59,6 +60,13 @@ export default function ServicesPage() {
             </div>
           </Container>
         </section>
+
+        <VideoBreak
+          src="/videos/own-golden-branches.mp4"
+          poster="/images/own-golden-branches-poster.jpg"
+          quote="The right service is just the vehicle. The strategy is what moves."
+          height="60vh"
+        />
 
         <section className="border-t border-border bg-background-alt py-16">
           <Container>
