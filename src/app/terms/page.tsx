@@ -26,25 +26,24 @@ export default function TermsPage() {
               <p>
                 All content on this site, including written copy, brand
                 strategy frameworks, and portfolio descriptions, is the
-                property of {site.founder} and may not be reproduced without
+                property of {site.founder} and may only be reproduced with
                 permission.
               </p>
               <p>
                 Case studies shown on this site describe work completed for
                 named clients with their permission. Results described are
-                specific to those projects and are not a guarantee of similar
-                outcomes for future work.
+                specific to those projects alone; future work outcomes will
+                vary based on your specific situation.
               </p>
               <p>
-                Enquiries submitted through the contact form do not
-                constitute a client engagement until confirmed separately in
-                writing.
+                Enquiries submitted through the contact form become a client
+                engagement only once confirmed separately in writing.
               </p>
             </div>
 
             <p className="mt-10 rounded-md border border-state-warning/40 bg-state-warning/10 p-4 text-sm text-soil">
-              This is placeholder legal text, not a substitute for legal
-              advice. Please have this reviewed by a lawyer before launch.
+              This is placeholder legal text meant as a starting structure
+              only. Please have this reviewed by a lawyer before launch.
             </p>
           </Container>
         </section>

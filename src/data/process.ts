@@ -26,19 +26,19 @@ export const process: ProcessStage[] = [
   {
     stage: "Shape",
     description:
-      "Voice, messaging, and identity direction take form around that foundation, not before it.",
+      "Voice, messaging, and identity direction take form around that foundation, after it, always in that order.",
     element: "Water",
   },
   {
     stage: "Express",
     description:
-      "The brand becomes real: website copy, content systems, campaign direction, built to be used, not filed away in a deck.",
+      "The brand becomes real: website copy, content systems, campaign direction, built to be used rather than filed away in a deck.",
     element: "Fire",
   },
   {
     stage: "Stay",
     description:
-      "Recognition is built over months, not launched in one campaign. Where it's useful, I stay involved, reviewing what's working and adjusting what isn't.",
+      "Recognition is built over months, through steady attention rather than a single campaign. Where it's useful, I stay involved, reviewing what's working and adjusting the rest.",
     element: "Space",
   },
 ];

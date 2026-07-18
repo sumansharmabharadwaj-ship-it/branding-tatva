@@ -23,8 +23,8 @@ export default function PrivacyPage() {
                 {site.name} ({site.founder}) collects only the information you
                 choose to share through the contact form on this site: your
                 name, email, and any project details you provide. This
-                information is used solely to respond to your enquiry and is
-                not sold or shared with third parties.
+                information is used solely to respond to your enquiry, kept
+                private, and never sold or shared with third parties.
               </p>
               <p>
                 If you submit the contact form, your message is sent to{" "}
@@ -33,8 +33,8 @@ export default function PrivacyPage() {
                 consent.
               </p>
               <p>
-                This site does not use tracking cookies or third party
-                advertising scripts at this time.
+                This site currently avoids tracking cookies and third party
+                advertising scripts.
               </p>
               <p>
                 To request that your information be deleted, email{" "}
@@ -43,8 +43,8 @@ export default function PrivacyPage() {
             </div>
 
             <p className="mt-10 rounded-md border border-state-warning/40 bg-state-warning/10 p-4 text-sm text-soil">
-              This is placeholder legal text, not a substitute for legal
-              advice. Please have this reviewed by a lawyer before launch.
+              This is placeholder legal text meant as a starting structure
+              only. Please have this reviewed by a lawyer before launch.
               I&apos;ll flag this again in the launch checklist.
             </p>
           </Container>

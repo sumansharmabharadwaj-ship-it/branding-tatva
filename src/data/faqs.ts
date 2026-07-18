@@ -27,7 +27,7 @@ export const faqs = [
   {
     question: "How long does a project take?",
     answer:
-      "It depends on scope. A positioning project moves faster than an ongoing content engagement. I'll give you a real timeline after understanding what you need, not a generic estimate up front.",
+      "It depends on scope. A positioning project moves faster than an ongoing content engagement. I'll give you a real timeline after understanding what you need, rather than a generic estimate up front.",
   },
   {
     question: "What should I prepare before we start?",

@@ -73,9 +73,10 @@ export default function Home() {
                   and wondering why the second half isn&apos;t happening.
                 </p>
                 <p>
-                  That gap is usually not a visibility problem. It&apos;s a
-                  clarity problem, somewhere between what the brand believes,
-                  what it says, and what it actually looks like day to day.
+                  That gap is usually a clarity problem, somewhere between
+                  what the brand believes, what it says, and what it
+                  actually looks like day to day, far more often than a
+                  visibility problem.
                 </p>
               </div>
             </Reveal>

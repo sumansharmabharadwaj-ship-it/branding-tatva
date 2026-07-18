@@ -63,9 +63,9 @@ export default function AboutPage() {
                 of which part of that is solved and which isn&apos;t.
               </p>
               <p className="mt-4 text-foreground-secondary">
-                I use &ldquo;I,&rdquo; not &ldquo;we.&rdquo; Branding Tatva
-                is a personal practice, and every project has my direct
-                attention.
+                I use &ldquo;I&rdquo; instead of &ldquo;we.&rdquo; Branding
+                Tatva is a personal practice, and every project has my
+                direct attention.
               </p>
             </Reveal>
 

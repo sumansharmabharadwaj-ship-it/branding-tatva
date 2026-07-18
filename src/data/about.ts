@@ -53,7 +53,7 @@ export const aboutIntro = {
   opening:
     "I study how people pay attention before I write a word of brand copy.",
   body: [
-    "My background pairs a master's in clinical psychology with an undergraduate degree in English literature: one for how people notice and decide, the other for how language carries meaning. I use both on every project, not as a personality trait but as a method.",
+    "My background pairs a master's in clinical psychology with an undergraduate degree in English literature: one for how people notice and decide, the other for how language carries meaning. I use both on every project as a working method, rather than a personality trait.",
     "That combination is what Branding Tatva is built on: strategy that takes attention seriously, expressed through writing that doesn't sound like a template.",
   ],
 } as const;
