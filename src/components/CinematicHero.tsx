@@ -13,12 +13,14 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 
 export function CinematicHero({
   image,
+  imagePosition = "center",
   badge,
   headline,
   subhead,
   children,
 }: {
   image: string;
+  imagePosition?: string;
   badge: string;
   headline: React.ReactNode;
   subhead: string;
@@ -40,7 +42,7 @@ export function CinematicHero({
           y: prefersReducedMotion ? 0 : imageY,
           backgroundImage: `linear-gradient(180deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.1) 32%, rgba(20,17,14,0.55) 62%, rgba(20,17,14,0.95) 100%), url(${image})`,
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: imagePosition,
         }}
       />
 

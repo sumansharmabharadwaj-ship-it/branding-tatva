@@ -36,7 +36,8 @@ export default function Home() {
       <Header transparent />
       <main id="main-content">
         <CinematicHero
-          image="/images/own-canopy.jpg"
+          image="/images/ai-forest-sanctuary.jpg"
+          imagePosition="30% 40%"
           badge="Brand strategy for founders & existing businesses"
           headline={
             <>
