@@ -29,17 +29,25 @@ export default function Home() {
     <>
       <Header />
       <main id="main-content">
-        {/* Hero — "The Elements Find Their Form" */}
-        <TexturedDark className="py-20 sm:py-28">
-          <Container className="relative grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-            <div>
+        {/* Hero — full-bleed photograph, the way the reference sites do it */}
+        <section
+          className="relative flex min-h-[88vh] items-center overflow-hidden bg-soil"
+          style={{
+            backgroundImage:
+              "linear-gradient(180deg, rgba(39,34,30,0.55) 0%, rgba(39,34,30,0.75) 55%, rgba(39,34,30,0.92) 100%), url(/images/hero-landscape.jpg)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <Container className="relative py-20">
+            <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
                 Brand strategy for founders &amp; existing businesses
               </p>
-              <h1 className="mt-4 max-w-xl text-display-xl font-display font-semibold text-ivory">
+              <h1 className="mt-4 max-w-2xl text-display-xl font-display font-semibold text-ivory">
                 {site.heroHeadline}
               </h1>
-              <p className="mt-6 max-w-xl text-lg text-ivory/70">
+              <p className="mt-6 max-w-xl text-lg text-ivory/80">
                 {site.tagline}
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
@@ -48,10 +56,13 @@ export default function Home() {
                   Explore the work
                 </LinkButton>
               </div>
-            </div>
-            <AnimatedHero dark />
+            </Reveal>
           </Container>
-        </TexturedDark>
+          <div className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-xs uppercase tracking-wide text-ivory/60 sm:flex">
+            <span>Scroll</span>
+            <span className="h-8 w-px bg-ivory/40" />
+          </div>
+        </section>
 
         <SectionThread />
 
@@ -112,11 +123,21 @@ export default function Home() {
         {/* Five elements */}
         <section className="border-t border-border bg-sandstone/15 py-20">
           <Container>
-            <Reveal>
-              <h2 className="text-display-sm font-display font-semibold text-soil">
-                The five elements
-              </h2>
-            </Reveal>
+            <div className="grid items-center gap-10 lg:grid-cols-[1fr_auto]">
+              <Reveal>
+                <h2 className="text-display-sm font-display font-semibold text-soil">
+                  The five elements
+                </h2>
+                <p className="mt-3 max-w-md text-sm text-foreground-secondary">
+                  Watch how they settle into place, the same convergence
+                  that shapes an actual brand: separate parts finding one
+                  shared center.
+                </p>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <AnimatedHero />
+              </Reveal>
+            </div>
             <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
               {elements.map((el, i) => (
                 <Reveal key={el.slug} delay={i * 0.08}>

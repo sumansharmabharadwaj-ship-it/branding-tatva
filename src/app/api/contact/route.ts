@@ -31,9 +31,9 @@ export async function POST(req: NextRequest) {
   const toEmail = process.env.CONTACT_TO_EMAIL;
 
   if (!apiKey || !toEmail) {
-    console.log("Contact form submission (email delivery not yet configured):", parsed.data);
+    console.log("Contact form submission (email delivery still pending setup):", parsed.data);
     return NextResponse.json(
-      { ok: true, note: "Received. Email delivery is not yet connected." },
+      { ok: true, note: "Received. Email delivery setup is still pending." },
       { status: 200 }
     );
   }
