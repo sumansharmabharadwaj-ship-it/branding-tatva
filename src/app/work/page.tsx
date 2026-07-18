@@ -6,6 +6,7 @@ import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { ImageBreak } from "@/components/ImageBreak";
+import { KenBurnsImage } from "@/components/KenBurnsImage";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
@@ -47,25 +48,32 @@ export default function WorkPage() {
                 <Reveal key={project.slug} delay={(i % 4) * 0.08} className="h-full">
                   <Link
                     href={`/work/${project.slug}`}
-                    className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
-                    style={{ borderTopColor: project.accent }}
+                    className="group relative flex h-full min-h-[24rem] flex-col justify-end overflow-hidden rounded-lg p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                   >
-                    <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
-                      {project.industry}
-                    </p>
-                    <p className="mt-2 font-display text-2xl font-semibold text-soil">
-                      {project.title}
-                    </p>
-                    <p className="mt-3 text-sm text-foreground-secondary">{project.challenge}</p>
-                    <div className="mt-auto flex flex-wrap gap-2 pt-4">
-                      {project.services.map((s) => (
-                        <span
-                          key={s}
-                          className="rounded-full border border-border px-3 py-1 text-xs text-foreground-secondary"
-                        >
-                          {s}
-                        </span>
-                      ))}
+                    {project.cardImage && (
+                      <KenBurnsImage
+                        image={project.cardImage}
+                        gradient="linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.45) 55%, rgba(39,34,30,0.15) 100%)"
+                      />
+                    )}
+                    <div className="relative border-t-2 pt-4" style={{ borderTopColor: project.accent }}>
+                      <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">
+                        {project.industry}
+                      </p>
+                      <p className="mt-2 font-display text-2xl font-semibold text-ivory">
+                        {project.title}
+                      </p>
+                      <p className="mt-3 text-sm text-ivory/80">{project.challenge}</p>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {project.services.map((s) => (
+                          <span
+                            key={s}
+                            className="rounded-full border border-ivory/30 px-3 py-1 text-xs text-ivory/80"
+                          >
+                            {s}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </Link>
                 </Reveal>

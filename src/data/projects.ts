@@ -42,6 +42,7 @@ export const projects: Project[] = [
       "The clearest signal was impressions barely dropping (down just 10%) despite posting 48% less. The platform was actively rewarding the more relevant content instead of just showing it to fewer people. That's the difference between reach and trust.",
     closingQuote:
       "Fewer posts, each one earning its place. That's the difference between being seen and being remembered.",
+    cardImage: "/images/pexels-forest-path.jpg",
     featured: true,
     accent: "#5C6B4A", // sage
     stats: [
@@ -116,6 +117,7 @@ export const projects: Project[] = [
       "The work that landed best was the most native, rather than the most polished. Content that looked like a real person's Instagram, rather than an ad, consistently outperformed anything that read as produced.",
     closingQuote:
       "The version that felt real outperformed the version that looked expensive, every time.",
+    cardImage: "/images/own-pond.jpg",
     featured: false,
     accent: "#C28A28", // ochre
   },
@@ -134,6 +136,7 @@ export const projects: Project[] = [
       "Produced a complete content portfolio of sixteen pieces spanning research, opinion, education, and fast consumption formats, structured around a deliberate arc: validate, challenge, humanise, define, rather than a loose content calendar.",
     closingQuote:
       "Trust with an expert and trust with a beginner are earned in two different languages, not one.",
+    cardImage: "/images/own-ridge-road.jpg",
     featured: false,
     accent: "#CD7A4C", // terracotta
   },
