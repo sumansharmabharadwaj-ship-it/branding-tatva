@@ -68,10 +68,17 @@
   box-shadow: 0 0 12px 3px rgba(194,138,40,0.45), 0 0 4px 1px rgba(255,244,220,0.6);
   animation: spark-pulse 2.2s ease-in-out infinite;
   /* No transform transition — the core marks the actual click point, so
-     it must snap exactly to the real cursor position with zero lag. Only
-     the trail behind it is allowed to ease/linger. */
-  transition: opacity 0.2s ease-out;
+     it must snap exactly to the real cursor position with zero lag (the
+     hover scale is baked into that same transform, so it snaps too,
+     rather than smoothly growing — a deliberate trade to avoid
+     reintroducing the click-accuracy lag). Only opacity and the glow
+     (box-shadow, on the hover variant below) are allowed to ease. */
+  transition: opacity 0.2s ease-out, box-shadow 0.25s ease-out;
   will-change: transform;
+}
+
+.spark-cursor-core--hover {
+  box-shadow: 0 0 26px 8px rgba(194,138,40,0.5), 0 0 8px 2px rgba(255,244,220,0.75);
 }
 
 .spark-cursor-trail {
