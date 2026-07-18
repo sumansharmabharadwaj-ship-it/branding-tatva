@@ -319,9 +319,10 @@ export default function Home() {
         </GradientSections>
 
         <ImageBreak
-          image="/images/own-cabin-banner.jpg"
+          image="/images/own-alpenglow-peak.jpg"
           quote="Every brand needs somewhere to stand before it can move."
           height="72vh"
+          imagePosition="center 38%"
         />
 
         <GradientSections colors={["#EFE4D9", "#F1EADE"]}>
