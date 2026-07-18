@@ -25,7 +25,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-colors duration-500 ${
+      className={`${transparent ? "fixed" : "sticky"} top-0 z-40 w-full transition-colors duration-500 ${
         isLight
           ? "border-b border-transparent bg-transparent"
           : "border-b border-border bg-background/90 backdrop-blur"

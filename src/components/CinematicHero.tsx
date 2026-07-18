@@ -40,7 +40,7 @@ export function CinematicHero({
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
 
   const gradient =
-    "linear-gradient(180deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.1) 32%, rgba(20,17,14,0.55) 62%, rgba(20,17,14,0.95) 100%)";
+    "linear-gradient(180deg, rgba(20,17,14,0.65) 0%, rgba(20,17,14,0.2) 14%, rgba(20,17,14,0.1) 32%, rgba(20,17,14,0.55) 62%, rgba(20,17,14,0.95) 100%)";
 
   return (
     <section ref={ref} className="relative h-[100svh] min-h-[620px] overflow-hidden bg-soil">

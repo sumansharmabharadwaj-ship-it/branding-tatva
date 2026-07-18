@@ -1,14 +1,23 @@
+"use client";
+
 import { site } from "@/data/site";
 
-// Primary logo is the wordmark alone, a tracked-out small-caps "BRANDING"
-// against a large italic serif "Tatva". That contrast is doing the branding
-// work on its own; it doesn't need an icon standing next to it competing
-// for attention. The five-petal mark still exists (see LogoMark below) but
-// is reserved for places that need a compact glyph and nothing else, like
-// the browser favicon, where its convergence point actually reads clearly
-// at small size instead of looking like clutter next to text.
+// Primary logo is the tracked-out small-caps "BRANDING" against a large
+// italic serif "Tatva", now paired with a small version of the five-petal
+// mark as the convergence point between the two words, a literal bindu:
+// five elements meeting at one center, the same idea the whole site is
+// built on, instead of an unrelated decorative icon. It turns slowly and
+// always on its own, and blooms open on hover.
 
-export function LogoMark({ size = 32, className }: { size?: number; className?: string }) {
+export function LogoMark({
+  size = 32,
+  className,
+  spin = false,
+}: {
+  size?: number;
+  className?: string;
+  spin?: boolean;
+}) {
   const petals = [
     { color: "#B85A34", rotate: 0 }, // earth — clay
     { color: "#24394D", rotate: 72 }, // water — indigo
@@ -22,7 +31,7 @@ export function LogoMark({ size = 32, className }: { size?: number; className?: 
       height={size}
       viewBox="0 0 100 100"
       fill="none"
-      className={className}
+      className={`${spin ? "animate-mark-spin" : ""} ${className ?? ""}`}
       role="img"
       aria-label={`${site.name} mark`}
     >
@@ -42,17 +51,24 @@ export function LogoMark({ size = 32, className }: { size?: number; className?: 
 
 export function Logo({ className, light = false }: { className?: string; light?: boolean }) {
   return (
-    <span className={`inline-flex flex-col leading-none ${className ?? ""}`}>
-      <span
-        className={`font-body text-[0.6rem] font-bold uppercase tracking-[0.32em] transition-colors duration-500 ${light ? "text-sandstone" : "text-action-secondary"}`}
-      >
-        Branding
+    <span className={`group inline-flex items-center gap-2 leading-none ${className ?? ""}`}>
+      <span className="inline-flex flex-col leading-none">
+        <span
+          className={`font-body text-[0.6rem] font-bold uppercase tracking-[0.32em] transition-colors duration-500 ${light ? "text-sandstone" : "text-action-secondary"}`}
+        >
+          Branding
+        </span>
+        <span
+          className={`-mt-1 font-display text-[1.7rem] font-semibold italic tracking-tight transition-colors duration-500 ${light ? "text-ivory" : "text-clay"}`}
+        >
+          Tatva
+        </span>
       </span>
-      <span
-        className={`-mt-1 font-display text-[1.7rem] font-semibold italic tracking-tight transition-colors duration-500 ${light ? "text-ivory" : "text-soil"}`}
-      >
-        Tatva
-      </span>
+      <LogoMark
+        size={20}
+        spin
+        className="shrink-0 transition-transform duration-500 ease-out group-hover:scale-[1.4] group-hover:rotate-[72deg]"
+      />
     </span>
   );
 }

@@ -92,3 +92,15 @@
     rotate: 6deg;
   }
 }
+
+/* Logo mark — a slow, continuous turn, the five petals always gently
+   revolving around their own center point. */
+.animate-mark-spin {
+  animation: mark-spin 28s linear infinite;
+}
+
+@keyframes mark-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
