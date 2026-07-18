@@ -25,7 +25,7 @@ export function FeaturedWorkHero({
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <a href={href} className="group relative flex min-h-[60vh] items-end overflow-hidden bg-soil">
+    <a href={href} className="group relative flex min-h-[75vh] items-end overflow-hidden bg-soil">
       <motion.div
         className="absolute inset-0"
         style={{

@@ -286,14 +286,25 @@ export default function Home() {
               <div className="mt-10 grid gap-10 sm:grid-cols-2">
                 {featured.slice(1).map((project, i) => (
                   <Reveal key={project.slug} delay={i * 0.1}>
-                    <a href={`/work/${project.slug}`} className="group block border-t-2 pt-6" style={{ borderColor: project.accent }}>
-                      <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
-                        {project.industry}
-                      </p>
-                      <p className="mt-2 font-display text-2xl font-semibold text-soil transition-colors group-hover:text-clay">
-                        {project.title}
-                      </p>
-                      <p className="mt-3 text-sm text-foreground-secondary">{project.outcome}</p>
+                    <a
+                      href={`/work/${project.slug}`}
+                      className="group relative flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-lg p-6 sm:p-8"
+                    >
+                      {project.cardImage && (
+                        <KenBurnsImage
+                          image={project.cardImage}
+                          gradient="linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.45) 55%, rgba(39,34,30,0.15) 100%)"
+                        />
+                      )}
+                      <div className="relative border-t-2 pt-4" style={{ borderColor: project.accent }}>
+                        <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">
+                          {project.industry}
+                        </p>
+                        <p className="mt-2 font-display text-2xl font-semibold text-ivory transition-colors group-hover:text-clay">
+                          {project.title}
+                        </p>
+                        <p className="mt-3 text-sm text-ivory/80">{project.outcome}</p>
+                      </div>
                     </a>
                   </Reveal>
                 ))}

@@ -14,6 +14,7 @@ export type Project = {
   accent: string; // card accent color, varies per project so the grid isn't monotone
   stats?: { value: string; label: string }[]; // real, verified numbers only — pulled from `outcome` for visual callouts
   closingQuote?: string; // the case-study page's closing VideoBreak — grounded in this project's own challenge/insight, not a generic line shared across every project
+  cardImage?: string; // background photo for the Home page's secondary "Selected work" cards
 };
 
 // Client names cleared for public use by Suman. Every field below is
@@ -71,6 +72,7 @@ export const projects: Project[] = [
       "The sharpest strategic call was refusing to let 'MyShopInEurope' default to meaning 'cheap Indian goods.' Repositioning around craft and origin, ahead of price, changes who the platform can credibly sell to.",
     closingQuote:
       "A story a buyer can pass on to their own customers is worth more than the lowest price on the listing.",
+    cardImage: "/images/own-jagged-peaks.jpg",
     featured: true,
     accent: "#B85A34", // clay
   },
@@ -89,6 +91,7 @@ export const projects: Project[] = [
       "Delivered a structured content system, built platform by platform, specifically around driving webinar registrations rather than generic engagement metrics.",
     closingQuote:
       "Content that only earns attention is unfinished. It has to lead somewhere, or it isn't strategy yet.",
+    cardImage: "/images/own-canopy.jpg",
     featured: true,
     accent: "#24394D", // indigo
   },
