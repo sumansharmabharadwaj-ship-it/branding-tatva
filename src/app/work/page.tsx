@@ -21,7 +21,7 @@ export default function WorkPage() {
         <PhotoHero
           video="/videos/hero-goldenpath.mp4"
           poster="/images/hero-goldenpath-poster.jpg"
-          minHeight="80vh"
+          minHeight="65vh"
         >
           <Container className="relative py-20 text-center">
             <Reveal>

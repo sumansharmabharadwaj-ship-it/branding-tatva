@@ -24,7 +24,7 @@ export default function ServicesPage() {
         <PhotoHero
           video="/videos/hero-valley.mp4"
           poster="/images/hero-valley-poster.jpg"
-          minHeight="80vh"
+          minHeight="68vh"
         >
           <Container className="relative py-20 text-center">
             <Reveal>

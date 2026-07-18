@@ -54,6 +54,7 @@ export default function AboutPage() {
           poster="/images/cinematic-ridge-poster.jpg"
           quote="The fog lifts the same way clarity does: slowly, then all at once."
           height="72vh"
+          quoteVariant="left"
         />
 
         <section className="border-t border-border bg-background-alt py-20">
@@ -108,23 +109,25 @@ export default function AboutPage() {
 
         <section className="py-20">
           <Container>
-            <Reveal>
-              <h2 className="text-display-sm font-display font-semibold text-soil">
-                Credentials
-              </h2>
-            </Reveal>
-            <div className="mt-8 grid items-stretch gap-6 sm:grid-cols-2">
-              {credentials.map((c, i) => (
-                <Reveal key={c.label} delay={i * 0.06} className="h-full">
-                  <div
-                    className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
-                    style={{ borderTopColor: c.color }}
-                  >
-                    <p className="font-medium text-soil">{c.label}</p>
-                    <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
-                  </div>
-                </Reveal>
-              ))}
+            <div className="grid gap-8 md:grid-cols-[220px_1fr] md:gap-12">
+              <Reveal>
+                <h2 className="text-display-sm font-display font-semibold text-soil md:sticky md:top-28">
+                  Credentials
+                </h2>
+              </Reveal>
+              <div className="grid items-stretch gap-6 sm:grid-cols-2">
+                {credentials.map((c, i) => (
+                  <Reveal key={c.label} delay={i * 0.06} className="h-full">
+                    <div
+                      className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                      style={{ borderTopColor: c.color }}
+                    >
+                      <p className="font-medium text-soil">{c.label}</p>
+                      <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </Container>
         </section>

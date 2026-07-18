@@ -370,8 +370,9 @@ export default function Home() {
           src="/videos/own-moonlit-sea.mp4"
           poster="/images/own-moonlit-sea-poster.jpg"
           quote="Some things only become visible once everything else goes quiet."
-          height="60vh"
+          height="65vh"
           imagePosition="50% 2%"
+          quoteVariant="statement"
         />
 
         {/* Final CTA — a widening threshold, marked with the lattice motif */}
