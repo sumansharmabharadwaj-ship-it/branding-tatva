@@ -13,12 +13,14 @@ export function FeaturedWorkHero({
   industry,
   title,
   outcome,
+  imagePosition = "center",
 }: {
   href: string;
   image: string;
   industry: string;
   title: string;
   outcome: string;
+  imagePosition?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -29,7 +31,7 @@ export function FeaturedWorkHero({
         style={{
           backgroundImage: `linear-gradient(0deg, rgba(39,34,30,0.92) 0%, rgba(39,34,30,0.35) 55%, rgba(39,34,30,0.25) 100%), url(${image})`,
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: imagePosition,
         }}
         initial={{ scale: 1 }}
         animate={prefersReducedMotion ? undefined : { scale: 1.05 }}

@@ -19,6 +19,7 @@ export function PhotoHero({
   video,
   poster,
   minHeight = "60vh",
+  imagePosition = "center",
   className,
 }: {
   children?: React.ReactNode;
@@ -26,6 +27,7 @@ export function PhotoHero({
   video?: string;
   poster?: string;
   minHeight?: string;
+  imagePosition?: string;
   className?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
@@ -39,6 +41,7 @@ export function PhotoHero({
         <>
           <video
             className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: imagePosition }}
             src={video}
             poster={poster}
             autoPlay
@@ -54,7 +57,7 @@ export function PhotoHero({
           style={{
             backgroundImage: `${gradient}, url(${poster ?? image})`,
             backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundPosition: imagePosition,
           }}
           initial={{ scale: 1 }}
           animate={prefersReducedMotion ? undefined : { scale: 1.07 }}

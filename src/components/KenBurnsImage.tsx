@@ -11,10 +11,12 @@ export function KenBurnsImage({
   image,
   gradient,
   className,
+  imagePosition = "center",
 }: {
   image: string;
   gradient: string;
   className?: string;
+  imagePosition?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -24,7 +26,7 @@ export function KenBurnsImage({
       style={{
         backgroundImage: `${gradient}, url(${image})`,
         backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundPosition: imagePosition,
       }}
       initial={{ scale: 1 }}
       animate={prefersReducedMotion ? undefined : { scale: 1.08 }}

@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/Reveal";
 import { VideoBreak } from "@/components/VideoBreak";
+import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -61,7 +62,7 @@ export default function ContactPage() {
           src="/videos/own-leaves-cabin.mp4"
           poster="/images/own-leaves-cabin-poster.jpg"
           quote="A brand conversation is just the first clear view through the noise."
-          height="55vh"
+          height="60vh"
         />
 
         <section className="border-t border-border bg-sage/10 py-16">
@@ -77,15 +78,7 @@ export default function ContactPage() {
                 Times shown automatically adjust to your local timezone,
                 wherever you are.
               </p>
-              <div className="mt-8 overflow-hidden rounded-lg border border-border bg-background-elevated">
-                <iframe
-                  src={`${site.calendlyUrl}?hide_gdpr_banner=1`}
-                  width="100%"
-                  height="700"
-                  title="Book a call via Calendly"
-                  loading="lazy"
-                />
-              </div>
+              <CalendlyEmbed url={site.calendlyUrl} />
               <p className="mt-3 text-xs text-foreground-secondary">
                 Having trouble with the embed?{" "}
                 <a

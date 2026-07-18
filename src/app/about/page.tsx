@@ -21,7 +21,7 @@ export default function AboutPage() {
     <>
       <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/own-companions.jpg" minHeight="80vh">
+        <PhotoHero image="/images/own-companions.jpg" minHeight="80vh" imagePosition="30% 75%">
           <Container className="relative pb-16 pt-20 text-center sm:pb-20">
             <Reveal>
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
@@ -117,7 +117,7 @@ export default function AboutPage() {
               {credentials.map((c, i) => (
                 <Reveal key={c.label} delay={i * 0.06} className="h-full">
                   <div
-                    className="flex h-full flex-col rounded-lg border-t-2 border-border p-5 transition-transform duration-300 hover:-translate-y-1"
+                    className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                     style={{ borderTopColor: c.color }}
                   >
                     <p className="font-medium text-soil">{c.label}</p>

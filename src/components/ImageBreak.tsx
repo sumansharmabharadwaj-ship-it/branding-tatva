@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 
 // A full-bleed photographic interlude between two text passages, so long
 // text stretches never go more than a viewport or so without a real
@@ -12,10 +13,12 @@ export function ImageBreak({
   image,
   quote,
   height = "70vh",
+  imagePosition = "center",
 }: {
   image: string;
   quote?: string;
   height?: string;
+  imagePosition?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -24,9 +27,9 @@ export function ImageBreak({
       <motion.div
         className="absolute inset-0"
         style={{
-          backgroundImage: `linear-gradient(0deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.6) 35%, rgba(20,17,14,0.6) 65%, rgba(20,17,14,0.2) 100%), url(${image})`,
+          backgroundImage: `${BREAK_OVERLAY_GRADIENT}, url(${image})`,
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: imagePosition,
         }}
         initial={prefersReducedMotion ? undefined : { scale: 1.12 }}
         whileInView={prefersReducedMotion ? undefined : { scale: 1 }}

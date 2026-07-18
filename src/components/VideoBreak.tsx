@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 
 // The video counterpart to ImageBreak: a full-bleed cinematic moment, but
 // with real motion in the shot itself rather than a static photograph.
@@ -13,11 +14,13 @@ export function VideoBreak({
   poster,
   quote,
   height = "70vh",
+  imagePosition = "center",
 }: {
   src: string;
   poster: string;
   quote?: string;
   height?: string;
+  imagePosition?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -27,15 +30,16 @@ export function VideoBreak({
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: `linear-gradient(0deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.6) 35%, rgba(20,17,14,0.6) 65%, rgba(20,17,14,0.2) 100%), url(${poster})`,
+            backgroundImage: `${BREAK_OVERLAY_GRADIENT}, url(${poster})`,
             backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundPosition: imagePosition,
           }}
         />
       ) : (
         <>
           <video
             className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: imagePosition }}
             src={src}
             poster={poster}
             autoPlay
@@ -45,10 +49,7 @@ export function VideoBreak({
           />
           <div
             className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(0deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.6) 35%, rgba(20,17,14,0.6) 65%, rgba(20,17,14,0.2) 100%)",
-            }}
+            style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }}
           />
         </>
       )}

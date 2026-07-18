@@ -49,7 +49,7 @@ export default function ServicesPage() {
               {offerings.map((offer, i) => (
                 <Reveal key={offer.name} delay={i * 0.06} className="h-full">
                   <div
-                    className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-6 transition-transform duration-300 hover:-translate-y-1"
+                    className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                     style={{ borderTopColor: offer.color }}
                   >
                     <p className="font-display text-lg font-semibold text-soil">{offer.name}</p>
@@ -66,6 +66,7 @@ export default function ServicesPage() {
           poster="/images/own-golden-branches-poster.jpg"
           quote="The right service is just the vehicle. The strategy is what moves."
           height="60vh"
+          imagePosition="center 75%"
         />
 
         <section className="border-t border-border bg-background-alt py-16">
@@ -84,7 +85,7 @@ export default function ServicesPage() {
               {elements.map((el, i) => (
                 <Reveal key={el.slug} delay={i * 0.08} className="h-full">
                   <div
-                    className="flex h-full flex-col border-t-2 bg-background-elevated p-6 transition-transform duration-300 hover:-translate-y-1"
+                    className="flex h-full flex-col border-t-2 bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                     style={{ borderColor: el.color }}
                   >
                     <p className="font-display text-xl font-semibold text-soil">{el.name}</p>
@@ -116,7 +117,7 @@ export default function ServicesPage() {
             <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2">
               {serviceGroups.map((group, i) => (
                 <Reveal key={group.slug} delay={i * 0.08} className="h-full">
-                  <div id={group.slug} className="flex h-full scroll-mt-24 flex-col rounded-lg border border-border p-6 transition-transform duration-300 hover:-translate-y-1">
+                  <div id={group.slug} className="flex h-full scroll-mt-24 flex-col rounded-lg border border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
                     <p className="font-display text-xl font-semibold text-soil">{group.name}</p>
                     <p className="mt-1 text-sm font-medium text-action-secondary">{group.forWho}</p>
                     <p className="mt-4 text-foreground-secondary">{group.description}</p>

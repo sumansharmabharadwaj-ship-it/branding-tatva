@@ -78,6 +78,7 @@ export default function WorkPage() {
           image="/images/own-canopy.jpg"
           quote="Every one of these projects started in a forest of noise, the same place yours is starting from."
           height="60vh"
+          imagePosition="center 75%"
         />
       </main>
       <Footer />
