@@ -43,9 +43,9 @@ export default async function CaseStudyPage({ params }: Props) {
 
   return (
     <>
-      <Header />
+      <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/hero-canyon.jpg" minHeight="55vh">
+        <PhotoHero image="/images/green-valley.jpg" minHeight="55vh">
           <Container className="relative py-20">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">

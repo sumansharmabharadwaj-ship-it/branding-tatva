@@ -15,9 +15,9 @@ export const metadata: Metadata = {
 export default function WorkPage() {
   return (
     <>
-      <Header />
+      <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/campaign-path.jpg" minHeight="60vh">
+        <PhotoHero image="/images/green-canopy.jpg" minHeight="60vh">
           <Container className="relative py-20">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Work</p>

@@ -31,7 +31,7 @@ export default function Home() {
       <Header transparent />
       <main id="main-content">
         <CinematicHero
-          image="/images/campaign-hero.jpg"
+          image="/images/green-canopy.jpg"
           eyebrow="Brand strategy for founders & existing businesses"
           headline={site.heroHeadline}
         >
@@ -71,7 +71,7 @@ export default function Home() {
 
           <div className="mt-20 sm:mt-28">
             <ImageBreak
-              image="/images/campaign-detail.jpg"
+              image="/images/green-detail.jpg"
               quote="Attention is the first thing any brand has to earn."
               height="60vh"
             />
@@ -169,7 +169,7 @@ export default function Home() {
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/hero-canyon.jpg)",
+                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/green-valley.jpg)",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
@@ -200,7 +200,7 @@ export default function Home() {
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/hero-river.jpg)",
+                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/green-stream.jpg)",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
@@ -318,7 +318,7 @@ export default function Home() {
         </section>
 
         {/* Final CTA — a widening threshold, marked with the lattice motif */}
-        <TexturedDark className="py-24" image="/images/campaign-path.jpg">
+        <TexturedDark className="py-24" image="/images/green-canopy.jpg">
           <IndianPattern className="absolute inset-0" opacity={0.08} color="#F4EFE6" />
           <Reveal>
             <Container className="relative text-center">

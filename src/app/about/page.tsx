@@ -18,9 +18,9 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <Header />
+      <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/hero-river.jpg" minHeight="70vh">
+        <PhotoHero image="/images/green-stream.jpg" minHeight="70vh">
           <Container className="relative py-20">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">

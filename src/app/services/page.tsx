@@ -18,9 +18,9 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <>
-      <Header />
+      <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/hero-canyon.jpg" minHeight="60vh">
+        <PhotoHero image="/images/green-valley.jpg" minHeight="60vh">
           <Container className="relative py-20">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Services</p>
@@ -128,7 +128,7 @@ export default function ServicesPage() {
         <section className="border-t border-border bg-background-alt py-20 text-center">
           <Container>
             <h2 className="text-display-sm font-display font-semibold text-soil">
-              Not sure which one you need?
+              Still deciding which one fits?
             </h2>
             <p className="mx-auto mt-3 max-w-md text-foreground-secondary">
               That&apos;s a completely normal place to start. Tell me where
