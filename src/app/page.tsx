@@ -31,23 +31,35 @@ export default function Home() {
     <>
       <Header transparent />
       <main id="main-content">
-        <CinematicHero
-          image="/images/own-canopy.jpg"
-          eyebrow="Brand strategy for founders & existing businesses"
-          headline={site.heroHeadline}
-        >
-          <p className="mt-6 max-w-md text-base text-ivory/70">{site.tagline}</p>
-          <div className="mt-9 flex flex-wrap gap-4">
-            <LinkButton href="/contact">Start a brand conversation</LinkButton>
-            <LinkButton href="/work" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
-              Explore the work
-            </LinkButton>
-          </div>
-        </CinematicHero>
+        <CinematicHero image="/images/own-canopy.jpg" />
+
+        {/* Quiet statement block, directly after the photo rather than on
+            top of it: eyebrow, headline, tagline, and the two entry points,
+            given room to breathe on plain ground instead of competing with
+            the image for contrast. */}
+        <section className="pb-20 pt-20 sm:pb-28 sm:pt-28">
+          <Container>
+            <Reveal>
+              <p className="font-body text-xs font-medium uppercase tracking-[0.35em] text-action-secondary">
+                Brand strategy for founders &amp; existing businesses
+              </p>
+              <h1 className="mt-6 max-w-3xl font-display text-[clamp(2.25rem,5.5vw,4.5rem)] font-semibold leading-[1.05] text-soil">
+                {site.heroHeadline}
+              </h1>
+              <p className="mt-6 max-w-md text-base text-foreground-secondary">{site.tagline}</p>
+              <div className="mt-9 flex flex-wrap gap-4">
+                <LinkButton href="/contact">Start a brand conversation</LinkButton>
+                <LinkButton href="/work" variant="secondary">
+                  Explore the work
+                </LinkButton>
+              </div>
+            </Reveal>
+          </Container>
+        </section>
 
         {/* Two-part editorial statement — the problem, then the philosophy,
             as one long unbroken chapter rather than two boxed sections. */}
-        <section className="py-28 sm:py-40">
+        <section className="border-t border-border py-28 sm:py-40">
           <Container>
             <Reveal>
               <h2 className="max-w-3xl font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
