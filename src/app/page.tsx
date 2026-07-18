@@ -3,7 +3,6 @@ import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { FAQ } from "@/components/FAQ";
-import { AnimatedHero } from "@/components/AnimatedHero";
 import { IndianPattern } from "@/components/IndianPattern";
 import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
@@ -128,21 +127,15 @@ export default function Home() {
             gradient="linear-gradient(180deg, rgba(244,239,230,0.88) 0%, rgba(212,185,154,0.8) 100%)"
           />
           <Container className="relative">
-            <div className="grid items-center gap-10 lg:grid-cols-[1fr_auto]">
-              <Reveal>
-                <h2 className="text-display-sm font-display font-semibold text-soil">
-                  The five elements
-                </h2>
-                <p className="mt-3 max-w-md text-sm text-foreground-secondary">
-                  Watch how they settle into place, the same convergence
-                  that shapes an actual brand: separate parts finding one
-                  shared center.
-                </p>
-              </Reveal>
-              <Reveal delay={0.1}>
-                <AnimatedHero />
-              </Reveal>
-            </div>
+            <Reveal>
+              <h2 className="text-display-sm font-display font-semibold text-soil">
+                The five elements
+              </h2>
+              <p className="mt-3 max-w-md text-sm text-foreground-secondary">
+                The same convergence that shapes an actual brand: separate
+                parts finding one shared center.
+              </p>
+            </Reveal>
           </Container>
 
           <ElementsRail elements={elements} />
