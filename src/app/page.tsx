@@ -33,6 +33,19 @@ const elementColor: Record<string, string> = {
   Space: "#AD6F5C",
 };
 
+// One backdrop photo per element, chosen for what it actually depicts —
+// not one generic image behind the whole section (already tried once and
+// reverted for feeling thematically unrelated; see ElementsConstellation).
+// Blended to the element's own color and kept faint, so each row gets a
+// whisper of a real, specific scene rather than a literal, competing photo.
+const elementBackdrop: Record<string, string> = {
+  earth: "/images/own-ridge-road.jpg",
+  water: "/images/own-pond.jpg",
+  fire: "/images/own-golden-branches-poster.jpg",
+  air: "/images/cinematic-ridge-poster.jpg",
+  space: "/images/own-dusk-ridge.jpg",
+};
+
 export default function Home() {
   const featured = projects.filter((p) => p.featured);
 
@@ -152,7 +165,19 @@ export default function Home() {
           <div className="mt-16 divide-y divide-border sm:mt-24">
             {elements.map((el, i) => (
               <Reveal key={el.slug} delay={i * 0.06}>
-                <Container>
+                <div className="relative overflow-hidden">
+                  <div
+                    className="absolute inset-0"
+                    aria-hidden="true"
+                    style={{
+                      backgroundImage: `linear-gradient(${el.color}, ${el.color}), url(${elementBackdrop[el.slug]})`,
+                      backgroundBlendMode: "color",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      opacity: 0.16,
+                    }}
+                  />
+                  <Container>
                   <div
                     id={el.slug}
                     className={`relative grid items-baseline gap-4 py-10 sm:grid-cols-[auto_1fr_1.2fr] sm:gap-10 sm:py-14 ${
@@ -186,7 +211,8 @@ export default function Home() {
                       <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
                     </div>
                   </div>
-                </Container>
+                  </Container>
+                </div>
               </Reveal>
             ))}
           </div>
