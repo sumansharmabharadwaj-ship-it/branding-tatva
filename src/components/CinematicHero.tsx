@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { DustMotes } from "./DustMotes";
 
 // Full-screen hero, restructured after looking at how references like
 // Haven actually handle text over a photograph: a small pill badge, one
@@ -72,6 +73,8 @@ export function CinematicHero({
           }}
         />
       )}
+
+      <DustMotes />
 
       <motion.div
         style={prefersReducedMotion ? undefined : { opacity: contentOpacity, y: contentY }}
