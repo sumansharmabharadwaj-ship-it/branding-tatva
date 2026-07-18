@@ -10,6 +10,7 @@ import { Testimonials } from "@/components/Testimonials";
 import { TexturedDark } from "@/components/TexturedDark";
 import { CinematicHero } from "@/components/CinematicHero";
 import { ImageBreak } from "@/components/ImageBreak";
+import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -230,8 +231,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Featured work */}
-        <section className="border-t border-border bg-clay/5 py-20">
+        {/* Featured work — one large photographic entry, two quiet
+            editorial ones, not three identical cards */}
+        <section className="py-20 sm:py-28">
           <Container>
             <Reveal>
               <div className="flex items-baseline justify-between">
@@ -239,18 +241,29 @@ export default function Home() {
                 <LinkButton href="/work" variant="secondary">View all work</LinkButton>
               </div>
             </Reveal>
-            <div className="mt-10 grid items-stretch gap-6 md:grid-cols-3">
-              {featured.map((project, i) => (
-                <Reveal key={project.slug} delay={i * 0.1} className="h-full">
-                  <a
-                    href={`/work/${project.slug}`}
-                    className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
-                    style={{ borderTopColor: project.accent }}
-                  >
+          </Container>
+
+          {featured[0] && (
+            <Reveal delay={0.1} className="mt-10">
+              <FeaturedWorkHero
+                href={`/work/${featured[0].slug}`}
+                image="/images/green-dew-macro.jpg"
+                industry={featured[0].industry}
+                title={featured[0].title}
+                outcome={featured[0].outcome}
+              />
+            </Reveal>
+          )}
+
+          <Container>
+            <div className="mt-10 grid gap-10 sm:grid-cols-2">
+              {featured.slice(1).map((project, i) => (
+                <Reveal key={project.slug} delay={i * 0.1}>
+                  <a href={`/work/${project.slug}`} className="group block border-t-2 pt-6" style={{ borderColor: project.accent }}>
                     <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
                       {project.industry}
                     </p>
-                    <p className="mt-2 font-display text-xl font-semibold text-soil">
+                    <p className="mt-2 font-display text-2xl font-semibold text-soil transition-colors group-hover:text-clay">
                       {project.title}
                     </p>
                     <p className="mt-3 text-sm text-foreground-secondary">{project.outcome}</p>

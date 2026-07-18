@@ -1,0 +1,44 @@
+"use client";
+
+import { motion } from "framer-motion";
+
+// The large featured-work entry: a full photographic block with a slow
+// hover zoom, distinct from the smaller text-only entries beside it so
+// the section reads as one large story plus two quiet footnotes, not
+// three identical cards.
+
+export function FeaturedWorkHero({
+  href,
+  image,
+  industry,
+  title,
+  outcome,
+}: {
+  href: string;
+  image: string;
+  industry: string;
+  title: string;
+  outcome: string;
+}) {
+  return (
+    <a href={href} className="group relative flex min-h-[60vh] items-end overflow-hidden bg-soil">
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `linear-gradient(0deg, rgba(39,34,30,0.92) 0%, rgba(39,34,30,0.35) 55%, rgba(39,34,30,0.25) 100%), url(${image})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+        whileHover={{ scale: 1.04 }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      />
+      <div className="container-page relative py-10">
+        <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">{industry}</p>
+        <p className="mt-3 max-w-xl font-display text-3xl font-semibold text-ivory sm:text-4xl">
+          {title}
+        </p>
+        <p className="mt-3 max-w-lg text-sm text-ivory/70">{outcome}</p>
+      </div>
+    </a>
+  );
+}
