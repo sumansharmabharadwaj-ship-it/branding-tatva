@@ -7,9 +7,8 @@ import { AnimatedHero } from "@/components/AnimatedHero";
 import { IndianPattern } from "@/components/IndianPattern";
 import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
-import { SectionThread } from "@/components/SectionThread";
 import { TexturedDark } from "@/components/TexturedDark";
-import { PhotoHero } from "@/components/PhotoHero";
+import { CinematicHero } from "@/components/CinematicHero";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -28,93 +27,75 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      <Header transparent />
       <main id="main-content">
-        {/* Hero — full-bleed photograph, the way the reference sites do it */}
-        <PhotoHero image="/images/hero-landscape.jpg" minHeight="88vh">
-          <Container className="relative py-20">
-            <Reveal>
-              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
-                Brand strategy for founders &amp; existing businesses
-              </p>
-              <h1 className="mt-4 max-w-2xl text-display-xl font-display font-semibold text-ivory">
-                {site.heroHeadline}
-              </h1>
-              <p className="mt-6 max-w-xl text-lg text-ivory/80">
-                {site.tagline}
-              </p>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <LinkButton href="/contact">Start a brand conversation</LinkButton>
-                <LinkButton href="/work" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
-                  Explore the work
-                </LinkButton>
-              </div>
-            </Reveal>
-          </Container>
-          <div className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-xs uppercase tracking-wide text-ivory/60 sm:flex">
-            <span>Scroll</span>
-            <span className="h-8 w-px bg-ivory/40" />
+        <CinematicHero
+          image="/images/hero-landscape.jpg"
+          eyebrow="Brand strategy for founders & existing businesses"
+          headline={site.heroHeadline}
+        >
+          <p className="mt-6 max-w-md text-base text-ivory/70">{site.tagline}</p>
+          <div className="mt-9 flex flex-wrap gap-4">
+            <LinkButton href="/contact">Start a brand conversation</LinkButton>
+            <LinkButton href="/work" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
+              Explore the work
+            </LinkButton>
           </div>
-        </PhotoHero>
+        </CinematicHero>
 
-        <SectionThread />
-
-        {/* The Attention Problem */}
-        <section className="border-y border-border bg-sage/10 py-20">
-          <Container className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+        {/* Two-part editorial statement — the problem, then the philosophy,
+            as one long unbroken chapter rather than two boxed sections. */}
+        <section className="py-28 sm:py-40">
+          <Container>
             <Reveal>
-              <h2 className="text-display-md font-display font-semibold text-soil">
+              <h2 className="max-w-3xl font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
                 A brand can be visible and still go unnoticed.
               </h2>
             </Reveal>
-            <Reveal delay={0.1}>
-              <div className="space-y-4 text-foreground-secondary">
+            <Reveal delay={0.15}>
+              <div className="mt-10 max-w-md space-y-4 text-foreground-secondary sm:ml-auto sm:mr-0 sm:mt-8 sm:text-right">
                 <p>
-                  Being present isn&apos;t the same as being recognised. Looking
-                  attractive isn&apos;t the same as communicating clearly.
-                  Posting content isn&apos;t the same as building recall. Most
-                  businesses are doing the first half of each of those pairs
-                  and wondering why the second half isn&apos;t happening.
+                  Being present isn&apos;t the same as being recognised.
+                  Looking attractive isn&apos;t the same as communicating
+                  clearly. Posting content isn&apos;t the same as building
+                  recall.
                 </p>
                 <p>
-                  That gap is usually a clarity problem, somewhere between
-                  what the brand believes, what it says, and what it
-                  actually looks like day to day, far more often than a
-                  visibility problem.
+                  That gap is usually a <span className="font-medium text-clay">clarity problem</span>,
+                  far more often than a visibility one.
+                </p>
+              </div>
+            </Reveal>
+          </Container>
+
+          <Container className="mt-28 sm:mt-40">
+            <Reveal>
+              <h2 className="ml-auto max-w-2xl text-right font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
+                Five elements.
+                <br />
+                One brand.
+              </h2>
+            </Reveal>
+            <Reveal delay={0.15}>
+              <div className="mt-10 max-w-md space-y-4 text-foreground-secondary">
+                <p>
+                  Earth is where a brand is grounded. Water is how it moves
+                  through someone&apos;s day. Fire is what makes people look
+                  twice. Air is the language that carries it. Space is
+                  what&apos;s left once the noise settles, the part people
+                  actually remember.
+                </p>
+                <p className="font-medium text-soil">
+                  Most brands are built with one or two of these. The ones
+                  people remember are built with all five, working together.
                 </p>
               </div>
             </Reveal>
           </Container>
         </section>
 
-        <SectionThread />
-
-        {/* Philosophy */}
-        <section className="bg-ochre/5 py-20">
-          <Container>
-            <Reveal>
-              <h2 className="max-w-2xl text-display-md font-display font-semibold text-soil">
-                Five elements. One brand.
-              </h2>
-              <p className="mt-5 max-w-xl text-foreground-secondary">
-                Earth is where a brand is grounded: its purpose, its audience,
-                what it&apos;s actually for. Water is how it moves through
-                someone&apos;s day. Fire is what makes people look twice. Air
-                is the language that carries it. Space is what&apos;s left
-                once the noise settles, the part people actually remember.
-              </p>
-              <p className="mt-4 max-w-xl font-medium text-soil">
-                Most brands are built with one or two of these. The ones people
-                remember are built with all five, working together.
-              </p>
-            </Reveal>
-          </Container>
-        </section>
-
-        <SectionThread />
-
-        {/* Five elements */}
-        <section className="border-t border-border bg-sandstone/15 py-20">
+        {/* Five elements — a slow vertical unfolding, not a grid of cards */}
+        <section className="border-t border-border bg-sandstone/15 py-28 sm:py-36">
           <Container>
             <div className="grid items-center gap-10 lg:grid-cols-[1fr_auto]">
               <Reveal>
@@ -131,75 +112,112 @@ export default function Home() {
                 <AnimatedHero />
               </Reveal>
             </div>
-            <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
-              {elements.map((el, i) => (
-                <Reveal key={el.slug} delay={i * 0.08}>
+          </Container>
+
+          <div className="mt-16 divide-y divide-border sm:mt-24">
+            {elements.map((el, i) => (
+              <Reveal key={el.slug} delay={i * 0.06}>
+                <Container>
                   <div
-                    className="border-t-2 pt-4 transition-transform duration-300 hover:-translate-y-1"
-                    style={{ borderColor: el.color }}
+                    className={`relative grid items-baseline gap-4 py-10 sm:grid-cols-[auto_1fr_1.2fr] sm:gap-10 sm:py-14 ${
+                      i % 2 === 1 ? "sm:text-right" : ""
+                    }`}
                   >
-                    <p className="font-display text-lg font-semibold text-soil">{el.name}</p>
-                    <p className="mt-2 font-display text-base italic text-foreground-secondary">
-                      &ldquo;{el.poetic}&rdquo;
+                    <span
+                      className="font-display text-[clamp(3rem,7vw,5.5rem)] font-semibold leading-none opacity-[0.14]"
+                      style={{ color: el.color }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <p
+                      className={`font-display text-2xl font-semibold text-soil sm:text-3xl ${
+                        i % 2 === 1 ? "sm:order-3" : ""
+                      }`}
+                    >
+                      {el.name}
                     </p>
-                    <p className="mt-3 text-sm text-foreground-secondary">{el.meaning}</p>
+                    <div className={i % 2 === 1 ? "sm:order-2" : ""}>
+                      <p className="font-display text-lg italic text-foreground-secondary">
+                        &ldquo;{el.poetic}&rdquo;
+                      </p>
+                      <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
+                    </div>
                   </div>
-                </Reveal>
-              ))}
-            </div>
-          </Container>
+                </Container>
+              </Reveal>
+            ))}
+          </div>
         </section>
 
-        <SectionThread />
-
-        {/* Two brand pathways */}
-        <section className="bg-indigo/5 py-20">
-          <Container>
-            <Reveal>
-              <h2 className="text-display-sm font-display font-semibold text-soil">
-                Every brand starts at one of two thresholds
-              </h2>
+        {/* Two brand pathways — a real diptych, not two bordered text blocks */}
+        <section>
+          <h2 className="container-page pt-20 text-center font-display text-display-sm font-semibold text-soil">
+            Every brand starts at one of two thresholds
+          </h2>
+          <div className="mt-12 grid min-h-[70vh] sm:grid-cols-2">
+            <Reveal className="relative flex min-h-[50vh] items-end overflow-hidden bg-soil p-8 sm:min-h-0 sm:p-12">
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/hero-canyon.jpg)",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              />
+              <div className="relative">
+                <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
+                  Threshold one
+                </p>
+                <p className="mt-3 max-w-xs font-display text-3xl font-semibold text-ivory">
+                  Starting with an idea
+                </p>
+                <p className="mt-3 max-w-xs text-sm text-ivory/70">
+                  Earth first work: purpose, audience, and positioning,
+                  before anything else gets built.
+                </p>
+                <LinkButton
+                  href="/services#brand-beginning"
+                  variant="secondary"
+                  className="mt-6 border-ivory/30 text-ivory hover:bg-ivory/10"
+                >
+                  Brand Beginning
+                </LinkButton>
+              </div>
             </Reveal>
-            <div className="mt-10 grid gap-10 md:grid-cols-2 md:gap-16">
-              <Reveal>
-                <div className="border-l-2 border-clay pl-6">
-                  <p className="text-xs font-medium uppercase tracking-wide text-clay">
-                    Threshold one
-                  </p>
-                  <p className="mt-2 font-display text-2xl font-semibold text-soil">
-                    Starting with an idea
-                  </p>
-                  <p className="mt-3 text-foreground-secondary">
-                    Earth first work: purpose, audience, and positioning,
-                    before anything else gets built.
-                  </p>
-                  <LinkButton href="/services#brand-beginning" variant="secondary" className="mt-6">
-                    Brand Beginning
-                  </LinkButton>
-                </div>
-              </Reveal>
-              <Reveal delay={0.1}>
-                <div className="border-l-2 border-indigo pl-6">
-                  <p className="text-xs font-medium uppercase tracking-wide text-action-secondary">
-                    Threshold two
-                  </p>
-                  <p className="mt-2 font-display text-2xl font-semibold text-soil">
-                    Already in business
-                  </p>
-                  <p className="mt-3 text-foreground-secondary">
-                    An audit first, finding exactly where the story stops
-                    holding together.
-                  </p>
-                  <LinkButton href="/services#brand-clarity" variant="secondary" className="mt-6">
-                    Brand Clarity
-                  </LinkButton>
-                </div>
-              </Reveal>
-            </div>
-          </Container>
-        </section>
 
-        <SectionThread />
+            <Reveal delay={0.12} className="relative flex min-h-[50vh] items-end overflow-hidden bg-soil p-8 sm:min-h-0 sm:p-12">
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/hero-river.jpg)",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              />
+              <div className="relative">
+                <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
+                  Threshold two
+                </p>
+                <p className="mt-3 max-w-xs font-display text-3xl font-semibold text-ivory">
+                  Already in business
+                </p>
+                <p className="mt-3 max-w-xs text-sm text-ivory/70">
+                  An audit first, finding exactly where the story stops
+                  holding together.
+                </p>
+                <LinkButton
+                  href="/services#brand-clarity"
+                  variant="secondary"
+                  className="mt-6 border-ivory/30 text-ivory hover:bg-ivory/10"
+                >
+                  Brand Clarity
+                </LinkButton>
+              </div>
+            </Reveal>
+          </div>
+        </section>
 
         {/* Featured work */}
         <section className="border-t border-border bg-clay/5 py-20">
@@ -232,8 +250,6 @@ export default function Home() {
           </Container>
         </section>
 
-        <SectionThread />
-
         {/* Testimonials */}
         <section className="bg-rose-earth/10 py-20">
           <Container>
@@ -252,8 +268,6 @@ export default function Home() {
             </Reveal>
           </Container>
         </section>
-
-        <SectionThread />
 
         {/* Process */}
         <section className="border-t border-border bg-terracotta/10 py-20">
@@ -280,8 +294,6 @@ export default function Home() {
           </Container>
         </section>
 
-        <SectionThread />
-
         {/* FAQ */}
         <section className="border-t border-border bg-sandstone/10 py-20">
           <Container className="max-w-2xl">
@@ -295,8 +307,6 @@ export default function Home() {
             </Reveal>
           </Container>
         </section>
-
-        <SectionThread />
 
         {/* Final CTA — a widening threshold, marked with the lattice motif */}
         <TexturedDark className="py-24" image="/images/texture-sage.jpg">

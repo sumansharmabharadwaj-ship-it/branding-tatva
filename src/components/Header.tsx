@@ -1,20 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Container } from "./Container";
 import { Logo } from "./Logo";
 import { site, navigation } from "@/data/site";
 
-export function Header() {
+export function Header({ transparent = false }: { transparent?: boolean }) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!transparent) return;
+    function onScroll() {
+      setScrolled(window.scrollY > 80);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [transparent]);
+
+  const isLight = transparent && !scrolled && !open;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
-      <Container className="flex h-16 items-center justify-between">
+    <header
+      className={`sticky top-0 z-40 transition-colors duration-500 ${
+        isLight
+          ? "border-b border-transparent bg-transparent"
+          : "border-b border-border bg-background/90 backdrop-blur"
+      }`}
+    >
+      <Container className="flex h-20 items-center justify-between">
         <Link href="/" aria-label={site.name}>
-          <Logo />
+          <Logo light={isLight} />
         </Link>
 
         {/* Desktop nav */}
@@ -23,7 +42,9 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm text-foreground-secondary hover:text-soil transition-colors"
+              className={`text-sm transition-colors ${
+                isLight ? "text-ivory/80 hover:text-ivory" : "text-foreground-secondary hover:text-soil"
+              }`}
             >
               {item.label}
             </Link>
@@ -38,7 +59,7 @@ export function Header() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden p-2 -mr-2"
+          className={`md:hidden p-2 -mr-2 ${isLight ? "text-ivory" : "text-foreground"}`}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}

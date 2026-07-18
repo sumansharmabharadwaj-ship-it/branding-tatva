@@ -40,13 +40,17 @@ export function LogoMark({ size = 32, className }: { size?: number; className?: 
   );
 }
 
-export function Logo({ className }: { className?: string }) {
+export function Logo({ className, light = false }: { className?: string; light?: boolean }) {
   return (
     <span className={`inline-flex flex-col leading-none ${className ?? ""}`}>
-      <span className="font-body text-[0.6rem] font-bold uppercase tracking-[0.32em] text-action-secondary">
+      <span
+        className={`font-body text-[0.6rem] font-bold uppercase tracking-[0.32em] ${light ? "text-sandstone" : "text-action-secondary"}`}
+      >
         Branding
       </span>
-      <span className="-mt-1 font-display text-[1.7rem] font-semibold italic tracking-tight text-soil">
+      <span
+        className={`-mt-1 font-display text-[1.7rem] font-semibold italic tracking-tight ${light ? "text-ivory" : "text-soil"}`}
+      >
         Tatva
       </span>
     </span>
