@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 // The large featured-work entry: a full photographic block with a slow
 // hover zoom, distinct from the smaller text-only entries beside it so
@@ -20,6 +20,8 @@ export function FeaturedWorkHero({
   title: string;
   outcome: string;
 }) {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <a href={href} className="group relative flex min-h-[60vh] items-end overflow-hidden bg-soil">
       <motion.div
@@ -29,8 +31,10 @@ export function FeaturedWorkHero({
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
-        whileHover={{ scale: 1.04 }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ scale: 1 }}
+        animate={prefersReducedMotion ? undefined : { scale: 1.05 }}
+        whileHover={{ scale: 1.1 }}
+        transition={{ duration: 16, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
       />
       <div className="container-page relative py-10">
         <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">{industry}</p>

@@ -3,23 +3,28 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 
-// Full-screen photographic hero, restructured after looking at how
-// references like Haven actually handle text over a photograph: a small
-// pill badge, one tight headline, a single line of support copy, two pill
-// CTAs, all held inside a strong scrim at the bottom of the frame rather
-// than scattered across the whole image. The photo still gets most of the
-// frame to itself; the words sit in the one zone guaranteed to have enough
-// contrast, instead of wherever the copy happened to land before.
+// Full-screen hero, restructured after looking at how references like
+// Haven actually handle text over a photograph: a small pill badge, one
+// tight headline, a single line of support copy, two pill CTAs, all held
+// inside a strong scrim at the bottom of the frame rather than scattered
+// across the whole image. The background can be a still photo (with
+// scroll-linked parallax) or a muted looping video — a hero should never
+// sit completely still, so a video background is the default direction
+// going forward; the photo path stays for pages that don't have one yet.
 
 export function CinematicHero({
   image,
+  video,
+  poster,
   imagePosition = "center",
   badge,
   headline,
   subhead,
   children,
 }: {
-  image: string;
+  image?: string;
+  video?: string;
+  poster?: string;
   imagePosition?: string;
   badge: string;
   headline: React.ReactNode;
@@ -34,17 +39,39 @@ export function CinematicHero({
   const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
 
+  const gradient =
+    "linear-gradient(180deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.1) 32%, rgba(20,17,14,0.55) 62%, rgba(20,17,14,0.95) 100%)";
+
   return (
     <section ref={ref} className="relative h-[100svh] min-h-[620px] overflow-hidden bg-soil">
-      <motion.div
-        className="absolute inset-0 -top-[10%] h-[120%] w-full"
-        style={{
-          y: prefersReducedMotion ? 0 : imageY,
-          backgroundImage: `linear-gradient(180deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.1) 32%, rgba(20,17,14,0.55) 62%, rgba(20,17,14,0.95) 100%), url(${image})`,
-          backgroundSize: "cover",
-          backgroundPosition: imagePosition,
-        }}
-      />
+      {video && !prefersReducedMotion ? (
+        <motion.div
+          className="absolute inset-0 -top-[10%] h-[120%] w-full"
+          style={{ y: imageY }}
+        >
+          <video
+            className="h-full w-full object-cover"
+            style={{ objectPosition: imagePosition }}
+            src={video}
+            poster={poster}
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
+        </motion.div>
+      ) : (
+        <motion.div
+          className="absolute inset-0 -top-[10%] h-[120%] w-full"
+          style={{
+            y: prefersReducedMotion ? 0 : imageY,
+            backgroundImage: `${gradient}, url(${poster ?? image})`,
+            backgroundSize: "cover",
+            backgroundPosition: imagePosition,
+          }}
+        />
+      )}
 
       <motion.div
         style={prefersReducedMotion ? undefined : { opacity: contentOpacity, y: contentY }}

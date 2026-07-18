@@ -10,6 +10,7 @@ import { Testimonials } from "@/components/Testimonials";
 import { ElementsRail } from "@/components/ElementsRail";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { GradientSections } from "@/components/GradientSections";
+import { KenBurnsImage } from "@/components/KenBurnsImage";
 import { TexturedDark } from "@/components/TexturedDark";
 import { CinematicHero } from "@/components/CinematicHero";
 import { ImageBreak } from "@/components/ImageBreak";
@@ -36,7 +37,8 @@ export default function Home() {
       <Header transparent />
       <main id="main-content">
         <CinematicHero
-          image="/images/ai-forest-sanctuary.jpg"
+          video="/videos/hero-forest-sanctuary.mp4"
+          poster="/images/hero-forest-sanctuary-poster.jpg"
           imagePosition="30% 40%"
           badge="Brand strategy for founders & existing businesses"
           headline={
@@ -186,14 +188,9 @@ export default function Home() {
           </h2>
           <div className="mt-12 grid min-h-[70vh] sm:grid-cols-2">
             <Reveal className="relative flex min-h-[50vh] items-end overflow-hidden bg-soil p-8 sm:min-h-0 sm:p-12">
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/own-ridge-road.jpg)",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
+              <KenBurnsImage
+                image="/images/own-ridge-road.jpg"
+                gradient="linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)"
               />
               <div className="relative">
                 <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
@@ -217,14 +214,9 @@ export default function Home() {
             </Reveal>
 
             <Reveal delay={0.12} className="relative flex min-h-[50vh] items-end overflow-hidden bg-soil p-8 sm:min-h-0 sm:p-12">
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/own-pond.jpg)",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
+              <KenBurnsImage
+                image="/images/own-pond.jpg"
+                gradient="linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)"
               />
               <div className="relative">
                 <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
