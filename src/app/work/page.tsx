@@ -35,12 +35,12 @@ export default function WorkPage() {
 
         <section className="border-t border-border bg-background-alt py-16">
           <Container>
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid items-stretch gap-6 md:grid-cols-2">
               {projects.map((project, i) => (
-                <Reveal key={project.slug} delay={(i % 4) * 0.08}>
+                <Reveal key={project.slug} delay={(i % 4) * 0.08} className="h-full">
                   <Link
                     href={`/work/${project.slug}`}
-                    className="block rounded-lg border-t-2 border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                     style={{ borderTopColor: project.accent }}
                   >
                     <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
@@ -50,7 +50,7 @@ export default function WorkPage() {
                       {project.title}
                     </p>
                     <p className="mt-3 text-sm text-foreground-secondary">{project.challenge}</p>
-                    <div className="mt-4 flex flex-wrap gap-2">
+                    <div className="mt-auto flex flex-wrap gap-2 pt-4">
                       {project.services.map((s) => (
                         <span
                           key={s}

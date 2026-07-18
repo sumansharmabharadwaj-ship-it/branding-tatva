@@ -96,11 +96,11 @@ export default function AboutPage() {
                 Credentials
               </h2>
             </Reveal>
-            <div className="mt-8 grid gap-6 sm:grid-cols-2">
+            <div className="mt-8 grid items-stretch gap-6 sm:grid-cols-2">
               {credentials.map((c, i) => (
-                <Reveal key={c.label} delay={i * 0.06}>
+                <Reveal key={c.label} delay={i * 0.06} className="h-full">
                   <div
-                    className="rounded-lg border-t-2 border-border p-5 transition-transform duration-300 hover:-translate-y-1"
+                    className="flex h-full flex-col rounded-lg border-t-2 border-border p-5 transition-transform duration-300 hover:-translate-y-1"
                     style={{ borderTopColor: c.color }}
                   >
                     <p className="font-medium text-soil">{c.label}</p>

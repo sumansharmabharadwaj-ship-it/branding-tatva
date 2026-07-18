@@ -59,7 +59,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
 
         {/* Mobile toggle */}
         <button
-          className={`md:hidden p-2 -mr-2 ${isLight ? "text-ivory" : "text-foreground"}`}
+          className={`md:hidden p-2 -mr-2 transition-colors duration-500 ${isLight ? "text-ivory" : "text-foreground"}`}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}

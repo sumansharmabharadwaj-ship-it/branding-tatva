@@ -44,12 +44,12 @@ export function Logo({ className, light = false }: { className?: string; light?:
   return (
     <span className={`inline-flex flex-col leading-none ${className ?? ""}`}>
       <span
-        className={`font-body text-[0.6rem] font-bold uppercase tracking-[0.32em] ${light ? "text-sandstone" : "text-action-secondary"}`}
+        className={`font-body text-[0.6rem] font-bold uppercase tracking-[0.32em] transition-colors duration-500 ${light ? "text-sandstone" : "text-action-secondary"}`}
       >
         Branding
       </span>
       <span
-        className={`-mt-1 font-display text-[1.7rem] font-semibold italic tracking-tight ${light ? "text-ivory" : "text-soil"}`}
+        className={`-mt-1 font-display text-[1.7rem] font-semibold italic tracking-tight transition-colors duration-500 ${light ? "text-ivory" : "text-soil"}`}
       >
         Tatva
       </span>

@@ -158,6 +158,8 @@ export default function Home() {
           </div>
         </section>
 
+        <ImageBreak image="/images/green-fjord.jpg" height="55vh" />
+
         {/* Two brand pathways — a real diptych, not two bordered text blocks */}
         <section>
           <h2 className="container-page pt-20 text-center font-display text-display-sm font-semibold text-soil">
@@ -237,12 +239,12 @@ export default function Home() {
                 <LinkButton href="/work" variant="secondary">View all work</LinkButton>
               </div>
             </Reveal>
-            <div className="mt-10 grid gap-6 md:grid-cols-3">
+            <div className="mt-10 grid items-stretch gap-6 md:grid-cols-3">
               {featured.map((project, i) => (
-                <Reveal key={project.slug} delay={i * 0.1}>
+                <Reveal key={project.slug} delay={i * 0.1} className="h-full">
                   <a
                     href={`/work/${project.slug}`}
-                    className="block rounded-lg border-t-2 border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                     style={{ borderTopColor: project.accent }}
                   >
                     <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
