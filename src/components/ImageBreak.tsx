@@ -24,7 +24,7 @@ export function ImageBreak({
       <motion.div
         className="absolute inset-0"
         style={{
-          backgroundImage: `linear-gradient(0deg, rgba(39,34,30,0.45) 0%, rgba(39,34,30,0.1) 40%, rgba(39,34,30,0.1) 60%, rgba(39,34,30,0.45) 100%), url(${image})`,
+          backgroundImage: `linear-gradient(0deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.6) 35%, rgba(20,17,14,0.6) 65%, rgba(20,17,14,0.2) 100%), url(${image})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -36,8 +36,8 @@ export function ImageBreak({
       {quote && (
         <div className="relative flex h-full items-center justify-center px-6 text-center">
           <p
-            className="max-w-xl rounded-2xl bg-soil/35 px-6 py-4 font-display text-2xl italic text-ivory backdrop-blur-md sm:text-3xl"
-            style={{ textShadow: "0 2px 16px rgba(20,17,14,0.6)" }}
+            className="max-w-xl px-6 font-display text-2xl italic text-ivory sm:text-3xl"
+            style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)" }}
           >
             &ldquo;{quote}&rdquo;
           </p>

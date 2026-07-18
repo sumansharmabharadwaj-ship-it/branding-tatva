@@ -36,14 +36,14 @@ export function SparkCursor() {
       lastX = e.clientX;
       lastY = e.clientY;
 
-      const speed = Math.min(Math.hypot(dx, dy), 46);
-      const angle = speed > 1.5 ? Math.atan2(dy, dx) * (180 / Math.PI) : 0;
-      const stretch = 1 + speed / 22;
+      const speed = Math.min(Math.hypot(dx, dy), 60);
+      const angle = speed > 1 ? Math.atan2(dy, dx) * (180 / Math.PI) : 0;
+      const stretch = 1 + speed / 10;
 
       core.style.opacity = "1";
       core.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
 
-      trail.style.opacity = String(Math.min(speed / 18, 0.75));
+      trail.style.opacity = String(Math.min(0.25 + speed / 45, 0.95));
       trail.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%) rotate(${angle}deg) scaleX(${stretch})`;
     }
     window.addEventListener("mousemove", handleMove);

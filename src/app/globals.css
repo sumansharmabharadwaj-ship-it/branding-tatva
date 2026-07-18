@@ -67,7 +67,10 @@
   background: radial-gradient(circle, rgba(255,236,205,0.95) 0%, rgba(194,138,40,0.85) 45%, rgba(184,90,52,0) 75%);
   box-shadow: 0 0 12px 3px rgba(194,138,40,0.45), 0 0 4px 1px rgba(255,244,220,0.6);
   animation: spark-pulse 2.2s ease-in-out infinite;
-  transition: transform 0.16s ease-out, opacity 0.2s ease-out;
+  /* No transform transition — the core marks the actual click point, so
+     it must snap exactly to the real cursor position with zero lag. Only
+     the trail behind it is allowed to ease/linger. */
+  transition: opacity 0.2s ease-out;
   will-change: transform;
 }
 
@@ -76,14 +79,14 @@
   left: 0;
   top: 0;
   z-index: 29;
-  width: 26px;
-  height: 6px;
+  width: 48px;
+  height: 8px;
   pointer-events: none;
   opacity: 0;
   border-radius: 9999px;
-  background: linear-gradient(90deg, rgba(184,90,52,0) 0%, rgba(194,138,40,0.5) 100%);
-  filter: blur(1.5px);
-  transition: transform 0.22s ease-out, opacity 0.22s ease-out;
+  background: linear-gradient(90deg, rgba(184,90,52,0) 0%, rgba(194,138,40,0.4) 30%, rgba(255,205,120,0.85) 100%);
+  filter: blur(2px);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease-out;
   will-change: transform, opacity;
 }
 
