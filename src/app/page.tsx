@@ -176,7 +176,7 @@ export default function Home() {
           </div>
         </section>
 
-        <ImageBreak image="/images/own-peaks.jpg" height="55vh" />
+        <ImageBreak image="/images/own-peaks.jpg" height="60vh" />
 
         {/* Two brand pathways — a real diptych, not two bordered text blocks */}
         <section>
@@ -305,7 +305,7 @@ export default function Home() {
         <ImageBreak
           image="/images/own-cabin.jpg"
           quote="Every brand needs somewhere to stand before it can move."
-          height="50vh"
+          height="60vh"
         />
 
         <GradientSections colors={["#EFE4D9", "#F1EADE"]}>
