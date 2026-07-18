@@ -54,12 +54,14 @@ export function Logo({ className, light = false }: { className?: string; light?:
     <span className={`group inline-flex items-center gap-2 leading-none ${className ?? ""}`}>
       <span className="inline-flex flex-col leading-none">
         <span
-          className={`font-body text-[0.6rem] font-bold uppercase tracking-[0.32em] transition-colors duration-500 ${light ? "text-sandstone" : "text-action-secondary"}`}
+          className={`font-body text-[0.6rem] font-bold uppercase tracking-[0.32em] transition-colors duration-500 ${light ? "text-ivory/90" : "text-action-secondary"}`}
+          style={light ? { textShadow: "0 1px 10px rgba(20,17,14,0.7)" } : undefined}
         >
           Branding
         </span>
         <span
           className={`-mt-1 font-display text-[1.7rem] font-semibold italic tracking-tight transition-colors duration-500 ${light ? "text-ivory" : "text-clay"}`}
+          style={light ? { textShadow: "0 1px 10px rgba(20,17,14,0.7)" } : undefined}
         >
           Tatva
         </span>

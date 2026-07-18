@@ -43,8 +43,9 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
               key={item.href}
               href={item.href}
               className={`text-sm transition-colors ${
-                isLight ? "text-ivory/80 hover:text-ivory" : "text-foreground-secondary hover:text-soil"
+                isLight ? "text-ivory/90 hover:text-ivory" : "text-foreground-secondary hover:text-soil"
               }`}
+              style={isLight ? { textShadow: "0 1px 8px rgba(20,17,14,0.7)" } : undefined}
             >
               {item.label}
             </Link>
