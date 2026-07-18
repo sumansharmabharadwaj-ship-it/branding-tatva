@@ -6,6 +6,7 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
+import { VideoBreak } from "@/components/VideoBreak";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -47,6 +48,13 @@ export default function AboutPage() {
             </Reveal>
           </Container>
         </section>
+
+        <VideoBreak
+          src="/videos/cinematic-ridge.mp4"
+          poster="/images/cinematic-ridge-poster.jpg"
+          quote="The fog lifts the same way clarity does: slowly, then all at once."
+          height="55vh"
+        />
 
         <section className="border-t border-border bg-background-alt py-20">
           <Container className="grid gap-12 md:grid-cols-[auto_1fr]">
