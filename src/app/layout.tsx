@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { SparkCursor } from "@/components/SparkCursor";
+import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({
@@ -68,6 +69,7 @@ export default function RootLayout({
         </a>
         {children}
         <SparkCursor />
+        <PageLoadVeil />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
