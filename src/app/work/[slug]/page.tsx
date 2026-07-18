@@ -112,10 +112,14 @@ export default async function CaseStudyPage({ params }: Props) {
           </Container>
         </section>
 
+        {/* Video: I Am Sorin via Pexels, free for commercial use. About's
+            cinematic-ridge.mp4 already owns the misty-pine-ridge mood one
+            click away — this case-study closer needed a genuinely different
+            backdrop, not a second fog shot. */}
         <VideoBreak
-          src="/videos/own-misty-ridge.mp4"
-          poster="/images/own-misty-ridge-poster.jpg"
-          quote="Clarity doesn't arrive all at once. It clears the way this fog does — one layer at a time."
+          src="/videos/own-forest-stream.mp4"
+          poster="/images/own-forest-stream-poster.jpg"
+          quote="Good strategy doesn't force a path. It finds the one already there, the way water finds a way through stone."
           height="60vh"
         />
 
