@@ -7,6 +7,7 @@ type ButtonProps = {
   children: ReactNode;
   variant?: "primary" | "secondary";
   className?: string;
+  onClick?: () => void;
 };
 
 // Pill-shaped to match the badge/scroll-cue language already used across
@@ -14,7 +15,7 @@ type ButtonProps = {
 // variant carries a small arrow that slides in on hover instead of just
 // swapping background color, so the call to action has somewhere to go.
 
-export function LinkButton({ href, children, variant = "primary", className }: ButtonProps) {
+export function LinkButton({ href, children, variant = "primary", className, onClick }: ButtonProps) {
   const base =
     "group/btn inline-flex items-center justify-center gap-1.5 rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 ease-earth focus-visible:outline-none";
   const styles = {
@@ -24,7 +25,7 @@ export function LinkButton({ href, children, variant = "primary", className }: B
   };
 
   return (
-    <Link href={href} className={cn(base, styles[variant], className)}>
+    <Link href={href} onClick={onClick} className={cn(base, styles[variant], className)}>
       {children}
       {variant === "primary" && (
         <span

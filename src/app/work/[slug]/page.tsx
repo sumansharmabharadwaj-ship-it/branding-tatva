@@ -128,7 +128,7 @@ export default async function CaseStudyPage({ params }: Props) {
                 </p>
                 <a
                   href={`/work/${related.slug}`}
-                  className="mt-3 block max-w-md rounded-lg border border-border p-6 transition-transform duration-300 hover:-translate-y-1 hover:border-action-primary/40"
+                  className="mt-3 block max-w-md rounded-lg border border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-action-primary/40 hover:shadow-md"
                 >
                   <p className="font-display text-lg font-semibold text-soil">{related.title}</p>
                   <p className="mt-2 text-sm text-foreground-secondary">{related.challenge}</p>
