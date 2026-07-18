@@ -3,6 +3,7 @@ import { Instagram, Facebook, Linkedin } from "lucide-react";
 import { Container } from "./Container";
 import { IndianPattern } from "./IndianPattern";
 import { Logo } from "./Logo";
+import { ElementGlyph } from "./ElementGlyph";
 import { site, navigation, footerLinks } from "@/data/site";
 
 const socialLinks = [
@@ -69,7 +70,14 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col-reverse gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col items-center gap-3 text-center">
+          <ElementGlyph slug="space" className="h-5 w-5 text-clay/70" strokeWidth={1.2} />
+          <p className="max-w-sm font-display text-lg italic text-foreground-secondary">
+            &ldquo;{site.tagline}&rdquo;
+          </p>
+        </div>
+
+        <div className="mt-8 flex flex-col-reverse gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-foreground-secondary">
             © {new Date().getFullYear()} {site.name}. All rights reserved.
           </p>
