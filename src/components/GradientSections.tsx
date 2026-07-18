@@ -24,7 +24,11 @@ export function GradientSections({
   const backgroundColor = useTransform(scrollYProgress, stops, colors);
 
   return (
-    <motion.div ref={ref} style={{ backgroundColor: prefersReducedMotion ? colors[0] : backgroundColor }}>
+    <motion.div
+      ref={ref}
+      className="relative"
+      style={{ backgroundColor: prefersReducedMotion ? colors[0] : backgroundColor }}
+    >
       {children}
     </motion.div>
   );

@@ -61,7 +61,10 @@ export function VideoBreak({
           transition={{ duration: 1 }}
           className="relative flex h-full items-center justify-center px-6 text-center"
         >
-          <p className="max-w-xl font-display text-2xl italic text-ivory sm:text-3xl">
+          <p
+            className="max-w-xl rounded-2xl bg-soil/35 px-6 py-4 font-display text-2xl italic text-ivory backdrop-blur-md sm:text-3xl"
+            style={{ textShadow: "0 2px 16px rgba(20,17,14,0.6)" }}
+          >
             &ldquo;{quote}&rdquo;
           </p>
         </motion.div>
