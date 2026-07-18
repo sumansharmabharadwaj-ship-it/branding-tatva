@@ -55,6 +55,44 @@ export default function ContactPage() {
             </Reveal>
           </Container>
         </section>
+
+        <section className="border-t border-border bg-sage/10 py-16">
+          <Container>
+            <Reveal>
+              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
+                Or skip the form
+              </p>
+              <h2 className="mt-2 text-display-sm font-display font-semibold text-soil">
+                Just grab a time that works for you.
+              </h2>
+              <p className="mt-3 max-w-xl text-foreground-secondary">
+                Times shown automatically adjust to your local timezone,
+                wherever you are.
+              </p>
+              <div className="mt-8 overflow-hidden rounded-lg border border-border bg-background-elevated">
+                <iframe
+                  src={`${site.calendlyUrl}?hide_gdpr_banner=1`}
+                  width="100%"
+                  height="700"
+                  title="Book a call via Calendly"
+                  loading="lazy"
+                />
+              </div>
+              <p className="mt-3 text-xs text-foreground-secondary">
+                Having trouble with the embed?{" "}
+                <a
+                  href={site.calendlyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-action-primary underline"
+                >
+                  Open it directly instead
+                </a>
+                .
+              </p>
+            </Reveal>
+          </Container>
+        </section>
       </main>
       <Footer />
     </>

@@ -17,6 +17,7 @@ export const site = {
     "A personal branding practice led by Suman Sharma, helping founders and existing businesses find clarity, voice, and consistency through an elemental approach to brand strategy.",
   url: "https://brandingtatva.com",
   email: "suman@brandingtatva.com",
+  calendlyUrl: "https://calendly.com/suman-brandingtatva",
   social: {
     linkedin: "https://linkedin.com/in/suman-sharma-b6a682232",
     instagram: "https://instagram.com/brandingtatva",
