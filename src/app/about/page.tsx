@@ -20,24 +20,29 @@ export default function AboutPage() {
     <>
       <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/own-companions.jpg" minHeight="70vh" />
+        <PhotoHero image="/images/own-companions.jpg" minHeight="70vh">
+          <Container className="relative pb-16 pt-20 text-center sm:pb-20">
+            <Reveal>
+              <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+                About
+              </span>
+              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(1.75rem,4vw,3rem)] font-semibold leading-[1.15] text-ivory">
+                {aboutIntro.opening}
+              </h1>
+              <div className="mt-8">
+                <LinkButton href="/contact">Start a brand conversation</LinkButton>
+              </div>
+            </Reveal>
+          </Container>
+        </PhotoHero>
 
         <section className="pb-20 pt-20 sm:pb-28 sm:pt-28">
           <Container>
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
-                About
-              </p>
-              <h1 className="mt-3 max-w-2xl text-display-lg font-display font-semibold text-soil">
-                {aboutIntro.opening}
-              </h1>
-              <div className="mt-8 max-w-xl space-y-5 text-foreground-secondary">
+              <div className="max-w-xl space-y-5 text-foreground-secondary">
                 {aboutIntro.body.map((para, i) => (
                   <p key={i}>{para}</p>
                 ))}
-              </div>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <LinkButton href="/contact">Start a brand conversation</LinkButton>
               </div>
             </Reveal>
           </Container>

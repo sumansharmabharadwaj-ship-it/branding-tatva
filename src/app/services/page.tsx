@@ -20,23 +20,23 @@ export default function ServicesPage() {
     <>
       <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/green-valley.jpg" minHeight="60vh" />
-
-        <section className="pb-16 pt-20 sm:pt-28">
-          <Container>
+        <PhotoHero image="/images/green-valley.jpg" minHeight="65vh">
+          <Container className="relative py-20 text-center">
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">Services</p>
-              <h1 className="mt-2 max-w-2xl text-display-sm font-display font-semibold text-soil">
+              <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+                Services
+              </span>
+              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-semibold leading-[1.1] text-ivory">
                 Everything a brand needs, in plain terms.
               </h1>
-              <p className="mt-4 max-w-2xl text-foreground-secondary">
+              <p className="mx-auto mt-4 max-w-xl text-ivory/70">
                 Strategy, identity, content, and the channels that carry it.
                 Here&apos;s what I actually do, before we get into how I
                 think about it.
               </p>
             </Reveal>
           </Container>
-        </section>
+        </PhotoHero>
 
         <section className="py-16">
           <Container>

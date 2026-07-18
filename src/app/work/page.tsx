@@ -17,23 +17,23 @@ export default function WorkPage() {
     <>
       <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/cinematic-goldenpath.jpg" minHeight="60vh" />
-
-        <section className="pb-16 pt-20 sm:pt-28">
-          <Container>
+        <PhotoHero image="/images/cinematic-goldenpath.jpg" minHeight="65vh">
+          <Container className="relative py-20 text-center">
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">Work</p>
-              <h1 className="mt-2 max-w-2xl text-display-sm font-display font-semibold text-soil">
+              <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+                Work
+              </span>
+              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-semibold leading-[1.1] text-ivory">
                 Projects across very different categories.
               </h1>
-              <p className="mt-4 max-w-2xl text-foreground-secondary">
+              <p className="mx-auto mt-4 max-w-xl text-ivory/70">
                 Marketplaces, executive coaching, wellness, D2C supplements,
                 enterprise technology: different industries, the same
                 underlying method.
               </p>
             </Reveal>
           </Container>
-        </section>
+        </PhotoHero>
 
         <section className="border-t border-border bg-background-alt py-16">
           <Container>
