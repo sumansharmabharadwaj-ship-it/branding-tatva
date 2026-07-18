@@ -7,10 +7,19 @@ import { AnimatedHero } from "@/components/AnimatedHero";
 import { IndianPattern } from "@/components/IndianPattern";
 import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
+import { SectionThread } from "@/components/SectionThread";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
 import { process } from "@/data/process";
+
+const elementColor: Record<string, string> = {
+  Earth: "#A65F46",
+  Water: "#31485A",
+  Fire: "#C9953D",
+  Air: "#79816D",
+  Space: "#B98278",
+};
 
 export default function Home() {
   const featured = projects.filter((p) => p.featured);
@@ -43,8 +52,10 @@ export default function Home() {
           </Container>
         </section>
 
+        <SectionThread />
+
         {/* The Attention Problem */}
-        <section className="border-y border-border bg-background-alt py-20">
+        <section className="border-y border-border bg-sage/10 py-20">
           <Container className="grid gap-10 lg:grid-cols-2 lg:gap-16">
             <Reveal>
               <h2 className="text-display-md font-display font-semibold text-soil">
@@ -70,8 +81,10 @@ export default function Home() {
           </Container>
         </section>
 
+        <SectionThread />
+
         {/* Philosophy */}
-        <section className="py-20">
+        <section className="bg-ochre/5 py-20">
           <Container>
             <Reveal>
               <h2 className="max-w-2xl text-display-md font-display font-semibold text-soil">
@@ -92,8 +105,10 @@ export default function Home() {
           </Container>
         </section>
 
+        <SectionThread />
+
         {/* Five elements */}
-        <section className="border-t border-border bg-background-alt py-20">
+        <section className="border-t border-border bg-sandstone/15 py-20">
           <Container>
             <Reveal>
               <h2 className="text-display-sm font-display font-semibold text-soil">
@@ -119,8 +134,10 @@ export default function Home() {
           </Container>
         </section>
 
+        <SectionThread />
+
         {/* Two brand pathways */}
-        <section className="py-20">
+        <section className="bg-indigo/5 py-20">
           <Container>
             <Reveal>
               <h2 className="text-display-sm font-display font-semibold text-soil">
@@ -130,7 +147,7 @@ export default function Home() {
             <div className="mt-10 grid gap-10 md:grid-cols-2 md:gap-16">
               <Reveal>
                 <div className="border-l-2 border-clay pl-6">
-                  <p className="text-xs font-medium uppercase tracking-wide text-action-secondary">
+                  <p className="text-xs font-medium uppercase tracking-wide text-clay">
                     Threshold one
                   </p>
                   <p className="mt-2 font-display text-2xl font-semibold text-soil">
@@ -166,8 +183,10 @@ export default function Home() {
           </Container>
         </section>
 
+        <SectionThread />
+
         {/* Featured work */}
-        <section className="border-t border-border bg-background-alt py-20">
+        <section className="border-t border-border bg-clay/5 py-20">
           <Container>
             <Reveal>
               <div className="flex items-baseline justify-between">
@@ -197,8 +216,10 @@ export default function Home() {
           </Container>
         </section>
 
+        <SectionThread />
+
         {/* Testimonials */}
-        <section className="py-20">
+        <section className="bg-rose-earth/10 py-20">
           <Container>
             <Reveal>
               <h2 className="text-display-sm font-display font-semibold text-soil">
@@ -216,8 +237,10 @@ export default function Home() {
           </Container>
         </section>
 
+        <SectionThread />
+
         {/* Process */}
-        <section className="border-t border-border bg-background-alt py-20">
+        <section className="border-t border-border bg-terracotta/10 py-20">
           <Container>
             <Reveal>
               <h2 className="text-display-sm font-display font-semibold text-soil">How a project moves</h2>
@@ -226,7 +249,10 @@ export default function Home() {
               {process.map((stage, i) => (
                 <li key={stage.stage} className="relative pl-10">
                   <Reveal delay={(i % 3) * 0.1}>
-                    <span className="absolute left-0 top-0 font-display text-2xl font-semibold text-action-primary/50">
+                    <span
+                      className="absolute left-0 top-0 font-display text-2xl font-semibold"
+                      style={{ color: elementColor[stage.element] }}
+                    >
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <p className="font-display text-lg font-semibold text-soil">{stage.stage}</p>
@@ -238,8 +264,10 @@ export default function Home() {
           </Container>
         </section>
 
+        <SectionThread />
+
         {/* FAQ */}
-        <section className="border-t border-border bg-background-alt py-20">
+        <section className="border-t border-border bg-sandstone/10 py-20">
           <Container className="max-w-2xl">
             <Reveal>
               <h2 className="text-display-sm font-display font-semibold text-soil">
@@ -251,6 +279,8 @@ export default function Home() {
             </Reveal>
           </Container>
         </section>
+
+        <SectionThread />
 
         {/* Final CTA — a widening threshold, marked with the lattice motif */}
         <section className="relative overflow-hidden bg-soil py-24">
