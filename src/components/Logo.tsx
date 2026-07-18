@@ -1,23 +1,15 @@
-"use client";
-
 import { site } from "@/data/site";
 
-// Primary logo is the tracked-out small-caps "BRANDING" against a large
-// italic serif "Tatva", now paired with a small version of the five-petal
-// mark as the convergence point between the two words, a literal bindu:
-// five elements meeting at one center, the same idea the whole site is
-// built on, instead of an unrelated decorative icon. It turns slowly and
-// always on its own, and blooms open on hover.
+// Primary logo is the wordmark alone: a tracked-out small-caps "BRANDING"
+// against a large italic serif "Tatva". That contrast carries the brand on
+// its own — an elite mark stays quiet and confident rather than competing
+// with itself. A small spinning icon was tried alongside the wordmark and
+// read as a muddy, indistinct smudge at the size a header actually needs,
+// so it's gone from here. The five-petal mark (LogoMark, below) still
+// exists for places built to show a single glyph at real size, like the
+// browser favicon, where its convergence point actually reads clearly.
 
-export function LogoMark({
-  size = 32,
-  className,
-  spin = false,
-}: {
-  size?: number;
-  className?: string;
-  spin?: boolean;
-}) {
+export function LogoMark({ size = 32, className }: { size?: number; className?: string }) {
   const petals = [
     { color: "#B85A34", rotate: 0 }, // earth — clay
     { color: "#24394D", rotate: 72 }, // water — indigo
@@ -31,7 +23,7 @@ export function LogoMark({
       height={size}
       viewBox="0 0 100 100"
       fill="none"
-      className={`${spin ? "animate-mark-spin" : ""} ${className ?? ""}`}
+      className={className}
       role="img"
       aria-label={`${site.name} mark`}
     >
@@ -51,26 +43,19 @@ export function LogoMark({
 
 export function Logo({ className, light = false }: { className?: string; light?: boolean }) {
   return (
-    <span className={`group inline-flex items-center gap-2 leading-none ${className ?? ""}`}>
-      <span className="inline-flex flex-col leading-none">
-        <span
-          className={`font-body text-[0.6rem] font-bold uppercase tracking-[0.32em] transition-colors duration-500 ${light ? "text-ivory/90" : "text-action-secondary"}`}
-          style={light ? { textShadow: "0 1px 10px rgba(20,17,14,0.7)" } : undefined}
-        >
-          Branding
-        </span>
-        <span
-          className={`-mt-1 font-display text-[1.7rem] font-semibold italic tracking-tight transition-colors duration-500 ${light ? "text-ivory" : "text-clay"}`}
-          style={light ? { textShadow: "0 1px 10px rgba(20,17,14,0.7)" } : undefined}
-        >
-          Tatva
-        </span>
+    <span className={`inline-flex flex-col leading-none ${className ?? ""}`}>
+      <span
+        className={`font-body text-[0.62rem] font-bold uppercase tracking-[0.38em] transition-colors duration-500 ${light ? "text-ivory/90" : "text-action-secondary"}`}
+        style={light ? { textShadow: "0 1px 10px rgba(20,17,14,0.7)" } : undefined}
+      >
+        Branding
       </span>
-      <LogoMark
-        size={20}
-        spin
-        className="shrink-0 transition-transform duration-500 ease-out group-hover:scale-[1.4] group-hover:rotate-[72deg]"
-      />
+      <span
+        className={`-mt-1 font-display text-[2.1rem] font-semibold italic tracking-tight transition-colors duration-500 ${light ? "text-ivory" : "text-clay"}`}
+        style={light ? { textShadow: "0 1px 10px rgba(20,17,14,0.7)" } : undefined}
+      >
+        Tatva
+      </span>
     </span>
   );
 }

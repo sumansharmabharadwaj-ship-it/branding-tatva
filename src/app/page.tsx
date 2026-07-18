@@ -124,7 +124,7 @@ export default function Home() {
         <section className="relative overflow-hidden border-t border-border py-28 sm:py-40">
           <KenBurnsImage
             image="/images/own-cabin.jpg"
-            gradient="linear-gradient(180deg, rgba(244,239,230,0.88) 0%, rgba(212,185,154,0.8) 100%)"
+            gradient="linear-gradient(180deg, rgba(244,239,230,0.96) 0%, rgba(212,185,154,0.94) 100%)"
           />
           <Container className="relative">
             <Reveal>

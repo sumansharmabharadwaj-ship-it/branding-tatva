@@ -71,7 +71,7 @@
 
 .bee-cursor-flutter {
   display: inline-block;
-  animation: bee-flutter 0.22s ease-in-out infinite;
+  animation: bee-flutter 0.14s ease-in-out infinite;
 }
 
 @keyframes bee-bob {
@@ -86,21 +86,11 @@
 
 @keyframes bee-flutter {
   0%, 100% {
-    rotate: -6deg;
+    rotate: -20deg;
+    scale: 1 0.92;
   }
   50% {
-    rotate: 6deg;
-  }
-}
-
-/* Logo mark — a slow, continuous turn, the five petals always gently
-   revolving around their own center point. */
-.animate-mark-spin {
-  animation: mark-spin 28s linear infinite;
-}
-
-@keyframes mark-spin {
-  to {
-    transform: rotate(360deg);
+    rotate: 20deg;
+    scale: 1 1.05;
   }
 }
