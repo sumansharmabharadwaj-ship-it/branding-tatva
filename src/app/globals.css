@@ -55,17 +55,23 @@
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 999;
+  z-index: 30;
   pointer-events: none;
   user-select: none;
-  font-size: 26px;
+  font-size: 19px;
   opacity: 0;
-  transition: transform 0.1s ease-out, opacity 0.15s ease-out;
+  mix-blend-mode: multiply;
+  transition: transform 0.12s ease-out, opacity 0.15s ease-out, scale 0.12s ease-out;
   will-change: transform;
 }
 
 .bee-cursor-bob {
   animation: bee-bob 0.9s ease-in-out infinite;
+}
+
+.bee-cursor-flutter {
+  display: inline-block;
+  animation: bee-flutter 0.22s ease-in-out infinite;
 }
 
 @keyframes bee-bob {
@@ -75,5 +81,14 @@
   50% {
     translate: 0 -4px;
     filter: drop-shadow(0 6px 4px rgb(39 34 30 / 0.1));
+  }
+}
+
+@keyframes bee-flutter {
+  0%, 100% {
+    rotate: -6deg;
+  }
+  50% {
+    rotate: 6deg;
   }
 }

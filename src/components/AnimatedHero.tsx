@@ -148,7 +148,7 @@ export function AnimatedHero({ dark = false }: { dark?: boolean }) {
     <div
       ref={containerRef}
       onPointerMove={handlePointerMove}
-      className="relative mx-auto h-[320px] w-full max-w-md sm:h-[420px] sm:max-w-lg"
+      className="relative mx-auto h-[320px] w-full max-w-md sm:h-[420px] sm:max-w-lg lg:h-[480px] lg:max-w-2xl"
       aria-hidden="true"
     >
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">

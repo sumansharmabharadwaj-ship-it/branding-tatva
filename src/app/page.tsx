@@ -122,8 +122,12 @@ export default function Home() {
         <KineticMarquee text="EARTH · WATER · FIRE · AIR · SPACE" />
 
         {/* Five elements — a slow vertical unfolding, not a grid of cards */}
-        <section className="border-t border-border bg-sandstone/15 py-28 sm:py-36">
-          <Container>
+        <section className="relative overflow-hidden border-t border-border py-28 sm:py-40">
+          <KenBurnsImage
+            image="/images/own-cabin.jpg"
+            gradient="linear-gradient(180deg, rgba(244,239,230,0.88) 0%, rgba(212,185,154,0.8) 100%)"
+          />
+          <Container className="relative">
             <div className="grid items-center gap-10 lg:grid-cols-[1fr_auto]">
               <Reveal>
                 <h2 className="text-display-sm font-display font-semibold text-soil">
