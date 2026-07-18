@@ -4,6 +4,7 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { FAQ } from "@/components/FAQ";
 import { IndianPattern } from "@/components/IndianPattern";
+import { DustMotes } from "@/components/DustMotes";
 import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
 import { ElementsRail } from "@/components/ElementsRail";
@@ -332,11 +333,17 @@ export default function Home() {
           </section>
         </GradientSections>
 
+        {/* No text here on purpose — the testimonials section above it was
+            flat white with nothing to look at, so instead of another
+            boxed-off quote, the image itself is the moment: stretched
+            larger, fading in from the same cream tone the testimonials
+            section ends on, so it reads as one continuous scene opening up
+            rather than a hard cut into a separate photo block. */}
         <ImageBreak
           image="/images/own-alpenglow-peak.jpg"
-          quote="Every brand needs somewhere to stand before it can move."
-          height="72vh"
+          height="92vh"
           imagePosition="center 38%"
+          overlayGradient="linear-gradient(180deg, #EEE4DB 0%, rgba(20,17,14,0.1) 14%, rgba(20,17,14,0.15) 82%, #EFE4D9 100%)"
         />
 
         <GradientSections colors={["#EFE4D9", "#F1EADE"]}>
@@ -393,8 +400,10 @@ export default function Home() {
           height="min(1500px, 185vh)"
           imagePosition="50% 12%"
           quoteVariant="statement"
-          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0.3) 30%, rgba(20,17,14,0.3) 58%, rgba(20,17,14,0.9) 100%)"
+          parallax
+          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0.3) 30%, rgba(20,17,14,0.3) 55%, rgba(20,17,14,0.92) 88%, #E8DED0 100%)"
         >
+          <DustMotes />
           <div className="relative">
             <IndianPattern className="absolute inset-0 -m-10" opacity={0.1} color="#F4EFE6" />
             <div className="relative">

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 
 // The video counterpart to ImageBreak: a full-bleed cinematic moment, but
@@ -19,6 +20,7 @@ export function VideoBreak({
   imagePosition = "center",
   quoteVariant = "center",
   overlayGradient = BREAK_OVERLAY_GRADIENT,
+  parallax = false,
   children,
 }: {
   src: string;
@@ -28,12 +30,17 @@ export function VideoBreak({
   imagePosition?: string;
   quoteVariant?: QuoteVariant;
   overlayGradient?: string;
+  parallax?: boolean;
   children?: React.ReactNode;
 }) {
   const prefersReducedMotion = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const mediaY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const usesParallax = parallax && !prefersReducedMotion;
 
   return (
-    <div className="relative overflow-hidden bg-soil" style={{ height }}>
+    <div ref={ref} className="relative overflow-hidden bg-soil" style={{ height }}>
       {prefersReducedMotion ? (
         <div
           className="absolute inset-0"
@@ -45,9 +52,12 @@ export function VideoBreak({
         />
       ) : (
         <>
-          <video
+          <motion.video
             className="absolute inset-0 h-full w-full object-cover"
-            style={{ objectPosition: imagePosition }}
+            style={{
+              objectPosition: imagePosition,
+              ...(usesParallax ? { y: mediaY, scale: 1.16 } : undefined),
+            }}
             src={src}
             poster={poster}
             autoPlay

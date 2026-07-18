@@ -14,11 +14,13 @@ export function ImageBreak({
   quote,
   height = "70vh",
   imagePosition = "center",
+  overlayGradient = BREAK_OVERLAY_GRADIENT,
 }: {
   image: string;
   quote?: string;
   height?: string;
   imagePosition?: string;
+  overlayGradient?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -27,7 +29,7 @@ export function ImageBreak({
       <motion.div
         className="absolute inset-0"
         style={{
-          backgroundImage: `${BREAK_OVERLAY_GRADIENT}, url(${image})`,
+          backgroundImage: `${overlayGradient}, url(${image})`,
           backgroundSize: "cover",
           backgroundPosition: imagePosition,
         }}
