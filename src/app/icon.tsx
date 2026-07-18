@@ -4,10 +4,10 @@ export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
 const dots = [
-  { color: "#A65F46", top: "2px", left: "12px" }, // earth
-  { color: "#31485A", top: "10px", left: "22px" }, // water
-  { color: "#C9953D", top: "22px", left: "18px" }, // fire
-  { color: "#79816D", top: "22px", left: "6px" }, // air
+  { color: "#B85A34", top: "2px", left: "12px" }, // earth
+  { color: "#24394D", top: "10px", left: "22px" }, // water
+  { color: "#C28A28", top: "22px", left: "18px" }, // fire
+  { color: "#5C6B4A", top: "22px", left: "6px" }, // air
   { color: "#27221E", top: "10px", left: "2px" }, // space
 ];
 

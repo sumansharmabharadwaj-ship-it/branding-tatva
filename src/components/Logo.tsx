@@ -10,10 +10,10 @@ import { site } from "@/data/site";
 
 export function LogoMark({ size = 32, className }: { size?: number; className?: string }) {
   const petals = [
-    { color: "#A65F46", rotate: 0 }, // earth — clay
-    { color: "#31485A", rotate: 72 }, // water — indigo
-    { color: "#C9953D", rotate: 144 }, // fire — ochre
-    { color: "#79816D", rotate: 216 }, // air — sage
+    { color: "#B85A34", rotate: 0 }, // earth — clay
+    { color: "#24394D", rotate: 72 }, // water — indigo
+    { color: "#C28A28", rotate: 144 }, // fire — ochre
+    { color: "#5C6B4A", rotate: 216 }, // air — sage
     { color: "#27221E", rotate: 288 }, // space — soil
   ];
   return (

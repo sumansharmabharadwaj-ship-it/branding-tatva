@@ -23,7 +23,7 @@ const fragments: Fragment[] = [
   {
     id: "earth",
     element: "Earth",
-    color: "#A65F46", // clay
+    color: "#B85A34", // clay
     shape: "blob",
     from: { x: -180, y: 60, rotate: -25, scale: 0.7 },
     to: { x: -70, y: 40, rotate: 0, scale: 1 },
@@ -33,7 +33,7 @@ const fragments: Fragment[] = [
   {
     id: "water",
     element: "Water",
-    color: "#31485A", // indigo
+    color: "#24394D", // indigo
     shape: "arc",
     from: { x: 160, y: -90, rotate: 40, scale: 0.6 },
     to: { x: 75, y: -55, rotate: 12, scale: 1 },
@@ -43,7 +43,7 @@ const fragments: Fragment[] = [
   {
     id: "fire",
     element: "Fire",
-    color: "#C9953D", // ochre
+    color: "#C28A28", // ochre
     shape: "ring",
     from: { x: 140, y: 110, rotate: 15, scale: 0.5 },
     to: { x: 55, y: 65, rotate: 0, scale: 1 },
@@ -53,7 +53,7 @@ const fragments: Fragment[] = [
   {
     id: "air",
     element: "Air",
-    color: "#79816D", // sage
+    color: "#5C6B4A", // sage
     shape: "line",
     from: { x: -140, y: -100, rotate: -60, scale: 0.8 },
     to: { x: -60, y: -70, rotate: -15, scale: 1 },

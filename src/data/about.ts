@@ -6,28 +6,28 @@ export const credentials = [
   {
     label: "M.A. Clinical Psychology",
     detail: "Amity University, 2023",
-    color: "#A65F46", // clay
+    color: "#B85A34", // clay
   },
   {
     label: "B.A. (Hons) English Literature",
     detail: "University of Delhi, 2021",
-    color: "#31485A", // indigo
+    color: "#24394D", // indigo
   },
   {
     label: "Clinical/Counselling Psychology Internship",
     detail: "Psy-मन: 60 hours of psychological assessment, psychotherapeutic and counselling procedures (2022)",
-    color: "#79816D", // sage
+    color: "#5C6B4A", // sage
   },
   {
     label: "Clinical Internship",
     detail:
       "Wisdom Matters Neuropsychiatry & Wellness Centre: 30 hours of case study collection and patient sessions (2021)",
-    color: "#C9953D", // ochre
+    color: "#C28A28", // ochre
   },
   {
     label: "National Winner, \"16 Frames\" Filmmaking Competition",
     detail: "Thomso'19, IIT Roorkee (2019)",
-    color: "#C58267", // terracotta
+    color: "#CD7A4C", // terracotta
   },
 ] as const;
 

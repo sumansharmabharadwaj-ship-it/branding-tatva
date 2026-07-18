@@ -22,11 +22,11 @@ import { projects } from "@/data/projects";
 import { process } from "@/data/process";
 
 const elementColor: Record<string, string> = {
-  Earth: "#A65F46",
-  Water: "#31485A",
-  Fire: "#C9953D",
-  Air: "#79816D",
-  Space: "#B98278",
+  Earth: "#B85A34",
+  Water: "#24394D",
+  Fire: "#C28A28",
+  Air: "#5C6B4A",
+  Space: "#AD6F5C",
 };
 
 export default function Home() {
@@ -158,7 +158,7 @@ export default function Home() {
                     }`}
                   >
                     <span
-                      className="font-display text-[clamp(3rem,7vw,5.5rem)] font-semibold leading-none opacity-[0.14]"
+                      className="font-display text-[clamp(3rem,7vw,5.5rem)] font-semibold leading-none opacity-[0.22]"
                       style={{ color: el.color }}
                     >
                       {String(i + 1).padStart(2, "0")}

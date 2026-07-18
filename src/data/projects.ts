@@ -39,7 +39,7 @@ export const projects: Project[] = [
     reflection:
       "The clearest signal was impressions barely dropping (down just 10%) despite posting 48% less. The platform was actively rewarding the more relevant content instead of just showing it to fewer people. That's the difference between reach and trust.",
     featured: true,
-    accent: "#79816D", // sage
+    accent: "#5C6B4A", // sage
     stats: [
       { value: "104%", label: "more followers earned per post" },
       { value: "1,350%", label: "jump in comments per post" },
@@ -67,7 +67,7 @@ export const projects: Project[] = [
     reflection:
       "The sharpest strategic call was refusing to let 'MyShopInEurope' default to meaning 'cheap Indian goods.' Repositioning around craft and origin, ahead of price, changes who the platform can credibly sell to.",
     featured: true,
-    accent: "#A65F46", // clay
+    accent: "#B85A34", // clay
   },
   {
     slug: "executive-springboard",
@@ -83,7 +83,7 @@ export const projects: Project[] = [
     outcome:
       "Delivered a structured content system, built platform by platform, specifically around driving webinar registrations rather than generic engagement metrics.",
     featured: true,
-    accent: "#31485A", // indigo
+    accent: "#24394D", // indigo
   },
   {
     slug: "herbalcart",
@@ -105,7 +105,7 @@ export const projects: Project[] = [
     reflection:
       "The work that landed best was the most native, rather than the most polished. Content that looked like a real person's Instagram, rather than an ad, consistently outperformed anything that read as produced.",
     featured: false,
-    accent: "#C9953D", // ochre
+    accent: "#C28A28", // ochre
   },
   {
     slug: "plaxonic-content-portfolio",
@@ -121,6 +121,6 @@ export const projects: Project[] = [
     outcome:
       "Produced a complete content portfolio of sixteen pieces spanning research, opinion, education, and fast consumption formats, structured around a deliberate arc: validate, challenge, humanise, define, rather than a loose content calendar.",
     featured: false,
-    accent: "#C58267", // terracotta
+    accent: "#CD7A4C", // terracotta
   },
 ];

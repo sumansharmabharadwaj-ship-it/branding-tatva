@@ -17,7 +17,7 @@ export const elements: Element[] = [
     name: "Earth · Foundation",
     poetic: "Where a brand stands before it speaks.",
     meaning: "Purpose, audience, and positioning: the research most brands skip.",
-    color: "#A65F46",
+    color: "#B85A34",
     services: [
       "Brand discovery",
       "Audience definition",
@@ -32,7 +32,7 @@ export const elements: Element[] = [
     name: "Water · Experience",
     poetic: "How a brand moves through someone's day.",
     meaning: "Customer journey, touchpoints, and adaptability across platforms.",
-    color: "#31485A",
+    color: "#24394D",
     services: [
       "Customer journey mapping",
       "Touchpoint planning",
@@ -46,7 +46,7 @@ export const elements: Element[] = [
     name: "Fire · Expression",
     poetic: "What makes people look twice.",
     meaning: "Creative direction, campaigns, and the visibility that earns attention.",
-    color: "#C9953D",
+    color: "#C28A28",
     services: [
       "Creative direction",
       "Campaign concepts",
@@ -60,7 +60,7 @@ export const elements: Element[] = [
     name: "Air · Voice",
     poetic: "The language a brand is remembered by.",
     meaning: "Messaging, narrative, and content: the words themselves.",
-    color: "#79816D",
+    color: "#5C6B4A",
     services: [
       "Brand voice",
       "Messaging",

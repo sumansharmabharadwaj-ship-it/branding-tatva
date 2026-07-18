@@ -21,32 +21,32 @@ export const offerings: Offering[] = [
   {
     name: "Brand Strategy & Identity",
     detail: "Positioning, naming direction, and the visual system that carries it.",
-    color: "#A65F46", // clay
+    color: "#B85A34", // clay
   },
   {
     name: "Content Strategy",
     detail: "A plan for what gets said, where, and in what order, before a single post goes out.",
-    color: "#31485A", // indigo
+    color: "#24394D", // indigo
   },
   {
     name: "Social Media Marketing",
     detail: "Ongoing management, growth, and campaign execution across the platforms that matter to your audience.",
-    color: "#79816D", // sage
+    color: "#5C6B4A", // sage
   },
   {
     name: "Website Development",
     detail: "A site built to carry the brand consistently, beyond just a template with your logo dropped in.",
-    color: "#C9953D", // ochre
+    color: "#C28A28", // ochre
   },
   {
     name: "Content Creation",
     detail: "Writing, scripts, and copy built in your actual voice, ahead of a generic template tone.",
-    color: "#B98278", // rose-earth
+    color: "#AD6F5C", // rose-earth
   },
   {
     name: "Marketing Strategy",
     detail: "The plan connecting content and campaigns to a real business outcome, beyond just activity.",
-    color: "#C58267", // terracotta
+    color: "#CD7A4C", // terracotta
   },
 ];
 

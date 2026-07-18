@@ -10,17 +10,21 @@ const config: Config = {
     extend: {
       colors: {
         // Base palette (from BRAND_STRATEGY / PROJECT_PLAN)
+        // Deepened/richer versions of the original earthy accents — same
+        // hues, pushed more saturated so they read as bolder rather than
+        // washed out, especially at the low opacities used for tints and
+        // watermark numerals throughout the site.
         ivory: "#F4EFE6",
         parchment: "#E8DED0",
         soil: "#27221E",
-        clay: "#A65F46",
-        terracotta: "#C58267",
-        sage: "#79816D",
-        ochre: "#C9953D",
-        indigo: "#31485A",
+        clay: "#B85A34",
+        terracotta: "#CD7A4C",
+        sage: "#5C6B4A",
+        ochre: "#C28A28",
+        indigo: "#24394D",
         sandstone: "#D4B99A",
         "warm-white": "#FCFAF6",
-        "rose-earth": "#B98278",
+        "rose-earth": "#AD6F5C",
 
         // Semantic tokens — components should reference these, not raw colors
         background: {
@@ -33,18 +37,18 @@ const config: Config = {
           secondary: "#5A5148", // muted soil (secondary text)
         },
         action: {
-          primary: "#A65F46", // clay
-          "primary-hover": "#8F4E38",
-          secondary: "#31485A", // indigo
-          "secondary-hover": "#26394699",
+          primary: "#B85A34", // clay
+          "primary-hover": "#9C4A29",
+          secondary: "#24394D", // indigo
+          "secondary-hover": "#1B2B3899",
         },
         border: {
           DEFAULT: "#D9CDBC",
         },
         state: {
-          focus: "#C9953D", // ochre
-          success: "#79816D", // sage
-          warning: "#C9953D", // ochre
+          focus: "#C28A28", // ochre
+          success: "#5C6B4A", // sage
+          warning: "#C28A28", // ochre
           error: "#B4432E",
         },
       },
