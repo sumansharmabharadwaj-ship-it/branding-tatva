@@ -12,6 +12,7 @@ export type Project = {
   reflection?: string;
   featured: boolean;
   accent: string; // card accent color, varies per project so the grid isn't monotone
+  stats?: { value: string; label: string }[]; // real, verified numbers only — pulled from `outcome` for visual callouts
 };
 
 // Client names cleared for public use by Suman. Every field below is
@@ -39,6 +40,12 @@ export const projects: Project[] = [
       "The clearest signal was impressions barely dropping (down just 10%) despite posting 48% less. The platform was actively rewarding the more relevant content instead of just showing it to fewer people. That's the difference between reach and trust.",
     featured: true,
     accent: "#79816D", // sage
+    stats: [
+      { value: "104%", label: "more followers earned per post" },
+      { value: "1,350%", label: "jump in comments per post" },
+      { value: "365%", label: "rise in LinkedIn impressions" },
+      { value: "2.81%", label: "engagement rate, up from 0.71%" },
+    ],
   },
   {
     slug: "myshopineurope",

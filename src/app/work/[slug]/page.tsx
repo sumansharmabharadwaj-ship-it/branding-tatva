@@ -58,6 +58,25 @@ export default async function CaseStudyPage({ params }: Props) {
           </Container>
         </TexturedDark>
 
+        {project.stats && (
+          <section className="border-b border-border bg-clay/5 py-14">
+            <Container>
+              <Reveal>
+                <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+                  {project.stats.map((stat) => (
+                    <div key={stat.label} className="text-center sm:text-left">
+                      <p className="font-display text-4xl font-semibold text-clay sm:text-5xl">
+                        {stat.value}
+                      </p>
+                      <p className="mt-2 text-sm text-foreground-secondary">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </Reveal>
+            </Container>
+          </section>
+        )}
+
         <section className="border-t border-border bg-background-alt py-16">
           <Container className="grid gap-12 md:grid-cols-3">
             <Reveal className="md:col-span-2 space-y-10">
