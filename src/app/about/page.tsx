@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
-import { ImagePlaceholder } from "@/components/ImagePlaceholder";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { aboutIntro, credentials, experience } from "@/data/about";
@@ -20,7 +20,7 @@ export default function AboutPage() {
     <>
       <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/green-stream.jpg" minHeight="70vh">
+        <PhotoHero image="/images/own-companions.jpg" minHeight="70vh">
           <Container className="relative py-20">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
@@ -44,10 +44,12 @@ export default function AboutPage() {
         <section className="border-t border-border bg-background-alt py-20">
           <Container className="grid gap-12 md:grid-cols-[auto_1fr]">
             <Reveal>
-              <ImagePlaceholder
-                label="Portrait, pending upload"
-                aspect="aspect-square"
-                className="w-40 rounded-full sm:w-48"
+              <Image
+                src="/images/own-portrait.jpg"
+                alt="Suman Sharma"
+                width={480}
+                height={480}
+                className="aspect-square w-40 rounded-full object-cover sm:w-48"
               />
             </Reveal>
             <div className="grid gap-12 sm:grid-cols-2">

@@ -32,7 +32,7 @@ export default function Home() {
       <Header transparent />
       <main id="main-content">
         <CinematicHero
-          image="/images/green-canopy.jpg"
+          image="/images/own-canopy.jpg"
           eyebrow="Brand strategy for founders & existing businesses"
           headline={site.heroHeadline}
         >
@@ -159,7 +159,7 @@ export default function Home() {
           </div>
         </section>
 
-        <ImageBreak image="/images/green-fjord.jpg" height="55vh" />
+        <ImageBreak image="/images/own-peaks.jpg" height="55vh" />
 
         {/* Two brand pathways — a real diptych, not two bordered text blocks */}
         <section>
@@ -172,7 +172,7 @@ export default function Home() {
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/green-valley.jpg)",
+                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/own-ridge-road.jpg)",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
@@ -203,7 +203,7 @@ export default function Home() {
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/green-stream.jpg)",
+                    "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%), url(/images/own-pond.jpg)",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
@@ -293,6 +293,12 @@ export default function Home() {
           </Container>
         </section>
 
+        <ImageBreak
+          image="/images/own-cabin.jpg"
+          quote="Every brand needs somewhere to stand before it can move."
+          height="50vh"
+        />
+
         {/* Process */}
         <section className="border-t border-border bg-terracotta/10 py-20">
           <Container>
@@ -333,7 +339,7 @@ export default function Home() {
         </section>
 
         {/* Final CTA — a widening threshold, marked with the lattice motif */}
-        <TexturedDark className="py-24" image="/images/green-canopy.jpg">
+        <TexturedDark className="py-24" image="/images/own-dusk-ridge.jpg">
           <IndianPattern className="absolute inset-0" opacity={0.08} color="#F4EFE6" />
           <Reveal>
             <Container className="relative text-center">
