@@ -33,33 +33,26 @@ export default function Home() {
     <>
       <Header transparent />
       <main id="main-content">
-        <CinematicHero image="/images/own-canopy.jpg" />
-
-        {/* Quiet statement block, directly after the photo rather than on
-            top of it: eyebrow, headline, tagline, and the two entry points,
-            given room to breathe on plain ground instead of competing with
-            the image for contrast. */}
-        <section className="pb-20 pt-20 sm:pb-28 sm:pt-28">
-          <Container>
-            <Reveal>
-              <p className="font-body text-xs font-medium uppercase tracking-[0.35em] text-action-secondary">
-                Brand strategy for founders &amp; existing businesses
-              </p>
-              <h1 className="mt-6 max-w-3xl font-display text-[clamp(2.25rem,5.5vw,4.5rem)] font-semibold leading-[1.05] text-soil">
-                Most brands are visible.
-                <br />
-                Very few are <span className="italic text-clay">remembered</span>.
-              </h1>
-              <p className="mt-6 max-w-md text-base text-foreground-secondary">{site.tagline}</p>
-              <div className="mt-9 flex flex-wrap gap-4">
-                <LinkButton href="/contact">Start a brand conversation</LinkButton>
-                <LinkButton href="/work" variant="secondary">
-                  Explore the work
-                </LinkButton>
-              </div>
-            </Reveal>
-          </Container>
-        </section>
+        <CinematicHero
+          image="/images/own-canopy.jpg"
+          badge="Brand strategy for founders & existing businesses"
+          headline={
+            <>
+              Most brands are visible. Very few are{" "}
+              <span className="italic text-clay">remembered</span>.
+            </>
+          }
+          subhead={site.tagline}
+        >
+          <LinkButton href="/contact">Start a brand conversation</LinkButton>
+          <LinkButton
+            href="/work"
+            variant="secondary"
+            className="border-ivory/30 text-ivory hover:bg-ivory/10"
+          >
+            Explore the work
+          </LinkButton>
+        </CinematicHero>
 
         {/* Two-part editorial statement — the problem, then the philosophy,
             as one long unbroken chapter rather than two boxed sections. */}
