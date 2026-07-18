@@ -9,6 +9,7 @@ import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
 import { ElementsRail } from "@/components/ElementsRail";
 import { KineticMarquee } from "@/components/KineticMarquee";
+import { GradientSections } from "@/components/GradientSections";
 import { TexturedDark } from "@/components/TexturedDark";
 import { CinematicHero } from "@/components/CinematicHero";
 import { ImageBreak } from "@/components/ImageBreak";
@@ -245,67 +246,69 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Featured work — one large photographic entry, two quiet
-            editorial ones, not three identical cards */}
-        <section className="py-20 sm:py-28">
-          <Container>
-            <Reveal>
-              <div className="flex items-baseline justify-between">
-                <h2 className="text-display-sm font-display font-semibold text-soil">Selected work</h2>
-                <LinkButton href="/work" variant="secondary">View all work</LinkButton>
+        <GradientSections colors={["#F4EFE6", "#EEE4DB"]}>
+          {/* Featured work — one large photographic entry, two quiet
+              editorial ones, not three identical cards */}
+          <section className="py-20 sm:py-28">
+            <Container>
+              <Reveal>
+                <div className="flex items-baseline justify-between">
+                  <h2 className="text-display-sm font-display font-semibold text-soil">Selected work</h2>
+                  <LinkButton href="/work" variant="secondary">View all work</LinkButton>
+                </div>
+              </Reveal>
+            </Container>
+
+            {featured[0] && (
+              <Reveal delay={0.1} className="mt-10">
+                <FeaturedWorkHero
+                  href={`/work/${featured[0].slug}`}
+                  image="/images/green-dew-macro.jpg"
+                  industry={featured[0].industry}
+                  title={featured[0].title}
+                  outcome={featured[0].outcome}
+                />
+              </Reveal>
+            )}
+
+            <Container>
+              <div className="mt-10 grid gap-10 sm:grid-cols-2">
+                {featured.slice(1).map((project, i) => (
+                  <Reveal key={project.slug} delay={i * 0.1}>
+                    <a href={`/work/${project.slug}`} className="group block border-t-2 pt-6" style={{ borderColor: project.accent }}>
+                      <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+                        {project.industry}
+                      </p>
+                      <p className="mt-2 font-display text-2xl font-semibold text-soil transition-colors group-hover:text-clay">
+                        {project.title}
+                      </p>
+                      <p className="mt-3 text-sm text-foreground-secondary">{project.outcome}</p>
+                    </a>
+                  </Reveal>
+                ))}
               </div>
-            </Reveal>
-          </Container>
+            </Container>
+          </section>
 
-          {featured[0] && (
-            <Reveal delay={0.1} className="mt-10">
-              <FeaturedWorkHero
-                href={`/work/${featured[0].slug}`}
-                image="/images/green-dew-macro.jpg"
-                industry={featured[0].industry}
-                title={featured[0].title}
-                outcome={featured[0].outcome}
-              />
-            </Reveal>
-          )}
-
-          <Container>
-            <div className="mt-10 grid gap-10 sm:grid-cols-2">
-              {featured.slice(1).map((project, i) => (
-                <Reveal key={project.slug} delay={i * 0.1}>
-                  <a href={`/work/${project.slug}`} className="group block border-t-2 pt-6" style={{ borderColor: project.accent }}>
-                    <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
-                      {project.industry}
-                    </p>
-                    <p className="mt-2 font-display text-2xl font-semibold text-soil transition-colors group-hover:text-clay">
-                      {project.title}
-                    </p>
-                    <p className="mt-3 text-sm text-foreground-secondary">{project.outcome}</p>
-                  </a>
-                </Reveal>
-              ))}
-            </div>
-          </Container>
-        </section>
-
-        {/* Testimonials */}
-        <section className="bg-rose-earth/10 py-20">
-          <Container>
-            <Reveal>
-              <h2 className="text-display-sm font-display font-semibold text-soil">
-                What clients say
-              </h2>
-              <p className="mt-3 max-w-xl text-sm text-foreground-secondary">
-                Real quotes are being collected from recent projects. This
-                section fills in as they come in, rather than being filled
-                with anything invented in the meantime.
-              </p>
-              <div className="mt-8">
-                <Testimonials />
-              </div>
-            </Reveal>
-          </Container>
-        </section>
+          {/* Testimonials */}
+          <section className="py-20">
+            <Container>
+              <Reveal>
+                <h2 className="text-display-sm font-display font-semibold text-soil">
+                  What clients say
+                </h2>
+                <p className="mt-3 max-w-xl text-sm text-foreground-secondary">
+                  Real quotes are being collected from recent projects. This
+                  section fills in as they come in, rather than being filled
+                  with anything invented in the meantime.
+                </p>
+                <div className="mt-8">
+                  <Testimonials />
+                </div>
+              </Reveal>
+            </Container>
+          </section>
+        </GradientSections>
 
         <ImageBreak
           image="/images/own-cabin.jpg"
@@ -313,44 +316,46 @@ export default function Home() {
           height="50vh"
         />
 
-        {/* Process */}
-        <section className="border-t border-border bg-terracotta/10 py-20">
-          <Container>
-            <Reveal>
-              <h2 className="text-display-sm font-display font-semibold text-soil">How a project moves</h2>
-            </Reveal>
-            <ol className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {process.map((stage, i) => (
-                <li key={stage.stage} className="relative pl-10">
-                  <Reveal delay={(i % 3) * 0.1}>
-                    <span
-                      className="absolute left-0 top-0 font-display text-2xl font-semibold"
-                      style={{ color: elementColor[stage.element] }}
-                    >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <p className="font-display text-lg font-semibold text-soil">{stage.stage}</p>
-                    <p className="mt-2 text-sm text-foreground-secondary">{stage.description}</p>
-                  </Reveal>
-                </li>
-              ))}
-            </ol>
-          </Container>
-        </section>
+        <GradientSections colors={["#EFE4D9", "#F1EADE"]}>
+          {/* Process */}
+          <section className="py-20">
+            <Container>
+              <Reveal>
+                <h2 className="text-display-sm font-display font-semibold text-soil">How a project moves</h2>
+              </Reveal>
+              <ol className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {process.map((stage, i) => (
+                  <li key={stage.stage} className="relative pl-10">
+                    <Reveal delay={(i % 3) * 0.1}>
+                      <span
+                        className="absolute left-0 top-0 font-display text-2xl font-semibold"
+                        style={{ color: elementColor[stage.element] }}
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <p className="font-display text-lg font-semibold text-soil">{stage.stage}</p>
+                      <p className="mt-2 text-sm text-foreground-secondary">{stage.description}</p>
+                    </Reveal>
+                  </li>
+                ))}
+              </ol>
+            </Container>
+          </section>
 
-        {/* FAQ */}
-        <section className="border-t border-border bg-sandstone/10 py-20">
-          <Container className="max-w-2xl">
-            <Reveal>
-              <h2 className="text-display-sm font-display font-semibold text-soil">
-                Common questions
-              </h2>
+          {/* FAQ */}
+          <section className="py-20">
+            <Container className="max-w-2xl">
+              <Reveal>
+                <h2 className="text-display-sm font-display font-semibold text-soil">
+                  Common questions
+                </h2>
               <div className="mt-8">
                 <FAQ />
               </div>
             </Reveal>
           </Container>
-        </section>
+          </section>
+        </GradientSections>
 
         {/* Final CTA — a widening threshold, marked with the lattice motif */}
         <TexturedDark className="py-24" image="/images/own-dusk-ridge.jpg">

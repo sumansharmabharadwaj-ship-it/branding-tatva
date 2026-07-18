@@ -116,7 +116,7 @@ export const projects: Project[] = [
     strategy:
       "Built a portfolio of sixteen pieces across four distinct content types, each doing a different job: Research Papers to validate claims with evidence, Perspective Pieces to challenge assumptions leaders hadn't questioned yet, Blogs to make emerging technology feel relevant to daily life, and Articles for fast, high visibility consumption.",
     execution:
-      "Grounded the research pillar in a real proof of concept: an IoT edge integration case study with the Delhi Jal Board showing a measurable drop in chemical over dosing (15% to 20% down to under 3%), rather than relying on abstract claims. Paired that rigor with a deliberately provocative perspective piece ('The SaaSpocalypse Is Not a Headline. It's a Warning.') built around three direct questions every technology leader has to answer.",
+      "Grounded the research pillar in a real proof of concept: an IoT edge integration case study with the Delhi Jal Board showing a measurable drop in chemical over dosing (15% to 20% down to under 3%), rather than relying on abstract claims. Paired that rigor with a deliberately provocative perspective piece questioning the industry's SaaS hype cycle, built around three direct questions every technology leader has to answer.",
     services: ["Air · content strategy"],
     outcome:
       "Produced a complete content portfolio of sixteen pieces spanning research, opinion, education, and fast consumption formats, structured around a deliberate arc: validate, challenge, humanise, define, rather than a loose content calendar.",
