@@ -10,6 +10,8 @@ import { ElementsRail } from "@/components/ElementsRail";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { GradientSections } from "@/components/GradientSections";
 import { KenBurnsImage } from "@/components/KenBurnsImage";
+import { ElementGlyph } from "@/components/ElementGlyph";
+import { ElementsConstellation } from "@/components/ElementsConstellation";
 import { TexturedDark } from "@/components/TexturedDark";
 import { CinematicHero } from "@/components/CinematicHero";
 import { ImageBreak } from "@/components/ImageBreak";
@@ -125,10 +127,14 @@ export default function Home() {
 
         {/* Five elements — a slow vertical unfolding, not a grid of cards */}
         <section className="relative overflow-hidden border-t border-border py-28 sm:py-40">
-          <KenBurnsImage
-            image="/images/own-cabin.jpg"
-            gradient="linear-gradient(180deg, rgba(244,239,230,0.96) 0%, rgba(212,185,154,0.94) 100%)"
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, #F4EFE6 0%, #EFE4D9 100%)",
+            }}
           />
+          <ElementsConstellation />
           <Container className="relative">
             <Reveal>
               <h2 className="text-display-sm font-display font-semibold text-soil">
@@ -153,12 +159,19 @@ export default function Home() {
                       i % 2 === 1 ? "sm:text-right" : ""
                     }`}
                   >
-                    <span
-                      className="font-display text-[clamp(3rem,7vw,5.5rem)] font-semibold leading-none opacity-[0.22]"
-                      style={{ color: el.color }}
-                    >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
+                    <div className={`flex items-baseline gap-3 ${i % 2 === 1 ? "sm:flex-row-reverse" : ""}`}>
+                      <span
+                        className="font-display text-[clamp(3rem,7vw,5.5rem)] font-semibold leading-none opacity-[0.22]"
+                        style={{ color: el.color }}
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <ElementGlyph
+                        slug={el.slug}
+                        className="h-7 w-7 shrink-0 opacity-70 sm:h-9 sm:w-9"
+                        style={{ color: el.color }}
+                      />
+                    </div>
                     <p
                       className={`font-display text-2xl font-semibold text-soil sm:text-3xl ${
                         i % 2 === 1 ? "sm:order-3" : ""
@@ -306,7 +319,7 @@ export default function Home() {
         </GradientSections>
 
         <ImageBreak
-          image="/images/own-cabin.jpg"
+          image="/images/own-cabin-banner.jpg"
           quote="Every brand needs somewhere to stand before it can move."
           height="72vh"
         />

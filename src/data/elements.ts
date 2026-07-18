@@ -75,7 +75,7 @@ export const elements: Element[] = [
     name: "Space · Presence",
     poetic: "What's left once the noise settles.",
     meaning: "Consistency and recognition, built over months rather than one campaign.",
-    color: "#27221E",
+    color: "#AD6F5C",
     services: [
       "Ongoing content management",
       "Consistency frameworks",
