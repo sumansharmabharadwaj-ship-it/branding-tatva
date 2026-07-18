@@ -62,7 +62,7 @@ export default function ContactPage() {
           src="/videos/own-leaves-cabin.mp4"
           poster="/images/own-leaves-cabin-poster.jpg"
           quote="A brand conversation is just the first clear view through the noise."
-          height="60vh"
+          height="72vh"
         />
 
         <section className="border-t border-border bg-sage/10 py-16">

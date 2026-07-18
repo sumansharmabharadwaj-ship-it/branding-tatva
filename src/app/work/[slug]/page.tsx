@@ -49,7 +49,7 @@ export default async function CaseStudyPage({ params }: Props) {
         <PhotoHero
           video="/videos/hero-valley.mp4"
           poster="/images/hero-valley-poster.jpg"
-          minHeight="65vh"
+          minHeight="72vh"
         >
           <Container className="relative py-20 text-center">
             <Reveal>
@@ -126,7 +126,7 @@ export default async function CaseStudyPage({ params }: Props) {
             project.closingQuote ??
             "Good strategy doesn't force a path. It finds the one already there, the way water finds a way through stone."
           }
-          height="60vh"
+          height="72vh"
         />
 
         {related && (

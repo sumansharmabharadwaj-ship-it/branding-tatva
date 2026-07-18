@@ -53,7 +53,7 @@ export default function AboutPage() {
           src="/videos/cinematic-ridge.mp4"
           poster="/images/cinematic-ridge-poster.jpg"
           quote="The fog lifts the same way clarity does: slowly, then all at once."
-          height="72vh"
+          height="85vh"
           quoteVariant="left"
         />
 

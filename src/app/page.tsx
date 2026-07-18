@@ -92,7 +92,7 @@ export default function Home() {
               src="/videos/cinematic-pines.mp4"
               poster="/images/cinematic-pines-poster.jpg"
               quote="Attention is the first thing any brand has to earn."
-              height="72vh"
+              height="85vh"
             />
           </div>
 
@@ -379,8 +379,8 @@ export default function Home() {
           src="/videos/own-moonlit-sea.mp4"
           poster="/images/own-moonlit-sea-poster.jpg"
           quote="Some things only become visible once everything else goes quiet."
-          height="min(1100px, 145vh)"
-          imagePosition="50% 2%"
+          height="min(1500px, 185vh)"
+          imagePosition="50% 12%"
           quoteVariant="statement"
           overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0.3) 30%, rgba(20,17,14,0.3) 58%, rgba(20,17,14,0.9) 100%)"
         >
