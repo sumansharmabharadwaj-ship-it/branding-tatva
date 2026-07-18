@@ -45,18 +45,20 @@ export default async function CaseStudyPage({ params }: Props) {
     <>
       <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/green-valley.jpg" minHeight="55vh">
-          <Container className="relative py-20">
+        <PhotoHero image="/images/green-valley.jpg" minHeight="55vh" />
+
+        <section className="pb-14 pt-20 sm:pt-28">
+          <Container>
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
+              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
                 {project.industry}
               </p>
-              <h1 className="mt-3 max-w-2xl text-display-lg font-display font-semibold text-ivory">
+              <h1 className="mt-3 max-w-2xl text-display-lg font-display font-semibold text-soil">
                 {project.title}
               </h1>
             </Reveal>
           </Container>
-        </PhotoHero>
+        </section>
 
         {project.stats && (
           <section className="border-b border-border bg-clay/5 py-14">

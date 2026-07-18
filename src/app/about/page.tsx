@@ -20,16 +20,18 @@ export default function AboutPage() {
     <>
       <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/own-companions.jpg" minHeight="70vh">
-          <Container className="relative py-20">
+        <PhotoHero image="/images/own-companions.jpg" minHeight="70vh" />
+
+        <section className="pb-20 pt-20 sm:pb-28 sm:pt-28">
+          <Container>
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
+              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
                 About
               </p>
-              <h1 className="mt-3 max-w-2xl text-display-lg font-display font-semibold text-ivory">
+              <h1 className="mt-3 max-w-2xl text-display-lg font-display font-semibold text-soil">
                 {aboutIntro.opening}
               </h1>
-              <div className="mt-8 max-w-xl space-y-5 text-ivory/70">
+              <div className="mt-8 max-w-xl space-y-5 text-foreground-secondary">
                 {aboutIntro.body.map((para, i) => (
                   <p key={i}>{para}</p>
                 ))}
@@ -39,7 +41,7 @@ export default function AboutPage() {
               </div>
             </Reveal>
           </Container>
-        </PhotoHero>
+        </section>
 
         <section className="border-t border-border bg-background-alt py-20">
           <Container className="grid gap-12 md:grid-cols-[auto_1fr]">

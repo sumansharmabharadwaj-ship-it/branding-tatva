@@ -10,7 +10,7 @@ export function PhotoHero({
   minHeight = "60vh",
   className,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   image: string;
   minHeight?: string;
   className?: string;
