@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 function Block({ id, title, children }: { id?: string; title: string; children?: string }) {
   if (!children) return null;
   return (
-    <div id={id} className={id ? "scroll-mt-24" : undefined}>
+    <div id={id} className={`case-study-block relative pl-14 sm:pl-16 ${id ? "scroll-mt-24" : ""}`}>
       <h2 className="font-display text-xl font-semibold text-soil">{title}</h2>
       <p className="mt-3 text-foreground-secondary">{children}</p>
     </div>
@@ -93,7 +93,7 @@ export default async function CaseStudyPage({ params }: Props) {
 
         <section className="border-t border-border bg-background-alt py-16">
           <Container className="grid gap-12 md:grid-cols-3">
-            <Reveal className="md:col-span-2 space-y-10">
+            <Reveal className="case-study-blocks md:col-span-2 space-y-10">
               <Block id="challenge" title="The challenge">{project.challenge}</Block>
               {project.audience && <Block title="Audience">{project.audience}</Block>}
               {project.insight && <Block id="insight" title="The insight">{project.insight}</Block>}
