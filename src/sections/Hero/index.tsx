@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import type { CinematicHeroProps } from "./types";
 import { HERO_SCRIM_GRADIENT } from "./constants";
-import { useHeroParallax } from "./animations";
+import { useHeroParallax, useHeroMouseParallax, useHeroSpotlight } from "./animations";
 
 // Purely decorative ambient texture — contributes nothing to LCP or
 // first paint, so it's code-split out of the hero's own bundle rather
@@ -37,6 +37,8 @@ export function CinematicHero({
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const { imageY, contentOpacity, contentY } = useHeroParallax(ref);
+  const mouseParallax = useHeroMouseParallax(ref, Boolean(prefersReducedMotion));
+  const spotlightRef = useHeroSpotlight(ref, Boolean(prefersReducedMotion));
 
   return (
     <section ref={ref} className="relative h-svh min-h-[620px] overflow-hidden bg-soil">
@@ -52,17 +54,22 @@ export function CinematicHero({
           className="absolute inset-0 top-[-10%] h-[120%] w-full"
           style={{ y: imageY }}
         >
-          <video
-            className="h-full w-full object-cover"
-            style={{ objectPosition: imagePosition }}
-            src={video}
-            poster={poster}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-          />
+          <motion.div
+            className="absolute inset-0"
+            style={prefersReducedMotion ? undefined : { x: mouseParallax.x, y: mouseParallax.y }}
+          >
+            <video
+              className="h-full w-full object-cover"
+              style={{ objectPosition: imagePosition }}
+              src={video}
+              poster={poster}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          </motion.div>
           <div className="absolute inset-0" style={{ backgroundImage: HERO_SCRIM_GRADIENT }} />
         </motion.div>
       ) : (
@@ -70,16 +77,34 @@ export function CinematicHero({
           className="absolute inset-0 top-[-10%] h-[120%] w-full"
           style={{ y: prefersReducedMotion ? 0 : imageY }}
         >
-          <Image
-            src={poster ?? image ?? ""}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            style={{ objectFit: "cover", objectPosition: imagePosition }}
-          />
+          <motion.div
+            className="absolute inset-0"
+            style={prefersReducedMotion ? undefined : { x: mouseParallax.x, y: mouseParallax.y }}
+          >
+            <Image
+              src={poster ?? image ?? ""}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              style={{ objectFit: "cover", objectPosition: imagePosition }}
+            />
+          </motion.div>
           <div className="absolute inset-0" style={{ backgroundImage: HERO_SCRIM_GRADIENT }} />
         </motion.div>
+      )}
+
+      {/* Cursor spotlight — a soft light following the pointer, purely
+          additive atmosphere. Position is written directly to this
+          element's own CSS custom properties (see useHeroSpotlight),
+          not through React state, so mouse movement never triggers a
+          re-render; only this one composited layer ever repaints. */}
+      {!prefersReducedMotion && (
+        <div
+          ref={spotlightRef}
+          aria-hidden="true"
+          className="hero-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500"
+        />
       )}
 
       <DustMotes />

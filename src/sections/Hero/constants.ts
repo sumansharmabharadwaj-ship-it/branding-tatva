@@ -13,3 +13,9 @@ export const HERO_CONTENT_Y_RANGE: [string, string] = ["0%", "10%"];
 // Content fades out over just the first 60% of the scroll-out, so it's
 // fully gone before the next section arrives rather than lingering.
 export const HERO_CONTENT_FADE_PROGRESS: [number, number] = [0, 0.6];
+
+// Mouse-parallax depth layer — deliberately subtle (a handful of
+// pixels, not a dramatic tilt) so it reads as "this scene has depth"
+// rather than as an obvious gimmick competing with the scroll parallax.
+export const MOUSE_PARALLAX_RANGE_PX = 18;
+export const MOUSE_PARALLAX_SPRING = { stiffness: 40, damping: 20, mass: 0.5 };

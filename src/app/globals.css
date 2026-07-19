@@ -328,6 +328,20 @@
   transform: scaleX(1);
 }
 
+/* Cursor spotlight for the Home hero — see useHeroSpotlight in
+   sections/Hero/animations.ts, which writes --spotlight-x/y directly
+   to this element's style on pointer move (bypassing React) and toggles
+   its own opacity, so the CSS here only has to read the two variables. */
+.hero-spotlight {
+  z-index: 1;
+  background: radial-gradient(
+    circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+    rgba(255, 244, 220, 0.1) 0%,
+    rgba(255, 244, 220, 0.04) 25%,
+    transparent 55%
+  );
+}
+
 /* Aurora glow — two large, blurred color blobs drifting slowly behind a
    dark section, so it reads as depth rather than a flat fill. Already
    covered by the sitewide prefers-reduced-motion rule above (zeroes out
