@@ -90,7 +90,7 @@ export default function WorkPage() {
           quote="Every one of these projects started in a forest of noise, the same place yours is starting from."
           height="60vh"
           imagePosition="center 75%"
-          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.6) 35%, rgba(20,17,14,0.6) 65%, rgba(20,17,14,0.35) 90%, #E8DED0 100%)"
+          overlayGradient="linear-gradient(180deg, #E8DED0 0%, rgba(20,17,14,0.55) 15%, rgba(20,17,14,0.55) 65%, rgba(20,17,14,0.35) 90%, #E8DED0 100%)"
         />
       </main>
       <Footer />

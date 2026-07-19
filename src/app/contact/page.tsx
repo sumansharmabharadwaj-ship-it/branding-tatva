@@ -63,7 +63,7 @@ export default function ContactPage() {
           poster="/images/own-leaves-cabin-poster.jpg"
           quote="A brand conversation is just the first clear view through the noise."
           height="60vh"
-          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.6) 35%, rgba(20,17,14,0.6) 65%, rgba(20,17,14,0.3) 90%, #E5E2D6 100%)"
+          overlayGradient="linear-gradient(180deg, #F4EFE6 0%, rgba(20,17,14,0.55) 15%, rgba(20,17,14,0.55) 65%, rgba(20,17,14,0.3) 90%, #E5E2D6 100%)"
         />
 
         <section className="border-t border-border bg-sage/10 py-16">

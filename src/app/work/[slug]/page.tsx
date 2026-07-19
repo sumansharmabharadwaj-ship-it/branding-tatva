@@ -135,7 +135,7 @@ export default async function CaseStudyPage({ params }: Props) {
             "Good strategy doesn't force a path. It finds the one already there, the way water finds a way through stone."
           }
           height="72vh"
-          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.6) 35%, rgba(20,17,14,0.6) 65%, rgba(20,17,14,0.35) 90%, #F4EFE6 100%)"
+          overlayGradient="linear-gradient(180deg, #E8DED0 0%, rgba(20,17,14,0.55) 15%, rgba(20,17,14,0.55) 65%, rgba(20,17,14,0.35) 90%, #F4EFE6 100%)"
         />
 
         {related && (
