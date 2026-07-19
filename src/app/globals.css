@@ -219,3 +219,49 @@
 .link-underline:hover::after {
   transform: scaleX(1);
 }
+
+/* Aurora glow — two large, blurred color blobs drifting slowly behind a
+   dark section, so it reads as depth rather than a flat fill. Already
+   covered by the sitewide prefers-reduced-motion rule above (zeroes out
+   animation-duration), so no separate reduced-motion handling needed
+   here. */
+.aurora-glow {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  filter: blur(80px);
+  opacity: 0.35;
+}
+
+.aurora-glow::before,
+.aurora-glow::after {
+  content: "";
+  position: absolute;
+  width: 45%;
+  height: 60%;
+  border-radius: 50%;
+}
+
+.aurora-glow::before {
+  top: 5%;
+  left: 10%;
+  background: radial-gradient(circle, #C28A28 0%, transparent 70%);
+  animation: aurora-drift-a 26s ease-in-out infinite;
+}
+
+.aurora-glow::after {
+  bottom: 0%;
+  right: 5%;
+  background: radial-gradient(circle, #B85A34 0%, transparent 70%);
+  animation: aurora-drift-b 32s ease-in-out infinite;
+}
+
+@keyframes aurora-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(8%, 12%) scale(1.15); }
+}
+
+@keyframes aurora-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-10%, -8%) scale(1.1); }
+}

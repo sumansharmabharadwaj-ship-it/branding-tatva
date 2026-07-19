@@ -23,7 +23,8 @@ export function TexturedDark({
         backgroundPosition: "center",
       }}
     >
-      {children}
+      <div className="aurora-glow" aria-hidden="true" />
+      <div className="relative">{children}</div>
     </section>
   );
 }
