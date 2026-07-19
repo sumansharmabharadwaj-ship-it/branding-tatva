@@ -67,6 +67,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
+        <div className="paper-grain" aria-hidden="true" />
         {children}
         <SparkCursor />
         <PageLoadVeil />
