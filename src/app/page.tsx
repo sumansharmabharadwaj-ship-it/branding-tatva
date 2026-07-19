@@ -43,9 +43,9 @@ export default function Home() {
       <Header transparent />
       <main id="main-content">
         <CinematicHero
-          video="/videos/hero-forest-sanctuary.mp4"
-          poster="/images/hero-forest-sanctuary-poster.jpg"
-          imagePosition="30% 40%"
+          video="/videos/hero-goldendunes.mp4"
+          poster="/images/hero-goldendunes-poster.jpg"
+          imagePosition="center 55%"
           badge="Brand strategy for founders & existing businesses"
           headline={
             <>
@@ -92,8 +92,8 @@ export default function Home() {
 
           <div className="mt-20 sm:mt-28">
             <VideoBreak
-              src="/videos/cinematic-pines.mp4"
-              poster="/images/cinematic-pines-poster.jpg"
+              src="/videos/cinematic-waterlight.mp4"
+              poster="/images/cinematic-waterlight-poster.jpg"
               quote="Attention is the first thing any brand has to earn."
               height="85vh"
             />
