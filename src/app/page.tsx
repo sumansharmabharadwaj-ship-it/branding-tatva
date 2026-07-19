@@ -3,7 +3,6 @@ import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { FAQ } from "@/components/FAQ";
-import { IndianPattern } from "@/components/IndianPattern";
 import { DustMotes } from "@/components/DustMotes";
 import { Reveal } from "@/components/Reveal";
 import { Testimonials } from "@/components/Testimonials";
@@ -424,7 +423,6 @@ export default function Home() {
         >
           <DustMotes />
           <div className="relative">
-            <IndianPattern className="absolute inset-0 -m-10" opacity={0.1} color="#F4EFE6" />
             <div className="relative">
               <h2
                 className="mx-auto max-w-xl text-display-md font-display font-semibold text-ivory"
