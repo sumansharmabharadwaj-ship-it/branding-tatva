@@ -47,10 +47,9 @@ export default function WorkPage() {
         </section>
 
         <ImageBreak
-          image="/images/own-canopy.jpg"
+          image="/images/higgsfield-canopy-light.jpg"
           quote="Every one of these projects started in a forest of noise, the same place yours is starting from."
           height="60vh"
-          imagePosition="center 75%"
         />
       </main>
       <Footer />
