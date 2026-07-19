@@ -9,6 +9,7 @@ import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { TexturedDark } from "@/components/TexturedDark";
+import { ClipReveal } from "@/components/ClipReveal";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { elements } from "@/data/elements";
@@ -174,20 +175,22 @@ export default function ServicesPage() {
           </Container>
         </section>
 
-        <TexturedDark className="py-24 text-center sm:pb-28">
-          <Container>
-            <h2 className="text-display-md font-display font-semibold text-ivory">
-              Still deciding which one fits?
-            </h2>
-            <p className="mx-auto mt-4 max-w-md text-ivory/70">
-              That&apos;s a completely normal place to start. Tell me where
-              your brand is right now and I&apos;ll tell you honestly what it needs.
-            </p>
-            <div className="mt-8">
-              <LinkButton href="/contact">Start a brand conversation</LinkButton>
-            </div>
-          </Container>
-        </TexturedDark>
+        <ClipReveal>
+          <TexturedDark className="py-24 text-center sm:pb-28">
+            <Container>
+              <h2 className="text-display-md font-display font-semibold text-ivory">
+                Still deciding which one fits?
+              </h2>
+              <p className="mx-auto mt-4 max-w-md text-ivory/70">
+                That&apos;s a completely normal place to start. Tell me where
+                your brand is right now and I&apos;ll tell you honestly what it needs.
+              </p>
+              <div className="mt-8">
+                <LinkButton href="/contact">Start a brand conversation</LinkButton>
+              </div>
+            </Container>
+          </TexturedDark>
+        </ClipReveal>
       </main>
       <Footer />
       <SectionJumpNav
