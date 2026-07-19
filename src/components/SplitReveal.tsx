@@ -1,12 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { SplitText } from "gsap/SplitText";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "framer-motion";
-
-gsap.registerPlugin(SplitText, ScrollTrigger);
+import { initSplitTextReveal } from "@/animations/splitTextReveal";
 
 // Splits a heading into individual words and staggers them in on scroll,
 // instead of the whole line fading up as one block. Reserved for the one
@@ -30,25 +26,7 @@ export function SplitReveal({
     const el = ref.current;
     if (!el || prefersReducedMotion) return;
 
-    const ctx = gsap.context(() => {
-      const split = new SplitText(el, { type: "words" });
-      gsap.set(split.words, { opacity: 0, y: "0.4em" });
-      gsap.to(split.words, {
-        opacity: 1,
-        y: 0,
-        duration: 0.7,
-        stagger: 0.045,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: el,
-          start: "top 85%",
-          once: true,
-        },
-      });
-
-      return () => split.revert();
-    }, el);
-
+    const ctx = initSplitTextReveal(el);
     return () => ctx.revert();
   }, [prefersReducedMotion]);
 
