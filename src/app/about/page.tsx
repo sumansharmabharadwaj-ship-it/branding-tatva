@@ -55,6 +55,7 @@ export default function AboutPage() {
           quote="The fog lifts the same way clarity does: slowly, then all at once."
           height="85vh"
           quoteVariant="left"
+          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.6) 35%, rgba(20,17,14,0.6) 65%, rgba(20,17,14,0.35) 90%, #E8DED0 100%)"
         />
 
         <section className="border-t border-border bg-background-alt py-20">
