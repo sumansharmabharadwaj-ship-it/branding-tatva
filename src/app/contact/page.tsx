@@ -18,7 +18,7 @@ export default function ContactPage() {
     <>
       <Header />
       <main id="main-content">
-        <section className="py-20 sm:py-28">
+        <section className="pb-20 pt-32 sm:pb-28 sm:pt-36">
           <Container className="grid gap-12 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
               <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">

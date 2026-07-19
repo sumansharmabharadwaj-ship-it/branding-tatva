@@ -4,10 +4,15 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { Container } from "./Container";
 import { Logo } from "./Logo";
 import { LinkButton } from "./Button";
 import { site, navigation } from "@/data/site";
+
+// A compact, floating pill instead of a full-width bar: the wordmark stays
+// the only permanent fixture (dead center, so it reads the same whether
+// the CTA or menu button is present), everything else — every nav link,
+// on every breakpoint — lives behind one hamburger toggle. Less chrome
+// competing with whatever hero sits underneath it.
 
 export function Header({ transparent = false }: { transparent?: boolean }) {
   const [open, setOpen] = useState(false);
@@ -24,90 +29,105 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, [transparent]);
 
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [transparent]);
+
   const isLight = transparent && !scrolled && !open;
 
   return (
-    <header
-      className={`${transparent ? "fixed" : "sticky"} top-0 z-40 w-full transition-colors duration-500 ${
-        isLight
-          ? "border-b border-transparent bg-transparent"
-          : "border-b border-border bg-background/90 backdrop-blur"
-      }`}
-    >
-      <Container className="flex h-20 items-center justify-between">
-        <Link href="/" aria-label={site.name}>
-          <Logo light={isLight} />
-        </Link>
-
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-8" aria-label="Primary">
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`group relative text-sm transition-colors ${
-                isLight ? "text-ivory/90 hover:text-ivory" : "text-foreground-secondary hover:text-soil"
-              }`}
-              style={isLight ? { textShadow: "0 1px 8px rgba(20,17,14,0.7)" } : undefined}
-            >
-              {item.label}
-              <span
-                aria-hidden="true"
-                className={`absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 transition-transform duration-300 ease-earth group-hover:scale-x-100 ${
-                  isLight ? "bg-ivory" : "bg-soil"
-                }`}
-              />
-            </Link>
-          ))}
-          <LinkButton href="/contact" className="px-4 py-2">
-            Start a project
-          </LinkButton>
-        </nav>
-
-        {/* Mobile toggle */}
-        <button
-          className={`md:hidden p-2 -mr-2 transition-colors duration-500 ${isLight ? "text-ivory" : "text-foreground"}`}
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
+    <>
+      <header className="fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5">
+        <div
+          className={`grid w-full max-w-3xl grid-cols-3 items-center rounded-full border px-3 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-4 ${
+            isLight
+              ? "border-ivory/25 bg-soil/25"
+              : "border-border bg-background-elevated/90 shadow-sm"
+          }`}
         >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
-      </Container>
+          <div className="flex justify-start">
+            <LinkButton
+              href="/contact"
+              className={`hidden px-4 py-2 text-xs sm:inline-flex ${
+                isLight ? "!bg-ivory !text-soil hover:!bg-ivory/90" : ""
+              }`}
+            >
+              Start a project
+            </LinkButton>
+          </div>
 
-      {/* Mobile nav */}
+          <Link href="/" aria-label={site.name} className="flex justify-center">
+            <Logo light={isLight} className="scale-[0.72] sm:scale-[0.78]" />
+          </Link>
+
+          <div className="flex justify-end">
+            <button
+              className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-500 ${
+                isLight ? "text-ivory" : "text-foreground"
+              }`}
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+            >
+              {open ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </div>
+      </header>
+
       <AnimatePresence>
         {open && (
-          <motion.nav
-            initial={prefersReducedMotion ? undefined : { opacity: 0, height: 0 }}
-            animate={prefersReducedMotion ? undefined : { opacity: 1, height: "auto" }}
-            exit={prefersReducedMotion ? undefined : { opacity: 0, height: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden overflow-hidden border-t border-border bg-background"
-            aria-label="Mobile"
-          >
-            <Container className="flex flex-col gap-1 py-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="rounded-md px-3 py-3 text-base text-foreground hover:bg-soil/5"
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <LinkButton
-                href="/contact"
-                onClick={() => setOpen(false)}
-                className="mt-2 w-full px-3 py-3"
+          <>
+            <motion.div
+              initial={prefersReducedMotion ? undefined : { opacity: 0 }}
+              animate={prefersReducedMotion ? undefined : { opacity: 1 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 z-30 bg-soil/40 backdrop-blur-sm"
+              onClick={() => setOpen(false)}
+              aria-hidden="true"
+            />
+            <div className="fixed inset-x-0 top-20 z-40 flex justify-center px-4 sm:top-24">
+              <motion.nav
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: -14, scale: 0.98 }}
+                animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -14, scale: 0.98 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="w-full max-w-sm rounded-2xl border border-border bg-background-elevated p-3 shadow-lg"
+                aria-label="Primary"
               >
-                Start a project
-              </LinkButton>
-            </Container>
-          </motion.nav>
+                <ul className="flex flex-col">
+                  {navigation.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={() => setOpen(false)}
+                        className="block rounded-xl px-4 py-3 text-center font-display text-xl text-soil transition-colors hover:bg-soil/5 hover:text-clay"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-2 border-t border-border pt-3 sm:hidden">
+                  <LinkButton href="/contact" onClick={() => setOpen(false)} className="w-full">
+                    Start a project
+                  </LinkButton>
+                </div>
+              </motion.nav>
+            </div>
+          </>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }

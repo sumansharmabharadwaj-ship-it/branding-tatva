@@ -88,12 +88,8 @@ export function CinematicHero({
         </h1>
         <p className="mt-4 max-w-md text-base text-ivory/70">{subhead}</p>
         {children && (
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">{children}</div>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-4">{children}</div>
         )}
-
-        <span className="mt-14 inline-flex items-center gap-2 rounded-full border border-ivory/20 px-4 py-1.5 text-[0.65rem] uppercase tracking-[0.3em] text-ivory/50">
-          Scroll
-        </span>
       </motion.div>
     </section>
   );
