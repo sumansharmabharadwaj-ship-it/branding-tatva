@@ -14,15 +14,14 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-background-alt">
+    <footer className="relative border-t border-border bg-background-alt">
       <div className="h-10 overflow-hidden border-b border-border/60" aria-hidden="true">
         <IndianPattern opacity={0.1} />
       </div>
-      <Container className="py-12">
+      <Container className="py-16 sm:py-20">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
-            <Logo />
-            <p className="mt-3 max-w-xs text-sm text-foreground-secondary">
+            <p className="max-w-xs text-sm text-foreground-secondary">
               {site.positioning}
             </p>
           </div>
@@ -70,14 +69,28 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col items-center gap-3 text-center">
-          <ElementGlyph slug="space" className="h-5 w-5 text-clay/70" strokeWidth={1.2} />
-          <p className="max-w-sm font-display text-lg italic text-foreground-secondary">
-            &ldquo;{site.tagline}&rdquo;
-          </p>
+        {/* Manifesto — the hero's own hook, echoed back as a closing
+            statement rather than a mid-page pitch, so the site's argument
+            resolves instead of just stopping. */}
+        <div className="relative mt-20 overflow-hidden py-6 text-center sm:mt-28">
+          <IndianPattern className="absolute inset-0" opacity={0.05} />
+          <div className="relative">
+            <ElementGlyph slug="space" className="mx-auto h-6 w-6 text-clay/70" strokeWidth={1.2} />
+            <h2 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(1.75rem,4vw,2.75rem)] font-semibold leading-[1.15] text-soil">
+              {site.heroHeadline}
+            </h2>
+            <p className="mx-auto mt-5 max-w-md font-display text-lg italic text-foreground-secondary">
+              &ldquo;{site.tagline}&rdquo;
+            </p>
+          </div>
         </div>
 
-        <div className="mt-8 flex flex-col-reverse gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+        {/* Large logo — the final signature, not a repeat of the header */}
+        <div className="mt-20 flex justify-center py-4 sm:mt-24">
+          <Logo className="scale-[1.9] sm:scale-[2.3]" />
+        </div>
+
+        <div className="mt-20 flex flex-col-reverse gap-4 border-t border-border pt-6 sm:mt-24 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-foreground-secondary">
             © {new Date().getFullYear()} {site.name}. All rights reserved.
           </p>
