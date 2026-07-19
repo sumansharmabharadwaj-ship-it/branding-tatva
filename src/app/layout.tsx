@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { SparkCursor } from "@/components/SparkCursor";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
+import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({
@@ -73,7 +74,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <div className="paper-grain" aria-hidden="true" />
-        {children}
+        <SmoothScrollProvider>{children}</SmoothScrollProvider>
         <SparkCursor />
         <PageLoadVeil />
         <script

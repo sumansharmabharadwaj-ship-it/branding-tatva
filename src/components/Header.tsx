@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Logo } from "./Logo";
 import { LinkButton } from "./Button";
+import { useLenis } from "./SmoothScrollProvider";
 import { site, navigation } from "@/data/site";
 
 // A compact, floating pill instead of a full-width bar: the wordmark stays
@@ -18,16 +19,28 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  const lenis = useLenis();
 
   useEffect(() => {
     if (!transparent) return;
+
+    // Lenis drives real scroll, but doesn't reliably fire the native
+    // `scroll` event alongside it — a prior attempt at this integration
+    // broke on exactly that assumption. Subscribe to Lenis's own scroll
+    // event when it's active; fall back to the native listener when it
+    // isn't (prefers-reduced-motion, or before Lenis has mounted).
+    if (lenis) {
+      setScrolled(lenis.scroll > 80);
+      return lenis.on("scroll", (instance) => setScrolled(instance.scroll > 80));
+    }
+
     function onScroll() {
       setScrolled(window.scrollY > 80);
     }
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [transparent]);
+  }, [transparent, lenis]);
 
   useEffect(() => {
     if (!open) return;
