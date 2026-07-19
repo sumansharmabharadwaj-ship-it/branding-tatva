@@ -33,6 +33,13 @@ export function CinematicHero({
 
   return (
     <section ref={ref} className="relative h-svh min-h-[620px] overflow-hidden bg-soil">
+      {/* The video's poster frame is what actually counts as the LCP
+          candidate here (Chrome doesn't wait for real video data to
+          paint) — a real production Lighthouse run found it wasn't
+          being prioritized, discovered late in the load. React 19
+          hoists a <link> rendered anywhere in the tree up to <head>,
+          so this reaches the browser's preload scanner immediately. */}
+      {video && poster && <link rel="preload" as="image" href={poster} fetchPriority="high" />}
       {video && !prefersReducedMotion ? (
         <motion.div
           className="absolute inset-0 top-[-10%] h-[120%] w-full"
@@ -47,6 +54,7 @@ export function CinematicHero({
             muted
             loop
             playsInline
+            preload="auto"
           />
           <div className="absolute inset-0" style={{ backgroundImage: HERO_SCRIM_GRADIENT }} />
         </motion.div>
