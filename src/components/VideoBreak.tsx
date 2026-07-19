@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 
@@ -64,14 +65,16 @@ export function VideoBreak({
   return (
     <div ref={ref} className="relative overflow-hidden bg-soil" style={{ height }}>
       {prefersReducedMotion ? (
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `${overlayGradient}, url(${poster})`,
-            backgroundSize: "cover",
-            backgroundPosition: imagePosition,
-          }}
-        />
+        <div className="absolute inset-0">
+          <Image
+            src={poster}
+            alt=""
+            fill
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: imagePosition }}
+          />
+          <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
+        </div>
       ) : (
         <>
           <motion.video
