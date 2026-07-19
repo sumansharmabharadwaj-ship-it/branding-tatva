@@ -415,7 +415,7 @@ export default function Home() {
           src="/videos/own-moonlit-sea.mp4"
           poster="/images/own-moonlit-sea-poster.jpg"
           quote="Some things only become visible once everything else goes quiet."
-          height="min(1500px, 185vh)"
+          height="min(1750px, 210vh)"
           imagePosition="50% 12%"
           quoteVariant="statement"
           parallax
