@@ -1,9 +1,3 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-import { useReducedMotion } from "framer-motion";
-import { initPageEnter, PAGE_ENTER_FROM } from "@/animations/pageTransition";
-
 // Next.js remounts template.tsx fresh on every navigation (unlike
 // layout.tsx, which persists) — the documented, low-risk mechanism for
 // a per-page enter animation, versus fighting AnimatePresence's
@@ -12,31 +6,17 @@ import { initPageEnter, PAGE_ENTER_FROM } from "@/animations/pageTransition";
 // SparkCursor — all untouched, stay mounted across navigations) and
 // each page's own content, so only the page body gets this motion.
 //
-// GSAP rather than Framer Motion, per this project's own animation-
-// stack rule that page transitions are GSAP's job — see
-// animations/pageTransition.ts for the actual tween and why the
-// element renders pre-styled at PAGE_ENTER_FROM instead of animating
-// from a gsap.set() inside the effect.
+// The actual animation is a plain CSS class (.page-enter, defined in
+// globals.css) rather than JS/GSAP. An earlier version drove this with
+// a GSAP tween that only started once React hydrated — a real
+// production Lighthouse run caught that as an 8.7s render delay on the
+// hero heading, since the page body sat at opacity: 0 until that
+// script ran. CSS animations start the moment the browser paints the
+// element, no script execution required, and the sitewide
+// prefers-reduced-motion rule already zeroes out animation-duration
+// for every element on the site, so there's no separate reduced-motion
+// branch to maintain here — this can be a plain server component.
 
 export default function Template({ children }: { children: React.ReactNode }) {
-  const prefersReducedMotion = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (prefersReducedMotion || !ref.current) return;
-    const tween = initPageEnter(ref.current);
-    return () => {
-      tween.kill();
-    };
-  }, [prefersReducedMotion]);
-
-  if (prefersReducedMotion) {
-    return <>{children}</>;
-  }
-
-  return (
-    <div ref={ref} style={PAGE_ENTER_FROM}>
-      {children}
-    </div>
-  );
+  return <div className="page-enter">{children}</div>;
 }

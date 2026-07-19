@@ -130,6 +130,32 @@
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
+
+  /* Page-enter transition for template.tsx — pure CSS, not JS-triggered.
+     A real production Lighthouse run caught this the JS-driven way: the
+     wrapper started at opacity 0 and only became visible once React
+     hydrated and a GSAP tween ran, which under a throttled CPU meant
+     the hero heading (the LCP element) had an 8.7s render delay before
+     painting anything, since it was invisible until that JS executed.
+     A CSS animation starts as soon as the browser paints the element,
+     no script execution required, and the sitewide reduced-motion rule
+     above already zeroes out animation-duration for it automatically. */
+  .page-enter {
+    animation: page-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.98);
+      filter: blur(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0px);
+    }
+  }
 }
 
 /* Spark cursor — replaces the system cursor with a small warm ember, the
