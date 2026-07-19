@@ -17,7 +17,7 @@ import { CinematicHero } from "@/components/CinematicHero";
 import { ImageBreak } from "@/components/ImageBreak";
 import { VideoBreak } from "@/components/VideoBreak";
 import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
-import { ProcessJourney } from "@/components/ProcessJourney";
+import { ProcessSection } from "@/components/ProcessSection";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -361,14 +361,18 @@ export default function Home() {
         />
 
         <GradientSections colors={["#EFE4D9", "#F1EADE"]}>
-          {/* Process */}
+          {/* Process — the horizontal-pinned treatment (desktop, motion
+              allowed) needs to break out of Container's max-w-6xl to read
+              as full-bleed, so it sits as a sibling after it rather than
+              nested inside; the mobile/reduced-motion ProcessJourney
+              fallback stays comfortable at that width regardless. */}
           <section className="py-20">
             <Container>
               <Reveal>
                 <h2 className="text-display-sm font-display font-semibold text-soil">How a project moves</h2>
               </Reveal>
-              <ProcessJourney stages={process} elementColor={elementColor} />
             </Container>
+            <ProcessSection stages={process} elementColor={elementColor} />
           </section>
 
           {/* FAQ */}
