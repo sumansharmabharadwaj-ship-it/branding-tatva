@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { Header } from "@/layouts/Header";
-import { Footer } from "@/components/Footer";
+import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 

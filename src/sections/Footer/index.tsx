@@ -1,17 +1,16 @@
 import Link from "next/link";
-import { Instagram, Facebook, Linkedin } from "lucide-react";
-import { Container } from "./Container";
-import { IndianPattern } from "./IndianPattern";
-import { Logo } from "./Logo";
-import { ElementGlyph } from "./ElementGlyph";
-import { Reveal } from "./Reveal";
+import { Container } from "@/components/Container";
+import { IndianPattern } from "@/components/IndianPattern";
+import { Logo } from "@/components/Logo";
+import { ElementGlyph } from "@/components/ElementGlyph";
+import { Reveal } from "@/components/Reveal";
 import { site, navigation, footerLinks } from "@/data/site";
+import { socialLinks, MANIFESTO_GLOW, REVEAL_DELAY_LOGO } from "./constants";
 
-const socialLinks = [
-  { href: site.social.linkedin, label: "LinkedIn", Icon: Linkedin },
-  { href: site.social.instagram, label: "Instagram", Icon: Instagram },
-  { href: site.social.facebook, label: "Facebook", Icon: Facebook },
-].filter((s) => s.href);
+// No animations.ts here on purpose: every motion in this section is the
+// shared Reveal primitive (src/components/Reveal.tsx) used as-is, with
+// no Footer-specific timing or variants of its own to isolate — adding
+// an empty file would just be ceremony.
 
 export function Footer() {
   return (
@@ -72,19 +71,12 @@ export function Footer() {
 
         {/* Manifesto — the hero's own hook, echoed back as a closing
             statement rather than a mid-page pitch, so the site's argument
-            resolves instead of just stopping. A soft ember glow behind the
-            glyph (the same warm radial used by the cursor and page-load
-            veil) carries that visual language through to the very last
-            beat, and Reveal gives it the same entrance motion as every
-            other section — it previously had none, which read as flat. */}
+            resolves instead of just stopping. */}
         <div className="relative mt-20 overflow-hidden py-6 text-center sm:mt-28">
           <IndianPattern className="absolute inset-0" opacity={0.05} />
           <div
             className="pointer-events-none absolute left-1/2 top-0 h-64 w-64 -translate-x-1/2 -translate-y-1/4 rounded-full opacity-70"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(194,138,40,0.16) 0%, rgba(184,90,52,0.08) 45%, rgba(184,90,52,0) 75%)",
-            }}
+            style={{ background: MANIFESTO_GLOW }}
             aria-hidden="true"
           />
           <Reveal className="relative">
@@ -99,7 +91,7 @@ export function Footer() {
         </div>
 
         {/* Large logo — the final signature, not a repeat of the header */}
-        <Reveal delay={0.1} className="mt-20 flex justify-center py-4 sm:mt-24">
+        <Reveal delay={REVEAL_DELAY_LOGO} className="mt-20 flex justify-center py-4 sm:mt-24">
           <Logo className="scale-[1.9] sm:scale-[2.3]" />
         </Reveal>
 

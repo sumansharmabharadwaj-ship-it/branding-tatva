@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Header } from "@/layouts/Header";
-import { Footer } from "@/components/Footer";
+import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";

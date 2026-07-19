@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Header } from "@/layouts/Header";
-import { Footer } from "@/components/Footer";
+import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/Reveal";
