@@ -5,18 +5,22 @@ import { site } from "@/data/site";
 // its own — an elite mark stays quiet and confident rather than competing
 // with itself. A small spinning icon was tried alongside the wordmark and
 // read as a muddy, indistinct smudge at the size a header actually needs,
-// so it's gone from here. The five-petal mark (LogoMark, below) still
-// exists for places built to show a single glyph at real size, like the
-// browser favicon, where its convergence point actually reads clearly.
+// so it's gone from here. The five-bar mark (LogoMark, below) still exists
+// for places built to show a single glyph at real size, like the browser
+// favicon: five bars in the five element colors, rising and settling like
+// a skyline — the same five-part idea as the radiating petals this
+// replaced, but a shape that reads as a mark rather than a symbol.
+const BARS = [
+  { color: "#B85A34", x: 14, height: 34 }, // earth — clay
+  { color: "#24394D", x: 30, height: 48 }, // water — indigo
+  { color: "#C28A28", x: 46, height: 64 }, // fire — ochre
+  { color: "#5C6B4A", x: 62, height: 48 }, // air — sage
+  { color: "#27221E", x: 78, height: 34 }, // space — soil
+];
+const BAR_WIDTH = 10;
+const BASELINE = 78;
 
 export function LogoMark({ size = 32, className }: { size?: number; className?: string }) {
-  const petals = [
-    { color: "#B85A34", rotate: 0 }, // earth — clay
-    { color: "#24394D", rotate: 72 }, // water — indigo
-    { color: "#C28A28", rotate: 144 }, // fire — ochre
-    { color: "#5C6B4A", rotate: 216 }, // air — sage
-    { color: "#27221E", rotate: 288 }, // space — soil
-  ];
   return (
     <svg
       width={size}
@@ -28,13 +32,16 @@ export function LogoMark({ size = 32, className }: { size?: number; className?: 
       aria-label={`${site.name} mark`}
     >
       <title>{site.name}</title>
-      {petals.map((p) => (
-        <path
-          key={p.rotate}
-          d="M50 50 C 43.5 36, 43.5 20, 50 9 C 56.5 20, 56.5 36, 50 50 Z"
-          fill={p.color}
+      {BARS.map((b) => (
+        <rect
+          key={b.x}
+          x={b.x}
+          y={BASELINE - b.height}
+          width={BAR_WIDTH}
+          height={b.height}
+          rx={5}
+          fill={b.color}
           opacity={0.92}
-          transform={`rotate(${p.rotate} 50 50)`}
         />
       ))}
     </svg>

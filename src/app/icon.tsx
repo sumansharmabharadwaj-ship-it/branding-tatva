@@ -3,19 +3,18 @@ import { ImageResponse } from "next/og";
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
-// Adapted from Logo.tsx's LogoMark — its own comment says this exists
-// specifically for the favicon, where the convergence point reads
-// clearly at small size. The petals there are tuned for a 32px header
-// mark; at a real 16x16 browser-tab favicon the same thin, needle-like
-// shape reads as a blurry smudge rather than a mark, so these are
-// widened and lengthened to hold up at that size.
-const petals = [
-  { color: "#B85A34", rotate: 0 },
-  { color: "#24394D", rotate: 72 },
-  { color: "#C28A28", rotate: 144 },
-  { color: "#5C6B4A", rotate: 216 },
-  { color: "#27221E", rotate: 288 },
+// Adapted from Logo.tsx's LogoMark — five bars in the five element
+// colors, rising and settling like a skyline. Replaces an earlier
+// five-petal design that, at a real 16x16 browser-tab size, read as a
+// radiating star rather than a brand mark.
+const bars = [
+  { color: "#B85A34", x: 14, height: 34 },
+  { color: "#24394D", x: 30, height: 48 },
+  { color: "#C28A28", x: 46, height: 64 },
+  { color: "#5C6B4A", x: 62, height: 48 },
+  { color: "#27221E", x: 78, height: 34 },
 ];
+const BASELINE = 78;
 
 export default function Icon() {
   return new ImageResponse(
@@ -30,12 +29,15 @@ export default function Icon() {
         }}
       >
         <svg width="32" height="32" viewBox="0 0 100 100">
-          {petals.map((p) => (
-            <path
-              key={p.rotate}
-              d="M50 50 C 31 33, 31 17, 50 4 C 69 17, 69 33, 50 50 Z"
-              fill={p.color}
-              transform={`rotate(${p.rotate} 50 50)`}
+          {bars.map((b) => (
+            <rect
+              key={b.x}
+              x={b.x}
+              y={BASELINE - b.height}
+              width={10}
+              height={b.height}
+              rx={5}
+              fill={b.color}
             />
           ))}
         </svg>

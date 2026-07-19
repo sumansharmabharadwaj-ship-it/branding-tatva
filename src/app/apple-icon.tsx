@@ -3,15 +3,16 @@ import { ImageResponse } from "next/og";
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-// Same LogoMark petal design as icon.tsx, scaled up — see that file's
-// comment for why this replaced the old five-dot pattern.
-const petals = [
-  { color: "#B85A34", rotate: 0 },
-  { color: "#24394D", rotate: 72 },
-  { color: "#C28A28", rotate: 144 },
-  { color: "#5C6B4A", rotate: 216 },
-  { color: "#27221E", rotate: 288 },
+// Same LogoMark five-bar design as icon.tsx, scaled up — see that
+// file's comment for why this replaced the old five-petal pattern.
+const bars = [
+  { color: "#B85A34", x: 14, height: 34 },
+  { color: "#24394D", x: 30, height: 48 },
+  { color: "#C28A28", x: 46, height: 64 },
+  { color: "#5C6B4A", x: 62, height: 48 },
+  { color: "#27221E", x: 78, height: 34 },
 ];
+const BASELINE = 78;
 
 export default function AppleIcon() {
   return new ImageResponse(
@@ -27,12 +28,15 @@ export default function AppleIcon() {
         }}
       >
         <svg width="140" height="140" viewBox="0 0 100 100">
-          {petals.map((p) => (
-            <path
-              key={p.rotate}
-              d="M50 50 C 31 33, 31 17, 50 4 C 69 17, 69 33, 50 50 Z"
-              fill={p.color}
-              transform={`rotate(${p.rotate} 50 50)`}
+          {bars.map((b) => (
+            <rect
+              key={b.x}
+              x={b.x}
+              y={BASELINE - b.height}
+              width={10}
+              height={b.height}
+              rx={5}
+              fill={b.color}
             />
           ))}
         </svg>
