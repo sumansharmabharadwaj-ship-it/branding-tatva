@@ -8,6 +8,7 @@ import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { elements } from "@/data/elements";
 import { serviceGroups, offerings } from "@/data/services";
 
@@ -44,7 +45,7 @@ export default function ServicesPage() {
           </Container>
         </PhotoHero>
 
-        <section className="py-14">
+        <section id="offerings" className="scroll-mt-24 py-14">
           <Container>
             <div className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {offerings.map((offer, i) => (
@@ -71,7 +72,7 @@ export default function ServicesPage() {
           overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.6) 35%, rgba(20,17,14,0.6) 65%, rgba(20,17,14,0.35) 90%, #E8DED0 100%)"
         />
 
-        <section className="border-t border-border bg-background-alt py-16">
+        <section id="elements" className="scroll-mt-24 border-t border-border bg-background-alt py-16">
           <Container>
             <SectionHeading
               eyebrow="The deeper system"
@@ -129,7 +130,7 @@ export default function ServicesPage() {
           </Container>
         </section>
 
-        <section className="py-16">
+        <section id="by-situation" className="scroll-mt-24 py-16">
           <Container>
             <SectionHeading
               eyebrow="By situation"
@@ -165,7 +166,7 @@ export default function ServicesPage() {
           </Container>
         </section>
 
-        <section className="border-t border-border bg-background-alt py-20 text-center">
+        <section className="border-t border-border bg-background-alt py-20 text-center sm:pb-28">
           <Container>
             <h2 className="text-display-sm font-display font-semibold text-soil">
               Still deciding which one fits?
@@ -181,6 +182,13 @@ export default function ServicesPage() {
         </section>
       </main>
       <Footer />
+      <SectionJumpNav
+        items={[
+          { href: "#offerings", label: "Offerings" },
+          { href: "#elements", label: "Elements" },
+          { href: "#by-situation", label: "By situation" },
+        ]}
+      />
     </>
   );
 }

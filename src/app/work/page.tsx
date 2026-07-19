@@ -74,6 +74,9 @@ export default function WorkPage() {
                           </span>
                         ))}
                       </div>
+                      <p className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-ivory transition-transform duration-300 group-hover:translate-x-1">
+                        View case study <span aria-hidden="true">&rarr;</span>
+                      </p>
                     </div>
                   </Link>
                 </Reveal>
