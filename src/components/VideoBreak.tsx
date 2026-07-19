@@ -52,7 +52,17 @@ function QuoteText({
 
   if (wordFade) {
     return (
-      <p ref={ref} className={className} style={style}>
+      // GSAP's SplitText auto-adds an aria-label with the original,
+      // unfragmented sentence to this <p> so screen readers get one
+      // readable text instead of the individual word spans (each
+      // already aria-hidden — see initSplitTextReveal). Correct
+      // behavior, but aria-label is technically only valid on elements
+      // whose role permits a distinct accessible name, and a plain <p>
+      // doesn't by default; role="text" is the documented pattern for
+      // exactly this "visually split, should read as one text node"
+      // case and is what quiets the false-positive without changing
+      // what's actually announced.
+      <p ref={ref} role="text" className={className} style={style}>
         {quote}
       </p>
     );
