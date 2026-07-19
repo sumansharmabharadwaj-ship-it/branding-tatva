@@ -9,7 +9,7 @@ This is the code for your website. You don't need to understand any of it — I'
 - ✅ Social sharing: link previews on LinkedIn/Instagram/WhatsApp now show a proper branded image instead of a blank card
 - ✅ Custom 404 and error pages, so anything that goes wrong still looks like your site, not a generic crash screen
 - ⏳ Not yet connected: GitHub, Vercel (hosting), your domain
-- ⏳ Still needed from you before this can go live — see `docs/PROJECT_PLAN.md` for the full list, but the short version is: a one-line "win" description for a couple of the case studies, your domain name, and a public contact email/phone if you want one different from what's there now
+- ⏳ Still needed from you before this can go live — see `docs/PROJECT_PLAN.md` for the full list, but the short version is: your domain name, a public contact email/phone if you want one different from what's there now, and picking one of the five positioning options in `docs/BRAND_STRATEGY.md` as final
 
 ## How to edit text later (once the site is live)
 Most of the words on the site live in one place: `src/data/`.

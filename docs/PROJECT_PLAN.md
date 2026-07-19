@@ -38,7 +38,7 @@ A visitor submits a project enquiry through the Contact page.
 5. **Plaxonic.com content portfolio** — good for demonstrating range across content types (research vs. blog vs. article), positioned as a portfolio piece rather than a "case study" since it's content output rather than a strategy-to-result arc
 
 ## What's still needed before Work page is final
-- One-line confirmation from you on each project: what you'd call the "win" in plain language (I have the Dr. Haley numbers; the others need a sentence from you on outcome, even if it's not a metric — e.g. "repositioned the brand away from a stereotype it didn't want").
+- ✅ Done: every case study now has a plain-language outcome/"win" line, not just Dr. Haley's numbers.
 - Any visual assets (screenshots, mockups, campaign images) beyond the strategy documents themselves — right now I have text/slides, not final visuals to show on a case study page.
 
 ## Still open (not blocking, but needed before launch)
