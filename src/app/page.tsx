@@ -11,6 +11,7 @@ import { KineticMarquee } from "@/components/KineticMarquee";
 import { GradientSections } from "@/components/GradientSections";
 import { KenBurnsImage } from "@/components/KenBurnsImage";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { ElementReveal } from "@/components/ElementReveal";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
 import { CinematicHero } from "@/components/CinematicHero";
 import { ImageBreak } from "@/components/ImageBreak";
@@ -152,7 +153,7 @@ export default function Home() {
 
           <div className="mt-16 divide-y divide-border sm:mt-24">
             {elements.map((el, i) => (
-              <Reveal key={el.slug} delay={i * 0.06}>
+              <ElementReveal key={el.slug} slug={el.slug} delay={i * 0.06}>
                 <div className="relative overflow-hidden">
                   <div
                     className="absolute inset-0"
@@ -201,7 +202,7 @@ export default function Home() {
                   </div>
                   </Container>
                 </div>
-              </Reveal>
+              </ElementReveal>
             ))}
           </div>
         </section>
