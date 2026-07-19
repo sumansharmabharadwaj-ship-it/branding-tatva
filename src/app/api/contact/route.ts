@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { contactSchema } from "@/lib/contact-schema";
 
-// This route validates and (once RESEND_API_KEY is set — see Phase 11 /
-// CONTACT_FORM_SETUP.md) emails contact form submissions. Until that key
-// exists, submissions are validated and logged server-side but not
-// delivered — Suman will be walked through creating a free Resend account
-// before launch.
+// This route validates and emails contact form submissions via Resend.
+// If RESEND_API_KEY or CONTACT_TO_EMAIL is missing (e.g. a fresh clone
+// without .env.local), it falls back to logging server-side instead of
+// failing the submission outright.
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
