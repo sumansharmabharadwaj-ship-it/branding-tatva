@@ -1,9 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { Reveal } from "./Reveal";
-import type { ProcessStage } from "@/data/process";
+import { motion, useReducedMotion } from "framer-motion";
+import { Reveal } from "@/components/Reveal";
+import type { ProcessSectionProps } from "./types";
+import { useVerticalLineProgress } from "./animations";
 
 // A connected vertical thread instead of a grid of six identical boxes —
 // the six stages already form one continuous sequence (Listen leads to
@@ -12,20 +13,10 @@ import type { ProcessStage } from "@/data/process";
 // the visitor moves through the section, so "progress" is something felt
 // rather than just implied by the numbering.
 
-export function ProcessJourney({
-  stages,
-  elementColor,
-}: {
-  stages: ProcessStage[];
-  elementColor: Record<string, string>;
-}) {
+export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 0.8", "end 0.6"],
-  });
-  const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const lineHeight = useVerticalLineProgress(ref);
 
   return (
     <div ref={ref} className="relative mt-16 pl-12 sm:pl-16">

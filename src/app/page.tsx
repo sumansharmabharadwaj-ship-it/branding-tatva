@@ -19,7 +19,7 @@ import { CinematicHero } from "@/sections/Hero";
 import { ImageBreak } from "@/components/ImageBreak";
 import { VideoBreak } from "@/components/VideoBreak";
 import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
-import { ProcessSection } from "@/components/ProcessSection";
+import { ProcessSection } from "@/sections/Process";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";

@@ -1,28 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ElementGlyph } from "./ElementGlyph";
-import type { ProcessStage } from "@/data/process";
+import { ElementGlyph } from "@/components/ElementGlyph";
+import type { ProcessSectionProps } from "./types";
+import { initHorizontalScroll } from "./animations";
 
-gsap.registerPlugin(ScrollTrigger);
+// Desktop-only pinned horizontal scroll through the process stages — see
+// animations.ts's initHorizontalScroll for the actual GSAP/ScrollTrigger
+// setup; this component only owns the refs and the markup.
 
-// Desktop-only pinned horizontal scroll through the process stages — the
-// section holds still while the viewport moves through it, one stage per
-// "screen" of scroll, like turning pages rather than reading a list.
-// gsap.context() scopes every ScrollTrigger/tween this creates so
-// ctx.revert() tears them all down cleanly on unmount, which matters here
-// specifically because Next's client-side navigation would otherwise leave
-// stale pinned-scroll instances behind on the next page.
-
-export function ProcessHorizontalJourney({
-  stages,
-  elementColor,
-}: {
-  stages: ProcessStage[];
-  elementColor: Record<string, string>;
-}) {
+export function HorizontalJourney({ stages, elementColor }: ProcessSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -31,24 +18,7 @@ export function ProcessHorizontalJourney({
     const track = trackRef.current;
     if (!section || !track) return;
 
-    const ctx = gsap.context(() => {
-      const scrollDistance = track.scrollWidth - section.offsetWidth;
-      if (scrollDistance <= 0) return;
-
-      gsap.to(track, {
-        x: -scrollDistance,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: () => `+=${scrollDistance}`,
-          scrub: 1,
-          pin: true,
-          invalidateOnRefresh: true,
-        },
-      });
-    }, section);
-
+    const ctx = initHorizontalScroll(section, track);
     return () => ctx.revert();
   }, [stages]);
 
