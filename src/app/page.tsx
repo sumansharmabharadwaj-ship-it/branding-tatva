@@ -3,7 +3,6 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
-import { Magnetic } from "@/components/Magnetic";
 import { FAQ } from "@/sections/FAQ";
 import { DustMotes } from "@/components/DustMotes";
 import { Reveal } from "@/components/Reveal";
@@ -59,18 +58,14 @@ export default function Home() {
           }
           subhead={site.tagline}
         >
-          <Magnetic>
-            <LinkButton href="/contact">Start a brand conversation</LinkButton>
-          </Magnetic>
-          <Magnetic>
-            <LinkButton
-              href="/work"
-              variant="secondary"
-              className="border-ivory/30 text-ivory hover:bg-ivory/10"
-            >
-              Explore the work
-            </LinkButton>
-          </Magnetic>
+          <LinkButton href="/contact">Start a brand conversation</LinkButton>
+          <LinkButton
+            href="/work"
+            variant="secondary"
+            className="border-ivory/30 text-ivory hover:bg-ivory/10"
+          >
+            Explore the work
+          </LinkButton>
         </CinematicHero>
 
         {/* Two-part editorial statement — the problem, then the philosophy,

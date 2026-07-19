@@ -6,7 +6,6 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { LinkButton } from "@/components/Button";
-import { Magnetic } from "@/components/Magnetic";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { navigation } from "@/data/site";
 import type { HeaderProps } from "./types";
@@ -110,17 +109,15 @@ export function Header({ transparent = false }: HeaderProps) {
               : "border-border bg-background-elevated/90 shadow-elevation-sm"
           }`}
         >
-          <div className="flex justify-start">
-            <Magnetic className="hidden sm:inline-flex">
-              <LinkButton
-                href="/contact"
-                className={`px-4 py-2 text-xs ${
-                  isLight ? "bg-ivory! text-soil! hover:bg-ivory/90!" : ""
-                }`}
-              >
-                Start a project
-              </LinkButton>
-            </Magnetic>
+          <div className="hidden justify-start sm:flex">
+            <LinkButton
+              href="/contact"
+              className={`px-4 py-2 text-xs ${
+                isLight ? "bg-ivory! text-soil! hover:bg-ivory/90!" : ""
+              }`}
+            >
+              Start a project
+            </LinkButton>
           </div>
 
           <Link href="/" className="flex justify-center">

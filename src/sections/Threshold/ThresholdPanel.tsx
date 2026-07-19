@@ -4,7 +4,6 @@ import { useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { LinkButton } from "@/components/Button";
-import { Magnetic } from "@/components/Magnetic";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import type { ThresholdPanelData } from "./types";
 import {
@@ -82,15 +81,13 @@ export function ThresholdPanel({
           {panel.title}
         </p>
         <p className="mt-3 max-w-xs text-sm text-ivory/70">{panel.description}</p>
-        <Magnetic className="mt-6 inline-block">
-          <LinkButton
-            href={panel.ctaHref}
-            variant="secondary"
-            className="border-ivory/30 text-ivory hover:bg-ivory/10"
-          >
-            {panel.ctaLabel}
-          </LinkButton>
-        </Magnetic>
+        <LinkButton
+          href={panel.ctaHref}
+          variant="secondary"
+          className="mt-6 border-ivory/30 text-ivory hover:bg-ivory/10"
+        >
+          {panel.ctaLabel}
+        </LinkButton>
       </motion.div>
     </div>
   );
