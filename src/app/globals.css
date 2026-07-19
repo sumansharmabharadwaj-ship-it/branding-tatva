@@ -1,6 +1,91 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-ivory: #f4efe6;
+  --color-parchment: #e8ded0;
+  --color-soil: #27221e;
+  --color-clay: #b85a34;
+  --color-terracotta: #cd7a4c;
+  --color-sage: #5c6b4a;
+  --color-ochre: #c28a28;
+  --color-indigo: #24394d;
+  --color-sandstone: #d4b99a;
+  --color-warm-white: #fcfaf6;
+  --color-rose-earth: #ad6f5c;
+
+  --color-background: #f4efe6;
+  --color-background-alt: #e8ded0;
+  --color-background-elevated: #fcfaf6;
+
+  --color-foreground: #27221e;
+  --color-foreground-secondary: #5a5148;
+
+  --color-action-primary: #b85a34;
+  --color-action-primary-hover: #9c4a29;
+  --color-action-secondary: #24394d;
+  --color-action-secondary-hover: #1b2b3899;
+
+  --color-border: #d9cdbc;
+
+  --color-state-focus: #a57522;
+  --color-state-success: #5c6b4a;
+  --color-state-warning: #c28a28;
+  --color-state-error: #b4432e;
+
+  --font-display: var(--font-display), serif;
+  --font-body: var(--font-body), sans-serif;
+
+  --text-display-xl: clamp(2.75rem, 6vw, 5.5rem);
+  --text-display-xl--line-height: 1.05;
+  --text-display-xl--letter-spacing: -0.01em;
+  --text-display-lg: clamp(2.25rem, 4.5vw, 4rem);
+  --text-display-lg--line-height: 1.08;
+  --text-display-md: clamp(1.75rem, 3vw, 2.75rem);
+  --text-display-md--line-height: 1.15;
+  --text-display-sm: clamp(1.375rem, 2vw, 1.875rem);
+  --text-display-sm--line-height: 1.25;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.875rem;
+
+  --shadow-elevation-sm:
+    0 1px 2px rgba(39, 34, 30, 0.08), 0 2px 10px rgba(39, 34, 30, 0.06);
+  --shadow-elevation-md:
+    0 2px 4px rgba(39, 34, 30, 0.1), 0 10px 28px rgba(39, 34, 30, 0.12);
+  --shadow-elevation-lg:
+    0 4px 10px rgba(39, 34, 30, 0.14), 0 20px 48px rgba(39, 34, 30, 0.16);
+
+  --ease-earth: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-air: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility skip-link {
+  @apply sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50
+      focus:bg-warm-white focus:text-soil focus:px-4 focus:py-2 focus:rounded-md;
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-10;
+}
 
 @layer base {
   html {
@@ -17,7 +102,7 @@
 
   /* Visible focus ring everywhere — accessibility baseline */
   :focus-visible {
-    outline: 2px solid theme("colors.state.focus");
+    outline: 2px solid var(--color-state-focus);
     outline-offset: 2px;
     border-radius: 2px;
   }
@@ -44,17 +129,6 @@
     opacity: 0.05;
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-}
-
-@layer components {
-  .skip-link {
-    @apply sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50
-      focus:bg-warm-white focus:text-soil focus:px-4 focus:py-2 focus:rounded-md;
-  }
-
-  .container-page {
-    @apply mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-10;
   }
 }
 

@@ -71,7 +71,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
             <LinkButton
               href="/contact"
               className={`hidden px-4 py-2 text-xs sm:inline-flex ${
-                isLight ? "!bg-ivory !text-soil hover:!bg-ivory/90" : ""
+                isLight ? "bg-ivory! text-soil! hover:bg-ivory/90!" : ""
               }`}
             >
               Start a project
@@ -129,7 +129,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
               animate={prefersReducedMotion ? undefined : { opacity: 1 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-30 bg-soil/40 backdrop-blur-sm"
+              className="fixed inset-0 z-30 bg-soil/40 backdrop-blur-xs"
               onClick={() => setOpen(false)}
               aria-hidden="true"
             />

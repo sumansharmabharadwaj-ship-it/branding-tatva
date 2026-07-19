@@ -119,11 +119,11 @@ type Filter = "featured" | "all";
 // full-width close) so the grid reads as a considered mosaic rather than
 // uniform cards, whichever filter is active — 3 featured or all 5.
 const tileClass = [
-  "md:col-span-4 md:min-h-[30rem]",
-  "md:col-span-2 md:min-h-[30rem]",
-  "md:col-span-3 md:min-h-[20rem]",
-  "md:col-span-3 md:min-h-[20rem]",
-  "md:col-span-6 md:min-h-[24rem]",
+  "md:col-span-4 md:min-h-120",
+  "md:col-span-2 md:min-h-120",
+  "md:col-span-3 md:min-h-80",
+  "md:col-span-3 md:min-h-80",
+  "md:col-span-6 md:min-h-96",
 ];
 
 export function WorkGrid({ projects }: { projects: Project[] }) {
@@ -159,7 +159,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.97 }}
               transition={{ duration: 0.35, delay: (i % 4) * 0.05, ease: [0.16, 1, 0.3, 1] }}
-              className={`h-full min-h-[24rem] ${tileClass[i % tileClass.length]}`}
+              className={`h-full min-h-96 ${tileClass[i % tileClass.length]}`}
             >
               <WorkCard project={project} />
             </motion.div>

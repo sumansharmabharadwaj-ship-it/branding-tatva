@@ -45,10 +45,10 @@ export function CinematicHero({
     "linear-gradient(180deg, rgba(20,17,14,0.65) 0%, rgba(20,17,14,0.2) 14%, rgba(20,17,14,0.1) 32%, rgba(20,17,14,0.55) 62%, rgba(20,17,14,0.95) 100%)";
 
   return (
-    <section ref={ref} className="relative h-[100svh] min-h-[620px] overflow-hidden bg-soil">
+    <section ref={ref} className="relative h-svh min-h-[620px] overflow-hidden bg-soil">
       {video && !prefersReducedMotion ? (
         <motion.div
-          className="absolute inset-0 -top-[10%] h-[120%] w-full"
+          className="absolute inset-0 top-[-10%] h-[120%] w-full"
           style={{ y: imageY }}
         >
           <video
@@ -65,7 +65,7 @@ export function CinematicHero({
         </motion.div>
       ) : (
         <motion.div
-          className="absolute inset-0 -top-[10%] h-[120%] w-full"
+          className="absolute inset-0 top-[-10%] h-[120%] w-full"
           style={{ y: prefersReducedMotion ? 0 : imageY }}
         >
           <Image

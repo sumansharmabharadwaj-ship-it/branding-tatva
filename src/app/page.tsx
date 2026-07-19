@@ -310,7 +310,7 @@ export default function Home() {
                     <a
                       href={`/work/${project.slug}`}
                       data-cursor-label="View case study"
-                      className="group relative flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-lg p-6 sm:p-8"
+                      className="group relative flex min-h-88 flex-col justify-end overflow-hidden rounded-lg p-6 sm:p-8"
                     >
                       {project.cardImage && (
                         <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-110">

@@ -40,7 +40,7 @@ export function SectionJumpNav({ items }: { items: JumpItem[] }) {
   return (
     <nav
       aria-label="Jump to section"
-      className="fixed inset-x-0 bottom-0 z-30 hidden border-t border-ivory/10 bg-soil/95 backdrop-blur-sm sm:block"
+      className="fixed inset-x-0 bottom-0 z-30 hidden border-t border-ivory/10 bg-soil/95 backdrop-blur-xs sm:block"
     >
       <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-6 py-3">
         {items.map((item) => (

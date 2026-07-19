@@ -10,7 +10,7 @@ import { Magnetic } from "@/components/Magnetic";
 type Status = "idle" | "submitting" | "success" | "error";
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-border bg-warm-white px-3 py-2 text-sm text-soil placeholder:text-foreground-secondary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-state-focus";
+  "mt-1 w-full rounded-md border border-border bg-warm-white px-3 py-2 text-sm text-soil placeholder:text-foreground-secondary/60 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-state-focus";
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -139,7 +139,7 @@ export function ContactForm() {
           type="submit"
           disabled={status === "submitting"}
           className={cn(
-            "group/btn inline-flex items-center justify-center gap-1.5 rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:bg-action-primary-hover hover:-translate-y-0.5 hover:shadow-elevation-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-state-focus focus-visible:ring-offset-2 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+            "group/btn inline-flex items-center justify-center gap-1.5 rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:bg-action-primary-hover hover:-translate-y-0.5 hover:shadow-elevation-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-state-focus focus-visible:ring-offset-2 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
           )}
         >
           {status === "submitting" ? "Sending…" : "Send enquiry"}
