@@ -64,11 +64,13 @@ export default async function BlogPostPage({ params }: Props) {
         <section className="relative overflow-hidden border-b border-border bg-soil pt-32 pb-16 sm:pt-40 sm:pb-20">
           <Container className="relative max-w-2xl">
             <Reveal>
-              <span
-                className="inline-flex items-center gap-2 rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85"
-                style={{ color: element?.color }}
-              >
-                <ElementGlyph slug={post.element} className="h-3.5 w-3.5" strokeWidth={1.6} />
+              <span className="inline-flex items-center gap-2 rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+                <ElementGlyph
+                  slug={post.element}
+                  className="h-3.5 w-3.5"
+                  strokeWidth={1.6}
+                  style={{ color: element?.color }}
+                />
                 {element?.name ?? post.element}
               </span>
               <h1 className="mt-6 font-display text-[clamp(1.75rem,4.5vw,3rem)] font-semibold leading-[1.1] text-ivory">
