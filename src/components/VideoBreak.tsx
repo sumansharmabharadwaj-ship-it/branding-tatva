@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 
@@ -39,6 +39,28 @@ export function VideoBreak({
   const mediaY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
   const usesParallax = parallax && !prefersReducedMotion;
 
+  // Every break on the page otherwise mounts and starts downloading its
+  // full video immediately, regardless of scroll position — a real
+  // weight cost on pages with several of these below the fold. The
+  // poster still renders instantly; only the .mp4 fetch is deferred
+  // until the section is within ~600px of the viewport.
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoadVideo(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div ref={ref} className="relative overflow-hidden bg-soil" style={{ height }}>
       {prefersReducedMotion ? (
@@ -58,12 +80,13 @@ export function VideoBreak({
               objectPosition: imagePosition,
               ...(usesParallax ? { y: mediaY, scale: 1.16 } : undefined),
             }}
-            src={src}
+            src={shouldLoadVideo ? src : undefined}
             poster={poster}
-            autoPlay
+            autoPlay={shouldLoadVideo}
             muted
             loop
             playsInline
+            preload={shouldLoadVideo ? "auto" : "none"}
           />
           <div
             className="absolute inset-0"

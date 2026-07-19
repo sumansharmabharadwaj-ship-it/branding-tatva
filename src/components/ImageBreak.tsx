@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 
@@ -27,13 +28,31 @@ export function ImageBreak({
   quoteVariant?: QuoteVariant;
 }) {
   const prefersReducedMotion = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="relative overflow-hidden bg-soil" style={{ height }}>
+    <div ref={ref} className="relative overflow-hidden bg-soil" style={{ height }}>
       <motion.div
         className="absolute inset-0"
         style={{
-          backgroundImage: `${overlayGradient}, url(${image})`,
+          backgroundImage: shouldLoad ? `${overlayGradient}, url(${image})` : overlayGradient,
           backgroundSize: "cover",
           backgroundPosition: imagePosition,
         }}
