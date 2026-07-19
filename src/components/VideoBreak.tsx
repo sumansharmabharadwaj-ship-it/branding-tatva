@@ -15,6 +15,13 @@ import { BREAK_QUOTE_INITIAL, BREAK_QUOTE_ANIMATE, BREAK_QUOTE_TRANSITION } from
 // glanced-at card, so the drift should be closer to imperceptible.
 const CAMERA_PUSH = kenBurnsAnimation({ scale: 1.06, duration: 30 });
 
+// How much extra zoom a non-cameraPush video starts at before settling
+// to its rest scale as it scrolls into view — the same "don't just hard
+// cut into frame" entrance ImageBreak's photos already use, so a video
+// break isn't the one full-bleed moment on the page that just pops in.
+const ENTRANCE_SCALE_DELTA = 0.06;
+const ENTRANCE_TRANSITION = { duration: 2.2, ease: [0.16, 1, 0.3, 1] as const };
+
 // The video counterpart to ImageBreak: a full-bleed cinematic moment, but
 // with real motion in the shot itself rather than a static photograph.
 // Muted, looping, and silent by design, it's atmosphere rather than
@@ -127,6 +134,10 @@ export function VideoBreak({
   const usesParallax = parallax && !prefersReducedMotion;
   const usesCameraPush = cameraPush && !prefersReducedMotion;
   const spotlightRef = useSpotlight(ref, spotlight ? Boolean(prefersReducedMotion) : true);
+  // Parallax needs a small permanent overscan so its ±8% vertical
+  // translate never reveals an edge; without it there's no such
+  // requirement, so rest is a plain 1.
+  const restScale = usesParallax ? 1.16 : 1;
 
   return (
     <div ref={ref} data-cursor-media className="relative overflow-hidden bg-soil" style={{ height }}>
@@ -148,11 +159,12 @@ export function VideoBreak({
             style={{
               objectPosition: imagePosition,
               ...(usesParallax ? { y: mediaY } : undefined),
-              ...(usesCameraPush ? undefined : usesParallax ? { scale: 1.16 } : undefined),
             }}
-            initial={usesCameraPush ? CAMERA_PUSH.initial : undefined}
+            initial={usesCameraPush ? CAMERA_PUSH.initial : { scale: restScale + ENTRANCE_SCALE_DELTA }}
             animate={usesCameraPush ? CAMERA_PUSH.animate : undefined}
-            transition={usesCameraPush ? CAMERA_PUSH.transition : undefined}
+            whileInView={usesCameraPush ? undefined : { scale: restScale }}
+            viewport={usesCameraPush ? undefined : { once: true }}
+            transition={usesCameraPush ? CAMERA_PUSH.transition : ENTRANCE_TRANSITION}
             src={shouldLoadVideo ? src : undefined}
             poster={poster}
             autoPlay={shouldLoadVideo}
