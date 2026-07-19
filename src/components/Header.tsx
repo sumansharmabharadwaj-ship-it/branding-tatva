@@ -102,7 +102,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                 animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
                 exit={prefersReducedMotion ? undefined : { opacity: 0, y: -14, scale: 0.98 }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full max-w-sm rounded-2xl border border-border bg-background-elevated p-3 shadow-lg"
+                className="w-full max-w-sm rounded-lg border border-border bg-background-elevated p-3 shadow-lg"
                 aria-label="Primary"
               >
                 <ul className="flex flex-col">
@@ -111,7 +111,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                       <Link
                         href={item.href}
                         onClick={() => setOpen(false)}
-                        className="block rounded-xl px-4 py-3 text-center font-display text-xl text-soil transition-colors hover:bg-soil/5 hover:text-clay"
+                        className="block rounded-lg px-4 py-3 text-center font-display text-xl text-soil transition-colors hover:bg-soil/5 hover:text-clay"
                       >
                         {item.label}
                       </Link>

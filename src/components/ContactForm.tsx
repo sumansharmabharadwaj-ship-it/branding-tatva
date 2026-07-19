@@ -137,10 +137,18 @@ export function ContactForm() {
         type="submit"
         disabled={status === "submitting"}
         className={cn(
-          "inline-flex items-center justify-center rounded-md bg-action-primary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-action-primary-hover disabled:opacity-60"
+          "group/btn inline-flex items-center justify-center gap-1.5 rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:bg-action-primary-hover hover:-translate-y-0.5 hover:shadow-lg hover:shadow-action-primary/25 focus-visible:outline-none disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
         )}
       >
         {status === "submitting" ? "Sending…" : "Send enquiry"}
+        {status !== "submitting" && (
+          <span
+            aria-hidden="true"
+            className="inline-block -translate-x-1 opacity-0 transition-all duration-300 ease-earth group-hover/btn:translate-x-0 group-hover/btn:opacity-100"
+          >
+            &rarr;
+          </span>
+        )}
       </button>
     </form>
   );
