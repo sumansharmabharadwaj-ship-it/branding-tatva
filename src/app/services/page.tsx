@@ -48,14 +48,18 @@ export default function ServicesPage() {
 
         <section id="offerings" className="scroll-mt-24 py-14">
           <Container>
-            <div className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {offerings.map((offer, i) => (
                 <Reveal key={offer.name} delay={i * 0.06} className="h-full">
                   <div
-                    className="flex h-full flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
-                    style={{ borderTopColor: offer.color, backgroundColor: `${offer.color}14` }}
+                    className="spotlight-card flex h-full flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
+                    style={{
+                      borderTopColor: offer.color,
+                      backgroundColor: `${offer.color}14`,
+                      ["--card-color" as string]: offer.color,
+                    }}
                   >
-                    <p className="font-display text-lg font-semibold text-soil">{offer.name}</p>
+                    <p className="font-display text-lg font-semibold text-soil transition-colors duration-300">{offer.name}</p>
                     <p className="mt-2 text-sm text-foreground-secondary">{offer.detail}</p>
                   </div>
                 </Reveal>
@@ -136,13 +140,17 @@ export default function ServicesPage() {
               eyebrow="By situation"
               title="Organised by where your brand is right now."
             />
-            <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2">
+            <div className="spotlight-grid mt-10 grid items-stretch gap-6 md:grid-cols-2">
               {serviceGroups.map((group, i) => (
                 <Reveal key={group.slug} delay={i * 0.08} className="h-full">
                   <div
                     id={group.slug}
-                    className="flex h-full scroll-mt-24 flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
-                    style={{ borderTopColor: group.color, backgroundColor: `${group.color}0F` }}
+                    className="spotlight-card flex h-full scroll-mt-24 flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
+                    style={{
+                      borderTopColor: group.color,
+                      backgroundColor: `${group.color}0F`,
+                      ["--card-color" as string]: group.color,
+                    }}
                   >
                     <p className="font-display text-xl font-semibold text-soil">{group.name}</p>
                     <p className="mt-1 text-sm font-medium" style={{ color: group.color }}>{group.forWho}</p>

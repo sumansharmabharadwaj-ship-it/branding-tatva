@@ -180,3 +180,18 @@
     opacity: 0;
   }
 }
+
+/* Spotlight card group — hovering one offering card intensifies its own
+   accent (tint deepens, border brightens via --card-color) while every
+   sibling dims, so attention actually follows the cursor instead of all
+   cards sitting at identical, static weight. Pure CSS (:has), no JS
+   state — every card already knows its own color via the inline
+   --card-color custom property. */
+.spotlight-grid:has(.spotlight-card:hover) .spotlight-card:not(:hover) {
+  opacity: 0.55;
+}
+
+.spotlight-card:hover {
+  background-color: color-mix(in srgb, var(--card-color) 22%, transparent);
+  border-color: var(--card-color);
+}
