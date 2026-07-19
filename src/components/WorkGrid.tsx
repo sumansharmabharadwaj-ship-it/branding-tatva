@@ -42,6 +42,7 @@ function WorkCardMedia({ project, isHovered }: { project: Project; isHovered: bo
           <KenBurnsImage
             image={project.cardImage}
             gradient="linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.45) 55%, rgba(39,34,30,0.15) 100%)"
+            sizes="(min-width: 768px) 50vw, 100vw"
           />
         </div>
       )}

@@ -222,6 +222,7 @@ export default function Home() {
               <KenBurnsImage
                 image="/images/own-misty-ridge-poster.jpg"
                 gradient="linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)"
+                sizes="(min-width: 640px) 50vw, 100vw"
               />
               <div className="relative">
                 <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
@@ -248,6 +249,7 @@ export default function Home() {
               <KenBurnsImage
                 image="/images/higgsfield-stream-clarity.jpg"
                 gradient="linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)"
+                sizes="(min-width: 640px) 50vw, 100vw"
               />
               <div className="relative">
                 <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
@@ -315,6 +317,7 @@ export default function Home() {
                           <KenBurnsImage
                             image={project.cardImage}
                             gradient="linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.45) 55%, rgba(39,34,30,0.15) 100%)"
+                            sizes="(min-width: 640px) 50vw, 100vw"
                           />
                         </div>
                       )}
