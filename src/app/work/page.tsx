@@ -5,7 +5,7 @@ import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { ImageBreak } from "@/components/ImageBreak";
-import { WorkGrid } from "@/components/WorkGrid";
+import { WorkGrid } from "@/sections/CaseStudies";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
