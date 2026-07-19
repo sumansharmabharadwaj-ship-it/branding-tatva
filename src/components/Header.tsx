@@ -84,14 +84,38 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
 
           <div className="flex justify-end">
             <button
-              className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-500 ${
+              className={`relative flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-500 ${
                 isLight ? "text-ivory" : "text-foreground"
               }`}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
             >
-              {open ? <X size={20} /> : <Menu size={20} />}
+              <AnimatePresence initial={false}>
+                {open ? (
+                  <motion.span
+                    key="close"
+                    initial={prefersReducedMotion ? undefined : { rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={prefersReducedMotion ? undefined : { rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute flex"
+                  >
+                    <X size={20} />
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="menu"
+                    initial={prefersReducedMotion ? undefined : { rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={prefersReducedMotion ? undefined : { rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute flex"
+                  >
+                    <Menu size={20} />
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
           </div>
         </div>
