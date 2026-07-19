@@ -17,7 +17,7 @@ type ButtonProps = {
 
 export function LinkButton({ href, children, variant = "primary", className, onClick }: ButtonProps) {
   const base =
-    "group/btn inline-flex items-center justify-center gap-1.5 rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 ease-earth focus-visible:outline-none";
+    "group/btn inline-flex items-center justify-center gap-1.5 rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 ease-earth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-state-focus focus-visible:ring-offset-2";
   const styles = {
     primary: "bg-action-primary text-white hover:bg-action-primary-hover hover:-translate-y-0.5 hover:shadow-elevation-lg",
     secondary:
