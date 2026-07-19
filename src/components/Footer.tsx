@@ -4,6 +4,7 @@ import { Container } from "./Container";
 import { IndianPattern } from "./IndianPattern";
 import { Logo } from "./Logo";
 import { ElementGlyph } from "./ElementGlyph";
+import { Reveal } from "./Reveal";
 import { site, navigation, footerLinks } from "@/data/site";
 
 const socialLinks = [
@@ -71,10 +72,22 @@ export function Footer() {
 
         {/* Manifesto — the hero's own hook, echoed back as a closing
             statement rather than a mid-page pitch, so the site's argument
-            resolves instead of just stopping. */}
+            resolves instead of just stopping. A soft ember glow behind the
+            glyph (the same warm radial used by the cursor and page-load
+            veil) carries that visual language through to the very last
+            beat, and Reveal gives it the same entrance motion as every
+            other section — it previously had none, which read as flat. */}
         <div className="relative mt-20 overflow-hidden py-6 text-center sm:mt-28">
           <IndianPattern className="absolute inset-0" opacity={0.05} />
-          <div className="relative">
+          <div
+            className="pointer-events-none absolute left-1/2 top-0 h-64 w-64 -translate-x-1/2 -translate-y-1/4 rounded-full opacity-70"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(194,138,40,0.16) 0%, rgba(184,90,52,0.08) 45%, rgba(184,90,52,0) 75%)",
+            }}
+            aria-hidden="true"
+          />
+          <Reveal className="relative">
             <ElementGlyph slug="space" className="mx-auto h-6 w-6 text-clay/70" strokeWidth={1.2} />
             <h2 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(1.75rem,4vw,2.75rem)] font-semibold leading-[1.15] text-soil">
               {site.heroHeadline}
@@ -82,13 +95,13 @@ export function Footer() {
             <p className="mx-auto mt-5 max-w-md font-display text-lg italic text-foreground-secondary">
               &ldquo;{site.tagline}&rdquo;
             </p>
-          </div>
+          </Reveal>
         </div>
 
         {/* Large logo — the final signature, not a repeat of the header */}
-        <div className="mt-20 flex justify-center py-4 sm:mt-24">
+        <Reveal delay={0.1} className="mt-20 flex justify-center py-4 sm:mt-24">
           <Logo className="scale-[1.9] sm:scale-[2.3]" />
-        </div>
+        </Reveal>
 
         <div className="mt-20 flex flex-col-reverse gap-4 border-t border-border pt-6 sm:mt-24 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-foreground-secondary">
