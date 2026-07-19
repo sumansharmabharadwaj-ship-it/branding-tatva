@@ -30,9 +30,8 @@ export default function AppleIcon() {
           {petals.map((p) => (
             <path
               key={p.rotate}
-              d="M50 50 C 43.5 36, 43.5 20, 50 9 C 56.5 20, 56.5 36, 50 50 Z"
+              d="M50 50 C 31 33, 31 17, 50 4 C 69 17, 69 33, 50 50 Z"
               fill={p.color}
-              opacity={0.92}
               transform={`rotate(${p.rotate} 50 50)`}
             />
           ))}
