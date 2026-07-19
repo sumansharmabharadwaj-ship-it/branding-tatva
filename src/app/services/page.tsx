@@ -51,7 +51,7 @@ export default function ServicesPage() {
               {offerings.map((offer, i) => (
                 <Reveal key={offer.name} delay={i * 0.06} className="h-full">
                   <div
-                    className="flex h-full flex-col rounded-lg border-t-2 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    className="flex h-full flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
                     style={{ borderTopColor: offer.color, backgroundColor: `${offer.color}14` }}
                   >
                     <p className="font-display text-lg font-semibold text-soil">{offer.name}</p>
@@ -88,7 +88,7 @@ export default function ServicesPage() {
               {elements.map((el, i) => (
                 <Reveal key={el.slug} delay={i * 0.08} className="h-full">
                   <div
-                    className="relative flex h-full flex-col overflow-hidden border-t-2 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    className="relative flex h-full flex-col overflow-hidden border-t-2 p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
                     style={{ borderColor: el.color }}
                   >
                     <div
@@ -141,7 +141,7 @@ export default function ServicesPage() {
                 <Reveal key={group.slug} delay={i * 0.08} className="h-full">
                   <div
                     id={group.slug}
-                    className="flex h-full scroll-mt-24 flex-col rounded-lg border-t-2 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    className="flex h-full scroll-mt-24 flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
                     style={{ borderTopColor: group.color, backgroundColor: `${group.color}0F` }}
                   >
                     <p className="font-display text-xl font-semibold text-soil">{group.name}</p>

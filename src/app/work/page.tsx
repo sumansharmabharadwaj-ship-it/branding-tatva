@@ -48,7 +48,7 @@ export default function WorkPage() {
                 <Reveal key={project.slug} delay={(i % 4) * 0.08} className="h-full">
                   <Link
                     href={`/work/${project.slug}`}
-                    className="group relative flex h-full min-h-[24rem] flex-col justify-end overflow-hidden rounded-lg p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    className="group relative flex h-full min-h-[24rem] flex-col justify-end overflow-hidden rounded-lg p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
                   >
                     {project.cardImage && (
                       <KenBurnsImage

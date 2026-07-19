@@ -51,7 +51,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
           className={`grid w-full max-w-3xl grid-cols-3 items-center rounded-full border px-3 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-4 ${
             isLight
               ? "border-ivory/25 bg-soil/25"
-              : "border-border bg-background-elevated/90 shadow-sm"
+              : "border-border bg-background-elevated/90 shadow-elevation-sm"
           }`}
         >
           <div className="flex justify-start">
@@ -102,7 +102,7 @@ export function Header({ transparent = false }: { transparent?: boolean }) {
                 animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
                 exit={prefersReducedMotion ? undefined : { opacity: 0, y: -14, scale: 0.98 }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full max-w-sm rounded-lg border border-border bg-background-elevated p-3 shadow-lg"
+                className="w-full max-w-sm rounded-lg border border-border bg-background-elevated p-3 shadow-elevation-lg"
                 aria-label="Primary"
               >
                 <ul className="flex flex-col">

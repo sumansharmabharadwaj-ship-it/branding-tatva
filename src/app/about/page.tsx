@@ -120,7 +120,7 @@ export default function AboutPage() {
                 {credentials.map((c, i) => (
                   <Reveal key={c.label} delay={i * 0.06} className="h-full">
                     <div
-                      className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                      className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
                       style={{ borderTopColor: c.color }}
                     >
                       <p className="font-medium text-soil">{c.label}</p>

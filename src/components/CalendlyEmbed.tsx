@@ -12,7 +12,7 @@ export function CalendlyEmbed({ url }: { url: string }) {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className="relative mt-8 overflow-hidden rounded-lg border border-border bg-background-elevated shadow-sm">
+    <div className="relative mt-8 overflow-hidden rounded-lg border border-border bg-background-elevated shadow-elevation-sm">
       {!loaded && (
         <div
           className="absolute inset-0 animate-pulse bg-background-alt"

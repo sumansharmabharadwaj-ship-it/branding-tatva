@@ -68,6 +68,16 @@ const config: Config = {
         md: "0.5rem",
         lg: "0.875rem",
       },
+      boxShadow: {
+        // Layered elevation — a tight "contact" shadow close to the surface
+        // plus a soft, diffuse "ambient" one further out, mimicking how
+        // light actually falls, instead of Tailwind's single flat default.
+        // Tinted with the brand's soil color rather than pure black so it
+        // reads warm at low opacity instead of grey.
+        "elevation-sm": "0 1px 2px rgba(39,34,30,0.08), 0 2px 10px rgba(39,34,30,0.06)",
+        "elevation-md": "0 2px 4px rgba(39,34,30,0.10), 0 10px 28px rgba(39,34,30,0.12)",
+        "elevation-lg": "0 4px 10px rgba(39,34,30,0.14), 0 20px 48px rgba(39,34,30,0.16)",
+      },
       transitionTimingFunction: {
         earth: "cubic-bezier(0.22, 0.61, 0.36, 1)",
         water: "cubic-bezier(0.45, 0, 0.15, 1)",
