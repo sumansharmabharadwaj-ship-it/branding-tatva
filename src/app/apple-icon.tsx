@@ -3,12 +3,14 @@ import { ImageResponse } from "next/og";
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-const dots = [
-  { color: "#B85A34", top: "10px", left: "68px" }, // earth
-  { color: "#24394D", top: "56px", left: "124px" }, // water
-  { color: "#C28A28", top: "124px", left: "100px" }, // fire
-  { color: "#5C6B4A", top: "124px", left: "34px" }, // air
-  { color: "#27221E", top: "56px", left: "10px" }, // space
+// Same LogoMark petal design as icon.tsx, scaled up — see that file's
+// comment for why this replaced the old five-dot pattern.
+const petals = [
+  { color: "#B85A34", rotate: 0 },
+  { color: "#24394D", rotate: 72 },
+  { color: "#C28A28", rotate: 144 },
+  { color: "#5C6B4A", rotate: 216 },
+  { color: "#27221E", rotate: 288 },
 ];
 
 export default function AppleIcon() {
@@ -19,35 +21,22 @@ export default function AppleIcon() {
           width: "100%",
           height: "100%",
           display: "flex",
-          position: "relative",
+          alignItems: "center",
+          justifyContent: "center",
           background: "#F4EFE6",
         }}
       >
-        {dots.map((d) => (
-          <div
-            key={d.color}
-            style={{
-              position: "absolute",
-              top: d.top,
-              left: d.left,
-              width: 56,
-              height: 56,
-              borderRadius: "50%",
-              background: d.color,
-            }}
-          />
-        ))}
-        <div
-          style={{
-            position: "absolute",
-            top: "74px",
-            left: "74px",
-            width: 32,
-            height: 32,
-            borderRadius: "50%",
-            background: "#27221E",
-          }}
-        />
+        <svg width="140" height="140" viewBox="0 0 100 100">
+          {petals.map((p) => (
+            <path
+              key={p.rotate}
+              d="M50 50 C 43.5 36, 43.5 20, 50 9 C 56.5 20, 56.5 36, 50 50 Z"
+              fill={p.color}
+              opacity={0.92}
+              transform={`rotate(${p.rotate} 50 50)`}
+            />
+          ))}
+        </svg>
       </div>
     ),
     { ...size }
