@@ -2,7 +2,7 @@ export const designChoices = [
   {
     title: "The mark",
     detail:
-      "Five petals, one per element, meeting at a single point. It's the same idea the homepage opens with, separate things finding a shared center, just small enough to sit in a header. A mark that only works at hero size isn't a mark yet.",
+      "Five bars, one per element, rising and settling like a skyline. It's the same idea the homepage opens with, separate things adding up to one shape, just small enough to sit in a header. A mark that only works at hero size isn't a mark yet.",
   },
   {
     title: "Cormorant Garamond, for headlines",
