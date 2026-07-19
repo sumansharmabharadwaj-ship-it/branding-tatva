@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { Magnetic } from "@/components/Magnetic";
 
 type ButtonProps = {
   href: string;
@@ -25,16 +26,18 @@ export function LinkButton({ href, children, variant = "primary", className, onC
   };
 
   return (
-    <Link href={href} onClick={onClick} className={cn(base, styles[variant], className)}>
-      {children}
-      {variant === "primary" && (
-        <span
-          aria-hidden="true"
-          className="inline-block -translate-x-1 opacity-0 transition-all duration-300 ease-earth group-hover/btn:translate-x-0 group-hover/btn:opacity-100"
-        >
-          &rarr;
-        </span>
-      )}
-    </Link>
+    <Magnetic className="inline-block">
+      <Link href={href} onClick={onClick} className={cn(base, styles[variant], className)}>
+        {children}
+        {variant === "primary" && (
+          <span
+            aria-hidden="true"
+            className="inline-block -translate-x-1 opacity-0 transition-all duration-300 ease-earth group-hover/btn:translate-x-0 group-hover/btn:opacity-100"
+          >
+            &rarr;
+          </span>
+        )}
+      </Link>
+    </Magnetic>
   );
 }
