@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { DustMotes } from "./DustMotes";
 
@@ -65,13 +66,18 @@ export function CinematicHero({
       ) : (
         <motion.div
           className="absolute inset-0 -top-[10%] h-[120%] w-full"
-          style={{
-            y: prefersReducedMotion ? 0 : imageY,
-            backgroundImage: `${gradient}, url(${poster ?? image})`,
-            backgroundSize: "cover",
-            backgroundPosition: imagePosition,
-          }}
-        />
+          style={{ y: prefersReducedMotion ? 0 : imageY }}
+        >
+          <Image
+            src={poster ?? image ?? ""}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: imagePosition }}
+          />
+          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
+        </motion.div>
       )}
 
       <DustMotes />

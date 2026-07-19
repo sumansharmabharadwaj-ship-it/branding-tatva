@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 
 // Full-bleed hero, the structure used across every reference site
@@ -54,15 +55,20 @@ export function PhotoHero({
       ) : (
         <motion.div
           className="absolute inset-0"
-          style={{
-            backgroundImage: `${gradient}, url(${poster ?? image})`,
-            backgroundSize: "cover",
-            backgroundPosition: imagePosition,
-          }}
           initial={{ scale: 1 }}
           animate={prefersReducedMotion ? undefined : { scale: 1.07 }}
           transition={{ duration: 22, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-        />
+        >
+          <Image
+            src={poster ?? image ?? ""}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: imagePosition }}
+          />
+          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
+        </motion.div>
       )}
       {children}
     </section>

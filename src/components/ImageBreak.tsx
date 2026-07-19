@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 
@@ -51,16 +52,25 @@ export function ImageBreak({
     <div ref={ref} className="relative overflow-hidden bg-soil" style={{ height }}>
       <motion.div
         className="absolute inset-0"
-        style={{
-          backgroundImage: shouldLoad ? `${overlayGradient}, url(${image})` : overlayGradient,
-          backgroundSize: "cover",
-          backgroundPosition: imagePosition,
-        }}
+        style={{ backgroundImage: shouldLoad ? undefined : overlayGradient }}
         initial={prefersReducedMotion ? undefined : { scale: 1.12 }}
         whileInView={prefersReducedMotion ? undefined : { scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 2.2, ease: [0.16, 1, 0.3, 1] }}
-      />
+      >
+        {shouldLoad && (
+          <>
+            <Image
+              src={image}
+              alt=""
+              fill
+              sizes="100vw"
+              style={{ objectFit: "cover", objectPosition: imagePosition }}
+            />
+            <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
+          </>
+        )}
+      </motion.div>
       {quote && quoteVariant === "left" && (
         <div className="relative flex h-full items-end px-6 pb-12 sm:px-12 sm:pb-16">
           <p
