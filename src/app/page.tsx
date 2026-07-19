@@ -247,7 +247,7 @@ export default function Home() {
 
             <Reveal delay={0.12} className="relative flex min-h-[50vh] items-end overflow-hidden bg-soil p-8 sm:min-h-0 sm:p-12">
               <KenBurnsImage
-                image="/images/own-pond.jpg"
+                image="/images/higgsfield-stream-clarity.jpg"
                 gradient="linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)"
               />
               <div className="relative">
