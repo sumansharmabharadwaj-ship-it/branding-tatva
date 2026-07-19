@@ -15,6 +15,7 @@ export type Project = {
   stats?: { value: string; label: string }[]; // real, verified numbers only — pulled from `outcome` for visual callouts
   closingQuote?: string; // the case-study page's closing VideoBreak — grounded in this project's own challenge/insight, not a generic line shared across every project
   cardImage?: string; // background photo for the Home page's secondary "Selected work" cards
+  cardVideo?: string; // ambient clip that autoplays on hover in the Work grid — abstract/atmospheric, not literal stock footage of the industry
 };
 
 // Client names cleared for public use by Suman. Every field below is
@@ -43,6 +44,7 @@ export const projects: Project[] = [
     closingQuote:
       "Fewer posts, each one earning its place. That's the difference between being seen and being remembered.",
     cardImage: "/images/pexels-forest-path.jpg",
+    cardVideo: "/videos/card-dr-haley-nutrition.mp4",
     featured: true,
     accent: "#5C6B4A", // sage
     stats: [
@@ -74,6 +76,7 @@ export const projects: Project[] = [
     closingQuote:
       "A story a buyer can pass on to their own customers is worth more than the lowest price on the listing.",
     cardImage: "/images/own-jagged-peaks.jpg",
+    cardVideo: "/videos/card-myshopineurope.mp4",
     featured: true,
     accent: "#B85A34", // clay
   },
@@ -93,6 +96,7 @@ export const projects: Project[] = [
     closingQuote:
       "Content that only earns attention is unfinished. It has to lead somewhere, or it isn't strategy yet.",
     cardImage: "/images/own-canopy.jpg",
+    cardVideo: "/videos/card-executive-springboard.mp4",
     featured: true,
     accent: "#24394D", // indigo
   },
