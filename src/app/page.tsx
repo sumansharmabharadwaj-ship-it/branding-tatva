@@ -16,6 +16,7 @@ import { CinematicHero } from "@/components/CinematicHero";
 import { ImageBreak } from "@/components/ImageBreak";
 import { VideoBreak } from "@/components/VideoBreak";
 import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
+import { ProcessJourney } from "@/components/ProcessJourney";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -364,22 +365,7 @@ export default function Home() {
               <Reveal>
                 <h2 className="text-display-sm font-display font-semibold text-soil">How a project moves</h2>
               </Reveal>
-              <ol className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                {process.map((stage, i) => (
-                  <li key={stage.stage} className="relative pl-10">
-                    <Reveal delay={(i % 3) * 0.1}>
-                      <span
-                        className="absolute left-0 top-0 font-display text-2xl font-semibold"
-                        style={{ color: elementColor[stage.element] }}
-                      >
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <p className="font-display text-lg font-semibold text-soil">{stage.stage}</p>
-                      <p className="mt-2 text-sm text-foreground-secondary">{stage.description}</p>
-                    </Reveal>
-                  </li>
-                ))}
-              </ol>
+              <ProcessJourney stages={process} elementColor={elementColor} />
             </Container>
           </section>
 
