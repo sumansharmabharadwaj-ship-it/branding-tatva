@@ -14,9 +14,15 @@ import { useEffect, useRef } from "react";
 //
 // Over links/buttons the core grows and the trail backs off — a small
 // magnetic-feeling cue that something is clickable, without the trail's
-// motion-blur streak competing with the target itself.
+// motion-blur streak competing with the target itself. Over a full-bleed
+// photo/video break (ImageBreak/VideoBreak, tagged data-cursor-media),
+// which isn't clickable, the core instead widens into a soft, wide
+// ambient halo — a gentler scale and no label, distinct from the tight
+// bright glow that means "this responds to a click." Interactive
+// targets take priority if the two ever overlap.
 
 const INTERACTIVE_SELECTOR = 'a, button, [role="button"], input, textarea, select';
+const MEDIA_SELECTOR = "[data-cursor-media]";
 
 export function SparkCursor() {
   const coreRef = useRef<HTMLDivElement>(null);
@@ -37,6 +43,7 @@ export function SparkCursor() {
     let lastX = 0;
     let lastY = 0;
     let hovering = false;
+    let overMedia = false;
 
     function handleMove(e: MouseEvent) {
       if (!core || !trail || !label) return;
@@ -48,12 +55,12 @@ export function SparkCursor() {
       const speed = Math.min(Math.hypot(dx, dy), 60);
       const angle = speed > 1 ? Math.atan2(dy, dx) * (180 / Math.PI) : 0;
       const stretch = 1 + speed / 10;
-      const coreScale = hovering ? 2.2 : 1;
+      const coreScale = hovering ? 2.2 : overMedia ? 1.5 : 1;
 
       core.style.opacity = "1";
       core.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%) scale(${coreScale})`;
 
-      const trailOpacity = hovering ? 0 : Math.min(0.25 + speed / 45, 0.95);
+      const trailOpacity = hovering || overMedia ? 0 : Math.min(0.25 + speed / 45, 0.95);
       trail.style.opacity = String(trailOpacity);
       trail.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%) rotate(${angle}deg) scaleX(${stretch})`;
 
@@ -66,6 +73,9 @@ export function SparkCursor() {
       if (target?.closest?.(INTERACTIVE_SELECTOR)) {
         hovering = true;
         core?.classList.add("spark-cursor-core--hover");
+      } else if (target?.closest?.(MEDIA_SELECTOR)) {
+        overMedia = true;
+        core?.classList.add("spark-cursor-core--media");
       }
       const labelSource = target?.closest?.("[data-cursor-label]");
       if (labelSource && label) {
@@ -78,6 +88,9 @@ export function SparkCursor() {
       if (target?.closest?.(INTERACTIVE_SELECTOR)) {
         hovering = false;
         core?.classList.remove("spark-cursor-core--hover");
+      } else if (target?.closest?.(MEDIA_SELECTOR)) {
+        overMedia = false;
+        core?.classList.remove("spark-cursor-core--media");
       }
       if (target?.closest?.("[data-cursor-label]")) {
         label?.classList.remove("spark-cursor-label--visible");

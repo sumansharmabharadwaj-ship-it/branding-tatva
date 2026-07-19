@@ -169,6 +169,14 @@
   box-shadow: 0 0 26px 8px rgba(194,138,40,0.5), 0 0 8px 2px rgba(255,244,220,0.75);
 }
 
+/* Over a full-bleed photo/video break — not clickable, so no scale-up
+   or label, just a wider, softer halo acknowledging there's something
+   worth pausing on. A different feeling from --hover's tight, bright
+   "this responds to a click" glow. */
+.spark-cursor-core--media {
+  box-shadow: 0 0 40px 14px rgba(194,138,40,0.22), 0 0 10px 3px rgba(255,244,220,0.35);
+}
+
 .spark-cursor-trail {
   position: fixed;
   left: 0;

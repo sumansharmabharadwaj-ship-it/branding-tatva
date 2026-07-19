@@ -32,7 +32,7 @@ export function ImageBreak({
   const [ref, shouldLoad] = useLazyMount();
 
   return (
-    <div ref={ref} className="relative overflow-hidden bg-soil" style={{ height }}>
+    <div ref={ref} data-cursor-media className="relative overflow-hidden bg-soil" style={{ height }}>
       <motion.div
         className="absolute inset-0"
         style={{ backgroundImage: shouldLoad ? undefined : overlayGradient }}

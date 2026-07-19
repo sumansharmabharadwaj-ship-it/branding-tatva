@@ -47,7 +47,7 @@ export function VideoBreak({
   const usesParallax = parallax && !prefersReducedMotion;
 
   return (
-    <div ref={ref} className="relative overflow-hidden bg-soil" style={{ height }}>
+    <div ref={ref} data-cursor-media className="relative overflow-hidden bg-soil" style={{ height }}>
       {prefersReducedMotion ? (
         <div className="absolute inset-0">
           <Image
