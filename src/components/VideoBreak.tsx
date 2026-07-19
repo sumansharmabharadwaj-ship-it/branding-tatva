@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { useLazyMount } from "@/hooks/useLazyMount";
+import { BREAK_QUOTE_INITIAL, BREAK_QUOTE_ANIMATE, BREAK_QUOTE_TRANSITION } from "@/animations/breakQuote";
 
 // The video counterpart to ImageBreak: a full-bleed cinematic moment, but
 // with real motion in the shot itself rather than a static photograph.
@@ -35,32 +36,15 @@ export function VideoBreak({
   children?: React.ReactNode;
 }) {
   const prefersReducedMotion = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const mediaY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
-  const usesParallax = parallax && !prefersReducedMotion;
-
   // Every break on the page otherwise mounts and starts downloading its
   // full video immediately, regardless of scroll position — a real
   // weight cost on pages with several of these below the fold. The
   // poster still renders instantly; only the .mp4 fetch is deferred
   // until the section is within ~600px of the viewport.
-  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldLoadVideo(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "600px 0px" }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  const [ref, shouldLoadVideo] = useLazyMount();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const mediaY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const usesParallax = parallax && !prefersReducedMotion;
 
   return (
     <div ref={ref} className="relative overflow-hidden bg-soil" style={{ height }}>
@@ -100,10 +84,10 @@ export function VideoBreak({
 
       {quote && quoteVariant === "statement" && (
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={BREAK_QUOTE_INITIAL}
+          whileInView={BREAK_QUOTE_ANIMATE}
           viewport={{ once: true }}
-          transition={{ duration: 1 }}
+          transition={BREAK_QUOTE_TRANSITION}
           className="relative flex h-full flex-col items-center justify-center gap-14 px-6 text-center"
         >
           <p
@@ -118,10 +102,10 @@ export function VideoBreak({
 
       {quote && quoteVariant === "left" && (
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={BREAK_QUOTE_INITIAL}
+          whileInView={BREAK_QUOTE_ANIMATE}
           viewport={{ once: true }}
-          transition={{ duration: 1 }}
+          transition={BREAK_QUOTE_TRANSITION}
           className="relative flex h-full items-end px-6 pb-12 sm:px-12 sm:pb-16"
         >
           <p
@@ -135,10 +119,10 @@ export function VideoBreak({
 
       {quote && quoteVariant === "center" && (
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={BREAK_QUOTE_INITIAL}
+          whileInView={BREAK_QUOTE_ANIMATE}
           viewport={{ once: true }}
-          transition={{ duration: 1 }}
+          transition={BREAK_QUOTE_TRANSITION}
           className="relative flex h-full items-center justify-center px-6 text-center"
         >
           <p

@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
+import { useLazyMount } from "@/hooks/useLazyMount";
 
 const KEN_BURNS = kenBurnsAnimation();
 
@@ -33,24 +33,7 @@ export function KenBurnsImage({
   sizes?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const [shouldLoad, setShouldLoad] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldLoad(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "600px 0px" }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  const [ref, shouldLoad] = useLazyMount();
 
   return (
     <motion.div

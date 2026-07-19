@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { useLazyMount } from "@/hooks/useLazyMount";
 
 // A full-bleed photographic interlude between two text passages, so long
 // text stretches never go more than a viewport or so without a real
@@ -29,24 +29,7 @@ export function ImageBreak({
   quoteVariant?: QuoteVariant;
 }) {
   const prefersReducedMotion = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const [shouldLoad, setShouldLoad] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldLoad(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "600px 0px" }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+  const [ref, shouldLoad] = useLazyMount();
 
   return (
     <div ref={ref} className="relative overflow-hidden bg-soil" style={{ height }}>
