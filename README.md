@@ -1,11 +1,15 @@
 # Branding Tatva — website project
 
-This is the in-progress code for your website. You don't need to understand any of it — I'm keeping this file updated in plain language as we go, and I'll do all the technical work.
+This is the code for your website. You don't need to understand any of it — I'm keeping this file updated in plain language as we go, and I'll do all the technical work.
 
 ## Where things stand
-- ✅ Project foundation: page structure, colour system, typography, homepage
-- ⏳ Not yet built: About, Services, Work, Contact pages; animated hero; final design polish
+- ✅ All pages built: Home, About, Services, Work (with individual case studies), Contact, Privacy, Terms
+- ✅ Full design system: colours, typography, the five-elements branding, motion and scroll animations throughout
+- ✅ Accessibility pass: keyboard navigation, visible focus indicators, reduced-motion support
+- ✅ Social sharing: link previews on LinkedIn/Instagram/WhatsApp now show a proper branded image instead of a blank card
+- ✅ Custom 404 and error pages, so anything that goes wrong still looks like your site, not a generic crash screen
 - ⏳ Not yet connected: GitHub, Vercel (hosting), your domain
+- ⏳ Still needed from you before this can go live — see `docs/PROJECT_PLAN.md` for the full list, but the short version is: a one-line "win" description for a couple of the case studies, your domain name, and a public contact email/phone if you want one different from what's there now
 
 ## How to edit text later (once the site is live)
 Most of the words on the site live in one place: `src/data/`.
@@ -16,6 +20,6 @@ Most of the words on the site live in one place: `src/data/`.
 You'll never need to touch these directly — just tell me what to change and I'll edit them.
 
 ## Common questions
-**"Can I see this now?"** Not yet as a live link — I don't have the ability to run a live preview in my current workspace (it can't reach the internet to download the tools it needs). The first real preview will happen once we deploy to Vercel, which is a coming step.
+**"Can I see this now?"** Yes — I can run the site and check it in a live browser myself, and I do that before saying anything is finished. Once we connect Vercel, you'll also get a real link you can open on your own phone or laptop.
 
-**"Did you test this?"** I checked the code carefully and did a structural sanity check, but I haven't been able to run it. The first full test happens automatically when we deploy — if anything's broken, Vercel will tell us exactly what and I'll fix it before it goes live.
+**"Did you test this?"** Yes — every change gets checked for actual code errors, then opened in a live browser to confirm it looks and works right, including things like keyboard navigation and mobile screen sizes.
