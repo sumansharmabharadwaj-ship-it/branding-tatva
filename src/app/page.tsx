@@ -17,6 +17,7 @@ import { ElementGlyph } from "@/components/ElementGlyph";
 import { ElementReveal } from "@/components/ElementReveal";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
 import { CinematicHero } from "@/sections/Hero";
+import { Threshold } from "@/sections/Threshold";
 import { ImageBreak } from "@/components/ImageBreak";
 import { VideoBreak } from "@/components/VideoBreak";
 import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
@@ -217,67 +218,35 @@ export default function Home() {
           height="72vh"
         />
 
-        {/* Two brand pathways — a real diptych, not two bordered text blocks */}
-        <section>
-          <h2 className="container-page pt-20 text-center font-display text-display-sm font-semibold text-soil">
-            Every brand starts at one of two thresholds
-          </h2>
-          <div className="mt-12 grid min-h-[70vh] sm:grid-cols-2">
-            <Reveal className="relative flex min-h-[50vh] items-end overflow-hidden bg-soil p-8 sm:min-h-0 sm:p-12">
-              <KenBurnsImage
-                image="/images/own-misty-ridge-poster.jpg"
-                gradient="linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)"
-                sizes="(min-width: 640px) 50vw, 100vw"
-              />
-              <div className="relative">
-                <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
-                  Threshold one
-                </p>
-                <p className="mt-3 max-w-xs font-display text-3xl font-semibold text-ivory">
-                  Starting with an idea
-                </p>
-                <p className="mt-3 max-w-xs text-sm text-ivory/70">
-                  Earth first work: purpose, audience, and positioning,
-                  before anything else gets built.
-                </p>
-                <LinkButton
-                  href="/services#brand-beginning"
-                  variant="secondary"
-                  className="mt-6 border-ivory/30 text-ivory hover:bg-ivory/10"
-                >
-                  Brand Beginning
-                </LinkButton>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.12} className="relative flex min-h-[50vh] items-end overflow-hidden bg-soil p-8 sm:min-h-0 sm:p-12">
-              <KenBurnsImage
-                image="/images/higgsfield-stream-clarity.jpg"
-                gradient="linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)"
-                sizes="(min-width: 640px) 50vw, 100vw"
-              />
-              <div className="relative">
-                <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
-                  Threshold two
-                </p>
-                <p className="mt-3 max-w-xs font-display text-3xl font-semibold text-ivory">
-                  Already in business
-                </p>
-                <p className="mt-3 max-w-xs text-sm text-ivory/70">
-                  An audit first, finding exactly where the story stops
-                  holding together.
-                </p>
-                <LinkButton
-                  href="/services#brand-clarity"
-                  variant="secondary"
-                  className="mt-6 border-ivory/30 text-ivory hover:bg-ivory/10"
-                >
-                  Brand Clarity
-                </LinkButton>
-              </div>
-            </Reveal>
-          </div>
-        </section>
+        {/* Two brand pathways — an interactive split-screen, not two
+            bordered text blocks. See sections/Threshold. */}
+        <Threshold
+          heading="Every brand starts at one of two thresholds"
+          panels={[
+            {
+              key: "left",
+              eyebrow: "Threshold one",
+              title: "Starting with an idea",
+              description:
+                "Earth first work: purpose, audience, and positioning, before anything else gets built.",
+              image: "/images/own-misty-ridge-poster.jpg",
+              gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
+              ctaLabel: "Brand Beginning",
+              ctaHref: "/services#brand-beginning",
+            },
+            {
+              key: "right",
+              eyebrow: "Threshold two",
+              title: "Already in business",
+              description:
+                "An audit first, finding exactly where the story stops holding together.",
+              image: "/images/higgsfield-stream-clarity.jpg",
+              gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
+              ctaLabel: "Brand Clarity",
+              ctaHref: "/services#brand-clarity",
+            },
+          ]}
+        />
 
         <GradientSections colors={["#F4EFE6", "#EEE4DB"]}>
           {/* Featured work — one large photographic entry, two quiet

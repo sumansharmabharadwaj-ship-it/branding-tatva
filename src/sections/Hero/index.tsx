@@ -4,9 +4,10 @@ import { useRef } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
+import { useSpotlight } from "@/hooks/useSpotlight";
 import type { CinematicHeroProps } from "./types";
 import { HERO_SCRIM_GRADIENT } from "./constants";
-import { useHeroParallax, useHeroMouseParallax, useHeroSpotlight } from "./animations";
+import { useHeroParallax, useHeroMouseParallax } from "./animations";
 
 // Purely decorative ambient texture — contributes nothing to LCP or
 // first paint, so it's code-split out of the hero's own bundle rather
@@ -38,7 +39,7 @@ export function CinematicHero({
   const prefersReducedMotion = useReducedMotion();
   const { imageY, contentOpacity, contentY } = useHeroParallax(ref);
   const mouseParallax = useHeroMouseParallax(ref, Boolean(prefersReducedMotion));
-  const spotlightRef = useHeroSpotlight(ref, Boolean(prefersReducedMotion));
+  const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));
 
   return (
     <section ref={ref} className="relative h-svh min-h-[620px] overflow-hidden bg-soil">
