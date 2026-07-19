@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
-import { SparkCursor } from "@/components/SparkCursor";
+import { DeferredCursor } from "@/components/DeferredCursor";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { site } from "@/data/site";
@@ -75,7 +75,7 @@ export default function RootLayout({
         </a>
         <div className="paper-grain" aria-hidden="true" />
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
-        <SparkCursor />
+        <DeferredCursor />
         <PageLoadVeil />
         <script
           type="application/ld+json"

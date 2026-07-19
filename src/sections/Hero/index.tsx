@@ -2,11 +2,18 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
-import { DustMotes } from "@/components/DustMotes";
 import type { CinematicHeroProps } from "./types";
 import { HERO_SCRIM_GRADIENT } from "./constants";
 import { useHeroParallax } from "./animations";
+
+// Purely decorative ambient texture — contributes nothing to LCP or
+// first paint, so it's code-split out of the hero's own bundle rather
+// than shipped as part of the critical path.
+const DustMotes = dynamic(() => import("@/components/DustMotes").then((m) => m.DustMotes), {
+  ssr: false,
+});
 
 // Full-screen hero, restructured after looking at how references like
 // Haven actually handle text over a photograph: a small pill badge, one
