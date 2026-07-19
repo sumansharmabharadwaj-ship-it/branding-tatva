@@ -62,6 +62,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
             >
               <Link
                 href={`/work/${project.slug}`}
+                data-cursor-label="View case study"
                 className="group relative flex h-full flex-col justify-end overflow-hidden rounded-lg p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
               >
                 {project.cardImage && (

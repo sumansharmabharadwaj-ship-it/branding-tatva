@@ -308,6 +308,7 @@ export default function Home() {
                   <Reveal key={project.slug} delay={i * 0.1}>
                     <a
                       href={`/work/${project.slug}`}
+                      data-cursor-label="View case study"
                       className="group relative flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-lg p-6 sm:p-8"
                     >
                       {project.cardImage && (

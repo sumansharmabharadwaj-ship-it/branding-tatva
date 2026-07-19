@@ -21,6 +21,7 @@ const INTERACTIVE_SELECTOR = 'a, button, [role="button"], input, textarea, selec
 export function SparkCursor() {
   const coreRef = useRef<HTMLDivElement>(null);
   const trailRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const isFinePointer = window.matchMedia("(pointer: fine)").matches;
@@ -28,7 +29,8 @@ export function SparkCursor() {
 
     const core = coreRef.current;
     const trail = trailRef.current;
-    if (!core || !trail) return;
+    const label = labelRef.current;
+    if (!core || !trail || !label) return;
 
     document.documentElement.classList.add("spark-cursor-active");
 
@@ -37,7 +39,7 @@ export function SparkCursor() {
     let hovering = false;
 
     function handleMove(e: MouseEvent) {
-      if (!core || !trail) return;
+      if (!core || !trail || !label) return;
       const dx = e.clientX - lastX;
       const dy = e.clientY - lastY;
       lastX = e.clientX;
@@ -54,19 +56,31 @@ export function SparkCursor() {
       const trailOpacity = hovering ? 0 : Math.min(0.25 + speed / 45, 0.95);
       trail.style.opacity = String(trailOpacity);
       trail.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%) rotate(${angle}deg) scaleX(${stretch})`;
+
+      label.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, 22px)`;
     }
     window.addEventListener("mousemove", handleMove);
 
     function handleOver(e: MouseEvent) {
-      if ((e.target as Element)?.closest?.(INTERACTIVE_SELECTOR)) {
+      const target = e.target as Element;
+      if (target?.closest?.(INTERACTIVE_SELECTOR)) {
         hovering = true;
         core?.classList.add("spark-cursor-core--hover");
       }
+      const labelSource = target?.closest?.("[data-cursor-label]");
+      if (labelSource && label) {
+        label.textContent = labelSource.getAttribute("data-cursor-label");
+        label.classList.add("spark-cursor-label--visible");
+      }
     }
     function handleOut(e: MouseEvent) {
-      if ((e.target as Element)?.closest?.(INTERACTIVE_SELECTOR)) {
+      const target = e.target as Element;
+      if (target?.closest?.(INTERACTIVE_SELECTOR)) {
         hovering = false;
         core?.classList.remove("spark-cursor-core--hover");
+      }
+      if (target?.closest?.("[data-cursor-label]")) {
+        label?.classList.remove("spark-cursor-label--visible");
       }
     }
     document.addEventListener("mouseover", handleOver);
@@ -84,6 +98,7 @@ export function SparkCursor() {
     <>
       <div ref={trailRef} aria-hidden="true" className="spark-cursor-trail" />
       <div ref={coreRef} aria-hidden="true" className="spark-cursor-core" />
+      <div ref={labelRef} aria-hidden="true" className="spark-cursor-label" />
     </>
   );
 }
