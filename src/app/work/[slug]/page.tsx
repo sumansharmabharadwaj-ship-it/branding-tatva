@@ -8,6 +8,7 @@ import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
+import { AnimatedStat } from "@/components/AnimatedStat";
 import { projects } from "@/data/projects";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -79,7 +80,7 @@ export default async function CaseStudyPage({ params }: Props) {
                   {project.stats.map((stat) => (
                     <div key={stat.label} className="text-center sm:text-left">
                       <p className="font-display text-4xl font-semibold text-clay sm:text-5xl">
-                        {stat.value}
+                        <AnimatedStat value={stat.value} />
                       </p>
                       <p className="mt-2 text-sm text-foreground-secondary">{stat.label}</p>
                     </div>
