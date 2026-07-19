@@ -221,7 +221,7 @@ export default function Home() {
           <div className="mt-12 grid min-h-[70vh] sm:grid-cols-2">
             <Reveal className="relative flex min-h-[50vh] items-end overflow-hidden bg-soil p-8 sm:min-h-0 sm:p-12">
               <KenBurnsImage
-                image="/images/own-ridge-road.jpg"
+                image="/images/own-misty-ridge-poster.jpg"
                 gradient="linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)"
               />
               <div className="relative">
@@ -404,7 +404,7 @@ export default function Home() {
           imagePosition="50% 12%"
           quoteVariant="statement"
           parallax
-          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0.3) 30%, rgba(20,17,14,0.3) 55%, rgba(20,17,14,0.92) 100%)"
+          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.35) 0%, rgba(20,17,14,0.15) 30%, rgba(20,17,14,0.2) 55%, rgba(20,17,14,0.9) 100%)"
         >
           <DustMotes />
           <div className="relative">
