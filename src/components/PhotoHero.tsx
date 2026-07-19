@@ -2,6 +2,9 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
+import { kenBurnsAnimation } from "@/animations/kenBurns";
+
+const KEN_BURNS = kenBurnsAnimation({ scale: 1.07, duration: 22 });
 
 // Full-bleed hero, the structure used across every reference site
 // (Nevada House, Haven, Sylvan): a real photo or video fills the
@@ -55,9 +58,9 @@ export function PhotoHero({
       ) : (
         <motion.div
           className="absolute inset-0"
-          initial={{ scale: 1 }}
-          animate={prefersReducedMotion ? undefined : { scale: 1.07 }}
-          transition={{ duration: 22, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+          initial={KEN_BURNS.initial}
+          animate={prefersReducedMotion ? undefined : KEN_BURNS.animate}
+          transition={KEN_BURNS.transition}
         >
           <Image
             src={poster ?? image ?? ""}

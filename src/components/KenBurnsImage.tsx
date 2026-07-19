@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
+import { kenBurnsAnimation } from "@/animations/kenBurns";
+
+const KEN_BURNS = kenBurnsAnimation();
 
 // A reusable slow, continuous zoom drift for any full-bleed background
 // image block that isn't already a hero. Used anywhere a static photo
@@ -54,9 +57,9 @@ export function KenBurnsImage({
       ref={ref}
       className={`absolute inset-0 ${className ?? ""}`}
       style={{ backgroundImage: shouldLoad ? undefined : gradient }}
-      initial={{ scale: 1 }}
-      animate={prefersReducedMotion ? undefined : { scale: 1.08 }}
-      transition={{ duration: 18, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+      initial={KEN_BURNS.initial}
+      animate={prefersReducedMotion ? undefined : KEN_BURNS.animate}
+      transition={KEN_BURNS.transition}
     >
       {shouldLoad && (
         <>

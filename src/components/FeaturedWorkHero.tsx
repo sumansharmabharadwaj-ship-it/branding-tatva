@@ -2,6 +2,9 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
+import { kenBurnsAnimation } from "@/animations/kenBurns";
+
+const KEN_BURNS = kenBurnsAnimation({ scale: 1.05, duration: 16 });
 
 // The large featured-work entry: a full photographic block with a slow
 // hover zoom, distinct from the smaller text-only entries beside it so
@@ -33,10 +36,10 @@ export function FeaturedWorkHero({
     >
       <motion.div
         className="absolute inset-0"
-        initial={{ scale: 1 }}
-        animate={prefersReducedMotion ? undefined : { scale: 1.05 }}
+        initial={KEN_BURNS.initial}
+        animate={prefersReducedMotion ? undefined : KEN_BURNS.animate}
         whileHover={{ scale: 1.1 }}
-        transition={{ duration: 16, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+        transition={KEN_BURNS.transition}
       >
         <Image
           src={image}
