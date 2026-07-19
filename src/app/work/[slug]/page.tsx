@@ -7,6 +7,7 @@ import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
+import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { projects } from "@/data/projects";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -25,10 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function Block({ title, children }: { title: string; children?: string }) {
+function Block({ id, title, children }: { id?: string; title: string; children?: string }) {
   if (!children) return null;
   return (
-    <div>
+    <div id={id} className={id ? "scroll-mt-24" : undefined}>
       <h2 className="font-display text-xl font-semibold text-soil">{title}</h2>
       <p className="mt-3 text-foreground-secondary">{children}</p>
     </div>
@@ -41,6 +42,13 @@ export default async function CaseStudyPage({ params }: Props) {
   if (!project) notFound();
 
   const related = projects.find((p) => p.slug !== project.slug && p.featured);
+  const strategyAnchor = project.insight ? "insight" : project.strategy ? "strategy" : null;
+  const jumpItems = [
+    project.stats ? { href: "#numbers", label: "Numbers" } : null,
+    { href: "#challenge", label: "Challenge" },
+    strategyAnchor ? { href: `#${strategyAnchor}`, label: "Strategy" } : null,
+    { href: "#outcome", label: "Outcome" },
+  ].filter((item): item is { href: string; label: string } => item !== null);
 
   return (
     <>
@@ -64,7 +72,7 @@ export default async function CaseStudyPage({ params }: Props) {
         </PhotoHero>
 
         {project.stats && (
-          <section className="border-b border-border bg-clay/5 py-14">
+          <section id="numbers" className="scroll-mt-24 border-b border-border bg-clay/5 py-14">
             <Container>
               <Reveal>
                 <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
@@ -85,12 +93,12 @@ export default async function CaseStudyPage({ params }: Props) {
         <section className="border-t border-border bg-background-alt py-16">
           <Container className="grid gap-12 md:grid-cols-3">
             <Reveal className="md:col-span-2 space-y-10">
-              <Block title="The challenge">{project.challenge}</Block>
+              <Block id="challenge" title="The challenge">{project.challenge}</Block>
               {project.audience && <Block title="Audience">{project.audience}</Block>}
-              {project.insight && <Block title="The insight">{project.insight}</Block>}
-              {project.strategy && <Block title="Strategy">{project.strategy}</Block>}
+              {project.insight && <Block id="insight" title="The insight">{project.insight}</Block>}
+              {project.strategy && <Block id="strategy" title="Strategy">{project.strategy}</Block>}
               {project.execution && <Block title="Execution">{project.execution}</Block>}
-              <Block title="Outcome">{project.outcome}</Block>
+              <Block id="outcome" title="Outcome">{project.outcome}</Block>
               {project.reflection && <Block title="Reflection">{project.reflection}</Block>}
             </Reveal>
 
@@ -150,6 +158,7 @@ export default async function CaseStudyPage({ params }: Props) {
         )}
       </main>
       <Footer />
+      <SectionJumpNav items={jumpItems} />
     </>
   );
 }
