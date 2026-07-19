@@ -47,8 +47,10 @@ export function SectionJumpNav({ items }: { items: JumpItem[] }) {
           <a
             key={item.href}
             href={item.href}
+            // terracotta, not clay — clay only reaches 3.41:1 on this dark
+            // bar at this text size, below WCAG's 4.5:1 for normal text.
             className={`whitespace-nowrap text-[0.65rem] uppercase tracking-[0.2em] transition-colors duration-300 ${
-              activeHref === item.href ? "text-clay" : "text-ivory/55 hover:text-ivory"
+              activeHref === item.href ? "text-terracotta" : "text-ivory/55 hover:text-ivory"
             }`}
           >
             {item.label}
