@@ -2,8 +2,11 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { DustMotes } from "./DustMotes";
+import { motion, useReducedMotion } from "framer-motion";
+import { DustMotes } from "@/components/DustMotes";
+import type { CinematicHeroProps } from "./types";
+import { HERO_SCRIM_GRADIENT } from "./constants";
+import { useHeroParallax } from "./animations";
 
 // Full-screen hero, restructured after looking at how references like
 // Haven actually handle text over a photograph: a small pill badge, one
@@ -23,26 +26,10 @@ export function CinematicHero({
   headline,
   subhead,
   children,
-}: {
-  image?: string;
-  video?: string;
-  poster?: string;
-  imagePosition?: string;
-  badge: string;
-  headline: React.ReactNode;
-  subhead: string;
-  children?: React.ReactNode;
-}) {
+}: CinematicHeroProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
-
-  const gradient =
-    "linear-gradient(180deg, rgba(20,17,14,0.65) 0%, rgba(20,17,14,0.2) 14%, rgba(20,17,14,0.1) 32%, rgba(20,17,14,0.55) 62%, rgba(20,17,14,0.95) 100%)";
+  const { imageY, contentOpacity, contentY } = useHeroParallax(ref);
 
   return (
     <section ref={ref} className="relative h-svh min-h-[620px] overflow-hidden bg-soil">
@@ -61,7 +48,7 @@ export function CinematicHero({
             loop
             playsInline
           />
-          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
+          <div className="absolute inset-0" style={{ backgroundImage: HERO_SCRIM_GRADIENT }} />
         </motion.div>
       ) : (
         <motion.div
@@ -76,7 +63,7 @@ export function CinematicHero({
             sizes="100vw"
             style={{ objectFit: "cover", objectPosition: imagePosition }}
           />
-          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
+          <div className="absolute inset-0" style={{ backgroundImage: HERO_SCRIM_GRADIENT }} />
         </motion.div>
       )}
 

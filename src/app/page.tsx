@@ -15,7 +15,7 @@ import { KenBurnsImage } from "@/components/KenBurnsImage";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ElementReveal } from "@/components/ElementReveal";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
-import { CinematicHero } from "@/components/CinematicHero";
+import { CinematicHero } from "@/sections/Hero";
 import { ImageBreak } from "@/components/ImageBreak";
 import { VideoBreak } from "@/components/VideoBreak";
 import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
