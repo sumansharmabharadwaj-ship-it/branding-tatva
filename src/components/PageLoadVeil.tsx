@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { LogoMark } from "./Logo";
 
 // A brief ivory veil over the very first paint, so the site arrives
 // rather than just snapping into view. Lives in the root layout, which
@@ -44,16 +45,12 @@ export function PageLoadVeil() {
           aria-hidden="true"
         >
           <motion.div
-            initial={{ scale: 0.6, opacity: 0 }}
+            initial={{ scale: 0.7, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="h-3 w-3 rounded-full"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(255,236,205,0.95) 0%, rgba(194,138,40,0.85) 45%, rgba(184,90,52,0) 75%)",
-              boxShadow: "0 0 20px 6px rgba(194,138,40,0.35)",
-            }}
-          />
+          >
+            <LogoMark size={48} />
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
