@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { faqs } from "@/data/faqs";
+import { answerVariants, answerTransition, TOGGLE_ROTATION } from "./animations";
 
 export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -23,7 +24,7 @@ export function FAQ() {
               {item.question}
               <span
                 className="ml-4 shrink-0 text-foreground-secondary transition-transform duration-300 ease-earth"
-                style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}
+                style={{ transform: isOpen ? TOGGLE_ROTATION.open : TOGGLE_ROTATION.closed }}
                 aria-hidden="true"
               >
                 +
@@ -32,10 +33,11 @@ export function FAQ() {
             <AnimatePresence initial={false}>
               {isOpen && (
                 <motion.div
-                  initial={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
-                  animate={prefersReducedMotion ? undefined : { height: "auto", opacity: 1 }}
-                  exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
-                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  variants={prefersReducedMotion ? undefined : answerVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={answerTransition}
                   className="overflow-hidden"
                 >
                   <p className="mt-3 text-sm text-foreground-secondary">{item.answer}</p>
