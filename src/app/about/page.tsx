@@ -120,12 +120,12 @@ export default function AboutPage() {
                   Credentials
                 </h2>
               </Reveal>
-              <div className="grid items-stretch gap-6 sm:grid-cols-2">
+              <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
                 {credentials.map((c, i) => (
                   <Reveal key={c.label} delay={i * 0.06} className="h-full">
                     <div
-                      className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
-                      style={{ borderTopColor: c.color }}
+                      className="spotlight-card flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
+                      style={{ borderTopColor: c.color, ["--card-color" as string]: c.color }}
                     >
                       <p className="font-medium text-soil">{c.label}</p>
                       <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
@@ -150,13 +150,20 @@ export default function AboutPage() {
                 case for yours.
               </p>
             </Reveal>
-            <div className="mt-10 grid gap-8 sm:grid-cols-2">
+            <div className="mt-14 divide-y divide-border">
               {designChoices.map((choice, i) => (
-                <Reveal key={choice.title} delay={i * 0.08}>
-                  <p className="font-medium text-soil">{choice.title}</p>
-                  <p className="mt-2 text-sm text-foreground-secondary">
-                    {choice.detail}
-                  </p>
+                <Reveal key={choice.title} delay={i * 0.06}>
+                  <div className="grid gap-3 py-8 sm:grid-cols-[auto_1fr] sm:gap-10 sm:py-10">
+                    <span className="font-display text-5xl font-semibold leading-none text-soil/15 sm:text-6xl">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <div>
+                      <p className="font-display text-lg font-semibold text-soil">{choice.title}</p>
+                      <p className="mt-2 max-w-2xl text-sm text-foreground-secondary">
+                        {choice.detail}
+                      </p>
+                    </div>
+                  </div>
                 </Reveal>
               ))}
             </div>
