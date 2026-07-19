@@ -54,7 +54,7 @@ export function CinematicHero({
             muted
             loop
             playsInline
-            preload="auto"
+            preload="metadata"
           />
           <div className="absolute inset-0" style={{ backgroundImage: HERO_SCRIM_GRADIENT }} />
         </motion.div>
