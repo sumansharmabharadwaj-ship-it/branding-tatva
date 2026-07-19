@@ -5,7 +5,7 @@ import { useEffect, useRef, type RefObject } from "react";
 // the DOM on every pointer move avoids a re-render per pixel of mouse
 // travel, and the consuming radial-gradient just reads the variable, so
 // only one composited layer ever repaints. Pair with a class that reads
-// --spotlight-x/y (see .hero-spotlight in globals.css for the pattern).
+// --spotlight-x/y (see .cursor-spotlight in globals.css for the pattern).
 // Originally built for the Home hero; extracted here once the Threshold
 // split-screen needed the identical technique on each panel.
 export function useSpotlight(ref: RefObject<HTMLElement | null>, disabled = false) {

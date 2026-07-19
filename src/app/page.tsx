@@ -102,6 +102,9 @@ export default function Home() {
               poster="/images/cinematic-waterlight-poster.jpg"
               quote="Attention is the first thing any brand has to earn."
               height="85vh"
+              cameraPush
+              wordFade
+              spotlight
             />
           </div>
 
@@ -382,6 +385,8 @@ export default function Home() {
           imagePosition="50% 12%"
           quoteVariant="statement"
           parallax
+          cameraPush
+          wordFade
           overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.35) 0%, rgba(20,17,14,0.15) 30%, rgba(20,17,14,0.2) 55%, rgba(20,17,14,0.9) 100%)"
         >
           <DustMotes />

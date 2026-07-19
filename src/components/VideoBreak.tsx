@@ -1,10 +1,19 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 import { useLazyMount } from "@/hooks/useLazyMount";
+import { useSpotlight } from "@/hooks/useSpotlight";
+import { kenBurnsAnimation } from "@/animations/kenBurns";
+import { initSplitTextReveal } from "@/animations/splitTextReveal";
 import { BREAK_QUOTE_INITIAL, BREAK_QUOTE_ANIMATE, BREAK_QUOTE_TRANSITION } from "@/animations/breakQuote";
+
+// A slower, more subtle push than the card/hero Ken Burns loops — this
+// sits behind a long quote someone is meant to actually read, not a
+// glanced-at card, so the drift should be closer to imperceptible.
+const CAMERA_PUSH = kenBurnsAnimation({ scale: 1.06, duration: 30 });
 
 // The video counterpart to ImageBreak: a full-bleed cinematic moment, but
 // with real motion in the shot itself rather than a static photograph.
@@ -13,6 +22,55 @@ import { BREAK_QUOTE_INITIAL, BREAK_QUOTE_ANIMATE, BREAK_QUOTE_TRANSITION } from
 // same as a photo would show.
 
 type QuoteVariant = "center" | "statement" | "left";
+
+// Opt-in word-by-word GSAP reveal (reusing the same SplitText setup as
+// SplitReveal's headlines) instead of the default single-block Framer
+// Motion fade — reserved for the handful of quote moments meant to
+// carry real weight, same reasoning SplitReveal itself already uses
+// for headlines.
+function QuoteText({
+  quote,
+  wordFade,
+  prefersReducedMotion,
+  className,
+  style,
+}: {
+  quote: string;
+  wordFade: boolean;
+  prefersReducedMotion: boolean | null;
+  className: string;
+  style: React.CSSProperties;
+}) {
+  const ref = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !wordFade || prefersReducedMotion) return;
+    const ctx = initSplitTextReveal(el);
+    return () => ctx.revert();
+  }, [wordFade, prefersReducedMotion]);
+
+  if (wordFade) {
+    return (
+      <p ref={ref} className={className} style={style}>
+        {quote}
+      </p>
+    );
+  }
+
+  return (
+    <motion.p
+      initial={BREAK_QUOTE_INITIAL}
+      whileInView={BREAK_QUOTE_ANIMATE}
+      viewport={{ once: true }}
+      transition={BREAK_QUOTE_TRANSITION}
+      className={className}
+      style={style}
+    >
+      {quote}
+    </motion.p>
+  );
+}
 
 export function VideoBreak({
   src,
@@ -23,6 +81,9 @@ export function VideoBreak({
   quoteVariant = "center",
   overlayGradient = BREAK_OVERLAY_GRADIENT,
   parallax = false,
+  cameraPush = false,
+  wordFade = false,
+  spotlight = false,
   children,
 }: {
   src: string;
@@ -33,6 +94,15 @@ export function VideoBreak({
   quoteVariant?: QuoteVariant;
   overlayGradient?: string;
   parallax?: boolean;
+  // A slow continuous zoom on the video itself — "the camera pushing
+  // in" on top of whatever the footage is already doing.
+  cameraPush?: boolean;
+  // Splits the quote into words that fade/rise in one at a time instead
+  // of the whole line arriving as one block.
+  wordFade?: boolean;
+  // A soft light following the cursor within this break, same
+  // technique as the Home hero and Threshold split-screen.
+  spotlight?: boolean;
   children?: React.ReactNode;
 }) {
   const prefersReducedMotion = useReducedMotion();
@@ -45,6 +115,8 @@ export function VideoBreak({
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const mediaY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
   const usesParallax = parallax && !prefersReducedMotion;
+  const usesCameraPush = cameraPush && !prefersReducedMotion;
+  const spotlightRef = useSpotlight(ref, spotlight ? Boolean(prefersReducedMotion) : true);
 
   return (
     <div ref={ref} data-cursor-media className="relative overflow-hidden bg-soil" style={{ height }}>
@@ -65,8 +137,12 @@ export function VideoBreak({
             className="absolute inset-0 h-full w-full object-cover"
             style={{
               objectPosition: imagePosition,
-              ...(usesParallax ? { y: mediaY, scale: 1.16 } : undefined),
+              ...(usesParallax ? { y: mediaY } : undefined),
+              ...(usesCameraPush ? undefined : usesParallax ? { scale: 1.16 } : undefined),
             }}
+            initial={usesCameraPush ? CAMERA_PUSH.initial : undefined}
+            animate={usesCameraPush ? CAMERA_PUSH.animate : undefined}
+            transition={usesCameraPush ? CAMERA_PUSH.transition : undefined}
             src={shouldLoadVideo ? src : undefined}
             poster={poster}
             autoPlay={shouldLoadVideo}
@@ -82,56 +158,49 @@ export function VideoBreak({
         </>
       )}
 
+      {spotlight && !prefersReducedMotion && (
+        <div
+          ref={spotlightRef}
+          aria-hidden="true"
+          className="cursor-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500"
+        />
+      )}
+
       {quote && quoteVariant === "statement" && (
-        <motion.div
-          initial={BREAK_QUOTE_INITIAL}
-          whileInView={BREAK_QUOTE_ANIMATE}
-          viewport={{ once: true }}
-          transition={BREAK_QUOTE_TRANSITION}
-          className="relative flex h-full flex-col items-center justify-center gap-14 px-6 text-center"
-        >
-          <p
+        <div className="relative flex h-full flex-col items-center justify-center gap-14 px-6 text-center">
+          <QuoteText
+            quote={quote}
+            wordFade={wordFade}
+            prefersReducedMotion={prefersReducedMotion}
             className="max-w-4xl font-display text-4xl font-semibold leading-[1.1] text-ivory sm:text-5xl"
             style={{ textShadow: "0 2px 14px rgba(0,0,0,0.85), 0 1px 4px rgba(0,0,0,0.9)" }}
-          >
-            {quote}
-          </p>
+          />
           {children}
-        </motion.div>
+        </div>
       )}
 
       {quote && quoteVariant === "left" && (
-        <motion.div
-          initial={BREAK_QUOTE_INITIAL}
-          whileInView={BREAK_QUOTE_ANIMATE}
-          viewport={{ once: true }}
-          transition={BREAK_QUOTE_TRANSITION}
-          className="relative flex h-full items-end px-6 pb-12 sm:px-12 sm:pb-16"
-        >
-          <p
+        <div className="relative flex h-full items-end px-6 pb-12 sm:px-12 sm:pb-16">
+          <QuoteText
+            quote={`“${quote}”`}
+            wordFade={wordFade}
+            prefersReducedMotion={prefersReducedMotion}
             className="max-w-md font-display text-2xl italic text-ivory sm:text-3xl"
             style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)" }}
-          >
-            &ldquo;{quote}&rdquo;
-          </p>
-        </motion.div>
+          />
+        </div>
       )}
 
       {quote && quoteVariant === "center" && (
-        <motion.div
-          initial={BREAK_QUOTE_INITIAL}
-          whileInView={BREAK_QUOTE_ANIMATE}
-          viewport={{ once: true }}
-          transition={BREAK_QUOTE_TRANSITION}
-          className="relative flex h-full items-center justify-center px-6 text-center"
-        >
-          <p
+        <div className="relative flex h-full items-center justify-center px-6 text-center">
+          <QuoteText
+            quote={`“${quote}”`}
+            wordFade={wordFade}
+            prefersReducedMotion={prefersReducedMotion}
             className="max-w-xl px-6 font-display text-2xl italic text-ivory sm:text-3xl"
             style={{ textShadow: "0 2px 10px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)" }}
-          >
-            &ldquo;{quote}&rdquo;
-          </p>
-        </motion.div>
+          />
+        </div>
       )}
     </div>
   );

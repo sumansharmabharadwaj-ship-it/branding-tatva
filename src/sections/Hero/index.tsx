@@ -104,7 +104,7 @@ export function CinematicHero({
         <div
           ref={spotlightRef}
           aria-hidden="true"
-          className="hero-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500"
+          className="cursor-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500"
         />
       )}
 

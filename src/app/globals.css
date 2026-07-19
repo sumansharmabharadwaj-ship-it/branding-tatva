@@ -332,7 +332,7 @@
    sections/Hero/animations.ts, which writes --spotlight-x/y directly
    to this element's style on pointer move (bypassing React) and toggles
    its own opacity, so the CSS here only has to read the two variables. */
-.hero-spotlight {
+.cursor-spotlight {
   z-index: 1;
   background: radial-gradient(
     circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
