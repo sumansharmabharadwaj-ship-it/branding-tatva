@@ -70,7 +70,7 @@ export default function BlogPage() {
                     <p className="mt-3 flex-1 text-sm text-foreground-secondary">
                       {post.excerpt}
                     </p>
-                    <p className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-action-primary transition-transform duration-300">
+                    <p className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-action-primary-hover transition-transform duration-300">
                       Read more <span aria-hidden="true">&rarr;</span>
                     </p>
                   </Link>
