@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
-import { ReactNode } from "react";
+import { ReactNode, useRef } from "react";
+import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/Magnetic";
+import { useSpotlight } from "@/hooks/useSpotlight";
 
 type ButtonProps = {
   href: string;
@@ -14,11 +18,19 @@ type ButtonProps = {
 // Pill-shaped to match the badge/scroll-cue language already used across
 // every hero, rather than a separate boxier button shape. The primary
 // variant carries a small arrow that slides in on hover instead of just
-// swapping background color, so the call to action has somewhere to go.
+// swapping background color, so the call to action has somewhere to go
+// — and a faint sheen that tracks the cursor across the fill, the same
+// useSpotlight technique used on photo/video sections, scaled down to
+// button size. Reserved for primary, since a glint on every bordered
+// secondary button on the page would stop reading as a highlight.
 
 export function LinkButton({ href, children, variant = "primary", className, onClick }: ButtonProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const spotlightRef = useSpotlight(linkRef, variant !== "primary" || Boolean(prefersReducedMotion));
+
   const base =
-    "group/btn inline-flex items-center justify-center gap-1.5 rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 ease-earth focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-state-focus focus-visible:ring-offset-2";
+    "group/btn relative overflow-hidden inline-flex items-center justify-center gap-1.5 rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 ease-earth focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-state-focus focus-visible:ring-offset-2";
   const styles = {
     primary: "bg-action-primary text-white hover:bg-action-primary-hover hover:-translate-y-0.5 hover:shadow-elevation-lg",
     secondary:
@@ -27,16 +39,25 @@ export function LinkButton({ href, children, variant = "primary", className, onC
 
   return (
     <Magnetic className="inline-block">
-      <Link href={href} onClick={onClick} className={cn(base, styles[variant], className)}>
-        {children}
+      <Link ref={linkRef} href={href} onClick={onClick} className={cn(base, styles[variant], className)}>
         {variant === "primary" && (
           <span
+            ref={spotlightRef}
             aria-hidden="true"
-            className="inline-block -translate-x-1 opacity-0 transition-all duration-300 ease-earth group-hover/btn:translate-x-0 group-hover/btn:opacity-100"
-          >
-            &rarr;
-          </span>
+            className="cursor-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
+          />
         )}
+        <span className="relative z-10 inline-flex items-center gap-1.5">
+          {children}
+          {variant === "primary" && (
+            <span
+              aria-hidden="true"
+              className="inline-block -translate-x-1 opacity-0 transition-all duration-300 ease-earth group-hover/btn:translate-x-0 group-hover/btn:opacity-100"
+            >
+              &rarr;
+            </span>
+          )}
+        </span>
       </Link>
     </Magnetic>
   );
