@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { ImageBreak } from "@/components/ImageBreak";
-import { KenBurnsImage } from "@/components/KenBurnsImage";
+import { WorkGrid } from "@/components/WorkGrid";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
@@ -43,45 +42,7 @@ export default function WorkPage() {
 
         <section className="border-t border-border bg-background-alt py-16">
           <Container>
-            <div className="grid items-stretch gap-6 md:grid-cols-2">
-              {projects.map((project, i) => (
-                <Reveal key={project.slug} delay={(i % 4) * 0.08} className="h-full">
-                  <Link
-                    href={`/work/${project.slug}`}
-                    className="group relative flex h-full min-h-[24rem] flex-col justify-end overflow-hidden rounded-lg p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
-                  >
-                    {project.cardImage && (
-                      <KenBurnsImage
-                        image={project.cardImage}
-                        gradient="linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.45) 55%, rgba(39,34,30,0.15) 100%)"
-                      />
-                    )}
-                    <div className="relative border-t-2 pt-4" style={{ borderTopColor: project.accent }}>
-                      <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">
-                        {project.industry}
-                      </p>
-                      <p className="mt-2 font-display text-2xl font-semibold text-ivory">
-                        {project.title}
-                      </p>
-                      <p className="mt-3 text-sm text-ivory/80">{project.challenge}</p>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {project.services.map((s) => (
-                          <span
-                            key={s}
-                            className="rounded-full border border-ivory/30 px-3 py-1 text-xs text-ivory/80"
-                          >
-                            {s}
-                          </span>
-                        ))}
-                      </div>
-                      <p className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-ivory transition-transform duration-300 group-hover:translate-x-1">
-                        View case study <span aria-hidden="true">&rarr;</span>
-                      </p>
-                    </div>
-                  </Link>
-                </Reveal>
-              ))}
-            </div>
+            <WorkGrid projects={projects} />
           </Container>
         </section>
 
