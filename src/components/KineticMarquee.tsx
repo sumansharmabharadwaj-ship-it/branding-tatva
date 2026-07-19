@@ -14,7 +14,7 @@ export function KineticMarquee({ text }: { text: string }) {
   return (
     <div className="overflow-hidden border-y border-border bg-soil py-4">
       <motion.div
-        className="flex w-max gap-10 whitespace-nowrap font-body text-xs font-medium uppercase tracking-[0.4em] text-ivory/50"
+        className="flex w-max gap-10 whitespace-nowrap font-body text-xs font-medium uppercase tracking-[0.4em] text-ivory/60"
         animate={prefersReducedMotion ? undefined : { x: ["0%", "-50%"] }}
         transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
       >

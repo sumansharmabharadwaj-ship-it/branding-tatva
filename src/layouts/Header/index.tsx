@@ -8,7 +8,7 @@ import { Logo } from "@/components/Logo";
 import { LinkButton } from "@/components/Button";
 import { Magnetic } from "@/components/Magnetic";
 import { useLenis } from "@/components/SmoothScrollProvider";
-import { site, navigation } from "@/data/site";
+import { navigation } from "@/data/site";
 import type { HeaderProps } from "./types";
 import { SCROLLED_THRESHOLD, HIDE_REVEAL_DELTA, HIDE_REVEAL_MIN_SCROLL } from "./constants";
 import {
@@ -16,10 +16,14 @@ import {
   BACKDROP_TRANSITION,
   MOBILE_NAV_TRANSITION,
   BAR_TRANSITION,
+  NAV_ITEM_TRANSITION,
+  NAV_CTA_TRANSITION,
   menuIconVariants,
   closeIconVariants,
   backdropVariants,
   mobileNavVariants,
+  navListVariants,
+  navItemVariants,
   barVariants,
 } from "./animations";
 
@@ -119,7 +123,7 @@ export function Header({ transparent = false }: HeaderProps) {
             </Magnetic>
           </div>
 
-          <Link href="/" aria-label={site.name} className="flex justify-center">
+          <Link href="/" className="flex justify-center">
             <Logo light={isLight} className="scale-[0.72] sm:scale-[0.78]" />
           </Link>
 
@@ -187,9 +191,16 @@ export function Header({ transparent = false }: HeaderProps) {
                 className="w-full max-w-sm rounded-lg border border-border bg-background-elevated p-3 shadow-elevation-lg"
                 aria-label="Primary"
               >
-                <ul className="flex flex-col">
+                <motion.ul
+                  variants={prefersReducedMotion ? undefined : navListVariants}
+                  className="flex flex-col"
+                >
                   {navigation.map((item) => (
-                    <li key={item.href}>
+                    <motion.li
+                      key={item.href}
+                      variants={prefersReducedMotion ? undefined : navItemVariants}
+                      transition={NAV_ITEM_TRANSITION}
+                    >
                       <Link
                         href={item.href}
                         onClick={() => setOpen(false)}
@@ -197,14 +208,18 @@ export function Header({ transparent = false }: HeaderProps) {
                       >
                         {item.label}
                       </Link>
-                    </li>
+                    </motion.li>
                   ))}
-                </ul>
-                <div className="mt-2 border-t border-border pt-3 sm:hidden">
+                </motion.ul>
+                <motion.div
+                  variants={prefersReducedMotion ? undefined : navItemVariants}
+                  transition={NAV_CTA_TRANSITION}
+                  className="mt-2 border-t border-border pt-3 sm:hidden"
+                >
                   <LinkButton href="/contact" onClick={() => setOpen(false)} className="w-full">
                     Start a project
                   </LinkButton>
-                </div>
+                </motion.div>
               </motion.nav>
             </div>
           </>
