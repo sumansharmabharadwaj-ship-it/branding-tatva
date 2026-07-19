@@ -37,7 +37,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
             <motion.div
               key={project.slug}
               layout
-              variants={tileVariants}
+              variants={tileVariants(i)}
               initial="initial"
               animate="animate"
               exit="exit"

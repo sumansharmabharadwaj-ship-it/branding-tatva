@@ -14,3 +14,7 @@ export const TILE_LAYOUT_CLASSES = [
 // legible the card's text is.
 export const CARD_MEDIA_GRADIENT =
   "linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.45) 55%, rgba(39,34,30,0.15) 100%)";
+
+// How far a card tilts toward the cursor — kept modest so it reads as
+// "this card has weight" rather than a gimmick.
+export const CARD_TILT_MAX_DEGREES = 6;
