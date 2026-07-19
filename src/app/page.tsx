@@ -5,6 +5,7 @@ import { LinkButton } from "@/components/Button";
 import { FAQ } from "@/components/FAQ";
 import { DustMotes } from "@/components/DustMotes";
 import { Reveal } from "@/components/Reveal";
+import { SplitReveal } from "@/components/SplitReveal";
 import { Testimonials } from "@/components/Testimonials";
 import { ElementsRail } from "@/components/ElementsRail";
 import { KineticMarquee } from "@/components/KineticMarquee";
@@ -69,11 +70,9 @@ export default function Home() {
             as one long unbroken chapter rather than two boxed sections. */}
         <section className="border-t border-border py-28 sm:py-40">
           <Container>
-            <Reveal>
-              <h2 className="max-w-3xl font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
-                A brand can be visible and still go unnoticed.
-              </h2>
-            </Reveal>
+            <SplitReveal className="max-w-3xl font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
+              A brand can be visible and still go unnoticed.
+            </SplitReveal>
             <Reveal delay={0.15}>
               <div className="mt-10 max-w-md space-y-4 text-foreground-secondary sm:ml-auto sm:mr-0 sm:mt-8 sm:text-right">
                 <p>
