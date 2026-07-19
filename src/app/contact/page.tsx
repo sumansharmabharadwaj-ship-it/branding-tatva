@@ -36,7 +36,7 @@ export default function ContactPage() {
               <div className="mt-8 space-y-2 text-sm text-foreground-secondary">
                 <p>
                   Prefer email?{" "}
-                  <a href={`mailto:${site.email}`} className="text-action-primary-hover underline">
+                  <a href={`mailto:${site.email}`} className="text-action-primary-hover link-underline">
                     {site.email}
                   </a>
                 </p>
@@ -45,7 +45,7 @@ export default function ContactPage() {
                     href={site.social.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-action-primary-hover underline"
+                    className="text-action-primary-hover link-underline"
                   >
                     Connect on LinkedIn
                   </a>
@@ -87,7 +87,7 @@ export default function ContactPage() {
                   href={site.calendlyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-action-primary-hover underline"
+                  className="text-action-primary-hover link-underline"
                 >
                   Open it directly instead
                 </a>

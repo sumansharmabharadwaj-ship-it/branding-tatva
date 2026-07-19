@@ -195,3 +195,27 @@
   background-color: color-mix(in srgb, var(--card-color) 22%, transparent);
   border-color: var(--card-color);
 }
+
+/* Underline draws in on hover instead of sitting there static — a small
+   signal that a link is a real interaction, not just colored text. */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.link-underline:hover::after {
+  transform: scaleX(1);
+}
