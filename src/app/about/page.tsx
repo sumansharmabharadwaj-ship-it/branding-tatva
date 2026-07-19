@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Header } from "@/components/Header";
+import { Header } from "@/layouts/Header";
 import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";

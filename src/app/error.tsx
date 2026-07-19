@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Header } from "@/components/Header";
+import { Header } from "@/layouts/Header";
 import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
