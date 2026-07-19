@@ -6,6 +6,7 @@ import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/Reveal";
 import { VideoBreak } from "@/components/VideoBreak";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
+import { ElementGlyph } from "@/components/ElementGlyph";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -68,7 +69,8 @@ export default function ContactPage() {
         <section className="border-t border-border bg-sage/10 py-16">
           <Container>
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
+              <ElementGlyph slug="water" className="h-6 w-6 text-indigo/70" strokeWidth={1.2} />
+              <p className="mt-3 text-sm font-medium uppercase tracking-wide text-action-secondary">
                 Or skip the form
               </p>
               <h2 className="mt-2 text-display-sm font-display font-semibold text-soil">
