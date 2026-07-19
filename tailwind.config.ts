@@ -80,7 +80,6 @@ const config: Config = {
       },
       transitionTimingFunction: {
         earth: "cubic-bezier(0.22, 0.61, 0.36, 1)",
-        water: "cubic-bezier(0.45, 0, 0.15, 1)",
         air: "cubic-bezier(0.16, 1, 0.3, 1)",
       },
     },
