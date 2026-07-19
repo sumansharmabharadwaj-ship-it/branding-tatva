@@ -66,10 +66,12 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
                 className="group relative flex h-full flex-col justify-end overflow-hidden rounded-lg p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
               >
                 {project.cardImage && (
-                  <KenBurnsImage
-                    image={project.cardImage}
-                    gradient="linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.45) 55%, rgba(39,34,30,0.15) 100%)"
-                  />
+                  <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-110">
+                    <KenBurnsImage
+                      image={project.cardImage}
+                      gradient="linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.45) 55%, rgba(39,34,30,0.15) 100%)"
+                    />
+                  </div>
                 )}
                 <div className="relative border-t-2 pt-4" style={{ borderTopColor: project.accent }}>
                   <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">
