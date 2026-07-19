@@ -14,6 +14,17 @@ import type { Project } from "@/data/projects";
 
 type Filter = "featured" | "all";
 
+// A 5-tile repeating pattern (large+tall pair, then a 3/3 pair, then one
+// full-width close) so the grid reads as a considered mosaic rather than
+// uniform cards, whichever filter is active — 3 featured or all 5.
+const tileClass = [
+  "md:col-span-4 md:min-h-[30rem]",
+  "md:col-span-2 md:min-h-[30rem]",
+  "md:col-span-3 md:min-h-[20rem]",
+  "md:col-span-3 md:min-h-[20rem]",
+  "md:col-span-6 md:min-h-[24rem]",
+];
+
 export function WorkGrid({ projects }: { projects: Project[] }) {
   const [filter, setFilter] = useState<Filter>("all");
   const visible = filter === "featured" ? projects.filter((p) => p.featured) : projects;
@@ -37,7 +48,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
         ))}
       </div>
 
-      <motion.div layout className="mt-8 grid items-stretch gap-6 md:grid-cols-2">
+      <motion.div layout className="mt-8 grid items-stretch gap-6 md:grid-cols-6">
         <AnimatePresence mode="popLayout">
           {visible.map((project, i) => (
             <motion.div
@@ -47,11 +58,11 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.97 }}
               transition={{ duration: 0.35, delay: (i % 4) * 0.05, ease: [0.16, 1, 0.3, 1] }}
-              className="h-full"
+              className={`h-full min-h-[24rem] ${tileClass[i % tileClass.length]}`}
             >
               <Link
                 href={`/work/${project.slug}`}
-                className="group relative flex h-full min-h-[24rem] flex-col justify-end overflow-hidden rounded-lg p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
+                className="group relative flex h-full flex-col justify-end overflow-hidden rounded-lg p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
               >
                 {project.cardImage && (
                   <KenBurnsImage
@@ -66,7 +77,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
                   <p className="mt-2 font-display text-2xl font-semibold text-ivory">
                     {project.title}
                   </p>
-                  <p className="mt-3 text-sm text-ivory/80">{project.challenge}</p>
+                  <p className="mt-3 line-clamp-3 text-sm text-ivory/80">{project.challenge}</p>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {project.services.map((s) => (
                       <span
