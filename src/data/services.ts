@@ -4,6 +4,7 @@ export type ServiceGroup = {
   forWho: string;
   description: string;
   includes: string[];
+  color: string;
 };
 
 export type Offering = {
@@ -65,6 +66,7 @@ export const serviceGroups: ServiceGroup[] = [
       "Purpose and values",
       "Launch messaging direction",
     ],
+    color: "#B85A34", // clay — Earth
   },
   {
     slug: "brand-clarity",
@@ -78,6 +80,7 @@ export const serviceGroups: ServiceGroup[] = [
       "Voice and messaging alignment",
       "Content structure",
     ],
+    color: "#24394D", // indigo — Water
   },
   {
     slug: "brand-elevation",
@@ -91,6 +94,7 @@ export const serviceGroups: ServiceGroup[] = [
       "Content strategy",
       "Launch communication",
     ],
+    color: "#C28A28", // ochre — Fire
   },
   {
     slug: "brand-presence",
@@ -103,5 +107,6 @@ export const serviceGroups: ServiceGroup[] = [
       "Consistency frameworks",
       "Performance review and adjustment",
     ],
+    color: "#AD6F5C", // rose-earth — Space
   },
 ];

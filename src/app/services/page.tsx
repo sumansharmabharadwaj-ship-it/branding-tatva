@@ -7,6 +7,7 @@ import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
+import { ElementGlyph } from "@/components/ElementGlyph";
 import { elements } from "@/data/elements";
 import { serviceGroups, offerings } from "@/data/services";
 
@@ -43,14 +44,14 @@ export default function ServicesPage() {
           </Container>
         </PhotoHero>
 
-        <section className="py-16">
+        <section className="py-14">
           <Container>
             <div className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {offerings.map((offer, i) => (
                 <Reveal key={offer.name} delay={i * 0.06} className="h-full">
                   <div
-                    className="flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
-                    style={{ borderTopColor: offer.color }}
+                    className="flex h-full flex-col rounded-lg border-t-2 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    style={{ borderTopColor: offer.color, backgroundColor: `${offer.color}14` }}
                   >
                     <p className="font-display text-lg font-semibold text-soil">{offer.name}</p>
                     <p className="mt-2 text-sm text-foreground-secondary">{offer.detail}</p>
@@ -80,28 +81,47 @@ export default function ServicesPage() {
           </Container>
         </section>
 
-        <section className="py-16">
+        <section className="py-14">
           <Container>
             <div className="grid items-stretch gap-6 lg:grid-cols-5">
               {elements.map((el, i) => (
                 <Reveal key={el.slug} delay={i * 0.08} className="h-full">
                   <div
-                    className="flex h-full flex-col border-t-2 bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    className="relative flex h-full flex-col overflow-hidden border-t-2 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                     style={{ borderColor: el.color }}
                   >
-                    <p className="font-display text-xl font-semibold text-soil">{el.name}</p>
-                    <p className="mt-2 font-display text-sm italic text-foreground-secondary">
-                      &ldquo;{el.poetic}&rdquo;
-                    </p>
-                    <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
-                    <ul className="mt-4 space-y-1.5">
-                      {el.services.map((s) => (
-                        <li key={s} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
-                          {s}
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="mt-auto pt-4 text-xs text-foreground-secondary/80 italic">{el.proof}</p>
+                    <div
+                      className="absolute inset-0"
+                      aria-hidden="true"
+                      style={{
+                        backgroundImage: `linear-gradient(${el.color}, ${el.color}), url(${el.image})`,
+                        backgroundBlendMode: "color",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        opacity: 0.14,
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-background-elevated/90" aria-hidden="true" />
+                    <div className="relative">
+                      <ElementGlyph
+                        slug={el.slug}
+                        className="h-7 w-7 opacity-70"
+                        style={{ color: el.color }}
+                      />
+                      <p className="mt-3 font-display text-xl font-semibold text-soil">{el.name}</p>
+                      <p className="mt-2 font-display text-sm italic text-foreground-secondary">
+                        &ldquo;{el.poetic}&rdquo;
+                      </p>
+                      <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
+                      <ul className="mt-4 space-y-1.5">
+                        {el.services.map((s) => (
+                          <li key={s} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
+                            {s}
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="mt-4 pt-4 text-xs text-foreground-secondary/80 italic">{el.proof}</p>
+                    </div>
                   </div>
                 </Reveal>
               ))}
@@ -109,7 +129,7 @@ export default function ServicesPage() {
           </Container>
         </section>
 
-        <section className="py-20">
+        <section className="py-16">
           <Container>
             <SectionHeading
               eyebrow="By situation"
@@ -118,9 +138,13 @@ export default function ServicesPage() {
             <div className="mt-10 grid items-stretch gap-6 md:grid-cols-2">
               {serviceGroups.map((group, i) => (
                 <Reveal key={group.slug} delay={i * 0.08} className="h-full">
-                  <div id={group.slug} className="flex h-full scroll-mt-24 flex-col rounded-lg border border-border bg-background-elevated p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                  <div
+                    id={group.slug}
+                    className="flex h-full scroll-mt-24 flex-col rounded-lg border-t-2 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    style={{ borderTopColor: group.color, backgroundColor: `${group.color}0F` }}
+                  >
                     <p className="font-display text-xl font-semibold text-soil">{group.name}</p>
-                    <p className="mt-1 text-sm font-medium text-action-secondary">{group.forWho}</p>
+                    <p className="mt-1 text-sm font-medium" style={{ color: group.color }}>{group.forWho}</p>
                     <p className="mt-4 text-foreground-secondary">{group.description}</p>
                     <ul className="mt-4 space-y-1.5">
                       {group.includes.map((item) => (

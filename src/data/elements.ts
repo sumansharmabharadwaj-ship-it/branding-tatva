@@ -9,6 +9,7 @@ export type Element = {
   color: string;
   services: string[];
   proof: string; // real work that demonstrates this element
+  image: string; // backdrop photo, blended to this element's color — see ElementsConstellation.tsx for why this isn't one generic unrelated photo
 };
 
 export const elements: Element[] = [
@@ -26,6 +27,7 @@ export const elements: Element[] = [
     ],
     proof:
       "Full brand foundation work for MyShopInEurope, including audience definition, market analysis, and a core belief, mission, and promise.",
+    image: "/images/own-ridge-road.jpg",
   },
   {
     slug: "water",
@@ -40,6 +42,7 @@ export const elements: Element[] = [
     ],
     proof:
       "Playbooks built for each platform, plus webinar conversion sequencing, for Executive Springboard.",
+    image: "/images/own-pond.jpg",
   },
   {
     slug: "fire",
@@ -54,6 +57,7 @@ export const elements: Element[] = [
     ],
     proof:
       "Campaign repositioning and script development for HerbalCart, moving the brand away from a stereotype it didn't intend to have.",
+    image: "/images/own-golden-branches-poster.jpg",
   },
   {
     slug: "air",
@@ -69,6 +73,7 @@ export const elements: Element[] = [
     ],
     proof:
       "A content portfolio of sixteen pieces for Plaxonic.com, spanning research papers, perspective pieces, blogs, and articles.",
+    image: "/images/cinematic-ridge-poster.jpg",
   },
   {
     slug: "space",
@@ -83,5 +88,6 @@ export const elements: Element[] = [
     ],
     proof:
       "Sustained, measured social management for Dr. Haley Nutrition, with verified follower and engagement growth over two consecutive months.",
+    image: "/images/own-dusk-ridge.jpg",
   },
 ];
