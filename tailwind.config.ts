@@ -46,7 +46,12 @@ const config: Config = {
           DEFAULT: "#D9CDBC",
         },
         state: {
-          focus: "#C28A28", // ochre
+          // Darkened from the base ochre (#C28A28, still used elsewhere)
+          // specifically for focus rings — the base value only reaches
+          // 2.63:1 against the cream background, below WCAG 1.4.11's 3:1
+          // minimum for UI-indicator contrast. This clears 3:1 against
+          // every section background on the site, light or dark.
+          focus: "#A57522",
           success: "#5C6B4A", // sage
           warning: "#C28A28", // ochre
           error: "#B4432E",
