@@ -122,6 +122,7 @@ export const projects: Project[] = [
     closingQuote:
       "The version that felt real outperformed the version that looked expensive, every time.",
     cardImage: "/images/own-pond.jpg",
+    cardVideo: "/videos/card-herbalcart.mp4",
     featured: false,
     accent: "#C28A28", // ochre
   },
@@ -141,6 +142,7 @@ export const projects: Project[] = [
     closingQuote:
       "Trust with an expert and trust with a beginner are earned in two different languages, not one.",
     cardImage: "/images/own-ridge-road.jpg",
+    cardVideo: "/videos/card-plaxonic.mp4",
     featured: false,
     accent: "#CD7A4C", // terracotta
   },
