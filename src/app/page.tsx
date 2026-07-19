@@ -94,7 +94,6 @@ export default function Home() {
               poster="/images/cinematic-pines-poster.jpg"
               quote="Attention is the first thing any brand has to earn."
               height="85vh"
-              overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.2) 0%, rgba(20,17,14,0.6) 35%, rgba(20,17,14,0.6) 65%, rgba(20,17,14,0.35) 90%, #F4EFE6 100%)"
             />
           </div>
 
@@ -210,7 +209,6 @@ export default function Home() {
           image="/images/own-peaks.jpg"
           quote="The parts that don't move are usually the ones holding everything else up."
           height="72vh"
-          overlayGradient="linear-gradient(180deg, #EFE4D9 0%, rgba(20,17,14,0.55) 16%, rgba(20,17,14,0.55) 78%, #F4EFE6 100%)"
         />
 
         {/* Two brand pathways — a real diptych, not two bordered text blocks */}
@@ -352,16 +350,11 @@ export default function Home() {
           </section>
         </GradientSections>
 
-        {/* Stretched larger and fading in from the same cream tone the
-            testimonials section ends on, so it reads as one continuous
-            scene opening up rather than a hard cut into a separate photo
-            block. */}
         <ImageBreak
           image="/images/own-alpenglow-peak.jpg"
           quote="Every strong brand has a moment like this — quiet, and completely sure of itself."
           height="92vh"
           imagePosition="center 38%"
-          overlayGradient="linear-gradient(180deg, #EEE4DB 0%, rgba(20,17,14,0.1) 14%, rgba(20,17,14,0.15) 82%, #EFE4D9 100%)"
         />
 
         <GradientSections colors={["#EFE4D9", "#F1EADE"]}>
@@ -419,7 +412,7 @@ export default function Home() {
           imagePosition="50% 12%"
           quoteVariant="statement"
           parallax
-          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0.3) 30%, rgba(20,17,14,0.3) 55%, rgba(20,17,14,0.92) 88%, #E8DED0 100%)"
+          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0.3) 30%, rgba(20,17,14,0.3) 55%, rgba(20,17,14,0.92) 100%)"
         >
           <DustMotes />
           <div className="relative">

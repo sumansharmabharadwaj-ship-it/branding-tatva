@@ -6,7 +6,7 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
-import { VideoBreak } from "@/components/VideoBreak";
+import { ImageBreak } from "@/components/ImageBreak";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -49,13 +49,17 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        <VideoBreak
-          src="/videos/cinematic-ridge.mp4"
-          poster="/images/cinematic-ridge-poster.jpg"
-          quote="The fog lifts the same way clarity does: slowly, then all at once."
+        {/* Photo: Higgsfield AI generation (Soul Cinematic), commissioned
+            specifically for this slot — the previous foggy ridge video
+            read as blurry and too close in mood to other misty shots
+            already in rotation. This is a crisp, clear-visibility valley
+            view instead, so the quote is about clarity earned by height,
+            not fog lifting. */}
+        <ImageBreak
+          image="/images/higgsfield-golden-ridge.jpg"
+          quote="Clarity isn't something you wait for. It's the view from finally standing somewhere high enough to see it."
           height="85vh"
           quoteVariant="left"
-          overlayGradient="linear-gradient(180deg, #F4EFE6 0%, rgba(20,17,14,0.55) 15%, rgba(20,17,14,0.55) 65%, rgba(20,17,14,0.35) 90%, #E8DED0 100%)"
         />
 
         <section className="border-t border-border bg-background-alt py-20">

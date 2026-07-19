@@ -69,7 +69,6 @@ export default function ServicesPage() {
           quote="The right service is just the vehicle. The strategy is what moves."
           height="72vh"
           imagePosition="center 75%"
-          overlayGradient="linear-gradient(180deg, #F4EFE6 0%, rgba(20,17,14,0.55) 15%, rgba(20,17,14,0.55) 65%, rgba(20,17,14,0.35) 90%, #E8DED0 100%)"
         />
 
         <section id="elements" className="scroll-mt-24 border-t border-border bg-background-alt py-16">

@@ -120,10 +120,9 @@ export default async function CaseStudyPage({ params }: Props) {
           </Container>
         </section>
 
-        {/* Video: I Am Sorin via Pexels, free for commercial use. About's
-            cinematic-ridge.mp4 already owns the misty-pine-ridge mood one
-            click away — this case-study closer needed a genuinely different
-            backdrop, not a second fog shot. The quote itself is per-project
+        {/* Video: I Am Sorin via Pexels, free for commercial use — a
+            distinct flowing-water mood, not another misty-forest shot.
+            The quote itself is per-project
             (closingQuote in data/projects.ts) so the words actually tie back
             to that project's own challenge/outcome, instead of one generic
             line sitting under every case study regardless of industry. */}
@@ -135,7 +134,6 @@ export default async function CaseStudyPage({ params }: Props) {
             "Good strategy doesn't force a path. It finds the one already there, the way water finds a way through stone."
           }
           height="72vh"
-          overlayGradient="linear-gradient(180deg, #E8DED0 0%, rgba(20,17,14,0.55) 15%, rgba(20,17,14,0.55) 65%, rgba(20,17,14,0.35) 90%, #F4EFE6 100%)"
         />
 
         {related && (
