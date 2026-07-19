@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
@@ -154,17 +155,16 @@ export default function Home() {
             {elements.map((el, i) => (
               <ElementReveal key={el.slug} slug={el.slug} delay={i * 0.06}>
                 <div className="relative overflow-hidden">
-                  <div
-                    className="absolute inset-0"
-                    aria-hidden="true"
-                    style={{
-                      backgroundImage: `linear-gradient(${el.color}, ${el.color}), url(${el.image})`,
-                      backgroundBlendMode: "color",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      opacity: 0.16,
-                    }}
-                  />
+                  <div className="absolute inset-0" aria-hidden="true" style={{ opacity: 0.16 }}>
+                    <div className="absolute inset-0" style={{ backgroundColor: el.color }} />
+                    <Image
+                      src={el.image}
+                      alt=""
+                      fill
+                      sizes="100vw"
+                      style={{ objectFit: "cover", objectPosition: "center", mixBlendMode: "color" }}
+                    />
+                  </div>
                   <Container>
                   <div
                     id={el.slug}

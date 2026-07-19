@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Container } from "@/components/Container";
@@ -95,17 +96,16 @@ export default function ServicesPage() {
                     className="relative flex h-full flex-col overflow-hidden border-t-2 p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
                     style={{ borderColor: el.color }}
                   >
-                    <div
-                      className="absolute inset-0"
-                      aria-hidden="true"
-                      style={{
-                        backgroundImage: `linear-gradient(${el.color}, ${el.color}), url(${el.image})`,
-                        backgroundBlendMode: "color",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        opacity: 0.14,
-                      }}
-                    />
+                    <div className="absolute inset-0" aria-hidden="true" style={{ opacity: 0.14 }}>
+                      <div className="absolute inset-0" style={{ backgroundColor: el.color }} />
+                      <Image
+                        src={el.image}
+                        alt=""
+                        fill
+                        sizes="(min-width: 1024px) 20vw, 100vw"
+                        style={{ objectFit: "cover", objectPosition: "center", mixBlendMode: "color" }}
+                      />
+                    </div>
                     <div className="absolute inset-0 bg-background-elevated/90" aria-hidden="true" />
                     <div className="relative">
                       <ElementGlyph
