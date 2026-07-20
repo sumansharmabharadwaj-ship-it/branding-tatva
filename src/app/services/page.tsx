@@ -13,8 +13,11 @@ import { TexturedDark } from "@/components/TexturedDark";
 import { ClipReveal } from "@/components/ClipReveal";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
+import { ProcessSection } from "@/sections/Process";
 import { elements } from "@/data/elements";
+import { process } from "@/data/process";
 import { serviceGroups, offerings } from "@/data/services";
+import { elementColor } from "@/lib/elementColor";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -141,6 +144,23 @@ export default function ServicesPage() {
           </Container>
         </section>
 
+        {/* The philosophy (elements) and the offerings (what) don't
+            explain the actual sequence of working together — this does,
+            reusing the same six-stage process (and the same
+            VerticalJourney component) the home page already uses,
+            rather than inventing a separate framework just for this
+            page. */}
+        <section id="process" className="scroll-mt-24 border-t border-border py-16">
+          <Container>
+            <SectionHeading
+              eyebrow="How I work"
+              title="The same six steps, every time."
+              description="Not a rigid checklist — a sequence. Each stage depends on the one before it, which is usually where a rushed process starts to show."
+            />
+          </Container>
+          <ProcessSection stages={process} elementColor={elementColor} />
+        </section>
+
         <section id="by-situation" className="scroll-mt-24 py-16">
           <Container>
             <SectionHeading
@@ -205,6 +225,7 @@ export default function ServicesPage() {
         items={[
           { href: "#offerings", label: "Offerings" },
           { href: "#elements", label: "Elements" },
+          { href: "#process", label: "How I work" },
           { href: "#by-situation", label: "By situation" },
         ]}
       />

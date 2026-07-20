@@ -25,18 +25,7 @@ import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
 import { process } from "@/data/process";
-
-// Text-only palette for the Process step numerals. Fire uses a darkened
-// ochre here (vs. the shared #C28A28 token) since the brand ochre falls
-// under 3:1 contrast against the parchment section background at this size.
-const elementColor: Record<string, string> = {
-  Earth: "#B85A34",
-  Water: "#24394D",
-  Fire: "#A5752A",
-  Air: "#5C6B4A",
-  Space: "#AD6F5C",
-};
-
+import { elementColor } from "@/lib/elementColor";
 
 export default function Home() {
   const featured = projects.filter((p) => p.featured);
