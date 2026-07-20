@@ -75,6 +75,7 @@ export default function AboutPage() {
                 alt="Suman Sharma"
                 width={480}
                 height={480}
+                priority
                 className="aspect-square w-40 rounded-full object-cover sm:w-48"
               />
             </Reveal>

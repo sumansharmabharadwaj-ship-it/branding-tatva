@@ -146,13 +146,21 @@ export function VideoBreak({
     <div ref={ref} data-cursor-media className="relative overflow-hidden bg-soil" style={{ height: toSvh(height) }}>
       {prefersReducedMotion ? (
         <div className="absolute inset-0">
-          <Image
-            src={poster}
-            alt=""
-            fill
-            sizes="100vw"
-            style={{ objectFit: "cover", objectPosition: imagePosition }}
-          />
+          {shouldLoadVideo && (
+            // priority — reuses the same shouldLoadVideo signal that
+            // already gates the video branch below; without it this
+            // fallback (the only content reduced-motion users ever see
+            // here) relied purely on next/image's own native lazy-load,
+            // confirmed elsewhere on this site to sometimes never fire.
+            <Image
+              src={poster}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              style={{ objectFit: "cover", objectPosition: imagePosition }}
+            />
+          )}
           <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
         </div>
       ) : (

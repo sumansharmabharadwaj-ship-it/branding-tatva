@@ -107,6 +107,7 @@ export default function ServicesPage() {
                           src={el.image}
                           alt=""
                           fill
+                          priority
                           sizes="(min-width: 1024px) 20vw, 100vw"
                           style={{ objectFit: "cover", objectPosition: "center", mixBlendMode: "color" }}
                         />
