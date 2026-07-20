@@ -3,14 +3,17 @@ import Image from "next/image";
 // Dark section wrapper with a subtle organic texture behind the solid
 // soil color, instead of flat, uniform color. The gradient overlay keeps
 // contrast high enough that ivory text stays fully readable; the photo
-// itself is decorative texture (stone, weathered surface), not standing
-// in for a person or a claim about anything specific. Generated via
-// Higgsfield rather than stock photography.
+// itself is decorative texture (rock, weathered surface), not standing
+// in for a person or a claim about anything specific. Real photography
+// by default (own-jagged-peaks reads as abstract rock texture under
+// this much darkening), not the AI-generated image this used to
+// default to — every call site should still pass its own `image` where
+// a specific mood/location matters, this default is only the fallback.
 
 export function TexturedDark({
   children,
   className,
-  image = "/images/higgsfield-terracotta-texture.jpg",
+  image = "/images/own-jagged-peaks.jpg",
 }: {
   children: React.ReactNode;
   className?: string;

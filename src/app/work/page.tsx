@@ -50,7 +50,7 @@ export default function WorkPage() {
         </ClipReveal>
 
         <ImageBreak
-          image="/images/higgsfield-canopy-light.jpg"
+          image="/images/own-canopy.jpg"
           quote="Every one of these projects started in a forest of noise, the same place yours is starting from."
           height="60vh"
         />

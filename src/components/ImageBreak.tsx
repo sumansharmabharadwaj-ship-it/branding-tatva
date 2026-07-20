@@ -46,10 +46,17 @@ export function ImageBreak({
       >
         {shouldLoad && (
           <>
+            {/* priority, not next/image's default lazy loading — this tag
+                only mounts once useLazyMount (already IntersectionObserver
+                + Lenis-scroll hardened) says it's needed, so a second,
+                independent native lazy-load gate on top of that is pure
+                redundancy, and confirmed unreliable on its own: an image
+                scrolled fully past can still never fire it. */}
             <Image
               src={image}
               alt=""
               fill
+              priority
               sizes="100vw"
               style={{ objectFit: "cover", objectPosition: imagePosition }}
             />

@@ -183,7 +183,7 @@ export default function ServicesPage() {
         </section>
 
         <ClipReveal>
-          <TexturedDark className="py-24 text-center sm:pb-28">
+          <TexturedDark image="/images/own-jagged-peaks.jpg" className="py-24 text-center sm:pb-28">
             <Container>
               <h2 className="text-display-md font-display font-semibold text-ivory">
                 Still deciding which one fits?

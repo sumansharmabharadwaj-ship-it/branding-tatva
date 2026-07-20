@@ -13,11 +13,14 @@ const KEN_BURNS = kenBurnsAnimation();
 // screen, like the diptych panels on the home page.
 //
 // next/image gives this a real srcset (avif/webp, sized per breakpoint)
-// instead of one fixed-resolution JPEG regardless of viewport — but it
-// still fetches eagerly once mounted, so the IntersectionObserver gate
-// stays: the <Image> itself isn't rendered until the panel nears the
-// viewport, same 600px rootMargin as before. The gradient (solid color,
-// ~instant) still renders immediately so the panel isn't blank.
+// instead of one fixed-resolution JPEG regardless of viewport — the
+// <Image> itself isn't rendered until the panel nears the viewport
+// (useLazyMount's IntersectionObserver + Lenis-scroll fallback), and
+// once it does mount it's marked priority so it fetches immediately
+// instead of picking up a second, independent (and confirmed
+// unreliable on its own) native lazy-load gate on top of that. The
+// gradient (solid color, ~instant) still renders immediately so the
+// panel isn't blank.
 
 export function KenBurnsImage({
   image,
@@ -50,6 +53,7 @@ export function KenBurnsImage({
             src={image}
             alt=""
             fill
+            priority
             sizes={sizes}
             style={{ objectFit: "cover", objectPosition: imagePosition }}
           />

@@ -48,10 +48,18 @@ export function ElementRowBackground({
         animate={prefersReducedMotion ? undefined : KEN_BURNS.animate}
         transition={KEN_BURNS.transition}
       >
+        {/* priority — next/image's own default lazy loading is an
+            independent, unreliable second gate on top of this row
+            already being scroll-position-aware (Ken Burns only
+            animates once near view, the matching video only loads via
+            useLazyMount below); confirmed elsewhere on this site that
+            an image scrolled fully into view can still never fire
+            native lazy-load on its own. */}
         <Image
           src={image}
           alt=""
           fill
+          priority
           sizes="100vw"
           style={{ objectFit: "cover", objectPosition: "center" }}
         />
