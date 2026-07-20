@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT, toSvh } from "@/lib/media";
 import { EASE_AIR } from "@/lib/motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
+import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 
 // A full-bleed photographic interlude between two text passages, so long
 // text stretches never go more than a viewport or so without a real
@@ -31,15 +32,16 @@ export function ImageBreak({
 }) {
   const prefersReducedMotion = useReducedMotion();
   const [ref, shouldLoad] = useLazyMount();
+  const [revealRef, revealed] = useRevealTrigger();
 
   return (
     <div ref={ref} data-cursor-media className="relative overflow-hidden bg-soil" style={{ height: toSvh(height) }}>
       <motion.div
+        ref={revealRef}
         className="absolute inset-0"
         style={{ backgroundImage: shouldLoad ? undefined : overlayGradient }}
         initial={prefersReducedMotion ? undefined : { scale: 1.12 }}
-        whileInView={prefersReducedMotion ? undefined : { scale: 1 }}
-        viewport={{ once: true }}
+        animate={prefersReducedMotion ? undefined : revealed ? { scale: 1 } : undefined}
         transition={{ duration: 2.2, ease: EASE_AIR }}
       >
         {shouldLoad && (

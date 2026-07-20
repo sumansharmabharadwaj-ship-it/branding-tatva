@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_AIR } from "@/lib/motion";
+import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 
 // A curtain-style entrance for a whole section boundary — the section's
 // own background/border wipes into view as it's scrolled to, rather than
@@ -13,6 +14,10 @@ import { EASE_AIR } from "@/lib/motion";
 // handful of section boundaries that read as a real mode-shift — a
 // light section giving way to a dark one, a card grid giving way to a
 // closing statement — not applied to every section on the page.
+//
+// See useRevealTrigger for why this uses that instead of whileInView
+// directly — a stuck-at-100%-clipped section would look identical to a
+// blank one.
 export function ClipReveal({
   children,
   className,
@@ -21,6 +26,7 @@ export function ClipReveal({
   className?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
+  const [ref, visible] = useRevealTrigger("0px 0px -15% 0px");
 
   if (prefersReducedMotion) {
     return <div className={className}>{children}</div>;
@@ -28,10 +34,10 @@ export function ClipReveal({
 
   return (
     <motion.div
+      ref={ref}
       className={className}
       initial={{ clipPath: "inset(0% 0 100% 0)" }}
-      whileInView={{ clipPath: "inset(0% 0 0% 0)" }}
-      viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+      animate={visible ? { clipPath: "inset(0% 0 0% 0)" } : undefined}
       transition={{ duration: 1.1, ease: EASE_AIR }}
     >
       {children}

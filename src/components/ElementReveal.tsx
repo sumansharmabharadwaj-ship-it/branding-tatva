@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 import type { Transition } from "framer-motion";
 import { EASE_AIR } from "@/lib/motion";
+import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 
 type Slug = "earth" | "water" | "fire" | "air" | "space";
 
@@ -60,6 +61,7 @@ export function ElementReveal({
 }) {
   const prefersReducedMotion = useReducedMotion();
   const recipe = recipes[slug];
+  const [ref, visible] = useRevealTrigger("0px 0px -100px 0px");
 
   if (prefersReducedMotion) {
     return <div className={className}>{children}</div>;
@@ -67,10 +69,10 @@ export function ElementReveal({
 
   return (
     <motion.div
+      ref={ref}
       className={className}
       initial={recipe.initial}
-      whileInView={recipe.animate}
-      viewport={{ once: true, margin: "-100px" }}
+      animate={visible ? recipe.animate : undefined}
       transition={{ ...recipe.transition, delay }}
     >
       {children}

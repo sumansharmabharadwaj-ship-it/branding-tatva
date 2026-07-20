@@ -6,6 +6,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { BREAK_OVERLAY_GRADIENT, toSvh } from "@/lib/media";
 import { EASE_AIR } from "@/lib/motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
+import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { initSplitTextReveal } from "@/animations/splitTextReveal";
@@ -49,10 +50,11 @@ function QuoteText({
   className: string;
   style: React.CSSProperties;
 }) {
-  const ref = useRef<HTMLParagraphElement>(null);
+  const splitRef = useRef<HTMLParagraphElement>(null);
+  const [revealRef, revealed] = useRevealTrigger();
 
   useEffect(() => {
-    const el = ref.current;
+    const el = splitRef.current;
     if (!el || !wordFade || prefersReducedMotion) return;
     const ctx = initSplitTextReveal(el);
     return () => ctx.revert();
@@ -70,7 +72,7 @@ function QuoteText({
       // exactly this "visually split, should read as one text node"
       // case and is what quiets the false-positive without changing
       // what's actually announced.
-      <p ref={ref} role="text" className={className} style={style}>
+      <p ref={splitRef} role="text" className={className} style={style}>
         {quote}
       </p>
     );
@@ -78,9 +80,9 @@ function QuoteText({
 
   return (
     <motion.p
+      ref={revealRef}
       initial={BREAK_QUOTE_INITIAL}
-      whileInView={BREAK_QUOTE_ANIMATE}
-      viewport={{ once: true }}
+      animate={revealed ? BREAK_QUOTE_ANIMATE : undefined}
       transition={BREAK_QUOTE_TRANSITION}
       className={className}
       style={style}
@@ -162,9 +164,14 @@ export function VideoBreak({
               ...(usesParallax ? { y: mediaY } : undefined),
             }}
             initial={usesCameraPush ? CAMERA_PUSH.initial : { scale: restScale + ENTRANCE_SCALE_DELTA }}
-            animate={usesCameraPush ? CAMERA_PUSH.animate : undefined}
-            whileInView={usesCameraPush ? undefined : { scale: restScale }}
-            viewport={usesCameraPush ? undefined : { once: true }}
+            // The entrance settle (non-cameraPush case) used to be driven
+            // by whileInView directly; now reuses shouldLoadVideo — the
+            // same already-hardened (IntersectionObserver + Lenis-scroll
+            // fallback) signal that gates the video's own src/autoplay —
+            // instead of a second, independent visibility mechanism that
+            // could disagree with it or fail on its own. See
+            // useRevealTrigger for the general reasoning.
+            animate={usesCameraPush ? CAMERA_PUSH.animate : shouldLoadVideo ? { scale: restScale } : undefined}
             transition={usesCameraPush ? CAMERA_PUSH.transition : ENTRANCE_TRANSITION}
             src={shouldLoadVideo ? src : undefined}
             poster={poster}
