@@ -46,9 +46,8 @@ export default function Home() {
       <Header transparent />
       <main id="main-content">
         <CinematicHero
-          video="/videos/hero-forest-sanctuary.mp4"
-          poster="/images/hero-forest-sanctuary-poster.jpg"
-          imagePosition="30% 40%"
+          video="/videos/higgsfield-elements-convergence.mp4"
+          poster="/images/higgsfield-elements-convergence-poster.jpg"
           badge="Brand strategy for founders & existing businesses"
           headline={
             <>
