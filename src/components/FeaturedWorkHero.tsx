@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { AnimatedStat } from "@/components/AnimatedStat";
+import { useLazyMount } from "@/hooks/useLazyMount";
 
 const KEN_BURNS = kenBurnsAnimation({ scale: 1.05, duration: 16 });
 
@@ -37,6 +38,7 @@ export function FeaturedWorkHero({
   accent?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
+  const [ref, shouldLoad] = useLazyMount();
 
   return (
     <a
@@ -45,24 +47,37 @@ export function FeaturedWorkHero({
       className="group relative flex min-h-[75svh] items-end overflow-hidden bg-soil"
     >
       <motion.div
+        ref={ref}
         className="absolute inset-0"
         initial={KEN_BURNS.initial}
         animate={prefersReducedMotion ? undefined : KEN_BURNS.animate}
         whileHover={{ scale: 1.1 }}
         transition={KEN_BURNS.transition}
       >
-        <Image
-          src={image}
-          alt=""
-          fill
-          sizes="100vw"
-          style={{ objectFit: "cover", objectPosition: imagePosition }}
-        />
-        {/* Ties the featured entry's own industry photography back to
-            its element without replacing it — same treatment as the
-            smaller work cards below it. */}
-        {accent && (
-          <div className="absolute inset-0" style={{ backgroundColor: accent, opacity: 0.16, mixBlendMode: "multiply" }} />
+        {shouldLoad && (
+          <>
+            {/* priority — this section sits well below the fold on a
+                long home page, and confirmed elsewhere on this site
+                that next/image's own native lazy-load can simply never
+                fire for a section scrolled past quickly; useLazyMount
+                (IntersectionObserver + Lenis-scroll fallback) already
+                decides correct timing, so priority just skips the
+                second, unreliable gate on top of that. */}
+            <Image
+              src={image}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              style={{ objectFit: "cover", objectPosition: imagePosition }}
+            />
+            {/* Ties the featured entry's own industry photography back
+                to its element without replacing it — same treatment as
+                the smaller work cards below it. */}
+            {accent && (
+              <div className="absolute inset-0" style={{ backgroundColor: accent, opacity: 0.16, mixBlendMode: "multiply" }} />
+            )}
+          </>
         )}
         <div
           className="absolute inset-0"
