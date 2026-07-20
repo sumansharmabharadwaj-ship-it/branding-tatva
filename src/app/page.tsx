@@ -72,23 +72,25 @@ export default function Home() {
             as one long unbroken chapter rather than two boxed sections. */}
         <section className="border-t border-border py-28 sm:py-40">
           <Container>
-            <SplitReveal className="max-w-3xl font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
-              A brand can be visible and still go unnoticed.
-            </SplitReveal>
-            <Reveal delay={0.15}>
-              <div className="mt-10 max-w-md space-y-4 text-foreground-secondary sm:ml-auto sm:mr-0 sm:mt-8 sm:text-right">
-                <p>
-                  Being present isn&apos;t the same as being recognised.
-                  Looking attractive isn&apos;t the same as communicating
-                  clearly. Posting content isn&apos;t the same as building
-                  recall.
-                </p>
-                <p>
-                  That gap is usually a <span className="font-semibold text-action-primary-hover">clarity problem</span>,
-                  far more often than a visibility one.
-                </p>
-              </div>
-            </Reveal>
+            <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
+              <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
+                A brand can be visible and still go unnoticed.
+              </SplitReveal>
+              <Reveal delay={0.15}>
+                <div className="max-w-md space-y-4 text-foreground-secondary sm:ml-auto sm:text-right">
+                  <p>
+                    Being present isn&apos;t the same as being recognised.
+                    Looking attractive isn&apos;t the same as communicating
+                    clearly. Posting content isn&apos;t the same as building
+                    recall.
+                  </p>
+                  <p>
+                    That gap is usually a <span className="font-semibold text-action-primary-hover">clarity problem</span>,
+                    far more often than a visibility one.
+                  </p>
+                </div>
+              </Reveal>
+            </div>
           </Container>
 
           <div className="mt-20 sm:mt-28">
