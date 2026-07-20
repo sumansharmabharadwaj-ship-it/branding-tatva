@@ -3,13 +3,19 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
+import { AnimatedStat } from "@/components/AnimatedStat";
 
 const KEN_BURNS = kenBurnsAnimation({ scale: 1.05, duration: 16 });
 
 // The large featured-work entry: a full photographic block with a slow
 // hover zoom, distinct from the smaller text-only entries beside it so
 // the section reads as one large story plus two quiet footnotes, not
-// three identical cards.
+// three identical cards. Stats render as scannable count-up numbers
+// (same component the case-study pages already use) rather than the
+// raw outcome paragraph — a wall of "104%... 1,350%... 365%..." prose
+// crammed into one card is a data dump, not something anyone actually
+// reads at a glance. Falls back to the outcome sentence for projects
+// that don't have verified stats broken out yet.
 
 export function FeaturedWorkHero({
   href,
@@ -17,6 +23,7 @@ export function FeaturedWorkHero({
   industry,
   title,
   outcome,
+  stats,
   imagePosition = "center",
 }: {
   href: string;
@@ -24,6 +31,7 @@ export function FeaturedWorkHero({
   industry: string;
   title: string;
   outcome: string;
+  stats?: { value: string; label: string }[];
   imagePosition?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
@@ -61,7 +69,20 @@ export function FeaturedWorkHero({
         <p className="mt-3 max-w-xl font-display text-3xl font-semibold text-ivory sm:text-4xl">
           {title}
         </p>
-        <p className="mt-3 max-w-lg text-sm text-ivory/70">{outcome}</p>
+        {stats && stats.length > 0 ? (
+          <div className="mt-6 flex flex-wrap gap-x-8 gap-y-4">
+            {stats.slice(0, 3).map((stat) => (
+              <div key={stat.label}>
+                <p className="font-display text-2xl font-semibold text-ivory sm:text-3xl">
+                  <AnimatedStat value={stat.value} />
+                </p>
+                <p className="mt-0.5 max-w-[10rem] text-xs text-ivory/70">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-3 max-w-lg text-sm text-ivory/70">{outcome}</p>
+        )}
       </div>
     </a>
   );

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -14,6 +13,7 @@ import { GradientSections } from "@/components/GradientSections";
 import { KenBurnsImage } from "@/components/KenBurnsImage";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ElementReveal } from "@/components/ElementReveal";
+import { ElementRowBackground } from "@/components/ElementRowBackground";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
 import { CinematicHero } from "@/sections/Hero";
 import { Threshold } from "@/sections/Threshold";
@@ -159,20 +159,11 @@ export default function Home() {
             {elements.map((el, i) => (
               <ElementReveal key={el.slug} slug={el.slug} delay={i * 0.06}>
                 <div className="relative overflow-hidden">
-                  <div className="absolute inset-0" aria-hidden="true" style={{ opacity: 0.16 }}>
-                    <div className="absolute inset-0" style={{ backgroundColor: el.color }} />
-                    <Image
-                      src={el.image}
-                      alt=""
-                      fill
-                      sizes="100vw"
-                      style={{ objectFit: "cover", objectPosition: "center", mixBlendMode: "color" }}
-                    />
-                  </div>
+                  <ElementRowBackground image={el.image} color={el.color} />
                   <Container>
                   <div
                     id={el.slug}
-                    className={`relative grid items-baseline gap-4 py-10 sm:grid-cols-[auto_1fr_1.2fr] sm:gap-10 sm:py-14 ${
+                    className={`relative grid items-baseline gap-4 rounded-xl bg-background/55 px-4 py-10 backdrop-blur-[2px] sm:grid-cols-[auto_1fr_1.2fr] sm:gap-10 sm:bg-transparent sm:px-0 sm:py-14 sm:backdrop-blur-none ${
                       i % 2 === 1 ? "sm:text-right" : ""
                     }`}
                   >
@@ -271,6 +262,7 @@ export default function Home() {
                   industry={featured[0].industry}
                   title={featured[0].title}
                   outcome={featured[0].outcome}
+                  stats={featured[0].stats}
                 />
               </Reveal>
             )}
