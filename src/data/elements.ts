@@ -28,8 +28,8 @@ export const elements: Element[] = [
     ],
     proof:
       "Full brand foundation work for MyShopInEurope, including audience definition, market analysis, and a core belief, mission, and promise.",
-    image: "/images/higgsfield-element-earth.jpg",
-    video: "/videos/higgsfield-element-earth.mp4",
+    image: "/images/own-jagged-peaks.jpg",
+    video: "/videos/own-jagged-peaks.mp4",
   },
   {
     slug: "water",
@@ -44,8 +44,8 @@ export const elements: Element[] = [
     ],
     proof:
       "Playbooks built for each platform, plus webinar conversion sequencing, for Executive Springboard.",
-    image: "/images/higgsfield-element-water.jpg",
-    video: "/videos/higgsfield-element-water.mp4",
+    image: "/images/own-forest-stream-poster.jpg",
+    video: "/videos/own-forest-stream.mp4",
   },
   {
     slug: "fire",
@@ -60,8 +60,8 @@ export const elements: Element[] = [
     ],
     proof:
       "Campaign repositioning and script development for HerbalCart, moving the brand away from a stereotype it didn't intend to have.",
-    image: "/images/higgsfield-element-fire.jpg",
-    video: "/videos/higgsfield-element-fire.mp4",
+    image: "/images/own-golden-branches-poster.jpg",
+    video: "/videos/own-golden-branches.mp4",
   },
   {
     slug: "air",
@@ -77,8 +77,8 @@ export const elements: Element[] = [
     ],
     proof:
       "A content portfolio of sixteen pieces for Plaxonic.com, spanning research papers, perspective pieces, blogs, and articles.",
-    image: "/images/higgsfield-element-air.jpg",
-    video: "/videos/higgsfield-element-air.mp4",
+    image: "/images/own-ridge-road-poster.jpg",
+    video: "/videos/own-ridge-road.mp4",
   },
   {
     slug: "space",
