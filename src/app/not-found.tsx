@@ -12,10 +12,10 @@ export default function NotFound() {
           <Container>
             <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">404</p>
             <h1 className="mt-3 text-display-lg font-display font-semibold text-soil">
-              This page hasn&apos;t found its shape yet.
+              This page is still finding its shape.
             </h1>
             <p className="mx-auto mt-4 max-w-md text-foreground-secondary">
-              The page you&apos;re looking for doesn&apos;t exist, or has moved.
+              The page you&apos;re looking for may have moved, or the link may be outdated.
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <LinkButton href="/">Back to home</LinkButton>

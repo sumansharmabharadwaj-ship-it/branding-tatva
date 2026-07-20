@@ -133,7 +133,7 @@ export default async function CaseStudyPage({ params }: Props) {
           poster="/images/own-forest-stream-poster.jpg"
           quote={
             project.closingQuote ??
-            "Good strategy doesn't force a path. It finds the one already there, the way water finds a way through stone."
+            "Good strategy lets a path reveal itself rather than forcing one, the way water finds a way through stone."
           }
           height="72vh"
         />

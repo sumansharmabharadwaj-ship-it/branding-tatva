@@ -2,7 +2,7 @@ export const designChoices = [
   {
     title: "The mark",
     detail:
-      "Five bars, one per element, rising and settling like a skyline. It's the same idea the homepage opens with, separate things adding up to one shape, just small enough to sit in a header. A mark that only works at hero size isn't a mark yet.",
+      "Five bars, one per element, rising and settling like a skyline. It's the same idea the homepage opens with, separate things adding up to one shape, just small enough to sit in a header. A mark earns that name only once it holds up at every size, down to the smallest.",
   },
   {
     title: "Cormorant Garamond, for headlines",
@@ -12,7 +12,7 @@ export const designChoices = [
   {
     title: "Manrope, for everything else",
     detail:
-      "The headline can afford some personality; a form label can't. Manrope stays out of the way at small sizes, which matters more on a contact form than it does on a hero line.",
+      "The headline can afford some personality; a form label needs to stay quiet. Manrope stays out of the way at small sizes, which matters more on a contact form than it does on a hero line.",
   },
   {
     title: "The palette",

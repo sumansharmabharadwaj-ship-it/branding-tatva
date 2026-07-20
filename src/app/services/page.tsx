@@ -155,7 +155,7 @@ export default function ServicesPage() {
             <SectionHeading
               eyebrow="How I work"
               title="The same six steps, every time."
-              description="Not a rigid checklist — a sequence. Each stage depends on the one before it, which is usually where a rushed process starts to show."
+              description="A sequence, more than a rigid checklist. Each stage depends on the one before it, which is usually where a rushed process starts to show."
             />
           </Container>
           <ProcessSection stages={process} elementColor={elementColor} />

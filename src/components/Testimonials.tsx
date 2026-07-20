@@ -23,7 +23,7 @@ export function Testimonials() {
         &ldquo;
       </motion.p>
       <p className="text-sm font-medium uppercase tracking-wide text-foreground-secondary/70">
-        Client quotes — coming soon
+        Client quotes, coming soon
       </p>
     </div>
   );

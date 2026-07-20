@@ -32,7 +32,7 @@ export const faqs = [
   {
     question: "What should I prepare before we start?",
     answer:
-      "Whatever you already have, even if it's messy. Past content, a rough idea of your audience, competitor examples you like or don't like. I'll tell you if anything's missing.",
+      "Whatever you already have, even if it's messy. Past content, a rough idea of your audience, competitor examples that stood out to you, for better or worse. I'll tell you if anything's missing.",
   },
   {
     question: "Can we work remotely?",

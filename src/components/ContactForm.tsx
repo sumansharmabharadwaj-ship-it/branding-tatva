@@ -43,7 +43,7 @@ export function ContactForm() {
       setStatus("success");
       reset();
     } catch {
-      setServerError("Couldn't reach the server. Check your connection and try again.");
+      setServerError("The server was unreachable. Check your connection and try again.");
       setStatus("error");
     }
   }

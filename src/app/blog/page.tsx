@@ -13,7 +13,7 @@ import { elements } from "@/data/elements";
 export const metadata: Metadata = {
   title: "Blog",
   description:
-    "Notes on brand strategy, positioning, and the elemental approach — from Branding Tatva.",
+    "Notes on brand strategy, positioning, and the elemental approach, from Branding Tatva.",
 };
 
 function elementColor(slug: string) {
@@ -50,8 +50,8 @@ export default function BlogPage() {
               </h1>
               <p className="mx-auto mt-4 max-w-xl text-ivory/70">
                 Short, specific writing on positioning, audience, and the
-                elemental approach — not a content calendar, just what&apos;s
-                actually useful.
+                elemental approach, the kind that&apos;s
+                actually useful rather than a content calendar.
               </p>
             </Reveal>
           </Container>

@@ -27,7 +27,7 @@ export default function Error({
               Something went wrong
             </p>
             <h1 className="mt-3 text-display-lg font-display font-semibold text-soil">
-              That didn&apos;t load the way it should have.
+              That loaded differently than it should have.
             </h1>
             <p className="mx-auto mt-4 max-w-md text-foreground-secondary">
               Nothing on your end went wrong. Try again, or head back to the

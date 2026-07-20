@@ -100,7 +100,7 @@ export const projects: Project[] = [
     outcome:
       "Delivered a structured content system, built platform by platform, specifically around driving webinar registrations rather than generic engagement metrics.",
     closingQuote:
-      "Content that only earns attention is unfinished. It has to lead somewhere, or it isn't strategy yet.",
+      "Content that only earns attention is unfinished. It has to lead somewhere before it counts as strategy.",
     cardImage: "/images/higgsfield-executive-office.jpg",
     cardVideo: "/videos/higgsfield-executive-office.mp4",
     heroVideo: "/videos/higgsfield-executive-office.mp4",
@@ -141,16 +141,16 @@ export const projects: Project[] = [
     title: "Plaxonic.com Content Portfolio",
     industry: "Enterprise technology",
     challenge:
-      "A technology company needed to build authority with audiences at very different levels of technical fluency, from HR and legal leaders encountering AI governance for the first time, to engineers who live in the subject daily. A single content tone couldn't credibly reach both.",
+      "A technology company needed to build authority with audiences at very different levels of technical fluency, from HR and legal leaders encountering AI governance for the first time, to engineers who live in the subject daily. A single content tone had no way to credibly reach both.",
     strategy:
-      "Built a portfolio of sixteen pieces across four distinct content types, each doing a different job: Research Papers to validate claims with evidence, Perspective Pieces to challenge assumptions leaders hadn't questioned yet, Blogs to make emerging technology feel relevant to daily life, and Articles for fast, high visibility consumption.",
+      "Built a portfolio of sixteen pieces across four distinct content types, each doing a different job: Research Papers to validate claims with evidence, Perspective Pieces to challenge assumptions leaders had yet to question, Blogs to make emerging technology feel relevant to daily life, and Articles for fast, high visibility consumption.",
     execution:
       "Grounded the research pillar in a real proof of concept: an IoT edge integration case study with the Delhi Jal Board showing a measurable drop in chemical over dosing (15% to 20% down to under 3%), rather than relying on abstract claims. Paired that rigor with a deliberately provocative perspective piece questioning the industry's SaaS hype cycle, built around three direct questions every technology leader has to answer.",
     services: ["Air · content strategy"],
     outcome:
       "Produced a complete content portfolio of sixteen pieces spanning research, opinion, education, and fast consumption formats, structured around a deliberate arc: validate, challenge, humanise, define, rather than a loose content calendar.",
     closingQuote:
-      "Trust with an expert and trust with a beginner are earned in two different languages, not one.",
+      "Trust with an expert and trust with a beginner are earned in two different languages, both of them necessary.",
     cardImage: "/images/higgsfield-plaxonic-tech.jpg",
     cardVideo: "/videos/higgsfield-plaxonic-tech.mp4",
     heroVideo: "/videos/higgsfield-plaxonic-tech.mp4",

@@ -68,9 +68,9 @@ export default function Home() {
               <Reveal delay={0.15}>
                 <div className="max-w-md space-y-4 text-foreground-secondary sm:ml-auto sm:text-right">
                   <p>
-                    Being present isn&apos;t the same as being recognised.
-                    Looking attractive isn&apos;t the same as communicating
-                    clearly. Posting content isn&apos;t the same as building
+                    Being present differs from being recognised.
+                    Looking attractive differs from communicating
+                    clearly. Posting content differs from building
                     recall.
                   </p>
                   <p>
@@ -128,18 +128,18 @@ export default function Home() {
                       person&apos;s day, a spark that earns a second look,
                       a voice, and the quiet consistency that actually
                       gets remembered. Earth, water, fire, air, and space
-                      aren&apos;t a theme — they&apos;re names for those
-                      five jobs.
+                      are names for those
+                      five jobs, more than a theme.
                     </p>
                     <p>
-                      Most brands are built with one or two of these — a
+                      Most brands are built with one or two of these, a
                       logo with no positioning behind it, a content
                       calendar with no voice tying it together. The ones
                       people remember are built with all five, working as
                       one system.
                     </p>
                     <p className="font-medium text-soil">
-                      That&apos;s not a mood board. It&apos;s the actual
+                      Real work, more than a mood board: the actual
                       method behind every project below, and the one
                       I&apos;d use on yours.
                     </p>
@@ -237,7 +237,7 @@ export default function Home() {
         <VideoBreak
           src="/videos/own-forest-stream.mp4"
           poster="/images/own-forest-stream-poster.jpg"
-          quote="The parts that don't move are usually the ones holding everything else up."
+          quote="The parts that stay still are usually the ones holding everything else up."
           height="72vh"
         />
 
@@ -321,7 +321,7 @@ export default function Home() {
         <VideoBreak
           src="/videos/own-alpenglow-peak.mp4"
           poster="/images/own-alpenglow-peak-poster.jpg"
-          quote="Every strong brand has a moment like this — quiet, and completely sure of itself."
+          quote="Every strong brand has a moment like this, quiet, and completely sure of itself."
           height="92vh"
         />
 

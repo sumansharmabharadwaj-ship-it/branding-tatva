@@ -58,7 +58,7 @@ export const elements: Element[] = [
       "Launch communication",
     ],
     proof:
-      "Campaign repositioning and script development for HerbalCart, moving the brand away from a stereotype it didn't intend to have.",
+      "Campaign repositioning and script development for HerbalCart, moving the brand toward the identity it actually intended to carry.",
     image: "/images/own-golden-branches-poster.jpg",
     video: "/videos/own-golden-branches.mp4",
   },

@@ -11,7 +11,7 @@ export const brandStages = [
 
 export const contactSchema = z.object({
   name: z.string().min(2, "Please share your name."),
-  email: z.string().email("That doesn't look like a working email, mind checking it?"),
+  email: z.string().email("That looks like it might have a typo, mind checking it?"),
   phone: z.string().optional(),
   business: z.string().min(1, "Let me know your business or brand name."),
   website: z.string().optional(),

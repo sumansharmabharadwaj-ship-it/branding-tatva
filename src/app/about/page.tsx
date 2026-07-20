@@ -61,7 +61,7 @@ export default function AboutPage() {
             literally that: her own view from having climbed to it. */}
         <ImageBreak
           image="/images/own-forest-clearing.jpg"
-          quote="Clarity isn't something you wait for. It's the view from finally standing somewhere high enough to see it."
+          quote="Clarity comes from climbing, more than waiting. It's the view from finally standing somewhere high enough to see it."
           height="85vh"
           imagePosition="center 30%"
           quoteVariant="left"
@@ -85,12 +85,13 @@ export default function AboutPage() {
                   Working method
                 </h2>
                 <p className="mt-4 text-foreground-secondary">
-                  I don&apos;t start with mood boards. I start by asking what
+                  I start by asking what
                   a business believes, who it&apos;s actually speaking to,
-                  and where its current story stops making sense. The
+                  and where its current story stops making sense, well
+                  before any mood board enters the room. The
                   elemental system, earth, water, fire, air, space, is how I
                   keep track of which part of that is solved and which
-                  isn&apos;t.
+                  still needs work.
                 </p>
                 <p className="mt-4 text-foreground-secondary">
                   I use &ldquo;I&rdquo; instead of &ldquo;we.&rdquo; Branding
