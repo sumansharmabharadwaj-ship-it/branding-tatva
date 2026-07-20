@@ -38,6 +38,27 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const d = parsed.data;
+    // Readable, labeled body instead of a raw JSON dump — this is a real
+    // business enquiry someone reads on a phone, not a debug log.
+    const text = [
+      `Name: ${d.name}`,
+      `Email: ${d.email}`,
+      d.phone && `Phone: ${d.phone}`,
+      `Business: ${d.business}`,
+      d.website && `Website: ${d.website}`,
+      `Brand stage: ${d.brandStage}`,
+      `Services needed: ${d.servicesNeeded}`,
+      d.budget && `Budget: ${d.budget}`,
+      d.timeline && `Timeline: ${d.timeline}`,
+      d.referral && `Found via: ${d.referral}`,
+      "",
+      "Project description:",
+      d.description,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -45,10 +66,13 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Branding Tatva <onboarding@resend.dev>",
+        from: "Branding Tatva <contact@brandingtatva.com>",
         to: toEmail,
-        subject: `New enquiry from ${parsed.data.name}`,
-        text: JSON.stringify(parsed.data, null, 2),
+        // Lets Suman just hit "reply" in her inbox to respond directly
+        // to the person who submitted the form.
+        reply_to: d.email,
+        subject: `New enquiry from ${d.name}`,
+        text,
       }),
     });
 
