@@ -70,7 +70,7 @@ export default function Home() {
 
         {/* Two-part editorial statement — the problem, then the philosophy,
             as one long unbroken chapter rather than two boxed sections. */}
-        <section className="border-t border-border py-28 sm:py-40">
+        <section className="border-t border-border pt-28 pb-16 sm:pt-40 sm:pb-20">
           <Container>
             <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
               <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
@@ -168,7 +168,7 @@ export default function Home() {
             curtain-wipe) marks this as its own chapter after the
             marquee, since the two sections look nothing alike. */}
         <PerspectiveReveal>
-          <section className="relative overflow-hidden border-t border-border py-28 sm:py-40">
+          <section className="relative overflow-hidden border-t border-border pt-16 pb-28 sm:pt-20 sm:pb-40">
             <div
               className="absolute inset-0"
               style={{
