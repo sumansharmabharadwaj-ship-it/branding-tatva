@@ -76,8 +76,7 @@ export const elements: Element[] = [
     ],
     proof:
       "A content portfolio of sixteen pieces for Plaxonic.com, spanning research papers, perspective pieces, blogs, and articles.",
-    image: "/images/own-ridge-road-poster.jpg",
-    video: "/videos/own-ridge-road.mp4",
+    image: "/images/own-misty-ridge-poster.jpg",
   },
   {
     slug: "space",
