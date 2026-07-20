@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -103,37 +104,55 @@ export default function Home() {
             />
           </div>
 
-          <Container className="mt-20 sm:mt-28">
-            <Reveal>
-              <h2 className="ml-auto max-w-2xl text-right font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
-                Five elements.
-                <br />
-                One brand.
-              </h2>
-            </Reveal>
-            <Reveal delay={0.15}>
-              <div className="mt-10 max-w-md space-y-4 text-foreground-secondary">
-                <p>
-                  Earth is where a brand is grounded. Water is how it moves
-                  through someone&apos;s day. Fire is what makes people look
-                  twice. Air is the language that carries it. Space is
-                  what&apos;s left once the noise settles, the part people
-                  actually remember.
-                </p>
-                <p>
-                  Most brands are built with one or two of these — a logo
-                  with no positioning behind it, a content calendar with no
-                  voice tying it together. The ones people remember are
-                  built with all five, working as one system.
-                </p>
-                <p className="font-medium text-soil">
-                  That&apos;s not a mood board. It&apos;s the actual method
-                  behind every project below, and the one I&apos;d use on
-                  yours.
-                </p>
-              </div>
-            </Reveal>
-          </Container>
+          {/* Own-peaks silhouette, very faint, behind this text block only —
+              the text block between the waterlight video and the Five
+              Elements section's own photography was previously flat cream
+              for its full height, the kind of "text on a plain background"
+              stretch the site otherwise avoids. Many sharp peaks under one
+              continuous sky doubles as a quiet visual echo of "five
+              elements, one brand" without illustrating it literally. */}
+          <div className="relative mt-20 overflow-hidden sm:mt-28">
+            <Image
+              src="/images/own-peaks.jpg"
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+              style={{ opacity: 0.1 }}
+            />
+            <Container className="relative">
+              <Reveal>
+                <h2 className="ml-auto max-w-2xl text-right font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
+                  Five elements.
+                  <br />
+                  One brand.
+                </h2>
+              </Reveal>
+              <Reveal delay={0.15}>
+                <div className="mt-10 max-w-md space-y-4 text-foreground-secondary">
+                  <p>
+                    Earth is where a brand is grounded. Water is how it moves
+                    through someone&apos;s day. Fire is what makes people look
+                    twice. Air is the language that carries it. Space is
+                    what&apos;s left once the noise settles, the part people
+                    actually remember.
+                  </p>
+                  <p>
+                    Most brands are built with one or two of these — a logo
+                    with no positioning behind it, a content calendar with no
+                    voice tying it together. The ones people remember are
+                    built with all five, working as one system.
+                  </p>
+                  <p className="font-medium text-soil">
+                    That&apos;s not a mood board. It&apos;s the actual method
+                    behind every project below, and the one I&apos;d use on
+                    yours.
+                  </p>
+                </div>
+              </Reveal>
+            </Container>
+          </div>
         </section>
 
         <KineticMarquee text="EARTH · WATER · FIRE · AIR · SPACE" />
