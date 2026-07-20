@@ -28,33 +28,44 @@ export function AnimatedStat({ value }: { value: string }) {
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const prefersReducedMotion = useReducedMotion();
   const parsed = parseStat(value);
-  const [display, setDisplay] = useState(0);
+  // Starts at the *real* number, not 0. The count-up below is a bonus
+  // flourish layered on top if it actually gets to run — it is never
+  // the thing that makes this number correct. A version that started
+  // at 0 and waited for a rAF loop (even a rAF loop with a setTimeout
+  // safety net) to eventually correct it was still wrong by
+  // construction: on a long-backgrounded or heavily throttled tab, a
+  // browser can suspend rAF *and* delay timers for extended stretches,
+  // and during all of that the only real proof-of-work number on this
+  // whole page was reading 0%. A stat a visitor is meant to trust
+  // can't have a failure mode where the honest answer is "it's wrong
+  // until something else fixes it" — so the default render is just the
+  // real value, full stop, and the animation can only make it *look*
+  // more alive, never make it *be* correct.
+  const [display, setDisplay] = useState(parsed?.target ?? 0);
 
   useEffect(() => {
-    if (!parsed || !isInView) return;
-    if (prefersReducedMotion) {
-      setDisplay(parsed.target);
-      return;
-    }
+    if (!parsed || !isInView || prefersReducedMotion) return;
+    const target = parsed.target;
     const duration = 1400;
     const start = performance.now();
     let frame: number;
     function tick(now: number) {
-      if (!parsed) return;
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(parsed.target * eased);
-      if (progress < 1) frame = requestAnimationFrame(tick);
+      setDisplay(target * eased);
+      if (progress < 1) {
+        frame = requestAnimationFrame(tick);
+      } else {
+        setDisplay(target);
+      }
     }
     frame = requestAnimationFrame(tick);
-    // This is a real stat, not decoration — if rAF gets throttled or
-    // interrupted mid-count (a backgrounded tab, a slow device, anything
-    // that stalls the animation loop), it must never settle on a wrong
-    // number permanently. setTimeout keeps firing even when rAF is
-    // paused, so this snaps to the real value shortly after the
-    // animation should have finished regardless of whether the rAF loop
-    // actually completed.
-    const settle = setTimeout(() => setDisplay(parsed.target), duration + 200);
+    // Belt and braces: if the rAF loop above stalls partway through
+    // (rather than never starting at all, which the initial state
+    // already covers), this snaps back to the real value shortly after
+    // the animation should have finished, independent of whether rAF
+    // ever got there itself.
+    const settle = setTimeout(() => setDisplay(target), duration + 200);
     return () => {
       cancelAnimationFrame(frame);
       clearTimeout(settle);
