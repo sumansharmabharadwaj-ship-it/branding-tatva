@@ -56,8 +56,8 @@ export default async function CaseStudyPage({ params }: Props) {
       <Header transparent />
       <main id="main-content">
         <PhotoHero
-          video="/videos/hero-workhorizon.mp4"
-          poster="/images/hero-workhorizon-poster.jpg"
+          video="/videos/own-jagged-peaks.mp4"
+          poster="/images/own-jagged-peaks-wide-poster.jpg"
           minHeight="70vh"
         >
           <Container className="relative py-20 text-center">

@@ -21,7 +21,12 @@ export default function AboutPage() {
     <>
       <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/own-companions.jpg" minHeight="80vh" imagePosition="30% 75%">
+        <PhotoHero
+          video="/videos/own-companions.mp4"
+          poster="/images/own-companions-wide-poster.jpg"
+          minHeight="80vh"
+          imagePosition="center 40%"
+        >
           <Container className="relative pb-16 pt-20 text-center sm:pb-20">
             <Reveal>
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">

@@ -19,8 +19,8 @@ export default function WorkPage() {
       <Header transparent />
       <main id="main-content">
         <PhotoHero
-          video="/videos/hero-goldendunes.mp4"
-          poster="/images/hero-goldendunes-poster.jpg"
+          video="/videos/own-ridge-road.mp4"
+          poster="/images/own-ridge-road-poster.jpg"
           minHeight="70vh"
         >
           <Container className="relative py-20 text-center">
