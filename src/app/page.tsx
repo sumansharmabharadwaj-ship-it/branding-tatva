@@ -261,13 +261,13 @@ export default function Home() {
 
             {featured[0] && (
               <Reveal delay={0.1} className="mt-10">
-                {/* Photo: Andreas Schnabl via Pexels, free for commercial
-                    use. The two other real-photo mountain shots on this
-                    page needed a visually distinct backdrop here, not a
-                    third variation on the same dusk-peak look. */}
+                {/* Generated via Higgsfield rather than the two real-photo
+                    mountain shots already on this page — needed a visually
+                    distinct backdrop here, not a third variation on the
+                    same dusk-peak look. */}
                 <FeaturedWorkHero
                   href={`/work/${featured[0].slug}`}
-                  image="/images/pexels-forest-path.jpg"
+                  image="/images/higgsfield-forest-path.jpg"
                   industry={featured[0].industry}
                   title={featured[0].title}
                   outcome={featured[0].outcome}
@@ -329,8 +329,9 @@ export default function Home() {
           </section>
         </GradientSections>
 
-        <ImageBreak
-          image="/images/own-alpenglow-peak.jpg"
+        <VideoBreak
+          src="/videos/own-alpenglow-peak.mp4"
+          poster="/images/own-alpenglow-peak-poster.jpg"
           quote="Every strong brand has a moment like this — quiet, and completely sure of itself."
           height="92vh"
           imagePosition="center 38%"
