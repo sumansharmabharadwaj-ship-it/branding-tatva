@@ -44,8 +44,7 @@ export const elements: Element[] = [
     ],
     proof:
       "Playbooks built for each platform, plus webinar conversion sequencing, for Executive Springboard.",
-    image: "/images/own-forest-stream-poster.jpg",
-    video: "/videos/own-forest-stream.mp4",
+    image: "/images/own-waterfall-veil.jpg",
   },
   {
     slug: "fire",

@@ -28,9 +28,9 @@ export default function ServicesPage() {
       <Header transparent />
       <main id="main-content">
         <PhotoHero
-          video="/videos/higgsfield-himalayan-valley.mp4"
-          poster="/images/higgsfield-himalayan-valley-poster.jpg"
+          image="/images/own-peaks-silhouette.jpg"
           minHeight="70vh"
+          imagePosition="center 65%"
         >
           <Container className="relative py-20 text-center">
             <Reveal>

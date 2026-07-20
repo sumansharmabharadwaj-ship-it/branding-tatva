@@ -7,7 +7,7 @@ import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { TiltCard } from "@/components/TiltCard";
 import { PhotoHero } from "@/components/PhotoHero";
-import { VideoBreak } from "@/components/VideoBreak";
+import { ImageBreak } from "@/components/ImageBreak";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -55,17 +55,15 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        {/* Photo: Higgsfield AI generation (Soul Cinematic), commissioned
-            specifically for this slot — the previous foggy ridge video
-            read as blurry and too close in mood to other misty shots
-            already in rotation. This is a crisp, clear-visibility valley
-            view instead, so the quote is about clarity earned by height,
-            not fog lifting. */}
-        <VideoBreak
-          src="/videos/higgsfield-golden-ridge.mp4"
-          poster="/images/higgsfield-golden-ridge-poster.jpg"
+        {/* Real photo, not AI generation — Suman on the trail, the
+            mountain catching last light through the trees behind her.
+            The quote is about clarity earned by height, and this is
+            literally that: her own view from having climbed to it. */}
+        <ImageBreak
+          image="/images/own-forest-clearing.jpg"
           quote="Clarity isn't something you wait for. It's the view from finally standing somewhere high enough to see it."
           height="85vh"
+          imagePosition="center 30%"
           quoteVariant="left"
         />
 
