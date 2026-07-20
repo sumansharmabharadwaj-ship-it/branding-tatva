@@ -128,13 +128,19 @@ export default function AboutPage() {
               </Reveal>
               <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
                 {credentials.map((c, i) => (
-                  <Reveal key={c.label} delay={i * 0.06} className="h-full">
+                  <Reveal
+                    key={c.label}
+                    delay={i * 0.06}
+                    className={`h-full ${c.featured ? "sm:col-span-2" : ""}`}
+                  >
                     <TiltCard glowColor={c.color}>
                       <div
                         className="spotlight-card flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-elevation-sm transition-colors duration-300"
                         style={{ borderTopColor: c.color, ["--card-color" as string]: c.color }}
                       >
-                        <p className="font-medium text-soil">{c.label}</p>
+                        <p className={c.featured ? "font-display text-lg font-semibold text-soil" : "font-medium text-soil"}>
+                          {c.label}
+                        </p>
                         <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
                       </div>
                     </TiltCard>

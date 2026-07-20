@@ -20,6 +20,12 @@ function elementColor(slug: string) {
   return elements.find((e) => e.slug === slug)?.color ?? "#27221E";
 }
 
+// Only 3 posts today, so a repeating modulo pattern (like the Work
+// grid's TILE_LAYOUT_CLASSES) would be overkill — a plain array indexed
+// against the sorted list is enough to give the most recent post a
+// lead tile instead of three identical cards.
+const GRID_TILE_CLASSES = ["sm:col-span-2 sm:min-h-64", "", ""];
+
 export default function BlogPage() {
   const sorted = [...blogPosts].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
@@ -54,9 +60,13 @@ export default function BlogPage() {
         <PerspectiveReveal>
         <section className="border-t border-border bg-background-alt py-16">
           <Container>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid items-stretch gap-6 sm:grid-cols-2">
               {sorted.map((post, i) => (
-                <Reveal key={post.slug} delay={i * 0.06} className="h-full">
+                <Reveal
+                  key={post.slug}
+                  delay={i * 0.06}
+                  className={`h-full ${GRID_TILE_CLASSES[i % GRID_TILE_CLASSES.length]}`}
+                >
                   <TiltCard glowColor={elementColor(post.element)}>
                     <Link
                       href={`/blog/${post.slug}`}
@@ -72,10 +82,10 @@ export default function BlogPage() {
                         {" · "}
                         {post.readingTime}
                       </p>
-                      <p className="mt-3 font-display text-xl font-semibold text-soil">
+                      <p className={`mt-3 font-display font-semibold text-soil ${i === 0 ? "text-2xl sm:text-3xl" : "text-xl"}`}>
                         {post.title}
                       </p>
-                      <p className="mt-3 flex-1 text-sm text-foreground-secondary">
+                      <p className={`mt-3 flex-1 text-foreground-secondary ${i === 0 ? "max-w-lg text-base" : "text-sm"}`}>
                         {post.excerpt}
                       </p>
                       <p className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-action-primary-hover transition-transform duration-300">

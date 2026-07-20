@@ -7,27 +7,32 @@ export const credentials = [
     label: "M.A. Clinical Psychology",
     detail: "Amity University, 2023",
     color: "#B85A34", // clay
+    featured: true, // formal degree — reads wider than the supplementary credentials below
   },
   {
     label: "B.A. (Hons) English Literature",
     detail: "University of Delhi, 2021",
     color: "#24394D", // indigo
+    featured: true,
   },
   {
     label: "Clinical/Counselling Psychology Internship",
     detail: "Psy-मन: 60 hours of psychological assessment, psychotherapeutic and counselling procedures (2022)",
     color: "#5C6B4A", // sage
+    featured: false,
   },
   {
     label: "Clinical Internship",
     detail:
       "Wisdom Matters Neuropsychiatry & Wellness Centre: 30 hours of case study collection and patient sessions (2021)",
     color: "#C28A28", // ochre
+    featured: false,
   },
   {
     label: "National Winner, \"16 Frames\" Filmmaking Competition",
     detail: "Thomso'19, IIT Roorkee (2019)",
     color: "#CD7A4C", // terracotta
+    featured: false,
   },
 ] as const;
 

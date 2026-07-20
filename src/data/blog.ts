@@ -16,6 +16,7 @@ export type BlogPost = {
   readingTime: string;
   startingSet?: boolean;
   body: string[]; // paragraphs
+  pullQuote?: string; // one sentence copied verbatim from `body` — never new copy, just a visual break
 };
 
 export const blogPosts: BlogPost[] = [
@@ -28,6 +29,7 @@ export const blogPosts: BlogPost[] = [
     publishedAt: "2026-07-20",
     readingTime: "4 min read",
     startingSet: true,
+    pullQuote: "None of the five works well in isolation.",
     body: [
       "Ask most businesses what their brand needs and you'll get one answer: a logo, or a content calendar, or \"better marketing.\" Each of those is real work, but treated alone, each is also a symptom fix. A sharp logo on a business with no clear audience just makes the confusion look tidier.",
       "The elemental approach splits brand work into five parts that actually do different jobs. Earth is where a brand is grounded: purpose, audience, positioning, the research most brands skip because it's slower than picking a font. Water is how a brand moves through someone's day, the actual customer journey rather than the funnel diagram of it. Fire is what makes people look twice. Air is the language that carries all of it. Space is what's left once the noise settles, the part people actually remember.",
@@ -44,6 +46,7 @@ export const blogPosts: BlogPost[] = [
     publishedAt: "2026-07-13",
     readingTime: "3 min read",
     startingSet: true,
+    pullQuote: "A message repeated inconsistently across five channels doesn't compound, it dilutes.",
     body: [
       "It's possible to post consistently, run ads, show up in every relevant search, and still not be remembered. Visibility and recall aren't the same metric, even though most brand tracking treats them as one.",
       "Visibility asks: did someone see this? Recall asks something harder: a week later, without being shown it again, can they describe what it was and why it mattered to them? Most brands optimise entirely for the first question, because it's the one with a dashboard.",
@@ -60,6 +63,7 @@ export const blogPosts: BlogPost[] = [
     publishedAt: "2026-07-06",
     readingTime: "4 min read",
     startingSet: true,
+    pullQuote: "That's also why an audit has to come before a rebuild.",
     body: [
       "For a business that's already operating, the temptation is to skip straight to the fix: a new website, a rebrand, a content push. An audit exists to make sure that fix is actually aimed at the real problem, instead of the most visible symptom of it.",
       "In practice, that means going through every place a customer actually meets the brand, not just the polished ones. The website says one thing; the last ten social posts say something slightly different; the founder describes the business in a sales call in a third way entirely. None of these are wrong on their own. The problem is that they don't agree with each other, and a customer piecing them together notices the seams even when they can't name what's off.",

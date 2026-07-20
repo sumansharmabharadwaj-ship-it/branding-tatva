@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Header } from "@/layouts/Header";
@@ -6,6 +7,7 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { PullQuote } from "@/components/PullQuote";
 import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
 import { site } from "@/data/site";
@@ -38,6 +40,12 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound();
 
   const element = elements.find((e) => e.slug === post.element);
+  // Lands after the actual midpoint, but never on the lede (index 0) or
+  // the closing paragraph, so it doesn't sit awkwardly against the
+  // prev/next nav that immediately follows the body.
+  const pullQuoteAfter = post.pullQuote
+    ? Math.min(Math.max(1, Math.floor(post.body.length / 2) - 1), post.body.length - 2)
+    : -1;
   const sorted = [...blogPosts].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
@@ -95,9 +103,12 @@ export default async function BlogPostPage({ params }: Props) {
           <Container className="max-w-2xl">
             <Reveal className="space-y-6 text-foreground-secondary">
               {post.body.map((paragraph, i) => (
-                <p key={i} className={i === 0 ? "text-lg text-soil" : undefined}>
-                  {paragraph}
-                </p>
+                <Fragment key={i}>
+                  <p className={i === 0 ? "text-lg text-soil" : undefined}>{paragraph}</p>
+                  {i === pullQuoteAfter && post.pullQuote && (
+                    <PullQuote quote={post.pullQuote} color={element?.color ?? "#B85A34"} />
+                  )}
+                </Fragment>
               ))}
             </Reveal>
 
