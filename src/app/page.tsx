@@ -6,7 +6,6 @@ import { FAQ } from "@/sections/FAQ";
 import { DustMotes } from "@/components/DustMotes";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
-import { Testimonials } from "@/components/Testimonials";
 import { ElementsRail } from "@/components/ElementsRail";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { PerspectiveReveal } from "@/components/PerspectiveReveal";
@@ -121,9 +120,16 @@ export default function Home() {
                   what&apos;s left once the noise settles, the part people
                   actually remember.
                 </p>
+                <p>
+                  Most brands are built with one or two of these — a logo
+                  with no positioning behind it, a content calendar with no
+                  voice tying it together. The ones people remember are
+                  built with all five, working as one system.
+                </p>
                 <p className="font-medium text-soil">
-                  Most brands are built with one or two of these. The ones
-                  people remember are built with all five, working together.
+                  That&apos;s not a mood board. It&apos;s the actual method
+                  behind every project below, and the one I&apos;d use on
+                  yours.
                 </p>
               </div>
             </Reveal>
@@ -152,8 +158,9 @@ export default function Home() {
                 The five elements
               </h2>
               <p className="mt-3 max-w-md text-sm text-foreground-secondary">
-                The same convergence that shapes an actual brand: separate
-                parts finding one shared center.
+                Every project moves through some version of all five, in
+                this order. Here&apos;s what each one actually covers, and
+                what it looks like when it&apos;s missing.
               </p>
             </Reveal>
           </Container>
@@ -286,25 +293,6 @@ export default function Home() {
                   </Reveal>
                 ))}
               </div>
-            </Container>
-          </section>
-
-          {/* Testimonials */}
-          <section className="py-20">
-            <Container>
-              <Reveal>
-                <h2 className="text-display-sm font-display font-semibold text-soil">
-                  What clients say
-                </h2>
-                <p className="mt-3 max-w-xl text-sm text-foreground-secondary">
-                  Real quotes are being collected from recent projects. This
-                  section fills in as they come in, rather than being filled
-                  with anything invented in the meantime.
-                </p>
-                <div className="mt-8">
-                  <Testimonials />
-                </div>
-              </Reveal>
             </Container>
           </section>
         </GradientSections>
