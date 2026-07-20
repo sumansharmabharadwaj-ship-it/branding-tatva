@@ -14,15 +14,16 @@ import { elements } from "@/data/elements";
 //    bars rise out of a blur rather than snapping in at full focus, so
 //    the opening beat feels like something resolving out of mist rather
 //    than a UI element appearing.
-// 2. It still says something. The five bars are the same skyline motif
-//    as LogoMark, rising in the same order as data/elements.ts (earth,
-//    water, fire, air, space) — one of the five elements' own poetic
-//    lines (already written for the Home page's Five Elements section,
-//    not new copy invented for this) appears alone, its matching bar
-//    brightening while the other four dim, then the element's name
-//    resolves, then both fade into the site's own wordmark — a beam of
-//    light sweeping across it once, the way a title card catches light
-//    in an opening title sequence.
+// 2. It shows all five, not one. This is a brand built on Tatva —
+//    element — as its organizing idea, and the loading screen is the
+//    one moment every visitor sees before anything else, so it walks
+//    through all five in the same order as data/elements.ts: each
+//    element's own bar brightens while the other four dim, its poetic
+//    line and name land together, holds a beat, then the next element
+//    takes over. Once all five have had their moment, they resolve
+//    together into the site's own wordmark — a beam of light sweeping
+//    across it once, the way a title card catches light in an opening
+//    sequence.
 // 3. It leaves the same way every other section on the site enters —
 //    ClipReveal's curtain-wipe clip-path, so the transition into the
 //    Hero underneath uses the site's one motion language instead of a
@@ -34,17 +35,10 @@ import { elements } from "@/data/elements";
 // instead — so the site's very first frame doesn't repeat the same tone
 // everything after it will also use.
 //
-// The element is chosen once per hard load with Math.random(), inside an
-// effect rather than in the initial render, so server and first-client
-// render agree (nothing text-bearing renders while stage is still
-// "bars") and there's no hydration mismatch — it's just a different one
-// of the five each time someone lands on the site.
-//
-// Lives in the root layout, which Next.js keeps mounted across
-// client-side navigations, so this only plays once per hard load, never
-// on internal link clicks. Skipped entirely for reduced-motion, since a
-// sequence like this is itself exactly the kind of motion some users
-// specifically want to avoid.
+// Total run time (~4.6s) is longer than a typical loading spinner would
+// justify — that's deliberate here specifically because this sequence
+// is the one place the site's whole five-element premise gets stated
+// directly, once, before a single card or heading has to imply it.
 
 const BARS = [
   { color: "#B85A34", height: 34 }, // earth — clay
@@ -57,42 +51,52 @@ const BAR_WIDTH = 10;
 const BAR_GAP = 6;
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
-type Stage = "bars" | "line" | "name" | "brand" | "sweep";
-const STAGE_ORDER: Stage[] = ["bars", "line", "name", "brand", "sweep"];
+const BARS_RISE_MS = 700;
+const PER_ELEMENT_MS = 560;
+const CYCLE_MS = BARS_RISE_MS + elements.length * PER_ELEMENT_MS; // when the last element's beat ends
+const BRAND_MS = CYCLE_MS + 150;
+const SWEEP_MS = BRAND_MS + 150;
+const HIDE_MS = SWEEP_MS + 550;
+const REMOVE_MS = HIDE_MS + 750;
+
+type Stage = "cycle" | "brand" | "sweep";
 
 export function PageLoadVeil() {
   const prefersReducedMotion = useReducedMotion();
-  const [stage, setStage] = useState<Stage>("bars");
+  const [stage, setStage] = useState<Stage>("cycle");
+  const [cycleIndex, setCycleIndex] = useState(-1); // -1: bars still rising, nothing lit yet
   const [visible, setVisible] = useState(!prefersReducedMotion);
   // A hard, animation-independent removal that always wins — see the
   // note in the exit transition below for why this can't just rely on
   // AnimatePresence's own onExitComplete.
   const [removed, setRemoved] = useState(prefersReducedMotion);
-  const [elementIndex, setElementIndex] = useState(0);
-
-  useEffect(() => {
-    setElementIndex(Math.floor(Math.random() * elements.length));
-  }, []);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
-    const timers = [
-      setTimeout(() => setStage("line"), 700),
-      setTimeout(() => setStage("name"), 1450),
-      setTimeout(() => setStage("brand"), 2050),
-      setTimeout(() => setStage("sweep"), 2150),
-      setTimeout(() => setVisible(false), 2700),
-      setTimeout(() => setRemoved(true), 3450),
-    ];
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    elements.forEach((_, i) => {
+      timers.push(setTimeout(() => setCycleIndex(i), BARS_RISE_MS + i * PER_ELEMENT_MS));
+    });
+    timers.push(
+      setTimeout(() => setStage("brand"), BRAND_MS),
+      setTimeout(() => setStage("sweep"), SWEEP_MS),
+      setTimeout(() => setVisible(false), HIDE_MS),
+      setTimeout(() => setRemoved(true), REMOVE_MS)
+    );
     return () => timers.forEach(clearTimeout);
   }, [prefersReducedMotion]);
 
   if (removed) return null;
 
-  const element = elements[elementIndex];
-  const philosophyVisible = stage === "line" || stage === "name";
-  const nameVisible = stage === "name";
+  const activeElement = cycleIndex >= 0 ? elements[cycleIndex] : null;
+  const cycling = stage === "cycle" && activeElement !== null;
   const brandVisible = stage === "brand" || stage === "sweep";
+  // A rough 0-1 sense of "how far in" for the progress rail, independent
+  // of exactly which stage we're in — the bars rising counts as the
+  // first fifth, each element after that fills another fraction, brand
+  // is full.
+  const progress =
+    stage !== "cycle" ? 1 : ((cycleIndex + 1) / elements.length) * (elements.length / (elements.length + 1));
 
   return (
     <AnimatePresence>
@@ -118,12 +122,12 @@ export function PageLoadVeil() {
                 animate={{
                   scaleY: 1,
                   filter: "blur(0px)",
-                  opacity: philosophyVisible ? (i === elementIndex ? 1 : 0.3) : 0.92,
+                  opacity: cycling ? (i === cycleIndex ? 1 : 0.3) : 0.92,
                 }}
                 transition={{
                   scaleY: { duration: 0.6, delay: i * 0.08, ease: EASE },
                   filter: { duration: 0.6, delay: i * 0.08, ease: EASE },
-                  opacity: { duration: 0.4, ease: EASE },
+                  opacity: { duration: 0.35, ease: EASE },
                 }}
                 style={{
                   width: BAR_WIDTH,
@@ -137,29 +141,32 @@ export function PageLoadVeil() {
           </div>
 
           <div className="relative flex min-h-[7rem] w-full max-w-xs flex-col items-center justify-center overflow-hidden px-6 text-center sm:max-w-sm">
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <motion.p
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: philosophyVisible ? 1 : 0, y: philosophyVisible ? 0 : 8 }}
-                transition={{ duration: 0.5, ease: EASE }}
-                className="font-display text-lg italic leading-snug text-ivory/85 sm:text-xl"
+            {/* All five elements' lines stay mounted the whole time,
+                stacked in the same slot and cross-faded by opacity —
+                the same always-mounted pattern used everywhere else on
+                the site for a hover/state swap, rather than an
+                AnimatePresence key-swap that depends on its exit
+                animation actually finishing before the next one mounts. */}
+            {elements.map((el, i) => (
+              <motion.div
+                key={el.slug}
+                animate={{ opacity: cycling && cycleIndex === i ? 1 : 0 }}
+                transition={{ duration: 0.35, ease: EASE }}
+                className="absolute inset-0 flex flex-col items-center justify-center gap-3"
               >
-                &ldquo;{element.poetic}&rdquo;
-              </motion.p>
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: nameVisible ? 1 : 0 }}
-                transition={{ duration: 0.4, ease: EASE }}
-                className="inline-flex items-center gap-2 text-[0.65rem] font-bold uppercase tracking-[0.35em] text-ivory/70"
-              >
-                <span
-                  className="h-1.5 w-1.5 rounded-full"
-                  style={{ backgroundColor: element.color }}
-                  aria-hidden="true"
-                />
-                {element.name}
-              </motion.span>
-            </div>
+                <p className="font-display text-lg italic leading-snug text-ivory/85 sm:text-xl">
+                  &ldquo;{el.poetic}&rdquo;
+                </p>
+                <span className="inline-flex items-center gap-2 text-[0.65rem] font-bold uppercase tracking-[0.35em] text-ivory/70">
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ backgroundColor: el.color }}
+                    aria-hidden="true"
+                  />
+                  {el.name}
+                </span>
+              </motion.div>
+            ))}
 
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -191,9 +198,9 @@ export function PageLoadVeil() {
           </div>
 
           {/* Progress reads through the same five-element bars rather
-              than a separate bar bolted on underneath — each stage
-              lights one more bar to full strength, so "how far along is
-              this" and "what is this actually about" are the same
+              than a separate bar bolted on underneath — each element's
+              turn fills the rail a little further, so "how far along
+              is this" and "what is this actually about" are the same
               visual instead of two competing ones. */}
           <div
             className="absolute bottom-10 h-px bg-ivory/15 sm:bottom-12"
@@ -201,8 +208,7 @@ export function PageLoadVeil() {
           >
             <motion.div
               className="h-full bg-ivory/60"
-              initial={{ width: "0%" }}
-              animate={{ width: `${(STAGE_ORDER.indexOf(stage) + 1) * 20}%` }}
+              animate={{ width: `${progress * 100}%` }}
               transition={{ duration: 0.4, ease: EASE }}
             />
           </div>
