@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import type { ProcessSectionProps } from "./types";
@@ -11,7 +12,9 @@ import { useVerticalLineProgress } from "./animations";
 // Notice leads to Ground, and so on), so the layout should read that way
 // too. The line's own fill is tied to scroll position: it draws down as
 // the visitor moves through the section, so "progress" is something felt
-// rather than just implied by the numbering.
+// rather than just implied by the numbering. Same faint road photo as
+// the desktop HorizontalJourney, at low opacity, so this doesn't become
+// a plain-text stretch on mobile either.
 
 export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -20,6 +23,15 @@ export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
 
   return (
     <div ref={ref} className="relative mt-16 pl-12 sm:pl-16">
+      <Image
+        src="/images/own-ridge-road-poster.jpg"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="-z-10 object-cover"
+        style={{ opacity: 0.1 }}
+      />
       <div
         className="absolute left-[7px] top-2 bottom-2 w-px bg-border sm:left-[11px]"
         aria-hidden="true"

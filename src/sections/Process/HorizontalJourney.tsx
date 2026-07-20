@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import type { ProcessSectionProps } from "./types";
 import { initHorizontalScroll } from "./animations";
@@ -8,6 +9,15 @@ import { initHorizontalScroll } from "./animations";
 // Desktop-only pinned horizontal scroll through the process stages — see
 // animations.ts's initHorizontalScroll for the actual GSAP/ScrollTrigger
 // setup; this component only owns the refs and the markup.
+//
+// This section pins for the full width of the track (7 stages, several
+// thousand pixels of scroll distance) — previously with nothing behind
+// the cards but flat cream, which reads as a long stretch of empty
+// space during exactly the part of the page a visitor spends the most
+// scroll distance in. A faint mountain-road photo (own-ridge-road — a
+// literal path, matching "how a project moves") sits behind the whole
+// track at low opacity: enough to keep the section visually alive,
+// nowhere near enough to compete with the text sitting on top of it.
 
 export function HorizontalJourney({ stages, elementColor }: ProcessSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -24,7 +34,17 @@ export function HorizontalJourney({ stages, elementColor }: ProcessSectionProps)
 
   return (
     <div ref={sectionRef} className="relative overflow-hidden bg-background">
-      <div ref={trackRef} className="flex w-max">
+      <Image
+        src="/images/own-ridge-road-poster.jpg"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover"
+        style={{ opacity: 0.16 }}
+      />
+      <div className="absolute inset-0" style={{ backgroundColor: "#F4EFE6", opacity: 0.55 }} />
+      <div ref={trackRef} className="relative flex w-max">
         {stages.map((stage, i) => (
           <div
             key={stage.stage}
