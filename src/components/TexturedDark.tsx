@@ -4,13 +4,13 @@ import Image from "next/image";
 // soil color, instead of flat, uniform color. The gradient overlay keeps
 // contrast high enough that ivory text stays fully readable; the photo
 // itself is decorative texture (stone, weathered surface), not standing
-// in for a person or a claim about anything specific. Photo: Pexels,
-// free for commercial use, see public/images/README if one gets added.
+// in for a person or a claim about anything specific. Generated via
+// Higgsfield rather than stock photography.
 
 export function TexturedDark({
   children,
   className,
-  image = "/images/texture-terracotta.jpg",
+  image = "/images/higgsfield-terracotta-texture.jpg",
 }: {
   children: React.ReactNode;
   className?: string;

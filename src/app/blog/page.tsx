@@ -27,7 +27,11 @@ export default function BlogPage() {
     <>
       <Header transparent />
       <main id="main-content">
-        <PhotoHero image="/images/own-dusk-ridge.jpg" minHeight="60vh">
+        <PhotoHero
+          video="/videos/own-dusk-ridge.mp4"
+          poster="/images/own-dusk-ridge-poster.jpg"
+          minHeight="60vh"
+        >
           <Container className="relative py-20 text-center">
             <Reveal>
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
