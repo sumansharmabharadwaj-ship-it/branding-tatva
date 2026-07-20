@@ -263,8 +263,7 @@ export default function Home() {
               title: "Starting with an idea",
               description:
                 "Earth first work: purpose, audience, and positioning, before anything else gets built.",
-              image: "/images/higgsfield-idea-sketch.jpg",
-              video: "/videos/higgsfield-idea-sketch.mp4",
+              image: "/images/own-canopy.jpg",
               gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
               ctaLabel: "Brand Beginning",
               ctaHref: "/services#brand-beginning",
@@ -276,8 +275,8 @@ export default function Home() {
               title: "Already in business",
               description:
                 "An audit first, finding exactly where the story stops holding together.",
-              image: "/images/higgsfield-stream-clarity.jpg",
-              video: "/videos/higgsfield-stream-clarity.mp4",
+              image: "/images/own-forest-stream-poster.jpg",
+              video: "/videos/own-forest-stream.mp4",
               gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
               ctaLabel: "Brand Clarity",
               ctaHref: "/services#brand-clarity",
@@ -330,8 +329,8 @@ export default function Home() {
         </GradientSections>
 
         <VideoBreak
-          src="/videos/higgsfield-confident-light.mp4"
-          poster="/images/higgsfield-confident-light-poster.jpg"
+          src="/videos/own-alpenglow-peak.mp4"
+          poster="/images/own-alpenglow-peak-poster.jpg"
           quote="Every strong brand has a moment like this — quiet, and completely sure of itself."
           height="92vh"
         />
