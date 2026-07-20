@@ -73,6 +73,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
+        <div className="gradient-mesh" aria-hidden="true" />
         <div className="paper-grain" aria-hidden="true" />
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
         <DeferredCursor />

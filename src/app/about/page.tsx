@@ -5,6 +5,7 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
+import { TiltCard } from "@/components/TiltCard";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { aboutIntro, credentials, experience } from "@/data/about";
@@ -129,13 +130,15 @@ export default function AboutPage() {
               <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
                 {credentials.map((c, i) => (
                   <Reveal key={c.label} delay={i * 0.06} className="h-full">
-                    <div
-                      className="spotlight-card flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
-                      style={{ borderTopColor: c.color, ["--card-color" as string]: c.color }}
-                    >
-                      <p className="font-medium text-soil">{c.label}</p>
-                      <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
-                    </div>
+                    <TiltCard glowColor={c.color}>
+                      <div
+                        className="spotlight-card flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-elevation-sm transition-colors duration-300"
+                        style={{ borderTopColor: c.color, ["--card-color" as string]: c.color }}
+                      >
+                        <p className="font-medium text-soil">{c.label}</p>
+                        <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
+                      </div>
+                    </TiltCard>
                   </Reveal>
                 ))}
               </div>

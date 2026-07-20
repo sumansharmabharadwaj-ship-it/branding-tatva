@@ -117,6 +117,35 @@
     }
   }
 
+  /* A slow-drifting wash of the brand's own five colors behind every
+     page, sitting just under paper-grain in the same fixed overlay
+     stack — so flat stretches of cream or soil pick up a faint color
+     temperature shift instead of reading as one dead-flat fill. Same
+     transform-only drift technique as .aurora-glow (never
+     background-position, which would repaint the whole viewport every
+     frame instead of just compositing a layer), just four soft color
+     pools instead of two, and low enough opacity to be felt rather than
+     seen. */
+  .gradient-mesh {
+    position: fixed;
+    inset: -20%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+    filter: blur(70px);
+    background:
+      radial-gradient(circle at 18% 20%, #C28A28 0%, transparent 42%),
+      radial-gradient(circle at 82% 12%, #B85A34 0%, transparent 42%),
+      radial-gradient(circle at 25% 88%, #24394D 0%, transparent 42%),
+      radial-gradient(circle at 88% 82%, #5C6B4A 0%, transparent 42%);
+    animation: mesh-drift 48s ease-in-out infinite;
+  }
+
+  @keyframes mesh-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-3%, 2%) scale(1.06); }
+  }
+
   /* A whisper of paper grain over the flat cream sections, so the base
      background reads as material rather than a solid digital fill.
      Fixed + very low opacity + multiply so it never fights photos or
@@ -386,6 +415,35 @@
 @keyframes aurora-drift-b {
   0%, 100% { transform: translate(0, 0) scale(1); }
   50% { transform: translate(-10%, -8%) scale(1.1); }
+}
+
+/* Soft diagonal light beams for the site's most cinematic dark moments
+   (the Home hero, TexturedDark's CTA panels) — a slow sweep rather than
+   a static gradient, so the section reads as lit rather than printed.
+   Opt-in per component rather than sitewide like grain/mesh, since this
+   is a much stronger effect and would read as decoration on a section
+   that isn't trying to feel like a film frame. screen blend keeps it
+   additive (lightens) instead of muddying whatever's underneath. */
+.light-rays {
+  position: absolute;
+  inset: -10% -50%;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  background: repeating-linear-gradient(
+    100deg,
+    transparent 0%,
+    transparent 7%,
+    rgba(255, 244, 220, 0.07) 7.5%,
+    transparent 9%,
+    transparent 16%
+  );
+  animation: rays-drift 40s ease-in-out infinite;
+}
+
+@keyframes rays-drift {
+  0%, 100% { transform: translateX(-4%) rotate(0deg); }
+  50% { transform: translateX(4%) rotate(1deg); }
 }
 
 /* Floating embers for the Footer's closing scene — small warm points of

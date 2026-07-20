@@ -30,6 +30,7 @@ export function TexturedDark({
         style={{ backgroundImage: "linear-gradient(rgba(39,34,30,0.88), rgba(39,34,30,0.93))" }}
       />
       <div className="aurora-glow" aria-hidden="true" />
+      <div className="light-rays" aria-hidden="true" />
       <div className="relative">{children}</div>
     </section>
   );

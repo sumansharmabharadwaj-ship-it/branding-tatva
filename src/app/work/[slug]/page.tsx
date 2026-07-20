@@ -5,6 +5,7 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
+import { TiltCard } from "@/components/TiltCard";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
@@ -144,13 +145,15 @@ export default async function CaseStudyPage({ params }: Props) {
                 <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
                   Related work
                 </p>
-                <a
-                  href={`/work/${related.slug}`}
-                  className="mt-3 block max-w-md rounded-lg border border-border bg-background-elevated p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:border-action-primary/40 hover:shadow-elevation-md"
-                >
-                  <p className="font-display text-lg font-semibold text-soil">{related.title}</p>
-                  <p className="mt-2 text-sm text-foreground-secondary">{related.challenge}</p>
-                </a>
+                <TiltCard glowColor={related.accent} className="mt-3 max-w-md">
+                  <a
+                    href={`/work/${related.slug}`}
+                    className="block h-full rounded-lg border border-border bg-background-elevated p-6 shadow-elevation-sm transition-colors duration-300 hover:border-action-primary/40"
+                  >
+                    <p className="font-display text-lg font-semibold text-soil">{related.title}</p>
+                    <p className="mt-2 text-sm text-foreground-secondary">{related.challenge}</p>
+                  </a>
+                </TiltCard>
               </Reveal>
             </Container>
           </section>

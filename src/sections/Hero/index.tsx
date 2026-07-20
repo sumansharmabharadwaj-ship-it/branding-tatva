@@ -95,6 +95,8 @@ export function CinematicHero({
         </motion.div>
       )}
 
+      {!prefersReducedMotion && <div className="light-rays" aria-hidden="true" />}
+
       {/* Cursor spotlight — a soft light following the pointer, purely
           additive atmosphere. Position is written directly to this
           element's own CSS custom properties (see useHeroSpotlight),

@@ -4,6 +4,7 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
+import { TiltCard } from "@/components/TiltCard";
 import { PhotoHero } from "@/components/PhotoHero";
 import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
@@ -54,30 +55,32 @@ export default function BlogPage() {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {sorted.map((post, i) => (
                 <Reveal key={post.slug} delay={i * 0.06} className="h-full">
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="flex h-full flex-col rounded-lg border-t-2 bg-background-elevated p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
-                    style={{ borderTopColor: elementColor(post.element) }}
-                  >
-                    <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
-                      {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                      {" · "}
-                      {post.readingTime}
-                    </p>
-                    <p className="mt-3 font-display text-xl font-semibold text-soil">
-                      {post.title}
-                    </p>
-                    <p className="mt-3 flex-1 text-sm text-foreground-secondary">
-                      {post.excerpt}
-                    </p>
-                    <p className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-action-primary-hover transition-transform duration-300">
-                      Read more <span aria-hidden="true">&rarr;</span>
-                    </p>
-                  </Link>
+                  <TiltCard glowColor={elementColor(post.element)}>
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="flex h-full flex-col rounded-lg border-t-2 bg-background-elevated p-6 shadow-elevation-sm"
+                      style={{ borderTopColor: elementColor(post.element) }}
+                    >
+                      <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+                        {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                        {" · "}
+                        {post.readingTime}
+                      </p>
+                      <p className="mt-3 font-display text-xl font-semibold text-soil">
+                        {post.title}
+                      </p>
+                      <p className="mt-3 flex-1 text-sm text-foreground-secondary">
+                        {post.excerpt}
+                      </p>
+                      <p className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-action-primary-hover transition-transform duration-300">
+                        Read more <span aria-hidden="true">&rarr;</span>
+                      </p>
+                    </Link>
+                  </TiltCard>
                 </Reveal>
               ))}
             </div>

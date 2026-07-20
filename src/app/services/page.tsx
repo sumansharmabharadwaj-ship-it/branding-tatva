@@ -6,6 +6,7 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
+import { TiltCard } from "@/components/TiltCard";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { TexturedDark } from "@/components/TexturedDark";
@@ -53,17 +54,19 @@ export default function ServicesPage() {
             <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {offerings.map((offer, i) => (
                 <Reveal key={offer.name} delay={i * 0.06} className="h-full">
-                  <div
-                    className="spotlight-card flex h-full flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
-                    style={{
-                      borderTopColor: offer.color,
-                      backgroundColor: `${offer.color}14`,
-                      ["--card-color" as string]: offer.color,
-                    }}
-                  >
-                    <p className="font-display text-lg font-semibold text-soil transition-colors duration-300">{offer.name}</p>
-                    <p className="mt-2 text-sm text-foreground-secondary">{offer.detail}</p>
-                  </div>
+                  <TiltCard glowColor={offer.color}>
+                    <div
+                      className="spotlight-card flex h-full flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-colors duration-300"
+                      style={{
+                        borderTopColor: offer.color,
+                        backgroundColor: `${offer.color}14`,
+                        ["--card-color" as string]: offer.color,
+                      }}
+                    >
+                      <p className="font-display text-lg font-semibold text-soil transition-colors duration-300">{offer.name}</p>
+                      <p className="mt-2 text-sm text-foreground-secondary">{offer.detail}</p>
+                    </div>
+                  </TiltCard>
                 </Reveal>
               ))}
             </div>
@@ -93,42 +96,44 @@ export default function ServicesPage() {
             <div className="grid items-stretch gap-6 lg:grid-cols-5">
               {elements.map((el, i) => (
                 <Reveal key={el.slug} delay={i * 0.08} className="h-full">
-                  <div
-                    className="relative flex h-full flex-col overflow-hidden border-t-2 p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
-                    style={{ borderColor: el.color }}
-                  >
-                    <div className="absolute inset-0" aria-hidden="true" style={{ opacity: 0.14 }}>
-                      <div className="absolute inset-0" style={{ backgroundColor: el.color }} />
-                      <Image
-                        src={el.image}
-                        alt=""
-                        fill
-                        sizes="(min-width: 1024px) 20vw, 100vw"
-                        style={{ objectFit: "cover", objectPosition: "center", mixBlendMode: "color" }}
-                      />
+                  <TiltCard glowColor={el.color}>
+                    <div
+                      className="relative flex h-full flex-col overflow-hidden border-t-2 p-6 shadow-elevation-sm"
+                      style={{ borderColor: el.color }}
+                    >
+                      <div className="absolute inset-0" aria-hidden="true" style={{ opacity: 0.14 }}>
+                        <div className="absolute inset-0" style={{ backgroundColor: el.color }} />
+                        <Image
+                          src={el.image}
+                          alt=""
+                          fill
+                          sizes="(min-width: 1024px) 20vw, 100vw"
+                          style={{ objectFit: "cover", objectPosition: "center", mixBlendMode: "color" }}
+                        />
+                      </div>
+                      <div className="absolute inset-0 bg-background-elevated/90" aria-hidden="true" />
+                      <div className="relative">
+                        <ElementGlyph
+                          slug={el.slug}
+                          className="h-7 w-7 opacity-70"
+                          style={{ color: el.color }}
+                        />
+                        <p className="mt-3 font-display text-xl font-semibold text-soil">{el.name}</p>
+                        <p className="mt-2 font-display text-sm italic text-foreground-secondary">
+                          &ldquo;{el.poetic}&rdquo;
+                        </p>
+                        <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
+                        <ul className="mt-4 space-y-1.5">
+                          {el.services.map((s) => (
+                            <li key={s} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
+                              {s}
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="mt-4 pt-4 text-xs text-foreground-secondary/80 italic">{el.proof}</p>
+                      </div>
                     </div>
-                    <div className="absolute inset-0 bg-background-elevated/90" aria-hidden="true" />
-                    <div className="relative">
-                      <ElementGlyph
-                        slug={el.slug}
-                        className="h-7 w-7 opacity-70"
-                        style={{ color: el.color }}
-                      />
-                      <p className="mt-3 font-display text-xl font-semibold text-soil">{el.name}</p>
-                      <p className="mt-2 font-display text-sm italic text-foreground-secondary">
-                        &ldquo;{el.poetic}&rdquo;
-                      </p>
-                      <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
-                      <ul className="mt-4 space-y-1.5">
-                        {el.services.map((s) => (
-                          <li key={s} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
-                            {s}
-                          </li>
-                        ))}
-                      </ul>
-                      <p className="mt-4 pt-4 text-xs text-foreground-secondary/80 italic">{el.proof}</p>
-                    </div>
-                  </div>
+                  </TiltCard>
                 </Reveal>
               ))}
             </div>
@@ -144,26 +149,28 @@ export default function ServicesPage() {
             <div className="spotlight-grid mt-10 grid items-stretch gap-6 md:grid-cols-2">
               {serviceGroups.map((group, i) => (
                 <Reveal key={group.slug} delay={i * 0.08} className="h-full">
-                  <div
-                    id={group.slug}
-                    className="spotlight-card flex h-full scroll-mt-24 flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-md"
-                    style={{
-                      borderTopColor: group.color,
-                      backgroundColor: `${group.color}0F`,
-                      ["--card-color" as string]: group.color,
-                    }}
-                  >
-                    <p className="font-display text-xl font-semibold text-soil">{group.name}</p>
-                    <p className="mt-1 text-sm font-medium" style={{ color: group.color }}>{group.forWho}</p>
-                    <p className="mt-4 text-foreground-secondary">{group.description}</p>
-                    <ul className="mt-4 space-y-1.5">
-                      {group.includes.map((item) => (
-                        <li key={item} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <TiltCard glowColor={group.color}>
+                    <div
+                      id={group.slug}
+                      className="spotlight-card flex h-full scroll-mt-24 flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-colors duration-300"
+                      style={{
+                        borderTopColor: group.color,
+                        backgroundColor: `${group.color}0F`,
+                        ["--card-color" as string]: group.color,
+                      }}
+                    >
+                      <p className="font-display text-xl font-semibold text-soil">{group.name}</p>
+                      <p className="mt-1 text-sm font-medium" style={{ color: group.color }}>{group.forWho}</p>
+                      <p className="mt-4 text-foreground-secondary">{group.description}</p>
+                      <ul className="mt-4 space-y-1.5">
+                        {group.includes.map((item) => (
+                          <li key={item} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </TiltCard>
                 </Reveal>
               ))}
             </div>
