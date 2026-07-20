@@ -6,7 +6,7 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
-import { ImageBreak } from "@/components/ImageBreak";
+import { VideoBreak } from "@/components/VideoBreak";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -60,8 +60,9 @@ export default function AboutPage() {
             already in rotation. This is a crisp, clear-visibility valley
             view instead, so the quote is about clarity earned by height,
             not fog lifting. */}
-        <ImageBreak
-          image="/images/higgsfield-golden-ridge.jpg"
+        <VideoBreak
+          src="/videos/higgsfield-golden-ridge.mp4"
+          poster="/images/higgsfield-golden-ridge-poster.jpg"
           quote="Clarity isn't something you wait for. It's the view from finally standing somewhere high enough to see it."
           height="85vh"
           quoteVariant="left"
