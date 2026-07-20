@@ -16,6 +16,8 @@ export type Project = {
   closingQuote?: string; // the case-study page's closing VideoBreak — grounded in this project's own challenge/insight, not a generic line shared across every project
   cardImage?: string; // background photo for the Home page's secondary "Selected work" cards
   cardVideo?: string; // ambient clip that autoplays on hover in the Work grid — abstract/atmospheric, not literal stock footage of the industry
+  heroVideo?: string; // case-study detail page's own PhotoHero — a distinct world per project instead of one shared clip
+  heroPoster?: string;
 };
 
 // Client names cleared for public use by Suman. Every field below is
@@ -43,8 +45,10 @@ export const projects: Project[] = [
       "The clearest signal was impressions barely dropping (down just 10%) despite posting 48% less. The platform was actively rewarding the more relevant content instead of just showing it to fewer people. That's the difference between reach and trust.",
     closingQuote:
       "Fewer posts, each one earning its place. That's the difference between being seen and being remembered.",
-    cardImage: "/images/pexels-forest-path.jpg",
+    cardImage: "/images/higgsfield-nutrition-morning.jpg",
     cardVideo: "/videos/card-dr-haley-nutrition.mp4",
+    heroVideo: "/videos/higgsfield-nutrition-morning.mp4",
+    heroPoster: "/images/higgsfield-nutrition-morning-poster.jpg",
     featured: true,
     accent: "#5C6B4A", // sage
     stats: [
@@ -75,8 +79,10 @@ export const projects: Project[] = [
       "The sharpest strategic call was refusing to let 'MyShopInEurope' default to meaning 'cheap Indian goods.' Repositioning around craft and origin, ahead of price, changes who the platform can credibly sell to.",
     closingQuote:
       "A story a buyer can pass on to their own customers is worth more than the lowest price on the listing.",
-    cardImage: "/images/own-jagged-peaks.jpg",
+    cardImage: "/images/higgsfield-marketplace-warehouse.jpg",
     cardVideo: "/videos/card-myshopineurope.mp4",
+    heroVideo: "/videos/higgsfield-marketplace-warehouse.mp4",
+    heroPoster: "/images/higgsfield-marketplace-warehouse-poster.jpg",
     featured: true,
     accent: "#B85A34", // clay
   },
@@ -95,8 +101,10 @@ export const projects: Project[] = [
       "Delivered a structured content system, built platform by platform, specifically around driving webinar registrations rather than generic engagement metrics.",
     closingQuote:
       "Content that only earns attention is unfinished. It has to lead somewhere, or it isn't strategy yet.",
-    cardImage: "/images/own-canopy.jpg",
+    cardImage: "/images/higgsfield-executive-office.jpg",
     cardVideo: "/videos/card-executive-springboard.mp4",
+    heroVideo: "/videos/higgsfield-executive-office.mp4",
+    heroPoster: "/images/higgsfield-executive-office-poster.jpg",
     featured: true,
     accent: "#24394D", // indigo
   },
@@ -121,8 +129,10 @@ export const projects: Project[] = [
       "The work that landed best was the most native, rather than the most polished. Content that looked like a real person's Instagram, rather than an ad, consistently outperformed anything that read as produced.",
     closingQuote:
       "The version that felt real outperformed the version that looked expensive, every time.",
-    cardImage: "/images/own-pond.jpg",
+    cardImage: "/images/higgsfield-herbalcart-modern.jpg",
     cardVideo: "/videos/card-herbalcart.mp4",
+    heroVideo: "/videos/higgsfield-herbalcart-modern.mp4",
+    heroPoster: "/images/higgsfield-herbalcart-modern-poster.jpg",
     featured: false,
     accent: "#C28A28", // ochre
   },
@@ -141,8 +151,10 @@ export const projects: Project[] = [
       "Produced a complete content portfolio of sixteen pieces spanning research, opinion, education, and fast consumption formats, structured around a deliberate arc: validate, challenge, humanise, define, rather than a loose content calendar.",
     closingQuote:
       "Trust with an expert and trust with a beginner are earned in two different languages, not one.",
-    cardImage: "/images/own-ridge-road.jpg",
+    cardImage: "/images/higgsfield-plaxonic-tech.jpg",
     cardVideo: "/videos/card-plaxonic.mp4",
+    heroVideo: "/videos/higgsfield-plaxonic-tech.mp4",
+    heroPoster: "/images/higgsfield-plaxonic-tech-poster.jpg",
     featured: false,
     accent: "#CD7A4C", // terracotta
   },
