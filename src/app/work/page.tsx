@@ -6,6 +6,7 @@ import { Reveal } from "@/components/Reveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { ImageBreak } from "@/components/ImageBreak";
 import { WorkGrid } from "@/sections/CaseStudies";
+import { ClipReveal } from "@/components/ClipReveal";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
@@ -40,11 +41,13 @@ export default function WorkPage() {
           </Container>
         </PhotoHero>
 
-        <section className="border-t border-border bg-background-alt py-16">
-          <Container>
-            <WorkGrid projects={projects} />
-          </Container>
-        </section>
+        <ClipReveal>
+          <section className="border-t border-border bg-background-alt py-16">
+            <Container>
+              <WorkGrid projects={projects} />
+            </Container>
+          </section>
+        </ClipReveal>
 
         <ImageBreak
           image="/images/higgsfield-canopy-light.jpg"
