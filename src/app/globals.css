@@ -417,6 +417,53 @@
   50% { transform: translate(-10%, -8%) scale(1.1); }
 }
 
+/* Cool slate fog for the load veil's opening beat — the one deliberately
+   cooler-toned moment on an otherwise warm-toned site (see the "diversify
+   the palette" note in PageLoadVeil's own comment): slate/charcoal
+   instead of the ochre/clay .aurora-glow uses everywhere else, so the
+   veil reads as its own atmosphere rather than a reskin of the same
+   glow. Same transform-only drift technique. */
+.veil-fog {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  filter: blur(90px);
+  opacity: 0.55;
+}
+
+.veil-fog::before,
+.veil-fog::after {
+  content: "";
+  position: absolute;
+  width: 55%;
+  height: 65%;
+  border-radius: 50%;
+}
+
+.veil-fog::before {
+  top: 0%;
+  left: 5%;
+  background: radial-gradient(circle, #5b6470 0%, transparent 70%);
+  animation: fog-drift-a 14s ease-in-out infinite;
+}
+
+.veil-fog::after {
+  bottom: -5%;
+  right: 0%;
+  background: radial-gradient(circle, #3b4048 0%, transparent 70%);
+  animation: fog-drift-b 18s ease-in-out infinite;
+}
+
+@keyframes fog-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(6%, 4%) scale(1.08); }
+}
+
+@keyframes fog-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-5%, -6%) scale(1.05); }
+}
+
 /* Soft diagonal light beams for the site's most cinematic dark moments
    (the Home hero, TexturedDark's CTA panels) — a slow sweep rather than
    a static gradient, so the section reads as lit rather than printed.

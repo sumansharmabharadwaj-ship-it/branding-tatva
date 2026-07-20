@@ -5,21 +5,34 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 
-// A short arrival sequence over the very first paint, instead of a flat
-// fade — and one that actually says something, since this is a brand
-// built on a philosophy (Tatva: element) rather than just a wordmark.
-// The five bars are the same skyline motif as LogoMark, rising in the
-// same order as data/elements.ts (earth, water, fire, air, space), so one
-// bar is always the "right" one to spotlight for whichever element gets
-// picked below.
+// A short arrival sequence over the very first paint — the opening shot
+// of the site, not a spinner. Built as three overlapping ideas:
 //
-// Sequence: the bars rise → one of the five elements' own poetic line
-// (data/elements.ts, already written for the Home page's Five Elements
-// section — not new copy invented for this) appears alone, its matching
-// bar brightening while the other four dim → the element's name resolves
-// underneath it → both fade into the site's own wordmark and tagline →
-// the whole thing opens like a curtain, reusing the same clip-path
-// technique as ClipReveal elsewhere on the site.
+// 1. Atmosphere first, mark second. A cool slate fog (.veil-fog —
+//    deliberately the one cooler-toned moment on an otherwise warm site,
+//    see the palette note below) drifts behind everything, and the five
+//    bars rise out of a blur rather than snapping in at full focus, so
+//    the opening beat feels like something resolving out of mist rather
+//    than a UI element appearing.
+// 2. It still says something. The five bars are the same skyline motif
+//    as LogoMark, rising in the same order as data/elements.ts (earth,
+//    water, fire, air, space) — one of the five elements' own poetic
+//    lines (already written for the Home page's Five Elements section,
+//    not new copy invented for this) appears alone, its matching bar
+//    brightening while the other four dim, then the element's name
+//    resolves, then both fade into the site's own wordmark — a beam of
+//    light sweeping across it once, the way a title card catches light
+//    in an opening title sequence.
+// 3. It leaves the same way every other section on the site enters —
+//    ClipReveal's curtain-wipe clip-path, so the transition into the
+//    Hero underneath uses the site's one motion language instead of a
+//    bespoke exit found nowhere else.
+//
+// Palette note: every other dark, cinematic moment on the site (Footer,
+// TexturedDark, the Hero's own scrim) sits on the same warm soil brown.
+// This is the one place that's deliberately cooler — charcoal/slate
+// instead — so the site's very first frame doesn't repeat the same tone
+// everything after it will also use.
 //
 // The element is chosen once per hard load with Math.random(), inside an
 // effect rather than in the initial render, so server and first-client
@@ -44,7 +57,8 @@ const BAR_WIDTH = 10;
 const BAR_GAP = 6;
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
-type Stage = "bars" | "line" | "name" | "brand";
+type Stage = "bars" | "line" | "name" | "brand" | "sweep";
+const STAGE_ORDER: Stage[] = ["bars", "line", "name", "brand", "sweep"];
 
 export function PageLoadVeil() {
   const prefersReducedMotion = useReducedMotion();
@@ -63,11 +77,12 @@ export function PageLoadVeil() {
   useEffect(() => {
     if (prefersReducedMotion) return;
     const timers = [
-      setTimeout(() => setStage("line"), 650),
-      setTimeout(() => setStage("name"), 1400),
-      setTimeout(() => setStage("brand"), 2000),
-      setTimeout(() => setVisible(false), 2550),
-      setTimeout(() => setRemoved(true), 3300),
+      setTimeout(() => setStage("line"), 700),
+      setTimeout(() => setStage("name"), 1450),
+      setTimeout(() => setStage("brand"), 2050),
+      setTimeout(() => setStage("sweep"), 2150),
+      setTimeout(() => setVisible(false), 2700),
+      setTimeout(() => setRemoved(true), 3450),
     ];
     return () => timers.forEach(clearTimeout);
   }, [prefersReducedMotion]);
@@ -77,7 +92,7 @@ export function PageLoadVeil() {
   const element = elements[elementIndex];
   const philosophyVisible = stage === "line" || stage === "name";
   const nameVisible = stage === "name";
-  const brandVisible = stage === "brand";
+  const brandVisible = stage === "brand" || stage === "sweep";
 
   return (
     <AnimatePresence>
@@ -86,22 +101,28 @@ export function PageLoadVeil() {
           initial={{ clipPath: "inset(0% 0 0% 0)" }}
           exit={{ clipPath: "inset(0% 0 100% 0)" }}
           transition={{ duration: 0.75, ease: EASE }}
-          className="pointer-events-none fixed inset-0 z-100 flex flex-col items-center justify-center gap-8 overflow-hidden bg-soil"
+          className="pointer-events-none fixed inset-0 z-100 flex flex-col items-center justify-center gap-8 overflow-hidden"
+          style={{
+            background: "radial-gradient(circle at 50% 42%, #26292E 0%, #16140F 75%)",
+          }}
           aria-hidden="true"
         >
-          <div className="paper-grain" style={{ opacity: 0.08 }} />
+          <div className="veil-fog" />
+          <div className="paper-grain" style={{ opacity: 0.14 }} />
 
           <div className="flex items-end" style={{ gap: BAR_GAP }}>
             {BARS.map((bar, i) => (
               <motion.div
                 key={bar.color}
-                initial={{ scaleY: 0 }}
+                initial={{ scaleY: 0, filter: "blur(5px)" }}
                 animate={{
                   scaleY: 1,
+                  filter: "blur(0px)",
                   opacity: philosophyVisible ? (i === elementIndex ? 1 : 0.3) : 0.92,
                 }}
                 transition={{
-                  scaleY: { duration: 0.55, delay: i * 0.08, ease: EASE },
+                  scaleY: { duration: 0.6, delay: i * 0.08, ease: EASE },
+                  filter: { duration: 0.6, delay: i * 0.08, ease: EASE },
                   opacity: { duration: 0.4, ease: EASE },
                 }}
                 style={{
@@ -115,7 +136,7 @@ export function PageLoadVeil() {
             ))}
           </div>
 
-          <div className="relative flex min-h-[7rem] w-full max-w-xs flex-col items-center justify-center px-6 text-center sm:max-w-sm">
+          <div className="relative flex min-h-[7rem] w-full max-w-xs flex-col items-center justify-center overflow-hidden px-6 text-center sm:max-w-sm">
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
               <motion.p
                 initial={{ opacity: 0, y: 8 }}
@@ -153,6 +174,37 @@ export function PageLoadVeil() {
                 {site.tagline}
               </span>
             </motion.div>
+
+            {/* A single beam catching the wordmark once it lands, the
+                way a title card catches light in an opening sequence —
+                not a repeating shimmer, just one pass. */}
+            <motion.div
+              className="pointer-events-none absolute inset-y-0 w-1/4"
+              style={{
+                background:
+                  "linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%)",
+              }}
+              initial={{ x: "-140%" }}
+              animate={{ x: stage === "sweep" ? "340%" : "-140%" }}
+              transition={{ duration: 0.9, ease: "easeInOut" }}
+            />
+          </div>
+
+          {/* Progress reads through the same five-element bars rather
+              than a separate bar bolted on underneath — each stage
+              lights one more bar to full strength, so "how far along is
+              this" and "what is this actually about" are the same
+              visual instead of two competing ones. */}
+          <div
+            className="absolute bottom-10 h-px bg-ivory/15 sm:bottom-12"
+            style={{ width: BAR_WIDTH * BARS.length + BAR_GAP * (BARS.length - 1) }}
+          >
+            <motion.div
+              className="h-full bg-ivory/60"
+              initial={{ width: "0%" }}
+              animate={{ width: `${(STAGE_ORDER.indexOf(stage) + 1) * 20}%` }}
+              transition={{ duration: 0.4, ease: EASE }}
+            />
           </div>
         </motion.div>
       )}
