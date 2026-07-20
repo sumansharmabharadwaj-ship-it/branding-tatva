@@ -120,7 +120,7 @@ export function Header({ transparent = false }: HeaderProps) {
             </LinkButton>
           </div>
 
-          <Link href="/" className="flex justify-center">
+          <Link href="/" className="col-start-2 flex justify-center">
             <Logo light={isLight} className="scale-[0.72] sm:scale-[0.78]" />
           </Link>
 
