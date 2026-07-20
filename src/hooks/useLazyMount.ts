@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
+import { useLenis } from "@/components/SmoothScrollProvider";
 
 // Gates a boolean to true the first time the returned ref's element
 // nears the viewport, then disconnects — the same "don't pay for what's
@@ -10,47 +11,56 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 // Every consumer of this hook renders *only* a flat gradient/color block
 // until shouldLoad flips true — the actual photo or video is what's
 // gated behind it. That means if the IntersectionObserver callback ever
-// fails to fire for a given element (a tab that loads already scrolled
-// to an anchor link, a browser edge case, anything that resolves the
-// observer before this effect finishes subscribing), that section's
-// real content never renders at all — not degraded, not delayed, a
-// permanently blank colored rectangle where a photo should be.
-//
-// The safety net only applies to elements already at or near the
-// viewport when this mounts — that's the one case where "the observer
-// should have fired almost immediately but didn't" is actually
-// diagnosable. Anything genuinely below the fold is left to the
-// observer alone; giving every element on the page the same timer
-// regardless of position would just eagerly load the whole page on a
-// fixed clock, which is the exact network cost this hook exists to
-// avoid.
+// fails to fire for a given element, that section's real content never
+// renders at all — not degraded, not delayed, a permanently blank
+// colored rectangle where a photo should be. This used to only guard
+// against that for elements already near the viewport at mount, on the
+// theory that anything genuinely below the fold could just trust the
+// observer. Confirmed otherwise: an element scrolled fully into view and
+// held there for several seconds can still never fire its callback (IO
+// delivery isn't guaranteed to be timely in every environment — a
+// throttled/occluded document is one real case). So below-the-fold
+// elements get their own safety net too, just a cheaper one than a
+// blanket timer: re-check the element's actual position on every Lenis
+// scroll tick (not a raw `scroll` listener — see SmoothScrollProvider's
+// own comment on why native scroll events aren't trustworthy in a
+// Lenis-driven page) and flip shouldLoad directly off real geometry the
+// moment it's in range, independent of whether IO ever fires at all.
 export function useLazyMount(rootMargin = "600px 0px"): [RefObject<HTMLDivElement | null>, boolean] {
   const ref = useRef<HTMLDivElement>(null);
   const [shouldLoad, setShouldLoad] = useState(false);
+  const lenis = useLenis();
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || shouldLoad) return;
+
+    function checkPosition() {
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 1.5 && rect.bottom > -window.innerHeight * 0.5) {
+        setShouldLoad(true);
+      }
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldLoad(true);
-          observer.disconnect();
-        }
+        if (entry.isIntersecting) setShouldLoad(true);
       },
       { rootMargin }
     );
     observer.observe(el);
 
-    const rect = el.getBoundingClientRect();
-    const nearViewport = rect.top < window.innerHeight * 1.5 && rect.bottom > -window.innerHeight * 0.5;
-    const fallback = nearViewport ? setTimeout(() => setShouldLoad(true), 800) : undefined;
+    checkPosition();
+    const fallback = setTimeout(checkPosition, 800);
+    const unsubscribe = lenis?.on("scroll", checkPosition);
 
     return () => {
       observer.disconnect();
-      if (fallback) clearTimeout(fallback);
+      clearTimeout(fallback);
+      unsubscribe?.();
     };
-  }, [rootMargin]);
+  }, [rootMargin, lenis, shouldLoad]);
 
   return [ref, shouldLoad];
 }
