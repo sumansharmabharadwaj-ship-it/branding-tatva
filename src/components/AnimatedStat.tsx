@@ -47,7 +47,18 @@ export function AnimatedStat({ value }: { value: string }) {
       if (progress < 1) frame = requestAnimationFrame(tick);
     }
     frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    // This is a real stat, not decoration — if rAF gets throttled or
+    // interrupted mid-count (a backgrounded tab, a slow device, anything
+    // that stalls the animation loop), it must never settle on a wrong
+    // number permanently. setTimeout keeps firing even when rAF is
+    // paused, so this snaps to the real value shortly after the
+    // animation should have finished regardless of whether the rAF loop
+    // actually completed.
+    const settle = setTimeout(() => setDisplay(parsed.target), duration + 200);
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(settle);
+    };
   }, [isInView, parsed, prefersReducedMotion]);
 
   if (!parsed) {
