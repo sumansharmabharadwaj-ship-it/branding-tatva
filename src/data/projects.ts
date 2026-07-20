@@ -46,7 +46,7 @@ export const projects: Project[] = [
     closingQuote:
       "Fewer posts, each one earning its place. That's the difference between being seen and being remembered.",
     cardImage: "/images/higgsfield-nutrition-morning.jpg",
-    cardVideo: "/videos/card-dr-haley-nutrition.mp4",
+    cardVideo: "/videos/higgsfield-nutrition-morning.mp4",
     heroVideo: "/videos/higgsfield-nutrition-morning.mp4",
     heroPoster: "/images/higgsfield-nutrition-morning-poster.jpg",
     featured: true,
@@ -80,7 +80,7 @@ export const projects: Project[] = [
     closingQuote:
       "A story a buyer can pass on to their own customers is worth more than the lowest price on the listing.",
     cardImage: "/images/higgsfield-marketplace-warehouse.jpg",
-    cardVideo: "/videos/card-myshopineurope.mp4",
+    cardVideo: "/videos/higgsfield-marketplace-warehouse.mp4",
     heroVideo: "/videos/higgsfield-marketplace-warehouse.mp4",
     heroPoster: "/images/higgsfield-marketplace-warehouse-poster.jpg",
     featured: true,
@@ -102,7 +102,7 @@ export const projects: Project[] = [
     closingQuote:
       "Content that only earns attention is unfinished. It has to lead somewhere, or it isn't strategy yet.",
     cardImage: "/images/higgsfield-executive-office.jpg",
-    cardVideo: "/videos/card-executive-springboard.mp4",
+    cardVideo: "/videos/higgsfield-executive-office.mp4",
     heroVideo: "/videos/higgsfield-executive-office.mp4",
     heroPoster: "/images/higgsfield-executive-office-poster.jpg",
     featured: true,
@@ -130,7 +130,7 @@ export const projects: Project[] = [
     closingQuote:
       "The version that felt real outperformed the version that looked expensive, every time.",
     cardImage: "/images/higgsfield-herbalcart-modern.jpg",
-    cardVideo: "/videos/card-herbalcart.mp4",
+    cardVideo: "/videos/higgsfield-herbalcart-modern.mp4",
     heroVideo: "/videos/higgsfield-herbalcart-modern.mp4",
     heroPoster: "/images/higgsfield-herbalcart-modern-poster.jpg",
     featured: false,
@@ -152,7 +152,7 @@ export const projects: Project[] = [
     closingQuote:
       "Trust with an expert and trust with a beginner are earned in two different languages, not one.",
     cardImage: "/images/higgsfield-plaxonic-tech.jpg",
-    cardVideo: "/videos/card-plaxonic.mp4",
+    cardVideo: "/videos/higgsfield-plaxonic-tech.mp4",
     heroVideo: "/videos/higgsfield-plaxonic-tech.mp4",
     heroPoster: "/images/higgsfield-plaxonic-tech-poster.jpg",
     featured: false,
