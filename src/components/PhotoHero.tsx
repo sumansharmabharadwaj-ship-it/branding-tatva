@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
+import { toSvh } from "@/lib/media";
 
 const KEN_BURNS = kenBurnsAnimation({ scale: 1.07, duration: 22 });
 
@@ -39,7 +40,7 @@ export function PhotoHero({
   return (
     <section
       className={`relative flex items-center overflow-hidden bg-soil ${className ?? ""}`}
-      style={{ minHeight }}
+      style={{ minHeight: toSvh(minHeight) }}
     >
       {video && !prefersReducedMotion ? (
         <>

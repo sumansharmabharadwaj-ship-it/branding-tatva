@@ -82,7 +82,7 @@ export function ThresholdPanel({
       ref={ref}
       onMouseEnter={onHoverStart}
       onMouseLeave={onHoverEnd}
-      className="relative flex h-full min-h-[50vh] items-end overflow-hidden bg-soil p-8 sm:min-h-0 sm:p-12"
+      className="relative flex h-full min-h-[50svh] items-end overflow-hidden bg-soil p-8 sm:min-h-0 sm:p-12"
     >
       <motion.div
         className="absolute inset-0"

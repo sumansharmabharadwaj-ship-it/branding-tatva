@@ -40,7 +40,7 @@ export function FeaturedWorkHero({
     <a
       href={href}
       data-cursor-label="View case study"
-      className="group relative flex min-h-[75vh] items-end overflow-hidden bg-soil"
+      className="group relative flex min-h-[75svh] items-end overflow-hidden bg-soil"
     >
       <motion.div
         className="absolute inset-0"

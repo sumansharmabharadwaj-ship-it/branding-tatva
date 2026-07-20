@@ -67,7 +67,7 @@ export function Threshold({
           </div>
         )}
       </div>
-      <div className="mt-12 grid min-h-[70vh] sm:grid-cols-2">
+      <div className="mt-12 grid min-h-[70svh] sm:grid-cols-2">
         {panels.map((panel) => (
           <Reveal key={panel.key} delay={panel.key === "right" ? 0.12 : 0} className="h-full">
             <ThresholdPanel

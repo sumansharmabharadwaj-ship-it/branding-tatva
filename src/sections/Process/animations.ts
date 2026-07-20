@@ -12,18 +12,30 @@ gsap.registerPlugin(ScrollTrigger);
 // ctx.revert() tears them all down cleanly on unmount, which matters here
 // specifically because Next's client-side navigation would otherwise leave
 // stale pinned-scroll instances behind on the next page.
+//
+// Both the tween's own target (`x`) and the trigger's `end` are
+// functions, not one-off numbers computed at setup time — with
+// invalidateOnRefresh: true, ScrollTrigger only re-runs whichever of
+// these are functions when it recalculates on resize. A static `x` here
+// would leave the *scrub target* frozen at the very first measurement
+// while `end` (a function) picked up the new one, so a resize (window
+// resize, or a font/content reflow changing track.scrollWidth) would
+// desync exactly how far the track visually travels from how far the
+// pinned scroll distance actually is — the track would either stop
+// short of the last stage or keep scrolling after it's already fully
+// in view.
 export function initHorizontalScroll(section: HTMLElement, track: HTMLElement): gsap.Context {
   return gsap.context(() => {
-    const scrollDistance = track.scrollWidth - section.offsetWidth;
-    if (scrollDistance <= 0) return;
+    const getScrollDistance = () => track.scrollWidth - section.offsetWidth;
+    if (getScrollDistance() <= 0) return;
 
     gsap.to(track, {
-      x: -scrollDistance,
+      x: () => -getScrollDistance(),
       ease: "none",
       scrollTrigger: {
         trigger: section,
         start: "top top",
-        end: () => `+=${scrollDistance}`,
+        end: () => `+=${getScrollDistance()}`,
         scrub: 1,
         pin: true,
         invalidateOnRefresh: true,

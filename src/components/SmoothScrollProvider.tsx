@@ -58,11 +58,31 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     // `window.__lenisInstance.scrollTo(...)`).
     window.__lenisInstance = instance;
 
+    // Every ScrollTrigger on the page (pinned or not) has its start/end
+    // positions computed from whatever the DOM measures at the moment
+    // each one is created — usually before images have finished loading
+    // or web fonts have swapped in, both of which can change section
+    // heights after the fact. A resize triggers GSAP's own automatic
+    // refresh, but neither of these does, so nothing currently corrects
+    // for it. Refreshing once after the page and fonts have actually
+    // settled catches both without forcing every trigger to guess at a
+    // width/height that hasn't stabilized yet.
+    function refresh() {
+      ScrollTrigger.refresh();
+    }
+    if (document.readyState === "complete") {
+      refresh();
+    } else {
+      window.addEventListener("load", refresh);
+    }
+    document.fonts?.ready?.then(refresh);
+
     return () => {
       gsap.ticker.remove(ticker);
       instance.destroy();
       setLenis(null);
       delete window.__lenisInstance;
+      window.removeEventListener("load", refresh);
     };
   }, []);
 

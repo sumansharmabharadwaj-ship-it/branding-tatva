@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { BREAK_OVERLAY_GRADIENT, toSvh } from "@/lib/media";
 import { EASE_AIR } from "@/lib/motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { useSpotlight } from "@/hooks/useSpotlight";
@@ -141,7 +141,7 @@ export function VideoBreak({
   const restScale = usesParallax ? 1.16 : 1;
 
   return (
-    <div ref={ref} data-cursor-media className="relative overflow-hidden bg-soil" style={{ height }}>
+    <div ref={ref} data-cursor-media className="relative overflow-hidden bg-soil" style={{ height: toSvh(height) }}>
       {prefersReducedMotion ? (
         <div className="absolute inset-0">
           <Image
