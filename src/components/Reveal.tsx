@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { EASE_AIR } from "@/lib/motion";
 
 // Scroll-triggered entrance for a section. Fires once, settles quickly, and
 // never blocks reading (content is present in the DOM immediately, this
@@ -28,7 +29,7 @@ export function Reveal({
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay }}
+      transition={{ duration: 0.6, ease: EASE_AIR, delay }}
     >
       {children}
     </motion.div>

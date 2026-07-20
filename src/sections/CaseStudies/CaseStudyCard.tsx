@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { KenBurnsImage } from "@/components/KenBurnsImage";
 import { useTilt } from "@/hooks/useTilt";
+import { EASE_AIR } from "@/lib/motion";
 import type { Project } from "@/data/projects";
 import { CARD_MEDIA_GRADIENT, CARD_TILT_MAX_DEGREES } from "./constants";
 
@@ -104,7 +105,7 @@ export function CaseStudyCard({ project }: { project: Project }) {
                   : "drop-shadow(0 0px 0px transparent)",
               }
         }
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.35, ease: EASE_AIR }}
         className="relative h-full"
       >
         <Link

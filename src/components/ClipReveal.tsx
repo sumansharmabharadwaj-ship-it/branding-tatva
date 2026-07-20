@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { EASE_AIR } from "@/lib/motion";
 
 // A curtain-style entrance for a whole section boundary — the section's
 // own background/border wipes into view as it's scrolled to, rather than
@@ -31,7 +32,7 @@ export function ClipReveal({
       initial={{ clipPath: "inset(0% 0 100% 0)" }}
       whileInView={{ clipPath: "inset(0% 0 0% 0)" }}
       viewport={{ once: true, margin: "0px 0px -15% 0px" }}
-      transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 1.1, ease: EASE_AIR }}
     >
       {children}
     </motion.div>

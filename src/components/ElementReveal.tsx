@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 import type { Transition } from "framer-motion";
+import { EASE_AIR } from "@/lib/motion";
 
 type Slug = "earth" | "water" | "fire" | "air" | "space";
 
@@ -32,17 +33,17 @@ const recipes: Record<
   fire: {
     initial: { opacity: 0, scale: 0.9 },
     animate: { opacity: 1, scale: [0.9, 1.05, 1] },
-    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.9, ease: EASE_AIR },
   },
   air: {
     initial: { opacity: 0, x: 48, y: -14, rotate: 3 },
     animate: { opacity: 1, x: 0, y: [-14, 6, 0], rotate: 0 },
-    transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 1, ease: EASE_AIR },
   },
   space: {
     initial: { opacity: 0, scale: 0.82, filter: "blur(6px)" },
     animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
-    transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 1, ease: EASE_AIR },
   },
 };
 

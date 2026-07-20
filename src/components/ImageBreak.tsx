@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { EASE_AIR } from "@/lib/motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
 
 // A full-bleed photographic interlude between two text passages, so long
@@ -39,7 +40,7 @@ export function ImageBreak({
         initial={prefersReducedMotion ? undefined : { scale: 1.12 }}
         whileInView={prefersReducedMotion ? undefined : { scale: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 2.2, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 2.2, ease: EASE_AIR }}
       >
         {shouldLoad && (
           <>

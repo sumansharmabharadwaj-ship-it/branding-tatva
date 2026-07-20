@@ -1,4 +1,5 @@
 import type { Variants, Transition } from "framer-motion";
+import { EASE_AIR } from "@/lib/motion";
 
 // Answer panel expand/collapse — height animates (not just opacity) so
 // the questions below actually shift out of the way instead of the
@@ -9,7 +10,7 @@ export const answerVariants: Variants = {
   exit: { height: 0, opacity: 0 },
 };
 
-export const answerTransition: Transition = { duration: 0.35, ease: [0.16, 1, 0.3, 1] };
+export const answerTransition: Transition = { duration: 0.35, ease: EASE_AIR };
 
 // The "+" toggle rotates into an "×" when its question is open, rather
 // than swapping icons — one glyph, one continuous motion.

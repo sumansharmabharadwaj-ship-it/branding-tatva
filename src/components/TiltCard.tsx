@@ -3,8 +3,7 @@
 import { useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useTilt } from "@/hooks/useTilt";
-
-const EASE = [0.16, 1, 0.3, 1] as const;
+import { EASE_AIR as EASE } from "@/lib/motion";
 
 // The tilt + lift + colored-glow treatment CaseStudyCard already uses,
 // pulled out so every other card grid on the site (services, about,

@@ -3,8 +3,9 @@
 import { useRef } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useTransform, useReducedMotion } from "framer-motion";
 import { useSpotlight } from "@/hooks/useSpotlight";
+import { SplitReveal } from "@/components/SplitReveal";
 import type { CinematicHeroProps } from "./types";
 import { HERO_SCRIM_GRADIENT } from "./constants";
 import { useHeroParallax, useHeroMouseParallax } from "./animations";
@@ -40,6 +41,12 @@ export function CinematicHero({
   const { imageY, contentOpacity, contentY } = useHeroParallax(ref);
   const mouseParallax = useHeroMouseParallax(ref, Boolean(prefersReducedMotion));
   const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));
+  // A foreground layer reacting more than the background it sits in
+  // front of is the actual depth cue (closer things move more) — same
+  // spring values as the background's own mouse parallax, just a larger
+  // multiple of it, rather than a second independent pointer listener.
+  const foregroundX = useTransform(mouseParallax.x, (v) => v * 2.4);
+  const foregroundY = useTransform(mouseParallax.y, (v) => v * 2.4);
 
   return (
     <section ref={ref} className="relative h-svh min-h-[620px] overflow-hidden bg-soil">
@@ -97,6 +104,23 @@ export function CinematicHero({
 
       {!prefersReducedMotion && <div className="light-rays" aria-hidden="true" />}
 
+      {/* Foreground depth layer — a soft vignette that reacts to the
+          cursor more than the background video does, so the frame
+          itself reads as sitting closer to the camera than the scene
+          behind it, instead of everything living on one flat plane. */}
+      {!prefersReducedMotion && (
+        <motion.div
+          className="pointer-events-none absolute -inset-8"
+          style={{
+            x: foregroundX,
+            y: foregroundY,
+            background:
+              "radial-gradient(circle, transparent 45%, rgba(20,17,14,0.5) 100%)",
+          }}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Cursor spotlight — a soft light following the pointer, purely
           additive atmosphere. Position is written directly to this
           element's own CSS custom properties (see useHeroSpotlight),
@@ -119,12 +143,21 @@ export function CinematicHero({
         <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
           {badge}
         </span>
-        <h1 className="mt-6 max-w-2xl font-display text-[clamp(2.25rem,5.5vw,4rem)] font-semibold leading-[1.08] text-ivory">
+        <SplitReveal
+          as="h1"
+          className="mt-6 max-w-2xl font-display text-[clamp(2.25rem,5.5vw,4rem)] font-semibold leading-[1.08] text-ivory"
+        >
           {headline}
-        </h1>
+        </SplitReveal>
         <p className="mt-4 max-w-md text-base text-ivory/70">{subhead}</p>
         {children && (
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-4">{children}</div>
+          <motion.div
+            className="mt-9 flex flex-wrap items-center justify-center gap-4"
+            animate={prefersReducedMotion ? undefined : { y: [0, -5, 0] }}
+            transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            {children}
+          </motion.div>
         )}
       </motion.div>
     </section>

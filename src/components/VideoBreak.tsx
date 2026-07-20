@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { EASE_AIR } from "@/lib/motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
@@ -20,7 +21,7 @@ const CAMERA_PUSH = kenBurnsAnimation({ scale: 1.06, duration: 30 });
 // cut into frame" entrance ImageBreak's photos already use, so a video
 // break isn't the one full-bleed moment on the page that just pops in.
 const ENTRANCE_SCALE_DELTA = 0.06;
-const ENTRANCE_TRANSITION = { duration: 2.2, ease: [0.16, 1, 0.3, 1] as const };
+const ENTRANCE_TRANSITION = { duration: 2.2, ease: EASE_AIR };
 
 // The video counterpart to ImageBreak: a full-bleed cinematic moment, but
 // with real motion in the shot itself rather than a static photograph.

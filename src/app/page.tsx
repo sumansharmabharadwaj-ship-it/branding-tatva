@@ -9,6 +9,7 @@ import { SplitReveal } from "@/components/SplitReveal";
 import { Testimonials } from "@/components/Testimonials";
 import { ElementsRail } from "@/components/ElementsRail";
 import { KineticMarquee } from "@/components/KineticMarquee";
+import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { GradientSections } from "@/components/GradientSections";
 import { KenBurnsImage } from "@/components/KenBurnsImage";
 import { ElementGlyph } from "@/components/ElementGlyph";
@@ -131,17 +132,21 @@ export default function Home() {
 
         <KineticMarquee text="EARTH · WATER · FIRE · AIR · SPACE" />
 
-        {/* Five elements — a slow vertical unfolding, not a grid of cards */}
-        <section className="relative overflow-hidden border-t border-border py-28 sm:py-40">
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(180deg, #F4EFE6 0%, #EFE4D9 100%)",
-            }}
-          />
-          <ElementsConstellation />
-          <Container className="relative">
+        {/* Five elements — a slow vertical unfolding, not a grid of cards.
+            PerspectiveReveal (a camera-push settle, not ClipReveal's
+            curtain-wipe) marks this as its own chapter after the
+            marquee, since the two sections look nothing alike. */}
+        <PerspectiveReveal>
+          <section className="relative overflow-hidden border-t border-border py-28 sm:py-40">
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, #F4EFE6 0%, #EFE4D9 100%)",
+              }}
+            />
+            <ElementsConstellation />
+            <Container className="relative">
             <Reveal>
               <h2 className="text-display-sm font-display font-semibold text-soil">
                 The five elements
@@ -199,7 +204,8 @@ export default function Home() {
               </ElementReveal>
             ))}
           </div>
-        </section>
+          </section>
+        </PerspectiveReveal>
 
         <ImageBreak
           image="/images/higgsfield-architecture-columns.jpg"
@@ -219,9 +225,11 @@ export default function Home() {
               description:
                 "Earth first work: purpose, audience, and positioning, before anything else gets built.",
               image: "/images/higgsfield-idea-sketch.jpg",
+              video: "/videos/higgsfield-idea-sketch.mp4",
               gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
               ctaLabel: "Brand Beginning",
               ctaHref: "/services#brand-beginning",
+              activeHeading: "Then you're building the foundation first.",
             },
             {
               key: "right",
@@ -230,9 +238,11 @@ export default function Home() {
               description:
                 "An audit first, finding exactly where the story stops holding together.",
               image: "/images/higgsfield-stream-clarity.jpg",
+              video: "/videos/higgsfield-stream-clarity.mp4",
               gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
               ctaLabel: "Brand Clarity",
               ctaHref: "/services#brand-clarity",
+              activeHeading: "Then you're finding where the story breaks.",
             },
           ]}
         />

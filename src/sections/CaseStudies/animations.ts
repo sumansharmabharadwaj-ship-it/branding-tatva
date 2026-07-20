@@ -1,4 +1,5 @@
 import type { Variants, Transition } from "framer-motion";
+import { EASE_AIR } from "@/lib/motion";
 
 // Grid tiles fade/scale/rise in on mount and on every filter change
 // (popLayout mode lets the ones leaving animate out without shoving the
@@ -21,5 +22,5 @@ export function tileVariants(index: number): Variants {
 }
 
 export function tileTransition(index: number): Transition {
-  return { duration: 0.35, delay: (index % 4) * 0.05, ease: [0.16, 1, 0.3, 1] };
+  return { duration: 0.35, delay: (index % 4) * 0.05, ease: EASE_AIR };
 }

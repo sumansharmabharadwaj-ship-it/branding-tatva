@@ -1,17 +1,18 @@
 import type { Variants, Transition } from "framer-motion";
+import { EASE_AIR } from "@/lib/motion";
 
 // Every timing/easing value the header's motion uses, in one place —
 // so the icon swap, the mobile menu, and the hide-on-scroll bar all
 // move with the same hand rather than three independently-tuned ones.
 
-export const ICON_TRANSITION: Transition = { duration: 0.25, ease: [0.16, 1, 0.3, 1] };
+export const ICON_TRANSITION: Transition = { duration: 0.25, ease: EASE_AIR };
 export const BACKDROP_TRANSITION: Transition = { duration: 0.3 };
-export const MOBILE_NAV_TRANSITION: Transition = { duration: 0.35, ease: [0.16, 1, 0.3, 1] };
-export const BAR_TRANSITION: Transition = { duration: 0.4, ease: [0.16, 1, 0.3, 1] };
-export const NAV_ITEM_TRANSITION: Transition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
+export const MOBILE_NAV_TRANSITION: Transition = { duration: 0.35, ease: EASE_AIR };
+export const BAR_TRANSITION: Transition = { duration: 0.4, ease: EASE_AIR };
+export const NAV_ITEM_TRANSITION: Transition = { duration: 0.3, ease: EASE_AIR };
 // A flat delay rather than an extra stagger step, so the CTA row always
 // lands just after the last link regardless of how many nav items exist.
-export const NAV_CTA_TRANSITION: Transition = { duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: 0.35 };
+export const NAV_CTA_TRANSITION: Transition = { duration: 0.3, ease: EASE_AIR, delay: 0.35 };
 
 export const menuIconVariants: Variants = {
   initial: { rotate: 90, opacity: 0 },

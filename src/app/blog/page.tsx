@@ -5,6 +5,7 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { TiltCard } from "@/components/TiltCard";
+import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
@@ -50,6 +51,7 @@ export default function BlogPage() {
           </Container>
         </PhotoHero>
 
+        <PerspectiveReveal>
         <section className="border-t border-border bg-background-alt py-16">
           <Container>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -86,6 +88,7 @@ export default function BlogPage() {
             </div>
           </Container>
         </section>
+        </PerspectiveReveal>
       </main>
       <Footer />
     </>

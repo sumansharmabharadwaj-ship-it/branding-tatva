@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/Magnetic";
 import { useSpotlight } from "@/hooks/useSpotlight";
+import { EASE_AIR } from "@/lib/motion";
 
 type ButtonProps = {
   href: string;
@@ -15,7 +16,6 @@ type ButtonProps = {
   onClick?: () => void;
 };
 
-const EASE = [0.16, 1, 0.3, 1] as const;
 let rippleId = 0;
 
 // Pill-shaped to match the badge/scroll-cue language already used across
@@ -89,7 +89,7 @@ export function LinkButton({ href, children, variant = "primary", className, onC
                 style={{ left: r.x, top: r.y, transform: "translate(-50%, -50%)" }}
                 initial={{ width: 0, height: 0, opacity: 0.3 }}
                 animate={{ width: 220, height: 220, opacity: 0 }}
-                transition={{ duration: 0.6, ease: EASE }}
+                transition={{ duration: 0.6, ease: EASE_AIR }}
               />
             ))}
           </AnimatePresence>
