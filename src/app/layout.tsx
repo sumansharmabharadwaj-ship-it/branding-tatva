@@ -51,7 +51,7 @@ const structuredData = {
       name: site.founder,
       url: site.url,
       jobTitle: "Brand Strategist",
-      sameAs: [site.social.linkedin].filter(Boolean),
+      sameAs: [site.social.linkedin, site.social.instagram, site.social.facebook].filter(Boolean),
     },
     {
       "@type": "ProfessionalService",

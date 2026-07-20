@@ -1,13 +1,10 @@
-import { Instagram, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Linkedin } from "lucide-react";
 import { site } from "@/data/site";
 
-// Email, Instagram, LinkedIn — deliberately not every channel the brand
-// has (Facebook exists in site.social but sits this one out): the closing
-// beat of every page is meant to read as a short, considered list, not a
-// full directory of everywhere the brand can be found.
 export const socialLinks = [
   { href: site.social.linkedin, label: "LinkedIn", Icon: Linkedin },
   { href: site.social.instagram, label: "Instagram", Icon: Instagram },
+  { href: site.social.facebook, label: "Facebook", Icon: Facebook },
 ].filter((s) => s.href);
 
 // Warm, low-glow embers drifting over the closing photo — the "floating
