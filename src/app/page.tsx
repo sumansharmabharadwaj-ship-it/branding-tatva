@@ -121,35 +121,38 @@ export default function Home() {
               style={{ opacity: 0.1 }}
             />
             <Container className="relative">
-              <Reveal>
-                <h2 className="ml-auto max-w-2xl text-right font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
-                  Five elements.
-                  <br />
-                  One brand.
-                </h2>
-              </Reveal>
-              <Reveal delay={0.15}>
-                <div className="mt-10 max-w-md space-y-4 text-foreground-secondary">
-                  <p>
-                    Earth is where a brand is grounded. Water is how it moves
-                    through someone&apos;s day. Fire is what makes people look
-                    twice. Air is the language that carries it. Space is
-                    what&apos;s left once the noise settles, the part people
-                    actually remember.
-                  </p>
-                  <p>
-                    Most brands are built with one or two of these — a logo
-                    with no positioning behind it, a content calendar with no
-                    voice tying it together. The ones people remember are
-                    built with all five, working as one system.
-                  </p>
-                  <p className="font-medium text-soil">
-                    That&apos;s not a mood board. It&apos;s the actual method
-                    behind every project below, and the one I&apos;d use on
-                    yours.
-                  </p>
-                </div>
-              </Reveal>
+              <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
+                <Reveal className="sm:order-2">
+                  <h2 className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil sm:text-right">
+                    Five elements.
+                    <br />
+                    One brand.
+                  </h2>
+                </Reveal>
+                <Reveal delay={0.15} className="sm:order-1">
+                  <div className="max-w-md space-y-4 text-foreground-secondary">
+                    <p>
+                      Earth is where a brand is grounded. Water is how it
+                      moves through someone&apos;s day. Fire is what makes
+                      people look twice. Air is the language that carries
+                      it. Space is what&apos;s left once the noise settles,
+                      the part people actually remember.
+                    </p>
+                    <p>
+                      Most brands are built with one or two of these — a
+                      logo with no positioning behind it, a content
+                      calendar with no voice tying it together. The ones
+                      people remember are built with all five, working as
+                      one system.
+                    </p>
+                    <p className="font-medium text-soil">
+                      That&apos;s not a mood board. It&apos;s the actual
+                      method behind every project below, and the one
+                      I&apos;d use on yours.
+                    </p>
+                  </div>
+                </Reveal>
+              </div>
             </Container>
           </div>
         </section>
