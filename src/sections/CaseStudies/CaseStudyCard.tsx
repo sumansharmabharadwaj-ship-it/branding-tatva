@@ -55,6 +55,8 @@ export function CaseStudyCard({ project }: { project: Project }) {
             image={project.cardImage}
             video={project.cardVideo}
             gradient={CARD_MEDIA_GRADIENT}
+            isHovered={isHovered}
+            dust
           />
           <div className="relative border-t-2 pt-4" style={{ borderTopColor: project.accent }}>
             <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">{project.industry}</p>

@@ -11,7 +11,7 @@ import { ElementsRail } from "@/components/ElementsRail";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { GradientSections } from "@/components/GradientSections";
-import { CinematicCardMedia } from "@/components/CinematicCardMedia";
+import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ElementReveal } from "@/components/ElementReveal";
 import { ElementRowBackground } from "@/components/ElementRowBackground";
@@ -282,27 +282,7 @@ export default function Home() {
               <div className="mt-10 grid gap-10 sm:grid-cols-2">
                 {featured.slice(1).map((project, i) => (
                   <Reveal key={project.slug} delay={i * 0.1}>
-                    <a
-                      href={`/work/${project.slug}`}
-                      data-cursor-label="View case study"
-                      className="group relative flex min-h-88 flex-col justify-end overflow-hidden rounded-lg p-6 sm:p-8"
-                    >
-                      <CinematicCardMedia
-                        image={project.cardImage}
-                        video={project.cardVideo}
-                        gradient="linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.45) 55%, rgba(39,34,30,0.15) 100%)"
-                        sizes="(min-width: 640px) 50vw, 100vw"
-                      />
-                      <div className="relative border-t-2 pt-4" style={{ borderColor: project.accent }}>
-                        <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">
-                          {project.industry}
-                        </p>
-                        <p className="mt-2 font-display text-2xl font-semibold text-ivory transition-colors group-hover:text-clay">
-                          {project.title}
-                        </p>
-                        <p className="mt-3 text-sm text-ivory/80">{project.outcome}</p>
-                      </div>
-                    </a>
+                    <FeaturedSecondaryCard project={project} />
                   </Reveal>
                 ))}
               </div>

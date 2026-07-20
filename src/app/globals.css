@@ -472,6 +472,24 @@
   50% { transform: translateY(-14px) scale(1.15); opacity: 0.75; }
 }
 
+/* Same drifting-light treatment as .footer-embers, generalized for any
+   card's media layer (CinematicCardMedia's `dust` prop) — a couple of
+   soft points of light, not the Footer's full five-ember cast. */
+.card-dust {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.card-dust span {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 224, 178, 0.9) 0%, rgba(194, 138, 40, 0.4) 55%, transparent 100%);
+  animation: ember-drift ease-in-out infinite;
+}
+
 /* Case-study Challenge/Insight/Strategy/Outcome blocks — a CSS counter
    instead of a hardcoded index, since which fields render varies per
    project (audience/insight/strategy/execution/reflection are all
