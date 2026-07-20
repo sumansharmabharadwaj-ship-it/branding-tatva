@@ -77,12 +77,30 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     }
     document.fonts?.ready?.then(refresh);
 
+    // A backgrounded tab throttles rAF, which is what GSAP's ticker (and
+    // therefore every scrub/pin ScrollTrigger, including the Process
+    // section's horizontal pin) runs on. A tab minimized or switched away
+    // from mid-scroll can come back with a pinned section's `x` tween
+    // stalled at a stale scroll position while the *real* scroll offset
+    // has moved on underneath it — the pin's `position: fixed` state and
+    // the actual scroll position disagree, and until something forces a
+    // recalculation, the section renders wrong (in the worst case,
+    // pinned content sitting outside the current viewport entirely,
+    // which looks like the page going blank at that scroll depth). Same
+    // fix as the load-time refresh above, just triggered by regaining
+    // visibility instead of by the page finishing its first load.
+    function onVisibilityChange() {
+      if (!document.hidden) refresh();
+    }
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
     return () => {
       gsap.ticker.remove(ticker);
       instance.destroy();
       setLenis(null);
       delete window.__lenisInstance;
       window.removeEventListener("load", refresh);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, []);
 

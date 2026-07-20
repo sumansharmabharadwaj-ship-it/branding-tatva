@@ -23,7 +23,7 @@ export function HorizontalJourney({ stages, elementColor }: ProcessSectionProps)
   }, [stages]);
 
   return (
-    <div ref={sectionRef} className="relative overflow-hidden">
+    <div ref={sectionRef} className="relative overflow-hidden bg-background">
       <div ref={trackRef} className="flex w-max">
         {stages.map((stage, i) => (
           <div
