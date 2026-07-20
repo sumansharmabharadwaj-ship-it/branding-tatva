@@ -60,6 +60,7 @@ export default async function CaseStudyPage({ params }: Props) {
           video={project.heroVideo ?? "/videos/own-jagged-peaks.mp4"}
           poster={project.heroPoster ?? "/images/own-jagged-peaks-wide-poster.jpg"}
           minHeight="70vh"
+          accentColor={project.heroVideo ? project.accent : undefined}
         >
           <Container className="relative py-20 text-center">
             <Reveal>
@@ -122,15 +123,14 @@ export default async function CaseStudyPage({ params }: Props) {
           </Container>
         </section>
 
-        {/* Generated via Higgsfield rather than stock footage — a
-            distinct flowing-water mood, not another misty-forest shot.
-            The quote itself is per-project
+        {/* Real footage, a distinct flowing-water mood rather than
+            another misty-forest shot. The quote itself is per-project
             (closingQuote in data/projects.ts) so the words actually tie back
             to that project's own challenge/outcome, instead of one generic
             line sitting under every case study regardless of industry. */}
         <VideoBreak
-          src="/videos/higgsfield-forest-stream.mp4"
-          poster="/images/higgsfield-forest-stream-poster.jpg"
+          src="/videos/own-forest-stream.mp4"
+          poster="/images/own-forest-stream-poster.jpg"
           quote={
             project.closingQuote ??
             "Good strategy doesn't force a path. It finds the one already there, the way water finds a way through stone."

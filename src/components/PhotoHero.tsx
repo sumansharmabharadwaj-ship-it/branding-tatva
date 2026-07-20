@@ -26,6 +26,7 @@ export function PhotoHero({
   minHeight = "60vh",
   imagePosition = "center",
   className,
+  accentColor,
 }: {
   children?: React.ReactNode;
   image?: string;
@@ -34,8 +35,17 @@ export function PhotoHero({
   minHeight?: string;
   imagePosition?: string;
   className?: string;
+  accentColor?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
+
+  // A case study's hero footage is industry-specific (an office, a
+  // warehouse) rather than generic nature photography, so an
+  // accentColor tints it toward that project's own element color
+  // instead of replacing it outright.
+  const accentWash = accentColor ? (
+    <div className="absolute inset-0" style={{ backgroundColor: accentColor, opacity: 0.16, mixBlendMode: "multiply" }} />
+  ) : null;
 
   return (
     <section
@@ -54,6 +64,7 @@ export function PhotoHero({
             loop
             playsInline
           />
+          {accentWash}
           <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
         </>
       ) : (
@@ -71,6 +82,7 @@ export function PhotoHero({
             sizes="100vw"
             style={{ objectFit: "cover", objectPosition: imagePosition }}
           />
+          {accentWash}
           <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
         </motion.div>
       )}

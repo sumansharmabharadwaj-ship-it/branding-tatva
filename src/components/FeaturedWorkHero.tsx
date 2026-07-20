@@ -25,6 +25,7 @@ export function FeaturedWorkHero({
   outcome,
   stats,
   imagePosition = "center",
+  accent,
 }: {
   href: string;
   image: string;
@@ -33,6 +34,7 @@ export function FeaturedWorkHero({
   outcome: string;
   stats?: { value: string; label: string }[];
   imagePosition?: string;
+  accent?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -56,6 +58,12 @@ export function FeaturedWorkHero({
           sizes="100vw"
           style={{ objectFit: "cover", objectPosition: imagePosition }}
         />
+        {/* Ties the featured entry's own industry photography back to
+            its element without replacing it — same treatment as the
+            smaller work cards below it. */}
+        {accent && (
+          <div className="absolute inset-0" style={{ backgroundColor: accent, opacity: 0.16, mixBlendMode: "multiply" }} />
+        )}
         <div
           className="absolute inset-0"
           style={{

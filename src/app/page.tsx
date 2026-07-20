@@ -307,11 +307,12 @@ export default function Home() {
                     third, unrelated backdrop for the same entry. */}
                 <FeaturedWorkHero
                   href={`/work/${featured[0].slug}`}
-                  image={featured[0].cardImage ?? "/images/higgsfield-forest-path.jpg"}
+                  image={featured[0].cardImage ?? "/images/own-forest-clearing.jpg"}
                   industry={featured[0].industry}
                   title={featured[0].title}
                   outcome={featured[0].outcome}
                   stats={featured[0].stats}
+                  accent={featured[0].accent}
                 />
               </Reveal>
             )}

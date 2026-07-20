@@ -30,6 +30,7 @@ export function FeaturedSecondaryCard({ project }: { project: Project }) {
         gradient={GRADIENT}
         sizes="(min-width: 640px) 50vw, 100vw"
         isHovered={isHovered}
+        accent={project.accent}
       />
       <div className="relative border-t-2 pt-4" style={{ borderColor: project.accent }}>
         <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">{project.industry}</p>

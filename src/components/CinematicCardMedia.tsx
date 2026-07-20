@@ -36,6 +36,7 @@ export function CinematicCardMedia({
   sizes = "(min-width: 768px) 50vw, 100vw",
   isHovered = false,
   dust = false,
+  accent,
 }: {
   image?: string;
   video?: string;
@@ -43,6 +44,7 @@ export function CinematicCardMedia({
   sizes?: string;
   isHovered?: boolean;
   dust?: boolean;
+  accent?: string;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ref, shouldLoad] = useLazyMount();
@@ -117,6 +119,14 @@ export function CinematicCardMedia({
           ))}
         </div>
       )}
+
+      {/* Case-study media stays industry-specific (an office, a
+          warehouse, a supplement shelf) rather than generic nature
+          photography, so this tints it toward the project's own
+          element color instead of replacing it outright — still nods
+          to Earth/Water/Fire/Air/Space without losing what the image
+          is actually showing. */}
+      {accent && <div className="absolute inset-0" style={{ backgroundColor: accent, opacity: 0.16, mixBlendMode: "multiply" }} />}
 
       <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
     </motion.div>
