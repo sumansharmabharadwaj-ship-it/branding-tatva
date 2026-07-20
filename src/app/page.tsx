@@ -202,7 +202,7 @@ export default function Home() {
         </section>
 
         <ImageBreak
-          image="/images/own-peaks.jpg"
+          image="/images/higgsfield-architecture-columns.jpg"
           quote="The parts that don't move are usually the ones holding everything else up."
           height="72vh"
         />
@@ -218,7 +218,7 @@ export default function Home() {
               title: "Starting with an idea",
               description:
                 "Earth first work: purpose, audience, and positioning, before anything else gets built.",
-              image: "/images/own-misty-ridge-poster.jpg",
+              image: "/images/higgsfield-idea-sketch.jpg",
               gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
               ctaLabel: "Brand Beginning",
               ctaHref: "/services#brand-beginning",
@@ -252,13 +252,14 @@ export default function Home() {
 
             {featured[0] && (
               <Reveal delay={0.1} className="mt-10">
-                {/* Generated via Higgsfield rather than the two real-photo
-                    mountain shots already on this page — needed a visually
-                    distinct backdrop here, not a third variation on the
-                    same dusk-peak look. */}
+                {/* The project's own cardImage/heroVideo world (see
+                    data/projects.ts) rather than a separate hardcoded
+                    photo — this is the same brand this project's case
+                    study page and Work grid card already use, not a
+                    third, unrelated backdrop for the same entry. */}
                 <FeaturedWorkHero
                   href={`/work/${featured[0].slug}`}
-                  image="/images/higgsfield-forest-path.jpg"
+                  image={featured[0].cardImage ?? "/images/higgsfield-forest-path.jpg"}
                   industry={featured[0].industry}
                   title={featured[0].title}
                   outcome={featured[0].outcome}
@@ -322,11 +323,10 @@ export default function Home() {
         </GradientSections>
 
         <VideoBreak
-          src="/videos/own-alpenglow-peak.mp4"
-          poster="/images/own-alpenglow-peak-poster.jpg"
+          src="/videos/higgsfield-confident-light.mp4"
+          poster="/images/higgsfield-confident-light-poster.jpg"
           quote="Every strong brand has a moment like this — quiet, and completely sure of itself."
           height="92vh"
-          imagePosition="center 38%"
         />
 
         <GradientSections colors={["#EFE4D9", "#F1EADE"]}>
