@@ -134,11 +134,13 @@ export default function Home() {
                 <Reveal delay={0.15} className="sm:order-1">
                   <div className="max-w-md space-y-4 text-foreground-secondary">
                     <p>
-                      Earth is where a brand is grounded. Water is how it
-                      moves through someone&apos;s day. Fire is what makes
-                      people look twice. Air is the language that carries
-                      it. Space is what&apos;s left once the noise settles,
-                      the part people actually remember.
+                      Every brand needs the same five things: something
+                      solid to stand on, a way of moving through a
+                      person&apos;s day, a spark that earns a second look,
+                      a voice, and the quiet consistency that actually
+                      gets remembered. Earth, water, fire, air, and space
+                      aren&apos;t a theme — they&apos;re names for those
+                      five jobs.
                     </p>
                     <p>
                       Most brands are built with one or two of these — a
