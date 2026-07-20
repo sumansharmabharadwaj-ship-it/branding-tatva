@@ -12,9 +12,10 @@ import { useVerticalLineProgress } from "./animations";
 // Notice leads to Ground, and so on), so the layout should read that way
 // too. The line's own fill is tied to scroll position: it draws down as
 // the visitor moves through the section, so "progress" is something felt
-// rather than just implied by the numbering. Same faint road photo as
-// the desktop HorizontalJourney, at low opacity, so this doesn't become
-// a plain-text stretch on mobile either.
+// rather than just implied by the numbering. Used at every viewport size
+// (see sections/Process/index.tsx for why the old desktop-only pinned
+// version was retired) — the faint road photo behind it keeps this from
+// becoming a plain-text stretch regardless of screen width.
 
 export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
   const ref = useRef<HTMLDivElement>(null);

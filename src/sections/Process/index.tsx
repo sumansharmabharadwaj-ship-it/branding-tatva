@@ -1,30 +1,21 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useReducedMotion } from "framer-motion";
 import { VerticalJourney } from "./VerticalJourney";
-import { HorizontalJourney } from "./HorizontalJourney";
 import { Container } from "@/components/Container";
 import type { ProcessSectionProps } from "./types";
-import { DESKTOP_QUERY } from "./constants";
 
-// Picks between the two Process treatments: a pinned horizontal scroll
-// on wide viewports (HorizontalJourney), a connected vertical thread
-// everywhere else (VerticalJourney) — a real, working experience on its
-// own, not a degraded fallback.
+// Used to be a pinned horizontal scroll on wide viewports, with this
+// vertical thread as the mobile/reduced-motion fallback. The pin was
+// the only GSAP ScrollTrigger `pin: true` usage anywhere on the site,
+// and it depends on precise scroll-position math staying in sync with
+// everything lazy-loaded around it — a real, repeated source of
+// "content goes missing mid-scroll" reports that kept resisting
+// targeted fixes (pin desync on tab backgrounding, stale trigger
+// positions, environment-specific rendering quirks). Removing the pin
+// entirely removes that whole failure class at the root instead of
+// continuing to patch around it. This vertical version already reads
+// as a complete, deliberate design on its own — not a degraded
+// fallback — so nothing is lost by using it everywhere.
 
 export function ProcessSection({ stages, elementColor }: ProcessSectionProps) {
-  const prefersReducedMotion = useReducedMotion();
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    setIsDesktop(window.matchMedia(DESKTOP_QUERY).matches);
-  }, []);
-
-  if (isDesktop && !prefersReducedMotion) {
-    return <HorizontalJourney stages={stages} elementColor={elementColor} />;
-  }
-
   return (
     <Container>
       <VerticalJourney stages={stages} elementColor={elementColor} />
