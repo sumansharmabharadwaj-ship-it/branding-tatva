@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { LinkButton } from "@/components/Button";
 import { useSpotlight } from "@/hooks/useSpotlight";
+import { useLazyMount } from "@/hooks/useLazyMount";
 import { EASE_AIR } from "@/lib/motion";
 import type { ThresholdPanelData } from "./types";
 import {
@@ -14,35 +15,39 @@ import {
   PANEL_TRANSITION_MS,
 } from "./constants";
 
-// Ambient clip that only starts playing once the panel is actually
-// active — same reasoning as CaseStudyCard's CardMedia: a video sitting
-// at opacity 0 still needs .play() called explicitly, CSS alone won't
-// start it.
-function PanelVideo({ src, isActive }: { src: string; isActive: boolean }) {
+// The ambient clip plays continuously once the panel nears the viewport
+// — a still image behind a section this large reads as frozen. Hovering
+// still does its own thing (the image/video scales up and brightens
+// while the sibling dims, see the parent motion.div's animate below);
+// this only controls whether the clip itself is playing at all, not
+// which panel currently has attention.
+function PanelVideo({ src }: { src: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [ref, shouldLoad] = useLazyMount();
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
-    if (isActive) {
-      video.play().catch(() => {});
-    } else {
-      video.pause();
-      video.currentTime = 0;
-    }
-  }, [isActive]);
+    if (!video || !shouldLoad) return;
+    video.play().catch(() => {});
+  }, [shouldLoad]);
 
   return (
-    <video
-      ref={videoRef}
-      className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
-      style={{ opacity: isActive ? 1 : 0 }}
-      src={src}
-      muted
-      loop
-      playsInline
-      preload="none"
-    />
+    <div ref={ref} className="absolute inset-0">
+      {shouldLoad && (
+        <video
+          ref={videoRef}
+          className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+          style={{ opacity: ready ? 1 : 0 }}
+          onCanPlay={() => setReady(true)}
+          src={src}
+          muted
+          loop
+          playsInline
+          preload="metadata"
+        />
+      )}
+    </div>
   );
 }
 
@@ -91,9 +96,7 @@ export function ThresholdPanel({
           sizes="(min-width: 640px) 50vw, 100vw"
           style={{ objectFit: "cover" }}
         />
-        {panel.video && !prefersReducedMotion && (
-          <PanelVideo src={panel.video} isActive={isActive} />
-        )}
+        {panel.video && !prefersReducedMotion && <PanelVideo src={panel.video} />}
         <div className="absolute inset-0" style={{ backgroundImage: panel.gradient }} />
       </motion.div>
 

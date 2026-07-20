@@ -11,7 +11,7 @@ import { ElementsRail } from "@/components/ElementsRail";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { GradientSections } from "@/components/GradientSections";
-import { KenBurnsImage } from "@/components/KenBurnsImage";
+import { CinematicCardMedia } from "@/components/CinematicCardMedia";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ElementReveal } from "@/components/ElementReveal";
 import { ElementRowBackground } from "@/components/ElementRowBackground";
@@ -164,7 +164,7 @@ export default function Home() {
             {elements.map((el, i) => (
               <ElementReveal key={el.slug} slug={el.slug} delay={i * 0.06}>
                 <div className="relative overflow-hidden">
-                  <ElementRowBackground image={el.image} color={el.color} />
+                  <ElementRowBackground image={el.image} video={el.video} color={el.color} />
                   <Container>
                   <div
                     id={el.slug}
@@ -287,15 +287,12 @@ export default function Home() {
                       data-cursor-label="View case study"
                       className="group relative flex min-h-88 flex-col justify-end overflow-hidden rounded-lg p-6 sm:p-8"
                     >
-                      {project.cardImage && (
-                        <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-110">
-                          <KenBurnsImage
-                            image={project.cardImage}
-                            gradient="linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.45) 55%, rgba(39,34,30,0.15) 100%)"
-                            sizes="(min-width: 640px) 50vw, 100vw"
-                          />
-                        </div>
-                      )}
+                      <CinematicCardMedia
+                        image={project.cardImage}
+                        video={project.cardVideo}
+                        gradient="linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.45) 55%, rgba(39,34,30,0.15) 100%)"
+                        sizes="(min-width: 640px) 50vw, 100vw"
+                      />
                       <div className="relative border-t-2 pt-4" style={{ borderColor: project.accent }}>
                         <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">
                           {project.industry}
