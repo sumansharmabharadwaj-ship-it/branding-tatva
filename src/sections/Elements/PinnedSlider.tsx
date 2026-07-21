@@ -91,14 +91,14 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
               <div className="max-w-xl">
                 <div className="flex items-center gap-4">
                   <span
-                    className="font-display text-[clamp(3.5rem,9vw,6.5rem)] font-semibold leading-none opacity-40"
+                    className="font-display text-[clamp(3.5rem,9vw,6.5rem)] font-normal leading-none opacity-40"
                     style={{ color: el.color }}
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <ElementGlyph slug={el.slug} className="h-10 w-10 opacity-90" style={{ color: el.color }} />
                 </div>
-                <p className="mt-4 font-display text-3xl font-semibold text-ivory sm:text-4xl">{el.name}</p>
+                <p className="mt-4 font-display text-3xl font-normal text-ivory sm:text-4xl">{el.name}</p>
                 <p className="mt-4 font-display text-xl italic text-ivory/85 sm:text-2xl">
                   &ldquo;{el.poetic}&rdquo;
                 </p>

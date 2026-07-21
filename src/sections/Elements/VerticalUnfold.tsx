@@ -31,7 +31,7 @@ export function VerticalUnfold({ elements }: { elements: Element[] }) {
               >
                 <div className={`flex items-baseline gap-3 ${i % 2 === 1 ? "sm:flex-row-reverse" : ""}`}>
                   <span
-                    className="font-display text-[clamp(3rem,7vw,5.5rem)] font-semibold leading-none opacity-40"
+                    className="font-display text-[clamp(3rem,7vw,5.5rem)] font-normal leading-none opacity-40"
                     style={{ color: el.color }}
                   >
                     {String(i + 1).padStart(2, "0")}
@@ -43,7 +43,7 @@ export function VerticalUnfold({ elements }: { elements: Element[] }) {
                   />
                 </div>
                 <p
-                  className={`font-display text-2xl font-semibold text-ivory sm:text-3xl ${
+                  className={`font-display text-2xl font-normal text-ivory sm:text-3xl ${
                     i % 2 === 1 ? "sm:order-3" : ""
                   }`}
                 >
