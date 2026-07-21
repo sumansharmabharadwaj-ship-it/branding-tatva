@@ -22,7 +22,15 @@ export function ElementsSection({ elements }: { elements: Element[] }) {
       <div className="hidden sm:block">
         <PinnedSlider elements={elements} />
       </div>
-      <div className="sm:hidden">
+      {/* overflow-x-hidden here, not on a shared ancestor with
+          PinnedSlider — VerticalUnfold's rows use ElementReveal's
+          per-element entrance signatures (water/air slide in from off
+          to the side by design), which used to rely on this whole
+          section's own now-removed overflow-hidden to stay contained
+          during the animation. Scoping the clip to this motion-only,
+          non-sticky branch keeps that containment without reintroducing
+          the ancestor that broke PinnedSlider's sticky positioning. */}
+      <div className="overflow-x-hidden sm:hidden">
         <VerticalUnfold elements={elements} />
       </div>
     </>

@@ -189,7 +189,18 @@ export default function Home() {
         {/* Five elements — a slow vertical unfolding, not a grid of cards.
             PerspectiveReveal (a camera-push settle, not ClipReveal's
             curtain-wipe) marks this as its own chapter after the
-            marquee, since the two sections look nothing alike. */}
+            marquee, since the two sections look nothing alike.
+            ElementsSection (the pinned slider on desktop) deliberately
+            sits OUTSIDE this section and outside PerspectiveReveal —
+            `position: sticky` breaks the moment any ancestor has
+            `overflow` other than visible (this section's own
+            overflow-hidden, kept for the constellation glyphs and the
+            watermark word) or a transform/filter mid-animation
+            (PerspectiveReveal's own scale+blur entrance). Nesting the
+            sticky slider inside either produced exactly the bug this
+            replaces: the slide showed once, then the rest of the
+            sequence never appeared, since sticky was resolving against
+            the wrong containing block instead of the real page scroll. */}
         <PerspectiveReveal>
           <section className="relative overflow-hidden border-t border-border pt-16 pb-28 sm:pt-20 sm:pb-40">
             <div
@@ -222,10 +233,10 @@ export default function Home() {
               </p>
             </Reveal>
           </Container>
-
-          <ElementsSection elements={elements} />
           </section>
         </PerspectiveReveal>
+
+        <ElementsSection elements={elements} />
 
         {/* Real footage, not the AI-generated architectural interior this
             replaced — that read as a real estate/architecture site, not
