@@ -16,7 +16,6 @@ import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ElementReveal } from "@/components/ElementReveal";
 import { ElementRowBackground } from "@/components/ElementRowBackground";
-import { SectionVideoWash } from "@/components/SectionVideoWash";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
 import { CinematicHero } from "@/sections/Hero";
 import { Threshold } from "@/sections/Threshold";
@@ -99,22 +98,19 @@ export default function Home() {
             hero was still plain cream, reading as blank space against a
             full-bleed video hero. Air (voice/clarity) also happens to fit
             this section's own subject better than any other element.
-            The aurora-glow/DustMotes ambient pass still read as flat in
-            a screenshot — too subtle to register as "motion" — so this
-            text block now sits on a real video (SectionVideoWash),
-            abstract swirling light rather than more forest/water footage
-            that would repeat the hero above and the VideoBreak below.
-            Scoped to just this block, not the whole section, and faded
-            to the section's own flat Sage at its own top/bottom edges,
-            so it reads as one continuous color field with a hint of
-            motion under the text rather than a visible video rectangle. */}
+            Tried a video underlay here (abstract swirling light) — direct
+            feedback that it read as a different visual genre entirely
+            next to the real photographic/cinematic footage everywhere
+            else on the page, not cohesive. Every real nature clip in the
+            library is already load-bearing on some other page (the
+            no-repeat rule rules out reusing one), so this stays on the
+            site's own established warm-glow language instead of forcing
+            in a video that doesn't belong — aurora-glow-bold is a
+            stronger read of the same technique the Footer/PageLoadVeil
+            already use, not a new visual idea. */}
         <section className="relative overflow-hidden pt-28 pb-16 sm:pt-40 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
           <div className="relative overflow-hidden">
-            <SectionVideoWash
-              video="/videos/higgsfield-elements-convergence.mp4"
-              poster="/images/higgsfield-elements-convergence-poster.jpg"
-              color={ELEMENT_HEX.air}
-            />
+            <div className="aurora-glow-bold" aria-hidden="true" />
             <DustMotes />
             <Container className="relative">
               <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">

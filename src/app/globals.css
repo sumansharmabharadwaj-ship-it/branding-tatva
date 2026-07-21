@@ -453,6 +453,54 @@
   50% { transform: translate(8%, 12%) scale(1.15); }
 }
 
+/* A bolder read of the same warm-glow language above — bigger blobs, a
+   third color pool, higher opacity, wider drift — for the one spot
+   (Home's "brand can be visible" text block) where the standard
+   .aurora-glow proved too subtle to register as motion at all against
+   a large flat Sage field. Kept as its own class rather than turning
+   .aurora-glow itself up, since every other section using it (Footer,
+   PageLoadVeil) already reads correctly at the original strength. */
+.aurora-glow-bold {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  filter: blur(70px);
+  opacity: 0.55;
+}
+
+.aurora-glow-bold::before,
+.aurora-glow-bold::after {
+  content: "";
+  position: absolute;
+  width: 60%;
+  height: 75%;
+  border-radius: 50%;
+}
+
+.aurora-glow-bold::before {
+  top: -5%;
+  left: 0%;
+  background: radial-gradient(circle, #C28A28 0%, transparent 70%);
+  animation: aurora-drift-bold-a 22s ease-in-out infinite;
+}
+
+.aurora-glow-bold::after {
+  bottom: -15%;
+  right: -5%;
+  background: radial-gradient(circle, #F4EFE6 0%, transparent 72%);
+  animation: aurora-drift-bold-b 28s ease-in-out infinite;
+}
+
+@keyframes aurora-drift-bold-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(14%, 10%) scale(1.2); }
+}
+
+@keyframes aurora-drift-bold-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-12%, -10%) scale(1.15); }
+}
+
 @keyframes aurora-drift-b {
   0%, 100% { transform: translate(0, 0) scale(1); }
   50% { transform: translate(-10%, -8%) scale(1.1); }
