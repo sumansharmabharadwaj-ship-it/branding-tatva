@@ -11,6 +11,7 @@ import { VideoBreak } from "@/components/VideoBreak";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { projects } from "@/data/projects";
+import { site } from "@/data/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -25,6 +26,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: project.title,
     description: project.challenge,
+    alternates: { canonical: `/work/${project.slug}` },
+    openGraph: {
+      title: `${project.title} | ${site.name}`,
+      description: project.challenge,
+      type: "article",
+    },
   };
 }
 
@@ -42,6 +49,23 @@ export default async function CaseStudyPage({ params }: Props) {
   const { slug } = await params;
   const project = projects.find((p) => p.slug === slug);
   if (!project) notFound();
+
+  // Case-study pages carry rich structured content (industry, challenge,
+  // outcome, verified stats) but had zero JSON-LD — a real, confirmed gap
+  // for both SEO and AEO. CreativeWork fits a portfolio/case-study
+  // writeup better than Service schema, which typically expects
+  // offers/pricing fields this site deliberately doesn't publish.
+  const caseStudyStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    about: project.industry,
+    description: project.challenge,
+    author: { "@id": `${site.url}/#person` },
+    creator: { "@id": `${site.url}/#organization` },
+    keywords: project.services.join(", "),
+    url: `${site.url}/work/${project.slug}`,
+  };
 
   const related = projects.find((p) => p.slug !== project.slug && p.featured);
   const strategyAnchor = project.insight ? "insight" : project.strategy ? "strategy" : null;
@@ -161,6 +185,11 @@ export default async function CaseStudyPage({ params }: Props) {
       </main>
       <Footer />
       <SectionJumpNav items={jumpItems} />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(caseStudyStructuredData) }}
+      />
     </>
   );
 }

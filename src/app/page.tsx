@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
@@ -25,7 +26,40 @@ import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
 import { process } from "@/data/process";
+import { faqs } from "@/data/faqs";
 import { elementColor } from "@/lib/elementColor";
+
+// Previously relied entirely on the root layout's default title/description
+// — functional, but means "/" never explicitly owns its own metadata (no
+// page-specific canonical, no way to tune the homepage's own OG/Twitter
+// copy independent of the site-wide fallback used everywhere else).
+export const metadata: Metadata = {
+  title: `${site.name}: Brand Strategy by ${site.founder}`,
+  description: site.description,
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: `${site.name}: Brand Strategy by ${site.founder}`,
+    description: site.description,
+    url: site.url,
+    type: "website",
+  },
+};
+
+// The homepage's FAQ section (src/sections/FAQ) already has 8 real,
+// substantive question/answer pairs — this was the single highest-value
+// AEO gap on the site: zero structured markup on real FAQ content,
+// meaning search engines' FAQ rich results and AI answer engines had no
+// explicit machine-readable signal for it, only the rendered accordion
+// text to infer from.
+const faqStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+  })),
+};
 
 export default function Home() {
   const featured = projects.filter((p) => p.featured);
@@ -390,6 +424,11 @@ export default function Home() {
         </VideoBreak>
       </main>
       <Footer />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+      />
     </>
   );
 }

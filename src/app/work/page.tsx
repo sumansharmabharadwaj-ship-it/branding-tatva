@@ -12,6 +12,12 @@ import { projects } from "@/data/projects";
 export const metadata: Metadata = {
   title: "Work",
   description: "Selected brand and content strategy work.",
+  alternates: { canonical: "/work" },
+  openGraph: {
+    title: "Work | Branding Tatva",
+    description: "Selected brand and content strategy work.",
+    type: "website",
+  },
 };
 
 export default function WorkPage() {

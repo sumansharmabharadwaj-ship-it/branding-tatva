@@ -14,6 +14,13 @@ export const metadata: Metadata = {
   title: "Blog",
   description:
     "Notes on brand strategy, positioning, and the elemental approach, from Branding Tatva.",
+  alternates: { canonical: "/blog" },
+  openGraph: {
+    title: "Blog | Branding Tatva",
+    description:
+      "Notes on brand strategy, positioning, and the elemental approach, from Branding Tatva.",
+    type: "website",
+  },
 };
 
 function elementColor(slug: string) {

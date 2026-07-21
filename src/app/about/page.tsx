@@ -15,6 +15,12 @@ import { site } from "@/data/site";
 export const metadata: Metadata = {
   title: "About Suman Sharma",
   description: `The thinking behind ${site.name}: brand strategy grounded in psychology and language.`,
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: `About ${site.founder} | ${site.name}`,
+    description: `The thinking behind ${site.name}: brand strategy grounded in psychology and language.`,
+    type: "profile",
+  },
 };
 
 export default function AboutPage() {

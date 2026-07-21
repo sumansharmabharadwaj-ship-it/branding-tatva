@@ -23,6 +23,13 @@ export const metadata: Metadata = {
   title: "Services",
   description:
     "Brand strategy, content strategy, social media marketing, and website development, all under one roof.",
+  alternates: { canonical: "/services" },
+  openGraph: {
+    title: "Services | Branding Tatva",
+    description:
+      "Brand strategy, content strategy, social media marketing, and website development, all under one roof.",
+    type: "website",
+  },
 };
 
 export default function ServicesPage() {

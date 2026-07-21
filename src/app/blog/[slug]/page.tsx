@@ -25,11 +25,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: post.title,
     description: post.excerpt,
+    alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
       title: post.title,
       description: post.excerpt,
       type: "article",
       publishedTime: post.publishedAt,
+      images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
     },
   };
 }
@@ -59,9 +61,16 @@ export default async function BlogPostPage({ params }: Props) {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.excerpt,
+    // No per-post photography exists yet — the site's own OG image is a
+    // defensible fallback rather than fabricating a claim about a
+    // specific image. No separate edit-tracking exists either, so
+    // dateModified mirrors datePublished (accurate for an unedited post,
+    // not an invented "last updated" claim).
+    image: `${site.url}/opengraph-image`,
     datePublished: post.publishedAt,
-    author: { "@type": "Person", name: site.founder, url: site.url },
-    publisher: { "@type": "Organization", name: site.name, url: site.url },
+    dateModified: post.publishedAt,
+    author: { "@id": `${site.url}/#person` },
+    publisher: { "@id": `${site.url}/#organization` },
     mainEntityOfPage: `${site.url}/blog/${post.slug}`,
   };
 

@@ -12,6 +12,12 @@ import { site } from "@/data/site";
 export const metadata: Metadata = {
   title: "Contact",
   description: "Tell me what your brand is becoming.",
+  alternates: { canonical: "/contact" },
+  openGraph: {
+    title: `Contact | ${site.name}`,
+    description: "Tell me what your brand is becoming.",
+    type: "website",
+  },
 };
 
 export default function ContactPage() {

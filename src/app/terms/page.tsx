@@ -6,6 +6,8 @@ import { site } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
+  description: `The terms that govern using ${site.name}'s website and working with ${site.founder}.`,
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {

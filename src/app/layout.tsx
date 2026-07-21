@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { DeferredCursor } from "@/components/DeferredCursor";
@@ -27,39 +27,70 @@ export const metadata: Metadata = {
     template: `%s | ${site.name}`,
   },
   description: site.description,
+  alternates: { canonical: "/" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
   openGraph: {
     title: site.name,
     description: site.description,
     url: site.url,
     siteName: site.name,
     type: "website",
+    locale: "en_US",
+    // Reuses the opengraph-image.tsx/twitter-image.tsx route convention
+    // already generating a real image at build time — this makes that
+    // explicit instead of relying on Next's implicit file-convention
+    // pickup alone.
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: site.name,
     description: site.description,
+    images: ["/opengraph-image"],
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#27221E",
+  width: "device-width",
+  initialScale: 1,
 };
 
 // Structured data — verified facts only. No aggregateRating/review markup
 // since no real testimonials exist yet (per brief: never fake reviews).
+// Both nodes carry an @id so other pages' schema (BlogPosting's
+// author/publisher, case-study Service schema) can reference them
+// directly instead of duplicating the same facts inline everywhere.
+const PERSON_ID = `${site.url}/#person`;
+const ORG_ID = `${site.url}/#organization`;
+const SOCIAL_LINKS = [site.social.linkedin, site.social.instagram, site.social.facebook].filter(Boolean);
+
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Person",
+      "@id": PERSON_ID,
       name: site.founder,
       url: site.url,
       jobTitle: "Brand Strategist",
-      sameAs: [site.social.linkedin, site.social.instagram, site.social.facebook].filter(Boolean),
+      sameAs: SOCIAL_LINKS,
     },
     {
       "@type": "ProfessionalService",
+      "@id": ORG_ID,
       name: site.name,
-      founder: site.founder,
+      founder: { "@id": PERSON_ID },
       url: site.url,
       description: site.description,
       areaServed: "Remote / Worldwide",
+      image: `${site.url}/opengraph-image`,
+      logo: `${site.url}/opengraph-image`,
+      sameAs: SOCIAL_LINKS,
     },
   ],
 };
