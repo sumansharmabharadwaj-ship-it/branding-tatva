@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Container } from "@/components/Container";
-import { IndianPattern } from "@/components/IndianPattern";
 import { TexturedDark } from "@/components/TexturedDark";
 import { Logo } from "@/components/Logo";
 import { HoverGlyph } from "@/components/HoverGlyph";
@@ -36,20 +35,17 @@ const ELEMENT_GLYPHS: { slug: "earth" | "water" | "fire" | "air" | "space"; colo
 export function Footer() {
   return (
     <footer className="relative">
-      {/* bg-soil, no border either side — this divider previously had no
-          background of its own (showing the page's plain cream through
-          it as a visible pale stripe) and, even after that fix, still
-          carried a beige border-t/border-b hairline exactly at the seam
-          between two dark video sections (the closing moonlit-sea break
-          above and this footer's own video below) — direct, repeated
-          feedback that a "divider design between sections" was still
-          visible pointed straight at this line. Matching the dark tone
-          on both sides with no stroke at all merges them into one
-          continuous dark passage instead of two sections meeting at a
-          seam; the pattern's own color still carries the visual beat. */}
-      <div className="h-10 overflow-hidden bg-soil" aria-hidden="true">
-        <IndianPattern opacity={0.14} color="#F4EFE6" />
-      </div>
+      {/* This used to carry a decorative IndianPattern strip here —
+          first with no background of its own (showing plain cream
+          through it), then with a bg-soil fix, then with its own
+          border removed. Each round, the strip itself still read as a
+          distinct "element" sitting between the two sections rather
+          than disappearing into either of them — repeated feedback
+          kept pointing at this exact band. Dropped entirely: the
+          section above and this footer's own video now meet directly,
+          with only their own color transition between them, the same
+          way every other section-to-section boundary on the site
+          already works. */}
 
       {/* imagePosition biased down — own-jagged-peaks' own frame is a
           pale sunset sky over the top ~55%, jagged silhouettes only in
