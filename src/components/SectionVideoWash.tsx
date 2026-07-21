@@ -10,11 +10,16 @@ import { useLazyMount } from "@/hooks/useLazyMount";
 // Scoped to sit behind one text block rather than the whole section, so
 // it fades to the section's own flat color at the top and bottom edges
 // (via the gradient below) instead of leaving a visible rectangle seam.
-// Muted color-multiply + low video opacity keeps this a hint of motion
-// under the text, not a competing video moment — pass the same clip a
-// VideoBreak just below already uses so the whole passage reads as one
-// continuous cinematic moment (text leading into its own footage)
-// rather than two unrelated video instances stitched together.
+// A first pass used a heavy multiply tint that crushed the footage into
+// a flat green wash — direct feedback that it hid the very thing it was
+// meant to show. A light normal-blend tint (not multiply, which darkens
+// and desaturates everything under it) plus a much higher video opacity
+// keeps the actual footage — the light, the water, the motion — clearly
+// legible, tied to the section's own color without being buried by it.
+// Pass the same clip a VideoBreak just below already uses so the whole
+// passage reads as one continuous cinematic moment (text leading into
+// its own footage) rather than two unrelated video instances stitched
+// together.
 export function SectionVideoWash({
   video,
   poster,
@@ -41,7 +46,7 @@ export function SectionVideoWash({
         <video
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000"
-          style={{ opacity: videoReady ? 0.55 : 0 }}
+          style={{ opacity: videoReady ? 0.85 : 0 }}
           onCanPlay={() => setVideoReady(true)}
           src={video}
           poster={poster}
@@ -51,11 +56,11 @@ export function SectionVideoWash({
           preload="metadata"
         />
       )}
-      <div className="absolute inset-0" style={{ backgroundColor: color, opacity: 0.4, mixBlendMode: "multiply" }} />
+      <div className="absolute inset-0" style={{ backgroundColor: color, opacity: 0.18 }} />
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: `linear-gradient(180deg, ${color} 0%, transparent 35%, transparent 100%)`,
+          backgroundImage: `linear-gradient(180deg, ${color} 0%, transparent 45%, transparent 65%, ${color} 100%)`,
         }}
       />
     </div>
