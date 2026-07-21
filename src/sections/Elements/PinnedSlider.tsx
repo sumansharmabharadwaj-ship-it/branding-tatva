@@ -1,97 +1,75 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import { ElementRowBackground } from "@/components/ElementRowBackground";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import type { Element } from "@/data/elements";
 
-gsap.registerPlugin(ScrollTrigger);
-
 // A true pinned slide sequence — one element fills the viewport at a
 // time, cross-fading as you scroll, instead of scrolling past five
-// stacked rows. This is the same category of feature the Process
-// section's old horizontal pin used and lost to real bugs (pin desync
-// on tab backgrounding, stale trigger positions once lazy content
-// shifted things) — see sections/Process/index.tsx's own history. Two
-// choices here specifically avoid that failure class rather than just
-// hoping it doesn't recur:
-//
-// 1. The scrollable range comes from a fixed `elements.length * 100vh`
-//    height on the outer wrapper, not from measuring the pinned
-//    content's own rendered size. The slides are absolutely positioned
-//    inside the pinned viewport and don't participate in document
-//    flow, so a video or image finishing its lazy-mount load later
-//    can't change the wrapper's height and can't desync the trigger's
-//    start/end — the one thing the removed pin's own postmortem
-//    specifically named as a cause.
-// 2. Tab-backgrounding desync is SmoothScrollProvider's job (it already
-//    calls ScrollTrigger.refresh() on visibilitychange, added when the
-//    old pin was still in use) — nothing extra needed here.
-//
-// Reduced-motion users never see this at all; ElementsSection renders
-// VerticalUnfold instead, same split Process/index.tsx already
-// established for its own pinned/fallback pair.
+// stacked rows. This used to be driven by a GSAP ScrollTrigger `pin`
+// (a separate trigger/pin-target pair, a cached start/end scroll
+// range, anticipatePin, a visibilitychange refresh) — the same
+// category of feature the Process section's old horizontal pin used
+// and lost to real, repeated bugs (pin desync on tab backgrounding,
+// stale trigger positions, a pin-target/wrapper mismatch that left
+// dead scroll space after unpinning). Rebuilt on plain CSS
+// `position: sticky` instead: the browser's own layout engine keeps
+// the slide viewport in place for exactly as long as the wrapper
+// below it is in the document, recomputed from live geometry on every
+// scroll tick rather than a value cached once up front — there's no
+// separate trigger/pin-target pairing left to fall out of sync, and
+// no scenario where "sticky" and "the wrapper's actual height" can
+// disagree, because sticky positioning IS the wrapper's own layout,
+// not a second system tracking it.
 export function PinnedSlider({ elements }: { elements: Element[] }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   // Mirrors activeIndex without triggering a re-render on read — lets
-  // onUpdate (fires on effectively every scrub frame while scrolling)
-  // skip the setState call entirely on the vast majority of frames
-  // where the rounded index hasn't actually changed, instead of
+  // the scroll handler (fires on effectively every frame while
+  // scrolling) skip the setState call entirely on the vast majority of
+  // frames where the rounded index hasn't actually changed, instead of
   // re-rendering the whole slider every frame for the entire scroll
   // range.
   const activeIndexRef = useRef(0);
+  const lenis = useLenis();
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const slides = slideRefs.current.filter((el): el is HTMLDivElement => el !== null);
-      if (slides.length === 0) return;
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
 
-      gsap.set(slides, { opacity: 0 });
-      gsap.set(slides[0], { opacity: 1 });
-
-      ScrollTrigger.create({
-        trigger: wrapperRef.current,
-        start: "top top",
-        end: () => `+=${(elements.length - 1) * window.innerHeight}`,
-        pin: pinRef.current,
-        scrub: 0.6,
-        anticipatePin: 1,
-        onUpdate: (self) => {
-          const progress = self.progress * (elements.length - 1);
-          const idx = Math.min(elements.length - 1, Math.round(progress));
-          if (idx !== activeIndexRef.current) {
-            activeIndexRef.current = idx;
-            setActiveIndex(idx);
-          }
-          slides.forEach((slide, i) => {
-            const opacity = Math.max(0, 1 - Math.abs(progress - i));
-            gsap.set(slide, { opacity });
-          });
-        },
+    function update() {
+      if (!wrapper) return;
+      const rect = wrapper.getBoundingClientRect();
+      const scrollableDistance = rect.height - window.innerHeight;
+      const raw = scrollableDistance > 0 ? -rect.top / scrollableDistance : 0;
+      const clamped = Math.min(1, Math.max(0, raw));
+      const progress = clamped * (elements.length - 1);
+      const idx = Math.min(elements.length - 1, Math.round(progress));
+      if (idx !== activeIndexRef.current) {
+        activeIndexRef.current = idx;
+        setActiveIndex(idx);
+      }
+      slideRefs.current.forEach((slide, i) => {
+        if (!slide) return;
+        slide.style.opacity = String(Math.max(0, 1 - Math.abs(progress - i)));
       });
-    }, wrapperRef);
+    }
 
-    return () => ctx.revert();
-  }, [elements.length]);
+    update();
+    const unsubscribe = lenis?.on("scroll", update);
+    window.addEventListener("resize", update);
+    return () => {
+      unsubscribe?.();
+      window.removeEventListener("resize", update);
+    };
+  }, [elements.length, lenis]);
 
   return (
     <div ref={wrapperRef} className="relative" style={{ height: `${elements.length * 100}vh` }}>
-      {/* pin targets this div specifically, not wrapperRef — pinning the
-          scroll-height wrapper itself (elements.length * 100vh tall)
-          left it fixed at its own full height once pinned, so only its
-          top 100vh (this inner div) ever showed through the viewport
-          while the remaining height sat pinned off-screen; once
-          ScrollTrigger unpinned, the page had to scroll through that
-          leftover space as blank before the next section, and the
-          pin-spacer/trigger size mismatch let a sliver of it show as a
-          stray line at the seam. Pinning this h-screen div instead
-          keeps the pinned box's own size equal to the viewport. */}
-      <div ref={pinRef} className="relative h-screen w-full overflow-hidden">
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
         {elements.map((el, i) => (
           <div
             key={el.slug}
@@ -99,7 +77,7 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
               slideRefs.current[i] = node;
             }}
             className="absolute inset-0"
-            style={{ pointerEvents: i === activeIndex ? "auto" : "none" }}
+            style={{ opacity: i === 0 ? 1 : 0, pointerEvents: i === activeIndex ? "auto" : "none" }}
             aria-hidden={i !== activeIndex}
           >
             <ElementRowBackground
