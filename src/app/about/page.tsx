@@ -179,9 +179,19 @@ export default function AboutPage() {
             follows (Sandstone, Soil, Clay, Soil, Indigo) instead of
             ending on a plain neutral right before the Footer. */}
         <section className="py-20" style={{ backgroundColor: ELEMENT_HEX.water }}>
-          <Container>
+          <Container className="relative">
+            {/* Ghost watermark word, same technique as the case-study
+                block numerals (.case-study-block::before in globals.css)
+                and Home's "ELEMENTS" watermark — ivory-toned since this
+                section is bold Indigo, not the dark-on-cream version. */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-ivory/[0.08] sm:-top-8"
+            >
+              WHY
+            </span>
             <Reveal>
-              <h2 className="text-display-sm font-display font-semibold text-ivory">
+              <h2 className="relative text-display-sm font-display font-semibold text-ivory">
                 Why this site looks the way it does
               </h2>
               <p className="mt-4 max-w-2xl text-ivory/75">

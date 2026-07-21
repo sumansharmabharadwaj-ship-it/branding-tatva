@@ -123,8 +123,14 @@ export default function ServicesPage() {
               {elements.map((el, i) => (
                 <Reveal key={el.slug} delay={i * 0.08} className="h-full">
                   <TiltCard glowColor={el.color}>
+                    {/* Arch silhouette, not the rounded-rect every other
+                        card on the site uses — a deliberate one-off shape
+                        variant (matching the reference moodboard's
+                        arch-cropped service cards), kept to this single
+                        card type rather than changed everywhere. Extra
+                        top padding keeps the glyph clear of the curve. */}
                     <div
-                      className="relative flex h-full flex-col overflow-hidden rounded-lg border-t-2 p-6 shadow-elevation-sm"
+                      className="relative flex h-full flex-col overflow-hidden rounded-t-[2.5rem] rounded-b-lg border-t-2 p-6 pt-9 shadow-elevation-sm"
                       style={{ borderColor: el.color }}
                     >
                       {/* Photo at real opacity, tinted rather than washed

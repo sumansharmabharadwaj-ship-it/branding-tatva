@@ -211,8 +211,18 @@ export default function Home() {
             />
             <ElementsConstellation />
             <Container className="relative">
+            {/* Ghost watermark word, same technique as the case-study
+                block numerals (.case-study-block::before in globals.css)
+                extended to a word instead of a numeral — one signature
+                moment, not applied to every heading site-wide. */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-soil/[0.06] sm:-top-8"
+            >
+              ELEMENTS
+            </span>
             <Reveal>
-              <h2 className="text-display-sm font-display font-semibold text-soil">
+              <h2 className="relative text-display-sm font-display font-semibold text-soil">
                 The five elements
               </h2>
               <p className="mt-3 max-w-md text-sm text-foreground-secondary">
