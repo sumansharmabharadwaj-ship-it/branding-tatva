@@ -34,8 +34,15 @@ const ELEMENT_GLYPHS: { slug: "earth" | "water" | "fire" | "air" | "space"; colo
 export function Footer() {
   return (
     <footer className="relative border-t border-border">
-      <div className="h-10 overflow-hidden border-b border-border/60" aria-hidden="true">
-        <IndianPattern opacity={0.1} />
+      {/* bg-soil + a light stroke color — this divider previously had no
+          background of its own, showing the page's plain cream through
+          it as a visible pale stripe between two dark video sections
+          (the closing moonlit-sea break above and this footer's own
+          video below). Matching the dark tone on both sides closes that
+          gap; the pattern's stroke flips from soil-on-transparent to
+          ivory-on-soil so it stays visible against its new backdrop. */}
+      <div className="h-10 overflow-hidden border-b border-border/60 bg-soil" aria-hidden="true">
+        <IndianPattern opacity={0.14} color="#F4EFE6" />
       </div>
 
       <TexturedDark image="/images/own-jagged-peaks.jpg" video="/videos/own-jagged-peaks.mp4" className="py-24 sm:py-32">
