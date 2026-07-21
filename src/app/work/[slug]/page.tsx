@@ -163,8 +163,8 @@ export default async function CaseStudyPage({ params }: Props) {
             words actually tie back to that project's own challenge/
             outcome instead of one generic line under every case study. */}
         <VideoBreak
-          src={project.closingVideo ?? "/videos/higgsfield-elements-convergence.mp4"}
-          poster={project.closingPoster ?? "/images/higgsfield-elements-convergence-poster.jpg"}
+          src={project.closingVideo ?? "/videos/higgsfield-idea-sketch.mp4"}
+          poster={project.closingPoster ?? "/images/higgsfield-idea-sketch.jpg"}
           quote={
             project.closingQuote ??
             "Good strategy lets a path reveal itself rather than forcing one, the way water finds a way through stone."

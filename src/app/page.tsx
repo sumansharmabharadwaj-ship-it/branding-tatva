@@ -16,6 +16,7 @@ import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ElementReveal } from "@/components/ElementReveal";
 import { ElementRowBackground } from "@/components/ElementRowBackground";
+import { SectionVideoWash } from "@/components/SectionVideoWash";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
 import { CinematicHero } from "@/sections/Hero";
 import { Threshold } from "@/sections/Threshold";
@@ -98,39 +99,48 @@ export default function Home() {
             hero was still plain cream, reading as blank space against a
             full-bleed video hero. Air (voice/clarity) also happens to fit
             this section's own subject better than any other element.
-            A flat color field this large still read as static/boring on
-            its own — direct feedback — so it gets the same ambient
-            motion already proven on the site's dark sections (aurora-glow,
-            DustMotes) instead of a new video that would repeat the
-            forest/water footage already carrying the hero right above it
-            and the VideoBreak right below. */}
+            The aurora-glow/DustMotes ambient pass still read as flat in
+            a screenshot — too subtle to register as "motion" — so this
+            text block now sits on a real video (SectionVideoWash),
+            abstract swirling light rather than more forest/water footage
+            that would repeat the hero above and the VideoBreak below.
+            Scoped to just this block, not the whole section, and faded
+            to the section's own flat Sage at its own top/bottom edges,
+            so it reads as one continuous color field with a hint of
+            motion under the text rather than a visible video rectangle. */}
         <section className="relative overflow-hidden pt-28 pb-16 sm:pt-40 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
-          <div className="aurora-glow" aria-hidden="true" />
-          <DustMotes />
-          <Container className="relative">
-            <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
-              <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-ivory">
-                A brand can be visible and still go unnoticed.
-              </SplitReveal>
-              <Reveal delay={0.15}>
-                <div className="max-w-md space-y-4 text-ivory/75 sm:ml-auto sm:text-right">
-                  <p>
-                    Being present differs from being recognised.
-                    Looking attractive differs from communicating
-                    clearly. Posting content differs from building
-                    recall.
-                  </p>
-                  <p>
-                    That gap is usually a{" "}
-                    <span className="font-semibold text-ivory underline decoration-sandstone underline-offset-4">
-                      clarity problem
-                    </span>
-                    , far more often than a visibility one.
-                  </p>
-                </div>
-              </Reveal>
-            </div>
-          </Container>
+          <div className="relative overflow-hidden">
+            <SectionVideoWash
+              video="/videos/higgsfield-elements-convergence.mp4"
+              poster="/images/higgsfield-elements-convergence-poster.jpg"
+              color={ELEMENT_HEX.air}
+            />
+            <DustMotes />
+            <Container className="relative">
+              <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
+                <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-ivory">
+                  A brand can be visible and still go unnoticed.
+                </SplitReveal>
+                <Reveal delay={0.15}>
+                  <div className="max-w-md space-y-4 text-ivory/75 sm:ml-auto sm:text-right">
+                    <p>
+                      Being present differs from being recognised.
+                      Looking attractive differs from communicating
+                      clearly. Posting content differs from building
+                      recall.
+                    </p>
+                    <p>
+                      That gap is usually a{" "}
+                      <span className="font-semibold text-ivory underline decoration-sandstone underline-offset-4">
+                        clarity problem
+                      </span>
+                      , far more often than a visibility one.
+                    </p>
+                  </div>
+                </Reveal>
+              </div>
+            </Container>
+          </div>
 
           <div className="mt-20 sm:mt-28">
             <VideoBreak
