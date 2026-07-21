@@ -49,7 +49,8 @@ export function CaseStudyCard({ project }: { project: Project }) {
         <Link
           href={`/work/${project.slug}`}
           data-cursor-label="View case study"
-          className="relative flex h-full flex-col justify-end overflow-hidden rounded-lg p-6 shadow-elevation-sm"
+          className="spotlight-card relative flex h-full flex-col justify-end overflow-hidden rounded-lg p-6 shadow-elevation-sm"
+          style={{ ["--card-color" as string]: project.accent }}
         >
           <CinematicCardMedia
             image={project.cardImage}

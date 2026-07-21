@@ -3,12 +3,13 @@ import { Container } from "@/components/Container";
 import { IndianPattern } from "@/components/IndianPattern";
 import { TexturedDark } from "@/components/TexturedDark";
 import { Logo } from "@/components/Logo";
-import { ElementGlyph } from "@/components/ElementGlyph";
+import { HoverGlyph } from "@/components/HoverGlyph";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { LinkButton } from "@/components/Button";
 import { site, footerLinks } from "@/data/site";
 import { socialLinks, EMBERS, REVEAL_DELAY_LOGO } from "./constants";
+import { sectionWash } from "@/lib/sectionWash";
 
 // The old footer spent its first screen on a nav column the header already
 // covers and a positioning paragraph nobody reads at the very bottom of a
@@ -60,10 +61,10 @@ export function Footer() {
                 set instead of gesturing at a single element. */}
             <div className="flex justify-center gap-4" aria-hidden="true">
               {ELEMENT_GLYPHS.map((el) => (
-                <ElementGlyph key={el.slug} slug={el.slug} className="h-5 w-5" style={{ color: el.color, opacity: 0.6 }} strokeWidth={1.2} />
+                <HoverGlyph key={el.slug} slug={el.slug} color={el.color} />
               ))}
             </div>
-            <SplitReveal className="mx-auto mt-6 max-w-3xl font-display text-[clamp(2rem,5.5vw,4rem)] font-semibold leading-[1.1] text-ivory">
+            <SplitReveal className="mx-auto mt-6 max-w-3xl font-display text-[clamp(2.25rem,6.5vw,4.75rem)] font-semibold leading-[1.05] text-ivory">
               Every brand is visible. Let&apos;s make yours unforgettable.
             </SplitReveal>
           </Reveal>
@@ -104,7 +105,10 @@ export function Footer() {
         </Container>
       </TexturedDark>
 
-      <div className="flex flex-col-reverse items-center gap-3 border-t border-border bg-background-alt px-6 py-5 text-center sm:flex-row sm:justify-between sm:px-10">
+      <div
+        className="flex flex-col-reverse items-center gap-3 border-t border-border px-6 py-5 text-center sm:flex-row sm:justify-between sm:px-10"
+        style={{ backgroundColor: sectionWash("space", 14) }}
+      >
         <p className="text-xs text-foreground-secondary">
           © {new Date().getFullYear()} {site.name}
         </p>

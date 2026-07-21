@@ -18,6 +18,7 @@ import { elements } from "@/data/elements";
 import { process } from "@/data/process";
 import { serviceGroups, offerings } from "@/data/services";
 import { elementColor } from "@/lib/elementColor";
+import { sectionWash } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -66,15 +67,22 @@ export default function ServicesPage() {
                 <Reveal key={offer.name} delay={i * 0.06} className="h-full">
                   <TiltCard glowColor={offer.color}>
                     <div
-                      className="spotlight-card flex h-full flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-colors duration-300"
+                      className="spotlight-card relative flex h-full flex-col overflow-hidden rounded-lg border-t-2 p-6 shadow-elevation-sm transition-colors duration-300"
                       style={{
                         borderTopColor: offer.color,
                         backgroundColor: `${offer.color}14`,
                         ["--card-color" as string]: offer.color,
                       }}
                     >
-                      <p className="font-display text-lg font-semibold text-soil transition-colors duration-300">{offer.name}</p>
-                      <p className="mt-2 text-sm text-foreground-secondary">{offer.detail}</p>
+                      <span
+                        aria-hidden="true"
+                        className="absolute -right-1 -top-3 font-display text-6xl font-semibold leading-none"
+                        style={{ color: offer.color, opacity: 0.18 }}
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <p className="relative font-display text-lg font-semibold text-soil transition-colors duration-300">{offer.name}</p>
+                      <p className="relative mt-2 text-sm text-foreground-secondary">{offer.detail}</p>
                     </div>
                   </TiltCard>
                 </Reveal>
@@ -108,7 +116,7 @@ export default function ServicesPage() {
                 <Reveal key={el.slug} delay={i * 0.08} className="h-full">
                   <TiltCard glowColor={el.color}>
                     <div
-                      className="relative flex h-full flex-col overflow-hidden border-t-2 p-6 shadow-elevation-sm"
+                      className="relative flex h-full flex-col overflow-hidden rounded-lg border-t-2 p-6 shadow-elevation-sm"
                       style={{ borderColor: el.color }}
                     >
                       {/* Photo at real opacity, tinted rather than washed
@@ -171,7 +179,11 @@ export default function ServicesPage() {
             VerticalJourney component) the home page already uses,
             rather than inventing a separate framework just for this
             page. */}
-        <section id="process" className="scroll-mt-24 border-t border-border py-16">
+        <section
+          id="process"
+          className="scroll-mt-24 border-t border-border py-16"
+          style={{ backgroundColor: sectionWash("water", 14) }}
+        >
           <Container>
             <SectionHeading
               eyebrow="How I work"
@@ -182,7 +194,11 @@ export default function ServicesPage() {
           <ProcessSection stages={process} elementColor={elementColor} />
         </section>
 
-        <section id="by-situation" className="scroll-mt-24 py-16">
+        <section
+          id="by-situation"
+          className="scroll-mt-24 py-16"
+          style={{ backgroundColor: sectionWash("earth", 14) }}
+        >
           <Container>
             <SectionHeading
               eyebrow="By situation"

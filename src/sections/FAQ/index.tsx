@@ -14,10 +14,10 @@ export function FAQ() {
       {faqs.map((item, i) => {
         const isOpen = openIndex === i;
         return (
-          <div key={item.question} className="py-4">
+          <div key={item.question} className="py-1">
             <button
               type="button"
-              className="flex w-full items-center justify-between text-left font-medium text-soil"
+              className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left font-medium text-soil transition-colors duration-300 hover:bg-clay/8 focus-visible:bg-clay/8"
               aria-expanded={isOpen}
               onClick={() => setOpenIndex(isOpen ? null : i)}
             >
@@ -40,7 +40,7 @@ export function FAQ() {
                   transition={answerTransition}
                   className="overflow-hidden"
                 >
-                  <p className="mt-3 text-sm text-foreground-secondary">{item.answer}</p>
+                  <p className="mt-3 px-3 text-sm text-foreground-secondary">{item.answer}</p>
                 </motion.div>
               )}
             </AnimatePresence>

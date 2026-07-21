@@ -11,6 +11,7 @@ import { ImageBreak } from "@/components/ImageBreak";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
+import { sectionWash } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "About Suman Sharma",
@@ -125,7 +126,7 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        <section className="py-20">
+        <section className="py-20" style={{ backgroundColor: sectionWash("space", 14) }}>
           <Container>
             <div className="grid gap-8 md:grid-cols-[220px_1fr] md:gap-12">
               <Reveal>

@@ -3,9 +3,9 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
-import { Reveal } from "@/components/Reveal";
 import type { ProcessSectionProps } from "./types";
 import { useVerticalLineProgress } from "./animations";
+import { JourneyStage } from "./JourneyStage";
 
 // A connected vertical thread instead of a grid of six identical boxes —
 // the six stages already form one continuous sequence (Listen leads to
@@ -44,22 +44,13 @@ export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
       />
       <ol className="space-y-12">
         {stages.map((stage, i) => (
-          <li key={stage.stage} className="relative">
-            <span
-              className="absolute -left-12 top-0 flex h-6 w-6 items-center justify-center rounded-full text-[0.65rem] font-semibold text-ivory sm:-left-16"
-              style={{ backgroundColor: elementColor[stage.element] }}
-            >
-              {i + 1}
-            </span>
-            <Reveal delay={(i % 3) * 0.08}>
-              <p className="font-display text-xl font-semibold text-soil sm:text-2xl">
-                {stage.stage}
-              </p>
-              <p className="mt-2 max-w-lg text-sm text-foreground-secondary">
-                {stage.description}
-              </p>
-            </Reveal>
-          </li>
+          <JourneyStage
+            key={stage.stage}
+            stage={stage}
+            index={i}
+            color={elementColor[stage.element]}
+            delay={(i % 3) * 0.08}
+          />
         ))}
       </ol>
     </div>

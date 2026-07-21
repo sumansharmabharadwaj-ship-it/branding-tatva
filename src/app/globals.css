@@ -371,6 +371,19 @@
   );
 }
 
+/* Per-stage cursor glow for the Process vertical journey — same
+   --spotlight-x/y technique as .cursor-spotlight above, but colored per
+   stage via --spotlight-color (each stage carries its own element
+   color) instead of one fixed warm tone. See JourneyStage.tsx. */
+.stage-spotlight {
+  z-index: 0;
+  background: radial-gradient(
+    circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+    var(--spotlight-color, rgba(194, 138, 40, 0.18)) 0%,
+    transparent 60%
+  );
+}
+
 /* Aurora glow — two large, blurred color blobs drifting slowly behind a
    dark section, so it reads as depth rather than a flat fill. Already
    covered by the sitewide prefers-reduced-motion rule above (zeroes out

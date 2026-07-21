@@ -9,6 +9,7 @@ import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
+import { ElementGlyph } from "@/components/ElementGlyph";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -67,7 +68,7 @@ export default function BlogPage() {
         <PerspectiveReveal>
         <section className="border-t border-border bg-background-alt py-16">
           <Container>
-            <div className="grid items-stretch gap-6 sm:grid-cols-2">
+            <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
               {sorted.map((post, i) => (
                 <Reveal
                   key={post.slug}
@@ -77,10 +78,19 @@ export default function BlogPage() {
                   <TiltCard glowColor={elementColor(post.element)}>
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="flex h-full flex-col rounded-lg border-t-2 bg-background-elevated p-6 shadow-elevation-sm"
-                      style={{ borderTopColor: elementColor(post.element) }}
+                      className="spotlight-card flex h-full flex-col rounded-lg border-t-2 bg-background-elevated p-6 shadow-elevation-sm transition-colors duration-300"
+                      style={{
+                        borderTopColor: elementColor(post.element),
+                        ["--card-color" as string]: elementColor(post.element),
+                      }}
                     >
-                      <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+                      <ElementGlyph
+                        slug={post.element}
+                        className="h-6 w-6 opacity-70"
+                        style={{ color: elementColor(post.element) }}
+                        strokeWidth={1.3}
+                      />
+                      <p className="mt-3 text-xs font-medium uppercase tracking-wide text-foreground-secondary">
                         {new Date(post.publishedAt).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",

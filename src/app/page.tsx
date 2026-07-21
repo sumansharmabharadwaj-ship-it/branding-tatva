@@ -28,6 +28,7 @@ import { projects } from "@/data/projects";
 import { process } from "@/data/process";
 import { faqs } from "@/data/faqs";
 import { elementColor } from "@/lib/elementColor";
+import { sectionWash } from "@/lib/sectionWash";
 
 // Previously relied entirely on the root layout's default title/description
 // — functional, but means "/" never explicitly owns its own metadata (no
@@ -359,7 +360,13 @@ export default function Home() {
           height="92vh"
         />
 
-        <GradientSections colors={["#EFE4D9", "#F1EADE"]}>
+        {/* Process and FAQ used to share one GradientSections wrapper
+            drifting between two near-identical creams — audit found this
+            as one of the longest "blank" runs on the site. Split into two
+            washes, each in its own element-color family, so the two
+            sections read as genuinely distinct rather than one long
+            beige stretch. */}
+        <GradientSections colors={[sectionWash("water", 8), sectionWash("water", 16)]}>
           {/* Process — the horizontal-pinned treatment (desktop, motion
               allowed) needs to break out of Container's max-w-6xl to read
               as full-bleed, so it sits as a sibling after it rather than
@@ -373,7 +380,9 @@ export default function Home() {
             </Container>
             <ProcessSection stages={process} elementColor={elementColor} />
           </section>
+        </GradientSections>
 
+        <GradientSections colors={[sectionWash("fire", 10), sectionWash("fire", 18)]}>
           {/* FAQ */}
           <section className="py-20">
             <Container className="max-w-2xl">

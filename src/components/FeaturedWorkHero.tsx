@@ -1,10 +1,12 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { useLazyMount } from "@/hooks/useLazyMount";
+import { useTilt } from "@/hooks/useTilt";
 
 const KEN_BURNS = kenBurnsAnimation({ scale: 1.05, duration: 16 });
 
@@ -38,21 +40,26 @@ export function FeaturedWorkHero({
   accent?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
-  const [ref, shouldLoad] = useLazyMount();
+  const [lazyRef, shouldLoad] = useLazyMount();
+  const tiltRef = useRef<HTMLAnchorElement>(null);
+  const { rotateX, rotateY } = useTilt(tiltRef, 2.5, Boolean(prefersReducedMotion));
 
   return (
     <a
+      ref={tiltRef}
       href={href}
       data-cursor-label="View case study"
       className="group relative flex min-h-[75svh] items-end overflow-hidden bg-soil"
+      style={{ perspective: 1000 }}
     >
       <motion.div
-        ref={ref}
+        ref={lazyRef}
         className="absolute inset-0"
         initial={KEN_BURNS.initial}
         animate={prefersReducedMotion ? undefined : KEN_BURNS.animate}
         whileHover={{ scale: 1.1 }}
         transition={KEN_BURNS.transition}
+        style={prefersReducedMotion ? undefined : { rotateX, rotateY }}
       >
         {shouldLoad && (
           <>

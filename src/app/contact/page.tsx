@@ -8,6 +8,7 @@ import { VideoBreak } from "@/components/VideoBreak";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { site } from "@/data/site";
+import { sectionWash } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -25,7 +26,10 @@ export default function ContactPage() {
     <>
       <Header />
       <main id="main-content">
-        <section className="pb-20 pt-32 sm:pb-28 sm:pt-36">
+        <section
+          className="pb-20 pt-32 sm:pb-28 sm:pt-36"
+          style={{ backgroundColor: sectionWash("earth", 10) }}
+        >
           <Container className="grid gap-12 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
               <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">

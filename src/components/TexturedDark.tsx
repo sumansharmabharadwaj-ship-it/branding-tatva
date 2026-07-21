@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "framer-motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
+import { useSpotlight } from "@/hooks/useSpotlight";
 
 // Dark section wrapper with a subtle organic texture behind the solid
 // soil color, instead of flat, uniform color. The gradient overlay keeps
@@ -35,6 +36,12 @@ export function TexturedDark({
   const [ref, shouldLoad] = useLazyMount();
   const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  // Only wired for the video variant (the Footer's closing scene) —
+  // TexturedDark's other caller (the Services CTA) has no video and
+  // already reads as a calm, static panel that doesn't need a cursor
+  // response competing with the CTA button.
+  const spotlightRef = useSpotlight(sectionRef, Boolean(prefersReducedMotion) || !video);
 
   useEffect(() => {
     const el = videoRef.current;
@@ -43,7 +50,7 @@ export function TexturedDark({
   }, [shouldLoad, prefersReducedMotion]);
 
   return (
-    <section className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
+    <section ref={sectionRef} className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
       <div ref={ref} className="absolute inset-0">
         {shouldLoad && (
           <>
@@ -83,6 +90,13 @@ export function TexturedDark({
       />
       <div className="aurora-glow" aria-hidden="true" />
       <div className="light-rays" aria-hidden="true" />
+      {video && !prefersReducedMotion && (
+        <div
+          ref={spotlightRef}
+          aria-hidden="true"
+          className="cursor-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500"
+        />
+      )}
       <div className="relative">{children}</div>
     </section>
   );

@@ -31,7 +31,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
         ))}
       </div>
 
-      <motion.div layout className="mt-8 grid items-stretch gap-6 md:grid-cols-6">
+      <motion.div layout className="spotlight-grid mt-8 grid items-stretch gap-6 md:grid-cols-6">
         <AnimatePresence mode="popLayout">
           {visible.map((project, i) => (
             <motion.div
