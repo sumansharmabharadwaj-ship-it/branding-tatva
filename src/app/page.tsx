@@ -148,7 +148,7 @@ export default function Home() {
             same way, and the values are tightened (not just moved) —
             direct feedback that this gap read as dead space even before
             the collapse bug was diagnosed. */}
-        <section className="relative pt-10 pb-16 sm:pt-14 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
+        <section className="relative pt-14 pb-20 sm:pt-20 sm:pb-24" style={{ backgroundColor: ELEMENT_HEX.air }}>
           {/* Was a faint own-peaks.jpg background — one more mountain/ridge
               photo on a site that already has several (Footer, Home
               elements row, Services, Work hero), even without repeating
@@ -379,7 +379,7 @@ export default function Home() {
               as full-bleed, so it sits as a sibling after it rather than
               nested inside; the mobile/reduced-motion ProcessJourney
               fallback stays comfortable at that width regardless. */}
-          <section className="py-20">
+          <section className="py-20 sm:py-28">
             <Container>
               <Reveal>
                 <h2 className="text-display-sm font-display font-normal text-soil">How a project moves</h2>
@@ -399,7 +399,7 @@ export default function Home() {
             styling (soil text, clay hover) is built for a light
             backdrop — flipping it to dark would mean re-doing that
             component's states for one section, not worth it here. */}
-        <section className="relative overflow-hidden py-20">
+        <section className="relative overflow-hidden py-20 sm:py-28">
           <Image
             src="/images/higgsfield-architecture-columns.jpg"
             alt=""
