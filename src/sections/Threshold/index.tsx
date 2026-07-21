@@ -38,16 +38,22 @@ export function Threshold({
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section>
+    // bg-soil, not the previous no-background section — this heading zone
+    // sat on plain page cream between the forest-stream video above it and
+    // the panels' own dark photos below, direct feedback that it read as a
+    // blank gap interrupting the flow rather than part of it. Matching the
+    // dark tone both neighbors already use closes that gap instead of
+    // giving it yet another distinct wash.
+    <section className="bg-soil">
       <div className="container-page pt-20 text-center">
         {prefersReducedMotion ? (
-          <h2 className="font-display text-display-sm font-normal text-soil">{heading}</h2>
+          <h2 className="font-display text-display-sm font-normal text-ivory">{heading}</h2>
         ) : (
           <div className="relative mx-auto min-h-[2.75em]">
             <motion.h2
               animate={{ opacity: active === null ? 1 : 0 }}
               transition={{ duration: 0.35, ease: EASE_AIR }}
-              className="absolute inset-0 flex items-center justify-center px-4 font-display text-display-sm font-normal text-soil"
+              className="absolute inset-0 flex items-center justify-center px-4 font-display text-display-sm font-normal text-ivory"
             >
               {heading}
             </motion.h2>
@@ -58,7 +64,7 @@ export function Threshold({
                     key={panel.key}
                     animate={{ opacity: active === panel.key ? 1 : 0 }}
                     transition={{ duration: 0.35, ease: EASE_AIR }}
-                    className="absolute inset-0 flex items-center justify-center px-4 font-display text-display-sm font-normal text-soil"
+                    className="absolute inset-0 flex items-center justify-center px-4 font-display text-display-sm font-normal text-ivory"
                   >
                     {panel.activeHeading}
                   </motion.h2>

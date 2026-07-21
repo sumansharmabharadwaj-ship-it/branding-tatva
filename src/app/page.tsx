@@ -215,11 +215,17 @@ export default function Home() {
             the wrong containing block instead of the real page scroll. */}
         <PerspectiveReveal>
           <section className="relative overflow-hidden border-t border-border pt-16 pb-28 sm:pt-20 sm:pb-40">
+            {/* Was a near-white-to-near-white gradient (#F4EFE6 to
+                #EFE4D9, both plain cream) — direct feedback that this
+                read as blank space rather than a real section, the same
+                complaint the Process wash already got fixed for. A real
+                earth wash (this section leads straight into the Earth
+                slide of the pinned sequence below it) instead of another
+                shade of cream. */}
             <div
               className="absolute inset-0"
               style={{
-                background:
-                  "linear-gradient(180deg, #F4EFE6 0%, #EFE4D9 100%)",
+                background: `linear-gradient(180deg, ${sectionWash("earth", 20)} 0%, ${sectionWash("earth", 40)} 100%)`,
               }}
             />
             <ElementsConstellation />
