@@ -8,7 +8,7 @@ import { VideoBreak } from "@/components/VideoBreak";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { site } from "@/data/site";
-import { sectionWash } from "@/lib/sectionWash";
+import { sectionWash, ELEMENT_HEX } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -76,28 +76,34 @@ export default function ContactPage() {
           height="60vh"
         />
 
-        <section className="border-t border-border bg-sage/10 py-16">
+        {/* Bold solid Water/Indigo, not the previous sage tint — this
+            section is already water-themed (the glyph below), and unlike
+            the form section above it, nothing here depends on the
+            error-message red staying legible, so it's safe to go bold.
+            CalendlyEmbed already wraps itself in an opaque card, so no
+            change needed there. */}
+        <section className="border-t border-border py-16" style={{ backgroundColor: ELEMENT_HEX.water }}>
           <Container>
             <Reveal>
-              <ElementGlyph slug="water" className="h-6 w-6 text-indigo/70" strokeWidth={1.2} />
-              <p className="mt-3 text-sm font-medium uppercase tracking-wide text-action-secondary">
+              <ElementGlyph slug="water" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
+              <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
                 Or skip the form
               </p>
-              <h2 className="mt-2 text-display-sm font-display font-semibold text-soil">
+              <h2 className="mt-2 text-display-sm font-display font-semibold text-ivory">
                 Just grab a time that works for you.
               </h2>
-              <p className="mt-3 max-w-xl text-foreground-secondary">
+              <p className="mt-3 max-w-xl text-ivory/75">
                 Times shown automatically adjust to your local timezone,
                 wherever you are.
               </p>
               <CalendlyEmbed url={site.calendlyUrl} />
-              <p className="mt-3 text-xs text-foreground-secondary">
+              <p className="mt-3 text-xs text-ivory/70">
                 Having trouble with the embed?{" "}
                 <a
                   href={site.calendlyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-action-primary-hover link-underline"
+                  className="text-sandstone link-underline"
                 >
                   Open it directly instead
                 </a>
