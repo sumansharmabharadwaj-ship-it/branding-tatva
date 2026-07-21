@@ -66,8 +66,12 @@ export default function BlogPage() {
           </Container>
         </PhotoHero>
 
+        {/* Bold solid Soil, not the previous parchment tint. Blog cards
+            already use an opaque bg-background-elevated fill (not a
+            translucent alpha trick), so they read as light cards floating
+            on dark without any card-level change needed. */}
         <PerspectiveReveal>
-        <section className="border-t border-border bg-background-alt py-16">
+        <section className="border-t border-border bg-soil py-16">
           <Container>
             <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
               {sorted.map((post, i) => (

@@ -99,21 +99,21 @@ export default async function CaseStudyPage({ params }: Props) {
           </Container>
         </PhotoHero>
 
+        {/* Bold solid Soil, not the Phase-5 clay tint — matches every
+            other photo/video section site-wide. Stat numbers flip from
+            clay to sandstone (a clay-toned background would collide with
+            clay-colored numbers) and labels flip to ivory. */}
         {project.stats && (
-          <section
-            id="numbers"
-            className="scroll-mt-24 border-b border-border py-14"
-            style={{ backgroundColor: sectionWash("earth", 16) }}
-          >
+          <section id="numbers" className="scroll-mt-24 border-b border-border bg-soil py-14">
             <Container>
               <Reveal>
                 <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
                   {project.stats.map((stat) => (
                     <div key={stat.label} className="text-center sm:text-left">
-                      <p className="font-display text-4xl font-semibold text-clay sm:text-5xl">
+                      <p className="font-display text-4xl font-semibold text-sandstone sm:text-5xl">
                         <AnimatedStat value={stat.value} />
                       </p>
-                      <p className="mt-2 text-sm text-foreground-secondary">{stat.label}</p>
+                      <p className="mt-2 text-sm text-ivory/70">{stat.label}</p>
                     </div>
                   ))}
                 </div>

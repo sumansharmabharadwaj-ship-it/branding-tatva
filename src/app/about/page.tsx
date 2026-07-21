@@ -11,7 +11,7 @@ import { ImageBreak } from "@/components/ImageBreak";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
-import { sectionWash } from "@/lib/sectionWash";
+import { sectionWash, SANDSTONE } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "About Suman Sharma",
@@ -50,7 +50,11 @@ export default function AboutPage() {
           </Container>
         </PhotoHero>
 
-        <section className="pb-20 pt-20 sm:pb-28 sm:pt-28">
+        {/* Bold solid Sandstone, not a tint — the section right after the
+            hero was still plain cream, the same "blank" transition Phase 6
+            targets sitewide. Dark text stays as-is; Sandstone is light
+            enough to keep full contrast without flipping to ivory. */}
+        <section className="pb-20 pt-20 sm:pb-28 sm:pt-28" style={{ backgroundColor: SANDSTONE }}>
           <Container>
             <Reveal>
               <div className="max-w-xl space-y-5 text-foreground-secondary">

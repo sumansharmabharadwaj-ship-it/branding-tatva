@@ -11,15 +11,19 @@
 // framer-motion color interpolation, which only understands literal hex/
 // rgb, not color-mix() syntax.
 
-type ElementSlug = "earth" | "water" | "fire" | "air" | "space";
+export type ElementSlug = "earth" | "water" | "fire" | "air" | "space";
 
-const ELEMENT_HEX: Record<ElementSlug, string> = {
+export const ELEMENT_HEX: Record<ElementSlug, string> = {
   earth: "#B85A34",
   water: "#24394D",
   fire: "#C28A28",
   air: "#5C6B4A",
   space: "#AD6F5C",
 };
+
+// Defined in globals.css but barely used anywhere — the "tan" half of
+// the bold-section palette (Phase 6), alongside Soil for "dark forest".
+export const SANDSTONE = "#D4B99A";
 
 const CREAM = "#F4EFE6";
 
@@ -37,12 +41,20 @@ function rgbToHex([r, g, b]: number[]): string {
   );
 }
 
+// Generic channel-wise linear blend between any two hex colors — the
+// mechanism `sectionWash` itself is built on, exposed directly for
+// cases that need to blend an arbitrary color (e.g. a card's own accent)
+// rather than one of the five fixed element hues.
+export function blendHex(hexA: string, hexB: string, strength: number): string {
+  const [ar, ag, ab] = hexToRgb(hexA);
+  const [br, bg, bb] = hexToRgb(hexB);
+  const t = strength / 100;
+  return rgbToHex([ar * t + br * (1 - t), ag * t + bg * (1 - t), ab * t + bb * (1 - t)]);
+}
+
 // `strength` is roughly the percentage of the element color mixed into
 // the base — 10-20 reads as a clear, soft tint; higher gets closer to
 // the saturated color itself.
 export function sectionWash(slug: ElementSlug, strength = 16, base: string = CREAM): string {
-  const [er, eg, eb] = hexToRgb(ELEMENT_HEX[slug]);
-  const [br, bg, bb] = hexToRgb(base);
-  const t = strength / 100;
-  return rgbToHex([er * t + br * (1 - t), eg * t + bg * (1 - t), eb * t + bb * (1 - t)]);
+  return blendHex(ELEMENT_HEX[slug], base, strength);
 }

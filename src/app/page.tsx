@@ -28,7 +28,7 @@ import { projects } from "@/data/projects";
 import { process } from "@/data/process";
 import { faqs } from "@/data/faqs";
 import { elementColor } from "@/lib/elementColor";
-import { sectionWash } from "@/lib/sectionWash";
+import { sectionWash, ELEMENT_HEX } from "@/lib/sectionWash";
 
 // Previously relied entirely on the root layout's default title/description
 // — functional, but means "/" never explicitly owns its own metadata (no
@@ -93,15 +93,19 @@ export default function Home() {
         </CinematicHero>
 
         {/* Two-part editorial statement — the problem, then the philosophy,
-            as one long unbroken chapter rather than two boxed sections. */}
-        <section className="border-t border-border pt-28 pb-16 sm:pt-40 sm:pb-20">
+            as one long unbroken chapter rather than two boxed sections.
+            Bold solid Air/Sage, not a tint — the section right after the
+            hero was still plain cream, reading as blank space against a
+            full-bleed video hero. Air (voice/clarity) also happens to fit
+            this section's own subject better than any other element. */}
+        <section className="pt-28 pb-16 sm:pt-40 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
           <Container>
             <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
-              <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil">
+              <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-ivory">
                 A brand can be visible and still go unnoticed.
               </SplitReveal>
               <Reveal delay={0.15}>
-                <div className="max-w-md space-y-4 text-foreground-secondary sm:ml-auto sm:text-right">
+                <div className="max-w-md space-y-4 text-ivory/75 sm:ml-auto sm:text-right">
                   <p>
                     Being present differs from being recognised.
                     Looking attractive differs from communicating
@@ -109,8 +113,11 @@ export default function Home() {
                     recall.
                   </p>
                   <p>
-                    That gap is usually a <span className="font-semibold text-action-primary-hover">clarity problem</span>,
-                    far more often than a visibility one.
+                    That gap is usually a{" "}
+                    <span className="font-semibold text-ivory underline decoration-sandstone underline-offset-4">
+                      clarity problem
+                    </span>
+                    , far more often than a visibility one.
                   </p>
                 </div>
               </Reveal>
@@ -149,14 +156,14 @@ export default function Home() {
             <Container className="relative">
               <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
                 <Reveal className="sm:order-2">
-                  <h2 className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-soil sm:text-right">
+                  <h2 className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-ivory sm:text-right">
                     Five elements.
                     <br />
                     One brand.
                   </h2>
                 </Reveal>
                 <Reveal delay={0.15} className="sm:order-1">
-                  <div className="max-w-md space-y-4 text-foreground-secondary">
+                  <div className="max-w-md space-y-4 text-ivory/75">
                     <p>
                       Every brand needs the same five things: something
                       solid to stand on, a way of moving through a
@@ -173,7 +180,7 @@ export default function Home() {
                       people remember are built with all five, working as
                       one system.
                     </p>
-                    <p className="font-medium text-soil">
+                    <p className="font-medium text-ivory">
                       This is real work: the actual
                       method behind every project below, and the one
                       I&apos;d use on yours.

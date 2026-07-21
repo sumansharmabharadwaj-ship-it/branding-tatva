@@ -47,8 +47,12 @@ export default function WorkPage() {
           </Container>
         </PhotoHero>
 
+        {/* Bold solid Soil, not the previous parchment tint — matches
+            every other photo/video section site-wide. CaseStudyCards are
+            already dark photographic cards so this only changes the
+            section's own now-empty fill. */}
         <ClipReveal>
-          <section className="border-t border-border bg-background-alt py-16">
+          <section className="border-t border-border bg-soil py-16">
             <Container>
               <WorkGrid projects={projects} />
             </Container>

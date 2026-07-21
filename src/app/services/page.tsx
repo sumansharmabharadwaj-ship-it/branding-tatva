@@ -18,7 +18,7 @@ import { elements } from "@/data/elements";
 import { process } from "@/data/process";
 import { serviceGroups, offerings } from "@/data/services";
 import { elementColor } from "@/lib/elementColor";
-import { sectionWash } from "@/lib/sectionWash";
+import { sectionWash, blendHex } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -60,7 +60,15 @@ export default function ServicesPage() {
           </Container>
         </PhotoHero>
 
-        <section id="offerings" className="scroll-mt-24 py-14">
+        {/* Bold solid Soil, not a tint — matches every other photo/video
+            section site-wide rather than competing with the cards' own
+            accent colors. The cards' fill used to be a translucent
+            `${color}14` alpha overlay, which only reads as a light tint
+            because it was sitting on cream; the same alpha over Soil would
+            blend dark-on-dark and disappear. blendHex computes an opaque
+            tint against warm-white instead, so the card stays legible
+            regardless of what's behind it. */}
+        <section id="offerings" className="scroll-mt-24 bg-soil py-14">
           <Container>
             <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {offerings.map((offer, i) => (
@@ -70,7 +78,7 @@ export default function ServicesPage() {
                       className="spotlight-card relative flex h-full flex-col overflow-hidden rounded-lg border-t-2 p-6 shadow-elevation-sm transition-colors duration-300"
                       style={{
                         borderTopColor: offer.color,
-                        backgroundColor: `${offer.color}14`,
+                        backgroundColor: blendHex(offer.color, "#FCFAF6", 14),
                         ["--card-color" as string]: offer.color,
                       }}
                     >
