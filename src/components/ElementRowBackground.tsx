@@ -30,11 +30,19 @@ export function ElementRowBackground({
   video,
   color,
   imagePosition = "center",
+  active = true,
 }: {
   image: string;
   video?: string;
   color: string;
   imagePosition?: string;
+  // Lets a caller with several of these mounted at once (PinnedSlider:
+  // all five slides exist in the DOM simultaneously, distinguished only
+  // by opacity) pause every video but the one actually on screen,
+  // instead of five autoplaying loops decoding behind each other at
+  // once. Defaults to true so the row-list usage (VerticalUnfold),
+  // where every mounted row is genuinely meant to play, is unaffected.
+  active?: boolean;
 }) {
   const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -44,8 +52,12 @@ export function ElementRowBackground({
   useEffect(() => {
     const el = videoRef.current;
     if (!el || !shouldLoad || prefersReducedMotion) return;
-    el.play().catch(() => {});
-  }, [shouldLoad, prefersReducedMotion]);
+    if (active) {
+      el.play().catch(() => {});
+    } else {
+      el.pause();
+    }
+  }, [shouldLoad, prefersReducedMotion, active]);
 
   return (
     <div ref={ref} className="absolute inset-0" aria-hidden="true">

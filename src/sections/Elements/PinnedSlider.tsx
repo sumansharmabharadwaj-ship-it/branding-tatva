@@ -37,6 +37,13 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  // Mirrors activeIndex without triggering a re-render on read — lets
+  // onUpdate (fires on effectively every scrub frame while scrolling)
+  // skip the setState call entirely on the vast majority of frames
+  // where the rounded index hasn't actually changed, instead of
+  // re-rendering the whole slider every frame for the entire scroll
+  // range.
+  const activeIndexRef = useRef(0);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -56,7 +63,10 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
         onUpdate: (self) => {
           const progress = self.progress * (elements.length - 1);
           const idx = Math.min(elements.length - 1, Math.round(progress));
-          setActiveIndex(idx);
+          if (idx !== activeIndexRef.current) {
+            activeIndexRef.current = idx;
+            setActiveIndex(idx);
+          }
           slides.forEach((slide, i) => {
             const opacity = Math.max(0, 1 - Math.abs(progress - i));
             gsap.set(slide, { opacity });
@@ -79,8 +89,15 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
             }}
             className="absolute inset-0"
             style={{ pointerEvents: i === activeIndex ? "auto" : "none" }}
+            aria-hidden={i !== activeIndex}
           >
-            <ElementRowBackground image={el.image} video={el.video} color={el.color} imagePosition={el.imagePosition} />
+            <ElementRowBackground
+              image={el.image}
+              video={el.video}
+              color={el.color}
+              imagePosition={el.imagePosition}
+              active={i === activeIndex}
+            />
             <div className="relative flex h-full items-center px-6 sm:px-16">
               <div className="max-w-xl">
                 <div className="flex items-center gap-4">
