@@ -4,6 +4,7 @@ import { IndianPattern } from "@/components/IndianPattern";
 import { TexturedDark } from "@/components/TexturedDark";
 import { Logo } from "@/components/Logo";
 import { HoverGlyph } from "@/components/HoverGlyph";
+import { NatureAccent } from "@/components/NatureAccent";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { LinkButton } from "@/components/Button";
@@ -56,6 +57,13 @@ export function Footer() {
         </div>
 
         <Container className="relative text-center">
+          {/* One quiet, hand-drawn touch on the closing scene, not
+              scattered decoration — a single leaf tucked near the
+              headline, same restraint as everything else on the site. */}
+          <NatureAccent
+            variant="leaf"
+            className="pointer-events-none absolute -top-2 right-[12%] hidden h-10 w-10 -rotate-12 text-ivory/20 sm:block"
+          />
           <Reveal>
             {/* All five, not just one — the closing scene completes the
                 set instead of gesturing at a single element. */}

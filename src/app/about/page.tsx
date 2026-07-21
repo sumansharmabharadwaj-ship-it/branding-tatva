@@ -9,6 +9,7 @@ import { TiltCard } from "@/components/TiltCard";
 import { PhotoHero } from "@/components/PhotoHero";
 import { ImageBreak } from "@/components/ImageBreak";
 import { JaggedEdge } from "@/components/JaggedEdge";
+import { NatureAccent } from "@/components/NatureAccent";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -193,7 +194,7 @@ export default function AboutPage() {
             <div className="mt-14 divide-y divide-ivory/15">
               {designChoices.map((choice, i) => (
                 <Reveal key={choice.title} delay={i * 0.06}>
-                  <div className="grid gap-3 py-8 sm:grid-cols-[auto_1fr] sm:gap-10 sm:py-10">
+                  <div className="relative grid gap-3 py-8 sm:grid-cols-[auto_1fr] sm:gap-10 sm:py-10">
                     <span className="font-display text-5xl font-semibold leading-none text-ivory/15 sm:text-6xl">
                       {String(i + 1).padStart(2, "0")}
                     </span>
@@ -203,6 +204,16 @@ export default function AboutPage() {
                         {choice.detail}
                       </p>
                     </div>
+                    {/* One quiet hand-drawn touch, tied to this specific
+                        line about the palette coming from materials
+                        rather than a trend — not decoration for its own
+                        sake. */}
+                    {choice.title === "The palette" && (
+                      <NatureAccent
+                        variant="mushroom"
+                        className="pointer-events-none absolute -right-1 top-6 hidden h-9 w-9 rotate-6 text-ivory/20 sm:block"
+                      />
+                    )}
                   </div>
                 </Reveal>
               ))}
