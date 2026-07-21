@@ -35,6 +35,7 @@ gsap.registerPlugin(ScrollTrigger);
 // established for its own pinned/fallback pair.
 export function PinnedSlider({ elements }: { elements: Element[] }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   // Mirrors activeIndex without triggering a re-render on read — lets
@@ -57,7 +58,7 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
         trigger: wrapperRef.current,
         start: "top top",
         end: () => `+=${(elements.length - 1) * window.innerHeight}`,
-        pin: true,
+        pin: pinRef.current,
         scrub: 0.6,
         anticipatePin: 1,
         onUpdate: (self) => {
@@ -80,7 +81,17 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
 
   return (
     <div ref={wrapperRef} className="relative" style={{ height: `${elements.length * 100}vh` }}>
-      <div className="relative h-screen w-full overflow-hidden">
+      {/* pin targets this div specifically, not wrapperRef — pinning the
+          scroll-height wrapper itself (elements.length * 100vh tall)
+          left it fixed at its own full height once pinned, so only its
+          top 100vh (this inner div) ever showed through the viewport
+          while the remaining height sat pinned off-screen; once
+          ScrollTrigger unpinned, the page had to scroll through that
+          leftover space as blank before the next section, and the
+          pin-spacer/trigger size mismatch let a sliver of it show as a
+          stray line at the seam. Pinning this h-screen div instead
+          keeps the pinned box's own size equal to the viewport. */}
+      <div ref={pinRef} className="relative h-screen w-full overflow-hidden">
         {elements.map((el, i) => (
           <div
             key={el.slug}

@@ -72,7 +72,7 @@ export function Footer() {
                 <HoverGlyph key={el.slug} slug={el.slug} color={el.color} />
               ))}
             </div>
-            <SplitReveal className="mx-auto mt-6 max-w-3xl font-display text-[clamp(2.25rem,6.5vw,4.75rem)] font-semibold leading-[1.05] text-ivory">
+            <SplitReveal className="mx-auto mt-6 max-w-3xl font-display text-[clamp(2.25rem,6.5vw,4.75rem)] font-semibold leading-[1.05] text-ivory [text-shadow:0_2px_16px_rgba(0,0,0,0.7)]">
               Every brand is visible. Let&apos;s make yours unforgettable.
             </SplitReveal>
           </Reveal>

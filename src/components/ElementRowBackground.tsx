@@ -67,18 +67,27 @@ export function ElementRowBackground({
         animate={prefersReducedMotion ? undefined : KEN_BURNS.animate}
         transition={KEN_BURNS.transition}
       >
-        {/* priority — next/image's own default lazy loading is an
-            independent, unreliable second gate on top of this row
-            already being scroll-position-aware (Ken Burns only
-            animates once near view, the matching video only loads via
-            useLazyMount below); confirmed elsewhere on this site that
-            an image scrolled fully into view can still never fire
-            native lazy-load on its own. */}
+        {/* priority only for the active instance — next/image's own
+            default lazy loading is an independent, unreliable second
+            gate on top of this row already being scroll-position-aware
+            (Ken Burns only animates once near view, the matching video
+            only loads via useLazyMount below); confirmed elsewhere on
+            this site that an image scrolled fully into view can still
+            never fire native lazy-load on its own. But PinnedSlider
+            mounts all five of these at once from page load (opacity is
+            all that distinguishes them), so unconditional priority
+            meant five full-size images force-loading immediately
+            regardless of which one is actually visible — real,
+            avoidable weight at first load. Only the visible slide
+            needs the eager/high-priority fetch; the rest can lazy-load
+            normally since they won't be seen until scrolled into their
+            turn anyway. */}
         <Image
           src={image}
           alt=""
           fill
-          priority
+          priority={active}
+          loading={active ? undefined : "lazy"}
           sizes="100vw"
           style={{ objectFit: "cover", objectPosition: imagePosition }}
         />

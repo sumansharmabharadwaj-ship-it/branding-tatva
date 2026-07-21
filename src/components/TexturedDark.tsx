@@ -82,9 +82,22 @@ export function TexturedDark({
           </>
         )}
       </div>
+      {/* Was a near-opaque 0.88-0.93 flat overlay — with a video behind
+          it (the Footer's closing scene) that crushed the motion to
+          almost nothing, reading as a static dark image rather than a
+          video loop, the same "technically there but invisible"
+          problem the Five Elements rows and Process background had
+          before switching to BREAK_OVERLAY_GRADIENT's ~0.6 peak. Same
+          fix here: bring the darkest point down to what the rest of
+          the site's video sections already use, so the footage
+          actually reads as moving. */}
       <div
         className="absolute inset-0"
-        style={{ backgroundImage: "linear-gradient(rgba(39,34,30,0.88), rgba(39,34,30,0.93))" }}
+        style={{
+          backgroundImage: video
+            ? "linear-gradient(180deg, rgba(39,34,30,0.45) 0%, rgba(39,34,30,0.65) 55%, rgba(39,34,30,0.8) 100%)"
+            : "linear-gradient(rgba(39,34,30,0.88), rgba(39,34,30,0.93))",
+        }}
       />
       <div className="aurora-glow" aria-hidden="true" />
       <div className="light-rays" aria-hidden="true" />
