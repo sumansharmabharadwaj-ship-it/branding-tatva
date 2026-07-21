@@ -16,10 +16,13 @@ import { sectionWash } from "@/lib/sectionWash";
 // covers and a positioning paragraph nobody reads at the very bottom of a
 // page. This closes every page the way the site's own argument wants to
 // close — one line, a way to start, then the mark settling like credits —
-// instead of stopping on a sitemap. own-jagged-peaks.mp4 gives the closing
-// scene real motion (TexturedDark's optional video, mirroring PhotoHero's
-// own pattern) instead of a single frozen frame — chosen specifically
-// because it's not already the last thing a visitor sees on any one page
+// instead of stopping on a sitemap. higgsfield-golden-peaks.mp4 (a
+// Seedance 2.0 generation — a snow-lit ridge at golden hour, replacing
+// the previous own-jagged-peaks clip per direct feedback wanting a fresh,
+// higher-quality closing shot) gives the closing scene real motion
+// (TexturedDark's optional video, mirroring PhotoHero's own pattern)
+// instead of a single frozen frame — chosen specifically because it's
+// not already the last thing a visitor sees on any one page
 // (own-alpenglow-peak and own-moonlit-sea are both already load-bearing
 // elsewhere on Home, immediately before this section would follow them).
 
@@ -45,7 +48,7 @@ export function Footer() {
         <IndianPattern opacity={0.14} color="#F4EFE6" />
       </div>
 
-      <TexturedDark image="/images/own-jagged-peaks.jpg" video="/videos/own-jagged-peaks.mp4" className="py-24 sm:py-32">
+      <TexturedDark image="/images/higgsfield-golden-peaks-poster.jpg" video="/videos/higgsfield-golden-peaks.mp4" className="py-24 sm:py-32">
         <div className="footer-embers" aria-hidden="true">
           {EMBERS.map((ember, i) => (
             <span
