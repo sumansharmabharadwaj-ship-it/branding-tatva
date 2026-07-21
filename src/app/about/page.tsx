@@ -7,7 +7,7 @@ import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { TiltCard } from "@/components/TiltCard";
 import { PhotoHero } from "@/components/PhotoHero";
-import { ImageBreak } from "@/components/ImageBreak";
+import { VideoBreak } from "@/components/VideoBreak";
 import { NatureAccent } from "@/components/NatureAccent";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
@@ -67,22 +67,22 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        {/* Was a portrait of Suman on the trail, fixed for cropping but
-            still not landing — direct feedback that the photo wasn't
-            resonating with a quote specifically about a view. Swapped
-            to own-peaks.jpg: real jagged peaks against a dramatic sky,
-            the view itself rather than a portrait implying one. Wide
-            landscape source (2600x1737) crops far more gracefully into
-            an 85vh banner than the portrait shot did, and this is the
-            one real vista in the library not already shown at full
-            strength anywhere (only a faint 10%-opacity backdrop on
-            Home). Biased upward to keep the peaks-into-clouds moment in
-            frame over the flat dark foreground at the bottom. */}
-        <ImageBreak
-          image="/images/own-peaks.jpg"
+        {/* Static peaks photo still read as a repeat of the same library —
+            direct feedback to stop reusing stills and use real motion
+            here instead. higgsfield-stream-clarity.mp4: water moving
+            over rock in warm sidelight, unused anywhere else on the
+            site, vetted frame-by-frame first (the air.mp4 clip's name
+            promised nature and was actually an indoor desk scene, so
+            filenames alone aren't trusted here anymore). Square 1080x1080
+            source crops far more gracefully into an 85vh banner than the
+            old portrait shot ever did — roughly two-thirds of the frame
+            stays visible instead of a quarter. */}
+        <VideoBreak
+          src="/videos/higgsfield-stream-clarity.mp4"
+          poster="/images/higgsfield-stream-clarity-poster.jpg"
           quote="Clarity comes from climbing. It's the view from finally standing somewhere high enough to see it."
           height="85vh"
-          imagePosition="center 30%"
+          imagePosition="center"
           quoteVariant="left"
         />
 
