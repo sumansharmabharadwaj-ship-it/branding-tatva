@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { Container } from "@/components/Container";
 import { BREAK_OVERLAY_GRADIENT, toSvh } from "@/lib/media";
 import { EASE_AIR } from "@/lib/motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
@@ -104,6 +105,7 @@ export function VideoBreak({
   cameraPush = false,
   wordFade = false,
   spotlight = false,
+  topContent,
   children,
 }: {
   src: string;
@@ -123,6 +125,11 @@ export function VideoBreak({
   // A soft light following the cursor within this break, same
   // technique as the Home hero and Threshold split-screen.
   spotlight?: boolean;
+  // Extra content rendered above the quote, inside the same video —
+  // lets a section that wants its own lead-in text share one video
+  // instance instead of needing a second, separate <video> just to
+  // put motion behind that text too.
+  topContent?: React.ReactNode;
   children?: React.ReactNode;
 }) {
   const prefersReducedMotion = useReducedMotion();
@@ -143,7 +150,12 @@ export function VideoBreak({
   const restScale = usesParallax ? 1.16 : 1;
 
   return (
-    <div ref={ref} data-cursor-media className="relative overflow-hidden bg-soil" style={{ height: toSvh(height) }}>
+    <div
+      ref={ref}
+      data-cursor-media
+      className="relative flex flex-col overflow-hidden bg-soil"
+      style={{ height: toSvh(height) }}
+    >
       {prefersReducedMotion ? (
         <div className="absolute inset-0">
           {shouldLoadVideo && (
@@ -204,8 +216,14 @@ export function VideoBreak({
         />
       )}
 
+      {topContent && (
+        <div className="relative pt-20 sm:pt-28">
+          <Container>{topContent}</Container>
+        </div>
+      )}
+
       {quote && quoteVariant === "statement" && (
-        <div className="relative flex h-full flex-col items-center justify-center gap-14 px-6 text-center">
+        <div className="relative flex flex-1 flex-col items-center justify-center gap-14 px-6 text-center">
           <QuoteText
             quote={quote}
             wordFade={wordFade}
@@ -218,7 +236,7 @@ export function VideoBreak({
       )}
 
       {quote && quoteVariant === "left" && (
-        <div className="relative flex h-full items-end px-6 pb-12 sm:px-12 sm:pb-16">
+        <div className="relative flex flex-1 items-end px-6 pb-12 sm:px-12 sm:pb-16">
           <QuoteText
             quote={`“${quote}”`}
             wordFade={wordFade}
@@ -230,7 +248,7 @@ export function VideoBreak({
       )}
 
       {quote && quoteVariant === "center" && (
-        <div className="relative flex h-full items-center justify-center px-6 text-center">
+        <div className="relative flex flex-1 items-center justify-center px-6 text-center">
           <QuoteText
             quote={`“${quote}”`}
             wordFade={wordFade}

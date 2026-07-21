@@ -16,7 +16,6 @@ import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ElementReveal } from "@/components/ElementReveal";
 import { ElementRowBackground } from "@/components/ElementRowBackground";
-import { SectionVideoWash } from "@/components/SectionVideoWash";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
 import { CinematicHero } from "@/sections/Hero";
 import { Threshold } from "@/sections/Threshold";
@@ -95,66 +94,52 @@ export default function Home() {
 
         {/* Two-part editorial statement — the problem, then the philosophy,
             as one long unbroken chapter rather than two boxed sections.
-            Bold solid Air/Sage, not a tint — the section right after the
-            hero was still plain cream, reading as blank space against a
-            full-bleed video hero. Air (voice/clarity) also happens to fit
-            this section's own subject better than any other element.
-            An abstract swirling-light clip here read as a different
-            visual genre next to the real cinematic footage everywhere
-            else on the page. A CSS-only glow read as no video at all.
-            The actual fix: extend the same cinematic-waterlight footage
-            the VideoBreak below already uses up behind this text block
-            too, muted and tinted, so the whole passage — heading, then
-            VideoBreak's full-strength quote — plays as one continuous
-            cinematic moment instead of a flat-color block bolted onto a
-            separate video. Same clip, one extended scene, not a second
-            unrelated instance of it. */}
-        <section className="relative overflow-hidden pt-28 pb-16 sm:pt-40 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
-          <div className="relative overflow-hidden">
-            <SectionVideoWash
-              video="/videos/cinematic-waterlight.mp4"
-              poster="/images/cinematic-waterlight-poster.jpg"
-              color={ELEMENT_HEX.air}
-            />
-            <DustMotes />
-            <Container className="relative">
-              <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
-                <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-ivory">
-                  A brand can be visible and still go unnoticed.
-                </SplitReveal>
-                <Reveal delay={0.15}>
-                  <div className="max-w-md space-y-4 text-ivory/75 sm:ml-auto sm:text-right">
-                    <p>
-                      Being present differs from being recognised.
-                      Looking attractive differs from communicating
-                      clearly. Posting content differs from building
-                      recall.
-                    </p>
-                    <p>
-                      That gap is usually a{" "}
-                      <span className="font-semibold text-ivory underline decoration-sandstone underline-offset-4">
-                        clarity problem
-                      </span>
-                      , far more often than a visibility one.
-                    </p>
-                  </div>
-                </Reveal>
-              </div>
-            </Container>
-          </div>
+            This used to be a flat Sage text block sitting on top of a
+            separate VideoBreak below it — three different attempts to
+            put motion behind the text block on its own (an abstract
+            clip, a CSS glow, then a second instance of this same video)
+            each failed on either aesthetic fit or the site's own
+            no-repeat rule. The actual fix: there's only one video here
+            now. VideoBreak's new topContent slot renders the heading
+            and paragraph inside the SAME video instance the quote
+            already uses below it, so the whole passage is one
+            continuous cinematic moment — cinematic-waterlight.mp4
+            appears exactly once in the codebase, not twice. */}
+        <VideoBreak
+          src="/videos/cinematic-waterlight.mp4"
+          poster="/images/cinematic-waterlight-poster.jpg"
+          quote="Attention is the first thing any brand has to earn."
+          height="145vh"
+          cameraPush
+          wordFade
+          spotlight
+          topContent={
+            <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
+              <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-ivory">
+                A brand can be visible and still go unnoticed.
+              </SplitReveal>
+              <Reveal delay={0.15}>
+                <div className="max-w-md space-y-4 text-ivory/75 sm:ml-auto sm:text-right">
+                  <p>
+                    Being present differs from being recognised.
+                    Looking attractive differs from communicating
+                    clearly. Posting content differs from building
+                    recall.
+                  </p>
+                  <p>
+                    That gap is usually a{" "}
+                    <span className="font-semibold text-ivory underline decoration-sandstone underline-offset-4">
+                      clarity problem
+                    </span>
+                    , far more often than a visibility one.
+                  </p>
+                </div>
+              </Reveal>
+            </div>
+          }
+        />
 
-          <div className="mt-20 sm:mt-28">
-            <VideoBreak
-              src="/videos/cinematic-waterlight.mp4"
-              poster="/images/cinematic-waterlight-poster.jpg"
-              quote="Attention is the first thing any brand has to earn."
-              height="85vh"
-              cameraPush
-              wordFade
-              spotlight
-            />
-          </div>
-
+        <section className="relative overflow-hidden pb-16 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
           {/* Own-peaks silhouette, very faint, behind this text block only —
               the text block between the waterlight video and the Five
               Elements section's own photography was previously flat cream
