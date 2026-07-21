@@ -1,20 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState, type MouseEvent } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { contactSchema, brandStages, type ContactFormValues } from "@/lib/contact-schema";
 import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/Magnetic";
+import { useSpotlight } from "@/hooks/useSpotlight";
+import { EASE_AIR } from "@/lib/motion";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
 const inputClass =
   "mt-1 w-full rounded-md border border-border bg-warm-white px-3 py-2 text-sm text-soil placeholder:text-foreground-secondary/60 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-state-focus";
 
+let rippleId = 0;
+
+// The submit button is the single most consequential click on the site,
+// yet it was the only primary CTA with none of LinkButton's signature
+// interactions (cursor-spotlight sheen, click ripple) — it can't reuse
+// LinkButton directly (that component renders a Next Link, this needs a
+// real form-submit button), so the same two effects are wired here by
+// hand instead.
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const spotlightRef = useSpotlight(buttonRef, Boolean(prefersReducedMotion));
+  const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
+
+  function handleButtonClick(e: MouseEvent<HTMLButtonElement>) {
+    if (prefersReducedMotion) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const id = rippleId++;
+    setRipples((prev) => [...prev, { id, x: e.clientX - rect.left, y: e.clientY - rect.top }]);
+    setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 650);
+  }
 
   const {
     register,
@@ -136,21 +159,45 @@ export function ContactForm() {
 
       <Magnetic className="inline-block">
         <button
+          ref={buttonRef}
           type="submit"
+          onClick={handleButtonClick}
           disabled={status === "submitting"}
           className={cn(
-            "group/btn inline-flex items-center justify-center gap-1.5 rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:bg-action-primary-hover hover:-translate-y-0.5 hover:shadow-elevation-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-state-focus focus-visible:ring-offset-2 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+            "group/btn relative overflow-hidden inline-flex items-center justify-center gap-1.5 rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:bg-action-primary-hover hover:-translate-y-0.5 hover:shadow-elevation-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-state-focus focus-visible:ring-offset-2 disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
           )}
         >
-          {status === "submitting" ? "Sending…" : "Send enquiry"}
-          {status !== "submitting" && (
-            <span
-              aria-hidden="true"
-              className="inline-block -translate-x-1 opacity-0 transition-all duration-300 ease-earth group-hover/btn:translate-x-0 group-hover/btn:opacity-100"
-            >
-              &rarr;
-            </span>
+          <span
+            ref={spotlightRef}
+            aria-hidden="true"
+            className="cursor-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
+          />
+          {!prefersReducedMotion && (
+            <AnimatePresence>
+              {ripples.map((r) => (
+                <motion.span
+                  key={r.id}
+                  aria-hidden="true"
+                  className="pointer-events-none absolute rounded-full bg-current"
+                  style={{ left: r.x, top: r.y, transform: "translate(-50%, -50%)" }}
+                  initial={{ width: 0, height: 0, opacity: 0.3 }}
+                  animate={{ width: 220, height: 220, opacity: 0 }}
+                  transition={{ duration: 0.6, ease: EASE_AIR }}
+                />
+              ))}
+            </AnimatePresence>
           )}
+          <span className="relative z-10 inline-flex items-center gap-1.5">
+            {status === "submitting" ? "Sending…" : "Send enquiry"}
+            {status !== "submitting" && (
+              <span
+                aria-hidden="true"
+                className="inline-block -translate-x-1 opacity-0 transition-all duration-300 ease-earth group-hover/btn:translate-x-0 group-hover/btn:opacity-100"
+              >
+                &rarr;
+              </span>
+            )}
+          </span>
         </button>
       </Magnetic>
     </form>

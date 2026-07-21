@@ -7,6 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { TiltCard } from "@/components/TiltCard";
 import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { PhotoHero } from "@/components/PhotoHero";
+import { ImageBreak } from "@/components/ImageBreak";
 import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
 import { ElementGlyph } from "@/components/ElementGlyph";
@@ -116,6 +117,17 @@ export default function BlogPage() {
           </Container>
         </section>
         </PerspectiveReveal>
+
+        {/* Every other page closes on a real photographic beat before
+            the footer; the blog index went straight from the grid into
+            it, which audit flagged as the page with "almost no visual
+            variety at all." own-pond.jpg was the one real photo in the
+            library not yet used anywhere on the site. */}
+        <ImageBreak
+          image="/images/own-pond.jpg"
+          quote="Every idea here started as a note before it became something worth reading."
+          height="55vh"
+        />
       </main>
       <Footer />
     </>
