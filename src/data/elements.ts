@@ -29,8 +29,8 @@ export const elements: Element[] = [
     ],
     proof:
       "Full brand foundation work for MyShopInEurope, including audience definition, market analysis, and a core belief, mission, and promise.",
-    image: "/images/own-jagged-peaks.jpg",
-    video: "/videos/own-jagged-peaks.mp4",
+    image: "/images/higgsfield-himalayan-valley-poster.jpg",
+    video: "/videos/higgsfield-himalayan-valley.mp4",
   },
   {
     slug: "water",
@@ -60,8 +60,8 @@ export const elements: Element[] = [
     ],
     proof:
       "Campaign repositioning and script development for HerbalCart, moving the brand toward the identity it actually intended to carry.",
-    image: "/images/own-golden-branches-poster.jpg",
-    video: "/videos/own-golden-branches.mp4",
+    image: "/images/higgsfield-element-fire.jpg",
+    video: "/videos/higgsfield-element-fire.mp4",
   },
   {
     slug: "air",

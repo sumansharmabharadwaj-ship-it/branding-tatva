@@ -324,8 +324,8 @@ export default function Home() {
               title: "Already in business",
               description:
                 "An audit first, finding exactly where the story stops holding together.",
-              image: "/images/own-forest-stream-poster.jpg",
-              video: "/videos/own-forest-stream.mp4",
+              image: "/images/higgsfield-forest-stream-poster.jpg",
+              video: "/videos/higgsfield-forest-stream.mp4",
               gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
               ctaLabel: "Brand Clarity",
               ctaHref: "/services#brand-clarity",

@@ -9,12 +9,10 @@ import { useSpotlight } from "@/hooks/useSpotlight";
 // Dark section wrapper with a subtle organic texture behind the solid
 // soil color, instead of flat, uniform color. The gradient overlay keeps
 // contrast high enough that ivory text stays fully readable; the photo
-// itself is decorative texture (rock, weathered surface), not standing
-// in for a person or a claim about anything specific. Real photography
-// by default (own-jagged-peaks reads as abstract rock texture under
-// this much darkening), not the AI-generated image this used to
-// default to — every call site should still pass its own `image` where
-// a specific mood/location matters, this default is only the fallback.
+// itself is decorative texture, not standing in for a person or a claim
+// about anything specific. Every call site passes its own `image` — no
+// shared default, so no two sections can silently end up on the same
+// fallback photo.
 //
 // Optional `video` mirrors PhotoHero's own video/poster pattern — a
 // still photo reads as a frozen frame for the site's actual closing
@@ -25,12 +23,12 @@ import { useSpotlight } from "@/hooks/useSpotlight";
 export function TexturedDark({
   children,
   className,
-  image = "/images/own-jagged-peaks.jpg",
+  image,
   video,
 }: {
   children: React.ReactNode;
   className?: string;
-  image?: string;
+  image: string;
   video?: string;
 }) {
   const [ref, shouldLoad] = useLazyMount();

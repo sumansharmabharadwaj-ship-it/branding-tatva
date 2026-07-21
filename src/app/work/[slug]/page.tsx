@@ -82,8 +82,8 @@ export default async function CaseStudyPage({ params }: Props) {
       <Header transparent />
       <main id="main-content">
         <PhotoHero
-          video={project.heroVideo ?? "/videos/own-jagged-peaks.mp4"}
-          poster={project.heroPoster ?? "/images/own-jagged-peaks-wide-poster.jpg"}
+          video={project.heroVideo ?? "/videos/higgsfield-golden-ridge.mp4"}
+          poster={project.heroPoster ?? "/images/higgsfield-golden-ridge-poster.jpg"}
           minHeight="70vh"
           accentColor={project.heroVideo ? project.accent : undefined}
         >
@@ -155,14 +155,16 @@ export default async function CaseStudyPage({ params }: Props) {
           </Container>
         </section>
 
-        {/* Real footage, a distinct flowing-water mood rather than
-            another misty-forest shot. The quote itself is per-project
-            (closingQuote in data/projects.ts) so the words actually tie back
-            to that project's own challenge/outcome, instead of one generic
-            line sitting under every case study regardless of industry. */}
+        {/* Per-project closing footage (closingVideo/closingPoster in
+            data/projects.ts) — this used to be one shared clip repeated
+            under every case study, the same "why does everything look
+            the same" problem the rest of the site was already fixed
+            for. The quote is per-project too (closingQuote), so the
+            words actually tie back to that project's own challenge/
+            outcome instead of one generic line under every case study. */}
         <VideoBreak
-          src="/videos/own-forest-stream.mp4"
-          poster="/images/own-forest-stream-poster.jpg"
+          src={project.closingVideo ?? "/videos/higgsfield-elements-convergence.mp4"}
+          poster={project.closingPoster ?? "/images/higgsfield-elements-convergence-poster.jpg"}
           quote={
             project.closingQuote ??
             "Good strategy lets a path reveal itself rather than forcing one, the way water finds a way through stone."

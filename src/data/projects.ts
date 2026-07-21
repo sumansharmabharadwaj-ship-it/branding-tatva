@@ -19,6 +19,8 @@ export type Project = {
   cardVideo?: string; // ambient clip that autoplays on hover in the Work grid — abstract/atmospheric, not literal stock footage of the industry
   heroVideo?: string; // case-study detail page's own PhotoHero — a distinct world per project instead of one shared clip
   heroPoster?: string;
+  closingVideo?: string; // the case-study page's own closing VideoBreak — distinct per project instead of one shared clip repeated on every case study
+  closingPoster?: string;
 };
 
 // Client names cleared for public use by Suman. Every field below is
@@ -46,10 +48,12 @@ export const projects: Project[] = [
       "The clearest signal was impressions barely dropping (down just 10%) despite posting 48% less. The platform was actively rewarding the more relevant content instead of just showing it to fewer people. That's the difference between reach and trust.",
     closingQuote:
       "Fewer posts, each one earning its place. That's the difference between being seen and being remembered.",
-    cardImage: "/images/higgsfield-nutrition-morning.jpg",
-    cardVideo: "/videos/higgsfield-nutrition-morning.mp4",
+    cardImage: "/images/card-dr-haley-nutrition-poster.jpg",
+    cardVideo: "/videos/card-dr-haley-nutrition.mp4",
     heroVideo: "/videos/higgsfield-nutrition-morning.mp4",
     heroPoster: "/images/higgsfield-nutrition-morning-poster.jpg",
+    closingVideo: "/videos/hero-valley.mp4",
+    closingPoster: "/images/hero-valley-poster.jpg",
     featured: true,
     accent: "#5C6B4A", // sage
     stats: [
@@ -80,10 +84,12 @@ export const projects: Project[] = [
       "The sharpest strategic call was refusing to let 'MyShopInEurope' default to meaning 'cheap Indian goods.' Repositioning around craft and origin, ahead of price, changes who the platform can credibly sell to.",
     closingQuote:
       "A story a buyer can pass on to their own customers is worth more than the lowest price on the listing.",
-    cardImage: "/images/higgsfield-marketplace-warehouse.jpg",
-    cardVideo: "/videos/higgsfield-marketplace-warehouse.mp4",
+    cardImage: "/images/card-myshopineurope-poster.jpg",
+    cardVideo: "/videos/card-myshopineurope.mp4",
     heroVideo: "/videos/higgsfield-marketplace-warehouse.mp4",
     heroPoster: "/images/higgsfield-marketplace-warehouse-poster.jpg",
+    closingVideo: "/videos/hero-goldendunes.mp4",
+    closingPoster: "/images/hero-goldendunes-poster.jpg",
     featured: true,
     accent: "#B85A34", // clay
   },
@@ -102,10 +108,12 @@ export const projects: Project[] = [
       "Delivered a structured content system, built platform by platform, specifically around driving webinar registrations rather than generic engagement metrics.",
     closingQuote:
       "Content that only earns attention is unfinished. It has to lead somewhere before it counts as strategy.",
-    cardImage: "/images/higgsfield-executive-office.jpg",
-    cardVideo: "/videos/higgsfield-executive-office.mp4",
+    cardImage: "/images/card-executive-springboard-poster.jpg",
+    cardVideo: "/videos/card-executive-springboard.mp4",
     heroVideo: "/videos/higgsfield-executive-office.mp4",
     heroPoster: "/images/higgsfield-executive-office-poster.jpg",
+    closingVideo: "/videos/higgsfield-confident-light.mp4",
+    closingPoster: "/images/higgsfield-confident-light-poster.jpg",
     featured: true,
     accent: "#24394D", // indigo
   },
@@ -130,10 +138,12 @@ export const projects: Project[] = [
       "The work that landed best was the most native, rather than the most polished. Content that looked like a real person's Instagram, rather than an ad, consistently outperformed anything that read as produced.",
     closingQuote:
       "The version that felt real outperformed the version that looked expensive, every time.",
-    cardImage: "/images/higgsfield-herbalcart-modern.jpg",
-    cardVideo: "/videos/higgsfield-herbalcart-modern.mp4",
+    cardImage: "/images/card-herbalcart-poster.jpg",
+    cardVideo: "/videos/card-herbalcart.mp4",
     heroVideo: "/videos/higgsfield-herbalcart-modern.mp4",
     heroPoster: "/images/higgsfield-herbalcart-modern-poster.jpg",
+    closingVideo: "/videos/higgsfield-element-water.mp4",
+    closingPoster: "/images/higgsfield-element-water.jpg",
     featured: false,
     accent: "#C28A28", // ochre
   },
@@ -152,10 +162,12 @@ export const projects: Project[] = [
       "Produced a complete content portfolio of sixteen pieces spanning research, opinion, education, and fast consumption formats, structured around a deliberate arc: validate, challenge, humanise, define, rather than a loose content calendar.",
     closingQuote:
       "Trust with an expert and trust with a beginner are earned in two different languages, both of them necessary.",
-    cardImage: "/images/higgsfield-plaxonic-tech.jpg",
-    cardVideo: "/videos/higgsfield-plaxonic-tech.mp4",
+    cardImage: "/images/card-plaxonic-poster.jpg",
+    cardVideo: "/videos/card-plaxonic.mp4",
     heroVideo: "/videos/higgsfield-plaxonic-tech.mp4",
     heroPoster: "/images/higgsfield-plaxonic-tech-poster.jpg",
+    closingVideo: "/videos/hero-workhorizon.mp4",
+    closingPoster: "/images/hero-workhorizon-poster.jpg",
     featured: false,
     accent: "#CD7A4C", // terracotta
   },

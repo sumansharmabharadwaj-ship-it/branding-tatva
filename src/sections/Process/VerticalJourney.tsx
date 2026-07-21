@@ -25,7 +25,7 @@ export function VerticalJourney({ stages, elementColor, dark }: ProcessSectionPr
   return (
     <div ref={ref} className="relative mt-16 pl-12 sm:pl-16">
       <Image
-        src="/images/own-ridge-road-poster.jpg"
+        src="/images/higgsfield-forest-path.jpg"
         alt=""
         fill
         priority
