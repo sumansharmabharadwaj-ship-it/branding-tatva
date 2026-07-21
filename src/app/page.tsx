@@ -350,8 +350,12 @@ export default function Home() {
             as one of the longest "blank" runs on the site. Split into two
             washes, each in its own element-color family, so the two
             sections read as genuinely distinct rather than one long
-            beige stretch. */}
-        <GradientSections colors={[sectionWash("water", 8), sectionWash("water", 16)]}>
+            beige stretch. The strengths here (8/16) still computed to
+            within a few RGB values of plain cream — direct feedback that
+            the section right after the alpenglow-peak video still read
+            as blank space, not a deliberate transition. Pushed strong
+            enough to read as a real steel-blue-grey tint at a glance. */}
+        <GradientSections colors={[sectionWash("water", 25), sectionWash("water", 45)]}>
           {/* Process — the horizontal-pinned treatment (desktop, motion
               allowed) needs to break out of Container's max-w-6xl to read
               as full-bleed, so it sits as a sibling after it rather than
