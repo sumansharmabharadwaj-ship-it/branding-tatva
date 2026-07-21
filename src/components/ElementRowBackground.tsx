@@ -60,7 +60,13 @@ export function ElementRowBackground({
   }, [shouldLoad, prefersReducedMotion, active]);
 
   return (
-    <div ref={ref} className="absolute inset-0" aria-hidden="true">
+    // backgroundColor here (not just the tint overlay below) so there's
+    // always a solid fill behind this row/slide the instant it mounts —
+    // previously fully transparent until the image decoded, which read
+    // as blank empty space rather than a loading section whenever the
+    // image was slow to arrive (cold CDN cache, slow network, or simply
+    // not the active PinnedSlider slide yet).
+    <div ref={ref} className="absolute inset-0" style={{ backgroundColor: color }} aria-hidden="true">
       <motion.div
         className="absolute inset-0"
         initial={KEN_BURNS.initial}
