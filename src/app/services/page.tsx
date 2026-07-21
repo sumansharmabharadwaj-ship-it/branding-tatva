@@ -38,10 +38,18 @@ export default function ServicesPage() {
     <>
       <Header transparent />
       <main id="main-content">
+        {/* Was a static mountain-silhouette photo — the site's one
+            remaining static hero, and direct feedback pointed at the
+            reference site's own "Heat" chapter (a close-up glowing-embers
+            clip) as exactly the fire-element mood wanted here. A
+            close-up fire loop doesn't illustrate "services" literally,
+            but neither does any other hero on the site illustrate its
+            own page literally — it's the same atmospheric-backdrop
+            convention, just drawing on Fire instead of Earth/Water. */}
         <PhotoHero
-          image="/images/own-peaks-silhouette.jpg"
+          video="/videos/higgsfield-glowing-embers.mp4"
+          poster="/images/higgsfield-glowing-embers-poster.jpg"
           minHeight="70vh"
-          imagePosition="center 65%"
         >
           <Container className="relative py-20 text-center">
             <Reveal>

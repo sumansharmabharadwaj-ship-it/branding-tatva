@@ -400,12 +400,18 @@ export default function Home() {
             since FAQ's own accordion styling (soil text, clay hover) is
             built for a light backdrop — flipping it to dark would mean
             re-doing that component's states for one section, not worth
-            it here. */}
+            it here. The wash started at 0.82-0.88 (near-opaque, meant to
+            guarantee text contrast) but direct feedback was that it
+            crushed the video to almost nothing, the same "technically
+            there but invisible" problem TexturedDark's own overlay had
+            before it dropped its peak — brought down the same way,
+            leaning on the video's own dark tree trunks for contrast
+            instead of a near-solid cream layer. */}
         <section className="relative overflow-hidden py-20 sm:py-28">
           <BackgroundVideo video="/videos/higgsfield-forest-light.mp4" poster="/images/higgsfield-forest-light-poster.jpg" />
           <div
             className="absolute inset-0"
-            style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.82) 0%, rgba(244,239,230,0.88) 100%)" }}
+            style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.48) 0%, rgba(244,239,230,0.58) 100%)" }}
           />
           <Container className="relative max-w-2xl">
             <Reveal>

@@ -51,7 +51,21 @@ export function Footer() {
         <IndianPattern opacity={0.14} color="#F4EFE6" />
       </div>
 
-      <TexturedDark image="/images/own-jagged-peaks.jpg" video="/videos/own-jagged-peaks.mp4" className="py-24 sm:py-32">
+      {/* imagePosition biased down — own-jagged-peaks' own frame is a
+          pale sunset sky over the top ~55%, jagged silhouettes only in
+          the bottom half; center-cropping (the default) put a visibly
+          bright sky band right at this section's own top edge, directly
+          under the closing moonlit-sea break above it — repeated
+          feedback flagged that exact band as a leftover "divider" even
+          after the actual stroke/border was already removed. Cropping
+          toward the peaks instead keeps the section reading as
+          continuously dark from the section above straight through. */}
+      <TexturedDark
+        image="/images/own-jagged-peaks.jpg"
+        video="/videos/own-jagged-peaks.mp4"
+        imagePosition="center 85%"
+        className="py-24 sm:py-32"
+      >
         <div className="footer-embers" aria-hidden="true">
           {EMBERS.map((ember, i) => (
             <span

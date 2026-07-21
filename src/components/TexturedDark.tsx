@@ -25,11 +25,13 @@ export function TexturedDark({
   className,
   image,
   video,
+  imagePosition = "center",
 }: {
   children: React.ReactNode;
   className?: string;
   image: string;
   video?: string;
+  imagePosition?: string;
 }) {
   const [ref, shouldLoad] = useLazyMount();
   const prefersReducedMotion = useReducedMotion();
@@ -56,6 +58,7 @@ export function TexturedDark({
               <video
                 ref={videoRef}
                 className="absolute inset-0 h-full w-full object-cover"
+                style={{ objectPosition: imagePosition }}
                 src={video}
                 poster={image}
                 muted
@@ -76,7 +79,7 @@ export function TexturedDark({
                 fill
                 priority
                 sizes="100vw"
-                style={{ objectFit: "cover", objectPosition: "center" }}
+                style={{ objectFit: "cover", objectPosition: imagePosition }}
               />
             )}
           </>
@@ -90,12 +93,19 @@ export function TexturedDark({
           before switching to BREAK_OVERLAY_GRADIENT's ~0.6 peak. Same
           fix here: bring the darkest point down to what the rest of
           the site's video sections already use, so the footage
-          actually reads as moving. */}
+          actually reads as moving. The original 0.45 top stop still let
+          own-jagged-peaks.mp4's own bright sky/cloud frame read as a
+          near-white band right where it meets the section above —
+          direct, repeated feedback pointed at exactly this band as a
+          leftover "divider." imagePosition (below, biased toward the
+          mountains on the Footer's own call site) does the real work;
+          raising the stops here just keeps any residual sky a shade
+          darker regardless of crop. */}
       <div
         className="absolute inset-0"
         style={{
           backgroundImage: video
-            ? "linear-gradient(180deg, rgba(39,34,30,0.45) 0%, rgba(39,34,30,0.65) 55%, rgba(39,34,30,0.8) 100%)"
+            ? "linear-gradient(180deg, rgba(39,34,30,0.6) 0%, rgba(39,34,30,0.7) 55%, rgba(39,34,30,0.85) 100%)"
             : "linear-gradient(rgba(39,34,30,0.88), rgba(39,34,30,0.93))",
         }}
       />
