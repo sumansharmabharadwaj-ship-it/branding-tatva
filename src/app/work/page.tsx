@@ -47,12 +47,16 @@ export default function WorkPage() {
           </Container>
         </PhotoHero>
 
-        {/* Bold solid Soil, not the previous parchment tint — matches
-            every other photo/video section site-wide. CaseStudyCards are
-            already dark photographic cards so this only changes the
-            section's own now-empty fill. */}
+        {/* Was bold solid Soil, matching every other photo/video section
+            site-wide — but per direct feedback pointing at the reference
+            site's own restraint, a card grid doesn't need that: these
+            cards are already dark, self-contained photographic tiles, so
+            they read as their own visual weight regardless of what's
+            behind them. Letting them sit on the site's own light neutral
+            instead lets the photography carry the color, the same way
+            the reference's own image-forward sections do. */}
         <ClipReveal>
-          <section className="border-t border-border bg-soil py-16">
+          <section className="border-t border-border bg-background-alt py-16">
             <Container>
               <WorkGrid projects={projects} />
             </Container>

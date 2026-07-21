@@ -24,7 +24,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
             className={`rounded-full border px-4 py-1.5 text-xs font-medium uppercase tracking-wide transition-colors duration-300 ${
               filter === value
                 ? "border-action-primary bg-action-primary text-white"
-                : "border-ivory/30 text-ivory/70 hover:border-ivory/50 hover:text-ivory"
+                : "border-soil/25 text-foreground-secondary hover:border-soil/50 hover:text-soil"
             }`}
           >
             {value === "all" ? "All work" : "Featured"}

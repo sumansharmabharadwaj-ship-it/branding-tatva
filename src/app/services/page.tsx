@@ -60,22 +60,26 @@ export default function ServicesPage() {
           </Container>
         </PhotoHero>
 
-        {/* Bold solid Soil, not a tint — matches every other photo/video
-            section site-wide rather than competing with the cards' own
-            accent colors. The cards' fill used to be a translucent
-            `${color}14` alpha overlay, which only reads as a light tint
-            because it was sitting on cream; the same alpha over Soil would
-            blend dark-on-dark and disappear. blendHex computes an opaque
-            tint against warm-white instead, so the card stays legible
-            regardless of what's behind it. */}
-        <section id="offerings" className="scroll-mt-24 bg-soil py-14">
+        {/* Was bold solid Soil — per direct feedback pointing at the
+            reference site's own restraint, moved back to a light neutral
+            for this card grid. Cards keep their own opaque blendHex tint
+            (still legible either way) and lean on their colored top
+            border + icon for definition, the same restrained way the
+            reference site's own cards separate from their background. */}
+        <section id="offerings" className="scroll-mt-24 bg-background-alt py-14">
           <Container>
             <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {offerings.map((offer, i) => (
                 <Reveal key={offer.name} delay={i * 0.06} className="h-full">
                   <TiltCard glowColor={offer.color}>
+                    {/* border (all sides) added alongside the existing
+                        border-t-2 accent — the card's own fill is a
+                        light tint too close in lightness to the section's
+                        own background-alt to read as a distinct object by
+                        color alone (contrast-checked at ~1.1:1), so a
+                        real edge does the defining work instead. */}
                     <div
-                      className="spotlight-card relative flex h-full flex-col overflow-hidden rounded-lg border-t-2 p-6 shadow-elevation-sm transition-colors duration-300"
+                      className="spotlight-card relative flex h-full flex-col overflow-hidden rounded-lg border border-t-2 border-soil/10 p-6 shadow-elevation-sm transition-colors duration-300"
                       style={{
                         borderTopColor: offer.color,
                         backgroundColor: blendHex(offer.color, "#FCFAF6", 14),

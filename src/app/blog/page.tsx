@@ -66,12 +66,13 @@ export default function BlogPage() {
           </Container>
         </PhotoHero>
 
-        {/* Bold solid Soil, not the previous parchment tint. Blog cards
-            already use an opaque bg-background-elevated fill (not a
-            translucent alpha trick), so they read as light cards floating
-            on dark without any card-level change needed. */}
+        {/* Was bold solid Soil — per direct feedback pointing at the
+            reference site's own restraint, card grids read better on a
+            light neutral than a dark block. Blog cards already use an
+            opaque bg-background-elevated fill (not a translucent alpha
+            trick), so no card-level change needed either way. */}
         <PerspectiveReveal>
-        <section className="border-t border-border bg-soil py-16">
+        <section className="border-t border-border bg-background-alt py-16">
           <Container>
             <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
               {sorted.map((post, i) => (
@@ -81,9 +82,14 @@ export default function BlogPage() {
                   className={`h-full ${GRID_TILE_CLASSES[i % GRID_TILE_CLASSES.length]}`}
                 >
                   <TiltCard glowColor={elementColor(post.element)}>
+                    {/* border (all sides), not just border-t-2 — the
+                        card's near-white fill and the section's own
+                        background-alt are too close in lightness
+                        (~1.3:1) to separate by color alone now that the
+                        section isn't dark Soil anymore. */}
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="spotlight-card flex h-full flex-col rounded-lg border-t-2 bg-background-elevated p-6 shadow-elevation-sm transition-colors duration-300"
+                      className="spotlight-card flex h-full flex-col rounded-lg border border-t-2 border-soil/10 bg-background-elevated p-6 shadow-elevation-sm transition-colors duration-300"
                       style={{
                         borderTopColor: elementColor(post.element),
                         ["--card-color" as string]: elementColor(post.element),
