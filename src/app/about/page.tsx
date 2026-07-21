@@ -67,22 +67,22 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        {/* Real photo, not AI generation — Suman on the trail, the
-            mountain catching last light through the trees behind her.
-            The quote is about clarity earned by height, and this is
-            literally that: her own view from having climbed to it.
-            Source is a portrait-orientation shot (1800x2400) forced into
-            a wide 85vh banner — object-fit:cover only ever shows a ~23%
-            vertical slice of it regardless of position. The previous
-            "center 30%" landed on bare treetops with just the very top
-            of her headscarf clipped in at the bottom edge, reading as a
-            broken crop rather than a real photo. Repositioned to frame
-            her face through her hands in her lap instead. */}
+        {/* Was a portrait of Suman on the trail, fixed for cropping but
+            still not landing — direct feedback that the photo wasn't
+            resonating with a quote specifically about a view. Swapped
+            to own-peaks.jpg: real jagged peaks against a dramatic sky,
+            the view itself rather than a portrait implying one. Wide
+            landscape source (2600x1737) crops far more gracefully into
+            an 85vh banner than the portrait shot did, and this is the
+            one real vista in the library not already shown at full
+            strength anywhere (only a faint 10%-opacity backdrop on
+            Home). Biased upward to keep the peaks-into-clouds moment in
+            frame over the flat dark foreground at the bottom. */}
         <ImageBreak
-          image="/images/own-forest-clearing.jpg"
+          image="/images/own-peaks.jpg"
           quote="Clarity comes from climbing. It's the view from finally standing somewhere high enough to see it."
           height="85vh"
-          imagePosition="center 58%"
+          imagePosition="center 30%"
           quoteVariant="left"
         />
 
