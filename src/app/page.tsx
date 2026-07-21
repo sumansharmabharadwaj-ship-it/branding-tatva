@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -139,24 +138,18 @@ export default function Home() {
           }
         />
 
-        <section className="relative overflow-hidden pb-16 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
-          {/* Own-peaks silhouette, very faint, behind this text block only —
-              the text block between the waterlight video and the Five
-              Elements section's own photography was previously flat cream
-              for its full height, the kind of "text on a plain background"
-              stretch the site otherwise avoids. Many sharp peaks under one
-              continuous sky doubles as a quiet visual echo of "five
-              elements, one brand" without illustrating it literally. */}
-          <div className="relative mt-20 overflow-hidden sm:mt-28">
-            <Image
-              src="/images/own-peaks.jpg"
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-              style={{ opacity: 0.1 }}
-            />
+        <section className="relative pb-16 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
+          {/* Was a faint own-peaks.jpg background — one more mountain/ridge
+              photo on a site that already has several (Footer, Home
+              elements row, Services, Work hero), even without repeating
+              the exact file. Dropped rather than reaching for another
+              nature shot just to fill the space; flat Sage carries this
+              transitional text block fine on its own, same as the
+              section above it. Copy tightened from three paragraphs to
+              two — the "most brands only have one or two" contrast and
+              the personal closing line were saying adjacent things and
+              read as padding rather than two distinct points. */}
+          <div className="relative mt-20 sm:mt-28">
             <Container className="relative">
               <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
                 <Reveal className="sm:order-2">
@@ -170,24 +163,21 @@ export default function Home() {
                   <div className="max-w-md space-y-4 text-ivory/75">
                     <p>
                       Every brand needs the same five things: something
-                      solid to stand on, a way of moving through a
-                      person&apos;s day, a spark that earns a second look,
-                      a voice, and the quiet consistency that actually
-                      gets remembered. Earth, water, fire, air, and space
-                      are the names for five real jobs, dressed up as
+                      solid to stand on, a way of moving through
+                      someone&apos;s day, a spark that earns a second look,
+                      a voice, and the consistency that gets remembered.
+                      Earth, water, fire, air, and space, dressed up as
                       a theme.
                     </p>
                     <p>
-                      Most brands are built with one or two of these, a
-                      logo with no positioning behind it, a content
-                      calendar with no voice tying it together. The ones
-                      people remember are built with all five, working as
-                      one system.
-                    </p>
-                    <p className="font-medium text-ivory">
-                      This is real work: the actual
-                      method behind every project below, and the one
-                      I&apos;d use on yours.
+                      Most brands are built with one or two. The ones
+                      people remember use all five, working as one
+                      system —{" "}
+                      <span className="font-medium text-ivory">
+                        the method behind every project below, and the
+                        one I&apos;d use on yours
+                      </span>
+                      .
                     </p>
                   </div>
                 </Reveal>
