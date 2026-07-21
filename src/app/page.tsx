@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -19,6 +18,7 @@ import { Threshold } from "@/sections/Threshold";
 import { VideoBreak } from "@/components/VideoBreak";
 import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
 import { ProcessSection } from "@/sections/Process";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -357,8 +357,8 @@ export default function Home() {
         </section>
 
         <VideoBreak
-          src="/videos/own-alpenglow-peak.mp4"
-          poster="/images/own-alpenglow-peak-poster.jpg"
+          src="/videos/higgsfield-lone-pine.mp4"
+          poster="/images/higgsfield-lone-pine-poster.jpg"
           quote="Every strong brand has a moment like this, quiet, and completely sure of itself."
           height="92vh"
         />
@@ -391,22 +391,18 @@ export default function Home() {
 
         {/* Had zero photo/video at all — direct feedback that it read as
             flat and empty next to every other section on the site.
-            higgsfield-architecture-columns.jpg (unused elsewhere, real
-            photography): light through structure, a quiet visual echo
-            of "finding clarity" without illustrating the FAQ content
-            literally. Kept as a light cream wash rather than the dark
-            overlay Process/Five-Elements use, since FAQ's own accordion
-            styling (soil text, clay hover) is built for a light
-            backdrop — flipping it to dark would mean re-doing that
-            component's states for one section, not worth it here. */}
+            higgsfield-forest-light.mp4 (a Seedance 2.0 generation,
+            replacing the earlier static higgsfield-architecture-columns.jpg
+            per direct feedback wanting motion here too): tall pines in a
+            hazy valley, a quiet visual echo of "finding clarity" without
+            illustrating the FAQ content literally. Kept as a light cream
+            wash rather than the dark overlay Process/Five-Elements use,
+            since FAQ's own accordion styling (soil text, clay hover) is
+            built for a light backdrop — flipping it to dark would mean
+            re-doing that component's states for one section, not worth
+            it here. */}
         <section className="relative overflow-hidden py-20 sm:py-28">
-          <Image
-            src="/images/higgsfield-architecture-columns.jpg"
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover"
-          />
+          <BackgroundVideo video="/videos/higgsfield-forest-light.mp4" poster="/images/higgsfield-forest-light-poster.jpg" />
           <div
             className="absolute inset-0"
             style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.82) 0%, rgba(244,239,230,0.88) 100%)" }}

@@ -23,7 +23,7 @@ import { sectionWash } from "@/lib/sectionWash";
 // (TexturedDark's optional video, mirroring PhotoHero's own pattern)
 // instead of a single frozen frame — chosen specifically because it's
 // not already the last thing a visitor sees on any one page
-// (own-alpenglow-peak and own-moonlit-sea are both already load-bearing
+// (higgsfield-lone-pine and own-moonlit-sea are both already load-bearing
 // elsewhere on Home, immediately before this section would follow them).
 
 const ELEMENT_GLYPHS: { slug: "earth" | "water" | "fire" | "air" | "space"; color: string }[] = [
