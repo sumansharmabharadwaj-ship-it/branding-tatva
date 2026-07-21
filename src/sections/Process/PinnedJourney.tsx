@@ -116,7 +116,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
               ref={(node) => {
                 stageRefs.current[i] = node;
               }}
-              className="relative flex h-full items-center px-6 sm:px-16"
+              className="absolute inset-0 flex items-center px-6 sm:px-16"
               style={{ opacity: i === 0 ? 1 : 0, pointerEvents: i === activeIndex ? "auto" : "none" }}
               aria-hidden={i !== activeIndex}
             >
