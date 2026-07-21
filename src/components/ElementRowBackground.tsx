@@ -24,10 +24,12 @@ export function ElementRowBackground({
   image,
   video,
   color,
+  imagePosition = "center",
 }: {
   image: string;
   video?: string;
   color: string;
+  imagePosition?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -61,14 +63,14 @@ export function ElementRowBackground({
           fill
           priority
           sizes="100vw"
-          style={{ objectFit: "cover", objectPosition: "center" }}
+          style={{ objectFit: "cover", objectPosition: imagePosition }}
         />
       </motion.div>
       {video && shouldLoad && !prefersReducedMotion && (
         <video
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
-          style={{ opacity: videoReady ? 1 : 0 }}
+          style={{ opacity: videoReady ? 1 : 0, objectPosition: imagePosition }}
           onCanPlay={() => setVideoReady(true)}
           src={video}
           muted

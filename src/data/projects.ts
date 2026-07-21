@@ -15,6 +15,7 @@ export type Project = {
   stats?: { value: string; label: string }[]; // real, verified numbers only — pulled from `outcome` for visual callouts
   closingQuote?: string; // the case-study page's closing VideoBreak — grounded in this project's own challenge/insight, not a generic line shared across every project
   cardImage?: string; // background photo for the Home page's secondary "Selected work" cards
+  cardImagePosition?: string; // object-position override for cardImage/cardVideo — CinematicCardMedia defaults to center, which crops off-center subjects
   cardVideo?: string; // ambient clip that autoplays on hover in the Work grid — abstract/atmospheric, not literal stock footage of the industry
   heroVideo?: string; // case-study detail page's own PhotoHero — a distinct world per project instead of one shared clip
   heroPoster?: string;

@@ -104,18 +104,32 @@ export default function ServicesPage() {
                       className="relative flex h-full flex-col overflow-hidden border-t-2 p-6 shadow-elevation-sm"
                       style={{ borderColor: el.color }}
                     >
-                      <div className="absolute inset-0" aria-hidden="true" style={{ opacity: 0.14 }}>
-                        <div className="absolute inset-0" style={{ backgroundColor: el.color }} />
+                      {/* Photo at real opacity, tinted rather than washed
+                          out — a flat 90%-opacity fill used to sit directly
+                          on top of an already-faint (14%) photo, crushing it
+                          down to roughly 1-2% effective visibility. Same
+                          fix already applied to the Home page's Five
+                          Elements rows (see ElementRowBackground.tsx):
+                          full-opacity photo, a color-multiply wash tied to
+                          the element's own color, then a much lighter
+                          legibility gradient instead of a near-opaque card
+                          fill. */}
+                      <div className="absolute inset-0" aria-hidden="true">
                         <Image
                           src={el.image}
                           alt=""
                           fill
                           priority
                           sizes="(min-width: 1024px) 20vw, 100vw"
-                          style={{ objectFit: "cover", objectPosition: "center", mixBlendMode: "color" }}
+                          style={{ objectFit: "cover", objectPosition: "center" }}
                         />
+                        <div className="absolute inset-0" style={{ backgroundColor: el.color, opacity: 0.24, mixBlendMode: "multiply" }} />
                       </div>
-                      <div className="absolute inset-0 bg-background-elevated/90" aria-hidden="true" />
+                      <div
+                        className="absolute inset-0"
+                        aria-hidden="true"
+                        style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.55) 0%, rgba(244,239,230,0.75) 100%)" }}
+                      />
                       <div className="relative">
                         <ElementGlyph
                           slug={el.slug}

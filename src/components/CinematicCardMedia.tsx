@@ -37,6 +37,7 @@ export function CinematicCardMedia({
   isHovered = false,
   dust = false,
   accent,
+  imagePosition = "center",
 }: {
   image?: string;
   video?: string;
@@ -45,6 +46,7 @@ export function CinematicCardMedia({
   isHovered?: boolean;
   dust?: boolean;
   accent?: string;
+  imagePosition?: string;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ref, shouldLoad] = useLazyMount();
@@ -78,14 +80,14 @@ export function CinematicCardMedia({
       <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-110">
         {image && (
           <div className="absolute inset-0 transition-[filter] duration-500" style={{ filter: mediaFilter }}>
-            <KenBurnsImage image={image} gradient={gradient} sizes={sizes} />
+            <KenBurnsImage image={image} gradient={gradient} sizes={sizes} imagePosition={imagePosition} />
           </div>
         )}
         {video && shouldLoad && !prefersReducedMotion && (
           <video
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover transition-[opacity,filter] duration-500"
-            style={{ opacity: videoReady ? 1 : 0, filter: mediaFilter }}
+            style={{ opacity: videoReady ? 1 : 0, filter: mediaFilter, objectPosition: imagePosition }}
             onCanPlay={() => setVideoReady(true)}
             src={video}
             muted

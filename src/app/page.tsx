@@ -185,7 +185,7 @@ export default function Home() {
             {elements.map((el, i) => (
               <ElementReveal key={el.slug} slug={el.slug} delay={i * 0.06}>
                 <div className="relative overflow-hidden">
-                  <ElementRowBackground image={el.image} video={el.video} color={el.color} />
+                  <ElementRowBackground image={el.image} video={el.video} color={el.color} imagePosition={el.imagePosition} />
                   <Container>
                   <div
                     id={el.slug}

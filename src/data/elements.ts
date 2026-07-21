@@ -11,6 +11,7 @@ export type Element = {
   proof: string; // real work that demonstrates this element
   image: string; // backdrop photo, blended to this element's color — see ElementsConstellation.tsx for why this isn't one generic unrelated photo
   video?: string; // ambient loop for the Home row background (ElementRowBackground) — image stays the Ken Burns fallback/poster
+  imagePosition?: string; // object-position override — ElementRowBackground defaults to center, which crops off-center subjects
 };
 
 export const elements: Element[] = [
