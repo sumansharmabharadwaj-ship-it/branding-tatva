@@ -162,8 +162,8 @@ export default function Home() {
                       person&apos;s day, a spark that earns a second look,
                       a voice, and the quiet consistency that actually
                       gets remembered. Earth, water, fire, air, and space
-                      are names for those
-                      five jobs, more than a theme.
+                      are the names for five real jobs, dressed up as
+                      a theme.
                     </p>
                     <p>
                       Most brands are built with one or two of these, a
@@ -173,7 +173,7 @@ export default function Home() {
                       one system.
                     </p>
                     <p className="font-medium text-soil">
-                      Real work, more than a mood board: the actual
+                      This is real work: the actual
                       method behind every project below, and the one
                       I&apos;d use on yours.
                     </p>

@@ -67,7 +67,7 @@ export default function AboutPage() {
             literally that: her own view from having climbed to it. */}
         <ImageBreak
           image="/images/own-forest-clearing.jpg"
-          quote="Clarity comes from climbing, more than waiting. It's the view from finally standing somewhere high enough to see it."
+          quote="Clarity comes from climbing. It's the view from finally standing somewhere high enough to see it."
           height="85vh"
           imagePosition="center 30%"
           quoteVariant="left"
