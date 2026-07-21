@@ -8,7 +8,6 @@ import { Reveal } from "@/components/Reveal";
 import { TiltCard } from "@/components/TiltCard";
 import { PhotoHero } from "@/components/PhotoHero";
 import { ImageBreak } from "@/components/ImageBreak";
-import { JaggedEdge } from "@/components/JaggedEdge";
 import { NatureAccent } from "@/components/NatureAccent";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
@@ -56,8 +55,7 @@ export default function AboutPage() {
             hero was still plain cream, the same "blank" transition Phase 6
             targets sitewide. Dark text stays as-is; Sandstone is light
             enough to keep full contrast without flipping to ivory. */}
-        <section className="relative pb-20 pt-20 sm:pb-28 sm:pt-28" style={{ backgroundColor: SANDSTONE }}>
-          <JaggedEdge color={SANDSTONE} />
+        <section className="pb-20 pt-20 sm:pb-28 sm:pt-28" style={{ backgroundColor: SANDSTONE }}>
           <Container>
             <Reveal>
               <div className="max-w-xl space-y-5 text-foreground-secondary">
