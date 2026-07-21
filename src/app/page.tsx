@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -235,35 +236,35 @@ export default function Home() {
                   <Container>
                   <div
                     id={el.slug}
-                    className={`relative grid items-baseline gap-4 rounded-xl bg-background/55 px-4 py-10 backdrop-blur-[2px] sm:grid-cols-[auto_1fr_1.2fr] sm:gap-10 sm:bg-transparent sm:px-0 sm:py-14 sm:backdrop-blur-none ${
+                    className={`relative grid items-baseline gap-4 rounded-xl bg-soil/45 px-4 py-9 backdrop-blur-[2px] sm:grid-cols-[auto_1fr_1.2fr] sm:gap-10 sm:bg-transparent sm:px-0 sm:py-11 sm:backdrop-blur-none ${
                       i % 2 === 1 ? "sm:text-right" : ""
                     }`}
                   >
                     <div className={`flex items-baseline gap-3 ${i % 2 === 1 ? "sm:flex-row-reverse" : ""}`}>
                       <span
-                        className="font-display text-[clamp(3rem,7vw,5.5rem)] font-semibold leading-none opacity-[0.22]"
+                        className="font-display text-[clamp(3rem,7vw,5.5rem)] font-semibold leading-none opacity-40"
                         style={{ color: el.color }}
                       >
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <ElementGlyph
                         slug={el.slug}
-                        className="h-7 w-7 shrink-0 opacity-70 sm:h-9 sm:w-9"
+                        className="h-7 w-7 shrink-0 opacity-90 sm:h-9 sm:w-9"
                         style={{ color: el.color }}
                       />
                     </div>
                     <p
-                      className={`font-display text-2xl font-semibold text-soil sm:text-3xl ${
+                      className={`font-display text-2xl font-semibold text-ivory sm:text-3xl ${
                         i % 2 === 1 ? "sm:order-3" : ""
                       }`}
                     >
                       {el.name}
                     </p>
                     <div className={i % 2 === 1 ? "sm:order-2" : ""}>
-                      <p className="font-display text-lg italic text-foreground-secondary">
+                      <p className="font-display text-lg italic text-ivory/85">
                         &ldquo;{el.poetic}&rdquo;
                       </p>
-                      <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
+                      <p className="mt-2 text-sm text-ivory/75">{el.meaning}</p>
                     </div>
                   </div>
                   </Container>
@@ -403,21 +404,39 @@ export default function Home() {
           </section>
         </GradientSections>
 
-        <GradientSections colors={[sectionWash("fire", 10), sectionWash("fire", 18)]}>
-          {/* FAQ */}
-          <section className="py-20">
-            <Container className="max-w-2xl">
-              <Reveal>
-                <h2 className="text-display-sm font-display font-semibold text-soil">
-                  Common questions
-                </h2>
-              <div className="mt-8">
-                <FAQ />
-              </div>
-            </Reveal>
-          </Container>
-          </section>
-        </GradientSections>
+        {/* Had zero photo/video at all — direct feedback that it read as
+            flat and empty next to every other section on the site.
+            higgsfield-architecture-columns.jpg (unused elsewhere, real
+            photography): light through structure, a quiet visual echo
+            of "finding clarity" without illustrating the FAQ content
+            literally. Kept as a light cream wash rather than the dark
+            overlay Process/Five-Elements use, since FAQ's own accordion
+            styling (soil text, clay hover) is built for a light
+            backdrop — flipping it to dark would mean re-doing that
+            component's states for one section, not worth it here. */}
+        <section className="relative overflow-hidden py-20">
+          <Image
+            src="/images/higgsfield-architecture-columns.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div
+            className="absolute inset-0"
+            style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.82) 0%, rgba(244,239,230,0.88) 100%)" }}
+          />
+          <Container className="relative max-w-2xl">
+            <Reveal>
+              <h2 className="text-display-sm font-display font-semibold text-soil">
+                Common questions
+              </h2>
+            <div className="mt-8">
+              <FAQ />
+            </div>
+          </Reveal>
+        </Container>
+        </section>
 
         {/* Closing chapter — the contemplative statement and the final CTA
             used to be two separate sections (a video break, then a flat

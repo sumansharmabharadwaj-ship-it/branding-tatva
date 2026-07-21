@@ -5,21 +5,26 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { useLazyMount } from "@/hooks/useLazyMount";
+import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 
 const KEN_BURNS = kenBurnsAnimation({ scale: 1.06, duration: 26 });
 
-// The photographic backdrop behind each Five Elements row. Previously
-// rendered at 16% opacity with mix-blend-mode: color — a blend mode that
-// keeps only the photo's hue/saturation and takes luminosity from
-// whatever's behind it, which against this section's pale cream
-// background crushed five real photos down to a barely-visible tint.
-// The row read as a flat color card, not a photograph. Now the photo
-// shows at real opacity, and where a matching clip exists (video),
-// cross-fades into a continuously-playing loop once the row nears the
-// viewport instead of just drifting via Ken Burns — the image alone
-// still carries the Ken Burns drift as the poster/fallback. A tinted
-// wash in the element's own color keeps the five rows reading as one
-// coherent set rather than five unrelated photos or clips.
+// The photographic backdrop behind each Five Elements row. First fix
+// (16% opacity + mix-blend-mode: color) crushed the photo to a barely
+// visible tint. Second attempt kept real photo opacity but painted a
+// 55-70%-opaque cream gradient on top for text contrast — direct
+// feedback that this was just as washed-out, only cream instead of
+// grey. This now reuses the same dark overlay every other photo/video
+// section on the site already uses (BREAK_OVERLAY_GRADIENT), which is
+// why the row's text also flips to ivory in page.tsx — dark text was
+// only ever legible against the old cream wash, not against a photo
+// that's actually visible. Photo shows at real opacity, and where a
+// matching clip exists (video), cross-fades into a continuously-
+// playing loop once the row nears the viewport instead of just
+// drifting via Ken Burns — the image alone still carries the Ken
+// Burns drift as the poster/fallback. A light tint in the element's
+// own color keeps the five rows reading as one coherent set rather
+// than five unrelated photos or clips.
 export function ElementRowBackground({
   image,
   video,
@@ -79,11 +84,8 @@ export function ElementRowBackground({
           preload="metadata"
         />
       )}
-      <div className="absolute inset-0" style={{ backgroundColor: color, opacity: 0.22, mixBlendMode: "multiply" }} />
-      <div
-        className="absolute inset-0"
-        style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.55) 0%, rgba(244,239,230,0.7) 100%)" }}
-      />
+      <div className="absolute inset-0" style={{ backgroundColor: color, opacity: 0.16, mixBlendMode: "multiply" }} />
+      <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
     </div>
   );
 }
