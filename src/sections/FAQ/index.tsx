@@ -13,12 +13,16 @@ export function FAQ() {
     <div className="divide-y divide-border">
       {faqs.map((item, i) => {
         const isOpen = openIndex === i;
+        const questionId = `faq-question-${i}`;
+        const answerId = `faq-answer-${i}`;
         return (
           <div key={item.question} className="py-1">
             <button
               type="button"
+              id={questionId}
               className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left font-medium text-soil transition-colors duration-300 hover:bg-clay/8 focus-visible:bg-clay/8"
               aria-expanded={isOpen}
+              aria-controls={answerId}
               onClick={() => setOpenIndex(isOpen ? null : i)}
             >
               {item.question}
@@ -33,6 +37,9 @@ export function FAQ() {
             <AnimatePresence initial={false}>
               {isOpen && (
                 <motion.div
+                  id={answerId}
+                  role="region"
+                  aria-labelledby={questionId}
                   variants={prefersReducedMotion ? undefined : answerVariants}
                   initial="initial"
                   animate="animate"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type MouseEvent } from "react";
+import { cloneElement, isValidElement, useId, useRef, useState, type MouseEvent, type ReactElement } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -73,7 +73,7 @@ export function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="rounded-lg border border-state-success/40 bg-state-success/10 p-6">
+      <div role="status" className="rounded-lg border border-state-success/40 bg-state-success/10 p-6">
         <p className="font-display text-xl font-semibold text-soil">Thank you, that&apos;s in.</p>
         <p className="mt-2 text-sm text-foreground-secondary">
           I read every enquiry personally and reply within a few days. If it&apos;s
@@ -211,14 +211,22 @@ function Field({
 }: {
   label: string;
   error?: string;
-  children: React.ReactNode;
+  children: ReactElement<{ "aria-invalid"?: boolean; "aria-describedby"?: string }>;
 }) {
+  const errorId = useId();
   return (
     <label className="block text-sm font-medium text-soil">
       {label}
-      {children}
+      {isValidElement(children)
+        ? cloneElement(children, {
+            "aria-invalid": Boolean(error),
+            "aria-describedby": error ? errorId : undefined,
+          })
+        : children}
       {error && (
-        <span className="mt-1 block text-xs font-normal text-state-error">{error}</span>
+        <span id={errorId} className="mt-1 block text-xs font-normal text-state-error">
+          {error}
+        </span>
       )}
     </label>
   );

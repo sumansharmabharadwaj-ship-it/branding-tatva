@@ -19,6 +19,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
           <button
             key={value}
             type="button"
+            aria-pressed={filter === value}
             onClick={() => setFilter(value)}
             className={`rounded-full border px-4 py-1.5 text-xs font-medium uppercase tracking-wide transition-colors duration-300 ${
               filter === value
@@ -30,6 +31,11 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
           </button>
         ))}
       </div>
+
+      <p className="sr-only" role="status">
+        Showing {visible.length} {visible.length === 1 ? "project" : "projects"}
+        {filter === "featured" ? ", featured only" : ""}.
+      </p>
 
       <motion.div layout className="spotlight-grid mt-8 grid items-stretch gap-6 md:grid-cols-6">
         <AnimatePresence mode="popLayout">
