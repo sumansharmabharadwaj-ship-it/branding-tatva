@@ -228,7 +228,7 @@ export function VideoBreak({
             quote={quote}
             wordFade={wordFade}
             prefersReducedMotion={prefersReducedMotion}
-            className="max-w-4xl font-display text-4xl font-semibold leading-[1.1] text-ivory sm:text-5xl"
+            className="max-w-4xl font-display text-4xl font-normal leading-[1.1] text-ivory sm:text-5xl"
             style={{ textShadow: "0 2px 14px rgba(0,0,0,0.85), 0 1px 4px rgba(0,0,0,0.9)" }}
           />
           {children}

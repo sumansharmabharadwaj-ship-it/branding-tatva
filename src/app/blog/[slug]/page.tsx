@@ -90,7 +90,7 @@ export default async function BlogPostPage({ params }: Props) {
                 />
                 {element?.name ?? post.element}
               </span>
-              <h1 className="mt-6 font-display text-[clamp(1.75rem,4.5vw,3rem)] font-semibold leading-[1.1] text-ivory">
+              <h1 className="mt-6 font-display text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.1] text-ivory">
                 {post.title}
               </h1>
               <p className="mt-4 text-sm text-ivory/60">

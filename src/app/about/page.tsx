@@ -41,7 +41,7 @@ export default function AboutPage() {
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 About
               </span>
-              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(1.75rem,4vw,3rem)] font-semibold leading-[1.15] text-ivory">
+              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(1.75rem,4vw,3rem)] font-normal leading-[1.15] text-ivory">
                 {aboutIntro.opening}
               </h1>
               <div className="mt-8">
@@ -104,7 +104,7 @@ export default function AboutPage() {
             </Reveal>
             <div className="grid gap-12 sm:grid-cols-2">
               <Reveal delay={0.1}>
-                <h2 className="text-display-sm font-display font-semibold text-ivory">
+                <h2 className="text-display-sm font-display font-normal text-ivory">
                   Working method
                 </h2>
                 <p className="mt-4 text-ivory/75">
@@ -124,7 +124,7 @@ export default function AboutPage() {
               </Reveal>
 
               <Reveal delay={0.15}>
-                <h2 className="text-display-sm font-display font-semibold text-ivory">
+                <h2 className="text-display-sm font-display font-normal text-ivory">
                   Recent experience
                 </h2>
                 <ul className="mt-4 space-y-4">
@@ -150,7 +150,7 @@ export default function AboutPage() {
           <Container>
             <div className="grid gap-8 md:grid-cols-[220px_1fr] md:gap-12">
               <Reveal>
-                <h2 className="text-display-sm font-display font-semibold text-ivory md:sticky md:top-28">
+                <h2 className="text-display-sm font-display font-normal text-ivory md:sticky md:top-28">
                   Credentials
                 </h2>
               </Reveal>
@@ -166,7 +166,7 @@ export default function AboutPage() {
                         className="spotlight-card flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-elevation-sm transition-colors duration-300"
                         style={{ borderTopColor: c.color, ["--card-color" as string]: c.color }}
                       >
-                        <p className={c.featured ? "font-display text-lg font-semibold text-soil" : "font-medium text-soil"}>
+                        <p className={c.featured ? "font-display text-lg font-normal text-soil" : "font-medium text-soil"}>
                           {c.label}
                         </p>
                         <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
@@ -196,7 +196,7 @@ export default function AboutPage() {
               WHY
             </span>
             <Reveal>
-              <h2 className="relative text-display-sm font-display font-semibold text-ivory">
+              <h2 className="relative text-display-sm font-display font-normal text-ivory">
                 Why this site looks the way it does
               </h2>
               <p className="mt-4 max-w-2xl text-ivory/75">
@@ -210,11 +210,11 @@ export default function AboutPage() {
               {designChoices.map((choice, i) => (
                 <Reveal key={choice.title} delay={i * 0.06}>
                   <div className="relative grid gap-3 py-8 sm:grid-cols-[auto_1fr] sm:gap-10 sm:py-10">
-                    <span className="font-display text-5xl font-semibold leading-none text-ivory/15 sm:text-6xl">
+                    <span className="font-display text-5xl font-normal leading-none text-ivory/15 sm:text-6xl">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <div>
-                      <p className="font-display text-lg font-semibold text-ivory">{choice.title}</p>
+                      <p className="font-display text-lg font-normal text-ivory">{choice.title}</p>
                       <p className="mt-2 max-w-2xl text-sm text-ivory/75">
                         {choice.detail}
                       </p>

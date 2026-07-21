@@ -47,7 +47,7 @@ export function FeaturedSecondaryCard({ project }: { project: Project }) {
         />
         <div className="relative border-t-2 pt-4" style={{ borderColor: project.accent }}>
           <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">{project.industry}</p>
-          <p className="mt-2 font-display text-2xl font-semibold text-ivory transition-colors group-hover:text-clay">
+          <p className="mt-2 font-display text-2xl font-normal text-ivory transition-colors group-hover:text-clay">
             {project.title}
           </p>
           <p className="mt-3 text-sm text-ivory/80">{project.outcome}</p>

@@ -112,7 +112,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
               <div className="max-w-xl">
                 <div className="flex items-center gap-4">
                   <span
-                    className="font-display text-[clamp(3.5rem,9vw,6.5rem)] font-semibold leading-none opacity-40"
+                    className="font-display text-[clamp(3.5rem,9vw,6.5rem)] font-normal leading-none opacity-40"
                     style={{ color }}
                   >
                     {String(i + 1).padStart(2, "0")}
@@ -123,7 +123,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
                     style={{ color }}
                   />
                 </div>
-                <p className="mt-4 font-display text-3xl font-semibold text-ivory sm:text-4xl">{stage.stage}</p>
+                <p className="mt-4 font-display text-3xl font-normal text-ivory sm:text-4xl">{stage.stage}</p>
                 <p className="mt-4 max-w-lg text-sm text-ivory/75 sm:text-base">{stage.description}</p>
               </div>
             </div>

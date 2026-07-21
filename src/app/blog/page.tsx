@@ -54,7 +54,7 @@ export default function BlogPage() {
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 Blog
               </span>
-              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-semibold leading-[1.1] text-ivory">
+              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory">
                 Notes on brand strategy, one element at a time.
               </h1>
               <p className="mx-auto mt-4 max-w-xl text-ivory/70">
@@ -104,7 +104,7 @@ export default function BlogPage() {
                         {" · "}
                         {post.readingTime}
                       </p>
-                      <p className={`mt-3 font-display font-semibold text-soil ${i === 0 ? "text-2xl sm:text-3xl" : "text-xl"}`}>
+                      <p className={`mt-3 font-display font-normal text-soil ${i === 0 ? "text-2xl sm:text-3xl" : "text-xl"}`}>
                         {post.title}
                       </p>
                       <p className={`mt-3 flex-1 text-foreground-secondary ${i === 0 ? "max-w-lg text-base" : "text-sm"}`}>

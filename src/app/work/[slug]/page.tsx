@@ -40,7 +40,7 @@ function Block({ id, title, children }: { id?: string; title: string; children?:
   if (!children) return null;
   return (
     <div id={id} className={`case-study-block relative pl-14 sm:pl-16 ${id ? "scroll-mt-24" : ""}`}>
-      <h2 className="font-display text-xl font-semibold text-soil">{title}</h2>
+      <h2 className="font-display text-xl font-normal text-soil">{title}</h2>
       <p className="mt-3 text-foreground-secondary">{children}</p>
     </div>
   );
@@ -92,7 +92,7 @@ export default async function CaseStudyPage({ params }: Props) {
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 {project.industry}
               </span>
-              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-semibold leading-[1.1] text-ivory">
+              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory">
                 {project.title}
               </h1>
             </Reveal>
@@ -110,7 +110,7 @@ export default async function CaseStudyPage({ params }: Props) {
                 <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
                   {project.stats.map((stat) => (
                     <div key={stat.label} className="text-center sm:text-left">
-                      <p className="font-display text-4xl font-semibold text-sandstone sm:text-5xl">
+                      <p className="font-display text-4xl font-normal text-sandstone sm:text-5xl">
                         <AnimatedStat value={stat.value} />
                       </p>
                       <p className="mt-2 text-sm text-ivory/70">{stat.label}</p>
@@ -184,7 +184,7 @@ export default async function CaseStudyPage({ params }: Props) {
                     href={`/work/${related.slug}`}
                     className="block h-full rounded-lg border border-border bg-background-elevated p-6 shadow-elevation-sm transition-colors duration-300 hover:border-action-primary/40"
                   >
-                    <p className="font-display text-lg font-semibold text-soil">{related.title}</p>
+                    <p className="font-display text-lg font-normal text-soil">{related.title}</p>
                     <p className="mt-2 text-sm text-foreground-secondary">{related.challenge}</p>
                   </a>
                 </TiltCard>

@@ -145,7 +145,7 @@ export function CinematicHero({
         </span>
         <SplitReveal
           as="h1"
-          className="mt-6 max-w-2xl font-display text-[clamp(2.25rem,5.5vw,4rem)] font-semibold leading-[1.08] text-ivory"
+          className="mt-6 max-w-2xl font-display text-[clamp(2.25rem,5.5vw,4rem)] font-normal leading-[1.08] text-ivory"
         >
           {headline}
         </SplitReveal>

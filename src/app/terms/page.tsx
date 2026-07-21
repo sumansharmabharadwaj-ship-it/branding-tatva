@@ -17,7 +17,7 @@ export default function TermsPage() {
       <main id="main-content">
         <section className="pb-20 pt-32 sm:pt-36">
           <Container className="max-w-2xl">
-            <h1 className="text-display-md font-display font-semibold text-soil">Terms of Use</h1>
+            <h1 className="text-display-md font-display font-normal text-soil">Terms of Use</h1>
             <p className="mt-4 text-sm text-foreground-secondary">Last updated: draft, pending your review</p>
 
             <div className="mt-8 space-y-6 text-foreground-secondary">

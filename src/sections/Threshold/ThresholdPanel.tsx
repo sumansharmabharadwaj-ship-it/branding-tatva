@@ -117,7 +117,7 @@ export function ThresholdPanel({
         <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
           {panel.eyebrow}
         </p>
-        <p className="mt-3 max-w-xs font-display text-3xl font-semibold text-ivory">
+        <p className="mt-3 max-w-xs font-display text-3xl font-normal text-ivory">
           {panel.title}
         </p>
         <p className="mt-3 max-w-xs text-sm text-ivory/70">{panel.description}</p>

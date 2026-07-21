@@ -68,7 +68,7 @@ export function JourneyStage({
         </span>
       </span>
       <Reveal delay={delay}>
-        <p className={`relative font-display text-xl font-semibold sm:text-2xl ${dark ? "text-ivory" : "text-soil"}`}>
+        <p className={`relative font-display text-xl font-normal sm:text-2xl ${dark ? "text-ivory" : "text-soil"}`}>
           {stage.stage}
         </p>
         <p className={`relative mt-2 max-w-lg text-sm ${dark ? "text-ivory/75" : "text-foreground-secondary"}`}>

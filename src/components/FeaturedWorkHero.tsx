@@ -96,14 +96,14 @@ export function FeaturedWorkHero({
       </motion.div>
       <div className="container-page relative py-10">
         <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">{industry}</p>
-        <p className="mt-3 max-w-xl font-display text-3xl font-semibold text-ivory sm:text-4xl">
+        <p className="mt-3 max-w-xl font-display text-3xl font-normal text-ivory sm:text-4xl">
           {title}
         </p>
         {stats && stats.length > 0 ? (
           <div className="mt-6 flex flex-wrap gap-x-8 gap-y-4">
             {stats.slice(0, 3).map((stat) => (
               <div key={stat.label}>
-                <p className="font-display text-2xl font-semibold text-ivory sm:text-3xl">
+                <p className="font-display text-2xl font-normal text-ivory sm:text-3xl">
                   <AnimatedStat value={stat.value} />
                 </p>
                 <p className="mt-0.5 max-w-[10rem] text-xs text-ivory/70">{stat.label}</p>

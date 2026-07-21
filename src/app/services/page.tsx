@@ -48,7 +48,7 @@ export default function ServicesPage() {
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 Services
               </span>
-              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-semibold leading-[1.1] text-ivory">
+              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory">
                 Everything a brand needs, in plain terms.
               </h1>
               <p className="mx-auto mt-4 max-w-xl text-ivory/70">
@@ -84,12 +84,12 @@ export default function ServicesPage() {
                     >
                       <span
                         aria-hidden="true"
-                        className="absolute -right-1 -top-3 font-display text-6xl font-semibold leading-none"
+                        className="absolute -right-1 -top-3 font-display text-6xl font-normal leading-none"
                         style={{ color: offer.color, opacity: 0.18 }}
                       >
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <p className="relative font-display text-lg font-semibold text-soil transition-colors duration-300">{offer.name}</p>
+                      <p className="relative font-display text-lg font-normal text-soil transition-colors duration-300">{offer.name}</p>
                       <p className="relative mt-2 text-sm text-foreground-secondary">{offer.detail}</p>
                     </div>
                   </TiltCard>
@@ -165,7 +165,7 @@ export default function ServicesPage() {
                           className="h-7 w-7 opacity-70"
                           style={{ color: el.color }}
                         />
-                        <p className="mt-3 font-display text-xl font-semibold text-soil">{el.name}</p>
+                        <p className="mt-3 font-display text-xl font-normal text-soil">{el.name}</p>
                         <p className="mt-2 font-display text-sm italic text-foreground-secondary">
                           &ldquo;{el.poetic}&rdquo;
                         </p>
@@ -209,7 +209,7 @@ export default function ServicesPage() {
           <Container>
             <div className="max-w-2xl">
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">How I work</p>
-              <h2 className="mt-2 text-display-sm font-display font-semibold text-ivory">
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                 The same six steps, every time.
               </h2>
               <p className="mt-4 text-ivory/75">
@@ -234,7 +234,7 @@ export default function ServicesPage() {
           <Container>
             <div className="max-w-2xl">
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">By situation</p>
-              <h2 className="mt-2 text-display-sm font-display font-semibold text-ivory">
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                 Organised by where your brand is right now.
               </h2>
             </div>
@@ -251,7 +251,7 @@ export default function ServicesPage() {
                         ["--card-color" as string]: group.color,
                       }}
                     >
-                      <p className="font-display text-xl font-semibold text-soil">{group.name}</p>
+                      <p className="font-display text-xl font-normal text-soil">{group.name}</p>
                       <p className="mt-1 text-sm font-medium" style={{ color: group.color }}>{group.forWho}</p>
                       <p className="mt-4 text-foreground-secondary">{group.description}</p>
                       <ul className="mt-4 space-y-1.5">
@@ -277,7 +277,7 @@ export default function ServicesPage() {
         <ClipReveal>
           <TexturedDark image="/images/higgsfield-golden-ridge.jpg" className="py-24 text-center sm:pb-28">
             <Container>
-              <h2 className="text-display-md font-display font-semibold text-ivory">
+              <h2 className="text-display-md font-display font-normal text-ivory">
                 Still deciding which one fits?
               </h2>
               <p className="mx-auto mt-4 max-w-md text-ivory/70">

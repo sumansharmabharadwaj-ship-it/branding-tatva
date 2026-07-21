@@ -35,7 +35,7 @@ export default function ContactPage() {
               <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
                 Contact
               </p>
-              <h1 className="mt-3 text-display-lg font-display font-semibold text-soil">
+              <h1 className="mt-3 text-display-lg font-display font-normal text-soil">
                 Tell me what your brand is becoming.
               </h1>
               <p className="mt-5 text-foreground-secondary">
@@ -89,7 +89,7 @@ export default function ContactPage() {
               <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
                 Or skip the form
               </p>
-              <h2 className="mt-2 text-display-sm font-display font-semibold text-ivory">
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                 Just grab a time that works for you.
               </h2>
               <p className="mt-3 max-w-xl text-ivory/75">

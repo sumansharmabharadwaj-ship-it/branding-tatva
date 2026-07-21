@@ -63,7 +63,7 @@ export function CaseStudyCard({ project }: { project: Project }) {
           />
           <div className="relative border-t-2 pt-4" style={{ borderTopColor: project.accent }}>
             <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">{project.industry}</p>
-            <p className="mt-2 font-display text-2xl font-semibold text-ivory">{project.title}</p>
+            <p className="mt-2 font-display text-2xl font-normal text-ivory">{project.title}</p>
             <p className="mt-3 line-clamp-3 text-sm text-ivory/80">{project.challenge}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {project.services.map((s) => (

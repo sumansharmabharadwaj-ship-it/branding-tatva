@@ -41,13 +41,13 @@ export function Threshold({
     <section>
       <div className="container-page pt-20 text-center">
         {prefersReducedMotion ? (
-          <h2 className="font-display text-display-sm font-semibold text-soil">{heading}</h2>
+          <h2 className="font-display text-display-sm font-normal text-soil">{heading}</h2>
         ) : (
           <div className="relative mx-auto min-h-[2.75em]">
             <motion.h2
               animate={{ opacity: active === null ? 1 : 0 }}
               transition={{ duration: 0.35, ease: EASE_AIR }}
-              className="absolute inset-0 flex items-center justify-center px-4 font-display text-display-sm font-semibold text-soil"
+              className="absolute inset-0 flex items-center justify-center px-4 font-display text-display-sm font-normal text-soil"
             >
               {heading}
             </motion.h2>
@@ -58,7 +58,7 @@ export function Threshold({
                     key={panel.key}
                     animate={{ opacity: active === panel.key ? 1 : 0 }}
                     transition={{ duration: 0.35, ease: EASE_AIR }}
-                    className="absolute inset-0 flex items-center justify-center px-4 font-display text-display-sm font-semibold text-soil"
+                    className="absolute inset-0 flex items-center justify-center px-4 font-display text-display-sm font-normal text-soil"
                   >
                     {panel.activeHeading}
                   </motion.h2>

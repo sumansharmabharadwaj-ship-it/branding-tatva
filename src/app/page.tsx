@@ -112,7 +112,7 @@ export default function Home() {
           spotlight
           topContent={
             <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
-              <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-ivory">
+              <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.1] text-ivory">
                 A brand can be visible and still go unnoticed.
               </SplitReveal>
               <Reveal delay={0.15}>
@@ -163,7 +163,7 @@ export default function Home() {
             <Container className="relative">
               <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
                 <Reveal className="sm:order-2">
-                  <h2 className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-ivory sm:text-right">
+                  <h2 className="font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.1] text-ivory sm:text-right">
                     Five elements.
                     <br />
                     One brand.
@@ -235,7 +235,7 @@ export default function Home() {
               ELEMENTS
             </span>
             <Reveal>
-              <h2 className="relative text-display-sm font-display font-semibold text-soil">
+              <h2 className="relative text-display-sm font-display font-normal text-soil">
                 The five elements
               </h2>
               <p className="mt-3 max-w-md text-sm text-foreground-secondary">
@@ -307,7 +307,7 @@ export default function Home() {
             <Container>
               <Reveal>
                 <div className="flex items-baseline justify-between">
-                  <h2 className="text-display-sm font-display font-semibold text-ivory">Selected work</h2>
+                  <h2 className="text-display-sm font-display font-normal text-ivory">Selected work</h2>
                   <LinkButton
                     href="/work"
                     variant="secondary"
@@ -376,7 +376,7 @@ export default function Home() {
           <section className="py-20">
             <Container>
               <Reveal>
-                <h2 className="text-display-sm font-display font-semibold text-soil">How a project moves</h2>
+                <h2 className="text-display-sm font-display font-normal text-soil">How a project moves</h2>
               </Reveal>
             </Container>
             <ProcessSection stages={process} elementColor={elementColor} />
@@ -407,7 +407,7 @@ export default function Home() {
           />
           <Container className="relative max-w-2xl">
             <Reveal>
-              <h2 className="text-display-sm font-display font-semibold text-soil">
+              <h2 className="text-display-sm font-display font-normal text-soil">
                 Common questions
               </h2>
             <div className="mt-8">
@@ -439,7 +439,7 @@ export default function Home() {
           <div className="relative">
             <div className="relative">
               <h2
-                className="mx-auto max-w-xl text-display-md font-display font-semibold text-ivory"
+                className="mx-auto max-w-xl text-display-md font-display font-normal text-ivory"
                 style={{ textShadow: "0 2px 14px rgba(0,0,0,0.85), 0 1px 4px rgba(0,0,0,0.9)" }}
               >
                 Let&apos;s find the Tatva of your business.
