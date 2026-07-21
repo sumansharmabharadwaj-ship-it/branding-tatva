@@ -56,7 +56,7 @@ export default function WorkPage() {
             instead lets the photography carry the color, the same way
             the reference's own image-forward sections do. */}
         <ClipReveal>
-          <section className="border-t border-border bg-background-alt py-16">
+          <section className="bg-background-alt py-16">
             <Container>
               <WorkGrid projects={projects} />
             </Container>

@@ -82,7 +82,7 @@ export default function ContactPage() {
             error-message red staying legible, so it's safe to go bold.
             CalendlyEmbed already wraps itself in an opaque card, so no
             change needed there. */}
-        <section className="border-t border-border py-16" style={{ backgroundColor: ELEMENT_HEX.water }}>
+        <section className="py-16" style={{ backgroundColor: ELEMENT_HEX.water }}>
           <Container>
             <Reveal>
               <ElementGlyph slug="water" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />

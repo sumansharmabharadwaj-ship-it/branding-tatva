@@ -104,7 +104,7 @@ export default async function CaseStudyPage({ params }: Props) {
             clay to sandstone (a clay-toned background would collide with
             clay-colored numbers) and labels flip to ivory. */}
         {project.stats && (
-          <section id="numbers" className="scroll-mt-24 border-b border-border bg-soil py-14">
+          <section id="numbers" className="scroll-mt-24 bg-soil py-14">
             <Container>
               <Reveal>
                 <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
@@ -123,7 +123,7 @@ export default async function CaseStudyPage({ params }: Props) {
         )}
 
         <section
-          className="border-t border-border py-16"
+          className="py-16"
           style={{ backgroundColor: sectionWash("water", 12) }}
         >
           <Container className="grid gap-12 md:grid-cols-3">

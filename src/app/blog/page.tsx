@@ -72,7 +72,7 @@ export default function BlogPage() {
             opaque bg-background-elevated fill (not a translucent alpha
             trick), so no card-level change needed either way. */}
         <PerspectiveReveal>
-        <section className="border-t border-border bg-background-alt py-16">
+        <section className="bg-background-alt py-16">
           <Container>
             <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
               {sorted.map((post, i) => (

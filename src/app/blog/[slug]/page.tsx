@@ -78,7 +78,7 @@ export default async function BlogPostPage({ params }: Props) {
     <>
       <Header transparent />
       <main id="main-content">
-        <section className="relative overflow-hidden border-b border-border bg-soil pt-32 pb-16 sm:pt-40 sm:pb-20">
+        <section className="relative overflow-hidden bg-soil pt-32 pb-16 sm:pt-40 sm:pb-20">
           <Container className="relative max-w-2xl">
             <Reveal>
               <span className="inline-flex items-center gap-2 rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">

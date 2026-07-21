@@ -214,7 +214,7 @@ export default function Home() {
             sequence never appeared, since sticky was resolving against
             the wrong containing block instead of the real page scroll. */}
         <PerspectiveReveal>
-          <section className="relative overflow-hidden border-t border-border pt-16 pb-28 sm:pt-20 sm:pb-40">
+          <section className="relative overflow-hidden pt-16 pb-28 sm:pt-20 sm:pb-40">
             {/* Was a near-white-to-near-white gradient (#F4EFE6 to
                 #EFE4D9, both plain cream) — direct feedback that this
                 read as blank space rather than a real section, the same

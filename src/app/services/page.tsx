@@ -111,7 +111,7 @@ export default function ServicesPage() {
           imagePosition="center 75%"
         />
 
-        <section id="elements" className="scroll-mt-24 border-t border-border bg-background-alt py-16">
+        <section id="elements" className="scroll-mt-24 bg-background-alt py-16">
           <Container>
             <SectionHeading
               eyebrow="The deeper system"

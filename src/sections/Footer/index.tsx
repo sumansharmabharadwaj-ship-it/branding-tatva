@@ -36,15 +36,19 @@ const ELEMENT_GLYPHS: { slug: "earth" | "water" | "fire" | "air" | "space"; colo
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-border">
-      {/* bg-soil + a light stroke color — this divider previously had no
-          background of its own, showing the page's plain cream through
-          it as a visible pale stripe between two dark video sections
-          (the closing moonlit-sea break above and this footer's own
-          video below). Matching the dark tone on both sides closes that
-          gap; the pattern's stroke flips from soil-on-transparent to
-          ivory-on-soil so it stays visible against its new backdrop. */}
-      <div className="h-10 overflow-hidden border-b border-border/60 bg-soil" aria-hidden="true">
+    <footer className="relative">
+      {/* bg-soil, no border either side — this divider previously had no
+          background of its own (showing the page's plain cream through
+          it as a visible pale stripe) and, even after that fix, still
+          carried a beige border-t/border-b hairline exactly at the seam
+          between two dark video sections (the closing moonlit-sea break
+          above and this footer's own video below) — direct, repeated
+          feedback that a "divider design between sections" was still
+          visible pointed straight at this line. Matching the dark tone
+          on both sides with no stroke at all merges them into one
+          continuous dark passage instead of two sections meeting at a
+          seam; the pattern's own color still carries the visual beat. */}
+      <div className="h-10 overflow-hidden bg-soil" aria-hidden="true">
         <IndianPattern opacity={0.14} color="#F4EFE6" />
       </div>
 
@@ -124,7 +128,7 @@ export function Footer() {
       </TexturedDark>
 
       <div
-        className="flex flex-col-reverse items-center gap-3 border-t border-border px-6 py-5 text-center sm:flex-row sm:justify-between sm:px-10"
+        className="flex flex-col-reverse items-center gap-3 px-6 py-5 text-center sm:flex-row sm:justify-between sm:px-10"
         style={{ backgroundColor: sectionWash("space", 14) }}
       >
         <p className="text-xs text-foreground-secondary">
