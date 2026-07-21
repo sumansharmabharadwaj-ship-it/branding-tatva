@@ -136,7 +136,19 @@ export default function Home() {
           }
         />
 
-        <section className="relative pb-16 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
+        {/* pt-* lives on the section itself, not a margin-top on the
+            child below — a child's top margin with nothing (no padding/
+            border) on the parent to contain it collapses straight
+            through and pushes the whole section's rendered box down,
+            leaving the "spacing" show as a gap of the page's own cream
+            above the section instead of space inside it. That's what
+            was producing the blank gap right after the waterlight video
+            — the sage color was real, it just started ~110px lower than
+            its own <section> tag implied. Padding can't collapse the
+            same way, and the values are tightened (not just moved) —
+            direct feedback that this gap read as dead space even before
+            the collapse bug was diagnosed. */}
+        <section className="relative pt-10 pb-16 sm:pt-14 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
           {/* Was a faint own-peaks.jpg background — one more mountain/ridge
               photo on a site that already has several (Footer, Home
               elements row, Services, Work hero), even without repeating
@@ -147,7 +159,7 @@ export default function Home() {
               two — the "most brands only have one or two" contrast and
               the personal closing line were saying adjacent things and
               read as padding rather than two distinct points. */}
-          <div className="relative mt-20 sm:mt-28">
+          <div className="relative">
             <Container className="relative">
               <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
                 <Reveal className="sm:order-2">
