@@ -11,7 +11,7 @@ import { ImageBreak } from "@/components/ImageBreak";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
-import { SANDSTONE } from "@/lib/sectionWash";
+import { SANDSTONE, ELEMENT_HEX, blendHex } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "About Suman Sharma",
@@ -78,7 +78,11 @@ export default function AboutPage() {
           quoteVariant="left"
         />
 
-        <section className="border-t border-border bg-background-alt py-20">
+        {/* Bold Earth/Clay (darkened slightly against Soil for AA text
+            contrast), not the previous parchment tint — continues the
+            same rule applied sitewide: no plain cream/parchment section
+            sits between two photo/dark moments. */}
+        <section className="py-20" style={{ backgroundColor: blendHex(ELEMENT_HEX.earth, "#27221E", 85) }}>
           <Container className="grid gap-12 md:grid-cols-[auto_1fr]">
             <Reveal>
               <Image
@@ -92,10 +96,10 @@ export default function AboutPage() {
             </Reveal>
             <div className="grid gap-12 sm:grid-cols-2">
               <Reveal delay={0.1}>
-                <h2 className="text-display-sm font-display font-semibold text-soil">
+                <h2 className="text-display-sm font-display font-semibold text-ivory">
                   Working method
                 </h2>
-                <p className="mt-4 text-foreground-secondary">
+                <p className="mt-4 text-ivory/75">
                   I start by asking what
                   a business believes, who it&apos;s actually speaking to,
                   and where its current story stops making sense, well
@@ -104,7 +108,7 @@ export default function AboutPage() {
                   keep track of which part of that is solved and which
                   still needs work.
                 </p>
-                <p className="mt-4 text-foreground-secondary">
+                <p className="mt-4 text-ivory/75">
                   I use &ldquo;I&rdquo; instead of &ldquo;we.&rdquo; Branding
                   Tatva is a personal practice, and every project has my
                   direct attention.
@@ -112,14 +116,14 @@ export default function AboutPage() {
               </Reveal>
 
               <Reveal delay={0.15}>
-                <h2 className="text-display-sm font-display font-semibold text-soil">
+                <h2 className="text-display-sm font-display font-semibold text-ivory">
                   Recent experience
                 </h2>
                 <ul className="mt-4 space-y-4">
                   {experience.map((role) => (
-                    <li key={`${role.org}-${role.period}`} className="border-l-2 border-action-primary/30 pl-4">
-                      <p className="font-medium text-soil">{role.role}</p>
-                      <p className="text-sm text-foreground-secondary">
+                    <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
+                      <p className="font-medium text-ivory">{role.role}</p>
+                      <p className="text-sm text-ivory/70">
                         {role.org} &middot; {role.period}
                       </p>
                     </li>
@@ -167,29 +171,33 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        <section className="border-t border-border bg-background-alt py-20">
+        {/* Bold Water/Indigo, not the previous parchment tint — closes
+            out the same alternating rhythm the rest of the page now
+            follows (Sandstone, Soil, Clay, Soil, Indigo) instead of
+            ending on a plain neutral right before the Footer. */}
+        <section className="py-20" style={{ backgroundColor: ELEMENT_HEX.water }}>
           <Container>
             <Reveal>
-              <h2 className="text-display-sm font-display font-semibold text-soil">
+              <h2 className="text-display-sm font-display font-semibold text-ivory">
                 Why this site looks the way it does
               </h2>
-              <p className="mt-4 max-w-2xl text-foreground-secondary">
+              <p className="mt-4 max-w-2xl text-ivory/75">
                 I could tell a prospective client what good branding looks
                 like, or I could just let this site be the example. Every
                 choice below was made on purpose, and I&apos;d make the same
                 case for yours.
               </p>
             </Reveal>
-            <div className="mt-14 divide-y divide-border">
+            <div className="mt-14 divide-y divide-ivory/15">
               {designChoices.map((choice, i) => (
                 <Reveal key={choice.title} delay={i * 0.06}>
                   <div className="grid gap-3 py-8 sm:grid-cols-[auto_1fr] sm:gap-10 sm:py-10">
-                    <span className="font-display text-5xl font-semibold leading-none text-soil/15 sm:text-6xl">
+                    <span className="font-display text-5xl font-semibold leading-none text-ivory/15 sm:text-6xl">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <div>
-                      <p className="font-display text-lg font-semibold text-soil">{choice.title}</p>
-                      <p className="mt-2 max-w-2xl text-sm text-foreground-secondary">
+                      <p className="font-display text-lg font-semibold text-ivory">{choice.title}</p>
+                      <p className="mt-2 max-w-2xl text-sm text-ivory/75">
                         {choice.detail}
                       </p>
                     </div>
