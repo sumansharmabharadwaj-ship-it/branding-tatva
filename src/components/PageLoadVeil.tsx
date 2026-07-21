@@ -9,12 +9,23 @@ import { site } from "@/data/site";
 // poetic lines one at a time (~5s total): reads as impressive in
 // isolation, but on every single hard load it started to feel like the
 // site was making someone sit through a pitch before letting them in.
-// The mark itself already carries the five-element idea (five bars,
-// five colors, the same skyline motif as LogoMark) — it doesn't need a
-// guided tour of what each one means before the wordmark's allowed to
-// land. One breath: the bars rise, the wordmark settles in right behind
-// them, the curtain opens. Under two seconds, on a bold solid ground
-// instead of a busy one.
+// A second version cut that down to five flat bars just rising in a
+// row — safe, but the philosophy it's meant to carry was reduced to a
+// generic loading-bar shape with the right colors, nothing more.
+//
+// This version keeps the same ~2s budget and the same restraint (no
+// per-element copy, no guided tour), but gives each element an actual
+// beat: as its own bar settles, its own color blooms behind it in a
+// soft glow — five separate, brief announcements instead of one flat
+// motion — and once all five have landed, a thin stroke draws itself
+// around the whole mark, the visual argument for "five parts, one
+// brand" instead of just stating it. Everything here is Framer Motion
+// animating plain SVG shapes (rect height/y, and rect pathLength for
+// the frame stroke) — no new dependency. This project already had one
+// real incident where a GSAP-hydration-dependent load animation caused
+// an 8+ second render delay; a page-blocking, every-single-visit
+// animation is the wrong place to introduce a new toolkit's risk, so
+// the craft comes from choreography, not new machinery.
 //
 // Lives in the root layout, which Next.js keeps mounted across
 // client-side navigations, so this only plays once per hard load, never
@@ -23,18 +34,22 @@ import { site } from "@/data/site";
 // specifically want to avoid.
 
 const BARS = [
-  { color: "#B85A34", height: 34 }, // earth — clay
-  { color: "#24394D", height: 48 }, // water — indigo
-  { color: "#C28A28", height: 64 }, // fire — ochre
-  { color: "#5C6B4A", height: 48 }, // air — sage
-  { color: "#AD6F5C", height: 34 }, // space — dusty rose (soil itself would vanish against this dark veil)
+  { color: "#B85A34", x: 4, height: 34 }, // earth — clay
+  { color: "#24394D", x: 20, height: 48 }, // water — indigo
+  { color: "#C28A28", x: 36, height: 64 }, // fire — ochre
+  { color: "#5C6B4A", x: 52, height: 48 }, // air — sage
+  { color: "#AD6F5C", x: 68, height: 34 }, // space — dusty rose (soil itself would vanish against this dark veil)
 ];
 const BAR_WIDTH = 10;
-const BAR_GAP = 6;
+const MARK_WIDTH = 82;
+const MARK_HEIGHT = 68;
+const BASELINE = 64;
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
 export function PageLoadVeil() {
   const prefersReducedMotion = useReducedMotion();
+  const [barsSettled, setBarsSettled] = useState(false);
+  const [frameDrawn, setFrameDrawn] = useState(false);
   const [brandVisible, setBrandVisible] = useState(false);
   const [visible, setVisible] = useState(!prefersReducedMotion);
   // A hard, animation-independent removal that always wins — see the
@@ -45,9 +60,11 @@ export function PageLoadVeil() {
   useEffect(() => {
     if (prefersReducedMotion) return;
     const timers = [
-      setTimeout(() => setBrandVisible(true), 500),
-      setTimeout(() => setVisible(false), 1250),
-      setTimeout(() => setRemoved(true), 2000),
+      setTimeout(() => setBarsSettled(true), 700),
+      setTimeout(() => setFrameDrawn(true), 750),
+      setTimeout(() => setBrandVisible(true), 900),
+      setTimeout(() => setVisible(false), 1450),
+      setTimeout(() => setRemoved(true), 2100),
     ];
     return () => timers.forEach(clearTimeout);
   }, [prefersReducedMotion]);
@@ -66,23 +83,63 @@ export function PageLoadVeil() {
         >
           <div className="paper-grain" style={{ opacity: 0.1 }} />
 
-          <div className="flex items-end" style={{ gap: BAR_GAP }}>
+          <div className="relative" style={{ width: MARK_WIDTH, height: MARK_HEIGHT + 4 }}>
             {BARS.map((bar, i) => (
               <motion.div
-                key={bar.color}
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: 1 }}
-                transition={{ duration: 0.45, delay: i * 0.055, ease: EASE }}
+                key={`glow-${bar.color}`}
+                className="absolute rounded-full"
                 style={{
-                  width: BAR_WIDTH,
-                  height: bar.height,
+                  left: bar.x - 12,
+                  bottom: 0,
+                  width: BAR_WIDTH + 24,
+                  height: BAR_WIDTH + 24,
                   backgroundColor: bar.color,
-                  borderRadius: 5,
-                  transformOrigin: "bottom",
-                  opacity: 0.92,
+                  filter: "blur(11px)",
                 }}
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={barsSettled ? { opacity: [0, 0.55, 0], scale: [0.6, 1.5, 1.5] } : undefined}
+                transition={{ duration: 0.4, delay: i * 0.04, ease: "easeOut" }}
               />
             ))}
+            <svg
+              width={MARK_WIDTH}
+              height={MARK_HEIGHT + 4}
+              viewBox={`0 0 ${MARK_WIDTH} ${MARK_HEIGHT + 4}`}
+              fill="none"
+              className="relative"
+            >
+              {BARS.map((bar, i) => (
+                <motion.rect
+                  key={bar.color}
+                  x={bar.x}
+                  width={BAR_WIDTH}
+                  rx={5}
+                  fill={bar.color}
+                  opacity={0.92}
+                  initial={{ height: 0, y: BASELINE }}
+                  animate={{ height: bar.height, y: BASELINE - bar.height }}
+                  transition={{ duration: 0.45, delay: i * 0.06, ease: EASE }}
+                />
+              ))}
+              {/* The unifying stroke: five separate bars settle first,
+                  each announcing its own element; only once all five have
+                  landed does this frame draw itself around them, the
+                  visual argument for "one brand" instead of just five
+                  colors sitting next to each other. */}
+              <motion.rect
+                x={1}
+                y={1}
+                width={MARK_WIDTH - 2}
+                height={MARK_HEIGHT + 2}
+                rx={10}
+                stroke="#F4EFE6"
+                strokeOpacity={0.32}
+                strokeWidth={1}
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: frameDrawn ? 1 : 0 }}
+                transition={{ duration: 0.5, ease: EASE }}
+              />
+            </svg>
           </div>
 
           <motion.div
