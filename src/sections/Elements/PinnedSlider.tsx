@@ -43,8 +43,16 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
     function update() {
       if (!wrapper) return;
       const rect = wrapper.getBoundingClientRect();
-      const scrollableDistance = rect.height - window.innerHeight;
-      const raw = scrollableDistance > 0 ? -rect.top / scrollableDistance : 0;
+      // Fixed distance, not rect.height - innerHeight — the wrapper is
+      // deliberately taller than this (see the (elements.length + 1) * 100vh
+      // below) so there's a dedicated buffer after the last slide becomes
+      // fully active. Tying progress to the wrapper's own full height meant
+      // progress=1 and the moment CSS sticky has to start releasing
+      // (remaining wrapper height drops to exactly one viewport) landed on
+      // the exact same scroll position — the last slide never got a stable
+      // instant on screen, it started sliding away the moment it appeared.
+      const scrollDistance = (elements.length - 1) * window.innerHeight;
+      const raw = scrollDistance > 0 ? -rect.top / scrollDistance : 0;
       const clamped = Math.min(1, Math.max(0, raw));
       const progress = clamped * (elements.length - 1);
       const idx = Math.min(elements.length - 1, Math.round(progress));
@@ -68,7 +76,10 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
   }, [elements.length, lenis]);
 
   return (
-    <div ref={wrapperRef} className="relative" style={{ height: `${elements.length * 100}vh` }}>
+    // +1 slide-height of buffer beyond what the crossfade math needs —
+    // see update()'s own comment for why sticky needs dedicated room to
+    // release in, separate from the last slide's own on-screen moment.
+    <div ref={wrapperRef} className="relative" style={{ height: `${(elements.length + 1) * 100}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {elements.map((el, i) => (
           <div
