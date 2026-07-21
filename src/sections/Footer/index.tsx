@@ -14,9 +14,20 @@ import { socialLinks, EMBERS, REVEAL_DELAY_LOGO } from "./constants";
 // covers and a positioning paragraph nobody reads at the very bottom of a
 // page. This closes every page the way the site's own argument wants to
 // close — one line, a way to start, then the mark settling like credits —
-// instead of stopping on a sitemap. own-alpenglow-peak.jpg was sitting
-// unused in the library: an actual end-of-day photo for an actual closing
-// scene, not a stock sunset.
+// instead of stopping on a sitemap. own-jagged-peaks.mp4 gives the closing
+// scene real motion (TexturedDark's optional video, mirroring PhotoHero's
+// own pattern) instead of a single frozen frame — chosen specifically
+// because it's not already the last thing a visitor sees on any one page
+// (own-alpenglow-peak and own-moonlit-sea are both already load-bearing
+// elsewhere on Home, immediately before this section would follow them).
+
+const ELEMENT_GLYPHS: { slug: "earth" | "water" | "fire" | "air" | "space"; color: string }[] = [
+  { slug: "earth", color: "#B85A34" },
+  { slug: "water", color: "#24394D" },
+  { slug: "fire", color: "#C28A28" },
+  { slug: "air", color: "#5C6B4A" },
+  { slug: "space", color: "#AD6F5C" },
+];
 
 export function Footer() {
   return (
@@ -25,7 +36,7 @@ export function Footer() {
         <IndianPattern opacity={0.1} />
       </div>
 
-      <TexturedDark image="/images/own-alpenglow-peak.jpg" className="py-24 sm:py-32">
+      <TexturedDark image="/images/own-jagged-peaks.jpg" video="/videos/own-jagged-peaks.mp4" className="py-24 sm:py-32">
         <div className="footer-embers" aria-hidden="true">
           {EMBERS.map((ember, i) => (
             <span
@@ -37,6 +48,7 @@ export function Footer() {
                 height: ember.size,
                 animationDelay: ember.delay,
                 animationDuration: ember.duration,
+                ["--ember-color" as string]: ember.color,
               }}
             />
           ))}
@@ -44,7 +56,13 @@ export function Footer() {
 
         <Container className="relative text-center">
           <Reveal>
-            <ElementGlyph slug="space" className="mx-auto h-6 w-6 text-ivory/50" strokeWidth={1.2} />
+            {/* All five, not just one — the closing scene completes the
+                set instead of gesturing at a single element. */}
+            <div className="flex justify-center gap-4" aria-hidden="true">
+              {ELEMENT_GLYPHS.map((el) => (
+                <ElementGlyph key={el.slug} slug={el.slug} className="h-5 w-5" style={{ color: el.color, opacity: 0.6 }} strokeWidth={1.2} />
+              ))}
+            </div>
             <SplitReveal className="mx-auto mt-6 max-w-3xl font-display text-[clamp(2rem,5.5vw,4rem)] font-semibold leading-[1.1] text-ivory">
               Every brand is visible. Let&apos;s make yours unforgettable.
             </SplitReveal>
