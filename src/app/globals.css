@@ -87,6 +87,24 @@
   @apply mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-10;
 }
 
+/* Same two-tone focus fix as the sitewide :focus-visible rule, for the
+   three components (LinkButton, ContactForm's submit button, error.tsx's
+   retry button) that opt out of the native outline in favor of a
+   Tailwind ring — that ring only ever used the amber state-focus color,
+   which the same contrast audit found failing on the bold Sage/Indigo/
+   Clay section backgrounds. A plain white gap, the amber ring, then a
+   soft white halo, composed as one explicit box-shadow instead of
+   fighting Tailwind's ring custom-property chain for a second color. */
+@utility focus-ring-halo {
+  &:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px rgba(252, 250, 246, 0.9),
+      0 0 0 4px var(--color-state-focus),
+      0 0 0 8px rgba(252, 250, 246, 0.5);
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -100,11 +118,21 @@
     @apply font-display;
   }
 
-  /* Visible focus ring everywhere — accessibility baseline */
+  /* Visible focus ring everywhere — accessibility baseline. The amber
+     outline alone drops under the 3:1 WCAG non-text contrast minimum
+     against several of the bold section backgrounds added across
+     Phases 5-7 (Sage, Indigo, darkened Clay all measured under 3:1,
+     one as low as 1.4:1) — a real regression those phases introduced
+     without anyone checking focus-ring visibility specifically, only
+     body-text contrast. The added halo is the standard two-tone fix:
+     a near-white glow just outside the amber ring, so at least one of
+     the two always contrasts against whatever's behind it, dark
+     background or light. */
   :focus-visible {
     outline: 2px solid var(--color-state-focus);
     outline-offset: 2px;
     border-radius: 2px;
+    box-shadow: 0 0 0 4px rgba(252, 250, 246, 0.6);
   }
 
   /* Respect reduced-motion preference site-wide */
