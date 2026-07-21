@@ -70,12 +70,19 @@ export default function AboutPage() {
         {/* Real photo, not AI generation — Suman on the trail, the
             mountain catching last light through the trees behind her.
             The quote is about clarity earned by height, and this is
-            literally that: her own view from having climbed to it. */}
+            literally that: her own view from having climbed to it.
+            Source is a portrait-orientation shot (1800x2400) forced into
+            a wide 85vh banner — object-fit:cover only ever shows a ~23%
+            vertical slice of it regardless of position. The previous
+            "center 30%" landed on bare treetops with just the very top
+            of her headscarf clipped in at the bottom edge, reading as a
+            broken crop rather than a real photo. Repositioned to frame
+            her face through her hands in her lap instead. */}
         <ImageBreak
           image="/images/own-forest-clearing.jpg"
           quote="Clarity comes from climbing. It's the view from finally standing somewhere high enough to see it."
           height="85vh"
-          imagePosition="center 30%"
+          imagePosition="center 58%"
           quoteVariant="left"
         />
 
