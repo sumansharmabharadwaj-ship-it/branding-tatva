@@ -16,6 +16,7 @@ import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ElementReveal } from "@/components/ElementReveal";
 import { ElementRowBackground } from "@/components/ElementRowBackground";
+import { SectionVideoWash } from "@/components/SectionVideoWash";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
 import { CinematicHero } from "@/sections/Hero";
 import { Threshold } from "@/sections/Threshold";
@@ -98,19 +99,23 @@ export default function Home() {
             hero was still plain cream, reading as blank space against a
             full-bleed video hero. Air (voice/clarity) also happens to fit
             this section's own subject better than any other element.
-            Tried a video underlay here (abstract swirling light) — direct
-            feedback that it read as a different visual genre entirely
-            next to the real photographic/cinematic footage everywhere
-            else on the page, not cohesive. Every real nature clip in the
-            library is already load-bearing on some other page (the
-            no-repeat rule rules out reusing one), so this stays on the
-            site's own established warm-glow language instead of forcing
-            in a video that doesn't belong — aurora-glow-bold is a
-            stronger read of the same technique the Footer/PageLoadVeil
-            already use, not a new visual idea. */}
+            An abstract swirling-light clip here read as a different
+            visual genre next to the real cinematic footage everywhere
+            else on the page. A CSS-only glow read as no video at all.
+            The actual fix: extend the same cinematic-waterlight footage
+            the VideoBreak below already uses up behind this text block
+            too, muted and tinted, so the whole passage — heading, then
+            VideoBreak's full-strength quote — plays as one continuous
+            cinematic moment instead of a flat-color block bolted onto a
+            separate video. Same clip, one extended scene, not a second
+            unrelated instance of it. */}
         <section className="relative overflow-hidden pt-28 pb-16 sm:pt-40 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
           <div className="relative overflow-hidden">
-            <div className="aurora-glow-bold" aria-hidden="true" />
+            <SectionVideoWash
+              video="/videos/cinematic-waterlight.mp4"
+              poster="/images/cinematic-waterlight-poster.jpg"
+              color={ELEMENT_HEX.air}
+            />
             <DustMotes />
             <Container className="relative">
               <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
