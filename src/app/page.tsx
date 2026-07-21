@@ -97,9 +97,17 @@ export default function Home() {
             Bold solid Air/Sage, not a tint — the section right after the
             hero was still plain cream, reading as blank space against a
             full-bleed video hero. Air (voice/clarity) also happens to fit
-            this section's own subject better than any other element. */}
-        <section className="pt-28 pb-16 sm:pt-40 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
-          <Container>
+            this section's own subject better than any other element.
+            A flat color field this large still read as static/boring on
+            its own — direct feedback — so it gets the same ambient
+            motion already proven on the site's dark sections (aurora-glow,
+            DustMotes) instead of a new video that would repeat the
+            forest/water footage already carrying the hero right above it
+            and the VideoBreak right below. */}
+        <section className="relative overflow-hidden pt-28 pb-16 sm:pt-40 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
+          <div className="aurora-glow" aria-hidden="true" />
+          <DustMotes />
+          <Container className="relative">
             <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
               <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-ivory">
                 A brand can be visible and still go unnoticed.
