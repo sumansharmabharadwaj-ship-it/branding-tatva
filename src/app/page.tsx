@@ -22,6 +22,7 @@ import { Threshold } from "@/sections/Threshold";
 import { VideoBreak } from "@/components/VideoBreak";
 import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
 import { ProcessSection } from "@/sections/Process";
+import { JaggedEdge } from "@/components/JaggedEdge";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -98,7 +99,8 @@ export default function Home() {
             hero was still plain cream, reading as blank space against a
             full-bleed video hero. Air (voice/clarity) also happens to fit
             this section's own subject better than any other element. */}
-        <section className="pt-28 pb-16 sm:pt-40 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
+        <section className="relative pt-28 pb-16 sm:pt-40 sm:pb-20" style={{ backgroundColor: ELEMENT_HEX.air }}>
+          <JaggedEdge color={ELEMENT_HEX.air} />
           <Container>
             <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
               <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-semibold leading-[1.1] text-ivory">
