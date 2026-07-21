@@ -15,10 +15,10 @@ import type { ProcessSectionProps } from "./types";
 // as a complete, deliberate design on its own — not a degraded
 // fallback — so nothing is lost by using it everywhere.
 
-export function ProcessSection({ stages, elementColor }: ProcessSectionProps) {
+export function ProcessSection({ stages, elementColor, dark }: ProcessSectionProps) {
   return (
     <Container>
-      <VerticalJourney stages={stages} elementColor={elementColor} />
+      <VerticalJourney stages={stages} elementColor={elementColor} dark={dark} />
     </Container>
   );
 }

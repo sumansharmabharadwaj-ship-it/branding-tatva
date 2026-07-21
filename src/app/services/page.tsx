@@ -18,7 +18,7 @@ import { elements } from "@/data/elements";
 import { process } from "@/data/process";
 import { serviceGroups, offerings } from "@/data/services";
 import { elementColor } from "@/lib/elementColor";
-import { sectionWash, blendHex } from "@/lib/sectionWash";
+import { blendHex, ELEMENT_HEX } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -187,19 +187,33 @@ export default function ServicesPage() {
             VerticalJourney component) the home page already uses,
             rather than inventing a separate framework just for this
             page. */}
+        {/* Bold Fire/Ochre (darkened against Soil for AA text contrast),
+            not the Phase-5 water tint — same rule as every other plain
+            section on the site. VerticalJourney/JourneyStage take an
+            opt-in `dark` prop for this (see sections/Process/types.ts) so
+            Home's Process section, which stays on its existing light
+            wash, is unaffected. SectionHeading hardcodes text-soil, so
+            this instance is hand-rolled in ivory rather than touching
+            that shared component's defaults for every other caller. */}
         <section
           id="process"
-          className="scroll-mt-24 border-t border-border py-16"
-          style={{ backgroundColor: sectionWash("water", 14) }}
+          className="scroll-mt-24 py-16"
+          style={{ backgroundColor: blendHex(ELEMENT_HEX.fire, "#27221E", 60) }}
         >
           <Container>
-            <SectionHeading
-              eyebrow="How I work"
-              title="The same six steps, every time."
-              description="Each stage depends on the one before it, a sequence rather than a checklist you can jump around in. That order is usually where a rushed process starts to show."
-            />
+            <div className="max-w-2xl">
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">How I work</p>
+              <h2 className="mt-2 text-display-sm font-display font-semibold text-ivory">
+                The same six steps, every time.
+              </h2>
+              <p className="mt-4 text-ivory/75">
+                Each stage depends on the one before it, a sequence rather
+                than a checklist you can jump around in. That order is
+                usually where a rushed process starts to show.
+              </p>
+            </div>
           </Container>
-          <ProcessSection stages={process} elementColor={elementColor} />
+          <ProcessSection stages={process} elementColor={elementColor} dark />
         </section>
 
         {/* Bold solid Soil, not the Phase-5 earth tint — matches the

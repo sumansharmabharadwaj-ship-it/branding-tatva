@@ -19,11 +19,13 @@ export function JourneyStage({
   index,
   color,
   delay,
+  dark,
 }: {
   stage: ProcessStage;
   index: number;
   color: string;
   delay: number;
+  dark?: boolean;
 }) {
   const ref = useRef<HTMLLIElement>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -66,8 +68,12 @@ export function JourneyStage({
         </span>
       </span>
       <Reveal delay={delay}>
-        <p className="relative font-display text-xl font-semibold text-soil sm:text-2xl">{stage.stage}</p>
-        <p className="relative mt-2 max-w-lg text-sm text-foreground-secondary">{stage.description}</p>
+        <p className={`relative font-display text-xl font-semibold sm:text-2xl ${dark ? "text-ivory" : "text-soil"}`}>
+          {stage.stage}
+        </p>
+        <p className={`relative mt-2 max-w-lg text-sm ${dark ? "text-ivory/75" : "text-foreground-secondary"}`}>
+          {stage.description}
+        </p>
       </Reveal>
     </li>
   );

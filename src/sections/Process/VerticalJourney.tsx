@@ -17,7 +17,7 @@ import { JourneyStage } from "./JourneyStage";
 // version was retired) — the faint road photo behind it keeps this from
 // becoming a plain-text stretch regardless of screen width.
 
-export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
+export function VerticalJourney({ stages, elementColor, dark }: ProcessSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const lineHeight = useVerticalLineProgress(ref);
@@ -34,11 +34,11 @@ export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
         style={{ opacity: 0.1 }}
       />
       <div
-        className="absolute left-[7px] top-2 bottom-2 w-px bg-border sm:left-[11px]"
+        className={`absolute left-[7px] top-2 bottom-2 w-px sm:left-[11px] ${dark ? "bg-ivory/20" : "bg-border"}`}
         aria-hidden="true"
       />
       <motion.div
-        className="absolute left-[7px] top-2 w-px origin-top bg-clay sm:left-[11px]"
+        className={`absolute left-[7px] top-2 w-px origin-top sm:left-[11px] ${dark ? "bg-sandstone" : "bg-clay"}`}
         style={prefersReducedMotion ? { height: "100%" } : { height: lineHeight }}
         aria-hidden="true"
       />
@@ -50,6 +50,7 @@ export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
             index={i}
             color={elementColor[stage.element]}
             delay={(i % 3) * 0.08}
+            dark={dark}
           />
         ))}
       </ol>
