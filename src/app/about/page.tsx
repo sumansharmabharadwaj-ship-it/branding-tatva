@@ -11,7 +11,7 @@ import { ImageBreak } from "@/components/ImageBreak";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
-import { sectionWash, SANDSTONE } from "@/lib/sectionWash";
+import { SANDSTONE } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "About Suman Sharma",
@@ -130,11 +130,15 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        <section className="py-20" style={{ backgroundColor: sectionWash("space", 14) }}>
+        {/* Bold solid Soil, not the Phase-5 space tint — matches the
+            grid-of-cards=soil rule now applied to every other card-grid
+            section site-wide. Cards already use an opaque
+            bg-background-elevated fill, no card-level change needed. */}
+        <section className="bg-soil py-20">
           <Container>
             <div className="grid gap-8 md:grid-cols-[220px_1fr] md:gap-12">
               <Reveal>
-                <h2 className="text-display-sm font-display font-semibold text-soil md:sticky md:top-28">
+                <h2 className="text-display-sm font-display font-semibold text-ivory md:sticky md:top-28">
                   Credentials
                 </h2>
               </Reveal>

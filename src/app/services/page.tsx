@@ -202,16 +202,22 @@ export default function ServicesPage() {
           <ProcessSection stages={process} elementColor={elementColor} />
         </section>
 
-        <section
-          id="by-situation"
-          className="scroll-mt-24 py-16"
-          style={{ backgroundColor: sectionWash("earth", 14) }}
-        >
+        {/* Bold solid Soil, not the Phase-5 earth tint — matches the
+            grid-of-cards=soil rule now applied to every other card-grid
+            section site-wide. The cards' fill used the same translucent
+            alpha-hex trick as the offerings cards (fixed above), which
+            would go dark-on-dark against Soil — swapped for the same
+            opaque blendHex tint. SectionHeading hardcodes text-soil, so
+            this one instance is hand-rolled in ivory instead of touching
+            that shared component's defaults for every other caller. */}
+        <section id="by-situation" className="scroll-mt-24 bg-soil py-16">
           <Container>
-            <SectionHeading
-              eyebrow="By situation"
-              title="Organised by where your brand is right now."
-            />
+            <div className="max-w-2xl">
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">By situation</p>
+              <h2 className="mt-2 text-display-sm font-display font-semibold text-ivory">
+                Organised by where your brand is right now.
+              </h2>
+            </div>
             <div className="spotlight-grid mt-10 grid items-stretch gap-6 md:grid-cols-2">
               {serviceGroups.map((group, i) => (
                 <Reveal key={group.slug} delay={i * 0.08} className="h-full">
@@ -221,7 +227,7 @@ export default function ServicesPage() {
                       className="spotlight-card flex h-full scroll-mt-24 flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-colors duration-300"
                       style={{
                         borderTopColor: group.color,
-                        backgroundColor: `${group.color}0F`,
+                        backgroundColor: blendHex(group.color, "#FCFAF6", 10),
                         ["--card-color" as string]: group.color,
                       }}
                     >
@@ -240,7 +246,7 @@ export default function ServicesPage() {
                 </Reveal>
               ))}
             </div>
-            <p className="mt-8 text-sm text-foreground-secondary">
+            <p className="mt-8 text-sm text-ivory/70">
               Pricing is discussed after understanding your project. Every
               engagement is scoped individually rather than sold off a fixed
               menu.

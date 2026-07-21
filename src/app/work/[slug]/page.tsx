@@ -171,10 +171,10 @@ export default async function CaseStudyPage({ params }: Props) {
         />
 
         {related && (
-          <section className="py-16">
+          <section className="bg-soil py-16">
             <Container>
               <Reveal>
-                <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+                <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">
                   Related work
                 </p>
                 <TiltCard glowColor={related.accent} className="mt-3 max-w-md">

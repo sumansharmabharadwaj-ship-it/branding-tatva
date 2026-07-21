@@ -316,15 +316,25 @@ export default function Home() {
           ]}
         />
 
-        <GradientSections colors={["#F4EFE6", "#EEE4DB"]}>
+        {/* Bold solid Soil, not the previous pale cream-to-near-cream
+            drift — matches the same "grid of dark photographic cards
+            sits on Soil" rule now applied to every other card-grid
+            section site-wide (Services offerings, Work grid, Blog grid). */}
+        <section className="bg-soil py-20 sm:py-28">
           {/* Featured work — one large photographic entry, two quiet
               editorial ones, not three identical cards */}
-          <section className="py-20 sm:py-28">
+          <div>
             <Container>
               <Reveal>
                 <div className="flex items-baseline justify-between">
-                  <h2 className="text-display-sm font-display font-semibold text-soil">Selected work</h2>
-                  <LinkButton href="/work" variant="secondary">View all work</LinkButton>
+                  <h2 className="text-display-sm font-display font-semibold text-ivory">Selected work</h2>
+                  <LinkButton
+                    href="/work"
+                    variant="secondary"
+                    className="border-ivory/30 text-ivory hover:bg-ivory/10"
+                  >
+                    View all work
+                  </LinkButton>
                 </div>
               </Reveal>
             </Container>
@@ -357,8 +367,8 @@ export default function Home() {
                 ))}
               </div>
             </Container>
-          </section>
-        </GradientSections>
+          </div>
+        </section>
 
         <VideoBreak
           src="/videos/own-alpenglow-peak.mp4"
