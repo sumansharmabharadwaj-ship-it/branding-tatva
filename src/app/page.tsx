@@ -428,12 +428,18 @@ export default function Home() {
             dark panel cut in right below it). Merged into one continuous
             video-backed section so the quiet moment carries straight
             through into the invitation, instead of the visual abruptly
-            resetting between them. */}
+            resetting between them. Was 210vh — nothing about this
+            section's content scales with height (the quote and CTA just
+            center within whatever space they're given; parallax/
+            cameraPush are self-contained motion, not scroll-gated
+            reveals), so the extra height was pure empty video before the
+            centered content ever appeared. Direct, repeated feedback
+            that this specific section felt long and boring. */}
         <VideoBreak
           src="/videos/own-moonlit-sea.mp4"
           poster="/images/own-moonlit-sea-poster.jpg"
           quote="Some things only become visible once everything else goes quiet."
-          height="min(1750px, 210vh)"
+          height="min(900px, 108vh)"
           imagePosition="50% 12%"
           quoteVariant="statement"
           parallax
