@@ -221,20 +221,20 @@ export default function Home() {
             the wrong containing block instead of the real page scroll. */}
         <PerspectiveReveal>
           <section className="relative overflow-hidden pt-16 pb-28 sm:pt-20 sm:pb-40">
-            {/* Went through higgsfield-water-ripples.mp4 first — still
-                too close visually to the water-droplets clip in the
-                section above (same dark surface, same warm highlight,
-                same liquid motion) to read as genuinely different, even
-                though it was a distinct file. own-alpenglow-peak.mp4
-                (unused again since being swapped out of the section
-                above) is a completely different category — mountain and
-                forest, no water at all — so there's no ambiguity this
-                time. Element color still lives in ElementsConstellation
-                and the slider just below, where five distinct colors
-                are the actual point. */}
+            {/* Third pass on this section's backdrop: water-ripples read
+                too close to the section above, own-alpenglow-peak read
+                as "another one of the site's own nature clips." This
+                one, pixabay-sunset-clouds.mp4, is sourced from Pixabay
+                (free for commercial use under the Pixabay Content
+                License, no attribution required) rather than Higgsfield
+                — AI credits ran low this session, and this is a genuine
+                sky/cloud shot a generation wouldn't have added much over.
+                Element color still lives in ElementsConstellation and
+                the slider just below, where five distinct colors are
+                the actual point. */}
             <BackgroundVideo
-              video="/videos/own-alpenglow-peak.mp4"
-              poster="/images/own-alpenglow-peak-poster.jpg"
+              video="/videos/pixabay-sunset-clouds.mp4"
+              poster="/images/pixabay-sunset-clouds-poster.jpg"
             />
             <div className="absolute inset-0 bg-soil/70" />
             <ElementsConstellation />
