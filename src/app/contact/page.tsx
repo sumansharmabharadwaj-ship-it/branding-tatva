@@ -4,12 +4,13 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/Reveal";
+import { SplitReveal } from "@/components/SplitReveal";
 import { VideoBreak } from "@/components/VideoBreak";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { site } from "@/data/site";
-import { sectionWash, ELEMENT_HEX } from "@/lib/sectionWash";
+import { SANDSTONE } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -27,15 +28,16 @@ export default function ContactPage() {
     <>
       <Header />
       <main id="main-content">
-        {/* Was sectionWash("earth", 10) — rgb(238,224,212), only barely
-            warmer than plain cream. This is the page's own first paint
-            (no hero video here), so pushed to 22% for a clearly visible
-            terracotta tint instead of something a visitor could mistake
-            for unstyled background. */}
-        <section
-          className="pb-20 pt-32 sm:pb-28 sm:pt-36"
-          style={{ backgroundColor: sectionWash("earth", 22) }}
-        >
+        {/* Was a one-off terracotta wash (earth blended 22%) — its own
+            color, distinct from every other light section on the site.
+            Sandstone now: the same single light-anchor tone About uses
+            for its own opening section, so a visitor lands on a color
+            that already means something elsewhere on the site instead
+            of a fifth shade of the same idea. This is the page's own
+            first paint (no hero video here), so still needs to read as
+            deliberately colored, not unstyled — Sandstone at full
+            strength does that. */}
+        <section className="pb-20 pt-32 sm:pb-28 sm:pt-36" style={{ backgroundColor: SANDSTONE }}>
           <Container className="grid gap-12 lg:grid-cols-5">
             <Reveal className="relative lg:col-span-2">
               {/* One quiet hand-drawn touch on the opening heading, the
@@ -48,9 +50,12 @@ export default function ContactPage() {
               <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
                 Contact
               </p>
-              <h1 className="mt-3 text-display-lg font-display font-normal text-soil">
+              <SplitReveal
+                as="h1"
+                className="mt-3 text-display-lg font-display font-normal text-soil"
+              >
                 Tell me what your brand is becoming.
-              </h1>
+              </SplitReveal>
               <p className="mt-5 text-foreground-secondary">
                 Fill in as much or as little as you know right now.
                 I&apos;ll ask a few more questions where it helps. I read
@@ -93,13 +98,15 @@ export default function ContactPage() {
           height="60vh"
         />
 
-        {/* Bold solid Water/Indigo, not the previous sage tint — this
-            section is already water-themed (the glyph below), and unlike
-            the form section above it, nothing here depends on the
-            error-message red staying legible, so it's safe to go bold.
-            CalendlyEmbed already wraps itself in an opaque card, so no
-            change needed there. */}
-        <section className="py-16" style={{ backgroundColor: ELEMENT_HEX.water }}>
+        {/* Was solid Indigo — a second distinct color on a two-section
+            page already using Sandstone above, exactly the kind of
+            per-section color-cycling flagged sitewide as reading
+            cluttered rather than cohesive. Soil now, the same dark
+            anchor every other page uses; the water glyph below still
+            carries the "water" theme as an accent, it just isn't the
+            whole backdrop anymore. CalendlyEmbed already wraps itself in
+            an opaque card, so no change needed there. */}
+        <section className="bg-soil py-16">
           <Container>
             <Reveal>
               <ElementGlyph slug="water" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />

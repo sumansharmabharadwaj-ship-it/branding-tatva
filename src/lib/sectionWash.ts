@@ -25,6 +25,19 @@ export const ELEMENT_HEX: Record<ElementSlug, string> = {
 // the bold-section palette (Phase 6), alongside Soil for "dark forest".
 export const SANDSTONE = "#D4B99A";
 
+// The site's two anchor tones for flat (non-photo/video) sections —
+// Sandstone for the occasional light break, this for everything else.
+// Exposed as a literal hex (not just the bg-soil Tailwind class) for the
+// few call sites that need a JS color value: inline styles and
+// GradientSections' framer-motion color interpolation. Every full-bleed
+// element-hue section (Sage, Clay, Indigo, Ochre) was collapsed into
+// this single dark tone — direct feedback that cycling through five
+// different saturated colors down one page read as "cluttered, no
+// cohesive visual language," not as intentional variety. Element hues
+// now only appear as accents (icons, borders, small numerals, card
+// tints), never as a full section fill.
+export const SOIL = "#27221E";
+
 const CREAM = "#F4EFE6";
 
 function hexToRgb(hex: string): [number, number, number] {

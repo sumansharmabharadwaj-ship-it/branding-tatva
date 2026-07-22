@@ -9,7 +9,6 @@ import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { PerspectiveReveal } from "@/components/PerspectiveReveal";
-import { GradientSections } from "@/components/GradientSections";
 import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
 import { ElementsSection } from "@/sections/Elements";
@@ -25,7 +24,6 @@ import { projects } from "@/data/projects";
 import { process } from "@/data/process";
 import { faqs } from "@/data/faqs";
 import { elementColor } from "@/lib/elementColor";
-import { sectionWash, ELEMENT_HEX } from "@/lib/sectionWash";
 
 // Previously relied entirely on the root layout's default title/description
 // — functional, but means "/" never explicitly owns its own metadata (no
@@ -141,24 +139,20 @@ export default function Home() {
             border) on the parent to contain it collapses straight
             through and pushes the whole section's rendered box down,
             leaving the "spacing" show as a gap of the page's own cream
-            above the section instead of space inside it. That's what
-            was producing the blank gap right after the waterlight video
-            — the sage color was real, it just started ~110px lower than
-            its own <section> tag implied. Padding can't collapse the
-            same way, and the values are tightened (not just moved) —
-            direct feedback that this gap read as dead space even before
-            the collapse bug was diagnosed. */}
-        <section className="relative pt-14 pb-20 sm:pt-20 sm:pb-24" style={{ backgroundColor: ELEMENT_HEX.air }}>
-          {/* Was a faint own-peaks.jpg background — one more mountain/ridge
-              photo on a site that already has several (Footer, Home
-              elements row, Services, Work hero), even without repeating
-              the exact file. Dropped rather than reaching for another
-              nature shot just to fill the space; flat Sage carries this
-              transitional text block fine on its own, same as the
-              section above it. Copy tightened from three paragraphs to
-              two — the "most brands only have one or two" contrast and
-              the personal closing line were saying adjacent things and
-              read as padding rather than two distinct points. */}
+            above the section instead of space inside it. Padding can't
+            collapse the same way, and the values are tightened (not
+            just moved) — direct feedback that this gap read as dead
+            space even before the collapse bug was diagnosed. */}
+        <section className="relative bg-soil pt-14 pb-20 sm:pt-20 sm:pb-24">
+          {/* Was solid Sage — direct, repeated feedback that stacking a
+              different saturated element color behind every section
+              (Sage here, Clay below, Indigo further down) read as
+              cluttered and scrapbook-like, not as a cohesive site. Soil
+              is now the one dark anchor tone for every flat section on
+              the page; it also continues straight on from the video
+              above instead of cutting to an unrelated hue. Element
+              colors stay in the palette as accents (icons, glyphs,
+              underlines, card tints) rather than full section fills. */}
           <div className="relative">
             <Container className="relative">
               <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
@@ -214,22 +208,16 @@ export default function Home() {
             sequence never appeared, since sticky was resolving against
             the wrong containing block instead of the real page scroll. */}
         <PerspectiveReveal>
-          <section className="relative overflow-hidden pt-16 pb-28 sm:pt-20 sm:pb-40">
-            {/* Was a near-white-to-near-white gradient, then a pale
-                earth wash (20/40, computing to rgb(232,209,194) down to
-                rgb(220,179,159)) — each round claimed to fix the "reads
-                as blank space" complaint, but a pale tint doesn't read
-                as a deliberate color at a glance next to this site's
-                warm cream, the same perceptual gap the Process section
-                had. Pushed to 90/100 (effectively solid earth-clay) to
-                match; text flips to ivory throughout, including the
-                ghost watermark. */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background: `linear-gradient(180deg, ${sectionWash("earth", 90)} 0%, ${sectionWash("earth", 100)} 100%)`,
-              }}
-            />
+          <section className="relative overflow-hidden bg-soil pt-16 pb-28 sm:pt-20 sm:pb-40">
+            {/* Went through a pale earth wash, then solid Clay — both
+                since replaced. A different bold hue on every section
+                (Sage above, Clay here, Indigo further down) was the
+                actual "cluttered scrapbook" complaint: too many colors
+                competing for attention with no shared visual language.
+                Soil now, continuing straight from the section above —
+                the element-color moment lives in ElementsConstellation
+                and the slider just below instead, where five distinct
+                colors are the actual point, not an accident. */}
             <ElementsConstellation />
             <Container className="relative">
             {/* Ghost watermark word, same technique as the case-study
@@ -366,37 +354,27 @@ export default function Home() {
           height="92vh"
         />
 
-        {/* Process and FAQ used to share one GradientSections wrapper
-            drifting between two near-identical creams — audit found this
-            as one of the longest "blank" runs on the site. Three rounds
-            of pale washes (8/16, then 25/45, then 50/70) each computed
-            to a lighter blue-gray on paper, but every one of them still
-            reads as "flat pale nothing" at a glance against this site's
-            warm cream/soil palette — a few RGB units of blue tint isn't
-            perceptible the way a genuinely bold color is. Every other
-            section on the site that isn't a photo/video is either a
-            bold, fully-saturated color (Home's Sage section, About's
-            Sandstone section) or soil-dark — never a pale tint. This
-            section was the one exception; brought it in line: 90/100
-            is effectively solid water-navy (#24394D), unmistakably its
-            own color the instant it's on screen, not a wash to
-            interpret. Text flips to ivory to match — the same flip
-            every other bold/dark section on the site already makes. */}
-        <GradientSections colors={[sectionWash("water", 90), sectionWash("water", 100)]}>
-          {/* Process — the horizontal-pinned treatment (desktop, motion
-              allowed) needs to break out of Container's max-w-6xl to read
-              as full-bleed, so it sits as a sibling after it rather than
-              nested inside; the mobile/reduced-motion ProcessJourney
-              fallback stays comfortable at that width regardless. */}
-          <section className="py-20 sm:py-28">
-            <Container>
-              <Reveal>
-                <h2 className="text-display-sm font-display font-normal text-ivory">How a project moves</h2>
-              </Reveal>
-            </Container>
-            <ProcessSection stages={process} elementColor={elementColor} />
-          </section>
-        </GradientSections>
+        {/* Was solid Indigo (before that, a pale blue-gray wash) — one
+            more one-off hue in a page that already had Sage and Clay
+            elsewhere, the exact color-cycling this round removes. Soil,
+            matching every other flat section on the page now; the
+            GradientSections scroll-interpolation wrapper this used to
+            need (blending between two near-identical Indigo tints) isn't
+            needed for a single flat color, so it's gone along with the
+            import. Process — the horizontal-pinned treatment (desktop,
+            motion allowed) needs to break out of Container's max-w-6xl
+            to read as full-bleed, so it sits as a sibling after the
+            heading rather than nested inside it; the mobile/reduced-
+            motion ProcessJourney fallback stays comfortable at that
+            width regardless. */}
+        <section className="bg-soil py-20 sm:py-28">
+          <Container>
+            <Reveal>
+              <h2 className="text-display-sm font-display font-normal text-ivory">How a project moves</h2>
+            </Reveal>
+          </Container>
+          <ProcessSection stages={process} elementColor={elementColor} />
+        </section>
 
         {/* Had zero photo/video at all — direct feedback that it read as
             flat and empty next to every other section on the site.

@@ -5,6 +5,7 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
+import { SplitReveal } from "@/components/SplitReveal";
 import { TiltCard } from "@/components/TiltCard";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
@@ -12,7 +13,7 @@ import { NatureAccent } from "@/components/NatureAccent";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
-import { SANDSTONE, ELEMENT_HEX, blendHex } from "@/lib/sectionWash";
+import { SANDSTONE } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "About Suman Sharma",
@@ -41,9 +42,12 @@ export default function AboutPage() {
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 About
               </span>
-              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(1.75rem,4vw,3rem)] font-normal leading-[1.15] text-ivory">
+              <SplitReveal
+                as="h1"
+                className="mx-auto mt-6 max-w-2xl font-display text-[clamp(1.75rem,4vw,3rem)] font-normal leading-[1.15] text-ivory"
+              >
                 {aboutIntro.opening}
-              </h1>
+              </SplitReveal>
               <div className="mt-8">
                 <LinkButton href="/contact">Start a brand conversation</LinkButton>
               </div>
@@ -86,11 +90,14 @@ export default function AboutPage() {
           quoteVariant="left"
         />
 
-        {/* Bold Earth/Clay (darkened slightly against Soil for AA text
-            contrast), not the previous parchment tint — continues the
-            same rule applied sitewide: no plain cream/parchment section
-            sits between two photo/dark moments. */}
-        <section className="py-20" style={{ backgroundColor: blendHex(ELEMENT_HEX.earth, "#27221E", 85) }}>
+        {/* Was Clay blended 85% toward Soil (a near-soil warm variant) —
+            close enough to soil to look right on its own, but yet
+            another slightly-different dark tone next to the true Soil
+            used two sections down (Credentials) and the Indigo used
+            further down still. Collapsed to plain Soil so every dark
+            section on this page reads as the exact same tone, not a
+            family of close-but-not-quite variants. */}
+        <section className="bg-soil py-20">
           <Container className="grid gap-12 md:grid-cols-[auto_1fr]">
             <Reveal>
               <Image
@@ -179,11 +186,14 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        {/* Bold Water/Indigo, not the previous parchment tint — closes
-            out the same alternating rhythm the rest of the page now
-            follows (Sandstone, Soil, Clay, Soil, Indigo) instead of
-            ending on a plain neutral right before the Footer. */}
-        <section className="py-20" style={{ backgroundColor: ELEMENT_HEX.water }}>
+        {/* Was solid Indigo — a third distinct dark hue alongside Clay
+            and Soil elsewhere on this page, direct feedback flagged this
+            exact pattern (a different saturated color per section) as
+            reading like a scrapbook rather than one cohesive site. Soil,
+            matching every other dark section on the page now; the
+            closing rhythm is Sandstone (one light break) then Soil
+            throughout, not a five-color cycle. */}
+        <section className="bg-soil py-20">
           <Container className="relative">
             {/* Ghost watermark word, same technique as the case-study
                 block numerals (.case-study-block::before in globals.css)

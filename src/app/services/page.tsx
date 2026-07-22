@@ -5,6 +5,7 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
+import { SplitReveal } from "@/components/SplitReveal";
 import { TiltCard } from "@/components/TiltCard";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
@@ -67,9 +68,12 @@ export default function ServicesPage() {
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 Services
               </span>
-              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory">
+              <SplitReveal
+                as="h1"
+                className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory"
+              >
                 Everything a brand needs, in plain terms.
-              </h1>
+              </SplitReveal>
               <p className="mx-auto mt-4 max-w-xl text-ivory/70">
                 Strategy, identity, content, and the channels that carry it.
                 Here&apos;s what I actually do, before we get into how I
@@ -211,19 +215,19 @@ export default function ServicesPage() {
             VerticalJourney component) the home page already uses,
             rather than inventing a separate framework just for this
             page. */}
-        {/* Bold Fire/Ochre (darkened against Soil for AA text contrast),
-            not the Phase-5 water tint — same rule as every other plain
-            section on the site. VerticalJourney/JourneyStage take an
+        {/* Was Ochre blended 60% toward Soil — a warm dark variant that,
+            next to this page's own true-Soil sections above and below it
+            (#elements, #by-situation), was one more slightly-off dark
+            tone in the mix. Direct feedback that a different color per
+            section reads as cluttered rather than cohesive applies here
+            too — collapsed to plain Soil so all three dark sections on
+            this page match exactly. VerticalJourney/JourneyStage take an
             opt-in `dark` prop for this (see sections/Process/types.ts) so
-            Home's Process section, which stays on its existing light
-            wash, is unaffected. SectionHeading hardcodes text-soil, so
-            this instance is hand-rolled in ivory rather than touching
-            that shared component's defaults for every other caller. */}
-        <section
-          id="process"
-          className="scroll-mt-24 py-16"
-          style={{ backgroundColor: blendHex(ELEMENT_HEX.fire, "#27221E", 60) }}
-        >
+            Home's Process section is unaffected. SectionHeading
+            hardcodes text-soil, so this instance is hand-rolled in ivory
+            rather than touching that shared component's defaults for
+            every other caller. */}
+        <section id="process" className="scroll-mt-24 bg-soil py-16">
           <Container>
             <div className="max-w-2xl">
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">How I work</p>

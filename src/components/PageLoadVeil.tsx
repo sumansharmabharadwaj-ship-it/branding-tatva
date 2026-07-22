@@ -46,6 +46,12 @@ const MARK_HEIGHT = 68;
 const BASELINE = 64;
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
+// How long the counter takes to reach 100 — the same window the rest of
+// the veil's own choreography (bars, frame, brand line) plays out over,
+// so "100" lands right as everything else has already settled rather
+// than racing ahead of or trailing behind it.
+const COUNTER_DURATION_MS = 1450;
+
 export function PageLoadVeil() {
   const prefersReducedMotion = useReducedMotion();
   const [barsSettled, setBarsSettled] = useState(false);
@@ -56,6 +62,15 @@ export function PageLoadVeil() {
   // note in the exit transition below for why this can't just rely on
   // AnimatePresence's own onExitComplete.
   const [removed, setRemoved] = useState(prefersReducedMotion);
+  // The small numeric counter next to the brand line — voyeurverite.com
+  // and trionn.com both pair their own loading screens with a ticking
+  // percentage; this is that same beat, synced to COUNTER_DURATION_MS
+  // instead of running as its own independent timer. Driven by rAF
+  // (elapsed-time-based, not tick-count-based) so a throttled/backgrounded
+  // tab still lands on exactly 100 rather than stalling partway — the
+  // same lesson AnimatedStat.tsx already learned the hard way for its
+  // own count-up.
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
@@ -66,7 +81,21 @@ export function PageLoadVeil() {
       setTimeout(() => setVisible(false), 1450),
       setTimeout(() => setRemoved(true), 2100),
     ];
-    return () => timers.forEach(clearTimeout);
+
+    const start = performance.now();
+    let frame: number;
+    function tick(now: number) {
+      const elapsed = now - start;
+      const pct = Math.min(100, Math.round((elapsed / COUNTER_DURATION_MS) * 100));
+      setProgress(pct);
+      if (pct < 100) frame = requestAnimationFrame(tick);
+    }
+    frame = requestAnimationFrame(tick);
+
+    return () => {
+      timers.forEach(clearTimeout);
+      cancelAnimationFrame(frame);
+    };
   }, [prefersReducedMotion]);
 
   if (removed) return null;
@@ -155,6 +184,16 @@ export function PageLoadVeil() {
               {site.tagline}
             </span>
           </motion.div>
+
+          {/* The numeric counter voyeurverite.com and trionn.com both
+              pair with their own loading screens — placed in a corner
+              rather than beside the mark so it reads as a separate,
+              secondary beat instead of competing with the brand line
+              for attention. */}
+          <div className="pointer-events-none absolute bottom-6 left-6 flex items-baseline gap-2 font-body text-[0.65rem] tracking-[0.3em] text-ivory/40 sm:bottom-8 sm:left-8">
+            <span>LOADING</span>
+            <span className="tabular-nums text-ivory/70">{progress}</span>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

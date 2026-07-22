@@ -3,6 +3,7 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
+import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { ImageBreak } from "@/components/ImageBreak";
 import { WorkGrid } from "@/sections/CaseStudies";
@@ -36,9 +37,12 @@ export default function WorkPage() {
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 Work
               </span>
-              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory">
+              <SplitReveal
+                as="h1"
+                className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory"
+              >
                 Projects across very different categories.
-              </h1>
+              </SplitReveal>
               <p className="mx-auto mt-4 max-w-xl text-ivory/70">
                 Marketplaces, executive coaching, wellness, D2C supplements,
                 enterprise technology: different industries, the same

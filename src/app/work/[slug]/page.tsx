@@ -12,7 +12,6 @@ import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
-import { sectionWash } from "@/lib/sectionWash";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -122,20 +121,17 @@ export default async function CaseStudyPage({ params }: Props) {
           </section>
         )}
 
-        {/* Was sectionWash("water", 12) then 40% — rgb(219,217,212) then
-            rgb(161,166,169), each one computing to a paler blue-gray on
-            paper but still reading as "flat, blank" at a glance next to
-            this site's warm palette. Every non-photo section on the
-            site that isn't soil-dark is bold and fully saturated
-            (Home's Sage section, About's Sandstone section) — this was
-            the one still on a pale wash. Brought to bold water-navy to
-            match; Block's own text and the sidebar both flip to ivory,
-            and .case-study-block::before's ghost numeral flips to
-            ivory-toned in globals.css. */}
-        <section
-          className="py-16"
-          style={{ backgroundColor: sectionWash("water", 95) }}
-        >
+        {/* Was a pale blue-gray wash, then solid Indigo — the Indigo
+            version was yet another one-off hue on a page that's
+            otherwise all Soil (#numbers above, Related work below), the
+            same color-per-section clutter fixed sitewide. Soil now, so
+            the whole template — stats, this, and related-work — reads
+            as one continuous dark chapter instead of three different
+            tones. Block's own text and the sidebar stay ivory, and
+            .case-study-block::before's ghost numeral stays ivory-toned
+            in globals.css — no change needed there, Soil is dark either
+            way. */}
+        <section className="bg-soil py-16">
           <Container className="grid gap-12 md:grid-cols-3">
             <Reveal className="case-study-blocks md:col-span-2 space-y-10">
               <Block id="challenge" title="The challenge">{project.challenge}</Block>
