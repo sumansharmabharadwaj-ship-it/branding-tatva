@@ -49,30 +49,37 @@ export default function WorkPage() {
         </PhotoHero>
 
         {/* Direct feedback pointed at alethia.earth/solutions/nature-based's
-            "OUR SOLUTION" section as the way to explain a point — a photo
-            with dot-and-line callouts, not another card grid. Added here,
-            not in place of the project grid below: those five projects
-            are genuinely distinct case studies someone needs to click
-            into individually, the same reason alethia's own case-study
-            list stays a normal list further down their page. This
-            explains the method behind all five before the grid, the one
-            thing a card grid can't easily say on its own. */}
+            "OUR SOLUTION" section as the technique to borrow — a photo
+            with dot-and-line callouts, not another card grid — but the
+            first pass leaned too hard on the reference itself: an
+            isolated single tree, same composition, same idea, not just
+            the same technique. Swapped for a brass compass instead —
+            takes the "one clear object explains it" gist without
+            reproducing what alethia's own asset actually shows, and
+            ties into "starts with real direction" more literally than a
+            tree did. Added here, not in place of the project grid
+            below: those five projects are genuinely distinct case
+            studies someone needs to click into individually, the same
+            reason alethia's own case-study list stays a normal list
+            further down their page. This explains the method behind
+            all five before the grid, the one thing a card grid can't
+            easily say on its own. */}
         <section className="bg-background-alt py-20 sm:py-28">
           <Container>
             <AnnotatedVisual
-              image="/images/higgsfield-solitary-tree.jpg"
+              image="/images/higgsfield-brass-compass.jpg"
               alt=""
               callouts={[
                 {
-                  dotTop: "32%",
-                  dotLeft: "26%",
+                  dotTop: "38%",
+                  dotLeft: "44%",
                   side: "left",
                   title: "Starts with a real audit, not a template",
                   text: "I look at what's actually happening in your market before proposing anything, not a standard package run the same way for every client.",
                 },
                 {
-                  dotTop: "46%",
-                  dotLeft: "74%",
+                  dotTop: "58%",
+                  dotLeft: "56%",
                   side: "right",
                   title: "One connected system, not five handoffs",
                   text: "Positioning, identity, and content built to carry the same throughline, not separate deliverables that happen to share a folder.",

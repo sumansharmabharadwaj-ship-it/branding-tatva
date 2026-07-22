@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
-import { SectionHeading } from "@/components/SectionHeading";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { TiltCard } from "@/components/TiltCard";
@@ -32,6 +31,18 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
+
+// Approximate position of each element's own color-strand in
+// higgsfield-elements-convergence.jpg, eyeballed against the actual
+// image rather than computed — this is a decorative diagram dot, not a
+// precision data point, so an exact match isn't the goal.
+const ELEMENT_DOTS: { slug: "earth" | "water" | "fire" | "air" | "space"; top: string; left: string }[] = [
+  { slug: "earth", top: "22%", left: "16%" },
+  { slug: "water", top: "58%", left: "22%" },
+  { slug: "fire", top: "42%", left: "48%" },
+  { slug: "air", top: "32%", left: "80%" },
+  { slug: "space", top: "68%", left: "76%" },
+];
 
 export default function ServicesPage() {
   return (
@@ -119,80 +130,75 @@ export default function ServicesPage() {
           imagePosition="center 75%"
         />
 
-        <section id="elements" className="scroll-mt-24 bg-background-alt py-16">
+        {/* Was five arch-shaped cards in a row — direct feedback pointing
+            at alethia.earth's own annotated-photo technique called this
+            "a boring way to make people understand things." Replaced
+            with one picture instead: higgsfield-elements-convergence.jpg
+            (already in the library, unused) shows five ribbon strands in
+            each element's own color spiraling into one point — an
+            already-literal visual of "five elements, one brand," not
+            just a neutral backdrop standing in for a card grid. Each
+            strand gets a small dot at roughly where its color reads
+            clearest in the photo; the legend below keeps every piece of
+            the original cards' content (glyph, quote, meaning, services,
+            proof) just without the arch-card borders and fills. */}
+        {/* SectionHeading hardcodes text-soil, so — same rule already
+            applied to the "How I work" and "By situation" sections below
+            — this one instance is hand-rolled in ivory instead of
+            touching that shared component's defaults for every other
+            caller. */}
+        <section id="elements" className="scroll-mt-24 bg-soil py-16 sm:py-20">
           <Container>
-            <SectionHeading
-              eyebrow="The deeper system"
-              title="The elements that make a brand complete."
-              description="Every project draws on some combination of these five. None of them work well in isolation, and that's usually the actual problem a brand walks in with."
-            />
+            <div className="max-w-2xl">
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The deeper system</p>
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                The elements that make a brand complete.
+              </h2>
+              <p className="mt-4 text-ivory/75">
+                Every project draws on some combination of these five. None
+                of them work well in isolation, and that&apos;s usually the
+                actual problem a brand walks in with.
+              </p>
+            </div>
           </Container>
-        </section>
 
-        <section className="py-14">
+          <Reveal className="relative mx-auto mt-10 aspect-[16/9] w-full max-w-4xl overflow-hidden rounded-lg sm:mt-14">
+            <Image
+              src="/images/higgsfield-elements-convergence.jpg"
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 60vw, 100vw"
+              style={{ objectFit: "cover" }}
+            />
+            {ELEMENT_DOTS.map((dot) => (
+              <span
+                key={dot.slug}
+                aria-hidden="true"
+                className="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-ivory/70"
+                style={{ top: dot.top, left: dot.left, backgroundColor: ELEMENT_HEX[dot.slug] }}
+              />
+            ))}
+          </Reveal>
+
           <Container>
-            <div className="grid items-stretch gap-6 lg:grid-cols-5">
+            <div className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
               {elements.map((el, i) => (
-                <Reveal key={el.slug} delay={i * 0.08} className="h-full">
-                  <TiltCard glowColor={el.color}>
-                    {/* Arch silhouette, not the rounded-rect every other
-                        card on the site uses — a deliberate one-off shape
-                        variant (matching the reference moodboard's
-                        arch-cropped service cards), kept to this single
-                        card type rather than changed everywhere. Extra
-                        top padding keeps the glyph clear of the curve. */}
-                    <div
-                      className="relative flex h-full flex-col overflow-hidden rounded-t-[2.5rem] rounded-b-lg border-t-2 p-6 pt-9 shadow-elevation-sm"
-                      style={{ borderColor: el.color }}
-                    >
-                      {/* Photo at real opacity, tinted rather than washed
-                          out — a flat 90%-opacity fill used to sit directly
-                          on top of an already-faint (14%) photo, crushing it
-                          down to roughly 1-2% effective visibility. Same
-                          fix already applied to the Home page's Five
-                          Elements rows (see ElementRowBackground.tsx):
-                          full-opacity photo, a color-multiply wash tied to
-                          the element's own color, then a much lighter
-                          legibility gradient instead of a near-opaque card
-                          fill. */}
-                      <div className="absolute inset-0" aria-hidden="true">
-                        <Image
-                          src={el.image}
-                          alt=""
-                          fill
-                          priority
-                          sizes="(min-width: 1024px) 20vw, 100vw"
-                          style={{ objectFit: "cover", objectPosition: "center" }}
-                        />
-                        <div className="absolute inset-0" style={{ backgroundColor: el.color, opacity: 0.24, mixBlendMode: "multiply" }} />
-                      </div>
-                      <div
-                        className="absolute inset-0"
-                        aria-hidden="true"
-                        style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.55) 0%, rgba(244,239,230,0.75) 100%)" }}
-                      />
-                      <div className="relative">
-                        <ElementGlyph
-                          slug={el.slug}
-                          className="h-7 w-7 opacity-70"
-                          style={{ color: el.color }}
-                        />
-                        <p className="mt-3 font-display text-xl font-normal text-soil">{el.name}</p>
-                        <p className="mt-2 font-display text-sm italic text-foreground-secondary">
-                          &ldquo;{el.poetic}&rdquo;
-                        </p>
-                        <p className="mt-2 text-sm text-foreground-secondary">{el.meaning}</p>
-                        <ul className="mt-4 space-y-1.5">
-                          {el.services.map((s) => (
-                            <li key={s} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
-                              {s}
-                            </li>
-                          ))}
-                        </ul>
-                        <p className="mt-4 pt-4 text-xs text-foreground-secondary/80 italic">{el.proof}</p>
-                      </div>
-                    </div>
-                  </TiltCard>
+                <Reveal key={el.slug} delay={i * 0.08}>
+                  <div className="flex items-center gap-2">
+                    <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: el.color }} />
+                    <ElementGlyph slug={el.slug} className="h-5 w-5" style={{ color: el.color }} />
+                  </div>
+                  <p className="mt-3 font-display text-lg font-normal text-ivory">{el.name}</p>
+                  <p className="mt-2 font-display text-sm italic text-ivory/70">&ldquo;{el.poetic}&rdquo;</p>
+                  <p className="mt-2 text-sm text-ivory/70">{el.meaning}</p>
+                  <ul className="mt-4 space-y-1.5">
+                    {el.services.map((s) => (
+                      <li key={s} className="text-sm text-ivory/70 before:mr-2 before:content-['•']">
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-4 pt-4 text-xs italic text-ivory/50">{el.proof}</p>
                 </Reveal>
               ))}
             </div>
