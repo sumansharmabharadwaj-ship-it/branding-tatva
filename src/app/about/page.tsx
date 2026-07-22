@@ -40,7 +40,7 @@ export default function AboutPage() {
           video="/videos/own-companions.mp4"
           poster="/images/own-companions-wide-poster.jpg"
           minHeight="80vh"
-          imagePosition="center 40%"
+          imagePosition="40% 82%"
         >
           <Container className="relative pb-16 pt-20 text-center sm:pb-20">
             <Reveal>
