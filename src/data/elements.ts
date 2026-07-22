@@ -18,7 +18,7 @@ export const elements: Element[] = [
   {
     slug: "earth",
     name: "Earth · Foundation",
-    poetic: "Where a brand stands before it speaks.",
+    poetic: "What a brand stands on, long before it says a word.",
     meaning: "Purpose, audience, and positioning: the research most brands skip.",
     color: "#B85A34",
     services: [
@@ -35,7 +35,7 @@ export const elements: Element[] = [
   {
     slug: "water",
     name: "Water · Experience",
-    poetic: "How a brand moves through someone's day.",
+    poetic: "A brand that only shows up once was never really there.",
     meaning: "Customer journey, touchpoints, and adaptability across platforms.",
     color: "#24394D",
     services: [
@@ -50,7 +50,7 @@ export const elements: Element[] = [
   {
     slug: "fire",
     name: "Fire · Expression",
-    poetic: "What makes people look twice.",
+    poetic: "Not the loudest voice in the room. The one worth turning toward.",
     meaning: "Creative direction, campaigns, and the visibility that earns attention.",
     color: "#C28A28",
     services: [
@@ -66,7 +66,7 @@ export const elements: Element[] = [
   {
     slug: "air",
     name: "Air · Voice",
-    poetic: "The language a brand is remembered by.",
+    poetic: "The words people use about you when you're not in the room.",
     meaning: "Messaging, narrative, and content: the words themselves.",
     color: "#5C6B4A",
     services: [
@@ -82,7 +82,7 @@ export const elements: Element[] = [
   {
     slug: "space",
     name: "Space · Presence",
-    poetic: "What's left once the noise settles.",
+    poetic: "Not remembered for one big moment. Remembered, period.",
     meaning: "Consistency and recognition, built over months rather than one campaign.",
     color: "#AD6F5C",
     services: [
