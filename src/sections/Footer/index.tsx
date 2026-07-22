@@ -104,8 +104,15 @@ export function Footer() {
             <LinkButton href="/contact">Start a project</LinkButton>
           </Reveal>
 
+          {/* mix-blend-mode: difference — the mark inverts against
+              whatever's actually playing behind it in the video rather
+              than sitting flat on top of it, so the closing moment keeps
+              shifting instead of being one static frame with text
+              overlaid. Pure CSS, no JS: the lowest-risk of everything
+              adopted this round, easy to drop if it ever reads as too
+              busy against a specific stretch of footage. */}
           <Reveal delay={REVEAL_DELAY_LOGO} className="mt-20 flex justify-center sm:mt-24">
-            <Logo light className="scale-[2.6] sm:scale-[3.4]" />
+            <Logo light className="scale-[2.6] mix-blend-difference sm:scale-[3.4]" />
           </Reveal>
 
           <Reveal
