@@ -11,6 +11,9 @@ import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { NatureAccent } from "@/components/NatureAccent";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { ScrollCue } from "@/components/ScrollCue";
+import { FiveElementsMoment } from "@/components/FiveElementsMoment";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -31,6 +34,7 @@ export default function AboutPage() {
   return (
     <>
       <Header transparent />
+      <ScrollProgress />
       <main id="main-content">
         <PhotoHero
           video="/videos/own-companions.mp4"
@@ -54,6 +58,7 @@ export default function AboutPage() {
               </div>
             </Reveal>
           </Container>
+          <ScrollCue />
         </PhotoHero>
 
         {/* Was own-alpenglow-peak.mp4 under an 80%-opaque Sandstone tint —
@@ -285,6 +290,12 @@ export default function AboutPage() {
             </div>
           </Container>
         </section>
+
+        {/* Closing beat: a literal 3D realization of "Five bars, one per
+            element, rising and settling like a skyline" from the section
+            just above — see FiveElementsMoment's own comment for the
+            full reasoning (placement, lazy-load, and fallback strategy). */}
+        <FiveElementsMoment />
       </main>
       <Footer />
     </>
