@@ -56,20 +56,22 @@ export default function AboutPage() {
           </Container>
         </PhotoHero>
 
-        {/* Was flat Sandstone with zero motion — the one remaining "dead"
-            section on this page once Working method/Credentials/Why-this-
-            site all got the same gap-fill treatment. own-alpenglow-peak.mp4
-            (a mountain seen through pines at dusk, unused anywhere else on
-            the site) sits under a strong Sandstone tint rather than the
-            soil/60-70 overlays used on the dark sections elsewhere on this
-            page — dark text needs the video kept subtle, closer to a slow
-            texture than a scene, so contrast never drops. */}
+        {/* Was own-alpenglow-peak.mp4 under an 80%-opaque Sandstone tint —
+            direct feedback that the video read as barely-there under that
+            much color. pixabay-forest-sunbeams.mp4 (sunbeams breaking
+            through oak branches over a misty field, freshly downloaded
+            for this section specifically, licensed for commercial use)
+            now plays at full visibility with only a light Sandstone wash
+            for warmth. Legibility comes from the same translucent glass
+            card the homepage already uses for text over vivid video
+            (page.tsx's newsletter panel) rather than from drowning the
+            footage in overlay. */}
         <section className="relative overflow-hidden pb-20 pt-20 sm:pb-28 sm:pt-28">
-          <BackgroundVideo video="/videos/own-alpenglow-peak.mp4" poster="/images/own-alpenglow-peak-poster.jpg" />
-          <div className="absolute inset-0" style={{ backgroundColor: `${SANDSTONE}CC` }} />
+          <BackgroundVideo video="/videos/pixabay-forest-sunbeams.mp4" poster="/images/pixabay-forest-sunbeams-poster.jpg" />
+          <div className="absolute inset-0" style={{ backgroundColor: `${SANDSTONE}40` }} />
           <Container className="relative">
             <Reveal>
-              <div className="max-w-xl space-y-5 text-foreground-secondary">
+              <div className="max-w-xl space-y-5 rounded-2xl border border-border/50 bg-background-elevated/85 px-6 py-8 text-foreground-secondary shadow-elevation-md backdrop-blur-sm sm:px-10 sm:py-10">
                 {aboutIntro.body.map((para, i) => (
                   <p key={i}>{para}</p>
                 ))}
