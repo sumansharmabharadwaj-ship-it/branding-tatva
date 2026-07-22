@@ -35,7 +35,7 @@ export const elements: Element[] = [
   {
     slug: "water",
     name: "Water · Experience",
-    poetic: "A brand that only shows up once was never really there.",
+    poetic: "Showing up once is barely showing up at all.",
     meaning: "Customer journey, touchpoints, and adaptability across platforms.",
     color: "#24394D",
     services: [
@@ -50,7 +50,7 @@ export const elements: Element[] = [
   {
     slug: "fire",
     name: "Fire · Expression",
-    poetic: "Not the loudest voice in the room. The one worth turning toward.",
+    poetic: "The one voice in the room worth turning toward.",
     meaning: "Creative direction, campaigns, and the visibility that earns attention.",
     color: "#C28A28",
     services: [
@@ -66,7 +66,7 @@ export const elements: Element[] = [
   {
     slug: "air",
     name: "Air · Voice",
-    poetic: "The words people use about you when you're not in the room.",
+    poetic: "The words people use about you once you've left the room.",
     meaning: "Messaging, narrative, and content: the words themselves.",
     color: "#5C6B4A",
     services: [
@@ -82,7 +82,7 @@ export const elements: Element[] = [
   {
     slug: "space",
     name: "Space · Presence",
-    poetic: "Not remembered for one big moment. Remembered, period.",
+    poetic: "Remembered long after the moment passes. Remembered, period.",
     meaning: "Consistency and recognition, built over months rather than one campaign.",
     color: "#AD6F5C",
     services: [

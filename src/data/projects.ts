@@ -122,7 +122,7 @@ export const projects: Project[] = [
     title: "HerbalCart",
     industry: "D2C wellness & supplements",
     challenge:
-      "HerbalCart's actual product line, including whey protein, pre workout, and protein bars, was being seen through a purely herbal or Ayurvedic lens the brand never intended. The gap between what people assumed HerbalCart sold and what it actually sold was undermining trust in its supplement range.",
+      "HerbalCart's actual product line, including whey protein, pre workout, and protein bars, was being seen through a purely herbal or Ayurvedic lens, a framing the brand had drifted into by accident. The gap between what people assumed HerbalCart sold and what it actually sold was undermining trust in its supplement range.",
     audience:
       "13 to 38 year olds in tier one and tier two Indian cities: health conscious, closer to 'functional fitness' enthusiasts than bodybuilders, wanting clean label options that stay approachable and reasonably priced.",
     insight:

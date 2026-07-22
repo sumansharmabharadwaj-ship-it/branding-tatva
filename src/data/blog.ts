@@ -21,7 +21,7 @@ export type BlogPost = {
 
 export const blogPosts: BlogPost[] = [
   {
-    slug: "five-elements-not-one",
+    slug: "five-elements-working-as-one",
     title: "Why brand strategy needs five elements working as one",
     excerpt:
       "Most brands are built with one or two elements working hard. The ones people remember are built with all five, working together.",
@@ -33,7 +33,7 @@ export const blogPosts: BlogPost[] = [
     body: [
       "Ask most businesses what their brand needs and you'll get one answer: a logo, or a content calendar, or \"better marketing.\" Each of those is real work, but treated alone, each is also a symptom fix. A sharp logo on a business with no clear audience just makes the confusion look tidier.",
       "The elemental approach splits brand work into five parts that actually do different jobs. Earth is where a brand is grounded: purpose, audience, positioning, the research most brands skip because it's slower than picking a font. Water is how a brand moves through someone's day, the actual customer journey rather than the funnel diagram of it. Fire is what makes people look twice. Air is the language that carries all of it. Space is what's left once the noise settles, the part people actually remember.",
-      "Most projects that come in asking for \"content\" are really missing Earth. Most projects asking for \"positioning\" already have Earth but have never translated it into Air anyone outside the founder's head can actually repeat. Naming the five separately does real diagnostic work: it tells you which part of the problem you're actually looking at before you spend money on the wrong one.",
+      "Most projects that come in asking for \"content\" are really missing Earth. Most projects asking for \"positioning\" already have Earth but have kept it trapped in the founder's own head, in a version of Air nobody outside the business can actually repeat. Naming the five separately does real diagnostic work: it tells you which part of the problem you're actually looking at before you spend money on the wrong one.",
       "None of the five works well in isolation. That's usually the actual problem a brand walks in with, whichever element it names first.",
     ],
   },

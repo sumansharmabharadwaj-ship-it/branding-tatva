@@ -78,15 +78,15 @@ export default function WorkPage() {
                   dotTop: "38%",
                   dotLeft: "44%",
                   side: "left",
-                  title: "Starts with a real audit, not a template",
-                  text: "I look at what's actually happening in your market before proposing anything, not a standard package run the same way for every client.",
+                  title: "A real audit, built for your actual market",
+                  text: "I look at what's actually happening in your market first, then build a plan specific to where your brand stands today.",
                 },
                 {
                   dotTop: "58%",
                   dotLeft: "56%",
                   side: "right",
-                  title: "One connected system, not five handoffs",
-                  text: "Positioning, identity, and content built to carry the same throughline, not separate deliverables that happen to share a folder.",
+                  title: "One connected system, start to finish",
+                  text: "Positioning, identity, and content built to carry the same throughline, from the first conversation to the last deliverable.",
                 },
               ]}
             />

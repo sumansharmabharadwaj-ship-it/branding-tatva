@@ -183,12 +183,12 @@ export default function Home() {
                 <Reveal delay={0.15} className="sm:order-1">
                   <div className="max-w-md space-y-4 text-ivory/85" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
                     <p>
-                      A brand isn&apos;t a logo or a slogan. It&apos;s every
-                      small decision that tells someone whether they can
-                      actually trust you — what you stand on, how you
-                      show up for them, what earns a second look, what
-                      you say when it matters, and whether you&apos;re
-                      still there once the excitement wears off.
+                      A brand is every small decision that tells someone
+                      whether they can actually trust you — what you
+                      stand on, how you show up for them, what earns a
+                      second look, what you say when it matters, and
+                      whether you&apos;re still there once the excitement
+                      wears off.
                     </p>
                     <p>
                       Most businesses get one or two of those right, usually
