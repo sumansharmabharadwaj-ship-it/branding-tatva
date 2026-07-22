@@ -216,19 +216,20 @@ export default function AboutPage() {
                 case for yours.
               </p>
             </Reveal>
-            <div className="mt-14 divide-y divide-ivory/15">
+            {/* Was a single-column divide-y list, each choice reading as
+                a stacked row rather than four distinct statements — a
+                2-column numbered pillar grid instead, same data, same
+                ghost-numeral treatment, just given its own card-like
+                weight per item rather than a running list. */}
+            <div className="mt-14 grid gap-x-12 gap-y-12 sm:grid-cols-2">
               {designChoices.map((choice, i) => (
-                <Reveal key={choice.title} delay={i * 0.06}>
-                  <div className="relative grid gap-3 py-8 sm:grid-cols-[auto_1fr] sm:gap-10 sm:py-10">
+                <Reveal key={choice.title} delay={i * 0.08}>
+                  <div className="relative border-t border-ivory/15 pt-6">
                     <span className="font-display text-5xl font-normal leading-none text-ivory/15 sm:text-6xl">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <div>
-                      <p className="font-display text-lg font-normal text-ivory">{choice.title}</p>
-                      <p className="mt-2 max-w-2xl text-sm text-ivory/75">
-                        {choice.detail}
-                      </p>
-                    </div>
+                    <p className="mt-4 font-display text-lg font-normal text-ivory">{choice.title}</p>
+                    <p className="mt-2 text-sm text-ivory/75">{choice.detail}</p>
                     {/* One quiet hand-drawn touch, tied to this specific
                         line about the palette coming from materials
                         rather than a trend — not decoration for its own

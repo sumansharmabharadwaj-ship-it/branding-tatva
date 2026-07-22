@@ -64,8 +64,25 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
       }
       stageRefs.current.forEach((stageEl, i) => {
         if (!stageEl) return;
-        stageEl.style.opacity = String(Math.max(0, 1 - Math.abs(progress - i)));
+        const dist = progress - i;
+        stageEl.style.opacity = String(Math.max(0, 1 - Math.abs(dist)));
+        // Was opacity-only — the stage crossfaded in place with nothing
+        // else tying it to scroll position, which read as a slideshow
+        // rather than something actually driven by scroll. Distance from
+        // the active stage now drives a drift + scale too, so a stage
+        // visibly moves through the frame as you scroll rather than just
+        // fading, still purely CSS transforms on the same per-tick
+        // scroll value already computed above.
+        const drift = dist * 28;
+        const scale = 1 - Math.min(0.1, Math.abs(dist) * 0.1);
+        stageEl.style.transform = `translateY(${drift}px) scale(${scale})`;
       });
+      // The backdrop photo/video slowly pushes in across the whole
+      // section (not per-stage) — a continuous "diving deeper" read as
+      // the six stages advance, using the same clamped 0-1 progress
+      // already computed for the sticky release buffer above.
+      const media = mediaRef.current;
+      if (media) media.style.transform = `scale(${1 + clamped * 0.07})`;
     }
 
     update();
@@ -75,7 +92,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
       unsubscribe?.();
       window.removeEventListener("resize", update);
     };
-  }, [stages.length, lenis]);
+  }, [stages.length, lenis, mediaRef]);
 
   return (
     // +1 stage-height of buffer beyond what the crossfade math needs —

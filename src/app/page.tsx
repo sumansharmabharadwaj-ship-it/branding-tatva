@@ -6,7 +6,7 @@ import { LinkButton } from "@/components/Button";
 import { FAQ } from "@/sections/FAQ";
 import { DustMotes } from "@/components/DustMotes";
 import { Reveal } from "@/components/Reveal";
-import { SplitReveal } from "@/components/SplitReveal";
+import { ScatterReveal } from "@/components/ScatterReveal";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
@@ -111,9 +111,13 @@ export default function Home() {
           spotlight
           topContent={
             <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
-              <SplitReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.1] text-ivory">
+              {/* Was SplitReveal (calm word fade) — this is the single
+                  showcase spot for ScatterReveal's more dramatic
+                  scattered-to-settled entrance instead, the site's own
+                  version of the kinetic-typography intro technique. */}
+              <ScatterReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.1] text-ivory">
                 A brand can be visible and still go unnoticed.
-              </SplitReveal>
+              </ScatterReveal>
               <Reveal delay={0.15}>
                 <div className="max-w-md space-y-4 text-ivory/75 sm:ml-auto sm:text-right">
                   <p>
