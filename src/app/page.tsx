@@ -11,6 +11,7 @@ import { KineticMarquee } from "@/components/KineticMarquee";
 import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
+import { MorphingGlyph } from "@/components/MorphingGlyph";
 import { ElementsSection } from "@/sections/Elements";
 import { CinematicHero } from "@/sections/Hero";
 import { Threshold } from "@/sections/Threshold";
@@ -231,16 +232,28 @@ export default function Home() {
             >
               ELEMENTS
             </span>
-            <Reveal>
-              <h2 className="relative text-display-sm font-display font-normal text-ivory">
-                The five elements
-              </h2>
-              <p className="mt-3 max-w-md text-sm text-ivory/70">
-                Every project moves through some version of all five, in
-                this order. Here&apos;s what each one actually covers, and
-                what it looks like when it&apos;s missing.
-              </p>
-            </Reveal>
+            <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <Reveal>
+                <h2 className="relative text-display-sm font-display font-normal text-ivory">
+                  The five elements
+                </h2>
+                <p className="mt-3 max-w-md text-sm text-ivory/70">
+                  Every project moves through some version of all five, in
+                  this order. Here&apos;s what each one actually covers, and
+                  what it looks like when it&apos;s missing.
+                </p>
+              </Reveal>
+              {/* One line, five shapes — MorphSVG (free since Webflow's
+                  2025 GreenSock acquisition) cycling through the same
+                  glyph paths ElementGlyph.tsx already draws elsewhere,
+                  performing "five elements, one brand" instead of just
+                  stating it in the heading above. Kept off the load-
+                  critical path (unlike PageLoadVeil, deliberately plain
+                  Framer Motion — see that file) and paused off-screen. */}
+              <Reveal delay={0.1} className="shrink-0 opacity-90">
+                <MorphingGlyph size={104} />
+              </Reveal>
+            </div>
           </Container>
           </section>
         </PerspectiveReveal>
