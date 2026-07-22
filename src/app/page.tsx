@@ -437,15 +437,21 @@ export default function Home() {
             reveals), so the extra height was pure empty video before the
             centered content ever appeared. Direct, repeated feedback
             that this specific section felt long and boring.
-            higgsfield-silver-tide.mp4 replaces own-moonlit-sea.mp4 — the
-            one background video on the whole site never actually
-            regenerated this session despite repeated feedback asking for
-            it; a still, silver-lit night sea matches "some things only
-            become visible once everything else goes quiet" more
-            directly than the original clip did. */}
+            higgsfield-verdant-hills.mp4 replaces higgsfield-silver-tide.mp4
+            (itself a replacement for own-moonlit-sea.mp4 the round
+            before) — per direct feedback wanting a serene green scene
+            here instead of the night sea; morning mist slowly parting
+            over rolling green hills still matches "some things only
+            become visible once everything else goes quiet" — a literal
+            visual of the quote instead of just a mood match. The
+            overlayGradient's 0.15-0.2 mid-band (right where the
+            centered quote sits) was tuned for own-moonlit-sea's own
+            darkness carrying contrast on its own; a bright, misty green
+            daytime scene needs real help from the overlay there
+            instead, so those stops came up to 0.5-0.55. */}
         <VideoBreak
-          src="/videos/higgsfield-silver-tide.mp4"
-          poster="/images/higgsfield-silver-tide-poster.jpg"
+          src="/videos/higgsfield-verdant-hills.mp4"
+          poster="/images/higgsfield-verdant-hills-poster.jpg"
           quote="Some things only become visible once everything else goes quiet."
           height="min(900px, 108vh)"
           imagePosition="50% 12%"
@@ -453,7 +459,7 @@ export default function Home() {
           parallax
           cameraPush
           wordFade
-          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.35) 0%, rgba(20,17,14,0.15) 30%, rgba(20,17,14,0.2) 55%, rgba(20,17,14,0.9) 100%)"
+          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.45) 0%, rgba(20,17,14,0.5) 30%, rgba(20,17,14,0.55) 55%, rgba(20,17,14,0.9) 100%)"
         >
           <DustMotes />
           <div className="relative">
