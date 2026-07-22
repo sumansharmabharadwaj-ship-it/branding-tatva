@@ -7,6 +7,7 @@ import { PhotoHero } from "@/components/PhotoHero";
 import { ImageBreak } from "@/components/ImageBreak";
 import { WorkGrid } from "@/sections/CaseStudies";
 import { ClipReveal } from "@/components/ClipReveal";
+import { AnnotatedVisual } from "@/components/AnnotatedVisual";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
@@ -46,6 +47,40 @@ export default function WorkPage() {
             </Reveal>
           </Container>
         </PhotoHero>
+
+        {/* Direct feedback pointed at alethia.earth/solutions/nature-based's
+            "OUR SOLUTION" section as the way to explain a point — a photo
+            with dot-and-line callouts, not another card grid. Added here,
+            not in place of the project grid below: those five projects
+            are genuinely distinct case studies someone needs to click
+            into individually, the same reason alethia's own case-study
+            list stays a normal list further down their page. This
+            explains the method behind all five before the grid, the one
+            thing a card grid can't easily say on its own. */}
+        <section className="bg-background-alt py-20 sm:py-28">
+          <Container>
+            <AnnotatedVisual
+              image="/images/higgsfield-solitary-tree.jpg"
+              alt=""
+              callouts={[
+                {
+                  dotTop: "32%",
+                  dotLeft: "26%",
+                  side: "left",
+                  title: "Starts with a real audit, not a template",
+                  text: "I look at what's actually happening in your market before proposing anything, not a standard package run the same way for every client.",
+                },
+                {
+                  dotTop: "46%",
+                  dotLeft: "74%",
+                  side: "right",
+                  title: "One connected system, not five handoffs",
+                  text: "Positioning, identity, and content built to carry the same throughline, not separate deliverables that happen to share a folder.",
+                },
+              ]}
+            />
+          </Container>
+        </section>
 
         {/* Was bold solid Soil, matching every other photo/video section
             site-wide — but per direct feedback pointing at the reference

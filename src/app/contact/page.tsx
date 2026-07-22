@@ -7,6 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { VideoBreak } from "@/components/VideoBreak";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { NatureAccent } from "@/components/NatureAccent";
 import { site } from "@/data/site";
 import { sectionWash, ELEMENT_HEX } from "@/lib/sectionWash";
 
@@ -31,7 +32,14 @@ export default function ContactPage() {
           style={{ backgroundColor: sectionWash("earth", 10) }}
         >
           <Container className="grid gap-12 lg:grid-cols-5">
-            <Reveal className="lg:col-span-2">
+            <Reveal className="relative lg:col-span-2">
+              {/* One quiet hand-drawn touch on the opening heading, the
+                  same restrained "one accent, not scattered decoration"
+                  rule the Footer and About page already use. */}
+              <NatureAccent
+                variant="butterfly"
+                className="pointer-events-none absolute -top-8 left-[68%] hidden h-9 w-9 text-clay/30 sm:block"
+              />
               <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
                 Contact
               </p>

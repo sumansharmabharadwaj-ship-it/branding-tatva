@@ -12,8 +12,13 @@ import { EASE_AIR } from "@/lib/motion";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
+// Underline-only fields, not full bordered boxes — per direct feedback
+// pointing at tile.pt's own "let's talk" form as a bar to match: bigger,
+// more confident type instead of small clinical inputs sitting in a
+// grid of near-identical rectangles. `bg-transparent` (not warm-white)
+// so the field reads as part of the page, not a boxed form widget.
 const inputClass =
-  "mt-1 w-full rounded-md border border-border bg-warm-white px-3 py-2 text-sm text-soil placeholder:text-foreground-secondary/60 focus-ring-halo";
+  "mt-2 w-full border-0 border-b-2 border-border bg-transparent px-0 py-2.5 text-lg text-soil placeholder:text-foreground-secondary/50 transition-colors duration-200 focus:border-action-primary focus:outline-none focus:ring-0";
 
 let rippleId = 0;
 
@@ -215,7 +220,7 @@ function Field({
 }) {
   const errorId = useId();
   return (
-    <label className="block text-sm font-medium text-soil">
+    <label className="block text-xs font-medium uppercase tracking-wide text-foreground-secondary">
       {label}
       {isValidElement(children)
         ? cloneElement(children, {
