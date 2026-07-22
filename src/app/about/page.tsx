@@ -10,6 +10,7 @@ import { TiltCard } from "@/components/TiltCard";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { NatureAccent } from "@/components/NatureAccent";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -97,8 +98,15 @@ export default function AboutPage() {
             further down still. Collapsed to plain Soil so every dark
             section on this page reads as the exact same tone, not a
             family of close-but-not-quite variants. */}
-        <section className="bg-soil py-20">
-          <Container className="grid gap-12 md:grid-cols-[auto_1fr]">
+        {/* Same gap-fill treatment as Home's flat bg-soil sections this
+            round — was solid color with zero motion. water-ripples,
+            unused anywhere on this page (stream-clarity above is a
+            different clip), gives the "how I work" section an ambient
+            flow backdrop instead of dead flat color. */}
+        <section className="relative overflow-hidden bg-soil py-20">
+          <BackgroundVideo video="/videos/higgsfield-water-ripples.mp4" poster="/images/higgsfield-water-ripples-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/60" />
+          <Container className="relative grid gap-12 md:grid-cols-[auto_1fr]">
             <Reveal>
               <Image
                 src="/images/own-portrait.jpg"
@@ -153,8 +161,16 @@ export default function AboutPage() {
             grid-of-cards=soil rule now applied to every other card-grid
             section site-wide. Cards already use an opaque
             bg-background-elevated fill, no card-level change needed. */}
-        <section className="bg-soil py-20">
-          <Container>
+        {/* own-moonlit-sea.mp4 — a calm, muted night clip, unused
+            elsewhere on the site currently, chosen specifically so it
+            sits quietly behind the card grid instead of competing with
+            it (the way higgsfield-element-fire does behind Home's
+            card-grid Selected-work section, a bright active clip
+            because that section has fewer, larger elements). */}
+        <section className="relative overflow-hidden bg-soil py-20">
+          <BackgroundVideo video="/videos/own-moonlit-sea.mp4" poster="/images/own-moonlit-sea-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/70" />
+          <Container className="relative">
             <div className="grid gap-8 md:grid-cols-[220px_1fr] md:gap-12">
               <Reveal>
                 <h2 className="text-display-sm font-display font-normal text-ivory md:sticky md:top-28">
@@ -193,7 +209,15 @@ export default function AboutPage() {
             matching every other dark section on the page now; the
             closing rhythm is Sandstone (one light break) then Soil
             throughout, not a five-color cycle. */}
-        <section className="bg-soil py-20">
+        {/* higgsfield-golden-peaks.mp4 — never used anywhere on the site
+            before now, chosen for this closing section specifically so
+            it doesn't repeat water-ripples or moonlit-sea from the two
+            sections directly above it. Mountain-peak light gives the
+            page's final "made on purpose" statement real weight instead
+            of ending the page on flat color. */}
+        <section className="relative overflow-hidden bg-soil py-20">
+          <BackgroundVideo video="/videos/higgsfield-golden-peaks.mp4" poster="/images/higgsfield-golden-peaks-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/65" />
           <Container className="relative">
             {/* Ghost watermark word, same technique as the case-study
                 block numerals (.case-study-block::before in globals.css)
