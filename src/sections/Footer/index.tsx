@@ -19,7 +19,7 @@ import { sectionWash } from "@/lib/sectionWash";
 // scene real motion (TexturedDark's optional video, mirroring PhotoHero's
 // own pattern) instead of a single frozen frame — chosen specifically
 // because it's not already the last thing a visitor sees on any one page
-// (higgsfield-lone-pine and higgsfield-verdant-hills are both already
+// (higgsfield-lone-pine and higgsfield-silver-tide are both already
 // load-bearing elsewhere on Home, immediately before this section would
 // follow them).
 // A brief round swapped this for a fresh higgsfield-golden-peaks

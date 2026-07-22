@@ -77,9 +77,13 @@ export default function ContactPage() {
           </Container>
         </section>
 
+        {/* own-leaves-cabin.mp4 replaced with higgsfield-verdant-hills.mp4
+            (morning mist parting over green hills, originally generated
+            for Home's closing CTA) per direct feedback moving this clip
+            here instead. */}
         <VideoBreak
-          src="/videos/own-leaves-cabin.mp4"
-          poster="/images/own-leaves-cabin-poster.jpg"
+          src="/videos/higgsfield-verdant-hills.mp4"
+          poster="/images/higgsfield-verdant-hills-poster.jpg"
           quote="A brand conversation is just the first clear view through the noise."
           height="60vh"
         />
