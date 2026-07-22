@@ -65,7 +65,12 @@ export default function AboutPage() {
             for warmth. Legibility comes from the same translucent glass
             card the homepage already uses for text over vivid video
             (page.tsx's newsletter panel) rather than from drowning the
-            footage in overlay. */}
+            footage in overlay. Re-graded from the original Pixabay source
+            with ffmpeg (saturation +40%, contrast +10%, a warm shadow/
+            midtone push, light unsharp) rather than a paid AI pass —
+            Higgsfield credits were exhausted this session, and a color
+            grade is a legitimate free-tool fix for "looks flat," not a
+            content problem an AI regeneration would actually solve. */}
         <section className="relative overflow-hidden pb-20 pt-20 sm:pb-28 sm:pt-28">
           <BackgroundVideo video="/videos/pixabay-forest-sunbeams.mp4" poster="/images/pixabay-forest-sunbeams-poster.jpg" />
           <div className="absolute inset-0" style={{ backgroundColor: `${SANDSTONE}40` }} />
