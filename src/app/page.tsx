@@ -215,17 +215,19 @@ export default function Home() {
             the wrong containing block instead of the real page scroll. */}
         <PerspectiveReveal>
           <section className="relative overflow-hidden pt-16 pb-28 sm:pt-20 sm:pb-40">
-            {/* Was a near-white-to-near-white gradient (#F4EFE6 to
-                #EFE4D9, both plain cream) — direct feedback that this
-                read as blank space rather than a real section, the same
-                complaint the Process wash already got fixed for. A real
-                earth wash (this section leads straight into the Earth
-                slide of the pinned sequence below it) instead of another
-                shade of cream. */}
+            {/* Was a near-white-to-near-white gradient, then a pale
+                earth wash (20/40, computing to rgb(232,209,194) down to
+                rgb(220,179,159)) — each round claimed to fix the "reads
+                as blank space" complaint, but a pale tint doesn't read
+                as a deliberate color at a glance next to this site's
+                warm cream, the same perceptual gap the Process section
+                had. Pushed to 90/100 (effectively solid earth-clay) to
+                match; text flips to ivory throughout, including the
+                ghost watermark. */}
             <div
               className="absolute inset-0"
               style={{
-                background: `linear-gradient(180deg, ${sectionWash("earth", 20)} 0%, ${sectionWash("earth", 40)} 100%)`,
+                background: `linear-gradient(180deg, ${sectionWash("earth", 90)} 0%, ${sectionWash("earth", 100)} 100%)`,
               }}
             />
             <ElementsConstellation />
@@ -233,18 +235,19 @@ export default function Home() {
             {/* Ghost watermark word, same technique as the case-study
                 block numerals (.case-study-block::before in globals.css)
                 extended to a word instead of a numeral — one signature
-                moment, not applied to every heading site-wide. */}
+                moment, not applied to every heading site-wide. Ivory-
+                toned now that the section itself is bold, not cream. */}
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-soil/[0.06] sm:-top-8"
+              className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-ivory/[0.1] sm:-top-8"
             >
               ELEMENTS
             </span>
             <Reveal>
-              <h2 className="relative text-display-sm font-display font-normal text-soil">
+              <h2 className="relative text-display-sm font-display font-normal text-ivory">
                 The five elements
               </h2>
-              <p className="mt-3 max-w-md text-sm text-foreground-secondary">
+              <p className="mt-3 max-w-md text-sm text-ivory/70">
                 Every project moves through some version of all five, in
                 this order. Here&apos;s what each one actually covers, and
                 what it looks like when it&apos;s missing.
