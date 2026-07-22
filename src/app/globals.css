@@ -197,21 +197,27 @@
      A CSS animation starts as soon as the browser paints the element,
      no script execution required, and the sitewide reduced-motion rule
      above already zeroes out animation-duration for it automatically. */
+  /* No `forwards`/`both` fill-mode — deliberately. That was the
+     original value, and it broke `position: fixed` for every
+     descendant (Header's nav pill, later ScrollProgress) the moment
+     you scrolled past the first ~600ms of any page's life: fill-mode
+     keeps the animation's last computed transform applied forever,
+     and even an *interpolated-toward-none* transform still resolves to
+     a concrete identity matrix rather than the literal keyword `none`
+     once the animation is finished (confirmed directly via
+     `Animation.finish()` + reading the resulting computed style — just
+     omitting `transform` from the `to` keyframe wasn't enough on its
+     own, the fill-mode itself has to go). Any matrix, identity or not,
+     still establishes a containing block for fixed descendants. With
+     no fill-mode, the animation stops affecting these properties the
+     instant it ends, and the element reverts to its actual unanimated
+     style — opacity 1, no filter, no transform — which is visually
+     identical to the `to` keyframe below, just without anything
+     lingering after. */
   .page-enter {
-    animation: page-enter 0.6s var(--ease-air) both;
+    animation: page-enter 0.6s var(--ease-air);
   }
 
-  /* `to` deliberately omits `transform` (rather than setting it to an
-     equivalent identity value like `translateY(0) scale(1)`) — any
-     transform value, including an identity matrix, establishes a new
-     containing block for `position: fixed` descendants, which broke
-     Header's nav pill (and this page's own ScrollProgress bar) the
-     moment you scrolled past the first ~600ms of any page's life:
-     both silently switched from viewport-fixed to scrolling with this
-     wrapper. Omitting it here means the animation interpolates toward
-     this element's own underlying value instead, which is `none` since
-     nothing else here sets a transform — the entrance motion is
-     unchanged, but nothing lingers afterward. */
   @keyframes page-enter {
     from {
       opacity: 0;
@@ -220,6 +226,7 @@
     }
     to {
       opacity: 1;
+      transform: translateY(0) scale(1);
       filter: blur(0px);
     }
   }
