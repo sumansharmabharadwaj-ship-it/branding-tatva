@@ -122,9 +122,14 @@ export default async function CaseStudyPage({ params }: Props) {
           </section>
         )}
 
+        {/* Was sectionWash("water", 12) — rgb(219,217,212), a near-neutral
+            gray barely distinguishable from the page's own cream, the
+            same "reads as blank space" problem the Home Process section
+            had at a similarly low strength. Pushed to 40% so it computes
+            to a legibly cool blue-gray instead. */}
         <section
           className="py-16"
-          style={{ backgroundColor: sectionWash("water", 12) }}
+          style={{ backgroundColor: sectionWash("water", 40) }}
         >
           <Container className="grid gap-12 md:grid-cols-3">
             <Reveal className="case-study-blocks md:col-span-2 space-y-10">

@@ -27,9 +27,14 @@ export default function ContactPage() {
     <>
       <Header />
       <main id="main-content">
+        {/* Was sectionWash("earth", 10) — rgb(238,224,212), only barely
+            warmer than plain cream. This is the page's own first paint
+            (no hero video here), so pushed to 22% for a clearly visible
+            terracotta tint instead of something a visitor could mistake
+            for unstyled background. */}
         <section
           className="pb-20 pt-32 sm:pb-28 sm:pt-36"
-          style={{ backgroundColor: sectionWash("earth", 10) }}
+          style={{ backgroundColor: sectionWash("earth", 22) }}
         >
           <Container className="grid gap-12 lg:grid-cols-5">
             <Reveal className="relative lg:col-span-2">

@@ -9,7 +9,6 @@ import { SplitReveal } from "@/components/SplitReveal";
 import { LinkButton } from "@/components/Button";
 import { site, footerLinks } from "@/data/site";
 import { socialLinks, EMBERS, REVEAL_DELAY_LOGO } from "./constants";
-import { sectionWash } from "@/lib/sectionWash";
 
 // The old footer spent its first screen on a nav column the header already
 // covers and a positioning paragraph nobody reads at the very bottom of a
@@ -137,16 +136,21 @@ export function Footer() {
         </Container>
       </TexturedDark>
 
-      <div
-        className="flex flex-col-reverse items-center gap-3 px-6 py-5 text-center sm:flex-row sm:justify-between sm:px-10"
-        style={{ backgroundColor: sectionWash("space", 14) }}
-      >
-        <p className="text-xs text-foreground-secondary">
+      {/* Was sectionWash("space", 14) — rgb(234,221,211), a pale near-cream
+          strip sitting directly under a near-black video section, the same
+          "abrupt light band right at a seam" problem the divider fixes
+          earlier this session already targeted. Flipped dark (bg-soil,
+          matching TexturedDark right above it) so the footer stays one
+          continuous dark passage through to the very last pixel instead
+          of resetting to light for the copyright line; text flips to its
+          light-on-dark equivalents to match. */}
+      <div className="flex flex-col-reverse items-center gap-3 bg-soil px-6 py-5 text-center sm:flex-row sm:justify-between sm:px-10">
+        <p className="text-xs text-ivory/60">
           © {new Date().getFullYear()} {site.name}
         </p>
         <div className="flex gap-4">
           {footerLinks.map((item) => (
-            <Link key={item.href} href={item.href} className="text-xs text-foreground-secondary hover:text-soil">
+            <Link key={item.href} href={item.href} className="text-xs text-ivory/60 hover:text-ivory">
               {item.label}
             </Link>
           ))}
