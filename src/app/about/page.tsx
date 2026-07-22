@@ -7,12 +7,11 @@ import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { TiltCard } from "@/components/TiltCard";
-import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { NatureAccent } from "@/components/NatureAccent";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ScrollProgress } from "@/components/ScrollProgress";
-import { ScrollCue } from "@/components/ScrollCue";
+import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { MeadowClosing } from "@/components/MeadowClosing";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
@@ -36,30 +35,15 @@ export default function AboutPage() {
       <Header transparent />
       <ScrollProgress />
       <main id="main-content">
-        <PhotoHero
-          video="/videos/own-companions.mp4"
-          poster="/images/own-companions-wide-poster.jpg"
-          minHeight="80vh"
-          imagePosition="40% 82%"
-        >
-          <Container className="relative pb-16 pt-20 text-center sm:pb-20">
-            <Reveal>
-              <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                About
-              </span>
-              <SplitReveal
-                as="h1"
-                className="mx-auto mt-6 max-w-2xl font-display text-[clamp(1.75rem,4vw,3rem)] font-normal leading-[1.15] text-ivory"
-              >
-                {aboutIntro.opening}
-              </SplitReveal>
-              <div className="mt-8">
-                <LinkButton href="/contact">Start a brand conversation</LinkButton>
-              </div>
-            </Reveal>
-          </Container>
-          <ScrollCue />
-        </PhotoHero>
+        <AboutSplitHero
+          eyebrow="About"
+          headline={aboutIntro.opening}
+          body={site.tagline}
+          ctaHref="/contact"
+          ctaLabel="Start a brand conversation"
+          video="/videos/own-companions-split.mp4"
+          poster="/images/own-companions-split-poster.jpg"
+        />
 
         {/* Was own-alpenglow-peak.mp4 under an 80%-opaque Sandstone tint —
             direct feedback that the video read as barely-there under that
