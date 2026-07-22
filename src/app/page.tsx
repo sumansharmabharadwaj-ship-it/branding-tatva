@@ -395,33 +395,35 @@ export default function Home() {
             replacing the earlier static higgsfield-architecture-columns.jpg
             per direct feedback wanting motion here too): tall pines in a
             hazy valley, a quiet visual echo of "finding clarity" without
-            illustrating the FAQ content literally. Kept as a light cream
-            wash rather than the dark overlay Process/Five-Elements use,
-            since FAQ's own accordion styling (soil text, clay hover) is
-            built for a light backdrop — flipping it to dark would mean
-            re-doing that component's states for one section, not worth
-            it here. The wash started at 0.82-0.88 (near-opaque, meant to
-            guarantee text contrast) but direct feedback was that it
-            crushed the video to almost nothing, the same "technically
-            there but invisible" problem TexturedDark's own overlay had
-            before it dropped its peak — brought down the same way,
-            leaning on the video's own dark tree trunks for contrast
-            instead of a near-solid cream layer. */}
+            illustrating the FAQ content literally.
+            The wash went through two rounds already: 0.82-0.88 (crushed
+            the video to nothing) then 0.48-0.58 (direct feedback that it
+            still needed "more clarity" and vibrancy). This round
+            separates the two concerns instead of tuning one wash to
+            serve both: the video itself is re-graded (+35% saturation,
+            +15% contrast) so it actually reads as vivid rather than
+            hazy, the section wash drops further (down to 0.18-0.28) to
+            let that vividness show, and the FAQ content moves onto its
+            own solid card instead of floating directly on the video —
+            so a busier, more saturated background can't compete with
+            the text for attention. */}
         <section className="relative overflow-hidden py-20 sm:py-28">
-          <BackgroundVideo video="/videos/higgsfield-forest-light.mp4" poster="/images/higgsfield-forest-light-poster.jpg" />
+          <BackgroundVideo video="/videos/higgsfield-forest-light-vivid.mp4" poster="/images/higgsfield-forest-light-vivid-poster.jpg" />
           <div
             className="absolute inset-0"
-            style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.48) 0%, rgba(244,239,230,0.58) 100%)" }}
+            style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.18) 0%, rgba(244,239,230,0.28) 100%)" }}
           />
           <Container className="relative max-w-2xl">
             <Reveal>
-              <h2 className="text-display-sm font-display font-normal text-soil">
-                Common questions
-              </h2>
-            <div className="mt-8">
-              <FAQ />
-            </div>
-          </Reveal>
+              <div className="rounded-2xl border border-border/50 bg-background-elevated/92 px-6 py-10 shadow-elevation-md backdrop-blur-sm sm:px-14 sm:py-16">
+                <h2 className="text-display-sm font-display font-normal text-soil">
+                  Common questions
+                </h2>
+                <div className="mt-8">
+                  <FAQ />
+                </div>
+              </div>
+            </Reveal>
         </Container>
         </section>
 
