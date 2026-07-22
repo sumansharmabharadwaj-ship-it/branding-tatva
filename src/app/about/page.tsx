@@ -13,7 +13,7 @@ import { NatureAccent } from "@/components/NatureAccent";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { ScrollCue } from "@/components/ScrollCue";
-import { FiveElementsMoment } from "@/components/FiveElementsMoment";
+import { ButterflyMoment } from "@/components/ButterflyMoment";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -291,11 +291,11 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        {/* Closing beat: a literal 3D realization of "Five bars, one per
-            element, rising and settling like a skyline" from the section
-            just above — see FiveElementsMoment's own comment for the
-            full reasoning (placement, lazy-load, and fallback strategy). */}
-        <FiveElementsMoment />
+        {/* Closing beat: a 3D butterfly drifting over the wildflower
+            meadow already playing behind it, settling to rest as you
+            scroll — see ButterflyMoment's own comment for the full
+            reasoning (placement, lazy-load, and fallback strategy). */}
+        <ButterflyMoment />
       </main>
       <Footer />
     </>
