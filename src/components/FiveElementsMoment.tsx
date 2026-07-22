@@ -39,14 +39,48 @@ const FALLBACK_BARS: { slug: ElementSlug; height: number }[] = [
 // static version of the same five bars on an ordinary section height,
 // not the oversized scroll-pinned wrapper the real experience needs.
 export function FiveElementsMoment() {
-  const [mediaRef, shouldLoad] = useLazyMount();
+  // 1000px instead of useLazyMount's 600px default — extra lead time
+  // specifically because this section's chunk (three + @react-three/
+  // fiber, ~900KB) is far heavier than anything else the hook gates,
+  // so it needs a bigger head start to be ready by the time shouldLoad
+  // actually flips true.
+  const [mediaRef, shouldLoad] = useLazyMount("1000px 0px");
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useMediaQuery("(max-width: 640px)");
   const lenis = useLenis();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(0);
 
-  const showCanvas = shouldLoad && !prefersReducedMotion && !isMobile;
+  const willShowCanvas = !prefersReducedMotion && !isMobile;
+  const showCanvas = shouldLoad && willShowCanvas;
+
+  // The real fix for the loading gap this was flagged for: shouldLoad
+  // firing near the viewport only controls when the (fast) WebGL
+  // context and geometry actually get created — it doesn't control
+  // when the chunk's JS starts downloading, since next/dynamic doesn't
+  // fetch anything until the lazy component first renders. Without
+  // this, the ~900KB three/@react-three/fiber chunk only began
+  // fetching once shouldLoad flipped, so there was a real network+parse
+  // gap between "scrolled near" and "canvas actually appears." Warming
+  // the same import() specifier during idle time, right from page
+  // load, means that fetch/parse work happens in the background while
+  // someone's still reading the sections above — by the time shouldLoad
+  // fires, the module is already cached and the dynamic import above
+  // resolves instantly. Skipped entirely when this section will never
+  // render the canvas anyway (reduced motion, mobile).
+  useEffect(() => {
+    if (!willShowCanvas) return;
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number };
+    const prefetch = () => {
+      import("./FiveElementsCanvas");
+    };
+    if (typeof w.requestIdleCallback === "function") {
+      const id = w.requestIdleCallback(prefetch, { timeout: 3000 });
+      return () => window.cancelIdleCallback?.(id);
+    }
+    const timeout = setTimeout(prefetch, 1500);
+    return () => clearTimeout(timeout);
+  }, [willShowCanvas]);
 
   useEffect(() => {
     if (!showCanvas) return;
