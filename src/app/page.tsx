@@ -221,19 +221,20 @@ export default function Home() {
             the wrong containing block instead of the real page scroll. */}
         <PerspectiveReveal>
           <section className="relative overflow-hidden pt-16 pb-28 sm:pt-20 sm:pb-40">
-            {/* Was the exact same higgsfield-water-droplets.mp4 as the
-                section above — direct feedback that reusing one literal
-                clip twice read as repetitive rather than cohesive.
-                higgsfield-water-ripples.mp4 keeps the same water motif
-                and warm/dark palette (concentric ripples instead of
-                falling droplets) so the two sections still read as one
-                continuous passage without being visually identical.
-                Element color still lives in ElementsConstellation and
-                the slider just below, where five distinct colors are
-                the actual point. */}
+            {/* Went through higgsfield-water-ripples.mp4 first — still
+                too close visually to the water-droplets clip in the
+                section above (same dark surface, same warm highlight,
+                same liquid motion) to read as genuinely different, even
+                though it was a distinct file. own-alpenglow-peak.mp4
+                (unused again since being swapped out of the section
+                above) is a completely different category — mountain and
+                forest, no water at all — so there's no ambiguity this
+                time. Element color still lives in ElementsConstellation
+                and the slider just below, where five distinct colors
+                are the actual point. */}
             <BackgroundVideo
-              video="/videos/higgsfield-water-ripples.mp4"
-              poster="/images/higgsfield-water-ripples-poster.jpg"
+              video="/videos/own-alpenglow-peak.mp4"
+              poster="/images/own-alpenglow-peak-poster.jpg"
             />
             <div className="absolute inset-0 bg-soil/70" />
             <ElementsConstellation />
