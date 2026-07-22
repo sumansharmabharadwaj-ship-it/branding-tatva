@@ -56,12 +56,18 @@ export default function AboutPage() {
           </Container>
         </PhotoHero>
 
-        {/* Bold solid Sandstone, not a tint — the section right after the
-            hero was still plain cream, the same "blank" transition Phase 6
-            targets sitewide. Dark text stays as-is; Sandstone is light
-            enough to keep full contrast without flipping to ivory. */}
-        <section className="pb-20 pt-20 sm:pb-28 sm:pt-28" style={{ backgroundColor: SANDSTONE }}>
-          <Container>
+        {/* Was flat Sandstone with zero motion — the one remaining "dead"
+            section on this page once Working method/Credentials/Why-this-
+            site all got the same gap-fill treatment. own-alpenglow-peak.mp4
+            (a mountain seen through pines at dusk, unused anywhere else on
+            the site) sits under a strong Sandstone tint rather than the
+            soil/60-70 overlays used on the dark sections elsewhere on this
+            page — dark text needs the video kept subtle, closer to a slow
+            texture than a scene, so contrast never drops. */}
+        <section className="relative overflow-hidden pb-20 pt-20 sm:pb-28 sm:pt-28">
+          <BackgroundVideo video="/videos/own-alpenglow-peak.mp4" poster="/images/own-alpenglow-peak-poster.jpg" />
+          <div className="absolute inset-0" style={{ backgroundColor: `${SANDSTONE}CC` }} />
+          <Container className="relative">
             <Reveal>
               <div className="max-w-xl space-y-5 text-foreground-secondary">
                 {aboutIntro.body.map((para, i) => (
