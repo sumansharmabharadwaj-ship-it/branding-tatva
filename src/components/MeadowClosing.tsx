@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { elements } from "@/data/elements";
 import { blendHex, SOIL } from "@/lib/sectionWash";
@@ -39,6 +41,7 @@ export function MeadowClosing() {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeIndexRef = useRef(0);
   const lenis = useLenis();
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -86,10 +89,25 @@ export function MeadowClosing() {
     }
 
     update();
-    const unsubscribe = lenis?.on("scroll", update);
+
+    // Lenis doesn't exist at all under prefers-reduced-motion (see
+    // SmoothScrollProvider) — without this fallback, update() would
+    // only ever run once at mount, and the whole five-stage sequence
+    // would stay frozen on whatever it computed then instead of
+    // tracking the visitor's actual (still perfectly normal, native)
+    // scroll as they move through the pinned section.
+    if (lenis) {
+      const unsubscribe = lenis.on("scroll", update);
+      window.addEventListener("resize", update);
+      return () => {
+        unsubscribe();
+        window.removeEventListener("resize", update);
+      };
+    }
+    window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
     return () => {
-      unsubscribe?.();
+      window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
   }, [lenis]);
@@ -97,17 +115,33 @@ export function MeadowClosing() {
   return (
     <div ref={wrapperRef} className="relative bg-soil" style={{ height: `${(STAGES.length + 1) * 100}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <video
-          ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
-          style={{ willChange: "transform" }}
-          src="/videos/pixabay-alpine-wildflowers.mp4"
-          poster="/images/pixabay-alpine-wildflowers-poster.jpg"
-          autoPlay
-          muted
-          loop
-          playsInline
-        />
+        {/* Video zoom is scroll-linked motion, same category PinnedJourney
+            already gates under reduced motion — a static poster stands
+            in instead, same as that file's own pattern (only the video
+            element is skipped; the crossfade/color-shift sequence
+            itself still runs, matching PinnedJourney's precedent of
+            keeping pin/crossfade behavior but dropping video playback). */}
+        {prefersReducedMotion ? (
+          <Image
+            src="/images/pixabay-alpine-wildflowers-poster.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ willChange: "transform" }}
+            src="/videos/pixabay-alpine-wildflowers.mp4"
+            poster="/images/pixabay-alpine-wildflowers-poster.jpg"
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+        )}
         {/* Tint shifts to each stage's own element color as it becomes
             active (blendHex toward Soil, matching every other section
             wash on this site) — the color itself moves with scroll,
