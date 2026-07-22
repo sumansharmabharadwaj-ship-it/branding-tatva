@@ -25,6 +25,7 @@ import { projects } from "@/data/projects";
 import { process } from "@/data/process";
 import { faqs } from "@/data/faqs";
 import { elementColor } from "@/lib/elementColor";
+import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 
 // Previously relied entirely on the root layout's default title/description
 // — functional, but means "/" never explicitly owns its own metadata (no
@@ -148,40 +149,51 @@ export default function Home() {
             collapse the same way, and the values are tightened (not
             just moved) — direct feedback that this gap read as dead
             space even before the collapse bug was diagnosed. */}
-        <section className="relative bg-soil pt-14 pb-20 sm:pt-20 sm:pb-24">
-          {/* Was solid Sage — direct, repeated feedback that stacking a
-              different saturated element color behind every section
-              (Sage here, Clay below, Indigo further down) read as
-              cluttered and scrapbook-like, not as a cohesive site. Soil
-              is now the one dark anchor tone for every flat section on
-              the page; it also continues straight on from the video
-              above instead of cutting to an unrelated hue. Element
-              colors stay in the palette as accents (icons, glyphs,
-              underlines, card tints) rather than full section fills. */}
+        {/* Was flat solid Soil — the fix for the earlier "clashing
+            colors" complaint swung too far the other way into "plain and
+            bland," direct feedback pointed at exactly this section. The
+            actual fix isn't a different flat color, it's real depth:
+            own-alpenglow-peak.mp4 (unused anywhere else on the site,
+            dawn light settling on a mountain — "something to stand on,"
+            literally) replaces the flat fill, with the same dark overlay
+            gradient every other video break already uses so the text
+            keeps full contrast. Copy rewritten to lead with why this
+            matters to someone reading it — trust, being remembered — not
+            just restate the five-elements mechanic in different words. */}
+        <section className="relative overflow-hidden pt-14 pb-20 sm:pt-20 sm:pb-24">
+          <BackgroundVideo
+            video="/videos/own-alpenglow-peak.mp4"
+            poster="/images/own-alpenglow-peak-poster.jpg"
+            imagePosition="center 65%"
+          />
+          <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
           <div className="relative">
             <Container className="relative">
               <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
                 <Reveal className="sm:order-2">
-                  <h2 className="font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.1] text-ivory sm:text-right">
+                  <h2
+                    className="font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.1] text-ivory sm:text-right"
+                    style={{ textShadow: "0 2px 14px rgba(0,0,0,0.6)" }}
+                  >
                     Five elements.
                     <br />
                     One brand.
                   </h2>
                 </Reveal>
                 <Reveal delay={0.15} className="sm:order-1">
-                  <div className="max-w-md space-y-4 text-ivory/75">
+                  <div className="max-w-md space-y-4 text-ivory/85" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
                     <p>
-                      Every brand needs the same five things: something
-                      solid to stand on, a way of moving through
-                      someone&apos;s day, a spark that earns a second look,
-                      a voice, and the consistency that gets remembered.
-                      Earth, water, fire, air, and space, dressed up as
-                      a theme.
+                      A brand isn&apos;t a logo or a slogan. It&apos;s every
+                      small decision that tells someone whether they can
+                      actually trust you — what you stand on, how you
+                      show up for them, what earns a second look, what
+                      you say when it matters, and whether you&apos;re
+                      still there once the excitement wears off.
                     </p>
                     <p>
-                      Most brands are built with one or two. The ones
-                      people remember use all five, working as one
-                      system —{" "}
+                      Most businesses get one or two of those right, usually
+                      by accident. The ones people actually remember get
+                      all five right, on purpose —{" "}
                       <span className="font-medium text-ivory">
                         the method behind every project below, and the
                         one I&apos;d use on yours
