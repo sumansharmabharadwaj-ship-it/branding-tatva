@@ -149,22 +149,18 @@ export default function Home() {
             collapse the same way, and the values are tightened (not
             just moved) — direct feedback that this gap read as dead
             space even before the collapse bug was diagnosed. */}
-        {/* Was flat solid Soil — the fix for the earlier "clashing
-            colors" complaint swung too far the other way into "plain and
-            bland," direct feedback pointed at exactly this section. The
-            actual fix isn't a different flat color, it's real depth:
-            own-alpenglow-peak.mp4 (unused anywhere else on the site,
-            dawn light settling on a mountain — "something to stand on,"
-            literally) replaces the flat fill, with the same dark overlay
-            gradient every other video break already uses so the text
-            keeps full contrast. Copy rewritten to lead with why this
-            matters to someone reading it — trust, being remembered — not
-            just restate the five-elements mechanic in different words. */}
+        {/* higgsfield-water-droplets.mp4 replaces own-alpenglow-peak —
+            direct feedback wanted this section and the "five elements"
+            intro right after it sharing one visual motif instead of
+            cutting between two unrelated scenes, so the same water clip
+            now plays behind both. Copy rewritten twice over: once to
+            lead with meaning instead of mechanics, then again to drop
+            every dash and negation-framed sentence, reading as a set of
+            direct, declarative statements instead. */}
         <section className="relative overflow-hidden pt-14 pb-20 sm:pt-20 sm:pb-24">
           <BackgroundVideo
-            video="/videos/own-alpenglow-peak.mp4"
-            poster="/images/own-alpenglow-peak-poster.jpg"
-            imagePosition="center 65%"
+            video="/videos/higgsfield-water-droplets.mp4"
+            poster="/images/higgsfield-water-droplets-poster.jpg"
           />
           <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
           <div className="relative">
@@ -184,16 +180,15 @@ export default function Home() {
                   <div className="max-w-md space-y-4 text-ivory/85" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
                     <p>
                       A brand is every small decision that tells someone
-                      whether they can actually trust you — what you
-                      stand on, how you show up for them, what earns a
-                      second look, what you say when it matters, and
-                      whether you&apos;re still there once the excitement
-                      wears off.
+                      whether they can trust you. What you stand on. How
+                      you show up for them. What earns a second look.
+                      What you say when it matters. Whether you&apos;re
+                      still there once the excitement fades.
                     </p>
                     <p>
-                      Most businesses get one or two of those right, usually
-                      by accident. The ones people actually remember get
-                      all five right, on purpose —{" "}
+                      Most businesses get one or two of these right,
+                      usually by accident. The ones people actually
+                      remember get all five right, on purpose. That&apos;s{" "}
                       <span className="font-medium text-ivory">
                         the method behind every project below, and the
                         one I&apos;d use on yours
@@ -225,16 +220,17 @@ export default function Home() {
             sequence never appeared, since sticky was resolving against
             the wrong containing block instead of the real page scroll. */}
         <PerspectiveReveal>
-          <section className="relative overflow-hidden bg-soil pt-16 pb-28 sm:pt-20 sm:pb-40">
-            {/* Went through a pale earth wash, then solid Clay — both
-                since replaced. A different bold hue on every section
-                (Sage above, Clay here, Indigo further down) was the
-                actual "cluttered scrapbook" complaint: too many colors
-                competing for attention with no shared visual language.
-                Soil now, continuing straight from the section above —
-                the element-color moment lives in ElementsConstellation
-                and the slider just below instead, where five distinct
-                colors are the actual point, not an accident. */}
+          <section className="relative overflow-hidden pt-16 pb-28 sm:pt-20 sm:pb-40">
+            {/* Same higgsfield-water-droplets.mp4 as the section above,
+                so this reads as one continuous passage instead of a cut
+                to flat Soil right after a video moment. Element color
+                still lives in ElementsConstellation and the slider just
+                below, where five distinct colors are the actual point. */}
+            <BackgroundVideo
+              video="/videos/higgsfield-water-droplets.mp4"
+              poster="/images/higgsfield-water-droplets-poster.jpg"
+            />
+            <div className="absolute inset-0 bg-soil/70" />
             <ElementsConstellation />
             <Container className="relative">
             {/* Ghost watermark word, same technique as the case-study
