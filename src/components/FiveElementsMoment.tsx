@@ -6,6 +6,7 @@ import { useReducedMotion } from "framer-motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useLenis } from "@/components/SmoothScrollProvider";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ELEMENT_HEX, type ElementSlug } from "@/lib/sectionWash";
 
 // Gated behind shouldLoad (not just rendered-but-hidden) so the
@@ -74,7 +75,12 @@ export function FiveElementsMoment() {
   if (!showCanvas) {
     return (
       <section className="relative flex items-center justify-center overflow-hidden bg-soil py-28">
-        <div ref={mediaRef} className="flex items-end gap-3" aria-hidden="true">
+        <BackgroundVideo
+          video="/videos/pixabay-alpine-wildflowers.mp4"
+          poster="/images/pixabay-alpine-wildflowers-poster.jpg"
+        />
+        <div className="absolute inset-0 bg-soil/55" />
+        <div ref={mediaRef} className="relative flex items-end gap-3" aria-hidden="true">
           {FALLBACK_BARS.map((bar) => (
             <span
               key={bar.slug}
@@ -90,6 +96,18 @@ export function FiveElementsMoment() {
   return (
     <div ref={wrapperRef} className="relative bg-soil" style={{ height: "200vh" }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
+        {/* Was flat bg-soil behind the capsules — direct feedback that
+            an animation over a plain solid color reads as monotonous.
+            A vibrant alpine wildflower meadow (Pixabay, free-licensed —
+            Higgsfield credits were exhausted this session) sits behind
+            the canvas at moderate overlay strength, since the whole
+            point of the earlier Sandstone-section fix was that too much
+            overlay drowns the footage out again. */}
+        <BackgroundVideo
+          video="/videos/pixabay-alpine-wildflowers.mp4"
+          poster="/images/pixabay-alpine-wildflowers-poster.jpg"
+        />
+        <div className="absolute inset-0 bg-soil/50" />
         <FiveElementsCanvas progressRef={progressRef} />
       </div>
     </div>
