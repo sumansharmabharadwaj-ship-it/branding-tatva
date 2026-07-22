@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { EASE_AIR } from "@/lib/motion";
 import { ThresholdPanel } from "./ThresholdPanel";
 import type { ThresholdPanelData } from "./types";
@@ -38,14 +39,17 @@ export function Threshold({
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    // bg-soil, not the previous no-background section — this heading zone
-    // sat on plain page cream between the forest-stream video above it and
-    // the panels' own dark photos below, direct feedback that it read as a
-    // blank gap interrupting the flow rather than part of it. Matching the
-    // dark tone both neighbors already use closes that gap instead of
-    // giving it yet another distinct wash.
-    <section className="bg-soil">
-      <div className="container-page pt-20 text-center">
+    // Was flat bg-soil with no motion — direct feedback that this heading
+    // zone still read as a blank gap between the video above it and the
+    // panels' own dark photos below, even after matching the dark tone.
+    // higgsfield-element-air.mp4 (already used elsewhere as the "voice"
+    // element's own clip) gives this specific gap real texture instead
+    // of a flat color — a fitting element for the moment right before a
+    // visitor picks which direction to take.
+    <section className="relative overflow-hidden bg-soil">
+      <BackgroundVideo video="/videos/higgsfield-element-air.mp4" poster="/images/higgsfield-element-air.jpg" />
+      <div className="absolute inset-0 bg-soil/60" />
+      <div className="container-page relative pt-20 text-center">
         {prefersReducedMotion ? (
           <h2 className="font-display text-display-sm font-normal text-ivory">{heading}</h2>
         ) : (

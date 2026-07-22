@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useLazyMount } from "@/hooks/useLazyMount";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import type { ProcessSectionProps } from "./types";
@@ -122,7 +123,18 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
     // +1 stage-height of buffer beyond what the crossfade math needs —
     // see update()'s own comment for why sticky needs dedicated room to
     // release in, separate from the last stage's own on-screen moment.
+    // That release itself used to read as a hard cut to flat Soil once
+    // the sticky child scrolled fully out of view — direct feedback
+    // flagged this exact spot as a blank gap right before FAQ. A plain,
+    // non-sticky water clip sits behind the whole wrapper now (not the
+    // sticky child, which already has its own six videos) so the last
+    // stretch of scroll reveals continuous motion instead of flat color
+    // as the pinned content scrolls away above it.
     <div ref={wrapperRef} className="relative" style={{ height: `${(stages.length + 1) * 100}vh` }}>
+      <div className="absolute inset-0 -z-10" aria-hidden="true">
+        <BackgroundVideo video="/videos/higgsfield-element-water.mp4" poster="/images/higgsfield-element-water.jpg" />
+        <div className="absolute inset-0 bg-soil/70" />
+      </div>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <div ref={mediaRef} className="absolute inset-0" aria-hidden="true">
           {stages.map((stage, i) => (

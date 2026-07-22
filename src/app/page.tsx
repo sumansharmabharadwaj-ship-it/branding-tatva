@@ -318,14 +318,20 @@ export default function Home() {
           ]}
         />
 
-        {/* Bold solid Soil, not the previous pale cream-to-near-cream
-            drift — matches the same "grid of dark photographic cards
-            sits on Soil" rule now applied to every other card-grid
-            section site-wide (Services offerings, Work grid, Blog grid). */}
-        <section className="bg-soil py-20 sm:py-28">
+        {/* Was flat bg-soil — direct feedback that the heading zone here,
+            before FeaturedWorkHero's own big photo takes over, still read
+            as a blank gap between the Threshold panels above and the
+            actual case-study imagery below. higgsfield-element-fire.mp4
+            fills just that zone (FeaturedWorkHero's own opaque image
+            covers the rest of the section, so the video only shows
+            through here) — fire fits a section about the work that
+            earned a second look. */}
+        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
+          <BackgroundVideo video="/videos/higgsfield-element-fire.mp4" poster="/images/higgsfield-element-fire.jpg" />
+          <div className="absolute inset-0 bg-soil/60" />
           {/* Featured work — one large photographic entry, two quiet
               editorial ones, not three identical cards */}
-          <div>
+          <div className="relative">
             <Container>
               <Reveal>
                 <div className="flex items-baseline justify-between">
@@ -392,12 +398,25 @@ export default function Home() {
             heading rather than nested inside it; the mobile/reduced-
             motion ProcessJourney fallback stays comfortable at that
             width regardless. */}
-        <section className="bg-soil py-20 sm:py-28">
-          <Container>
-            <Reveal>
-              <h2 className="text-display-sm font-display font-normal text-ivory">How a project moves</h2>
-            </Reveal>
-          </Container>
+        <section className="bg-soil">
+          {/* overflow-hidden scoped to this heading div only, not the
+              outer section — ProcessSection's own PinnedJourney relies
+              on `position: sticky`, which breaks the moment any ancestor
+              has overflow other than visible (see PinnedJourney's own
+              comment). Was flat bg-soil here too, direct feedback that
+              the heading zone before the pinned stages begin still read
+              as a blank gap; higgsfield-element-earth.mp4 fills it,
+              fitting since this heading introduces the whole process,
+              the foundation the other five stages build on. */}
+          <div className="relative overflow-hidden py-20 sm:py-28">
+            <BackgroundVideo video="/videos/higgsfield-element-earth.mp4" poster="/images/higgsfield-element-earth.jpg" />
+            <div className="absolute inset-0 bg-soil/60" />
+            <Container className="relative">
+              <Reveal>
+                <h2 className="text-display-sm font-display font-normal text-ivory">How a project moves</h2>
+              </Reveal>
+            </Container>
+          </div>
           <ProcessSection stages={process} elementColor={elementColor} />
         </section>
 
