@@ -17,26 +17,42 @@ type GlyphSlug = "earth" | "water" | "fire" | "air" | "space";
 // `position: sticky` rather than a GSAP ScrollTrigger pin (a past
 // version of this exact section lost real time to pin-desync bugs;
 // sticky positioning can't fall out of sync with the wrapper's own
-// height because it IS the wrapper's own layout). Reuses
-// VerticalJourney's shared backdrop rather than sourcing six distinct
-// stage photos — this is a mechanism swap, not a visual redesign.
+// height because it IS the wrapper's own layout).
+//
+// Used to reuse one shared backdrop across all six stages — direct
+// feedback that the background should actually change with each stage,
+// not just the foreground text. Each stage now gets its own short
+// atmospheric loop (see data/process.ts), crossfaded with the exact same
+// per-tick scroll math already driving the foreground text's opacity/
+// drift, so background and foreground move together instead of the
+// backdrop being a static layer underneath an animated one. Only the
+// active stage's video actually plays — the rest stay paused — so six
+// autoplaying loops don't all compete for the same GPU/decode budget at
+// once.
 export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const stageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const bgRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const activeIndexRef = useRef(0);
   const lenis = useLenis();
 
   const [mediaRef, shouldLoad] = useLazyMount();
   const prefersReducedMotion = useReducedMotion();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoReady, setVideoReady] = useState(false);
+  const [videoReady, setVideoReady] = useState<boolean[]>(() => stages.map(() => false));
 
+  // Only the active stage's video plays — every other one stays paused,
+  // so switching stages is a play/pause swap rather than six loops
+  // running simultaneously the whole time the section is pinned.
   useEffect(() => {
-    const el = videoRef.current;
-    if (!el || !shouldLoad || prefersReducedMotion) return;
-    el.play().catch(() => {});
-  }, [shouldLoad, prefersReducedMotion]);
+    if (prefersReducedMotion || !shouldLoad) return;
+    videoRefs.current.forEach((el, i) => {
+      if (!el) return;
+      if (i === activeIndex) el.play().catch(() => {});
+      else el.pause();
+    });
+  }, [activeIndex, shouldLoad, prefersReducedMotion]);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -77,10 +93,18 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
         const scale = 1 - Math.min(0.1, Math.abs(dist) * 0.1);
         stageEl.style.transform = `translateY(${drift}px) scale(${scale})`;
       });
-      // The backdrop photo/video slowly pushes in across the whole
-      // section (not per-stage) — a continuous "diving deeper" read as
-      // the six stages advance, using the same clamped 0-1 progress
-      // already computed for the sticky release buffer above.
+      // Each stage's own backdrop crossfades on the exact same distance
+      // value driving its text above — background and foreground change
+      // together rather than the backdrop being a static layer underneath.
+      bgRefs.current.forEach((bgEl, i) => {
+        if (!bgEl) return;
+        const dist = progress - i;
+        bgEl.style.opacity = String(Math.max(0, 1 - Math.abs(dist)));
+      });
+      // The whole backdrop stack slowly pushes in across the section (not
+      // per-stage) — a continuous "diving deeper" read as the six stages
+      // advance, using the same clamped 0-1 progress already computed for
+      // the sticky release buffer above.
       const media = mediaRef.current;
       if (media) media.style.transform = `scale(${1 + clamped * 0.07})`;
     }
@@ -101,27 +125,48 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
     <div ref={wrapperRef} className="relative" style={{ height: `${(stages.length + 1) * 100}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <div ref={mediaRef} className="absolute inset-0" aria-hidden="true">
-          <Image
-            src="/images/higgsfield-element-earth.jpg"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          {shouldLoad && !prefersReducedMotion && (
-            <video
-              ref={videoRef}
-              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
-              style={{ opacity: videoReady ? 1 : 0 }}
-              onCanPlay={() => setVideoReady(true)}
-              src="/videos/higgsfield-element-earth.mp4"
-              muted
-              loop
-              playsInline
-              preload="metadata"
-            />
-          )}
+          {stages.map((stage, i) => (
+            <div
+              key={stage.stage}
+              ref={(node) => {
+                bgRefs.current[i] = node;
+              }}
+              className="absolute inset-0"
+              style={{ opacity: i === 0 ? 1 : 0 }}
+            >
+              {stage.poster && (
+                <Image
+                  src={stage.poster}
+                  alt=""
+                  fill
+                  priority={i === 0}
+                  sizes="100vw"
+                  className="object-cover"
+                />
+              )}
+              {stage.video && shouldLoad && !prefersReducedMotion && (
+                <video
+                  ref={(node) => {
+                    videoRefs.current[i] = node;
+                  }}
+                  className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+                  style={{ opacity: videoReady[i] ? 1 : 0 }}
+                  onCanPlay={() =>
+                    setVideoReady((prev) => {
+                      const next = [...prev];
+                      next[i] = true;
+                      return next;
+                    })
+                  }
+                  src={stage.video}
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                />
+              )}
+            </div>
+          ))}
           <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
         </div>
 
