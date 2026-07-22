@@ -39,15 +39,13 @@ export function Threshold({
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    // Was flat bg-soil with no motion — direct feedback that this heading
-    // zone still read as a blank gap between the video above it and the
-    // panels' own dark photos below, even after matching the dark tone.
-    // higgsfield-element-air.mp4 (already used elsewhere as the "voice"
-    // element's own clip) gives this specific gap real texture instead
-    // of a flat color — a fitting element for the moment right before a
-    // visitor picks which direction to take.
+    // Was higgsfield-element-air.mp4 — direct feedback that reusing an
+    // existing element clip here didn't resonate or feel definitive
+    // enough for this specific moment. higgsfield-mountain-mist.mp4 (a
+    // fresh Higgsfield generation: aerial drift over misty mountain
+    // ridges at dawn) gives this heading real visual weight instead.
     <section className="relative overflow-hidden bg-soil">
-      <BackgroundVideo video="/videos/higgsfield-element-air.mp4" poster="/images/higgsfield-element-air.jpg" />
+      <BackgroundVideo video="/videos/higgsfield-mountain-mist.mp4" poster="/images/higgsfield-mountain-mist-poster.jpg" />
       <div className="absolute inset-0 bg-soil/60" />
       <div className="container-page relative pt-20 text-center">
         {prefersReducedMotion ? (

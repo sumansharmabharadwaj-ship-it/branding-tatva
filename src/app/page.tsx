@@ -301,7 +301,13 @@ export default function Home() {
               title: "Starting with an idea",
               description:
                 "Earth first work: purpose, audience, and positioning, before anything else gets built.",
-              image: "/images/own-canopy.jpg",
+              // Was a static image (own-canopy.jpg) — the only one of
+              // the two panels without real motion, direct feedback
+              // that it needed a proper video, not just a nicer photo.
+              // higgsfield-forest-trail-mist.mp4 (sunlit path through
+              // mist between tall trees): a journey just beginning.
+              image: "/images/higgsfield-forest-trail-mist-poster.jpg",
+              video: "/videos/higgsfield-forest-trail-mist.mp4",
               gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
               ctaLabel: "Brand Beginning",
               ctaHref: "/services#brand-beginning",
