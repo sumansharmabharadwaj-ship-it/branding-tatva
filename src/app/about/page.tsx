@@ -98,13 +98,15 @@ export default function AboutPage() {
             further down still. Collapsed to plain Soil so every dark
             section on this page reads as the exact same tone, not a
             family of close-but-not-quite variants. */}
-        {/* Same gap-fill treatment as Home's flat bg-soil sections this
-            round — was solid color with zero motion. water-ripples,
-            unused anywhere on this page (stream-clarity above is a
-            different clip), gives the "how I work" section an ambient
-            flow backdrop instead of dead flat color. */}
+        {/* Was higgsfield-water-ripples.mp4 — direct feedback that this
+            clip had already been used elsewhere. higgsfield-redwood-canopy.mp4
+            is a fresh generation (sunbeams filtering down through tall
+            redwoods, referenced against a Pinterest redwoods pin and
+            storytelling.noomoagency.com's own atmospheric mood), unused
+            anywhere else on the site, and reads distinct from
+            stream-clarity's water-over-rock shot directly above it. */}
         <section className="relative overflow-hidden bg-soil py-20">
-          <BackgroundVideo video="/videos/higgsfield-water-ripples.mp4" poster="/images/higgsfield-water-ripples-poster.jpg" />
+          <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
           <div className="absolute inset-0 bg-soil/60" />
           <Container className="relative grid gap-12 md:grid-cols-[auto_1fr]">
             <Reveal>
