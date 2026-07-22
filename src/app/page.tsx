@@ -365,19 +365,21 @@ export default function Home() {
 
         {/* Process and FAQ used to share one GradientSections wrapper
             drifting between two near-identical creams — audit found this
-            as one of the longest "blank" runs on the site. Split into two
-            washes, each in its own element-color family, so the two
-            sections read as genuinely distinct rather than one long
-            beige stretch. The strengths went 8/16 then 25/45 across two
-            rounds, each claiming to read as "a real steel-blue-grey tint"
-            — but water (#24394D) is dark and fairly desaturated, so
-            blended at 25% into cream it computes to rgb(192,194,192): a
-            near-neutral gray with no visible blue in it at all, reading
-            as exactly the same "blank divider" the wash was meant to
-            fix. Pushed to 50/70, which actually computes to a legibly
-            cool blue-gray (rgb(140,148,154) to rgb(98,112,123)) instead
-            of gray. */}
-        <GradientSections colors={[sectionWash("water", 50), sectionWash("water", 70)]}>
+            as one of the longest "blank" runs on the site. Three rounds
+            of pale washes (8/16, then 25/45, then 50/70) each computed
+            to a lighter blue-gray on paper, but every one of them still
+            reads as "flat pale nothing" at a glance against this site's
+            warm cream/soil palette — a few RGB units of blue tint isn't
+            perceptible the way a genuinely bold color is. Every other
+            section on the site that isn't a photo/video is either a
+            bold, fully-saturated color (Home's Sage section, About's
+            Sandstone section) or soil-dark — never a pale tint. This
+            section was the one exception; brought it in line: 90/100
+            is effectively solid water-navy (#24394D), unmistakably its
+            own color the instant it's on screen, not a wash to
+            interpret. Text flips to ivory to match — the same flip
+            every other bold/dark section on the site already makes. */}
+        <GradientSections colors={[sectionWash("water", 90), sectionWash("water", 100)]}>
           {/* Process — the horizontal-pinned treatment (desktop, motion
               allowed) needs to break out of Container's max-w-6xl to read
               as full-bleed, so it sits as a sibling after it rather than
@@ -386,7 +388,7 @@ export default function Home() {
           <section className="py-20 sm:py-28">
             <Container>
               <Reveal>
-                <h2 className="text-display-sm font-display font-normal text-soil">How a project moves</h2>
+                <h2 className="text-display-sm font-display font-normal text-ivory">How a project moves</h2>
               </Reveal>
             </Container>
             <ProcessSection stages={process} elementColor={elementColor} />

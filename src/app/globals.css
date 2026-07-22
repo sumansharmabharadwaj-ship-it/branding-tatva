@@ -603,5 +603,9 @@
   font-size: 2.25rem;
   font-weight: 600;
   line-height: 1;
-  color: rgba(39, 34, 30, 0.15);
+  /* Ivory-toned, not soil-toned — this is the only section using
+     .case-study-block, and it moved from a light wash to bold
+     water-navy, the same dark-on-cream → ivory-on-dark flip the About
+     page's own ghost watermark already makes for its bold section. */
+  color: rgba(244, 239, 230, 0.18);
 }

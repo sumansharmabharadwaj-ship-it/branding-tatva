@@ -40,8 +40,8 @@ function Block({ id, title, children }: { id?: string; title: string; children?:
   if (!children) return null;
   return (
     <div id={id} className={`case-study-block relative pl-14 sm:pl-16 ${id ? "scroll-mt-24" : ""}`}>
-      <h2 className="font-display text-xl font-normal text-soil">{title}</h2>
-      <p className="mt-3 text-foreground-secondary">{children}</p>
+      <h2 className="font-display text-xl font-normal text-ivory">{title}</h2>
+      <p className="mt-3 text-ivory/70">{children}</p>
     </div>
   );
 }
@@ -122,14 +122,19 @@ export default async function CaseStudyPage({ params }: Props) {
           </section>
         )}
 
-        {/* Was sectionWash("water", 12) — rgb(219,217,212), a near-neutral
-            gray barely distinguishable from the page's own cream, the
-            same "reads as blank space" problem the Home Process section
-            had at a similarly low strength. Pushed to 40% so it computes
-            to a legibly cool blue-gray instead. */}
+        {/* Was sectionWash("water", 12) then 40% — rgb(219,217,212) then
+            rgb(161,166,169), each one computing to a paler blue-gray on
+            paper but still reading as "flat, blank" at a glance next to
+            this site's warm palette. Every non-photo section on the
+            site that isn't soil-dark is bold and fully saturated
+            (Home's Sage section, About's Sandstone section) — this was
+            the one still on a pale wash. Brought to bold water-navy to
+            match; Block's own text and the sidebar both flip to ivory,
+            and .case-study-block::before's ghost numeral flips to
+            ivory-toned in globals.css. */}
         <section
           className="py-16"
-          style={{ backgroundColor: sectionWash("water", 40) }}
+          style={{ backgroundColor: sectionWash("water", 95) }}
         >
           <Container className="grid gap-12 md:grid-cols-3">
             <Reveal className="case-study-blocks md:col-span-2 space-y-10">
@@ -144,12 +149,12 @@ export default async function CaseStudyPage({ params }: Props) {
 
             <Reveal delay={0.15} className="space-y-6 md:sticky md:top-24 md:self-start">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+                <p className="text-xs font-medium uppercase tracking-wide text-sandstone">
                   Elements involved
                 </p>
                 <ul className="mt-2 space-y-1">
                   {project.services.map((s) => (
-                    <li key={s} className="text-sm text-soil">{s}</li>
+                    <li key={s} className="text-sm text-ivory/80">{s}</li>
                   ))}
                 </ul>
               </div>
