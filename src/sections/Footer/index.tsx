@@ -152,9 +152,28 @@ export function Footer() {
           of resetting to light for the copyright line; text flips to its
           light-on-dark equivalents to match. */}
       <div className="flex flex-col-reverse items-center gap-3 bg-soil px-6 py-5 text-center sm:flex-row sm:justify-between sm:px-10">
-        <p className="text-xs text-ivory/60">
-          © {new Date().getFullYear()} {site.name}
-        </p>
+        <div className="flex flex-col items-center gap-1 sm:items-start">
+          <p className="text-xs text-ivory/60">
+            © {new Date().getFullYear()} {site.name}
+          </p>
+          {/* Kevin MacLeod's Creative Commons license (the free tier of
+              his standard/CC split — see incompetech.com's own license
+              page) requires this credit in exchange for no licensing
+              fee, the same free-resources approach used for every
+              stock video sourced this session. */}
+          <p className="text-[0.65rem] text-ivory/40">
+            Ambient music: &ldquo;That Zen Moment&rdquo; by{" "}
+            <a
+              href="https://incompetech.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline decoration-ivory/30 underline-offset-2 hover:text-ivory/60"
+            >
+              Kevin MacLeod
+            </a>{" "}
+            (CC BY 4.0)
+          </p>
+        </div>
         <div className="flex gap-4">
           {footerLinks.map((item) => (
             <Link key={item.href} href={item.href} className="text-xs text-ivory/60 hover:text-ivory">

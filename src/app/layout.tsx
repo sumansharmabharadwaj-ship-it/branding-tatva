@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { DeferredCursor } from "@/components/DeferredCursor";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
+import { AmbientAudio } from "@/components/AmbientAudio";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { site } from "@/data/site";
 
@@ -109,6 +110,7 @@ export default function RootLayout({
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
         <DeferredCursor />
         <PageLoadVeil />
+        <AmbientAudio />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

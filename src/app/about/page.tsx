@@ -13,7 +13,7 @@ import { NatureAccent } from "@/components/NatureAccent";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { ScrollCue } from "@/components/ScrollCue";
-import { ButterflyMoment } from "@/components/ButterflyMoment";
+import { MeadowClosing } from "@/components/MeadowClosing";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { site } from "@/data/site";
@@ -291,11 +291,11 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        {/* Closing beat: a 3D butterfly drifting over the wildflower
-            meadow already playing behind it, settling to rest as you
-            scroll — see ButterflyMoment's own comment for the full
-            reasoning (placement, lazy-load, and fallback strategy). */}
-        <ButterflyMoment />
+        {/* Closing beat: the meadow video doing a slow scroll-driven
+            zoom while a two-line closing statement reveals as you
+            scroll through — see MeadowClosing's own comment for why
+            this replaced two rejected WebGL attempts at this section. */}
+        <MeadowClosing />
       </main>
       <Footer />
     </>
