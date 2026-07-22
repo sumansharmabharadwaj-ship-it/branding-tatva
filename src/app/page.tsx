@@ -221,14 +221,19 @@ export default function Home() {
             the wrong containing block instead of the real page scroll. */}
         <PerspectiveReveal>
           <section className="relative overflow-hidden pt-16 pb-28 sm:pt-20 sm:pb-40">
-            {/* Same higgsfield-water-droplets.mp4 as the section above,
-                so this reads as one continuous passage instead of a cut
-                to flat Soil right after a video moment. Element color
-                still lives in ElementsConstellation and the slider just
-                below, where five distinct colors are the actual point. */}
+            {/* Was the exact same higgsfield-water-droplets.mp4 as the
+                section above — direct feedback that reusing one literal
+                clip twice read as repetitive rather than cohesive.
+                higgsfield-water-ripples.mp4 keeps the same water motif
+                and warm/dark palette (concentric ripples instead of
+                falling droplets) so the two sections still read as one
+                continuous passage without being visually identical.
+                Element color still lives in ElementsConstellation and
+                the slider just below, where five distinct colors are
+                the actual point. */}
             <BackgroundVideo
-              video="/videos/higgsfield-water-droplets.mp4"
-              poster="/images/higgsfield-water-droplets-poster.jpg"
+              video="/videos/higgsfield-water-ripples.mp4"
+              poster="/images/higgsfield-water-ripples-poster.jpg"
             />
             <div className="absolute inset-0 bg-soil/70" />
             <ElementsConstellation />
