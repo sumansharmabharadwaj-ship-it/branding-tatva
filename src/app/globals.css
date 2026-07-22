@@ -201,6 +201,17 @@
     animation: page-enter 0.6s var(--ease-air) both;
   }
 
+  /* `to` deliberately omits `transform` (rather than setting it to an
+     equivalent identity value like `translateY(0) scale(1)`) — any
+     transform value, including an identity matrix, establishes a new
+     containing block for `position: fixed` descendants, which broke
+     Header's nav pill (and this page's own ScrollProgress bar) the
+     moment you scrolled past the first ~600ms of any page's life:
+     both silently switched from viewport-fixed to scrolling with this
+     wrapper. Omitting it here means the animation interpolates toward
+     this element's own underlying value instead, which is `none` since
+     nothing else here sets a transform — the entrance motion is
+     unchanged, but nothing lingers afterward. */
   @keyframes page-enter {
     from {
       opacity: 0;
@@ -209,7 +220,6 @@
     }
     to {
       opacity: 1;
-      transform: translateY(0) scale(1);
       filter: blur(0px);
     }
   }
