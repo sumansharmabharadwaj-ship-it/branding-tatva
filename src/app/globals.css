@@ -106,11 +106,22 @@
 }
 
 @layer base {
+  /* No `scroll-behavior: smooth` here — Lenis already drives every
+     scroll with its own eased rAF loop, and native CSS smooth-scroll
+     fights it for control of the same scroll position on every frame
+     (a discrete scroll event tries to animate scrollTop on the CSS
+     timing function while Lenis's lerp tries to animate it too),
+     which is what made scrolling feel janky/inconsistent site-wide on
+     both desktop and mobile. Lenis's own reduced-motion skip (see
+     SmoothScrollProvider.tsx) already falls back to plain native
+     scroll with no smoothing at all, so nothing needs restoring here
+     under prefers-reduced-motion either. */
   html {
-    scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
+    overflow-x: hidden;
     @apply bg-background text-foreground font-body antialiased;
   }
 
