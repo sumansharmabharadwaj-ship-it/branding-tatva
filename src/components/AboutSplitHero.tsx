@@ -40,10 +40,10 @@ export function AboutSplitHero({
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="relative grid min-h-screen bg-soil sm:grid-cols-2">
-      <div className="relative flex flex-col justify-center overflow-hidden px-6 py-28 sm:px-10 sm:py-24 lg:px-16">
+    <section className="relative grid min-h-screen grid-cols-2 bg-soil">
+      <div className="relative flex flex-col justify-center overflow-hidden px-3 py-16 sm:px-10 sm:py-24 lg:px-16">
         {prefersReducedMotion ? (
-          <Image src={leftPoster} alt="" fill sizes="(min-width: 640px) 50vw, 100vw" className="object-cover" />
+          <Image src={leftPoster} alt="" fill sizes="50vw" className="object-cover" />
         ) : (
           <video
             className="absolute inset-0 h-full w-full object-cover"
@@ -57,28 +57,38 @@ export function AboutSplitHero({
         )}
         <div
           className="absolute inset-0"
-          style={{ backgroundColor: "rgba(39,34,30,0.82)" }}
+          style={{ backgroundImage: "linear-gradient(180deg, rgba(39,34,30,0.68) 0%, rgba(39,34,30,0.58) 45%, rgba(39,34,30,0.72) 100%)" }}
         />
         <Reveal className="relative z-10">
-          <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+          <span
+            className="inline-flex items-center rounded-full border border-ivory/30 px-2 py-1 text-[0.5rem] font-medium uppercase tracking-[0.15em] text-ivory/85 sm:px-4 sm:py-1.5 sm:text-[0.65rem] sm:tracking-[0.25em]"
+            style={{ textShadow: "0 2px 12px rgba(0,0,0,0.6)" }}
+          >
             {eyebrow}
           </span>
           <SplitReveal
             as="h1"
-            className="mt-6 max-w-lg font-display text-[clamp(2rem,4.2vw,3.25rem)] font-normal leading-[1.12] text-ivory"
+            className="mt-4 max-w-lg font-display text-[clamp(1.15rem,4.6vw,3.25rem)] font-normal leading-[1.15] text-ivory [text-shadow:0_2px_16px_rgba(0,0,0,0.65)] sm:mt-6"
           >
             {headline}
           </SplitReveal>
-          <p className="mt-6 max-w-md font-body text-base leading-relaxed text-ivory/65 sm:text-lg">{body}</p>
-          <div className="mt-9">
-            <LinkButton href={ctaHref}>{ctaLabel}</LinkButton>
+          <p
+            className="mt-3 max-w-md font-body text-[0.75rem] leading-relaxed text-ivory/80 sm:mt-6 sm:text-base lg:text-lg"
+            style={{ textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}
+          >
+            {body}
+          </p>
+          <div className="mt-5 sm:mt-9">
+            <LinkButton href={ctaHref} className="px-3 py-2 text-[0.7rem] sm:px-6 sm:py-3 sm:text-sm">
+              {ctaLabel}
+            </LinkButton>
           </div>
         </Reveal>
       </div>
 
-      <div className="relative h-[56vh] overflow-hidden sm:h-auto">
+      <div className="relative overflow-hidden">
         {prefersReducedMotion ? (
-          <Image src={poster} alt="" fill sizes="(min-width: 640px) 50vw, 100vw" className="object-cover" />
+          <Image src={poster} alt="" fill sizes="50vw" className="object-cover" />
         ) : (
           <video
             className="absolute inset-0 h-full w-full object-cover"
