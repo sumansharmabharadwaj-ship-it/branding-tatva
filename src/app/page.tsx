@@ -220,25 +220,36 @@ export default function Home() {
             replaces: the slide showed once, then the rest of the
             sequence never appeared, since sticky was resolving against
             the wrong containing block instead of the real page scroll. */}
-        <PerspectiveReveal>
-          <section className="relative overflow-hidden pt-16 pb-28 sm:pt-20 sm:pb-40">
-            {/* Third pass on this section's backdrop: water-ripples read
-                too close to the section above, own-alpenglow-peak read
-                as "another one of the site's own nature clips." This
-                one, pixabay-sunset-clouds.mp4, is sourced from Pixabay
-                (free for commercial use under the Pixabay Content
-                License, no attribution required) rather than Higgsfield
-                — AI credits ran low this session, and this is a genuine
-                sky/cloud shot a generation wouldn't have added much over.
-                Element color still lives in ElementsConstellation and
-                the slider just below, where five distinct colors are
-                the actual point. */}
-            <BackgroundVideo
-              video="/videos/pixabay-sunset-clouds.mp4"
-              poster="/images/pixabay-sunset-clouds-poster.jpg"
-            />
-            <div className="absolute inset-0 bg-soil/70" />
-            <ElementsConstellation />
+        {/* BackgroundVideo/overlay/ElementsConstellation sit outside
+            PerspectiveReveal now, not wrapped by it — the same fix as
+            VerticalUnfold's element rows. PerspectiveReveal's initial
+            state is opacity:0 across its *entire* children, so nesting
+            the whole section (background included) inside it meant a
+            slow-to-fire reveal trigger during real mobile scrolling
+            left the whole section blank/cream instead of just skipping
+            an entrance animation. Reveal is now scoped to the text
+            content only, which keeps the camera-push settle on the
+            actual reveal-worthy part while the section's own visual
+            presence is no longer gated on it. */}
+        <section className="relative overflow-hidden pt-16 pb-28 sm:pt-20 sm:pb-40">
+          {/* Third pass on this section's backdrop: water-ripples read
+              too close to the section above, own-alpenglow-peak read
+              as "another one of the site's own nature clips." This
+              one, pixabay-sunset-clouds.mp4, is sourced from Pixabay
+              (free for commercial use under the Pixabay Content
+              License, no attribution required) rather than Higgsfield
+              — AI credits ran low this session, and this is a genuine
+              sky/cloud shot a generation wouldn't have added much over.
+              Element color still lives in ElementsConstellation and
+              the slider just below, where five distinct colors are
+              the actual point. */}
+          <BackgroundVideo
+            video="/videos/pixabay-sunset-clouds.mp4"
+            poster="/images/pixabay-sunset-clouds-poster.jpg"
+          />
+          <div className="absolute inset-0 bg-soil/70" />
+          <ElementsConstellation />
+          <PerspectiveReveal>
             <Container className="relative">
             {/* Ghost watermark word, same technique as the case-study
                 block numerals (.case-study-block::before in globals.css)
@@ -274,8 +285,8 @@ export default function Home() {
               </Reveal>
             </div>
           </Container>
-          </section>
-        </PerspectiveReveal>
+          </PerspectiveReveal>
+        </section>
 
         <ElementsSection elements={elements} />
 
@@ -451,18 +462,29 @@ export default function Home() {
             own solid card instead of floating directly on the video —
             so a busier, more saturated background can't compete with
             the text for attention. */}
-        {/* Light chapter giving way from the dark Selected-work grid
-            above — the same real mode-shift ClipReveal already marks on
-            Services and Work, just running the other direction (dark to
-            light instead of light to dark) since that's the actual
-            boundary here. */}
-        <ClipReveal>
-          <section className="relative overflow-hidden py-20 sm:py-28">
-            <BackgroundVideo video="/videos/higgsfield-forest-light-vivid.mp4" poster="/images/higgsfield-forest-light-vivid-poster.jpg" />
-            <div
-              className="absolute inset-0"
-              style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.18) 0%, rgba(244,239,230,0.28) 100%)" }}
-            />
+        {/* BackgroundVideo/overlay sit outside ClipReveal now, not
+            wrapped by it — same fix as the PerspectiveReveal section
+            above and VerticalUnfold's element rows. ClipReveal's
+            initial state clips its *entire* children to zero height,
+            so nesting the whole section (background included) inside
+            it meant a slow-to-fire reveal trigger left the whole
+            section blank/cream during real mobile scrolling. Reveal is
+            scoped to the content card only now — that's also the part
+            with a real "mode-shift" boundary to mark (the card itself
+            wiping into view), while the ambient backdrop video is
+            always present underneath it. */}
+        <section className="relative overflow-hidden py-20 sm:py-28">
+          {/* Light chapter giving way from the dark Selected-work grid
+              above — the same real mode-shift ClipReveal already marks
+              on Services and Work, just running the other direction
+              (dark to light instead of light to dark) since that's the
+              actual boundary here. */}
+          <BackgroundVideo video="/videos/higgsfield-forest-light-vivid.mp4" poster="/images/higgsfield-forest-light-vivid-poster.jpg" />
+          <div
+            className="absolute inset-0"
+            style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.18) 0%, rgba(244,239,230,0.28) 100%)" }}
+          />
+          <ClipReveal>
             <Container className="relative max-w-2xl">
               <Reveal>
                 <div className="rounded-2xl border border-border/50 bg-background-elevated/92 px-6 py-10 shadow-elevation-md backdrop-blur-sm sm:px-14 sm:py-16">
@@ -475,8 +497,8 @@ export default function Home() {
                 </div>
               </Reveal>
             </Container>
-          </section>
-        </ClipReveal>
+          </ClipReveal>
+        </section>
 
         {/* Closing chapter — the contemplative statement and the final CTA
             used to be two separate sections (a video break, then a flat

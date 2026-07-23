@@ -54,15 +54,34 @@ export function PhotoHero({
     >
       {video && !prefersReducedMotion ? (
         <>
+          {/* A next/image base layer instead of relying solely on the
+              <video poster> attribute — that's a native browser fetch
+              outside Next's own image-optimization/priority pipeline,
+              so on a slow mobile connection the banner's real photo
+              could show up later than it needs to. priority guarantees
+              it's requested immediately, same reasoning as the Ken
+              Burns branch below; the video fades in once it actually
+              has a playable frame instead of being the only thing
+              between the poster and true motion. */}
+          <Image
+            src={poster ?? ""}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: imagePosition }}
+          />
           <video
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
             style={{ objectPosition: imagePosition }}
             src={video}
-            poster={poster}
             autoPlay
             muted
             loop
             playsInline
+            onLoadedData={(e) => {
+              e.currentTarget.style.opacity = "1";
+            }}
           />
           {accentWash}
           <div className="absolute inset-0" style={{ backgroundImage: gradient }} />

@@ -17,7 +17,20 @@ export function VerticalUnfold({ elements }: { elements: Element[] }) {
     <>
       <ElementsRail elements={elements} />
 
-      <div className="mt-16 divide-y divide-border sm:mt-24">
+      {/*
+        bg-soil here (not just on each row) is the actual fix for the
+        remaining gap: this wrapper used to be fully transparent with a
+        mt-16/sm:mt-24 top margin sitting directly on top of the plain
+        cream page background — on mobile this is the ONLY layout for
+        this section (desktop uses PinnedSlider instead, which has no
+        such margin), so that margin always showed as a solid band of
+        cream between the preceding section and the first row. Giving
+        the wrapper its own dark fill and turning the margin into
+        padding means there's no longer any transparent gap for the
+        page background to show through, no matter how the rows above
+        settle.
+      */}
+      <div className="divide-y divide-border bg-soil pt-16 sm:pt-24">
         {elements.map((el, i) => (
           // ElementRowBackground deliberately sits OUTSIDE ElementReveal
           // now, not wrapped by it — it already carries its own robust

@@ -101,13 +101,21 @@ export default function WorkPage() {
             behind them. Letting them sit on the site's own light neutral
             instead lets the photography carry the color, the same way
             the reference's own image-forward sections do. */}
-        <ClipReveal>
-          <section className="bg-background-alt py-16">
+        {/* bg-background-alt lives on the outer section now, outside
+            ClipReveal — clip-path:inset(...100%...) hides an element's
+            entire rendered box, background-color included, so wrapping
+            the whole section meant a slow-to-fire reveal trigger showed
+            blank page background instead of this section's own fill
+            during fast real-device scrolling. Same fix as Home's
+            PerspectiveReveal/ClipReveal sections and VerticalUnfold's
+            element rows. */}
+        <section className="bg-background-alt py-16">
+          <ClipReveal>
             <Container>
               <WorkGrid projects={projects} />
             </Container>
-          </section>
-        </ClipReveal>
+          </ClipReveal>
+        </section>
 
         <ImageBreak
           image="/images/higgsfield-canopy-light.jpg"

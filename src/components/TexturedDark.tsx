@@ -52,37 +52,42 @@ export function TexturedDark({
   return (
     <section ref={sectionRef} className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
       <div ref={ref} className="absolute inset-0">
-        {shouldLoad && (
-          <>
-            {video && !prefersReducedMotion ? (
-              <video
-                ref={videoRef}
-                className="absolute inset-0 h-full w-full object-cover"
-                style={{ objectPosition: imagePosition }}
-                src={video}
-                poster={image}
-                muted
-                loop
-                playsInline
-                preload="metadata"
-              />
-            ) : (
-              // priority — this wrapper is often used far down the page
-              // (e.g. the Footer), and confirmed elsewhere on this site
-              // that next/image's own native lazy-load can simply never
-              // fire once scrolled past; useLazyMount already decides
-              // correct timing on its own, so priority just skips that
-              // second, unreliable gate.
-              <Image
-                src={image}
-                alt=""
-                fill
-                priority
-                sizes="100vw"
-                style={{ objectFit: "cover", objectPosition: imagePosition }}
-              />
-            )}
-          </>
+        {/* image renders immediately, unconditionally — not gated behind
+            shouldLoad. This wrapper is almost always far down the page
+            (the Footer, every page's closing CTA), so before this fix
+            the entire background was a flat bg-soil rectangle until
+            shouldLoad fired *and* the video itself finished a full
+            network round-trip (preload="metadata" only fetches
+            metadata; actual frame data only starts downloading once
+            play() is called in the effect above) — two sequential
+            delays stacked on mobile, read as "the footer takes forever
+            to load." The real photo now shows the instant it's
+            rendered (same reasoning as ElementRowBackground's solid
+            fallback fill); the video, once shouldLoad fires and it's
+            actually playable, fades in on top instead of being the
+            only thing standing between a blank rectangle and content. */}
+        <Image
+          src={image}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          style={{ objectFit: "cover", objectPosition: imagePosition }}
+        />
+        {shouldLoad && video && !prefersReducedMotion && (
+          <video
+            ref={videoRef}
+            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
+            style={{ objectPosition: imagePosition }}
+            src={video}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            onLoadedData={(e) => {
+              e.currentTarget.style.opacity = "1";
+            }}
+          />
         )}
       </div>
       {/* Was a near-opaque 0.88-0.93 flat overlay — with a video behind

@@ -117,10 +117,16 @@ export default function AboutPage() {
             statement) and Work (hero → dark card grid), extended here
             since About had the identical light-to-dark boundary without
             it. */}
-        <ClipReveal>
-          <section className="relative overflow-hidden bg-soil py-20">
-            <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
-            <div className="absolute inset-0 bg-soil/60" />
+        {/* Background sits outside ClipReveal now, not wrapped by it —
+            same fix as Home's ClipReveal/PerspectiveReveal sections and
+            VerticalUnfold's element rows: clip-path hides an element's
+            entire box (bg-soil, the video, all of it), so a slow-to-fire
+            reveal trigger showed blank page background during fast
+            real-device scrolling instead of this section's own fill. */}
+        <section className="relative overflow-hidden bg-soil py-20">
+          <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/60" />
+          <ClipReveal>
             <Container className="relative grid gap-12 md:grid-cols-[auto_1fr]">
               <Reveal>
                 <Image
@@ -170,8 +176,8 @@ export default function AboutPage() {
                 </Reveal>
               </div>
             </Container>
-          </section>
-        </ClipReveal>
+          </ClipReveal>
+        </section>
 
         {/* Bold solid Soil, not the Phase-5 space tint — matches the
             grid-of-cards=soil rule now applied to every other card-grid

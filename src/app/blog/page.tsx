@@ -83,8 +83,14 @@ export default function BlogPage() {
             light neutral than a dark block. Blog cards already use an
             opaque bg-background-elevated fill (not a translucent alpha
             trick), so no card-level change needed either way. */}
-        <PerspectiveReveal>
+        {/* bg-background-alt lives on the outer section now, outside
+            PerspectiveReveal — opacity:0 hides an element's entire
+            rendered box, background-color included, so wrapping the
+            whole section meant a slow-to-fire reveal trigger showed
+            blank page background during fast real-device scrolling.
+            Same fix as Home's PerspectiveReveal/ClipReveal sections. */}
         <section className="bg-background-alt py-16">
+        <PerspectiveReveal>
           <Container>
             <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
               {sorted.map((post, i) => (
@@ -137,8 +143,8 @@ export default function BlogPage() {
               ))}
             </div>
           </Container>
-        </section>
         </PerspectiveReveal>
+        </section>
 
         {/* Every other page closes on a real photographic beat before
             the footer; the blog index went straight from the grid into

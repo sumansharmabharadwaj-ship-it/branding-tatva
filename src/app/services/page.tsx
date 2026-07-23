@@ -305,8 +305,15 @@ export default function ServicesPage() {
           </Container>
         </section>
 
-        <ClipReveal>
-          <TexturedDark image="/images/higgsfield-golden-ridge.jpg" className="py-24 text-center sm:pb-28">
+        {/* TexturedDark sits outside ClipReveal now, not wrapped by it
+            — it renders its own background image independently of its
+            children, and clip-path hides an element's entire box, so
+            wrapping the whole component meant a slow-to-fire reveal
+            trigger showed blank page background instead of its own
+            fill during fast real-device scrolling. Same fix as every
+            other ClipReveal/PerspectiveReveal section this round. */}
+        <TexturedDark image="/images/higgsfield-golden-ridge.jpg" className="py-24 text-center sm:pb-28">
+          <ClipReveal>
             <Container>
               <h2 className="text-display-md font-display font-normal text-ivory">
                 Still deciding which one fits?
@@ -319,8 +326,8 @@ export default function ServicesPage() {
                 <LinkButton href="/contact">Start a brand conversation</LinkButton>
               </div>
             </Container>
-          </TexturedDark>
-        </ClipReveal>
+          </ClipReveal>
+        </TexturedDark>
       </main>
       <Footer />
       <SectionJumpNav
