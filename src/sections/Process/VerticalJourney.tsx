@@ -42,7 +42,18 @@ export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
 
   return (
     <div ref={ref} className="relative mt-16 overflow-hidden rounded-xl px-4 py-10 pl-16 sm:px-8 sm:pl-20">
-      <div ref={mediaRef} className="absolute inset-0 -z-10" aria-hidden="true">
+      {/* -z-10 removed — this section sits inside a bg-soil ancestor
+          (Home page's Process section), and a negative z-index can
+          escape into an ancestor's own stacking context instead of
+          staying behind just this component's own siblings, which on
+          real devices painted this entire background layer underneath
+          the ancestor's solid bg-soil fill — a completely invisible
+          photo/video despite rendering correctly in the DOM. Every
+          other background layer on the site (ElementRowBackground,
+          TexturedDark, etc.) relies on plain DOM order instead — being
+          first in the JSX already puts it behind the `ol` below with
+          the default z-index:auto, no negative value needed. */}
+      <div ref={mediaRef} className="absolute inset-0" aria-hidden="true">
         <Image
           src="/images/higgsfield-element-earth.jpg"
           alt=""

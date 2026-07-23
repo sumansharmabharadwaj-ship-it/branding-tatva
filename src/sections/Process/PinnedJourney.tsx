@@ -131,7 +131,17 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
     // stretch of scroll reveals continuous motion instead of flat color
     // as the pinned content scrolls away above it.
     <div ref={wrapperRef} className="relative" style={{ height: `${(stages.length + 1) * 100}vh` }}>
-      <div className="absolute inset-0 -z-10" aria-hidden="true">
+      {/* -z-10 removed — same fix as VerticalJourney's own background
+          layer: this section sits inside a bg-soil ancestor (Home
+          page's Process section), and a negative z-index can escape
+          into that ancestor's stacking context instead of staying
+          behind just the sticky child below, painting this "release
+          buffer" video underneath the ancestor's own solid fill —
+          invisible despite rendering correctly in the DOM. Being first
+          in the JSX, before the .sticky sibling, already puts it
+          behind that sibling with the default z-index:auto — no
+          negative value needed. */}
+      <div className="absolute inset-0" aria-hidden="true">
         <BackgroundVideo video="/videos/higgsfield-element-water.mp4" poster="/images/higgsfield-element-water.jpg" />
         <div className="absolute inset-0 bg-soil/70" />
       </div>
