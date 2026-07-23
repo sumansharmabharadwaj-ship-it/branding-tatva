@@ -16,14 +16,18 @@ import type { ProcessSectionProps } from "./types";
 // stale trigger positions, environment-specific rendering quirks). It
 // was removed entirely rather than continuing to patch around it.
 //
-// PinnedJourney reintroduces the pinned/full-bleed treatment for
-// desktop, motion-allowed visitors, but on plain CSS
-// `position: sticky` instead of a ScrollTrigger pin — see its own
+// PinnedJourney reintroduces the pinned/full-bleed treatment on plain
+// CSS `position: sticky` instead of a ScrollTrigger pin — see its own
 // comment for why that avoids the failure class outright rather than
-// just hoping it doesn't recur. VerticalJourney remains the mobile and
-// reduced-motion experience, same split ElementsSection already
-// established for its own pinned/fallback pair — it already reads as
-// a complete, deliberate design on its own, not a degraded fallback.
+// just hoping it doesn't recur. That sticky approach doesn't depend on
+// viewport width to be reliable (it's what made it safe to trust again
+// after the old GSAP-pin version), so it's no longer desktop-only:
+// direct feedback confirmed the mobile-only VerticalJourney fallback
+// read as a plain, dated version of the section sitting right next to
+// PinnedJourney's richer per-stage crossfade, not as a deliberate
+// mobile treatment. VerticalJourney is now reserved for
+// prefers-reduced-motion only, where a pinned/scrubbed section would
+// be exactly the kind of motion that preference exists to turn off.
 export function ProcessSection({ stages, elementColor, dark }: ProcessSectionProps) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -35,16 +39,5 @@ export function ProcessSection({ stages, elementColor, dark }: ProcessSectionPro
     );
   }
 
-  return (
-    <>
-      <div className="hidden sm:block">
-        <PinnedJourney stages={stages} elementColor={elementColor} />
-      </div>
-      <div className="sm:hidden">
-        <Container>
-          <VerticalJourney stages={stages} elementColor={elementColor} dark={dark} />
-        </Container>
-      </div>
-    </>
-  );
+  return <PinnedJourney stages={stages} elementColor={elementColor} />;
 }

@@ -6,7 +6,7 @@ import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { BREAK_OVERLAY_GRADIENT, toSvh } from "@/lib/media";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import type { ProcessSectionProps } from "./types";
 
@@ -130,7 +130,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
     // sticky child, which already has its own six videos) so the last
     // stretch of scroll reveals continuous motion instead of flat color
     // as the pinned content scrolls away above it.
-    <div ref={wrapperRef} className="relative" style={{ height: `${(stages.length + 1) * 100}vh` }}>
+    <div ref={wrapperRef} className="relative" style={{ height: toSvh(`${(stages.length + 1) * 100}vh`) }}>
       {/* -z-10 removed — same fix as VerticalJourney's own background
           layer: this section sits inside a bg-soil ancestor (Home
           page's Process section), and a negative z-index can escape
@@ -145,7 +145,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
         <BackgroundVideo video="/videos/higgsfield-element-water.mp4" poster="/images/higgsfield-element-water.jpg" />
         <div className="absolute inset-0 bg-soil/70" />
       </div>
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div className="sticky top-0 h-svh w-full overflow-hidden">
         <div ref={mediaRef} className="absolute inset-0" aria-hidden="true">
           {stages.map((stage, i) => (
             <div
@@ -228,7 +228,12 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
         {/* Numbered index, same pattern as PinnedSlider's own — six
             stages read comfortably on one line even at the sm breakpoint
             since stage names are short (Listen, Notice, Ground...). */}
-        <div className="pointer-events-none absolute bottom-10 left-6 z-10 flex flex-wrap gap-x-6 gap-y-2 sm:left-16">
+        {/* right-6/right-16 added alongside left — this is absolutely
+            positioned with no explicit width, and on a narrow phone
+            viewport six wrapped stage labels need a real right-hand
+            bound to reliably wrap instead of risking a shrink-to-fit
+            width wider than the screen. */}
+        <div className="pointer-events-none absolute bottom-6 left-6 right-6 z-10 flex flex-wrap gap-x-4 gap-y-2 sm:bottom-10 sm:left-16 sm:right-16 sm:gap-x-6">
           {stages.map((stage, i) => (
             <span
               key={stage.stage}
