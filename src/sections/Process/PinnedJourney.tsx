@@ -177,16 +177,37 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
               className="absolute inset-0"
               style={{ opacity: i === 0 ? 1 : 0 }}
             >
+              {/* priority on every stage, not just i===0 — these six
+                  divs are all position:absolute inset-0 stacked on the
+                  same spot inside a `sticky` parent, which next/image's
+                  own lazy-load IntersectionObserver can be slow to
+                  resolve correctly for elements it doesn't see as
+                  freshly "entering" the viewport in the usual sense.
+                  A stage whose poster hadn't finished loading yet by
+                  the time its video also hadn't buffered read as a
+                  genuinely empty box during a normal-speed scroll.
+                  Posters are small (24-80KB each) — eager-loading all
+                  six is cheap insurance against that gap. */}
               {stage.poster && (
                 <Image
                   src={stage.poster}
                   alt=""
                   fill
-                  priority={i === 0}
+                  priority
                   sizes="100vw"
                   className="object-cover"
                 />
               )}
+              {/* preload="auto" (not "metadata") on every mounted stage
+                  video — direct feedback that video felt slow to start
+                  once scrolled to. "metadata" deliberately deferred the
+                  real byte fetch until .play() was called, so the
+                  first buffering only began at the exact moment a
+                  stage became active. "auto" lets the browser start
+                  buffering all six as soon as they mount (once
+                  shouldLoad fires for the section as a whole), so by
+                  the time a visitor actually scrolls to a given stage
+                  its video is already substantially downloaded. */}
               {stage.video && shouldLoad && !prefersReducedMotion && (
                 <video
                   ref={(node) => {
@@ -205,7 +226,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
                   muted
                   loop
                   playsInline
-                  preload="metadata"
+                  preload="auto"
                 />
               )}
             </div>
