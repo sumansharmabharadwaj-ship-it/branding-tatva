@@ -43,8 +43,8 @@ export default function AboutPage() {
           ctaLabel="Start a brand conversation"
           video="/videos/own-companions-split.mp4"
           poster="/images/own-companions-split-poster.jpg"
-          leftVideo="/videos/higgsfield-verdant-hills-about.mp4"
-          leftPoster="/images/higgsfield-verdant-hills-about-poster.jpg"
+          leftVideo="/videos/pixabay-tropical-island-sunset-about.mp4"
+          leftPoster="/images/pixabay-tropical-island-sunset-about-poster.jpg"
         />
 
         {/* Was own-alpenglow-peak.mp4 under an 80%-opaque Sandstone tint —
