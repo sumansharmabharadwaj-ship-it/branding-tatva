@@ -1,12 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { ProcessSectionProps } from "./types";
 import { useVerticalLineProgress } from "./animations";
-import { useLazyMount } from "@/hooks/useLazyMount";
-import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 import { JourneyStage } from "./JourneyStage";
 
 // A connected vertical thread instead of a grid of six identical boxes —
@@ -18,65 +15,21 @@ import { JourneyStage } from "./JourneyStage";
 // (see sections/Process/index.tsx for why the old desktop-only pinned
 // version was retired).
 //
-// The background was a 10%-opacity photo — direct feedback that this
-// read as flat/empty rather than as a real visual moment. Now a real
-// video (higgsfield-element-earth: hand-drawn plans and sketches on a
-// desk, the actual physical act of mapping out work) plays behind the
-// thread at real strength, with the same dark overlay every other
-// photo/video section on the site uses — which is why `dark` is now
-// always true here regardless of what the caller passes, matching the
-// ivory-on-photo treatment that's consistent everywhere else.
+// Each stage carries its own photo/video backdrop now (see JourneyStage)
+// instead of one shared image behind the whole list — direct feedback
+// that desktop's PinnedJourney already crossfades a distinct video per
+// stage while mobile stayed on a single static backdrop, reading as an
+// unfinished/older version of the same section rather than a deliberate
+// mobile-specific treatment. bg-soil stays on this wrapper as a plain
+// fallback fill so the rounded-xl container never shows transparent
+// even before any individual stage's own poster has loaded.
 export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [mediaRef, shouldLoad] = useLazyMount();
   const prefersReducedMotion = useReducedMotion();
   const lineHeight = useVerticalLineProgress(ref);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoReady, setVideoReady] = useState(false);
-
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el || !shouldLoad || prefersReducedMotion) return;
-    el.play().catch(() => {});
-  }, [shouldLoad, prefersReducedMotion]);
 
   return (
-    <div ref={ref} className="relative mt-16 overflow-hidden rounded-xl px-4 py-10 pl-16 sm:px-8 sm:pl-20">
-      {/* -z-10 removed — this section sits inside a bg-soil ancestor
-          (Home page's Process section), and a negative z-index can
-          escape into an ancestor's own stacking context instead of
-          staying behind just this component's own siblings, which on
-          real devices painted this entire background layer underneath
-          the ancestor's solid bg-soil fill — a completely invisible
-          photo/video despite rendering correctly in the DOM. Every
-          other background layer on the site (ElementRowBackground,
-          TexturedDark, etc.) relies on plain DOM order instead — being
-          first in the JSX already puts it behind the `ol` below with
-          the default z-index:auto, no negative value needed. */}
-      <div ref={mediaRef} className="absolute inset-0" aria-hidden="true">
-        <Image
-          src="/images/higgsfield-element-earth.jpg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        {shouldLoad && !prefersReducedMotion && (
-          <video
-            ref={videoRef}
-            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
-            style={{ opacity: videoReady ? 1 : 0 }}
-            onCanPlay={() => setVideoReady(true)}
-            src="/videos/higgsfield-element-earth.mp4"
-            muted
-            loop
-            playsInline
-            preload="metadata"
-          />
-        )}
-        <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
-      </div>
+    <div ref={ref} className="relative mt-16 overflow-hidden rounded-xl bg-soil px-4 py-10 pl-16 sm:px-8 sm:pl-20">
       <div className="absolute left-[23px] top-12 bottom-12 w-px sm:left-[27px] bg-ivory/20" aria-hidden="true" />
       <motion.div
         className="absolute left-[23px] top-12 w-px origin-top sm:left-[27px] bg-sandstone"
