@@ -82,7 +82,15 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
       stageRefs.current.forEach((stageEl, i) => {
         if (!stageEl) return;
         const dist = progress - i;
-        stageEl.style.opacity = String(Math.max(0, 1 - Math.abs(dist)));
+        // Text opacity falls off steeper than the background crossfade
+        // below (1.6x distance instead of 1x) — at the original 1:1
+        // rate, two adjacent stages' text sat at ~50% opacity each
+        // simultaneously right at the midpoint, and since each stage's
+        // description is a different length, that read as a genuine
+        // double-exposure glitch (one paragraph visibly overlapping
+        // another) rather than a clean crossfade. Steeper falloff keeps
+        // the transition smooth while shrinking that overlap window.
+        stageEl.style.opacity = String(Math.max(0, 1 - Math.abs(dist) * 1.6));
         // Was opacity-only — the stage crossfaded in place with nothing
         // else tying it to scroll position, which read as a slideshow
         // rather than something actually driven by scroll. Distance from
@@ -145,7 +153,20 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
         <BackgroundVideo video="/videos/higgsfield-element-water.mp4" poster="/images/higgsfield-element-water.jpg" />
         <div className="absolute inset-0 bg-soil/70" />
       </div>
-      <div className="sticky top-0 h-svh w-full overflow-hidden">
+      {/* bg-soil fallback + a hair of extra height beyond exactly
+          100svh — real mobile browsers animate their toolbar in/out
+          during an active scroll gesture, and svh's own recalculation
+          isn't always perfectly synced to that animation frame-by-
+          frame, which showed up as a thin strip of the wrapper's own
+          (unrelated) water-clip backdrop peeking out beneath this
+          sticky child mid-scroll. bg-soil means any such sliver reads
+          as the section's own dark tone instead of a mismatched
+          lighter color; the extra height means overflow-hidden clips
+          any shortfall before it's ever visible at all. */}
+      <div
+        className="sticky top-0 w-full overflow-hidden bg-soil"
+        style={{ height: "calc(100svh + 8px)" }}
+      >
         <div ref={mediaRef} className="absolute inset-0" aria-hidden="true">
           {stages.map((stage, i) => (
             <div
@@ -200,7 +221,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
               ref={(node) => {
                 stageRefs.current[i] = node;
               }}
-              className="absolute inset-0 flex items-center px-6 sm:px-16"
+              className="absolute inset-0 flex items-center px-6 sm:px-16 will-change-transform"
               style={{ opacity: i === 0 ? 1 : 0, pointerEvents: i === activeIndex ? "auto" : "none" }}
               aria-hidden={i !== activeIndex}
             >
