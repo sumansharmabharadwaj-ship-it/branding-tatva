@@ -5,6 +5,7 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
+import { NatureAccent } from "@/components/NatureAccent";
 import { TiltCard } from "@/components/TiltCard";
 import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { PhotoHero } from "@/components/PhotoHero";
@@ -51,7 +52,14 @@ export default function BlogPage() {
           minHeight="60vh"
         >
           <Container className="relative py-20 text-center">
-            <Reveal>
+            <Reveal className="relative">
+              {/* Ripple — ideas spreading outward — same quiet, low-opacity
+                  accent Footer/Contact/Services already carry near their
+                  own headings. */}
+              <NatureAccent
+                variant="ripple"
+                className="pointer-events-none absolute -top-6 left-1/2 hidden h-10 w-10 translate-x-[60%] text-ivory/20 sm:block"
+              />
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 Blog
               </span>

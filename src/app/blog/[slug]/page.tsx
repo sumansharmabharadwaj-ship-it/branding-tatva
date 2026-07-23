@@ -78,61 +78,104 @@ export default async function BlogPostPage({ params }: Props) {
     <>
       <Header transparent />
       <main id="main-content">
-        <section className="relative overflow-hidden bg-soil pt-32 pb-16 sm:pt-40 sm:pb-20">
-          <Container className="relative max-w-2xl">
-            <Reveal>
-              <span className="inline-flex items-center gap-2 rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                <ElementGlyph
-                  slug={post.element}
-                  className="h-3.5 w-3.5"
-                  strokeWidth={1.6}
-                  style={{ color: element?.color }}
-                />
-                {element?.name ?? post.element}
-              </span>
-              <h1 className="mt-6 font-display text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.1] text-ivory">
-                {post.title}
-              </h1>
-              <p className="mt-4 text-sm text-ivory/60">
-                {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-                {" · "}
-                {post.readingTime}
-                {" · "}
-                {site.founder}
-              </p>
-            </Reveal>
+        {/* Asymmetric masthead, not a centered stack — the headline runs
+            large and left in its own column, the meta block sits apart
+            in its own right-hand column instead of stacking directly
+            underneath, and a giant faint element-name watermark sits
+            behind the whole thing (the same ghost-numeral technique
+            already used on case studies and About, extended to a word
+            here). This is the one page on the site that was still a
+            plain centered template — every other page already got this
+            kind of editorial variety across earlier rounds. */}
+        <section className="relative overflow-hidden bg-soil pt-32 pb-16 sm:pt-40 sm:pb-24">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,16vw,11rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+          >
+            {element?.name ?? post.element}
+          </span>
+          <Container className="relative">
+            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+              <Reveal>
+                <span className="inline-flex items-center gap-2 rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+                  <ElementGlyph
+                    slug={post.element}
+                    className="h-3.5 w-3.5"
+                    strokeWidth={1.6}
+                    style={{ color: element?.color }}
+                  />
+                  {element?.name ?? post.element}
+                </span>
+                <h1 className="mt-6 max-w-3xl font-display text-[clamp(2.1rem,6vw,4.25rem)] font-normal leading-[1.05] text-ivory">
+                  {post.title}
+                </h1>
+              </Reveal>
+              <Reveal delay={0.1} className="lg:pb-2 lg:text-right">
+                <p className="text-sm text-ivory/60">
+                  {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </p>
+                <p className="mt-1 text-sm text-ivory/60">{post.readingTime}</p>
+                <p className="mt-1 text-sm text-ivory/60">{site.founder}</p>
+              </Reveal>
+            </div>
           </Container>
         </section>
 
-        <section className="py-16">
-          <Container className="max-w-2xl">
-            <Reveal className="space-y-6 text-foreground-secondary">
-              {post.body.map((paragraph, i) => (
-                <Fragment key={i}>
-                  <p className={i === 0 ? "text-lg text-soil" : undefined}>{paragraph}</p>
-                  {i === pullQuoteAfter && post.pullQuote && (
-                    <PullQuote quote={post.pullQuote} color={element?.color ?? "#B85A34"} />
-                  )}
-                </Fragment>
-              ))}
-            </Reveal>
+        {/* Sticky side rail alongside the article, not another centered
+            column — the element glyph and a "back to all posts" link
+            stay in view as the piece scrolls, so the page reads as an
+            article inside a considered layout rather than a lone text
+            block. The reading column itself stays a narrow, single
+            measure (no asymmetry inside the prose) since long-form
+            legibility shouldn't be traded away for a layout flourish. */}
+        <section className="py-16 sm:py-20">
+          <Container>
+            <div className="lg:grid lg:grid-cols-[140px_1fr] lg:gap-12">
+              <div className="hidden lg:block">
+                <div className="sticky top-32 flex flex-col items-start gap-6">
+                  <ElementGlyph
+                    slug={post.element}
+                    className="h-9 w-9"
+                    strokeWidth={1.2}
+                    style={{ color: element?.color }}
+                  />
+                  <div className="h-16 w-px" style={{ backgroundColor: `${element?.color ?? "#B85A34"}40` }} />
+                  <Link href="/blog" className="link-underline text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+                    &larr; All posts
+                  </Link>
+                </div>
+              </div>
 
-            <div className="mt-16 flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
-              <Link href="/blog" className="link-underline text-sm font-medium text-soil">
-                &larr; All posts
-              </Link>
-              {next && (
-                <Link
-                  href={`/blog/${next.slug}`}
-                  className="link-underline text-sm font-medium text-soil"
-                >
-                  Next: {next.title} &rarr;
-                </Link>
-              )}
+              <div className="max-w-2xl">
+                <Reveal className="space-y-6 text-foreground-secondary">
+                  {post.body.map((paragraph, i) => (
+                    <Fragment key={i}>
+                      <p className={i === 0 ? "blog-lede text-lg text-soil" : undefined}>{paragraph}</p>
+                      {i === pullQuoteAfter && post.pullQuote && (
+                        <PullQuote quote={post.pullQuote} color={element?.color ?? "#B85A34"} />
+                      )}
+                    </Fragment>
+                  ))}
+                </Reveal>
+
+                <div className="mt-16 flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
+                  <Link href="/blog" className="link-underline text-sm font-medium text-soil lg:hidden">
+                    &larr; All posts
+                  </Link>
+                  {next && (
+                    <Link
+                      href={`/blog/${next.slug}`}
+                      className="link-underline text-sm font-medium text-soil sm:ml-auto"
+                    >
+                      Next: {next.title} &rarr;
+                    </Link>
+                  )}
+                </div>
+              </div>
             </div>
           </Container>
         </section>

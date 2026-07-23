@@ -7,6 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { VideoBreak } from "@/components/VideoBreak";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
+import { NewsletterForm } from "@/components/NewsletterForm";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { site } from "@/data/site";
@@ -133,6 +134,27 @@ export default function ContactPage() {
                 </a>
                 .
               </p>
+            </Reveal>
+
+            {/* Kept on the same Soil background rather than its own
+                section — a third color here would repeat the exact
+                "per-section color-cycling reads cluttered" problem
+                already fixed sitewide. Air glyph instead of Water
+                (already used above) so this still reads as its own
+                moment, not a repeat, without a new backdrop. */}
+            <Reveal delay={0.1} className="mt-16 border-t border-ivory/15 pt-10">
+              <ElementGlyph slug="air" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
+              <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
+                Not ready to talk yet?
+              </p>
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                Get occasional notes on brand clarity.
+              </h2>
+              <p className="mt-3 max-w-xl text-ivory/75">
+                A few thoughts a month, not a drip campaign. No pitch, unsubscribe
+                whenever.
+              </p>
+              <NewsletterForm />
             </Reveal>
           </Container>
         </section>

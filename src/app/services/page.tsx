@@ -12,6 +12,7 @@ import { VideoBreak } from "@/components/VideoBreak";
 import { TexturedDark } from "@/components/TexturedDark";
 import { ClipReveal } from "@/components/ClipReveal";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { NatureAccent } from "@/components/NatureAccent";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { ProcessSection } from "@/sections/Process";
 import { elements } from "@/data/elements";
@@ -64,7 +65,15 @@ export default function ServicesPage() {
           minHeight="70vh"
         >
           <Container className="relative py-20 text-center">
-            <Reveal>
+            <Reveal className="relative">
+              {/* One quiet accent on a fire-themed hero — same low-opacity,
+                  near-heading placement Footer/Contact already use, just
+                  the ember motif instead of leaf, since this hero already
+                  runs on a glowing-embers backdrop. */}
+              <NatureAccent
+                variant="ember"
+                className="pointer-events-none absolute -top-6 left-1/2 hidden h-10 w-10 -translate-x-[140%] text-ivory/20 sm:block"
+              />
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 Services
               </span>

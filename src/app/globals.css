@@ -708,3 +708,19 @@
      page's own ghost watermark already makes for its bold section. */
   color: rgba(244, 239, 230, 0.18);
 }
+
+/* Drop cap on a blog post's lede paragraph only — one small, classic
+   editorial touch (see blog/[slug]/page.tsx's asymmetric masthead
+   comment for the rest of that page's rebuild) that doesn't touch the
+   reading column's own width or line length, so it adds typographic
+   character without costing legibility. */
+.blog-lede::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 3.4rem;
+  font-weight: 600;
+  line-height: 0.85;
+  padding-right: 0.1em;
+  padding-top: 0.05em;
+  color: var(--color-clay);
+}
