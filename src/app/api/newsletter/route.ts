@@ -34,9 +34,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  const apiKey = process.env.MAILCHIMP_API_KEY;
-  const audienceId = process.env.MAILCHIMP_AUDIENCE_ID;
-  const serverPrefix = process.env.MAILCHIMP_SERVER_PREFIX;
+  // Trimmed defensively — a stray leading/trailing space or newline from
+  // copy-pasting into Vercel's env var fields is invisible in the
+  // dashboard but silently breaks the request: the key itself may be
+  // perfectly valid (confirmed directly against Mailchimp's API), yet a
+  // malformed subdomain from a whitespace-polluted server prefix routes
+  // the request to the wrong regional endpoint, which then reports the
+  // key as belonging to "a different datacenter" from *its* point of
+  // view — a confusing error that points at the key when the actual
+  // fault is whitespace in one of the other two values.
+  const apiKey = process.env.MAILCHIMP_API_KEY?.trim();
+  const audienceId = process.env.MAILCHIMP_AUDIENCE_ID?.trim();
+  const serverPrefix = process.env.MAILCHIMP_SERVER_PREFIX?.trim();
 
   if (!apiKey || !audienceId || !serverPrefix) {
     console.log("Newsletter signup (Mailchimp setup still pending):", parsed.data.email);
