@@ -58,6 +58,48 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     // `window.__lenisInstance.scrollTo(...)`).
     window.__lenisInstance = instance;
 
+    // A URL like /services#brand-beginning relies on the browser's own
+    // native "scroll to the element matching location.hash" behavior on
+    // load — but Lenis takes over scroll control the moment it mounts,
+    // before that native scroll reliably resolves, and sections built on
+    // client-only pinned-scroll components (ProcessSection's 700vh
+    // wrapper, the Five Elements slider) don't establish their real
+    // height until they mount and measure themselves on the client. A
+    // single well-timed scroll consistently overshot by almost exactly
+    // one such section's own height, which points at something in that
+    // mounting process (GSAP's ScrollTrigger.refresh() among the likely
+    // culprits, since it runs right alongside this) nudging scroll
+    // position on its own terms after the fact — not worth chasing the
+    // exact mechanism when the actual goal is simple: land on the
+    // target and stay there. This scrolls once, then rechecks and
+    // re-corrects a few times over the next couple of seconds, so
+    // whatever moves the target after the first attempt gets overridden
+    // rather than needing to be predicted in advance.
+    let hashScrollAttempts = 0;
+    function scrollToHash() {
+      if (!window.location.hash || hashScrollAttempts >= 6) return;
+      let target: HTMLElement | null = null;
+      try {
+        target = document.querySelector<HTMLElement>(window.location.hash);
+      } catch {
+        // location.hash can contain characters that aren't a valid CSS
+        // selector (e.g. a bare numeric id) — not this site's own
+        // links, but worth not throwing on if one ever shows up.
+      }
+      if (!target) return;
+
+      const rect = target.getBoundingClientRect();
+      const alreadyThere = rect.top > -4 && rect.top < window.innerHeight * 0.5;
+      if (alreadyThere && hashScrollAttempts > 0) return;
+
+      hashScrollAttempts += 1;
+      instance.resize();
+      instance.scrollTo(target, { immediate: true });
+      if (hashScrollAttempts < 6) {
+        window.setTimeout(scrollToHash, 350);
+      }
+    }
+
     // Every ScrollTrigger on the page (pinned or not) has its start/end
     // positions computed from whatever the DOM measures at the moment
     // each one is created — usually before images have finished loading
@@ -69,6 +111,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     // width/height that hasn't stabilized yet.
     function refresh() {
       ScrollTrigger.refresh();
+      scrollToHash();
     }
     if (document.readyState === "complete") {
       refresh();
