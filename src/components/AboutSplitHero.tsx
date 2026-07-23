@@ -6,8 +6,10 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { LinkButton } from "@/components/Button";
+import { TiltCard } from "@/components/TiltCard";
 import { ScrollCue } from "@/components/ScrollCue";
 import { Fireflies } from "@/components/Fireflies";
+import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 
 // Full-bleed nature backdrop with a single framed photo/video card
 // floating centered on it, the headline carried directly on the card
@@ -45,6 +47,7 @@ export function AboutSplitHero({
   const ref = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const [cardRef, cardVisible] = useRevealTrigger();
 
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const cardY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
@@ -97,49 +100,67 @@ export function AboutSplitHero({
         {/* One card: her own footage, bordered like a printed
             photograph, with the headline carried directly on it — the
             section's single focal object instead of two competing
-            boxes. */}
-        <Reveal delay={0.1} className="relative z-10 mt-6">
+            boxes. Arrives with real weight (spring scale-up, not just a
+            fade) and responds to the cursor with the same 3D tilt
+            TiltCard already gives every other card on the site, so the
+            "wow" comes from motion quality and a real interaction, not
+            from stacking on more decoration. */}
+        <div ref={cardRef} className="relative z-10 mt-6" style={{ perspective: 1200 }}>
           <motion.div
-            className="card-float relative w-[260px] overflow-hidden rounded-lg border-[6px] border-ivory sm:w-[320px]"
-            style={{
-              ...(prefersReducedMotion ? undefined : { y: cardY }),
-              boxShadow: "0 14px 30px rgba(20,17,14,0.4), 0 0 40px 6px rgba(20,17,14,0.2)",
-            }}
+            initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.8, y: 56 }}
+            animate={
+              prefersReducedMotion
+                ? undefined
+                : cardVisible
+                  ? { opacity: 1, scale: 1, y: 0 }
+                  : { opacity: 0, scale: 0.8, y: 56 }
+            }
+            transition={{ type: "spring", stiffness: 170, damping: 20, mass: 0.9 }}
           >
-            <div className="relative aspect-[3/4] w-full overflow-hidden">
-              {prefersReducedMotion ? (
-                <Image src={poster} alt="" fill sizes="320px" className="object-cover" />
-              ) : (
-                <video
-                  className="absolute inset-0 h-full w-full object-cover"
-                  src={video}
-                  poster={poster}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                />
-              )}
-              <div
-                className="absolute inset-x-0 top-0 px-5 pb-10 pt-5"
-                style={{ backgroundImage: "linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0) 100%)" }}
+            <TiltCard glowColor="#C28A28" maxDegrees={7}>
+              <motion.div
+                className="card-float relative w-[260px] overflow-hidden rounded-lg border-[6px] border-ivory sm:w-[320px]"
+                style={{
+                  ...(prefersReducedMotion ? undefined : { y: cardY }),
+                  boxShadow: "0 14px 30px rgba(20,17,14,0.4), 0 0 40px 6px rgba(20,17,14,0.2)",
+                }}
               >
-                <SplitReveal
-                  as="h1"
-                  className="font-display text-[clamp(1.15rem,3.6vw,1.6rem)] font-normal leading-[1.25] text-ivory"
-                >
-                  {headline}
-                </SplitReveal>
-              </div>
-              <div
-                className="absolute inset-x-0 bottom-0 px-5 pb-4 pt-10"
-                style={{ backgroundImage: "linear-gradient(0deg, rgba(20,17,14,0.75) 0%, rgba(20,17,14,0) 100%)" }}
-              >
-                <p className="font-body text-[0.65rem] uppercase tracking-[0.18em] text-ivory/90">{body}</p>
-              </div>
-            </div>
+                <div className="relative aspect-[3/4] w-full overflow-hidden">
+                  {prefersReducedMotion ? (
+                    <Image src={poster} alt="" fill sizes="320px" className="object-cover" />
+                  ) : (
+                    <video
+                      className="absolute inset-0 h-full w-full object-cover"
+                      src={video}
+                      poster={poster}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                  )}
+                  <div
+                    className="absolute inset-x-0 top-0 px-5 pb-10 pt-5"
+                    style={{ backgroundImage: "linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0) 100%)" }}
+                  >
+                    <SplitReveal
+                      as="h1"
+                      className="font-display text-[clamp(1.15rem,3.6vw,1.6rem)] font-normal leading-[1.25] text-ivory"
+                    >
+                      {headline}
+                    </SplitReveal>
+                  </div>
+                  <div
+                    className="absolute inset-x-0 bottom-0 px-5 pb-4 pt-10"
+                    style={{ backgroundImage: "linear-gradient(0deg, rgba(20,17,14,0.75) 0%, rgba(20,17,14,0) 100%)" }}
+                  >
+                    <p className="font-body text-[0.65rem] uppercase tracking-[0.18em] text-ivory/90">{body}</p>
+                  </div>
+                </div>
+              </motion.div>
+            </TiltCard>
           </motion.div>
-        </Reveal>
+        </div>
 
         <Reveal delay={0.2} className="mt-9">
           <LinkButton href={ctaHref}>{ctaLabel}</LinkButton>
