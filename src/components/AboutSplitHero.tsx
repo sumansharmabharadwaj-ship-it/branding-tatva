@@ -24,6 +24,8 @@ export function AboutSplitHero({
   ctaLabel,
   video,
   poster,
+  leftVideo,
+  leftPoster,
 }: {
   eyebrow: string;
   headline: string;
@@ -32,13 +34,32 @@ export function AboutSplitHero({
   ctaLabel: string;
   video: string;
   poster: string;
+  leftVideo: string;
+  leftPoster: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
 
   return (
     <section className="relative grid min-h-screen bg-soil sm:grid-cols-2">
-      <div className="relative flex flex-col justify-center px-6 py-28 sm:px-10 sm:py-24 lg:px-16">
-        <Reveal>
+      <div className="relative flex flex-col justify-center overflow-hidden px-6 py-28 sm:px-10 sm:py-24 lg:px-16">
+        {prefersReducedMotion ? (
+          <Image src={leftPoster} alt="" fill sizes="(min-width: 640px) 50vw, 100vw" className="object-cover" />
+        ) : (
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            src={leftVideo}
+            poster={leftPoster}
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+        )}
+        <div
+          className="absolute inset-0"
+          style={{ backgroundColor: "rgba(39,34,30,0.82)" }}
+        />
+        <Reveal className="relative z-10">
           <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
             {eyebrow}
           </span>
