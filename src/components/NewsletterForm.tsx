@@ -104,7 +104,7 @@ export function NewsletterForm() {
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="whitespace-nowrap rounded-full border border-ivory/30 px-5 py-2 text-sm font-medium text-ivory transition-all duration-300 ease-earth hover:-translate-y-0.5 hover:border-ivory/50 hover:bg-ivory/10 disabled:opacity-60 disabled:hover:translate-y-0"
+          className="min-h-11 whitespace-nowrap rounded-full border border-ivory/30 px-5 py-2.5 text-sm font-medium text-ivory transition-all duration-300 ease-earth hover:-translate-y-0.5 hover:border-ivory/50 hover:bg-ivory/10 disabled:opacity-60 disabled:hover:translate-y-0"
         >
           {status === "submitting" ? "Sending…" : "Subscribe"}
         </button>
