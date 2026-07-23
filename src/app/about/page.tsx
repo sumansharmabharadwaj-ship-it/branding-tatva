@@ -15,6 +15,7 @@ import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { MeadowClosing } from "@/components/MeadowClosing";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
+import { elements } from "@/data/elements";
 import { site } from "@/data/site";
 import { SANDSTONE } from "@/lib/sectionWash";
 
@@ -38,13 +39,13 @@ export default function AboutPage() {
         <AboutSplitHero
           eyebrow="About"
           headline={aboutIntro.opening}
-          body={site.tagline}
+          body={elements[0].poetic}
           ctaHref="/contact"
           ctaLabel="Start a brand conversation"
           video="/videos/own-companions-split.mp4"
           poster="/images/own-companions-split-poster.jpg"
-          bgVideo="/videos/about-hero-bg-forest.mp4"
-          bgPoster="/images/about-hero-bg-forest-poster.jpg"
+          bgVideo="/videos/about-hero-bg-meadow.mp4"
+          bgPoster="/images/about-hero-bg-meadow-poster.jpg"
         />
 
         {/* Was own-alpenglow-peak.mp4 under an 80%-opaque Sandstone tint —

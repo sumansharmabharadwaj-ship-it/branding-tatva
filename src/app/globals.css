@@ -363,6 +363,65 @@
   }
 }
 
+/* Fireflies for the About hero's forest backdrop — warmer/greener and
+   far more alive than dust-mote's straight upward drift: each one
+   wanders on its own wobbling path and pulses brightness like real
+   bioluminescence, not a uniform fade. See Fireflies.tsx. */
+.firefly {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(232,255,190,0.95) 0%, rgba(196,224,84,0.6) 45%, rgba(196,224,84,0) 75%);
+  box-shadow: 0 0 8px 2px rgba(212,225,87,0.5);
+  opacity: 0;
+  animation-name: firefly-wander;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes firefly-wander {
+  0% { transform: translate3d(0, 0, 0) scale(0.8); opacity: 0; }
+  15% { opacity: 0.9; }
+  30% { transform: translate3d(18px, -22px, 0) scale(1.1); opacity: 0.3; }
+  45% { opacity: 0.85; }
+  60% { transform: translate3d(-14px, -46px, 0) scale(0.9); opacity: 0.25; }
+  75% { opacity: 0.8; }
+  90% { transform: translate3d(10px, -68px, 0) scale(1); opacity: 0.2; }
+  100% { transform: translate3d(-8px, -84px, 0) scale(0.8); opacity: 0; }
+}
+
+/* Slow-drifting fog blobs layered over the About hero's forest video —
+   the source footage's own mist reads as a fixed frame; this gives it
+   real, gentle movement so the atmosphere feels alive rather than
+   printed. */
+.hero-fog {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(ellipse, rgba(244,239,230,0.55) 0%, rgba(244,239,230,0.15) 55%, rgba(244,239,230,0) 80%);
+  filter: blur(18px);
+  animation-name: fog-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes fog-drift {
+  0% { transform: translate3d(-4%, 0, 0) scale(1); opacity: 0.5; }
+  50% { transform: translate3d(4%, -2%, 0) scale(1.12); opacity: 0.75; }
+  100% { transform: translate3d(-4%, 0, 0) scale(1); opacity: 0.5; }
+}
+
+/* Gentle continuous float for the About hero's postcard/photo cards —
+   scroll parallax alone only moves on scroll; this keeps them alive at
+   rest too, like something actually resting on a breeze rather than
+   glued to the screen. Two cards, opposite phase (see delay in JSX) so
+   they never move in lockstep. */
+@keyframes card-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -9px; }
+}
+.card-float {
+  animation: card-float 6.5s ease-in-out infinite;
+}
+
 /* Spotlight card group — hovering one offering card intensifies its own
    accent (tint deepens, border brightens via --card-color) while every
    sibling dims, so attention actually follows the cursor instead of all
