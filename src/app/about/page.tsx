@@ -8,6 +8,7 @@ import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { TiltCard } from "@/components/TiltCard";
 import { VideoBreak } from "@/components/VideoBreak";
+import { ClipReveal } from "@/components/ClipReveal";
 import { NatureAccent } from "@/components/NatureAccent";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ScrollProgress } from "@/components/ScrollProgress";
@@ -110,59 +111,67 @@ export default function AboutPage() {
             storytelling.noomoagency.com's own atmospheric mood), unused
             anywhere else on the site, and reads distinct from
             stream-clarity's water-over-rock shot directly above it. */}
-        <section className="relative overflow-hidden bg-soil py-20">
-          <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/60" />
-          <Container className="relative grid gap-12 md:grid-cols-[auto_1fr]">
-            <Reveal>
-              <Image
-                src="/images/own-portrait.jpg"
-                alt="Suman Sharma"
-                width={480}
-                height={480}
-                priority
-                className="aspect-square w-40 rounded-full object-cover sm:w-48"
-              />
-            </Reveal>
-            <div className="grid gap-12 sm:grid-cols-2">
-              <Reveal delay={0.1}>
-                <h2 className="text-display-sm font-display font-normal text-ivory">
-                  Working method
-                </h2>
-                <p className="mt-4 text-ivory/75">
-                  I start by asking what
-                  a business believes, who it&apos;s actually speaking to,
-                  and where its current story stops making sense, well
-                  before any mood board enters the room. The
-                  elemental system, earth, water, fire, air, space, is how I
-                  keep track of which part of that is solved and which
-                  still needs work.
-                </p>
-                <p className="mt-4 text-ivory/75">
-                  I use &ldquo;I&rdquo; instead of &ldquo;we.&rdquo; Branding
-                  Tatva is a personal practice, and every project has my
-                  direct attention.
-                </p>
+        {/* This is the page's first real dark chapter after the light
+            Sandstone intro above — the same kind of mode-shift ClipReveal
+            already marks on Services (light offerings → dark closing
+            statement) and Work (hero → dark card grid), extended here
+            since About had the identical light-to-dark boundary without
+            it. */}
+        <ClipReveal>
+          <section className="relative overflow-hidden bg-soil py-20">
+            <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
+            <div className="absolute inset-0 bg-soil/60" />
+            <Container className="relative grid gap-12 md:grid-cols-[auto_1fr]">
+              <Reveal>
+                <Image
+                  src="/images/own-portrait.jpg"
+                  alt="Suman Sharma"
+                  width={480}
+                  height={480}
+                  priority
+                  className="aspect-square w-40 rounded-full object-cover sm:w-48"
+                />
               </Reveal>
+              <div className="grid gap-12 sm:grid-cols-2">
+                <Reveal delay={0.1}>
+                  <h2 className="text-display-sm font-display font-normal text-ivory">
+                    Working method
+                  </h2>
+                  <p className="mt-4 text-ivory/75">
+                    I start by asking what
+                    a business believes, who it&apos;s actually speaking to,
+                    and where its current story stops making sense, well
+                    before any mood board enters the room. The
+                    elemental system, earth, water, fire, air, space, is how I
+                    keep track of which part of that is solved and which
+                    still needs work.
+                  </p>
+                  <p className="mt-4 text-ivory/75">
+                    I use &ldquo;I&rdquo; instead of &ldquo;we.&rdquo; Branding
+                    Tatva is a personal practice, and every project has my
+                    direct attention.
+                  </p>
+                </Reveal>
 
-              <Reveal delay={0.15}>
-                <h2 className="text-display-sm font-display font-normal text-ivory">
-                  Recent experience
-                </h2>
-                <ul className="mt-4 space-y-4">
-                  {experience.map((role) => (
-                    <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
-                      <p className="font-medium text-ivory">{role.role}</p>
-                      <p className="text-sm text-ivory/70">
-                        {role.org} &middot; {role.period}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-            </div>
-          </Container>
-        </section>
+                <Reveal delay={0.15}>
+                  <h2 className="text-display-sm font-display font-normal text-ivory">
+                    Recent experience
+                  </h2>
+                  <ul className="mt-4 space-y-4">
+                    {experience.map((role) => (
+                      <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
+                        <p className="font-medium text-ivory">{role.role}</p>
+                        <p className="text-sm text-ivory/70">
+                          {role.org} &middot; {role.period}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </Reveal>
+              </div>
+            </Container>
+          </section>
+        </ClipReveal>
 
         {/* Bold solid Soil, not the Phase-5 space tint — matches the
             grid-of-cards=soil rule now applied to every other card-grid

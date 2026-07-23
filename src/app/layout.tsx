@@ -4,6 +4,7 @@ import "./globals.css";
 import { DeferredCursor } from "@/components/DeferredCursor";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
+import { PrecisionMark } from "@/components/PrecisionMark";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { site } from "@/data/site";
 
@@ -111,6 +112,7 @@ export default function RootLayout({
         <DeferredCursor />
         <PageLoadVeil />
         <AmbientAudio />
+        <PrecisionMark />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

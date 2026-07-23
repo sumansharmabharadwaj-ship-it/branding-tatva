@@ -23,6 +23,7 @@ import { useEffect, useRef } from "react";
 
 const INTERACTIVE_SELECTOR = 'a, button, [role="button"], input, textarea, select';
 const MEDIA_SELECTOR = "[data-cursor-media]";
+const TRAIL_LERP = 0.35;
 
 export function SparkCursor() {
   const coreRef = useRef<HTMLDivElement>(null);
@@ -42,31 +43,67 @@ export function SparkCursor() {
 
     let lastX = 0;
     let lastY = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let trailX = 0;
+    let trailY = 0;
+    let hasMoved = false;
     let hovering = false;
     let overMedia = false;
+    let angle = 0;
+    let stretch = 1;
+    let trailOpacity = 0;
 
     function handleMove(e: MouseEvent) {
-      if (!core || !trail || !label) return;
+      if (!core || !label) return;
       const dx = e.clientX - lastX;
       const dy = e.clientY - lastY;
       lastX = e.clientX;
       lastY = e.clientY;
+      pointerX = e.clientX;
+      pointerY = e.clientY;
+      if (!hasMoved) {
+        trailX = pointerX;
+        trailY = pointerY;
+        hasMoved = true;
+      }
 
       const speed = Math.min(Math.hypot(dx, dy), 60);
-      const angle = speed > 1 ? Math.atan2(dy, dx) * (180 / Math.PI) : 0;
-      const stretch = 1 + speed / 10;
+      angle = speed > 1 ? Math.atan2(dy, dx) * (180 / Math.PI) : angle;
+      stretch = 1 + speed / 10;
+      trailOpacity = hovering || overMedia ? 0 : Math.min(0.25 + speed / 45, 0.95);
       const coreScale = hovering ? 2.2 : overMedia ? 1.5 : 1;
 
       core.style.opacity = "1";
-      core.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%) scale(${coreScale})`;
-
-      const trailOpacity = hovering || overMedia ? 0 : Math.min(0.25 + speed / 45, 0.95);
-      trail.style.opacity = String(trailOpacity);
-      trail.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%) rotate(${angle}deg) scaleX(${stretch})`;
-
-      label.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, 22px)`;
+      core.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0) translate(-50%, -50%) scale(${coreScale})`;
+      label.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0) translate(-50%, 22px)`;
     }
     window.addEventListener("mousemove", handleMove);
+
+    // The trail only reads as smooth if its on-screen position eases on
+    // every animation frame. It used to instead sit behind a CSS
+    // `transition: transform`, restarted on every raw mousemove event —
+    // since mousemove fires far more often than that transition's own
+    // 320ms duration, each new event cancelled the previous tween
+    // mid-flight and started a new one, which is what made the whole
+    // custom cursor feel laggy/stuttery rather than smooth. Lerping
+    // trailX/Y toward the real pointer position here every rAF tick
+    // (same technique already driving Lenis's scroll easing and
+    // TiltCard's spring elsewhere on this site) decouples the trail's
+    // rendered position from the input event rate. The speed/angle/
+    // stretch/opacity values stay driven by real per-event pointer
+    // velocity computed above, so how "fast" the trail reads doesn't
+    // change — only its position is now frame-smoothed instead of
+    // CSS-smoothed.
+    let rafId = requestAnimationFrame(function tick() {
+      if (trail && hasMoved) {
+        trailX += (pointerX - trailX) * TRAIL_LERP;
+        trailY += (pointerY - trailY) * TRAIL_LERP;
+        trail.style.opacity = String(trailOpacity);
+        trail.style.transform = `translate3d(${trailX}px, ${trailY}px, 0) translate(-50%, -50%) rotate(${angle}deg) scaleX(${stretch})`;
+      }
+      rafId = requestAnimationFrame(tick);
+    });
 
     function handleOver(e: MouseEvent) {
       const target = e.target as Element;
@@ -104,6 +141,7 @@ export function SparkCursor() {
       document.removeEventListener("mouseover", handleOver);
       document.removeEventListener("mouseout", handleOut);
       document.documentElement.classList.remove("spark-cursor-active");
+      cancelAnimationFrame(rafId);
     };
   }, []);
 

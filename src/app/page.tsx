@@ -9,6 +9,7 @@ import { Reveal } from "@/components/Reveal";
 import { ScatterReveal } from "@/components/ScatterReveal";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { PerspectiveReveal } from "@/components/PerspectiveReveal";
+import { ClipReveal } from "@/components/ClipReveal";
 import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
 import { ElementsConstellation } from "@/components/ElementsConstellation";
 import { MorphingGlyph } from "@/components/MorphingGlyph";
@@ -450,25 +451,32 @@ export default function Home() {
             own solid card instead of floating directly on the video —
             so a busier, more saturated background can't compete with
             the text for attention. */}
-        <section className="relative overflow-hidden py-20 sm:py-28">
-          <BackgroundVideo video="/videos/higgsfield-forest-light-vivid.mp4" poster="/images/higgsfield-forest-light-vivid-poster.jpg" />
-          <div
-            className="absolute inset-0"
-            style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.18) 0%, rgba(244,239,230,0.28) 100%)" }}
-          />
-          <Container className="relative max-w-2xl">
-            <Reveal>
-              <div className="rounded-2xl border border-border/50 bg-background-elevated/92 px-6 py-10 shadow-elevation-md backdrop-blur-sm sm:px-14 sm:py-16">
-                <h2 className="text-display-sm font-display font-normal text-soil">
-                  Common questions
-                </h2>
-                <div className="mt-8">
-                  <FAQ />
+        {/* Light chapter giving way from the dark Selected-work grid
+            above — the same real mode-shift ClipReveal already marks on
+            Services and Work, just running the other direction (dark to
+            light instead of light to dark) since that's the actual
+            boundary here. */}
+        <ClipReveal>
+          <section className="relative overflow-hidden py-20 sm:py-28">
+            <BackgroundVideo video="/videos/higgsfield-forest-light-vivid.mp4" poster="/images/higgsfield-forest-light-vivid-poster.jpg" />
+            <div
+              className="absolute inset-0"
+              style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.18) 0%, rgba(244,239,230,0.28) 100%)" }}
+            />
+            <Container className="relative max-w-2xl">
+              <Reveal>
+                <div className="rounded-2xl border border-border/50 bg-background-elevated/92 px-6 py-10 shadow-elevation-md backdrop-blur-sm sm:px-14 sm:py-16">
+                  <h2 className="text-display-sm font-display font-normal text-soil">
+                    Common questions
+                  </h2>
+                  <div className="mt-8">
+                    <FAQ />
+                  </div>
                 </div>
-              </div>
-            </Reveal>
-        </Container>
-        </section>
+              </Reveal>
+            </Container>
+          </section>
+        </ClipReveal>
 
         {/* Closing chapter — the contemplative statement and the final CTA
             used to be two separate sections (a video break, then a flat

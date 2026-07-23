@@ -307,7 +307,12 @@
   border-radius: 9999px;
   background: linear-gradient(90deg, rgba(184,90,52,0) 0%, rgba(194,138,40,0.4) 30%, rgba(255,205,120,0.85) 100%);
   filter: blur(2px);
-  transition: transform 0.32s var(--ease-air), opacity 0.4s ease-out;
+  /* No transform transition — SparkCursor.tsx now lerps the trail's
+     position every animation frame instead. A CSS transition retriggered
+     on every raw mousemove event (which fires far more often than any
+     transition can complete) is what made the trail visibly lag/stutter
+     behind the real cursor instead of trailing smoothly. */
+  transition: opacity 0.4s ease-out;
   will-change: transform, opacity;
 }
 
