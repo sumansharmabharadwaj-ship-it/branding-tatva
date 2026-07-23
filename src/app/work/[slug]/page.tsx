@@ -80,21 +80,47 @@ export default async function CaseStudyPage({ params }: Props) {
     <>
       <Header transparent />
       <main id="main-content">
+        {/* Asymmetric masthead, matching the technique the blog post
+            template now uses — a large offset headline in its own
+            column instead of a centered stack, a separate meta column
+            (here, the services actually provided, not a date/author),
+            and a giant faint industry-name watermark behind both. The
+            body below already had real structure (a sticky sidebar next
+            to the challenge/strategy blocks); this was the one plain
+            centered piece left on the page. */}
         <PhotoHero
           video={project.heroVideo ?? "/videos/higgsfield-golden-ridge.mp4"}
           poster={project.heroPoster ?? "/images/higgsfield-golden-ridge-poster.jpg"}
           minHeight="70vh"
           accentColor={project.heroVideo ? project.accent : undefined}
         >
-          <Container className="relative py-20 text-center">
-            <Reveal>
-              <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                {project.industry}
-              </span>
-              <h1 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory">
-                {project.title}
-              </h1>
-            </Reveal>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,13vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+          >
+            {project.industry}
+          </span>
+          <Container className="relative py-20">
+            <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+              <Reveal>
+                <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+                  {project.industry}
+                </span>
+                <h1 className="mt-6 max-w-2xl font-display text-[clamp(2.1rem,5.5vw,3.75rem)] font-normal leading-[1.1] text-ivory">
+                  {project.title}
+                </h1>
+              </Reveal>
+              <Reveal delay={0.1} className="flex flex-wrap gap-2 lg:flex-col lg:items-end lg:pb-2">
+                {project.services.map((s) => (
+                  <span
+                    key={s}
+                    className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/75 lg:text-right"
+                  >
+                    {s}
+                  </span>
+                ))}
+              </Reveal>
+            </div>
           </Container>
         </PhotoHero>
 

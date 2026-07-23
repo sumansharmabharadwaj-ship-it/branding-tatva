@@ -120,8 +120,19 @@
     overflow-x: hidden;
   }
 
+  /* No overflow-x here — only on html above. Setting it on body too
+     makes body itself a second, independent scroll-clipping container
+     distinct from the real viewport/html scroller, and per the CSS
+     spec that silently breaks `position: sticky` for every descendant
+     (its containing block becomes body's own box instead of the real
+     viewport). This site leans on sticky heavily — the Five Elements
+     and Process pinned sections on Home, plus the sticky rails on the
+     blog post and case-study templates — and having it on both html
+     and body is exactly what made sections appear to "vanish" while
+     scrolling: the sticky elements were still being positioned, just
+     against the wrong containing block. html's own overflow-x already
+     covers the anti-horizontal-scroll guarantee this was added for. */
   body {
-    overflow-x: hidden;
     @apply bg-background text-foreground font-body antialiased;
   }
 
