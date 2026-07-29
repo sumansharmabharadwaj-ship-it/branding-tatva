@@ -10,6 +10,9 @@ import { TiltCard } from "@/components/TiltCard";
 import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { ImageBreak } from "@/components/ImageBreak";
+import { ClipReveal } from "@/components/ClipReveal";
+import { TexturedDark } from "@/components/TexturedDark";
+import { LinkButton } from "@/components/Button";
 import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
 import { ElementGlyph } from "@/components/ElementGlyph";
@@ -89,7 +92,21 @@ export default function BlogPage() {
             whole section meant a slow-to-fire reveal trigger showed
             blank page background during fast real-device scrolling.
             Same fix as Home's PerspectiveReveal/ClipReveal sections. */}
-        <section className="bg-background-alt py-16">
+        <section className="relative overflow-hidden bg-background-alt py-16">
+          {/* Ghost watermark word, same technique as Home's "ELEMENTS"
+              and About's "WHY" — soil-toned rather than ivory-toned
+              since this section is light, not dark, the inverse of
+              every other instance of this pattern. Sits outside
+              PerspectiveReveal, not inside it, for the same reason this
+              section's own background does (see comment above): a
+              slow-to-fire reveal trigger would hide it along with
+              everything else it wraps. */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-soil/[0.05] sm:-top-8"
+          >
+            NOTES
+          </span>
         <PerspectiveReveal>
           <Container>
             <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
@@ -156,6 +173,27 @@ export default function BlogPage() {
           quote="Every idea here started as a note before it became something worth reading."
           height="55vh"
         />
+
+        {/* This page used to end on the ImageBreak above with no next
+            step — every other page (Home, About, Services, Contact)
+            closes with an explicit CTA. Same TexturedDark + ClipReveal
+            + LinkButton combination Services and Work already prove. */}
+        <TexturedDark image="/images/own-alpenglow-peak.jpg" className="py-24 text-center sm:pb-28">
+          <ClipReveal>
+            <Container>
+              <h2 className="text-display-md font-display font-normal text-ivory">
+                Want writing like this, applied to your own brand?
+              </h2>
+              <p className="mx-auto mt-4 max-w-md text-ivory/70">
+                Everything here started as a real question from a real
+                project. Tell me yours, and I&apos;ll start there too.
+              </p>
+              <div className="mt-8">
+                <LinkButton href="/contact">Start a brand conversation</LinkButton>
+              </div>
+            </Container>
+          </ClipReveal>
+        </TexturedDark>
       </main>
       <Footer />
     </>

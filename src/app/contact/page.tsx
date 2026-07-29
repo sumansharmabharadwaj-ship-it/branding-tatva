@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
+import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { NewsletterForm } from "@/components/NewsletterForm";
@@ -27,42 +28,60 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <Header />
+      <Header transparent />
       <main id="main-content">
-        {/* Was a one-off terracotta wash (earth blended 22%) — its own
-            color, distinct from every other light section on the site.
-            Sandstone now: the same single light-anchor tone About uses
-            for its own opening section, so a visitor lands on a color
-            that already means something elsewhere on the site instead
-            of a fifth shade of the same idea. This is the page's own
-            first paint (no hero video here), so still needs to read as
-            deliberately colored, not unstyled — Sandstone at full
-            strength does that. */}
-        <section className="pb-20 pt-32 sm:pb-28 sm:pt-36" style={{ backgroundColor: SANDSTONE }}>
-          <Container className="grid gap-12 lg:grid-cols-5">
-            <Reveal className="relative lg:col-span-2">
-              {/* One quiet hand-drawn touch on the opening heading, the
-                  same restrained "one accent, not scattered decoration"
-                  rule the Footer and About page already use. */}
+        {/* Every other page on the site opens on a real video/photo
+            hero; this page used to open directly on a flat color
+            section instead, the one structural outlier in an otherwise
+            consistent pattern. Tier 3 (70vh), the same as Services/
+            Work — matches PhotoHero's own documented height-tier
+            table. higgsfield-forest-light.mp4 (trees opening onto a
+            clear valley view) was picked specifically because it
+            echoes this page's own existing VideoBreak quote below: "A
+            brand conversation is just the first clear view through the
+            noise." */}
+        <PhotoHero
+          video="/videos/higgsfield-forest-light.mp4"
+          poster="/images/higgsfield-forest-light-poster.jpg"
+          minHeight="70vh"
+        >
+          <Container className="relative py-20 text-center">
+            <Reveal className="relative">
               <NatureAccent
                 variant="butterfly"
-                className="pointer-events-none absolute -top-8 left-[68%] hidden h-9 w-9 text-clay/30 sm:block"
+                className="pointer-events-none absolute -top-6 left-1/2 hidden h-9 w-9 translate-x-[60%] text-ivory/20 sm:block"
               />
-              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
+              <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 Contact
-              </p>
+              </span>
               <SplitReveal
                 as="h1"
-                className="mt-3 text-display-lg font-display font-normal text-soil"
+                className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory"
               >
                 Tell me what your brand is becoming.
               </SplitReveal>
-              <p className="mt-5 text-foreground-secondary">
+              <p className="mx-auto mt-4 max-w-xl text-ivory/70">
                 Fill in as much or as little as you know right now.
                 I&apos;ll ask a few more questions where it helps. I read
                 every enquiry personally.
               </p>
-              <div className="mt-8 space-y-2 text-sm text-foreground-secondary">
+            </Reveal>
+          </Container>
+        </PhotoHero>
+
+        {/* Was a one-off terracotta wash (earth blended 22%) — its own
+            color, distinct from every other light section on the site.
+            Sandstone now: the same single light-anchor tone About uses
+            for its own opening section. The heading/intro copy above
+            moved into the new hero; this section now carries just the
+            form and the direct-contact links. */}
+        <section className="pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
+          <Container className="grid gap-12 lg:grid-cols-5">
+            <Reveal className="lg:col-span-2">
+              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
+                Reach me directly
+              </p>
+              <div className="mt-3 space-y-2 text-sm text-foreground-secondary">
                 <p>
                   Prefer email?{" "}
                   <a href={`mailto:${site.email}`} className="text-action-primary-hover link-underline">

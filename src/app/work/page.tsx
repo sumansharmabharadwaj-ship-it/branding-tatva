@@ -9,6 +9,9 @@ import { ImageBreak } from "@/components/ImageBreak";
 import { WorkGrid } from "@/sections/CaseStudies";
 import { ClipReveal } from "@/components/ClipReveal";
 import { AnnotatedVisual } from "@/components/AnnotatedVisual";
+import { KineticMarquee } from "@/components/KineticMarquee";
+import { TexturedDark } from "@/components/TexturedDark";
+import { LinkButton } from "@/components/Button";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
@@ -93,6 +96,13 @@ export default function WorkPage() {
           </Container>
         </section>
 
+        {/* A section-transition beat between the compass explainer and
+            the project grid — this page had no divider at all between
+            its two flat-light sections. Reuses the exact industry list
+            already stated in this page's own hero subhead above, not
+            new copy. */}
+        <KineticMarquee text="MARKETPLACES · WELLNESS · D2C · ENTERPRISE · COACHING" />
+
         {/* Was bold solid Soil, matching every other photo/video section
             site-wide — but per direct feedback pointing at the reference
             site's own restraint, a card grid doesn't need that: these
@@ -122,6 +132,28 @@ export default function WorkPage() {
           quote="Every one of these projects started in a forest of noise, the same place yours is starting from."
           height="60vh"
         />
+
+        {/* This page used to end on the ImageBreak above with no next
+            step — every other page (Home, About, Services, Contact)
+            closes with an explicit CTA. Same TexturedDark + ClipReveal
+            + LinkButton combination Services already proves at its own
+            closing section. */}
+        <TexturedDark image="/images/higgsfield-forest-path.jpg" className="py-24 text-center sm:pb-28">
+          <ClipReveal>
+            <Container>
+              <h2 className="text-display-md font-display font-normal text-ivory">
+                Want a project like these on your own brand?
+              </h2>
+              <p className="mx-auto mt-4 max-w-md text-ivory/70">
+                Every one of these started with a conversation about where
+                the brand actually stood. Yours can start the same way.
+              </p>
+              <div className="mt-8">
+                <LinkButton href="/contact">Start a brand conversation</LinkButton>
+              </div>
+            </Container>
+          </ClipReveal>
+        </TexturedDark>
       </main>
       <Footer />
     </>

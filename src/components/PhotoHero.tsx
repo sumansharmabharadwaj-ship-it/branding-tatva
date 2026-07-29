@@ -14,6 +14,19 @@ const KEN_BURNS = kenBurnsAnimation({ scale: 1.07, duration: 22 });
 // secondary pages get to their content faster. When only a still image
 // is given, it holds a slow continuous Ken Burns drift so it's never
 // sitting completely still; a video background moves on its own.
+//
+// Height is a deliberate four-tier system across the site, not one
+// value standardized everywhere or an accident of each page being
+// built separately — the variation itself is what signals hierarchy:
+//   Tier 1 — Signature   Home            100svh (CinematicHero, not this component)
+//   Tier 2 — Personal    About           100vh  (AboutSplitHero, not this component)
+//   Tier 3 — Mid         Services, Work, Contact   minHeight="70vh"
+//   Tier 4 — Shorter     Blog            minHeight="60vh"
+// Home and About use their own bespoke hero components (a full-viewport
+// video takeover, and a split video/floating-cards layout) rather than
+// this one — they're listed here anyway so the tier table stays
+// complete in one place instead of split across files. A new page's
+// hero height should be picked from this table, not invented fresh.
 
 const gradient =
   "linear-gradient(180deg, rgba(39,34,30,0.55) 0%, rgba(39,34,30,0.78) 60%, rgba(39,34,30,0.92) 100%)";

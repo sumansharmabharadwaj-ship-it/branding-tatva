@@ -237,19 +237,36 @@ export default function ServicesPage() {
             rather than touching that shared component's defaults for
             every other caller. */}
         <section id="process" className="scroll-mt-24 bg-soil py-16">
-          <Container>
-            <div className="max-w-2xl">
-              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">How I work</p>
-              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                The same six steps, every time.
-              </h2>
-              <p className="mt-4 text-ivory/75">
-                Each stage depends on the one before it, a sequence rather
-                than a checklist you can jump around in. That order is
-                usually where a rushed process starts to show.
-              </p>
-            </div>
-          </Container>
+          {/* overflow-hidden scoped to this inner wrapper only, not the
+              outer section — ProcessSection right below relies on
+              `position: sticky` (PinnedJourney), which breaks the
+              moment any ancestor has overflow other than visible (see
+              PinnedJourney's own comment, and the Home page's identical
+              note for its own Process section heading). Ghost watermark
+              word, same technique as Home's "ELEMENTS" and About's
+              "WHY" — this page had none of the site's recurring
+              signature moments, reading plainer than Home/About. */}
+          <div className="relative overflow-hidden">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-ivory/[0.06] sm:-top-8"
+            >
+              METHOD
+            </span>
+            <Container className="relative">
+              <div className="max-w-2xl">
+                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">How I work</p>
+                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                  The same six steps, every time.
+                </h2>
+                <p className="mt-4 text-ivory/75">
+                  Each stage depends on the one before it, a sequence rather
+                  than a checklist you can jump around in. That order is
+                  usually where a rushed process starts to show.
+                </p>
+              </div>
+            </Container>
+          </div>
           <ProcessSection stages={process} elementColor={elementColor} dark />
         </section>
 
