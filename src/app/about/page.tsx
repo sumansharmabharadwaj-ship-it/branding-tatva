@@ -17,6 +17,8 @@ import { MeadowClosing } from "@/components/MeadowClosing";
 import { aboutIntro, credentials, experience } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { elements } from "@/data/elements";
+import { philosophy } from "@/data/philosophy";
+import { ElementGlyph } from "@/components/ElementGlyph";
 import { site } from "@/data/site";
 import { SANDSTONE } from "@/lib/sectionWash";
 
@@ -221,6 +223,74 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
+          </Container>
+        </section>
+
+        {/* Where the five elements themselves come from, sitting right
+            before the section that explains this site's own visual
+            choices — that section already covers the mark, the
+            typefaces, the palette; this one covers the actual idea
+            underneath all of it, which none of those four items touch.
+            Deliberately plain bg-soil, no video, unlike every other dark
+            section on this page: five paragraphs of text is already a
+            lot to hold attention through, and a quiet background lets
+            the ideas carry the section instead of competing with a
+            moving image behind them. */}
+        <section className="bg-soil py-20">
+          <Container>
+            <Reveal>
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
+                Why five elements
+              </p>
+              <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory">
+                These five elements describe something older than a
+                marketing framework.
+              </h2>
+              <p className="mt-4 max-w-2xl text-ivory/75">
+                They describe what anything needs in order to actually
+                last: a person, a body of work, a civilization, a brand.
+                Something needs ground before it can stand. It needs to
+                move through how people actually experience it. It needs
+                a spark that earns a second look. It needs to be
+                understood in its own words. And it has to still be
+                there once the moment has passed. A brand lives or dies
+                on the same five things a person does.
+              </p>
+            </Reveal>
+
+            <div className="mt-14 space-y-10 border-t border-ivory/15 pt-10">
+              {philosophy.map((item, i) => {
+                const el = elements.find((e) => e.slug === item.element);
+                if (!el) return null;
+                return (
+                  <Reveal key={item.element} delay={i * 0.06}>
+                    <div className="flex items-center gap-3">
+                      <ElementGlyph
+                        slug={item.element}
+                        className="h-5 w-5 shrink-0 opacity-80"
+                        style={{ color: el.color }}
+                      />
+                      <p className="font-display text-lg font-normal text-ivory">{el.name}</p>
+                      <span className="text-xs font-medium uppercase tracking-wide text-ivory/50">
+                        {item.thinker}
+                      </span>
+                    </div>
+                    <p className="mt-2 max-w-2xl text-sm text-ivory/75">{item.text}</p>
+                  </Reveal>
+                );
+              })}
+            </div>
+
+            <Reveal delay={0.4}>
+              <p className="mt-14 max-w-2xl border-t border-ivory/15 pt-10 text-ivory/75">
+                None of this is abstract. A sustained content push built
+                the same way took Dr. Haley Nutrition&apos;s engagement
+                rate from 0.71% to 2.81% in two months, with impressions
+                barely moving even as posting dropped by nearly half.
+                That is the difference between reach and trust, and
+                it is what these five elements are actually for.
+              </p>
+            </Reveal>
           </Container>
         </section>
 
