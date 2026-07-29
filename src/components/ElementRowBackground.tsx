@@ -48,14 +48,27 @@ export function ElementRowBackground({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ref, shouldLoad] = useLazyMount();
   const [videoReady, setVideoReady] = useState(false);
+  // Tracks the in-flight play() promise so a pause() that lands while
+  // it's still pending waits for it to settle first, instead of firing
+  // immediately.
+  const playPromiseRef = useRef<Promise<void> | null>(null);
 
   useEffect(() => {
     const el = videoRef.current;
     if (!el || !shouldLoad || prefersReducedMotion) return;
     if (active) {
-      el.play().catch(() => {});
+      playPromiseRef.current = el.play().catch(() => {});
     } else {
-      el.pause();
+      // PinnedSlider mounts all five rows at once and toggles `active`
+      // as the user scrolls between stages, sometimes several times in
+      // quick succession. Calling pause() while an earlier play() is
+      // still pending throws "The play() request was interrupted by a
+      // call to pause()" in Chrome, and can leave the element stuck on
+      // a frozen frame even once it becomes active again later — video
+      // reads as permanently paused despite the effect re-running and
+      // calling play(). Waiting for any pending play() to settle first
+      // avoids that race entirely.
+      Promise.resolve(playPromiseRef.current).finally(() => el.pause());
     }
   }, [shouldLoad, prefersReducedMotion, active]);
 

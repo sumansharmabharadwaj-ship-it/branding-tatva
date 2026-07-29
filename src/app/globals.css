@@ -501,11 +501,17 @@
    its own opacity, so the CSS here only has to read the two variables. */
 .cursor-spotlight {
   z-index: 1;
+  /* Was 0.1 peak, fully faded by 55% radius — direct feedback that this
+     read as barely visible against a dark video background instead of
+     a real "ray of light following the cursor." Brighter core, a wider
+     fade, and a warmer tone so it reads as an actual beam rather than a
+     faint smudge, on both the large full-screen hero/slider contexts
+     and the smaller Button/ContactForm hover uses this class shares. */
   background: radial-gradient(
     circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
-    rgba(255, 244, 220, 0.1) 0%,
-    rgba(255, 244, 220, 0.04) 25%,
-    transparent 55%
+    rgba(255, 224, 168, 0.32) 0%,
+    rgba(255, 224, 168, 0.14) 30%,
+    transparent 65%
   );
 }
 

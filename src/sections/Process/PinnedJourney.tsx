@@ -42,6 +42,9 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
   const [mediaRef, shouldLoad] = useLazyMount();
   const prefersReducedMotion = useReducedMotion();
   const [videoReady, setVideoReady] = useState<boolean[]>(() => stages.map(() => false));
+  // Tracks each stage's in-flight play() promise so a pause() landing
+  // while one is still pending waits for it to settle first.
+  const playPromisesRef = useRef<(Promise<void> | null)[]>(stages.map(() => null));
 
   // Only the active stage's video plays — every other one stays paused,
   // so switching stages is a play/pause swap rather than six loops
@@ -50,8 +53,18 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
     if (prefersReducedMotion || !shouldLoad) return;
     videoRefs.current.forEach((el, i) => {
       if (!el) return;
-      if (i === activeIndex) el.play().catch(() => {});
-      else el.pause();
+      if (i === activeIndex) {
+        playPromisesRef.current[i] = el.play().catch(() => {});
+      } else {
+        // Scrolling quickly through stages can toggle a video active
+        // then inactive again before its play() promise settles.
+        // Calling pause() while that promise is still pending throws
+        // "The play() request was interrupted by a call to pause()" in
+        // Chrome, and can leave the element stuck on a frozen frame
+        // even once it becomes active again later. Waiting for any
+        // pending play() first avoids that race.
+        Promise.resolve(playPromisesRef.current[i]).finally(() => el.pause());
+      }
     });
   }, [activeIndex, shouldLoad, prefersReducedMotion]);
 
