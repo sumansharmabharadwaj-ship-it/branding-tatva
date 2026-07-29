@@ -29,14 +29,32 @@ export function useTilt(
     const el = ref.current;
     if (!el || disabled) return;
 
-    function handleMove(e: MouseEvent) {
-      const rect = el!.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width - 0.5;
-      const py = (e.clientY - rect.top) / rect.height - 0.5;
+    // getBoundingClientRect() forces a synchronous layout read — doing
+    // that on every raw mousemove event (which can fire far more often
+    // than once per animation frame) is unnecessary work piled on top of
+    // whatever else is happening that frame. mousemove itself only
+    // caches the latest pointer position now (a cheap assignment, no DOM
+    // read); a single rAF loop reads geometry and applies the rotation
+    // once per frame instead, the same pattern SparkCursor's own trail
+    // already uses for this exact reason.
+    let pointer: { x: number; y: number } | null = null;
+    let rafId: number | null = null;
+
+    function tick() {
+      rafId = null;
+      if (!pointer || !el) return;
+      const rect = el.getBoundingClientRect();
+      const px = (pointer.x - rect.left) / rect.width - 0.5;
+      const py = (pointer.y - rect.top) / rect.height - 0.5;
       rawRotateX.set(-py * maxDegrees * 2);
       rawRotateY.set(px * maxDegrees * 2);
     }
+    function handleMove(e: MouseEvent) {
+      pointer = { x: e.clientX, y: e.clientY };
+      if (rafId === null) rafId = requestAnimationFrame(tick);
+    }
     function handleLeave() {
+      pointer = null;
       rawRotateX.set(0);
       rawRotateY.set(0);
     }
@@ -46,6 +64,7 @@ export function useTilt(
     return () => {
       el.removeEventListener("mousemove", handleMove);
       el.removeEventListener("mouseleave", handleLeave);
+      if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, [ref, maxDegrees, disabled, rawRotateX, rawRotateY]);
 

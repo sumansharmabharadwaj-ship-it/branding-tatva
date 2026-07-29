@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
+import { registerScrollCheck } from "@/lib/scrollCheckRegistry";
 
 // Drives every scroll-triggered entrance animation on the site (Reveal,
 // ImageBreak, ClipReveal, PerspectiveReveal, ElementReveal, VideoBreak's
@@ -50,7 +51,7 @@ export function useRevealTrigger(rootMargin = "0px 0px -80px 0px"): [RefObject<H
 
     checkPosition();
     const fallback = setTimeout(checkPosition, 800);
-    const unsubscribe = lenis?.on("scroll", checkPosition);
+    const unsubscribe = lenis ? registerScrollCheck(lenis, checkPosition) : undefined;
 
     return () => {
       observer.disconnect();

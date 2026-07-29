@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
+import { registerScrollCheck } from "@/lib/scrollCheckRegistry";
 
 // Gates a boolean to true the first time the returned ref's element
 // nears the viewport, then disconnects — the same "don't pay for what's
@@ -53,7 +54,7 @@ export function useLazyMount(rootMargin = "600px 0px"): [RefObject<HTMLDivElemen
 
     checkPosition();
     const fallback = setTimeout(checkPosition, 800);
-    const unsubscribe = lenis?.on("scroll", checkPosition);
+    const unsubscribe = lenis ? registerScrollCheck(lenis, checkPosition) : undefined;
 
     return () => {
       observer.disconnect();

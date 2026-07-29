@@ -16,19 +16,32 @@ export function useSpotlight(ref: RefObject<HTMLElement | null>, disabled = fals
     const spotlight = spotlightRef.current;
     if (!el || !spotlight || disabled) return;
 
-    // A single CSS custom property write per mousemove is cheap enough
-    // not to need manual rAF coalescing — the browser's own event rate
-    // already caps this reasonably, and skipping the extra rAF hop
-    // keeps the update synchronous with the event that caused it.
+    // The property write itself is cheap, but getBoundingClientRect()
+    // isn't — it forces a synchronous layout read, and doing that on
+    // every raw mousemove (which can fire faster than one event per
+    // frame) is unnecessary work regardless of how cheap the write after
+    // it is. mousemove now only caches the latest pointer position; a
+    // single rAF loop reads geometry and applies the update once per
+    // frame, same pattern useTilt/SparkCursor already use.
+    let pointer: { x: number; y: number } | null = null;
+    let rafId: number | null = null;
+
+    function tick() {
+      rafId = null;
+      if (!pointer || !el || !spotlight) return;
+      const rect = el.getBoundingClientRect();
+      const px = ((pointer.x - rect.left) / rect.width) * 100;
+      const py = ((pointer.y - rect.top) / rect.height) * 100;
+      spotlight.style.setProperty("--spotlight-x", `${px}%`);
+      spotlight.style.setProperty("--spotlight-y", `${py}%`);
+      spotlight.style.opacity = "1";
+    }
     function handleMove(e: MouseEvent) {
-      const rect = el!.getBoundingClientRect();
-      const px = ((e.clientX - rect.left) / rect.width) * 100;
-      const py = ((e.clientY - rect.top) / rect.height) * 100;
-      spotlight!.style.setProperty("--spotlight-x", `${px}%`);
-      spotlight!.style.setProperty("--spotlight-y", `${py}%`);
-      spotlight!.style.opacity = "1";
+      pointer = { x: e.clientX, y: e.clientY };
+      if (rafId === null) rafId = requestAnimationFrame(tick);
     }
     function handleLeave() {
+      pointer = null;
       spotlight!.style.opacity = "0";
     }
 
@@ -37,6 +50,7 @@ export function useSpotlight(ref: RefObject<HTMLElement | null>, disabled = fals
     return () => {
       el.removeEventListener("mousemove", handleMove);
       el.removeEventListener("mouseleave", handleLeave);
+      if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, [ref, disabled]);
 

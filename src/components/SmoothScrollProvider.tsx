@@ -44,7 +44,44 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) return;
 
-    const instance = new Lenis();
+    // Options made explicit rather than left as unstated defaults, so a
+    // future edit doesn't accidentally change the scroll feel without
+    // realizing it was ever a deliberate choice:
+    //
+    // lerp: 0.1 — Lenis's own default, and the right one specifically
+    // because PinnedJourney/PinnedSlider/MeadowClosing all compute their
+    // progress from wrapper.getBoundingClientRect().top, which reflects
+    // this *smoothed* scroll position, not raw wheel delta. A lower lerp
+    // would lag those pinned sections behind the user's own scrolling; a
+    // higher one approaches "barely smoothed," undercutting the reason
+    // Lenis is here at all.
+    //
+    // duration/easing deliberately left unset — traced through Lenis's
+    // own source (node_modules/lenis/dist/lenis.mjs): every wheel/touch
+    // delta calls scrollTo() again, which resets the tween's elapsed
+    // time on every single input event. A duration+easing tween never
+    // gets to play out its curve under continuous scrolling; only
+    // lerp's frame-rate-independent damping is correct for that. That
+    // mode's real use case is a one-shot destination (see scrollToHash
+    // below, which intentionally uses `{ immediate: true }` instead
+    // since it's correcting drift after the fact, not the primary case
+    // duration/easing was built for).
+    //
+    // wheelMultiplier/touchMultiplier: 1 — kept at 1:1 since the three
+    // pinned sections' own scroll-distance math ((N+1) * 100vh wrapper
+    // heights) is tuned against real wheel/touch delta; rescaling either
+    // would require re-tuning all three together, a separate change.
+    //
+    // syncTouch: false — this site has no drag-synced canvas/WebGL scene
+    // that would need JS-mimicked touch scroll, and Lenis's own docs
+    // flag that mode as unstable on iOS < 16, so there's no reason to
+    // take on that risk for no benefit here.
+    const instance = new Lenis({
+      lerp: 0.1,
+      wheelMultiplier: 1,
+      touchMultiplier: 1,
+      syncTouch: false,
+    });
     instance.on("scroll", ScrollTrigger.update);
     setLenis(instance);
 

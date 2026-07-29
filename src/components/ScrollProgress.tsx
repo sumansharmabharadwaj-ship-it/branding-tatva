@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 
@@ -12,15 +12,26 @@ import { useLenis } from "@/components/SmoothScrollProvider";
 // own comment on why). The scroll callback receives the Lenis instance
 // itself, not an event payload — it exposes its own `progress` getter.
 //
+// Writes width directly to the bar's own ref instead of going through
+// React state — `progress` changes on essentially every scroll frame
+// while scrolling, and routing that through setState forced a full
+// component re-render every tick. PinnedJourney/PinnedSlider/
+// MeadowClosing already settled on direct ref-style mutation for this
+// exact reason; this just applies the same pattern here.
+//
 // z-50 specifically: the header's nav pill sits at z-40, its mobile-menu
 // backdrop at z-30. This only needs to sit above both, not reason about
 // the rest of the stack, hence the round number rather than z-41.
 export function ScrollProgress() {
-  const [progress, setProgress] = useState(0);
+  const barRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
+    function setProgress(progress: number) {
+      if (barRef.current) barRef.current.style.width = `${progress * 100}%`;
+    }
+
     if (lenis) {
       const unsubscribe = lenis.on("scroll", (l) => setProgress(l.progress));
       return () => unsubscribe();
@@ -44,9 +55,10 @@ export function ScrollProgress() {
       aria-hidden="true"
     >
       <div
+        ref={barRef}
         className="h-full bg-clay"
         style={{
-          width: `${progress * 100}%`,
+          width: "0%",
           transition: prefersReducedMotion ? "none" : "width 100ms linear",
         }}
       />
