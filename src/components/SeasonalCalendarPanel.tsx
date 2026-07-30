@@ -85,8 +85,8 @@ export function SeasonalCalendarPanel() {
 
   return (
     <div
-      className="relative mx-auto mt-16 max-w-md overflow-hidden rounded-[2rem] border border-white/15 p-6 sm:p-7"
-      style={{ boxShadow: "0 30px 80px -20px rgba(0,0,0,0.55)" }}
+      className="relative h-full overflow-hidden rounded-2xl border border-white/15 p-5 sm:p-6"
+      style={{ boxShadow: "0 20px 60px -20px rgba(0,0,0,0.5)" }}
     >
       <div className="absolute inset-0 -z-10">
         <BackgroundVideo
@@ -137,13 +137,13 @@ export function SeasonalCalendarPanel() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: EASE_AIR }}
           >
-            <div className="mt-6 flex items-baseline justify-between">
-              <span className="font-display text-4xl font-normal leading-none text-ivory">
+            <div className="mt-5 flex items-baseline justify-between">
+              <span className="font-display text-3xl font-normal leading-none text-ivory">
                 {MONTH_NAMES[month]}
               </span>
-              <span className="font-display text-4xl font-normal leading-none text-ivory">{today}</span>
+              <span className="font-display text-3xl font-normal leading-none text-ivory">{today}</span>
             </div>
-            <div className="mt-6 grid grid-cols-7 gap-1 text-center">
+            <div className="mt-5 grid grid-cols-7 gap-1 text-center">
               {DAY_LETTERS.map((d, i) => (
                 <span key={i} className="text-xs text-ivory/50">
                   {d}
@@ -154,7 +154,7 @@ export function SeasonalCalendarPanel() {
               {weekDates.map((d, i) => (
                 <div
                   key={i}
-                  className="mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm"
+                  className="mx-auto flex h-8 w-8 items-center justify-center rounded-full text-sm"
                   style={
                     d === today
                       ? { backgroundColor: element.color, color: "#F4EFE6" }
@@ -174,7 +174,7 @@ export function SeasonalCalendarPanel() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: EASE_AIR }}
           >
-            <div className="mt-6 grid grid-cols-7 text-center">
+            <div className="mt-5 grid grid-cols-7 text-center">
               {DAY_LETTERS.map((d, i) => (
                 <span key={i} className="pb-2 text-xs text-ivory/50">
                   {d}
@@ -184,7 +184,7 @@ export function SeasonalCalendarPanel() {
             {monthGrid.map((week, wi) => (
               <div
                 key={wi}
-                className={`grid grid-cols-7 border-white/15 py-2 ${wi > 0 ? "border-t" : ""}`}
+                className={`grid grid-cols-7 border-white/15 py-1.5 ${wi > 0 ? "border-t" : ""}`}
               >
                 {week.map((d, di) => (
                   <div key={di} className="flex items-center justify-center text-sm">
@@ -208,12 +208,12 @@ export function SeasonalCalendarPanel() {
         )}
       </AnimatePresence>
 
-      <p className="mx-auto mt-6 max-w-xs text-center text-xs italic leading-snug text-ivory/60">
+      <p className="mx-auto mt-4 max-w-xs text-center text-xs italic leading-snug text-ivory/60">
         &ldquo;{element.poetic}&rdquo;
       </p>
 
-      <div className="mt-5 flex items-center justify-between gap-3">
-        <span className="text-sm text-ivory/70">Twenty minutes, no pitch attached.</span>
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <span className="text-xs text-ivory/70 sm:text-sm">Twenty minutes, no pitch attached.</span>
         <motion.button
           type="button"
           onClick={() => setExpanded(true)}
