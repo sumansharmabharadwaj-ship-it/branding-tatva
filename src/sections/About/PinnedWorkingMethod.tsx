@@ -83,17 +83,19 @@ function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
               <h2 className="text-display-sm font-display font-normal text-ivory">
                 Recent experience
               </h2>
-              <ul className="mt-4 space-y-4">
-                {experience.map((role) => (
-                  <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
+            </Reveal>
+            <ul className="mt-4 space-y-4">
+              {experience.map((role, i) => (
+                <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
+                  <Reveal delay={0.18 + i * 0.06}>
                     <p className="font-medium text-ivory">{role.role}</p>
                     <p className="text-sm text-ivory/70">
                       {role.org} &middot; {role.period}
                     </p>
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
+                  </Reveal>
+                </li>
+              ))}
+            </ul>
           </div>
         </Container>
       </ClipReveal>

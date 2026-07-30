@@ -116,14 +116,16 @@ export default function Home() {
               <ScatterReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.1] text-ivory">
                 A brand can be visible and still go unnoticed.
               </ScatterReveal>
-              <Reveal delay={0.15}>
-                <div className="max-w-md space-y-4 text-ivory/75 sm:ml-auto sm:text-right">
+              <div className="max-w-md space-y-4 text-ivory/75 sm:ml-auto sm:text-right">
+                <Reveal delay={0.15}>
                   <p>
                     Being present differs from being recognised.
                     Looking attractive differs from communicating
                     clearly. Posting content differs from building
                     recall.
                   </p>
+                </Reveal>
+                <Reveal delay={0.25}>
                   <p>
                     That gap is usually a{" "}
                     <span className="font-semibold text-ivory underline decoration-sandstone underline-offset-4">
@@ -131,8 +133,8 @@ export default function Home() {
                     </span>
                     , far more often than a visibility one.
                   </p>
-                </div>
-              </Reveal>
+                </Reveal>
+              </div>
             </div>
           }
         />
@@ -173,6 +175,8 @@ export default function Home() {
           poster="/images/own-forest-stream-poster.jpg"
           quote="The parts that stay still are usually the ones holding everything else up."
           height="72vh"
+          cameraPush
+          spotlight
         />
 
         {/* Two brand pathways — an interactive split-screen, not two
@@ -236,9 +240,11 @@ export default function Home() {
           <BackgroundVideo video="/videos/pixabay-flame-texture.mp4" poster="/images/pixabay-flame-texture-poster.jpg" />
           <div className="absolute inset-0 bg-soil/60" />
           <Container className="relative">
-            <Reveal>
-              <div className="flex items-baseline justify-between">
+            <div className="flex items-baseline justify-between">
+              <Reveal>
                 <h2 className="text-display-sm font-display font-normal text-ivory">Selected work</h2>
+              </Reveal>
+              <Reveal delay={0.1}>
                 <LinkButton
                   href="/work"
                   variant="secondary"
@@ -246,8 +252,8 @@ export default function Home() {
                 >
                   View all work
                 </LinkButton>
-              </div>
-            </Reveal>
+              </Reveal>
+            </div>
           </Container>
         </section>
 
@@ -264,6 +270,8 @@ export default function Home() {
           poster="/images/higgsfield-lone-pine-poster.jpg"
           quote="Every strong brand has a moment like this, quiet, and completely sure of itself."
           height="92vh"
+          wordFade
+          spotlight
         />
 
         {/* Was solid Indigo (before that, a pale blue-gray wash) — one

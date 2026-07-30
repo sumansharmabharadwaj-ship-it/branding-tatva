@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { faqs } from "@/data/faqs";
+import { Reveal } from "@/components/Reveal";
 import { answerVariants, answerTransition, TOGGLE_ROTATION } from "./animations";
 
 export function FAQ() {
@@ -16,7 +17,7 @@ export function FAQ() {
         const questionId = `faq-question-${i}`;
         const answerId = `faq-answer-${i}`;
         return (
-          <div key={item.question} className="py-1">
+          <Reveal key={item.question} delay={i * 0.05} className="py-1">
             <button
               type="button"
               id={questionId}
@@ -51,7 +52,7 @@ export function FAQ() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </Reveal>
         );
       })}
     </div>

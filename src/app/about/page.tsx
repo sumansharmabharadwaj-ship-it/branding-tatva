@@ -70,13 +70,13 @@ export default function AboutPage() {
           <BackgroundVideo video="/videos/pixabay-forest-sunbeams.mp4" poster="/images/pixabay-forest-sunbeams-poster.jpg" />
           <div className="absolute inset-0" style={{ backgroundColor: `${SANDSTONE}40` }} />
           <Container className="relative">
-            <Reveal>
-              <div className="max-w-xl space-y-5 rounded-2xl border border-border/50 bg-background-elevated/85 px-6 py-8 text-foreground-secondary shadow-elevation-md backdrop-blur-sm sm:px-10 sm:py-10">
-                {aboutIntro.body.map((para, i) => (
-                  <p key={i}>{para}</p>
-                ))}
-              </div>
-            </Reveal>
+            <div className="max-w-xl space-y-5 rounded-2xl border border-border/50 bg-background-elevated/85 px-6 py-8 text-foreground-secondary shadow-elevation-md backdrop-blur-sm sm:px-10 sm:py-10">
+              {aboutIntro.body.map((para, i) => (
+                <Reveal key={i} delay={i * 0.08}>
+                  <p>{para}</p>
+                </Reveal>
+              ))}
+            </div>
           </Container>
         </section>
 
@@ -97,6 +97,8 @@ export default function AboutPage() {
           height="85vh"
           imagePosition="center"
           quoteVariant="left"
+          cameraPush
+          spotlight
         />
 
         {/* Was Clay blended 85% toward Soil (a near-soil warm variant) —
@@ -204,10 +206,14 @@ export default function AboutPage() {
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
                 Why five elements
               </p>
+            </Reveal>
+            <Reveal delay={0.06}>
               <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory">
                 These five elements describe something older than a
                 marketing framework.
               </h2>
+            </Reveal>
+            <Reveal delay={0.14}>
               <p className="mt-4 max-w-2xl text-ivory/75">
                 They describe what anything needs in order to actually
                 last: a person, a body of work, a civilization, a brand.
@@ -270,7 +276,10 @@ export default function AboutPage() {
             page's final "made on purpose" statement real weight instead
             of ending the page on flat color. */}
         <section className="relative overflow-hidden bg-soil py-20">
-          <BackgroundVideo video="/videos/higgsfield-golden-peaks.mp4" poster="/images/higgsfield-golden-peaks-poster.jpg" />
+          <ParallaxVideoBackdrop
+            video="/videos/higgsfield-golden-peaks.mp4"
+            poster="/images/higgsfield-golden-peaks-poster.jpg"
+          />
           <div className="absolute inset-0 bg-soil/65" />
           <Container className="relative">
             {/* Ghost watermark word, same technique as the case-study
@@ -287,6 +296,8 @@ export default function AboutPage() {
               <h2 className="relative text-display-sm font-display font-normal text-ivory">
                 Why this site looks the way it does
               </h2>
+            </Reveal>
+            <Reveal delay={0.08}>
               <p className="mt-4 max-w-2xl text-ivory/75">
                 I could tell a prospective client what good branding looks
                 like, or I could just let this site be the example. Every
