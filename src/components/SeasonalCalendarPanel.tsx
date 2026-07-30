@@ -81,35 +81,32 @@ export function SeasonalCalendarPanel() {
 
   return (
     <div
-      className="relative isolate h-full overflow-hidden rounded-2xl border border-white/15 p-2"
+      className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/15"
       style={{ boxShadow: "0 20px 60px -20px rgba(0,0,0,0.5)" }}
     >
-      <div className="absolute inset-0 -z-10">
+      {/* Video gets its own dedicated band, not a layer sitting behind
+          the content — three rounds of tuning a single full-bleed
+          overlay (too transparent, then too opaque, then a
+          text-shadow-leaning middle) all fought the same unsolvable
+          problem: one flat wash can't make footage that swings from
+          near-black to near-white in the same frame read clearly while
+          also keeping text on top of it legible. A follow-up structural
+          fix (video behind a p-2 margin, content on a frosted panel)
+          shrank the visible video down to an 8px sliver — reading as a
+          rendering glitch rather than a background. Splitting video and
+          content into two stacked, non-overlapping regions removes the
+          conflict entirely: the campfire clip is fully visible here
+          with nothing dimming it, and every control below sits on a
+          fully opaque surface with zero legibility risk, no overlay
+          tuning left to get wrong. */}
+      <div className="relative h-28 w-full shrink-0 overflow-hidden sm:h-32">
         <BackgroundVideo
           video="/videos/pixabay-campfire-conversation.mp4"
           poster="/images/pixabay-campfire-conversation-poster.jpg"
         />
-        {/* Just a light color grade now, not doing double duty as text
-            contrast — three rounds of tuning this single full-bleed
-            overlay (too transparent, then too opaque, then a
-            text-shadow-leaning middle that still wasn't enough) kept
-            fighting the same problem: one flat wash can't be both
-            "video reads clearly" and "text reads clearly" against
-            footage that swings from near-black to near-white in the
-            same frame. Fixed properly below with a distinct content
-            panel instead. */}
-        <div className="absolute inset-0 bg-soil/20" />
       </div>
 
-      {/* The actual controls/content live on their own frosted glass
-          panel, not directly on the video — the outer p-2 padding
-          above leaves a thin margin where the campfire video shows
-          through clearly on its own, while every label in here sits on
-          a consistent dark surface regardless of what the footage is
-          doing. This is the standard "widget content surface over live
-          wallpaper" pattern, and replaces the text-shadow-only approach
-          that couldn't fully solve it on its own. */}
-      <div className="relative rounded-xl bg-black/55 p-4 backdrop-blur-md sm:p-5">
+      <div className="relative flex-1 bg-soil p-4 sm:p-5">
       {/* Weekly / Monthly toggle, same shape and position as the
           reference — a shared sliding highlight (layoutId) rather than
           each pill managing its own active state. */}
@@ -121,10 +118,7 @@ export function SeasonalCalendarPanel() {
               type="button"
               onClick={() => setView(v)}
               className="relative rounded-full px-4 py-1.5 text-sm font-medium capitalize transition-colors duration-300"
-              style={{
-                color: view === v ? "#27221E" : "rgba(244,239,230,0.9)",
-                textShadow: view === v ? undefined : "0 1px 4px rgba(0,0,0,0.6)",
-              }}
+              style={{ color: view === v ? "#27221E" : "rgba(244,239,230,0.9)" }}
             >
               {view === v && (
                 <motion.span
@@ -154,26 +148,14 @@ export function SeasonalCalendarPanel() {
             transition={{ duration: 0.3, ease: EASE_AIR }}
           >
             <div className="mt-5 flex items-baseline justify-between">
-              <span
-                className="font-display text-3xl font-normal leading-none text-ivory"
-                style={{ textShadow: "0 1px 8px rgba(0,0,0,0.65)" }}
-              >
+              <span className="font-display text-3xl font-normal leading-none text-ivory">
                 {MONTH_NAMES[month]}
               </span>
-              <span
-                className="font-display text-3xl font-normal leading-none text-ivory"
-                style={{ textShadow: "0 1px 8px rgba(0,0,0,0.65)" }}
-              >
-                {today}
-              </span>
+              <span className="font-display text-3xl font-normal leading-none text-ivory">{today}</span>
             </div>
             <div className="mt-5 grid grid-cols-7 gap-1 text-center">
               {DAY_LETTERS.map((d, i) => (
-                <span
-                  key={i}
-                  className="text-xs font-medium text-ivory/75"
-                  style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
-                >
+                <span key={i} className="text-xs font-medium text-ivory/75">
                   {d}
                 </span>
               ))}
@@ -186,7 +168,7 @@ export function SeasonalCalendarPanel() {
                   style={
                     d === today
                       ? { backgroundColor: element.color, color: "#F4EFE6" }
-                      : { color: "rgba(244,239,230,0.92)", textShadow: "0 1px 4px rgba(0,0,0,0.6)" }
+                      : { color: "rgba(244,239,230,0.92)" }
                   }
                 >
                   {d}

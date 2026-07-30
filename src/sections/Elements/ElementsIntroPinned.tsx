@@ -19,7 +19,15 @@ const STAGE_LABELS = ["One brand", "The elements"];
 // an earlier pass bumped STAGE_SPEED without updating the wrapper's
 // own height, so the available pin-scroll room fell short of what the
 // math needed and the last stage's hold never fully completed.
-const STAGE_SPEED = 1.8;
+// Dialed back from an earlier 1.8/+200vh pass — applied identically
+// across five pinned sections on the same pages, that compounded into
+// a document roughly 40 screens tall and direct feedback the whole
+// site's scrolling was unusable. The real fix for "no settle point" is
+// stageOpacity's hold plateau, which is a fraction of whatever
+// distance exists regardless of STAGE_SPEED — so a small multiplier
+// plus a 1-screen tail buffer (was 2) keeps the same settle behavior
+// without inflating total scroll distance.
+const STAGE_SPEED = 1.15;
 
 // Pilot: a pinned 2-stage cinematic intro merging two sections that used
 // to scroll past independently (the "Five elements. One brand." text
@@ -94,7 +102,7 @@ export function ElementsIntroPinned() {
     // math: sticky needs dedicated room to release in, separate from
     // the last stage's own on-screen moment, or it starts sliding away
     // the instant it finishes settling in.
-    <div ref={wrapperRef} className="relative" style={{ height: `${100 * STAGE_SPEED + 200}vh` }}>
+    <div ref={wrapperRef} className="relative" style={{ height: `${100 * STAGE_SPEED + 100}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Stage 0 — "Five elements. One brand." */}
         <div

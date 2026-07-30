@@ -37,7 +37,16 @@ type GlyphSlug = "earth" | "water" | "fire" | "air" | "space";
 // pinned scrolling site-wide felt too fast to actually settle on a
 // stage. Wrapper height below is derived from STAGE_SPEED, not
 // hardcoded, so the two can't fall out of sync.
-const STAGE_SPEED = 1.8;
+// Dialed back from an earlier 1.8/+200vh pass — that compounded badly
+// on a 6-stage journey ((6-1)*100*1.8+200 = 1100vh for this section
+// alone) and, applied identically across five pinned sections on the
+// same pages, produced a document roughly 40 screens tall and direct
+// feedback the whole site's scrolling was unusable. The real fix for
+// "no settle point" is stageOpacity's hold plateau above, which is a
+// fraction of whatever distance exists regardless of STAGE_SPEED — so
+// a small multiplier plus a 1-screen tail buffer (was 2) keeps that
+// same settle behavior without inflating total scroll distance.
+const STAGE_SPEED = 1.15;
 
 export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -170,7 +179,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
     // sticky child, which already has its own six videos) so the last
     // stretch of scroll reveals continuous motion instead of flat color
     // as the pinned content scrolls away above it.
-    <div ref={wrapperRef} className="relative" style={{ height: toSvh(`${(stages.length - 1) * 100 * STAGE_SPEED + 200}vh`) }}>
+    <div ref={wrapperRef} className="relative" style={{ height: toSvh(`${(stages.length - 1) * 100 * STAGE_SPEED + 100}vh`) }}>
       {/* -z-10 removed — same fix as VerticalJourney's own background
           layer: this section sits inside a bg-soil ancestor (Home
           page's Process section), and a negative z-index can escape

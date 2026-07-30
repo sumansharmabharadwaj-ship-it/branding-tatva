@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "framer-motion";
 
 // Counts up from 0 to the real value once scrolled into view, instead of
@@ -27,7 +27,14 @@ export function AnimatedStat({ value }: { value: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const prefersReducedMotion = useReducedMotion();
-  const parsed = parseStat(value);
+  // Memoized on value alone — parseStat returns a fresh object every
+  // call, and this used to be recomputed inline on every render. Since
+  // it fed the count-up effect's dependency array, any re-render of
+  // this component (a parent re-rendering for an unrelated reason)
+  // gave the effect a new object reference, which tore down and
+  // restarted the rAF loop from 0 again — visibly, the number never
+  // reached its target, just kept resetting mid-count.
+  const parsed = useMemo(() => parseStat(value), [value]);
   // Starts at the *real* number, not 0. The count-up below is a bonus
   // flourish layered on top if it actually gets to run — it is never
   // the thing that makes this number correct. A version that started

@@ -38,7 +38,19 @@ import type { Element } from "@/data/elements";
 // touching the wrapper height, so the actual available pin-scroll room
 // fell short of what the math needed and progress never quite reached
 // the last stage's hold before sticky released.
-const STAGE_SPEED = 1.8;
+// A subsequent pass pushed STAGE_SPEED to 1.8 with a +200vh tail
+// buffer on every pinned section site-wide — a real regression, not a
+// fix: on this 5-slide slider that's (5-1)*100*1.8+200 = 920vh for one
+// section alone, and the same multiplier applied across five separate
+// pinned components on the same page compounded into a document
+// roughly 40 screens tall. Immediate, direct feedback ("scrolling
+// experience is 0/10") followed. The actual fix for "no settle point"
+// was always HOLD's plateau above — that's a fraction of whatever
+// distance is available, independent of STAGE_SPEED — so a large
+// STAGE_SPEED was never buying real settle time, only inflating total
+// scroll distance. Pulled back to a small, sane multiplier and a
+// 1-screen tail buffer (was 2).
+const STAGE_SPEED = 1.15;
 const HOLD = 0.4;
 
 export function PinnedSlider({ elements }: { elements: Element[] }) {

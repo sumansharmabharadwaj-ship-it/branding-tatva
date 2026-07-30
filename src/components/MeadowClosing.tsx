@@ -35,7 +35,15 @@ const CLOSING_LINE = "Everything on this page took time to become one thing. You
 // direct, repeated feedback that pinned scrolling site-wide felt too
 // fast to actually settle on a stage. Wrapper height below is derived
 // from STAGE_SPEED, not hardcoded, so the two can't fall out of sync.
-const STAGE_SPEED = 1.8;
+// Dialed back from an earlier 1.8/+200vh pass — applied identically
+// across five pinned sections on the same pages, that compounded into
+// a document roughly 40 screens tall and direct feedback the whole
+// site's scrolling was unusable. The real fix for "no settle point" is
+// stageOpacity's hold plateau, which is a fraction of whatever
+// distance exists regardless of STAGE_SPEED — so a small multiplier
+// plus a 1-screen tail buffer (was 2) keeps the same settle behavior
+// without inflating total scroll distance.
+const STAGE_SPEED = 1.15;
 const STAGES = elements;
 
 export function MeadowClosing() {
@@ -119,7 +127,7 @@ export function MeadowClosing() {
   }, [lenis]);
 
   return (
-    <div ref={wrapperRef} className="relative bg-soil" style={{ height: `${(STAGES.length - 1) * 100 * STAGE_SPEED + 200}vh` }}>
+    <div ref={wrapperRef} className="relative bg-soil" style={{ height: `${(STAGES.length - 1) * 100 * STAGE_SPEED + 100}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Video zoom is scroll-linked motion, same category PinnedJourney
             already gates under reduced motion — a static poster stands

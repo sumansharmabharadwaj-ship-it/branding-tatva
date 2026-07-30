@@ -35,7 +35,15 @@ import { stageOpacity } from "@/lib/pinnedStageOpacity";
 // MeadowClosing — direct, repeated feedback that pinned scrolling
 // site-wide felt too fast to actually settle on a stage. Wrapper
 // height below is derived from STAGE_SPEED, not hardcoded.
-const STAGE_SPEED = 1.8;
+// Dialed back from an earlier 1.8/+200vh pass — applied identically
+// across five pinned sections on the same pages, that compounded into
+// a document roughly 40 screens tall and direct feedback the whole
+// site's scrolling was unusable. The real fix for "no settle point" is
+// stageOpacity's hold plateau, which is a fraction of whatever
+// distance exists regardless of STAGE_SPEED — so a small multiplier
+// plus a 1-screen tail buffer (was 2) keeps the same settle behavior
+// without inflating total scroll distance.
+const STAGE_SPEED = 1.15;
 
 export function SelectedWorkPinned({ featured }: { featured: Project[] }) {
   const prefersReducedMotion = useReducedMotion();
@@ -97,7 +105,7 @@ function SelectedWorkPinnedDesktop({ featured }: { featured: Project[] }) {
   const secondary = featured.slice(1);
 
   return (
-    <div ref={wrapperRef} className="relative bg-soil" style={{ height: `${100 * STAGE_SPEED + 200}vh` }}>
+    <div ref={wrapperRef} className="relative bg-soil" style={{ height: `${100 * STAGE_SPEED + 100}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Behind both stages — stage 0's FeaturedWorkHero already fills
             the whole frame edge-to-edge with its own photo, so this
