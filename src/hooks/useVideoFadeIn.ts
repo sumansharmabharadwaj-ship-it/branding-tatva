@@ -15,10 +15,18 @@ import { useEffect, type RefObject } from "react";
 // readyState immediately after attaching the listener here closes that
 // race: either the video already has data (fade in immediately) or the
 // listener catches the future event — no window where both miss.
+//
+// Also calls play() explicitly rather than trusting the bare `autoplay`
+// HTML attribute alone — confirmed live on the same hero that autoplay
+// wasn't reliably kicking in (video.paused stayed true with a fully
+// loaded, muted, autoplay video), while an explicit play() call
+// resolved immediately with no error. Harmless to call on a video
+// that's already playing.
 export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: boolean) {
   useEffect(() => {
     const el = ref.current;
     if (!el || !active) return;
+    el.play().catch(() => {});
     if (el.readyState >= 2) {
       el.style.opacity = "1";
       return;

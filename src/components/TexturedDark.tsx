@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "framer-motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
@@ -43,13 +43,10 @@ export function TexturedDark({
   // already reads as a calm, static panel that doesn't need a cursor
   // response competing with the CTA button.
   const spotlightRef = useSpotlight(sectionRef, Boolean(prefersReducedMotion) || !video);
+  // useVideoFadeIn now handles both the fade-in and the explicit
+  // play() call (autoplay attribute alone isn't reliable — see the
+  // hook's own comment) — this used to be a separate effect here.
   useVideoFadeIn(videoRef, shouldLoad && Boolean(video) && !prefersReducedMotion);
-
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el || !shouldLoad || prefersReducedMotion) return;
-    el.play().catch(() => {});
-  }, [shouldLoad, prefersReducedMotion]);
 
   return (
     <section ref={sectionRef} className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
