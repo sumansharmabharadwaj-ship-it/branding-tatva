@@ -107,12 +107,12 @@ export const offerings: Offering[] = [
   },
   {
     name: "Social Media Marketing",
-    detail: "Growth that compounds because the positioning underneath it stays consistent, the real driver, far more than posting volume.",
+    detail: "Recognition that compounds because the positioning underneath it stays consistent, the real driver, far more than posting volume.",
     color: "#5C6B4A", // sage
   },
   {
     name: "Website Development",
-    detail: "A brand's most visited touchpoint, and often its least strategized one. Built to carry the position, far beyond hosting a logo.",
+    detail: "A brand's most visited touchpoint, and often its most overlooked one. Built to carry the position, far beyond hosting a logo.",
     color: "#C28A28", // ochre
   },
   {

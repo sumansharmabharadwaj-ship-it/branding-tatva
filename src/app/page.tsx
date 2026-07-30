@@ -71,7 +71,7 @@ export default function Home() {
               <span className="italic text-clay">remembered</span>.
             </>
           }
-          subhead="Strategy, identity, and content built around the five things every remembered brand gets right: purpose, experience, expression, voice, and presence. The real reason people notice a brand, trust it, and come back to it."
+          subhead="Every remembered brand gets five things right. Purpose. Experience. Expression. Voice. Presence. Everything else follows from there."
         >
           <LinkButton href="/contact">Let&apos;s build the version of your brand people remember</LinkButton>
           <LinkButton
@@ -128,7 +128,7 @@ not repeated here. */}
             <Reveal>
               <p className="font-display text-lg text-ivory sm:text-xl">Suman Sharma</p>
               <p className="mx-auto mt-2 max-w-xl text-sm text-ivory/70 sm:text-base">
-                Clinical psychology and English literature, applied to brand strategy. A working method, the actual reason perception, memory, and trust get treated as a discipline here.
+                Clinical psychology and English literature. One studies how people notice and decide. The other studies how language carries meaning.
               </p>
               <div className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs uppercase tracking-[0.15em] text-ivory/50 sm:text-sm">
                 <span>M.A. Clinical Psychology</span>
@@ -152,10 +152,10 @@ not repeated here. */}
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The framework</p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                Branding means five decisions every remembered brand makes.
+                Every remembered brand made the same five decisions.
               </h2>
               <p className="mt-4 text-ivory/75">
-                Positioning. Distinctiveness. Narrative. Verbal identity. Salience. The language changes by agency. The decisions stay the same, because human memory, trust, and choice work the same way regardless of who is doing the branding.
+                Positioning. Distinctiveness. Narrative. Verbal identity. Salience. Memory does not change by agency. Neither does choice.
               </p>
             </Reveal>
           </Container>
