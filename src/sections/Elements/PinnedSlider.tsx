@@ -146,12 +146,19 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
                   <ElementGlyph slug={el.slug} className="h-10 w-10 opacity-90" style={{ color: el.color }} />
                 </div>
                 <p className="mt-4 font-display text-3xl font-normal text-ivory sm:text-4xl">{el.name}</p>
-                <div className="mt-4 font-display text-xl italic text-ivory/85 sm:text-2xl">
+                {/* space-y here matters more than it looks — Tailwind's
+                    preflight zeroes default <p> margins, so consecutive
+                    manifesto lines/concepts stacked with no gap utility
+                    read as visually cramped, especially at this italic
+                    display size where the type itself already looks
+                    spacious. Confirmed via computed-style extraction on
+                    the live page before adding these. */}
+                <div className="mt-4 space-y-1.5 font-display text-xl italic text-ivory/85 sm:text-2xl">
                   {el.manifesto.map((line, li) => (
                     <p key={li}>{line}</p>
                   ))}
                 </div>
-                <div className="mt-4 max-w-md space-y-1">
+                <div className="mt-5 max-w-md space-y-2">
                   {el.concepts.map((c, ci) => (
                     <p key={ci} className="text-sm text-ivory/75 sm:text-base">
                       {c}

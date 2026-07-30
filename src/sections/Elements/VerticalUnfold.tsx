@@ -78,12 +78,16 @@ export function VerticalUnfold({ elements }: { elements: Element[] }) {
                     {el.name}
                   </p>
                   <div className={i % 2 === 1 ? "sm:order-2" : ""}>
-                    <div className="font-display text-lg italic text-ivory/85">
+                    {/* Same spacing fix as PinnedSlider's own desktop
+                        version — Tailwind's preflight zeroes default <p>
+                        margins, so stacked manifesto lines/concepts with
+                        no gap utility read as cramped. */}
+                    <div className="space-y-1 font-display text-lg italic text-ivory/85">
                       {el.manifesto.map((line, li) => (
                         <p key={li}>{line}</p>
                       ))}
                     </div>
-                    <div className="mt-2 space-y-1">
+                    <div className="mt-3 space-y-1.5">
                       {el.concepts.map((c, ci) => (
                         <p key={ci} className="text-sm text-ivory/75">
                           {c}
