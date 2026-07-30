@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { Logo } from "@/components/Logo";
+import { Logo, LogoMark } from "@/components/Logo";
 import { LinkButton } from "@/components/Button";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { navigation } from "@/data/site";
@@ -102,65 +102,72 @@ export function Header({ transparent = false }: HeaderProps) {
         transition={BAR_TRANSITION}
         className="fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5"
       >
-        <div
-          className={`grid w-full max-w-3xl grid-cols-3 items-center rounded-full border px-3 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-4 ${
-            isLight
-              ? "border-ivory/25 bg-soil/25"
-              : "border-border bg-background-elevated/90 shadow-elevation-sm"
-          }`}
-        >
-          <div className="hidden justify-start sm:flex">
-            <LinkButton
-              href="/contact"
-              className={`px-4 py-2 text-xs ${
-                isLight ? "bg-ivory! text-soil! hover:bg-ivory/90!" : ""
-              }`}
-            >
-              Start a project
-            </LinkButton>
-          </div>
+        {/* nav-pill-ring: a slow rotating conic-gradient carrying all
+            five element colors, replacing the old flat single-tone
+            border — direct feedback that the pill read as boring/
+            generic against the rest of a site built entirely on this
+            palette. 1.5px padding is the whole "border" now; the inner
+            pill no longer sets its own border color. */}
+        <div className="nav-pill-ring w-full max-w-3xl rounded-full p-[1.5px] shadow-elevation-sm">
+          <div
+            className={`grid w-full grid-cols-3 items-center rounded-full px-3 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-4 ${
+              isLight ? "bg-soil/40" : "bg-background-elevated/95"
+            }`}
+          >
+            <div className="hidden justify-start sm:flex">
+              <LinkButton
+                href="/contact"
+                className={`px-4 py-2 text-xs ${
+                  isLight ? "bg-ivory! text-soil! hover:bg-ivory/90!" : ""
+                }`}
+              >
+                Start a project
+              </LinkButton>
+            </div>
 
-          <Link href="/" className="col-start-2 flex justify-center">
-            <Logo light={isLight} className="scale-[0.72] sm:scale-[0.78]" />
-          </Link>
+            <Link href="/" className="col-start-2 flex items-center justify-center gap-1.5">
+              <LogoMark size={20} className="shrink-0" />
+              <Logo light={isLight} className="scale-[0.72] sm:scale-[0.78]" />
+            </Link>
 
-          <div className="flex justify-end">
-            <button
-              className={`relative flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-500 ${
-                isLight ? "text-ivory" : "text-foreground"
-              }`}
-              aria-label={open ? "Close menu" : "Open menu"}
-              aria-expanded={open}
-              onClick={() => setOpen((v) => !v)}
-            >
-              <AnimatePresence initial={false}>
-                {open ? (
-                  <motion.span
-                    key="close"
-                    variants={prefersReducedMotion ? undefined : closeIconVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    transition={ICON_TRANSITION}
-                    className="absolute flex"
-                  >
-                    <X size={20} />
-                  </motion.span>
-                ) : (
-                  <motion.span
-                    key="menu"
-                    variants={prefersReducedMotion ? undefined : menuIconVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    transition={ICON_TRANSITION}
-                    className="absolute flex"
-                  >
-                    <Menu size={20} />
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </button>
+            <div className="flex justify-end">
+              <button
+                className={`relative flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-500 ${
+                  isLight ? "text-ivory" : "text-foreground"
+                }`}
+                aria-label={open ? "Close menu" : "Open menu"}
+                aria-expanded={open}
+                onClick={() => setOpen((v) => !v)}
+              >
+                <AnimatePresence initial={false}>
+                  {open ? (
+                    <motion.span
+                      key="close"
+                      variants={prefersReducedMotion ? undefined : closeIconVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={ICON_TRANSITION}
+                      className="absolute flex"
+                    >
+                      <X size={20} />
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="menu"
+                      variants={prefersReducedMotion ? undefined : menuIconVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={ICON_TRANSITION}
+                      className="absolute flex"
+                    >
+                      <Menu size={20} />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
+            </div>
           </div>
         </div>
       </motion.header>

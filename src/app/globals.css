@@ -755,3 +755,40 @@
   padding-top: 0.05em;
   color: var(--color-clay);
 }
+
+/* Header pill — the five-element brand system made literal on the one
+   piece of chrome present on every single page. Direct feedback that
+   the nav pill read as boring/generic; a plain flat border was
+   replaced with a slow rotating conic-gradient ring carrying all five
+   element colors (the same hexes LogoMark's own five bars use), so
+   the site's actual visual identity shows up in its own navigation
+   instead of leaving it colorless. @property lets the browser tween
+   --nav-angle smoothly frame to frame instead of jumping; browsers
+   without @property support just render a static gradient ring
+   instead of a spinning one — a safe, harmless degrade. Covered by
+   the sitewide prefers-reduced-motion rule above (zeroes out the
+   animation, leaving the static ring in place). */
+@property --nav-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.nav-pill-ring {
+  background: conic-gradient(
+    from var(--nav-angle),
+    #b85a34,
+    #24394d,
+    #c28a28,
+    #5c6b4a,
+    #ad6f5c,
+    #b85a34
+  );
+  animation: nav-ring-spin 12s linear infinite;
+}
+
+@keyframes nav-ring-spin {
+  to {
+    --nav-angle: 360deg;
+  }
+}
