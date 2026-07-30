@@ -1,57 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { CalendlyEmbed } from "./CalendlyEmbed";
-import { ELEMENT_HEX, SANDSTONE } from "@/lib/sectionWash";
+import { BackgroundVideo } from "./BackgroundVideo";
+import { ElementGlyph } from "./ElementGlyph";
+import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { elements, type Element } from "@/data/elements";
 import { site } from "@/data/site";
 
-// A booking panel for the Footer (already the one component present on
-// every page — this doesn't need its own sitewide-fixed mount, and a
-// floating overlay would just fight the corners AmbientAudio/
-// SectionJumpNav/PrecisionMark already occupy). The seasonal backdrop
-// changes with the real calendar month rather than showing one static
-// mountain photo forever; the four images were sourced fresh and graded
-// together this round rather than reused from elsewhere on the site.
-// Reuses the existing CalendlyEmbed/booking flow — this is a themed
-// presentation shell around it, not a replacement scheduling system;
-// building real availability/timezone/confirmation-email handling from
-// scratch is out of scope for a marketing site when Calendly already
-// does that job for free.
-const SEASONS = [
-  {
-    key: "spring",
-    months: [2, 3, 4], // Mar–May
-    label: "Spring",
-    image: "/images/season-spring-cherry-alps.jpg",
-    accent: ELEMENT_HEX.air,
-  },
-  {
-    key: "summer",
-    months: [5, 6, 7], // Jun–Aug
-    label: "Summer",
-    image: "/images/season-summer-lake-mountain.jpg",
-    accent: ELEMENT_HEX.earth,
-  },
-  {
-    key: "monsoon",
-    months: [8, 9, 10], // Sep–Nov
-    label: "Monsoon",
-    image: "/images/season-monsoon-waterfall.jpg",
-    accent: ELEMENT_HEX.water,
-  },
-  {
-    key: "winter",
-    months: [11, 0, 1], // Dec–Feb
-    label: "Winter",
-    image: "/images/season-winter-fuji.jpg",
-    accent: SANDSTONE,
-  },
-] as const;
-
-function seasonForMonth(month: number) {
-  return SEASONS.find((s) => (s.months as readonly number[]).includes(month)) ?? SEASONS[0];
-}
+// Redesigned per direct feedback on the first version, which leaned on
+// four European stock photos (Bavarian cherry blossoms, a Romanian
+// waterfall, Mount Fuji) that had nothing to do with this brand and
+// read as a bolted-on widget, not part of the site. This version
+// introduces no new imagery at all — it reuses the five elements
+// already at the center of the whole site (the same graded photos,
+// accent colors, and hand-drawn ElementGlyph marks already established
+// in the Elements section, Process journey, and Services page), mapped
+// across the year instead of four generic seasons, so the calendar
+// reads as one more room in the same five-element house rather than a
+// separate feature. The copy also pulls each element's own `poetic`
+// line from data/elements.ts — already-approved brand language — rather
+// than inventing new seasonal copy.
+const MONTH_TO_ELEMENT: Element["slug"][] = [
+  "earth", "earth", "earth", // Jan–Mar: the year's foundation
+  "water", "water",          // Apr–May
+  "fire", "fire",            // Jun–Jul: peak heat
+  "air", "air", "air",       // Aug–Oct
+  "space", "space",          // Nov–Dec: what's remembered as the year settles
+];
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -62,61 +38,85 @@ export function SeasonalCalendarPanel() {
   const [expanded, setExpanded] = useState(false);
   // Resolved client-side only, after mount — computing new Date()
   // during render would let the server and client disagree on "now"
-  // (a request landing right at a day/month boundary) and trip a
-  // hydration mismatch, the exact class of bug this codebase already
-  // works around elsewhere (see useMediaQuery's own useState(false) +
-  // useEffect pattern). Spring is a reasonable, deterministic default
-  // for the brief pre-mount frame — it's never actually painted long
-  // enough to notice, since this panel sits far down the page and only
-  // becomes visible once already scrolled near.
+  // and trip a hydration mismatch, the same class of bug this codebase
+  // already works around elsewhere (see useMediaQuery's own
+  // useState(false) + useEffect pattern). January/Earth is a
+  // deterministic default for the brief pre-mount frame — this panel
+  // sits far down the page and is never actually seen before mounting.
   const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
     setNow(new Date());
   }, []);
 
-  const month = now?.getMonth() ?? 3;
-  const season = seasonForMonth(month);
+  const month = now?.getMonth() ?? 0;
+  const element = elements.find((el) => el.slug === MONTH_TO_ELEMENT[month]) ?? elements[0];
   const day = now?.getDate() ?? null;
   const year = now?.getFullYear() ?? null;
   const monthName = MONTH_NAMES[month];
 
   return (
-    <div className="relative mx-auto mt-16 max-w-2xl overflow-hidden rounded-2xl border border-ivory/15">
+    <div className="relative mx-auto mt-16 max-w-2xl overflow-hidden rounded-2xl">
       <div className="absolute inset-0">
-        <Image src={season.image} alt="" fill sizes="(min-width: 768px) 42rem, 100vw" style={{ objectFit: "cover" }} />
+        <BackgroundVideo
+          video={element.video ?? ""}
+          poster={element.image}
+          imagePosition={element.imagePosition ?? "center"}
+        />
+        {/* Same tint + overlay recipe ElementRowBackground already uses
+            for these exact photos elsewhere on the site — a light
+            multiply of the element's own color, then the shared
+            BREAK_OVERLAY_GRADIENT every video-quote section uses, so
+            this panel reads as visually continuous with the rest of
+            the site instead of a different treatment. */}
         <div
           className="absolute inset-0"
-          style={{ backgroundImage: "linear-gradient(180deg, rgba(39,34,30,0.55) 0%, rgba(39,34,30,0.8) 100%)" }}
+          style={{ backgroundColor: element.color, opacity: 0.18, mixBlendMode: "multiply" }}
         />
+        <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
       </div>
 
-      <div className="relative px-8 py-10 text-center sm:px-14 sm:py-12">
+      {/* The current element's own hand-drawn mark, oversized and faint
+          — the same ghost-watermark language used elsewhere on this
+          site (ELEMENTS behind the Home heading, WHY on About), not a
+          decorative stock icon. */}
+      <ElementGlyph
+        slug={element.slug}
+        className="pointer-events-none absolute -top-10 -right-8 h-52 w-52 opacity-[0.16] sm:h-64 sm:w-64"
+        style={{ color: element.color }}
+        strokeWidth={0.8}
+      />
+
+      <div className="relative px-8 py-12 text-center sm:px-14 sm:py-14">
         <p
           className="text-xs font-medium uppercase tracking-[0.2em]"
-          style={{ color: season.accent }}
+          style={{ color: element.color }}
         >
-          {season.label}
+          {element.name}
         </p>
 
-        <div className="mx-auto mt-5 flex max-w-[220px] items-baseline justify-center gap-3 border-y border-ivory/20 py-4">
-          <span className="font-display text-5xl font-normal leading-none text-ivory">{day ?? " "}</span>
+        <p className="mx-auto mt-5 max-w-sm text-pretty font-display text-2xl italic leading-snug text-ivory sm:text-[1.75rem]">
+          &ldquo;{element.poetic}&rdquo;
+        </p>
+
+        <div className="mx-auto mt-8 flex max-w-[200px] items-baseline justify-center gap-3 border-t border-ivory/20 pt-5">
+          <span className="font-display text-4xl font-normal leading-none text-ivory">{day ?? " "}</span>
           <span className="text-left text-sm leading-tight text-ivory/70">
             {monthName}
             <br />
-            {year ?? " "}
+            {year ?? " "}
           </span>
         </div>
 
         <p className="mx-auto mt-6 max-w-xs text-sm text-ivory/75">
-          Pick a time that works — a short call, no obligation, to see if this is the right fit.
+          If this feels like the right moment, I&apos;d like to hear about it — twenty minutes, whenever suits you, no pitch attached.
         </p>
 
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className={`mt-7 rounded-full border border-ivory/30 px-6 py-3 text-sm font-medium text-ivory transition-colors hover:bg-ivory/10 ${expanded ? "hidden" : ""}`}
+          className={`mt-7 inline-flex items-center gap-1.5 rounded-full border border-ivory/30 px-6 py-3 text-sm font-medium text-ivory transition-all duration-300 hover:-translate-y-0.5 hover:bg-ivory/10 ${expanded ? "hidden" : ""}`}
         >
-          Book a call
+          Find a time
         </button>
 
         {expanded && (

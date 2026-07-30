@@ -94,7 +94,14 @@ export const elements: Element[] = [
     ],
     proof:
       "Sustained, measured social management for Dr. Haley Nutrition, with verified follower and engagement growth over two consecutive months.",
-    image: "/images/pixabay-hazy-twilight-mountains-poster.jpg",
-    video: "/videos/pixabay-hazy-twilight-mountains.mp4",
+    // Was pixabay-hazy-twilight-mountains.mp4 — direct feedback that it
+    // wasn't playing; turned out the clip itself has almost no visible
+    // motion across its whole 10s (frame-sampled start to end, they're
+    // nearly identical), so even mid-playback it reads as a frozen
+    // photo next to its far livelier siblings (flames, water, wind).
+    // This replacement has real, visible cloud drift confirmed the same
+    // way before swapping it in.
+    image: "/images/pixabay-sea-of-fog-sunrise-poster.jpg",
+    video: "/videos/pixabay-sea-of-fog-sunrise.mp4",
   },
 ];
