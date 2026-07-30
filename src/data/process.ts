@@ -38,7 +38,7 @@ export const process: ProcessStage[] = [
   {
     stage: "Architect",
     description:
-      "Purpose, audience, and category get committed to language before anything else moves. Everything built after this step either compounds it or fights it.",
+      "Purpose, audience, and category get committed to language, the brand's own architecture, before anything else moves. Everything built after this step either compounds it or fights it.",
     element: "Earth",
     video: "/videos/higgsfield-process-ground.mp4",
     poster: "/images/higgsfield-process-ground-poster.jpg",

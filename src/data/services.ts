@@ -97,32 +97,32 @@ export const packages: Package[] = [
 export const offerings: Offering[] = [
   {
     name: "Brand Strategy & Identity",
-    detail: "Positioning decided before a single pixel exists. The visual system carries that decision forward, always the result, always second.",
+    detail: "Positioning decided before a single pixel exists. The identity system, the actual architecture, carries that decision forward, always second, never the source of it.",
     color: "#B85A34", // clay
   },
   {
     name: "Content Strategy",
-    detail: "What gets said, and in what order, decided before the first post goes out. Real planning, well ahead of improvising one caption at a time.",
+    detail: "A messaging framework decided before the first post goes out. Real planning, well ahead of improvising one caption at a time.",
     color: "#24394D", // indigo
   },
   {
     name: "Social Media Marketing",
-    detail: "Recognition that compounds because the positioning underneath it stays consistent, the real driver, far more than posting volume.",
+    detail: "Recall that compounds because the positioning underneath it stays consistent, mental availability building post by post, far more than posting volume alone.",
     color: "#5C6B4A", // sage
   },
   {
     name: "Website Development",
-    detail: "A brand's most visited touchpoint, and often its most overlooked one. Built to carry the position, far beyond hosting a logo.",
+    detail: "The most visited stop on a customer's whole journey through a brand, and often its most overlooked one. Built to carry the position, far beyond hosting a logo.",
     color: "#C28A28", // ochre
   },
   {
     name: "Content Creation",
-    detail: "Written in the voice the strategy actually defined. Specific to the brand, distinct from any generic tone with the name swapped in.",
+    detail: "Written in the verbal identity the strategy actually defined. A specific tone of voice, distinct from any generic one with the name swapped in.",
     color: "#AD6F5C", // rose-earth
   },
   {
     name: "Marketing Strategy",
-    detail: "Marketing amplifies a position it already has. This is where the two finally connect, working together instead of running in parallel.",
+    detail: "Marketing amplifies a value proposition that already exists. This is where the two finally connect, working together instead of running in parallel.",
     color: "#CD7A4C", // terracotta
   },
 ];
