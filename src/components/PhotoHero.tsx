@@ -1,9 +1,11 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { toSvh } from "@/lib/media";
+import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
 const KEN_BURNS = kenBurnsAnimation({ scale: 1.07, duration: 22 });
 
@@ -51,6 +53,8 @@ export function PhotoHero({
   accentColor?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useVideoFadeIn(videoRef, Boolean(video) && !prefersReducedMotion);
 
   // A case study's hero footage is industry-specific (an office, a
   // warehouse) rather than generic nature photography, so an
@@ -85,6 +89,7 @@ export function PhotoHero({
             style={{ objectFit: "cover", objectPosition: imagePosition }}
           />
           <video
+            ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
             style={{ objectPosition: imagePosition }}
             src={video}
@@ -92,9 +97,6 @@ export function PhotoHero({
             muted
             loop
             playsInline
-            onLoadedData={(e) => {
-              e.currentTarget.style.opacity = "1";
-            }}
           />
           {accentWash}
           <div className="absolute inset-0" style={{ backgroundImage: gradient }} />

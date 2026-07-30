@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useReducedMotion } from "framer-motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { useSpotlight } from "@/hooks/useSpotlight";
+import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
 // Dark section wrapper with a subtle organic texture behind the solid
 // soil color, instead of flat, uniform color. The gradient overlay keeps
@@ -42,6 +43,7 @@ export function TexturedDark({
   // already reads as a calm, static panel that doesn't need a cursor
   // response competing with the CTA button.
   const spotlightRef = useSpotlight(sectionRef, Boolean(prefersReducedMotion) || !video);
+  useVideoFadeIn(videoRef, shouldLoad && Boolean(video) && !prefersReducedMotion);
 
   useEffect(() => {
     const el = videoRef.current;
@@ -84,9 +86,6 @@ export function TexturedDark({
             loop
             playsInline
             preload="metadata"
-            onLoadedData={(e) => {
-              e.currentTarget.style.opacity = "1";
-            }}
           />
         )}
       </div>
