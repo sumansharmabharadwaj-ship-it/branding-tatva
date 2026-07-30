@@ -32,7 +32,18 @@ export function SparkCursor() {
 
   useEffect(() => {
     const isFinePointer = window.matchMedia("(pointer: fine)").matches;
-    if (!isFinePointer) return;
+    // The sitewide `prefers-reduced-motion` CSS rule (globals.css) only
+    // zeroes animation/transition *durations* — it doesn't stop this
+    // component from hiding the native cursor or running its own
+    // per-frame trail lerp in JS, neither of which is CSS-driven. A
+    // custom cursor that replaces the familiar, predictable native
+    // pointer with something that pulses continuously and stretches
+    // into a motion-blurred streak on fast movement is exactly the kind
+    // of persistent, hard-to-predict motion this OS-level setting exists
+    // to opt out of — checked explicitly here so reduced-motion users
+    // get the plain system cursor, not a toned-down version of this one.
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!isFinePointer || prefersReducedMotion) return;
 
     const core = coreRef.current;
     const trail = trailRef.current;
@@ -68,10 +79,15 @@ export function SparkCursor() {
         hasMoved = true;
       }
 
-      const speed = Math.min(Math.hypot(dx, dy), 60);
+      // Capped lower and divided down from an earlier 60/÷10 (which let
+      // a fast flick stretch the trail up to 7x its own width) — a wide
+      // elastic streak on every quick movement is a lot of unpredictable
+      // motion to have in view, and gentler max stretch keeps the trail
+      // readable as "a cursor" rather than a smear.
+      const speed = Math.min(Math.hypot(dx, dy), 40);
       angle = speed > 1 ? Math.atan2(dy, dx) * (180 / Math.PI) : angle;
-      stretch = 1 + speed / 10;
-      trailOpacity = hovering || overMedia ? 0 : Math.min(0.25 + speed / 45, 0.95);
+      stretch = 1 + speed / 18;
+      trailOpacity = hovering || overMedia ? 0 : Math.min(0.2 + speed / 55, 0.75);
       const coreScale = hovering ? 2.2 : overMedia ? 1.5 : 1;
 
       core.style.opacity = "1";

@@ -291,7 +291,12 @@
   border-radius: 9999px;
   background: radial-gradient(circle, rgba(255,240,215,1) 0%, rgba(255,190,110,0.95) 45%, rgba(184,90,52,0) 75%);
   box-shadow: 0 0 22px 6px rgba(194,138,40,0.55), 0 0 8px 2px rgba(255,244,220,0.75);
-  animation: spark-pulse 2.2s ease-in-out infinite;
+  /* Was a perpetual 2.2s scale pulse, running the entire time the
+     cursor is on screen — persistent, rhythmic motion in peripheral
+     vision that's hard to filter out, especially for ADHD/autistic
+     users. Steady/static now; the existing --hover glow growth still
+     gives it an "alive" moment, just tied to an actual action (hovering
+     something clickable) instead of running unprompted forever. */
   /* No transform transition — the core marks the actual click point, so
      it must snap exactly to the real cursor position with zero lag (the
      hover scale is baked into that same transform, so it snaps too,
@@ -338,15 +343,6 @@
      behind the real cursor instead of trailing smoothly. */
   transition: opacity 0.4s ease-out;
   will-change: transform, opacity;
-}
-
-@keyframes spark-pulse {
-  0%, 100% {
-    scale: 1;
-  }
-  50% {
-    scale: 1.35;
-  }
 }
 
 /* Contextual cursor label — e.g. "View case study" over a project card.
