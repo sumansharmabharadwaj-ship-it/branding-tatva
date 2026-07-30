@@ -95,10 +95,15 @@ function SelectedWorkPinnedDesktop({ featured }: { featured: Project[] }) {
             the whole frame edge-to-edge with its own photo, so this
             only actually shows through in stage 1's Container gutters
             and the gap between the two secondary cards, which otherwise
-            read as flat, motionless bg-soil. own-leaves-cabin.mp4: real
-            footage, previously displaced (not rejected) from Contact
-            when verdant-hills moved there, unused anywhere else. */}
-        <BackgroundVideo video="/videos/own-leaves-cabin.mp4" poster="/images/own-leaves-cabin-poster.jpg" />
+            read as flat, motionless bg-soil. Was own-leaves-cabin.mp4 —
+            direct feedback to replace it with a waterfall in the
+            mountains; pixabay-alpine-waterfall.mp4 is a genuinely
+            moving cascade (frame-sampled across its full duration
+            before swapping in), not a static-reading clip. */}
+        <BackgroundVideo
+          video="/videos/pixabay-alpine-waterfall.mp4"
+          poster="/images/pixabay-alpine-waterfall-poster.jpg"
+        />
         <div
           ref={(node) => {
             stageRefs.current[0] = node;
@@ -145,7 +150,10 @@ function SelectedWorkFallback({ featured }: { featured: Project[] }) {
 
   return (
     <div className="relative overflow-hidden bg-soil py-20 sm:py-28">
-      <BackgroundVideo video="/videos/own-leaves-cabin.mp4" poster="/images/own-leaves-cabin-poster.jpg" />
+      <BackgroundVideo
+        video="/videos/pixabay-alpine-waterfall.mp4"
+        poster="/images/pixabay-alpine-waterfall-poster.jpg"
+      />
       <div className="absolute inset-0 bg-soil/70" />
       {hero && (
         <Reveal>

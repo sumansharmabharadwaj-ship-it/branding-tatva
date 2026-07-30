@@ -9,6 +9,7 @@ import { TiltCard } from "@/components/TiltCard";
 import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { NatureAccent } from "@/components/NatureAccent";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { ParallaxVideoBackdrop } from "@/components/ParallaxVideoBackdrop";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { MeadowClosing } from "@/components/MeadowClosing";
@@ -176,13 +177,29 @@ export default function AboutPage() {
             choices — that section already covers the mark, the
             typefaces, the palette; this one covers the actual idea
             underneath all of it, which none of those four items touch.
-            Deliberately plain bg-soil, no video, unlike every other dark
-            section on this page: five paragraphs of text is already a
-            lot to hold attention through, and a quiet background lets
-            the ideas carry the section instead of competing with a
-            moving image behind them. */}
-        <section className="bg-soil py-20">
-          <Container>
+            Direct feedback: this section needs a real backdrop and real
+            scroll motion, not flat bg-soil. pixabay-misty-ridge-drift.mp4
+            — a slow aerial drift over a mist-wrapped ridge — reads as old
+            and elemental rather than staged, matching "something older
+            than a marketing framework" instead of fighting it, and is
+            distinct in mood from higgsfield-golden-peaks.mp4 right below
+            (cool/misty here, warm/gold there). The scroll drift itself is
+            ParallaxVideoBackdrop, the same useScroll/useTransform
+            technique VideoBreak's own `parallax` prop already uses
+            elsewhere on this page — reused standalone since this
+            section's five-paragraph layout doesn't fit VideoBreak's
+            quote-card shape. A full PinnedHold (stopping scroll dead to
+            hold this section in place) was deliberately not used: five
+            real paragraphs need to be read at the reader's own pace, not
+            forced through a fixed-duration hold — the moving backdrop
+            gives the cinematic feel without stalling the read. */}
+        <section className="relative overflow-hidden bg-soil py-20">
+          <ParallaxVideoBackdrop
+            video="/videos/pixabay-misty-ridge-drift.mp4"
+            poster="/images/pixabay-misty-ridge-drift-poster.jpg"
+          />
+          <div className="absolute inset-0 bg-soil/70" />
+          <Container className="relative">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
                 Why five elements
