@@ -146,10 +146,18 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
                   <ElementGlyph slug={el.slug} className="h-10 w-10 opacity-90" style={{ color: el.color }} />
                 </div>
                 <p className="mt-4 font-display text-3xl font-normal text-ivory sm:text-4xl">{el.name}</p>
-                <p className="mt-4 font-display text-xl italic text-ivory/85 sm:text-2xl">
-                  &ldquo;{el.poetic}&rdquo;
-                </p>
-                <p className="mt-3 max-w-md text-sm text-ivory/75 sm:text-base">{el.meaning}</p>
+                <div className="mt-4 font-display text-xl italic text-ivory/85 sm:text-2xl">
+                  {el.manifesto.map((line, li) => (
+                    <p key={li}>{line}</p>
+                  ))}
+                </div>
+                <div className="mt-4 max-w-md space-y-1">
+                  {el.concepts.map((c, ci) => (
+                    <p key={ci} className="text-sm text-ivory/75 sm:text-base">
+                      {c}
+                    </p>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

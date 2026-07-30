@@ -78,10 +78,18 @@ export function VerticalUnfold({ elements }: { elements: Element[] }) {
                     {el.name}
                   </p>
                   <div className={i % 2 === 1 ? "sm:order-2" : ""}>
-                    <p className="font-display text-lg italic text-ivory/85">
-                      &ldquo;{el.poetic}&rdquo;
-                    </p>
-                    <p className="mt-2 text-sm text-ivory/75">{el.meaning}</p>
+                    <div className="font-display text-lg italic text-ivory/85">
+                      {el.manifesto.map((line, li) => (
+                        <p key={li}>{line}</p>
+                      ))}
+                    </div>
+                    <div className="mt-2 space-y-1">
+                      {el.concepts.map((c, ci) => (
+                        <p key={ci} className="text-sm text-ivory/75">
+                          {c}
+                        </p>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </ElementReveal>

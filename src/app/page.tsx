@@ -71,7 +71,7 @@ export default function Home() {
               <span className="italic text-clay">remembered</span>.
             </>
           }
-          subhead={site.tagline}
+          subhead="Strategy, identity, and content built around the five things every remembered brand gets right — purpose, experience, expression, voice, and presence. Not decoration. The reason people notice, trust, and come back."
         >
           <LinkButton href="/contact">Start a brand conversation</LinkButton>
           <LinkButton
@@ -81,6 +81,15 @@ export default function Home() {
           >
             Explore the work
           </LinkButton>
+          {/* w-full forces this onto its own line within CinematicHero's
+              flex-wrap CTA row instead of crowding the two buttons —
+              stays inside the hero's own scrim, no risk of a seam
+              against whatever section follows. Real, verified number
+              (Dr. Haley Nutrition, already live on /work), not invented
+              social proof. */}
+          <p className="w-full text-xs text-ivory/50 sm:text-sm">
+            The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks.
+          </p>
         </CinematicHero>
 
         {/* Direct feedback that this section, ElementsIntro, the two
@@ -89,7 +98,46 @@ export default function Home() {
             rather than reused elsewhere for now. What used to live here:
             a "clarity problem" text passage over cinematic-waterlight.mp4.
             Marquee now leads straight from Hero into the elements grid. */}
-        <KineticMarquee text="EARTH · WATER · FIRE · AIR · SPACE" />
+        {/* Was "EARTH · WATER · FIRE · AIR · SPACE" — direct feedback
+            that bare element names are pure philosophy with zero
+            business meaning, right before the section that explains
+            them. Real branding vocabulary instead, doing actual work
+            instead of decoration. */}
+        <KineticMarquee text="POSITIONING · DISTINCTIVENESS · MENTAL AVAILABILITY · CATEGORY DESIGN · BRAND SALIENCE" />
+
+        {/* New trust beat — direct feedback that the page went straight
+            from the hero's emotional hook to the elements framework
+            (Authority) with no credibility established first, breaking
+            the requested Attention → Curiosity → Trust → Authority
+            sequence. Real credential, not padding. */}
+        <section className="bg-soil py-14 text-center">
+          <Container>
+            <Reveal>
+              <p className="font-display text-lg text-ivory sm:text-xl">Suman Sharma</p>
+              <p className="mx-auto mt-2 max-w-xl text-sm text-ivory/70 sm:text-base">
+                Clinical psychology and English literature, applied to brand strategy — not a personality trait, a working method.
+              </p>
+            </Reveal>
+          </Container>
+        </section>
+
+        {/* Direct feedback the site needed to lead with real branding
+            theory before naming the elements framework — "branding
+            isn't five services, it's five decisions every remembered
+            brand makes," then the elements as the explanatory device. */}
+        <section className="bg-soil pb-10 pt-4 sm:pb-14">
+          <Container className="max-w-2xl text-center">
+            <Reveal>
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The framework</p>
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                Branding isn&apos;t five services. It&apos;s five decisions every remembered brand makes.
+              </h2>
+              <p className="mt-4 text-ivory/75">
+                Positioning. Distinctiveness. Narrative. Verbal identity. Salience — the language changes by agency, the decisions don&apos;t. Here&apos;s the shape they take when the work actually gets done.
+              </p>
+            </Reveal>
+          </Container>
+        </section>
 
         <ElementsSection elements={elements} />
 
@@ -116,7 +164,12 @@ export default function Home() {
           <Container className="relative">
             <div className="flex items-baseline justify-between">
               <Reveal>
-                <h2 className="text-display-sm font-display font-normal text-ivory">Selected work</h2>
+                <div>
+                  <h2 className="text-display-sm font-display font-normal text-ivory">Selected work</h2>
+                  <p className="mt-2 text-sm italic text-ivory/70">
+                    No concept work. No &ldquo;if this launched&rdquo; numbers. Everything below is what actually happened when it went live.
+                  </p>
+                </div>
               </Reveal>
               <Reveal delay={0.1}>
                 <LinkButton
@@ -138,6 +191,24 @@ export default function Home() {
             3, and why neither card component conflicts with permanent
             mounting + opacity toggling. */}
         <SelectedWorkPinned featured={featured} />
+
+        {/* Soft mid-funnel CTA — direct feedback that the page only had
+            one ask at the very top and one at the very bottom. Desire is
+            highest right after seeing real proof; a visitor ready here
+            shouldn't have to scroll through Process/FAQ to find a link. */}
+        <section className="bg-soil py-10 text-center">
+          <Container>
+            <Reveal>
+              <LinkButton
+                href="/contact"
+                variant="secondary"
+                className="border-ivory/30 text-ivory hover:bg-ivory/10"
+              >
+                See this happen for your brand
+              </LinkButton>
+            </Reveal>
+          </Container>
+        </section>
 
         {/* Was solid Indigo (before that, a pale blue-gray wash) — one
             more one-off hue in a page that already had Sage and Clay
@@ -177,6 +248,13 @@ export default function Home() {
             </Container>
           </div>
           <ProcessSection stages={process} elementColor={elementColor} />
+          <Container className="pb-16 pt-4 text-center sm:pb-20">
+            <Reveal>
+              <p className="mx-auto max-w-lg text-sm italic text-ivory/70 sm:text-base">
+                Skip a step and it doesn&apos;t fail loudly — it just quietly costs you the recall you paid for.
+              </p>
+            </Reveal>
+          </Container>
         </section>
 
         {/* Threshold ("every brand starts at one of two thresholds") used
@@ -279,10 +357,16 @@ export default function Home() {
                 className="mx-auto max-w-xl text-display-md font-display font-normal text-ivory"
                 style={{ textShadow: "0 2px 14px rgba(0,0,0,0.85), 0 1px 4px rgba(0,0,0,0.9)" }}
               >
-                Let&apos;s find the Tatva of your business.
+                Let&apos;s find the Tatva of your business — the thing that makes people remember you instead of just seeing you.
               </h2>
               <div className="mt-8">
                 <LinkButton href="/contact">Start a brand conversation</LinkButton>
+                <p
+                  className="mt-4 text-sm text-ivory/70"
+                  style={{ textShadow: "0 1px 6px rgba(0,0,0,0.8)" }}
+                >
+                  Twenty minutes, no pitch deck. If it&apos;s not a fit, I&apos;ll tell you that too.
+                </p>
               </div>
             </div>
           </div>

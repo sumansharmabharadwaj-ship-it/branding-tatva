@@ -133,6 +133,7 @@ function SelectedWorkPinnedDesktop({ featured }: { featured: Project[] }) {
             image={hero.cardImage ?? "/images/own-forest-clearing.jpg"}
             industry={hero.industry}
             title={hero.title}
+            hook={hero.hook}
             outcome={hero.outcome}
             stats={hero.stats}
             accent={hero.accent}

@@ -50,7 +50,7 @@ export function FeaturedSecondaryCard({ project }: { project: Project }) {
           <p className="mt-2 font-display text-2xl font-normal text-ivory transition-colors group-hover:text-clay">
             {project.title}
           </p>
-          <p className="mt-3 text-sm text-ivory/80">{project.outcome}</p>
+          <p className="mt-3 text-sm italic text-ivory/80">{project.hook ?? project.outcome}</p>
         </div>
       </motion.div>
     </a>

@@ -38,4 +38,19 @@ export const faqs = [
     question: "Can we work remotely?",
     answer: "Yes. All of the work shown here was done remotely.",
   },
+  {
+    question: "Will branding increase revenue?",
+    answer:
+      "Branding isn't a direct revenue lever — it's what makes your marketing and sales work harder instead of fighting an unclear story. One client's engagement rate moved from 0.71% to 2.81% over two months on the same posting budget; that's the kind of compounding effect done right, not a guarantee of what happens for every business.",
+  },
+  {
+    question: "How long before I see results?",
+    answer:
+      "Depends what you mean by results. Positioning and identity land in weeks. Recognition — the kind that shows up as more inbound trust — builds over months, not one campaign.",
+  },
+  {
+    question: "Can you actually implement, or just strategize?",
+    answer:
+      "Both. Strategy that never gets built is just a deck. I carry the work through to the actual website, content, and campaigns, not just the plan for them.",
+  },
 ] as const;

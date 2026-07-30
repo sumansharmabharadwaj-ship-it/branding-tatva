@@ -6,6 +6,15 @@ export type Element = {
   // something felt and something built, at once.
   poetic: string;
   meaning: string;
+  // manifesto/concepts: the Home page slider's own copy, distinct from
+  // poetic/meaning above (which stay a single quotable sentence — used
+  // as-is on About, Services, the footer calendar, and MeadowClosing).
+  // manifesto is the philosophical opening (1-2 lines); concepts is the
+  // real branding-vocabulary list that does the actual explaining —
+  // "Earth is a storytelling device for positioning, not a service
+  // label," per the site's own content direction.
+  manifesto: string[];
+  concepts: string[];
   color: string;
   services: string[];
   proof: string; // real work that demonstrates this element
@@ -20,6 +29,15 @@ export const elements: Element[] = [
     name: "Earth · Foundation",
     poetic: "What a brand stands on, long before it says a word.",
     meaning: "Purpose, audience, and positioning: the research most brands skip.",
+    manifesto: ["Everything people never see.", "The strategic architecture beneath every premium brand."],
+    concepts: [
+      "Category definition.",
+      "Competitive framing.",
+      "Audience psychology.",
+      "Brand beliefs.",
+      "Perception mapping.",
+      "Positioning.",
+    ],
     color: "#B85A34",
     services: [
       "Brand discovery",
@@ -37,6 +55,12 @@ export const elements: Element[] = [
     name: "Water · Experience",
     poetic: "Showing up once is barely showing up at all.",
     meaning: "Customer journey, touchpoints, and adaptability across platforms.",
+    manifesto: [
+      "Brands exist where people experience them.",
+      "Every interaction either reinforces memory or weakens it.",
+      "Every touchpoint teaches customers what to expect.",
+    ],
+    concepts: ["Experience isn't service.", "It's perception, repeated."],
     color: "#24394D",
     services: [
       "Customer journey mapping",
@@ -57,6 +81,15 @@ export const elements: Element[] = [
     name: "Fire · Expression",
     poetic: "The one voice in the room worth turning toward.",
     meaning: "Creative direction, campaigns, and the visibility that earns attention.",
+    manifesto: ["The moment a brand risks being noticed."],
+    concepts: [
+      "Attention.",
+      "Emotion.",
+      "Cultural relevance.",
+      "Distinctive assets.",
+      "Creative courage.",
+      "Memorability.",
+    ],
     color: "#C28A28",
     services: [
       "Creative direction",
@@ -80,6 +113,16 @@ export const elements: Element[] = [
     name: "Air · Voice",
     poetic: "The words people use about you once you've left the room.",
     meaning: "Messaging, narrative, and content: the words themselves.",
+    manifesto: ["What's said and what's remembered are rarely the same sentence."],
+    concepts: [
+      "Language.",
+      "Meaning.",
+      "Narrative.",
+      "Verbal identity.",
+      "Framing.",
+      "Storytelling.",
+      "Mental shortcuts.",
+    ],
     color: "#5C6B4A",
     services: [
       "Brand voice",
@@ -97,6 +140,16 @@ export const elements: Element[] = [
     name: "Space · Presence",
     poetic: "Remembered long after the moment passes. Remembered, period.",
     meaning: "Consistency and recognition, built over months rather than one campaign.",
+    manifesto: ["What's left of a brand once the campaign is forgotten."],
+    concepts: [
+      "Legacy.",
+      "Recognition.",
+      "Mental availability.",
+      "Brand equity.",
+      "Market ownership.",
+      "Brand world.",
+      "Memory.",
+    ],
     color: "#AD6F5C",
     services: [
       "Ongoing content management",

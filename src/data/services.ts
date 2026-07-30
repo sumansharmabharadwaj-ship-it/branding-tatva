@@ -99,35 +99,39 @@ export const packages: Package[] = [
 // "what do you actually do" in one glance. Each card carries a distinct
 // accent from the earthy palette (including sage green, previously
 // under-used) rather than repeating one color six times.
+// Detail lines sharpened from neutral service descriptions into actual
+// positions — direct feedback that the site's copy read as safe/
+// consensus rather than opinionated, the register the reference sites
+// operate in.
 export const offerings: Offering[] = [
   {
     name: "Brand Strategy & Identity",
-    detail: "Positioning, naming direction, and the visual system that carries it.",
+    detail: "Positioning decided before a single pixel — the visual system is the result of that decision, never a substitute for it.",
     color: "#B85A34", // clay
   },
   {
     name: "Content Strategy",
-    detail: "A plan for what gets said, where, and in what order, before a single post goes out.",
+    detail: "What gets said, and in what order, decided before the first post — not improvised into existence one caption at a time.",
     color: "#24394D", // indigo
   },
   {
     name: "Social Media Marketing",
-    detail: "Ongoing management, growth, and campaign execution across the platforms that matter to your audience.",
+    detail: "Growth that compounds because the positioning underneath it is consistent, not because the posting volume went up.",
     color: "#5C6B4A", // sage
   },
   {
     name: "Website Development",
-    detail: "A site built to carry the brand consistently, beyond just a template with your logo dropped in.",
+    detail: "A brand's most-visited touchpoint, and its most under-strategized one. Built to carry the position, not just host a logo.",
     color: "#C28A28", // ochre
   },
   {
     name: "Content Creation",
-    detail: "Writing, scripts, and copy built in your actual voice, ahead of a generic template tone.",
+    detail: "Written in the voice the strategy actually defined — not a generic tone with the brand name swapped in.",
     color: "#AD6F5C", // rose-earth
   },
   {
     name: "Marketing Strategy",
-    detail: "The plan connecting content and campaigns to a real business outcome, beyond just activity.",
+    detail: "Marketing amplifies a position. It doesn't create one. This is where the two stop running in parallel.",
     color: "#CD7A4C", // terracotta
   },
 ];

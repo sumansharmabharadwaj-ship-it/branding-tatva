@@ -13,51 +13,56 @@ export type ProcessStage = {
   poster?: string;
 };
 
+// Stage names renamed from a first pass (Listen/Notice/Ground/Shape/
+// Express/Stay) that read as workflow steps rather than strategic
+// thinking — direct feedback that the site "needs opinions" and should
+// sound like branding thinking, not a project-management checklist.
+// Same six real activities underneath, sharper verbs and descriptions.
 export const process: ProcessStage[] = [
   {
-    stage: "Listen",
+    stage: "Question",
     description:
-      "Before any framework, I listen to how the business actually talks about itself, in founder conversations, existing content, even customer messages. The real voice is usually already there, buried under how it thinks it should sound.",
+      "Before any framework: what does this business actually believe, and where does its own language contradict it? The real position is usually already there, buried under how it thinks it should sound.",
     element: "Air",
     video: "/videos/higgsfield-process-listen.mp4",
     poster: "/images/higgsfield-process-listen-poster.jpg",
   },
   {
-    stage: "Notice",
+    stage: "Decode",
     description:
-      "I look at what attention is actually doing around the brand right now: what gets read, what gets skipped, where the story stops making sense to someone outside the business.",
+      "What attention is actually doing right now — what gets read, what gets skipped, where the story stops making sense to someone outside the business. Not opinion. Pattern.",
     element: "Fire",
     video: "/videos/higgsfield-process-notice.mp4",
     poster: "/images/higgsfield-process-notice-poster.jpg",
   },
   {
-    stage: "Ground",
+    stage: "Architect",
     description:
-      "Purpose, audience, and positioning get written down in plain language before anything else moves. If this step is rushed, everything built afterward has to compensate for it later.",
+      "Purpose, audience, and category get committed to language before anything else moves. Everything built after this step either compounds it or fights it.",
     element: "Earth",
     video: "/videos/higgsfield-process-ground.mp4",
     poster: "/images/higgsfield-process-ground-poster.jpg",
   },
   {
-    stage: "Shape",
+    stage: "Signal",
     description:
-      "Voice, messaging, and identity direction take form around that foundation, after it, always in that order.",
+      "Voice, identity, and messaging take the shape the architecture demands — never invented first, always built on what Architect already decided.",
     element: "Water",
     video: "/videos/higgsfield-process-shape.mp4",
     poster: "/images/higgsfield-process-shape-poster.jpg",
   },
   {
-    stage: "Express",
+    stage: "Influence",
     description:
-      "The brand becomes real: website copy, content systems, campaign direction, built to be used rather than filed away in a deck.",
+      "The brand becomes something people actually encounter: the site, the content, the campaign. Strategy that never reaches an audience isn't strategy. It's a deck.",
     element: "Fire",
     video: "/videos/higgsfield-process-express.mp4",
     poster: "/images/higgsfield-process-express-poster.jpg",
   },
   {
-    stage: "Stay",
+    stage: "Compound",
     description:
-      "Recognition is built over months, through steady attention rather than a single campaign. Where it's useful, I stay involved, reviewing what's working and adjusting the rest.",
+      "Recognition isn't won once. It accrues, or it doesn't, in the months after the campaign ends — usually exactly where most brands stop paying attention.",
     element: "Space",
     video: "/videos/higgsfield-process-stay.mp4",
     poster: "/images/higgsfield-process-stay-poster.jpg",

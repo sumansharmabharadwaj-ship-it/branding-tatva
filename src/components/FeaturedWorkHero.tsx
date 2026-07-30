@@ -25,6 +25,7 @@ export function FeaturedWorkHero({
   image,
   industry,
   title,
+  hook,
   outcome,
   stats,
   imagePosition = "center",
@@ -34,6 +35,7 @@ export function FeaturedWorkHero({
   image: string;
   industry: string;
   title: string;
+  hook?: string;
   outcome: string;
   stats?: { value: string; label: string }[];
   imagePosition?: string;
@@ -99,6 +101,7 @@ export function FeaturedWorkHero({
         <p className="mt-3 max-w-xl font-display text-3xl font-normal text-ivory sm:text-4xl">
           {title}
         </p>
+        {hook && <p className="mt-2 max-w-lg text-sm italic text-ivory/80">{hook}</p>}
         {stats && stats.length > 0 ? (
           <div className="mt-6 flex flex-wrap gap-x-8 gap-y-4">
             {stats.slice(0, 3).map((stat) => (
