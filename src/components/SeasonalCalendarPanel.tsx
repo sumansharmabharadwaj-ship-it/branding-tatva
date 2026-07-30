@@ -85,7 +85,7 @@ export function SeasonalCalendarPanel() {
 
   return (
     <div
-      className="relative h-full overflow-hidden rounded-2xl border border-white/15 p-5 sm:p-6"
+      className="relative isolate h-full overflow-hidden rounded-2xl border border-white/15 p-5 sm:p-6"
       style={{ boxShadow: "0 20px 60px -20px rgba(0,0,0,0.5)" }}
     >
       <div className="absolute inset-0 -z-10">
