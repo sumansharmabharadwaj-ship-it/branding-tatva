@@ -6,7 +6,6 @@ import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { TiltCard } from "@/components/TiltCard";
-import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { NatureAccent } from "@/components/NatureAccent";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ParallaxVideoBackdrop } from "@/components/ParallaxVideoBackdrop";
@@ -80,26 +79,10 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        {/* Static peaks photo still read as a repeat of the same library —
-            direct feedback to stop reusing stills and use real motion
-            here instead. higgsfield-stream-clarity.mp4: water moving
-            over rock in warm sidelight, unused anywhere else on the
-            site, vetted frame-by-frame first (the air.mp4 clip's name
-            promised nature and was actually an indoor desk scene, so
-            filenames alone aren't trusted here anymore). Square 1080x1080
-            source crops far more gracefully into an 85vh banner than the
-            old portrait shot ever did — roughly two-thirds of the frame
-            stays visible instead of a quarter. */}
-        <PinnedVideoBreak
-          src="/videos/higgsfield-stream-clarity.mp4"
-          poster="/images/higgsfield-stream-clarity-poster.jpg"
-          quote="Clarity comes from climbing. It's the view from finally standing somewhere high enough to see it."
-          height="85vh"
-          imagePosition="center"
-          quoteVariant="left"
-          cameraPush
-          spotlight
-        />
+        {/* Direct feedback flagged this quote break (higgsfield-stream-
+            clarity.mp4, "Clarity comes from climbing...") as useless,
+            same as the Home page's atmospheric interludes — cut. Video
+            kept on disk, not deleted. */}
 
         {/* Was Clay blended 85% toward Soil (a near-soil warm variant) —
             close enough to soil to look right on its own, but yet
