@@ -30,6 +30,12 @@ const CLOSING_LINE = "Everything on this page took time to become one thing. You
 // state (only the rarely-changing "which stage is active" value is
 // state, for aria-hidden/pointer-events — everything continuous is a
 // direct style write). No GSAP ScrollTrigger pin, no WebGL.
+//
+// Same STAGE_SPEED pacing fix as PinnedSlider/ElementsIntroPinned —
+// direct, repeated feedback that pinned scrolling site-wide felt too
+// fast to actually settle on a stage. Wrapper height below is derived
+// from STAGE_SPEED, not hardcoded, so the two can't fall out of sync.
+const STAGE_SPEED = 1.8;
 const STAGES = elements;
 
 export function MeadowClosing() {
@@ -51,7 +57,7 @@ export function MeadowClosing() {
     function update() {
       if (!wrapper) return;
       const rect = wrapper.getBoundingClientRect();
-      const scrollDistance = (STAGES.length - 1) * window.innerHeight;
+      const scrollDistance = (STAGES.length - 1) * window.innerHeight * STAGE_SPEED;
       const raw = scrollDistance > 0 ? -rect.top / scrollDistance : 0;
       const clamped = Math.min(1, Math.max(0, raw));
       const progress = clamped * (STAGES.length - 1);
@@ -113,7 +119,7 @@ export function MeadowClosing() {
   }, [lenis]);
 
   return (
-    <div ref={wrapperRef} className="relative bg-soil" style={{ height: `${(STAGES.length + 1) * 100}vh` }}>
+    <div ref={wrapperRef} className="relative bg-soil" style={{ height: `${(STAGES.length - 1) * 100 * STAGE_SPEED + 200}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Video zoom is scroll-linked motion, same category PinnedJourney
             already gates under reduced motion — a static poster stands

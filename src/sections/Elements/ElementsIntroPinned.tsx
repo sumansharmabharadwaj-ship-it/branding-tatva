@@ -12,6 +12,15 @@ import { stageOpacity } from "@/lib/pinnedStageOpacity";
 
 const STAGE_LABELS = ["One brand", "The elements"];
 
+// Same STAGE_SPEED/HOLD pacing fix as PinnedSlider — direct, repeated
+// feedback that pinned scrolling on the elements sections felt too
+// fast to actually read. Wrapper height below is derived from
+// STAGE_SPEED (not hardcoded) so the two stay in sync — a real bug in
+// an earlier pass bumped STAGE_SPEED without updating the wrapper's
+// own height, so the available pin-scroll room fell short of what the
+// math needed and the last stage's hold never fully completed.
+const STAGE_SPEED = 1.8;
+
 // Pilot: a pinned 2-stage cinematic intro merging two sections that used
 // to scroll past independently (the "Five elements. One brand." text
 // block and "The five elements" intro right before ElementsSection's own
@@ -44,7 +53,7 @@ export function ElementsIntroPinned() {
     function update() {
       if (!wrapper) return;
       const rect = wrapper.getBoundingClientRect();
-      const scrollDistance = 1 * window.innerHeight;
+      const scrollDistance = 1 * window.innerHeight * STAGE_SPEED;
       const raw = scrollDistance > 0 ? -rect.top / scrollDistance : 0;
       const clamped = Math.min(1, Math.max(0, raw));
       const progress = clamped;
@@ -76,7 +85,7 @@ export function ElementsIntroPinned() {
     const wrapper = wrapperRef.current;
     if (!wrapper || !lenis) return;
     const wrapperTop = window.scrollY + wrapper.getBoundingClientRect().top;
-    lenis.scrollTo(wrapperTop + index * window.innerHeight, { duration: 1.1 });
+    lenis.scrollTo(wrapperTop + index * window.innerHeight * STAGE_SPEED, { duration: 1.1 });
   }
 
   return (
@@ -85,7 +94,7 @@ export function ElementsIntroPinned() {
     // math: sticky needs dedicated room to release in, separate from
     // the last stage's own on-screen moment, or it starts sliding away
     // the instant it finishes settling in.
-    <div ref={wrapperRef} className="relative" style={{ height: "300vh" }}>
+    <div ref={wrapperRef} className="relative" style={{ height: `${100 * STAGE_SPEED + 200}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Stage 0 — "Five elements. One brand." */}
         <div

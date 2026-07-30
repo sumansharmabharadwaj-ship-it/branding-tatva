@@ -30,6 +30,13 @@ import { stageOpacity } from "@/lib/pinnedStageOpacity";
 // convention (CSS-hidden dual-render, same as ElementsIntro — image
 // loading here is next/image's own lazy-load, not an eager <video>, so
 // the dual-mount concern PinnedVideoBreak works around doesn't apply).
+//
+// Same STAGE_SPEED pacing fix as PinnedSlider/ElementsIntroPinned/
+// MeadowClosing — direct, repeated feedback that pinned scrolling
+// site-wide felt too fast to actually settle on a stage. Wrapper
+// height below is derived from STAGE_SPEED, not hardcoded.
+const STAGE_SPEED = 1.8;
+
 export function SelectedWorkPinned({ featured }: { featured: Project[] }) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -63,7 +70,7 @@ function SelectedWorkPinnedDesktop({ featured }: { featured: Project[] }) {
     function update() {
       if (!wrapper) return;
       const rect = wrapper.getBoundingClientRect();
-      const scrollDistance = 1 * window.innerHeight;
+      const scrollDistance = 1 * window.innerHeight * STAGE_SPEED;
       const raw = scrollDistance > 0 ? -rect.top / scrollDistance : 0;
       const progress = Math.min(1, Math.max(0, raw));
       const idx = Math.min(1, Math.round(progress));
@@ -73,7 +80,7 @@ function SelectedWorkPinnedDesktop({ featured }: { featured: Project[] }) {
       }
       stageRefs.current.forEach((stage, i) => {
         if (!stage) return;
-        stage.style.opacity = String(Math.max(0, 1 - Math.abs(progress - i)));
+        stage.style.opacity = String(stageOpacity(progress, i));
       });
     }
 
@@ -90,7 +97,7 @@ function SelectedWorkPinnedDesktop({ featured }: { featured: Project[] }) {
   const secondary = featured.slice(1);
 
   return (
-    <div ref={wrapperRef} className="relative bg-soil" style={{ height: "300vh" }}>
+    <div ref={wrapperRef} className="relative bg-soil" style={{ height: `${100 * STAGE_SPEED + 200}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Behind both stages — stage 0's FeaturedWorkHero already fills
             the whole frame edge-to-edge with its own photo, so this

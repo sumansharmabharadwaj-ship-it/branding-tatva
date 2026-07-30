@@ -45,8 +45,12 @@ export const elements: Element[] = [
     ],
     proof:
       "Playbooks built for each platform, plus webinar conversion sequencing, for Executive Springboard.",
-    image: "/images/own-waterfall-veil.jpg",
-    video: "/videos/higgsfield-water-ripples.mp4",
+    // Direct feedback the prior clip "still looked the same" after
+    // several rounds of unrelated fixes elsewhere — swapped for a
+    // freshly-sourced, frame-verified clip (sunlight through mist over
+    // a moving stream) instead of tweaking the same footage again.
+    image: "/images/pixabay-stream-mist-rays-poster.jpg",
+    video: "/videos/pixabay-stream-mist-rays.mp4",
   },
   {
     slug: "fire",

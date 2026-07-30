@@ -23,17 +23,23 @@ import type { Element } from "@/data/elements";
 // no scenario where "sticky" and "the wrapper's actual height" can
 // disagree, because sticky positioning IS the wrapper's own layout,
 // not a second system tracking it.
-// Direct feedback that the slider felt "too fast," with no stage ever
-// reading as settled — the original crossfade math (opacity = 1 - |progress
-// - i|) only hits full opacity at one exact scroll pixel per stage, then
-// immediately starts fading into the neighbor. There was never a real
-// "hold": every scroll frame was mid-transition. Two changes fix that:
-// STAGE_SPEED slows the whole sequence (more real scroll distance per
-// stage-to-stage transition), and HOLD carves out a plateau around each
-// stage's own center where it stays fully opaque before the crossfade
-// into the next one begins.
-const STAGE_SPEED = 1.3;
-const HOLD = 0.35;
+// Direct, repeated feedback that the slider felt "too fast," with no
+// stage ever reading as settled — the original crossfade math
+// (opacity = 1 - |progress - i|) only hits full opacity at one exact
+// scroll pixel per stage, then immediately starts fading into the
+// neighbor. There was never a real "hold": every scroll frame was
+// mid-transition. STAGE_SPEED slows the whole sequence (more real
+// scroll distance per stage-to-stage transition) and HOLD carves out a
+// plateau around each stage's own center where it stays fully opaque
+// before the crossfade into the next one begins. Pushed further after
+// a first pass (1.3/0.35) still read as rushed. The wrapper's own
+// height below has to scale with STAGE_SPEED too, not just the JS
+// scrollDistance — a first attempt at this bumped STAGE_SPEED without
+// touching the wrapper height, so the actual available pin-scroll room
+// fell short of what the math needed and progress never quite reached
+// the last stage's hold before sticky released.
+const STAGE_SPEED = 1.8;
+const HOLD = 0.4;
 
 export function PinnedSlider({ elements }: { elements: Element[] }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -93,7 +99,11 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
     // +1 slide-height of buffer beyond what the crossfade math needs —
     // see update()'s own comment for why sticky needs dedicated room to
     // release in, separate from the last slide's own on-screen moment.
-    <div ref={wrapperRef} className="relative" style={{ height: `${(elements.length + 1) * 100}vh` }}>
+    <div
+      ref={wrapperRef}
+      className="relative"
+      style={{ height: `${(elements.length - 1) * 100 * STAGE_SPEED + 200}vh` }}
+    >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {elements.map((el, i) => (
           <div

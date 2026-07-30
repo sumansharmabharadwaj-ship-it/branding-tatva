@@ -31,6 +31,14 @@ type GlyphSlug = "earth" | "water" | "fire" | "air" | "space";
 // active stage's video actually plays — the rest stay paused — so six
 // autoplaying loops don't all compete for the same GPU/decode budget at
 // once.
+//
+// Same STAGE_SPEED pacing fix as PinnedSlider/ElementsIntroPinned/
+// MeadowClosing/SelectedWorkPinned — direct, repeated feedback that
+// pinned scrolling site-wide felt too fast to actually settle on a
+// stage. Wrapper height below is derived from STAGE_SPEED, not
+// hardcoded, so the two can't fall out of sync.
+const STAGE_SPEED = 1.8;
+
 export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const stageRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -84,7 +92,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
       // (remaining wrapper height drops to exactly one viewport) landed on
       // the exact same scroll position — the last stage never got a stable
       // instant on screen, it started sliding away the moment it appeared.
-      const scrollDistance = (stages.length - 1) * window.innerHeight;
+      const scrollDistance = (stages.length - 1) * window.innerHeight * STAGE_SPEED;
       const raw = scrollDistance > 0 ? -rect.top / scrollDistance : 0;
       const clamped = Math.min(1, Math.max(0, raw));
       const progress = clamped * (stages.length - 1);
@@ -162,7 +170,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
     // sticky child, which already has its own six videos) so the last
     // stretch of scroll reveals continuous motion instead of flat color
     // as the pinned content scrolls away above it.
-    <div ref={wrapperRef} className="relative" style={{ height: toSvh(`${(stages.length + 1) * 100}vh`) }}>
+    <div ref={wrapperRef} className="relative" style={{ height: toSvh(`${(stages.length - 1) * 100 * STAGE_SPEED + 200}vh`) }}>
       {/* -z-10 removed — same fix as VerticalJourney's own background
           layer: this section sits inside a bg-soil ancestor (Home
           page's Process section), and a negative z-index can escape

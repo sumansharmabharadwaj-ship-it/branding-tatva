@@ -81,7 +81,7 @@ export function SeasonalCalendarPanel() {
 
   return (
     <div
-      className="relative isolate h-full overflow-hidden rounded-2xl border border-white/15 p-5 sm:p-6"
+      className="relative isolate h-full overflow-hidden rounded-2xl border border-white/15 p-2"
       style={{ boxShadow: "0 20px 60px -20px rgba(0,0,0,0.5)" }}
     >
       <div className="absolute inset-0 -z-10">
@@ -89,17 +89,27 @@ export function SeasonalCalendarPanel() {
           video="/videos/pixabay-campfire-conversation.mp4"
           poster="/images/pixabay-campfire-conversation-poster.jpg"
         />
-        {/* Went /45 -> /75+blur-sm to fix unreadable text against the
-            campfire's own bright/dark swings, then direct feedback that
-            the video itself was now too obscured. Text legibility now
-            leans on the text-shadow already set on every label below
-            (which doesn't block the video the way a solid wash does),
-            so the overlay itself can sit lighter — enough to keep the
-            video from ever reading as pure white/black behind a digit,
-            not so much that the scene disappears. */}
-        <div className="absolute inset-0 bg-soil/40 backdrop-blur-[2px]" />
+        {/* Just a light color grade now, not doing double duty as text
+            contrast — three rounds of tuning this single full-bleed
+            overlay (too transparent, then too opaque, then a
+            text-shadow-leaning middle that still wasn't enough) kept
+            fighting the same problem: one flat wash can't be both
+            "video reads clearly" and "text reads clearly" against
+            footage that swings from near-black to near-white in the
+            same frame. Fixed properly below with a distinct content
+            panel instead. */}
+        <div className="absolute inset-0 bg-soil/20" />
       </div>
 
+      {/* The actual controls/content live on their own frosted glass
+          panel, not directly on the video — the outer p-2 padding
+          above leaves a thin margin where the campfire video shows
+          through clearly on its own, while every label in here sits on
+          a consistent dark surface regardless of what the footage is
+          doing. This is the standard "widget content surface over live
+          wallpaper" pattern, and replaces the text-shadow-only approach
+          that couldn't fully solve it on its own. */}
+      <div className="relative rounded-xl bg-black/55 p-4 backdrop-blur-md sm:p-5">
       {/* Weekly / Monthly toggle, same shape and position as the
           reference — a shared sliding highlight (layoutId) rather than
           each pill managing its own active state. */}
@@ -254,6 +264,7 @@ export function SeasonalCalendarPanel() {
         >
           + Book a call
         </motion.button>
+      </div>
       </div>
 
       <AnimatePresence>

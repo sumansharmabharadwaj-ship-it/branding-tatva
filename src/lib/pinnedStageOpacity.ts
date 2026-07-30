@@ -8,7 +8,7 @@
 // "stable," every stage read as permanently mid-transition. This
 // carves out a plateau around each stage's own center where it stays
 // fully opaque before the crossfade into the next stage begins.
-export function stageOpacity(progress: number, index: number, hold = 0.35): number {
+export function stageOpacity(progress: number, index: number, hold = 0.4): number {
   const d = Math.abs(progress - index);
   if (d <= hold) return 1;
   if (d <= 1 - hold) return 1 - (d - hold) / (1 - 2 * hold);
