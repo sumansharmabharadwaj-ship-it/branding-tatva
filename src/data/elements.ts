@@ -61,8 +61,8 @@ export const elements: Element[] = [
     ],
     proof:
       "Campaign repositioning and script development for HerbalCart, moving the brand toward the identity it actually intended to carry.",
-    image: "/images/higgsfield-element-fire.jpg",
-    video: "/videos/higgsfield-element-fire.mp4",
+    image: "/images/pixabay-campfire-flames-poster.jpg",
+    video: "/videos/pixabay-campfire-flames.mp4",
   },
   {
     slug: "air",
@@ -94,7 +94,7 @@ export const elements: Element[] = [
     ],
     proof:
       "Sustained, measured social management for Dr. Haley Nutrition, with verified follower and engagement growth over two consecutive months.",
-    image: "/images/own-dusk-ridge.jpg",
-    video: "/videos/own-alpenglow-peak.mp4",
+    image: "/images/pixabay-hazy-twilight-mountains-poster.jpg",
+    video: "/videos/pixabay-hazy-twilight-mountains.mp4",
   },
 ];

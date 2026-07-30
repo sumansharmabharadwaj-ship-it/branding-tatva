@@ -142,8 +142,8 @@ export const projects: Project[] = [
     cardVideo: "/videos/card-herbalcart.mp4",
     heroVideo: "/videos/higgsfield-herbalcart-modern.mp4",
     heroPoster: "/images/higgsfield-herbalcart-modern-poster.jpg",
-    closingVideo: "/videos/higgsfield-element-water.mp4",
-    closingPoster: "/images/higgsfield-element-water.jpg",
+    closingVideo: "/videos/pixabay-cascade-rocks.mp4",
+    closingPoster: "/images/pixabay-cascade-rocks-poster.jpg",
     featured: false,
     accent: "#C28A28", // ochre
   },

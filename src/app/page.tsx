@@ -217,11 +217,15 @@ export default function Home() {
         {/* Was flat bg-soil — direct feedback that the heading zone here,
             before FeaturedWorkHero's own big photo takes over, still read
             as a blank gap between the Threshold panels above and the
-            actual case-study imagery below. higgsfield-element-fire.mp4
-            fills just that zone (FeaturedWorkHero's own opaque image
-            covers the rest of the section, so the video only shows
-            through here) — fire fits a section about the work that
-            earned a second look. */}
+            actual case-study imagery below. Fire fits a section about
+            the work that earned a second look — pixabay-flame-texture.mp4
+            (an abstract, tight flame-texture shot, distinct from the
+            elements grid's own campfire-with-wood clip so the same
+            footage doesn't repeat on this page). Was
+            higgsfield-element-fire.mp4, an indoor theatrical stage set
+            with a film projector on a table — direct feedback that this
+            broke the site's natural-outdoor-footage standard, the same
+            class of mismatch the old mislabeled Air clip had. */}
         {/* Heading kept as its own section, separate from the pinned
             work content below — SelectedWorkPinned relies on
             position: sticky, which breaks the moment an ancestor has
@@ -229,7 +233,7 @@ export default function Home() {
             overflow-hidden, kept for the fire video). Same fix pattern
             as every other pinned section on this page. */}
         <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
-          <BackgroundVideo video="/videos/higgsfield-element-fire.mp4" poster="/images/higgsfield-element-fire.jpg" />
+          <BackgroundVideo video="/videos/pixabay-flame-texture.mp4" poster="/images/pixabay-flame-texture-poster.jpg" />
           <div className="absolute inset-0 bg-soil/60" />
           <Container className="relative">
             <Reveal>
@@ -282,11 +286,16 @@ export default function Home() {
               has overflow other than visible (see PinnedJourney's own
               comment). Was flat bg-soil here too, direct feedback that
               the heading zone before the pinned stages begin still read
-              as a blank gap; higgsfield-element-earth.mp4 fills it,
-              fitting since this heading introduces the whole process,
-              the foundation the other five stages build on. */}
+              as a blank gap; pixabay-roots-stream.mp4 (moss-covered
+              roots framing a small forest stream) fills it, fitting
+              since this heading introduces the whole process — roots as
+              the foundation the other five stages build on, the stream
+              as the first sign of movement. Was
+              higgsfield-element-earth.mp4, architectural blueprints on
+              an indoor desk — the same natural-outdoor-footage mismatch
+              found across several of this row's clips this round. */}
           <div className="relative overflow-hidden py-20 sm:py-28">
-            <BackgroundVideo video="/videos/higgsfield-element-earth.mp4" poster="/images/higgsfield-element-earth.jpg" />
+            <BackgroundVideo video="/videos/pixabay-roots-stream.mp4" poster="/images/pixabay-roots-stream-poster.jpg" />
             <div className="absolute inset-0 bg-soil/60" />
             <Container className="relative">
               <Reveal>

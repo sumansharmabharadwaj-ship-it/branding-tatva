@@ -29,7 +29,7 @@ export function PinnedWorkingMethod() {
     <>
       <div className="hidden sm:block">
         <PinnedHold>
-          <WorkingMethodSection />
+          <WorkingMethodSection pinned />
         </PinnedHold>
       </div>
       <div className="sm:hidden">
@@ -39,12 +39,14 @@ export function PinnedWorkingMethod() {
   );
 }
 
-function WorkingMethodSection() {
+function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
   return (
-    <section className="relative overflow-hidden bg-soil py-20">
+    <section
+      className={`relative flex overflow-hidden bg-soil ${pinned ? "min-h-screen items-center" : "py-20"}`}
+    >
       <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
       <div className="absolute inset-0 bg-soil/60" />
-      <ClipReveal>
+      <ClipReveal className="w-full">
         <Container className="relative grid gap-12 md:grid-cols-[auto_1fr]">
           <Reveal>
             <Image

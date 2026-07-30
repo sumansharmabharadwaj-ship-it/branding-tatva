@@ -4,6 +4,7 @@ import { TexturedDark } from "@/components/TexturedDark";
 import { Logo } from "@/components/Logo";
 import { HoverGlyph } from "@/components/HoverGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
+import { SeasonalCalendarPanel } from "@/components/SeasonalCalendarPanel";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { LinkButton } from "@/components/Button";
@@ -140,6 +141,8 @@ export function Footer() {
               ))}
             </div>
           </Reveal>
+
+          <SeasonalCalendarPanel />
         </Container>
       </TexturedDark>
 

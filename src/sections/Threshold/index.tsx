@@ -75,7 +75,13 @@ export function Threshold({
           </div>
         )}
       </div>
-      <div className="mt-12 grid min-h-[70svh] sm:grid-cols-2">
+      {/* sm:min-h-screen (not just 70svh) since desktop renders this
+          pinned inside PinnedHold's full-screen sticky frame — anything
+          shorter leaves the frame's own soil fill showing above/below,
+          which stacks into a visible seam against the pinned section
+          before or after this one. Mobile never pins, so it keeps the
+          shorter 70svh. */}
+      <div className="mt-12 grid min-h-[70svh] sm:min-h-screen sm:grid-cols-2">
         {panels.map((panel) => (
           <Reveal key={panel.key} delay={panel.key === "right" ? 0.12 : 0} className="h-full">
             <ThresholdPanel

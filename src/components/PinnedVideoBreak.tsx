@@ -20,9 +20,17 @@ export function PinnedVideoBreak(props: React.ComponentProps<typeof VideoBreak>)
     return <VideoBreak {...props} />;
   }
 
+  // The per-instance heights callers pass (72vh, 85vh, 145vh, ...) were
+  // tuned for normal document flow before this got wrapped in a pin —
+  // now that it's held in a full-screen sticky frame, anything shorter
+  // than that frame leaves PinnedHold's own soil fill showing above and
+  // below it, which stacks into a visible seam against whatever pinned
+  // section comes next. Forcing 100vh here (fallback branch above keeps
+  // props.height, since normal flow still benefits from the shorter,
+  // tuned sizes) makes this fill the frame edge-to-edge instead.
   return (
     <PinnedHold>
-      <VideoBreak {...props} />
+      <VideoBreak {...props} height="100vh" />
     </PinnedHold>
   );
 }

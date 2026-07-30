@@ -163,7 +163,14 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
           behind that sibling with the default z-index:auto — no
           negative value needed. */}
       <div className="absolute inset-0" aria-hidden="true">
-        <BackgroundVideo video="/videos/higgsfield-element-water.mp4" poster="/images/higgsfield-element-water.jpg" />
+        {/* Was higgsfield-element-water.mp4, an abstract studio shot of
+            flowing silk fabric — no outdoor/natural content at all,
+            same class of cohesion mismatch as this round's other
+            element-video fixes. pixabay-cascade-rocks.mp4: real water
+            cascading over rock, distinct from the moss-roots-stream
+            clip now used on Home's own process-intro heading above
+            this section. */}
+        <BackgroundVideo video="/videos/pixabay-cascade-rocks.mp4" poster="/images/pixabay-cascade-rocks-poster.jpg" />
         <div className="absolute inset-0 bg-soil/70" />
       </div>
       {/* bg-soil fallback + a hair of extra height beyond exactly
