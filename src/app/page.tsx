@@ -8,12 +8,10 @@ import { DustMotes } from "@/components/DustMotes";
 import { Reveal } from "@/components/Reveal";
 import { ScatterReveal } from "@/components/ScatterReveal";
 import { KineticMarquee } from "@/components/KineticMarquee";
-import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { ClipReveal } from "@/components/ClipReveal";
 import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
-import { ElementsConstellation } from "@/components/ElementsConstellation";
-import { MorphingGlyph } from "@/components/MorphingGlyph";
 import { ElementsSection } from "@/sections/Elements";
+import { ElementsIntro } from "@/sections/Elements/ElementsIntro";
 import { CinematicHero } from "@/sections/Hero";
 import { Threshold } from "@/sections/Threshold";
 import { VideoBreak } from "@/components/VideoBreak";
@@ -26,7 +24,6 @@ import { projects } from "@/data/projects";
 import { process } from "@/data/process";
 import { faqs } from "@/data/faqs";
 import { elementColor } from "@/lib/elementColor";
-import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
 
 // Previously relied entirely on the root layout's default title/description
 // — functional, but means "/" never explicitly owns its own metadata (no
@@ -150,143 +147,19 @@ export default function Home() {
             collapse the same way, and the values are tightened (not
             just moved) — direct feedback that this gap read as dead
             space even before the collapse bug was diagnosed. */}
-        {/* higgsfield-water-droplets.mp4 replaces own-alpenglow-peak —
-            direct feedback wanted this section and the "five elements"
-            intro right after it sharing one visual motif instead of
-            cutting between two unrelated scenes, so the same water clip
-            now plays behind both. Copy rewritten twice over: once to
-            lead with meaning instead of mechanics, then again to drop
-            every dash and negation-framed sentence, reading as a set of
-            direct, declarative statements instead. */}
-        <section className="relative overflow-hidden pt-14 pb-20 sm:pt-20 sm:pb-24">
-          <BackgroundVideo
-            video="/videos/higgsfield-water-droplets.mp4"
-            poster="/images/higgsfield-water-droplets-poster.jpg"
-          />
-          <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
-          <div className="relative">
-            <Container className="relative">
-              <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
-                <Reveal className="sm:order-2">
-                  <h2
-                    className="font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.1] text-ivory sm:text-right"
-                    style={{ textShadow: "0 2px 14px rgba(0,0,0,0.6)" }}
-                  >
-                    Five elements.
-                    <br />
-                    One brand.
-                  </h2>
-                </Reveal>
-                <Reveal delay={0.15} className="sm:order-1">
-                  <div className="max-w-md space-y-4 text-ivory/85" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
-                    <p>
-                      A brand is every small decision that tells someone
-                      whether they can trust you. What you stand on. How
-                      you show up for them. What earns a second look.
-                      What you say when it matters. Whether you&apos;re
-                      still there once the excitement fades.
-                    </p>
-                    <p>
-                      Most businesses get one or two of these right,
-                      usually by accident. The ones people actually
-                      remember get all five right, on purpose. That&apos;s{" "}
-                      <span className="font-medium text-ivory">
-                        the method behind every project below, and the
-                        one I&apos;d use on yours
-                      </span>
-                      .
-                    </p>
-                  </div>
-                </Reveal>
-              </div>
-            </Container>
-          </div>
-        </section>
+        {/* Pilot: these two sections ("Five elements. One brand." and
+            "The five elements" intro) used to scroll past independently.
+            Direct feedback pointed at ElementsSection's own PinnedSlider
+            as the feeling to extend, so they're now one pinned 2-stage
+            cinematic sequence leading straight into it — see
+            ElementsIntro's own comment for the full reasoning and why
+            this stays scoped to just these two sections rather than the
+            whole page. Desktop/motion-allowed only; mobile and reduced
+            motion get these same two sections back in normal document
+            flow, unchanged from before this pilot. */}
+        <ElementsIntro />
 
         <KineticMarquee text="EARTH · WATER · FIRE · AIR · SPACE" />
-
-        {/* Five elements — a slow vertical unfolding, not a grid of cards.
-            PerspectiveReveal (a camera-push settle, not ClipReveal's
-            curtain-wipe) marks this as its own chapter after the
-            marquee, since the two sections look nothing alike.
-            ElementsSection (the pinned slider on desktop) deliberately
-            sits OUTSIDE this section and outside PerspectiveReveal —
-            `position: sticky` breaks the moment any ancestor has
-            `overflow` other than visible (this section's own
-            overflow-hidden, kept for the constellation glyphs and the
-            watermark word) or a transform/filter mid-animation
-            (PerspectiveReveal's own scale+blur entrance). Nesting the
-            sticky slider inside either produced exactly the bug this
-            replaces: the slide showed once, then the rest of the
-            sequence never appeared, since sticky was resolving against
-            the wrong containing block instead of the real page scroll. */}
-        {/* BackgroundVideo/overlay/ElementsConstellation sit outside
-            PerspectiveReveal now, not wrapped by it — the same fix as
-            VerticalUnfold's element rows. PerspectiveReveal's initial
-            state is opacity:0 across its *entire* children, so nesting
-            the whole section (background included) inside it meant a
-            slow-to-fire reveal trigger during real mobile scrolling
-            left the whole section blank/cream instead of just skipping
-            an entrance animation. Reveal is now scoped to the text
-            content only, which keeps the camera-push settle on the
-            actual reveal-worthy part while the section's own visual
-            presence is no longer gated on it. */}
-        <section className="relative overflow-hidden pt-16 pb-28 sm:pt-20 sm:pb-40">
-          {/* Third pass on this section's backdrop: water-ripples read
-              too close to the section above, own-alpenglow-peak read
-              as "another one of the site's own nature clips." This
-              one, pixabay-sunset-clouds.mp4, is sourced from Pixabay
-              (free for commercial use under the Pixabay Content
-              License, no attribution required) rather than Higgsfield
-              — AI credits ran low this session, and this is a genuine
-              sky/cloud shot a generation wouldn't have added much over.
-              Element color still lives in ElementsConstellation and
-              the slider just below, where five distinct colors are
-              the actual point. */}
-          <BackgroundVideo
-            video="/videos/pixabay-sunset-clouds.mp4"
-            poster="/images/pixabay-sunset-clouds-poster.jpg"
-          />
-          <div className="absolute inset-0 bg-soil/70" />
-          <ElementsConstellation />
-          <PerspectiveReveal>
-            <Container className="relative">
-            {/* Ghost watermark word, same technique as the case-study
-                block numerals (.case-study-block::before in globals.css)
-                extended to a word instead of a numeral — one signature
-                moment, not applied to every heading site-wide. Ivory-
-                toned now that the section itself is bold, not cream. */}
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-ivory/[0.1] sm:-top-8"
-            >
-              ELEMENTS
-            </span>
-            <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
-              <Reveal>
-                <h2 className="relative text-display-sm font-display font-normal text-ivory">
-                  The five elements
-                </h2>
-                <p className="mt-3 max-w-md text-sm text-ivory/70">
-                  Every project moves through some version of all five, in
-                  this order. Here&apos;s what each one actually covers, and
-                  what it looks like when it&apos;s missing.
-                </p>
-              </Reveal>
-              {/* One line, five shapes — MorphSVG (free since Webflow's
-                  2025 GreenSock acquisition) cycling through the same
-                  glyph paths ElementGlyph.tsx already draws elsewhere,
-                  performing "five elements, one brand" instead of just
-                  stating it in the heading above. Kept off the load-
-                  critical path (unlike PageLoadVeil, deliberately plain
-                  Framer Motion — see that file) and paused off-screen. */}
-              <Reveal delay={0.1} className="shrink-0 opacity-90">
-                <MorphingGlyph size={104} />
-              </Reveal>
-            </div>
-          </Container>
-          </PerspectiveReveal>
-        </section>
 
         <ElementsSection elements={elements} />
 

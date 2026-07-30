@@ -275,14 +275,22 @@
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 30;
-  width: 14px;
-  height: 14px;
+  /* Was z-index: 30 — below the mobile nav menu's z-40 (Header.tsx),
+     so the cursor genuinely disappeared underneath it whenever the
+     real mouse was over that panel. A cursor replacement should always
+     be the topmost thing on the page; 60 sits above every other
+     z-index on the site (the prior ceiling was ScrollProgress at 50). */
+  z-index: 60;
+  /* Was 14px — direct feedback the cursor read as barely visible
+     against a large dark cinematic background. Widened, brighter core,
+     stronger glow. */
+  width: 20px;
+  height: 20px;
   pointer-events: none;
   opacity: 0;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(255,236,205,0.95) 0%, rgba(194,138,40,0.85) 45%, rgba(184,90,52,0) 75%);
-  box-shadow: 0 0 12px 3px rgba(194,138,40,0.45), 0 0 4px 1px rgba(255,244,220,0.6);
+  background: radial-gradient(circle, rgba(255,240,215,1) 0%, rgba(255,190,110,0.95) 45%, rgba(184,90,52,0) 75%);
+  box-shadow: 0 0 22px 6px rgba(194,138,40,0.55), 0 0 8px 2px rgba(255,244,220,0.75);
   animation: spark-pulse 2.2s ease-in-out infinite;
   /* No transform transition — the core marks the actual click point, so
      it must snap exactly to the real cursor position with zero lag (the
@@ -295,22 +303,27 @@
 }
 
 .spark-cursor-core--hover {
-  box-shadow: 0 0 26px 8px rgba(194,138,40,0.5), 0 0 8px 2px rgba(255,244,220,0.75);
+  box-shadow: 0 0 32px 10px rgba(194,138,40,0.6), 0 0 10px 3px rgba(255,244,220,0.85);
 }
 
 /* Over a full-bleed photo/video break — not clickable, so no scale-up
    or label, just a wider, softer halo acknowledging there's something
    worth pausing on. A different feeling from --hover's tight, bright
-   "this responds to a click" glow. */
+   "this responds to a click" glow. Was 0.22/0.35 peak opacity, the
+   softest of the three variants — direct feedback (a screenshot of the
+   PinnedSlider Fire stage, exactly this variant's own context) that it
+   read as a faint smudge rather than a visible "ray of light" against
+   a dark cinematic background. */
 .spark-cursor-core--media {
-  box-shadow: 0 0 40px 14px rgba(194,138,40,0.22), 0 0 10px 3px rgba(255,244,220,0.35);
+  box-shadow: 0 0 56px 18px rgba(194,138,40,0.42), 0 0 16px 5px rgba(255,244,220,0.55);
 }
 
 .spark-cursor-trail {
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 29;
+  /* Was z-index: 29 — same nav-menu-stacking issue as the core above. */
+  z-index: 59;
   width: 48px;
   height: 8px;
   pointer-events: none;
@@ -343,7 +356,8 @@
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 31;
+  /* Was z-index: 31 — same nav-menu-stacking issue as the core/trail. */
+  z-index: 61;
   pointer-events: none;
   opacity: 0;
   white-space: nowrap;
