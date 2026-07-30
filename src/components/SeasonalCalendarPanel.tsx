@@ -89,16 +89,15 @@ export function SeasonalCalendarPanel() {
           video="/videos/pixabay-campfire-conversation.mp4"
           poster="/images/pixabay-campfire-conversation-poster.jpg"
         />
-        {/* Was /45 with a near-invisible 1px blur — direct feedback that
-            the dates and labels were unreadable against the campfire
-            video's own bright flame/highlight areas, which swing from
-            near-black to near-white within the same frame and can sit
-            directly behind any given digit depending on scroll/loop
-            position. A much darker, more blurred wash makes the
-            backdrop read as soft ambient light rather than a sharp
-            image competing with small text, so contrast stays
-            consistent no matter what the video is doing underneath. */}
-        <div className="absolute inset-0 bg-soil/75 backdrop-blur-sm" />
+        {/* Went /45 -> /75+blur-sm to fix unreadable text against the
+            campfire's own bright/dark swings, then direct feedback that
+            the video itself was now too obscured. Text legibility now
+            leans on the text-shadow already set on every label below
+            (which doesn't block the video the way a solid wash does),
+            so the overlay itself can sit lighter — enough to keep the
+            video from ever reading as pure white/black behind a digit,
+            not so much that the scene disappears. */}
+        <div className="absolute inset-0 bg-soil/40 backdrop-blur-[2px]" />
       </div>
 
       {/* Weekly / Monthly toggle, same shape and position as the
