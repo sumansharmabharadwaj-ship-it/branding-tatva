@@ -213,7 +213,7 @@ export function SeasonalCalendarPanel() {
       </p>
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <span className="text-xs text-ivory/70 sm:text-sm">Twenty minutes, no pitch attached.</span>
+        <span className="text-xs text-ivory/70 sm:text-sm">Twenty minutes, just a real conversation.</span>
         <motion.button
           type="button"
           onClick={() => setExpanded(true)}

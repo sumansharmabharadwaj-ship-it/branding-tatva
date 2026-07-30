@@ -21,7 +21,7 @@ import { socialLinks } from "./constants";
 // shorter passage now that there's far less content sitting on top of it.
 
 const WIDGET_CLASS =
-  "rounded-2xl border border-white/15 bg-black/20 backdrop-blur-md p-5 sm:p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]";
+  "rounded-2xl border border-white/15 bg-black/20 backdrop-blur-md p-5 sm:p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-black/25";
 
 export function Footer() {
   return (
@@ -51,7 +51,7 @@ export function Footer() {
         image="/images/own-jagged-peaks.jpg"
         video="/videos/own-jagged-peaks.mp4"
         imagePosition="center 85%"
-        className="py-14 sm:py-16"
+        className="py-12 sm:py-14"
       >
         <Container className="relative">
           <Reveal className="mx-auto max-w-xl text-center">
@@ -64,15 +64,22 @@ export function Footer() {
           {/* The widget bar itself — three cards side by side on desktop,
               stacked on mobile. The calendar gets the most width: it's
               the one thing here that actually converts, everything else
-              is support. No LinkButton "Start a project" duplicate here
-              anymore — Header already carries that CTA on every page;
-              this bar's own job is the booking widget specifically. */}
-          <Reveal delay={0.08} className="mt-8 flex flex-col items-stretch gap-4 sm:flex-row">
-            <div className={`${WIDGET_CLASS} flex flex-col justify-between gap-6 sm:w-[240px] sm:shrink-0`}>
+              is support. LinkButton "Start a project" duplicates Header's
+              own CTA on purpose here — this bar is the one place a
+              visitor lands right at page-bottom with both conversion
+              paths (project inquiry, booking) sitting together, instead
+              of one and a scroll back up for the other.
+              justify-center (not justify-between) on the two side cards
+              — direct feedback that stretching sparse content to match
+              the taller calendar card left a dead gap in the middle of
+              each one; centering reads as a deliberate compact block
+              instead. */}
+          <Reveal delay={0.08} className="mt-6 flex flex-col items-stretch gap-4 sm:flex-row">
+            <div className={`${WIDGET_CLASS} flex flex-col justify-center gap-5 sm:w-[240px] sm:shrink-0`}>
               <div>
                 <Logo light className="scale-90 origin-left" />
                 <p className="mt-3 text-sm text-ivory/60">
-                  Branding built on five elements, not on trend.
+                  Earth, water, fire, air, space — the five elements behind every project I take on.
                 </p>
               </div>
               <div className="self-start">
@@ -84,7 +91,7 @@ export function Footer() {
               <SeasonalCalendarPanel />
             </div>
 
-            <div className={`${WIDGET_CLASS} flex flex-col justify-between gap-6 sm:w-[220px] sm:shrink-0`}>
+            <div className={`${WIDGET_CLASS} flex flex-col justify-center gap-5 sm:w-[220px] sm:shrink-0`}>
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-ivory/50">Get in touch</p>
                 <a
@@ -94,19 +101,23 @@ export function Footer() {
                   {site.email}
                 </a>
               </div>
-              <div className="flex gap-3">
-                {socialLinks.map(({ href, label, Icon }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${site.name} on ${label}`}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-ivory/25 text-ivory/70 transition-colors hover:border-ivory/50 hover:text-ivory"
-                  >
-                    <Icon size={16} strokeWidth={1.75} />
-                  </a>
-                ))}
+              <div className="h-px w-8 bg-ivory/20" aria-hidden="true" />
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-ivory/50">Follow along</p>
+                <div className="mt-2 flex gap-3">
+                  {socialLinks.map(({ href, label, Icon }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${site.name} on ${label}`}
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-ivory/25 text-ivory/70 transition-colors hover:border-ivory/50 hover:text-ivory"
+                    >
+                      <Icon size={16} strokeWidth={1.75} />
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           </Reveal>
