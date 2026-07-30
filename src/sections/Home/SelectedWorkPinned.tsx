@@ -131,6 +131,7 @@ function SelectedWorkPinnedDesktop({ featured }: { featured: Project[] }) {
           <FeaturedWorkHero
             href={`/work/${hero.slug}`}
             image={hero.cardImage ?? "/images/own-forest-clearing.jpg"}
+            video={hero.cardVideo}
             industry={hero.industry}
             title={hero.title}
             hook={hero.hook}
@@ -178,6 +179,7 @@ function SelectedWorkFallback({ featured }: { featured: Project[] }) {
             <FeaturedWorkHero
               href={`/work/${hero.slug}`}
               image={hero.cardImage ?? "/images/own-forest-clearing.jpg"}
+              video={hero.cardVideo}
               industry={hero.industry}
               title={hero.title}
               outcome={hero.outcome}

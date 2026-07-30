@@ -7,6 +7,7 @@ import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { useTilt } from "@/hooks/useTilt";
+import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
 const KEN_BURNS = kenBurnsAnimation({ scale: 1.05, duration: 16 });
 
@@ -23,6 +24,7 @@ const KEN_BURNS = kenBurnsAnimation({ scale: 1.05, duration: 16 });
 export function FeaturedWorkHero({
   href,
   image,
+  video,
   industry,
   title,
   hook,
@@ -33,6 +35,7 @@ export function FeaturedWorkHero({
 }: {
   href: string;
   image: string;
+  video?: string;
   industry: string;
   title: string;
   hook?: string;
@@ -45,6 +48,8 @@ export function FeaturedWorkHero({
   const [lazyRef, shouldLoad] = useLazyMount();
   const tiltRef = useRef<HTMLAnchorElement>(null);
   const { rotateX, rotateY } = useTilt(tiltRef, 2.5, Boolean(prefersReducedMotion));
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useVideoFadeIn(videoRef, shouldLoad && Boolean(video) && !prefersReducedMotion);
 
   return (
     <a
@@ -80,6 +85,25 @@ export function FeaturedWorkHero({
               sizes="100vw"
               style={{ objectFit: "cover", objectPosition: imagePosition }}
             />
+            {/* project.cardVideo was already in the data (data/projects.ts)
+                but this component had no video prop at all — the featured
+                hero slot silently fell back to a still image with only a
+                barely-perceptible 1.05 Ken Burns scale, reading as static
+                next to every other video-forward section on the page.
+                Fades in on top of the still image once ready, same
+                pattern as TexturedDark/CinematicCardMedia. */}
+            {video && (
+              <video
+                ref={videoRef}
+                className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
+                style={{ objectPosition: imagePosition }}
+                src={video}
+                muted
+                loop
+                playsInline
+                preload="metadata"
+              />
+            )}
             {/* Ties the featured entry's own industry photography back
                 to its element without replacing it — same treatment as
                 the smaller work cards below it. */}

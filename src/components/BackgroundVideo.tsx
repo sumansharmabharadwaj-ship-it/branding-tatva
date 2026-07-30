@@ -1,7 +1,9 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "framer-motion";
+import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
 // A bare video-with-poster-fallback fill layer, for sections that already
 // build their own overlay/content on top rather than wrapping in
@@ -19,6 +21,17 @@ export function BackgroundVideo({
   imagePosition?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  // The bare `autoplay` attribute alone isn't reliable — confirmed
+  // elsewhere on this site (PhotoHero/TexturedDark hero videos, via
+  // useVideoFadeIn's own comment) that a fully-loaded, muted, autoplay
+  // video can sit paused with nothing ever calling play() on it. This
+  // component previously had no such fallback, unlike every other
+  // video-background component on the site, and every instance of it
+  // sits behind a section heading (Selected work, Process, FAQ,
+  // SelectedWorkPinned's own backdrop) — exactly the sections that
+  // would read as flat/static if their autoplay silently never fired.
+  useVideoFadeIn(videoRef, !prefersReducedMotion);
 
   if (prefersReducedMotion) {
     return (
@@ -35,6 +48,7 @@ export function BackgroundVideo({
 
   return (
     <video
+      ref={videoRef}
       className="absolute inset-0 h-full w-full object-cover"
       style={{ objectPosition: imagePosition }}
       src={video}
