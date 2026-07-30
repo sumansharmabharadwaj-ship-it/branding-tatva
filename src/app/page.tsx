@@ -14,6 +14,7 @@ import { CinematicHero } from "@/sections/Hero";
 import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { TexturedDark } from "@/components/TexturedDark";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -123,8 +124,20 @@ export default function Home() {
             (MyShopInEurope, Executive Springboard, Dr. Haley's real
             stats) already lives in the Selected work section below,
 not repeated here. */}
-        <section className="bg-soil py-14 text-center">
-          <Container>
+        {/* Was flat bg-soil, no photography at all — the one Trust beat
+            on the site with zero visual evidence of the actual person
+            behind it. own-suman-trust.mp4 is a real, own-sourced
+            montage (11 personal photos, slow Ken Burns push/drift per
+            frame, cross-dissolved, graded to the site's own warm
+            palette) — a real face for a section making a credibility
+            claim, not stock texture standing in for one. */}
+        <TexturedDark
+          image="/images/own-suman-trust-poster.jpg"
+          video="/videos/own-suman-trust.mp4"
+          imagePosition="center 32%"
+          className="py-14"
+        >
+          <Container className="text-center">
             <Reveal>
               <p className="font-display text-lg text-ivory sm:text-xl">Suman Sharma</p>
               <p className="mx-auto mt-2 max-w-xl text-sm text-ivory/70 sm:text-base">
@@ -139,7 +152,7 @@ not repeated here. */}
               </div>
             </Reveal>
           </Container>
-        </section>
+        </TexturedDark>
 
         {/* Direct feedback the site needed to lead with real branding
             theory before naming the elements framework: branding as
