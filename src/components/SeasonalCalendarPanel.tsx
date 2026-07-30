@@ -64,10 +64,22 @@ export function SeasonalCalendarPanel() {
   const today = now?.getDate() ?? 1;
   const element = elements.find((el) => el.slug === MONTH_TO_ELEMENT[month]) ?? elements[0];
 
+  // The Sunday-starting calendar week containing today, walked via
+  // real Date arithmetic (not today ± 3) — a naive day-number offset
+  // breaks at month boundaries (June 30 + 3 became a nonexistent
+  // "July 33" rather than rolling over) and doesn't actually line up
+  // with the S M T W T F S header unless today happens to fall exactly
+  // midweek.
   const weekDates = useMemo(() => {
     if (!now) return [];
-    return Array.from({ length: 7 }, (_, i) => today - 3 + i);
-  }, [now, today]);
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(startOfWeek);
+      d.setDate(startOfWeek.getDate() + i);
+      return d.getDate();
+    });
+  }, [now]);
 
   const monthGrid = useMemo(() => buildMonthGrid(year, month), [year, month]);
 
