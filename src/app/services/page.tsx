@@ -17,7 +17,8 @@ import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { ProcessSection } from "@/sections/Process";
 import { elements } from "@/data/elements";
 import { process } from "@/data/process";
-import { serviceGroups, offerings } from "@/data/services";
+import { packages, offerings } from "@/data/services";
+import { projects } from "@/data/projects";
 import { elementColor } from "@/lib/elementColor";
 import { blendHex, ELEMENT_HEX } from "@/lib/sectionWash";
 
@@ -281,55 +282,97 @@ export default function ServicesPage() {
           <ProcessSection stages={process} elementColor={elementColor} dark />
         </section>
 
-        {/* Bold solid Soil, not the Phase-5 earth tint — matches the
-            grid-of-cards=soil rule now applied to every other card-grid
-            section site-wide. The cards' fill used the same translucent
-            alpha-hex trick as the offerings cards (fixed above), which
-            would go dark-on-dark against Soil — swapped for the same
-            opaque blendHex tint. SectionHeading hardcodes text-soil, so
-            this one instance is hand-rolled in ivory instead of touching
-            that shared component's defaults for every other caller. */}
-        <section id="by-situation" className="scroll-mt-24 bg-soil py-16">
+        {/* Replaces the old "by situation" cards, which listed the same
+            four groups with no pricing at all ("discussed after
+            understanding your project") — direct feedback wanted a real,
+            conversion-oriented package structure with GBP figures
+            visible up front, not a routing list with no numbers. Reuses
+            the same underlying client-situation groups (now `packages`
+            in data/services.ts) rather than inventing disconnected new
+            categories — the "brand-beginning"/"brand-clarity" slugs stay
+            unchanged so Home's Threshold panels (which already link to
+            /services#brand-beginning and #brand-clarity) keep working.
+            These prices are a first draft grounded in typical UK
+            solo-consultant rates, not confirmed figures — flagged for
+            Suman to review before treating them as final. */}
+        <section id="packages" className="scroll-mt-24 bg-soil py-16 sm:py-20">
           <Container>
             <div className="max-w-2xl">
-              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">By situation</p>
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Packages</p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                Organised by where your brand is right now.
+                Three ways to work together.
               </h2>
+              <p className="mt-4 text-ivory/75">
+                A starting point, not a fixed menu — final scope is
+                confirmed after a short call, but this is where most
+                projects land.
+              </p>
             </div>
-            <div className="spotlight-grid mt-10 grid items-stretch gap-6 md:grid-cols-2">
-              {serviceGroups.map((group, i) => (
-                <Reveal key={group.slug} delay={i * 0.08} className="h-full">
-                  <TiltCard glowColor={group.color}>
-                    <div
-                      id={group.slug}
-                      className="spotlight-card flex h-full scroll-mt-24 flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-colors duration-300"
-                      style={{
-                        borderTopColor: group.color,
-                        backgroundColor: blendHex(group.color, "#FCFAF6", 10),
-                        ["--card-color" as string]: group.color,
-                      }}
-                    >
-                      <p className="font-display text-xl font-normal text-soil">{group.name}</p>
-                      <p className="mt-1 text-sm font-medium" style={{ color: group.color }}>{group.forWho}</p>
-                      <p className="mt-4 text-foreground-secondary">{group.description}</p>
-                      <ul className="mt-4 space-y-1.5">
-                        {group.includes.map((item) => (
-                          <li key={item} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </TiltCard>
-                </Reveal>
-              ))}
+            <div className="spotlight-grid mt-10 grid items-stretch gap-6 lg:grid-cols-3">
+              {packages.map((pkg, i) => {
+                const proof = pkg.proofSlug ? projects.find((p) => p.slug === pkg.proofSlug) : undefined;
+                return (
+                  <Reveal key={pkg.slug} delay={i * 0.08} className="h-full">
+                    <TiltCard glowColor={pkg.color}>
+                      <div
+                        id={pkg.slug}
+                        className={`spotlight-card relative flex h-full scroll-mt-24 flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-colors duration-300 ${pkg.popular ? "ring-1 ring-inset" : ""}`}
+                        style={{
+                          borderTopColor: pkg.color,
+                          backgroundColor: blendHex(pkg.color, "#FCFAF6", 10),
+                          ["--card-color" as string]: pkg.color,
+                          ...(pkg.popular ? { boxShadow: `0 0 0 1px ${pkg.color}55` } : {}),
+                        }}
+                      >
+                        {pkg.popular && (
+                          <span
+                            className="absolute -top-3 left-6 rounded-full px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.15em] text-ivory"
+                            style={{ backgroundColor: pkg.color }}
+                          >
+                            Most popular
+                          </span>
+                        )}
+                        <p className="font-display text-xl font-normal text-soil">{pkg.name}</p>
+                        <p className="mt-1 text-sm text-foreground-secondary">{pkg.forWho}</p>
+                        <div className="mt-4 flex items-baseline gap-1.5">
+                          {pkg.billing === "monthly" && (
+                            <span className="text-sm text-foreground-secondary">from</span>
+                          )}
+                          <span className="font-display text-3xl font-normal text-soil">
+                            £{pkg.price.toLocaleString("en-GB")}
+                          </span>
+                          {pkg.billing === "monthly" && (
+                            <span className="text-sm text-foreground-secondary">/mo</span>
+                          )}
+                        </div>
+                        <p className="mt-4 text-foreground-secondary">{pkg.description}</p>
+                        <ul className="mt-4 space-y-1.5">
+                          {pkg.includes.map((item) => (
+                            <li key={item} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="mt-6 flex flex-1 flex-col justify-end gap-3">
+                          {proof && (
+                            <LinkButton
+                              href={`/work/${proof.slug}`}
+                              variant="secondary"
+                              className="border-soil/20 text-soil hover:bg-soil/5"
+                            >
+                              See it in action: {proof.title}
+                            </LinkButton>
+                          )}
+                          <LinkButton href="/contact" style={{ backgroundColor: pkg.color }}>
+                            Get started
+                          </LinkButton>
+                        </div>
+                      </div>
+                    </TiltCard>
+                  </Reveal>
+                );
+              })}
             </div>
-            <p className="mt-8 text-sm text-ivory/70">
-              Pricing is discussed after understanding your project. Every
-              engagement is scoped individually rather than sold off a fixed
-              menu.
-            </p>
           </Container>
         </section>
 
@@ -363,7 +406,7 @@ export default function ServicesPage() {
           { href: "#offerings", label: "Offerings" },
           { href: "#elements", label: "Elements" },
           { href: "#process", label: "How I work" },
-          { href: "#by-situation", label: "By situation" },
+          { href: "#packages", label: "Packages" },
         ]}
       />
     </>
