@@ -4,7 +4,7 @@ import { TexturedDark } from "@/components/TexturedDark";
 import { Logo } from "@/components/Logo";
 import { SeasonalCalendarPanel } from "@/components/SeasonalCalendarPanel";
 import { Reveal } from "@/components/Reveal";
-import { LinkButton } from "@/components/Button";
+import { ElementAccentButton } from "@/components/ElementAccentButton";
 import { site, footerLinks } from "@/data/site";
 import { socialLinks } from "./constants";
 
@@ -83,7 +83,7 @@ export function Footer() {
                 </p>
               </div>
               <div className="self-start">
-                <LinkButton href="/contact">Start a project</LinkButton>
+                <ElementAccentButton href="/contact">Start a project</ElementAccentButton>
               </div>
             </div>
 

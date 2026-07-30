@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { Logo, LogoMark } from "@/components/Logo";
 import { LinkButton } from "@/components/Button";
 import { useLenis } from "@/components/SmoothScrollProvider";
+import { useCurrentElement } from "@/lib/currentElement";
 import { navigation } from "@/data/site";
 import type { HeaderProps } from "./types";
 import { SCROLLED_THRESHOLD, HIDE_REVEAL_DELTA, HIDE_REVEAL_MIN_SCROLL } from "./constants";
@@ -41,6 +42,7 @@ export function Header({ transparent = false }: HeaderProps) {
   const lastScrollRef = useRef(0);
   const prefersReducedMotion = useReducedMotion();
   const lenis = useLenis();
+  const element = useCurrentElement();
 
   useEffect(() => {
     function handleScroll(current: number) {
@@ -89,9 +91,17 @@ export function Header({ transparent = false }: HeaderProps) {
     setOpen(false);
   }, [transparent]);
 
-  const isLight = transparent && !scrolled && !open;
-  // Never actually hide the bar while the mobile menu is open — its own
-  // toggle button lives inside it.
+  // Was a two-tone system — a plain white/cream pill once scrolled past
+  // a transparent hero, dark glass only at the very top. Direct, blunt
+  // feedback three times over: first that the pill was "boring and
+  // conventional," then that a thin gradient ring on the same white
+  // pill still read as "bland white and plain orange," then that even
+  // after going to one consistent dark-glass pill, an ivory CTA button
+  // was still "white and boring." The CTA is now tied to the current
+  // month's element color (useCurrentElement, shared with the footer's
+  // own buttons and the calendar's own accent) instead of a fixed
+  // ivory or clay — it actually changes through the year rather than
+  // defaulting to the same one or two tones everywhere.
   const isBarHidden = barHidden && !open;
 
   return (
@@ -103,70 +113,64 @@ export function Header({ transparent = false }: HeaderProps) {
         className="fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5"
       >
         {/* nav-pill-ring: a slow rotating conic-gradient carrying all
-            five element colors, replacing the old flat single-tone
-            border — direct feedback that the pill read as boring/
-            generic against the rest of a site built entirely on this
-            palette. 1.5px padding is the whole "border" now; the inner
-            pill no longer sets its own border color. */}
-        <div className="nav-pill-ring w-full max-w-3xl rounded-full p-[1.5px] shadow-elevation-sm">
-          <div
-            className={`grid w-full grid-cols-3 items-center rounded-full px-3 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-4 ${
-              isLight ? "bg-soil/40" : "bg-background-elevated/95"
-            }`}
-          >
-            <div className="hidden justify-start sm:flex">
-              <LinkButton
-                href="/contact"
-                className={`px-4 py-2 text-xs ${
-                  isLight ? "bg-ivory! text-soil! hover:bg-ivory/90!" : ""
-                }`}
-              >
-                Start a project
-              </LinkButton>
-            </div>
+            five element colors, plus nav-pill-glow — the same gradient
+            blurred behind the pill as a soft halo, so the palette reads
+            as genuinely vivid rather than a hairline most people would
+            never consciously notice against a bright white fill. */}
+        <div className="nav-pill-glow relative w-full max-w-3xl">
+          <div className="nav-pill-ring rounded-full p-[2.5px] shadow-elevation-md">
+            <div
+              className={`grid w-full grid-cols-3 items-center rounded-full px-3 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-4 ${
+                scrolled ? "bg-soil/85" : "bg-soil/55"
+              }`}
+            >
+              <div className="hidden justify-start sm:flex">
+                <LinkButton href="/contact" className="px-4 py-2 text-xs" style={{ backgroundColor: element.color }}>
+                  Start a project
+                </LinkButton>
+              </div>
 
-            <Link href="/" className="col-start-2 flex items-center justify-center gap-1.5">
-              <LogoMark size={20} className="shrink-0" />
-              <Logo light={isLight} className="scale-[0.72] sm:scale-[0.78]" />
-            </Link>
+              <Link href="/" className="col-start-2 flex items-center justify-center gap-1.5">
+                <LogoMark size={22} className="shrink-0" />
+                <Logo light className="scale-[0.72] sm:scale-[0.78]" />
+              </Link>
 
-            <div className="flex justify-end">
-              <button
-                className={`relative flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-500 ${
-                  isLight ? "text-ivory" : "text-foreground"
-                }`}
-                aria-label={open ? "Close menu" : "Open menu"}
-                aria-expanded={open}
-                onClick={() => setOpen((v) => !v)}
-              >
-                <AnimatePresence initial={false}>
-                  {open ? (
-                    <motion.span
-                      key="close"
-                      variants={prefersReducedMotion ? undefined : closeIconVariants}
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
-                      transition={ICON_TRANSITION}
-                      className="absolute flex"
-                    >
-                      <X size={20} />
-                    </motion.span>
-                  ) : (
-                    <motion.span
-                      key="menu"
-                      variants={prefersReducedMotion ? undefined : menuIconVariants}
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
-                      transition={ICON_TRANSITION}
-                      className="absolute flex"
-                    >
-                      <Menu size={20} />
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </button>
+              <div className="flex justify-end">
+                <button
+                  className="relative flex h-9 w-9 items-center justify-center rounded-full text-ivory transition-colors duration-500"
+                  aria-label={open ? "Close menu" : "Open menu"}
+                  aria-expanded={open}
+                  onClick={() => setOpen((v) => !v)}
+                >
+                  <AnimatePresence initial={false}>
+                    {open ? (
+                      <motion.span
+                        key="close"
+                        variants={prefersReducedMotion ? undefined : closeIconVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                        transition={ICON_TRANSITION}
+                        className="absolute flex"
+                      >
+                        <X size={20} />
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="menu"
+                        variants={prefersReducedMotion ? undefined : menuIconVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                        transition={ICON_TRANSITION}
+                        className="absolute flex"
+                      >
+                        <Menu size={20} />
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -220,7 +224,12 @@ export function Header({ transparent = false }: HeaderProps) {
                   transition={NAV_CTA_TRANSITION}
                   className="mt-2 border-t border-border pt-3 sm:hidden"
                 >
-                  <LinkButton href="/contact" onClick={() => setOpen(false)} className="w-full">
+                  <LinkButton
+                    href="/contact"
+                    onClick={() => setOpen(false)}
+                    className="w-full"
+                    style={{ backgroundColor: element.color }}
+                  >
                     Start a project
                   </LinkButton>
                 </motion.div>

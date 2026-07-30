@@ -5,27 +5,23 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CalendlyEmbed } from "./CalendlyEmbed";
 import { BackgroundVideo } from "./BackgroundVideo";
 import { EASE_AIR } from "@/lib/motion";
-import { elements, type Element } from "@/data/elements";
+import { useCurrentElement } from "@/lib/currentElement";
 import { site } from "@/data/site";
 
-// Rebuilt to match direct reference images — a real glass-widget
-// calendar (Weekly/Monthly toggle, an actual date grid, today
-// highlighted) over a full-bleed photo, the way an iOS/Android widget
-// looks, rather than a quote-card layout. The brand tie-in is the
-// backdrop and accent, not invented calendar chrome: the background is
-// the current element's own already-graded video, "today" is
-// highlighted in that element's own accent color, and the element's
-// `poetic` line sits as one quiet caption underneath rather than
-// dominating the card. Booking mechanics are unchanged — this is a
-// themed shell around the existing Calendly embed.
-const MONTH_TO_ELEMENT: Element["slug"][] = [
-  "earth", "earth", "earth", // Jan–Mar: the year's foundation
-  "water", "water",          // Apr–May
-  "fire", "fire",            // Jun–Jul: peak heat
-  "air", "air", "air",       // Aug–Oct
-  "space", "space",          // Nov–Dec: what's remembered as the year settles
-];
-
+// A real glass-widget calendar (Weekly/Monthly toggle, an actual date
+// grid, today highlighted) — not a quote-card layout. Went through two
+// more rounds after the original monthly-element-video version: first
+// dropped to a flat color glow (direct feedback the fire clip "looked
+// so bad"), then asked back explicitly — a single fixed, warm
+// campfire-conversation scene ("the warmth conversation we will have
+// in comfort"), not tied to the monthly element rotation that kept
+// causing problems (a stacking glitch, a harsh close-up ember clip).
+// One well-chosen, verified clip now, permanently, with the isolate
+// stacking-context fix still in place. The five-element tie-in lives
+// in color only — the "today" highlight and the "+Book a call" button
+// both use the current month's element accent (useCurrentElement,
+// shared with Header/Footer), so the palette still varies through the
+// year without needing five different video assets.
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
@@ -62,7 +58,7 @@ export function SeasonalCalendarPanel() {
   const month = now?.getMonth() ?? 0;
   const year = now?.getFullYear() ?? 2026;
   const today = now?.getDate() ?? 1;
-  const element = elements.find((el) => el.slug === MONTH_TO_ELEMENT[month]) ?? elements[0];
+  const element = useCurrentElement();
 
   // The Sunday-starting calendar week containing today, walked via
   // real Date arithmetic (not today ± 3) — a naive day-number offset
@@ -90,11 +86,10 @@ export function SeasonalCalendarPanel() {
     >
       <div className="absolute inset-0 -z-10">
         <BackgroundVideo
-          video={element.video ?? ""}
-          poster={element.image}
-          imagePosition={element.imagePosition ?? "center"}
+          video="/videos/pixabay-campfire-conversation.mp4"
+          poster="/images/pixabay-campfire-conversation-poster.jpg"
         />
-        <div className="absolute inset-0 bg-soil/40 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-soil/45 backdrop-blur-[1px]" />
       </div>
 
       {/* Weekly / Monthly toggle, same shape and position as the
@@ -219,7 +214,8 @@ export function SeasonalCalendarPanel() {
           onClick={() => setExpanded(true)}
           whileHover={prefersReducedMotion ? undefined : { scale: 1.04 }}
           whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-          className={`shrink-0 rounded-full bg-ivory px-5 py-2.5 text-sm font-medium text-soil transition-opacity duration-300 ${expanded ? "pointer-events-none opacity-0" : ""}`}
+          style={{ backgroundColor: element.color }}
+          className={`shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-ivory transition-opacity duration-300 ${expanded ? "pointer-events-none opacity-0" : ""}`}
         >
           + Book a call
         </motion.button>

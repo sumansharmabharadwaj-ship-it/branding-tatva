@@ -164,15 +164,16 @@ export default function Home() {
 
         <ElementsSection elements={elements} />
 
-        {/* Real footage, not the AI-generated architectural interior this
-            replaced — that read as a real estate/architecture site, not
-            a philosophical branding practice. A forest stream with mossy,
-            unmoving boulders steadying its banks is the same idea the
-            quote makes, just found in nature instead of illustrated with
-            a building. */}
+        {/* Was own-forest-stream.mp4 — direct feedback wanting something
+            more alive: a lush green, cinematic flowing river instead.
+            pixabay-emerald-river.mp4 (vivid turquoise-green water over
+            mossy rocks, tall grass framing the bank) still carries the
+            same idea the quote makes — motion and stillness sitting
+            together in one frame — just with real color and life to it
+            instead of a duller, quieter clip. */}
         <PinnedVideoBreak
-          src="/videos/own-forest-stream.mp4"
-          poster="/images/own-forest-stream-poster.jpg"
+          src="/videos/pixabay-emerald-river.mp4"
+          poster="/images/pixabay-emerald-river-poster.jpg"
           quote="The parts that stay still are usually the ones holding everything else up."
           height="72vh"
           cameraPush

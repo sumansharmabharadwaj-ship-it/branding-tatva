@@ -14,6 +14,10 @@ type ButtonProps = {
   variant?: "primary" | "secondary";
   className?: string;
   onClick?: () => void;
+  // Escape hatch for callers that need a per-instance color (e.g. tied
+  // to the current five-element accent) rather than the fixed
+  // bg-action-primary every other button on the site correctly shares.
+  style?: React.CSSProperties;
 };
 
 let rippleId = 0;
@@ -27,7 +31,7 @@ let rippleId = 0;
 // draws itself in on hover instead, since a glint would just look like
 // a smudge on a pill with no fill behind it to catch the light.
 
-export function LinkButton({ href, children, variant = "primary", className, onClick }: ButtonProps) {
+export function LinkButton({ href, children, variant = "primary", className, onClick, style }: ButtonProps) {
   const prefersReducedMotion = useReducedMotion();
   const linkRef = useRef<HTMLAnchorElement>(null);
   const spotlightRef = useSpotlight(linkRef, variant !== "primary" || Boolean(prefersReducedMotion));
@@ -53,7 +57,7 @@ export function LinkButton({ href, children, variant = "primary", className, onC
 
   return (
     <Magnetic className="inline-block">
-      <Link ref={linkRef} href={href} onClick={handleClick} className={cn(base, styles[variant], className)}>
+      <Link ref={linkRef} href={href} onClick={handleClick} className={cn(base, styles[variant], className)} style={style}>
         {variant === "primary" && (
           <span
             ref={spotlightRef}
