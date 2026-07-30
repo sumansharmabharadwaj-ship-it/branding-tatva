@@ -180,49 +180,9 @@ export default function Home() {
           spotlight
         />
 
-        {/* Two brand pathways — an interactive split-screen, not two
-            bordered text blocks. See sections/Threshold. */}
-        <PinnedThreshold
-          heading="Every brand starts at one of two thresholds"
-          panels={[
-            {
-              key: "left",
-              eyebrow: "Threshold one",
-              title: "Starting with an idea",
-              description:
-                "Earth first work: purpose, audience, and positioning, before anything else gets built.",
-              // Was a static image (own-canopy.jpg) — the only one of
-              // the two panels without real motion, direct feedback
-              // that it needed a proper video, not just a nicer photo.
-              // higgsfield-forest-trail-mist.mp4 (sunlit path through
-              // mist between tall trees): a journey just beginning.
-              image: "/images/higgsfield-forest-trail-mist-poster.jpg",
-              video: "/videos/higgsfield-forest-trail-mist.mp4",
-              gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
-              ctaLabel: "Brand Beginning",
-              ctaHref: "/services#brand-beginning",
-              activeHeading: "Then you're building the foundation first.",
-            },
-            {
-              key: "right",
-              eyebrow: "Threshold two",
-              title: "Already in business",
-              description:
-                "An audit first, finding exactly where the story stops holding together.",
-              image: "/images/higgsfield-forest-stream-poster.jpg",
-              video: "/videos/higgsfield-forest-stream.mp4",
-              gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
-              ctaLabel: "Brand Clarity",
-              ctaHref: "/services#brand-clarity",
-              activeHeading: "Then you're finding where the story breaks.",
-            },
-          ]}
-        />
-
-        {/* Was flat bg-soil — direct feedback that the heading zone here,
-            before FeaturedWorkHero's own big photo takes over, still read
-            as a blank gap between the Threshold panels above and the
-            actual case-study imagery below. Fire fits a section about
+        {/* Was flat bg-soil — direct feedback that the heading zone here
+            still read as a blank gap between the elements grid above and
+            the actual case-study imagery below. Fire fits a section about
             the work that earned a second look — pixabay-flame-texture.mp4
             (an abstract, tight flame-texture shot, distinct from the
             elements grid's own campfire-with-wood clip so the same
@@ -314,6 +274,48 @@ export default function Home() {
           </div>
           <ProcessSection stages={process} elementColor={elementColor} />
         </section>
+
+        {/* Moved here from between the elements grid and Selected work —
+            that position interrupted "here's the method, here's it in
+            action" with an unrelated qualification question mid-story.
+            By this point in the page a visitor has seen the method (Five
+            Elements), the proof (Selected work), and the mechanism
+            (Process) — "which of these two are you" now reads as a
+            natural personalized next step into FAQ/CTA, not an
+            interruption. Two brand pathways — an interactive
+            split-screen, not two bordered text blocks. See
+            sections/Threshold. */}
+        <PinnedThreshold
+          heading="Every brand starts at one of two thresholds"
+          panels={[
+            {
+              key: "left",
+              eyebrow: "Threshold one",
+              title: "Starting with an idea",
+              description:
+                "Earth first work: purpose, audience, and positioning, before anything else gets built.",
+              image: "/images/higgsfield-forest-trail-mist-poster.jpg",
+              video: "/videos/higgsfield-forest-trail-mist.mp4",
+              gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
+              ctaLabel: "Brand Beginning",
+              ctaHref: "/services#brand-beginning",
+              activeHeading: "Then you're building the foundation first.",
+            },
+            {
+              key: "right",
+              eyebrow: "Threshold two",
+              title: "Already in business",
+              description:
+                "An audit first, finding exactly where the story stops holding together.",
+              image: "/images/higgsfield-forest-stream-poster.jpg",
+              video: "/videos/higgsfield-forest-stream.mp4",
+              gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
+              ctaLabel: "Brand Clarity",
+              ctaHref: "/services#brand-clarity",
+              activeHeading: "Then you're finding where the story breaks.",
+            },
+          ]}
+        />
 
         {/* Had zero photo/video at all — direct feedback that it read as
             flat and empty next to every other section on the site.
