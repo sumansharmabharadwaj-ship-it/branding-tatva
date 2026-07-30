@@ -73,26 +73,28 @@ export default function WorkPage() {
             easily say on its own. */}
         <section className="bg-background-alt py-20 sm:py-28">
           <Container>
-            <AnnotatedVisual
-              image="/images/higgsfield-brass-compass.jpg"
-              alt=""
-              callouts={[
-                {
-                  dotTop: "38%",
-                  dotLeft: "44%",
-                  side: "left",
-                  title: "A real audit, built for your actual market",
-                  text: "I look at what's actually happening in your market first, then build a plan specific to where your brand stands today.",
-                },
-                {
-                  dotTop: "58%",
-                  dotLeft: "56%",
-                  side: "right",
-                  title: "One connected system, start to finish",
-                  text: "Positioning, identity, and content built to carry the same throughline, from the first conversation to the last deliverable.",
-                },
-              ]}
-            />
+            <Reveal>
+              <AnnotatedVisual
+                image="/images/higgsfield-brass-compass.jpg"
+                alt=""
+                callouts={[
+                  {
+                    dotTop: "38%",
+                    dotLeft: "44%",
+                    side: "left",
+                    title: "A real audit, built for your actual market",
+                    text: "I look at what's actually happening in your market first, then build a plan specific to where your brand stands today.",
+                  },
+                  {
+                    dotTop: "58%",
+                    dotLeft: "56%",
+                    side: "right",
+                    title: "One connected system, start to finish",
+                    text: "Positioning, identity, and content built to carry the same throughline, from the first conversation to the last deliverable.",
+                  },
+                ]}
+              />
+            </Reveal>
           </Container>
         </section>
 

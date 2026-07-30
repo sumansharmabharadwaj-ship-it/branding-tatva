@@ -141,6 +141,8 @@ export default function ServicesPage() {
           quote="The right service is just the vehicle. The strategy is what moves."
           height="72vh"
           imagePosition="center 75%"
+          cameraPush
+          spotlight
         />
 
         {/* Was five arch-shaped cards in a row — direct feedback pointing
@@ -197,21 +199,30 @@ export default function ServicesPage() {
             <div className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
               {elements.map((el, i) => (
                 <Reveal key={el.slug} delay={i * 0.08}>
-                  <div className="flex items-center gap-2">
-                    <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: el.color }} />
-                    <ElementGlyph slug={el.slug} className="h-5 w-5" style={{ color: el.color }} />
+                  {/* Hover-lift lives on this inner div, not Reveal's own
+                      motion.div — Reveal already writes an inline
+                      transform (its entrance y-offset), which would
+                      silently block a CSS hover:-translate-y class
+                      applied to that same element (inline style always
+                      wins over a stylesheet hover rule). A separate,
+                      static inner element has no such conflict. */}
+                  <div className="transition-transform duration-300 hover:-translate-y-1">
+                    <div className="flex items-center gap-2">
+                      <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: el.color }} />
+                      <ElementGlyph slug={el.slug} className="h-5 w-5" style={{ color: el.color }} />
+                    </div>
+                    <p className="mt-3 font-display text-lg font-normal text-ivory">{el.name}</p>
+                    <p className="mt-2 font-display text-sm italic text-ivory/70">&ldquo;{el.poetic}&rdquo;</p>
+                    <p className="mt-2 text-sm text-ivory/70">{el.meaning}</p>
+                    <ul className="mt-4 space-y-1.5">
+                      {el.services.map((s) => (
+                        <li key={s} className="text-sm text-ivory/70 before:mr-2 before:content-['•']">
+                          {s}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-4 pt-4 text-xs italic text-ivory/50">{el.proof}</p>
                   </div>
-                  <p className="mt-3 font-display text-lg font-normal text-ivory">{el.name}</p>
-                  <p className="mt-2 font-display text-sm italic text-ivory/70">&ldquo;{el.poetic}&rdquo;</p>
-                  <p className="mt-2 text-sm text-ivory/70">{el.meaning}</p>
-                  <ul className="mt-4 space-y-1.5">
-                    {el.services.map((s) => (
-                      <li key={s} className="text-sm text-ivory/70 before:mr-2 before:content-['•']">
-                        {s}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="mt-4 pt-4 text-xs italic text-ivory/50">{el.proof}</p>
                 </Reveal>
               ))}
             </div>

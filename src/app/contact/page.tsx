@@ -116,6 +116,8 @@ export default function ContactPage() {
           poster="/images/higgsfield-verdant-hills-poster.jpg"
           quote="A brand conversation is just the first clear view through the noise."
           height="60vh"
+          cameraPush
+          spotlight
         />
 
         {/* Was solid Indigo — a second distinct color on a two-section

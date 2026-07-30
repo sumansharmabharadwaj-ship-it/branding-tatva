@@ -131,18 +131,16 @@ export default async function CaseStudyPage({ params }: Props) {
         {project.stats && (
           <section id="numbers" className="scroll-mt-24 bg-soil py-14">
             <Container>
-              <Reveal>
-                <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-                  {project.stats.map((stat) => (
-                    <div key={stat.label} className="text-center sm:text-left">
-                      <p className="font-display text-4xl font-normal text-sandstone sm:text-5xl">
-                        <AnimatedStat value={stat.value} />
-                      </p>
-                      <p className="mt-2 text-sm text-ivory/70">{stat.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </Reveal>
+              <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+                {project.stats.map((stat, i) => (
+                  <Reveal key={stat.label} delay={i * 0.08} className="text-center sm:text-left">
+                    <p className="font-display text-4xl font-normal text-sandstone sm:text-5xl">
+                      <AnimatedStat value={stat.value} />
+                    </p>
+                    <p className="mt-2 text-sm text-ivory/70">{stat.label}</p>
+                  </Reveal>
+                ))}
+              </div>
             </Container>
           </section>
         )}
@@ -159,15 +157,25 @@ export default async function CaseStudyPage({ params }: Props) {
             way. */}
         <section className="bg-soil py-16">
           <Container className="grid gap-12 md:grid-cols-3">
-            <Reveal className="case-study-blocks md:col-span-2 space-y-10">
-              <Block id="challenge" title="The challenge">{project.challenge}</Block>
-              {project.audience && <Block title="Audience">{project.audience}</Block>}
-              {project.insight && <Block id="insight" title="The insight">{project.insight}</Block>}
-              {project.strategy && <Block id="strategy" title="Strategy">{project.strategy}</Block>}
-              {project.execution && <Block title="Execution">{project.execution}</Block>}
-              <Block id="outcome" title="Outcome">{project.outcome}</Block>
-              {project.reflection && <Block title="Reflection">{project.reflection}</Block>}
-            </Reveal>
+            <div className="case-study-blocks md:col-span-2 space-y-10">
+              <Reveal><Block id="challenge" title="The challenge">{project.challenge}</Block></Reveal>
+              {project.audience && (
+                <Reveal delay={0.08}><Block title="Audience">{project.audience}</Block></Reveal>
+              )}
+              {project.insight && (
+                <Reveal delay={0.16}><Block id="insight" title="The insight">{project.insight}</Block></Reveal>
+              )}
+              {project.strategy && (
+                <Reveal delay={0.24}><Block id="strategy" title="Strategy">{project.strategy}</Block></Reveal>
+              )}
+              {project.execution && (
+                <Reveal delay={0.32}><Block title="Execution">{project.execution}</Block></Reveal>
+              )}
+              <Reveal delay={0.4}><Block id="outcome" title="Outcome">{project.outcome}</Block></Reveal>
+              {project.reflection && (
+                <Reveal delay={0.48}><Block title="Reflection">{project.reflection}</Block></Reveal>
+              )}
+            </div>
 
             <Reveal delay={0.15} className="space-y-6 md:sticky md:top-24 md:self-start">
               <div>
@@ -202,6 +210,9 @@ export default async function CaseStudyPage({ params }: Props) {
             "Good strategy lets a path reveal itself rather than forcing one, the way water finds a way through stone."
           }
           height="72vh"
+          cameraPush
+          wordFade
+          spotlight
         />
 
         {related && (

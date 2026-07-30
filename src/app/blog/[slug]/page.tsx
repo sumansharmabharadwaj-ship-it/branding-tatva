@@ -151,16 +151,29 @@ export default async function BlogPostPage({ params }: Props) {
               </div>
 
               <div className="max-w-2xl">
-                <Reveal className="space-y-6 text-foreground-secondary">
+                <div className="space-y-6 text-foreground-secondary">
+                  {/* Each paragraph gets its own Reveal instead of one
+                      blanket fade around the whole article — on a
+                      long-form reading page, a single flat entrance means
+                      everything already below the fold pops in at once
+                      the moment the article top scrolls into view. Per-
+                      paragraph triggers (each with its own
+                      useRevealTrigger/IntersectionObserver) fire naturally
+                      as the reader actually scrolls to each one instead,
+                      no artificial index-based delay needed. */}
                   {post.body.map((paragraph, i) => (
                     <Fragment key={i}>
-                      <p className={i === 0 ? "blog-lede text-lg text-soil" : undefined}>{paragraph}</p>
+                      <Reveal>
+                        <p className={i === 0 ? "blog-lede text-lg text-soil" : undefined}>{paragraph}</p>
+                      </Reveal>
                       {i === pullQuoteAfter && post.pullQuote && (
-                        <PullQuote quote={post.pullQuote} color={element?.color ?? "#B85A34"} />
+                        <Reveal>
+                          <PullQuote quote={post.pullQuote} color={element?.color ?? "#B85A34"} />
+                        </Reveal>
                       )}
                     </Fragment>
                   ))}
-                </Reveal>
+                </div>
 
                 <div className="mt-16 flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
                   <Link href="/blog" className="link-underline text-sm font-medium text-soil lg:hidden">
