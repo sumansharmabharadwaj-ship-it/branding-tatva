@@ -21,7 +21,7 @@ export function PinnedVideoBreak(props: React.ComponentProps<typeof VideoBreak>)
   }
 
   return (
-    <PinnedHold height={props.height ?? "70vh"}>
+    <PinnedHold>
       <VideoBreak {...props} />
     </PinnedHold>
   );

@@ -25,7 +25,7 @@ export function PinnedThreshold(props: React.ComponentProps<typeof Threshold>) {
   return (
     <>
       <div className="hidden sm:block">
-        <PinnedHold height="80vh">
+        <PinnedHold>
           <Threshold {...props} />
         </PinnedHold>
       </div>

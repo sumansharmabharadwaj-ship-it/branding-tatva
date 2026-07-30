@@ -5,6 +5,7 @@ import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
 import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
 import type { Project } from "@/data/projects";
@@ -90,6 +91,14 @@ function SelectedWorkPinnedDesktop({ featured }: { featured: Project[] }) {
   return (
     <div ref={wrapperRef} className="relative bg-soil" style={{ height: "300vh" }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
+        {/* Behind both stages — stage 0's FeaturedWorkHero already fills
+            the whole frame edge-to-edge with its own photo, so this
+            only actually shows through in stage 1's Container gutters
+            and the gap between the two secondary cards, which otherwise
+            read as flat, motionless bg-soil. own-leaves-cabin.mp4: real
+            footage, previously displaced (not rejected) from Contact
+            when verdant-hills moved there, unused anywhere else. */}
+        <BackgroundVideo video="/videos/own-leaves-cabin.mp4" poster="/images/own-leaves-cabin-poster.jpg" />
         <div
           ref={(node) => {
             stageRefs.current[0] = node;
@@ -135,21 +144,25 @@ function SelectedWorkFallback({ featured }: { featured: Project[] }) {
   const secondary = featured.slice(1);
 
   return (
-    <div className="bg-soil py-20 sm:py-28">
+    <div className="relative overflow-hidden bg-soil py-20 sm:py-28">
+      <BackgroundVideo video="/videos/own-leaves-cabin.mp4" poster="/images/own-leaves-cabin-poster.jpg" />
+      <div className="absolute inset-0 bg-soil/70" />
       {hero && (
         <Reveal>
-          <FeaturedWorkHero
-            href={`/work/${hero.slug}`}
-            image={hero.cardImage ?? "/images/own-forest-clearing.jpg"}
-            industry={hero.industry}
-            title={hero.title}
-            outcome={hero.outcome}
-            stats={hero.stats}
-            accent={hero.accent}
-          />
+          <div className="relative">
+            <FeaturedWorkHero
+              href={`/work/${hero.slug}`}
+              image={hero.cardImage ?? "/images/own-forest-clearing.jpg"}
+              industry={hero.industry}
+              title={hero.title}
+              outcome={hero.outcome}
+              stats={hero.stats}
+              accent={hero.accent}
+            />
+          </div>
         </Reveal>
       )}
-      <Container>
+      <Container className="relative">
         <div className="mt-10 grid gap-10 sm:grid-cols-2">
           {secondary.map((project, i) => (
             <Reveal key={project.slug} delay={i * 0.1}>

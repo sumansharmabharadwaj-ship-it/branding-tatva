@@ -28,7 +28,7 @@ export function PinnedWorkingMethod() {
   return (
     <>
       <div className="hidden sm:block">
-        <PinnedHold height="70vh">
+        <PinnedHold>
           <WorkingMethodSection />
         </PinnedHold>
       </div>

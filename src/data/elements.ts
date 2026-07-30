@@ -46,6 +46,7 @@ export const elements: Element[] = [
     proof:
       "Playbooks built for each platform, plus webinar conversion sequencing, for Executive Springboard.",
     image: "/images/own-waterfall-veil.jpg",
+    video: "/videos/higgsfield-water-ripples.mp4",
   },
   {
     slug: "fire",
@@ -77,7 +78,8 @@ export const elements: Element[] = [
     ],
     proof:
       "A content portfolio of sixteen pieces for Plaxonic.com, spanning research papers, perspective pieces, blogs, and articles.",
-    image: "/images/own-misty-ridge-poster.jpg",
+    image: "/images/pixabay-golden-reeds-wind-poster.jpg",
+    video: "/videos/pixabay-golden-reeds-wind.mp4",
   },
   {
     slug: "space",
@@ -93,5 +95,6 @@ export const elements: Element[] = [
     proof:
       "Sustained, measured social management for Dr. Haley Nutrition, with verified follower and engagement growth over two consecutive months.",
     image: "/images/own-dusk-ridge.jpg",
+    video: "/videos/own-alpenglow-peak.mp4",
   },
 ];
