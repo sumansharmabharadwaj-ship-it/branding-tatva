@@ -8,6 +8,7 @@ import { MorphingGlyph } from "@/components/MorphingGlyph";
 import { Reveal } from "@/components/Reveal";
 import { Container } from "@/components/Container";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { stageOpacity } from "@/lib/pinnedStageOpacity";
 
 const STAGE_LABELS = ["One brand", "The elements"];
 
@@ -54,11 +55,11 @@ export function ElementsIntroPinned() {
       }
       stageRefs.current.forEach((stage, i) => {
         if (!stage) return;
-        stage.style.opacity = String(Math.max(0, 1 - Math.abs(progress - i)));
+        stage.style.opacity = String(stageOpacity(progress, i));
       });
       bgRefs.current.forEach((bg, i) => {
         if (!bg) return;
-        bg.style.opacity = String(Math.max(0, 1 - Math.abs(progress - i)));
+        bg.style.opacity = String(stageOpacity(progress, i));
       });
     }
 
@@ -96,8 +97,8 @@ export function ElementsIntroPinned() {
           aria-hidden="true"
         >
           <BackgroundVideo
-            video="/videos/pixabay-misty-rain-valley.mp4"
-            poster="/images/pixabay-misty-rain-valley-poster.jpg"
+            video="/videos/pixabay-refreshing-river.mp4"
+            poster="/images/pixabay-refreshing-river-poster.jpg"
           />
           <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
         </div>
@@ -156,8 +157,8 @@ export function ElementsIntroPinned() {
           aria-hidden="true"
         >
           <BackgroundVideo
-            video="/videos/pixabay-kedarkantha-himalaya.mp4"
-            poster="/images/pixabay-kedarkantha-himalaya-poster.jpg"
+            video="/videos/pixabay-kashmir-valley.mp4"
+            poster="/images/pixabay-kashmir-valley-poster.jpg"
           />
           <div className="absolute inset-0 bg-soil/70" />
           <ElementsConstellation />

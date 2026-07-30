@@ -9,6 +9,7 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
 import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
 import type { Project } from "@/data/projects";
+import { stageOpacity } from "@/lib/pinnedStageOpacity";
 
 // Same PinnedSlider/PinnedJourney/ElementsIntroPinned mechanism, applied
 // to "Selected work" — deliberately 2 stages, not 3 (one per card).

@@ -8,6 +8,7 @@ import { useLazyMount } from "@/hooks/useLazyMount";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { BREAK_OVERLAY_GRADIENT, toSvh } from "@/lib/media";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { stageOpacity } from "@/lib/pinnedStageOpacity";
 import type { ProcessSectionProps } from "./types";
 
 type GlyphSlug = "earth" | "water" | "fire" | "air" | "space";
@@ -103,7 +104,18 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
         // double-exposure glitch (one paragraph visibly overlapping
         // another) rather than a clean crossfade. Steeper falloff keeps
         // the transition smooth while shrinking that overlap window.
-        stageEl.style.opacity = String(Math.max(0, 1 - Math.abs(dist) * 1.6));
+        // Direct, repeated feedback that pinned scrolling never felt
+        // "stable" — this steeper 1.6x falloff only made the crossfade
+        // itself quicker, it didn't add any hold at the center the way
+        // stageOpacity's plateau does elsewhere. A short hold (0.2, half
+        // of the other pinned sections' 0.35) keeps this stage's own
+        // fast, double-exposure-avoiding transition while still giving
+        // the text a real settled beat instead of being perpetually
+        // mid-fade.
+        const textHold = 0.2;
+        const absDist = Math.abs(dist);
+        const textOpacity = absDist <= textHold ? 1 : Math.max(0, 1 - (absDist - textHold) * 1.6);
+        stageEl.style.opacity = String(textOpacity);
         // Was opacity-only — the stage crossfaded in place with nothing
         // else tying it to scroll position, which read as a slideshow
         // rather than something actually driven by scroll. Distance from
@@ -120,8 +132,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
       // together rather than the backdrop being a static layer underneath.
       bgRefs.current.forEach((bgEl, i) => {
         if (!bgEl) return;
-        const dist = progress - i;
-        bgEl.style.opacity = String(Math.max(0, 1 - Math.abs(dist)));
+        bgEl.style.opacity = String(stageOpacity(progress, i));
       });
       // The whole backdrop stack slowly pushes in across the section (not
       // per-stage) — a continuous "diving deeper" read as the six stages

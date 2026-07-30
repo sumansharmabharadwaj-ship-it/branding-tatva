@@ -116,8 +116,8 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
               <div className="max-w-xl">
                 <div className="flex items-center gap-4">
                   <span
-                    className="font-display text-[clamp(3.5rem,9vw,6.5rem)] font-normal leading-none opacity-40"
-                    style={{ color: el.color }}
+                    className="font-display text-[clamp(3.5rem,9vw,6.5rem)] font-normal leading-none"
+                    style={{ color: el.color, textShadow: "0 2px 16px rgba(0,0,0,0.55)" }}
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>

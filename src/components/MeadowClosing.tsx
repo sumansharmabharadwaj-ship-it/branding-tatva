@@ -6,6 +6,7 @@ import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { elements } from "@/data/elements";
 import { blendHex, SOIL } from "@/lib/sectionWash";
+import { stageOpacity } from "@/lib/pinnedStageOpacity";
 
 const CLOSING_LINE = "Everything on this page took time to become one thing. Yours can too.";
 
@@ -72,8 +73,7 @@ export function MeadowClosing() {
       stageRefs.current.forEach((el, i) => {
         if (!el) return;
         const dist = progress - i;
-        const opacity = Math.max(0, 1 - Math.abs(dist));
-        el.style.opacity = String(opacity);
+        el.style.opacity = String(stageOpacity(progress, i));
         el.style.transform = `translateY(${dist * 26}px) scale(${1 - Math.min(0.08, Math.abs(dist) * 0.08)})`;
         if (i === STAGES.length - 1 && closingRef.current) {
           const closeT = Math.max(0, Math.min(1, 1 - Math.abs(dist) * 2.2));
