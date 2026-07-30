@@ -9,13 +9,12 @@ import { Reveal } from "@/components/Reveal";
 import { ScatterReveal } from "@/components/ScatterReveal";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { ClipReveal } from "@/components/ClipReveal";
-import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
 import { ElementsSection } from "@/sections/Elements";
 import { ElementsIntro } from "@/sections/Elements/ElementsIntro";
+import { SelectedWorkPinned } from "@/sections/Home/SelectedWorkPinned";
 import { CinematicHero } from "@/sections/Hero";
-import { Threshold } from "@/sections/Threshold";
-import { VideoBreak } from "@/components/VideoBreak";
-import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
+import { PinnedThreshold } from "@/components/PinnedThreshold";
+import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { site } from "@/data/site";
@@ -100,7 +99,7 @@ export default function Home() {
             already uses below it, so the whole passage is one
             continuous cinematic moment — cinematic-waterlight.mp4
             appears exactly once in the codebase, not twice. */}
-        <VideoBreak
+        <PinnedVideoBreak
           src="/videos/cinematic-waterlight.mp4"
           poster="/images/cinematic-waterlight-poster.jpg"
           quote="Attention is the first thing any brand has to earn."
@@ -169,7 +168,7 @@ export default function Home() {
             unmoving boulders steadying its banks is the same idea the
             quote makes, just found in nature instead of illustrated with
             a building. */}
-        <VideoBreak
+        <PinnedVideoBreak
           src="/videos/own-forest-stream.mp4"
           poster="/images/own-forest-stream-poster.jpg"
           quote="The parts that stay still are usually the ones holding everything else up."
@@ -178,7 +177,7 @@ export default function Home() {
 
         {/* Two brand pathways — an interactive split-screen, not two
             bordered text blocks. See sections/Threshold. */}
-        <Threshold
+        <PinnedThreshold
           heading="Every brand starts at one of two thresholds"
           panels={[
             {
@@ -223,59 +222,40 @@ export default function Home() {
             covers the rest of the section, so the video only shows
             through here) — fire fits a section about the work that
             earned a second look. */}
+        {/* Heading kept as its own section, separate from the pinned
+            work content below — SelectedWorkPinned relies on
+            position: sticky, which breaks the moment an ancestor has
+            overflow other than visible (this section's own
+            overflow-hidden, kept for the fire video). Same fix pattern
+            as every other pinned section on this page. */}
         <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
           <BackgroundVideo video="/videos/higgsfield-element-fire.mp4" poster="/images/higgsfield-element-fire.jpg" />
           <div className="absolute inset-0 bg-soil/60" />
-          {/* Featured work — one large photographic entry, two quiet
-              editorial ones, not three identical cards */}
-          <div className="relative">
-            <Container>
-              <Reveal>
-                <div className="flex items-baseline justify-between">
-                  <h2 className="text-display-sm font-display font-normal text-ivory">Selected work</h2>
-                  <LinkButton
-                    href="/work"
-                    variant="secondary"
-                    className="border-ivory/30 text-ivory hover:bg-ivory/10"
-                  >
-                    View all work
-                  </LinkButton>
-                </div>
-              </Reveal>
-            </Container>
-
-            {featured[0] && (
-              <Reveal delay={0.1} className="mt-10">
-                {/* The project's own cardImage/heroVideo world (see
-                    data/projects.ts) rather than a separate hardcoded
-                    photo — this is the same brand this project's case
-                    study page and Work grid card already use, not a
-                    third, unrelated backdrop for the same entry. */}
-                <FeaturedWorkHero
-                  href={`/work/${featured[0].slug}`}
-                  image={featured[0].cardImage ?? "/images/own-forest-clearing.jpg"}
-                  industry={featured[0].industry}
-                  title={featured[0].title}
-                  outcome={featured[0].outcome}
-                  stats={featured[0].stats}
-                  accent={featured[0].accent}
-                />
-              </Reveal>
-            )}
-
-            <Container>
-              <div className="mt-10 grid gap-10 sm:grid-cols-2">
-                {featured.slice(1).map((project, i) => (
-                  <Reveal key={project.slug} delay={i * 0.1}>
-                    <FeaturedSecondaryCard project={project} />
-                  </Reveal>
-                ))}
+          <Container className="relative">
+            <Reveal>
+              <div className="flex items-baseline justify-between">
+                <h2 className="text-display-sm font-display font-normal text-ivory">Selected work</h2>
+                <LinkButton
+                  href="/work"
+                  variant="secondary"
+                  className="border-ivory/30 text-ivory hover:bg-ivory/10"
+                >
+                  View all work
+                </LinkButton>
               </div>
-            </Container>
-          </div>
+            </Reveal>
+          </Container>
         </section>
 
-        <VideoBreak
+        {/* Featured work — one large photographic entry, two quiet
+            editorial ones, not three identical cards. Same pinned
+            mechanism as PinnedSlider/PinnedJourney; see
+            SelectedWorkPinned's own comment for why it's 2 stages, not
+            3, and why neither card component conflicts with permanent
+            mounting + opacity toggling. */}
+        <SelectedWorkPinned featured={featured} />
+
+        <PinnedVideoBreak
           src="/videos/higgsfield-lone-pine.mp4"
           poster="/images/higgsfield-lone-pine-poster.jpg"
           quote="Every strong brand has a moment like this, quiet, and completely sure of itself."
@@ -390,7 +370,7 @@ export default function Home() {
             the Contact page instead per direct feedback), then reverted
             back to this one per direct feedback preferring the night sea
             here after all. */}
-        <VideoBreak
+        <PinnedVideoBreak
           src="/videos/higgsfield-silver-tide.mp4"
           poster="/images/higgsfield-silver-tide-poster.jpg"
           quote="Some things only become visible once everything else goes quiet."
@@ -416,7 +396,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </VideoBreak>
+        </PinnedVideoBreak>
       </main>
       <Footer />
       <script

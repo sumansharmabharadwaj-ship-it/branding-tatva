@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -7,14 +6,14 @@ import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { TiltCard } from "@/components/TiltCard";
-import { VideoBreak } from "@/components/VideoBreak";
-import { ClipReveal } from "@/components/ClipReveal";
+import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { NatureAccent } from "@/components/NatureAccent";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { MeadowClosing } from "@/components/MeadowClosing";
-import { aboutIntro, credentials, experience } from "@/data/about";
+import { PinnedWorkingMethod } from "@/sections/About/PinnedWorkingMethod";
+import { aboutIntro, credentials } from "@/data/about";
 import { designChoices } from "@/data/design-rationale";
 import { elements } from "@/data/elements";
 import { philosophy } from "@/data/philosophy";
@@ -90,7 +89,7 @@ export default function AboutPage() {
             source crops far more gracefully into an 85vh banner than the
             old portrait shot ever did — roughly two-thirds of the frame
             stays visible instead of a quarter. */}
-        <VideoBreak
+        <PinnedVideoBreak
           src="/videos/higgsfield-stream-clarity.mp4"
           poster="/images/higgsfield-stream-clarity-poster.jpg"
           quote="Clarity comes from climbing. It's the view from finally standing somewhere high enough to see it."
@@ -119,67 +118,13 @@ export default function AboutPage() {
             statement) and Work (hero → dark card grid), extended here
             since About had the identical light-to-dark boundary without
             it. */}
-        {/* Background sits outside ClipReveal now, not wrapped by it —
-            same fix as Home's ClipReveal/PerspectiveReveal sections and
-            VerticalUnfold's element rows: clip-path hides an element's
-            entire box (bg-soil, the video, all of it), so a slow-to-fire
-            reveal trigger showed blank page background during fast
-            real-device scrolling instead of this section's own fill. */}
-        <section className="relative overflow-hidden bg-soil py-20">
-          <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/60" />
-          <ClipReveal>
-            <Container className="relative grid gap-12 md:grid-cols-[auto_1fr]">
-              <Reveal>
-                <Image
-                  src="/images/own-portrait.jpg"
-                  alt="Suman Sharma"
-                  width={480}
-                  height={480}
-                  priority
-                  className="aspect-square w-40 rounded-full object-cover sm:w-48"
-                />
-              </Reveal>
-              <div className="grid gap-12 sm:grid-cols-2">
-                <Reveal delay={0.1}>
-                  <h2 className="text-display-sm font-display font-normal text-ivory">
-                    Working method
-                  </h2>
-                  <p className="mt-4 text-ivory/75">
-                    I start by asking what
-                    a business believes, who it&apos;s actually speaking to,
-                    and where its current story stops making sense, well
-                    before any mood board enters the room. The
-                    elemental system, earth, water, fire, air, space, is how I
-                    keep track of which part of that is solved and which
-                    still needs work.
-                  </p>
-                  <p className="mt-4 text-ivory/75">
-                    I use &ldquo;I&rdquo; instead of &ldquo;we.&rdquo; Branding
-                    Tatva is a personal practice, and every project has my
-                    direct attention.
-                  </p>
-                </Reveal>
-
-                <Reveal delay={0.15}>
-                  <h2 className="text-display-sm font-display font-normal text-ivory">
-                    Recent experience
-                  </h2>
-                  <ul className="mt-4 space-y-4">
-                    {experience.map((role) => (
-                      <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
-                        <p className="font-medium text-ivory">{role.role}</p>
-                        <p className="text-sm text-ivory/70">
-                          {role.org} &middot; {role.period}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                </Reveal>
-              </div>
-            </Container>
-          </ClipReveal>
-        </section>
+        {/* Same pinned mechanism as every other pinned section on the
+            site — a single beat (portrait, method text, and the
+            experience list all shown together, nothing sequential), so
+            it fits PinnedHold directly. See PinnedWorkingMethod's own
+            comment for why this section's own overflow-hidden (kept
+            for the redwood-canopy video) is safe to wrap this way. */}
+        <PinnedWorkingMethod />
 
         {/* Bold solid Soil, not the Phase-5 space tint — matches the
             grid-of-cards=soil rule now applied to every other card-grid

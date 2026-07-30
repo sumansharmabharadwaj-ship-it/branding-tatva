@@ -1,0 +1,163 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
+import { useLenis } from "@/components/SmoothScrollProvider";
+import { Container } from "@/components/Container";
+import { Reveal } from "@/components/Reveal";
+import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
+import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
+import type { Project } from "@/data/projects";
+
+// Same PinnedSlider/PinnedJourney/ElementsIntroPinned mechanism, applied
+// to "Selected work" — deliberately 2 stages, not 3 (one per card).
+// page.tsx's own comment on this section already states the intent:
+// "one large story plus two quiet footnotes, not three identical
+// cards." Giving each FeaturedSecondaryCard equal full-screen weight to
+// FeaturedWorkHero would contradict that hierarchy, so stage 0 is the
+// hero project alone and stage 1 is the existing side-by-side pair,
+// shown together exactly as they already are.
+//
+// Neither card component depends on scroll-position assumptions that
+// conflict with permanent mounting + opacity toggling: FeaturedWorkHero
+// uses useLazyMount (image load gate) and useTilt (mouse-driven), its
+// Ken Burns drift runs on its own repeat: Infinity loop rather than
+// whileInView; FeaturedSecondaryCard uses local hover state + useTilt.
+//
+// Desktop/motion-allowed only, matching every other pinned component's
+// convention (CSS-hidden dual-render, same as ElementsIntro — image
+// loading here is next/image's own lazy-load, not an eager <video>, so
+// the dual-mount concern PinnedVideoBreak works around doesn't apply).
+export function SelectedWorkPinned({ featured }: { featured: Project[] }) {
+  const prefersReducedMotion = useReducedMotion();
+
+  if (prefersReducedMotion || !featured[0]) {
+    return <SelectedWorkFallback featured={featured} />;
+  }
+
+  return (
+    <>
+      <div className="hidden sm:block">
+        <SelectedWorkPinnedDesktop featured={featured} />
+      </div>
+      <div className="sm:hidden">
+        <SelectedWorkFallback featured={featured} />
+      </div>
+    </>
+  );
+}
+
+function SelectedWorkPinnedDesktop({ featured }: { featured: Project[] }) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const stageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeIndexRef = useRef(0);
+  const lenis = useLenis();
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    function update() {
+      if (!wrapper) return;
+      const rect = wrapper.getBoundingClientRect();
+      const scrollDistance = 1 * window.innerHeight;
+      const raw = scrollDistance > 0 ? -rect.top / scrollDistance : 0;
+      const progress = Math.min(1, Math.max(0, raw));
+      const idx = Math.min(1, Math.round(progress));
+      if (idx !== activeIndexRef.current) {
+        activeIndexRef.current = idx;
+        setActiveIndex(idx);
+      }
+      stageRefs.current.forEach((stage, i) => {
+        if (!stage) return;
+        stage.style.opacity = String(Math.max(0, 1 - Math.abs(progress - i)));
+      });
+    }
+
+    update();
+    const unsubscribe = lenis?.on("scroll", update);
+    window.addEventListener("resize", update);
+    return () => {
+      unsubscribe?.();
+      window.removeEventListener("resize", update);
+    };
+  }, [lenis]);
+
+  const hero = featured[0];
+  const secondary = featured.slice(1);
+
+  return (
+    <div ref={wrapperRef} className="relative bg-soil" style={{ height: "300vh" }}>
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <div
+          ref={(node) => {
+            stageRefs.current[0] = node;
+          }}
+          className="absolute inset-0 [&>a]:h-full [&>a]:min-h-0"
+          style={{ opacity: 1, pointerEvents: activeIndex === 0 ? "auto" : "none" }}
+          aria-hidden={activeIndex !== 0}
+        >
+          <FeaturedWorkHero
+            href={`/work/${hero.slug}`}
+            image={hero.cardImage ?? "/images/own-forest-clearing.jpg"}
+            industry={hero.industry}
+            title={hero.title}
+            outcome={hero.outcome}
+            stats={hero.stats}
+            accent={hero.accent}
+          />
+        </div>
+
+        <div
+          ref={(node) => {
+            stageRefs.current[1] = node;
+          }}
+          className="absolute inset-0 flex items-center"
+          style={{ opacity: 0, pointerEvents: activeIndex === 1 ? "auto" : "none" }}
+          aria-hidden={activeIndex !== 1}
+        >
+          <Container>
+            <div className="grid gap-10 sm:grid-cols-2">
+              {secondary.map((project) => (
+                <FeaturedSecondaryCard key={project.slug} project={project} />
+              ))}
+            </div>
+          </Container>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SelectedWorkFallback({ featured }: { featured: Project[] }) {
+  const hero = featured[0];
+  const secondary = featured.slice(1);
+
+  return (
+    <div className="bg-soil py-20 sm:py-28">
+      {hero && (
+        <Reveal>
+          <FeaturedWorkHero
+            href={`/work/${hero.slug}`}
+            image={hero.cardImage ?? "/images/own-forest-clearing.jpg"}
+            industry={hero.industry}
+            title={hero.title}
+            outcome={hero.outcome}
+            stats={hero.stats}
+            accent={hero.accent}
+          />
+        </Reveal>
+      )}
+      <Container>
+        <div className="mt-10 grid gap-10 sm:grid-cols-2">
+          {secondary.map((project, i) => (
+            <Reveal key={project.slug} delay={i * 0.1}>
+              <FeaturedSecondaryCard project={project} />
+            </Reveal>
+          ))}
+        </div>
+      </Container>
+    </div>
+  );
+}
