@@ -71,9 +71,9 @@ export default function Home() {
               <span className="italic text-clay">remembered</span>.
             </>
           }
-          subhead="Strategy, identity, and content built around the five things every remembered brand gets right — purpose, experience, expression, voice, and presence. Not decoration. The reason people notice, trust, and come back."
+          subhead="Strategy, identity, and content built around the five things every remembered brand gets right: purpose, experience, expression, voice, and presence. The real reason people notice a brand, trust it, and come back to it."
         >
-          <LinkButton href="/contact">Start a brand conversation</LinkButton>
+          <LinkButton href="/contact">Let&apos;s build the version of your brand people remember</LinkButton>
           <LinkButton
             href="/work"
             variant="secondary"
@@ -82,11 +82,11 @@ export default function Home() {
             Explore the work
           </LinkButton>
           {/* w-full forces this onto its own line within CinematicHero's
-              flex-wrap CTA row instead of crowding the two buttons —
-              stays inside the hero's own scrim, no risk of a seam
-              against whatever section follows. Real, verified number
-              (Dr. Haley Nutrition, already live on /work), not invented
-              social proof. */}
+              flex wrap CTA row instead of crowding the two buttons. It
+              stays inside the hero's own scrim, so there is no seam
+              risk against whatever section follows. Real, verified
+              number (Dr. Haley Nutrition, already live on /work), never
+              invented social proof. */}
           <p className="w-full text-xs text-ivory/50 sm:text-sm">
             The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks.
           </p>
@@ -107,33 +107,55 @@ export default function Home() {
 
         {/* New trust beat — direct feedback that the page went straight
             from the hero's emotional hook to the elements framework
-            (Authority) with no credibility established first, breaking
+            (Authority) with zero credibility established first, breaking
             the requested Attention → Curiosity → Trust → Authority
-            sequence. Real credential, not padding. */}
+            sequence. Real credential, never padding. */}
+        {/* Expanded from a single credibility line into real, verifiable
+            credentials plus a factual count, for Phase 3 (Trust
+            Building). Testimonials and client logos are deliberately
+            absent here: real material exists for neither yet, and
+            inventing them would break the same commercial-honesty
+            standard the rest of this site's copy holds to. Credentials
+            pulled directly from data/about.ts (M.A. Clinical Psychology,
+            B.A. English Literature, both real, dated, verifiable); "5
+            real client engagements" is a literal count of projects.ts,
+            never a round invented number. Specific per-project proof
+            (MyShopInEurope, Executive Springboard, Dr. Haley's real
+            stats) already lives in the Selected work section below,
+not repeated here. */}
         <section className="bg-soil py-14 text-center">
           <Container>
             <Reveal>
               <p className="font-display text-lg text-ivory sm:text-xl">Suman Sharma</p>
               <p className="mx-auto mt-2 max-w-xl text-sm text-ivory/70 sm:text-base">
-                Clinical psychology and English literature, applied to brand strategy — not a personality trait, a working method.
+                Clinical psychology and English literature, applied to brand strategy. A working method, the actual reason perception, memory, and trust get treated as a discipline here.
               </p>
+              <div className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs uppercase tracking-[0.15em] text-ivory/50 sm:text-sm">
+                <span>M.A. Clinical Psychology</span>
+                <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ivory/30" />
+                <span>B.A. (Hons) English Literature</span>
+                <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ivory/30" />
+                <span>5 real client engagements</span>
+              </div>
             </Reveal>
           </Container>
         </section>
 
         {/* Direct feedback the site needed to lead with real branding
-            theory before naming the elements framework — "branding
-            isn't five services, it's five decisions every remembered
-            brand makes," then the elements as the explanatory device. */}
+            theory before naming the elements framework: branding as
+            five decisions every remembered brand makes, then the
+            elements as the explanatory device underneath that claim.
+            Also folds in the requested consumer-psychology angle: why
+            memory, trust, and choice actually work the way they do. */}
         <section className="bg-soil pb-10 pt-4 sm:pb-14">
           <Container className="max-w-2xl text-center">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The framework</p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                Branding isn&apos;t five services. It&apos;s five decisions every remembered brand makes.
+                Branding means five decisions every remembered brand makes.
               </h2>
               <p className="mt-4 text-ivory/75">
-                Positioning. Distinctiveness. Narrative. Verbal identity. Salience — the language changes by agency, the decisions don&apos;t. Here&apos;s the shape they take when the work actually gets done.
+                Positioning. Distinctiveness. Narrative. Verbal identity. Salience. The language changes by agency. The decisions stay the same, because human memory, trust, and choice work the same way regardless of who is doing the branding.
               </p>
             </Reveal>
           </Container>
@@ -167,7 +189,7 @@ export default function Home() {
                 <div>
                   <h2 className="text-display-sm font-display font-normal text-ivory">Selected work</h2>
                   <p className="mt-2 text-sm italic text-ivory/70">
-                    No concept work. No &ldquo;if this launched&rdquo; numbers. Everything below is what actually happened when it went live.
+                    Real projects, real numbers, verified after launch. Everything below actually happened.
                   </p>
                 </div>
               </Reveal>
@@ -193,9 +215,12 @@ export default function Home() {
         <SelectedWorkPinned featured={featured} />
 
         {/* Soft mid-funnel CTA — direct feedback that the page only had
-            one ask at the very top and one at the very bottom. Desire is
-            highest right after seeing real proof; a visitor ready here
-            shouldn't have to scroll through Process/FAQ to find a link. */}
+            one ask at the very top and one at the very bottom. Desire
+            peaks right after seeing real proof, and a visitor ready
+            here deserves a link before Process/FAQ. Curiosity-driven
+            copy, distinct from the hero's and closing CTA's own text,
+            matching what a reader actually wants at this point: proof
+            of a fit, before a full booking commitment. */}
         <section className="bg-soil py-10 text-center">
           <Container>
             <Reveal>
@@ -204,7 +229,7 @@ export default function Home() {
                 variant="secondary"
                 className="border-ivory/30 text-ivory hover:bg-ivory/10"
               >
-                See this happen for your brand
+                Let&apos;s uncover the perception your market already has
               </LinkButton>
             </Reveal>
           </Container>
@@ -251,7 +276,7 @@ export default function Home() {
           <Container className="pb-16 pt-4 text-center sm:pb-20">
             <Reveal>
               <p className="mx-auto max-w-lg text-sm italic text-ivory/70 sm:text-base">
-                Skip a step and it doesn&apos;t fail loudly — it just quietly costs you the recall you paid for.
+                Skipping a step costs you quietly. The recall you paid for simply stops compounding.
               </p>
             </Reveal>
           </Container>
@@ -357,15 +382,15 @@ export default function Home() {
                 className="mx-auto max-w-xl text-display-md font-display font-normal text-ivory"
                 style={{ textShadow: "0 2px 14px rgba(0,0,0,0.85), 0 1px 4px rgba(0,0,0,0.9)" }}
               >
-                Let&apos;s find the Tatva of your business — the thing that makes people remember you instead of just seeing you.
+                Let&apos;s find the Tatva of your business, the layer that makes people remember you long after they have simply seen you.
               </h2>
               <div className="mt-8">
-                <LinkButton href="/contact">Start a brand conversation</LinkButton>
+                <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
                 <p
                   className="mt-4 text-sm text-ivory/70"
                   style={{ textShadow: "0 1px 6px rgba(0,0,0,0.8)" }}
                 >
-                  Twenty minutes, no pitch deck. If it&apos;s not a fit, I&apos;ll tell you that too.
+                  Twenty minutes, a real conversation, zero pitch deck. Honest feedback either way.
                 </p>
               </div>
             </div>

@@ -1,12 +1,3 @@
-export type ServiceGroup = {
-  slug: string;
-  name: string;
-  forWho: string;
-  description: string;
-  includes: string[];
-  color: string;
-};
-
 export type Offering = {
   name: string;
   detail: string;
@@ -106,92 +97,33 @@ export const packages: Package[] = [
 export const offerings: Offering[] = [
   {
     name: "Brand Strategy & Identity",
-    detail: "Positioning decided before a single pixel — the visual system is the result of that decision, never a substitute for it.",
+    detail: "Positioning decided before a single pixel exists. The visual system carries that decision forward, always the result, always second.",
     color: "#B85A34", // clay
   },
   {
     name: "Content Strategy",
-    detail: "What gets said, and in what order, decided before the first post — not improvised into existence one caption at a time.",
+    detail: "What gets said, and in what order, decided before the first post goes out. Real planning, well ahead of improvising one caption at a time.",
     color: "#24394D", // indigo
   },
   {
     name: "Social Media Marketing",
-    detail: "Growth that compounds because the positioning underneath it is consistent, not because the posting volume went up.",
+    detail: "Growth that compounds because the positioning underneath it stays consistent, the real driver, far more than posting volume.",
     color: "#5C6B4A", // sage
   },
   {
     name: "Website Development",
-    detail: "A brand's most-visited touchpoint, and its most under-strategized one. Built to carry the position, not just host a logo.",
+    detail: "A brand's most visited touchpoint, and often its least strategized one. Built to carry the position, far beyond hosting a logo.",
     color: "#C28A28", // ochre
   },
   {
     name: "Content Creation",
-    detail: "Written in the voice the strategy actually defined — not a generic tone with the brand name swapped in.",
+    detail: "Written in the voice the strategy actually defined. Specific to the brand, distinct from any generic tone with the name swapped in.",
     color: "#AD6F5C", // rose-earth
   },
   {
     name: "Marketing Strategy",
-    detail: "Marketing amplifies a position. It doesn't create one. This is where the two stop running in parallel.",
+    detail: "Marketing amplifies a position it already has. This is where the two finally connect, working together instead of running in parallel.",
     color: "#CD7A4C", // terracotta
   },
 ];
 
-// Organised by client need, per PROJECT_PLAN.md. Pricing intentionally
-// omitted until Suman approves an approach — see BRAND_STRATEGY open items.
-export const serviceGroups: ServiceGroup[] = [
-  {
-    slug: "brand-beginning",
-    name: "Brand Beginning",
-    forWho: "For founders and businesses starting with an idea, before anything is built.",
-    description:
-      "Before a website or a logo, a brand needs to know what it believes, who it's for, and why it matters. I call this the Earth work, done first so nothing built afterward has to guess.",
-    includes: [
-      "Brand discovery and positioning",
-      "Audience definition",
-      "Purpose and values",
-      "Launch messaging direction",
-    ],
-    color: "#B85A34", // clay — Earth
-  },
-  {
-    slug: "brand-clarity",
-    name: "Brand Clarity",
-    forWho: "For existing brands that feel unclear, inconsistent, or hard to explain in one sentence.",
-    description:
-      "Usually the real problem is that the story fails to hold together across channels, rather than visibility itself. I find the disagreement between how a brand looks, sounds, and actually behaves, and resolve it.",
-    includes: [
-      "Brand audit",
-      "Repositioning",
-      "Voice and messaging alignment",
-      "Content structure",
-    ],
-    color: "#24394D", // indigo — Water
-  },
-  {
-    slug: "brand-elevation",
-    name: "Brand Elevation",
-    forWho: "For established brands ready for stronger recognition and sharper creative direction.",
-    description:
-      "For a brand with a working foundation that needs its expression to catch up, I build campaigns, creative direction, and content meant to earn attention on purpose rather than by accident.",
-    includes: [
-      "Creative direction",
-      "Campaign concepts",
-      "Content strategy",
-      "Launch communication",
-    ],
-    color: "#C28A28", // ochre — Fire
-  },
-  {
-    slug: "brand-presence",
-    name: "Brand Presence",
-    forWho: "For brands that need ongoing content, consistency, and someone watching the whole system.",
-    description:
-      "I build recognition month over month, through sustained content and consistency work, rather than a single campaign. It shows up as steady growth rather than a spike.",
-    includes: [
-      "Ongoing content management",
-      "Consistency frameworks",
-      "Performance review and adjustment",
-    ],
-    color: "#AD6F5C", // rose-earth — Space
-  },
-];

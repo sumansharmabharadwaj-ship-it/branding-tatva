@@ -29,7 +29,7 @@ export const elements: Element[] = [
     name: "Earth · Foundation",
     poetic: "What a brand stands on, long before it says a word.",
     meaning: "Purpose, audience, and positioning: the research most brands skip.",
-    manifesto: ["Everything people never see.", "The strategic architecture beneath every premium brand."],
+    manifesto: ["Everything hidden from view.", "The strategic architecture beneath every premium brand."],
     concepts: [
       "Category definition.",
       "Competitive framing.",
@@ -60,7 +60,7 @@ export const elements: Element[] = [
       "Every interaction either reinforces memory or weakens it.",
       "Every touchpoint teaches customers what to expect.",
     ],
-    concepts: ["Experience isn't service.", "It's perception, repeated."],
+    concepts: ["Experience is perception, repeated.", "That is the real service."],
     color: "#24394D",
     services: [
       "Customer journey mapping",

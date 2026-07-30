@@ -41,16 +41,16 @@ export const faqs = [
   {
     question: "Will branding increase revenue?",
     answer:
-      "Branding isn't a direct revenue lever — it's what makes your marketing and sales work harder instead of fighting an unclear story. One client's engagement rate moved from 0.71% to 2.81% over two months on the same posting budget; that's the kind of compounding effect done right, not a guarantee of what happens for every business.",
+      "Branding works as an indirect revenue lever. It makes your marketing and sales work harder, aligned with a clear story instead of fighting one. One client's engagement rate moved from 0.71% to 2.81% over two months on the same posting budget, a real example of compounding done right, specific to that business rather than a universal promise.",
   },
   {
     question: "How long before I see results?",
     answer:
-      "Depends what you mean by results. Positioning and identity land in weeks. Recognition — the kind that shows up as more inbound trust — builds over months, not one campaign.",
+      "Depends what you mean by results. Positioning and identity land in weeks. Recognition, the kind that shows up as more inbound trust, builds gradually over months, well beyond the span of one campaign.",
   },
   {
     question: "Can you actually implement, or just strategize?",
     answer:
-      "Both. Strategy that never gets built is just a deck. I carry the work through to the actual website, content, and campaigns, not just the plan for them.",
+      "Both. Strategy only counts once it gets built. I carry the work through to the actual website, content, and campaigns, always beyond the plan alone.",
   },
 ] as const;

@@ -30,7 +30,7 @@ export const process: ProcessStage[] = [
   {
     stage: "Decode",
     description:
-      "What attention is actually doing right now — what gets read, what gets skipped, where the story stops making sense to someone outside the business. Not opinion. Pattern.",
+      "What attention is actually doing right now: what gets read, what gets skipped, where the story stops making sense to someone outside the business. Pattern, always, over opinion.",
     element: "Fire",
     video: "/videos/higgsfield-process-notice.mp4",
     poster: "/images/higgsfield-process-notice-poster.jpg",
@@ -46,7 +46,7 @@ export const process: ProcessStage[] = [
   {
     stage: "Signal",
     description:
-      "Voice, identity, and messaging take the shape the architecture demands — never invented first, always built on what Architect already decided.",
+      "Voice, identity, and messaging take the shape the architecture demands, always built on what Architect already decided, always after it.",
     element: "Water",
     video: "/videos/higgsfield-process-shape.mp4",
     poster: "/images/higgsfield-process-shape-poster.jpg",
@@ -54,7 +54,7 @@ export const process: ProcessStage[] = [
   {
     stage: "Influence",
     description:
-      "The brand becomes something people actually encounter: the site, the content, the campaign. Strategy that never reaches an audience isn't strategy. It's a deck.",
+      "The brand becomes something people actually encounter: the site, the content, the campaign. Strategy only counts once it reaches an audience. Anything short of that stays a deck.",
     element: "Fire",
     video: "/videos/higgsfield-process-express.mp4",
     poster: "/images/higgsfield-process-express-poster.jpg",
@@ -62,7 +62,7 @@ export const process: ProcessStage[] = [
   {
     stage: "Compound",
     description:
-      "Recognition isn't won once. It accrues, or it doesn't, in the months after the campaign ends — usually exactly where most brands stop paying attention.",
+      "Recognition accrues gradually across the months after a campaign ends, exactly where most brands already stopped paying attention.",
     element: "Space",
     video: "/videos/higgsfield-process-stay.mp4",
     poster: "/images/higgsfield-process-stay-poster.jpg",

@@ -49,7 +49,7 @@ export const projects: Project[] = [
     services: ["Space · ongoing content management", "Air · content strategy"],
     outcome:
       "Instagram gained 126 new followers in January from 12 posts, more than December's 111 followers from 23 posts. That's a 104% increase in followers earned per post, alongside a 1,350% jump in comments per post. Facebook grew steadily from roughly 59 to 69 total fans over the same period, with engagement per post up 67%. LinkedIn impressions rose 365%, and engagement rate climbed from 0.71% to 2.81%.",
-    hook: "Proof that posting less can outperform posting more — when what's left actually earns attention.",
+    hook: "Proof that posting less can outperform posting more, once what remains actually earns attention.",
     reflection:
       "The clearest signal was impressions barely dropping (down just 10%) despite posting 48% less. The platform was actively rewarding the more relevant content instead of just showing it to fewer people. That's the difference between reach and trust.",
     closingQuote:
@@ -86,7 +86,7 @@ export const projects: Project[] = [
     services: ["Earth · brand foundation", "Air · messaging"],
     outcome:
       "Delivered a complete brand foundation and a full content operating system: positioning, content pillars, playbooks for each channel, and a rollout plan, quarter by quarter, connecting each phase to a specific business outcome (awareness, trust, leads, conversion).",
-    hook: "A marketplace that refused to compete on price — because craft and origin were the actual advantage worth selling.",
+    hook: "A marketplace that refused to compete on price. Craft and origin became the actual advantage worth selling.",
     reflection:
       "The sharpest strategic call was refusing to let 'MyShopInEurope' default to meaning 'cheap Indian goods.' Repositioning around craft and origin, ahead of price, changes who the platform can credibly sell to.",
     closingQuote:
@@ -113,7 +113,7 @@ export const projects: Project[] = [
     services: ["Water · customer journey", "Air · content strategy"],
     outcome:
       "Delivered a structured content system, built platform by platform, specifically around driving webinar registrations rather than generic engagement metrics.",
-    hook: "Content built to end in a registration, not just a like. The difference between attention and a finished strategy.",
+    hook: "Content built to end in a registration, a real one, well beyond a like. The difference between attention and a finished strategy.",
     closingQuote:
       "Content that only earns attention is unfinished. It has to lead somewhere before it counts as strategy.",
     cardImage: "/images/card-executive-springboard-poster.jpg",
