@@ -43,7 +43,7 @@ export default function AboutPage() {
           headline={aboutIntro.opening}
           body={elements[0].poetic}
           ctaHref="/contact"
-          ctaLabel="Start a brand conversation"
+          ctaLabel="Let's build the version of your brand people remember"
           video="/videos/own-companions-split.mp4"
           poster="/images/own-companions-split-poster.jpg"
           bgVideo="/videos/about-hero-bg-meadow.mp4"
