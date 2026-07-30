@@ -6,14 +6,11 @@ import { LinkButton } from "@/components/Button";
 import { FAQ } from "@/sections/FAQ";
 import { DustMotes } from "@/components/DustMotes";
 import { Reveal } from "@/components/Reveal";
-import { ScatterReveal } from "@/components/ScatterReveal";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { ClipReveal } from "@/components/ClipReveal";
 import { ElementsSection } from "@/sections/Elements";
-import { ElementsIntro } from "@/sections/Elements/ElementsIntro";
 import { SelectedWorkPinned } from "@/sections/Home/SelectedWorkPinned";
 import { CinematicHero } from "@/sections/Hero";
-import { PinnedThreshold } from "@/components/PinnedThreshold";
 import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -86,99 +83,15 @@ export default function Home() {
           </LinkButton>
         </CinematicHero>
 
-        {/* Two-part editorial statement — the problem, then the philosophy,
-            as one long unbroken chapter rather than two boxed sections.
-            This used to be a flat Sage text block sitting on top of a
-            separate VideoBreak below it — three different attempts to
-            put motion behind the text block on its own (an abstract
-            clip, a CSS glow, then a second instance of this same video)
-            each failed on either aesthetic fit or the site's own
-            no-repeat rule. The actual fix: there's only one video here
-            now. VideoBreak's new topContent slot renders the heading
-            and paragraph inside the SAME video instance the quote
-            already uses below it, so the whole passage is one
-            continuous cinematic moment — cinematic-waterlight.mp4
-            appears exactly once in the codebase, not twice. */}
-        <PinnedVideoBreak
-          src="/videos/cinematic-waterlight.mp4"
-          poster="/images/cinematic-waterlight-poster.jpg"
-          quote="Attention is the first thing any brand has to earn."
-          height="145vh"
-          cameraPush
-          wordFade
-          spotlight
-          topContent={
-            <div className="grid gap-8 sm:grid-cols-2 sm:items-start sm:gap-16">
-              {/* Was SplitReveal (calm word fade) — this is the single
-                  showcase spot for ScatterReveal's more dramatic
-                  scattered-to-settled entrance instead, the site's own
-                  version of the kinetic-typography intro technique. */}
-              <ScatterReveal className="font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.1] text-ivory">
-                A brand can be visible and still go unnoticed.
-              </ScatterReveal>
-              <div className="max-w-md space-y-4 text-ivory/75 sm:ml-auto sm:text-right">
-                <Reveal delay={0.15}>
-                  <p>
-                    Being present differs from being recognised.
-                    Looking attractive differs from communicating
-                    clearly. Posting content differs from building
-                    recall.
-                  </p>
-                </Reveal>
-                <Reveal delay={0.25}>
-                  <p>
-                    That gap is usually a{" "}
-                    <span className="font-semibold text-ivory underline decoration-sandstone underline-offset-4">
-                      clarity problem
-                    </span>
-                    , far more often than a visibility one.
-                  </p>
-                </Reveal>
-              </div>
-            </div>
-          }
-        />
-
-        {/* pt-* lives on the section itself, not a margin-top on the
-            child below — a child's top margin with nothing (no padding/
-            border) on the parent to contain it collapses straight
-            through and pushes the whole section's rendered box down,
-            leaving the "spacing" show as a gap of the page's own cream
-            above the section instead of space inside it. Padding can't
-            collapse the same way, and the values are tightened (not
-            just moved) — direct feedback that this gap read as dead
-            space even before the collapse bug was diagnosed. */}
-        {/* Pilot: these two sections ("Five elements. One brand." and
-            "The five elements" intro) used to scroll past independently.
-            Direct feedback pointed at ElementsSection's own PinnedSlider
-            as the feeling to extend, so they're now one pinned 2-stage
-            cinematic sequence leading straight into it — see
-            ElementsIntro's own comment for the full reasoning and why
-            this stays scoped to just these two sections rather than the
-            whole page. Desktop/motion-allowed only; mobile and reduced
-            motion get these same two sections back in normal document
-            flow, unchanged from before this pilot. */}
-        <ElementsIntro />
-
+        {/* Direct feedback that this section, ElementsIntro, the two
+            atmospheric quote breaks below, and Threshold all read as
+            "useless" — cut and the videos kept on disk (not deleted)
+            rather than reused elsewhere for now. What used to live here:
+            a "clarity problem" text passage over cinematic-waterlight.mp4.
+            Marquee now leads straight from Hero into the elements grid. */}
         <KineticMarquee text="EARTH · WATER · FIRE · AIR · SPACE" />
 
         <ElementsSection elements={elements} />
-
-        {/* Was own-forest-stream.mp4 — direct feedback wanting something
-            more alive: a lush green, cinematic flowing river instead.
-            pixabay-emerald-river.mp4 (vivid turquoise-green water over
-            mossy rocks, tall grass framing the bank) still carries the
-            same idea the quote makes — motion and stillness sitting
-            together in one frame — just with real color and life to it
-            instead of a duller, quieter clip. */}
-        <PinnedVideoBreak
-          src="/videos/pixabay-emerald-river.mp4"
-          poster="/images/pixabay-emerald-river-poster.jpg"
-          quote="The parts that stay still are usually the ones holding everything else up."
-          height="72vh"
-          cameraPush
-          spotlight
-        />
 
         {/* Was flat bg-soil — direct feedback that the heading zone here
             still read as a blank gap between the elements grid above and
@@ -226,15 +139,6 @@ export default function Home() {
             mounting + opacity toggling. */}
         <SelectedWorkPinned featured={featured} />
 
-        <PinnedVideoBreak
-          src="/videos/higgsfield-lone-pine.mp4"
-          poster="/images/higgsfield-lone-pine-poster.jpg"
-          quote="Every strong brand has a moment like this, quiet, and completely sure of itself."
-          height="92vh"
-          wordFade
-          spotlight
-        />
-
         {/* Was solid Indigo (before that, a pale blue-gray wash) — one
             more one-off hue in a page that already had Sage and Clay
             elsewhere, the exact color-cycling this round removes. Soil,
@@ -275,47 +179,13 @@ export default function Home() {
           <ProcessSection stages={process} elementColor={elementColor} />
         </section>
 
-        {/* Moved here from between the elements grid and Selected work —
-            that position interrupted "here's the method, here's it in
-            action" with an unrelated qualification question mid-story.
-            By this point in the page a visitor has seen the method (Five
-            Elements), the proof (Selected work), and the mechanism
-            (Process) — "which of these two are you" now reads as a
-            natural personalized next step into FAQ/CTA, not an
-            interruption. Two brand pathways — an interactive
-            split-screen, not two bordered text blocks. See
-            sections/Threshold. */}
-        <PinnedThreshold
-          heading="Every brand starts at one of two thresholds"
-          panels={[
-            {
-              key: "left",
-              eyebrow: "Threshold one",
-              title: "Starting with an idea",
-              description:
-                "Earth first work: purpose, audience, and positioning, before anything else gets built.",
-              image: "/images/higgsfield-forest-trail-mist-poster.jpg",
-              video: "/videos/higgsfield-forest-trail-mist.mp4",
-              gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
-              ctaLabel: "Brand Beginning",
-              ctaHref: "/services#brand-beginning",
-              activeHeading: "Then you're building the foundation first.",
-            },
-            {
-              key: "right",
-              eyebrow: "Threshold two",
-              title: "Already in business",
-              description:
-                "An audit first, finding exactly where the story stops holding together.",
-              image: "/images/higgsfield-forest-stream-poster.jpg",
-              video: "/videos/higgsfield-forest-stream.mp4",
-              gradient: "linear-gradient(180deg, rgba(39,34,30,0.25) 0%, rgba(39,34,30,0.9) 100%)",
-              ctaLabel: "Brand Clarity",
-              ctaHref: "/services#brand-clarity",
-              activeHeading: "Then you're finding where the story breaks.",
-            },
-          ]}
-        />
+        {/* Threshold ("every brand starts at one of two thresholds") used
+            to sit here — direct feedback called it out as useless along
+            with the other video-quote interludes on this page, cut
+            entirely. Its routing job (starting fresh vs. already in
+            business) already lives on Services' own packages section
+            (#brand-beginning/#brand-clarity), so nothing is lost, just
+            not duplicated on Home too. Videos kept on disk, not deleted. */}
 
         {/* Had zero photo/video at all — direct feedback that it read as
             flat and empty next to every other section on the site.
