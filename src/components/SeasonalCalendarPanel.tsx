@@ -1,26 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CalendlyEmbed } from "./CalendlyEmbed";
 import { BackgroundVideo } from "./BackgroundVideo";
-import { ElementGlyph } from "./ElementGlyph";
-import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { EASE_AIR } from "@/lib/motion";
 import { elements, type Element } from "@/data/elements";
 import { site } from "@/data/site";
 
-// Redesigned per direct feedback on the first version, which leaned on
-// four European stock photos (Bavarian cherry blossoms, a Romanian
-// waterfall, Mount Fuji) that had nothing to do with this brand and
-// read as a bolted-on widget, not part of the site. This version
-// introduces no new imagery at all — it reuses the five elements
-// already at the center of the whole site (the same graded photos,
-// accent colors, and hand-drawn ElementGlyph marks already established
-// in the Elements section, Process journey, and Services page), mapped
-// across the year instead of four generic seasons, so the calendar
-// reads as one more room in the same five-element house rather than a
-// separate feature. The copy also pulls each element's own `poetic`
-// line from data/elements.ts — already-approved brand language — rather
-// than inventing new seasonal copy.
+// Rebuilt to match direct reference images — a real glass-widget
+// calendar (Weekly/Monthly toggle, an actual date grid, today
+// highlighted) over a full-bleed photo, the way an iOS/Android widget
+// looks, rather than a quote-card layout. The brand tie-in is the
+// backdrop and accent, not invented calendar chrome: the background is
+// the current element's own already-graded video, "today" is
+// highlighted in that element's own accent color, and the element's
+// `poetic` line sits as one quiet caption underneath rather than
+// dominating the card. Booking mechanics are unchanged — this is a
+// themed shell around the existing Calendly embed.
 const MONTH_TO_ELEMENT: Element["slug"][] = [
   "earth", "earth", "earth", // Jan–Mar: the year's foundation
   "water", "water",          // Apr–May
@@ -33,98 +30,204 @@ const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
 ];
+const DAY_LETTERS = ["S", "M", "T", "W", "T", "F", "S"];
+
+function buildMonthGrid(year: number, month: number): (number | null)[][] {
+  const firstWeekday = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells: (number | null)[] = [
+    ...Array(firstWeekday).fill(null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+  ];
+  const weeks: (number | null)[][] = [];
+  for (let i = 0; i < cells.length; i += 7) {
+    weeks.push(cells.slice(i, i + 7));
+  }
+  return weeks;
+}
 
 export function SeasonalCalendarPanel() {
+  const prefersReducedMotion = useReducedMotion();
   const [expanded, setExpanded] = useState(false);
-  // Resolved client-side only, after mount — computing new Date()
-  // during render would let the server and client disagree on "now"
-  // and trip a hydration mismatch, the same class of bug this codebase
-  // already works around elsewhere (see useMediaQuery's own
-  // useState(false) + useEffect pattern). January/Earth is a
-  // deterministic default for the brief pre-mount frame — this panel
-  // sits far down the page and is never actually seen before mounting.
+  const [view, setView] = useState<"weekly" | "monthly">("weekly");
+  // Resolved client-side only, after mount — computing new Date() during
+  // render would let the server and client disagree on "now" and trip a
+  // hydration mismatch (see useMediaQuery's own pattern elsewhere in
+  // this codebase).
   const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
     setNow(new Date());
   }, []);
 
   const month = now?.getMonth() ?? 0;
+  const year = now?.getFullYear() ?? 2026;
+  const today = now?.getDate() ?? 1;
   const element = elements.find((el) => el.slug === MONTH_TO_ELEMENT[month]) ?? elements[0];
-  const day = now?.getDate() ?? null;
-  const year = now?.getFullYear() ?? null;
-  const monthName = MONTH_NAMES[month];
+
+  const weekDates = useMemo(() => {
+    if (!now) return [];
+    return Array.from({ length: 7 }, (_, i) => today - 3 + i);
+  }, [now, today]);
+
+  const monthGrid = useMemo(() => buildMonthGrid(year, month), [year, month]);
 
   return (
-    <div className="relative mx-auto mt-16 max-w-2xl overflow-hidden rounded-2xl">
-      <div className="absolute inset-0">
+    <div
+      className="relative mx-auto mt-16 max-w-md overflow-hidden rounded-[2rem] border border-white/15 p-6 sm:p-7"
+      style={{ boxShadow: "0 30px 80px -20px rgba(0,0,0,0.55)" }}
+    >
+      <div className="absolute inset-0 -z-10">
         <BackgroundVideo
           video={element.video ?? ""}
           poster={element.image}
           imagePosition={element.imagePosition ?? "center"}
         />
-        {/* Same tint + overlay recipe ElementRowBackground already uses
-            for these exact photos elsewhere on the site — a light
-            multiply of the element's own color, then the shared
-            BREAK_OVERLAY_GRADIENT every video-quote section uses, so
-            this panel reads as visually continuous with the rest of
-            the site instead of a different treatment. */}
-        <div
-          className="absolute inset-0"
-          style={{ backgroundColor: element.color, opacity: 0.18, mixBlendMode: "multiply" }}
-        />
-        <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
+        <div className="absolute inset-0 bg-soil/40 backdrop-blur-[2px]" />
       </div>
 
-      {/* The current element's own hand-drawn mark, oversized and faint
-          — the same ghost-watermark language used elsewhere on this
-          site (ELEMENTS behind the Home heading, WHY on About), not a
-          decorative stock icon. */}
-      <ElementGlyph
-        slug={element.slug}
-        className="pointer-events-none absolute -top-10 -right-8 h-52 w-52 opacity-[0.16] sm:h-64 sm:w-64"
-        style={{ color: element.color }}
-        strokeWidth={0.8}
-      />
-
-      <div className="relative px-8 py-12 text-center sm:px-14 sm:py-14">
-        <p
-          className="text-xs font-medium uppercase tracking-[0.2em]"
-          style={{ color: element.color }}
-        >
-          {element.name}
-        </p>
-
-        <p className="mx-auto mt-5 max-w-sm text-pretty font-display text-2xl italic leading-snug text-ivory sm:text-[1.75rem]">
-          &ldquo;{element.poetic}&rdquo;
-        </p>
-
-        <div className="mx-auto mt-8 flex max-w-[200px] items-baseline justify-center gap-3 border-t border-ivory/20 pt-5">
-          <span className="font-display text-4xl font-normal leading-none text-ivory">{day ?? " "}</span>
-          <span className="text-left text-sm leading-tight text-ivory/70">
-            {monthName}
-            <br />
-            {year ?? " "}
-          </span>
+      {/* Weekly / Monthly toggle, same shape and position as the
+          reference — a shared sliding highlight (layoutId) rather than
+          each pill managing its own active state. */}
+      <div className="flex items-center justify-between">
+        <div className="relative flex rounded-full border border-white/20 bg-black/15 p-1">
+          {(["weekly", "monthly"] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setView(v)}
+              className="relative rounded-full px-4 py-1.5 text-sm font-medium capitalize transition-colors duration-300"
+              style={{ color: view === v ? "#27221E" : "rgba(244,239,230,0.75)" }}
+            >
+              {view === v && (
+                <motion.span
+                  layoutId="active-view-pill"
+                  className="absolute inset-0 rounded-full bg-ivory"
+                  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.35, ease: EASE_AIR }}
+                />
+              )}
+              <span className="relative">{v}</span>
+            </button>
+          ))}
         </div>
+        <span
+          className="h-2.5 w-2.5 rounded-full"
+          style={{ backgroundColor: element.color }}
+          aria-hidden="true"
+        />
+      </div>
 
-        <p className="mx-auto mt-6 max-w-xs text-sm text-ivory/75">
-          If this feels like the right moment, I&apos;d like to hear about it — twenty minutes, whenever suits you, no pitch attached.
-        </p>
+      <AnimatePresence mode="wait">
+        {view === "weekly" ? (
+          <motion.div
+            key="weekly"
+            initial={prefersReducedMotion ? undefined : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: EASE_AIR }}
+          >
+            <div className="mt-6 flex items-baseline justify-between">
+              <span className="font-display text-4xl font-normal leading-none text-ivory">
+                {MONTH_NAMES[month]}
+              </span>
+              <span className="font-display text-4xl font-normal leading-none text-ivory">{today}</span>
+            </div>
+            <div className="mt-6 grid grid-cols-7 gap-1 text-center">
+              {DAY_LETTERS.map((d, i) => (
+                <span key={i} className="text-xs text-ivory/50">
+                  {d}
+                </span>
+              ))}
+            </div>
+            <div className="mt-2 grid grid-cols-7 gap-1 text-center">
+              {weekDates.map((d, i) => (
+                <div
+                  key={i}
+                  className="mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm"
+                  style={
+                    d === today
+                      ? { backgroundColor: element.color, color: "#F4EFE6" }
+                      : { color: "rgba(244,239,230,0.85)" }
+                  }
+                >
+                  {d}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="monthly"
+            initial={prefersReducedMotion ? undefined : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: EASE_AIR }}
+          >
+            <div className="mt-6 grid grid-cols-7 text-center">
+              {DAY_LETTERS.map((d, i) => (
+                <span key={i} className="pb-2 text-xs text-ivory/50">
+                  {d}
+                </span>
+              ))}
+            </div>
+            {monthGrid.map((week, wi) => (
+              <div
+                key={wi}
+                className={`grid grid-cols-7 border-white/15 py-2 ${wi > 0 ? "border-t" : ""}`}
+              >
+                {week.map((d, di) => (
+                  <div key={di} className="flex items-center justify-center text-sm">
+                    {d && (
+                      <span
+                        className="flex h-7 w-7 items-center justify-center rounded-full"
+                        style={
+                          d === today
+                            ? { backgroundColor: element.color, color: "#F4EFE6" }
+                            : { color: "rgba(244,239,230,0.85)" }
+                        }
+                      >
+                        {d}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        <button
+      <p className="mx-auto mt-6 max-w-xs text-center text-xs italic leading-snug text-ivory/60">
+        &ldquo;{element.poetic}&rdquo;
+      </p>
+
+      <div className="mt-5 flex items-center justify-between gap-3">
+        <span className="text-sm text-ivory/70">Twenty minutes, no pitch attached.</span>
+        <motion.button
           type="button"
           onClick={() => setExpanded(true)}
-          className={`mt-7 inline-flex items-center gap-1.5 rounded-full border border-ivory/30 px-6 py-3 text-sm font-medium text-ivory transition-all duration-300 hover:-translate-y-0.5 hover:bg-ivory/10 ${expanded ? "hidden" : ""}`}
+          whileHover={prefersReducedMotion ? undefined : { scale: 1.04 }}
+          whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+          className={`shrink-0 rounded-full bg-ivory px-5 py-2.5 text-sm font-medium text-soil transition-opacity duration-300 ${expanded ? "pointer-events-none opacity-0" : ""}`}
         >
-          Find a time
-        </button>
-
-        {expanded && (
-          <div className="mt-7 rounded-lg bg-background p-1 sm:p-2">
-            <CalendlyEmbed url={site.calendlyUrl} />
-          </div>
-        )}
+          + Book a call
+        </motion.button>
       </div>
+
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={prefersReducedMotion ? undefined : { opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.4, ease: EASE_AIR }}
+            className="overflow-hidden"
+          >
+            <div className="mt-5 rounded-2xl bg-background p-1 sm:p-2">
+              <CalendlyEmbed url={site.calendlyUrl} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
