@@ -86,8 +86,7 @@ export default function ServicesPage() {
               </SplitReveal>
               <p className="mx-auto mt-4 max-w-xl text-ivory/70">
                 Strategy, identity, content, and the channels that carry it.
-                Here&apos;s what I actually do, before we get into how I
-                think about it.
+                What gets built, before the thinking behind it.
               </p>
             </Reveal>
           </Container>
@@ -139,7 +138,7 @@ export default function ServicesPage() {
         <VideoBreak
           src="/videos/own-golden-branches.mp4"
           poster="/images/own-golden-branches-poster.jpg"
-          quote="The right service is just the vehicle. The strategy is what moves."
+          quote="The service is the vehicle. The strategy is what moves."
           height="72vh"
           imagePosition="center 75%"
           cameraPush
@@ -171,9 +170,9 @@ export default function ServicesPage() {
                 The elements that make a brand complete.
               </h2>
               <p className="mt-4 text-ivory/75">
-                Every project draws on some combination of these five. None
-                of them work well in isolation, and that&apos;s usually the
-                actual problem a brand walks in with.
+                Every project draws on some combination of these five.
+                Isolation is usually the actual problem a brand walks in
+                with.
               </p>
             </div>
           </Container>
@@ -269,7 +268,7 @@ export default function ServicesPage() {
               <div className="max-w-2xl">
                 <p className="text-sm font-medium uppercase tracking-wide text-sandstone">How I work</p>
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  The same six steps, every time.
+                  The same six moves, every time.
                 </h2>
                 <p className="mt-4 text-ivory/75">
                   Each stage depends on the one before it, a sequence rather
@@ -303,9 +302,8 @@ export default function ServicesPage() {
                 Three ways to work together.
               </h2>
               <p className="mt-4 text-ivory/75">
-                A starting point, not a fixed menu — final scope is
-                confirmed after a short call, but this is where most
-                projects land.
+                A starting point, always confirmed after a short call,
+                but this is where most projects land.
               </p>
             </div>
             <div className="spotlight-grid mt-10 grid items-stretch gap-6 lg:grid-cols-3">
@@ -394,7 +392,7 @@ export default function ServicesPage() {
                 your brand is right now and I&apos;ll tell you honestly what it needs.
               </p>
               <div className="mt-8">
-                <LinkButton href="/contact">Start a brand conversation</LinkButton>
+                <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
               </div>
             </Container>
           </ClipReveal>

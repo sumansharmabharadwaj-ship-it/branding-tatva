@@ -189,7 +189,7 @@ export default function BlogPage() {
                 project. Tell me yours, and I&apos;ll start there too.
               </p>
               <div className="mt-8">
-                <LinkButton href="/contact">Start a brand conversation</LinkButton>
+                <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
               </div>
             </Container>
           </ClipReveal>

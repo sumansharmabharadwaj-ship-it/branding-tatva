@@ -151,7 +151,7 @@ export default function WorkPage() {
                 the brand actually stood. Yours can start the same way.
               </p>
               <div className="mt-8">
-                <LinkButton href="/contact">Start a brand conversation</LinkButton>
+                <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
               </div>
             </Container>
           </ClipReveal>

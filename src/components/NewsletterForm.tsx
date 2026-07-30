@@ -52,7 +52,7 @@ export function NewsletterForm() {
   if (status === "success") {
     return (
       <p role="status" className="mt-4 text-sm text-ivory/85">
-        Check your inbox — I sent a quick confirmation link to finish signing up.
+        Check your inbox. I sent a quick confirmation link to finish signing up.
       </p>
     );
   }

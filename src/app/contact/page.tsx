@@ -166,14 +166,14 @@ export default function ContactPage() {
             <Reveal delay={0.1} className="mt-16 border-t border-ivory/15 pt-10">
               <ElementGlyph slug="air" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
               <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
-                Not ready to talk yet?
+                Still deciding?
               </p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                 Get occasional notes on brand clarity.
               </h2>
               <p className="mt-3 max-w-xl text-ivory/75">
-                A few thoughts a month, not a drip campaign. No pitch, unsubscribe
-                whenever.
+                A few honest thoughts a month, short and specific. Zero pitch,
+                unsubscribe whenever.
               </p>
               <NewsletterForm />
             </Reveal>

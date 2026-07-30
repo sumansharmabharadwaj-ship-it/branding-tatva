@@ -79,7 +79,7 @@ export function Footer() {
               <div>
                 <Logo light className="scale-90 origin-left" />
                 <p className="mt-3 text-sm text-ivory/60">
-                  A one-person practice — every project is led directly by Suman, start to finish.
+                  A one-person practice. Every project led directly by Suman, start to finish.
                 </p>
               </div>
               <div className="self-start">
