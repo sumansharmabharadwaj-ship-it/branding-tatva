@@ -124,18 +124,25 @@ export default function Home() {
             (MyShopInEurope, Executive Springboard, Dr. Haley's real
             stats) already lives in the Selected work section below,
 not repeated here. */}
-        {/* Was flat bg-soil, no photography at all — the one Trust beat
-            on the site with zero visual evidence of the actual person
-            behind it. own-suman-trust.mp4 is a real, own-sourced
-            montage (11 personal photos, slow Ken Burns push/drift per
-            frame, cross-dissolved, graded to the site's own warm
-            palette) — a real face for a section making a credibility
-            claim, not stock texture standing in for one. */}
+        {/* Trust and the framework claim used to be two separate
+            sections — a video-backed beat cutting straight to flat
+            bg-soil right after it, the same "abrupt seam" pattern
+            already fixed elsewhere on this page. Merged into one
+            TexturedDark instead: one continuous video plays behind both
+            blocks, a hairline divider marks the handoff between them
+            instead of a hard section cut. higgsfield-idea-sketch.mp4
+            (a hand-drawn sketch, pencil, coffee, morning window light —
+            a real push-in, not a static shot) replaces both the earlier
+            personal-photo montage and a since-rejected static "empty
+            room" clip — direct feedback wanted something people
+            actually relate to and that visibly moves; a sketchbook
+            mid-thought reads as the strategy work itself, not a mood
+            board standing in for it. */}
         <TexturedDark
-          image="/images/own-suman-trust-poster.jpg"
-          video="/videos/own-suman-trust.mp4"
-          imagePosition="center 32%"
-          className="py-14"
+          image="/images/higgsfield-idea-sketch.jpg"
+          video="/videos/higgsfield-idea-sketch.mp4"
+          imagePosition="center"
+          className="py-16 sm:py-20"
         >
           <Container className="text-center">
             <Reveal>
@@ -151,18 +158,12 @@ not repeated here. */}
                 <span>5 real client engagements</span>
               </div>
             </Reveal>
-          </Container>
-        </TexturedDark>
 
-        {/* Direct feedback the site needed to lead with real branding
-            theory before naming the elements framework: branding as
-            five decisions every remembered brand makes, then the
-            elements as the explanatory device underneath that claim.
-            Also folds in the requested consumer-psychology angle: why
-            memory, trust, and choice actually work the way they do. */}
-        <section className="bg-soil pb-10 pt-4 sm:pb-14">
-          <Container className="max-w-2xl text-center">
-            <Reveal>
+            {/* The framework claim: leads with real branding theory
+                before naming the elements framework, and now shares the
+                Trust beat's own video instead of cutting to plain
+                bg-soil right after it. */}
+            <Reveal delay={0.1} className="mx-auto mt-12 max-w-2xl border-t border-ivory/15 pt-10 sm:mt-16 sm:pt-12">
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The framework</p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                 Every remembered brand made the same five decisions.
@@ -172,7 +173,7 @@ not repeated here. */}
               </p>
             </Reveal>
           </Container>
-        </section>
+        </TexturedDark>
 
         <ElementsSection elements={elements} />
 
