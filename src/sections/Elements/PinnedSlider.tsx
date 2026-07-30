@@ -23,6 +23,18 @@ import type { Element } from "@/data/elements";
 // no scenario where "sticky" and "the wrapper's actual height" can
 // disagree, because sticky positioning IS the wrapper's own layout,
 // not a second system tracking it.
+// Direct feedback that the slider felt "too fast," with no stage ever
+// reading as settled — the original crossfade math (opacity = 1 - |progress
+// - i|) only hits full opacity at one exact scroll pixel per stage, then
+// immediately starts fading into the neighbor. There was never a real
+// "hold": every scroll frame was mid-transition. Two changes fix that:
+// STAGE_SPEED slows the whole sequence (more real scroll distance per
+// stage-to-stage transition), and HOLD carves out a plateau around each
+// stage's own center where it stays fully opaque before the crossfade
+// into the next one begins.
+const STAGE_SPEED = 1.3;
+const HOLD = 0.35;
+
 export function PinnedSlider({ elements }: { elements: Element[] }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -51,7 +63,7 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
       // (remaining wrapper height drops to exactly one viewport) landed on
       // the exact same scroll position — the last slide never got a stable
       // instant on screen, it started sliding away the moment it appeared.
-      const scrollDistance = (elements.length - 1) * window.innerHeight;
+      const scrollDistance = (elements.length - 1) * window.innerHeight * STAGE_SPEED;
       const raw = scrollDistance > 0 ? -rect.top / scrollDistance : 0;
       const clamped = Math.min(1, Math.max(0, raw));
       const progress = clamped * (elements.length - 1);
@@ -62,7 +74,9 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
       }
       slideRefs.current.forEach((slide, i) => {
         if (!slide) return;
-        slide.style.opacity = String(Math.max(0, 1 - Math.abs(progress - i)));
+        const d = Math.abs(progress - i);
+        const opacity = d <= HOLD ? 1 : d <= 1 - HOLD ? 1 - (d - HOLD) / (1 - 2 * HOLD) : 0;
+        slide.style.opacity = String(opacity);
       });
     }
 

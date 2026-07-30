@@ -96,8 +96,8 @@ export function ElementsIntroPinned() {
           aria-hidden="true"
         >
           <BackgroundVideo
-            video="/videos/higgsfield-water-droplets.mp4"
-            poster="/images/higgsfield-water-droplets-poster.jpg"
+            video="/videos/pixabay-misty-rain-valley.mp4"
+            poster="/images/pixabay-misty-rain-valley-poster.jpg"
           />
           <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
         </div>
@@ -156,8 +156,8 @@ export function ElementsIntroPinned() {
           aria-hidden="true"
         >
           <BackgroundVideo
-            video="/videos/pixabay-sunset-clouds.mp4"
-            poster="/images/pixabay-sunset-clouds-poster.jpg"
+            video="/videos/pixabay-kedarkantha-himalaya.mp4"
+            poster="/images/pixabay-kedarkantha-himalaya-poster.jpg"
           />
           <div className="absolute inset-0 bg-soil/70" />
           <ElementsConstellation />

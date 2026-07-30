@@ -89,21 +89,33 @@ export function SeasonalCalendarPanel() {
           video="/videos/pixabay-campfire-conversation.mp4"
           poster="/images/pixabay-campfire-conversation-poster.jpg"
         />
-        <div className="absolute inset-0 bg-soil/45 backdrop-blur-[1px]" />
+        {/* Was /45 with a near-invisible 1px blur — direct feedback that
+            the dates and labels were unreadable against the campfire
+            video's own bright flame/highlight areas, which swing from
+            near-black to near-white within the same frame and can sit
+            directly behind any given digit depending on scroll/loop
+            position. A much darker, more blurred wash makes the
+            backdrop read as soft ambient light rather than a sharp
+            image competing with small text, so contrast stays
+            consistent no matter what the video is doing underneath. */}
+        <div className="absolute inset-0 bg-soil/75 backdrop-blur-sm" />
       </div>
 
       {/* Weekly / Monthly toggle, same shape and position as the
           reference — a shared sliding highlight (layoutId) rather than
           each pill managing its own active state. */}
       <div className="flex items-center justify-between">
-        <div className="relative flex rounded-full border border-white/20 bg-black/15 p-1">
+        <div className="relative flex rounded-full border border-white/25 bg-black/30 p-1">
           {(["weekly", "monthly"] as const).map((v) => (
             <button
               key={v}
               type="button"
               onClick={() => setView(v)}
               className="relative rounded-full px-4 py-1.5 text-sm font-medium capitalize transition-colors duration-300"
-              style={{ color: view === v ? "#27221E" : "rgba(244,239,230,0.75)" }}
+              style={{
+                color: view === v ? "#27221E" : "rgba(244,239,230,0.9)",
+                textShadow: view === v ? undefined : "0 1px 4px rgba(0,0,0,0.6)",
+              }}
             >
               {view === v && (
                 <motion.span
@@ -133,14 +145,26 @@ export function SeasonalCalendarPanel() {
             transition={{ duration: 0.3, ease: EASE_AIR }}
           >
             <div className="mt-5 flex items-baseline justify-between">
-              <span className="font-display text-3xl font-normal leading-none text-ivory">
+              <span
+                className="font-display text-3xl font-normal leading-none text-ivory"
+                style={{ textShadow: "0 1px 8px rgba(0,0,0,0.65)" }}
+              >
                 {MONTH_NAMES[month]}
               </span>
-              <span className="font-display text-3xl font-normal leading-none text-ivory">{today}</span>
+              <span
+                className="font-display text-3xl font-normal leading-none text-ivory"
+                style={{ textShadow: "0 1px 8px rgba(0,0,0,0.65)" }}
+              >
+                {today}
+              </span>
             </div>
             <div className="mt-5 grid grid-cols-7 gap-1 text-center">
               {DAY_LETTERS.map((d, i) => (
-                <span key={i} className="text-xs text-ivory/50">
+                <span
+                  key={i}
+                  className="text-xs font-medium text-ivory/75"
+                  style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
+                >
                   {d}
                 </span>
               ))}
@@ -149,11 +173,11 @@ export function SeasonalCalendarPanel() {
               {weekDates.map((d, i) => (
                 <div
                   key={i}
-                  className="mx-auto flex h-8 w-8 items-center justify-center rounded-full text-sm"
+                  className="mx-auto flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium"
                   style={
                     d === today
                       ? { backgroundColor: element.color, color: "#F4EFE6" }
-                      : { color: "rgba(244,239,230,0.85)" }
+                      : { color: "rgba(244,239,230,0.92)", textShadow: "0 1px 4px rgba(0,0,0,0.6)" }
                   }
                 >
                   {d}
@@ -171,7 +195,11 @@ export function SeasonalCalendarPanel() {
           >
             <div className="mt-5 grid grid-cols-7 text-center">
               {DAY_LETTERS.map((d, i) => (
-                <span key={i} className="pb-2 text-xs text-ivory/50">
+                <span
+                  key={i}
+                  className="pb-2 text-xs font-medium text-ivory/75"
+                  style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
+                >
                   {d}
                 </span>
               ))}
@@ -182,14 +210,14 @@ export function SeasonalCalendarPanel() {
                 className={`grid grid-cols-7 border-white/15 py-1.5 ${wi > 0 ? "border-t" : ""}`}
               >
                 {week.map((d, di) => (
-                  <div key={di} className="flex items-center justify-center text-sm">
+                  <div key={di} className="flex items-center justify-center text-sm font-medium">
                     {d && (
                       <span
                         className="flex h-7 w-7 items-center justify-center rounded-full"
                         style={
                           d === today
                             ? { backgroundColor: element.color, color: "#F4EFE6" }
-                            : { color: "rgba(244,239,230,0.85)" }
+                            : { color: "rgba(244,239,230,0.92)", textShadow: "0 1px 4px rgba(0,0,0,0.6)" }
                         }
                       >
                         {d}
@@ -203,12 +231,20 @@ export function SeasonalCalendarPanel() {
         )}
       </AnimatePresence>
 
-      <p className="mx-auto mt-4 max-w-xs text-center text-xs italic leading-snug text-ivory/60">
+      <p
+        className="mx-auto mt-4 max-w-xs text-center text-xs italic leading-snug text-ivory/80"
+        style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
+      >
         &ldquo;{element.poetic}&rdquo;
       </p>
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <span className="text-xs text-ivory/70 sm:text-sm">Twenty minutes, just a real conversation.</span>
+        <span
+          className="text-xs text-ivory/85 sm:text-sm"
+          style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
+        >
+          Twenty minutes, just a real conversation.
+        </span>
         <motion.button
           type="button"
           onClick={() => setExpanded(true)}

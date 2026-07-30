@@ -61,13 +61,15 @@ export const elements: Element[] = [
     ],
     proof:
       "Campaign repositioning and script development for HerbalCart, moving the brand toward the identity it actually intended to carry.",
-    // Was pixabay-campfire-flames.mp4 — direct feedback that it wasn't
-    // resonating. A close, glowing-ember shot reads calmer and more
-    // deliberate than a full campfire-with-logs, and holds up better
-    // as a blurred backdrop behind the footer calendar's glass card,
-    // where the video is dimmed rather than the main subject.
-    image: "/images/pixabay-glowing-embers-fire-poster.jpg",
-    video: "/videos/pixabay-glowing-embers-fire.mp4",
+    // Was pixabay-glowing-embers-fire.mp4 — direct feedback that a
+    // tight ember close-up read as "danger," not serene, when it filled
+    // the whole PinnedSlider stage full-screen (a different context
+    // than the small, dimmed footer-calendar card this was originally
+    // graded for). Golden sunset light filtering through a forest,
+    // birds crossing the beam, carries Fire's actual meaning — warmth,
+    // a spark that earns a second look — without literal flame.
+    image: "/images/pixabay-golden-forest-glow-poster.jpg",
+    video: "/videos/pixabay-golden-forest-glow.mp4",
   },
   {
     slug: "air",
