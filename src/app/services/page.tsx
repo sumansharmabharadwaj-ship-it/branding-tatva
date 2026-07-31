@@ -25,6 +25,7 @@ import { StrategySessionPreview } from "@/sections/Services/StrategySessionPrevi
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { Fireflies } from "@/components/Fireflies";
 import { process } from "@/data/process";
 import { projects } from "@/data/projects";
 import { elementColor } from "@/lib/elementColor";
@@ -333,22 +334,29 @@ export default function ServicesPage() {
         {/* Risk removal — the real FAQ content, reframed, merged with the
             "before you book" preview into one section instead of two
             back-to-back blocks. Direct feedback that the wildflowers clip
-            here read as generic stock footage, and a direct instruction
-            not to reuse any existing video — the library has zero unused
-            clips left (confirmed by a full site-wide audit), so any
-            other choice would just be reuse with extra steps. The
-            brief's own stated priority settles it instead: video here
-            should never overpower the FAQ, exists only for atmosphere,
-            and the content should stay the focal point. A pure reading
-            section doesn't need video at all — removed entirely rather
-            than swapped, which also directly answers "stop reusing
-            footage." AmbientElementShader (the site's one ambient
-            WebGL motion, already used on Authority/Education/Desire)
-            stays as the section's only motion, quieter and correct for
-            a section meant to be read, not watched. RiskRemovalFAQ/
-            StrategySessionPreview both take the same `dark` prop
-            ProcessSection already exposes elsewhere on this site. */}
+            here read as generic stock footage, with a direct instruction
+            not to reuse footage but to preserve atmosphere through
+            another medium rather than simply removing it. Layered four
+            real, already-built, reduced-motion-safe atmospheric devices
+            instead of video — the same toolkit TexturedDark/Hero/About's
+            hero already use, just never combined here: AmbientElementShader
+            (ambient WebGL colour drift), .aurora-glow (two slow-drifting
+            warm colour blooms), .light-rays (a soft diagonal light sweep,
+            TexturedDark's own device, screen-blended so it lifts rather
+            than darkens), and Fireflies (warm wandering glow points,
+            About's forest-hero device) — together the "volumetric light,
+            soft floating particles, quiet warmth" register asked for,
+            built from motion and light rather than a filmed clip. Video
+            genuinely doesn't fit a pure reading section regardless —
+            "atmosphere without overpowering the FAQ" is closer to what
+            this layered, lower-key treatment does than a looping video
+            ever could. RiskRemovalFAQ/StrategySessionPreview both take
+            the same `dark` prop ProcessSection already exposes
+            elsewhere on this site. */}
         <section id="risk" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
+          <div className="aurora-glow" aria-hidden="true" />
+          <div className="light-rays" aria-hidden="true" />
+          <Fireflies />
           <AmbientElementShader opacity={0.16} />
           <span
             aria-hidden="true"
