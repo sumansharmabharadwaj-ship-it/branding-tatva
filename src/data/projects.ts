@@ -88,7 +88,7 @@ export const projects: Project[] = [
       "Delivered a complete brand foundation and a full content operating system: positioning, content pillars, playbooks for each channel, and a rollout plan, quarter by quarter, connecting each phase to a specific business outcome (awareness, trust, leads, conversion).",
     hook: "A marketplace that refused to compete on price. Craft and origin became the actual advantage worth selling.",
     reflection:
-      "The sharpest strategic call was refusing to let 'MyShopInEurope' default to meaning 'cheap Indian goods.' Repositioning around craft and origin, ahead of price, changes who the platform can credibly sell to.",
+      "The sharpest positioning call was refusing to let 'MyShopInEurope' default to meaning 'cheap Indian goods.' Repositioning around craft and origin, ahead of price, changes who the platform can credibly sell to.",
     closingQuote:
       "A story a buyer can pass on to their own customers is worth more than the lowest price on the listing.",
     cardImage: "/images/card-myshopineurope-poster.jpg",
@@ -139,7 +139,7 @@ export const projects: Project[] = [
       "Reset the campaign around one clear argument: natural food alone falls short for an active lifestyle, and supplementation fills a specific, explainable, practical gap, rather than a spiritual or ayurvedic one.",
     execution:
       "Built five content formats around that argument: direct comparisons of food versus supplement (for example, 'one scoop = 24g protein' shown against the equivalent in eggs or dal), scripted 'why choose a supplement with food' narratives, DIY recipe content, honest transformation clips from real users, and reaction style reviews. Wrote Hinglish video scripts built on real cultural reference points rather than generic fitness influencer tropes.",
-    services: ["Fire · creative direction", "Air · messaging"],
+    services: ["Fire · content direction", "Air · messaging"],
     outcome:
       "Delivered a full campaign reset: repositioned content themes, five formats ready to shoot, and complete video scripts, moving the brand's public perception from 'herbal supplement' toward 'modern, supplement first wellness brand.'",
     reflection:

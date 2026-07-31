@@ -52,12 +52,12 @@ export const packages: Package[] = [
     price: 4200,
     billing: "one-time",
     description:
-      "Everything in Foundation, plus a full audit, repositioning, and the creative direction to carry it across every channel.",
+      "Everything in Foundation, plus a full audit, repositioning, and the visual direction to carry it across every channel.",
     includes: [
       "Everything in Foundation",
       "Full brand audit & repositioning",
       "Voice & messaging alignment across channels",
-      "Campaign concept & creative direction",
+      "Campaign concept & visual direction",
       "Website content structure",
       "3 months of async support",
     ],

@@ -26,7 +26,7 @@ export const philosophy: ElementPhilosophy[] = [
   {
     element: "fire",
     thinker: "Nietzsche",
-    text: "Nietzsche's own instruction was to become who you are. Good creative direction does the same work: it finds the identity already sitting inside a brand and gives it the nerve to be seen.",
+    text: "Nietzsche's own instruction was to become who you are. Real brand expression does the same work: it finds the identity already sitting inside a brand and gives it the nerve to be seen.",
   },
   {
     element: "air",
