@@ -16,6 +16,8 @@ import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
 import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { FounderLens } from "@/sections/Services/FounderLens";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
+import { CommonMistakes } from "@/sections/Services/CommonMistakes";
+import { DeliverablesReveal } from "@/sections/Services/DeliverablesReveal";
 import { CaseStudyScrollStory } from "@/sections/Services/CaseStudyScrollStory";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
@@ -93,6 +95,17 @@ export default function ServicesPage() {
           <PerceptionLadder />
         </section>
 
+        {/* An extension of Education, not a new act — direct feedback
+            wanted the page to establish authority through real
+            perspective, not just theory. Grounded in the same branding
+            vocabulary already established sitewide (positioning, mental
+            availability), no invented case data. No id/jump-nav entry:
+            a supporting beat within Education's own objection, the same
+            treatment the "breath" section below gets. */}
+        <section className="bg-soil py-16 sm:py-24">
+          <CommonMistakes />
+        </section>
+
         {/* Trust — Founder Lens. */}
         <section id="trust" className="scroll-mt-24 bg-soil py-16 sm:py-24">
           <FounderLens />
@@ -113,6 +126,16 @@ export default function ServicesPage() {
           <div className="relative">
             <PackageSelector />
           </div>
+        </section>
+
+        {/* An extension of Desire, not a new act — direct feedback
+            wanted the deliverables to feel tangible right after picking
+            a package, not left as bullet points inside a card. Every
+            item traces to real services.ts data (see the component's
+            own comment). No id/jump-nav entry, same supporting-beat
+            treatment as Common mistakes above. */}
+        <section className="bg-soil py-16 sm:py-24">
+          <DeliverablesReveal />
         </section>
 
         {/* Proof — one real case study, staged as a scroll-driven story
