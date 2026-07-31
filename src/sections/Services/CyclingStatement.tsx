@@ -38,7 +38,12 @@ export function CyclingStatement({ headline }: { headline: React.ReactNode }) {
       <SplitReveal
         as="h1"
         splitType="chars"
-        className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory"
+        // Matches Home's own hero headline scale (clamp(2.25rem,5.5vw,4rem),
+        // src/sections/Hero) — direct, repeated feedback that this hero
+        // still read as visually smaller/weaker than Home's despite the
+        // copy and motion already being real. Same type scale closes
+        // that gap without breaking the documented 70vh mid-tier height.
+        className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2.25rem,5.5vw,4rem)] font-normal leading-[1.08] text-ivory"
       >
         {headline}
       </SplitReveal>
@@ -46,7 +51,7 @@ export function CyclingStatement({ headline }: { headline: React.ReactNode }) {
   }
 
   return (
-    <div className="mx-auto mt-6 flex h-[clamp(2.6rem,6vw,4.25rem)] max-w-2xl items-center justify-center">
+    <div className="mx-auto mt-6 flex h-[clamp(2.9rem,6.5vw,5rem)] max-w-2xl items-center justify-center">
       <AnimatePresence mode="wait">
         <motion.p
           key={index}
@@ -54,7 +59,7 @@ export function CyclingStatement({ headline }: { headline: React.ReactNode }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="font-display text-[clamp(1.6rem,4vw,2.75rem)] font-normal leading-[1.15] text-ivory/90"
+          className="font-display text-[clamp(1.85rem,4.5vw,3.25rem)] font-normal leading-[1.12] text-ivory/90"
         >
           {LINES[index]}
         </motion.p>

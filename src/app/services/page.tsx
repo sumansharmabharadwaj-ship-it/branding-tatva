@@ -331,37 +331,40 @@ export default function ServicesPage() {
 
         {/* Risk removal — the real FAQ content, reframed, merged with the
             "before you book" preview into one section instead of two
-            back-to-back bg-background-alt blocks. Direct feedback that a
-            visitor could see "white screen" — two full-padding light
-            sections stacked right after eight straight dark video
-            sections created a long, undifferentiated pale stretch with
-            nothing to anchor it. A single section with one shared
-            padding budget, a soil-toned ghost watermark (the same
-            light-background technique Blog's grid section already
-            uses), and a hairline divider between the two halves reads
-            as one deliberate light beat instead of a gap. */}
-        <section id="risk" className="relative scroll-mt-24 overflow-hidden bg-background-alt py-16 sm:py-24">
+            back-to-back blocks. Direct, repeated feedback that this was
+            still reading as a blank/white stretch even after merging —
+            moved off the light bg-background-alt tier entirely onto the
+            same bg-soil/video treatment as every other Services section,
+            for full uniformity with the rest of the page. A calm meadow
+            of wildflowers, already used once on Home's own closing
+            moment: a real visual echo of "resolved, reassured" fitting a
+            risk removal section. RiskRemovalFAQ/StrategySessionPreview
+            both take the same `dark` prop ProcessSection already
+            exposes elsewhere on this site. */}
+        <section id="risk" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
+          <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/76" />
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-soil/[0.05] sm:-top-8"
+            className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
           >
             Ask
           </span>
           <Container className="relative max-w-2xl">
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">Risk removal</p>
-              <h2 className="mt-2 text-display-sm font-display font-normal text-soil">
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Risk removal</p>
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                 Is this the right fit?
               </h2>
-              <p className="mt-4 text-foreground-secondary">
+              <p className="mt-4 text-ivory/75">
                 Real answers to the questions that come up before a first conversation.
               </p>
             </Reveal>
             <div className="mt-8">
-              <RiskRemovalFAQ />
+              <RiskRemovalFAQ dark />
             </div>
-            <div className="mt-16 border-t border-soil/10 pt-12 sm:mt-20 sm:pt-16">
-              <StrategySessionPreview />
+            <div className="mt-16 border-t border-ivory/15 pt-12 sm:mt-20 sm:pt-16">
+              <StrategySessionPreview dark />
             </div>
           </Container>
         </section>

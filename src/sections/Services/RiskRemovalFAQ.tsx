@@ -38,7 +38,12 @@ const GROUPS = [
   },
 ] as const;
 
-export function RiskRemovalFAQ() {
+// `dark` mirrors the same prop ProcessSection already exposes — this
+// section moved from the light bg-background-alt tier to the same
+// bg-soil/video treatment as every other Services section (direct
+// feedback that the one remaining light stretch still read as blank),
+// so every hardcoded light-only color needs a dark-bg equivalent.
+export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
   const [openQuestion, setOpenQuestion] = useState<string | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
@@ -46,8 +51,10 @@ export function RiskRemovalFAQ() {
     <div className="space-y-10">
       {GROUPS.map((group, gi) => (
         <Reveal key={group.label} delay={gi * 0.08}>
-          <p className="text-xs font-medium uppercase tracking-wide text-action-secondary">{group.label}</p>
-          <div className="mt-3 divide-y divide-border">
+          <p className={`text-xs font-medium uppercase tracking-wide ${dark ? "text-sandstone" : "text-action-secondary"}`}>
+            {group.label}
+          </p>
+          <div className={`mt-3 divide-y ${dark ? "divide-ivory/15" : "divide-border"}`}>
             {group.questions.map((question) => {
               const item = faqs.find((f) => f.question === question);
               if (!item) return null;
@@ -56,14 +63,16 @@ export function RiskRemovalFAQ() {
                 <div key={item.question} className="py-1">
                   <button
                     type="button"
-                    className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left font-medium text-soil transition-colors duration-300 hover:bg-clay/8 focus-visible:bg-clay/8"
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left font-medium transition-colors duration-300 ${
+                      dark ? "text-ivory hover:bg-ivory/8 focus-visible:bg-ivory/8" : "text-soil hover:bg-clay/8 focus-visible:bg-clay/8"
+                    }`}
                     aria-expanded={isOpen}
                     onClick={() => setOpenQuestion(isOpen ? null : item.question)}
                   >
                     {item.question}
                     <span
                       aria-hidden="true"
-                      className="ml-4 shrink-0 text-lg text-action-primary transition-transform duration-300"
+                      className={`ml-4 shrink-0 text-lg transition-transform duration-300 ${dark ? "text-sandstone" : "text-action-primary"}`}
                       style={{ transform: isOpen ? TOGGLE_ROTATION.open : TOGGLE_ROTATION.closed }}
                     >
                       +
@@ -79,7 +88,7 @@ export function RiskRemovalFAQ() {
                         transition={answerTransition}
                         className="overflow-hidden px-3"
                       >
-                        <p className="pb-4 text-foreground-secondary">{item.answer}</p>
+                        <p className={`pb-4 ${dark ? "text-ivory/75" : "text-foreground-secondary"}`}>{item.answer}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
+import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { LinkButton } from "@/components/Button";
 import { Container } from "@/components/Container";
@@ -25,10 +26,19 @@ export function CaseStudyScrollStory({ project }: { project: Project }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const stageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const imageRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const activeIndexRef = useRef(0);
   const lenis = useLenis();
   const prefersReducedMotion = useReducedMotion();
+  // Direct feedback: this section read as "stuck black and white, video
+  // not playing." Root cause — project.cardVideo is a real field
+  // already set on every project (data/projects.ts) but this component
+  // only ever rendered the static cardImage. There never was a video
+  // here to play. Same explicit play() + fade-in fix every other video
+  // on the site already uses (the bare autoplay attribute isn't
+  // reliable — see useVideoFadeIn's own comment).
+  useVideoFadeIn(videoRef, !prefersReducedMotion && !!project.cardVideo);
 
   const stages: Stage[] = [
     { label: "The challenge", text: project.challenge },
@@ -97,13 +107,26 @@ export function CaseStudyScrollStory({ project }: { project: Project }) {
     <div ref={wrapperRef} className="relative" style={{ height: `${(stages.length - 1) * 100 * STAGE_SPEED + 100}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <div ref={imageRef} className="absolute inset-0" style={{ filter: "grayscale(0.85) saturate(0.4)" }}>
-          <Image
-            src={project.cardImage ?? "/images/own-forest-clearing.jpg"}
-            alt=""
-            fill
-            sizes="100vw"
-            style={{ objectFit: "cover" }}
-          />
+          {project.cardVideo ? (
+            <video
+              ref={videoRef}
+              src={project.cardVideo}
+              poster={project.cardImage}
+              muted
+              loop
+              playsInline
+              autoPlay
+              className="h-full w-full object-cover opacity-0 transition-opacity duration-700"
+            />
+          ) : (
+            <Image
+              src={project.cardImage ?? "/images/own-forest-clearing.jpg"}
+              alt=""
+              fill
+              sizes="100vw"
+              style={{ objectFit: "cover" }}
+            />
+          )}
         </div>
         <div className="absolute inset-0" style={{ backgroundColor: "rgba(39,34,30,0.86)" }} />
         <Container className="relative flex h-full flex-col justify-center">

@@ -16,12 +16,16 @@ const STEPS = [
   "If it makes sense to continue, we agree on what the first thirty days would actually look like.",
 ] as const;
 
-export function StrategySessionPreview() {
+// `dark` — see RiskRemovalFAQ's own comment; both moved off the light
+// bg-background-alt tier together.
+export function StrategySessionPreview({ dark = false }: { dark?: boolean }) {
   return (
     <Container className="max-w-2xl">
       <Reveal>
-        <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">Before you book</p>
-        <h2 className="mt-2 text-display-sm font-display font-normal text-soil">
+        <p className={`text-sm font-medium uppercase tracking-wide ${dark ? "text-sandstone" : "text-action-secondary"}`}>
+          Before you book
+        </p>
+        <h2 className={`mt-2 text-display-sm font-display font-normal ${dark ? "text-ivory" : "text-soil"}`}>
           What actually happens on the call.
         </h2>
       </Reveal>
@@ -29,10 +33,10 @@ export function StrategySessionPreview() {
         {STEPS.map((step, i) => (
           <Reveal key={step} delay={i * 0.08}>
             <li className="flex items-start gap-4">
-              <span className="pt-0.5 font-display text-2xl font-normal leading-none text-soil/25">
+              <span className={`pt-0.5 font-display text-2xl font-normal leading-none ${dark ? "text-ivory/25" : "text-soil/25"}`}>
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <p className="text-foreground-secondary">{step}</p>
+              <p className={dark ? "text-ivory/75" : "text-foreground-secondary"}>{step}</p>
             </li>
           </Reveal>
         ))}
