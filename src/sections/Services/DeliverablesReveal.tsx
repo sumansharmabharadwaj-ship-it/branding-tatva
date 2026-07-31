@@ -27,11 +27,18 @@ export function DeliverablesReveal() {
           Every item below is pulled directly from the three packages above. Nothing generic, nothing invented.
         </p>
       </Reveal>
-      <ul className="mt-10 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+      <ul className="mt-10 grid gap-x-8 gap-y-1 sm:grid-cols-2">
         {ALL_ITEMS.map((item, i) => (
           <Reveal key={item} delay={Math.min(i, 12) * 0.04}>
-            <li className="flex items-start gap-3 text-sm text-ivory/85">
-              <span aria-hidden="true" className="mt-0.5 text-sandstone">
+            {/* Real hover feedback on a real checklist — the check mark
+                fills in and the row picks up a quiet tint, so each
+                deliverable reads as something you can point at rather
+                than a static bullet. */}
+            <li className="group flex cursor-default items-start gap-3 rounded-md px-2 py-1.5 text-sm text-ivory/85 transition-colors duration-200 hover:bg-ivory/5">
+              <span
+                aria-hidden="true"
+                className="mt-0.5 text-sandstone/60 transition-colors duration-200 group-hover:text-sandstone"
+              >
                 &#10003;
               </span>
               {item}
