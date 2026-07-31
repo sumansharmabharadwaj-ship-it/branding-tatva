@@ -100,9 +100,17 @@ export default function ServicesPage() {
             pattern rather than a specific company's story — the
             honest version of the requested comparison, since no real
             two-business case study exists yet to build a factual one
-            from. */}
-        <section className="bg-soil py-16 sm:py-24">
-          <WeakBrandingCost />
+            from. Same ambient shader as Authority/Education/Desire —
+            direct feedback that stacking several new flat bg-soil
+            sections back to back recreated the exact "dead zone"
+            problem already fixed once on Desire; the fix is the same
+            each time, continuing one visual system rather than adding
+            a new device per section. */}
+        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+          <AmbientElementShader opacity={0.13} />
+          <div className="relative">
+            <WeakBrandingCost />
+          </div>
         </section>
 
         {/* Education — the one Three.js moment (inside PerceptionLadder,
@@ -117,9 +125,14 @@ export default function ServicesPage() {
             vocabulary already established sitewide (positioning, mental
             availability), no invented case data. No id/jump-nav entry:
             a supporting beat within Education's own objection, the same
-            treatment the "breath" section below gets. */}
-        <section className="bg-soil py-16 sm:py-24">
-          <CommonMistakes />
+            treatment the "breath" section below gets. Same shader
+            treatment as the sections around it — see WeakBrandingCost's
+            comment above for why. */}
+        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+          <AmbientElementShader opacity={0.15} />
+          <div className="relative">
+            <CommonMistakes />
+          </div>
         </section>
 
         {/* Trust — Founder Lens. */}
@@ -149,9 +162,14 @@ export default function ServicesPage() {
             a package, not left as bullet points inside a card. Every
             item traces to real services.ts data (see the component's
             own comment). No id/jump-nav entry, same supporting-beat
-            treatment as Common mistakes above. */}
-        <section className="bg-soil py-16 sm:py-24">
-          <DeliverablesReveal />
+            treatment as Common mistakes above. Same shader treatment as
+            the sections around it — see WeakBrandingCost's comment
+            above for why. */}
+        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+          <AmbientElementShader opacity={0.12} />
+          <div className="relative">
+            <DeliverablesReveal />
+          </div>
         </section>
 
         {/* Proof — one real case study, staged as a scroll-driven story
@@ -213,9 +231,14 @@ export default function ServicesPage() {
             invested before the calendar appears. Transparent scoring,
             real package mapping, see the component's own comment for
             why it's a distinct mechanism from PackageSelector rather
-            than a duplicate of it. */}
-        <section className="bg-soil py-16 sm:py-24">
-          <BrandHealthCheck />
+            than a duplicate of it. Same shader treatment as the
+            sections around it — see WeakBrandingCost's comment above
+            for why. */}
+        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+          <AmbientElementShader opacity={0.15} />
+          <div className="relative">
+            <BrandHealthCheck />
+          </div>
         </section>
 
         {/* Risk removal — the real FAQ content, reframed. */}
