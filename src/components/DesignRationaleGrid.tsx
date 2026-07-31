@@ -86,22 +86,30 @@ function Specimen({ kind }: { kind: (typeof designChoices)[number]["kind"] }) {
 }
 
 export function DesignRationaleGrid() {
-  const [active, setActive] = useState<number | null>(null);
+  // Two separate pieces of state, not one: `pinned` is click/tap driven
+  // and sticky until something else is clicked; `hovered` is a
+  // mouse-only convenience that only applies while nothing is pinned.
+  // A single shared index broke this: onMouseLeave had to clear
+  // *something* on exit, and clearing the same index a click had just
+  // set meant a click-to-open card slammed shut the instant the mouse
+  // moved away, before a desktop user could even read the specimen.
+  const [pinned, setPinned] = useState<number | null>(null);
+  const [hovered, setHovered] = useState<number | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   return (
     <div className="mt-14 grid gap-x-12 gap-y-12 sm:grid-cols-2">
       {designChoices.map((choice, i) => {
-        const isActive = active === i;
+        const isActive = pinned === i || (pinned === null && hovered === i);
         return (
           <Reveal key={choice.title} delay={i * 0.08}>
             <button
               type="button"
-              onClick={() => setActive((cur) => (cur === i ? null : i))}
-              onMouseEnter={() => setActive(i)}
-              onMouseLeave={() => setActive((cur) => (cur === i ? null : cur))}
-              onFocus={() => setActive(i)}
-              onBlur={() => setActive((cur) => (cur === i ? null : cur))}
+              onClick={() => setPinned((cur) => (cur === i ? null : i))}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered((cur) => (cur === i ? null : cur))}
+              onFocus={() => setHovered(i)}
+              onBlur={() => setHovered((cur) => (cur === i ? null : cur))}
               className="relative w-full border-t border-ivory/15 pt-6 text-left"
               aria-expanded={isActive}
             >
