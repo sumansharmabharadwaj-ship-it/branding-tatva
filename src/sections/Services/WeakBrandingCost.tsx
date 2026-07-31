@@ -2,6 +2,7 @@
 
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
+import { TiltCard } from "@/components/TiltCard";
 import { ELEMENT_HEX } from "@/lib/sectionWash";
 
 // Direct feedback asked for a section showing the cost of weak
@@ -12,6 +13,12 @@ import { ELEMENT_HEX } from "@/lib/sectionWash";
 // specific company's story. No invented statistics, no named business —
 // a real client comparison would need real data that does not exist
 // yet, so this stays qualitative and honest about what it is.
+//
+// Direct feedback that hover across the page "does nothing interesting"
+// — wrapped both panels in TiltCard, the same cursor-reactive tilt+glow
+// mechanism already proven on every other card grid on the site (About
+// credentials, Blog, Work, related-work), rather than inventing a new
+// interaction pattern for this one section.
 const WEAK = [
   "Competes mainly on price, since nothing else distinguishes it.",
   "Gets reintroduced to the market every time it advertises.",
@@ -40,34 +47,38 @@ export function WeakBrandingCost() {
       </Reveal>
       <div className="mt-10 grid gap-6 sm:grid-cols-2">
         <Reveal delay={0.06}>
-          <div
-            className="h-full rounded-lg border-t-2 p-6"
-            style={{ borderColor: ELEMENT_HEX.earth, backgroundColor: `${ELEMENT_HEX.earth}0F` }}
-          >
-            <p className="text-xs font-medium uppercase tracking-wide text-ivory/50">Positioned generically</p>
-            <ul className="mt-4 space-y-3">
-              {WEAK.map((item) => (
-                <li key={item} className="text-sm text-ivory/75">
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <TiltCard glowColor={ELEMENT_HEX.earth}>
+            <div
+              className="h-full rounded-lg border-t-2 p-6"
+              style={{ borderColor: ELEMENT_HEX.earth, backgroundColor: `${ELEMENT_HEX.earth}0F` }}
+            >
+              <p className="text-xs font-medium uppercase tracking-wide text-ivory/50">Positioned generically</p>
+              <ul className="mt-4 space-y-3">
+                {WEAK.map((item) => (
+                  <li key={item} className="text-sm text-ivory/75">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </TiltCard>
         </Reveal>
         <Reveal delay={0.14}>
-          <div
-            className="h-full rounded-lg border-t-2 p-6"
-            style={{ borderColor: ELEMENT_HEX.water, backgroundColor: `${ELEMENT_HEX.water}0F` }}
-          >
-            <p className="text-xs font-medium uppercase tracking-wide text-ivory/50">Positioned distinctly</p>
-            <ul className="mt-4 space-y-3">
-              {STRONG.map((item) => (
-                <li key={item} className="text-sm text-ivory/85">
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <TiltCard glowColor={ELEMENT_HEX.water}>
+            <div
+              className="h-full rounded-lg border-t-2 p-6"
+              style={{ borderColor: ELEMENT_HEX.water, backgroundColor: `${ELEMENT_HEX.water}0F` }}
+            >
+              <p className="text-xs font-medium uppercase tracking-wide text-ivory/50">Positioned distinctly</p>
+              <ul className="mt-4 space-y-3">
+                {STRONG.map((item) => (
+                  <li key={item} className="text-sm text-ivory/85">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </TiltCard>
         </Reveal>
       </div>
     </Container>
