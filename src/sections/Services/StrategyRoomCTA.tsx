@@ -55,7 +55,14 @@ export function StrategyRoomCTA() {
         A few quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way.
       </p>
 
-      <div className="relative mt-10 min-h-[220px]">
+      {/* Audit found this fixed height could overflow on narrow
+          viewports — 6 brandStages options (some as long as "I am
+          beginning with an idea") wrapping to 4-5 lines inside
+          max-w-lg on a ~360px screen can exceed 220px, causing a jump
+          against the skip-link/CTA below it. More room on mobile,
+          where wrapping is likelier; the original value still holds on
+          larger screens. */}
+      <div className="relative mt-10 min-h-[280px] sm:min-h-[220px]">
         <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div key="stage" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
@@ -123,7 +130,7 @@ export function StrategyRoomCTA() {
       </div>
 
       {step < 3 && (
-        <p className="mt-8 text-xs text-ivory/50">
+        <p className="mt-8 text-xs text-ivory/70">
           Prefer to skip ahead? <SkipLink onSkip={() => setStep(3)} />
         </p>
       )}
@@ -133,7 +140,7 @@ export function StrategyRoomCTA() {
 
 function SkipLink({ onSkip }: { onSkip: () => void }) {
   return (
-    <button type="button" onClick={onSkip} className="link-underline text-xs text-ivory/70 hover:text-ivory">
+    <button type="button" onClick={onSkip} className="link-underline text-xs text-ivory/85 hover:text-ivory">
       Go straight to the calendar
     </button>
   );
