@@ -29,7 +29,7 @@ export function PerceptionLadder() {
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
             Why some brands look different.
           </h2>
-          <p className="mt-4 text-ivory/75">
+          <p className="mt-4 text-ivory/85">
             A position on the same ladder every brand climbs, deliberately or by accident.
           </p>
         </Reveal>
@@ -38,7 +38,7 @@ export function PerceptionLadder() {
           {RUNGS.map((rung, i) => (
             <Reveal key={rung.label} delay={i * 0.1}>
               <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{rung.label}</p>
-              <p className="mt-1 text-sm text-ivory/70 sm:text-base">{rung.text}</p>
+              <p className="mt-1 text-sm text-ivory/80 sm:text-base">{rung.text}</p>
             </Reveal>
           ))}
         </div>

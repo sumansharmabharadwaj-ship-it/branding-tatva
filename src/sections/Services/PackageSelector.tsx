@@ -86,7 +86,7 @@ export function PackageSelector() {
                 </span>
                 {activePackage.billing === "monthly" && <span className="text-sm text-ivory/60">/mo</span>}
               </div>
-              <p className="mt-4 text-ivory/75">{activePackage.description}</p>
+              <p className="mt-4 text-ivory/85">{activePackage.description}</p>
               {/* "Open folder" stagger reveal — each real include item
                   animates in with a short delay instead of appearing as
                   a static bulleted list, so what a visitor actually
@@ -100,7 +100,7 @@ export function PackageSelector() {
                     initial={prefersReducedMotion ? undefined : { opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : 0.15 + i * 0.08 }}
-                    className="text-sm text-ivory/70 before:mr-2 before:content-['•']"
+                    className="text-sm text-ivory/80 before:mr-2 before:content-['•']"
                   >
                     {item}
                   </motion.li>

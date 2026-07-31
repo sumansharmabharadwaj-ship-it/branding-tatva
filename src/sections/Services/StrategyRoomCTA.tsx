@@ -51,7 +51,7 @@ export function StrategyRoomCTA() {
       <h2 className="mt-2 text-display-md font-display font-normal text-ivory">
         Open the strategy room.
       </h2>
-      <p className="mx-auto mt-4 max-w-md text-ivory/70">
+      <p className="mx-auto mt-4 max-w-md text-ivory/80">
         A few quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way.
       </p>
 
@@ -113,7 +113,7 @@ export function StrategyRoomCTA() {
 
           {step === 3 && (
             <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
-              <p className="text-sm text-ivory/70">Good. Grab a time that works.</p>
+              <p className="text-sm text-ivory/80">Good. Grab a time that works.</p>
               <div className="mt-2">
                 <CalendlyEmbed url={site.calendlyUrl} />
               </div>

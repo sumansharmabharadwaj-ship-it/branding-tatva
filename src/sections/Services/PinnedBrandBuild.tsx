@@ -118,7 +118,7 @@ export function PinnedBrandBuild() {
                     <ElementGlyph slug={layer.slug} className="h-4 w-4" style={{ color: layer.color }} />
                     <p className="font-display text-lg font-normal text-ivory">{layer.label}</p>
                   </div>
-                  <p className="mt-1 text-sm text-ivory/70">{layer.line}</p>
+                  <p className="mt-1 text-sm text-ivory/80">{layer.line}</p>
                 </div>
               </div>
             ))}
@@ -160,12 +160,12 @@ export function PinnedBrandBuild() {
               <ElementGlyph slug={layer.slug} className="h-6 w-6 shrink-0" style={{ color: layer.color }} />
               <div>
                 <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{layer.label}</p>
-                <p className="text-sm text-ivory/70">{layer.line}</p>
+                <p className="text-sm text-ivory/80">{layer.line}</p>
               </div>
             </div>
           ))}
         </div>
-        <p className="mt-10 max-w-md text-sm italic text-ivory/70">
+        <p className="mt-10 max-w-md text-sm italic text-ivory/80">
           Skip one layer, and marketing amplifies the gap instead of the position.
         </p>
       </Container>

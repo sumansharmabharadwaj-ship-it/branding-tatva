@@ -88,7 +88,7 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
                         transition={answerTransition}
                         className="overflow-hidden px-3"
                       >
-                        <p className={`pb-4 ${dark ? "text-ivory/75" : "text-foreground-secondary"}`}>{item.answer}</p>
+                        <p className={`pb-4 ${dark ? "text-ivory/85" : "text-foreground-secondary"}`}>{item.answer}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>

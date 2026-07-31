@@ -59,7 +59,7 @@ export function CommonMistakes() {
               <p className="mt-4 font-display text-lg font-normal text-ivory transition-transform duration-300 group-hover:translate-x-1">
                 {m.title}
               </p>
-              <p className="mt-2 text-sm text-ivory/75 transition-transform duration-300 group-hover:translate-x-1">
+              <p className="mt-2 text-sm text-ivory/85 transition-transform duration-300 group-hover:translate-x-1">
                 {m.detail}
               </p>
             </div>

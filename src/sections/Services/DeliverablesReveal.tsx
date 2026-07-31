@@ -23,7 +23,7 @@ export function DeliverablesReveal() {
         <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
           What you actually leave with.
         </h2>
-        <p className="mt-4 max-w-xl text-ivory/75">
+        <p className="mt-4 max-w-xl text-ivory/85">
           Every item below is pulled directly from the three packages above. Nothing generic, nothing invented.
         </p>
       </Reveal>

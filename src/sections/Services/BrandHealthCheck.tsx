@@ -120,7 +120,7 @@ export function BrandHealthCheck() {
       <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
         A quick brand health check.
       </h2>
-      <p className="mt-4 text-ivory/75">
+      <p className="mt-4 text-ivory/85">
         A real pattern, no invented analysis. {QUESTIONS.length} questions, about a minute.
       </p>
 
@@ -179,7 +179,7 @@ export function BrandHealthCheck() {
             >
               <p className="text-xs uppercase tracking-wide text-ivory/50">Where this points</p>
               <p className="mt-2 font-display text-xl font-normal text-ivory">{result?.title}</p>
-              <p className="mt-3 text-ivory/75">{result?.detail}</p>
+              <p className="mt-3 text-ivory/85">{result?.detail}</p>
               {resultPackage && (
                 <p className="mt-4 text-sm text-ivory/60">
                   Closest real match: <span className="text-ivory">{resultPackage.name}</span>

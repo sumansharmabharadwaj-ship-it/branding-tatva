@@ -41,7 +41,7 @@ export function WeakBrandingCost() {
         <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
           What weak branding actually costs.
         </h2>
-        <p className="mt-4 max-w-xl text-ivory/75">
+        <p className="mt-4 max-w-xl text-ivory/85">
           A pattern that holds across categories, described in general terms rather than as one company&apos;s story.
         </p>
       </Reveal>

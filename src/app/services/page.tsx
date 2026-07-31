@@ -86,7 +86,7 @@ export default function ServicesPage() {
                 Curiosity
               </span>
               <CyclingStatement headline="Why should a business care about branding?" />
-              <p className="mx-auto mt-4 max-w-xl text-ivory/70">
+              <p className="mx-auto mt-4 max-w-xl text-ivory/80">
                 The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Everything on this page explains how.
               </p>
             </Reveal>
@@ -121,7 +121,7 @@ export default function ServicesPage() {
               "positioned distinctly," but breaks the run of consecutive
               misty clips instead of adding a fourth one. */}
           <BackgroundVideo video="/videos/higgsfield-golden-ridge.mp4" poster="/images/higgsfield-golden-ridge-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/70" />
+          <div className="absolute inset-0 bg-soil/80" />
           <AmbientElementShader opacity={0.13} />
           {/* Same ghost watermark word technique Home ("ELEMENTS"), About
               ("WHY"), and Blog ("NOTES") already use, extended here — a
@@ -147,7 +147,7 @@ export default function ServicesPage() {
             nothing on Services claims it. */}
         <section id="education" className="relative scroll-mt-24 overflow-hidden bg-soil">
           <BackgroundVideo video="/videos/pixabay-sea-of-fog-sunrise.mp4" poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/76" />
+          <div className="absolute inset-0 bg-soil/80" />
           <div className="relative">
             <PerceptionLadder />
           </div>
@@ -169,7 +169,7 @@ export default function ServicesPage() {
               other clip on this page, still fits a quiet, contemplative
               tone for a section about what goes wrong. */}
           <BackgroundVideo video="/videos/pixabay-roots-stream.mp4" poster="/images/pixabay-roots-stream-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/70" />
+          <div className="absolute inset-0 bg-soil/80" />
           <AmbientElementShader opacity={0.15} />
           <div className="relative">
             <CommonMistakes />
@@ -195,12 +195,14 @@ export default function ServicesPage() {
             a wide Himalayan valley opening up behind the choice, a real
             visual echo of "where does my brand actually stand," reused
             from Home's own elements row since nothing on Services
-            claims it. Overlay pushed to /78 (darker than the standard
-            /70) since the three package cards need to stay legible
-            against a brighter, more open shot than the other sections. */}
+            claims it. Direct, repeated feedback that text was blending
+            into video across the page — every overlay on this page is
+            now a flat, consistent bg-soil/80 (was a hand-tuned 70/76/78
+            spread), a real contrast increase applied as one system
+            rather than guessed per clip. */}
         <section id="desire" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
           <BackgroundVideo video="/videos/higgsfield-himalayan-valley.mp4" poster="/images/higgsfield-himalayan-valley-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/78" />
+          <div className="absolute inset-0 bg-soil/80" />
           <AmbientElementShader opacity={0.14} />
           <div className="relative">
             <PackageSelector />
@@ -218,11 +220,10 @@ export default function ServicesPage() {
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
           {/* A living, flowing river — a real visual echo of "what you
               receive" actually moving toward the visitor, not a static
-              list. Same "real video underneath the shader" fix. Overlay
-              pushed to /78 (this clip runs brighter than the others) —
-              direct feedback that text over video was hard to read. */}
+              list. Same "real video underneath the shader" fix, same
+              consistent bg-soil/80 as every other section now. */}
           <BackgroundVideo video="/videos/pixabay-emerald-river.mp4" poster="/images/pixabay-emerald-river-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/78" />
+          <div className="absolute inset-0 bg-soil/80" />
           <AmbientElementShader opacity={0.12} />
           <span
             aria-hidden="true"
@@ -245,14 +246,14 @@ export default function ServicesPage() {
               claims it, fitting the pivot into one real project. */}
           <div className="relative overflow-hidden bg-soil pb-6 pt-16 sm:pt-20">
             <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
-            <div className="absolute inset-0 bg-soil/70" />
+            <div className="absolute inset-0 bg-soil/80" />
             <Container className="relative max-w-2xl text-center">
               <Reveal>
                 <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Proof</p>
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                   What do you actually receive?
                 </h2>
-                <p className="mt-4 text-ivory/75">
+                <p className="mt-4 text-ivory/85">
                   One real project, staged the way it actually happened. Verified numbers throughout.
                 </p>
               </Reveal>
@@ -286,14 +287,14 @@ export default function ServicesPage() {
               from "what happened" into "what happens next." */}
           <div className="relative overflow-hidden py-16 sm:py-20">
             <BackgroundVideo video="/videos/pixabay-golden-forest-glow.mp4" poster="/images/pixabay-golden-forest-glow-poster.jpg" />
-            <div className="absolute inset-0 bg-soil/70" />
+            <div className="absolute inset-0 bg-soil/80" />
             <Container className="relative">
               <Reveal>
                 <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Future vision</p>
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                   What happens during the project?
                 </h2>
-                <p className="mt-4 max-w-xl text-ivory/75">
+                <p className="mt-4 max-w-xl text-ivory/85">
                   Each stage depends on the one before it, a sequence rather than a checklist you can jump around in.
                 </p>
               </Reveal>
@@ -316,7 +317,7 @@ export default function ServicesPage() {
               apt real echo for a self-assessment section. Same "real
               video underneath the shader" fix. */}
           <BackgroundVideo video="/videos/higgsfield-forest-stream.mp4" poster="/images/higgsfield-forest-stream-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/70" />
+          <div className="absolute inset-0 bg-soil/80" />
           <AmbientElementShader opacity={0.15} />
           <span
             aria-hidden="true"
@@ -343,7 +344,7 @@ export default function ServicesPage() {
             exposes elsewhere on this site. */}
         <section id="risk" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
           <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/76" />
+          <div className="absolute inset-0 bg-soil/80" />
           <span
             aria-hidden="true"
             className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
@@ -356,7 +357,7 @@ export default function ServicesPage() {
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                 Is this the right fit?
               </h2>
-              <p className="mt-4 text-ivory/75">
+              <p className="mt-4 text-ivory/85">
                 Real answers to the questions that come up before a first conversation.
               </p>
             </Reveal>

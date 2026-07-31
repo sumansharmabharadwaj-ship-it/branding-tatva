@@ -48,7 +48,7 @@ export function FounderLens() {
             <Image src="/images/own-portrait.jpg" alt="Suman Sharma" fill sizes="100vw" style={{ objectFit: "cover", objectPosition: "center 25%" }} />
           </div>
           <p className="font-display text-2xl font-normal text-ivory sm:text-3xl">{aboutIntro.opening}</p>
-          <p className="mt-5 text-ivory/75">{aboutIntro.body[0]}</p>
+          <p className="mt-5 text-ivory/85">{aboutIntro.body[0]}</p>
           <p className="mt-4 text-sm text-ivory/60">
             Every engagement is led directly by the founder, start to finish, no handoffs and no account managers.
           </p>
@@ -69,7 +69,7 @@ export function FounderLens() {
             ))}
             <Reveal delay={credentials.length * 0.06}>
               <div className="flex h-full items-center rounded-lg border border-ivory/20 bg-ivory/5 px-4 py-4">
-                <p className="text-sm text-ivory/70">{engagementCount} real client engagements</p>
+                <p className="text-sm text-ivory/80">{engagementCount} real client engagements</p>
               </div>
             </Reveal>
           </div>
