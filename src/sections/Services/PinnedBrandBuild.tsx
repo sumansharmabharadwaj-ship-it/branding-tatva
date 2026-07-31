@@ -4,8 +4,10 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ELEMENT_HEX } from "@/lib/sectionWash";
 import { elements } from "@/data/elements";
@@ -91,8 +93,17 @@ export function PinnedBrandBuild() {
     // stacked in normal document flow with a plain per-item reveal
     // instead of scroll-scrubbed, no pin at all.
     return (
-      <section className="bg-soil py-16 sm:hidden">
-        <Container>
+      <section className="relative overflow-hidden bg-soil py-16 sm:hidden">
+        <Image
+          src="/images/higgsfield-mountain-mist-poster.jpg"
+          alt=""
+          fill
+          sizes="100vw"
+          style={{ objectFit: "cover" }}
+          className="opacity-30"
+        />
+        <div className="absolute inset-0 bg-soil/70" />
+        <Container className="relative">
           <div className="space-y-8">
             {LAYERS.map((layer, i) => (
               <div key={layer.slug} className="flex items-start gap-4">
@@ -119,7 +130,18 @@ export function PinnedBrandBuild() {
 
   return (
     <div ref={sectionRef} className="relative hidden h-screen overflow-hidden bg-soil sm:block">
-      <AmbientElementShader opacity={0.22} />
+      {/* Direct feedback that this section read as flat and motionless —
+          the shader alone (opacity 0.22) is too subtle as the section's
+          only source of visible movement while the five layers are
+          still building. Mist slowly clearing over a ridge doubles as a
+          literal echo of the section's own line ("marketing amplifies
+          whatever is already there") — the shape is already there
+          underneath, becoming visible. Shared with PerceptionLadder's
+          own AmbientElementShader right after it, so both "Authority"
+          and "Education" keep reading as one continuous visual system. */}
+      <BackgroundVideo video="/videos/higgsfield-mountain-mist.mp4" poster="/images/higgsfield-mountain-mist-poster.jpg" />
+      <div className="absolute inset-0 bg-soil/55" />
+      <AmbientElementShader opacity={0.3} />
       <Container className="relative flex h-full flex-col justify-center">
         <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Authority</p>
         <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">

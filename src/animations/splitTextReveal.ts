@@ -64,7 +64,15 @@ export function initSplitTextReveal(
   }
 
   const ctx = gsap.context(() => {
-    split = new SplitText(el, { type: splitType === "chars" ? "chars" : "words" });
+    // SplitText's "chars" type on its own doesn't group characters by
+    // word for line-wrapping purposes — confirmed live on the Services
+    // hero, a headline broke mid-word ("...care abou" / "t branding?")
+    // because the browser could wrap between any two character spans.
+    // Also requesting "words" wraps each word in its own non-breaking
+    // node, so a word can still only break at its own boundary, while
+    // split.chars (used for the actual per-char stagger below) is
+    // unaffected either way.
+    split = new SplitText(el, { type: splitType === "chars" ? "words, chars" : "words" });
     const nodes = splitType === "chars" ? split.chars : split.words;
     nodes.forEach((node) => {
       const w = node as HTMLElement;
