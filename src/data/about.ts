@@ -17,7 +17,7 @@ export const credentials = [
   },
   {
     label: "Clinical/Counselling Psychology Internship",
-    detail: "Psy-मन: 60 hours of psychological assessment, psychotherapeutic and counselling procedures (2022)",
+    detail: "Psy मन: 60 hours of psychological assessment, psychotherapeutic and counselling procedures (2022)",
     color: "#5C6B4A", // sage
     featured: false,
   },

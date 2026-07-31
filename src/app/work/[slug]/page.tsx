@@ -10,6 +10,7 @@ import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { AnimatedStat } from "@/components/AnimatedStat";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 
@@ -79,6 +80,7 @@ export default async function CaseStudyPage({ params }: Props) {
   return (
     <>
       <Header transparent />
+      <ScrollProgress />
       <main id="main-content">
         {/* Asymmetric masthead, matching the technique the blog post
             template now uses — a large offset headline in its own

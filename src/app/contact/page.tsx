@@ -11,8 +11,9 @@ import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import { site } from "@/data/site";
-import { SANDSTONE } from "@/lib/sectionWash";
+import { SANDSTONE, ELEMENT_HEX } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -29,6 +30,7 @@ export default function ContactPage() {
   return (
     <>
       <Header transparent />
+      <ScrollProgress />
       <main id="main-content">
         {/* Every other page on the site opens on a real video/photo
             hero; this page used to open directly on a flat color
@@ -128,54 +130,64 @@ export default function ContactPage() {
             carries the "water" theme as an accent, it just isn't the
             whole backdrop anymore. CalendlyEmbed already wraps itself in
             an opaque card, so no change needed there. */}
+        {/* Direct feedback that this section read as two flat text blocks
+            with only a hairline dividing them — same bordered,
+            element-tinted card treatment FounderLens/PackageSelector
+            already proved on Services, applied here to the two real
+            choices this page already offers (book directly, or stay on
+            the list). Water and Air, matching the glyphs already used. */}
         <section className="bg-soil py-16">
-          <Container>
+          <Container className="grid gap-8 lg:grid-cols-2 lg:items-start">
             <Reveal>
-              <ElementGlyph slug="water" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
-              <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
-                Or skip the form
-              </p>
-              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                Just grab a time that works for you.
-              </h2>
-              <p className="mt-3 max-w-xl text-ivory/75">
-                Times shown automatically adjust to your local timezone,
-                wherever you are.
-              </p>
-              <CalendlyEmbed url={site.calendlyUrl} />
-              <p className="mt-3 text-xs text-ivory/70">
-                Having trouble with the embed?{" "}
-                <a
-                  href={site.calendlyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sandstone link-underline"
-                >
-                  Open it directly instead
-                </a>
-                .
-              </p>
+              <div
+                className="rounded-2xl border p-6 sm:p-8"
+                style={{ borderColor: `${ELEMENT_HEX.water}40`, backgroundColor: `${ELEMENT_HEX.water}14` }}
+              >
+                <ElementGlyph slug="water" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
+                <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
+                  Or skip the form
+                </p>
+                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                  Just grab a time that works for you.
+                </h2>
+                <p className="mt-3 text-ivory/75">
+                  Times shown automatically adjust to your local timezone,
+                  wherever you are.
+                </p>
+                <CalendlyEmbed url={site.calendlyUrl} />
+                <p className="mt-3 text-xs text-ivory/70">
+                  Having trouble with the embed?{" "}
+                  <a
+                    href={site.calendlyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sandstone link-underline"
+                  >
+                    Open it directly instead
+                  </a>
+                  .
+                </p>
+              </div>
             </Reveal>
 
-            {/* Kept on the same Soil background rather than its own
-                section — a third color here would repeat the exact
-                "per-section color-cycling reads cluttered" problem
-                already fixed sitewide. Air glyph instead of Water
-                (already used above) so this still reads as its own
-                moment, not a repeat, without a new backdrop. */}
-            <Reveal delay={0.1} className="mt-16 border-t border-ivory/15 pt-10">
-              <ElementGlyph slug="air" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
-              <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
-                Still deciding?
-              </p>
-              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                Get occasional notes on brand clarity.
-              </h2>
-              <p className="mt-3 max-w-xl text-ivory/75">
-                A few honest thoughts a month, short and specific. Zero pitch,
-                unsubscribe whenever.
-              </p>
-              <NewsletterForm />
+            <Reveal delay={0.1}>
+              <div
+                className="rounded-2xl border p-6 sm:p-8"
+                style={{ borderColor: `${ELEMENT_HEX.air}40`, backgroundColor: `${ELEMENT_HEX.air}14` }}
+              >
+                <ElementGlyph slug="air" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
+                <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
+                  Still deciding?
+                </p>
+                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                  Get occasional notes on brand clarity.
+                </h2>
+                <p className="mt-3 text-ivory/75">
+                  A few honest thoughts a month, short and specific. Zero pitch,
+                  unsubscribe whenever.
+                </p>
+                <NewsletterForm />
+              </div>
             </Reveal>
           </Container>
         </section>

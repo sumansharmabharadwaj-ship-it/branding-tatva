@@ -6,15 +6,14 @@ import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { TiltCard } from "@/components/TiltCard";
-import { NatureAccent } from "@/components/NatureAccent";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ParallaxVideoBackdrop } from "@/components/ParallaxVideoBackdrop";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { MeadowClosing } from "@/components/MeadowClosing";
+import { DesignRationaleGrid } from "@/components/DesignRationaleGrid";
 import { PinnedWorkingMethod } from "@/sections/About/PinnedWorkingMethod";
 import { aboutIntro, credentials } from "@/data/about";
-import { designChoices } from "@/data/design-rationale";
 import { elements } from "@/data/elements";
 import { philosophy } from "@/data/philosophy";
 import { ElementGlyph } from "@/components/ElementGlyph";
@@ -288,34 +287,14 @@ export default function AboutPage() {
                 case for yours.
               </p>
             </Reveal>
-            {/* Was a single-column divide-y list, each choice reading as
-                a stacked row rather than four distinct statements — a
-                2-column numbered pillar grid instead, same data, same
-                ghost-numeral treatment, just given its own card-like
-                weight per item rather than a running list. */}
-            <div className="mt-14 grid gap-x-12 gap-y-12 sm:grid-cols-2">
-              {designChoices.map((choice, i) => (
-                <Reveal key={choice.title} delay={i * 0.08}>
-                  <div className="relative border-t border-ivory/15 pt-6">
-                    <span className="font-display text-5xl font-normal leading-none text-ivory/15 sm:text-6xl">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <p className="mt-4 font-display text-lg font-normal text-ivory">{choice.title}</p>
-                    <p className="mt-2 text-sm text-ivory/75">{choice.detail}</p>
-                    {/* One quiet hand-drawn touch, tied to this specific
-                        line about the palette coming from materials
-                        rather than a trend — not decoration for its own
-                        sake. */}
-                    {choice.title === "The palette" && (
-                      <NatureAccent
-                        variant="mushroom"
-                        className="pointer-events-none absolute -right-1 top-6 hidden h-9 w-9 rotate-6 text-ivory/20 sm:block"
-                      />
-                    )}
-                  </div>
-                </Reveal>
-              ))}
-            </div>
+            {/* Was a static 4-item 2-column grid, plain text only — the
+                honest fulfillment of the "logo/type/color/photography/
+                voice reacting on hover" backlog item: 2 real entries
+                added (photography, voice) to complete the set, and every
+                card now reveals a real, live specimen of this site's own
+                system on hover or tap, rather than a fabricated
+                brand-asset showcase built for a client with none. */}
+            <DesignRationaleGrid />
           </Container>
         </section>
 

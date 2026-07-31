@@ -88,6 +88,17 @@ export function ContactForm() {
     );
   }
 
+  // Direct feedback that this form read as one flat block dropped in at
+  // once — the same staggered "open folder" reveal PackageSelector's own
+  // includes list already proved, applied per row here instead. Rows
+  // fire in visual reading order (top to bottom), not per input, so a
+  // two-column row still animates as one beat.
+  let rowIndex = -1;
+  function nextDelay() {
+    rowIndex += 1;
+    return prefersReducedMotion ? 0 : rowIndex * 0.06;
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
       {/* Honeypot — hidden from real users, visible to bots */}
@@ -100,61 +111,86 @@ export function ContactForm() {
         {...register("company_website")}
       />
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}
+        className="grid gap-5 sm:grid-cols-2"
+      >
         <Field label="Name" error={errors.name?.message}>
           <input className={inputClass} {...register("name")} />
         </Field>
         <Field label="Email" error={errors.email?.message}>
           <input type="email" className={inputClass} {...register("email")} />
         </Field>
-      </div>
+      </motion.div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}
+        className="grid gap-5 sm:grid-cols-2"
+      >
         <Field label="Phone (optional)" error={errors.phone?.message}>
           <input className={inputClass} {...register("phone")} />
         </Field>
         <Field label="Business or brand name" error={errors.business?.message}>
           <input className={inputClass} {...register("business")} />
         </Field>
-      </div>
+      </motion.div>
 
-      <Field label="Website or social link (optional)" error={errors.website?.message}>
-        <input className={inputClass} {...register("website")} />
-      </Field>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}>
+        <Field label="Website or social link (optional)" error={errors.website?.message}>
+          <input className={inputClass} {...register("website")} />
+        </Field>
+      </motion.div>
 
-      <Field label="Where is your brand right now?" error={errors.brandStage?.message}>
-        <select className={inputClass} defaultValue="" {...register("brandStage")}>
-          <option value="" disabled>
-            Choose the closest fit
-          </option>
-          {brandStages.map((stage) => (
-            <option key={stage} value={stage}>
-              {stage}
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}>
+        <Field label="Where is your brand right now?" error={errors.brandStage?.message}>
+          <select className={inputClass} defaultValue="" {...register("brandStage")}>
+            <option value="" disabled>
+              Choose the closest fit
             </option>
-          ))}
-        </select>
-      </Field>
+            {brandStages.map((stage) => (
+              <option key={stage} value={stage}>
+                {stage}
+              </option>
+            ))}
+          </select>
+        </Field>
+      </motion.div>
 
-      <Field label="What do you think you need?" error={errors.servicesNeeded?.message}>
-        <input className={inputClass} {...register("servicesNeeded")} placeholder="A rough idea is fine" />
-      </Field>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}>
+        <Field label="What do you think you need?" error={errors.servicesNeeded?.message}>
+          <input className={inputClass} {...register("servicesNeeded")} placeholder="A rough idea is fine" />
+        </Field>
+      </motion.div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}
+        className="grid gap-5 sm:grid-cols-2"
+      >
         <Field label="Estimated budget (optional)" error={errors.budget?.message}>
           <input className={inputClass} {...register("budget")} />
         </Field>
         <Field label="Desired timeline (optional)" error={errors.timeline?.message}>
           <input className={inputClass} {...register("timeline")} />
         </Field>
-      </div>
+      </motion.div>
 
-      <Field label="Tell me about the project" error={errors.description?.message}>
-        <textarea rows={5} className={inputClass} {...register("description")} />
-      </Field>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}>
+        <Field label="Tell me about the project" error={errors.description?.message}>
+          <textarea rows={5} className={inputClass} {...register("description")} />
+        </Field>
+      </motion.div>
 
-      <Field label="How did you find Branding Tatva? (optional)" error={errors.referral?.message}>
-        <input className={inputClass} {...register("referral")} />
-      </Field>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}>
+        <Field label="How did you find Branding Tatva? (optional)" error={errors.referral?.message}>
+          <input className={inputClass} {...register("referral")} />
+        </Field>
+      </motion.div>
 
       {status === "error" && serverError && (
         <p role="alert" className="text-sm text-state-error">

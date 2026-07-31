@@ -8,6 +8,7 @@ import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { PullQuote } from "@/components/PullQuote";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
 import { site } from "@/data/site";
@@ -77,6 +78,7 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <>
       <Header transparent />
+      <ScrollProgress />
       <main id="main-content">
         {/* Asymmetric masthead, not a centered stack — the headline runs
             large and left in its own column, the meta block sits apart

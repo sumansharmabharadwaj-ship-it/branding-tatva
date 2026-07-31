@@ -16,6 +16,7 @@ import { LinkButton } from "@/components/Button";
 import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { ScrollProgress } from "@/components/ScrollProgress";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -48,6 +49,7 @@ export default function BlogPage() {
   return (
     <>
       <Header transparent />
+      <ScrollProgress />
       <main id="main-content">
         <PhotoHero
           video="/videos/own-dusk-ridge.mp4"

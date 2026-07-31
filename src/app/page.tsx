@@ -15,6 +15,7 @@ import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { TexturedDark } from "@/components/TexturedDark";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
@@ -60,6 +61,7 @@ export default function Home() {
   return (
     <>
       <Header transparent />
+      <ScrollProgress />
       <main id="main-content">
         <CinematicHero
           video="/videos/hero-forest-sanctuary.mp4"
@@ -169,7 +171,7 @@ not repeated here. */}
                 Every remembered brand made the same five decisions.
               </h2>
               <p className="mt-4 text-ivory/75">
-                Positioning. Distinctiveness. Narrative. Verbal identity. Salience. Memory does not change by agency. Neither does choice.
+                Positioning. Distinctiveness. Narrative. Verbal identity. Salience. Memory ignores agency. It ignores choice too.
               </p>
             </Reveal>
           </Container>

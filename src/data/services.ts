@@ -78,7 +78,7 @@ export const packages: Package[] = [
       "Monthly consistency review",
       "Performance tracking & adjustment",
       "Priority access",
-      "Quarterly strategy check-in",
+      "Quarterly strategy review",
     ],
     color: "#AD6F5C", // rose-earth — Space
     proofSlug: "herbalcart",

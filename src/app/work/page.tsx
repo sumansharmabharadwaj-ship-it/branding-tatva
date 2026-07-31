@@ -12,6 +12,7 @@ import { AnnotatedVisual } from "@/components/AnnotatedVisual";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { TexturedDark } from "@/components/TexturedDark";
 import { LinkButton } from "@/components/Button";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
@@ -26,9 +27,12 @@ export const metadata: Metadata = {
 };
 
 export default function WorkPage() {
+  const industries = [...new Set(projects.map((p) => p.industry))];
+
   return (
     <>
       <Header transparent />
+      <ScrollProgress />
       <main id="main-content">
         <PhotoHero
           video="/videos/own-ridge-road.mp4"
@@ -104,6 +108,35 @@ export default function WorkPage() {
             already stated in this page's own hero subhead above, not
             new copy. */}
         <KineticMarquee text="MARKETPLACES · WELLNESS · D2C · ENTERPRISE · COACHING" />
+
+        {/* Direct feedback that this page stayed uniformly light from the
+            compass explainer straight through to the closing CTA, the
+            one page on the site with no dark chapter until the very end.
+            Real facts already stated on this page (the project count,
+            the industry list from the hero subhead), given a moment of
+            visual weight rather than new stats. */}
+        <section className="bg-soil py-14">
+          <Container>
+            <Reveal className="flex flex-col items-center gap-8 text-center sm:flex-row sm:justify-between sm:text-left">
+              <div>
+                <p className="font-display text-5xl font-normal text-sandstone sm:text-6xl">
+                  {projects.length}
+                </p>
+                <p className="mt-2 text-sm text-ivory/70">Real client engagements, each one different.</p>
+              </div>
+              <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
+                {industries.map((industry) => (
+                  <span
+                    key={industry}
+                    className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/75"
+                  >
+                    {industry}
+                  </span>
+                ))}
+              </div>
+            </Reveal>
+          </Container>
+        </section>
 
         {/* Was bold solid Soil, matching every other photo/video section
             site-wide — but per direct feedback pointing at the reference
