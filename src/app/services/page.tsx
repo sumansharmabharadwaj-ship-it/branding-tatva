@@ -3,31 +3,24 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
-import { SplitReveal } from "@/components/SplitReveal";
 import { ScrollCue } from "@/components/ScrollCue";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { PhotoHero } from "@/components/PhotoHero";
 import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
-import { ProcessSection } from "@/sections/Process";
 import { RiskRemovalFAQ } from "@/sections/Services/RiskRemovalFAQ";
 import { CyclingStatement } from "@/sections/Services/CyclingStatement";
 import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
 import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
-import { FounderLens } from "@/sections/Services/FounderLens";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
 import { WeakBrandingCost } from "@/sections/Services/WeakBrandingCost";
 import { DeliverablesReveal } from "@/sections/Services/DeliverablesReveal";
-import { CaseStudyScrollStory } from "@/sections/Services/CaseStudyScrollStory";
 import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
 import { StrategySessionPreview } from "@/sections/Services/StrategySessionPreview";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Fireflies } from "@/components/Fireflies";
-import { process } from "@/data/process";
-import { projects } from "@/data/projects";
-import { elementColor } from "@/lib/elementColor";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -44,15 +37,17 @@ export const metadata: Metadata = {
 
 // Rebuilt from a services catalog into a "Brand Discovery Experience" —
 // one section per objection a visitor actually carries into the page
-// (Curiosity → Authority → Education → Trust → Desire → Proof → Future
-// vision → Risk removal → Book call), not a service-by-service list.
-// See the plan doc (Phase 14) for the full reasoning, including why
-// GSAP ScrollTrigger.pin appears exactly once (PinnedBrandBuild) and
-// Three.js exactly once (inside PerceptionLadder, via
-// AmbientElementShader) rather than throughout — every other pinned
-// moment on this page and site runs on the same sticky mechanism
-// already proven everywhere else.
-const flagshipProject = projects.find((p) => p.slug === "dr-haley-nutrition") ?? projects[0];
+// (Curiosity → Authority → Education → Desire → Risk removal → Book
+// call), not a service-by-service list. Trust, Proof, and Future
+// vision (the founder bio, the case study, and the six-stage pinned
+// process) were removed after a Creative Direction Audit — the pinned
+// process sequence was also rendering with overlapping text, a real
+// bug, not just a pacing call. See the plan doc (Phase 14) for the
+// full original reasoning, including why GSAP ScrollTrigger.pin
+// appears exactly once (PinnedBrandBuild) and Three.js exactly once
+// (inside PerceptionLadder, via AmbientElementShader) rather than
+// throughout — every other pinned moment on this page and site runs on
+// the same sticky mechanism already proven everywhere else.
 
 export default function ServicesPage() {
   return (
@@ -161,10 +156,9 @@ export default function ServicesPage() {
             observations now live as a compact addendum inside Stakes
             instead; the separate section, video, and shader are gone. */}
 
-        {/* Trust — Founder Lens. */}
-        <section id="trust" className="scroll-mt-24 bg-soil py-16 sm:py-24">
-          <FounderLens />
-        </section>
+        {/* Trust (FounderLens) removed on direct request following the
+            Creative Direction Audit. Founder credibility still lives on
+            the About page; not duplicated here. */}
 
         {/* Desire — the real package selector. Direct feedback flagged
             this section as flat and motionless (plain bg-soil, three
@@ -198,10 +192,10 @@ export default function ServicesPage() {
             wanted the deliverables to feel tangible right after picking
             a package, not left as bullet points inside a card. Every
             item traces to real services.ts data (see the component's
-            own comment). No id/jump-nav entry, same supporting-beat
-            treatment as Common mistakes above. Same shader treatment as
-            the sections around it — see WeakBrandingCost's comment
-            above for why. */}
+            own comment). No id/jump-nav entry — a supporting beat within
+            Desire's own objection. Same shader treatment as the
+            sections around it — see WeakBrandingCost's comment above
+            for why. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
           {/* A living, flowing river — a real visual echo of "what you
               receive" actually moving toward the visitor, not a static
@@ -221,72 +215,15 @@ export default function ServicesPage() {
           </div>
         </section>
 
-        {/* Proof — one real case study, staged as a scroll-driven story
-            (same sticky mechanism as PinnedJourney, no pin needed here). */}
-        <section id="proof" className="scroll-mt-24">
-          {/* Direct feedback confirmed this intro block still read blank
-              against the case study it leads into. A redwood canopy,
-              already used once on About for the same "steady, considered
-              work" register — reused here since nothing on Services
-              claims it, fitting the pivot into one real project. */}
-          <div className="relative overflow-hidden bg-soil pb-6 pt-16 sm:pt-20">
-            <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
-            <div className="absolute inset-0 bg-soil/80" />
-            <Container className="relative max-w-2xl text-center">
-              <Reveal>
-                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Proof</p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  What do you actually receive?
-                </h2>
-                <p className="mt-4 text-ivory/85">
-                  One real project, staged the way it actually happened. Verified numbers throughout.
-                </p>
-              </Reveal>
-            </Container>
-          </div>
-          <CaseStudyScrollStory project={flagshipProject} />
-        </section>
-
-        {/* A single pacing "breath" — direct feedback that every section
-            on the page carried roughly equal visual weight, with no
-            room to let a claim land before the next section starts.
-            One large, otherwise-empty statement at the exact narrative
-            pivot from "what happened" (Proof) to "how it works" (Future
-            vision) — deliberately placed once, not scattered as a
-            rhythm applied everywhere, matching this project's own
-            "signature moment, not everywhere" restraint. */}
-        <section className="bg-soil px-6 py-28 text-center sm:py-40">
-          <SplitReveal as="h2" splitType="chars" className="mx-auto max-w-2xl font-display text-[clamp(1.75rem,5vw,3rem)] font-normal leading-[1.2] text-ivory">
-            Proof only matters if the process behind it repeats.
-          </SplitReveal>
-        </section>
-
-        {/* Future vision — the real six-stage process, reused as-is
-            (already a cinematic scroll-driven timeline via PinnedJourney,
-            not rebuilt for this page). */}
-        <section id="process" className="scroll-mt-24 bg-soil">
-          {/* Direct feedback confirmed this intro block still read blank
-              ahead of the six-stage timeline. Warm light breaking through
-              a forest, already used once on Home's elements row — reused
-              here since nothing on Services claims it, fitting the pivot
-              from "what happened" into "what happens next." */}
-          <div className="relative overflow-hidden py-16 sm:py-20">
-            <BackgroundVideo video="/videos/pixabay-golden-forest-glow.mp4" poster="/images/pixabay-golden-forest-glow-poster.jpg" />
-            <div className="absolute inset-0 bg-soil/80" />
-            <Container className="relative">
-              <Reveal>
-                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Future vision</p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  What happens during the project?
-                </h2>
-                <p className="mt-4 max-w-xl text-ivory/85">
-                  Each stage depends on the one before it, a sequence rather than a checklist you can jump around in.
-                </p>
-              </Reveal>
-            </Container>
-          </div>
-          <ProcessSection stages={process} elementColor={elementColor} dark />
-        </section>
+        {/* Proof (the Dr. Haley Nutrition case study) and Future vision
+            (the six-stage pinned process) removed on direct request
+            following the Creative Direction Audit — the pinned process
+            sequence was also rendering with overlapping text (a real
+            bug: stage numerals, headings, and the bottom stage-list row
+            all painting on top of each other). The pacing "breath" quote
+            that used to sit between them ("Proof only matters if the
+            process behind it repeats") named both by concept and no
+            longer made sense with neither present, so it's gone too. */}
 
         {/* A slower alternative to Desire's one-click pick, for a visitor
             who wants to think it through before Risk removal and the
@@ -377,10 +314,7 @@ export default function ServicesPage() {
         items={[
           { href: "#authority", label: "Authority" },
           { href: "#education", label: "Education" },
-          { href: "#trust", label: "Trust" },
           { href: "#desire", label: "Desire" },
-          { href: "#proof", label: "Proof" },
-          { href: "#process", label: "Process" },
           { href: "#risk", label: "FAQ" },
         ]}
       />
