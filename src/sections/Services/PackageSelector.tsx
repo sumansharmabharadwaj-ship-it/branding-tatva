@@ -112,8 +112,10 @@ export function PackageSelector() {
                     See it in action: {proof.title}
                   </LinkButton>
                 )}
+                {/* Named after the real package chosen, not a generic
+                    "Get started" repeated on every card. */}
                 <LinkButton href="/contact" style={{ backgroundColor: activePackage.color }}>
-                  Get started
+                  Start with {activePackage.name}
                 </LinkButton>
               </div>
             </motion.div>

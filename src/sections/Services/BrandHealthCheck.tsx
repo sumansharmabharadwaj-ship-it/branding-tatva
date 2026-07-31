@@ -82,18 +82,33 @@ function bandFor(score: number) {
 export function BrandHealthCheck() {
   const [step, setStep] = useState(0);
   const [score, setScore] = useState(0);
+  // Direct feedback that this quiz "isn't interactive" — a click landed
+  // with no visible acknowledgement before the next question swapped in.
+  // Tracking the just-clicked option separately lets the button itself
+  // show a pressed state for a beat before advancing, real tactile
+  // feedback rather than relying only on the AnimatePresence swap.
+  const [selected, setSelected] = useState<string | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const done = step >= QUESTIONS.length;
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.35 };
 
-  function answer(points: number) {
-    setScore((s) => s + points);
-    setStep((s) => s + 1);
+  function answer(label: string, points: number) {
+    if (selected) return;
+    setSelected(label);
+    window.setTimeout(
+      () => {
+        setScore((s) => s + points);
+        setStep((s) => s + 1);
+        setSelected(null);
+      },
+      prefersReducedMotion ? 0 : 260
+    );
   }
 
   function reset() {
     setStep(0);
     setScore(0);
+    setSelected(null);
   }
 
   const result = done ? bandFor(score) : null;
@@ -108,6 +123,15 @@ export function BrandHealthCheck() {
       <p className="mt-4 text-ivory/75">
         A real pattern, no invented analysis. {QUESTIONS.length} questions, about a minute.
       </p>
+
+      {/* Progress bar — the other real, visible signal that a click
+          registered, independent of the question-swap animation. */}
+      <div className="mt-6 h-1 w-full overflow-hidden rounded-full bg-ivory/10">
+        <div
+          className="h-full rounded-full bg-sandstone transition-[width] duration-500 ease-out"
+          style={{ width: `${(Math.min(step, QUESTIONS.length) / QUESTIONS.length) * 100}%` }}
+        />
+      </div>
 
       <div className="relative mt-8 min-h-[260px]">
         <AnimatePresence mode="wait">
@@ -124,16 +148,24 @@ export function BrandHealthCheck() {
               </p>
               <p className="mt-2 text-lg text-ivory">{QUESTIONS[step].prompt}</p>
               <div className="mt-5 space-y-2.5">
-                {QUESTIONS[step].options.map((opt) => (
-                  <button
-                    key={opt.label}
-                    type="button"
-                    onClick={() => answer(opt.points)}
-                    className="block w-full rounded-lg border border-ivory/20 px-4 py-3 text-left text-sm text-ivory/85 transition-colors duration-300 hover:border-ivory/45 hover:bg-ivory/5"
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+                {QUESTIONS[step].options.map((opt) => {
+                  const isSelected = selected === opt.label;
+                  return (
+                    <button
+                      key={opt.label}
+                      type="button"
+                      onClick={() => answer(opt.label, opt.points)}
+                      aria-pressed={isSelected}
+                      className={`block w-full rounded-lg border px-4 py-3 text-left text-sm transition-all duration-200 ${
+                        isSelected
+                          ? "border-sandstone bg-sandstone/15 text-ivory"
+                          : "border-ivory/20 text-ivory/85 hover:border-ivory/45 hover:bg-ivory/5"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
               </div>
             </motion.div>
           ) : (

@@ -138,9 +138,18 @@ export default function ServicesPage() {
         </section>
 
         {/* Education — the one Three.js moment (inside PerceptionLadder,
-            via AmbientElementShader), scoped and ambient. */}
-        <section id="education" className="scroll-mt-24">
-          <PerceptionLadder />
+            via AmbientElementShader), scoped and ambient. Direct feedback
+            confirmed this section still read blank against the sections
+            around it. Fog breaking over a ridge at sunrise: a real visual
+            echo of "recognized" slowly becoming "remembered" as the light
+            clears, already used elsewhere on Home, reused here since
+            nothing on Services claims it. */}
+        <section id="education" className="relative scroll-mt-24 overflow-hidden bg-soil">
+          <BackgroundVideo video="/videos/pixabay-sea-of-fog-sunrise.mp4" poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/76" />
+          <div className="relative">
+            <PerceptionLadder />
+          </div>
         </section>
 
         {/* An extension of Education, not a new act — direct feedback
@@ -179,8 +188,17 @@ export default function ServicesPage() {
             system continuing through the page rather than a new device
             per section. Opacity dropped slightly below Authority's
             (0.3) and Education's (0.16) since PackageSelector's own
-            interactive cards need to stay the clearest thing on screen. */}
+            interactive cards need to stay the clearest thing on screen.
+            Direct feedback confirmed this section still read blank —
+            a wide Himalayan valley opening up behind the choice, a real
+            visual echo of "where does my brand actually stand," reused
+            from Home's own elements row since nothing on Services
+            claims it. Overlay pushed to /78 (darker than the standard
+            /70) since the three package cards need to stay legible
+            against a brighter, more open shot than the other sections. */}
         <section id="desire" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
+          <BackgroundVideo video="/videos/higgsfield-himalayan-valley.mp4" poster="/images/higgsfield-himalayan-valley-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/78" />
           <AmbientElementShader opacity={0.14} />
           <div className="relative">
             <PackageSelector />
@@ -198,9 +216,11 @@ export default function ServicesPage() {
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
           {/* A living, flowing river — a real visual echo of "what you
               receive" actually moving toward the visitor, not a static
-              list. Same "real video underneath the shader" fix. */}
+              list. Same "real video underneath the shader" fix. Overlay
+              pushed to /78 (this clip runs brighter than the others) —
+              direct feedback that text over video was hard to read. */}
           <BackgroundVideo video="/videos/pixabay-emerald-river.mp4" poster="/images/pixabay-emerald-river-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/70" />
+          <div className="absolute inset-0 bg-soil/78" />
           <AmbientElementShader opacity={0.12} />
           <span
             aria-hidden="true"
@@ -216,8 +236,15 @@ export default function ServicesPage() {
         {/* Proof — one real case study, staged as a scroll-driven story
             (same sticky mechanism as PinnedJourney, no pin needed here). */}
         <section id="proof" className="scroll-mt-24">
-          <div className="bg-soil pb-6 pt-16 sm:pt-20">
-            <Container className="max-w-2xl text-center">
+          {/* Direct feedback confirmed this intro block still read blank
+              against the case study it leads into. A redwood canopy,
+              already used once on About for the same "steady, considered
+              work" register — reused here since nothing on Services
+              claims it, fitting the pivot into one real project. */}
+          <div className="relative overflow-hidden bg-soil pb-6 pt-16 sm:pt-20">
+            <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
+            <div className="absolute inset-0 bg-soil/70" />
+            <Container className="relative max-w-2xl text-center">
               <Reveal>
                 <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Proof</p>
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
@@ -250,7 +277,14 @@ export default function ServicesPage() {
             (already a cinematic scroll-driven timeline via PinnedJourney,
             not rebuilt for this page). */}
         <section id="process" className="scroll-mt-24 bg-soil">
+          {/* Direct feedback confirmed this intro block still read blank
+              ahead of the six-stage timeline. Warm light breaking through
+              a forest, already used once on Home's elements row — reused
+              here since nothing on Services claims it, fitting the pivot
+              from "what happened" into "what happens next." */}
           <div className="relative overflow-hidden py-16 sm:py-20">
+            <BackgroundVideo video="/videos/pixabay-golden-forest-glow.mp4" poster="/images/pixabay-golden-forest-glow-poster.jpg" />
+            <div className="absolute inset-0 bg-soil/70" />
             <Container className="relative">
               <Reveal>
                 <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Future vision</p>

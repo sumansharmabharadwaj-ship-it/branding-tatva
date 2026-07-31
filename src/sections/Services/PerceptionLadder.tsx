@@ -21,7 +21,7 @@ const RUNGS = [
 
 export function PerceptionLadder() {
   return (
-    <div className="relative overflow-hidden bg-soil py-20 sm:py-28">
+    <div className="relative py-20 sm:py-28">
       <AmbientElementShader opacity={0.16} />
       <Container className="relative max-w-2xl">
         <Reveal>
