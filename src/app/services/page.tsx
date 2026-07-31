@@ -67,10 +67,16 @@ export default function ServicesPage() {
             forming rather than reading a static question. Height stays
             Tier 3 (70vh), the documented mid-page tier in PhotoHero's
             own comment — this page's ambition shows in what follows the
-            hero, not in breaking the site's hero-height hierarchy. */}
+            hero, not in breaking the site's hero-height hierarchy. Was
+            higgsfield-glowing-embers.mp4 — direct feedback that flickering
+            fire footage read as agitated rather than calm for what should
+            be a quiet, contemplative opening question. Swapped for a
+            still-unused clip already on disk: sunbeams through a misty
+            pine trail, matching the site's established calm-nature
+            register instead of introducing new footage. */}
         <PhotoHero
-          video="/videos/higgsfield-glowing-embers.mp4"
-          poster="/images/higgsfield-glowing-embers-poster.jpg"
+          video="/videos/higgsfield-forest-trail-mist.mp4"
+          poster="/images/higgsfield-forest-trail-mist-poster.jpg"
           minHeight="70vh"
         >
           <Container className="relative py-20 text-center">
