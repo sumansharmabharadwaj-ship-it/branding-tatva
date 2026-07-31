@@ -108,6 +108,16 @@ export default function ServicesPage() {
             a new device per section. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
           <AmbientElementShader opacity={0.13} />
+          {/* Same ghost watermark word technique Home ("ELEMENTS"), About
+              ("WHY"), and Blog ("NOTES") already use, extended here — a
+              recurring graphic motif tying new sections into the same
+              visual system rather than each reading as a one-off. */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
+          >
+            Stakes
+          </span>
           <div className="relative">
             <WeakBrandingCost />
           </div>
@@ -167,6 +177,12 @@ export default function ServicesPage() {
             above for why. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
           <AmbientElementShader opacity={0.12} />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
+          >
+            Receive
+          </span>
           <div className="relative">
             <DeliverablesReveal />
           </div>
@@ -236,6 +252,12 @@ export default function ServicesPage() {
             for why. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
           <AmbientElementShader opacity={0.15} />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
+          >
+            Check
+          </span>
           <div className="relative">
             <BrandHealthCheck />
           </div>
