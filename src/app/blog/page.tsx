@@ -179,8 +179,19 @@ export default function BlogPage() {
         {/* This page used to end on the ImageBreak above with no next
             step — every other page (Home, About, Services, Contact)
             closes with an explicit CTA. Same TexturedDark + ClipReveal
-            + LinkButton combination Services and Work already prove. */}
-        <TexturedDark image="/images/own-alpenglow-peak.jpg" className="py-24 text-center sm:pb-28">
+            + LinkButton combination Services and Work already prove.
+            Was own-alpenglow-peak.jpg — the exact clip flagged earlier
+            this session as reading flat and hazy next to the site's
+            other, more vivid footage, confirmed still live here on a
+            direct audit. Swapped for the one genuinely unused clip left
+            in the library: a clear stream over rocks, a real visual
+            match for "clarity," now upgraded from a static image to
+            video. */}
+        <TexturedDark
+          image="/images/higgsfield-stream-clarity-poster.jpg"
+          video="/videos/higgsfield-stream-clarity.mp4"
+          className="py-24 text-center sm:pb-28"
+        >
           <ClipReveal>
             <Container>
               <h2 className="text-display-md font-display font-normal text-ivory">
