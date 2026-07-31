@@ -230,26 +230,15 @@ not repeated here. */}
             mounting + opacity toggling. */}
         <SelectedWorkPinned featured={featured} />
 
-        {/* Soft mid-funnel CTA — direct feedback that the page only had
-            one ask at the very top and one at the very bottom. Desire
-            peaks right after seeing real proof, and a visitor ready
-            here deserves a link before Process/FAQ. Curiosity-driven
-            copy, distinct from the hero's and closing CTA's own text,
-            matching what a reader actually wants at this point: proof
-            of a fit, before a full booking commitment. */}
-        <section className="bg-soil py-10 text-center">
-          <Container>
-            <Reveal>
-              <LinkButton
-                href="/contact"
-                variant="secondary"
-                className="border-ivory/30 text-ivory hover:bg-ivory/10"
-              >
-                Let&apos;s uncover the perception your market already has
-              </LinkButton>
-            </Reveal>
-          </Container>
-        </section>
+        {/* Was a standalone mid-funnel CTA section here (plain bg-soil,
+            no video) — direct, repeated feedback that this and the
+            closing Process quote below were both flat text-only breaks
+            interrupting otherwise-continuous video sections, reading as
+            a visible "seam" rather than one connected scroll. Removed
+            entirely rather than video-ified: Home already opens and
+            closes on real CTAs, and cutting this one lets Selected
+            Work's flame video hand off directly into Process's own
+            video heading with no flat interlude between them. */}
 
         {/* Was solid Indigo (before that, a pale blue-gray wash) — one
             more one-off hue in a page that already had Sage and Clay
@@ -289,13 +278,27 @@ not repeated here. */}
             </Container>
           </div>
           <ProcessSection stages={process} elementColor={elementColor} />
-          <Container className="pb-16 pt-4 text-center sm:pb-20">
-            <Reveal>
-              <p className="mx-auto max-w-lg text-sm italic text-ivory/70 sm:text-base">
-                Skipping a step costs you quietly. The recall you paid for simply stops compounding.
-              </p>
-            </Reveal>
-          </Container>
+          {/* Direct, repeated feedback that this quote sat on bare
+              bg-soil right after the pinned journey releases — the exact
+              seam complaint above, just at the other end of the same
+              section. A second, independent overflow-hidden wrapper
+              here (a sibling AFTER ProcessSection, never an ancestor of
+              it) keeps PinnedJourney's own sticky mechanism untouched —
+              see the comment on the heading div above for why that
+              scoping matters. Same roots-and-stream clip as the
+              heading: a deliberate visual bookend (open and close the
+              section on the same footage) rather than a new clip. */}
+          <div className="relative overflow-hidden">
+            <BackgroundVideo video="/videos/pixabay-roots-stream.mp4" poster="/images/pixabay-roots-stream-poster.jpg" />
+            <div className="absolute inset-0 bg-soil/70" />
+            <Container className="relative pb-16 pt-10 text-center sm:pb-20 sm:pt-14">
+              <Reveal>
+                <p className="mx-auto max-w-lg text-sm italic text-ivory/80 sm:text-base">
+                  Skipping a step costs you quietly. The recall you paid for simply stops compounding.
+                </p>
+              </Reveal>
+            </Container>
+          </div>
         </section>
 
         {/* Threshold ("every brand starts at one of two thresholds") used

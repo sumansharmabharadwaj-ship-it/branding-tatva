@@ -46,7 +46,15 @@ type GlyphSlug = "earth" | "water" | "fire" | "air" | "space";
 // fraction of whatever distance exists regardless of STAGE_SPEED — so
 // a small multiplier plus a 1-screen tail buffer (was 2) keeps that
 // same settle behavior without inflating total scroll distance.
-const STAGE_SPEED = 1.15;
+// Tuned down again from the sitewide 1.15 specifically for this
+// component — direct feedback that this exact section felt "stuck,"
+// video playing long after scrolling past it. Every other pinned
+// sequence on the site has 2-5 stages; this one has 6, the most of
+// any of them, so the same per-stage multiplier compounds into by far
+// the longest single hold on the site (was 675vh, ~20% longer than
+// PinnedSlider's 5-stage 560vh). Lower here brings it back in line
+// with its siblings instead of lowering the shared constant everywhere.
+const STAGE_SPEED = 0.95;
 
 export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
