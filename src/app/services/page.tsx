@@ -114,12 +114,13 @@ export default function ServicesPage() {
             each time, continuing one visual system rather than adding
             a new device per section. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
-          {/* Direct feedback that the shader alone reads as basically flat
-              in a screenshot — real, visible footage underneath it now,
-              not just a near-invisible WebGL shimmer. A single pine
-              standing apart from a misty valley: a real visual echo of
-              "positioned distinctly," not decoration for its own sake. */}
-          <BackgroundVideo video="/videos/higgsfield-lone-pine.mp4" poster="/images/higgsfield-lone-pine-poster.jpg" />
+          {/* Direct feedback that the misty forest/mountain look was
+              repeating too often back to back (hero, Authority, and this
+              section all read as the same shot). Swapped from
+              higgsfield-lone-pine to a warm, sunlit ridge — still fits
+              "positioned distinctly," but breaks the run of consecutive
+              misty clips instead of adding a fourth one. */}
+          <BackgroundVideo video="/videos/higgsfield-golden-ridge.mp4" poster="/images/higgsfield-golden-ridge-poster.jpg" />
           <div className="absolute inset-0 bg-soil/70" />
           <AmbientElementShader opacity={0.13} />
           {/* Same ghost watermark word technique Home ("ELEMENTS"), About
@@ -162,11 +163,12 @@ export default function ServicesPage() {
             treatment as the sections around it — see WeakBrandingCost's
             comment above for why. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
-          {/* Own real footage (not stock) — warm light through branches,
-              a quiet contemplative tone for a section about what goes
-              wrong. Same "real video underneath the shader" fix as the
-              section above. */}
-          <BackgroundVideo video="/videos/own-golden-branches.mp4" poster="/images/own-golden-branches-poster.jpg" />
+          {/* Was own-golden-branches.mp4 (Suman's own personal footage) —
+              removed from this page on direct request. Moss-covered
+              roots in a running stream: a distinct texture from every
+              other clip on this page, still fits a quiet, contemplative
+              tone for a section about what goes wrong. */}
+          <BackgroundVideo video="/videos/pixabay-roots-stream.mp4" poster="/images/pixabay-roots-stream-poster.jpg" />
           <div className="absolute inset-0 bg-soil/70" />
           <AmbientElementShader opacity={0.15} />
           <div className="relative">
@@ -327,9 +329,25 @@ export default function ServicesPage() {
           </div>
         </section>
 
-        {/* Risk removal — the real FAQ content, reframed. */}
-        <section id="risk" className="scroll-mt-24 bg-background-alt py-16 sm:py-24">
-          <Container className="max-w-2xl">
+        {/* Risk removal — the real FAQ content, reframed, merged with the
+            "before you book" preview into one section instead of two
+            back-to-back bg-background-alt blocks. Direct feedback that a
+            visitor could see "white screen" — two full-padding light
+            sections stacked right after eight straight dark video
+            sections created a long, undifferentiated pale stretch with
+            nothing to anchor it. A single section with one shared
+            padding budget, a soil-toned ghost watermark (the same
+            light-background technique Blog's grid section already
+            uses), and a hairline divider between the two halves reads
+            as one deliberate light beat instead of a gap. */}
+        <section id="risk" className="relative scroll-mt-24 overflow-hidden bg-background-alt py-16 sm:py-24">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-soil/[0.05] sm:-top-8"
+          >
+            Ask
+          </span>
+          <Container className="relative max-w-2xl">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">Risk removal</p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-soil">
@@ -342,16 +360,10 @@ export default function ServicesPage() {
             <div className="mt-8">
               <RiskRemovalFAQ />
             </div>
+            <div className="mt-16 border-t border-soil/10 pt-12 sm:mt-20 sm:pt-16">
+              <StrategySessionPreview />
+            </div>
           </Container>
-        </section>
-
-        {/* Direct lead-in to Book call — describes the real mechanism
-            StrategyRoomCTA/CalendlyEmbed already run, nothing new
-            promised. Sits on the same background as Risk removal above
-            it (bg-background-alt) since it's still answering
-            uncertainty, not yet the cinematic booking moment itself. */}
-        <section className="bg-background-alt py-16 sm:py-24">
-          <StrategySessionPreview />
         </section>
 
         {/* Book call — the strategy room. */}
