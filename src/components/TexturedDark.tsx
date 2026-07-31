@@ -119,7 +119,30 @@ export function TexturedDark({
           className="cursor-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500"
         />
       )}
-      <div className="relative">{children}</div>
+      <div className="relative">
+        {/* Audit found the video variant's overlay (above) sits below
+            the site's normalized bg-soil/80 text-contrast floor —
+            deliberately, per the comment above: raising it site-wide
+            already caused a real regression once (crushed the Footer's
+            video to a static-looking image). Rather than re-fighting
+            that trade-off with one shared value, a second, local scrim
+            sized to exactly this block's own content bounds (not the
+            whole section) sits only behind the text/CTA, so contrast
+            improves where it's actually read without darkening the
+            video everywhere else it's visible. No-op for the no-video
+            variant, which is already at 0.88-0.93. */}
+        {video && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-3xl sm:-inset-x-10"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(39,34,30,0.55) 0%, rgba(39,34,30,0.3) 65%, transparent 100%)",
+            }}
+          />
+        )}
+        {children}
+      </div>
     </section>
   );
 }

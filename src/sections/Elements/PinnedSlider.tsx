@@ -111,10 +111,16 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
     // +1 slide-height of buffer beyond what the crossfade math needs —
     // see update()'s own comment for why sticky needs dedicated room to
     // release in, separate from the last slide's own on-screen moment.
+    // Audit found this was still +200 (two screens) despite the file's
+    // own top comment describing the fix as "a 1-screen tail buffer
+    // (was 2)" — a stale mismatch between the comment and the code that
+    // left this the longest, most disproportionate pinned hold on the
+    // site (660vh vs. its 5-6 stage siblings' 540-575vh). Corrected to
+    // match what was actually intended.
     <div
       ref={wrapperRef}
       className="relative"
-      style={{ height: `${(elements.length - 1) * 100 * STAGE_SPEED + 200}vh` }}
+      style={{ height: `${(elements.length - 1) * 100 * STAGE_SPEED + 100}vh` }}
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {elements.map((el, i) => (
