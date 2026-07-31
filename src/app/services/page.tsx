@@ -332,19 +332,24 @@ export default function ServicesPage() {
 
         {/* Risk removal — the real FAQ content, reframed, merged with the
             "before you book" preview into one section instead of two
-            back-to-back blocks. Direct, repeated feedback that this was
-            still reading as a blank/white stretch even after merging —
-            moved off the light bg-background-alt tier entirely onto the
-            same bg-soil/video treatment as every other Services section,
-            for full uniformity with the rest of the page. A calm meadow
-            of wildflowers, already used once on Home's own closing
-            moment: a real visual echo of "resolved, reassured" fitting a
-            risk removal section. RiskRemovalFAQ/StrategySessionPreview
-            both take the same `dark` prop ProcessSection already
-            exposes elsewhere on this site. */}
+            back-to-back blocks. Direct feedback that the wildflowers clip
+            here read as generic stock footage, and a direct instruction
+            not to reuse any existing video — the library has zero unused
+            clips left (confirmed by a full site-wide audit), so any
+            other choice would just be reuse with extra steps. The
+            brief's own stated priority settles it instead: video here
+            should never overpower the FAQ, exists only for atmosphere,
+            and the content should stay the focal point. A pure reading
+            section doesn't need video at all — removed entirely rather
+            than swapped, which also directly answers "stop reusing
+            footage." AmbientElementShader (the site's one ambient
+            WebGL motion, already used on Authority/Education/Desire)
+            stays as the section's only motion, quieter and correct for
+            a section meant to be read, not watched. RiskRemovalFAQ/
+            StrategySessionPreview both take the same `dark` prop
+            ProcessSection already exposes elsewhere on this site. */}
         <section id="risk" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
-          <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
+          <AmbientElementShader opacity={0.16} />
           <span
             aria-hidden="true"
             className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
