@@ -18,6 +18,7 @@ import { FounderLens } from "@/sections/Services/FounderLens";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
 import { CaseStudyScrollStory } from "@/sections/Services/CaseStudyScrollStory";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
+import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { process } from "@/data/process";
 import { projects } from "@/data/projects";
 import { elementColor } from "@/lib/elementColor";
@@ -97,9 +98,21 @@ export default function ServicesPage() {
           <FounderLens />
         </section>
 
-        {/* Desire — the real package selector. */}
-        <section id="desire" className="scroll-mt-24 bg-soil py-16 sm:py-24">
-          <PackageSelector />
+        {/* Desire — the real package selector. Direct feedback flagged
+            this section as flat and motionless (plain bg-soil, three
+            outlined boxes, no texture at all) against Authority and
+            Education right above it, which both carry the same ambient
+            shader. Extending that shader here, not a new visual, keeps
+            the throughline the brief itself asked for: one visual
+            system continuing through the page rather than a new device
+            per section. Opacity dropped slightly below Authority's
+            (0.3) and Education's (0.16) since PackageSelector's own
+            interactive cards need to stay the clearest thing on screen. */}
+        <section id="desire" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
+          <AmbientElementShader opacity={0.14} />
+          <div className="relative">
+            <PackageSelector />
+          </div>
         </section>
 
         {/* Proof — one real case study, staged as a scroll-driven story
