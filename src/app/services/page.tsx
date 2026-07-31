@@ -16,7 +16,6 @@ import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
 import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { FounderLens } from "@/sections/Services/FounderLens";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
-import { CommonMistakes } from "@/sections/Services/CommonMistakes";
 import { WeakBrandingCost } from "@/sections/Services/WeakBrandingCost";
 import { DeliverablesReveal } from "@/sections/Services/DeliverablesReveal";
 import { CaseStudyScrollStory } from "@/sections/Services/CaseStudyScrollStory";
@@ -154,28 +153,13 @@ export default function ServicesPage() {
           </div>
         </section>
 
-        {/* An extension of Education, not a new act — direct feedback
-            wanted the page to establish authority through real
-            perspective, not just theory. Grounded in the same branding
-            vocabulary already established sitewide (positioning, mental
-            availability), no invented case data. No id/jump-nav entry:
-            a supporting beat within Education's own objection, the same
-            treatment the "breath" section below gets. Same shader
-            treatment as the sections around it — see WeakBrandingCost's
-            comment above for why. */}
-        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
-          {/* Was own-golden-branches.mp4 (Suman's own personal footage) —
-              removed from this page on direct request. Moss-covered
-              roots in a running stream: a distinct texture from every
-              other clip on this page, still fits a quiet, contemplative
-              tone for a section about what goes wrong. */}
-          <BackgroundVideo video="/videos/pixabay-roots-stream.mp4" poster="/images/pixabay-roots-stream-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
-          <AmbientElementShader opacity={0.15} />
-          <div className="relative">
-            <CommonMistakes />
-          </div>
-        </section>
+        {/* CommonMistakes used to be its own full-viewport section here
+            — a Creative Direction Audit found it taught the same idea
+            as Stakes (WeakBrandingCost) above with a separate video
+            beat, directly contributing to "the page is longer than
+            necessary and repeats branding concepts." Its four real
+            observations now live as a compact addendum inside Stakes
+            instead; the separate section, video, and shader are gone. */}
 
         {/* Trust — Founder Lens. */}
         <section id="trust" className="scroll-mt-24 bg-soil py-16 sm:py-24">

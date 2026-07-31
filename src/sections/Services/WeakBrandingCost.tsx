@@ -33,6 +33,20 @@ const STRONG = [
   "Owns a specific position inside its category, rather than one more listing in it.",
 ];
 
+// Was its own separate section, CommonMistakes — a Creative Direction
+// Audit found it taught the same idea as this section (positioning
+// discipline vs. positioning failure) with its own full-viewport video
+// beat, directly contributing to "the page repeats branding concepts
+// and is longer than necessary." Folded in here as a compact addendum
+// instead of cut outright — the four real observations survive, the
+// separate video/heading/section shell doesn't.
+const STARTS_HERE = [
+  "Identity commissioned before positioning",
+  "Constant reinvention",
+  "Marketing asked to fix positioning",
+  "Skipping the audit",
+];
+
 export function WeakBrandingCost() {
   return (
     <Container className="max-w-3xl">
@@ -81,6 +95,16 @@ export function WeakBrandingCost() {
           </TiltCard>
         </Reveal>
       </div>
+      <Reveal delay={0.2}>
+        <p className="mt-12 text-xs font-medium uppercase tracking-wide text-ivory/50">Where it usually starts</p>
+        <div className="mt-4 flex flex-wrap gap-x-8 gap-y-3">
+          {STARTS_HERE.map((item) => (
+            <span key={item} className="text-sm text-ivory/80">
+              {item}
+            </span>
+          ))}
+        </div>
+      </Reveal>
     </Container>
   );
 }
