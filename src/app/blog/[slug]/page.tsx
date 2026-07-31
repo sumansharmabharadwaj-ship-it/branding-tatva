@@ -9,6 +9,7 @@ import { Reveal } from "@/components/Reveal";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { PullQuote } from "@/components/PullQuote";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
 import { site } from "@/data/site";
@@ -88,8 +89,21 @@ export default async function BlogPostPage({ params }: Props) {
             already used on case studies and About, extended to a word
             here). This is the one page on the site that was still a
             plain centered template — every other page already got this
-            kind of editorial variety across earlier rounds. */}
+            kind of editorial variety across earlier rounds. Audit found
+            this section had no video at all, the one remaining "blank
+            section" bug class site-wide — this post's own already-tagged
+            element (post.element) has a real video/poster pair in
+            data/elements.ts, so the masthead now shows the same footage
+            already used for that element elsewhere, not an arbitrary
+            new choice. Overlay at bg-soil/80, the site's normalized
+            standard. */}
         <section className="relative overflow-hidden bg-soil pt-32 pb-16 sm:pt-40 sm:pb-24">
+          {element?.video && (
+            <>
+              <BackgroundVideo video={element.video} poster={element.image} />
+              <div className="absolute inset-0 bg-soil/80" />
+            </>
+          )}
           <span
             aria-hidden="true"
             className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,16vw,11rem)] font-bold uppercase leading-none text-ivory/[0.06]"
@@ -113,15 +127,15 @@ export default async function BlogPostPage({ params }: Props) {
                 </h1>
               </Reveal>
               <Reveal delay={0.1} className="lg:pb-2 lg:text-right">
-                <p className="text-sm text-ivory/60">
+                <p className="text-sm text-ivory/70">
                   {new Date(post.publishedAt).toLocaleDateString("en-US", {
                     month: "long",
                     day: "numeric",
                     year: "numeric",
                   })}
                 </p>
-                <p className="mt-1 text-sm text-ivory/60">{post.readingTime}</p>
-                <p className="mt-1 text-sm text-ivory/60">{site.founder}</p>
+                <p className="mt-1 text-sm text-ivory/70">{post.readingTime}</p>
+                <p className="mt-1 text-sm text-ivory/70">{site.founder}</p>
               </Reveal>
             </div>
           </Container>

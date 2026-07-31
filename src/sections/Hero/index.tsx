@@ -149,7 +149,7 @@ export function CinematicHero({
         >
           {headline}
         </SplitReveal>
-        <p className="mt-4 max-w-md text-base text-ivory/70">{subhead}</p>
+        <p className="mt-4 max-w-md text-base text-ivory/80">{subhead}</p>
         {children && (
           <motion.div
             className="mt-9 flex flex-wrap items-center justify-center gap-4"

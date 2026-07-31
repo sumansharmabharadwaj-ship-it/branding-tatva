@@ -78,7 +78,7 @@ export function Footer() {
             <div className={`${WIDGET_CLASS} flex flex-col justify-center gap-5 sm:w-[240px] sm:shrink-0`}>
               <div>
                 <Logo light className="scale-90 origin-left" />
-                <p className="mt-3 text-sm text-ivory/60">
+                <p className="mt-3 text-sm text-ivory/80">
                   A solo practice. Every project led directly by Suman, start to finish.
                 </p>
               </div>

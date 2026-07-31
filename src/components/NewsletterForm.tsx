@@ -84,7 +84,7 @@ export function NewsletterForm() {
           id="newsletter-email"
           type="email"
           placeholder="you@yourbrand.com"
-          className="w-full border-0 border-b-2 border-ivory/25 bg-transparent px-0 py-2 text-ivory placeholder:text-ivory/40 transition-colors duration-200 focus:border-sandstone focus:outline-none focus:ring-0"
+          className="w-full border-0 border-b-2 border-ivory/25 bg-transparent px-0 py-2 text-ivory placeholder:text-ivory/60 transition-colors duration-200 focus:border-sandstone focus:outline-none focus:ring-0"
           aria-invalid={Boolean(errors.email)}
           aria-describedby={errors.email ? "newsletter-email-error" : undefined}
           {...register("email")}

@@ -117,7 +117,7 @@ export function DesignRationaleGrid() {
                 {String(i + 1).padStart(2, "0")}
               </span>
               <p className="mt-4 font-display text-lg font-normal text-ivory">{choice.title}</p>
-              <p className="mt-2 text-sm text-ivory/75">{choice.detail}</p>
+              <p className="mt-2 text-sm text-ivory/85">{choice.detail}</p>
               <AnimatePresence initial={false}>
                 {isActive && (
                   <motion.div

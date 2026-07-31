@@ -50,7 +50,7 @@ export default function WorkPage() {
               >
                 Projects across very different categories.
               </SplitReveal>
-              <p className="mx-auto mt-4 max-w-xl text-ivory/70">
+              <p className="mx-auto mt-4 max-w-xl text-ivory/80">
                 Marketplaces, executive coaching, wellness, D2C supplements,
                 enterprise technology: different industries, the same
                 underlying method.
@@ -122,13 +122,13 @@ export default function WorkPage() {
                 <p className="font-display text-5xl font-normal text-sandstone sm:text-6xl">
                   {projects.length}
                 </p>
-                <p className="mt-2 text-sm text-ivory/70">Real client engagements, each one different.</p>
+                <p className="mt-2 text-sm text-ivory/80">Real client engagements, each one different.</p>
               </div>
               <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
                 {industries.map((industry) => (
                   <span
                     key={industry}
-                    className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/75"
+                    className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/85"
                   >
                     {industry}
                   </span>
@@ -179,7 +179,7 @@ export default function WorkPage() {
               <h2 className="text-display-md font-display font-normal text-ivory">
                 Want a project like these on your own brand?
               </h2>
-              <p className="mx-auto mt-4 max-w-md text-ivory/70">
+              <p className="mx-auto mt-4 max-w-md text-ivory/80">
                 Every one of these started with a conversation about where
                 the brand actually stood. Yours can start the same way.
               </p>

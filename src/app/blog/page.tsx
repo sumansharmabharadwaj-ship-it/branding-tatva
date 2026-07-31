@@ -74,7 +74,7 @@ export default function BlogPage() {
               >
                 Notes on brand strategy, one element at a time.
               </SplitReveal>
-              <p className="mx-auto mt-4 max-w-xl text-ivory/70">
+              <p className="mx-auto mt-4 max-w-xl text-ivory/80">
                 Short, specific writing on positioning, audience, and the
                 elemental approach, the kind that&apos;s
                 actually useful rather than a content calendar.
@@ -197,7 +197,7 @@ export default function BlogPage() {
               <h2 className="text-display-md font-display font-normal text-ivory">
                 Want writing like this, applied to your own brand?
               </h2>
-              <p className="mx-auto mt-4 max-w-md text-ivory/70">
+              <p className="mx-auto mt-4 max-w-md text-ivory/80">
                 Everything here started as a real question from a real
                 project. Tell me yours, and I&apos;ll start there too.
               </p>

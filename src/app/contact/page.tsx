@@ -12,6 +12,7 @@ import { NewsletterForm } from "@/components/NewsletterForm";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { site } from "@/data/site";
 import { SANDSTONE, ELEMENT_HEX } from "@/lib/sectionWash";
 
@@ -62,7 +63,7 @@ export default function ContactPage() {
               >
                 Tell me what your brand is becoming.
               </SplitReveal>
-              <p className="mx-auto mt-4 max-w-xl text-ivory/70">
+              <p className="mx-auto mt-4 max-w-xl text-ivory/80">
                 Fill in as much or as little as you know right now.
                 I&apos;ll ask a few more questions where it helps. I read
                 every enquiry personally.
@@ -135,9 +136,16 @@ export default function ContactPage() {
             element-tinted card treatment FounderLens/PackageSelector
             already proved on Services, applied here to the two real
             choices this page already offers (book directly, or stay on
-            the list). Water and Air, matching the glyphs already used. */}
-        <section className="bg-soil py-16">
-          <Container className="grid gap-8 lg:grid-cols-2 lg:items-start">
+            the list). Water and Air, matching the glyphs already used.
+            Audit found this section had no video behind it at all — the
+            same "blank section" bug class fixed elsewhere. A calm
+            wildflower meadow, genuinely unused elsewhere on this page
+            (or its own Footer), fitting "grab a time / stay in touch."
+            Overlay at bg-soil/80, the site's normalized standard. */}
+        <section className="relative overflow-hidden bg-soil py-16">
+          <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/80" />
+          <Container className="relative grid gap-8 lg:grid-cols-2 lg:items-start">
             <Reveal>
               <div
                 className="rounded-2xl border p-6 sm:p-8"
@@ -150,12 +158,12 @@ export default function ContactPage() {
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                   Just grab a time that works for you.
                 </h2>
-                <p className="mt-3 text-ivory/75">
+                <p className="mt-3 text-ivory/85">
                   Times shown automatically adjust to your local timezone,
                   wherever you are.
                 </p>
                 <CalendlyEmbed url={site.calendlyUrl} />
-                <p className="mt-3 text-xs text-ivory/70">
+                <p className="mt-3 text-xs text-ivory/75">
                   Having trouble with the embed?{" "}
                   <a
                     href={site.calendlyUrl}
@@ -182,7 +190,7 @@ export default function ContactPage() {
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                   Get occasional notes on brand clarity.
                 </h2>
-                <p className="mt-3 text-ivory/75">
+                <p className="mt-3 text-ivory/85">
                   A few honest thoughts a month, short and specific. Zero pitch,
                   unsubscribe whenever.
                 </p>

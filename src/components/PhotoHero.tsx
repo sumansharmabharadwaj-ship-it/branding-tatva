@@ -30,8 +30,13 @@ const KEN_BURNS = kenBurnsAnimation({ scale: 1.07, duration: 22 });
 // complete in one place instead of split across files. A new page's
 // hero height should be picked from this table, not invented fresh.
 
+// Site-wide contrast audit found this top stop (0.55, sitting directly
+// behind every page's badge + headline) well under the bg-soil/80
+// standard the rest of the site was just normalized to. Raised across
+// all three stops rather than just the top one, so the whole gradient
+// stays above that floor instead of dipping mid-scroll.
 const gradient =
-  "linear-gradient(180deg, rgba(39,34,30,0.55) 0%, rgba(39,34,30,0.78) 60%, rgba(39,34,30,0.92) 100%)";
+  "linear-gradient(180deg, rgba(39,34,30,0.8) 0%, rgba(39,34,30,0.86) 60%, rgba(39,34,30,0.94) 100%)";
 
 export function PhotoHero({
   children,

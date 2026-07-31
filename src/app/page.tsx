@@ -149,7 +149,7 @@ not repeated here. */}
           <Container className="text-center">
             <Reveal>
               <p className="font-display text-lg text-ivory sm:text-xl">Suman Sharma</p>
-              <p className="mx-auto mt-2 max-w-xl text-sm text-ivory/70 sm:text-base">
+              <p className="mx-auto mt-2 max-w-xl text-sm text-ivory/80 sm:text-base">
                 Clinical psychology and English literature. One studies how people notice and decide. The other studies how language carries meaning.
               </p>
               <div className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs uppercase tracking-[0.15em] text-ivory/50 sm:text-sm">
@@ -170,7 +170,7 @@ not repeated here. */}
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                 Every remembered brand made the same five decisions.
               </h2>
-              <p className="mt-4 text-ivory/75">
+              <p className="mt-4 text-ivory/85">
                 Positioning. Distinctiveness. Narrative. Verbal identity. Salience. Memory ignores agency. It ignores choice too.
               </p>
             </Reveal>
@@ -198,7 +198,7 @@ not repeated here. */}
             as every other pinned section on this page. */}
         <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
           <BackgroundVideo video="/videos/pixabay-flame-texture.mp4" poster="/images/pixabay-flame-texture-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/60" />
+          <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
             <div className="flex items-baseline justify-between">
               <Reveal>
@@ -270,7 +270,7 @@ not repeated here. */}
               found across several of this row's clips this round. */}
           <div className="relative overflow-hidden py-20 sm:py-28">
             <BackgroundVideo video="/videos/pixabay-roots-stream.mp4" poster="/images/pixabay-roots-stream-poster.jpg" />
-            <div className="absolute inset-0 bg-soil/60" />
+            <div className="absolute inset-0 bg-soil/80" />
             <Container className="relative">
               <Reveal>
                 <h2 className="text-display-sm font-display font-normal text-ivory">How a project moves</h2>
@@ -290,7 +290,7 @@ not repeated here. */}
               section on the same footage) rather than a new clip. */}
           <div className="relative overflow-hidden">
             <BackgroundVideo video="/videos/pixabay-roots-stream.mp4" poster="/images/pixabay-roots-stream-poster.jpg" />
-            <div className="absolute inset-0 bg-soil/70" />
+            <div className="absolute inset-0 bg-soil/80" />
             <Container className="relative pb-16 pt-10 text-center sm:pb-20 sm:pt-14">
               <Reveal>
                 <p className="mx-auto max-w-lg text-sm italic text-ivory/80 sm:text-base">
@@ -406,7 +406,7 @@ not repeated here. */}
               <div className="mt-8">
                 <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
                 <p
-                  className="mt-4 text-sm text-ivory/70"
+                  className="mt-4 text-sm text-ivory/80"
                   style={{ textShadow: "0 1px 6px rgba(0,0,0,0.8)" }}
                 >
                   Twenty minutes, a real conversation, zero pitch deck. Honest feedback either way.

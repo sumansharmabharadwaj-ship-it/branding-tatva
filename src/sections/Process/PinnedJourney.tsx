@@ -207,7 +207,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
             clip now used on Home's own process-intro heading above
             this section. */}
         <BackgroundVideo video="/videos/pixabay-cascade-rocks.mp4" poster="/images/pixabay-cascade-rocks-poster.jpg" />
-        <div className="absolute inset-0 bg-soil/70" />
+        <div className="absolute inset-0 bg-soil/80" />
       </div>
       {/* bg-soil fallback + a hair of extra height beyond exactly
           100svh — real mobile browsers animate their toolbar in/out
@@ -317,7 +317,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
                   />
                 </div>
                 <p className="mt-4 font-display text-3xl font-normal text-ivory sm:text-4xl">{stage.stage}</p>
-                <p className="mt-4 max-w-lg text-sm text-ivory/75 sm:text-base">{stage.description}</p>
+                <p className="mt-4 max-w-lg text-sm text-ivory/85 sm:text-base">{stage.description}</p>
               </div>
             </div>
           );

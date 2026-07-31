@@ -172,7 +172,7 @@ function SelectedWorkFallback({ featured }: { featured: Project[] }) {
         video="/videos/pixabay-alpine-waterfall.mp4"
         poster="/images/pixabay-alpine-waterfall-poster.jpg"
       />
-      <div className="absolute inset-0 bg-soil/70" />
+      <div className="absolute inset-0 bg-soil/80" />
       {hero && (
         <Reveal>
           <div className="relative">

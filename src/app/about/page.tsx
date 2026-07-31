@@ -123,7 +123,7 @@ export default function AboutPage() {
             because that section has fewer, larger elements). */}
         <section className="relative overflow-hidden bg-soil py-20">
           <BackgroundVideo video="/videos/own-moonlit-sea.mp4" poster="/images/own-moonlit-sea-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/70" />
+          <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
             <div className="grid gap-8 md:grid-cols-[220px_1fr] md:gap-12">
               <Reveal>
@@ -182,7 +182,7 @@ export default function AboutPage() {
             video="/videos/pixabay-misty-ridge-drift.mp4"
             poster="/images/pixabay-misty-ridge-drift-poster.jpg"
           />
-          <div className="absolute inset-0 bg-soil/70" />
+          <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
@@ -196,7 +196,7 @@ export default function AboutPage() {
               </h2>
             </Reveal>
             <Reveal delay={0.14}>
-              <p className="mt-4 max-w-2xl text-ivory/75">
+              <p className="mt-4 max-w-2xl text-ivory/85">
                 They describe what anything needs in order to actually
                 last: a person, a body of work, a civilization, a brand.
                 Something needs ground before it can stand. It needs to
@@ -225,14 +225,14 @@ export default function AboutPage() {
                         {item.thinker}
                       </span>
                     </div>
-                    <p className="mt-2 max-w-2xl text-sm text-ivory/75">{item.text}</p>
+                    <p className="mt-2 max-w-2xl text-sm text-ivory/85">{item.text}</p>
                   </Reveal>
                 );
               })}
             </div>
 
             <Reveal delay={0.4}>
-              <p className="mt-14 max-w-2xl border-t border-ivory/15 pt-10 text-ivory/75">
+              <p className="mt-14 max-w-2xl border-t border-ivory/15 pt-10 text-ivory/85">
                 None of this is abstract. A sustained content push built
                 the same way took Dr. Haley Nutrition&apos;s engagement
                 rate from 0.71% to 2.81% in two months, with impressions
@@ -262,7 +262,7 @@ export default function AboutPage() {
             video="/videos/higgsfield-golden-peaks.mp4"
             poster="/images/higgsfield-golden-peaks-poster.jpg"
           />
-          <div className="absolute inset-0 bg-soil/65" />
+          <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
             {/* Ghost watermark word, same technique as the case-study
                 block numerals (.case-study-block::before in globals.css)
@@ -280,7 +280,7 @@ export default function AboutPage() {
               </h2>
             </Reveal>
             <Reveal delay={0.08}>
-              <p className="mt-4 max-w-2xl text-ivory/75">
+              <p className="mt-4 max-w-2xl text-ivory/85">
                 I could tell a prospective client what good branding looks
                 like, or I could just let this site be the example. Every
                 choice below was made on purpose, and I&apos;d make the same

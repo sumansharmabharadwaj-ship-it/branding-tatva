@@ -41,7 +41,7 @@ function Block({ id, title, children }: { id?: string; title: string; children?:
   return (
     <div id={id} className={`case-study-block relative pl-14 sm:pl-16 ${id ? "scroll-mt-24" : ""}`}>
       <h2 className="font-display text-xl font-normal text-ivory">{title}</h2>
-      <p className="mt-3 text-ivory/70">{children}</p>
+      <p className="mt-3 text-ivory/85">{children}</p>
     </div>
   );
 }
@@ -116,7 +116,7 @@ export default async function CaseStudyPage({ params }: Props) {
                 {project.services.map((s) => (
                   <span
                     key={s}
-                    className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/75 lg:text-right"
+                    className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/85 lg:text-right"
                   >
                     {s}
                   </span>
@@ -139,7 +139,7 @@ export default async function CaseStudyPage({ params }: Props) {
                     <p className="font-display text-4xl font-normal text-sandstone sm:text-5xl">
                       <AnimatedStat value={stat.value} />
                     </p>
-                    <p className="mt-2 text-sm text-ivory/70">{stat.label}</p>
+                    <p className="mt-2 text-sm text-ivory/80">{stat.label}</p>
                   </Reveal>
                 ))}
               </div>

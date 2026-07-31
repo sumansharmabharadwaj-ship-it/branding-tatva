@@ -45,7 +45,7 @@ function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
       className={`relative flex overflow-hidden bg-soil ${pinned ? "min-h-screen items-center" : "py-20"}`}
     >
       <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
-      <div className="absolute inset-0 bg-soil/60" />
+      <div className="absolute inset-0 bg-soil/80" />
       <ClipReveal className="w-full">
         <Container className="relative grid gap-12 md:grid-cols-[auto_1fr]">
           <Reveal>
@@ -63,7 +63,7 @@ function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
               <h2 className="text-display-sm font-display font-normal text-ivory">
                 Working method
               </h2>
-              <p className="mt-4 text-ivory/75">
+              <p className="mt-4 text-ivory/85">
                 I start by asking what
                 a business believes, who it&apos;s actually speaking to,
                 and where its current story stops making sense, well
@@ -72,7 +72,7 @@ function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
                 keep track of which part of that is solved and which
                 still needs work.
               </p>
-              <p className="mt-4 text-ivory/75">
+              <p className="mt-4 text-ivory/85">
                 I use &ldquo;I&rdquo; instead of &ldquo;we.&rdquo; Branding
                 Tatva is a personal practice, and every project has my
                 direct attention.

@@ -117,6 +117,7 @@ export function SeasonalCalendarPanel() {
               key={v}
               type="button"
               onClick={() => setView(v)}
+              aria-pressed={view === v}
               className="relative rounded-full px-4 py-1.5 text-sm font-medium capitalize transition-colors duration-300"
               style={{ color: view === v ? "#27221E" : "rgba(244,239,230,0.9)" }}
             >
@@ -242,6 +243,12 @@ export function SeasonalCalendarPanel() {
           whileHover={prefersReducedMotion ? undefined : { scale: 1.04 }}
           whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
           style={{ backgroundColor: element.color }}
+          // tabIndex/aria-hidden tied to the same `expanded` condition as
+          // the opacity/pointer-events classes below — a real bug found
+          // in audit: the button stayed keyboard-focusable while
+          // invisible, so Tab could land on an unseen control.
+          tabIndex={expanded ? -1 : 0}
+          aria-hidden={expanded}
           className={`shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-ivory transition-opacity duration-300 ${expanded ? "pointer-events-none opacity-0" : ""}`}
         >
           + Book a call
