@@ -184,7 +184,11 @@ export default function WorkPage() {
                 the brand actually stood. Yours can start the same way.
               </p>
               <div className="mt-8">
-                <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
+                {/* Was "Book a Brand Strategy Session," identical to Home's
+                    and Blog's own closing CTAs — worded to match "yours can
+                    start the same way" right above it instead of repeating
+                    the same three pages' label verbatim. */}
+                <LinkButton href="/contact">Book Your Own Strategy Session</LinkButton>
               </div>
             </Container>
           </ClipReveal>

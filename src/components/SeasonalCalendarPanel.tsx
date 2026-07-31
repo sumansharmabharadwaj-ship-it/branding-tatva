@@ -268,6 +268,23 @@ export function SeasonalCalendarPanel() {
             <div className="mt-5 rounded-2xl bg-background p-1 sm:p-2">
               <CalendlyEmbed url={site.calendlyUrl} />
             </div>
+            {/* Audit found this embed had no fallback link, unlike the
+                main Contact page's own CalendlyEmbed usage, despite
+                CalendlyEmbed's own comment documenting that ad-blockers
+                can silently collapse the widget with no visible
+                failure. Same escape hatch, here too. */}
+            <p className="mt-3 text-center text-xs text-ivory/75">
+              Having trouble with the embed?{" "}
+              <a
+                href={site.calendlyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sandstone link-underline"
+              >
+                Open it directly instead
+              </a>
+              .
+            </p>
           </motion.div>
         )}
       </AnimatePresence>

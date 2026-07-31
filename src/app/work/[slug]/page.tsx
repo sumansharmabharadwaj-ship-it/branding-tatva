@@ -68,8 +68,29 @@ export default async function CaseStudyPage({ params }: Props) {
     url: `${site.url}/work/${project.slug}`,
   };
 
-  const related = projects.find((p) => p.slug !== project.slug && p.featured);
-  const strategyAnchor = project.insight ? "insight" : project.strategy ? "strategy" : null;
+  // Audit found this always picked the first `featured` project that
+  // wasn't the current one, in array order — since only 3 of 5 projects
+  // are featured, dr-haley-nutrition (the first featured entry) showed
+  // as "related" on 4 of 5 case studies regardless of any actual
+  // relevance. Real fix: match on shared words in each project's own
+  // `industry` string first (e.g. "Nutrition & wellness" and "D2C
+  // wellness & supplements" genuinely share "wellness") rather than
+  // requiring `featured`; only fall back to array rotation, not a fixed
+  // first pick, when nothing overlaps.
+  const industryWords = (s: string) => new Set(s.toLowerCase().split(/[^a-z]+/).filter((w) => w.length > 3));
+  const ownWords = industryWords(project.industry);
+  const others = projects.filter((p) => p.slug !== project.slug);
+  const bestMatch = others.find((p) => [...industryWords(p.industry)].some((w) => ownWords.has(w)));
+  const related = bestMatch ?? others[projects.findIndex((p) => p.slug === project.slug) % others.length];
+
+  // Audit found this always preferred #insight even when a project has
+  // its own real #strategy block further down the page — the jump-nav
+  // item labeled "Strategy" was silently scrolling to Insight instead,
+  // and #strategy had no jump-nav entry of its own on the ~3 projects
+  // that define both fields. Point at the block that actually matches
+  // the label; #insight is now only the fallback when a project has no
+  // dedicated strategy block at all.
+  const strategyAnchor = project.strategy ? "strategy" : project.insight ? "insight" : null;
   const jumpItems = [
     project.stats ? { href: "#numbers", label: "Numbers" } : null,
     { href: "#challenge", label: "Challenge" },

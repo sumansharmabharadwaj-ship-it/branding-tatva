@@ -202,7 +202,11 @@ export default function BlogPage() {
                 project. Tell me yours, and I&apos;ll start there too.
               </p>
               <div className="mt-8">
-                <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
+                {/* Was "Book a Brand Strategy Session," identical to Home's
+                    and Work's own closing CTAs — same destination, worded
+                    to match this page's own conversational framing instead
+                    of repeating the same three pages' label verbatim. */}
+                <LinkButton href="/contact">Start a Brand Conversation</LinkButton>
               </div>
             </Container>
           </ClipReveal>
