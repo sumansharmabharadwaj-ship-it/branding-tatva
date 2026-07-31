@@ -19,6 +19,8 @@ import { PackageSelector } from "@/sections/Services/PackageSelector";
 import { CommonMistakes } from "@/sections/Services/CommonMistakes";
 import { DeliverablesReveal } from "@/sections/Services/DeliverablesReveal";
 import { CaseStudyScrollStory } from "@/sections/Services/CaseStudyScrollStory";
+import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
+import { StrategySessionPreview } from "@/sections/Services/StrategySessionPreview";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { process } from "@/data/process";
@@ -191,6 +193,17 @@ export default function ServicesPage() {
           <ProcessSection stages={process} elementColor={elementColor} dark />
         </section>
 
+        {/* A slower alternative to Desire's one-click pick, for a visitor
+            who wants to think it through before Risk removal and the
+            booking CTA — direct feedback wanted the visitor to feel
+            invested before the calendar appears. Transparent scoring,
+            real package mapping, see the component's own comment for
+            why it's a distinct mechanism from PackageSelector rather
+            than a duplicate of it. */}
+        <section className="bg-soil py-16 sm:py-24">
+          <BrandHealthCheck />
+        </section>
+
         {/* Risk removal — the real FAQ content, reframed. */}
         <section id="risk" className="scroll-mt-24 bg-background-alt py-16 sm:py-24">
           <Container className="max-w-2xl">
@@ -207,6 +220,15 @@ export default function ServicesPage() {
               <RiskRemovalFAQ />
             </div>
           </Container>
+        </section>
+
+        {/* Direct lead-in to Book call — describes the real mechanism
+            StrategyRoomCTA/CalendlyEmbed already run, nothing new
+            promised. Sits on the same background as Risk removal above
+            it (bg-background-alt) since it's still answering
+            uncertainty, not yet the cinematic booking moment itself. */}
+        <section className="bg-background-alt py-16 sm:py-24">
+          <StrategySessionPreview />
         </section>
 
         {/* Book call — the strategy room. */}
