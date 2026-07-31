@@ -17,6 +17,7 @@ import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { FounderLens } from "@/sections/Services/FounderLens";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
 import { CommonMistakes } from "@/sections/Services/CommonMistakes";
+import { WeakBrandingCost } from "@/sections/Services/WeakBrandingCost";
 import { DeliverablesReveal } from "@/sections/Services/DeliverablesReveal";
 import { CaseStudyScrollStory } from "@/sections/Services/CaseStudyScrollStory";
 import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
@@ -89,6 +90,19 @@ export default function ServicesPage() {
         {/* Authority — the one deliberate ScrollTrigger.pin section. */}
         <section id="authority" className="scroll-mt-24">
           <PinnedBrandBuild />
+        </section>
+
+        {/* An extension of Authority, not a new act — shows the real
+            stakes behind "marketing amplifies whatever is already
+            there" before Education explains the recognition ladder.
+            Grounded in established branding theory (mental
+            availability, distinctive assets), described as a general
+            pattern rather than a specific company's story — the
+            honest version of the requested comparison, since no real
+            two-business case study exists yet to build a factual one
+            from. */}
+        <section className="bg-soil py-16 sm:py-24">
+          <WeakBrandingCost />
         </section>
 
         {/* Education — the one Three.js moment (inside PerceptionLadder,
