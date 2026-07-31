@@ -31,16 +31,29 @@ const REVEAL_DURATION = 0.7;
 const REVEAL_STAGGER = 0.045;
 const REVEAL_EASE = "cubic-bezier(0.17, 0.67, 0.35, 1)"; // power3.out equivalent
 
-export function initSplitTextReveal(el: HTMLElement): { revert: () => void } {
+// Char-level split staggers roughly 4-6x more nodes than word-level for
+// the same headline, so its per-node stagger is proportionally tighter
+// (0.018s vs 0.045s) — otherwise a single sentence split into chars
+// would take visibly longer to finish revealing than the same sentence
+// split into words, which reads as sluggish rather than "kinetic."
+const CHARS_STAGGER = 0.018;
+
+export function initSplitTextReveal(
+  el: HTMLElement,
+  options?: { type?: "words" | "chars" }
+): { revert: () => void } {
+  const splitType = options?.type ?? "words";
+  const stagger = splitType === "chars" ? CHARS_STAGGER : REVEAL_STAGGER;
   let split: SplitText | undefined;
   let revealed = false;
 
   function reveal() {
     if (revealed || !split) return;
     revealed = true;
-    split.words.forEach((word, i) => {
-      const w = word as HTMLElement;
-      w.style.transition = `opacity ${REVEAL_DURATION}s ${REVEAL_EASE} ${i * REVEAL_STAGGER}s, transform ${REVEAL_DURATION}s ${REVEAL_EASE} ${i * REVEAL_STAGGER}s`;
+    const nodes = splitType === "chars" ? split.chars : split.words;
+    nodes.forEach((node, i) => {
+      const w = node as HTMLElement;
+      w.style.transition = `opacity ${REVEAL_DURATION}s ${REVEAL_EASE} ${i * stagger}s, transform ${REVEAL_DURATION}s ${REVEAL_EASE} ${i * stagger}s`;
       w.style.opacity = "1";
       w.style.transform = "translateY(0)";
     });
@@ -51,9 +64,10 @@ export function initSplitTextReveal(el: HTMLElement): { revert: () => void } {
   }
 
   const ctx = gsap.context(() => {
-    split = new SplitText(el, { type: "words" });
-    split.words.forEach((word) => {
-      const w = word as HTMLElement;
+    split = new SplitText(el, { type: splitType === "chars" ? "chars" : "words" });
+    const nodes = splitType === "chars" ? split.chars : split.words;
+    nodes.forEach((node) => {
+      const w = node as HTMLElement;
       w.style.opacity = "0";
       w.style.transform = "translateY(0.4em)";
     });

@@ -1,410 +1,185 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
-import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
-import { TiltCard } from "@/components/TiltCard";
+import { ScrollCue } from "@/components/ScrollCue";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import { PhotoHero } from "@/components/PhotoHero";
-import { VideoBreak } from "@/components/VideoBreak";
 import { TexturedDark } from "@/components/TexturedDark";
-import { ClipReveal } from "@/components/ClipReveal";
-import { ElementGlyph } from "@/components/ElementGlyph";
-import { NatureAccent } from "@/components/NatureAccent";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { ProcessSection } from "@/sections/Process";
-import { elements } from "@/data/elements";
+import { FAQ } from "@/sections/FAQ";
+import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
+import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
+import { FounderLens } from "@/sections/Services/FounderLens";
+import { PackageSelector } from "@/sections/Services/PackageSelector";
+import { CaseStudyScrollStory } from "@/sections/Services/CaseStudyScrollStory";
+import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { process } from "@/data/process";
-import { packages, offerings } from "@/data/services";
 import { projects } from "@/data/projects";
 import { elementColor } from "@/lib/elementColor";
-import { blendHex, ELEMENT_HEX } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "Brand strategy, content strategy, social media marketing, and website development, all under one roof.",
+    "A brand discovery experience: why branding works, why it fails, what a project actually involves, and where your own brand stands today.",
   alternates: { canonical: "/services" },
   openGraph: {
     title: "Services | Branding Tatva",
     description:
-      "Brand strategy, content strategy, social media marketing, and website development, all under one roof.",
+      "A brand discovery experience: why branding works, why it fails, what a project actually involves, and where your own brand stands today.",
     type: "website",
   },
 };
 
-// Approximate position of each element's own color-strand in
-// higgsfield-elements-convergence.jpg, eyeballed against the actual
-// image rather than computed — this is a decorative diagram dot, not a
-// precision data point, so an exact match isn't the goal.
-const ELEMENT_DOTS: { slug: "earth" | "water" | "fire" | "air" | "space"; top: string; left: string }[] = [
-  { slug: "earth", top: "22%", left: "16%" },
-  { slug: "water", top: "58%", left: "22%" },
-  { slug: "fire", top: "42%", left: "48%" },
-  { slug: "air", top: "32%", left: "80%" },
-  { slug: "space", top: "68%", left: "76%" },
-];
+// Rebuilt from a services catalog into a "Brand Discovery Experience" —
+// one section per objection a visitor actually carries into the page
+// (Curiosity → Authority → Education → Trust → Desire → Proof → Future
+// vision → Risk removal → Book call), not a service-by-service list.
+// See the plan doc (Phase 14) for the full reasoning, including why
+// GSAP ScrollTrigger.pin appears exactly once (PinnedBrandBuild) and
+// Three.js exactly once (inside PerceptionLadder, via
+// AmbientElementShader) rather than throughout — every other pinned
+// moment on this page and site runs on the same sticky mechanism
+// already proven everywhere else.
+const flagshipProject = projects.find((p) => p.slug === "dr-haley-nutrition") ?? projects[0];
 
 export default function ServicesPage() {
   return (
     <>
       <Header transparent />
+      <ScrollProgress />
       <main id="main-content">
-        {/* Was a static mountain-silhouette photo — the site's one
-            remaining static hero, and direct feedback pointed at the
-            reference site's own "Heat" chapter (a close-up glowing-embers
-            clip) as exactly the fire-element mood wanted here. A
-            close-up fire loop doesn't illustrate "services" literally,
-            but neither does any other hero on the site illustrate its
-            own page literally — it's the same atmospheric-backdrop
-            convention, just drawing on Fire instead of Earth/Water. */}
+        {/* Curiosity — the opening objection: why care about branding at
+            all. Char-level SplitText reveal (extends initSplitTextReveal
+            with a "chars" variant, src/animations/splitTextReveal.ts) for
+            a tighter, more kinetic entrance than the word-level reveal
+            used on every other page's hero — the one place on this page
+            that earns a different treatment from the rest of the site's
+            established word-by-word pattern. Height stays Tier 3 (70vh),
+            the documented mid-page tier in PhotoHero's own comment —
+            this page's ambition shows in what follows the hero, not in
+            breaking the site's hero-height hierarchy. */}
         <PhotoHero
           video="/videos/higgsfield-glowing-embers.mp4"
           poster="/images/higgsfield-glowing-embers-poster.jpg"
           minHeight="70vh"
         >
           <Container className="relative py-20 text-center">
-            <Reveal className="relative">
-              {/* One quiet accent on a fire-themed hero — same low-opacity,
-                  near-heading placement Footer/Contact already use, just
-                  the ember motif instead of leaf, since this hero already
-                  runs on a glowing-embers backdrop. */}
-              <NatureAccent
-                variant="ember"
-                className="pointer-events-none absolute -top-6 left-1/2 hidden h-10 w-10 -translate-x-[140%] text-ivory/20 sm:block"
-              />
+            <Reveal>
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                Services
+                Curiosity
               </span>
               <SplitReveal
                 as="h1"
+                splitType="chars"
                 className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory"
               >
-                Everything a brand needs, in plain terms.
+                Why should a business care about branding?
               </SplitReveal>
               <p className="mx-auto mt-4 max-w-xl text-ivory/70">
-                Strategy, identity, content, and the channels that carry it.
-                What gets built, before the thinking behind it.
+                The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Everything on this page explains how.
               </p>
             </Reveal>
           </Container>
+          <ScrollCue />
         </PhotoHero>
 
-        {/* Was bold solid Soil — per direct feedback pointing at the
-            reference site's own restraint, moved back to a light neutral
-            for this card grid. Cards keep their own opaque blendHex tint
-            (still legible either way) and lean on their colored top
-            border + icon for definition, the same restrained way the
-            reference site's own cards separate from their background. */}
-        <section id="offerings" className="scroll-mt-24 bg-background-alt py-14">
-          <Container>
-            <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {offerings.map((offer, i) => (
-                <Reveal key={offer.name} delay={i * 0.06} className="h-full">
-                  <TiltCard glowColor={offer.color}>
-                    {/* border (all sides) added alongside the existing
-                        border-t-2 accent — the card's own fill is a
-                        light tint too close in lightness to the section's
-                        own background-alt to read as a distinct object by
-                        color alone (contrast-checked at ~1.1:1), so a
-                        real edge does the defining work instead. */}
-                    <div
-                      className="spotlight-card relative flex h-full flex-col overflow-hidden rounded-lg border border-t-2 border-soil/10 p-6 shadow-elevation-sm transition-colors duration-300"
-                      style={{
-                        borderTopColor: offer.color,
-                        backgroundColor: blendHex(offer.color, "#FCFAF6", 14),
-                        ["--card-color" as string]: offer.color,
-                      }}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="absolute -right-1 -top-3 font-display text-6xl font-normal leading-none"
-                        style={{ color: offer.color, opacity: 0.18 }}
-                      >
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <p className="relative font-display text-lg font-normal text-soil transition-colors duration-300">{offer.name}</p>
-                      <p className="relative mt-2 text-sm text-foreground-secondary">{offer.detail}</p>
-                    </div>
-                  </TiltCard>
-                </Reveal>
-              ))}
-            </div>
-          </Container>
+        {/* Authority — the one deliberate ScrollTrigger.pin section. */}
+        <section id="authority" className="scroll-mt-24">
+          <PinnedBrandBuild />
         </section>
 
-        <VideoBreak
-          src="/videos/own-golden-branches.mp4"
-          poster="/images/own-golden-branches-poster.jpg"
-          quote="The service is the vehicle. The strategy is what moves."
-          height="72vh"
-          imagePosition="center 75%"
-          cameraPush
-          spotlight
-        />
-
-        {/* Was five arch-shaped cards in a row — direct feedback pointing
-            at alethia.earth's own annotated-photo technique called this
-            "a boring way to make people understand things." Replaced
-            with one picture instead: higgsfield-elements-convergence.jpg
-            (already in the library, unused) shows five ribbon strands in
-            each element's own color spiraling into one point — an
-            already-literal visual of "five elements, one brand," not
-            just a neutral backdrop standing in for a card grid. Each
-            strand gets a small dot at roughly where its color reads
-            clearest in the photo; the legend below keeps every piece of
-            the original cards' content (glyph, quote, meaning, services,
-            proof) just without the arch-card borders and fills. */}
-        {/* SectionHeading hardcodes text-soil, so — same rule already
-            applied to the "How I work" and "By situation" sections below
-            — this one instance is hand-rolled in ivory instead of
-            touching that shared component's defaults for every other
-            caller. */}
-        <section id="elements" className="scroll-mt-24 bg-soil py-16 sm:py-20">
-          <Container>
-            <div className="max-w-2xl">
-              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The deeper system</p>
-              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                The elements that make a brand complete.
-              </h2>
-              <p className="mt-4 text-ivory/75">
-                Every project draws on some combination of these five.
-                Isolation is usually the actual problem a brand walks in
-                with.
-              </p>
-            </div>
-          </Container>
-
-          <Reveal className="relative mx-auto mt-10 aspect-[16/9] w-full max-w-4xl overflow-hidden rounded-lg sm:mt-14">
-            <Image
-              src="/images/higgsfield-elements-convergence.jpg"
-              alt=""
-              fill
-              sizes="(min-width: 1024px) 60vw, 100vw"
-              style={{ objectFit: "cover" }}
-            />
-            {ELEMENT_DOTS.map((dot) => (
-              <span
-                key={dot.slug}
-                aria-hidden="true"
-                className="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-ivory/70"
-                style={{ top: dot.top, left: dot.left, backgroundColor: ELEMENT_HEX[dot.slug] }}
-              />
-            ))}
-          </Reveal>
-
-          <Container>
-            <div className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
-              {elements.map((el, i) => (
-                <Reveal key={el.slug} delay={i * 0.08}>
-                  {/* Hover-lift lives on this inner div, not Reveal's own
-                      motion.div — Reveal already writes an inline
-                      transform (its entrance y-offset), which would
-                      silently block a CSS hover:-translate-y class
-                      applied to that same element (inline style always
-                      wins over a stylesheet hover rule). A separate,
-                      static inner element has no such conflict. */}
-                  <div className="transition-transform duration-300 hover:-translate-y-1">
-                    <div className="flex items-center gap-2">
-                      <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: el.color }} />
-                      <ElementGlyph slug={el.slug} className="h-5 w-5" style={{ color: el.color }} />
-                    </div>
-                    <p className="mt-3 font-display text-lg font-normal text-ivory">{el.name}</p>
-                    <p className="mt-2 font-display text-sm italic text-ivory/70">&ldquo;{el.poetic}&rdquo;</p>
-                    <p className="mt-2 text-sm text-ivory/70">{el.meaning}</p>
-                    <ul className="mt-4 space-y-1.5">
-                      {el.services.map((s) => (
-                        <li key={s} className="text-sm text-ivory/70 before:mr-2 before:content-['•']">
-                          {s}
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="mt-4 pt-4 text-xs italic text-ivory/50">{el.proof}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </Container>
+        {/* Education — the one Three.js moment (inside PerceptionLadder,
+            via AmbientElementShader), scoped and ambient. */}
+        <section id="education" className="scroll-mt-24">
+          <PerceptionLadder />
         </section>
 
-        {/* The philosophy (elements) and the offerings (what) don't
-            explain the actual sequence of working together — this does,
-            reusing the same six-stage process (and the same
-            VerticalJourney component) the home page already uses,
-            rather than inventing a separate framework just for this
-            page. */}
-        {/* Was Ochre blended 60% toward Soil — a warm dark variant that,
-            next to this page's own true-Soil sections above and below it
-            (#elements, #by-situation), was one more slightly-off dark
-            tone in the mix. Direct feedback that a different color per
-            section reads as cluttered rather than cohesive applies here
-            too — collapsed to plain Soil so all three dark sections on
-            this page match exactly. VerticalJourney/JourneyStage take an
-            opt-in `dark` prop for this (see sections/Process/types.ts) so
-            Home's Process section is unaffected. SectionHeading
-            hardcodes text-soil, so this instance is hand-rolled in ivory
-            rather than touching that shared component's defaults for
-            every other caller. */}
-        <section id="process" className="scroll-mt-24 bg-soil py-16">
-          {/* overflow-hidden scoped to this inner wrapper only, not the
-              outer section — ProcessSection right below relies on
-              `position: sticky` (PinnedJourney), which breaks the
-              moment any ancestor has overflow other than visible (see
-              PinnedJourney's own comment, and the Home page's identical
-              note for its own Process section heading). Ghost watermark
-              word, same technique as Home's "ELEMENTS" and About's
-              "WHY" — this page had none of the site's recurring
-              signature moments, reading plainer than Home/About. */}
-          <div className="relative overflow-hidden">
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-ivory/[0.06] sm:-top-8"
-            >
-              METHOD
-            </span>
-            <Container className="relative">
-              <div className="max-w-2xl">
-                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">How I work</p>
+        {/* Trust — Founder Lens. */}
+        <section id="trust" className="scroll-mt-24 bg-soil py-16 sm:py-24">
+          <FounderLens />
+        </section>
+
+        {/* Desire — the real package selector. */}
+        <section id="desire" className="scroll-mt-24 bg-soil py-16 sm:py-24">
+          <PackageSelector />
+        </section>
+
+        {/* Proof — one real case study, staged as a scroll-driven story
+            (same sticky mechanism as PinnedJourney, no pin needed here). */}
+        <section id="proof" className="scroll-mt-24">
+          <div className="bg-soil pb-6 pt-16 sm:pt-20">
+            <Container className="max-w-2xl text-center">
+              <Reveal>
+                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Proof</p>
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  The same six moves, every time.
+                  What do you actually receive?
                 </h2>
                 <p className="mt-4 text-ivory/75">
-                  Each stage depends on the one before it, a sequence rather
-                  than a checklist you can jump around in. That order is
-                  usually where a rushed process starts to show.
+                  One real project, staged the way it actually happened. Verified numbers, not projections.
                 </p>
-              </div>
+              </Reveal>
+            </Container>
+          </div>
+          <CaseStudyScrollStory project={flagshipProject} />
+        </section>
+
+        {/* Future vision — the real six-stage process, reused as-is
+            (already a cinematic scroll-driven timeline via PinnedJourney,
+            not rebuilt for this page). */}
+        <section id="process" className="scroll-mt-24 bg-soil">
+          <div className="relative overflow-hidden py-16 sm:py-20">
+            <Container className="relative">
+              <Reveal>
+                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Future vision</p>
+                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                  What happens during the project?
+                </h2>
+                <p className="mt-4 max-w-xl text-ivory/75">
+                  Each stage depends on the one before it, a sequence rather than a checklist you can jump around in.
+                </p>
+              </Reveal>
             </Container>
           </div>
           <ProcessSection stages={process} elementColor={elementColor} dark />
         </section>
 
-        {/* Replaces the old "by situation" cards, which listed the same
-            four groups with no pricing at all ("discussed after
-            understanding your project") — direct feedback wanted a real,
-            conversion-oriented package structure with GBP figures
-            visible up front, not a routing list with no numbers. Reuses
-            the same underlying client-situation groups (now `packages`
-            in data/services.ts) rather than inventing disconnected new
-            categories — the "brand-beginning"/"brand-clarity" slugs stay
-            unchanged so Home's Threshold panels (which already link to
-            /services#brand-beginning and #brand-clarity) keep working.
-            These prices are a first draft grounded in typical UK
-            solo-consultant rates, not confirmed figures — flagged for
-            Suman to review before treating them as final. */}
-        <section id="packages" className="scroll-mt-24 bg-soil py-16 sm:py-20">
-          <Container>
-            <div className="max-w-2xl">
-              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Packages</p>
-              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                Three ways to work together.
+        {/* Risk removal — the real FAQ content, reframed. */}
+        <section id="risk" className="scroll-mt-24 bg-background-alt py-16 sm:py-24">
+          <Container className="max-w-2xl">
+            <Reveal>
+              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">Risk removal</p>
+              <h2 className="mt-2 text-display-sm font-display font-normal text-soil">
+                Is this the right fit?
               </h2>
-              <p className="mt-4 text-ivory/75">
-                A starting point, always confirmed after a short call,
-                but this is where most projects land.
+              <p className="mt-4 text-foreground-secondary">
+                Real answers to the questions that come up before a first conversation.
               </p>
-            </div>
-            <div className="spotlight-grid mt-10 grid items-stretch gap-6 lg:grid-cols-3">
-              {packages.map((pkg, i) => {
-                const proof = pkg.proofSlug ? projects.find((p) => p.slug === pkg.proofSlug) : undefined;
-                return (
-                  <Reveal key={pkg.slug} delay={i * 0.08} className="h-full">
-                    <TiltCard glowColor={pkg.color}>
-                      <div
-                        id={pkg.slug}
-                        className={`spotlight-card relative flex h-full scroll-mt-24 flex-col rounded-lg border-t-2 p-6 shadow-elevation-sm transition-colors duration-300 ${pkg.popular ? "ring-1 ring-inset" : ""}`}
-                        style={{
-                          borderTopColor: pkg.color,
-                          backgroundColor: blendHex(pkg.color, "#FCFAF6", 10),
-                          ["--card-color" as string]: pkg.color,
-                          ...(pkg.popular ? { boxShadow: `0 0 0 1px ${pkg.color}55` } : {}),
-                        }}
-                      >
-                        {pkg.popular && (
-                          <span
-                            className="absolute -top-3 left-6 rounded-full px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.15em] text-ivory"
-                            style={{ backgroundColor: pkg.color }}
-                          >
-                            Most popular
-                          </span>
-                        )}
-                        <p className="font-display text-xl font-normal text-soil">{pkg.name}</p>
-                        <p className="mt-1 text-sm text-foreground-secondary">{pkg.forWho}</p>
-                        <div className="mt-4 flex items-baseline gap-1.5">
-                          {pkg.billing === "monthly" && (
-                            <span className="text-sm text-foreground-secondary">from</span>
-                          )}
-                          <span className="font-display text-3xl font-normal text-soil">
-                            £{pkg.price.toLocaleString("en-GB")}
-                          </span>
-                          {pkg.billing === "monthly" && (
-                            <span className="text-sm text-foreground-secondary">/mo</span>
-                          )}
-                        </div>
-                        <p className="mt-4 text-foreground-secondary">{pkg.description}</p>
-                        <ul className="mt-4 space-y-1.5">
-                          {pkg.includes.map((item) => (
-                            <li key={item} className="text-sm text-foreground-secondary before:mr-2 before:content-['•']">
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="mt-6 flex flex-1 flex-col justify-end gap-3">
-                          {proof && (
-                            <LinkButton
-                              href={`/work/${proof.slug}`}
-                              variant="secondary"
-                              className="border-soil/20 text-soil hover:bg-soil/5"
-                            >
-                              See it in action: {proof.title}
-                            </LinkButton>
-                          )}
-                          <LinkButton href="/contact" style={{ backgroundColor: pkg.color }}>
-                            Get started
-                          </LinkButton>
-                        </div>
-                      </div>
-                    </TiltCard>
-                  </Reveal>
-                );
-              })}
+            </Reveal>
+            <div className="mt-8">
+              <FAQ />
             </div>
           </Container>
         </section>
 
-        {/* TexturedDark sits outside ClipReveal now, not wrapped by it
-            — it renders its own background image independently of its
-            children, and clip-path hides an element's entire box, so
-            wrapping the whole component meant a slow-to-fire reveal
-            trigger showed blank page background instead of its own
-            fill during fast real-device scrolling. Same fix as every
-            other ClipReveal/PerspectiveReveal section this round. */}
-        <TexturedDark image="/images/higgsfield-golden-ridge.jpg" className="py-24 text-center sm:pb-28">
-          <ClipReveal>
-            <Container>
-              <h2 className="text-display-md font-display font-normal text-ivory">
-                Still deciding which one fits?
-              </h2>
-              <p className="mx-auto mt-4 max-w-md text-ivory/70">
-                That&apos;s a completely normal place to start. Tell me where
-                your brand is right now and I&apos;ll tell you honestly what it needs.
-              </p>
-              <div className="mt-8">
-                <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
-              </div>
-            </Container>
-          </ClipReveal>
+        {/* Book call — the strategy room. */}
+        <TexturedDark image="/images/higgsfield-idea-sketch.jpg" video="/videos/higgsfield-idea-sketch.mp4" className="py-20 sm:py-28">
+          <StrategyRoomCTA />
         </TexturedDark>
       </main>
       <Footer />
       <SectionJumpNav
         items={[
-          { href: "#offerings", label: "Offerings" },
-          { href: "#elements", label: "Elements" },
-          { href: "#process", label: "How I work" },
-          { href: "#packages", label: "Packages" },
+          { href: "#authority", label: "Authority" },
+          { href: "#education", label: "Education" },
+          { href: "#trust", label: "Trust" },
+          { href: "#desire", label: "Desire" },
+          { href: "#proof", label: "Proof" },
+          { href: "#process", label: "Process" },
+          { href: "#risk", label: "FAQ" },
         ]}
       />
     </>
