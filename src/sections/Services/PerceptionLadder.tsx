@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
@@ -20,6 +22,20 @@ const RUNGS = [
 ] as const;
 
 export function PerceptionLadder() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
+  // Direct critique (Creative Direction Audit) flagged this as the
+  // weakest execution on the page — real content, but a plain bordered
+  // list with zero motion. The ladder metaphor now literally climbs:
+  // a fill line tracks scroll progress through the list instead of a
+  // static border, the same target-scoped useScroll technique already
+  // proven lightweight elsewhere, no new scroll-math system invented.
+  const { scrollYProgress } = useScroll({
+    target: trackRef,
+    offset: ["start 0.75", "end 0.4"],
+  });
+  const fillScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
   return (
     <div className="relative py-20 sm:py-28">
       <AmbientElementShader opacity={0.16} />
@@ -34,11 +50,25 @@ export function PerceptionLadder() {
           </p>
         </Reveal>
 
-        <div className="mt-12 space-y-8 border-l-2 border-ivory/15 pl-6 sm:pl-8">
+        <div ref={trackRef} className="relative mt-12 space-y-8 pl-6 sm:pl-8">
+          <div className="absolute inset-y-0 left-0 w-[2px] bg-ivory/15" aria-hidden="true" />
+          {!prefersReducedMotion && (
+            <motion.div
+              className="absolute left-0 top-0 w-[2px] origin-top bg-sandstone"
+              style={{ height: "100%", scaleY: fillScale }}
+              aria-hidden="true"
+            />
+          )}
           {RUNGS.map((rung, i) => (
             <Reveal key={rung.label} delay={i * 0.1}>
-              <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{rung.label}</p>
-              <p className="mt-1 text-sm text-ivory/80 sm:text-base">{rung.text}</p>
+              <div className="relative">
+                <span
+                  className="absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-ivory/25 bg-soil sm:-left-[33px]"
+                  aria-hidden="true"
+                />
+                <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{rung.label}</p>
+                <p className="mt-1 text-sm text-ivory/80 sm:text-base">{rung.text}</p>
+              </div>
             </Reveal>
           ))}
         </div>
