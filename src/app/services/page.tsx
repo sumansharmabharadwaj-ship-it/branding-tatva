@@ -10,7 +10,8 @@ import { PhotoHero } from "@/components/PhotoHero";
 import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { ProcessSection } from "@/sections/Process";
-import { FAQ } from "@/sections/FAQ";
+import { RiskRemovalFAQ } from "@/sections/Services/RiskRemovalFAQ";
+import { CyclingStatement } from "@/sections/Services/CyclingStatement";
 import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
 import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { FounderLens } from "@/sections/Services/FounderLens";
@@ -53,15 +54,14 @@ export default function ServicesPage() {
       <ScrollProgress />
       <main id="main-content">
         {/* Curiosity — the opening objection: why care about branding at
-            all. Char-level SplitText reveal (extends initSplitTextReveal
-            with a "chars" variant, src/animations/splitTextReveal.ts) for
-            a tighter, more kinetic entrance than the word-level reveal
-            used on every other page's hero — the one place on this page
-            that earns a different treatment from the rest of the site's
-            established word-by-word pattern. Height stays Tier 3 (70vh),
-            the documented mid-page tier in PhotoHero's own comment —
-            this page's ambition shows in what follows the hero, not in
-            breaking the site's hero-height hierarchy. */}
+            all. Two short opinionated lines build the claim (Framer
+            Motion AnimatePresence, CyclingStatement.tsx) before handing
+            off to the same char-level SplitText reveal every other
+            headline moment already uses — visitors experience a claim
+            forming rather than reading a static question. Height stays
+            Tier 3 (70vh), the documented mid-page tier in PhotoHero's
+            own comment — this page's ambition shows in what follows the
+            hero, not in breaking the site's hero-height hierarchy. */}
         <PhotoHero
           video="/videos/higgsfield-glowing-embers.mp4"
           poster="/images/higgsfield-glowing-embers-poster.jpg"
@@ -72,13 +72,7 @@ export default function ServicesPage() {
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 Curiosity
               </span>
-              <SplitReveal
-                as="h1"
-                splitType="chars"
-                className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory"
-              >
-                Why should a business care about branding?
-              </SplitReveal>
+              <CyclingStatement headline="Why should a business care about branding?" />
               <p className="mx-auto mt-4 max-w-xl text-ivory/70">
                 The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Everything on this page explains how.
               </p>
@@ -119,12 +113,26 @@ export default function ServicesPage() {
                   What do you actually receive?
                 </h2>
                 <p className="mt-4 text-ivory/75">
-                  One real project, staged the way it actually happened. Verified numbers, not projections.
+                  One real project, staged the way it actually happened. Verified numbers throughout.
                 </p>
               </Reveal>
             </Container>
           </div>
           <CaseStudyScrollStory project={flagshipProject} />
+        </section>
+
+        {/* A single pacing "breath" — direct feedback that every section
+            on the page carried roughly equal visual weight, with no
+            room to let a claim land before the next section starts.
+            One large, otherwise-empty statement at the exact narrative
+            pivot from "what happened" (Proof) to "how it works" (Future
+            vision) — deliberately placed once, not scattered as a
+            rhythm applied everywhere, matching this project's own
+            "signature moment, not everywhere" restraint. */}
+        <section className="bg-soil px-6 py-28 text-center sm:py-40">
+          <SplitReveal as="h2" splitType="chars" className="mx-auto max-w-2xl font-display text-[clamp(1.75rem,5vw,3rem)] font-normal leading-[1.2] text-ivory">
+            Proof only matters if the process behind it repeats.
+          </SplitReveal>
         </section>
 
         {/* Future vision — the real six-stage process, reused as-is
@@ -160,7 +168,7 @@ export default function ServicesPage() {
               </p>
             </Reveal>
             <div className="mt-8">
-              <FAQ />
+              <RiskRemovalFAQ />
             </div>
           </Container>
         </section>

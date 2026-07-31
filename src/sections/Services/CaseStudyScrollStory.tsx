@@ -24,6 +24,7 @@ type Stage = { label: string; text: string };
 export function CaseStudyScrollStory({ project }: { project: Project }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const stageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const imageRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const activeIndexRef = useRef(0);
   const lenis = useLenis();
@@ -56,6 +57,17 @@ export function CaseStudyScrollStory({ project }: { project: Project }) {
         if (!el) return;
         el.style.opacity = String(stageOpacity(progress, i, 0.3));
       });
+      // The brief's own "everything grey, then the insight appears and
+      // colour returns" beat, built as a real, cheap CSS filter tied to
+      // the same progress value already driving the text above — not a
+      // new mechanism, and not new imagery. Fully desaturated on "The
+      // challenge" (index 0), fully resolved to color by "The insight"
+      // (index 1) — the exact narrative turn those two stages already
+      // carry in the real copy.
+      if (imageRef.current) {
+        const colorProgress = Math.min(1, Math.max(0, progress));
+        imageRef.current.style.filter = `grayscale(${(1 - colorProgress) * 0.85}) saturate(${0.4 + colorProgress * 0.6})`;
+      }
     }
 
     update();
@@ -84,13 +96,15 @@ export function CaseStudyScrollStory({ project }: { project: Project }) {
   return (
     <div ref={wrapperRef} className="relative" style={{ height: `${(stages.length - 1) * 100 * STAGE_SPEED + 100}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <Image
-          src={project.cardImage ?? "/images/own-forest-clearing.jpg"}
-          alt=""
-          fill
-          sizes="100vw"
-          style={{ objectFit: "cover" }}
-        />
+        <div ref={imageRef} className="absolute inset-0" style={{ filter: "grayscale(0.85) saturate(0.4)" }}>
+          <Image
+            src={project.cardImage ?? "/images/own-forest-clearing.jpg"}
+            alt=""
+            fill
+            sizes="100vw"
+            style={{ objectFit: "cover" }}
+          />
+        </div>
         <div className="absolute inset-0" style={{ backgroundColor: "rgba(39,34,30,0.86)" }} />
         <Container className="relative flex h-full flex-col justify-center">
           <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">{project.industry}</p>

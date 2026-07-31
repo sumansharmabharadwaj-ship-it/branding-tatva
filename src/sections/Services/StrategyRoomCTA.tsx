@@ -9,21 +9,25 @@ import { brandStages } from "@/lib/contact-schema";
 import { site } from "@/data/site";
 
 // The closing "Book call" section, reframed as a Strategy Room per
-// direct feedback: two quick taps before the calendar appears, instead
-// of the calendar being the very first thing shown. This is a pacing
-// device, not a data-collection claim — nothing here promises the
-// booking flow personalizes based on the answers (it doesn't), which
-// would break this site's own commercial-honesty rule. Q1 reuses the
-// Contact form's own real brandStages options verbatim
-// (lib/contact-schema.ts) rather than inventing separate wording.
+// direct feedback: a few quick taps before the calendar appears,
+// instead of the calendar being the very first thing shown. This is a
+// pacing device, not a data-collection claim — nothing here promises
+// the booking flow personalizes based on the answers (it doesn't),
+// which would break this site's own commercial-honesty rule. Q1 reuses
+// the Contact form's own real brandStages options verbatim
+// (lib/contact-schema.ts); Q3 compresses the site's own real six
+// `offerings` names (data/services.ts) into four focus areas, rather
+// than inventing separate wording for either.
 const PRIORITIES = ["Getting positioning right", "Building recognition", "Staying consistent", "Still deciding"] as const;
+const FOCUS_AREAS = ["Positioning & identity", "Content & voice", "Ongoing management", "Still exploring"] as const;
 
-type Step = 0 | 1 | 2;
+type Step = 0 | 1 | 2 | 3;
 
 export function StrategyRoomCTA() {
   const [step, setStep] = useState<Step>(0);
   const [stage, setStage] = useState<string | null>(null);
   const [priority, setPriority] = useState<string | null>(null);
+  const [focus, setFocus] = useState<string | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   function pickStage(value: string) {
@@ -33,6 +37,10 @@ export function StrategyRoomCTA() {
   function pickPriority(value: string) {
     setPriority(value);
     setStep(2);
+  }
+  function pickFocus(value: string) {
+    setFocus(value);
+    setStep(3);
   }
 
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const };
@@ -44,7 +52,7 @@ export function StrategyRoomCTA() {
         Open the strategy room.
       </h2>
       <p className="mx-auto mt-4 max-w-md text-ivory/70">
-        Two quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way.
+        A few quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way.
       </p>
 
       <div className="relative mt-10 min-h-[220px]">
@@ -86,6 +94,24 @@ export function StrategyRoomCTA() {
           )}
 
           {step === 2 && (
+            <motion.div key="focus" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
+              <p className="text-sm font-medium uppercase tracking-wide text-ivory/60">What&apos;s the main focus?</p>
+              <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
+                {FOCUS_AREAS.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => pickFocus(option)}
+                    className="rounded-full border border-ivory/25 px-4 py-2 text-sm text-ivory/85 transition-colors duration-300 hover:border-ivory/50 hover:bg-ivory/10"
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {step === 3 && (
             <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
               <p className="text-sm text-ivory/70">Good. Grab a time that works.</p>
               <div className="mt-2">
@@ -96,9 +122,9 @@ export function StrategyRoomCTA() {
         </AnimatePresence>
       </div>
 
-      {step < 2 && (
+      {step < 3 && (
         <p className="mt-8 text-xs text-ivory/50">
-          Prefer to skip ahead? <SkipLink onSkip={() => setStep(2)} />
+          Prefer to skip ahead? <SkipLink onSkip={() => setStep(3)} />
         </p>
       )}
     </Container>

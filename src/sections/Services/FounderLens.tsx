@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Container } from "@/components/Container";
+import { Reveal } from "@/components/Reveal";
 import { credentials, aboutIntro } from "@/data/about";
 import { projects } from "@/data/projects";
 
@@ -13,6 +14,13 @@ import { projects } from "@/data/projects";
 // Copy is aboutIntro's own established lines (data/about.ts), not
 // rewritten — the same founder voice should read identically wherever
 // it appears on the site.
+//
+// Direct feedback that the section read as a plain biography — the
+// same real 5 credentials now render as staggered chip cards (a small
+// alternating vertical offset per card, Reveal's own stagger) instead
+// of an inline list, for more visual presence. No new photography:
+// sketches/books/research notes were requested but don't exist, and
+// won't be simulated — only layout changed, not content.
 export function FounderLens() {
   const engagementCount = projects.length;
 
@@ -20,7 +28,7 @@ export function FounderLens() {
     <Container>
       <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Trust</p>
       <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
-        Can you trust the person behind this?
+        The mind behind Branding Tatva.
       </h2>
       <div className="mt-10 lg:grid lg:grid-cols-[300px_1fr] lg:gap-14">
         <div className="hidden lg:block">
@@ -41,26 +49,30 @@ export function FounderLens() {
           </div>
           <p className="font-display text-2xl font-normal text-ivory sm:text-3xl">{aboutIntro.opening}</p>
           <p className="mt-5 text-ivory/75">{aboutIntro.body[0]}</p>
+          <p className="mt-4 text-sm text-ivory/60">
+            Every engagement is led directly by the founder, start to finish, no handoffs and no account managers.
+          </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs uppercase tracking-[0.15em] text-ivory/50 sm:text-sm">
-            {credentials
-              .filter((c) => c.featured)
-              .map((c) => (
-                <span key={c.label}>{c.label}</span>
-              ))}
-            <span>{engagementCount} real client engagements</span>
+          <div className="mt-10 flex flex-wrap gap-3">
+            {credentials.map((c, i) => (
+              <Reveal key={c.label} delay={i * 0.06} className={i % 2 === 1 ? "sm:mt-4" : undefined}>
+                <div
+                  className="rounded-lg border p-4"
+                  style={{ borderColor: `${c.color}55`, backgroundColor: `${c.color}14` }}
+                >
+                  <p className="text-sm font-medium" style={{ color: c.color }}>
+                    {c.label}
+                  </p>
+                  <p className="mt-1 text-xs text-ivory/60">{c.detail}</p>
+                </div>
+              </Reveal>
+            ))}
+            <Reveal delay={credentials.length * 0.06}>
+              <div className="flex h-full items-center rounded-lg border border-ivory/20 bg-ivory/5 px-4 py-4">
+                <p className="text-sm text-ivory/70">{engagementCount} real client engagements</p>
+              </div>
+            </Reveal>
           </div>
-
-          <ul className="mt-8 space-y-3 border-t border-ivory/15 pt-6">
-            {credentials
-              .filter((c) => !c.featured)
-              .map((c) => (
-                <li key={c.label} className="text-sm text-ivory/70">
-                  <span style={{ color: c.color }}>{c.label}</span>
-                  <span className="text-ivory/50"> · {c.detail}</span>
-                </li>
-              ))}
-          </ul>
         </div>
       </div>
     </Container>
