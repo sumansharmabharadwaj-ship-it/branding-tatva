@@ -24,6 +24,7 @@ import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
 import { StrategySessionPreview } from "@/sections/Services/StrategySessionPreview";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { process } from "@/data/process";
 import { projects } from "@/data/projects";
 import { elementColor } from "@/lib/elementColor";
@@ -113,6 +114,13 @@ export default function ServicesPage() {
             each time, continuing one visual system rather than adding
             a new device per section. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+          {/* Direct feedback that the shader alone reads as basically flat
+              in a screenshot — real, visible footage underneath it now,
+              not just a near-invisible WebGL shimmer. A single pine
+              standing apart from a misty valley: a real visual echo of
+              "positioned distinctly," not decoration for its own sake. */}
+          <BackgroundVideo video="/videos/higgsfield-lone-pine.mp4" poster="/images/higgsfield-lone-pine-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/70" />
           <AmbientElementShader opacity={0.13} />
           {/* Same ghost watermark word technique Home ("ELEMENTS"), About
               ("WHY"), and Blog ("NOTES") already use, extended here — a
@@ -145,6 +153,12 @@ export default function ServicesPage() {
             treatment as the sections around it — see WeakBrandingCost's
             comment above for why. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+          {/* Own real footage (not stock) — warm light through branches,
+              a quiet contemplative tone for a section about what goes
+              wrong. Same "real video underneath the shader" fix as the
+              section above. */}
+          <BackgroundVideo video="/videos/own-golden-branches.mp4" poster="/images/own-golden-branches-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/70" />
           <AmbientElementShader opacity={0.15} />
           <div className="relative">
             <CommonMistakes />
@@ -182,6 +196,11 @@ export default function ServicesPage() {
             the sections around it — see WeakBrandingCost's comment
             above for why. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+          {/* A living, flowing river — a real visual echo of "what you
+              receive" actually moving toward the visitor, not a static
+              list. Same "real video underneath the shader" fix. */}
+          <BackgroundVideo video="/videos/pixabay-emerald-river.mp4" poster="/images/pixabay-emerald-river-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/70" />
           <AmbientElementShader opacity={0.12} />
           <span
             aria-hidden="true"
@@ -257,6 +276,11 @@ export default function ServicesPage() {
             sections around it — see WeakBrandingCost's comment above
             for why. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+          {/* A clear, still forest stream — clarity and reflection, an
+              apt real echo for a self-assessment section. Same "real
+              video underneath the shader" fix. */}
+          <BackgroundVideo video="/videos/higgsfield-forest-stream.mp4" poster="/images/higgsfield-forest-stream-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/70" />
           <AmbientElementShader opacity={0.15} />
           <span
             aria-hidden="true"
