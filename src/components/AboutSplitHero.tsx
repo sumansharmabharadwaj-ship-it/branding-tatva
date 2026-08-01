@@ -141,7 +141,11 @@ export function AboutSplitHero({
                   )}
                   <div
                     className="absolute inset-x-0 top-0 px-5 pb-10 pt-5"
-                    style={{ backgroundImage: "linear-gradient(180deg, rgba(20,17,14,0.7) 0%, rgba(20,17,14,0) 100%)" }}
+                    // Autopilot audit: text sits at the 0% stop (the
+                    // strongest point) of this gradient, which was 0.7 —
+                    // under the site's normalized bg-soil/80 contrast
+                    // floor. Bumped to match.
+                    style={{ backgroundImage: "linear-gradient(180deg, rgba(20,17,14,0.8) 0%, rgba(20,17,14,0) 100%)" }}
                   >
                     <SplitReveal
                       as="h1"
@@ -152,7 +156,7 @@ export function AboutSplitHero({
                   </div>
                   <div
                     className="absolute inset-x-0 bottom-0 px-5 pb-4 pt-10"
-                    style={{ backgroundImage: "linear-gradient(0deg, rgba(20,17,14,0.75) 0%, rgba(20,17,14,0) 100%)" }}
+                    style={{ backgroundImage: "linear-gradient(0deg, rgba(20,17,14,0.8) 0%, rgba(20,17,14,0) 100%)" }}
                   >
                     <p className="font-body text-[0.65rem] uppercase tracking-[0.18em] text-ivory/90">{body}</p>
                   </div>
