@@ -12,6 +12,7 @@ import { NewsletterForm } from "@/components/NewsletterForm";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { Fireflies } from "@/components/Fireflies";
+import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { site } from "@/data/site";
@@ -113,9 +114,19 @@ export default function ContactPage() {
             Sandstone now: the same single light-anchor tone About uses
             for its own opening section. The heading/intro copy above
             moved into the new hero; this section now carries just the
-            form and the direct-contact links. */}
-        <section className="pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
-          <Container className="grid gap-12 lg:grid-cols-5">
+            form and the direct-contact links.
+            Redesign pass: this is the single most consequential section
+            on the entire site, the actual conversion moment, yet it was
+            the flattest, a solid color with text and form fields and
+            nothing else, while every other section on this page now
+            has real depth. AmbientElementShader (the one deliberately
+            restrained WebGL moment already proven safe on Services,
+            color and light only, no 3D objects) gives it quiet
+            atmosphere instead of a flat fill, at the same low opacity
+            Services already uses on comparable light sections. */}
+        <section className="relative overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
+          <AmbientElementShader opacity={0.14} />
+          <Container className="relative grid gap-12 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
               <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
                 Reach me directly
