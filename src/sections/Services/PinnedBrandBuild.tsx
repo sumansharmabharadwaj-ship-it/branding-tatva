@@ -160,61 +160,68 @@ export function PinnedBrandBuild() {
       <BackgroundVideo video="/videos/higgsfield-mountain-mist.mp4" poster="/images/higgsfield-mountain-mist-poster.jpg" />
       <div className="absolute inset-0 bg-soil/55" />
       <AmbientElementShader opacity={0.3} />
-      {/* Direct feedback (screenshot) that the content sat in a narrow
-          left column while most of the section's real width, on any
-          wide screen, was just empty video with nothing placed on it —
-          "the biggest issue." Same ghost watermark technique this site
-          already proves on the hero/FAQ/deliverables sections, sized to
-          actually occupy the right side rather than leaving it blank. */}
+      {/* Direct, repeated feedback (two screenshots) that this pinned
+          frame read as a narrow content strip with empty video on both
+          sides on a real wide display, and that the stacked
+          heading-above-layers arrangement overflowed the frame's own
+          height (the heading visibly scrolled out of the top mid-pin).
+          A first attempt answered it with a decorative watermark —
+          wrong diagnosis. The actual fix is the layout: the frame is
+          now a real two-column composition on its own wider grid (the
+          site's max-w-6xl Container is deliberately not used here — a
+          full-viewport cinematic frame earns a wider stage), heading
+          and closing line locked in the left column, the five layers
+          building in the right, both vertically centered. Total column
+          height now fits inside h-screen at every common desktop
+          height, so nothing gets clipped mid-pin. */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 select-none whitespace-nowrap font-display text-[clamp(4rem,13vw,11rem)] font-bold uppercase leading-none text-ivory/[0.05] lg:block"
+        className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 select-none whitespace-nowrap font-display text-[clamp(4rem,13vw,11rem)] font-bold uppercase leading-none text-ivory/[0.04] lg:block"
       >
         Build
       </span>
-      <Container className="relative flex h-full flex-col justify-center">
-        <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Authority</p>
-        <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
-          Marketing amplifies whatever is already there.
-        </h2>
-        {/* Typography/spacing pass only — the GSAP scrub timeline below
-            targets these exact ref nodes by index, so the DOM structure
-            and ref wiring stay untouched; only the visual treatment of
-            each layer changes. Was a plain left-border row with a small
-            icon and tight type — reads more like a museum wall plate
-            now: a real ghost numeral, a wider gap, and a hairline
-            divider closing each entry instead of a colored bar doing
-            all the work alone. */}
-        <div className="relative mt-14 max-w-3xl">
-          {LAYERS.map((layer, i) => (
-            <div
-              key={layer.slug}
-              ref={(node) => {
-                layerRefs.current[i] = node;
-              }}
-              className="flex items-start gap-6 border-b border-ivory/10 py-5 opacity-0 last:border-b-0"
-              style={{ marginLeft: `${i * 18}px` }}
-            >
-              <span
-                className="font-display text-3xl font-normal leading-none opacity-40 sm:text-4xl"
-                style={{ color: layer.color }}
+      <div className="relative mx-auto flex h-full w-full max-w-[100rem] flex-col justify-center px-6 sm:px-10 lg:px-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20">
+          <div>
+            <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Authority</p>
+            <h2 className="mt-2 text-display-sm font-display font-normal text-ivory lg:text-display-md">
+              Marketing amplifies whatever is already there.
+            </h2>
+            <p className="mt-8 max-w-md text-sm italic text-ivory/80 lg:text-base">
+              Skip one layer, and marketing amplifies the gap instead of the position.
+            </p>
+          </div>
+          {/* The GSAP scrub timeline targets these exact ref nodes by
+              index — DOM structure and ref wiring unchanged from the
+              working version, only the surrounding layout moved. */}
+          <div className="relative">
+            {LAYERS.map((layer, i) => (
+              <div
+                key={layer.slug}
+                ref={(node) => {
+                  layerRefs.current[i] = node;
+                }}
+                className="flex items-start gap-6 border-b border-ivory/10 py-4 opacity-0 last:border-b-0 xl:py-5"
+                style={{ marginLeft: `${i * 18}px` }}
               >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div className="flex items-start gap-4 pt-1">
-                <ElementGlyph slug={layer.slug} className="mt-1 h-6 w-6 shrink-0" style={{ color: layer.color }} />
-                <div>
-                  <p className="font-display text-2xl font-normal text-ivory sm:text-3xl">{layer.label}</p>
-                  <p className="mt-1.5 max-w-md text-sm text-ivory/80 sm:text-base">{layer.line}</p>
+                <span
+                  className="font-display text-3xl font-normal leading-none opacity-40 xl:text-4xl"
+                  style={{ color: layer.color }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="flex items-start gap-4 pt-1">
+                  <ElementGlyph slug={layer.slug} className="mt-1 h-6 w-6 shrink-0" style={{ color: layer.color }} />
+                  <div>
+                    <p className="font-display text-2xl font-normal text-ivory xl:text-3xl">{layer.label}</p>
+                    <p className="mt-1 max-w-lg text-sm text-ivory/80 xl:text-base">{layer.line}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-        <p className="mt-10 max-w-md text-sm italic text-ivory/80">
-          Skip one layer, and marketing amplifies the gap instead of the position.
-        </p>
-      </Container>
+      </div>
     </div>
   );
 }
