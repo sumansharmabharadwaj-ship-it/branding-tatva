@@ -5,7 +5,7 @@ import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
-import { ImageBreak } from "@/components/ImageBreak";
+import { VideoBreak } from "@/components/VideoBreak";
 import { WorkGrid } from "@/sections/CaseStudies";
 import { ClipReveal } from "@/components/ClipReveal";
 import { AnnotatedVisual } from "@/components/AnnotatedVisual";
@@ -209,8 +209,19 @@ export default function WorkPage() {
           </ClipReveal>
         </section>
 
-        <ImageBreak
-          image="/images/higgsfield-canopy-light.jpg"
+        {/* Was a static image (higgsfield-canopy-light.jpg) under a quote
+            that is literally about "a forest of noise" — real cinematic
+            footage instead, sourced and verified this session: sunbeams
+            breaking through mist in a real forest (Pexels, id 33237395,
+            standard Pexels license, free for commercial use, no
+            attribution required), trimmed to an 8s loop and re-encoded
+            at 1080p/crf22 (5.6MB, verified via frame extraction against
+            the original before compressing further). The copy's own
+            metaphor is now the thing actually on screen, not a
+            coincidentally-similar stock photo. */}
+        <VideoBreak
+          src="/videos/pexels-misty-forest-sunbeams.mp4"
+          poster="/images/pexels-misty-forest-sunbeams-poster.jpg"
           quote="Every one of these projects started in a forest of noise, the same place yours is starting from."
           height="60vh"
         />

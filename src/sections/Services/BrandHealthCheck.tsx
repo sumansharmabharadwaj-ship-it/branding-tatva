@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
+import { AnimatedStat } from "@/components/AnimatedStat";
 import { packages } from "@/data/services";
 
 // A real, transparent scored self-assessment, not a fake "AI analyzes
@@ -79,9 +80,15 @@ function bandFor(score: number) {
   return BANDS.find((b) => score <= b.max) ?? BANDS[BANDS.length - 1];
 }
 
+const MAX_SCORE = QUESTIONS.reduce((sum, q) => sum + q.options[q.options.length - 1].points, 0);
+
 export function BrandHealthCheck() {
   const [step, setStep] = useState(0);
-  const [score, setScore] = useState(0);
+  // Points per answered question, not a running total — storing each
+  // answer separately (instead of just a summed score) is what makes
+  // "Back" possible: going back a step needs to un-add exactly the
+  // right amount, not guess at it.
+  const [answers, setAnswers] = useState<number[]>([]);
   // Direct feedback that this quiz "isn't interactive" — a click landed
   // with no visible acknowledgement before the next question swapped in.
   // Tracking the just-clicked option separately lets the button itself
@@ -91,13 +98,14 @@ export function BrandHealthCheck() {
   const prefersReducedMotion = useReducedMotion();
   const done = step >= QUESTIONS.length;
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.35 };
+  const score = answers.reduce((sum, points) => sum + points, 0);
 
   function answer(label: string, points: number) {
     if (selected) return;
     setSelected(label);
     window.setTimeout(
       () => {
-        setScore((s) => s + points);
+        setAnswers((a) => [...a, points]);
         setStep((s) => s + 1);
         setSelected(null);
       },
@@ -105,9 +113,15 @@ export function BrandHealthCheck() {
     );
   }
 
+  function back() {
+    if (step === 0 || selected) return;
+    setStep((s) => s - 1);
+    setAnswers((a) => a.slice(0, -1));
+  }
+
   function reset() {
     setStep(0);
-    setScore(0);
+    setAnswers([]);
     setSelected(null);
   }
 
@@ -143,27 +157,52 @@ export function BrandHealthCheck() {
               exit={{ opacity: 0 }}
               transition={transition}
             >
-              <p className="text-xs uppercase tracking-wide text-ivory/50">
-                Question {step + 1} of {QUESTIONS.length}
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-xs uppercase tracking-wide text-ivory/50">
+                  Question {step + 1} of {QUESTIONS.length}
+                </p>
+                {step > 0 && (
+                  <button
+                    type="button"
+                    onClick={back}
+                    className="link-underline text-xs text-ivory/60 hover:text-ivory"
+                  >
+                    Back
+                  </button>
+                )}
+              </div>
               <p className="mt-2 text-lg text-ivory">{QUESTIONS[step].prompt}</p>
               <div className="mt-5 space-y-2.5">
                 {QUESTIONS[step].options.map((opt) => {
                   const isSelected = selected === opt.label;
                   return (
-                    <button
+                    <motion.button
                       key={opt.label}
                       type="button"
                       onClick={() => answer(opt.label, opt.points)}
                       aria-pressed={isSelected}
-                      className={`block w-full rounded-lg border px-4 py-3 text-left text-sm transition-all duration-200 ${
+                      whileHover={prefersReducedMotion || selected ? undefined : { x: 4 }}
+                      whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                      transition={{ duration: 0.15 }}
+                      className={`flex w-full items-center justify-between gap-3 rounded-lg border px-4 py-3 text-left text-sm transition-colors duration-200 ${
                         isSelected
                           ? "border-sandstone bg-sandstone/15 text-ivory"
                           : "border-ivory/20 text-ivory/85 hover:border-ivory/45 hover:bg-ivory/5"
                       }`}
                     >
-                      {opt.label}
-                    </button>
+                      <span>{opt.label}</span>
+                      <motion.span
+                        aria-hidden="true"
+                        initial={false}
+                        animate={{ scale: isSelected ? 1 : 0, opacity: isSelected ? 1 : 0 }}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
+                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sandstone text-soil"
+                      >
+                        <svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M3 8.5L6.5 12L13 4.5" />
+                        </svg>
+                      </motion.span>
+                    </motion.button>
                   );
                 })}
               </div>
@@ -177,7 +216,13 @@ export function BrandHealthCheck() {
               className="rounded-lg border-t-2 p-6 sm:p-8"
               style={{ borderColor: resultPackage?.color, backgroundColor: "rgba(244,239,230,0.04)" }}
             >
-              <p className="text-xs uppercase tracking-wide text-ivory/50">Where this points</p>
+              <div className="flex items-baseline justify-between gap-4">
+                <p className="text-xs uppercase tracking-wide text-ivory/50">Where this points</p>
+                <p className="font-display text-sm text-sandstone">
+                  <AnimatedStat value={String(score)} />
+                  <span className="text-ivory/50">/{MAX_SCORE}</span>
+                </p>
+              </div>
               <p className="mt-2 font-display text-xl font-normal text-ivory">{result?.title}</p>
               <p className="mt-3 text-ivory/85">{result?.detail}</p>
               {resultPackage && (
