@@ -174,8 +174,18 @@ export default function ContactPage() {
         <section className="relative overflow-hidden bg-soil py-16">
           <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
           <div className="absolute inset-0 bg-soil/80" />
+          {/* min-w-0 on both grid items: CalendlyEmbed's own real
+              minWidth:320px constraint (its own widget's floor, not
+              this page's choice) was propagating up through CSS
+              Grid's default min-width:auto item behavior, forcing the
+              shared single-column mobile track wider than the
+              viewport, and dragging the Newsletter card along with it
+              even though it has no width problem of its own.
+              Confirmed via computed-style inspection at 375px width
+              (both cards measured 370px, 43px past the actual 327px
+              content box) before fixing. */}
           <Container className="relative grid gap-8 lg:grid-cols-2 lg:items-start">
-            <Reveal>
+            <Reveal className="min-w-0">
               <div
                 className="rounded-2xl border p-6 sm:p-8"
                 style={{ borderColor: `${ELEMENT_HEX.water}40`, backgroundColor: `${ELEMENT_HEX.water}14` }}
@@ -207,7 +217,7 @@ export default function ContactPage() {
               </div>
             </Reveal>
 
-            <Reveal delay={0.1}>
+            <Reveal delay={0.1} className="min-w-0">
               <div
                 className="rounded-2xl border p-6 sm:p-8"
                 style={{ borderColor: `${ELEMENT_HEX.air}40`, backgroundColor: `${ELEMENT_HEX.air}14` }}

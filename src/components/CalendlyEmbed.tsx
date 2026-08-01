@@ -33,7 +33,18 @@ export function CalendlyEmbed({ url }: { url: string }) {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className="relative mt-8 overflow-hidden rounded-lg border-t-2 border-action-primary bg-background-elevated shadow-elevation-sm">
+    // overflow-x-auto, not overflow-hidden — Calendly's own 320px
+    // minWidth (its own widget's real floor, confirmed against their
+    // docs, not a choice made here) can end up wider than this
+    // wrapper on a narrow card (e.g. Contact's two-column layout
+    // collapsed to one column on mobile still leaves each card under
+    // 320px). overflow-hidden was silently cropping part of the real
+    // booking calendar in that case; overflow-x-auto keeps every
+    // wrapper that already has enough room visually unchanged (no
+    // scrollbar appears when there's nothing to scroll) while letting
+    // a cramped one stay fully usable via a swipe instead of quietly
+    // losing part of the calendar.
+    <div className="relative mt-8 overflow-x-auto rounded-lg border-t-2 border-action-primary bg-background-elevated shadow-elevation-sm">
       {!loaded && (
         <div
           className="absolute inset-0 animate-pulse bg-background-alt"
