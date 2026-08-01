@@ -9,6 +9,7 @@ import { PhotoHero } from "@/components/PhotoHero";
 import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { RiskRemovalFAQ } from "@/sections/Services/RiskRemovalFAQ";
+import { ClearingMist } from "@/sections/Services/ClearingMist";
 import { CyclingStatement } from "@/sections/Services/CyclingStatement";
 import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
 import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
@@ -192,6 +193,18 @@ export default function ServicesPage() {
             </div>
           </Container>
           <ScrollCue />
+          {/* Scene dissolve system, boundary 1 of 7: the hero's last
+              frames darken into Authority's charcoal, so the cut into
+              the pinned build reads as the same shot getting darker
+              rather than a new page section starting. Every following
+              chapter opens with the same device — a veil of the
+              PREVIOUS chapter's mood color dissolving into its own —
+              one continuous color journey instead of stacked blocks. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[20vh]"
+            style={{ background: "linear-gradient(180deg, rgba(23,24,26,0) 0%, #17181A 100%)" }}
+          />
         </PhotoHero>
 
         {/* Authority — the one deliberate ScrollTrigger.pin section. */}
@@ -234,6 +247,13 @@ export default function ServicesPage() {
                 "linear-gradient(180deg, rgba(24,25,26,0.92) 0%, rgba(24,25,26,0.74) 50%, rgba(24,25,26,0.9) 100%)",
             }}
           />
+          {/* Scene dissolve: Authority's charcoal handing off into
+              Stakes' stone. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[16vh]"
+            style={{ background: "linear-gradient(180deg, #17181A 0%, rgba(23,24,26,0) 100%)" }}
+          />
           <AmbientElementShader opacity={0.1} />
           {/* Same ghost watermark word technique Home ("ELEMENTS"), About
               ("WHY"), and Blog ("NOTES") already use, extended here — a
@@ -268,6 +288,12 @@ export default function ServicesPage() {
               backgroundImage:
                 "linear-gradient(180deg, rgba(26,32,38,0.88) 0%, rgba(26,32,38,0.7) 55%, rgba(26,32,38,0.88) 100%)",
             }}
+          />
+          {/* Scene dissolve: Stakes' dry stone into Education's mist. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[16vh]"
+            style={{ background: "linear-gradient(180deg, #1B1A17 0%, rgba(27,26,23,0) 100%)" }}
           />
           <div className="relative">
             <PerceptionLadder />
@@ -334,6 +360,13 @@ export default function ServicesPage() {
                 "linear-gradient(180deg, rgba(15,21,28,0.85) 0%, rgba(15,21,28,0.58) 45%, rgba(15,21,28,0.85) 100%)",
             }}
           />
+          {/* Scene dissolve: Education's blue mist into Desire's deep
+              water. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[16vh]"
+            style={{ background: "linear-gradient(180deg, #1A2026 0%, rgba(26,32,38,0) 100%)" }}
+          />
           <div className="relative">
             <PackageSelector />
           </div>
@@ -378,6 +411,15 @@ export default function ServicesPage() {
           >
             Receive
           </span>
+          {/* Scene dissolve: the shadow of Desire's deep water falls
+              across the top of the desk before the parchment brightens
+              — the page's hardest cut (dark to light) becomes a
+              surfacing instead. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[14vh]"
+            style={{ background: "linear-gradient(180deg, rgba(15,21,28,0.55) 0%, rgba(15,21,28,0) 100%)" }}
+          />
           <div className="relative">
             <DeliverablesReveal light />
           </div>
@@ -414,6 +456,14 @@ export default function ServicesPage() {
               backgroundImage:
                 "linear-gradient(180deg, rgba(20,26,21,0.88) 0%, rgba(20,26,21,0.72) 50%, rgba(20,26,21,0.88) 100%)",
             }}
+          />
+          {/* Scene dissolve: the dossier's parchment light spills into
+              the top of the forest — light traveling downward into the
+              next scene. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[12vh]"
+            style={{ background: "linear-gradient(180deg, rgba(232,222,208,0.32) 0%, rgba(232,222,208,0) 100%)" }}
           />
           <span
             aria-hidden="true"
@@ -514,6 +564,18 @@ export default function ServicesPage() {
               }}
             />
           </div>
+          {/* Scene dissolve: the quiz's forest dark hands off into the
+              FAQ's slate mist. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[16vh]"
+            style={{ background: "linear-gradient(180deg, #141A15 0%, rgba(20,26,21,0) 100%)" }}
+          />
+          {/* Scroll-controlled atmosphere — the fog is densest entering
+              the chapter and clears as the visitor descends through the
+              answers, arriving at Book Call in the clearest air on the
+              page. The guided-descent device this section was missing. */}
+          <ClearingMist />
           <ParallaxDrift distance={130} className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%]">
             <div
               aria-hidden="true"

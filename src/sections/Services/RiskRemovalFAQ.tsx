@@ -79,7 +79,17 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
               if (!item) return null;
               const isOpen = openQuestion === item.question;
               return (
-                <div key={item.question} className="py-1">
+                // Each question condenses out of the fog as the visitor
+                // descends — the section reads as a guided sequence of
+                // arrivals rather than one tall pre-rendered list.
+                <motion.div
+                  key={item.question}
+                  className="py-1"
+                  initial={prefersReducedMotion ? undefined : { opacity: 0, y: 18, filter: "blur(4px)" }}
+                  whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
+                  viewport={{ once: true, margin: "0px 0px -8% 0px" }}
+                  transition={{ duration: 0.65, delay: 0.1 + qi * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                >
                   <motion.div
                     aria-hidden="true"
                     className={`h-px ${dark ? "bg-ivory/15" : "bg-border"}`}
@@ -133,7 +143,7 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </motion.div>
               );
             })}
           </div>
