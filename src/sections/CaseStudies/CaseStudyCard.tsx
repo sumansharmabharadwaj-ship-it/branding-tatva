@@ -69,6 +69,7 @@ export function CaseStudyCard({ project }: { project: Project }) {
               inventing a number to fill the space. */}
           {project.stats?.[0] && (
             <motion.div
+              aria-hidden="true"
               className="pointer-events-none absolute left-6 top-6 rounded-md px-3 py-2"
               style={{ backgroundColor: `${project.accent}E6` }}
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
