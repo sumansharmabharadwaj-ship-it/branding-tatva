@@ -62,6 +62,14 @@ export function BackgroundVideo({
       muted
       loop
       playsInline
+      // Was the browser-default eager preload — a Lighthouse profile of
+      // Services caught every BackgroundVideo instance on the page
+      // (~27MB combined) downloading during initial load, competing
+      // with the LCP hero for bandwidth. metadata-only now; the
+      // offscreen-pause observer in useVideoFadeIn calls play() 25%
+      // before a video becomes visible, which starts its real download
+      // ahead of paint, with the poster covering the gap.
+      preload="metadata"
     >
       {videoWebm && <source src={videoWebm} type="video/webm" />}
       <source src={video} type="video/mp4" />

@@ -149,11 +149,20 @@ export function AmbientElementShader({ className, opacity = 0.35 }: { className?
       const resizeObserver = new ResizeObserver(resize);
       resizeObserver.observe(container);
 
+      // Frame-capped to 30fps — a Lighthouse profile of Services (which
+      // runs up to six instances of this shader) attributed its longest
+      // main-thread tasks to uncapped per-frame render work. The drift
+      // here moves at uTime * 0.03; at that speed the difference
+      // between 60 and 30 renders a second is imperceptible, and the
+      // cap halves this component's total CPU/GPU cost page-wide.
+      let lastRender = 0;
       function tick(time: number) {
         if (!running || !renderer) return;
+        raf = requestAnimationFrame(tick);
+        if (time - lastRender < 33) return;
+        lastRender = time;
         material.uniforms.uTime.value = time * 0.001;
         renderer.render(scene, camera);
-        raf = requestAnimationFrame(tick);
       }
 
       const intersectionObserver = new IntersectionObserver(
