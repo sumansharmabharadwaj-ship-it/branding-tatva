@@ -168,6 +168,16 @@ export const projects: Project[] = [
     services: ["Air · content strategy"],
     outcome:
       "Produced a complete content portfolio of sixteen pieces spanning research, opinion, education, and fast consumption formats, structured around a deliberate arc: validate, challenge, humanise, define, rather than a loose content calendar.",
+    // Real numbers, both already stated in `execution`/`outcome` above,
+    // just never extracted into a structured stat before now — this
+    // was the one project besides Dr. Haley Nutrition with an actual
+    // quantifiable result in its own copy, not a number invented to
+    // fill the field. The dosing figure comes first (Delhi Jal Board,
+    // the research pillar's real proof point), the piece count second.
+    stats: [
+      { value: "Under 3%", label: "chemical over dosing, down from 15 to 20%" },
+      { value: "16", label: "content pieces across four formats" },
+    ],
     closingQuote:
       "Trust with an expert and trust with a beginner are earned in two different languages, both of them necessary.",
     cardImage: "/images/card-plaxonic-poster.jpg",
