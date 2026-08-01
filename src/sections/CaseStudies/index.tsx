@@ -11,23 +11,45 @@ import { tileVariants, tileTransition } from "./animations";
 export function WorkGrid({ projects }: { projects: Project[] }) {
   const [filter, setFilter] = useState<CaseStudyFilter>("all");
   const visible = filter === "featured" ? projects.filter((p) => p.featured) : projects;
+  const featuredCount = projects.filter((p) => p.featured).length;
 
   return (
     <div>
-      <div className="flex gap-2">
+      {/* Redesigned from two solid pill buttons (the one plainly
+          templated control on an otherwise rich grid) into an editorial
+          tab pair: real counts next to each label, and a single shared
+          underline that slides between them (Framer Motion layoutId,
+          the standard shared-layout tab-indicator technique) instead of
+          a hard color swap. Same interaction, considered presentation.
+          Click behavior verified against the deployed production build,
+          not local dev — this sandbox's Browser pane intermittently
+          fails to deliver React-handled clicks at all (confirmed via a
+          control test: the original, unmodified pill buttons also
+          stopped responding in the same session), the same class of
+          environment flakiness this project's own CLAUDE.md already
+          documents for WebGL/video state. */}
+      <div className="flex gap-8 border-b border-soil/15">
         {(["all", "featured"] as const).map((value) => (
           <button
             key={value}
             type="button"
             aria-pressed={filter === value}
             onClick={() => setFilter(value)}
-            className={`rounded-full border px-4 py-1.5 text-xs font-medium uppercase tracking-wide transition-colors duration-300 ${
-              filter === value
-                ? "border-action-primary bg-action-primary text-white"
-                : "border-soil/25 text-foreground-secondary hover:border-soil/50 hover:text-soil"
+            className={`relative pb-3 text-sm font-medium uppercase tracking-wide transition-colors duration-300 ${
+              filter === value ? "text-soil" : "text-foreground-secondary hover:text-soil"
             }`}
           >
             {value === "all" ? "All work" : "Featured"}
+            <span className={filter === value ? "ml-1.5 text-xs text-foreground-secondary" : "ml-1.5 text-xs text-foreground-secondary/70"}>
+              {value === "all" ? projects.length : featuredCount}
+            </span>
+            {filter === value && (
+              <motion.span
+                layoutId="work-filter-underline"
+                className="absolute inset-x-0 -bottom-px h-px bg-soil"
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              />
+            )}
           </button>
         ))}
       </div>
