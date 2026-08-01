@@ -67,21 +67,38 @@ export function DeliverablesReveal({ light = false }: { light?: boolean }) {
                 }
                 style={{ borderColor: pkg.color }}
               >
-                <p className={`text-xs font-medium uppercase tracking-[0.15em] ${light ? "text-soil/60" : "text-ivory/60"}`}>
-                  {pkg.name}
-                </p>
+                {/* Document header — each sheet reads as a numbered
+                    file, not a generic card: index numeral in the
+                    package's own color, name, hairline rule. */}
+                <div className="flex items-baseline justify-between">
+                  <p className={`text-xs font-medium uppercase tracking-[0.15em] ${light ? "text-soil/60" : "text-ivory/60"}`}>
+                    {pkg.name}
+                  </p>
+                  {light && (
+                    <span className="font-display text-xl font-normal leading-none opacity-45" style={{ color: pkg.color }}>
+                      {String(pi + 1).padStart(2, "0")}
+                    </span>
+                  )}
+                </div>
                 {light && <div className="mt-3 h-px bg-soil/10" aria-hidden="true" />}
+                {/* Items write themselves onto the page line by line —
+                    the visible animation this chapter was missing once
+                    the sheets had settled. */}
                 <ul className="mt-4 space-y-3">
-                  {items.map((item) => (
-                    <li
+                  {items.map((item, ii) => (
+                    <motion.li
                       key={item}
+                      initial={light && !prefersReducedMotion ? { opacity: 0, x: -10 } : undefined}
+                      whileInView={light && !prefersReducedMotion ? { opacity: 1, x: 0 } : undefined}
+                      viewport={{ once: true, margin: "0px 0px -8% 0px" }}
+                      transition={{ duration: 0.4, delay: 0.25 + pi * 0.12 + ii * 0.08 }}
                       className={`flex items-start gap-2.5 ${light ? "text-[0.95rem] text-soil/85" : "text-sm text-ivory/85"}`}
                     >
                       <span aria-hidden="true" className="mt-0.5 shrink-0" style={{ color: pkg.color }}>
                         &#10003;
                       </span>
                       {item}
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
               </div>

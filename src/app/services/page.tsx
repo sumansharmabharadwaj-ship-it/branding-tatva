@@ -330,6 +330,20 @@ export default function ServicesPage() {
             the pool for Phase 3's reassignment audit rather than being
             discarded.) */}
         <section className="relative overflow-hidden bg-background-alt py-16 sm:py-24">
+          {/* Direct feedback that this chapter read as flat white — the
+              pause survives (it is the film's one bright rest, per the
+              approved color script), but the surface now reads as
+              actual paper: an inline SVG grain layer (no asset, no
+              request) at low opacity gives the parchment real tooth
+              instead of a flat fill. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-[0.5]"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E\")",
+            }}
+          />
           <span
             aria-hidden="true"
             className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-soil/[0.05] sm:-top-8"
