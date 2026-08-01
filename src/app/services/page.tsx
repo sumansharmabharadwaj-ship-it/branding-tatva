@@ -63,13 +63,14 @@ export default function ServicesPage() {
             forming rather than reading a static question. Height stays
             Tier 3 (70vh), the documented mid-page tier in PhotoHero's
             own comment — this page's ambition shows in what follows the
-            hero, not in breaking the site's hero-height hierarchy. Was
-            higgsfield-glowing-embers.mp4 — direct feedback that flickering
-            fire footage read as agitated rather than calm for what should
-            be a quiet, contemplative opening question. Swapped for a
-            still-unused clip already on disk: sunbeams through a misty
-            pine trail, matching the site's established calm-nature
-            register instead of introducing new footage. */}
+            hero, not in breaking the site's hero-height hierarchy. A
+            newly-sourced "ink dispersing in dark water" clip was tried
+            here and reverted immediately on direct feedback — a black-
+            background studio abstraction breaks the site's own
+            established warm, sunlit, natural register (documented in
+            CLAUDE.md's own video-sourcing standard), regardless of how
+            cinematically it reads on its own. Back to the calm misty
+            pine trail already proven here. */}
         <PhotoHero
           video="/videos/higgsfield-forest-trail-mist.mp4"
           poster="/images/higgsfield-forest-trail-mist-poster.jpg"
