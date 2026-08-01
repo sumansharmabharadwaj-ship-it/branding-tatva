@@ -34,28 +34,55 @@ export default function WorkPage() {
       <Header transparent />
       <ScrollProgress />
       <main id="main-content">
+        {/* Redesigned from the centered pill-badge-plus-headline template
+            every secondary page's hero used to share (identical to
+            Services/Blog/Contact) — an asymmetric masthead instead, the
+            exact technique already proven on this site's own case-study
+            and blog-post templates (large offset headline in one
+            column, a real-data aside in the other, a giant faint
+            watermark word behind both), just never applied to this
+            page's own top-level hero until now. Real industries list
+            (already computed below for the numbers strip) fills the
+            aside — distinct from that strip's own lead (the project
+            count), not a repeat of it. */}
         <PhotoHero
           video="/videos/own-ridge-road.mp4"
           poster="/images/own-ridge-road-poster.jpg"
           minHeight="70vh"
         >
-          <Container className="relative py-20 text-center">
-            <Reveal>
-              <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                Work
-              </span>
-              <SplitReveal
-                as="h1"
-                className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory"
-              >
-                Projects across very different categories.
-              </SplitReveal>
-              <p className="mx-auto mt-4 max-w-xl text-ivory/80">
-                Marketplaces, executive coaching, wellness, D2C supplements,
-                enterprise technology: different industries, the same
-                underlying method.
-              </p>
-            </Reveal>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,15vw,10rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+          >
+            Work
+          </span>
+          <Container className="relative py-20">
+            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+              <Reveal>
+                <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+                  Work
+                </span>
+                <SplitReveal
+                  as="h1"
+                  className="mt-6 max-w-2xl font-display text-[clamp(2.4rem,6.5vw,4.5rem)] font-normal leading-[1.05] text-ivory"
+                >
+                  Projects across very different categories.
+                </SplitReveal>
+                <p className="mt-4 max-w-lg text-ivory/80">
+                  Different industries, the same underlying method.
+                </p>
+              </Reveal>
+              <Reveal delay={0.1} className="flex flex-row flex-wrap gap-2 lg:max-w-56 lg:flex-col lg:items-end lg:pb-2">
+                {industries.map((industry) => (
+                  <span
+                    key={industry}
+                    className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/85 lg:text-right"
+                  >
+                    {industry}
+                  </span>
+                ))}
+              </Reveal>
+            </div>
           </Container>
         </PhotoHero>
 

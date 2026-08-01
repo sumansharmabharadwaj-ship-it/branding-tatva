@@ -46,6 +46,19 @@ export default function ContactPage() {
             echoes this page's own existing VideoBreak quote below: "A
             brand conversation is just the first clear view through the
             noise." */}
+        {/* Redesigned from the same centered pill-badge-plus-headline
+            template Work/Services/Blog's heroes used to share into the
+            asymmetric masthead already proven on this site's case-study
+            and blog-post templates — a large offset headline, a real
+            byline-style aside (name and real credentials, the same
+            meta-column job the blog post template gives to date and
+            author), and a giant faint watermark word behind both.
+            Distinct from the fuller credentials/count line that sits
+            just above the form further down this page: that one is the
+            final reassurance right before a visitor commits, this one
+            is the immediate "who am I actually talking to" signal, the
+            same two-jobs-one-fact pattern a masthead and a byline
+            already play on any real publication. */}
         <PhotoHero
           video="/videos/higgsfield-forest-light.mp4"
           poster="/images/higgsfield-forest-light-poster.jpg"
@@ -59,27 +72,39 @@ export default function ContactPage() {
               feel. Same forest register as this hero's own clip, not a
               new visual idea introduced just for this page. */}
           <Fireflies />
-          <Container className="relative py-20 text-center">
-            <Reveal className="relative">
-              <NatureAccent
-                variant="butterfly"
-                className="pointer-events-none absolute -top-6 left-1/2 hidden h-9 w-9 translate-x-[60%] text-ivory/20 sm:block"
-              />
-              <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                Contact
-              </span>
-              <SplitReveal
-                as="h1"
-                className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory"
-              >
-                Tell me what your brand is becoming.
-              </SplitReveal>
-              <p className="mx-auto mt-4 max-w-xl text-ivory/80">
-                Fill in as much or as little as you know right now.
-                I&apos;ll ask a few more questions where it helps. I read
-                every enquiry personally.
-              </p>
-            </Reveal>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,15vw,10rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+          >
+            Contact
+          </span>
+          <Container className="relative py-20">
+            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+              <Reveal className="relative">
+                <NatureAccent
+                  variant="butterfly"
+                  className="pointer-events-none absolute -top-6 left-8 hidden h-9 w-9 text-ivory/20 sm:block"
+                />
+                <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+                  Contact
+                </span>
+                <SplitReveal
+                  as="h1"
+                  className="mt-6 max-w-2xl font-display text-[clamp(2.4rem,6.5vw,4.5rem)] font-normal leading-[1.05] text-ivory"
+                >
+                  Tell me what your brand is becoming.
+                </SplitReveal>
+                <p className="mt-4 max-w-lg text-ivory/80">
+                  Fill in as much or as little as you know right now.
+                  I&apos;ll ask a few more questions where it helps.
+                </p>
+              </Reveal>
+              <Reveal delay={0.1} className="lg:pb-2 lg:text-right">
+                <p className="font-display text-lg text-ivory">{site.founder}</p>
+                <p className="mt-1 text-sm text-ivory/70">Founder, {site.name}</p>
+                <p className="mt-1 text-sm text-ivory/70">Reads every enquiry personally</p>
+              </Reveal>
+            </div>
           </Container>
         </PhotoHero>
 
