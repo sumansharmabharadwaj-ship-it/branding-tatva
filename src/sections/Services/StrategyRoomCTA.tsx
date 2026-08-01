@@ -47,11 +47,15 @@ export function StrategyRoomCTA() {
 
   return (
     <Container className="relative max-w-2xl text-center">
-      <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Book call</p>
-      <h2 className="mt-2 text-display-md font-display font-normal text-ivory">
+      {/* Deliberately centered — the one symmetric composition on the
+          page, chosen as arrival rather than convenience: after seven
+          asymmetric chapters, the visitor reaches a calm, balanced
+          room. Typography breathes wider here than anywhere else. */}
+      <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">Book call</p>
+      <h2 className="mt-3 text-display-md font-display font-normal leading-[1.06] text-ivory">
         Open the strategy room.
       </h2>
-      <p className="mx-auto mt-4 max-w-md text-ivory/80">
+      <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-ivory/85">
         A few quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way.
       </p>
 

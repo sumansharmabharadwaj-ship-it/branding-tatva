@@ -51,7 +51,15 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
     <div className="space-y-10">
       {GROUPS.map((group, gi) => (
         <Reveal key={group.label} delay={gi * 0.08}>
-          <p className={`text-xs font-medium uppercase tracking-wide ${dark ? "text-sandstone" : "text-action-secondary"}`}>
+          {/* Phase 1 typography: dark-variant group labels moved off
+              warm sandstone (this section's slate mood is the page's
+              coolest chapter — a warm label on every group re-warmed
+              it) onto a cool quiet ivory, with wider editorial
+              tracking. Questions read a step larger; answers at full
+              text-base. */}
+          <p
+            className={`text-xs font-medium uppercase tracking-[0.18em] ${dark ? "text-ivory/55" : "text-action-secondary"}`}
+          >
             {group.label}
           </p>
           <div className={`mt-3 divide-y ${dark ? "divide-ivory/15" : "divide-border"}`}>
@@ -63,7 +71,7 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
                 <div key={item.question} className="py-1">
                   <button
                     type="button"
-                    className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left font-medium transition-colors duration-300 ${
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-3.5 text-left text-[1.05rem] font-medium transition-colors duration-300 ${
                       dark ? "text-ivory hover:bg-ivory/8 focus-visible:bg-ivory/8" : "text-soil hover:bg-clay/8 focus-visible:bg-clay/8"
                     }`}
                     aria-expanded={isOpen}
@@ -88,7 +96,7 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
                         transition={answerTransition}
                         className="overflow-hidden px-3"
                       >
-                        <p className={`pb-4 ${dark ? "text-ivory/85" : "text-foreground-secondary"}`}>{item.answer}</p>
+                        <p className={`max-w-2xl pb-4 text-base leading-relaxed ${dark ? "text-ivory/85" : "text-foreground-secondary"}`}>{item.answer}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>

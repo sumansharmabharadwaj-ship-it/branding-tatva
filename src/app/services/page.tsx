@@ -21,6 +21,7 @@ import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Fireflies } from "@/components/Fireflies";
+import { MOOD } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -91,6 +92,23 @@ export default function ServicesPage() {
           poster="/images/higgsfield-forest-trail-mist-poster.jpg"
           minHeight="70vh"
         >
+          {/* Phase 1 hero pass. Two localized layers on top of
+              PhotoHero's own base gradient: a cool tint pulling the
+              warm trail footage toward the page's opening-chapter mood
+              (the color script starts cool; gold only arrives at
+              Desire), and a directional left-heavy scrim so the
+              masthead column reads perfectly while the right of the
+              frame stays open and cinematic. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{ backgroundColor: "rgba(22,28,26,0.28)" }}
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{ backgroundImage: "linear-gradient(90deg, rgba(15,18,17,0.55) 0%, rgba(15,18,17,0.2) 45%, transparent 70%)" }}
+          />
           <span
             aria-hidden="true"
             className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,15vw,10rem)] font-bold uppercase leading-none text-ivory/[0.06]"
@@ -104,20 +122,35 @@ export default function ServicesPage() {
                   Curiosity
                 </span>
                 <CyclingStatement headline="Why should a business care about branding?" />
-                <p className="mt-4 max-w-lg text-ivory/80">
-                  The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Everything on this page explains how.
+                <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/85">
+                  The same process that took one client&apos;s engagement rate from{" "}
+                  <span className="font-medium text-sandstone">0.71%</span> to{" "}
+                  <span className="font-medium text-sandstone">2.81%</span> in eight weeks. Everything on this page
+                  explains how.
                 </p>
               </Reveal>
-              <Reveal delay={0.1} className="flex flex-row flex-wrap gap-2 lg:max-w-56 lg:flex-col lg:items-end lg:pb-2">
-                {JUMP_ITEMS.map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/85 transition-colors duration-200 hover:border-ivory/45 hover:bg-ivory/5 lg:text-right"
-                  >
-                    {item.label}
-                  </a>
-                ))}
+              {/* Editorial chapter index — the page's four acts listed
+                  the way a film lists chapters, replacing a row of
+                  generic pill buttons. Real navigation (same anchors
+                  as SectionJumpNav), presented with editorial weight. */}
+              <Reveal delay={0.1} className="hidden lg:block lg:pb-2">
+                <ol className="lg:min-w-52">
+                  {JUMP_ITEMS.map((item, i) => (
+                    <li key={item.href}>
+                      <a
+                        href={item.href}
+                        className="group flex items-baseline justify-end gap-3 border-b border-ivory/15 py-2.5 transition-colors duration-200 hover:border-ivory/40"
+                      >
+                        <span className="font-display text-sm text-ivory/50 transition-colors duration-200 group-hover:text-sandstone">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span className="text-sm tracking-wide text-ivory/85 transition-colors duration-200 group-hover:text-ivory">
+                          {item.label}
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
               </Reveal>
             </div>
           </Container>
@@ -143,16 +176,28 @@ export default function ServicesPage() {
             problem already fixed once on Desire; the fix is the same
             each time, continuing one visual system rather than adding
             a new device per section. */}
-        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
-          {/* Direct feedback that the misty forest/mountain look was
-              repeating too often back to back (hero, Authority, and this
-              section all read as the same shot). Swapped from
-              higgsfield-lone-pine to a warm, sunlit ridge — still fits
-              "positioned distinctly," but breaks the run of consecutive
-              misty clips instead of adding a fourth one. */}
+        {/* Mood: STONE. Part of the Phase 1 cinematic color script —
+            each Services section sits on its own temperature-shifted
+            dark (see MOOD in sectionWash.ts) instead of the one warm
+            soil veil that was re-warming the whole page into a single
+            amber wash. The overlay gradient is tinted with the
+            section's own mood tone, never soil. */}
+        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.stone }}>
           <BackgroundVideo video="/videos/higgsfield-golden-ridge.mp4" poster="/images/higgsfield-golden-ridge-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
-          <AmbientElementShader opacity={0.13} />
+          {/* Second-audit push: the ridge clip's residual warm sky band
+              was still tinting this chapter amber against Education's
+              mist directly below — the overlay now leans a step cooler
+              than the stone base itself, and a touch denser at the top
+              where the warm sky sits. */}
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(180deg, rgba(24,25,26,0.92) 0%, rgba(24,25,26,0.74) 50%, rgba(24,25,26,0.9) 100%)",
+            }}
+          />
+          <AmbientElementShader opacity={0.1} />
           {/* Same ghost watermark word technique Home ("ELEMENTS"), About
               ("WHY"), and Blog ("NOTES") already use, extended here — a
               recurring graphic motif tying new sections into the same
@@ -175,9 +220,18 @@ export default function ServicesPage() {
             echo of "recognized" slowly becoming "remembered" as the light
             clears, already used elsewhere on Home, reused here since
             nothing on Services claims it. */}
-        <section id="education" className="relative scroll-mt-24 overflow-hidden bg-soil">
+        {/* Mood: MIST — blue-grey, the coolest chapter so far, directly
+            after Stakes' dry stone. See MOOD in sectionWash.ts. */}
+        <section id="education" className="relative scroll-mt-24 overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
           <BackgroundVideo video="/videos/pixabay-sea-of-fog-sunrise.mp4" poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(180deg, rgba(26,32,38,0.88) 0%, rgba(26,32,38,0.7) 55%, rgba(26,32,38,0.88) 100%)",
+            }}
+          />
           <div className="relative">
             <PerceptionLadder />
           </div>
@@ -226,7 +280,10 @@ export default function ServicesPage() {
             gold streak stays visible between the content blocks while
             both text zones (heading up top, package card below) sit on
             the darker stops. */}
-        <section id="desire" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
+        {/* Mood: DEEP WATER — night-blue dark; the water clip's gold
+            streak is the page's first warm accent, jewelry against a
+            cool ground rather than an amber section. */}
+        <section id="desire" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.deepwater }}>
           <BackgroundVideo
             video="/videos/pexels-golden-water-reflection.mp4"
             videoWebm="/videos/pexels-golden-water-reflection.webm"
@@ -237,10 +294,9 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(39,34,30,0.85) 0%, rgba(39,34,30,0.62) 45%, rgba(39,34,30,0.85) 100%)",
+                "linear-gradient(180deg, rgba(15,21,28,0.85) 0%, rgba(15,21,28,0.58) 45%, rgba(15,21,28,0.85) 100%)",
             }}
           />
-          <AmbientElementShader opacity={0.12} />
           <div className="relative">
             <PackageSelector />
           </div>
@@ -254,22 +310,25 @@ export default function ServicesPage() {
             Desire's own objection. Same shader treatment as the
             sections around it — see WeakBrandingCost's comment above
             for why. */}
-        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
-          {/* A living, flowing river — a real visual echo of "what you
-              receive" actually moving toward the visitor, not a static
-              list. Same "real video underneath the shader" fix, same
-              consistent bg-soil/80 as every other section now. */}
-          <BackgroundVideo video="/videos/pixabay-emerald-river.mp4" poster="/images/pixabay-emerald-river-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
-          <AmbientElementShader opacity={0.12} />
+        {/* Mood: EDITORIAL LIGHT — the page's one clean, bright chapter
+            break, directly after deep water. Phase 1 decision: the
+            emerald river footage here was overpowering a section whose
+            entire job is a readable list of real deliverables — the
+            exact "video before message" failure named in the brief.
+            Content leads absolutely now: parchment ground, dark type,
+            the deliverables presented as what they actually are —
+            printed documents you leave with. (The river clip returns to
+            the pool for Phase 3's reassignment audit rather than being
+            discarded.) */}
+        <section className="relative overflow-hidden bg-background-alt py-16 sm:py-24">
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
+            className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-soil/[0.05] sm:-top-8"
           >
             Receive
           </span>
           <div className="relative">
-            <DeliverablesReveal />
+            <DeliverablesReveal light />
           </div>
         </section>
 
@@ -292,13 +351,19 @@ export default function ServicesPage() {
             than a duplicate of it. Same shader treatment as the
             sections around it — see WeakBrandingCost's comment above
             for why. */}
-        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
-          {/* A clear, still forest stream — clarity and reflection, an
-              apt real echo for a self-assessment section. Same "real
-              video underneath the shader" fix. */}
+        {/* Mood: FOREST — deep green-black after the light editorial
+            break; the stream clip's mossy greens finally read as green
+            instead of being re-warmed to amber by a soil overlay. */}
+        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.forest }}>
           <BackgroundVideo video="/videos/higgsfield-forest-stream.mp4" poster="/images/higgsfield-forest-stream-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
-          <AmbientElementShader opacity={0.15} />
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(180deg, rgba(20,26,21,0.88) 0%, rgba(20,26,21,0.72) 50%, rgba(20,26,21,0.88) 100%)",
+            }}
+          />
           <span
             aria-hidden="true"
             className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
@@ -343,11 +408,15 @@ export default function ServicesPage() {
             left rail, and the FAQ accordion fills the right column —
             both pieces of real content the section always had, just
             given an actual layout instead of one narrow stack. */}
-        <section id="risk" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
-          <div className="aurora-glow" aria-hidden="true" />
+        {/* Mood: SLATE — cool, calm, the quietest chapter, matching a
+            reading-and-deciding section. The warm aurora blooms are
+            gone from here (they were a large part of the amber cast in
+            this section); the cooler light-rays sweep and fireflies
+            stay as the calm ambient layer until Phase 3's fog loop. */}
+        <section id="risk" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.slate }}>
           <div className="light-rays" aria-hidden="true" />
           <Fireflies />
-          <AmbientElementShader opacity={0.16} />
+          <AmbientElementShader opacity={0.12} />
           <span
             aria-hidden="true"
             className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
@@ -356,11 +425,11 @@ export default function ServicesPage() {
           </span>
           <Container className="relative max-w-6xl">
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Risk removal</p>
-              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+              <p className="text-sm font-medium uppercase tracking-[0.18em] text-ivory/55">Risk removal</p>
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory sm:text-display-md">
                 Is this the right fit?
               </h2>
-              <p className="mt-4 max-w-md text-ivory/85">
+              <p className="mt-4 max-w-md text-base text-ivory/85">
                 Real answers to the questions that come up before a first conversation.
               </p>
             </Reveal>
@@ -388,11 +457,15 @@ export default function ServicesPage() {
             time-reversed twin), so there is no loop-point jump. First
             WebM asset on the site (TexturedDark's own comment covers
             why), MP4 fallback alongside it. */}
+        {/* Phase 1: the emotional resting point before conversion — the
+            page's kept golden moment gets the most generous vertical
+            breathing room on the page, arriving like a quiet studio
+            after the cool chapters rather than "the end of a website." */}
         <TexturedDark
           image="/images/pexels-sunlight-wood-grain-poster.jpg"
           video="/videos/pexels-sunlight-wood-grain.mp4"
           videoWebm="/videos/pexels-sunlight-wood-grain.webm"
-          className="py-20 sm:py-28"
+          className="py-24 sm:py-36"
         >
           <StrategyRoomCTA />
         </TexturedDark>

@@ -145,7 +145,11 @@ export function BrandHealthCheck() {
           fills the second column instead, the same sticky-rail pattern
           already proven on Risk removal. */}
       <div className="grid gap-12 lg:grid-cols-[1fr_minmax(0,19rem)] lg:gap-16">
-        <div className="max-w-2xl">
+        {/* Glass reading surface (Phase 1, mandatory per brief) — the
+            quiz sat directly on the stream footage; a soft
+            forest-tinted panel keeps the video cinematic around it
+            while the questions become the unambiguous focus. */}
+        <div className="max-w-2xl rounded-2xl p-6 backdrop-blur-md sm:p-8" style={{ backgroundColor: "rgba(20,26,21,0.55)" }}>
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Self-check</p>
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
             A quick brand health check.

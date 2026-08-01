@@ -52,30 +52,33 @@ export function WeakBrandingCost() {
     <Container className="max-w-3xl">
       <Reveal>
         <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The stakes</p>
-        <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+        <h2 className="mt-2 text-display-sm font-display font-normal text-ivory sm:text-display-md">
           What weak branding actually costs.
         </h2>
-        <p className="mt-4 max-w-xl text-ivory/85">
+        <p className="mt-4 max-w-xl text-base text-ivory/85">
           A pattern that holds across categories, described in general terms rather than as one company&apos;s story.
         </p>
       </Reveal>
-      <div className="mt-10 grid gap-6 sm:grid-cols-2">
+      <div className="mt-12 grid gap-6 sm:grid-cols-2">
         <Reveal delay={0.06}>
           {/* Metaphor, not decoration: this card starts very slightly
               soft-focused and only fully sharpens on hover — a literal
               visual echo of "blends into whichever category it happens
               to sit in," the last line in its own list. The distinct
               card (below) never blurs; it's already in focus, matching
-              "gets recognized before it gets explained." */}
+              "gets recognized before it gets explained." Both cards
+              now sit on real stone-glass reading surfaces (Phase 1) —
+              the old ${"{color}"}0F fills were near-transparent over
+              moving video, dissolving the list text into the footage. */}
           <TiltCard glowColor={ELEMENT_HEX.earth} className="group">
             <div
-              className="h-full rounded-lg border-t-2 p-6 transition-[filter] duration-500 [filter:blur(1.5px)_saturate(0.85)] group-hover:[filter:blur(0)_saturate(1)]"
-              style={{ borderColor: ELEMENT_HEX.earth, backgroundColor: `${ELEMENT_HEX.earth}0F` }}
+              className="h-full rounded-lg border-t-2 p-6 backdrop-blur-md transition-[filter] duration-500 [filter:blur(1.5px)_saturate(0.85)] group-hover:[filter:blur(0)_saturate(1)] sm:p-7"
+              style={{ borderColor: ELEMENT_HEX.earth, backgroundColor: "rgba(24,25,26,0.6)" }}
             >
-              <p className="text-xs font-medium uppercase tracking-wide text-ivory/50">Positioned generically</p>
-              <ul className="mt-4 space-y-3">
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/55">Positioned generically</p>
+              <ul className="mt-5 space-y-3.5">
                 {WEAK.map((item) => (
-                  <li key={item} className="text-sm text-ivory/75">
+                  <li key={item} className="text-[0.95rem] leading-relaxed text-ivory/80">
                     {item}
                   </li>
                 ))}
@@ -86,13 +89,13 @@ export function WeakBrandingCost() {
         <Reveal delay={0.14}>
           <TiltCard glowColor={ELEMENT_HEX.water}>
             <div
-              className="h-full rounded-lg border-t-2 p-6"
-              style={{ borderColor: ELEMENT_HEX.water, backgroundColor: `${ELEMENT_HEX.water}0F` }}
+              className="h-full rounded-lg border-t-2 p-6 backdrop-blur-md sm:p-7"
+              style={{ borderColor: ELEMENT_HEX.water, backgroundColor: "rgba(24,25,26,0.6)" }}
             >
-              <p className="text-xs font-medium uppercase tracking-wide text-ivory/50">Positioned distinctly</p>
-              <ul className="mt-4 space-y-3">
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/55">Positioned distinctly</p>
+              <ul className="mt-5 space-y-3.5">
                 {STRONG.map((item) => (
-                  <li key={item} className="text-sm text-ivory/85">
+                  <li key={item} className="text-[0.95rem] leading-relaxed text-ivory/90">
                     {item}
                   </li>
                 ))}

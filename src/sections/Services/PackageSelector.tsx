@@ -54,10 +54,13 @@ export function PackageSelector() {
               key={choice.slug}
               type="button"
               onClick={() => setActive(choice.slug)}
-              className="flex flex-col items-center gap-3 rounded-lg border-t-2 p-6 text-center transition-all duration-300 hover:-translate-y-0.5"
+              className="flex flex-col items-center gap-3 rounded-lg border-t-2 p-6 text-center backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5"
               style={{
                 borderColor: pkg?.color,
-                backgroundColor: isActive ? blendHex(pkg?.color ?? "#B85A34", "#27221E", 18) : "rgba(244,239,230,0.03)",
+                // Glass over deep water (Phase 1 reading surface) — the
+                // cards previously sat near-transparent on the shimmer,
+                // so their descriptions dissolved into the highlights.
+                backgroundColor: isActive ? blendHex(pkg?.color ?? "#B85A34", "#0F151C", 22) : "rgba(15,21,28,0.55)",
               }}
             >
               <ElementGlyph
@@ -66,7 +69,7 @@ export function PackageSelector() {
                 style={{ color: isActive ? pkg?.color : "rgba(244,239,230,0.7)" }}
               />
               <span className="font-display text-lg font-normal text-ivory">{choice.label}</span>
-              {pkg && <span className="text-xs text-ivory/60">{pkg.forWho}</span>}
+              {pkg && <span className="text-xs leading-relaxed text-ivory/75">{pkg.forWho}</span>}
             </button>
           );
         })}
@@ -81,8 +84,8 @@ export function PackageSelector() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={transition}
-              className="rounded-lg border-t-2 p-6 sm:p-8"
-              style={{ borderColor: activePackage.color, backgroundColor: blendHex(activePackage.color, "#27221E", 12) }}
+              className="rounded-lg border-t-2 p-6 backdrop-blur-md sm:p-8"
+              style={{ borderColor: activePackage.color, backgroundColor: blendHex(activePackage.color, "#0F151C", 14) }}
             >
               <p className="font-display text-xl font-normal text-ivory">{activePackage.name}</p>
               <div className="mt-2 flex items-baseline gap-1.5">

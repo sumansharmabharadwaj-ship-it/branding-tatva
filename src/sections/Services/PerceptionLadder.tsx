@@ -83,7 +83,7 @@ export function PerceptionLadder() {
           </div>
 
           <Reveal delay={0.15} className="lg:sticky lg:top-28 lg:self-start">
-            <div className="rounded-2xl border border-ivory/15 bg-ivory/[0.03] p-6 sm:p-8">
+            <div className="rounded-2xl border border-ivory/15 p-6 backdrop-blur-md sm:p-8" style={{ backgroundColor: "rgba(26,32,38,0.55)" }}>
               <p className="text-xs font-medium uppercase tracking-wide text-ivory/60">One real climb</p>
               <p className="mt-4 font-display text-4xl font-normal text-ivory sm:text-5xl">
                 <AnimatedStat value="0.71%" />

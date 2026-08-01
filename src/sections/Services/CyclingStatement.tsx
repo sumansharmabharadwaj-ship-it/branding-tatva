@@ -47,7 +47,12 @@ export function CyclingStatement({ headline }: { headline: React.ReactNode }) {
         // generic centered-pill template to the same asymmetric masthead
         // Work/Contact already use, so this headline now sits in a real
         // left column rather than a centered block.
-        className="mt-6 max-w-2xl font-display text-[clamp(2.25rem,5.5vw,4rem)] font-normal leading-[1.08] text-ivory"
+        // Phase 1 typography pass: this page's front door now runs a
+        // step past Home's shared scale — the founder's brief names the
+        // hero as the section that sets the emotional bar for the whole
+        // page, and at 70vh (vs Home's 100svh) the same clamp read
+        // smaller in practice. Tighter leading for display confidence.
+        className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
       >
         {headline}
       </SplitReveal>

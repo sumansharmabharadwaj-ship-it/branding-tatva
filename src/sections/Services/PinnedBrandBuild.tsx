@@ -9,7 +9,7 @@ import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { ELEMENT_HEX } from "@/lib/sectionWash";
+import { ELEMENT_HEX, MOOD } from "@/lib/sectionWash";
 import { elements } from "@/data/elements";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 
@@ -107,7 +107,7 @@ export function PinnedBrandBuild() {
     // height the pinned branch occupies, so the hydration swap is
     // height-neutral and shifts nothing.
     return (
-      <section className="relative flex flex-col justify-center overflow-hidden bg-soil py-16 sm:min-h-screen">
+      <section className="relative flex flex-col justify-center overflow-hidden py-16 sm:min-h-screen" style={{ backgroundColor: MOOD.charcoal }}>
         <Image
           src="/images/higgsfield-mountain-mist-poster.jpg"
           alt=""
@@ -116,7 +116,7 @@ export function PinnedBrandBuild() {
           style={{ objectFit: "cover" }}
           className="opacity-30"
         />
-        <div className="absolute inset-0 bg-soil/70" />
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.7)" }} />
         <Container className="relative">
           <p className="hidden text-sm font-medium uppercase tracking-wide text-sandstone sm:block">Authority</p>
           <h2 className="hidden max-w-xl text-display-sm font-display font-normal text-ivory sm:mt-2 sm:block">
@@ -147,7 +147,10 @@ export function PinnedBrandBuild() {
   }
 
   return (
-    <div ref={sectionRef} className="relative hidden h-screen overflow-hidden bg-soil sm:block">
+    // Mood: CHARCOAL — neutral-cool architectural dark (see MOOD in
+    // sectionWash.ts); the warm soil base + soil overlay here were the
+    // page's second-largest amber contributor after the shared veil.
+    <div ref={sectionRef} className="relative hidden h-screen overflow-hidden sm:block" style={{ backgroundColor: MOOD.charcoal }}>
       {/* Direct feedback that this section read as flat and motionless —
           the shader alone (opacity 0.22) is too subtle as the section's
           only source of visible movement while the five layers are
@@ -158,7 +161,7 @@ export function PinnedBrandBuild() {
           own AmbientElementShader right after it, so both "Authority"
           and "Education" keep reading as one continuous visual system. */}
       <BackgroundVideo video="/videos/higgsfield-mountain-mist.mp4" poster="/images/higgsfield-mountain-mist-poster.jpg" />
-      <div className="absolute inset-0 bg-soil/55" />
+      <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.6)" }} />
       <AmbientElementShader opacity={0.3} />
       {/* Direct, repeated feedback (two screenshots) that this pinned
           frame read as a narrow content strip with empty video on both
