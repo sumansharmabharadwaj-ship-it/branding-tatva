@@ -89,11 +89,25 @@ export function PinnedBrandBuild() {
   }, [runPinned]);
 
   if (!runPinned) {
-    // Mobile / reduced-motion fallback — the exact same five layers,
-    // stacked in normal document flow with a plain per-item reveal
-    // instead of scroll-scrubbed, no pin at all.
+    // Mobile / reduced-motion / pre-hydration fallback — the exact same
+    // five layers, stacked in normal document flow, no pin.
+    //
+    // The wrapper is no longer `sm:hidden`: this branch is also what
+    // the SERVER renders (useMediaQuery only flips true after
+    // hydration), and hiding it at desktop widths meant desktop
+    // visitors got zero Authority section in the server HTML — then a
+    // full-viewport pinned section popped into existence at hydration,
+    // shifting every section below it by ~100vh. A Lighthouse trace
+    // measured that single insertion as a 0.21+ CLS, the whole page's
+    // worth. (Slow eager video preloading used to push hydration past
+    // the trace window, which is why the score only surfaced after the
+    // perf round sped loading up — the shift itself was always there.)
+    // It also meant desktop reduced-motion visitors permanently saw
+    // nothing here at all. min-h-screen at sm+ reserves exactly the
+    // height the pinned branch occupies, so the hydration swap is
+    // height-neutral and shifts nothing.
     return (
-      <section className="relative overflow-hidden bg-soil py-16 sm:hidden">
+      <section className="relative flex flex-col justify-center overflow-hidden bg-soil py-16 sm:min-h-screen">
         <Image
           src="/images/higgsfield-mountain-mist-poster.jpg"
           alt=""
@@ -104,7 +118,11 @@ export function PinnedBrandBuild() {
         />
         <div className="absolute inset-0 bg-soil/70" />
         <Container className="relative">
-          <div className="space-y-8">
+          <p className="hidden text-sm font-medium uppercase tracking-wide text-sandstone sm:block">Authority</p>
+          <h2 className="hidden max-w-xl text-display-sm font-display font-normal text-ivory sm:mt-2 sm:block">
+            Marketing amplifies whatever is already there.
+          </h2>
+          <div className="space-y-8 sm:mt-10 sm:space-y-6">
             {LAYERS.map((layer, i) => (
               <div key={layer.slug} className="flex items-start gap-4">
                 <span
