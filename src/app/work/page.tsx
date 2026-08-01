@@ -13,7 +13,10 @@ import { KineticMarquee } from "@/components/KineticMarquee";
 import { TexturedDark } from "@/components/TexturedDark";
 import { LinkButton } from "@/components/Button";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { AnimatedStat } from "@/components/AnimatedStat";
+import { ElementGlyph } from "@/components/ElementGlyph";
 import { projects } from "@/data/projects";
+import { elements } from "@/data/elements";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -28,6 +31,13 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   const industries = [...new Set(projects.map((p) => p.industry))];
+  // Real derived fact, not a decorative element grid: which of the five
+  // elements at least one real project's own services field actually
+  // names, kept in the framework's canonical Earth/Water/Fire/Air/Space
+  // order rather than data-insertion order.
+  const elementsCovered = elements
+    .map((e) => e.slug)
+    .filter((slug) => projects.some((p) => p.services.some((s) => s.toLowerCase().startsWith(slug))));
 
   return (
     <>
@@ -136,30 +146,40 @@ export default function WorkPage() {
             new copy. */}
         <KineticMarquee text="MARKETPLACES · WELLNESS · D2C · ENTERPRISE · COACHING" />
 
-        {/* Direct feedback that this page stayed uniformly light from the
-            compass explainer straight through to the closing CTA, the
-            one page on the site with no dark chapter until the very end.
-            Real facts already stated on this page (the project count,
-            the industry list from the hero subhead), given a moment of
-            visual weight rather than new stats. */}
-        <section className="bg-soil py-14">
+        {/* Redesigned: the industries list here duplicated the exact
+            same real data the new hero aside above now already shows,
+            and the section itself read as a plain flex row rather than
+            a real moment. The count now counts up on scroll (the same
+            AnimatedStat device the case-study numbers sections already
+            use, real motion instead of a static digit), and the second
+            fact is a genuinely different one: which of the five
+            elements real client work has actually touched, derived
+            directly from every project's own services field, not a
+            repeated industries list or a decorative element grid for
+            its own sake. */}
+        <section className="bg-soil py-16 sm:py-20">
           <Container>
-            <Reveal className="flex flex-col items-center gap-8 text-center sm:flex-row sm:justify-between sm:text-left">
+            <Reveal className="flex flex-col items-center gap-10 text-center sm:flex-row sm:items-end sm:justify-between sm:text-left">
               <div>
-                <p className="font-display text-5xl font-normal text-sandstone sm:text-6xl">
-                  {projects.length}
+                <p className="font-display text-6xl font-normal text-sandstone sm:text-7xl">
+                  <AnimatedStat value={String(projects.length)} />
                 </p>
                 <p className="mt-2 text-sm text-ivory/80">Real client engagements, each one different.</p>
               </div>
-              <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
-                {industries.map((industry) => (
-                  <span
-                    key={industry}
-                    className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/85"
-                  >
-                    {industry}
-                  </span>
-                ))}
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-ivory/60 sm:text-right">
+                  Every element, in real work
+                </p>
+                <div className="mt-3 flex justify-center gap-4 sm:justify-end">
+                  {elementsCovered.map((slug) => (
+                    <ElementGlyph
+                      key={slug}
+                      slug={slug}
+                      className="h-6 w-6 text-sandstone"
+                      strokeWidth={1.3}
+                    />
+                  ))}
+                </div>
               </div>
             </Reveal>
           </Container>
