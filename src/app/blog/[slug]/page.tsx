@@ -163,6 +163,15 @@ export default async function BlogPostPage({ params }: Props) {
                   <Link href="/blog" className="link-underline text-xs font-medium uppercase tracking-wide text-foreground-secondary">
                     &larr; All posts
                   </Link>
+                  {/* Audit found every post ends with only two options,
+                      back to the index or the next post, no path toward
+                      the actual business goal. The case study template's
+                      sidebar already carries a "Start a similar project"
+                      link the same way; this mirrors it rather than a
+                      full LinkButton, since the rail is only 140px wide. */}
+                  <Link href="/contact" className="link-underline text-xs font-medium uppercase tracking-wide" style={{ color: element?.color }}>
+                    Start a project &rarr;
+                  </Link>
                 </div>
               </div>
 
@@ -192,9 +201,16 @@ export default async function BlogPostPage({ params }: Props) {
                 </div>
 
                 <div className="mt-16 flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
-                  <Link href="/blog" className="link-underline text-sm font-medium text-soil lg:hidden">
-                    &larr; All posts
-                  </Link>
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+                    <Link href="/blog" className="link-underline text-sm font-medium text-soil lg:hidden">
+                      &larr; All posts
+                    </Link>
+                    {/* Mirrors the sticky sidebar's CTA for mobile, where
+                        that rail is hidden below lg. */}
+                    <Link href="/contact" className="link-underline text-sm font-medium text-soil">
+                      Start a project &rarr;
+                    </Link>
+                  </div>
                   {next && (
                     <Link
                       href={`/blog/${next.slug}`}
