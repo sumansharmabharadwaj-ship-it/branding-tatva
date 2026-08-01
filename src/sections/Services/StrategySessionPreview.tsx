@@ -1,6 +1,5 @@
 "use client";
 
-import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 
 // Direct feedback wanted the visitor to feel invested before the
@@ -17,10 +16,14 @@ const STEPS = [
 ] as const;
 
 // `dark` — see RiskRemovalFAQ's own comment; both moved off the light
-// bg-background-alt tier together.
+// bg-background-alt tier together. No longer wraps itself in its own
+// `<Container>` — this now sits as the left column of the FAQ section's
+// two-column layout (see services/page.tsx), and a nested container-page
+// would have doubled up on horizontal padding inside the already-
+// contained parent grid.
 export function StrategySessionPreview({ dark = false }: { dark?: boolean }) {
   return (
-    <Container className="max-w-2xl">
+    <div>
       <Reveal>
         <p className={`text-sm font-medium uppercase tracking-wide ${dark ? "text-sandstone" : "text-action-secondary"}`}>
           Before you book
@@ -41,6 +44,6 @@ export function StrategySessionPreview({ dark = false }: { dark?: boolean }) {
           </Reveal>
         ))}
       </ol>
-    </Container>
+    </div>
   );
 }

@@ -69,14 +69,17 @@ export function StrategyRoomCTA() {
               <p className="text-sm font-medium uppercase tracking-wide text-ivory/60">Where is your brand right now?</p>
               <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
                 {brandStages.map((option) => (
-                  <button
+                  <motion.button
                     key={option}
                     type="button"
                     onClick={() => pickStage(option)}
-                    className="rounded-full border border-ivory/25 px-4 py-2 text-sm text-ivory/85 transition-colors duration-300 hover:border-ivory/50 hover:bg-ivory/10"
+                    whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                    transition={{ duration: 0.15 }}
+                    className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/85 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
                   >
                     {option}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </motion.div>
@@ -87,14 +90,17 @@ export function StrategyRoomCTA() {
               <p className="text-sm font-medium uppercase tracking-wide text-ivory/60">What matters most right now?</p>
               <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
                 {PRIORITIES.map((option) => (
-                  <button
+                  <motion.button
                     key={option}
                     type="button"
                     onClick={() => pickPriority(option)}
-                    className="rounded-full border border-ivory/25 px-4 py-2 text-sm text-ivory/85 transition-colors duration-300 hover:border-ivory/50 hover:bg-ivory/10"
+                    whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                    transition={{ duration: 0.15 }}
+                    className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/85 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
                   >
                     {option}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </motion.div>
@@ -105,14 +111,17 @@ export function StrategyRoomCTA() {
               <p className="text-sm font-medium uppercase tracking-wide text-ivory/60">What&apos;s the main focus?</p>
               <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
                 {FOCUS_AREAS.map((option) => (
-                  <button
+                  <motion.button
                     key={option}
                     type="button"
                     onClick={() => pickFocus(option)}
-                    className="rounded-full border border-ivory/25 px-4 py-2 text-sm text-ivory/85 transition-colors duration-300 hover:border-ivory/50 hover:bg-ivory/10"
+                    whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                    transition={{ duration: 0.15 }}
+                    className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/85 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
                   >
                     {option}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </motion.div>

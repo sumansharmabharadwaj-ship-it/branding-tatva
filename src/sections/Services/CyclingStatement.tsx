@@ -43,7 +43,11 @@ export function CyclingStatement({ headline }: { headline: React.ReactNode }) {
         // still read as visually smaller/weaker than Home's despite the
         // copy and motion already being real. Same type scale closes
         // that gap without breaking the documented 70vh mid-tier height.
-        className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2.25rem,5.5vw,4rem)] font-normal leading-[1.08] text-ivory"
+        // Left-aligned (was mx-auto/centered) — the hero moved from the
+        // generic centered-pill template to the same asymmetric masthead
+        // Work/Contact already use, so this headline now sits in a real
+        // left column rather than a centered block.
+        className="mt-6 max-w-2xl font-display text-[clamp(2.25rem,5.5vw,4rem)] font-normal leading-[1.08] text-ivory"
       >
         {headline}
       </SplitReveal>
@@ -51,7 +55,7 @@ export function CyclingStatement({ headline }: { headline: React.ReactNode }) {
   }
 
   return (
-    <div className="mx-auto mt-6 flex h-[clamp(2.9rem,6.5vw,5rem)] max-w-2xl items-center justify-center">
+    <div className="mt-6 flex h-[clamp(2.9rem,6.5vw,5rem)] max-w-2xl items-center">
       <AnimatePresence mode="wait">
         <motion.p
           key={index}

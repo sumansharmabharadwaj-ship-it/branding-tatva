@@ -26,12 +26,22 @@ export function TexturedDark({
   className,
   image,
   video,
+  videoWebm,
   imagePosition = "center",
 }: {
   children: React.ReactNode;
   className?: string;
   image: string;
   video?: string;
+  // Optional WebM sibling, tried first via a real <source> list (was a
+  // single `src` string). The first WebM asset on this site (the
+  // Services CTA's sunlight-on-wood clip) established this pattern —
+  // VP9/WebM compresses meaningfully smaller than H.264 at the same
+  // visual quality, the browser picks whichever <source> it can
+  // decode, and `video` alone still works exactly as before for every
+  // existing MP4-only call site (the Footer), so this is additive, not
+  // a breaking change to the prop contract.
+  videoWebm?: string;
   imagePosition?: string;
 }) {
   const [ref, shouldLoad] = useLazyMount();
@@ -78,12 +88,14 @@ export function TexturedDark({
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
             style={{ objectPosition: imagePosition }}
-            src={video}
             muted
             loop
             playsInline
             preload="metadata"
-          />
+          >
+            {videoWebm && <source src={videoWebm} type="video/webm" />}
+            <source src={video} type="video/mp4" />
+          </video>
         )}
       </div>
       {/* Was a near-opaque 0.88-0.93 flat overlay — with a video behind

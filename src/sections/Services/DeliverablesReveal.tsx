@@ -4,20 +4,22 @@ import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { packages } from "@/data/services";
 
-// Direct feedback asked for a section that makes the deliverables feel
-// tangible rather than abstract. Every item here is computed straight
-// from the same three real packages PackageSelector shows above, not a
-// separately-maintained list that could drift out of sync or invent a
-// deliverable that doesn't actually exist. "Everything in Foundation"
-// is a cross-reference line inside services.ts, not a deliverable of
-// its own, so it's filtered out rather than shown as a 15th item.
-const ALL_ITEMS = Array.from(
-  new Set(packages.flatMap((p) => p.includes).filter((item) => !item.startsWith("Everything in")))
-);
+// Direct feedback that the original flat 14-item two-column checklist
+// read as a plain SaaS features list, no hierarchy, no sense of which
+// deliverable belonged to which real commitment. Regrouped by the same
+// three real packages PackageSelector shows above, one card per
+// package, each showing only what that tier actually *adds* (Full
+// Brand System's own "Everything in Foundation" cross-reference line
+// is a summary, not a 15th deliverable, so it's filtered here same as
+// before) — a reader can now see the real cumulative shape of the
+// offer instead of one undifferentiated block of checkmarks. Each
+// card's own package color anchors it, the same visual language
+// PackageSelector already uses, so this reads as a continuation of the
+// choice above rather than a disconnected list.
 
 export function DeliverablesReveal() {
   return (
-    <Container className="max-w-3xl">
+    <Container className="max-w-5xl">
       <Reveal>
         <p className="text-sm font-medium uppercase tracking-wide text-sandstone">What you receive</p>
         <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
@@ -27,25 +29,31 @@ export function DeliverablesReveal() {
           Every item below is pulled directly from the three packages above. Nothing generic, nothing invented.
         </p>
       </Reveal>
-      <ul className="mt-10 grid gap-x-8 gap-y-1 sm:grid-cols-2">
-        {ALL_ITEMS.map((item, i) => (
-          <Reveal key={item} delay={Math.min(i, 12) * 0.04}>
-            {/* Real hover feedback on a real checklist — the check mark
-                fills in and the row picks up a quiet tint, so each
-                deliverable reads as something you can point at rather
-                than a static bullet. */}
-            <li className="group flex cursor-default items-start gap-3 rounded-md px-2 py-1.5 text-sm text-ivory/85 transition-colors duration-200 hover:bg-ivory/5">
-              <span
-                aria-hidden="true"
-                className="mt-0.5 text-sandstone/60 transition-colors duration-200 group-hover:text-sandstone"
+      <div className="mt-10 grid gap-6 sm:grid-cols-3">
+        {packages.map((pkg, pi) => {
+          const items = pkg.includes.filter((item) => !item.startsWith("Everything in"));
+          return (
+            <Reveal key={pkg.slug} delay={pi * 0.08}>
+              <div
+                className="h-full rounded-xl border-t-2 bg-ivory/[0.03] p-6"
+                style={{ borderColor: pkg.color }}
               >
-                &#10003;
-              </span>
-              {item}
-            </li>
-          </Reveal>
-        ))}
-      </ul>
+                <p className="text-xs font-medium uppercase tracking-wide text-ivory/60">{pkg.name}</p>
+                <ul className="mt-4 space-y-2.5">
+                  {items.map((item) => (
+                    <li key={item} className="flex items-start gap-2.5 text-sm text-ivory/85">
+                      <span aria-hidden="true" className="mt-0.5 shrink-0" style={{ color: pkg.color }}>
+                        &#10003;
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          );
+        })}
+      </div>
     </Container>
   );
 }

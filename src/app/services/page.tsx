@@ -49,6 +49,13 @@ export const metadata: Metadata = {
 // throughout — every other pinned moment on this page and site runs on
 // the same sticky mechanism already proven everywhere else.
 
+const JUMP_ITEMS = [
+  { href: "#authority", label: "Authority" },
+  { href: "#education", label: "Education" },
+  { href: "#desire", label: "Desire" },
+  { href: "#risk", label: "FAQ" },
+];
+
 export default function ServicesPage() {
   return (
     <>
@@ -70,22 +77,49 @@ export default function ServicesPage() {
             established warm, sunlit, natural register (documented in
             CLAUDE.md's own video-sourcing standard), regardless of how
             cinematically it reads on its own. Back to the calm misty
-            pine trail already proven here. */}
+            pine trail already proven here.
+            Redesigned from the centered pill-badge-plus-headline
+            template (identical to what Work/Contact used to share)
+            into the same asymmetric masthead already proven on those
+            pages and on the case-study/blog-post templates: a large
+            offset headline in one column, a real-data aside in the
+            other. The aside reuses this exact page's own SectionJumpNav
+            items — real wayfinding, not decoration — so the hero itself
+            previews the four objections the rest of the page answers. */}
         <PhotoHero
           video="/videos/higgsfield-forest-trail-mist.mp4"
           poster="/images/higgsfield-forest-trail-mist-poster.jpg"
           minHeight="70vh"
         >
-          <Container className="relative py-20 text-center">
-            <Reveal>
-              <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                Curiosity
-              </span>
-              <CyclingStatement headline="Why should a business care about branding?" />
-              <p className="mx-auto mt-4 max-w-xl text-ivory/80">
-                The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Everything on this page explains how.
-              </p>
-            </Reveal>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,15vw,10rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+          >
+            Services
+          </span>
+          <Container className="relative py-20">
+            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+              <Reveal>
+                <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+                  Curiosity
+                </span>
+                <CyclingStatement headline="Why should a business care about branding?" />
+                <p className="mt-4 max-w-lg text-ivory/80">
+                  The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Everything on this page explains how.
+                </p>
+              </Reveal>
+              <Reveal delay={0.1} className="flex flex-row flex-wrap gap-2 lg:max-w-56 lg:flex-col lg:items-end lg:pb-2">
+                {JUMP_ITEMS.map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/85 transition-colors duration-200 hover:border-ivory/45 hover:bg-ivory/5 lg:text-right"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </Reveal>
+            </div>
           </Container>
           <ScrollCue />
         </PhotoHero>
@@ -275,6 +309,17 @@ export default function ServicesPage() {
             ever could. RiskRemovalFAQ/StrategySessionPreview both take
             the same `dark` prop ProcessSection already exposes
             elsewhere on this site. */}
+        {/* Was a single centered max-w-2xl column — on a real desktop
+            viewport that left roughly two fifths of the section empty
+            on both sides, the weakest composition on the page, and the
+            plain accordion sitting alone in that empty space read as
+            exactly the "template" pattern flagged directly. Two real
+            columns now: the "what happens on the call" preview (already
+            a real, separate piece of content, previously stacked below
+            with its own border and a large uneven gap) sits as a sticky
+            left rail, and the FAQ accordion fills the right column —
+            both pieces of real content the section always had, just
+            given an actual layout instead of one narrow stack. */}
         <section id="risk" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
           <div className="aurora-glow" aria-hidden="true" />
           <div className="light-rays" aria-hidden="true" />
@@ -286,39 +331,51 @@ export default function ServicesPage() {
           >
             Ask
           </span>
-          <Container className="relative max-w-2xl">
+          <Container className="relative max-w-6xl">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Risk removal</p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
                 Is this the right fit?
               </h2>
-              <p className="mt-4 text-ivory/85">
+              <p className="mt-4 max-w-md text-ivory/85">
                 Real answers to the questions that come up before a first conversation.
               </p>
             </Reveal>
-            <div className="mt-8">
+            <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-16">
+              <div className="lg:sticky lg:top-28 lg:self-start">
+                <StrategySessionPreview dark />
+              </div>
               <RiskRemovalFAQ dark />
-            </div>
-            <div className="mt-16 border-t border-ivory/15 pt-12 sm:mt-20 sm:pt-16">
-              <StrategySessionPreview dark />
             </div>
           </Container>
         </section>
 
-        {/* Book call — the strategy room. */}
-        <TexturedDark image="/images/higgsfield-idea-sketch.jpg" video="/videos/higgsfield-idea-sketch.mp4" className="py-20 sm:py-28">
+        {/* Book call — the strategy room. Direct feedback that the
+            previous asset (a blurred coffee cup and notebook photo)
+            read as a generic desk stock cliché on the page's single
+            most consequential section. Replaced after a real search
+            against the site's own established language (rejected along
+            the way: a portrait-oriented curtain clip, a cluttered dark
+            cabin interior, a cluttered kids' playroom) with sunlight
+            drifting across weathered wood grain (Pexels id 4102353,
+            standard license) — genuinely macro, muted, and quiet,
+            verified across the full clip's motion, not just its poster
+            frame. Trimmed to a 5s graded segment, then built into a
+            mathematically seamless 10s ping-pong loop (forward +
+            time-reversed twin), so there is no loop-point jump. First
+            WebM asset on the site (TexturedDark's own comment covers
+            why), MP4 fallback alongside it. */}
+        <TexturedDark
+          image="/images/pexels-sunlight-wood-grain-poster.jpg"
+          video="/videos/pexels-sunlight-wood-grain.mp4"
+          videoWebm="/videos/pexels-sunlight-wood-grain.webm"
+          className="py-20 sm:py-28"
+        >
           <StrategyRoomCTA />
         </TexturedDark>
       </main>
       <Footer />
-      <SectionJumpNav
-        items={[
-          { href: "#authority", label: "Authority" },
-          { href: "#education", label: "Education" },
-          { href: "#desire", label: "Desire" },
-          { href: "#risk", label: "FAQ" },
-        ]}
-      />
+      <SectionJumpNav items={JUMP_ITEMS} />
     </>
   );
 }
