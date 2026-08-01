@@ -36,12 +36,42 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function Block({ id, title, children }: { id?: string; title: string; children?: string }) {
+// Every block read at the same visual weight (challenge, strategy,
+// outcome, all plain ivory text) — the one place on this template
+// with zero "before/after" arc, despite Outcome being the literal
+// payoff of the whole page. accent, when passed, gives that block a
+// colored rule and a small eyebrow, so scrolling the block list ends
+// on a real visual arrival rather than one more paragraph that looks
+// like the rest.
+function Block({
+  id,
+  title,
+  eyebrow,
+  accent,
+  children,
+}: {
+  id?: string;
+  title: string;
+  eyebrow?: string;
+  accent?: string;
+  children?: string;
+}) {
   if (!children) return null;
   return (
-    <div id={id} className={`case-study-block relative pl-14 sm:pl-16 ${id ? "scroll-mt-24" : ""}`}>
-      <h2 className="font-display text-xl font-normal text-ivory">{title}</h2>
-      <p className="mt-3 text-ivory/85">{children}</p>
+    <div
+      id={id}
+      className={`case-study-block relative pl-14 sm:pl-16 ${id ? "scroll-mt-24" : ""} ${accent ? "border-l-2 -ml-px pl-16 sm:pl-20" : ""}`}
+      style={accent ? { borderColor: accent } : undefined}
+    >
+      {eyebrow && accent && (
+        <p className="text-xs font-medium uppercase tracking-wide" style={{ color: accent }}>
+          {eyebrow}
+        </p>
+      )}
+      <h2 className={`font-display font-normal text-ivory ${accent ? "mt-1 text-2xl sm:text-3xl" : "text-xl"}`}>
+        {title}
+      </h2>
+      <p className={`mt-3 ${accent ? "text-lg text-ivory" : "text-ivory/85"}`}>{children}</p>
     </div>
   );
 }
@@ -194,7 +224,11 @@ export default async function CaseStudyPage({ params }: Props) {
               {project.execution && (
                 <Reveal delay={0.32}><Block title="Execution">{project.execution}</Block></Reveal>
               )}
-              <Reveal delay={0.4}><Block id="outcome" title="Outcome">{project.outcome}</Block></Reveal>
+              <Reveal delay={0.4}>
+                <Block id="outcome" title="Outcome" eyebrow="What actually happened" accent={project.accent}>
+                  {project.outcome}
+                </Block>
+              </Reveal>
               {project.reflection && (
                 <Reveal delay={0.48}><Block title="Reflection">{project.reflection}</Block></Reveal>
               )}

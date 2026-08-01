@@ -11,6 +11,7 @@ import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
+import { Fireflies } from "@/components/Fireflies";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { site } from "@/data/site";
@@ -48,6 +49,14 @@ export default function ContactPage() {
           poster="/images/higgsfield-forest-light-poster.jpg"
           minHeight="70vh"
         >
+          {/* Every other atmospheric hero on the site (About's forest
+              backdrop) carries a small ambient layer on top of the
+              video; this one was the plain video-plus-gradient every
+              other page's hero already is, missing the one touch that
+              gives About's hero its "considered, not just footage"
+              feel. Same forest register as this hero's own clip, not a
+              new visual idea introduced just for this page. */}
+          <Fireflies />
           <Container className="relative py-20 text-center">
             <Reveal className="relative">
               <NatureAccent
