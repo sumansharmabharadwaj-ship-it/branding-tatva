@@ -61,6 +61,32 @@ export function CaseStudyCard({ project }: { project: Project }) {
             accent={project.accent}
             imagePosition={project.cardImagePosition}
           />
+          {/* A real metric on hover, not decoration — the grid otherwise
+              only ever shows challenge/services text, never the actual
+              result. Only renders where project.stats has real,
+              verified numbers (data/projects.ts's own rule); cards
+              without stats yet just don't get this, rather than
+              inventing a number to fill the space. */}
+          {project.stats?.[0] && (
+            <motion.div
+              className="pointer-events-none absolute left-6 top-6 rounded-md px-3 py-2"
+              style={{ backgroundColor: `${project.accent}E6` }}
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
+              animate={
+                prefersReducedMotion
+                  ? undefined
+                  : isHovered
+                    ? { opacity: 1, y: 0 }
+                    : { opacity: 0, y: -8 }
+              }
+              transition={{ duration: 0.3, ease: EASE_AIR }}
+            >
+              <p className="font-display text-2xl font-normal leading-none text-ivory">{project.stats[0].value}</p>
+              <p className="mt-1 max-w-[9rem] text-[0.65rem] uppercase leading-tight tracking-wide text-ivory/85">
+                {project.stats[0].label}
+              </p>
+            </motion.div>
+          )}
           <div className="relative border-t-2 pt-4" style={{ borderTopColor: project.accent }}>
             <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">{project.industry}</p>
             <p className="mt-2 font-display text-2xl font-normal text-ivory">{project.title}</p>

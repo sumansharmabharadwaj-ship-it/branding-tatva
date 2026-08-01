@@ -76,15 +76,57 @@ export function ContactForm() {
     }
   }
 
+  // Every other consequential moment on this page (the button itself,
+  // the staggered field reveal) already carries real motion; the
+  // success state was the one hard cut left, an abrupt re-render swap
+  // with nothing animating at all. The checkmark reuses the exact
+  // stroke-draw technique LinkButton's secondary variant already
+  // proves (pathLength 0 to 1 via a dashoffset transition), so this
+  // isn't a new animation idiom, just the existing one applied to the
+  // form's actual final moment.
   if (status === "success") {
     return (
-      <div role="status" className="rounded-lg border border-state-success/40 bg-state-success/10 p-6">
-        <p className="font-display text-xl font-normal text-soil">Thank you, that&apos;s in.</p>
-        <p className="mt-2 text-sm text-foreground-secondary">
-          I read every enquiry personally and reply within a few days. If it&apos;s
-          urgent, feel free to email directly too.
-        </p>
-      </div>
+      <motion.div
+        role="status"
+        initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.96, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: EASE_AIR }}
+        className="rounded-lg border border-state-success/40 bg-state-success/10 p-6"
+      >
+        <motion.svg
+          width="40"
+          height="40"
+          viewBox="0 0 40 40"
+          fill="none"
+          aria-hidden="true"
+          initial={prefersReducedMotion ? undefined : { scale: 0.6, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.35, delay: 0.1, ease: EASE_AIR }}
+        >
+          <circle cx="20" cy="20" r="19" className="stroke-state-success" strokeWidth="1.5" opacity="0.4" />
+          <motion.path
+            d="M12 20.5L17 25.5L28.5 14"
+            className="stroke-state-success"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            initial={prefersReducedMotion ? undefined : { pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.45, delay: 0.3, ease: "easeOut" }}
+          />
+        </motion.svg>
+        <motion.div
+          initial={prefersReducedMotion ? undefined : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.5, ease: EASE_AIR }}
+        >
+          <p className="mt-4 font-display text-xl font-normal text-soil">Thank you, that&apos;s in.</p>
+          <p className="mt-2 text-sm text-foreground-secondary">
+            I read every enquiry personally and reply within a few days. If it&apos;s
+            urgent, feel free to email directly too.
+          </p>
+        </motion.div>
+      </motion.div>
     );
   }
 
