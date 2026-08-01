@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { packages } from "@/data/services";
@@ -25,6 +26,7 @@ import { packages } from "@/data/services";
 // type. The dark variant is kept intact for any future dark-ground
 // caller rather than deleted.
 export function DeliverablesReveal({ light = false }: { light?: boolean }) {
+  const prefersReducedMotion = useReducedMotion();
   return (
     <Container className="max-w-5xl">
       <Reveal>
@@ -42,11 +44,25 @@ export function DeliverablesReveal({ light = false }: { light?: boolean }) {
         {packages.map((pkg, pi) => {
           const items = pkg.includes.filter((item) => !item.startsWith("Everything in"));
           return (
-            <Reveal key={pkg.slug} delay={pi * 0.08}>
+            // Phase 2 motion direction — "documents laid on the desk":
+            // each sheet settles into place with a slight rotation
+            // correcting itself (scroll), and lifts toward the reader
+            // on hover with its shadow deepening — picking the page up.
+            // This is the only section with a rotation in its motion
+            // language, matching the only paper-object metaphor.
+            <motion.div
+              key={pkg.slug}
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 30, rotate: pi % 2 === 0 ? -1.4 : 1.1 }}
+              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, rotate: 0 }}
+              viewport={{ once: true, margin: "0px 0px -12% 0px" }}
+              transition={{ duration: 0.55, delay: pi * 0.12, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={light && !prefersReducedMotion ? { y: -6 } : undefined}
+              className="h-full"
+            >
               <div
                 className={
                   light
-                    ? "h-full rounded-lg border-t-2 bg-[#FBF8F2] p-7 shadow-[0_2px_16px_rgba(39,34,30,0.08)]"
+                    ? "h-full rounded-lg border-t-2 bg-[#FBF8F2] p-7 shadow-[0_2px_16px_rgba(39,34,30,0.08)] transition-shadow duration-300 hover:shadow-[0_14px_32px_rgba(39,34,30,0.16)]"
                     : "h-full rounded-xl border-t-2 bg-ivory/[0.03] p-6"
                 }
                 style={{ borderColor: pkg.color }}
@@ -69,7 +85,7 @@ export function DeliverablesReveal({ light = false }: { light?: boolean }) {
                   ))}
                 </ul>
               </div>
-            </Reveal>
+            </motion.div>
           );
         })}
       </div>

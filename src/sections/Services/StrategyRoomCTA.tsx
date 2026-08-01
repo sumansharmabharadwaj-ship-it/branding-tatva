@@ -51,13 +51,24 @@ export function StrategyRoomCTA() {
           page, chosen as arrival rather than convenience: after seven
           asymmetric chapters, the visitor reaches a calm, balanced
           room. Typography breathes wider here than anywhere else. */}
-      <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">Book call</p>
-      <h2 className="mt-3 text-display-md font-display font-normal leading-[1.06] text-ivory">
-        Open the strategy room.
-      </h2>
-      <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-ivory/85">
-        A few quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way.
-      </p>
+      {/* Phase 2 motion direction — "arrival": the single slowest
+          entrance on the page, one unhurried breath rather than a
+          staggered sequence. Everything after the visitor gets here is
+          meant to feel settled; the welcome moves accordingly. */}
+      <motion.div
+        initial={prefersReducedMotion ? undefined : { opacity: 0, y: 16 }}
+        whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">Book call</p>
+        <h2 className="mt-3 text-display-md font-display font-normal leading-[1.06] text-ivory">
+          Open the strategy room.
+        </h2>
+        <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-ivory/85">
+          A few quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way.
+        </p>
+      </motion.div>
 
       {/* Audit found this fixed height could overflow on narrow
           viewports — 6 brandStages options (some as long as "I am

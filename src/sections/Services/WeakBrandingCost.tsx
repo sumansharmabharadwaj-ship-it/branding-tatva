@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { TiltCard } from "@/components/TiltCard";
@@ -48,6 +50,20 @@ const STARTS_HERE = [
 ];
 
 export function WeakBrandingCost() {
+  // Phase 2 motion direction — this section's story IS focus: a
+  // generically positioned brand is out of focus; a distinctly
+  // positioned one is sharp. Primary motion: as the visitor scrolls
+  // the section into view, the "generic" card pulls from heavy blur
+  // toward its resting soft-blur — clarity arriving with attention —
+  // while the "distinct" card was never blurred at all. Scroll-linked
+  // (not time-based) so the visitor's own progress performs the focus
+  // pull. Bounded to one element; hover still completes the sharpen.
+  const focusRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: focusRef, offset: ["start 0.95", "start 0.35"] });
+  const blurPx = useTransform(scrollYProgress, [0, 1], [7, 1.5]);
+  const filter = useTransform(blurPx, (b) => `blur(${b}px) saturate(0.85)`);
+
   return (
     <Container className="max-w-3xl">
       <Reveal>
@@ -71,9 +87,14 @@ export function WeakBrandingCost() {
               the old ${"{color}"}0F fills were near-transparent over
               moving video, dissolving the list text into the footage. */}
           <TiltCard glowColor={ELEMENT_HEX.earth} className="group">
-            <div
-              className="h-full rounded-lg border-t-2 p-6 backdrop-blur-md transition-[filter] duration-500 [filter:blur(1.5px)_saturate(0.85)] group-hover:[filter:blur(0)_saturate(1)] sm:p-7"
-              style={{ borderColor: ELEMENT_HEX.earth, backgroundColor: "rgba(24,25,26,0.6)" }}
+            <motion.div
+              ref={focusRef}
+              className="h-full rounded-lg border-t-2 p-6 backdrop-blur-md transition-[filter] duration-500 group-hover:!filter-none sm:p-7"
+              style={{
+                borderColor: ELEMENT_HEX.earth,
+                backgroundColor: "rgba(24,25,26,0.6)",
+                filter: prefersReducedMotion ? "none" : filter,
+              }}
             >
               <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/55">Positioned generically</p>
               <ul className="mt-5 space-y-3.5">
@@ -83,7 +104,7 @@ export function WeakBrandingCost() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           </TiltCard>
         </Reveal>
         <Reveal delay={0.14}>

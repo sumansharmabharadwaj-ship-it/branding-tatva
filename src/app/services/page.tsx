@@ -21,6 +21,7 @@ import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Fireflies } from "@/components/Fireflies";
+import { ParallaxDrift } from "@/components/ParallaxDrift";
 import { MOOD } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
@@ -109,12 +110,21 @@ export default function ServicesPage() {
             className="pointer-events-none absolute inset-0"
             style={{ backgroundImage: "linear-gradient(90deg, rgba(15,18,17,0.55) 0%, rgba(15,18,17,0.2) 45%, transparent 70%)" }}
           />
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,15vw,10rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+          {/* Phase 2, hero motion language: "typography forming." The
+              claim assembles (CyclingStatement), and the giant page
+              title drifts at a slower rate than the scroll around it —
+              depth through type, no imagery involved. */}
+          <ParallaxDrift
+            distance={90}
+            className="pointer-events-none absolute -top-6 right-0 select-none"
           >
-            Services
-          </span>
+            <span
+              aria-hidden="true"
+              className="whitespace-nowrap font-display text-[clamp(4rem,15vw,10rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+            >
+              Services
+            </span>
+          </ParallaxDrift>
           <Container className="relative py-20">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal>

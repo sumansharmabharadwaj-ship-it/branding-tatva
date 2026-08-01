@@ -149,7 +149,19 @@ export function BrandHealthCheck() {
             quiz sat directly on the stream footage; a soft
             forest-tinted panel keeps the video cinematic around it
             while the questions become the unambiguous focus. */}
-        <div className="max-w-2xl rounded-2xl p-6 backdrop-blur-md sm:p-8" style={{ backgroundColor: "rgba(20,26,21,0.55)" }}>
+        <motion.div
+          // Phase 2 motion direction — "the instrument arrives": the
+          // glass diagnostic panel slides laterally into position as
+          // the section enters, the only lateral entrance on the page
+          // — a device being set on the table, distinct from the
+          // vertical rises everywhere else.
+          initial={prefersReducedMotion ? undefined : { opacity: 0, x: -28 }}
+          whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-2xl rounded-2xl p-6 backdrop-blur-md sm:p-8"
+          style={{ backgroundColor: "rgba(20,26,21,0.55)" }}
+        >
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Self-check</p>
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
             A quick brand health check.
@@ -264,7 +276,7 @@ export function BrandHealthCheck() {
           )}
         </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
 
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <p className="text-xs font-medium uppercase tracking-wide text-ivory/60">Where this could point</p>

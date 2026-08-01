@@ -46,15 +46,25 @@ export function PackageSelector() {
           button row — and a second line pulled straight from that
           package's own real `forWho` field, not new copy. */}
       <div className="mx-auto mt-10 grid max-w-2xl gap-4 sm:grid-cols-3">
-        {CHOICES.map((choice) => {
+        {/* Phase 2 motion direction — "touching the surface": the three
+            choices rise from below in sequence (scroll), lift with real
+            depth on hover, and press down under the pointer on tap —
+            the one section where interaction should feel physical. */}
+        {CHOICES.map((choice, ci) => {
           const pkg = packages.find((p) => p.slug === choice.slug);
           const isActive = active === choice.slug;
           return (
-            <button
+            <motion.button
               key={choice.slug}
               type="button"
               onClick={() => setActive(choice.slug)}
-              className="flex flex-col items-center gap-3 rounded-lg border-t-2 p-6 text-center backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5"
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 22 }}
+              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "0px 0px -12% 0px" }}
+              whileHover={prefersReducedMotion ? undefined : { y: -5 }}
+              whileTap={prefersReducedMotion ? undefined : { scale: 0.98, y: -1 }}
+              transition={{ duration: 0.45, delay: ci * 0.09, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col items-center gap-3 rounded-lg border-t-2 p-6 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)]"
               style={{
                 borderColor: pkg?.color,
                 // Glass over deep water (Phase 1 reading surface) — the
@@ -70,7 +80,7 @@ export function PackageSelector() {
               />
               <span className="font-display text-lg font-normal text-ivory">{choice.label}</span>
               {pkg && <span className="text-xs leading-relaxed text-ivory/75">{pkg.forWho}</span>}
-            </button>
+            </motion.button>
           );
         })}
       </div>
@@ -80,10 +90,12 @@ export function PackageSelector() {
           {activePackage ? (
             <motion.div
               key={activePackage.slug}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
+              // "Surfacing" — the recommendation rises from beneath the
+              // water with a soft settle, discovered rather than shown.
+              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 28, scale: 0.985 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0 }}
-              transition={transition}
+              transition={prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 170, damping: 24 }}
               className="rounded-lg border-t-2 p-6 backdrop-blur-md sm:p-8"
               style={{ borderColor: activePackage.color, backgroundColor: blendHex(activePackage.color, "#0F151C", 14) }}
             >

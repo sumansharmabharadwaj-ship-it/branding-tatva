@@ -68,15 +68,32 @@ export function PerceptionLadder() {
                 aria-hidden="true"
               />
             )}
+            {/* Phase 2 motion direction — "the climb": each rung's dot
+                ignites in sequence as the fill line draws past it, so
+                the ladder is climbed rather than shown. Hover inspects
+                a rung — the row leans in, its dot glows. */}
             {RUNGS.map((rung, i) => (
               <Reveal key={rung.label} delay={i * 0.1}>
-                <div className="relative">
-                  <span
-                    className="absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-ivory/25 bg-soil sm:-left-[33px]"
+                <div className="group relative transition-transform duration-300 hover:translate-x-1">
+                  <motion.span
+                    className="absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 bg-soil transition-shadow duration-300 group-hover:shadow-[0_0_10px_rgba(212,185,154,0.55)] sm:-left-[33px]"
                     aria-hidden="true"
+                    initial={prefersReducedMotion ? { borderColor: "#D4B99A" } : { borderColor: "rgba(244,239,230,0.25)", scale: 1 }}
+                    whileInView={
+                      prefersReducedMotion
+                        ? undefined
+                        : {
+                            borderColor: "#D4B99A",
+                            scale: [1, 1.35, 1],
+                            transition: { delay: 0.35 + i * 0.18, duration: 0.5 },
+                          }
+                    }
+                    viewport={{ once: true, margin: "0px 0px -25% 0px" }}
                   />
                   <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{rung.label}</p>
-                  <p className="mt-1 text-sm text-ivory/80 sm:text-base">{rung.text}</p>
+                  <p className="mt-1 text-sm text-ivory/80 transition-colors duration-300 group-hover:text-ivory/95 sm:text-base">
+                    {rung.text}
+                  </p>
                 </div>
               </Reveal>
             ))}

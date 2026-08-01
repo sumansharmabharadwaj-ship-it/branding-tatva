@@ -204,7 +204,13 @@ export function PinnedBrandBuild() {
                 ref={(node) => {
                   layerRefs.current[i] = node;
                 }}
-                className="flex items-start gap-6 border-b border-ivory/10 py-4 opacity-0 last:border-b-0 xl:py-5"
+                // Micro-motion (Phase 2): hovering a layer nudges it
+                // forward and brightens its divider — inspecting one
+                // stratum of the build. Deliberately the ONLY motion
+                // added to this section: the scrub assembly is its
+                // primary motion, and anything running alongside it
+                // would compete rather than support.
+                className="group/layer flex items-start gap-6 border-b border-ivory/10 py-4 opacity-0 transition-[border-color,transform] duration-300 last:border-b-0 hover:translate-x-1.5 hover:border-ivory/30 xl:py-5"
                 style={{ marginLeft: `${i * 18}px` }}
               >
                 <span

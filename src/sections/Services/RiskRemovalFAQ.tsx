@@ -49,8 +49,12 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
 
   return (
     <div className="space-y-10">
+      {/* Phase 2 motion direction — "the calm chapter": entrances here
+          run slower and further apart than anywhere earlier on the
+          page, the motion equivalent of the room going quiet before a
+          decision. */}
       {GROUPS.map((group, gi) => (
-        <Reveal key={group.label} delay={gi * 0.08}>
+        <Reveal key={group.label} delay={gi * 0.14} duration={0.9}>
           {/* Phase 1 typography: dark-variant group labels moved off
               warm sandstone (this section's slate mood is the page's
               coolest chapter — a warm label on every group re-warmed
