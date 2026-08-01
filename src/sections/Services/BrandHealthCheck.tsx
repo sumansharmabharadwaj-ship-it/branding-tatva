@@ -281,7 +281,19 @@ export function BrandHealthCheck() {
         </motion.div>
 
         <aside className="lg:sticky lg:top-28 lg:self-start">
-          <p className="text-xs font-medium uppercase tracking-wide text-ivory/60">Where this could point</p>
+          {/* A live diagnostic reads as live: the indicator breathes
+              continuously, so the panel keeps feeling like an
+              instrument watching the answers rather than a static
+              legend once its entrance has played. */}
+          <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-ivory/60">
+            <motion.span
+              aria-hidden="true"
+              animate={prefersReducedMotion ? undefined : { opacity: [0.35, 1, 0.35] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+              className="h-1.5 w-1.5 rounded-full bg-sandstone"
+            />
+            Where this could point
+          </p>
           <div className="mt-4 space-y-3">
             {BANDS.map((band) => {
               const isTrending = trendingBand?.title === band.title;

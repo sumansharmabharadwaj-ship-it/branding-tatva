@@ -10,6 +10,7 @@ import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { RiskRemovalFAQ } from "@/sections/Services/RiskRemovalFAQ";
 import { ClearingMist } from "@/sections/Services/ClearingMist";
+import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { CyclingStatement } from "@/sections/Services/CyclingStatement";
 import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
 import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
@@ -64,7 +65,20 @@ export default function ServicesPage() {
     <>
       <Header transparent />
       <ScrollProgress />
-      <main id="main-content">
+      {/* Charcoal ground for the whole experience — the permanent fix
+          for the "white space at left and right" class of bug. The
+          site's body ground is cream; on this page every full-bleed
+          scene paints its own dark background, and the one section
+          whose paint is delegated to a GSAP-pinned child
+          (PinnedBrandBuild) can transiently narrow when the pin's
+          cached width measurement goes stale — the documented pin
+          artifact class — exposing cream at both edges. With the page
+          ground itself charcoal (and the #authority wrapper painting
+          charcoal below), no measurement artifact anywhere on this
+          page can ever expose a light edge again: worst case is
+          charcoal on charcoal, invisible. The parchment chapter still
+          paints its own bg-background-alt deliberately. */}
+      <main id="main-content" style={{ backgroundColor: MOOD.charcoal }}>
         {/* Curiosity — the opening objection: why care about branding at
             all. Two short opinionated lines build the claim (Framer
             Motion AnimatePresence, CyclingStatement.tsx) before handing
@@ -208,7 +222,11 @@ export default function ServicesPage() {
         </PhotoHero>
 
         {/* Authority — the one deliberate ScrollTrigger.pin section. */}
-        <section id="authority" className="scroll-mt-24">
+        {/* The wrapper paints charcoal itself — it sits in normal flow,
+            is never transformed by GSAP, and therefore always spans the
+            full viewport regardless of what the pin does to its child.
+            See the main-level comment above for the full root cause. */}
+        <section id="authority" className="scroll-mt-24" style={{ backgroundColor: MOOD.charcoal }}>
           <PinnedBrandBuild />
         </section>
 
@@ -233,7 +251,7 @@ export default function ServicesPage() {
             amber wash. The overlay gradient is tinted with the
             section's own mood tone, never soil. */}
         <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.stone }}>
-          <BackgroundVideo video="/videos/higgsfield-golden-ridge.mp4" poster="/images/higgsfield-golden-ridge-poster.jpg" />
+          <BackgroundVideo parallax video="/videos/higgsfield-golden-ridge.mp4" poster="/images/higgsfield-golden-ridge-poster.jpg" />
           {/* Second-audit push: the ridge clip's residual warm sky band
               was still tinting this chapter amber against Education's
               mist directly below — the overlay now leans a step cooler
@@ -249,22 +267,20 @@ export default function ServicesPage() {
           />
           {/* Scene dissolve: Authority's charcoal handing off into
               Stakes' stone. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-[16vh]"
-            style={{ background: "linear-gradient(180deg, #17181A 0%, rgba(23,24,26,0) 100%)" }}
-          />
+          <SceneVeil color="#17181A" />
           <AmbientElementShader opacity={0.1} />
           {/* Same ghost watermark word technique Home ("ELEMENTS"), About
               ("WHY"), and Blog ("NOTES") already use, extended here — a
               recurring graphic motif tying new sections into the same
               visual system rather than each reading as a one-off. */}
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
-          >
-            Stakes
-          </span>
+          <ParallaxDrift distance={70} className="pointer-events-none absolute -top-4 left-0 select-none sm:-top-8">
+            <span
+              aria-hidden="true"
+              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+            >
+              Stakes
+            </span>
+          </ParallaxDrift>
           <div className="relative">
             <WeakBrandingCost />
           </div>
@@ -280,7 +296,7 @@ export default function ServicesPage() {
         {/* Mood: MIST — blue-grey, the coolest chapter so far, directly
             after Stakes' dry stone. See MOOD in sectionWash.ts. */}
         <section id="education" className="relative scroll-mt-24 overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
-          <BackgroundVideo video="/videos/pixabay-sea-of-fog-sunrise.mp4" poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg" />
+          <BackgroundVideo parallax video="/videos/pixabay-sea-of-fog-sunrise.mp4" poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg" />
           <div
             className="absolute inset-0"
             aria-hidden="true"
@@ -290,11 +306,7 @@ export default function ServicesPage() {
             }}
           />
           {/* Scene dissolve: Stakes' dry stone into Education's mist. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-[16vh]"
-            style={{ background: "linear-gradient(180deg, #1B1A17 0%, rgba(27,26,23,0) 100%)" }}
-          />
+          <SceneVeil color="#1B1A17" />
           <div className="relative">
             <PerceptionLadder />
           </div>
@@ -347,7 +359,7 @@ export default function ServicesPage() {
             streak is the page's first warm accent, jewelry against a
             cool ground rather than an amber section. */}
         <section id="desire" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.deepwater }}>
-          <BackgroundVideo
+          <BackgroundVideo parallax
             video="/videos/pexels-golden-water-reflection.mp4"
             videoWebm="/videos/pexels-golden-water-reflection.webm"
             poster="/images/pexels-golden-water-reflection-poster.jpg"
@@ -362,11 +374,7 @@ export default function ServicesPage() {
           />
           {/* Scene dissolve: Education's blue mist into Desire's deep
               water. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-[16vh]"
-            style={{ background: "linear-gradient(180deg, #1A2026 0%, rgba(26,32,38,0) 100%)" }}
-          />
+          <SceneVeil color="#1A2026" />
           <div className="relative">
             <PackageSelector />
           </div>
@@ -405,21 +413,19 @@ export default function ServicesPage() {
                 "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E\")",
             }}
           />
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-soil/[0.05] sm:-top-8"
-          >
-            Receive
-          </span>
+          <ParallaxDrift distance={55} className="pointer-events-none absolute -top-4 right-0 select-none sm:-top-8">
+            <span
+              aria-hidden="true"
+              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-soil/[0.05]"
+            >
+              Receive
+            </span>
+          </ParallaxDrift>
           {/* Scene dissolve: the shadow of Desire's deep water falls
               across the top of the desk before the parchment brightens
               — the page's hardest cut (dark to light) becomes a
               surfacing instead. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-[14vh]"
-            style={{ background: "linear-gradient(180deg, rgba(15,21,28,0.55) 0%, rgba(15,21,28,0) 100%)" }}
-          />
+          <SceneVeil color="rgba(15,21,28,0.55)" heightClass="h-[14vh]" />
           <div className="relative">
             <DeliverablesReveal light />
           </div>
@@ -448,7 +454,7 @@ export default function ServicesPage() {
             break; the stream clip's mossy greens finally read as green
             instead of being re-warmed to amber by a soil overlay. */}
         <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.forest }}>
-          <BackgroundVideo video="/videos/higgsfield-forest-stream.mp4" poster="/images/higgsfield-forest-stream-poster.jpg" />
+          <BackgroundVideo parallax video="/videos/higgsfield-forest-stream.mp4" poster="/images/higgsfield-forest-stream-poster.jpg" />
           <div
             className="absolute inset-0"
             aria-hidden="true"
@@ -460,17 +466,15 @@ export default function ServicesPage() {
           {/* Scene dissolve: the dossier's parchment light spills into
               the top of the forest — light traveling downward into the
               next scene. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-[12vh]"
-            style={{ background: "linear-gradient(180deg, rgba(232,222,208,0.32) 0%, rgba(232,222,208,0) 100%)" }}
-          />
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
-          >
-            Check
-          </span>
+          <SceneVeil color="rgba(232,222,208,0.32)" heightClass="h-[12vh]" />
+          <ParallaxDrift distance={70} className="pointer-events-none absolute -top-4 left-0 select-none sm:-top-8">
+            <span
+              aria-hidden="true"
+              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+            >
+              Check
+            </span>
+          </ParallaxDrift>
           <div className="relative">
             <BrandHealthCheck />
           </div>
@@ -523,7 +527,7 @@ export default function ServicesPage() {
             into Book Call's golden wood — light traveling into the
             final room rather than a hard cut. */}
         <section id="risk" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.slate }}>
-          <BackgroundVideo
+          <BackgroundVideo parallax
             video="/videos/pexels-mist-over-water.mp4"
             videoWebm="/videos/pexels-mist-over-water.webm"
             poster="/images/pexels-mist-over-water-poster.jpg"
@@ -566,11 +570,7 @@ export default function ServicesPage() {
           </div>
           {/* Scene dissolve: the quiz's forest dark hands off into the
               FAQ's slate mist. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-[16vh]"
-            style={{ background: "linear-gradient(180deg, #141A15 0%, rgba(20,26,21,0) 100%)" }}
-          />
+          <SceneVeil color="#141A15" />
           {/* Scroll-controlled atmosphere — the fog is densest entering
               the chapter and clears as the visitor descends through the
               answers, arriving at Book Call in the clearest air on the
@@ -587,12 +587,14 @@ export default function ServicesPage() {
               }}
             />
           </ParallaxDrift>
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
-          >
-            Ask
-          </span>
+          <ParallaxDrift distance={55} className="pointer-events-none absolute -top-4 right-0 select-none sm:-top-8">
+            <span
+              aria-hidden="true"
+              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+            >
+              Ask
+            </span>
+          </ParallaxDrift>
           <Container className="relative max-w-6xl">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-[0.18em] text-ivory/55">Risk removal</p>
