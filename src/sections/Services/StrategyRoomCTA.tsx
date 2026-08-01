@@ -65,8 +65,13 @@ export function StrategyRoomCTA() {
         <h2 className="mt-3 text-display-md font-display font-normal leading-[1.06] text-ivory">
           Open the strategy room.
         </h2>
+        {/* Phase 4: the one trust line between Desire and the calendar —
+            a real fact (one person practice, already established on
+            About and in the Footer), placed at the exact moment the
+            visitor decides whether to hand over their time. */}
         <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-ivory/85">
-          A few quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way.
+          A few quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way. You
+          talk directly with the person who does the work, from first question to final file.
         </p>
       </motion.div>
 

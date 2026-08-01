@@ -162,7 +162,9 @@ export function BrandHealthCheck() {
           className="max-w-2xl rounded-2xl p-6 backdrop-blur-md sm:p-8"
           style={{ backgroundColor: "rgba(20,26,21,0.55)" }}
         >
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Self-check</p>
+          {/* "Self-check" carried a rendered hyphen — a copywriting
+              standard violation caught in the Phase 4 pass. */}
+          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Self assessment</p>
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
             A quick brand health check.
           </h2>

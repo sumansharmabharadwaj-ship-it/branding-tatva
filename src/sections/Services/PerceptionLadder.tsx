@@ -50,11 +50,16 @@ export function PerceptionLadder() {
       <Container className="relative max-w-5xl">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Education</p>
+          {/* Phase 4 persuasion pass: "why some brands look different"
+              was observation at a distance — this makes the ladder about
+              the reader's own brand, already being ranked whether they
+              participate or so much as know about it. */}
           <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
-            Why some brands look different.
+            Your brand is already on this ladder.
           </h2>
           <p className="mt-4 max-w-xl text-ivory/85">
-            A position on the same ladder every brand climbs, deliberately or by accident.
+            Buyers place it there with or without your involvement. Climbing deliberately is the whole discipline of
+            branding.
           </p>
         </Reveal>
 

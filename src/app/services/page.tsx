@@ -19,6 +19,7 @@ import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
 import { StrategySessionPreview } from "@/sections/Services/StrategySessionPreview";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
+import { Magnetic } from "@/components/Magnetic";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ParallaxDrift } from "@/components/ParallaxDrift";
 import { MOOD } from "@/lib/sectionWash";
@@ -130,13 +131,40 @@ export default function ServicesPage() {
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                   Curiosity
                 </span>
-                <CyclingStatement headline="Why should a business care about branding?" />
+                {/* Phase 4 persuasion pass: the old headline asked a
+                    question ("Why should a business care about
+                    branding?") right after two cycling lines had built a
+                    claim — the question dissolved the momentum. The
+                    headline now lands the claim the lines were building:
+                    it names what "something else" is. */}
+                <CyclingStatement headline="Branding is how a business gets chosen before it gets compared." />
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/85">
-                  The same process that took one client&apos;s engagement rate from{" "}
+                  One client&apos;s engagement moved from{" "}
                   <span className="font-medium text-sandstone">0.71%</span> to{" "}
-                  <span className="font-medium text-sandstone">2.81%</span> in eight weeks. Everything on this page
-                  explains how.
+                  <span className="font-medium text-sandstone">2.81%</span> in eight weeks of this exact work. The
+                  chapters below show what made that happen, and where your brand would start.
                 </p>
+                {/* The hero's one quiet action — a visitor sold by the
+                    opening claim previously had nowhere to act until the
+                    final chapter. An editorial text link, deliberately
+                    understated next to the headline rather than a loud
+                    button competing with it. */}
+                {/* Magnetic like every LinkButton on the site — the
+                    hero's one action responds to the cursor the same
+                    way every other CTA already does. */}
+                <div className="mt-7">
+                  <Magnetic>
+                    <a
+                      href="#book"
+                      className="group inline-flex items-baseline gap-2 text-sm tracking-wide text-ivory/85 transition-colors duration-300 hover:text-ivory"
+                    >
+                      <span className="link-underline">Ready already? Open the strategy room</span>
+                      <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-y-0.5">
+                        ↓
+                      </span>
+                    </a>
+                  </Magnetic>
+                </div>
               </Reveal>
               {/* Editorial chapter index — the page's four acts listed
                   the way a film lists chapters, replacing a row of
@@ -542,10 +570,11 @@ export default function ServicesPage() {
             breathing room on the page, arriving like a quiet studio
             after the cool chapters rather than "the end of a website." */}
         <TexturedDark
+          id="book"
           image="/images/pexels-sunlight-wood-grain-poster.jpg"
           video="/videos/pexels-sunlight-wood-grain.mp4"
           videoWebm="/videos/pexels-sunlight-wood-grain.webm"
-          className="py-24 sm:py-36"
+          className="scroll-mt-24 py-24 sm:py-36"
         >
           <StrategyRoomCTA />
         </TexturedDark>

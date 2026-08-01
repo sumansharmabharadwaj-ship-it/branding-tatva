@@ -24,6 +24,7 @@ import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 export function TexturedDark({
   children,
   className,
+  id,
   image,
   video,
   videoWebm,
@@ -31,6 +32,9 @@ export function TexturedDark({
 }: {
   children: React.ReactNode;
   className?: string;
+  // Optional anchor id so in-page links (the Services hero's "open the
+  // strategy room" line) can target a TexturedDark chapter directly.
+  id?: string;
   image: string;
   video?: string;
   // Optional WebM sibling, tried first via a real <source> list (was a
@@ -59,7 +63,7 @@ export function TexturedDark({
   useVideoFadeIn(videoRef, shouldLoad && Boolean(video) && !prefersReducedMotion);
 
   return (
-    <section ref={sectionRef} className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
+    <section ref={sectionRef} id={id} className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
       <div ref={ref} className="absolute inset-0">
         {/* image renders immediately, unconditionally — not gated behind
             shouldLoad. This wrapper is almost always far down the page
