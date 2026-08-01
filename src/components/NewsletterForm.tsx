@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion, useReducedMotion } from "framer-motion";
 import { newsletterSchema, type NewsletterFormValues } from "@/lib/newsletter-schema";
 import { Magnetic } from "@/components/Magnetic";
+import { EASE_AIR } from "@/lib/motion";
 
 type Status = "idle" | "submitting" | "success" | "already" | "error";
 
@@ -16,6 +18,7 @@ type Status = "idle" | "submitting" | "success" | "already" | "error";
 export function NewsletterForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const {
     register,
@@ -49,19 +52,24 @@ export function NewsletterForm() {
     }
   }
 
-  if (status === "success") {
+  // Was a hard, unanimated swap, the same one-frame cut ContactForm's
+  // own success state used to be. Kept deliberately smaller than that
+  // fix (no checkmark, no spring) since this form is meant to read as
+  // a quiet aside next to the real enquiry form, not a second version
+  // of it, so a small fade rather than a full moment.
+  if (status === "success" || status === "already") {
     return (
-      <p role="status" className="mt-4 text-sm text-ivory/85">
-        Check your inbox. I sent a quick confirmation link to finish signing up.
-      </p>
-    );
-  }
-
-  if (status === "already") {
-    return (
-      <p role="status" className="mt-4 text-sm text-ivory/85">
-        You&apos;re already on the list.
-      </p>
+      <motion.p
+        role="status"
+        initial={prefersReducedMotion ? undefined : { opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: EASE_AIR }}
+        className="mt-4 text-sm text-ivory/85"
+      >
+        {status === "success"
+          ? "Check your inbox. I sent a quick confirmation link to finish signing up."
+          : "You're already on the list."}
+      </motion.p>
     );
   }
 

@@ -15,6 +15,8 @@ import { Fireflies } from "@/components/Fireflies";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { site } from "@/data/site";
+import { credentials } from "@/data/about";
+import { projects } from "@/data/projects";
 import { SANDSTONE, ELEMENT_HEX } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
@@ -110,6 +112,24 @@ export default function ContactPage() {
                     Connect on LinkedIn
                   </a>
                 </p>
+              </div>
+
+              {/* Real trust indicator, placed where a first-time visitor
+                  is actually deciding whether to fill in the form, not
+                  buried elsewhere on the page. Same real facts and same
+                  dot-separator presentation Home's own Trust beat
+                  already uses (page.tsx), not a new device and not a
+                  fabricated testimonial or client logo. */}
+              <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-soil/10 pt-5 text-xs uppercase tracking-[0.1em] text-foreground-secondary">
+                {credentials
+                  .filter((c) => c.featured)
+                  .map((c) => (
+                    <span key={c.label} className="inline-flex items-center gap-3">
+                      {c.label}
+                      <span aria-hidden="true" className="h-1 w-1 rounded-full bg-soil/25" />
+                    </span>
+                  ))}
+                <span>{projects.length} real client engagements</span>
               </div>
             </Reveal>
 
