@@ -66,25 +66,47 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
           >
             {group.label}
           </p>
-          <div className={`mt-3 divide-y ${dark ? "divide-ivory/15" : "divide-border"}`}>
-            {group.questions.map((question) => {
+          {/* Interaction language — "the fog clearing", this chapter's
+              own motion identity: dividers draw themselves in like
+              horizon lines emerging from mist, a soft glow blooms under
+              the cursor (light through fog, matching the mist layers in
+              the section backdrop), the question leans gently toward the
+              reader, and open answers condense out of a blur instead of
+              simply sliding down. No other section shares any of these. */}
+          <div className="mt-3">
+            {group.questions.map((question, qi) => {
               const item = faqs.find((f) => f.question === question);
               if (!item) return null;
               const isOpen = openQuestion === item.question;
               return (
                 <div key={item.question} className="py-1">
+                  <motion.div
+                    aria-hidden="true"
+                    className={`h-px ${dark ? "bg-ivory/15" : "bg-border"}`}
+                    style={{ originX: 0 }}
+                    initial={prefersReducedMotion ? undefined : { scaleX: 0 }}
+                    whileInView={prefersReducedMotion ? undefined : { scaleX: 1 }}
+                    viewport={{ once: true, margin: "0px 0px -6% 0px" }}
+                    transition={{ duration: 1.1, delay: 0.15 + qi * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                  />
                   <button
                     type="button"
-                    className={`flex w-full items-center justify-between rounded-lg px-3 py-3.5 text-left text-[1.05rem] font-medium transition-colors duration-300 ${
-                      dark ? "text-ivory hover:bg-ivory/8 focus-visible:bg-ivory/8" : "text-soil hover:bg-clay/8 focus-visible:bg-clay/8"
+                    className={`group mt-1 flex w-full items-center justify-between rounded-lg px-3 py-3.5 text-left text-[1.05rem] font-medium transition-all duration-500 ${
+                      dark
+                        ? `text-ivory hover:bg-ivory/[0.07] hover:shadow-[0_0_38px_rgba(222,230,236,0.08)] focus-visible:bg-ivory/[0.07] ${isOpen ? "bg-ivory/[0.05]" : ""}`
+                        : "text-soil hover:bg-clay/8 focus-visible:bg-clay/8"
                     }`}
                     aria-expanded={isOpen}
                     onClick={() => setOpenQuestion(isOpen ? null : item.question)}
                   >
-                    {item.question}
+                    <span className="transition-transform duration-500 ease-out group-hover:translate-x-1.5">
+                      {item.question}
+                    </span>
                     <span
                       aria-hidden="true"
-                      className={`ml-4 shrink-0 text-lg transition-transform duration-300 ${dark ? "text-sandstone" : "text-action-primary"}`}
+                      className={`ml-4 shrink-0 text-lg transition-all duration-300 group-hover:opacity-100 ${
+                        dark ? "text-sandstone opacity-70" : "text-action-primary"
+                      }`}
                       style={{ transform: isOpen ? TOGGLE_ROTATION.open : TOGGLE_ROTATION.closed }}
                     >
                       +
@@ -100,7 +122,14 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
                         transition={answerTransition}
                         className="overflow-hidden px-3"
                       >
-                        <p className={`max-w-2xl pb-4 text-base leading-relaxed ${dark ? "text-ivory/85" : "text-foreground-secondary"}`}>{item.answer}</p>
+                        <motion.p
+                          initial={prefersReducedMotion ? undefined : { opacity: 0, filter: "blur(6px)", y: 4 }}
+                          animate={prefersReducedMotion ? undefined : { opacity: 1, filter: "blur(0px)", y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                          className={`max-w-2xl pb-4 text-base leading-relaxed ${dark ? "text-ivory/85" : "text-foreground-secondary"}`}
+                        >
+                          {item.answer}
+                        </motion.p>
                       </motion.div>
                     )}
                   </AnimatePresence>

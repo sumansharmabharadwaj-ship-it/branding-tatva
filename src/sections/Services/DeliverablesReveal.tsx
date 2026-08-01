@@ -56,13 +56,29 @@ export function DeliverablesReveal({ light = false }: { light?: boolean }) {
               whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, rotate: 0 }}
               viewport={{ once: true, margin: "0px 0px -12% 0px" }}
               transition={{ duration: 0.55, delay: pi * 0.12, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={light && !prefersReducedMotion ? { y: -6 } : undefined}
-              className="h-full"
+              whileHover={
+                light && !prefersReducedMotion ? { y: -6, rotate: pi % 2 === 0 ? -0.5 : 0.5 } : undefined
+              }
+              className="group relative h-full"
             >
+              {/* The sheet beneath — each document sits on a second page
+                  in the stack, and picking one up (hover) separates the
+                  two: real paper depth, the interaction this chapter was
+                  still missing after the sheets settled. */}
+              {light && (
+                <div
+                  aria-hidden="true"
+                  className={`absolute inset-0 rounded-lg bg-[#F3EDE2] shadow-[0_2px_10px_rgba(39,34,30,0.06)] transition-transform duration-500 ease-out ${
+                    pi % 2 === 0
+                      ? "rotate-[1.1deg] group-hover:translate-y-2 group-hover:rotate-[2.4deg]"
+                      : "-rotate-[0.9deg] group-hover:translate-y-2 group-hover:-rotate-[2.2deg]"
+                  }`}
+                />
+              )}
               <div
                 className={
                   light
-                    ? "h-full rounded-lg border-t-2 bg-[#FBF8F2] p-7 shadow-[0_2px_16px_rgba(39,34,30,0.08)] transition-shadow duration-300 hover:shadow-[0_14px_32px_rgba(39,34,30,0.16)]"
+                    ? "relative h-full rounded-lg border-t-2 bg-[#FBF8F2] p-7 shadow-[0_2px_16px_rgba(39,34,30,0.08)] transition-shadow duration-300 group-hover:shadow-[0_14px_32px_rgba(39,34,30,0.16)]"
                     : "h-full rounded-xl border-t-2 bg-ivory/[0.03] p-6"
                 }
                 style={{ borderColor: pkg.color }}
@@ -80,7 +96,19 @@ export function DeliverablesReveal({ light = false }: { light?: boolean }) {
                     </span>
                   )}
                 </div>
-                {light && <div className="mt-3 h-px bg-soil/10" aria-hidden="true" />}
+                {/* The rule draws itself across the page — an editorial
+                    line animation, not a static border. */}
+                {light && (
+                  <motion.div
+                    className="mt-3 h-px bg-soil/10"
+                    aria-hidden="true"
+                    style={{ originX: 0 }}
+                    initial={prefersReducedMotion ? undefined : { scaleX: 0 }}
+                    whileInView={prefersReducedMotion ? undefined : { scaleX: 1 }}
+                    viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                    transition={{ duration: 0.9, delay: 0.2 + pi * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                  />
+                )}
                 {/* Items write themselves onto the page line by line —
                     the visible animation this chapter was missing once
                     the sheets had settled. */}

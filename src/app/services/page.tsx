@@ -450,14 +450,53 @@ export default function ServicesPage() {
             videoWebm="/videos/pexels-mist-over-water.webm"
             poster="/images/pexels-mist-over-water-poster.jpg"
           />
+          {/* Overlay lightened through the middle (direct feedback that
+              the fog disappeared behind it) — the filmed mist now reads
+              through the whole reading zone, while the top edge and the
+              warm foot keep their density for the transition in and out. */}
           <div
             className="absolute inset-0"
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(24,29,33,0.88) 0%, rgba(24,29,33,0.74) 45%, rgba(24,29,33,0.82) 82%, rgba(35,31,27,0.9) 100%)",
+                "linear-gradient(180deg, rgba(24,29,33,0.84) 0%, rgba(24,29,33,0.6) 45%, rgba(24,29,33,0.7) 82%, rgba(35,31,27,0.9) 100%)",
             }}
           />
+          {/* Three mist depth planes above the overlay — the filmed fog
+              is the far plane; these are the mid and near planes, so the
+              atmosphere has real parallax instead of one flat backdrop.
+              The near sheet rides ParallaxDrift, moving against scroll —
+              fog passing between the visitor and the page. All layers
+              pointer-events-none, constant blur, transform/opacity only. */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div
+              className="mist-layer-a absolute -left-[18%] top-[6%] h-[55%] w-[75%] rounded-full"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, rgba(216,224,230,0.17) 0%, rgba(216,224,230,0.05) 48%, transparent 72%)",
+                filter: "blur(56px)",
+              }}
+            />
+            <div
+              className="mist-layer-b absolute -right-[22%] top-[38%] h-[58%] w-[80%] rounded-full"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, rgba(198,208,216,0.14) 0%, rgba(198,208,216,0.04) 50%, transparent 74%)",
+                filter: "blur(64px)",
+              }}
+            />
+          </div>
+          <ParallaxDrift distance={130} className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%]">
+            <div
+              aria-hidden="true"
+              className="mist-layer-a h-full w-full"
+              style={{
+                background: "linear-gradient(0deg, rgba(206,214,221,0.15) 0%, rgba(206,214,221,0.05) 55%, transparent 85%)",
+                filter: "blur(28px)",
+                animationDuration: "58s",
+              }}
+            />
+          </ParallaxDrift>
           <span
             aria-hidden="true"
             className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"

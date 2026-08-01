@@ -788,3 +788,49 @@
     --nav-angle: 360deg;
   }
 }
+
+/* FAQ decompression chamber — CSS mist layers. Direct feedback that the
+   fog video alone disappeared into the background: these two drifting,
+   heavily blurred gradient sheets sit ABOVE the overlay, so mist visibly
+   passes in front of the scene, concealing and revealing it. Constant
+   blur (never animated — only transform/opacity move, compositor safe),
+   long offset periods so the two layers never sync into a visible loop.
+   Covered by the sitewide prefers-reduced-motion rule (animation zeroed,
+   layers rest at their base opacity as a static haze). */
+@keyframes mist-drift-a {
+  0% {
+    transform: translate3d(-4%, 0, 0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(4%, -3%, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-4%, 0, 0);
+    opacity: 0.55;
+  }
+}
+
+@keyframes mist-drift-b {
+  0% {
+    transform: translate3d(3%, 1%, 0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate3d(-4%, -2%, 0);
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate3d(3%, 1%, 0);
+    opacity: 0.9;
+  }
+}
+
+.mist-layer-a {
+  animation: mist-drift-a 46s ease-in-out infinite;
+}
+
+.mist-layer-b {
+  animation: mist-drift-b 34s ease-in-out infinite;
+}
