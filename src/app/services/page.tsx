@@ -20,7 +20,6 @@ import { StrategySessionPreview } from "@/sections/Services/StrategySessionPrevi
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { Fireflies } from "@/components/Fireflies";
 import { ParallaxDrift } from "@/components/ParallaxDrift";
 import { MOOD } from "@/lib/sectionWash";
 
@@ -418,15 +417,33 @@ export default function ServicesPage() {
             left rail, and the FAQ accordion fills the right column —
             both pieces of real content the section always had, just
             given an actual layout instead of one narrow stack. */}
-        {/* Mood: SLATE — cool, calm, the quietest chapter, matching a
-            reading-and-deciding section. The warm aurora blooms are
-            gone from here (they were a large part of the amber cast in
-            this section); the cooler light-rays sweep and fireflies
-            stay as the calm ambient layer until Phase 3's fog loop. */}
+        {/* Mood: SLATE — the emotional decompression chamber before
+            Book Call. Phase 3 completed this chapter's atmosphere:
+            mist breathing over dark water (Pexels id 2534297, standard
+            license; slowed 1.5x into an 18s seamless ping-pong loop so
+            the drift reads as breathing, never as a video), and it is
+            now the section's ONLY atmospheric layer — the light-rays
+            sweep, fireflies, and ambient shader that used to stack
+            here competed with each other and with the calm this
+            chapter exists to create. One overlay keeps the fog
+            subconscious and the reading surface generous; a warm
+            gradient at the foot of the section lets slate dissolve
+            into Book Call's golden wood — light traveling into the
+            final room rather than a hard cut. */}
         <section id="risk" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.slate }}>
-          <div className="light-rays" aria-hidden="true" />
-          <Fireflies />
-          <AmbientElementShader opacity={0.12} />
+          <BackgroundVideo
+            video="/videos/pexels-mist-over-water.mp4"
+            videoWebm="/videos/pexels-mist-over-water.webm"
+            poster="/images/pexels-mist-over-water-poster.jpg"
+          />
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(180deg, rgba(24,29,33,0.88) 0%, rgba(24,29,33,0.74) 45%, rgba(24,29,33,0.82) 82%, rgba(35,31,27,0.9) 100%)",
+            }}
+          />
           <span
             aria-hidden="true"
             className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06] sm:-top-8"
