@@ -32,16 +32,20 @@ export function StrategySessionPreview({ dark = false }: { dark?: boolean }) {
           What actually happens on the call.
         </h2>
       </Reveal>
+      {/* Reveal sits INSIDE each li (a div inside li is valid HTML) —
+          the previous Reveal-wrapping-li nesting put divs directly
+          inside the ol, a real accessibility violation Lighthouse
+          caught (list/listitem audits). */}
       <ol className="mt-8 space-y-5">
         {STEPS.map((step, i) => (
-          <Reveal key={step} delay={i * 0.08}>
-            <li className="flex items-start gap-4">
+          <li key={step}>
+            <Reveal delay={i * 0.08} className="flex items-start gap-4">
               <span className={`pt-0.5 font-display text-2xl font-normal leading-none ${dark ? "text-ivory/25" : "text-soil/25"}`}>
                 {String(i + 1).padStart(2, "0")}
               </span>
               <p className={dark ? "text-ivory/85" : "text-foreground-secondary"}>{step}</p>
-            </li>
-          </Reveal>
+            </Reveal>
+          </li>
         ))}
       </ol>
     </div>
