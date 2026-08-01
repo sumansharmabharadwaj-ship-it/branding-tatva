@@ -13,10 +13,16 @@ import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
 export function BackgroundVideo({
   video,
+  videoWebm,
   poster,
   imagePosition = "center",
 }: {
   video: string;
+  // Optional WebM sibling, tried first via a real <source> list — same
+  // additive pattern TexturedDark established (see its own comment).
+  // `video` alone keeps working exactly as before for every existing
+  // MP4-only call site.
+  videoWebm?: string;
   poster: string;
   imagePosition?: string;
 }) {
@@ -51,12 +57,14 @@ export function BackgroundVideo({
       ref={videoRef}
       className="absolute inset-0 h-full w-full object-cover"
       style={{ objectPosition: imagePosition }}
-      src={video}
       poster={poster}
       autoPlay
       muted
       loop
       playsInline
-    />
+    >
+      {videoWebm && <source src={videoWebm} type="video/webm" />}
+      <source src={video} type="video/mp4" />
+    </video>
   );
 }

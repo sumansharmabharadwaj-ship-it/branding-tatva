@@ -5,6 +5,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
+import { AnimatedStat } from "@/components/AnimatedStat";
 
 // "Education" objection — why premium-reading brands look different.
 // Reframed from the brief's literal "looks expensive / feels expensive"
@@ -39,38 +40,62 @@ export function PerceptionLadder() {
   return (
     <div className="relative py-20 sm:py-28">
       <AmbientElementShader opacity={0.16} />
-      <Container className="relative max-w-2xl">
+      {/* Was a single centered max-w-2xl column — the same dead-space
+          pattern already fixed on the Risk removal section, left
+          unaddressed here. The ladder itself is unchanged; a real proof
+          companion now fills the second column instead of empty space
+          on wide viewports — the exact 0.71% to 2.81% climb already
+          named in this page's own hero, restated here as the concrete
+          instance of the abstract ladder a visitor just read. */}
+      <Container className="relative max-w-5xl">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Education</p>
-          <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+          <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
             Why some brands look different.
           </h2>
-          <p className="mt-4 text-ivory/85">
+          <p className="mt-4 max-w-xl text-ivory/85">
             A position on the same ladder every brand climbs, deliberately or by accident.
           </p>
         </Reveal>
 
-        <div ref={trackRef} className="relative mt-12 space-y-8 pl-6 sm:pl-8">
-          <div className="absolute inset-y-0 left-0 w-[2px] bg-ivory/15" aria-hidden="true" />
-          {!prefersReducedMotion && (
-            <motion.div
-              className="absolute left-0 top-0 w-[2px] origin-top bg-sandstone"
-              style={{ height: "100%", scaleY: fillScale }}
-              aria-hidden="true"
-            />
-          )}
-          {RUNGS.map((rung, i) => (
-            <Reveal key={rung.label} delay={i * 0.1}>
-              <div className="relative">
-                <span
-                  className="absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-ivory/25 bg-soil sm:-left-[33px]"
-                  aria-hidden="true"
-                />
-                <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{rung.label}</p>
-                <p className="mt-1 text-sm text-ivory/80 sm:text-base">{rung.text}</p>
-              </div>
-            </Reveal>
-          ))}
+        <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_minmax(0,20rem)] lg:gap-16">
+          <div ref={trackRef} className="relative space-y-8 pl-6 sm:pl-8">
+            <div className="absolute inset-y-0 left-0 w-[2px] bg-ivory/15" aria-hidden="true" />
+            {!prefersReducedMotion && (
+              <motion.div
+                className="absolute left-0 top-0 w-[2px] origin-top bg-sandstone"
+                style={{ height: "100%", scaleY: fillScale }}
+                aria-hidden="true"
+              />
+            )}
+            {RUNGS.map((rung, i) => (
+              <Reveal key={rung.label} delay={i * 0.1}>
+                <div className="relative">
+                  <span
+                    className="absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-ivory/25 bg-soil sm:-left-[33px]"
+                    aria-hidden="true"
+                  />
+                  <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{rung.label}</p>
+                  <p className="mt-1 text-sm text-ivory/80 sm:text-base">{rung.text}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          <Reveal delay={0.15} className="lg:sticky lg:top-28 lg:self-start">
+            <div className="rounded-2xl border border-ivory/15 bg-ivory/[0.03] p-6 sm:p-8">
+              <p className="text-xs font-medium uppercase tracking-wide text-ivory/60">One real climb</p>
+              <p className="mt-4 font-display text-4xl font-normal text-ivory sm:text-5xl">
+                <AnimatedStat value="0.71%" />
+              </p>
+              <p className="mt-1 text-sm text-ivory/70">Where one client&apos;s engagement started.</p>
+              <div className="my-6 h-px bg-ivory/15" aria-hidden="true" />
+              <p className="font-display text-4xl font-normal text-sandstone sm:text-5xl">
+                <AnimatedStat value="2.81%" />
+              </p>
+              <p className="mt-1 text-sm text-ivory/70">Eight weeks after climbing this exact ladder.</p>
+            </div>
+          </Reveal>
         </div>
       </Container>
     </div>

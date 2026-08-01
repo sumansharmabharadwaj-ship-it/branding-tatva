@@ -33,12 +33,19 @@ export function PackageSelector() {
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const };
 
   return (
-    <Container className="max-w-2xl text-center">
+    <Container className="max-w-3xl text-center">
       <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Desire</p>
       <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
         Where does your brand actually stand?
       </h2>
-      <div className="mx-auto mt-8 grid max-w-xl gap-3 sm:grid-cols-3">
+      {/* Was a flat, always-transparent bordered row (color only
+          appeared once a choice was already active) and a one-line
+          label with no real substance behind it. Each card now carries
+          its own package color as a quiet top accent from the start —
+          three real options presented as considered, not a plain
+          button row — and a second line pulled straight from that
+          package's own real `forWho` field, not new copy. */}
+      <div className="mx-auto mt-10 grid max-w-2xl gap-4 sm:grid-cols-3">
         {CHOICES.map((choice) => {
           const pkg = packages.find((p) => p.slug === choice.slug);
           const isActive = active === choice.slug;
@@ -47,20 +54,19 @@ export function PackageSelector() {
               key={choice.slug}
               type="button"
               onClick={() => setActive(choice.slug)}
-              className="flex flex-col items-center gap-3 rounded-lg border p-5 text-center transition-all duration-300 hover:-translate-y-0.5"
+              className="flex flex-col items-center gap-3 rounded-lg border-t-2 p-6 text-center transition-all duration-300 hover:-translate-y-0.5"
               style={{
-                borderColor: isActive ? pkg?.color : "rgba(244,239,230,0.2)",
-                backgroundColor: isActive ? blendHex(pkg?.color ?? "#B85A34", "#27221E", 18) : "transparent",
+                borderColor: pkg?.color,
+                backgroundColor: isActive ? blendHex(pkg?.color ?? "#B85A34", "#27221E", 18) : "rgba(244,239,230,0.03)",
               }}
             >
               <ElementGlyph
                 slug={choice.element}
-                className="h-6 w-6"
-                style={{ color: isActive ? pkg?.color : "rgba(244,239,230,0.6)" }}
+                className="h-7 w-7"
+                style={{ color: isActive ? pkg?.color : "rgba(244,239,230,0.7)" }}
               />
-              <span className="text-sm" style={{ color: isActive ? "#F4EFE6" : "rgba(244,239,230,0.8)" }}>
-                {choice.label}
-              </span>
+              <span className="font-display text-lg font-normal text-ivory">{choice.label}</span>
+              {pkg && <span className="text-xs text-ivory/60">{pkg.forWho}</span>}
             </button>
           );
         })}

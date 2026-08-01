@@ -142,25 +142,53 @@ export function PinnedBrandBuild() {
       <BackgroundVideo video="/videos/higgsfield-mountain-mist.mp4" poster="/images/higgsfield-mountain-mist-poster.jpg" />
       <div className="absolute inset-0 bg-soil/55" />
       <AmbientElementShader opacity={0.3} />
+      {/* Direct feedback (screenshot) that the content sat in a narrow
+          left column while most of the section's real width, on any
+          wide screen, was just empty video with nothing placed on it —
+          "the biggest issue." Same ghost watermark technique this site
+          already proves on the hero/FAQ/deliverables sections, sized to
+          actually occupy the right side rather than leaving it blank. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 select-none whitespace-nowrap font-display text-[clamp(4rem,13vw,11rem)] font-bold uppercase leading-none text-ivory/[0.05] lg:block"
+      >
+        Build
+      </span>
       <Container className="relative flex h-full flex-col justify-center">
         <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Authority</p>
         <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
           Marketing amplifies whatever is already there.
         </h2>
-        <div className="relative mt-10 max-w-2xl">
+        {/* Typography/spacing pass only — the GSAP scrub timeline below
+            targets these exact ref nodes by index, so the DOM structure
+            and ref wiring stay untouched; only the visual treatment of
+            each layer changes. Was a plain left-border row with a small
+            icon and tight type — reads more like a museum wall plate
+            now: a real ghost numeral, a wider gap, and a hairline
+            divider closing each entry instead of a colored bar doing
+            all the work alone. */}
+        <div className="relative mt-14 max-w-3xl">
           {LAYERS.map((layer, i) => (
             <div
               key={layer.slug}
               ref={(node) => {
                 layerRefs.current[i] = node;
               }}
-              className="flex items-center gap-5 border-l-2 py-3 opacity-0"
-              style={{ borderColor: layer.color, marginLeft: `${i * 18}px` }}
+              className="flex items-start gap-6 border-b border-ivory/10 py-5 opacity-0 last:border-b-0"
+              style={{ marginLeft: `${i * 18}px` }}
             >
-              <ElementGlyph slug={layer.slug} className="h-6 w-6 shrink-0" style={{ color: layer.color }} />
-              <div>
-                <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{layer.label}</p>
-                <p className="text-sm text-ivory/80">{layer.line}</p>
+              <span
+                className="font-display text-3xl font-normal leading-none opacity-40 sm:text-4xl"
+                style={{ color: layer.color }}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div className="flex items-start gap-4 pt-1">
+                <ElementGlyph slug={layer.slug} className="mt-1 h-6 w-6 shrink-0" style={{ color: layer.color }} />
+                <div>
+                  <p className="font-display text-2xl font-normal text-ivory sm:text-3xl">{layer.label}</p>
+                  <p className="mt-1.5 max-w-md text-sm text-ivory/80 sm:text-base">{layer.line}</p>
+                </div>
               </div>
             </div>
           ))}

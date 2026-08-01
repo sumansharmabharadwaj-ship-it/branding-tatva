@@ -214,10 +214,33 @@ export default function ServicesPage() {
             now a flat, consistent bg-soil/80 (was a hand-tuned 70/76/78
             spread), a real contrast increase applied as one system
             rather than guessed per clip. */}
+        {/* Media replaced per direct confirmation: the wide Himalayan
+            valley vista read as "travel," against the quiet, intimate,
+            water-driven register every Pinterest reference shares.
+            Golden-hour light rippling on dark water now (Pexels id
+            38132728, standard license) — reflection as the literal
+            visual metaphor for "where does your brand actually
+            stand." Built into the same seamless ping-pong loop as the
+            Book Call clip; WebM first, MP4 fallback. Overlay eased
+            from the blanket bg-soil/80 to a vertical gradient — the
+            gold streak stays visible between the content blocks while
+            both text zones (heading up top, package card below) sit on
+            the darker stops. */}
         <section id="desire" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
-          <BackgroundVideo video="/videos/higgsfield-himalayan-valley.mp4" poster="/images/higgsfield-himalayan-valley-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
-          <AmbientElementShader opacity={0.14} />
+          <BackgroundVideo
+            video="/videos/pexels-golden-water-reflection.mp4"
+            videoWebm="/videos/pexels-golden-water-reflection.webm"
+            poster="/images/pexels-golden-water-reflection-poster.jpg"
+          />
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(180deg, rgba(39,34,30,0.85) 0%, rgba(39,34,30,0.62) 45%, rgba(39,34,30,0.85) 100%)",
+            }}
+          />
+          <AmbientElementShader opacity={0.12} />
           <div className="relative">
             <PackageSelector />
           </div>

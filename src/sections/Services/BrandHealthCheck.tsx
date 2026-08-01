@@ -127,27 +127,43 @@ export function BrandHealthCheck() {
 
   const result = done ? bandFor(score) : null;
   const resultPackage = result ? packages.find((p) => p.slug === result.packageSlug) : undefined;
+  // Real, live-responsive companion for the right column — not a
+  // decorative fill. As real answers accumulate, this highlights which
+  // of the three actual outcome bands the current score is trending
+  // toward, before the quiz is even finished. step > 0 guards against
+  // showing a misleading "Foundation stage" trend at score 0 before any
+  // question has been answered at all.
+  const trendingBand = step > 0 ? bandFor(score) : null;
 
   return (
-    <Container className="max-w-2xl">
-      <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Self-check</p>
-      <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-        A quick brand health check.
-      </h2>
-      <p className="mt-4 text-ivory/85">
-        A real pattern, no invented analysis. {QUESTIONS.length} questions, about a minute.
-      </p>
+    <Container className="max-w-5xl">
+      {/* Direct feedback (screenshot) that this section, like the FAQ
+          before it, sat centered in a narrow column with the rest of a
+          wide viewport left empty. The quiz itself is unchanged; a real
+          companion — the three actual outcome bands, live-highlighting
+          which one the visitor's real answers are trending toward —
+          fills the second column instead, the same sticky-rail pattern
+          already proven on Risk removal. */}
+      <div className="grid gap-12 lg:grid-cols-[1fr_minmax(0,19rem)] lg:gap-16">
+        <div className="max-w-2xl">
+          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Self-check</p>
+          <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+            A quick brand health check.
+          </h2>
+          <p className="mt-4 text-ivory/85">
+            A real pattern, no invented analysis. {QUESTIONS.length} questions, about a minute.
+          </p>
 
-      {/* Progress bar — the other real, visible signal that a click
-          registered, independent of the question-swap animation. */}
-      <div className="mt-6 h-1 w-full overflow-hidden rounded-full bg-ivory/10">
-        <div
-          className="h-full rounded-full bg-sandstone transition-[width] duration-500 ease-out"
-          style={{ width: `${(Math.min(step, QUESTIONS.length) / QUESTIONS.length) * 100}%` }}
-        />
-      </div>
+          {/* Progress bar — the other real, visible signal that a click
+              registered, independent of the question-swap animation. */}
+          <div className="mt-6 h-1 w-full overflow-hidden rounded-full bg-ivory/10">
+            <div
+              className="h-full rounded-full bg-sandstone transition-[width] duration-500 ease-out"
+              style={{ width: `${(Math.min(step, QUESTIONS.length) / QUESTIONS.length) * 100}%` }}
+            />
+          </div>
 
-      <div className="relative mt-8 min-h-[260px]">
+          <div className="relative mt-8 min-h-[260px]">
         <AnimatePresence mode="wait">
           {!done ? (
             <motion.div
@@ -243,6 +259,42 @@ export function BrandHealthCheck() {
             </motion.div>
           )}
         </AnimatePresence>
+          </div>
+        </div>
+
+        <aside className="lg:sticky lg:top-28 lg:self-start">
+          <p className="text-xs font-medium uppercase tracking-wide text-ivory/60">Where this could point</p>
+          <div className="mt-4 space-y-3">
+            {BANDS.map((band) => {
+              const isTrending = trendingBand?.title === band.title;
+              return (
+                <div
+                  key={band.title}
+                  className={`rounded-lg border p-4 transition-colors duration-500 ${
+                    isTrending ? "border-sandstone bg-sandstone/10" : "border-ivory/10"
+                  }`}
+                >
+                  <p className={`font-display text-lg font-normal ${isTrending ? "text-ivory" : "text-ivory/55"}`}>
+                    {band.title}
+                  </p>
+                  <AnimatePresence>
+                    {isTrending && (
+                      <motion.p
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mt-1.5 overflow-hidden text-sm text-ivory/80"
+                      >
+                        {band.detail}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
+        </aside>
       </div>
     </Container>
   );
