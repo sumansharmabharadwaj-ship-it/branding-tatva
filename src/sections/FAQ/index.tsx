@@ -6,13 +6,13 @@ import { faqs } from "@/data/faqs";
 import { Reveal } from "@/components/Reveal";
 import { answerVariants, answerTransition, TOGGLE_ROTATION } from "./animations";
 
-export function FAQ() {
+export function FAQ({ questions }: { questions?: string[] } = {}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   return (
     <div className="divide-y divide-border">
-      {faqs.map((item, i) => {
+      {(questions ? faqs.filter((f) => questions.includes(f.question)) : faqs).map((item, i) => {
         const isOpen = openIndex === i;
         const questionId = `faq-question-${i}`;
         const answerId = `faq-answer-${i}`;

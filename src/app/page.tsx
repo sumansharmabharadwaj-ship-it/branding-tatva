@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -11,6 +12,8 @@ import { ClipReveal } from "@/components/ClipReveal";
 import { ElementsSection } from "@/sections/Elements";
 import { SelectedWorkPinned } from "@/sections/Home/SelectedWorkPinned";
 import { CinematicHero } from "@/sections/Hero";
+import { VisitorRecognition } from "@/sections/Home/VisitorRecognition";
+import { ServicePaths } from "@/sections/Home/ServicePaths";
 import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -74,15 +77,15 @@ export default function Home() {
               <span className="italic text-clay">remembered</span>.
             </>
           }
-          subhead="Every remembered brand gets five things right. Purpose. Experience. Expression. Voice. Presence. Everything else follows from there."
+          subhead="Brand positioning, identity, voice, and market presence for founders and existing businesses that need recognition to compound."
         >
-          <LinkButton href="/contact">Let&apos;s build the version of your brand people remember</LinkButton>
+          <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
           <LinkButton
             href="/work"
             variant="secondary"
             className="border-ivory/30 text-ivory hover:bg-ivory/10"
           >
-            Explore the work
+            Explore the Work
           </LinkButton>
           {/* w-full forces this onto its own line within CinematicHero's
               flex wrap CTA row instead of crowding the two buttons. It
@@ -91,9 +94,15 @@ export default function Home() {
               number (Dr. Haley Nutrition, already live on /work), never
               invented social proof. */}
           <p className="w-full text-xs text-ivory/50 sm:text-sm">
-            The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks.
+            The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Led
+            directly by Suman, start to finish.
           </p>
         </CinematicHero>
+
+        {/* Conversion architecture section two: the visitor identifies
+            their situation before anything teaches them. Selection
+            persists and Services reads it back. */}
+        <VisitorRecognition />
 
         {/* Direct feedback that this section, ElementsIntro, the two
             atmospheric quote breaks below, and Threshold all read as
@@ -107,6 +116,58 @@ export default function Home() {
             them. Real branding vocabulary instead, doing actual work
             instead of decoration. */}
         <KineticMarquee text="POSITIONING · DISTINCTIVENESS · MENTAL AVAILABILITY · CATEGORY DESIGN · BRAND SALIENCE" />
+
+        {/* Was flat bg-soil — direct feedback that the heading zone here
+            still read as a blank gap between the elements grid above and
+            the actual case-study imagery below. Fire fits a section about
+            the work that earned a second look — pixabay-flame-texture.mp4
+            (an abstract, tight flame-texture shot, distinct from the
+            elements grid's own campfire-with-wood clip so the same
+            footage doesn't repeat on this page). Was
+            higgsfield-element-fire.mp4, an indoor theatrical stage set
+            with a film projector on a table — direct feedback that this
+            broke the site's natural-outdoor-footage standard, the same
+            class of mismatch the old mislabeled Air clip had. */}
+        {/* Heading kept as its own section, separate from the pinned
+            work content below — SelectedWorkPinned relies on
+            position: sticky, which breaks the moment an ancestor has
+            overflow other than visible (this section's own
+            overflow-hidden, kept for the fire video). Same fix pattern
+            as every other pinned section on this page. */}
+        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
+          <BackgroundVideo video="/videos/pixabay-flame-texture.mp4" poster="/images/pixabay-flame-texture-poster.jpg" />
+          <div className="absolute inset-0 bg-soil/80" />
+          <Container className="relative">
+            <div className="flex items-baseline justify-between">
+              <Reveal>
+                <div>
+                  <h2 className="text-display-sm font-display font-normal text-ivory">Selected work</h2>
+                  <p className="mt-2 text-sm italic text-ivory/70">
+                    Real projects, real numbers, verified after launch. Everything below actually happened.
+                  </p>
+                </div>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <LinkButton
+                  href="/work"
+                  variant="secondary"
+                  className="border-ivory/30 text-ivory hover:bg-ivory/10"
+                >
+                  View all work
+                </LinkButton>
+              </Reveal>
+            </div>
+          </Container>
+        </section>
+
+        {/* Featured work — one large photographic entry, two quiet
+            editorial ones, not three identical cards. Same pinned
+            mechanism as PinnedSlider/PinnedJourney; see
+            SelectedWorkPinned's own comment for why it's 2 stages, not
+            3, and why neither card component conflicts with permanent
+            mounting + opacity toggling. */}
+        <SelectedWorkPinned featured={featured} />
+
 
         {/* New trust beat — direct feedback that the page went straight
             from the hero's emotional hook to the elements framework
@@ -161,74 +222,38 @@ not repeated here. */}
               </div>
             </Reveal>
 
-            {/* The framework claim: leads with real branding theory
-                before naming the elements framework, and now shares the
-                Trust beat's own video instead of cutting to plain
-                bg-soil right after it. */}
-            <Reveal delay={0.1} className="mx-auto mt-12 max-w-2xl border-t border-ivory/15 pt-10 sm:mt-16 sm:pt-12">
-              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The framework</p>
-              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                Every remembered brand made the same five decisions.
-              </h2>
-              <p className="mt-4 text-ivory/85">
-                Positioning. Distinctiveness. Narrative. Verbal identity. Salience. Memory ignores agency. It ignores choice too.
-              </p>
+            <Reveal delay={0.1} className="mx-auto mt-8 max-w-xl">
+              <LinkButton href="/about" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
+                Work directly with Suman
+              </LinkButton>
             </Reveal>
           </Container>
         </TexturedDark>
 
-        <ElementsSection elements={elements} />
+        {/* Conversion architecture section five: the three commercial
+            paths, before the framework teaches the philosophy behind
+            them. */}
+        <ServicePaths />
 
-        {/* Was flat bg-soil — direct feedback that the heading zone here
-            still read as a blank gap between the elements grid above and
-            the actual case-study imagery below. Fire fits a section about
-            the work that earned a second look — pixabay-flame-texture.mp4
-            (an abstract, tight flame-texture shot, distinct from the
-            elements grid's own campfire-with-wood clip so the same
-            footage doesn't repeat on this page). Was
-            higgsfield-element-fire.mp4, an indoor theatrical stage set
-            with a film projector on a table — direct feedback that this
-            broke the site's natural-outdoor-footage standard, the same
-            class of mismatch the old mislabeled Air clip had. */}
-        {/* Heading kept as its own section, separate from the pinned
-            work content below — SelectedWorkPinned relies on
-            position: sticky, which breaks the moment an ancestor has
-            overflow other than visible (this section's own
-            overflow-hidden, kept for the fire video). Same fix pattern
-            as every other pinned section on this page. */}
-        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
-          <BackgroundVideo video="/videos/pixabay-flame-texture.mp4" poster="/images/pixabay-flame-texture-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
-          <Container className="relative">
-            <div className="flex items-baseline justify-between">
-              <Reveal>
-                <div>
-                  <h2 className="text-display-sm font-display font-normal text-ivory">Selected work</h2>
-                  <p className="mt-2 text-sm italic text-ivory/70">
-                    Real projects, real numbers, verified after launch. Everything below actually happened.
-                  </p>
-                </div>
-              </Reveal>
-              <Reveal delay={0.1}>
-                <LinkButton
-                  href="/work"
-                  variant="secondary"
-                  className="border-ivory/30 text-ivory hover:bg-ivory/10"
-                >
-                  View all work
-                </LinkButton>
-              </Reveal>
-            </div>
+        {/* The framework claim leads directly into the five decisions —
+            philosophy taught after relevance and proof, per the
+            conversion architecture. */}
+        <section className="bg-soil pb-4 pt-16 text-center sm:pt-20">
+          <Container>
+            <Reveal>
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The framework</p>
+              <h2 className="mx-auto mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory">
+                Every remembered brand made the same five decisions.
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-ivory/85">
+                Positioning. Distinctiveness. Narrative. Verbal identity. Salience. Memory ignores agency. It ignores choice too.
+              </p>
+            </Reveal>
           </Container>
         </section>
 
-        {/* Featured work — one large photographic entry, two quiet
-            editorial ones, not three identical cards. Same pinned
-            mechanism as PinnedSlider/PinnedJourney; see
-            SelectedWorkPinned's own comment for why it's 2 stages, not
-            3, and why neither card component conflicts with permanent
-            mounting + opacity toggling. */}
-        <SelectedWorkPinned featured={featured} />
+        <ElementsSection elements={elements} />
+
 
         {/* Was a standalone mid-funnel CTA section here (plain bg-soil,
             no video) — direct, repeated feedback that this and the
@@ -357,7 +382,20 @@ not repeated here. */}
                     Common questions
                   </h2>
                   <div className="mt-8">
-                    <FAQ />
+                    <FAQ
+                      questions={[
+                        "Can you help a brand new business?",
+                        "Can you help an existing brand that already has an identity?",
+                        "Can you actually implement, or just strategize?",
+                        "How long does a project take?",
+                        "Can we work remotely?",
+                      ]}
+                    />
+                    <p className="mt-6 text-sm">
+                      <Link href="/services#risk" className="link-underline text-foreground-secondary hover:text-soil">
+                        Every question, answered on the Services journey
+                      </Link>
+                    </p>
                   </div>
                 </div>
               </Reveal>
