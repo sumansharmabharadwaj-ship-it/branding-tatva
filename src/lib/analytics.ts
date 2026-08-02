@@ -9,6 +9,7 @@ import { track as vercelTrack } from "@vercel/analytics";
 export type AnalyticsEvent =
   | "hero_booking_click"
   | "case_study_opened"
+  | "capability_selected"
   | "visitor_situation_selected"
   | "package_viewed"
   | "packages_compared"

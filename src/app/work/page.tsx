@@ -8,6 +8,7 @@ import { LinkButton } from "@/components/Button";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { WorkOpening } from "@/sections/Work/WorkOpening";
 import { WorkIndex } from "@/sections/Work/WorkIndex";
+import { CapabilityMap } from "@/sections/Work/CapabilityMap";
 import { SignatureProject } from "@/sections/Work/SignatureProject";
 import { DecisionMap } from "@/sections/Work/DecisionMap";
 import { WorkArchive } from "@/sections/Work/WorkArchive";
@@ -73,6 +74,7 @@ export default function WorkPage() {
       <ScrollProgress />
       <main id="main-content" style={{ backgroundColor: "#F2F0E8" }}>
         <WorkOpening />
+        <CapabilityMap />
         <WorkIndex projects={projects} />
         {signature && <SignatureProject project={signature} />}
         <DecisionMap />

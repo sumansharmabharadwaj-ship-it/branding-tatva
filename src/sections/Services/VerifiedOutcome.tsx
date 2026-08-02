@@ -19,8 +19,10 @@ import { projects } from "@/data/projects";
 export function VerifiedOutcome() {
   const proof = projects.find((p) => p.slug === "dr-haley-nutrition");
   if (!proof?.stats) return null;
-  const lead = proof.stats.find((s) => s.value === "1,350%") ?? proof.stats[0];
-  const rest = proof.stats.filter((s) => s !== lead);
+  // Proof allocation (WORK_SERVICES_CONVERSION_PLAN.md §1): Services
+  // shows THE DECISION and one stat; the full four stat narrative
+  // lives only on the Work page's signature chapter.
+  const lead = proof.stats.find((s) => s.value === "104%") ?? proof.stats[0];
   return (
     <Container className="max-w-6xl">
       <Reveal>
@@ -38,19 +40,13 @@ export function VerifiedOutcome() {
           <p className="mt-5 max-w-md text-sm leading-relaxed text-ivory/70">{proof.hook}</p>
         </Reveal>
         <div>
-          {rest.map((stat, i) => (
-            <Reveal key={stat.label} delay={i * 0.08}>
-              <div className="flex items-baseline justify-between gap-6 border-t border-ivory/15 py-5">
-                <p className="text-sm leading-relaxed text-ivory/80">{stat.label}</p>
-                <p className="shrink-0 font-display text-3xl font-normal text-ivory sm:text-4xl">
-                  <AnimatedStat value={stat.value} />
-                </p>
-              </div>
-            </Reveal>
-          ))}
-          <Reveal delay={0.24}>
-            <div className="flex flex-wrap gap-3 border-t border-ivory/15 pt-6">
-              <LinkButton href={`/work/${proof.slug}`}>Read the full case study</LinkButton>
+          <Reveal>
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">The decision</p>
+            <p className="mt-3 max-w-xl text-base leading-relaxed text-ivory/90">{proof.strategy}</p>
+          </Reveal>
+          <Reveal delay={0.15}>
+            <div className="mt-8 flex flex-wrap gap-3 border-t border-ivory/15 pt-6">
+              <LinkButton href={`/work/${proof.slug}`}>See the full decision trail</LinkButton>
               <LinkButton href="/work" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
                 Explore the Work
               </LinkButton>

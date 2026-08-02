@@ -15,7 +15,7 @@ import { WORK, EASE_ORGANIC } from "@/sections/Work/palette";
 // material (two case study stills layered like proofs on a desk) with
 // a two to four pixel cursor drift on pointer devices. No loader, no
 // delayed readability: text renders first, media settles around it.
-const LINES = ["The work begins", "where recognition", "becomes unclear."];
+const LINES = ["The work is easier", "to judge when the", "decisions are visible."];
 
 export function WorkOpening() {
   const prefersReducedMotion = useReducedMotion();
@@ -100,7 +100,7 @@ export function WorkOpening() {
               className="mt-6 max-w-md text-base leading-relaxed"
               style={{ color: WORK.wood }}
             >
-              Selected work in positioning, verbal identity, brand architecture, digital expression, and recognition.
+              Selected engagements, independent studies, and strategic experiments across positioning, identity, language, digital experience, content, and recognition.
             </motion.p>
             <motion.div
               initial={prefersReducedMotion ? undefined : { opacity: 0 }}
