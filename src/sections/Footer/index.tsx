@@ -37,18 +37,14 @@ export function Footer() {
           way every other section-to-section boundary on the site
           already works. */}
 
-      {/* The film's coda (storyboard footer band + Suman's own pick,
-          Pexels 37342950): the dandelion field at golden hour, seeds
-          carried into the world — every page now ends inside the
-          living ecosystem instead of cutting to the old mountain
-          silhouettes, which read as a different movie after the
-          nature-documentary chapters above. Slowed, forward-only
-          dissolve loop, cinematic center crop from the 4K portrait
-          source. */}
+      {/* Backdrop restored to the original jagged peaks on direct
+          request; the dandelion release now lives in the Deliverables
+          chapter on Services instead. imagePosition biased down keeps
+          the pale sky band out of the section's top edge. */}
       <TexturedDark
-        image="/images/pexels-dandelion-release-poster.jpg"
-        video="/videos/pexels-dandelion-release.mp4"
-        videoWebm="/videos/pexels-dandelion-release.webm"
+        image="/images/own-jagged-peaks.jpg"
+        video="/videos/own-jagged-peaks.mp4"
+        imagePosition="center 85%"
         className="py-12 sm:py-14"
       >
         <Container className="relative">

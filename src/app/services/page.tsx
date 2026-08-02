@@ -441,9 +441,9 @@ export default function ServicesPage() {
           <BackgroundVideo
             parallax
             push
-            video="/videos/pexels-leaf-veins.mp4"
-            videoWebm="/videos/pexels-leaf-veins.webm"
-            poster="/images/pexels-leaf-veins-poster.jpg"
+            video="/videos/pexels-dandelion-release.mp4"
+            videoWebm="/videos/pexels-dandelion-release.webm"
+            poster="/images/pexels-dandelion-release-poster.jpg"
           />
           <div
             className="absolute inset-0"
