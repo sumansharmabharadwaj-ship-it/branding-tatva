@@ -565,6 +565,7 @@ export default function ServicesPage() {
             videoWebm="/videos/pexels-fog-sun-forest.webm"
             poster="/images/pexels-fog-sun-forest-poster.jpg"
           />
+          <DustMotes />
           {/* Overlay lightened through the middle (direct feedback that
               the fog disappeared behind it) — the filmed mist now reads
               through the whole reading zone, while the top edge and the

@@ -47,25 +47,55 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
   const [openQuestion, setOpenQuestion] = useState<string | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
+  // Guided-discovery pacing (direct creative direction: "a conversation
+  // unfolding, chapters not paragraphs"): each group carries its own
+  // rhythm — the first arrives slow and quiet, the second brisker, the
+  // third with a longer anticipatory rise — so the descent through the
+  // section reads as pacing choices, never one repeated entrance. All
+  // rect/viewport-driven (whileInView), content always present in the
+  // DOM: the reveal choreography can stall at worst into fully-visible
+  // static content, never a blank frame (the documented failure mode of
+  // the abandoned sticky-scrub approach).
+  const PACE = [
+    { dur: 0.9, stagger: 0.13, rise: 14 },
+    { dur: 0.6, stagger: 0.07, rise: 22 },
+    { dur: 0.75, stagger: 0.1, rise: 18 },
+  ] as const;
+
   return (
-    <div className="space-y-10">
-      {/* Phase 2 motion direction — "the calm chapter": entrances here
-          run slower and further apart than anywhere earlier on the
-          page, the motion equivalent of the room going quiet before a
-          decision. */}
-      {GROUPS.map((group, gi) => (
+    <div className="space-y-14 lg:space-y-16">
+      {GROUPS.map((group, gi) => {
+        const pace = PACE[gi] ?? PACE[0];
+        return (
         <Reveal key={group.label} delay={gi * 0.14} duration={0.9}>
-          {/* Phase 1 typography: dark-variant group labels moved off
-              warm sandstone (this section's slate mood is the page's
-              coolest chapter — a warm label on every group re-warmed
-              it) onto a cool quiet ivory, with wider editorial
-              tracking. Questions read a step larger; answers at full
-              text-base. */}
-          <p
-            className={`text-xs font-medium uppercase tracking-[0.18em] ${dark ? "text-ivory/70" : "text-action-secondary"}`}
-          >
-            {group.label}
-          </p>
+          {/* The chapter heading assembles instead of appearing: the
+              index number is already settled, the label condenses from
+              wide scattered tracking into its final editorial set, and
+              an accent hairline grows out from under it — typography
+              arriving, not fading in. */}
+          <div className="flex items-baseline gap-3">
+            <span className={`font-display text-sm ${dark ? "text-ivory/50" : "text-action-secondary"}`} aria-hidden="true">
+              0{gi + 1}
+            </span>
+            <motion.p
+              className={`text-xs font-medium uppercase ${dark ? "text-ivory/70" : "text-action-secondary"}`}
+              initial={prefersReducedMotion ? { letterSpacing: "0.18em" } : { letterSpacing: "0.42em", opacity: 0 }}
+              whileInView={prefersReducedMotion ? undefined : { letterSpacing: "0.18em", opacity: 1 }}
+              viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+              transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {group.label}
+            </motion.p>
+          </div>
+          <motion.div
+            aria-hidden="true"
+            className={`mt-2 h-px w-10 ${dark ? "bg-[#A0A690]/60" : "bg-action-secondary/50"}`}
+            style={{ originX: 0 }}
+            initial={prefersReducedMotion ? undefined : { scaleX: 0 }}
+            whileInView={prefersReducedMotion ? undefined : { scaleX: 1 }}
+            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          />
           {/* Interaction language — "the fog clearing", this chapter's
               own motion identity: dividers draw themselves in like
               horizon lines emerging from mist, a soft glow blooms under
@@ -85,10 +115,10 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
                 <motion.div
                   key={item.question}
                   className="py-1"
-                  initial={prefersReducedMotion ? undefined : { opacity: 0, y: 18, filter: "blur(4px)" }}
+                  initial={prefersReducedMotion ? undefined : { opacity: 0, y: pace.rise, filter: "blur(4px)" }}
                   whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
                   viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-                  transition={{ duration: 0.65, delay: 0.1 + qi * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: pace.dur, delay: 0.1 + qi * pace.stagger, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <motion.div
                     aria-hidden="true"
@@ -109,18 +139,39 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
                     aria-expanded={isOpen}
                     onClick={() => setOpenQuestion(isOpen ? null : item.question)}
                   >
-                    <span className="transition-transform duration-500 ease-out group-hover:translate-x-1.5">
-                      {item.question}
+                    <span className="flex w-full items-center justify-between">
+                      <span className="transition-transform duration-500 ease-out group-hover:translate-x-1.5">
+                        {item.question}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className={`ml-4 shrink-0 text-lg transition-all duration-300 group-hover:opacity-100 ${
+                          dark ? "text-ivory/70 opacity-70" : "text-action-primary"
+                        }`}
+                        style={{ transform: isOpen ? TOGGLE_ROTATION.open : TOGGLE_ROTATION.closed }}
+                      >
+                        +
+                      </span>
                     </span>
-                    <span
-                      aria-hidden="true"
-                      className={`ml-4 shrink-0 text-lg transition-all duration-300 group-hover:opacity-100 ${
-                        dark ? "text-ivory/70 opacity-70" : "text-action-primary"
-                      }`}
-                      style={{ transform: isOpen ? TOGGLE_ROTATION.open : TOGGLE_ROTATION.closed }}
-                    >
-                      +
-                    </span>
+                    {/* Hover reveals another layer of understanding
+                        (direct creative direction): before the click,
+                        resting the cursor on a question breathes out the
+                        answer's own first sentence as a quiet whisper —
+                        a preview drawn from the real answer text, hidden
+                        again once the full answer is open. CSS-only so
+                        it costs nothing and degrades to simply absent on
+                        touch devices, where tapping already opens the
+                        full answer directly. */}
+                    {!isOpen && (
+                      <span
+                        aria-hidden="true"
+                        className={`block max-h-0 overflow-hidden pr-10 text-sm font-normal leading-relaxed opacity-0 transition-all duration-500 ease-out group-hover:mt-1.5 group-hover:max-h-16 group-hover:opacity-60 ${
+                          dark ? "text-ivory" : "text-foreground-secondary"
+                        }`}
+                      >
+                        {item.answer.split(/(?<=\.)\s/)[0]}
+                      </span>
+                    )}
                   </button>
                   <AnimatePresence initial={false}>
                     {isOpen && (
@@ -148,7 +199,8 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
             })}
           </div>
         </Reveal>
-      ))}
+        );
+      })}
     </div>
   );
 }
