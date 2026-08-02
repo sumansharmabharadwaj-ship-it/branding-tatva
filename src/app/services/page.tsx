@@ -304,7 +304,18 @@ export default function ServicesPage() {
         {/* Mood: MIST — blue-grey, the coolest chapter so far, directly
             after Stakes' dry stone. See MOOD in sectionWash.ts. */}
         <section id="education" className="relative scroll-mt-24 overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
-          <BackgroundVideo parallax video="/videos/pixabay-sea-of-fog-sunrise.mp4" poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg" />
+          {/* Approved Positioning footage (Pexels 6134369, standard
+              license), cool graded per direct art direction: the golden
+              sunrise pulled to mist blue, graphite, and silver dawn so
+              the chapter reads "the only peak above uncertainty" —
+              summits emerging above the cloud inversion, the ladder's
+              own destination — rather than a landscape postcard. */}
+          <BackgroundVideo
+            parallax
+            video="/videos/pexels-summit-inversion.mp4"
+            videoWebm="/videos/pexels-summit-inversion.webm"
+            poster="/images/pexels-summit-inversion-poster.jpg"
+          />
           <div
             className="absolute inset-0"
             aria-hidden="true"
