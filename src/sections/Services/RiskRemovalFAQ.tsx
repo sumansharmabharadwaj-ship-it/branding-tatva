@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { faqs } from "@/data/faqs";
 import { answerVariants, answerTransition, TOGGLE_ROTATION } from "@/sections/FAQ/animations";
@@ -62,12 +62,85 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
     { dur: 0.75, stagger: 0.1, rise: 18 },
   ] as const;
 
+  return <Trail dark={dark} openQuestion={openQuestion} setOpenQuestion={setOpenQuestion} prefersReducedMotion={prefersReducedMotion} PACE={PACE} />;
+}
+
+// The journey layout (built to the approved reference board): question
+// stations sit alternately left and right of a winding trail that draws
+// itself with scroll — a golden-sage path through the meadow, glowing
+// nodes igniting as each station is reached. The trail IS the progress
+// tracker; nothing is a list. Stations carry their own glass so the
+// meadow stays luminous everywhere text is absent (readability system).
+// All rect/scroll-driven — content always present, worst case fully
+// visible and static.
+const TRAIL_D = "M50 0 C 18 130, 82 230, 50 360 C 20 480, 80 600, 50 720 C 24 830, 74 920, 50 1000";
+
+function Trail({
+  dark,
+  openQuestion,
+  setOpenQuestion,
+  prefersReducedMotion,
+  PACE,
+}: {
+  dark: boolean;
+  openQuestion: string | null;
+  setOpenQuestion: (q: string | null) => void;
+  prefersReducedMotion: boolean | null;
+  PACE: readonly { dur: number; stagger: number; rise: number }[];
+}) {
+  const trailRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: trailRef, offset: ["start 0.75", "end 0.5"] });
+  const drawnRaw = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const drawn = useSpring(drawnRaw, { stiffness: 55, damping: 20 });
+
   return (
-    <div className="space-y-14 lg:space-y-16">
+    <div ref={trailRef} className="relative">
+      {/* The trail — a faint track the full journey ahead, and the lit
+          path the visitor has earned so far, drawn by scroll. Desktop
+          only; on mobile stations stack and the trail steps aside. */}
+      <svg
+        className="pointer-events-none absolute inset-y-0 left-1/2 hidden h-full w-32 -translate-x-1/2 lg:block"
+        viewBox="0 0 100 1000"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path d={TRAIL_D} stroke="rgba(160,166,144,0.2)" strokeWidth="1.5" fill="none" vectorEffect="non-scaling-stroke" />
+        <motion.path
+          d={TRAIL_D}
+          stroke="#C9CDB4"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+          style={prefersReducedMotion ? undefined : { pathLength: drawn }}
+        />
+      </svg>
+      <div className="space-y-14 lg:space-y-28">
       {GROUPS.map((group, gi) => {
         const pace = PACE[gi] ?? PACE[0];
         return (
-        <Reveal key={group.label} delay={gi * 0.14} duration={0.9}>
+        <Reveal
+          key={group.label}
+          delay={gi * 0.14}
+          duration={0.9}
+          className={`relative lg:w-[45%] ${gi % 2 === 1 ? "lg:ml-auto" : ""}`}
+        >
+          {/* Station node: a firefly resting where the card meets the
+              trail, breathing while its station is the active stop. */}
+          <motion.span
+            aria-hidden="true"
+            className={`absolute top-7 hidden h-2 w-2 rounded-full bg-[#E4D9B4] lg:block ${gi % 2 === 1 ? "-left-4" : "-right-4"}`}
+            animate={prefersReducedMotion ? undefined : { opacity: [0.4, 1, 0.4], boxShadow: [
+              "0 0 6px rgba(228,217,180,0.4)",
+              "0 0 16px rgba(228,217,180,0.9)",
+              "0 0 6px rgba(228,217,180,0.4)",
+            ] }}
+            transition={{ duration: 3.1 + gi * 0.7, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <div
+            className="rounded-2xl p-6 backdrop-blur-md sm:p-7"
+            style={dark ? { backgroundColor: "rgba(20,26,23,0.55)" } : undefined}
+          >
           {/* The chapter heading assembles instead of appearing: the
               index number is already settled, the label condenses from
               wide scattered tracking into its final editorial set, and
@@ -221,9 +294,11 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
               );
             })}
           </div>
+          </div>
         </Reveal>
         );
       })}
+      </div>
     </div>
   );
 }
