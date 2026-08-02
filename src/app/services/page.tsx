@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies, headers } from "next/headers";
 import { preload } from "react-dom";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
@@ -12,6 +13,8 @@ import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { DecisionClearing } from "@/sections/Services/DecisionClearing";
 import { SituationPath } from "@/sections/Services/SituationPath";
 import { RecognitionAudit } from "@/sections/Services/RecognitionAudit";
+import { PricingProvider } from "@/components/PricingProvider";
+import { REGION_COOKIE, isRegion, regionFromCountry } from "@/data/pricing";
 import { VerifiedOutcome } from "@/sections/Services/VerifiedOutcome";
 import { ClearingMist } from "@/sections/Services/ClearingMist";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
@@ -70,7 +73,16 @@ const JUMP_ITEMS = [
   { href: "#risk", label: "FAQ" },
 ];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  // Market aware pricing (governing bible §10): the visitor's explicit
+  // region cookie always wins; otherwise Vercel's country header picks
+  // the starting price book; unknown falls to rest of world. Detection
+  // is server side so the first paint already shows the right
+  // currency; the manual selector beside the prices stays in control.
+  const cookieStore = await cookies();
+  const hdrs = await headers();
+  const savedRegion = cookieStore.get(REGION_COOKIE)?.value;
+  const region = isRegion(savedRegion) ? savedRegion : regionFromCountry(hdrs.get("x-vercel-ip-country"));
   // The hero poster is the page's first paint — a high priority preload
   // hint so the awakening scene arrives before the veil starts lifting.
   preload("/images/pexels-aspen-sunburst-poster.jpg", { as: "image", fetchPriority: "high" });
@@ -92,6 +104,7 @@ export default function ServicesPage() {
           charcoal on charcoal, invisible. The parchment chapter still
           paints its own bg-background-alt deliberately. */}
       <main id="main-content" style={{ backgroundColor: MOOD.charcoal }}>
+        <PricingProvider initialRegion={region}>
         {/* Curiosity — the opening objection: why care about branding at
             all. Two short opinionated lines build the claim (Framer
             Motion AnimatePresence, CyclingStatement.tsx) before handing
@@ -747,6 +760,7 @@ export default function ServicesPage() {
           </div>
           <StrategyRoomCTA />
         </TexturedDark>
+        </PricingProvider>
       </main>
       <Footer />
       <SectionJumpNav items={JUMP_ITEMS} />

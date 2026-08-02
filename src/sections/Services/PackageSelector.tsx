@@ -9,6 +9,9 @@ import { packages } from "@/data/services";
 import { projects } from "@/data/projects";
 import { blendHex } from "@/lib/sectionWash";
 import { track } from "@/lib/analytics";
+import { usePricing } from "@/components/PricingProvider";
+import { RegionSelector } from "@/components/RegionSelector";
+import { formatPrice, type PackageSlug } from "@/data/pricing";
 
 // The brief's "interactive decision moment" idea, built honestly: three
 // buttons map to the site's three real packages (data/services.ts) —
@@ -36,6 +39,10 @@ export function PackageSelector() {
   const proof = activePackage?.proofSlug ? projects.find((p) => p.slug === activePackage.proofSlug) : undefined;
 
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const };
+  // Location aware pricing: figures come from the approved price book
+  // (data/pricing.ts) in the visitor's region, never from the GBP
+  // fields in services.ts, which remain only as the package registry.
+  const { region } = usePricing();
 
   return (
     <Container className="max-w-3xl text-center">
@@ -93,7 +100,8 @@ export function PackageSelector() {
         })}
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+        <RegionSelector />
         <button
           type="button"
           aria-pressed={compare}
@@ -128,9 +136,9 @@ export function PackageSelector() {
                 >
                   <p className="font-display text-lg font-normal text-ivory">{pkg.name}</p>
                   <div className="mt-1 flex items-baseline gap-1.5">
-                    {pkg.billing === "monthly" && <span className="text-xs text-ivory/70">from</span>}
+                    <span className="text-xs text-ivory/70">{pkg.billing === "monthly" ? "from" : "begins at"}</span>
                     <span className="font-display text-xl font-normal text-ivory">
-                      £{pkg.price.toLocaleString("en-GB")}
+                      {formatPrice(region, pkg.slug as PackageSlug)}
                     </span>
                     {pkg.billing === "monthly" && <span className="text-xs text-ivory/70">/mo</span>}
                   </div>
@@ -166,12 +174,15 @@ export function PackageSelector() {
             >
               <p className="font-display text-xl font-normal text-ivory">{activePackage.name}</p>
               <div className="mt-2 flex items-baseline gap-1.5">
-                {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">from</span>}
+                <span className="text-sm text-ivory/70">
+                  {activePackage.billing === "monthly" ? "from" : "Projects begin at"}
+                </span>
                 <span className="font-display text-2xl font-normal text-ivory">
-                  £{activePackage.price.toLocaleString("en-GB")}
+                  {formatPrice(region, activePackage.slug as PackageSlug)}
                 </span>
                 {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">/mo</span>}
               </div>
+              <p className="mt-1 text-xs text-ivory/60">Final quotation follows the discovery call.</p>
               <p className="mt-4 text-ivory/90">{activePackage.description}</p>
               {/* "Open folder" stagger reveal — each real include item
                   animates in with a short delay instead of appearing as
@@ -212,6 +223,13 @@ export function PackageSelector() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* The governing bible's required transparency note, verbatim. */}
+      <p className="mx-auto mt-8 max-w-lg text-xs leading-relaxed text-ivory/55">
+        Prices are localised by market and shown in the selected currency. Final scope and quotation are confirmed
+        after the discovery conversation. Taxes and third party production, media, printing, development, travel or
+        licensing are listed separately where relevant.
+      </p>
     </Container>
   );
 }

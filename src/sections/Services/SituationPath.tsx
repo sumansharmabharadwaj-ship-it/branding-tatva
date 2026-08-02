@@ -68,7 +68,7 @@ export function SituationPath() {
 
   function pick(id: string) {
     setSelected((prev) => (prev === id ? prev : id));
-    track("situation_selected", { situation: id, page: "services" });
+    track("visitor_situation_selected", { situation: id, page: "services" });
     setCarried(false);
   }
 

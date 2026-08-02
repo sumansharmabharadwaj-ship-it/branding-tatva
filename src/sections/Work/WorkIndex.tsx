@@ -51,7 +51,7 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                     <Link
                       href={`/work/${project.slug}`}
                       onMouseEnter={() => setActive(i)}
-                      onClick={() => track("case_study_click", { project: project.slug })}
+                      onClick={() => track("case_study_opened", { project: project.slug })}
                       onFocus={() => setActive(i)}
                       className="group grid grid-cols-[2.5rem_1fr] gap-4 py-6 transition-all duration-500 focus-visible:outline focus-visible:outline-2 sm:grid-cols-[3rem_1fr_auto] sm:gap-6 sm:py-7"
                       style={{

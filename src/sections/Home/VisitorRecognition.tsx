@@ -53,7 +53,7 @@ export function VisitorRecognition() {
 
   function pick(id: string) {
     setSelected(id);
-    track("situation_selected", { situation: id, page: "home" });
+    track("visitor_situation_selected", { situation: id, page: "home" });
     try {
       window.localStorage.setItem(SITUATION_KEY, id);
     } catch {}

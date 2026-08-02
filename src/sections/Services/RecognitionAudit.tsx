@@ -64,7 +64,7 @@ export function RecognitionAudit() {
         setStatus("error");
         return;
       }
-      track("audit_requested");
+      track("lead_magnet_requested");
       setStatus("done");
     } catch {
       setError("The server was unreachable. Check your connection and try again.");

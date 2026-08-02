@@ -8,13 +8,13 @@ import { track as vercelTrack } from "@vercel/analytics";
 // swallows errors so measurement can never break an interaction.
 export type AnalyticsEvent =
   | "hero_booking_click"
-  | "case_study_click"
-  | "situation_selected"
+  | "case_study_opened"
+  | "visitor_situation_selected"
   | "package_viewed"
   | "packages_compared"
   | "health_check_started"
   | "health_check_completed"
-  | "audit_requested"
+  | "lead_magnet_requested"
   | "faq_opened"
   | "calendar_opened"
   | "booking_completed";
