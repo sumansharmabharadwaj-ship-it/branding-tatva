@@ -29,6 +29,8 @@ export function AboutSplitHero({
   body,
   ctaHref,
   ctaLabel,
+  secondaryCtaHref,
+  secondaryCtaLabel,
   video,
   poster,
   bgVideo,
@@ -39,6 +41,10 @@ export function AboutSplitHero({
   body: string;
   ctaHref: string;
   ctaLabel: string;
+  // Optional second action — the redesign brief wants the authority
+  // hero to carry both the booking path and the work path.
+  secondaryCtaHref?: string;
+  secondaryCtaLabel?: string;
   video: string;
   poster: string;
   bgVideo: string;
@@ -167,7 +173,16 @@ export function AboutSplitHero({
         </div>
 
         <Reveal delay={0.2} className="mt-9">
-          <LinkButton href={ctaHref}>{ctaLabel}</LinkButton>
+          <div className="flex flex-wrap gap-3">
+            <LinkButton href={ctaHref} trackEvent="hero_booking_click" trackProps={{ page: "about" }}>
+              {ctaLabel}
+            </LinkButton>
+            {secondaryCtaHref && secondaryCtaLabel && (
+              <LinkButton href={secondaryCtaHref} variant="secondary" className="border-ivory/40 text-ivory hover:bg-ivory/10">
+                {secondaryCtaLabel}
+              </LinkButton>
+            )}
+          </div>
         </Reveal>
       </motion.div>
 

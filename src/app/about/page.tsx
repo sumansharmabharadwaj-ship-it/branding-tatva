@@ -11,6 +11,12 @@ import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { MeadowClosing } from "@/components/MeadowClosing";
 import { DesignRationaleGrid } from "@/components/DesignRationaleGrid";
 import { PinnedWorkingMethod } from "@/sections/About/PinnedWorkingMethod";
+import { PointOfView } from "@/sections/About/PointOfView";
+import { Convergence } from "@/sections/About/Convergence";
+import { WorkingDirectly } from "@/sections/About/WorkingDirectly";
+import { Evidence } from "@/sections/About/Evidence";
+import { Behaviours } from "@/sections/About/Behaviours";
+import { LinkButton } from "@/components/Button";
 import { aboutIntro, credentials } from "@/data/about";
 import { elements } from "@/data/elements";
 import { philosophy } from "@/data/philosophy";
@@ -40,12 +46,22 @@ export default function AboutPage() {
           headline={aboutIntro.opening}
           body={elements[0].poetic}
           ctaHref="/contact"
-          ctaLabel="Let's build the version of your brand people remember"
+          ctaLabel="Book a Brand Strategy Session"
+          secondaryCtaHref="/work"
+          secondaryCtaLabel="Explore the Work"
           video="/videos/own-companions-split.mp4"
           poster="/images/own-companions-split-poster.jpg"
           bgVideo="/videos/about-hero-bg-meadow.mp4"
           bgPoster="/images/about-hero-bg-meadow-poster.jpg"
         />
+
+        {/* Point of view — the redesign brief's chapter two: three
+            claims, each tied to a real engagement. Sits directly after
+            the authority hero so the practice's stance arrives before
+            its story. */}
+        <section className="bg-soil py-16 sm:py-24">
+          <PointOfView />
+        </section>
 
         {/* Was own-alpenglow-peak.mp4 under an 80%-opaque Sandstone tint —
             direct feedback that the video read as barely-there under that
@@ -74,6 +90,14 @@ export default function AboutPage() {
               ))}
             </div>
           </Container>
+        </section>
+
+        {/* The interdisciplinary convergence — psychology and language
+            traveling toward each other through measured scroll progress
+            and meeting as brand strategy. Typographic, sticky, zero
+            WebGL; reduced motion gets the resolved state statically. */}
+        <section className="bg-soil">
+          <Convergence />
         </section>
 
         {/* Direct feedback flagged this quote break (higgsfield-stream-
@@ -108,6 +132,13 @@ export default function AboutPage() {
             comment for why this section's own overflow-hidden (kept
             for the redwood-canopy video) is safe to wrap this way. */}
         <PinnedWorkingMethod />
+
+        {/* The terms of working directly together — the brief's five
+            real commitments, stated as things a client can hold the
+            practice to. */}
+        <section className="bg-soil py-16 sm:py-24">
+          <WorkingDirectly />
+        </section>
 
         {/* Bold solid Soil, not the Phase-5 space tint — matches the
             grid-of-cards=soil rule now applied to every other card-grid
@@ -152,6 +183,17 @@ export default function AboutPage() {
               </div>
             </div>
           </Container>
+        </section>
+
+        {/* Evidence — ambiguity, decision, observed result for three
+            selected cases, all from recorded project data. */}
+        <section className="bg-soil py-16 sm:py-24">
+          <Evidence />
+        </section>
+
+        {/* Behaviours instead of values. */}
+        <section className="bg-soil pb-16 sm:pb-24">
+          <Behaviours />
         </section>
 
         {/* Where the five elements themselves come from, sitting right
@@ -295,6 +337,21 @@ export default function AboutPage() {
             scroll through — see MeadowClosing's own comment for why
             this replaced two rejected WebGL attempts at this section. */}
         <MeadowClosing />
+
+        {/* Booking — the page's last word is an invitation, right after
+            the personal closing, per the required order. */}
+        <section className="bg-soil pb-24 pt-4 text-center sm:pb-28">
+          <Container>
+            <p className="mx-auto max-w-md text-ivory/85">
+              The next documented decision could be about your brand.
+            </p>
+            <div className="mt-6">
+              <LinkButton href="/contact" trackEvent="hero_booking_click" trackProps={{ page: "about", position: "closing" }}>
+                Book a Brand Strategy Session
+              </LinkButton>
+            </div>
+          </Container>
+        </section>
       </main>
       <Footer />
     </>
