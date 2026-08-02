@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { preload } from "react-dom";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -65,6 +66,9 @@ const JUMP_ITEMS = [
 ];
 
 export default function ServicesPage() {
+  // The hero poster is the page's first paint — a high priority preload
+  // hint so the awakening scene arrives before the veil starts lifting.
+  preload("/images/pexels-aspen-sunburst-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
