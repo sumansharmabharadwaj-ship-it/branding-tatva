@@ -398,12 +398,28 @@ export default function ServicesPage() {
             drifting lamp light on a charcoal-bronze desk, the palette
             carrying the color story between Desire's cold deep water
             and Health Check's forest instead of interrupting it. */}
-        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
-          {/* Lamp light — two warm glows drifting slowly through the
-              room on the mist keyframes (constant blur, transform and
-              opacity only): the desk lamp upper left, a fainter bronze
-              answer lower right. The room's continuous life. */}
+        {/* No overflow-hidden on the section itself — the discovery
+            sequence inside DeliverablesReveal uses position: sticky,
+            which an overflow ancestor silently breaks (the documented
+            sticky lesson). Clipping is scoped to the decorative
+            wrapper below instead. */}
+        <section className="relative py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
+          {/* Decorative atmosphere, clipped in its own wrapper: lamp
+              glows, dust, drifting grain, and the oversized watermark. */}
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+            <DustMotes />
+            <div
+              className="grain-drift absolute -inset-[4%] opacity-[0.4]"
+              style={{
+                backgroundImage:
+                  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' fill='%23F4EFE6' filter='url(%23n)'/%3E%3C/svg%3E\")",
+              }}
+            />
+            <ParallaxDrift distance={55} className="absolute -top-4 right-0 select-none sm:-top-8">
+              <span className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.05]">
+                Receive
+              </span>
+            </ParallaxDrift>
             <div
               className="mist-layer-a absolute -left-[12%] -top-[8%] h-[60%] w-[55%] rounded-full"
               style={{
@@ -421,31 +437,6 @@ export default function ServicesPage() {
               }}
             />
           </div>
-          {/* Floating dust in the lamp light — the same motes device the
-              site's cinematic cards already use, here as the room's
-              airborne layer. */}
-          <DustMotes />
-          {/* Paper-grain air in the room — same inline SVG noise device,
-              now light specks at low opacity against the dark ground,
-              drifting almost imperceptibly (grain-drift keyframes) so
-              even the texture itself is alive. Oversized so the drift
-              never exposes an edge. */}
-          <div
-            aria-hidden="true"
-            className="grain-drift pointer-events-none absolute -inset-[4%] opacity-[0.4]"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' fill='%23F4EFE6' filter='url(%23n)'/%3E%3C/svg%3E\")",
-            }}
-          />
-          <ParallaxDrift distance={55} className="pointer-events-none absolute -top-4 right-0 select-none sm:-top-8">
-            <span
-              aria-hidden="true"
-              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.05]"
-            >
-              Receive
-            </span>
-          </ParallaxDrift>
           {/* Scene dissolve: Desire's deep water hands into the warm
               study — cold blue releasing into lamplight. */}
           <SceneVeil color="#0F151C" heightClass="h-[15vh]" />
@@ -699,6 +690,10 @@ export default function ServicesPage() {
             />
           </div>
           <StrategyRoomCTA />
+          {/* The film's final frame settles into darkness before the
+              footer — the last remaining hard cut on the page,
+              found in the Experience Director walkthrough. */}
+          <SceneHandoff color="#27221E" heightClass="h-[18vh]" />
         </TexturedDark>
       </main>
       <Footer />
