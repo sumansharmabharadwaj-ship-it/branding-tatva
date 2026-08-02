@@ -468,7 +468,21 @@ export default function ServicesPage() {
             break; the stream clip's mossy greens finally read as green
             instead of being re-warmed to amber by a soil overlay. */}
         <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.forest }}>
-          <BackgroundVideo parallax video="/videos/higgsfield-forest-stream.mp4" poster="/images/higgsfield-forest-stream-poster.jpg" />
+          {/* Media replaced per direct approval (Pexels id 38507614,
+              standard license): near-black still water carrying green
+              foliage reflections — the chapter's own question made
+              visual, a self assessment as looking into still water,
+              replacing the generic forest stream. Trimmed to the
+              strongest 8s, slowed 0.85x, graded a step darker and
+              quieter into the forest mood, built into the same
+              seamless ping-pong loop as the other Pexels assets.
+              2.0MB MP4 / 0.7MB WebM. */}
+          <BackgroundVideo
+            parallax
+            video="/videos/pexels-still-water-reflection.mp4"
+            videoWebm="/videos/pexels-still-water-reflection.webm"
+            poster="/images/pexels-still-water-reflection-poster.jpg"
+          />
           <div
             className="absolute inset-0"
             aria-hidden="true"
