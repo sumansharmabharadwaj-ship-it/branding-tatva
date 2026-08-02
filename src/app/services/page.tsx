@@ -11,6 +11,7 @@ import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { RiskRemovalFAQ } from "@/sections/Services/RiskRemovalFAQ";
 import { ClearingMist } from "@/sections/Services/ClearingMist";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
+import { SceneHandoff } from "@/sections/Services/SceneHandoff";
 import { CyclingStatement } from "@/sections/Services/CyclingStatement";
 import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
 import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
@@ -215,11 +216,7 @@ export default function ServicesPage() {
               chapter opens with the same device — a veil of the
               PREVIOUS chapter's mood color dissolving into its own —
               one continuous color journey instead of stacked blocks. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-[20vh]"
-            style={{ background: "linear-gradient(180deg, rgba(23,24,26,0) 0%, #17181A 100%)" }}
-          />
+          <SceneHandoff color="#17181A" heightClass="h-[24vh]" />
         </PhotoHero>
 
         {/* Authority — the one deliberate ScrollTrigger.pin section. */}
@@ -227,8 +224,9 @@ export default function ServicesPage() {
             is never transformed by GSAP, and therefore always spans the
             full viewport regardless of what the pin does to its child.
             See the main-level comment above for the full root cause. */}
-        <section id="authority" className="scroll-mt-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section id="authority" className="relative scroll-mt-24" style={{ backgroundColor: MOOD.charcoal }}>
           <PinnedBrandBuild />
+          <SceneHandoff color="#1B1A17" />
         </section>
 
         {/* An extension of Authority, not a new act — shows the real
@@ -285,6 +283,7 @@ export default function ServicesPage() {
           <div className="relative">
             <WeakBrandingCost />
           </div>
+          <SceneHandoff color="#1A2026" />
         </section>
 
         {/* Education — the one Three.js moment (inside PerceptionLadder,
@@ -311,6 +310,7 @@ export default function ServicesPage() {
           <div className="relative">
             <PerceptionLadder />
           </div>
+          <SceneHandoff color="#0F151C" />
         </section>
 
         {/* CommonMistakes used to be its own full-viewport section here
@@ -379,6 +379,7 @@ export default function ServicesPage() {
           <div className="relative">
             <PackageSelector />
           </div>
+          <SceneHandoff color="#1F1A15" />
         </section>
 
         {/* An extension of Desire, not a new act — direct feedback
@@ -451,6 +452,7 @@ export default function ServicesPage() {
           <div className="relative">
             <DeliverablesReveal room />
           </div>
+          <SceneHandoff color="#141A15" />
         </section>
 
         {/* Proof (the Dr. Haley Nutrition case study) and Future vision
@@ -516,6 +518,7 @@ export default function ServicesPage() {
           <div className="relative">
             <BrandHealthCheck />
           </div>
+          <SceneHandoff color="#181D21" />
         </section>
 
         {/* Risk removal — the real FAQ content, reframed, merged with the
@@ -650,6 +653,7 @@ export default function ServicesPage() {
               <RiskRemovalFAQ dark />
             </div>
           </Container>
+          <SceneHandoff color="#27221E" heightClass="h-[26vh]" />
         </section>
 
         {/* Book call — the strategy room. Direct feedback that the
@@ -678,6 +682,22 @@ export default function ServicesPage() {
           videoWebm="/videos/pexels-sunlight-wood-grain.webm"
           className="scroll-mt-24 py-24 sm:py-36"
         >
+          {/* The last of the FAQ's fog arrives with the visitor and
+              burns off in the warm room — the mist itself crosses the
+              final boundary instead of stopping at it. Same drifting
+              mist device as the FAQ's own layers, cool-tinted, fading
+              over the section's first stretch. */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[30vh] overflow-hidden">
+            <div
+              className="mist-layer-b absolute -left-[10%] top-0 h-full w-[120%]"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(200,209,216,0.12) 0%, rgba(200,209,216,0.04) 55%, transparent 100%)",
+                filter: "blur(30px)",
+                animationDuration: "40s",
+              }}
+            />
+          </div>
           <StrategyRoomCTA />
         </TexturedDark>
       </main>
