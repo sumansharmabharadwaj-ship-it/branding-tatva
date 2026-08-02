@@ -250,7 +250,19 @@ export default function ServicesPage() {
             amber wash. The overlay gradient is tinted with the
             section's own mood tone, never soil. */}
         <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.stone }}>
-          <BackgroundVideo parallax video="/videos/higgsfield-golden-ridge.mp4" poster="/images/higgsfield-golden-ridge-poster.jpg" />
+          {/* Media replaced per direct approval (Pexels id 30449698,
+              standard license): native monochrome ridge under a silver
+              cloud band — graphite landscape, quiet tension, zero warm
+              sky. Ends the two-round grading fight the previous clip's
+              warm band forced. Strongest 7s, slowed 0.85x, contrast
+              lifted a step, seamless ping-pong loop. 0.32MB MP4 /
+              0.07MB WebM. */}
+          <BackgroundVideo
+            parallax
+            video="/videos/pexels-graphite-ridge.mp4"
+            videoWebm="/videos/pexels-graphite-ridge.webm"
+            poster="/images/pexels-graphite-ridge-poster.jpg"
+          />
           {/* Second-audit push: the ridge clip's residual warm sky band
               was still tinting this chapter amber against Education's
               mist directly below — the overlay now leans a step cooler
@@ -407,6 +419,20 @@ export default function ServicesPage() {
           {/* Decorative atmosphere, clipped in its own wrapper: lamp
               glows, dust, drifting grain, and the oversized watermark. */}
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+            {/* Environmental light, per direct approval (Pexels id
+                7876536, standard license): window light moving across
+                linen. Screen-blended at low opacity so only its moving
+                highlights survive against the dark study — the visitor
+                perceives shifting daylight on premium material, never
+                "a video playing". Darkened a step in the grade,
+                seamless ping-pong loop, 2.1MB MP4 / 0.5MB WebM. */}
+            <div className="absolute inset-0 opacity-[0.13] mix-blend-screen">
+              <BackgroundVideo
+                video="/videos/pexels-sunlit-cloth.mp4"
+                videoWebm="/videos/pexels-sunlit-cloth.webm"
+                poster="/images/pexels-sunlit-cloth-poster.jpg"
+              />
+            </div>
             <DustMotes />
             <div
               className="grain-drift absolute -inset-[4%] opacity-[0.4]"
