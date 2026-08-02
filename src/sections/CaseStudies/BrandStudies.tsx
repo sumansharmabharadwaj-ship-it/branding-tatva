@@ -60,6 +60,13 @@ export function BrandStudies() {
                   <p className="mt-7 border-l-2 border-[#A0A690]/60 pl-4 font-display text-lg italic text-ivory sm:text-xl">
                     {study.lesson}
                   </p>
+                  <Link
+                    href={`/work/studies/${study.slug}`}
+                    className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#A0A690] underline decoration-[#A0A690]/40 underline-offset-4 transition-colors hover:text-ivory"
+                  >
+                    Read the full study
+                    <span aria-hidden="true">→</span>
+                  </Link>
                 </div>
               </article>
             </Reveal>

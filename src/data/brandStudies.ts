@@ -21,6 +21,7 @@ export type BrandStudy = {
   premise: string;
   observations: { title: string; text: string }[];
   lesson: string;
+  applications: string[];
 };
 
 export const brandStudies: BrandStudy[] = [
@@ -46,6 +47,11 @@ export const brandStudies: BrandStudy[] = [
       },
     ],
     lesson: "Distinctive assets outlast campaigns. Choose your codes early, then defend them for decades.",
+    applications: [
+      "Choose one color, one mark and one typographic voice, then hold them steady for years while competitors redesign themselves into anonymity.",
+      "Audit every touchpoint for the code that would survive with the name removed. That code deserves the budget.",
+      "Treat rebrand impulses as a tax on memory. Evolution beats replacement almost every time.",
+    ],
   },
   {
     slug: "apple-brand-architecture",
@@ -69,6 +75,11 @@ export const brandStudies: BrandStudy[] = [
       },
     ],
     lesson: "Architecture decides whether each launch starts from zero or from equity already earned.",
+    applications: [
+      "Name your offers as one family, so each launch inherits trust from the last instead of introducing a stranger.",
+      "Position the maker before the product. Buyers join a worldview first and evaluate features second.",
+      "Restraint reads as confidence at every scale. A calm page outsells a crowded one.",
+    ],
   },
   {
     slug: "nike-verbal-identity",
@@ -92,6 +103,11 @@ export const brandStudies: BrandStudy[] = [
       },
     ],
     lesson: "A verbal asset, repeated with discipline, can outwork a media budget.",
+    applications: [
+      "Write one line that speaks to who the buyer wants to become, then keep it for a decade.",
+      "Spend on consistency before spending on reach. A repeated idea compounds while a rotating one evaporates.",
+      "Attach the brand to effort your audience already admires, and let stories carry the meaning.",
+    ],
   },
   {
     slug: "burberry-codes-reclaimed",
@@ -115,6 +131,11 @@ export const brandStudies: BrandStudy[] = [
       },
     ],
     lesson: "Codes are capital. Manage their exposure the way a fund manages risk.",
+    applications: [
+      "List your codes, then track where they appear without your consent. Exposure you never chose still shapes memory.",
+      "Scarcity is a repair tool. Pulling a diluted asset back can restore the status it lost.",
+      "Keep heritage circulating in customers' own hands rather than sealed inside a brand book.",
+    ],
   },
   {
     slug: "tim-hortons-ritual",
@@ -138,5 +159,10 @@ export const brandStudies: BrandStudy[] = [
       },
     ],
     lesson: "Rituals earn a place in memory that media spend only borrows.",
+    applications: [
+      "Invent a ritual a customer can perform with the brand absent. Repetition they choose beats repetition you buy.",
+      "Give buyers language of their own for your product, then defend it once they adopt it.",
+      "Tie the brand to moments the culture already keeps: seasons, rituals, the real calendar.",
+    ],
   },
 ];

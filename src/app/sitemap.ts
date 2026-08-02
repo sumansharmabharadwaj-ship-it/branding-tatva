@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { site } from "@/data/site";
 import { projects } from "@/data/projects";
 import { blogPosts } from "@/data/blog";
+import { brandStudies } from "@/data/brandStudies";
 
 // No per-page edit-history is tracked anywhere in this codebase, so
 // `new Date()` (recomputed on every single sitemap request) was
@@ -36,6 +37,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority,
   }));
 
+  const studyRoutes = brandStudies.map((s) => ({
+    url: `${site.url}/work/studies/${s.slug}`,
+    lastModified: new Date("2026-08-02"),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
   const workRoutes = projects.map((p) => ({
     url: `${site.url}/work/${p.slug}`,
     lastModified: SITE_LAST_UPDATED,
@@ -50,5 +58,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...workRoutes, ...blogRoutes];
+  return [...staticRoutes, ...workRoutes, ...blogRoutes , ...studyRoutes];
 }
