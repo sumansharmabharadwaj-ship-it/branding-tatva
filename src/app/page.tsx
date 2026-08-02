@@ -135,7 +135,14 @@ export default function Home() {
             overflow-hidden, kept for the fire video). Same fix pattern
             as every other pinned section on this page. */}
         <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
-          <BackgroundVideo video="/videos/pixabay-flame-texture.mp4" poster="/images/pixabay-flame-texture-poster.jpg" />
+          {/* Cinematic OS replacement: the flame texture failed every
+              selection test (single subject, zero layers, stock
+              texture). Sunrise breaking over a rolling fog sea now —
+              what rises above the fog gets seen, which is exactly what
+              this proof chapter argues. Cut and graded from the
+              archived 4K master, warm highlights, forward crossfade
+              loop. */}
+          <BackgroundVideo video="/videos/pexels-fog-sunrise.mp4" videoWebm="/videos/pexels-fog-sunrise.webm" poster="/images/pexels-fog-sunrise-poster.jpg" />
           <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
             <div className="flex items-baseline justify-between">

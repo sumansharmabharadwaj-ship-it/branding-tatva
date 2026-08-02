@@ -78,7 +78,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     // take on that risk for no benefit here.
     const instance = new Lenis({
       lerp: 0.1,
-      wheelMultiplier: 1,
+      wheelMultiplier: 0.92,
       touchMultiplier: 1,
       syncTouch: false,
     });
