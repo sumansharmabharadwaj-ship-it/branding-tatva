@@ -81,3 +81,7 @@ Five principles, applied to every new surface:
 5. **Slow organic motion** — wind/water/breathing/fog metaphors, ease cubic-bezier(0.22, 1, 0.36, 1), 2–5px cursor drift, slow parallax, blur-sharpening reveals. Nothing mechanical, nothing fast.
 
 Photography: early morning / golden hour / overcast; macro, shallow depth of field, strong negative space, one dominant subject. Emotional register: calm, quiet confidence, slow luxury, authenticity. Ghost watermark words were removed sitewide on direct feedback (Aug 2026) — do not reintroduce them.
+
+## Media standard (recorded Aug 2026 after direct verdict: "dark, vague, low quality, serving no purpose")
+
+The failure pattern to never repeat: grading footage darker so text can sit on it. Per the moodboard, footage stays BRIGHT and luminous (backlit leaves, dew macro, bright mist, sunlit valleys); glass panels carry all text readability. Overlays stay light (peak ~0.4), localized scrims only where type sits. Encode at 1080p minimum, crf 20-22 (720p/crf26 reads soft at full-bleed retina). Every clip must serve its chapter's specific idea, or the chapter goes without video. Full Services media re-foundation is the open next phase: source a coherent bright set per the codified design language, per-file approvals as always.
