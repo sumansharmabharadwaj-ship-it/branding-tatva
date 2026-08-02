@@ -10,6 +10,8 @@ import { PhotoHero } from "@/components/PhotoHero";
 import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { DecisionClearing } from "@/sections/Services/DecisionClearing";
+import { SituationPath } from "@/sections/Services/SituationPath";
+import { VerifiedOutcome } from "@/sections/Services/VerifiedOutcome";
 import { ClearingMist } from "@/sections/Services/ClearingMist";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { SceneHandoff } from "@/sections/Services/SceneHandoff";
@@ -57,10 +59,13 @@ export const metadata: Metadata = {
 // throughout — every other pinned moment on this page and site runs on
 // the same sticky mechanism already proven everywhere else.
 
+// Conversion order (Phase 2 of the redesign brief): the commercial
+// path — situation, packages, proof — comes before the teaching
+// chapters, so a ready visitor can act inside the first two scrolls.
 const JUMP_ITEMS = [
-  { href: "#authority", label: "Authority" },
+  { href: "#situation", label: "Your situation" },
+  { href: "#desire", label: "Packages" },
   { href: "#education", label: "Education" },
-  { href: "#desire", label: "Desire" },
   { href: "#risk", label: "FAQ" },
 ];
 
@@ -163,7 +168,7 @@ export default function ServicesPage() {
                   splitType="chars"
                   className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
                 >
-                  Branding is how a business gets chosen before it gets compared.
+                  The work begins wherever recognition is breaking down.
                 </SplitReveal>
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/90">
                   One client&apos;s engagement moved from{" "}
@@ -228,6 +233,63 @@ export default function ServicesPage() {
               one continuous color journey instead of stacked blocks. */}
           <SceneHandoff color="#171A17" heightClass="h-[24vh]" />
         </PhotoHero>
+
+        {/* Choose your situation — the visitor places themselves before
+            any package is pitched. Reads the Home page's saved choice
+            (the shared localStorage key VisitorRecognition writes) so
+            the site remembers where they stand instead of asking twice.
+            A quiet interstitial on the page's charcoal ground; the
+            chapters around it carry the media. */}
+        <section id="situation" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          <LazyAmbientShader opacity={0.12} />
+          <div className="relative">
+            <SituationPath />
+          </div>
+          <SceneHandoff color="#0E1714" />
+        </section>
+
+        {/* Desire — the real package selector, moved to chapter three
+            per the conversion redesign: packages exposed inside the
+            first two scrolls instead of after the teaching chapters.
+            Mood: DEEP WATER — same fungi clip and overlay as before the
+            move; only the dissolve colors changed with the new
+            neighbours. The full art direction history for this chapter
+            lives in git on the pre move block. */}
+        <section id="desire" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.deepwater }}>
+          <BackgroundVideo parallax
+            push
+            video="/videos/pexels-forest-floor-fungi.mp4"
+            videoWebm="/videos/pexels-forest-floor-fungi.webm"
+            poster="/images/pexels-forest-floor-fungi-poster.jpg"
+          />
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(180deg, rgba(14,23,20,0.55) 0%, rgba(14,23,20,0.35) 45%, rgba(14,23,20,0.58) 100%)",
+            }}
+          />
+          {/* Scene dissolve: the situation chapter's charcoal into
+              Desire's deep water. */}
+          <SceneVeil color="#171A17" />
+          <div className="relative">
+            <PackageSelector />
+          </div>
+          <SceneHandoff color="#171A17" />
+        </section>
+
+        {/* Verified outcome — proof directly after the packages, every
+            number from projects.ts verified stats. Charcoal ground so
+            the numbers themselves are the visual; it also hands
+            seamlessly into Authority's identical charcoal. */}
+        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          <SceneVeil color="#0E1714" />
+          <LazyAmbientShader opacity={0.1} />
+          <div className="relative">
+            <VerifiedOutcome />
+          </div>
+        </section>
 
         {/* Authority — the one deliberate ScrollTrigger.pin section. */}
         {/* The wrapper paints charcoal itself — it sits in normal flow,
@@ -342,7 +404,7 @@ export default function ServicesPage() {
           <div className="relative">
             <PerceptionLadder />
           </div>
-          <SceneHandoff color="#0E1714" />
+          <SceneHandoff color="#172019" />
         </section>
 
         {/* CommonMistakes used to be its own full-viewport section here
@@ -357,67 +419,8 @@ export default function ServicesPage() {
             Creative Direction Audit. Founder credibility still lives on
             the About page; not duplicated here. */}
 
-        {/* Desire — the real package selector. Direct feedback flagged
-            this section as flat and motionless (plain bg-soil, three
-            outlined boxes, no texture at all) against Authority and
-            Education right above it, which both carry the same ambient
-            shader. Extending that shader here, not a new visual, keeps
-            the throughline the brief itself asked for: one visual
-            system continuing through the page rather than a new device
-            per section. Opacity dropped slightly below Authority's
-            (0.3) and Education's (0.16) since PackageSelector's own
-            interactive cards need to stay the clearest thing on screen.
-            Direct feedback confirmed this section still read blank —
-            a wide Himalayan valley opening up behind the choice, a real
-            visual echo of "where does my brand actually stand," reused
-            from Home's own elements row since nothing on Services
-            claims it. Direct, repeated feedback that text was blending
-            into video across the page — every overlay on this page is
-            now a flat, consistent bg-soil/80 (was a hand-tuned 70/76/78
-            spread), a real contrast increase applied as one system
-            rather than guessed per clip. */}
-        {/* Media replaced per direct confirmation: the wide Himalayan
-            valley vista read as "travel," against the quiet, intimate,
-            water-driven register every Pinterest reference shares.
-            Golden-hour light rippling on dark water now (Pexels id
-            38132728, standard license) — reflection as the literal
-            visual metaphor for "where does your brand actually
-            stand." Built into the same seamless ping-pong loop as the
-            Book Call clip; WebM first, MP4 fallback. Overlay eased
-            from the blanket bg-soil/80 to a vertical gradient — the
-            gold streak stays visible between the content blocks while
-            both text zones (heading up top, package card below) sit on
-            the darker stops. */}
-        {/* Mood: DEEP WATER — night-blue dark; the water clip's gold
-            streak is the page's first warm accent, jewelry against a
-            cool ground rather than an amber section. */}
-        <section id="desire" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.deepwater }}>
-          <BackgroundVideo parallax
-            push
-            video="/videos/pexels-forest-floor-fungi.mp4"
-            videoWebm="/videos/pexels-forest-floor-fungi.webm"
-            poster="/images/pexels-forest-floor-fungi-poster.jpg"
-          />
-          <div
-            className="absolute inset-0"
-            aria-hidden="true"
-            style={{
-              backgroundImage:
-                "linear-gradient(180deg, rgba(14,23,20,0.55) 0%, rgba(14,23,20,0.35) 45%, rgba(14,23,20,0.58) 100%)",
-            }}
-          />
-          {/* Scene dissolve: Education's blue mist into Desire's deep
-              water. */}
-          <SceneVeil color="#1A2026" />
-          <div className="relative">
-            <PackageSelector />
-          </div>
-          <SceneHandoff color="#172019" />
-        </section>
-
-        {/* An extension of Desire, not a new act — direct feedback
-            wanted the deliverables to feel tangible right after picking
-            a package, not left as bullet points inside a card. Every
+        {/* Deliverables — direct feedback wanted these to feel
+            tangible rather than left as bullet points inside a card. Every
             item traces to real services.ts data (see the component's
             own comment). No id/jump-nav entry — a supporting beat within
             Desire's own objection. Same shader treatment as the
@@ -457,9 +460,9 @@ export default function ServicesPage() {
             }}
           />
           <DustMotes />
-          {/* Scene dissolve: Desire's deep water hands into the river
+          {/* Scene dissolve: Education's blue mist hands into the river
               study. */}
-          <SceneVeil color="#0E1714" heightClass="h-[15vh]" />
+          <SceneVeil color="#1A2026" heightClass="h-[15vh]" />
           <div className="relative">
             <DeliverablesReveal room />
           </div>

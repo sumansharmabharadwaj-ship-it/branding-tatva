@@ -334,7 +334,13 @@ export function BrandHealthCheck() {
                 </p>
               )}
               <div className="mt-6 flex flex-wrap gap-3">
-                <LinkButton href="#desire">See that package</LinkButton>
+                {/* Conversion architecture: the diagnosis connects
+                    straight to the booking room, with the package
+                    detail as the secondary path. */}
+                <LinkButton href="#book">Book a Brand Strategy Session</LinkButton>
+                <LinkButton href="#desire" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
+                  See that package
+                </LinkButton>
                 <button
                   type="button"
                   onClick={reset}
