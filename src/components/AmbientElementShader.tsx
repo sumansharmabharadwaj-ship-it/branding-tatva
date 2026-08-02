@@ -2,7 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
-import { ELEMENT_HEX } from "@/lib/sectionWash";
+// Palette re-keyed (Aug 2026) from the warm five-element hexes to the
+// codified earth-first desaturated greens (CLAUDE.md design language).
+// Root cause of a recurring "why is this section orangish" bug class:
+// this shader's clay/ochre uniforms drifted a warm amber wash over
+// every scene it sat on — visibly re-warming chapters whose footage
+// had been deliberately cool-graded (the slate summit, the mist
+// ground). The drift now stays inside the green/mist family, so the
+// shader adds organic light without ever fighting a chapter's grade.
+const ECOSYSTEM_HEX = {
+  forest: "#1F3A28",
+  moss: "#556B4A",
+  sage: "#8FAE83",
+  olive: "#7D8E52",
+  mist: "#DDE2DC",
+} as const;
 
 // The one Three.js moment on the site (Services' Education section) —
 // deliberately vanilla `three`, not @react-three/fiber/drei. Two prior
@@ -12,7 +26,7 @@ import { ELEMENT_HEX } from "@/lib/sectionWash";
 // *objects* (shapes, geometry, lighting) competing with an editorial,
 // photographic, warm-earthy identity. This avoids that entirely: no
 // geometry beyond a flat full-bleed plane, no simulated props — just
-// the five element colors (ELEMENT_HEX) drifting through a slow GLSL
+// the ecosystem greens (ECOSYSTEM_HEX below) drifting through a slow GLSL
 // blend, closer to light and grain than to a rendered "scene." drei's
 // own <ScrollControls> was also avoided on purpose — it's a second
 // scroll-virtualization system that would collide with Lenis, which
@@ -129,11 +143,11 @@ export function AmbientElementShader({ className, opacity = 0.35 }: { className?
         transparent: true,
         uniforms: {
           uTime: { value: 0 },
-          uEarth: { value: hexToVec3(ELEMENT_HEX.earth) },
-          uWater: { value: hexToVec3(ELEMENT_HEX.water) },
-          uFire: { value: hexToVec3(ELEMENT_HEX.fire) },
-          uAir: { value: hexToVec3(ELEMENT_HEX.air) },
-          uSpace: { value: hexToVec3(ELEMENT_HEX.space) },
+          uEarth: { value: hexToVec3(ECOSYSTEM_HEX.forest) },
+          uWater: { value: hexToVec3(ECOSYSTEM_HEX.moss) },
+          uFire: { value: hexToVec3(ECOSYSTEM_HEX.sage) },
+          uAir: { value: hexToVec3(ECOSYSTEM_HEX.mist) },
+          uSpace: { value: hexToVec3(ECOSYSTEM_HEX.olive) },
           uOpacity: { value: opacity },
         },
       });
