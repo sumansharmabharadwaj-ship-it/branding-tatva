@@ -254,24 +254,26 @@ export default function ServicesPage() {
             amber wash. The overlay gradient is tinted with the
             section's own mood tone, never soil. */}
         <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.stone }}>
-          {/* Media replaced per direct approval (Pexels id 30449698,
-              standard license): native monochrome ridge under a silver
-              cloud band — graphite landscape, quiet tension, zero warm
-              sky. Ends the two-round grading fight the previous clip's
-              warm band forced. Strongest 7s, slowed 0.85x, contrast
-              lifted a step, seamless ping-pong loop. 0.32MB MP4 /
-              0.07MB WebM. */}
+          {/* Approved Positioning footage (Pexels 6134369, standard
+              license). This is the arrival shot — one dominant summit
+              above the cloud inversion, stillness and hierarchy — so it
+              lives on THIS chapter (positioned generically vs
+              distinctly), per the direction that Positioning means
+              standing above the market while Education means climbing
+              toward it. Cool grade per the same direction: warmth pulled
+              across shadows and mids, depth carried by contrast and the
+              sun's own luminance rather than color, so the peak stays
+              unmistakably above everything without the golden postcard. */}
           <BackgroundVideo
             parallax
-            video="/videos/pexels-graphite-ridge.mp4"
-            videoWebm="/videos/pexels-graphite-ridge.webm"
-            poster="/images/pexels-graphite-ridge-poster.jpg"
+            video="/videos/pexels-summit-inversion.mp4"
+            videoWebm="/videos/pexels-summit-inversion.webm"
+            poster="/images/pexels-summit-inversion-poster.jpg"
           />
-          {/* Second-audit push: the ridge clip's residual warm sky band
-              was still tinting this chapter amber against Education's
-              mist directly below — the overlay now leans a step cooler
-              than the stone base itself, and a touch denser at the top
-              where the warm sky sits. */}
+          {/* Overlay stays a step cooler than the stone base and a touch
+              denser at the top where the sky sits — the summit clip is
+              already graded slate, so this only steadies type contrast
+              without dulling the cloud sea's own shadow depth. */}
           <div
             className="absolute inset-0"
             aria-hidden="true"
@@ -295,35 +297,24 @@ export default function ServicesPage() {
         </section>
 
         {/* Education — the one Three.js moment (inside PerceptionLadder,
-            via AmbientElementShader), scoped and ambient. Direct feedback
-            confirmed this section still read blank against the sections
-            around it. Fog breaking over a ridge at sunrise: a real visual
-            echo of "recognized" slowly becoming "remembered" as the light
-            clears, already used elsewhere on Home, reused here since
-            nothing on Services claims it. */}
+            via AmbientElementShader), scoped and ambient. Chapter identity
+            per direct creative direction: the CLIMB — movement upward,
+            evolving perspective, rising through layers. Its footage slot
+            is reserved for an approved ascending shot. */}
         {/* Mood: MIST — blue-grey, the coolest chapter so far, directly
             after Stakes' dry stone. See MOOD in sectionWash.ts. */}
         <section id="education" className="relative scroll-mt-24 overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
-          {/* Approved Positioning footage (Pexels 6134369, standard
-              license), cool graded per direct art direction: the golden
-              sunrise pulled to mist blue, graphite, and silver dawn so
-              the chapter reads "the only peak above uncertainty" —
-              summits emerging above the cloud inversion, the ladder's
-              own destination — rather than a landscape postcard. */}
-          <BackgroundVideo
-            parallax
-            video="/videos/pexels-summit-inversion.mp4"
-            videoWebm="/videos/pexels-summit-inversion.webm"
-            poster="/images/pexels-summit-inversion-poster.jpg"
-          />
-          <div
-            className="absolute inset-0"
-            aria-hidden="true"
-            style={{
-              backgroundImage:
-                "linear-gradient(180deg, rgba(26,32,38,0.76) 0%, rgba(26,32,38,0.6) 55%, rgba(26,32,38,0.78) 100%)",
-            }}
-          />
+          {/* Deliberately no footage yet. Direct creative direction split
+              this chapter's identity from Positioning above: Education is
+              the CLIMB (movement upward, rising through layers, earning
+              perspective) while Positioning is the ARRIVAL (one dominant
+              summit, stillness). The summit clip briefly sat here and was
+              moved to Stakes for exactly that reason. Until an ascending
+              shot — a camera rising through cloud or mist layers — is
+              sourced and approved, the chapter holds on its mist ground
+              plus the ambient shader inside PerceptionLadder, per the
+              media standard: a clip serves the chapter's specific idea
+              or the chapter goes without video. */}
           {/* Scene dissolve: Stakes' dry stone into Education's mist. */}
           <SceneVeil color="#191B16" />
           <div className="relative">
