@@ -391,7 +391,7 @@ export default function ServicesPage() {
           <div className="relative">
             <PackageSelector />
           </div>
-          <SceneHandoff color="#1F1A15" />
+          <SceneHandoff color="#1B1917" />
         </section>
 
         {/* An extension of Desire, not a new act — direct feedback
@@ -426,7 +426,7 @@ export default function ServicesPage() {
                 perceives shifting daylight on premium material, never
                 "a video playing". Darkened a step in the grade,
                 seamless ping-pong loop, 2.1MB MP4 / 0.5MB WebM. */}
-            <div className="absolute inset-0 opacity-[0.13] mix-blend-screen">
+            <div className="absolute inset-0 opacity-[0.11] mix-blend-screen">
               <BackgroundVideo
                 video="/videos/pexels-sunlit-cloth.mp4"
                 videoWebm="/videos/pexels-sunlit-cloth.webm"
@@ -449,7 +449,7 @@ export default function ServicesPage() {
             <div
               className="mist-layer-a absolute -left-[12%] -top-[8%] h-[60%] w-[55%] rounded-full"
               style={{
-                background: "radial-gradient(ellipse at center, rgba(212,185,154,0.13) 0%, rgba(212,185,154,0.04) 50%, transparent 72%)",
+                background: "radial-gradient(ellipse at center, rgba(226,229,226,0.11) 0%, rgba(226,229,226,0.03) 50%, transparent 72%)",
                 filter: "blur(60px)",
                 animationDuration: "44s",
               }}
@@ -457,7 +457,7 @@ export default function ServicesPage() {
             <div
               className="mist-layer-b absolute -bottom-[10%] -right-[14%] h-[55%] w-[60%] rounded-full"
               style={{
-                background: "radial-gradient(ellipse at center, rgba(184,90,52,0.09) 0%, rgba(184,90,52,0.03) 50%, transparent 74%)",
+                background: "radial-gradient(ellipse at center, rgba(184,90,52,0.05) 0%, rgba(184,90,52,0.02) 50%, transparent 74%)",
                 filter: "blur(70px)",
                 animationDuration: "36s",
               }}
@@ -523,7 +523,7 @@ export default function ServicesPage() {
               next scene. */}
           {/* Scene dissolve: the study's warm dark hands into the
               forest — lamplight dimming into green-black. */}
-          <SceneVeil color="#1F1A15" heightClass="h-[14vh]" />
+          <SceneVeil color="#1B1917" heightClass="h-[14vh]" />
           <ParallaxDrift distance={70} className="pointer-events-none absolute -top-4 left-0 select-none sm:-top-8">
             <span
               aria-hidden="true"
