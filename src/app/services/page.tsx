@@ -657,10 +657,17 @@ export default function ServicesPage() {
                 Real answers to the questions that come up before a first conversation.
               </p>
             </Reveal>
+            {/* Layout rebuilt for the journey (reference board): the
+                call preview sits beside the heading as the trailhead
+                marker, and the trail itself then takes the FULL content
+                width below — stations alternating left and right of the
+                drawn path. The old half-width column squeezed stations
+                to a word per line on wide displays. */}
             <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-16">
-              <div className="lg:sticky lg:top-28 lg:self-start">
-                <StrategySessionPreview dark />
-              </div>
+              <StrategySessionPreview dark />
+              <div />
+            </div>
+            <div className="mt-16 lg:mt-24">
               <RiskRemovalFAQ dark />
             </div>
           </Container>
