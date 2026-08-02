@@ -868,3 +868,23 @@
 .bg-slow-push {
   animation: bg-slow-push 55s ease-in-out infinite alternate;
 }
+
+/* SkyLife: distant birds crossing the frame. Linear traversal with a
+   soft vertical bob layered on top — the crossing is steady, the body
+   breathes. Spawn cadence and per-bird values are randomized in the
+   component; only the paths live here. */
+@keyframes sky-cross-ltr {
+  from { transform: translateX(-6vw); }
+  to { transform: translateX(106vw); }
+}
+@keyframes sky-cross-rtl {
+  from { transform: translateX(106vw); }
+  to { transform: translateX(-6vw); }
+}
+.sky-cross-ltr { animation: sky-cross-ltr linear forwards; }
+.sky-cross-rtl { animation: sky-cross-rtl linear forwards; }
+@keyframes sky-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.sky-bob { animation: sky-bob 3.2s ease-in-out infinite; }

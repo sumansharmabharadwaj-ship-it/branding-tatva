@@ -26,6 +26,7 @@ import { LazyAmbientShader } from "@/components/LazyAmbientShader";
 import { Magnetic } from "@/components/Magnetic";
 import { DustMotes } from "@/components/DustMotes";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { SkyLife } from "@/components/SkyLife";
 import { ParallaxDrift } from "@/components/ParallaxDrift";
 import { MOOD } from "@/lib/sectionWash";
 
@@ -270,6 +271,11 @@ export default function ServicesPage() {
             videoWebm="/videos/pexels-summit-inversion.webm"
             poster="/images/pexels-summit-inversion-poster.jpg"
           />
+          {/* Tertiary life, story-first: a single distant bird crossing
+              above the cloud sea at long, irregular intervals — the one
+              thing moving higher than the summit's own stillness,
+              underlining elevation without disturbing it. */}
+          <SkyLife density="rare" solitary band={[8, 26]} color="rgba(18,22,24,0.75)" />
           {/* Overlay stays a step cooler than the stone base and a touch
               denser at the top where the sky sits — the summit clip is
               already graded slate, so this only steadies type contrast
@@ -565,6 +571,12 @@ export default function ServicesPage() {
             videoWebm="/videos/pexels-fog-sun-forest.webm"
             poster="/images/pexels-fog-sun-forest-poster.jpg"
           />
+          {/* Tertiary life, story-first: birds crossing the open sky
+              above the fog at irregular intervals, with pollen motes
+              drifting below — openness, exploration, possibility, the
+              exact feeling this chapter's question deserves. Randomized
+              spawn cadence so the sky never repeats itself. */}
+          <SkyLife density="occasional" band={[5, 32]} color="rgba(24,28,26,0.7)" />
           <DustMotes />
           {/* Overlay lightened through the middle (direct feedback that
               the fog disappeared behind it) — the filmed mist now reads

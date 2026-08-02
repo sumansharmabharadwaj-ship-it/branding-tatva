@@ -114,12 +114,35 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
                 // arrivals rather than one tall pre-rendered list.
                 <motion.div
                   key={item.question}
-                  className="py-1"
+                  className="relative py-1"
                   initial={prefersReducedMotion ? undefined : { opacity: 0, y: pace.rise, filter: "blur(4px)" }}
                   whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
                   viewport={{ once: true, margin: "0px 0px -8% 0px" }}
                   transition={{ duration: pace.dur, delay: 0.1 + qi * pace.stagger, ease: [0.16, 1, 0.3, 1] }}
                 >
+                  {/* The environment answers the click: opening a
+                      question parts the mist around it — a soft pool of
+                      light blooms behind the active row, as if the fog
+                      thinned exactly where understanding arrived. The
+                      environment participating in the interaction, per
+                      direct creative direction, rather than sitting
+                      behind it as wallpaper. */}
+                  <AnimatePresence>
+                    {isOpen && !prefersReducedMotion && (
+                      <motion.div
+                        aria-hidden="true"
+                        className="pointer-events-none absolute -inset-x-6 -inset-y-2 rounded-3xl"
+                        style={{
+                          background:
+                            "radial-gradient(ellipse 70% 60% at 30% 40%, rgba(222,230,220,0.13) 0%, rgba(222,230,220,0.05) 45%, transparent 75%)",
+                        }}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.05 }}
+                        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                    )}
+                  </AnimatePresence>
                   <motion.div
                     aria-hidden="true"
                     className={`h-px ${dark ? "bg-ivory/15" : "bg-border"}`}
