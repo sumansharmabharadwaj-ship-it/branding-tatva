@@ -323,7 +323,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(26,32,38,0.7) 0%, rgba(26,32,38,0.5) 55%, rgba(26,32,38,0.72) 100%)",
+                "linear-gradient(180deg, rgba(26,32,38,0.5) 0%, rgba(26,32,38,0.3) 55%, rgba(26,32,38,0.52) 100%)",
             }}
           />
           {/* Scene dissolve: Stakes' dry stone into Education's mist. */}
@@ -382,6 +382,7 @@ export default function ServicesPage() {
             cool ground rather than an amber section. */}
         <section id="desire" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.deepwater }}>
           <BackgroundVideo parallax
+            push
             video="/videos/pexels-white-bloom.mp4"
             videoWebm="/videos/pexels-white-bloom.webm"
             poster="/images/pexels-white-bloom-poster.jpg"
@@ -391,7 +392,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(14,23,20,0.75) 0%, rgba(14,23,20,0.55) 45%, rgba(14,23,20,0.78) 100%)",
+                "linear-gradient(180deg, rgba(14,23,20,0.55) 0%, rgba(14,23,20,0.35) 45%, rgba(14,23,20,0.58) 100%)",
             }}
           />
           {/* Scene dissolve: Education's blue mist into Desire's deep
@@ -431,6 +432,7 @@ export default function ServicesPage() {
               grade, seamless ping-pong loop. 3.2MB MP4 / 2.0MB WebM. */}
           <BackgroundVideo
             parallax
+            push
             video="/videos/pexels-leaf-veins.mp4"
             videoWebm="/videos/pexels-leaf-veins.webm"
             poster="/images/pexels-leaf-veins-poster.jpg"
@@ -496,7 +498,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(20,26,21,0.75) 0%, rgba(20,26,21,0.55) 50%, rgba(20,26,21,0.78) 100%)",
+                "linear-gradient(180deg, rgba(20,26,21,0.55) 0%, rgba(20,26,21,0.35) 50%, rgba(20,26,21,0.6) 100%)",
             }}
           />
           {/* Scene dissolve: the dossier's parchment light spills into
@@ -572,7 +574,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(23,32,28,0.72) 0%, rgba(23,32,28,0.48) 45%, rgba(23,32,28,0.6) 82%, rgba(35,31,27,0.9) 100%)",
+                "linear-gradient(180deg, rgba(23,32,28,0.52) 0%, rgba(23,32,28,0.32) 45%, rgba(23,32,28,0.45) 82%, rgba(35,31,27,0.8) 100%)",
             }}
           />
           {/* Three mist depth planes above the overlay — the filmed fog

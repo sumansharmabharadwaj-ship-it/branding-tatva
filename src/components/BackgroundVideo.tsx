@@ -17,6 +17,7 @@ export function BackgroundVideo({
   poster,
   imagePosition = "center",
   parallax = false,
+  push = false,
 }: {
   video: string;
   // Optional WebM sibling, tried first via a real <source> list — same
@@ -34,6 +35,13 @@ export function BackgroundVideo({
   // renders exactly as before. Transform-only, overscan (1.13) always
   // exceeds the ±6% travel so edges never show.
   parallax?: boolean;
+  // Opt-in slow push-in for clips whose own camera is locked off (macro
+  // timelapses like the bloom and the leaf): a 55s ease-in-out breathe
+  // between 1.04x and 1.14x (bg-slow-push in globals.css) so the frame
+  // reads as a documentary camera drifting closer, never a static
+  // wallpaper. Disabled automatically under prefers-reduced-motion by
+  // the sitewide animation kill rule.
+  push?: boolean;
 }) {
   const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -69,7 +77,7 @@ export function BackgroundVideo({
       <motion.div className="absolute inset-0" style={parallax ? { y, scale: 1.13 } : undefined}>
         <video
           ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
+          className={`absolute inset-0 h-full w-full object-cover${push ? " bg-slow-push" : ""}`}
           style={{ objectPosition: imagePosition }}
           poster={poster}
           autoPlay

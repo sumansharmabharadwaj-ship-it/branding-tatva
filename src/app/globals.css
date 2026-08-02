@@ -855,3 +855,16 @@
 .grain-drift {
   animation: grain-drift 50s ease-in-out infinite;
 }
+
+/* Documentary camera breathe for locked-off macro footage
+   (BackgroundVideo's `push` prop): a 55s ease-in-out drift between
+   1.04x and 1.14x — slow enough to read as a cinematographer leaning
+   in, never a zoom animation. Killed by the sitewide reduced-motion
+   rule like every other animation. */
+@keyframes bg-slow-push {
+  from { transform: scale(1.04); }
+  to { transform: scale(1.14); }
+}
+.bg-slow-push {
+  animation: bg-slow-push 55s ease-in-out infinite alternate;
+}
