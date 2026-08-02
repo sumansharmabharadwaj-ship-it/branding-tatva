@@ -202,6 +202,25 @@ export const CHANGE_INSIGHTS: Record<ChangeId, string> = {
   "content-system": "Content compounds only when one position governs it; volume without a system dilutes instead of builds.",
 };
 
+// Waystone support: the real deliverable count each situation path
+// draws on (from the base maps above, so the number can never drift
+// from the truth), and the change this practice would usually
+// recommend first for each situation — grounded in each diagnostic's
+// own root cause, which points at positioning far more often than at
+// expression.
+export function baseDeliverableCount(situation: SituationId): number {
+  return SITUATION_BASE[situation].deliverableIds.length;
+}
+
+export const RECOMMENDED_CHANGE: Record<SituationId, ChangeId> = {
+  launching: "position",
+  repositioning: "position",
+  inconsistent: "identity",
+  "new-market": "position",
+  founder: "recognition",
+  marketing: "position",
+};
+
 export function buildProjectMap(situation: SituationId, change: ChangeId): ProjectMap {
   const base = SITUATION_BASE[situation];
   const extra = CHANGE_EXTRAS[change];

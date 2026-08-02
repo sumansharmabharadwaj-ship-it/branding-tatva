@@ -10,10 +10,13 @@ import {
   JOURNEY_STAGES,
   DIAGNOSTICS,
   CHANGE_INSIGHTS,
+  RECOMMENDED_CHANGE,
+  baseDeliverableCount,
   buildProjectMap,
   type SituationId,
   type ChangeId,
 } from "@/lib/recommendationEngine";
+import { WaystoneField, type Waystone } from "@/components/motion/WaystoneField";
 import { deliverables } from "@/data/deliverables";
 import { packages } from "@/data/services";
 import { usePricing } from "@/components/PricingProvider";
@@ -31,6 +34,40 @@ import { motionTokens } from "@/lib/motionTokens";
 // promises a real timeline after discovery, and this keeps that
 // promise.
 type Status = "idle" | "submitting" | "sent" | "error";
+
+// Every waystone teaches in one line before it gets selected — the
+// marker as an information object rather than a button label. Counts
+// are real, computed from the engine's own deliverable maps.
+const SITUATION_TEACH: Record<SituationId, string> = {
+  launching: "Before anything gets designed.",
+  repositioning: "When the old story reads wrong.",
+  inconsistent: "When growth multiplied the voices.",
+  "new-market": "When the category speaks a new code.",
+  founder: "When the thinking is the product.",
+  marketing: "When reach outruns recognition.",
+};
+
+const CHANGE_TEACH: Record<ChangeId, string> = {
+  position: "One idea, owned.",
+  recognition: "Known with the logo covered.",
+  messaging: "Sentences only you would say.",
+  identity: "Every surface, one meaning.",
+  website: "Notice, understand, act.",
+  "content-system": "Repetition that compounds.",
+};
+
+const SITUATION_STONES: Waystone[] = SITUATIONS.map((s) => ({
+  id: s.id,
+  title: s.label,
+  teach: SITUATION_TEACH[s.id],
+  meta: `${baseDeliverableCount(s.id)} deliverables on this path`,
+}));
+
+const CHANGE_STONES: Waystone[] = CHANGES.map((c) => ({
+  id: c.id,
+  title: c.label,
+  teach: CHANGE_TEACH[c.id],
+}));
 
 export function ImagineYourBrand() {
   const [situation, setSituation] = useState<SituationId | null>(null);
@@ -92,9 +129,6 @@ export function ImagineYourBrand() {
     }
   }
 
-  const chipBase =
-    "rounded-full border px-4 py-2 text-sm transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone";
-
   return (
     <Container className="max-w-6xl">
       <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Imagine your brand</p>
@@ -109,42 +143,29 @@ export function ImagineYourBrand() {
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-ivory/60">01 · Your situation</p>
-          <div role="group" aria-label="Your situation" className="mt-3 flex flex-wrap gap-2">
-            {SITUATIONS.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                aria-pressed={situation === s.id}
-                onClick={() => pickSituation(s.id)}
-                className={`${chipBase} ${
-                  situation === s.id
-                    ? "border-sandstone/70 bg-sandstone/15 text-ivory"
-                    : "border-ivory/20 text-ivory/70 hover:border-ivory/40 hover:text-ivory"
-                }`}
-              >
-                {s.label}
-              </button>
-            ))}
+          <div className="mt-3">
+            <WaystoneField
+              stones={SITUATION_STONES}
+              activeId={situation}
+              onSelect={(id) => pickSituation(id as SituationId)}
+              ariaLabel="Your situation"
+            />
           </div>
         </div>
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-ivory/60">02 · The change you want</p>
-          <div role="group" aria-label="The change you want" className="mt-3 flex flex-wrap gap-2">
-            {CHANGES.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                aria-pressed={change === c.id}
-                onClick={() => pickChange(c.id)}
-                className={`${chipBase} ${
-                  change === c.id
-                    ? "border-sandstone/70 bg-sandstone/15 text-ivory"
-                    : "border-ivory/20 text-ivory/70 hover:border-ivory/40 hover:text-ivory"
-                }`}
-              >
-                {c.label}
-              </button>
-            ))}
+          <div className="mt-3">
+            {/* Once a situation is placed, the change this practice
+                would usually recommend first carries a quiet marker —
+                grounded in that situation's own diagnostic root cause,
+                never pretend intelligence. */}
+            <WaystoneField
+              stones={CHANGE_STONES}
+              activeId={change}
+              onSelect={(id) => pickChange(id as ChangeId)}
+              ariaLabel="The change you want"
+              recommendedId={situation && !change ? RECOMMENDED_CHANGE[situation] : null}
+            />
           </div>
         </div>
       </div>

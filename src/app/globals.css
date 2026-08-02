@@ -888,3 +888,22 @@
   50% { transform: translateY(-5px); }
 }
 .sky-bob { animation: sky-bob 3.2s ease-in-out infinite; }
+
+/* Waystone field (Living Compass) — the selected marker breathes: a
+   soft glow pulse every ~9s and a faint light sweep every ~13s.
+   Both sit under the sitewide prefers-reduced-motion clamp. */
+@keyframes waystone-pulse {
+  0%, 88%, 100% { box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 0 0 rgba(85, 107, 74, 0); }
+  93% { box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 0 22px rgba(85, 107, 74, 0.45); }
+}
+.waystone-selected {
+  animation: waystone-pulse 9s ease-in-out infinite;
+}
+@keyframes waystone-sweep {
+  0%, 90%, 100% { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
+  94% { opacity: 0.35; }
+  97% { transform: translateX(140%) skewX(-12deg); opacity: 0; }
+}
+.waystone-sweep {
+  animation: waystone-sweep 13s ease-in-out infinite;
+}
