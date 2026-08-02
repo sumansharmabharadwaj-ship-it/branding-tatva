@@ -8,6 +8,8 @@ import {
   SITUATIONS,
   CHANGES,
   JOURNEY_STAGES,
+  DIAGNOSTICS,
+  CHANGE_INSIGHTS,
   buildProjectMap,
   type SituationId,
   type ChangeId,
@@ -160,56 +162,111 @@ export function ImagineYourBrand() {
               style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
             >
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">Your project journey</p>
-                <ol className="mt-4 flex flex-wrap items-center gap-y-3">
-                  {JOURNEY_STAGES.map((stage, i) => {
-                    const active = map.stages.includes(i);
-                    return (
-                      <li key={stage} className="flex items-center">
-                        <span
-                          className={`rounded-full border px-3 py-1.5 text-xs transition-colors duration-500 ${
-                            active ? "border-sandstone/70 text-ivory" : "border-ivory/12 text-ivory/35"
-                          }`}
-                          style={active ? { backgroundColor: `${pkg.color}33` } : undefined}
+                {/* The first consultation before the consultation: the
+                    map arrives as eight observations written in
+                    sequence, the way a strategist would talk through a
+                    desk, rather than a spec sheet appearing at once.
+                    Pattern language throughout ("usually", "may") —
+                    honest observation of the situation type, never a
+                    claim about this visitor's specific business.
+                    Reduced motion renders every beat instantly. */}
+                {(() => {
+                  const diag = DIAGNOSTICS[situation!];
+                  const beats: { label: string; body: React.ReactNode }[] = [
+                    { label: "What businesses in this situation usually struggle with", body: <p className="text-sm leading-relaxed text-ivory/90">{diag.struggle}</p> },
+                    {
+                      label: "The symptoms we usually observe",
+                      body: (
+                        <ul className="space-y-1.5">
+                          {diag.symptoms.map((sym) => (
+                            <li key={sym} className="text-sm leading-relaxed text-ivory/85 before:mr-2 before:content-['·']">{sym}</li>
+                          ))}
+                        </ul>
+                      ),
+                    },
+                    { label: "What customers may currently perceive", body: <p className="text-sm leading-relaxed text-ivory/90">{diag.perception}</p> },
+                    { label: "The likely root cause", body: <p className="text-sm leading-relaxed text-ivory/90">{diag.rootCause}</p> },
+                    {
+                      label: "Where Branding Tatva would begin",
+                      body: (
+                        <ol className="flex flex-wrap items-center gap-y-2">
+                          {JOURNEY_STAGES.map((stage, i) => {
+                            const active = map.stages.includes(i);
+                            return (
+                              <li key={stage} className="flex items-center">
+                                <span
+                                  className={`rounded-full border px-2.5 py-1 text-xs transition-colors duration-500 ${
+                                    active ? "border-sandstone/70 text-ivory" : "border-ivory/12 text-ivory/35"
+                                  }`}
+                                  style={active ? { backgroundColor: `${pkg.color}33` } : undefined}
+                                >
+                                  {stage}
+                                </span>
+                                {i < JOURNEY_STAGES.length - 1 && (
+                                  <span aria-hidden="true" className="mx-1 text-ivory/25">→</span>
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ol>
+                      ),
+                    },
+                    {
+                      label: "The strategic decisions we would make",
+                      body: (
+                        <ul className="space-y-2">
+                          {map.questions.map((q) => (
+                            <li key={q} className="text-sm leading-relaxed text-ivory/90">{q}</li>
+                          ))}
+                        </ul>
+                      ),
+                    },
+                    {
+                      label: "What you would actually receive",
+                      body: (
+                        <div className="flex flex-wrap gap-2">
+                          {mapDeliverables.map((d) => (
+                            <span key={d.id} className="rounded-lg border border-ivory/20 px-3 py-1.5 text-xs text-ivory/85">{d.name}</span>
+                          ))}
+                        </div>
+                      ),
+                    },
+                    {
+                      label: "How this influences recognition, marketing, and growth",
+                      body: (
+                        <div className="space-y-2">
+                          <p className="text-sm italic leading-relaxed text-sandstone/90">{CHANGE_INSIGHTS[change!]}</p>
+                          {map.marketingLayer && (
+                            <p className="text-sm leading-relaxed text-ivory/75">Optional marketing layer: {map.marketingLayer}</p>
+                          )}
+                        </div>
+                      ),
+                    },
+                  ];
+                  return (
+                    <div className="space-y-5">
+                      {beats.map((beat, i) => (
+                        <motion.div
+                          key={beat.label}
+                          initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10, filter: "blur(6px)", rotate: -0.3 }}
+                          animate={{ opacity: 1, y: 0, filter: "blur(0px)", rotate: 0 }}
+                          transition={{
+                            duration: motionTokens.durationBase,
+                            delay: prefersReducedMotion ? 0 : 0.25 + i * 0.4,
+                            ease: motionTokens.easeOrganic,
+                          }}
+                          className="border-l-2 border-sandstone/40 pl-4"
                         >
-                          {stage}
-                        </span>
-                        {i < JOURNEY_STAGES.length - 1 && (
-                          <span aria-hidden="true" className="mx-1.5 text-ivory/25">
-                            →
-                          </span>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ol>
-
-                <p className="mt-6 text-xs font-medium uppercase tracking-[0.18em] text-ivory/60">
-                  The questions this path raises
-                </p>
-                <ul className="mt-2 space-y-2">
-                  {map.questions.map((q) => (
-                    <li key={q} className="border-l-2 border-sandstone/50 pl-4 text-sm leading-relaxed text-ivory/90">
-                      {q}
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="mt-6 text-xs font-medium uppercase tracking-[0.18em] text-ivory/60">
-                  Deliverables this path draws on
-                </p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {mapDeliverables.map((d) => (
-                    <span key={d.id} className="rounded-full border border-ivory/20 px-3 py-1.5 text-xs text-ivory/85">
-                      {d.name}
-                    </span>
-                  ))}
-                </div>
-                {map.marketingLayer && (
-                  <p className="mt-5 text-sm leading-relaxed text-ivory/80">
-                    <span className="text-sandstone">Optional marketing layer:</span> {map.marketingLayer}
-                  </p>
-                )}
+                          <p className="flex items-baseline gap-2 text-[0.62rem] font-medium uppercase tracking-[0.18em] text-ivory/55">
+                            <span className="font-display text-xs text-sandstone/80" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                            {beat.label}
+                          </p>
+                          <div className="mt-1.5">{beat.body}</div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
 
               <div className="border-t border-ivory/12 pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
@@ -219,6 +276,9 @@ export function ImagineYourBrand() {
                   {pkg.billing === "monthly" ? "from " : "Projects begin at "}
                   <span className="text-ivory">{formatPrice(region, map.packageSlug)}</span>
                   {pkg.billing === "monthly" && "/mo"}
+                </p>
+                <p className="mt-3 border-l-2 border-sandstone/40 pl-3 text-xs leading-relaxed text-ivory/75">
+                  {DIAGNOSTICS[situation!].why}
                 </p>
                 <p className="mt-2 text-xs leading-relaxed text-ivory/60">
                   A real timeline follows the discovery conversation, scoped to your situation rather than a generic

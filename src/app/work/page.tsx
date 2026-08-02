@@ -12,6 +12,7 @@ import { CapabilityMap } from "@/sections/Work/CapabilityMap";
 import { ContextualCTA } from "@/components/conversion/ContextualCTA";
 import { SignatureProject } from "@/sections/Work/SignatureProject";
 import { DecisionMap } from "@/sections/Work/DecisionMap";
+import { MarketingEcosystem } from "@/sections/Work/MarketingEcosystem";
 import { WorkArchive } from "@/sections/Work/WorkArchive";
 import { Authorship } from "@/sections/Work/Authorship";
 import { BrandStudies } from "@/sections/CaseStudies/BrandStudies";
@@ -87,6 +88,7 @@ export default function WorkPage() {
         <WorkIndex projects={projects} />
         {signature && <SignatureProject project={signature} />}
         <DecisionMap />
+        <MarketingEcosystem />
         <WorkArchive projects={projects} />
 
         {/* Brand studies — the teaching layer beneath the client record.

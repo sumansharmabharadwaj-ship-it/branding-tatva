@@ -107,6 +107,101 @@ const CHANGE_EXTRAS: Partial<Record<ChangeId, { deliverableIds?: string[]; stage
   recognition: { deliverableIds: ["identity"] },
 };
 
+// The consultation layer — per situation diagnostic beats, so the
+// map reads as the first consultation rather than a product picker:
+// what the business is probably struggling with, the symptoms usually
+// observed, what customers may currently perceive, the likely root
+// cause, and why this practice would begin where it begins. Written
+// as honest pattern observation ("usually", "often", "may"), never as
+// a claim about this specific visitor's business.
+export type Diagnostic = {
+  struggle: string;
+  symptoms: string[];
+  perception: string;
+  rootCause: string;
+  why: string;
+};
+
+export const DIAGNOSTICS: Record<SituationId, Diagnostic> = {
+  launching: {
+    struggle: "Everything needs deciding at once, and each decision feels like it blocks the next.",
+    symptoms: [
+      "The name, the logo, and the website all feel urgent simultaneously",
+      "Descriptions of the business change depending on who asks",
+      "Design choices keep getting revisited because nothing anchors them",
+    ],
+    perception: "Customers meet fragments: a promising idea that reads slightly differently at every touchpoint.",
+    rootCause: "Design decisions are being made before the positioning decision that should govern them.",
+    why: "Businesses that decide their position first make every later choice once. That is why the path begins at diagnosis rather than design.",
+  },
+  repositioning: {
+    struggle: "The brand that got you here reads wrong for where the business is going.",
+    symptoms: [
+      "New offers sit awkwardly under the old identity",
+      "The best clients arrive despite the brand rather than because of it",
+      "Explaining the business takes longer than it should",
+    ],
+    perception: "Customers still file the brand under its old category, whatever the new work says.",
+    rootCause: "The position moved but the perception stayed; every touchpoint still rehearses the old story.",
+    why: "Repositioning without an audit usually repaints the confusion. The audit finds where recognition leaks before anything gets rebuilt.",
+  },
+  inconsistent: {
+    struggle: "Growth multiplied the voices, and the brand now says several things at once.",
+    symptoms: [
+      "Each channel has drifted into its own tone",
+      "New material needs the founder's review to sound right",
+      "Old assets and new assets look like different companies",
+    ],
+    perception: "Customers see activity without accumulation: familiar pieces that never add up to one memory.",
+    rootCause: "The brand grew by addition instead of by system; consistency depends on people remembering rather than rules deciding.",
+    why: "Consistency returns when decisions live in a system instead of a person's taste. That is why the path centres on the audit and the voice work.",
+  },
+  "new-market": {
+    struggle: "What worked in the home market lands differently here, and nobody is sure which parts to keep.",
+    symptoms: [
+      "Messages that converted before now need explaining",
+      "The category means something different to the new audience",
+      "Local competitors own codes the brand has yet to learn",
+    ],
+    perception: "The new market reads the brand through its own category codes, and the current identity was never written for them.",
+    rootCause: "Position and language were decided for one market's assumptions and inherited by another's.",
+    why: "Entering a market on its own terms beats arriving with a translation. The path starts by re examining position against the new category.",
+  },
+  founder: {
+    struggle: "The founder's thinking is the product, and it currently lives only in conversations.",
+    symptoms: [
+      "Clients arrive through referrals rather than reputation",
+      "Expertise shows up in calls but nowhere public",
+      "Content gets planned, started, and quietly abandoned",
+    ],
+    perception: "The market sees a competent service; the distinctive point of view stays invisible until the first meeting.",
+    rootCause: "Authority compounds only when a position gets repeated in public, and there is no system carrying that repetition.",
+    why: "A founder's voice needs a position before a posting schedule. That is why the path decides the point of view first, then builds the rhythm that carries it.",
+  },
+  marketing: {
+    struggle: "Marketing produces activity and reach, yet enquiries stay flat.",
+    symptoms: [
+      "Impressions grow while conversations stay rare",
+      "Every campaign starts from a blank page",
+      "Metrics get reported without changing decisions",
+    ],
+    perception: "Customers see the brand often enough, yet a week later they would struggle to say what it stands for.",
+    rootCause: "Marketing is amplifying an unclear position. Amplification multiplies whatever exists, including confusion.",
+    why: "Marketing amplifies clarity; it rarely creates it. That is why the path fixes what gets amplified before touching how loudly.",
+  },
+};
+
+// One educational insight per desired change — the visitor should
+// leave having learned something true regardless of whether they book.
+export const CHANGE_INSIGHTS: Record<ChangeId, string> = {
+  position: "Businesses rarely lose customers over weak visuals. They lose recognition because every touchpoint communicates a different idea.",
+  recognition: "Recognition is a compound asset: the same distinctive signals, repeated until strangers can identify the brand with the logo covered.",
+  messaging: "A message that needs explaining was written for the company rather than the customer.",
+  identity: "Consistency without positioning simply repeats the confusion more efficiently.",
+  website: "A website converts when every page knows what the visitor should notice, understand, and do next.",
+  "content-system": "Content compounds only when one position governs it; volume without a system dilutes instead of builds.",
+};
+
 export function buildProjectMap(situation: SituationId, change: ChangeId): ProjectMap {
   const base = SITUATION_BASE[situation];
   const extra = CHANGE_EXTRAS[change];

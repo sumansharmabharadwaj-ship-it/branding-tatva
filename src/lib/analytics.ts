@@ -15,6 +15,7 @@ export type AnalyticsEvent =
   | "imagine_your_brand_started"
   | "imagine_your_brand_completed"
   | "project_map_emailed"
+  | "channel_strategy_viewed"
   | "visitor_situation_selected"
   | "package_viewed"
   | "packages_compared"
