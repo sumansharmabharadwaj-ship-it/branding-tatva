@@ -112,13 +112,15 @@ export default function ServicesPage() {
           poster="/images/pexels-aspen-sunburst-poster.jpg"
           minHeight="70vh"
         >
-          {/* Approved Chapter 01 footage (Pexels 37218119, standard
-              license): volumetric rays through lush canopy — discovery,
-              light entering darkness. Graded for organic dopamine
-              (luminous greens, golden highlights), 1440px crf 22,
-              seamless ping-pong. The reveal veil below fades the scene
-              in from near black so the rays are discovered, and the
-              masthead lands at the brightest beat. */}
+          {/* Approved awakening footage (Pexels 31883946, Joshua
+              Woroniecki, free license): a sun star breaking through
+              backlit trembling aspens, birch trunks in bokeh depth —
+              the first candidate to pass all five hero questions
+              (clear visual event, revealing light, layered depth,
+              scroll-stopping, stronger than its predecessor). Full 20s
+              slowed to 24s, 2s forward dissolve, no reverse motion.
+              The reveal veil below lifts the forest darkness so the
+              page wakes into the burst. */}
           <HeroReveal />
           {/* Phase 1 hero pass. Two localized layers on top of
               PhotoHero's own base gradient: a cool tint pulling the
