@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
-import { AmbientElementShader } from "@/components/AmbientElementShader";
+import { LazyAmbientShader } from "@/components/LazyAmbientShader";
 import { AnimatedStat } from "@/components/AnimatedStat";
 
 // "Education" objection — why premium-reading brands look different.
@@ -39,7 +39,7 @@ export function PerceptionLadder() {
 
   return (
     <div className="relative py-20 sm:py-28">
-      <AmbientElementShader opacity={0.16} />
+      <LazyAmbientShader opacity={0.16} />
       {/* Was a single centered max-w-2xl column — the same dead-space
           pattern already fixed on the Risk removal section, left
           unaddressed here. The ladder itself is unchanged; a real proof

@@ -21,7 +21,7 @@ import { DeliverablesReveal } from "@/sections/Services/DeliverablesReveal";
 import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
 import { StrategySessionPreview } from "@/sections/Services/StrategySessionPreview";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
-import { AmbientElementShader } from "@/components/AmbientElementShader";
+import { LazyAmbientShader } from "@/components/LazyAmbientShader";
 import { Magnetic } from "@/components/Magnetic";
 import { DustMotes } from "@/components/DustMotes";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -279,7 +279,7 @@ export default function ServicesPage() {
           {/* Scene dissolve: Authority's charcoal handing off into
               Stakes' stone. */}
           <SceneVeil color="#17181A" />
-          <AmbientElementShader opacity={0.1} />
+          <LazyAmbientShader opacity={0.1} />
           {/* Same ghost watermark word technique Home ("ELEMENTS"), About
               ("WHY"), and Blog ("NOTES") already use, extended here — a
               recurring graphic motif tying new sections into the same
