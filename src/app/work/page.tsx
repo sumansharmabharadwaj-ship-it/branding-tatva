@@ -8,6 +8,31 @@ import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { WorkGrid } from "@/sections/CaseStudies";
 import { BrandStudies } from "@/sections/CaseStudies/BrandStudies";
+import { brandStudies } from "@/data/brandStudies";
+import { site } from "@/data/site";
+
+// AEO/GEO: the brand studies as structured data, so search and answer
+// engines can cite each dissection individually. Articles, deliberately
+// never CaseStudy/Service types — these are independent analyses of the
+// public record, and the schema must say so as clearly as the page copy.
+const studiesJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Brand studies",
+  description:
+    "Independent brand strategy analyses of renowned brands, written as teaching. No client relationship with the brands analyzed.",
+  itemListElement: brandStudies.map((study, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    item: {
+      "@type": "Article",
+      headline: `${study.brand}: ${study.lens}`,
+      about: study.brand,
+      abstract: study.premise,
+      url: `${site.url}/work`,
+    },
+  })),
+};
 import { ClipReveal } from "@/components/ClipReveal";
 import { AnnotatedVisual } from "@/components/AnnotatedVisual";
 import { KineticMarquee } from "@/components/KineticMarquee";
@@ -21,11 +46,13 @@ import { elements } from "@/data/elements";
 
 export const metadata: Metadata = {
   title: "Work",
-  description: "Selected brand and content strategy work.",
+  description:
+    "Selected brand and content strategy work, plus independent brand studies dissecting Coca Cola, Apple, Nike, Burberry and Tim Hortons.",
   alternates: { canonical: "/work" },
   openGraph: {
     title: "Work | Branding Tatva",
-    description: "Selected brand and content strategy work.",
+    description:
+    "Selected brand and content strategy work, plus independent brand studies dissecting Coca Cola, Apple, Nike, Burberry and Tim Hortons.",
     type: "website",
   },
 };
@@ -212,6 +239,7 @@ export default function WorkPage() {
             numbered editorial rows, a different visual genre from the
             client cards above. */}
         <BrandStudies />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(studiesJsonLd) }} />
 
         {/* Was a static image (higgsfield-canopy-light.jpg) under a quote
             that is literally about "a forest of noise" — real cinematic

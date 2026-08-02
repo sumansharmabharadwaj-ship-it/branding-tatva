@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { brandStudies } from "@/data/brandStudies";
@@ -64,6 +65,24 @@ export function BrandStudies() {
             </Reveal>
           ))}
         </div>
+
+        {/* The bridge: the studies teach the mechanisms, the Services
+            journey applies them. One link, closing the argument. */}
+        <Reveal delay={0.1}>
+          <div className="mt-16 border-t border-ivory/15 pt-8">
+            <p className="max-w-xl text-base text-ivory/90">
+              The same mechanisms scale down. The Services journey applies them to brands still earning their place
+              in memory.
+            </p>
+            <Link
+              href="/services"
+              className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[#A0A690] underline decoration-[#A0A690]/40 underline-offset-4 transition-colors hover:text-ivory"
+            >
+              Walk the journey
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </Reveal>
       </Container>
     </section>
   );
