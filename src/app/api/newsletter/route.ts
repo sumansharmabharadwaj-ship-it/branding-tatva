@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
   // The audit form asks for explicit consent; enforce it server side
   // so a client bug can never subscribe someone silently.
-  if (parsed.data.source === "recognition-audit" && parsed.data.consent !== true) {
+  if ((parsed.data.source === "recognition-audit" || parsed.data.source === "project-map") && parsed.data.consent !== true) {
     return NextResponse.json({ error: "Please confirm the consent box first." }, { status: 422 });
   }
 

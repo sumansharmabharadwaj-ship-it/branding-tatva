@@ -10,7 +10,7 @@ export const newsletterSchema = z.object({
   firstName: z.string().max(80).optional(),
   business: z.string().max(120).optional(),
   consent: z.boolean().optional(),
-  source: z.enum(["newsletter", "recognition-audit"]).optional(),
+  source: z.enum(["newsletter", "recognition-audit", "project-map"]).optional(),
 });
 
 export type NewsletterFormValues = z.infer<typeof newsletterSchema>;

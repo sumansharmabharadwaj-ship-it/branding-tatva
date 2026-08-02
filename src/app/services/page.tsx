@@ -27,6 +27,7 @@ import { PackageSelector } from "@/sections/Services/PackageSelector";
 import { WeakBrandingCost } from "@/sections/Services/WeakBrandingCost";
 import { DeliverablesExplorer } from "@/sections/Services/DeliverablesExplorer";
 import { ContextualCTA } from "@/components/conversion/ContextualCTA";
+import { ImagineYourBrand } from "@/sections/Services/ImagineYourBrand";
 import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { LazyAmbientShader } from "@/components/LazyAmbientShader";
@@ -564,6 +565,19 @@ export default async function ServicesPage() {
           eventProps={{ source: "services_deliverables" }}
           tone="light"
         />
+
+        {/* Imagine Your Brand — the signature builder (conversion
+            rebuild §17): two choices produce a personalized project
+            map from real deliverables, real packages, and the
+            visitor's own regional pricing. The full map renders
+            before any email is requested. Charcoal interstitial
+            between the light CTA breath and the forest health check. */}
+        <section id="imagine" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          <LazyAmbientShader opacity={0.1} />
+          <div className="relative">
+            <ImagineYourBrand />
+          </div>
+        </section>
 
         {/* Proof (the Dr. Haley Nutrition case study) and Future vision
             (the six-stage pinned process) removed on direct request
