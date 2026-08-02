@@ -62,7 +62,12 @@ export function WeakBrandingCost() {
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: focusRef, offset: ["start 0.95", "start 0.35"] });
   const blurPx = useTransform(scrollYProgress, [0, 1], [7, 1.5]);
-  const filter = useTransform(blurPx, (b) => `blur(${b}px) saturate(0.85)`);
+  // Quantized to whole pixels: the GPU frame map located a carpet of
+  // dropped frames across this exact chapter, and a continuously
+  // interpolating blur() means re-rasterizing this card every scroll
+  // frame. Whole-pixel steps keep the scroll-linked focus-pull metaphor
+  // while re-rasterizing only ~6 times across the entire pull.
+  const filter = useTransform(blurPx, (b) => `blur(${Math.round(b)}px) saturate(0.85)`);
 
   return (
     // Creative Director pass: this was the page's most conventional
