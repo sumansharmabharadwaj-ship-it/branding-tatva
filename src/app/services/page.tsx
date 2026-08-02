@@ -304,17 +304,28 @@ export default function ServicesPage() {
         {/* Mood: MIST — blue-grey, the coolest chapter so far, directly
             after Stakes' dry stone. See MOOD in sectionWash.ts. */}
         <section id="education" className="relative scroll-mt-24 overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
-          {/* Deliberately no footage yet. Direct creative direction split
-              this chapter's identity from Positioning above: Education is
-              the CLIMB (movement upward, rising through layers, earning
-              perspective) while Positioning is the ARRIVAL (one dominant
-              summit, stillness). The summit clip briefly sat here and was
-              moved to Stakes for exactly that reason. Until an ascending
-              shot — a camera rising through cloud or mist layers — is
-              sourced and approved, the chapter holds on its mist ground
-              plus the ambient shader inside PerceptionLadder, per the
-              media standard: a clip serves the chapter's specific idea
-              or the chapter goes without video. */}
+          {/* Approved Education footage (Pexels 8522207, David Roberts,
+              free license): seedlings rising out of dark soil in
+              timelapse — the climb performed by nature itself, growth
+              stages upward from unknown ground, no human needed. Also
+              the film's best cut: Authority ends underground in roots;
+              this chapter opens with what those roots push above the
+              surface. Crossfade loop (never ping-pong — reversed growth
+              reads as shrinking). */}
+          <BackgroundVideo
+            parallax
+            video="/videos/pexels-seedlings-rise.mp4"
+            videoWebm="/videos/pexels-seedlings-rise.webm"
+            poster="/images/pexels-seedlings-rise-poster.jpg"
+          />
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(180deg, rgba(26,32,38,0.7) 0%, rgba(26,32,38,0.5) 55%, rgba(26,32,38,0.72) 100%)",
+            }}
+          />
           {/* Scene dissolve: Stakes' dry stone into Education's mist. */}
           <SceneVeil color="#191B16" />
           <div className="relative">
@@ -371,9 +382,9 @@ export default function ServicesPage() {
             cool ground rather than an amber section. */}
         <section id="desire" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.deepwater }}>
           <BackgroundVideo parallax
-            video="/videos/pexels-golden-water-reflection.mp4"
-            videoWebm="/videos/pexels-golden-water-reflection.webm"
-            poster="/images/pexels-golden-water-reflection-poster.jpg"
+            video="/videos/pexels-white-bloom.mp4"
+            videoWebm="/videos/pexels-white-bloom.webm"
+            poster="/images/pexels-white-bloom-poster.jpg"
           />
           <div
             className="absolute inset-0"
@@ -420,9 +431,9 @@ export default function ServicesPage() {
               grade, seamless ping-pong loop. 3.2MB MP4 / 2.0MB WebM. */}
           <BackgroundVideo
             parallax
-            video="/videos/pexels-misty-lake-dawn.mp4"
-            videoWebm="/videos/pexels-misty-lake-dawn.webm"
-            poster="/images/pexels-misty-lake-dawn-poster.jpg"
+            video="/videos/pexels-leaf-veins.mp4"
+            videoWebm="/videos/pexels-leaf-veins.webm"
+            poster="/images/pexels-leaf-veins-poster.jpg"
           />
           <div
             className="absolute inset-0"
@@ -548,9 +559,9 @@ export default function ServicesPage() {
             final room rather than a hard cut. */}
         <section id="risk" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.slate }}>
           <BackgroundVideo parallax
-            video="/videos/pexels-mist-over-water.mp4"
-            videoWebm="/videos/pexels-mist-over-water.webm"
-            poster="/images/pexels-mist-over-water-poster.jpg"
+            video="/videos/pexels-fog-sun-forest.mp4"
+            videoWebm="/videos/pexels-fog-sun-forest.webm"
+            poster="/images/pexels-fog-sun-forest-poster.jpg"
           />
           {/* Overlay lightened through the middle (direct feedback that
               the fog disappeared behind it) — the filmed mist now reads
@@ -648,9 +659,9 @@ export default function ServicesPage() {
             after the cool chapters rather than "the end of a website." */}
         <TexturedDark
           id="book"
-          image="/images/pexels-sunlight-wood-grain-poster.jpg"
-          video="/videos/pexels-sunlight-wood-grain.mp4"
-          videoWebm="/videos/pexels-sunlight-wood-grain.webm"
+          image="/images/pexels-valley-first-light-poster.jpg"
+          video="/videos/pexels-valley-first-light.mp4"
+          videoWebm="/videos/pexels-valley-first-light.webm"
           className="scroll-mt-24 pb-16 pt-24 sm:pb-20 sm:pt-32"
         >
           {/* The last of the FAQ's fog arrives with the visitor and
