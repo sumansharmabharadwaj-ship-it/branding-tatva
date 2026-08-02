@@ -8,6 +8,25 @@ import { CHANNEL_FAMILIES, BUSINESS_TYPES } from "@/data/marketingChannels";
 import { track } from "@/lib/analytics";
 import { WORK } from "@/sections/Work/palette";
 import { motionTokens } from "@/lib/motionTokens";
+import { WaystoneField, type Waystone } from "@/components/motion/WaystoneField";
+
+// Business type waystones: one teaching line each, and the real count
+// of channels in that architecture from the data itself.
+const TYPE_TEACH: Record<string, string> = {
+  "founder-service": "Authority earns the enquiry.",
+  "consumer-product": "The shelf and the feed alike.",
+  hospitality: "Found with intent, felt on arrival.",
+  wellness: "Trust builds through teaching.",
+  b2b: "Long decisions reward documents.",
+  local: "Found nearby, remembered weekly.",
+};
+
+const TYPE_STONES: Waystone[] = BUSINESS_TYPES.map((t) => ({
+  id: t.id,
+  title: t.label,
+  teach: TYPE_TEACH[t.id] ?? "",
+  meta: `${t.channelIds.length} channels in this architecture`,
+}));
 
 // The marketing ecosystem explorer (conversion rebuild §11) — proof
 // that the practice understands how a brand system reaches people.
@@ -49,27 +68,13 @@ export function MarketingEcosystem() {
           </p>
         </Reveal>
 
-        <div role="group" aria-label="Business type" className="mt-8 flex flex-wrap gap-2">
-          {BUSINESS_TYPES.map((t) => {
-            const active = t.id === typeId;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                aria-pressed={active}
-                onClick={() => pick(t.id)}
-                className="rounded-full border px-4 py-2 text-sm transition-colors duration-300 focus-visible:outline focus-visible:outline-2"
-                style={{
-                  borderColor: active ? WORK.sage : "rgba(143,174,131,0.35)",
-                  backgroundColor: active ? "rgba(143,174,131,0.18)" : "transparent",
-                  color: active ? WORK.cream : "rgba(242,240,232,0.7)",
-                  outlineColor: WORK.sage,
-                }}
-              >
-                {t.label}
-              </button>
-            );
-          })}
+        <div className="mt-8">
+          <WaystoneField
+            stones={TYPE_STONES}
+            activeId={typeId}
+            onSelect={pick}
+            ariaLabel="Business type"
+          />
         </div>
 
         <p aria-live="polite" className="mt-5 max-w-xl border-l-2 pl-4 text-sm leading-relaxed" style={{ borderColor: WORK.sand, color: "rgba(242,240,232,0.85)" }}>

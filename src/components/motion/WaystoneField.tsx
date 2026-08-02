@@ -25,19 +25,59 @@ export type Waystone = {
   meta?: string;
 };
 
+// Tone tokens: the field lives on dark chapters (charcoal, forest)
+// and light ones (mist, cream). Same behaviour, swapped materials.
+const TONES = {
+  dark: {
+    panelBg: "rgba(212,185,154,0.06)",
+    panelBorder: "border-ivory/12",
+    light: "rgba(198,169,122,0.14)",
+    stoneBorder: "border-ivory/15 hover:border-ivory/35",
+    stoneBg: "rgba(244,239,230,0.04)",
+    selectedBg: "rgba(85,107,74,0.2)",
+    recommendedBorder: "border-sandstone/60",
+    title: "text-ivory/85",
+    titleSelected: "text-ivory",
+    teach: "text-ivory/70",
+    meta: "text-sandstone/80",
+    recommendedTag: "text-sandstone",
+    outline: "focus-visible:outline-sandstone",
+    sweep: "rgba(242,240,232,0.5)",
+  },
+  light: {
+    panelBg: "rgba(31,58,40,0.05)",
+    panelBorder: "border-[#1B1B1B]/10",
+    light: "rgba(198,169,122,0.22)",
+    stoneBorder: "border-[#1B1B1B]/15 hover:border-[#1B1B1B]/35",
+    stoneBg: "rgba(255,255,255,0.45)",
+    selectedBg: "rgba(85,107,74,0.16)",
+    recommendedBorder: "border-[#C6A97A]",
+    title: "text-[#1B1B1B]/80",
+    titleSelected: "text-[#1B1B1B]",
+    teach: "text-[#6F4E37]",
+    meta: "text-[#7D8E52]",
+    recommendedTag: "text-[#6F4E37]",
+    outline: "focus-visible:outline-[#556B4A]",
+    sweep: "rgba(255,255,255,0.6)",
+  },
+} as const;
+
 export function WaystoneField({
   stones,
   activeId,
   onSelect,
   ariaLabel,
   recommendedId,
+  tone = "dark",
 }: {
   stones: Waystone[];
   activeId: string | null;
   onSelect: (id: string) => void;
   ariaLabel: string;
   recommendedId?: string | null;
+  tone?: "dark" | "light";
 }) {
+  const T = TONES[tone];
   const prefersReducedMotion = useReducedMotion();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -65,12 +105,12 @@ export function WaystoneField({
       ref={panelRef}
       onPointerMove={onPointerMove}
       onPointerLeave={() => setHoveredId(null)}
-      className="relative overflow-hidden rounded-2xl border border-ivory/12 p-4 sm:p-5"
+      className={`relative overflow-hidden rounded-2xl border p-4 sm:p-5 ${T.panelBorder}`}
       style={{
         // Matte carved glass: sandstone tinted, backdrop softened, the
         // site's own paper grain as the fiber — polished stone rather
         // than futuristic acrylic.
-        backgroundColor: "rgba(212,185,154,0.06)",
+        backgroundColor: T.panelBg,
         backdropFilter: "blur(6px)",
         ["--wx" as string]: "50%",
         ["--wy" as string]: "50%",
@@ -82,7 +122,7 @@ export function WaystoneField({
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 transition-opacity duration-500"
           style={{
-            background: "radial-gradient(240px circle at var(--wx) var(--wy), rgba(198,169,122,0.14), transparent 70%)",
+            background: `radial-gradient(240px circle at var(--wx) var(--wy), ${T.light}, transparent 70%)`,
             opacity: hoveredId ? 1 : 0,
           }}
         />
@@ -113,11 +153,11 @@ export function WaystoneField({
               animate={{ x: drift, y: selected && !prefersReducedMotion ? 2 : 0 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.985 }}
               transition={{ duration: motionTokens.durationFast, ease: motionTokens.easeOrganic }}
-              className={`relative overflow-hidden rounded-xl border px-4 py-2.5 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone ${
-                selected ? "waystone-selected border-transparent" : recommended ? "border-sandstone/60" : "border-ivory/15 hover:border-ivory/35"
+              className={`relative overflow-hidden rounded-xl border px-4 py-2.5 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 ${T.outline} ${
+                selected ? "waystone-selected border-transparent" : recommended ? T.recommendedBorder : T.stoneBorder
               }`}
               style={{
-                backgroundColor: selected ? "rgba(85,107,74,0.2)" : "rgba(244,239,230,0.04)",
+                backgroundColor: selected ? T.selectedBg : T.stoneBg,
                 boxShadow: selected ? "inset 0 2px 6px rgba(0,0,0,0.35)" : undefined,
               }}
             >
@@ -145,17 +185,17 @@ export function WaystoneField({
                 <span
                   aria-hidden="true"
                   className="waystone-sweep pointer-events-none absolute inset-y-0 w-1/3"
-                  style={{ background: "linear-gradient(90deg, transparent, rgba(242,240,232,0.5), transparent)" }}
+                  style={{ background: `linear-gradient(90deg, transparent, ${T.sweep}, transparent)` }}
                 />
               )}
               {recommended && (
-                <span className="mb-0.5 block text-[0.55rem] font-medium uppercase tracking-[0.16em] text-sandstone">
+                <span className={`mb-0.5 block text-[0.55rem] font-medium uppercase tracking-[0.16em] ${T.recommendedTag}`}>
                   Recommended next
                 </span>
               )}
               <span
                 className={`block font-display text-base leading-snug transition-colors duration-300 sm:text-lg ${
-                  selected ? "text-ivory" : "text-ivory/85"
+                  selected ? T.titleSelected : T.title
                 }`}
               >
                 {stone.title}
@@ -167,9 +207,9 @@ export function WaystoneField({
                 style={{ gridTemplateRows: open ? "1fr" : "0fr", opacity: open ? 1 : 0 }}
               >
                 <span className="overflow-hidden">
-                  <span className="block pt-1 text-xs leading-relaxed text-ivory/70">{stone.teach}</span>
+                  <span className={`block pt-1 text-xs leading-relaxed ${T.teach}`}>{stone.teach}</span>
                   {stone.meta && (
-                    <span className="block pt-0.5 text-[0.62rem] uppercase tracking-[0.14em] text-sandstone/80">
+                    <span className={`block pt-0.5 text-[0.62rem] uppercase tracking-[0.14em] ${T.meta}`}>
                       {stone.meta}
                     </span>
                   )}

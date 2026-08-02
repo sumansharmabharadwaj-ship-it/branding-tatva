@@ -10,6 +10,25 @@ import { projects } from "@/data/projects";
 import { track } from "@/lib/analytics";
 import { WORK, EASE_ORGANIC } from "@/sections/Work/palette";
 import { motionTokens } from "@/lib/motionTokens";
+import { WaystoneField, type Waystone } from "@/components/motion/WaystoneField";
+
+// Each need waystone teaches in one line and carries the real count
+// of capability areas it illuminates — computed from the need paths
+// themselves, never typed by hand.
+const NEED_TEACH: Record<string, string> = {
+  clarity: "One position instead of several.",
+  recognition: "Known before compared.",
+  consistency: "One system, many hands.",
+  launch: "Decided before designed.",
+  marketing: "Amplify clarity, never confusion.",
+};
+
+const NEED_STONES: Waystone[] = NEED_PATHS.map((n) => ({
+  id: n.id,
+  title: n.label,
+  teach: NEED_TEACH[n.id] ?? "",
+  meta: `${n.capabilityIds.length} capability areas`,
+}));
 
 // The capability and experience map — breadth communicated through
 // visible judgment rather than claimed volume. The visitor names
@@ -41,27 +60,14 @@ export function CapabilityMap() {
           </h2>
         </Reveal>
 
-        <div role="group" aria-label="Choose your need" className="mt-8 flex flex-wrap gap-2.5">
-          {NEED_PATHS.map((n) => {
-            const active = n.id === activeNeed;
-            return (
-              <button
-                key={n.id}
-                type="button"
-                aria-pressed={active}
-                onClick={() => pick(n.id)}
-                className="rounded-full border px-4 py-2 text-sm transition-colors duration-300 focus-visible:outline focus-visible:outline-2"
-                style={{
-                  borderColor: active ? WORK.forest : WORK.stone,
-                  backgroundColor: active ? WORK.forest : "transparent",
-                  color: active ? WORK.cream : WORK.wood,
-                  outlineColor: WORK.moss,
-                }}
-              >
-                {n.label}
-              </button>
-            );
-          })}
+        <div className="mt-8">
+          <WaystoneField
+            stones={NEED_STONES}
+            activeId={activeNeed}
+            onSelect={pick}
+            ariaLabel="Choose your need"
+            tone="light"
+          />
         </div>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
