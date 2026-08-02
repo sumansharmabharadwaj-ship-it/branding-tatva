@@ -616,7 +616,7 @@ export default function ServicesPage() {
               style={{
                 background:
                   "radial-gradient(ellipse at center, rgba(216,224,230,0.17) 0%, rgba(216,224,230,0.05) 48%, transparent 72%)",
-                filter: "blur(56px)",
+                
               }}
             />
             <div
@@ -624,7 +624,7 @@ export default function ServicesPage() {
               style={{
                 background:
                   "radial-gradient(ellipse at center, rgba(198,208,216,0.14) 0%, rgba(198,208,216,0.04) 50%, transparent 74%)",
-                filter: "blur(64px)",
+                
               }}
             />
           </div>
@@ -642,7 +642,7 @@ export default function ServicesPage() {
               className="mist-layer-a h-full w-full"
               style={{
                 background: "linear-gradient(0deg, rgba(206,214,221,0.15) 0%, rgba(206,214,221,0.05) 55%, transparent 85%)",
-                filter: "blur(28px)",
+                
                 animationDuration: "58s",
               }}
             />
@@ -711,7 +711,7 @@ export default function ServicesPage() {
               style={{
                 background:
                   "linear-gradient(180deg, rgba(200,209,216,0.12) 0%, rgba(200,209,216,0.04) 55%, transparent 100%)",
-                filter: "blur(30px)",
+                
                 animationDuration: "40s",
               }}
             />

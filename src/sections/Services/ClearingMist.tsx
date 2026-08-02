@@ -29,7 +29,7 @@ export function ClearingMist() {
         opacity,
         background:
           "linear-gradient(180deg, rgba(206,215,222,0.13) 0%, rgba(206,215,222,0.07) 45%, rgba(206,215,222,0.02) 100%)",
-        filter: "blur(22px)",
+        
       }}
     />
   );
