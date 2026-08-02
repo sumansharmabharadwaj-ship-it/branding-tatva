@@ -9,6 +9,7 @@ import { deliverables, SCOPE_GROUPS, type ScopeGroup } from "@/data/deliverables
 import { packages } from "@/data/services";
 import { track } from "@/lib/analytics";
 import { motionTokens } from "@/lib/motionTokens";
+import { ArtifactPreview } from "@/sections/Services/ArtifactPreview";
 
 // The deliverables explorer (conversion rebuild §16) — the invisible
 // work made tangible. Every chip is a real inclusion from
@@ -108,10 +109,20 @@ export function DeliverablesExplorer() {
               exit={prefersReducedMotion ? undefined : { opacity: 0 }}
               transition={{ duration: motionTokens.durationFast, ease: motionTokens.easeOrganic }}
               className="rounded-2xl border border-ivory/15 p-6 backdrop-blur-md sm:p-7"
-              style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
+              style={{ backgroundColor: "rgba(244,239,230,0.05)", perspective: 900 }}
             >
-              <p className="text-xs font-medium uppercase tracking-[0.15em] text-sandstone">{active.group}</p>
-              <p className="mt-1.5 font-display text-2xl font-normal text-ivory">{active.name}</p>
+              {/* The deliverable as an object: an ivory document
+                  unfolding onto the dark desk, its structural preview
+                  inside. The words below stay the canonical content
+                  for assistive technology; the paper is the shape. */}
+              <motion.div
+                initial={prefersReducedMotion ? undefined : { rotateX: -14, opacity: 0, y: 6 }}
+                animate={{ rotateX: 0, opacity: 1, y: 0 }}
+                transition={{ duration: motionTokens.durationBase, ease: motionTokens.easeOrganic }}
+                style={{ transformOrigin: "top center" }}
+              >
+                <ArtifactPreview deliverable={active} />
+              </motion.div>
               {(
                 [
                   ["What it is", active.what],
