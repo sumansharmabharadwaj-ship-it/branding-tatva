@@ -10,7 +10,7 @@ export const site = {
   // See HERO_HEADLINES.md for five alternatives and the reasoning behind
   // this pairing (option B for hook, A for resolution).
   heroHeadline: "Most brands are visible. Very few are remembered.",
-  tagline: "Every memorable brand begins with the right elements.",
+  tagline: "Revealing essence. Creating impact.",
   positioning:
     "Branding Tatva finds the elements that make a business worth noticing, and shapes them into a brand people recognise, trust, and remember.",
   description:

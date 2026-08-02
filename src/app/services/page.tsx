@@ -35,6 +35,7 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { SkyLife } from "@/components/SkyLife";
 import { ParallaxDrift } from "@/components/ParallaxDrift";
 import { MOOD } from "@/lib/sectionWash";
+import { offerings } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -68,8 +69,8 @@ export const metadata: Metadata = {
 // chapters, so a ready visitor can act inside the first two scrolls.
 const JUMP_ITEMS = [
   { href: "#situation", label: "Your situation" },
+  { href: "#offerings", label: "Services" },
   { href: "#desire", label: "Packages" },
-  { href: "#education", label: "Education" },
   { href: "#risk", label: "FAQ" },
 ];
 
@@ -284,6 +285,50 @@ export default async function ServicesPage() {
           <div className="relative">
             <SituationPath />
           </div>
+          <SceneHandoff color="#171A17" />
+        </section>
+
+        {/* The full practice — every real service on offer, answered
+            plainly before the packages bundle them. Restored per
+            direct instruction: the offerings list (data/services.ts)
+            lost its section in the discovery rebuild, which left
+            "what do you actually do" with no complete answer anywhere
+            on the page. Editorial rows rather than a card grid; each
+            offering keeps its own accent from the data. */}
+        <section id="offerings" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          <LazyAmbientShader opacity={0.1} />
+          <Container className="relative max-w-6xl">
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-20">
+              <Reveal className="lg:sticky lg:top-28 lg:self-start">
+                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The full practice</p>
+                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                  Six kinds of work, one discipline underneath.
+                </h2>
+                <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/70">
+                  Every service below shows up inside the packages further down; this is the complete list, stated
+                  plainly.
+                </p>
+              </Reveal>
+              <div>
+                {offerings.map((offer, i) => (
+                  <Reveal key={offer.name} delay={i * 0.05}>
+                    <div className="grid gap-2 border-t border-ivory/12 py-6 sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-8">
+                      <p className="flex items-center gap-3 font-display text-xl font-normal text-ivory">
+                        <span
+                          aria-hidden="true"
+                          className="h-2 w-2 shrink-0 rounded-full"
+                          style={{ backgroundColor: offer.color }}
+                        />
+                        {offer.name}
+                      </p>
+                      <p className="text-sm leading-relaxed text-ivory/85 sm:pt-1">{offer.detail}</p>
+                    </div>
+                  </Reveal>
+                ))}
+                <div className="h-px bg-ivory/12" aria-hidden="true" />
+              </div>
+            </div>
+          </Container>
           <SceneHandoff color="#0E1714" />
         </section>
 

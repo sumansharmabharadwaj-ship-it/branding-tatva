@@ -131,7 +131,7 @@ export function Header({ transparent = false }: HeaderProps) {
               </div>
 
               <Link href="/" className="col-start-2 flex items-center justify-center gap-1.5">
-                <LogoMark size={22} className="shrink-0" />
+                <LogoMark size={30} light className="shrink-0" />
                 <Logo light className="scale-[0.72] sm:scale-[0.78]" />
               </Link>
 

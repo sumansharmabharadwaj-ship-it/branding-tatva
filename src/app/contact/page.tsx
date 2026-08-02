@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { preload } from "react-dom";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -32,6 +33,9 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
+  // The hero poster is this page's LCP element — a high priority
+  // preload so first paint stops waiting behind the video request.
+  preload("/images/higgsfield-forest-light-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />

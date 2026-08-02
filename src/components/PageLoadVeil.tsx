@@ -2,84 +2,39 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { LogoMark } from "@/components/Logo";
 import { site } from "@/data/site";
 
-// A short, confident arrival — not a spinner, but not a five-beat story
-// either. An earlier version cycled through all five elements' own
-// poetic lines one at a time (~5s total): reads as impressive in
-// isolation, but on every single hard load it started to feel like the
-// site was making someone sit through a pitch before letting them in.
-// A second version cut that down to five flat bars just rising in a
-// row — safe, but the philosophy it's meant to carry was reduced to a
-// generic loading-bar shape with the right colors, nothing more.
-//
-// This version keeps the same ~2s budget and the same restraint (no
-// per-element copy, no guided tour), but gives each element an actual
-// beat: as its own bar settles, its own color blooms behind it in a
-// soft glow — five separate, brief announcements instead of one flat
-// motion — and once all five have landed, a thin stroke draws itself
-// around the whole mark, the visual argument for "five parts, one
-// brand" instead of just stating it. Everything here is Framer Motion
-// animating plain SVG shapes (rect height/y, and rect pathLength for
-// the frame stroke) — no new dependency. This project already had one
-// real incident where a GSAP-hydration-dependent load animation caused
-// an 8+ second render delay; a page-blocking, every-single-visit
-// animation is the wrong place to introduce a new toolkit's risk, so
-// the craft comes from choreography, not new machinery.
-//
-// Lives in the root layout, which Next.js keeps mounted across
-// client-side navigations, so this only plays once per hard load, never
-// on internal link clicks. Skipped entirely for reduced-motion, since a
-// sequence like this is itself exactly the kind of motion some users
-// specifically want to avoid.
+// The 2026 loading page, rebuilt to Suman's attached design: a real
+// mountain scene under a warm shaft of light, the interlocked BT
+// monogram arriving first, the spaced serif wordmark beneath it, a
+// thin gold divider, the brand line, and a LOADING beat at the foot —
+// a hairline progress track with a glowing gold leading edge and a
+// ticking percentage. Same discipline as every prior version: ~2s
+// total budget, Framer Motion only, mounted in the root layout so it
+// plays once per hard load and never on client navigations, and
+// skipped entirely under reduced motion. The same rAF elapsed-time
+// counter drives both the percentage and the line, so a throttled tab
+// still lands on exactly 100.
 
-const BARS = [
-  { color: "#B85A34", x: 4, height: 34 }, // earth — clay
-  { color: "#24394D", x: 20, height: 48 }, // water — indigo
-  { color: "#C28A28", x: 36, height: 64 }, // fire — ochre
-  { color: "#5C6B4A", x: 52, height: 48 }, // air — sage
-  { color: "#AD6F5C", x: 68, height: 34 }, // space — dusty rose (soil itself would vanish against this dark veil)
-];
-const BAR_WIDTH = 10;
-const MARK_WIDTH = 82;
-const MARK_HEIGHT = 68;
-const BASELINE = 64;
 const EASE = [0.22, 0.61, 0.36, 1] as const;
-
-// How long the counter takes to reach 100 — the same window the rest of
-// the veil's own choreography (bars, frame, brand line) plays out over,
-// so "100" lands right as everything else has already settled rather
-// than racing ahead of or trailing behind it.
 const COUNTER_DURATION_MS = 1450;
 
 export function PageLoadVeil() {
   const prefersReducedMotion = useReducedMotion();
-  const [barsSettled, setBarsSettled] = useState(false);
-  const [frameDrawn, setFrameDrawn] = useState(false);
   const [brandVisible, setBrandVisible] = useState(false);
   const [visible, setVisible] = useState(!prefersReducedMotion);
   // A hard, animation-independent removal that always wins — see the
-  // note in the exit transition below for why this can't just rely on
-  // AnimatePresence's own onExitComplete.
+  // note on the exit transition below.
   const [removed, setRemoved] = useState(prefersReducedMotion);
-  // The small numeric counter next to the brand line — voyeurverite.com
-  // and trionn.com both pair their own loading screens with a ticking
-  // percentage; this is that same beat, synced to COUNTER_DURATION_MS
-  // instead of running as its own independent timer. Driven by rAF
-  // (elapsed-time-based, not tick-count-based) so a throttled/backgrounded
-  // tab still lands on exactly 100 rather than stalling partway — the
-  // same lesson AnimatedStat.tsx already learned the hard way for its
-  // own count-up.
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
     const timers = [
-      setTimeout(() => setBarsSettled(true), 700),
-      setTimeout(() => setFrameDrawn(true), 750),
-      setTimeout(() => setBrandVisible(true), 900),
-      setTimeout(() => setVisible(false), 1450),
-      setTimeout(() => setRemoved(true), 2100),
+      setTimeout(() => setBrandVisible(true), 350),
+      setTimeout(() => setVisible(false), 1600),
+      setTimeout(() => setRemoved(true), 2300),
     ];
 
     const start = performance.now();
@@ -107,92 +62,88 @@ export function PageLoadVeil() {
           initial={{ clipPath: "inset(0% 0 0% 0)" }}
           exit={{ clipPath: "inset(0% 0 100% 0)" }}
           transition={{ duration: 0.65, ease: EASE }}
-          className="pointer-events-none fixed inset-0 z-100 flex flex-col items-center justify-center gap-6 overflow-hidden bg-soil"
+          className="pointer-events-none fixed inset-0 z-100 flex flex-col items-center justify-center overflow-hidden"
+          style={{ backgroundColor: "#1B1B1B" }}
           aria-hidden="true"
         >
-          <div className="paper-grain" style={{ opacity: 0.1 }} />
-
-          <div className="relative" style={{ width: MARK_WIDTH, height: MARK_HEIGHT + 4 }}>
-            {BARS.map((bar, i) => (
-              <motion.div
-                key={`glow-${bar.color}`}
-                className="absolute rounded-full"
-                style={{
-                  left: bar.x - 12,
-                  bottom: 0,
-                  width: BAR_WIDTH + 24,
-                  height: BAR_WIDTH + 24,
-                  backgroundColor: bar.color,
-                  filter: "blur(11px)",
-                }}
-                initial={{ opacity: 0, scale: 0.6 }}
-                animate={barsSettled ? { opacity: [0, 0.55, 0], scale: [0.6, 1.5, 1.5] } : undefined}
-                transition={{ duration: 0.4, delay: i * 0.04, ease: "easeOut" }}
-              />
-            ))}
-            <svg
-              width={MARK_WIDTH}
-              height={MARK_HEIGHT + 4}
-              viewBox={`0 0 ${MARK_WIDTH} ${MARK_HEIGHT + 4}`}
-              fill="none"
-              className="relative"
-            >
-              {BARS.map((bar, i) => (
-                <motion.rect
-                  key={bar.color}
-                  x={bar.x}
-                  width={BAR_WIDTH}
-                  rx={5}
-                  fill={bar.color}
-                  opacity={0.92}
-                  initial={{ height: 0, y: BASELINE }}
-                  animate={{ height: bar.height, y: BASELINE - bar.height }}
-                  transition={{ duration: 0.45, delay: i * 0.06, ease: EASE }}
-                />
-              ))}
-              {/* The unifying stroke: five separate bars settle first,
-                  each announcing its own element; only once all five have
-                  landed does this frame draw itself around them, the
-                  visual argument for "one brand" instead of just five
-                  colors sitting next to each other. */}
-              <motion.rect
-                x={1}
-                y={1}
-                width={MARK_WIDTH - 2}
-                height={MARK_HEIGHT + 2}
-                rx={10}
-                stroke="#F4EFE6"
-                strokeOpacity={0.32}
-                strokeWidth={1}
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: frameDrawn ? 1 : 0 }}
-                transition={{ duration: 0.5, ease: EASE }}
-              />
-            </svg>
-          </div>
+          {/* The mountain scene — a real peak from the site's own
+              photography, breathing very slightly, under a charcoal
+              grade that keeps the mark the brightest thing on screen. */}
+          <motion.img
+            src="/images/own-jagged-peaks-wide.jpg"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            initial={{ scale: 1.06, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.55 }}
+            transition={{ duration: 1.8, ease: EASE }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(180deg, rgba(27,27,27,0.55) 0%, rgba(27,27,27,0.35) 45%, rgba(27,27,27,0.7) 100%)",
+            }}
+          />
+          {/* The warm shaft of light from the board — one soft diagonal
+              gradient, never a spotlight effect. */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(215deg, rgba(198,169,122,0.22) 0%, transparent 42%)",
+            }}
+          />
+          <div className="paper-grain" style={{ opacity: 0.12 }} />
 
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: brandVisible ? 1 : 0, y: brandVisible ? 0 : 8 }}
-            transition={{ duration: 0.4, ease: EASE }}
-            className="flex flex-col items-center"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
+            className="relative flex flex-col items-center"
           >
-            <span className="font-body text-[0.65rem] font-bold uppercase tracking-[0.4em] text-ivory/70">
-              {site.name}
-            </span>
-            <span className="mt-2 max-w-xs text-center text-xs text-ivory/40">
-              {site.tagline}
-            </span>
+            <LogoMark size={88} light />
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: brandVisible ? 1 : 0, y: brandVisible ? 0 : 8 }}
+              transition={{ duration: 0.5, ease: EASE }}
+              className="mt-6 flex flex-col items-center"
+            >
+              <span className="font-display text-lg font-medium uppercase tracking-[0.38em] text-ivory sm:text-xl">
+                {site.name}
+              </span>
+              {/* The gold divider with its centered node. */}
+              <span className="mt-4 flex items-center gap-1.5" aria-hidden="true">
+                <span className="h-px w-10" style={{ backgroundColor: "rgba(198,169,122,0.7)" }} />
+                <span className="h-1 w-1 rounded-full" style={{ backgroundColor: "#C6A97A" }} />
+                <span className="h-px w-10" style={{ backgroundColor: "rgba(198,169,122,0.7)" }} />
+              </span>
+              <span className="mt-4 font-body text-[0.62rem] uppercase tracking-[0.32em] text-ivory/60">
+                Revealing essence. Creating impact.
+              </span>
+            </motion.div>
           </motion.div>
 
-          {/* The numeric counter voyeurverite.com and trionn.com both
-              pair with their own loading screens — placed in a corner
-              rather than beside the mark so it reads as a separate,
-              secondary beat instead of competing with the brand line
-              for attention. */}
-          <div className="pointer-events-none absolute bottom-6 left-6 flex items-baseline gap-2 font-body text-[0.65rem] tracking-[0.3em] text-ivory/40 sm:bottom-8 sm:left-8">
-            <span>LOADING</span>
-            <span className="tabular-nums text-ivory/70">{progress}</span>
+          {/* The loading beat — label, hairline track with a glowing
+              gold leading edge, percentage. */}
+          <div className="absolute bottom-12 flex flex-col items-center gap-3 sm:bottom-16">
+            <span className="font-body text-[0.6rem] uppercase tracking-[0.4em] text-ivory/55">Loading</span>
+            <span className="relative block h-px w-56 overflow-visible sm:w-64" aria-hidden="true">
+              <span className="absolute inset-0" style={{ backgroundColor: "rgba(242,240,232,0.18)" }} />
+              <span
+                className="absolute inset-y-0 left-0"
+                style={{ width: `${progress}%`, backgroundColor: "#C6A97A", transition: "width 80ms linear" }}
+              />
+              <span
+                className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full"
+                style={{
+                  left: `${progress}%`,
+                  backgroundColor: "#EBD9B4",
+                  boxShadow: "0 0 12px 3px rgba(198,169,122,0.85)",
+                  transition: "left 80ms linear",
+                }}
+              />
+            </span>
+            <span className="font-body text-[0.62rem] tabular-nums tracking-[0.3em] text-ivory/60">{progress} %</span>
           </div>
         </motion.div>
       )}
