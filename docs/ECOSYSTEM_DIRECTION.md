@@ -53,3 +53,6 @@ soft highlight bloom, atmospheric depth. Footage stays BRIGHT; glass
 carries text (see CLAUDE.md media standard). Goal: organic dopamine —
 awe, curiosity, calm — each section a new ecosystem whose imagery
 deepens the story.
+
+## Three layers of life (rule added Aug 2, 2026 — gates every future clip)
+Every chapter must contain, in one frame: PRIMARY life (the cinematic subject — canopy, stream, meadow, summit), SECONDARY life (the environment moving — wind, water, fog, cloud, light), and TERTIARY life (living organisms — birds, pollinators, dragonflies, drifting seeds, insects). Footage without the tertiary layer is scenery, not nature, and is rejected regardless of beauty. Where footage cannot carry tertiary life itself, the SkyLife component and mote layers may supply it, but real in-frame life always outranks synthetic. Biodiversity rule stands: each chapter introduces a biologically different ecosystem (rainforest canopy, moss floor, alpine summit, flowering meadow, freshwater stream, wetland, open valley). Success criterion: visitors remember cinematic moments (the forest waking up, crystal water revealing stones, birds disappearing into the horizon), never sections.
