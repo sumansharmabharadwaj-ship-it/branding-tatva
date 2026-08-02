@@ -164,7 +164,7 @@ export function BrandHealthCheck() {
         >
           {/* "Self-check" carried a rendered hyphen — a copywriting
               standard violation caught in the Phase 4 pass. */}
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Self assessment</p>
+          <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Self assessment</p>
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
             A quick brand health check.
           </h2>
@@ -252,7 +252,7 @@ export function BrandHealthCheck() {
             >
               <div className="flex items-baseline justify-between gap-4">
                 <p className="text-xs uppercase tracking-wide text-ivory/50">Where this points</p>
-                <p className="font-display text-sm text-sandstone">
+                <p className="font-display text-sm text-ivory/70">
                   <AnimatedStat value={String(score)} />
                   <span className="text-ivory/50">/{MAX_SCORE}</span>
                 </p>

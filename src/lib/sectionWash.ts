@@ -54,12 +54,12 @@ const CREAM = "#F4EFE6";
 // deliberate golden moments and for every other page's established
 // sections.
 export const MOOD = {
-  charcoal: "#17181A", // Authority — architectural, neutral-cool
-  stone: "#1B1A17", // Stakes — dry stone/graphite, reads grey
+  charcoal: "#171A17", // Authority — architectural, neutral-cool
+  stone: "#191B16", // Stakes — dry stone/graphite, reads grey
   mist: "#1A2026", // Education — blue-grey mist
-  deepwater: "#0F151C", // Desire — night-water blue behind the gold
+  deepwater: "#0E1714", // Desire — night-water blue behind the gold
   forest: "#141A15", // Health Check — deep forest green-black
-  slate: "#181D21", // FAQ — cool slate calm
+  slate: "#17201C", // FAQ — cool slate calm
   // Deliverables — "the study": dark walnut-charcoal, the room the
   // strategy documents are read in. Color Script Audit: the first
   // study tone (#1F1A15) stacked with warm lamp glows and warm cloth
@@ -67,7 +67,7 @@ export const MOOD = {
   // the Pinterest references never have. The room is now near-neutral
   // smoked oak: warmth exists only as accents (ivory paper, one faint
   // bronze highlight), never as the mood.
-  study: "#1B1917",
+  study: "#172019",
 } as const;
 
 function hexToRgb(hex: string): [number, number, number] {

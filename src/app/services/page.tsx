@@ -216,7 +216,7 @@ export default function ServicesPage() {
               chapter opens with the same device — a veil of the
               PREVIOUS chapter's mood color dissolving into its own —
               one continuous color journey instead of stacked blocks. */}
-          <SceneHandoff color="#17181A" heightClass="h-[24vh]" />
+          <SceneHandoff color="#171A17" heightClass="h-[24vh]" />
         </PhotoHero>
 
         {/* Authority — the one deliberate ScrollTrigger.pin section. */}
@@ -226,7 +226,7 @@ export default function ServicesPage() {
             See the main-level comment above for the full root cause. */}
         <section id="authority" className="relative scroll-mt-24" style={{ backgroundColor: MOOD.charcoal }}>
           <PinnedBrandBuild />
-          <SceneHandoff color="#1B1A17" />
+          <SceneHandoff color="#191B16" />
         </section>
 
         {/* An extension of Authority, not a new act — shows the real
@@ -273,12 +273,12 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(24,25,26,0.92) 0%, rgba(24,25,26,0.74) 50%, rgba(24,25,26,0.9) 100%)",
+                "linear-gradient(180deg, rgba(24,27,23,0.92) 0%, rgba(24,27,23,0.74) 50%, rgba(24,27,23,0.9) 100%)",
             }}
           />
           {/* Scene dissolve: Authority's charcoal handing off into
               Stakes' stone. */}
-          <SceneVeil color="#17181A" />
+          <SceneVeil color="#171A17" />
           <LazyAmbientShader opacity={0.1} />
           {/* Same ghost watermark word technique Home ("ELEMENTS"), About
               ("WHY"), and Blog ("NOTES") already use, extended here — a
@@ -314,15 +314,15 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(26,32,38,0.88) 0%, rgba(26,32,38,0.7) 55%, rgba(26,32,38,0.88) 100%)",
+                "linear-gradient(180deg, rgba(26,32,38,0.9) 0%, rgba(26,32,38,0.78) 55%, rgba(26,32,38,0.88) 100%)",
             }}
           />
           {/* Scene dissolve: Stakes' dry stone into Education's mist. */}
-          <SceneVeil color="#1B1A17" />
+          <SceneVeil color="#191B16" />
           <div className="relative">
             <PerceptionLadder />
           </div>
-          <SceneHandoff color="#0F151C" />
+          <SceneHandoff color="#0E1714" />
         </section>
 
         {/* CommonMistakes used to be its own full-viewport section here
@@ -382,7 +382,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(15,21,28,0.85) 0%, rgba(15,21,28,0.58) 45%, rgba(15,21,28,0.85) 100%)",
+                "linear-gradient(180deg, rgba(14,23,20,0.88) 0%, rgba(14,23,20,0.68) 45%, rgba(14,23,20,0.85) 100%)",
             }}
           />
           {/* Scene dissolve: Education's blue mist into Desire's deep
@@ -391,7 +391,7 @@ export default function ServicesPage() {
           <div className="relative">
             <PackageSelector />
           </div>
-          <SceneHandoff color="#1B1917" />
+          <SceneHandoff color="#172019" />
         </section>
 
         {/* An extension of Desire, not a new act — direct feedback
@@ -431,7 +431,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(27,25,23,0.55) 0%, rgba(27,25,23,0.28) 45%, rgba(27,25,23,0.6) 100%)",
+                "linear-gradient(180deg, rgba(23,32,25,0.55) 0%, rgba(23,32,25,0.28) 45%, rgba(23,32,25,0.6) 100%)",
             }}
           />
           <DustMotes />
@@ -445,7 +445,7 @@ export default function ServicesPage() {
           </ParallaxDrift>
           {/* Scene dissolve: Desire's deep water hands into the river
               study. */}
-          <SceneVeil color="#0F151C" heightClass="h-[15vh]" />
+          <SceneVeil color="#0E1714" heightClass="h-[15vh]" />
           <div className="relative">
             <DeliverablesReveal room />
           </div>
@@ -503,7 +503,7 @@ export default function ServicesPage() {
               next scene. */}
           {/* Scene dissolve: the study's warm dark hands into the
               forest — lamplight dimming into green-black. */}
-          <SceneVeil color="#1B1917" heightClass="h-[14vh]" />
+          <SceneVeil color="#172019" heightClass="h-[14vh]" />
           <ParallaxDrift distance={70} className="pointer-events-none absolute -top-4 left-0 select-none sm:-top-8">
             <span
               aria-hidden="true"
@@ -515,7 +515,7 @@ export default function ServicesPage() {
           <div className="relative">
             <BrandHealthCheck />
           </div>
-          <SceneHandoff color="#181D21" />
+          <SceneHandoff color="#17201C" />
         </section>
 
         {/* Risk removal — the real FAQ content, reframed, merged with the
@@ -579,7 +579,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(24,29,33,0.84) 0%, rgba(24,29,33,0.6) 45%, rgba(24,29,33,0.7) 82%, rgba(35,31,27,0.9) 100%)",
+                "linear-gradient(180deg, rgba(23,32,28,0.84) 0%, rgba(23,32,28,0.6) 45%, rgba(23,32,28,0.7) 82%, rgba(35,31,27,0.9) 100%)",
             }}
           />
           {/* Three mist depth planes above the overlay — the filmed fog

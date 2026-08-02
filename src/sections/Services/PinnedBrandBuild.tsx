@@ -118,7 +118,7 @@ export function PinnedBrandBuild() {
         />
         <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.7)" }} />
         <Container className="relative">
-          <p className="hidden text-sm font-medium uppercase tracking-wide text-sandstone sm:block">Authority</p>
+          <p className="hidden text-sm font-medium uppercase tracking-wide text-ivory/70 sm:block">Authority</p>
           <h2 className="hidden max-w-xl text-display-sm font-display font-normal text-ivory sm:mt-2 sm:block">
             Marketing amplifies whatever is already there.
           </h2>
@@ -186,7 +186,7 @@ export function PinnedBrandBuild() {
       <div className="relative mx-auto flex h-full w-full max-w-[100rem] flex-col justify-center px-6 sm:px-10 lg:px-20">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20">
           <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Authority</p>
+            <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Authority</p>
             <h2 className="mt-2 text-display-sm font-display font-normal text-ivory lg:text-display-md">
               Marketing amplifies whatever is already there.
             </h2>

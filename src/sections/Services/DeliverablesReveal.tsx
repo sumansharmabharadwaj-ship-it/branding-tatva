@@ -44,7 +44,7 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
     return (
       <Container className="max-w-5xl">
         <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">What you receive</p>
+          <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">What you receive</p>
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory sm:text-display-md">
             What you actually leave with.
           </h2>
@@ -85,8 +85,8 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
           glass language. */}
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,15rem)] lg:items-end lg:gap-16">
         <Reveal>
-          <div className="inline-block max-w-2xl rounded-2xl border border-ivory/20 bg-soil/25 p-7 backdrop-blur-xl sm:p-8">
-            <p className="text-sm font-medium uppercase tracking-wide text-sandstone">What you receive</p>
+          <div className="inline-block max-w-2xl rounded-2xl border border-ivory/20 bg-soil/40 p-7 backdrop-blur-xl sm:p-8">
+            <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">What you receive</p>
             <h2 className="mt-2 text-display-sm font-display font-normal text-ivory sm:text-display-md">
               What you actually leave with.
             </h2>
@@ -96,7 +96,7 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
           </div>
         </Reveal>
         <Reveal delay={0.12} className="hidden lg:block">
-          <div className="rounded-2xl border border-ivory/20 bg-soil/25 p-5 backdrop-blur-xl">
+          <div className="rounded-2xl border border-ivory/20 bg-soil/40 p-5 backdrop-blur-xl">
             <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/60">Inside this file</p>
             <ol className="mt-3">
               {packages.map((pkg, i) => (
@@ -125,7 +125,7 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
               className={`group relative mt-10 first:mt-0 lg:mt-0 ${pose.className}`}
               style={{ zIndex: pi + 10 }}
             >
-              <div className="relative overflow-hidden rounded-3xl border border-ivory/25 bg-soil/25 p-7 shadow-[0_18px_50px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-colors duration-500 group-hover:border-ivory/40 sm:p-9">
+              <div className="relative overflow-hidden rounded-3xl border border-ivory/25 bg-soil/40 p-7 shadow-[0_18px_50px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-colors duration-500 group-hover:border-ivory/40 sm:p-9">
                 <div className="flex items-center gap-2.5">
                   <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ backgroundColor: pkg.color }} />
                   <span className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-ivory/70">
@@ -145,7 +145,7 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
                 <div className="relative mt-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
                   <h3 className="font-display text-2xl font-normal text-ivory sm:text-3xl">{pkg.name}</h3>
                   <motion.span
-                    className="-rotate-1 font-display text-base italic text-sandstone"
+                    className="-rotate-1 font-display text-base italic text-ivory/70"
                     initial={prefersReducedMotion ? undefined : { opacity: 0, y: 4, filter: "blur(3px)" }}
                     whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
                     viewport={{ once: true, margin: "0px 0px -8% 0px" }}

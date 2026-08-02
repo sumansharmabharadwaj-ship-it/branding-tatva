@@ -49,7 +49,7 @@ export function PerceptionLadder() {
           instance of the abstract ladder a visitor just read. */}
       <Container className="relative max-w-5xl">
         <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Education</p>
+          <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Education</p>
           {/* Phase 4 persuasion pass: "why some brands look different"
               was observation at a distance — this makes the ladder about
               the reader's own brand, already being ranked whether they
@@ -68,7 +68,7 @@ export function PerceptionLadder() {
             <div className="absolute inset-y-0 left-0 w-[2px] bg-ivory/15" aria-hidden="true" />
             {!prefersReducedMotion && (
               <motion.div
-                className="absolute left-0 top-0 w-[2px] origin-top bg-sandstone"
+                className="absolute left-0 top-0 w-[2px] origin-top bg-[#A0A690]"
                 style={{ height: "100%", scaleY: fillScale }}
                 aria-hidden="true"
               />
@@ -81,14 +81,14 @@ export function PerceptionLadder() {
               <Reveal key={rung.label} delay={i * 0.1}>
                 <div className="group relative transition-transform duration-300 hover:translate-x-1">
                   <motion.span
-                    className="absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 bg-soil transition-shadow duration-300 group-hover:shadow-[0_0_10px_rgba(212,185,154,0.55)] sm:-left-[33px]"
+                    className="absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 bg-soil transition-shadow duration-300 group-hover:shadow-[0_0_10px_rgba(160,166,144,0.55)] sm:-left-[33px]"
                     aria-hidden="true"
-                    initial={prefersReducedMotion ? { borderColor: "#D4B99A" } : { borderColor: "rgba(244,239,230,0.25)", scale: 1 }}
+                    initial={prefersReducedMotion ? { borderColor: "#A0A690" } : { borderColor: "rgba(244,239,230,0.25)", scale: 1 }}
                     whileInView={
                       prefersReducedMotion
                         ? undefined
                         : {
-                            borderColor: "#D4B99A",
+                            borderColor: "#A0A690",
                             scale: [1, 1.35, 1],
                             transition: { delay: 0.35 + i * 0.18, duration: 0.5 },
                           }
@@ -112,7 +112,10 @@ export function PerceptionLadder() {
               </p>
               <p className="mt-1 text-sm text-ivory/70">Where one client&apos;s engagement started.</p>
               <div className="my-6 h-px bg-ivory/15" aria-hidden="true" />
-              <p className="font-display text-4xl font-normal text-sandstone sm:text-5xl">
+              {/* The climb's destination keeps a highlight — sage tint
+                  (blendHex(sage, ivory, 45) precomputed), the same
+                  accent as the ladder's own fill line. */}
+              <p className="font-display text-4xl font-normal text-[#A0A690] sm:text-5xl">
                 <AnimatedStat value="2.81%" />
               </p>
               <p className="mt-1 text-sm text-ivory/70">Eight weeks after climbing this exact ladder.</p>

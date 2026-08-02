@@ -115,7 +115,7 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
                     <span
                       aria-hidden="true"
                       className={`ml-4 shrink-0 text-lg transition-all duration-300 group-hover:opacity-100 ${
-                        dark ? "text-sandstone opacity-70" : "text-action-primary"
+                        dark ? "text-ivory/70 opacity-70" : "text-action-primary"
                       }`}
                       style={{ transform: isOpen ? TOGGLE_ROTATION.open : TOGGLE_ROTATION.closed }}
                     >

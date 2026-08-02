@@ -76,7 +76,7 @@ export function WeakBrandingCost() {
     <Container className="max-w-5xl">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:items-end lg:gap-16">
         <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The stakes</p>
+          <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">The stakes</p>
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory sm:text-display-md">
             What weak branding actually costs.
           </h2>

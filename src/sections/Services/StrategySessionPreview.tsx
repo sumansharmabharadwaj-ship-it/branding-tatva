@@ -25,7 +25,7 @@ export function StrategySessionPreview({ dark = false }: { dark?: boolean }) {
   return (
     <div>
       <Reveal>
-        <p className={`text-sm font-medium uppercase tracking-wide ${dark ? "text-sandstone" : "text-action-secondary"}`}>
+        <p className={`text-sm font-medium uppercase tracking-wide ${dark ? "text-ivory/70" : "text-action-secondary"}`}>
           Before you book
         </p>
         <h2 className={`mt-2 text-display-sm font-display font-normal ${dark ? "text-ivory" : "text-soil"}`}>
