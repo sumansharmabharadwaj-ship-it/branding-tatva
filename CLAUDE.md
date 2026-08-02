@@ -85,3 +85,5 @@ Photography: early morning / golden hour / overcast; macro, shallow depth of fie
 ## Media standard (recorded Aug 2026 after direct verdict: "dark, vague, low quality, serving no purpose")
 
 The failure pattern to never repeat: grading footage darker so text can sit on it. Per the moodboard, footage stays BRIGHT and luminous (backlit leaves, dew macro, bright mist, sunlit valleys); glass panels carry all text readability. Overlays stay light (peak ~0.4), localized scrims only where type sits. Encode at 1080p minimum, crf 20-22 (720p/crf26 reads soft at full-bleed retina). Every clip must serve its chapter's specific idea, or the chapter goes without video. Full Services media re-foundation is the open next phase: source a coherent bright set per the codified design language, per-file approvals as always.
+
+The full media/narrative direction lives in docs/ECOSYSTEM_DIRECTION.md — the living-ecosystem shot script, environmental-psychology map, and cinematic DNA. It is CURRENT truth (unlike the older docs/) and governs every footage, grading, and section-story decision.
