@@ -320,9 +320,9 @@ export default function ServicesPage() {
               reads as shrinking). */}
           <BackgroundVideo
             parallax
-            video="/videos/pexels-seedlings-rise.mp4"
-            videoWebm="/videos/pexels-seedlings-rise.webm"
-            poster="/images/pexels-seedlings-rise-poster.jpg"
+            video="/videos/pexels-redwood-ferns.mp4"
+            videoWebm="/videos/pexels-redwood-ferns.webm"
+            poster="/images/pexels-redwood-ferns-poster.jpg"
           />
           <div
             className="absolute inset-0"
@@ -389,9 +389,9 @@ export default function ServicesPage() {
         <section id="desire" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.deepwater }}>
           <BackgroundVideo parallax
             push
-            video="/videos/pexels-white-bloom.mp4"
-            videoWebm="/videos/pexels-white-bloom.webm"
-            poster="/images/pexels-white-bloom-poster.jpg"
+            video="/videos/pexels-dew-clearing.mp4"
+            videoWebm="/videos/pexels-dew-clearing.webm"
+            poster="/images/pexels-dew-clearing-poster.jpg"
           />
           <div
             className="absolute inset-0"
@@ -495,9 +495,9 @@ export default function ServicesPage() {
               2.0MB MP4 / 0.7MB WebM. */}
           <BackgroundVideo
             parallax
-            video="/videos/pexels-still-water-reflection.mp4"
-            videoWebm="/videos/pexels-still-water-reflection.webm"
-            poster="/images/pexels-still-water-reflection-poster.jpg"
+            video="/videos/pexels-moss-stream.mp4"
+            videoWebm="/videos/pexels-moss-stream.webm"
+            poster="/images/pexels-moss-stream-poster.jpg"
           />
           <div
             className="absolute inset-0"
@@ -567,9 +567,9 @@ export default function ServicesPage() {
             final room rather than a hard cut. */}
         <section id="risk" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.slate }}>
           <BackgroundVideo parallax
-            video="/videos/pexels-fog-sun-forest.mp4"
-            videoWebm="/videos/pexels-fog-sun-forest.webm"
-            poster="/images/pexels-fog-sun-forest-poster.jpg"
+            video="/videos/pexels-living-meadow.mp4"
+            videoWebm="/videos/pexels-living-meadow.webm"
+            poster="/images/pexels-living-meadow-poster.jpg"
           />
           {/* Tertiary life, story-first: birds crossing the open sky
               above the fog at irregular intervals, with pollen motes
