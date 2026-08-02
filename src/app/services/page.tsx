@@ -130,7 +130,7 @@ export default function ServicesPage() {
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
-            style={{ backgroundImage: "linear-gradient(90deg, rgba(15,18,17,0.55) 0%, rgba(15,18,17,0.2) 45%, transparent 70%)" }}
+            style={{ backgroundImage: "linear-gradient(90deg, rgba(15,18,17,0.38) 0%, rgba(15,18,17,0.12) 45%, transparent 70%)" }}
           />
           {/* Phase 2, hero motion language: "typography forming." The
               claim assembles (CyclingStatement), and the giant page
