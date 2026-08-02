@@ -48,7 +48,7 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory sm:text-display-md">
             What you actually leave with.
           </h2>
-          <p className="mt-4 max-w-xl text-base text-ivory/85">
+          <p className="mt-4 max-w-xl text-base text-ivory/90">
             Every item below is pulled directly from the three packages above. Nothing generic, nothing invented.
           </p>
         </Reveal>
@@ -57,10 +57,10 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
             const items = pkg.includes.filter((item) => !item.startsWith("Everything in"));
             return (
               <div key={pkg.slug} className="h-full rounded-xl border-t-2 bg-ivory/[0.03] p-6" style={{ borderColor: pkg.color }}>
-                <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/60">{pkg.name}</p>
+                <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/70">{pkg.name}</p>
                 <ul className="mt-4 space-y-3">
                   {items.map((item) => (
-                    <li key={item} className="flex items-start gap-2.5 text-sm text-ivory/85">
+                    <li key={item} className="flex items-start gap-2.5 text-sm text-ivory/90">
                       <span aria-hidden="true" className="mt-0.5 shrink-0" style={{ color: pkg.color }}>
                         &#10003;
                       </span>
@@ -97,12 +97,12 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
         </Reveal>
         <Reveal delay={0.12} className="hidden lg:block">
           <div className="rounded-2xl border border-ivory/20 bg-soil/40 p-5 backdrop-blur-xl">
-            <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/60">Inside this file</p>
+            <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/70">Inside this file</p>
             <ol className="mt-3">
               {packages.map((pkg, i) => (
                 <li key={pkg.slug} className="flex items-baseline gap-3 border-b border-ivory/15 py-2 last:border-b-0">
-                  <span className="font-display text-sm text-ivory/45">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="text-sm text-ivory/85">{pkg.name}</span>
+                  <span className="font-display text-sm text-ivory/70">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="text-sm text-ivory/90">{pkg.name}</span>
                 </li>
               ))}
             </ol>

@@ -101,13 +101,13 @@ export function PackageSelector() {
             >
               <p className="font-display text-xl font-normal text-ivory">{activePackage.name}</p>
               <div className="mt-2 flex items-baseline gap-1.5">
-                {activePackage.billing === "monthly" && <span className="text-sm text-ivory/60">from</span>}
+                {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">from</span>}
                 <span className="font-display text-2xl font-normal text-ivory">
                   £{activePackage.price.toLocaleString("en-GB")}
                 </span>
-                {activePackage.billing === "monthly" && <span className="text-sm text-ivory/60">/mo</span>}
+                {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">/mo</span>}
               </div>
-              <p className="mt-4 text-ivory/85">{activePackage.description}</p>
+              <p className="mt-4 text-ivory/90">{activePackage.description}</p>
               {/* "Open folder" stagger reveal — each real include item
                   animates in with a short delay instead of appearing as
                   a static bulleted list, so what a visitor actually
@@ -121,7 +121,7 @@ export function PackageSelector() {
                     initial={prefersReducedMotion ? undefined : { opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : 0.15 + i * 0.08 }}
-                    className="text-sm text-ivory/80 before:mr-2 before:content-['•']"
+                    className="text-sm text-ivory/90 before:mr-2 before:content-['•']"
                   >
                     {item}
                   </motion.li>
@@ -141,7 +141,7 @@ export function PackageSelector() {
               </div>
             </motion.div>
           ) : (
-            <motion.p key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-sm text-ivory/50">
+            <motion.p key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-sm text-ivory/70">
               Pick the one closest to true. The right package appears below.
             </motion.p>
           )}

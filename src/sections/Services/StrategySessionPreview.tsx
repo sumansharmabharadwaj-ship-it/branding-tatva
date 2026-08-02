@@ -43,7 +43,7 @@ export function StrategySessionPreview({ dark = false }: { dark?: boolean }) {
               <span className={`pt-0.5 font-display text-2xl font-normal leading-none ${dark ? "text-ivory/25" : "text-soil/25"}`}>
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <p className={dark ? "text-ivory/85" : "text-foreground-secondary"}>{step}</p>
+              <p className={dark ? "text-ivory/90" : "text-foreground-secondary"}>{step}</p>
             </Reveal>
           </li>
         ))}

@@ -84,12 +84,12 @@ export function WeakBrandingCost() {
               section ("a pattern that holds across categories") —
               methodology talk. This one puts the reader's own money in
               the sentence. */}
-          <p className="mt-4 max-w-xl text-base text-ivory/85">
+          <p className="mt-4 max-w-xl text-base text-ivory/90">
             The same budget buys two very different futures. Positioning decides which one a brand is paying for.
           </p>
         </Reveal>
         <Reveal delay={0.12}>
-          <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/50">Where the weak column begins</p>
+          <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/70">Where the weak column begins</p>
           {/* Phase 4.5 — Stakes' motion identity is focus and tension:
               the four origin points arrive one at a time, each sliding
               in from soft focus to sharp, the editorial numbering
@@ -106,8 +106,8 @@ export function WeakBrandingCost() {
                 transition={{ duration: 0.55, delay: 0.3 + i * 0.16, ease: [0.16, 1, 0.3, 1] }}
                 className="flex items-baseline gap-3 border-b border-ivory/15 py-2.5"
               >
-                <span className="font-display text-sm text-ivory/45">{String(i + 1).padStart(2, "0")}</span>
-                <span className="text-sm text-ivory/85">{item}</span>
+                <span className="font-display text-sm text-ivory/70">{String(i + 1).padStart(2, "0")}</span>
+                <span className="text-sm text-ivory/90">{item}</span>
               </motion.li>
             ))}
           </ol>
@@ -134,7 +134,7 @@ export function WeakBrandingCost() {
                 filter: prefersReducedMotion ? "none" : filter,
               }}
             >
-              <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/55">Positioned generically</p>
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/70">Positioned generically</p>
               {/* Each cost surfaces from soft focus one line at a time —
                   the psychological weight builds instead of arriving as
                   one block. The distinct card's list (below) stays
@@ -147,7 +147,7 @@ export function WeakBrandingCost() {
                     whileInView={prefersReducedMotion ? undefined : { opacity: 1, filter: "blur(0px)" }}
                     viewport={{ once: true, margin: "0px 0px -12% 0px" }}
                     transition={{ duration: 0.6, delay: 0.35 + wi * 0.14 }}
-                    className="text-[0.95rem] leading-relaxed text-ivory/80"
+                    className="text-[0.95rem] leading-relaxed text-ivory/90"
                   >
                     {item}
                   </motion.li>
@@ -162,7 +162,7 @@ export function WeakBrandingCost() {
               className="h-full rounded-lg border-t-2 p-6 backdrop-blur-md sm:p-7"
               style={{ borderColor: ELEMENT_HEX.water, backgroundColor: "rgba(24,25,26,0.6)" }}
             >
-              <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/55">Positioned distinctly</p>
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/70">Positioned distinctly</p>
               <ul className="mt-5 space-y-3.5">
                 {STRONG.map((item) => (
                   <li key={item} className="text-[0.95rem] leading-relaxed text-ivory/90">

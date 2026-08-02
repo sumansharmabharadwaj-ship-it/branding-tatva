@@ -12,7 +12,7 @@ import { RiskRemovalFAQ } from "@/sections/Services/RiskRemovalFAQ";
 import { ClearingMist } from "@/sections/Services/ClearingMist";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { SceneHandoff } from "@/sections/Services/SceneHandoff";
-import { CyclingStatement } from "@/sections/Services/CyclingStatement";
+import { SplitReveal } from "@/components/SplitReveal";
 import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
 import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
@@ -134,7 +134,7 @@ export default function ServicesPage() {
           <Container className="relative py-20">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal>
-                <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+                <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/90">
                   Curiosity
                 </span>
                 {/* Phase 4 persuasion pass: the old headline asked a
@@ -143,8 +143,19 @@ export default function ServicesPage() {
                     claim — the question dissolved the momentum. The
                     headline now lands the claim the lines were building:
                     it names what "something else" is. */}
-                <CyclingStatement headline="Branding is how a business gets chosen before it gets compared." />
-                <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/85">
+                {/* The cycling pre-headline ritual is retired on direct feedback:
+                    its single line height handing off to a wrapping headline
+                    made everything below jump, and it delayed the H1 —
+                    CLAUDE.md's own motion rule. The headline now renders
+                    immediately for every visitor, stable at every width. */}
+                <SplitReveal
+                  as="h1"
+                  splitType="chars"
+                  className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
+                >
+                  Branding is how a business gets chosen before it gets compared.
+                </SplitReveal>
+                <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/90">
                   One client&apos;s engagement moved from{" "}
                   <span className="font-medium text-sandstone">0.71%</span> to{" "}
                   <span className="font-medium text-sandstone">2.81%</span> in eight weeks of this exact work. The
@@ -162,7 +173,7 @@ export default function ServicesPage() {
                   <Magnetic>
                     <a
                       href="#book"
-                      className="group inline-flex items-baseline gap-2 text-sm tracking-wide text-ivory/85 transition-colors duration-300 hover:text-ivory"
+                      className="group inline-flex items-baseline gap-2 text-sm tracking-wide text-ivory/90 transition-colors duration-300 hover:text-ivory"
                     >
                       <span className="link-underline">Ready already? Open the strategy room</span>
                       <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-y-0.5">
@@ -184,10 +195,10 @@ export default function ServicesPage() {
                         href={item.href}
                         className="group flex items-baseline justify-end gap-3 border-b border-ivory/15 py-2.5 transition-colors duration-200 hover:border-ivory/40"
                       >
-                        <span className="font-display text-sm text-ivory/50 transition-colors duration-200 group-hover:text-sandstone">
+                        <span className="font-display text-sm text-ivory/70 transition-colors duration-200 group-hover:text-sandstone">
                           {String(i + 1).padStart(2, "0")}
                         </span>
-                        <span className="text-sm tracking-wide text-ivory/85 transition-colors duration-200 group-hover:text-ivory">
+                        <span className="text-sm tracking-wide text-ivory/90 transition-colors duration-200 group-hover:text-ivory">
                           {item.label}
                         </span>
                       </a>
@@ -592,11 +603,11 @@ export default function ServicesPage() {
           </ParallaxDrift>
           <Container className="relative max-w-6xl">
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-[0.18em] text-ivory/55">Risk removal</p>
+              <p className="text-sm font-medium uppercase tracking-[0.18em] text-ivory/70">Risk removal</p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory sm:text-display-md">
                 Is this the right fit?
               </h2>
-              <p className="mt-4 max-w-md text-base text-ivory/85">
+              <p className="mt-4 max-w-md text-base text-ivory/90">
                 Real answers to the questions that come up before a first conversation.
               </p>
             </Reveal>

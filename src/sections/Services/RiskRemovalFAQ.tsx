@@ -62,7 +62,7 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
               tracking. Questions read a step larger; answers at full
               text-base. */}
           <p
-            className={`text-xs font-medium uppercase tracking-[0.18em] ${dark ? "text-ivory/55" : "text-action-secondary"}`}
+            className={`text-xs font-medium uppercase tracking-[0.18em] ${dark ? "text-ivory/70" : "text-action-secondary"}`}
           >
             {group.label}
           </p>
@@ -136,7 +136,7 @@ export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
                           initial={prefersReducedMotion ? undefined : { opacity: 0, filter: "blur(6px)", y: 4 }}
                           animate={prefersReducedMotion ? undefined : { opacity: 1, filter: "blur(0px)", y: 0 }}
                           transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                          className={`max-w-2xl pb-4 text-base leading-relaxed ${dark ? "text-ivory/85" : "text-foreground-secondary"}`}
+                          className={`max-w-2xl pb-4 text-base leading-relaxed ${dark ? "text-ivory/90" : "text-foreground-secondary"}`}
                         >
                           {item.answer}
                         </motion.p>

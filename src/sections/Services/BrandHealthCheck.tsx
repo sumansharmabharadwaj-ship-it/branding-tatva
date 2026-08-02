@@ -168,7 +168,7 @@ export function BrandHealthCheck() {
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
             A quick brand health check.
           </h2>
-          <p className="mt-4 text-ivory/85">
+          <p className="mt-4 text-ivory/90">
             A real pattern, no invented analysis. {QUESTIONS.length} questions, about a minute.
           </p>
 
@@ -192,14 +192,14 @@ export function BrandHealthCheck() {
               transition={transition}
             >
               <div className="flex items-center justify-between">
-                <p className="text-xs uppercase tracking-wide text-ivory/50">
+                <p className="text-xs uppercase tracking-wide text-ivory/70">
                   Question {step + 1} of {QUESTIONS.length}
                 </p>
                 {step > 0 && (
                   <button
                     type="button"
                     onClick={back}
-                    className="link-underline text-xs text-ivory/60 hover:text-ivory"
+                    className="link-underline text-xs text-ivory/70 hover:text-ivory"
                   >
                     Back
                   </button>
@@ -221,7 +221,7 @@ export function BrandHealthCheck() {
                       className={`flex w-full items-center justify-between gap-3 rounded-lg border px-4 py-3 text-left text-sm transition-colors duration-200 ${
                         isSelected
                           ? "border-sandstone bg-sandstone/15 text-ivory"
-                          : "border-ivory/20 text-ivory/85 hover:border-ivory/45 hover:bg-ivory/5"
+                          : "border-ivory/20 text-ivory/90 hover:border-ivory/45 hover:bg-ivory/5"
                       }`}
                     >
                       <span>{opt.label}</span>
@@ -251,16 +251,16 @@ export function BrandHealthCheck() {
               style={{ borderColor: resultPackage?.color, backgroundColor: "rgba(244,239,230,0.04)" }}
             >
               <div className="flex items-baseline justify-between gap-4">
-                <p className="text-xs uppercase tracking-wide text-ivory/50">Where this points</p>
+                <p className="text-xs uppercase tracking-wide text-ivory/70">Where this points</p>
                 <p className="font-display text-sm text-ivory/70">
                   <AnimatedStat value={String(score)} />
-                  <span className="text-ivory/50">/{MAX_SCORE}</span>
+                  <span className="text-ivory/70">/{MAX_SCORE}</span>
                 </p>
               </div>
               <p className="mt-2 font-display text-xl font-normal text-ivory">{result?.title}</p>
-              <p className="mt-3 text-ivory/85">{result?.detail}</p>
+              <p className="mt-3 text-ivory/90">{result?.detail}</p>
               {resultPackage && (
-                <p className="mt-4 text-sm text-ivory/60">
+                <p className="mt-4 text-sm text-ivory/70">
                   Closest real match: <span className="text-ivory">{resultPackage.name}</span>
                 </p>
               )}
@@ -285,7 +285,7 @@ export function BrandHealthCheck() {
               continuously, so the panel keeps feeling like an
               instrument watching the answers rather than a static
               legend once its entrance has played. */}
-          <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-ivory/60">
+          <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-ivory/70">
             <motion.span
               aria-hidden="true"
               animate={prefersReducedMotion ? undefined : { opacity: [0.35, 1, 0.35] }}
@@ -304,7 +304,7 @@ export function BrandHealthCheck() {
                     isTrending ? "border-sandstone bg-sandstone/10" : "border-ivory/10"
                   }`}
                 >
-                  <p className={`font-display text-lg font-normal ${isTrending ? "text-ivory" : "text-ivory/55"}`}>
+                  <p className={`font-display text-lg font-normal ${isTrending ? "text-ivory" : "text-ivory/70"}`}>
                     {band.title}
                   </p>
                   <AnimatePresence>
@@ -314,7 +314,7 @@ export function BrandHealthCheck() {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="mt-1.5 overflow-hidden text-sm text-ivory/80"
+                        className="mt-1.5 overflow-hidden text-sm text-ivory/90"
                       >
                         {band.detail}
                       </motion.p>

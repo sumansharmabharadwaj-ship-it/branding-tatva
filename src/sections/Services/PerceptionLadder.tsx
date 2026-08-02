@@ -57,7 +57,7 @@ export function PerceptionLadder() {
           <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
             Your brand is already on this ladder.
           </h2>
-          <p className="mt-4 max-w-xl text-ivory/85">
+          <p className="mt-4 max-w-xl text-ivory/90">
             Buyers place it there with or without your involvement. Climbing deliberately is the whole discipline of
             branding.
           </p>
@@ -96,7 +96,7 @@ export function PerceptionLadder() {
                     viewport={{ once: true, margin: "0px 0px -25% 0px" }}
                   />
                   <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{rung.label}</p>
-                  <p className="mt-1 text-sm text-ivory/80 transition-colors duration-300 group-hover:text-ivory/95 sm:text-base">
+                  <p className="mt-1 text-sm text-ivory/90 transition-colors duration-300 group-hover:text-ivory/95 sm:text-base">
                     {rung.text}
                   </p>
                 </div>
@@ -106,7 +106,7 @@ export function PerceptionLadder() {
 
           <Reveal delay={0.15} className="lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-2xl border border-ivory/15 p-6 backdrop-blur-md sm:p-8" style={{ backgroundColor: "rgba(26,32,38,0.55)" }}>
-              <p className="text-xs font-medium uppercase tracking-wide text-ivory/60">One real climb</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">One real climb</p>
               <p className="mt-4 font-display text-4xl font-normal text-ivory sm:text-5xl">
                 <AnimatedStat value="0.71%" />
               </p>

@@ -136,7 +136,7 @@ export function PinnedBrandBuild() {
                     <ElementGlyph slug={layer.slug} className="h-4 w-4" style={{ color: layer.color }} />
                     <p className="font-display text-lg font-normal text-ivory">{layer.label}</p>
                   </div>
-                  <p className="mt-1 text-sm text-ivory/80">{layer.line}</p>
+                  <p className="mt-1 text-sm text-ivory/90">{layer.line}</p>
                 </div>
               </div>
             ))}
@@ -160,9 +160,11 @@ export function PinnedBrandBuild() {
           underneath, becoming visible. Shared with PerceptionLadder's
           own AmbientElementShader right after it, so both "Authority"
           and "Education" keep reading as one continuous visual system. */}
-      <BackgroundVideo video="/videos/higgsfield-mountain-mist.mp4" poster="/images/higgsfield-mountain-mist-poster.jpg" />
+      <div className="absolute inset-0 saturate-[0.5]" aria-hidden="true">
+        <BackgroundVideo video="/videos/higgsfield-mountain-mist.mp4" poster="/images/higgsfield-mountain-mist-poster.jpg" />
+      </div>
       <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.6)" }} />
-      <AmbientElementShader opacity={0.3} />
+      <AmbientElementShader opacity={0.08} />
       {/* Direct, repeated feedback (two screenshots) that this pinned
           frame read as a narrow content strip with empty video on both
           sides on a real wide display, and that the stacked
@@ -184,7 +186,7 @@ export function PinnedBrandBuild() {
             <h2 className="mt-2 text-display-sm font-display font-normal text-ivory lg:text-display-md">
               Marketing amplifies whatever is already there.
             </h2>
-            <p className="mt-8 max-w-md text-sm italic text-ivory/80 lg:text-base">
+            <p className="mt-8 max-w-md text-sm italic text-ivory/90 lg:text-base">
               Skip one layer, and marketing amplifies the gap instead of the position.
             </p>
           </div>
@@ -217,7 +219,7 @@ export function PinnedBrandBuild() {
                   <ElementGlyph slug={layer.slug} className="mt-1 h-6 w-6 shrink-0" style={{ color: layer.color }} />
                   <div>
                     <p className="font-display text-2xl font-normal text-ivory xl:text-3xl">{layer.label}</p>
-                    <p className="mt-1 max-w-lg text-sm text-ivory/80 xl:text-base">{layer.line}</p>
+                    <p className="mt-1 max-w-lg text-sm text-ivory/90 xl:text-base">{layer.line}</p>
                   </div>
                 </div>
               </div>
