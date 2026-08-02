@@ -15,9 +15,9 @@ import { socialLinks } from "./constants";
 // This keeps the same close-every-page-consistently job (Footer already
 // renders on all 12 pages) but gets to the booking widget immediately,
 // side by side with a brand/CTA card and a contact card — like a taskbar,
-// not another full scene. The backdrop is the dandelion release — the
-// film's coda per the ecosystem storyboard — behind a much shorter
-// passage now that there's far less content sitting on top of it.
+// not another full scene. The jagged peaks backdrop (restored on
+// direct request) sits behind a much shorter passage now that there's
+// far less content sitting on top of it.
 
 const WIDGET_CLASS =
   "rounded-2xl border border-white/15 bg-black/20 backdrop-blur-md p-5 sm:p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-black/25";
