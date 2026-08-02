@@ -412,17 +412,26 @@ export default function ServicesPage() {
             walnut-tinted overlay so the ivory documents stay the
             brightest thing in frame. */}
         <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
+          {/* Fresh clip per direct instruction and the glassmorphism
+              references (Pexels id 27065369, standard free license):
+              mist drifting over a calm lake at dawn, tree silhouette
+              framing — the serene register of the Home and About
+              backdrops. The overlay is deliberately light: the scene
+              is meant to SHOW, the frosted glass cards carry their own
+              readability. Strongest 8s, slowed 0.9x, near native
+              grade, seamless ping-pong loop. 3.2MB MP4 / 2.0MB WebM. */}
           <BackgroundVideo
             parallax
-            video="/videos/pixabay-emerald-river.mp4"
-            poster="/images/pixabay-emerald-river-poster.jpg"
+            video="/videos/pexels-misty-lake-dawn.mp4"
+            videoWebm="/videos/pexels-misty-lake-dawn.webm"
+            poster="/images/pexels-misty-lake-dawn-poster.jpg"
           />
           <div
             className="absolute inset-0"
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(27,25,23,0.88) 0%, rgba(27,25,23,0.72) 50%, rgba(27,25,23,0.88) 100%)",
+                "linear-gradient(180deg, rgba(27,25,23,0.55) 0%, rgba(27,25,23,0.28) 45%, rgba(27,25,23,0.6) 100%)",
             }}
           />
           <DustMotes />
