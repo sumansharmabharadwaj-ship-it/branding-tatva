@@ -1,7 +1,8 @@
 "use client";
 
 import Script from "next/script";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { track } from "@/lib/analytics";
 
 // Calendly's own widget.js resizes this div's height to fit whatever
 // step of the booking flow is showing (picking a date vs. a longer
@@ -31,6 +32,19 @@ import { useState } from "react";
 
 export function CalendlyEmbed({ url }: { url: string }) {
   const [loaded, setLoaded] = useState(false);
+
+  // Calendly's embed announces a finished booking through postMessage
+  // — the one signal that separates opening the calendar from actually
+  // scheduling. Origin checked so arbitrary frames can't fire it.
+  useEffect(() => {
+    function onMessage(e: MessageEvent) {
+      if (e.origin === "https://calendly.com" && e.data?.event === "calendly.event_scheduled") {
+        track("booking_completed");
+      }
+    }
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
 
   return (
     // overflow-x-auto, not overflow-hidden — Calendly's own 320px

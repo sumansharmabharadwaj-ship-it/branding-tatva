@@ -6,6 +6,7 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { packages } from "@/data/services";
+import { track } from "@/lib/analytics";
 
 // A real, transparent scored self-assessment, not a fake "AI analyzes
 // your brand" claim — every question and point value is visible in this
@@ -157,6 +158,8 @@ export function BrandHealthCheck() {
 
   function answer(label: string, points: number) {
     if (selected) return;
+    if (answers.length === 0) track("health_check_started");
+    if (step === QUESTIONS.length - 1) track("health_check_completed");
     setSelected(label);
     window.setTimeout(
       () => {

@@ -7,6 +7,7 @@ import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { LinkButton } from "@/components/Button";
 import { brandStages } from "@/lib/contact-schema";
 import { site } from "@/data/site";
+import { track } from "@/lib/analytics";
 
 // The closing "Book call" section, reframed as a Strategy Room per
 // direct feedback: a few quick taps before the calendar appears,
@@ -41,6 +42,7 @@ export function StrategyRoomCTA() {
   function pickFocus(value: string) {
     setFocus(value);
     setStep(3);
+    track("calendar_opened");
   }
 
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const };

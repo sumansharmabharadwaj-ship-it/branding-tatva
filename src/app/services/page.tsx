@@ -11,6 +11,7 @@ import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { DecisionClearing } from "@/sections/Services/DecisionClearing";
 import { SituationPath } from "@/sections/Services/SituationPath";
+import { RecognitionAudit } from "@/sections/Services/RecognitionAudit";
 import { VerifiedOutcome } from "@/sections/Services/VerifiedOutcome";
 import { ClearingMist } from "@/sections/Services/ClearingMist";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
@@ -241,7 +242,32 @@ export default function ServicesPage() {
             A quiet interstitial on the page's charcoal ground; the
             chapters around it carry the media. */}
         <section id="situation" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
-          <LazyAmbientShader opacity={0.12} />
+          {/* Deliberate art direction, cut this round from the archived
+              4K master (Pexels 32795404, standard license): sunrise
+              breaking over a misted river valley, water branching into
+              several channels, white birds moving through the wetland —
+              the day starting over three possible paths, which is
+              exactly this chapter's question. Graded bright and warm
+              (lifted shadows, gentle vibrance, cool shadow balance) at
+              2560 wide, 10.5s forward crossfade loop, no reverse
+              motion. */}
+          <BackgroundVideo
+            parallax
+            video="/videos/pexels-river-dawn.mp4"
+            videoWebm="/videos/pexels-river-dawn.webm"
+            poster="/images/pexels-river-dawn-poster.jpg"
+          />
+          {/* Left weighted scrim — the sticky heading rail sits on the
+              darker stops while the sunrise and river stay open on the
+              right of the frame. */}
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, rgba(23,26,23,0.82) 0%, rgba(23,26,23,0.6) 45%, rgba(23,26,23,0.42) 100%)",
+            }}
+          />
           <div className="relative">
             <SituationPath />
           </div>
@@ -524,6 +550,22 @@ export default function ServicesPage() {
           <div className="relative">
             <BrandHealthCheck />
           </div>
+          <SceneHandoff color="#171A17" />
+        </section>
+
+        {/* The Brand Recognition Audit — the site's one secondary lead
+            asset, placed right after the health check so a visitor who
+            just diagnosed themselves can take the deeper checklist
+            away. Five checks open to anyone, the full ten behind an
+            explicit consent form feeding the existing Mailchimp double
+            opt in. Charcoal ground between the forest and slate
+            chapters. */}
+        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          <SceneVeil color="#141A15" />
+          <LazyAmbientShader opacity={0.1} />
+          <div className="relative">
+            <RecognitionAudit />
+          </div>
           <SceneHandoff color="#17201C" />
         </section>
 
@@ -636,9 +678,9 @@ export default function ServicesPage() {
               }}
             />
           </div>
-          {/* Scene dissolve: the quiz's forest dark hands off into the
+          {/* Scene dissolve: the audit's charcoal hands off into the
               FAQ's slate mist. */}
-          <SceneVeil color="#141A15" />
+          <SceneVeil color="#171A17" />
           {/* Scroll-controlled atmosphere — the fog is densest entering
               the chapter and clears as the visitor descends through the
               answers, arriving at Book Call in the clearest air on the

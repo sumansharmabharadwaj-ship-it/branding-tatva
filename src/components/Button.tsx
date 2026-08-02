@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/Magnetic";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { EASE_AIR } from "@/lib/motion";
+import { track, type AnalyticsEvent } from "@/lib/analytics";
 
 type ButtonProps = {
   href: string;
@@ -14,6 +15,10 @@ type ButtonProps = {
   variant?: "primary" | "secondary";
   className?: string;
   onClick?: () => void;
+  // Optional conversion event reported on click — serializable, so
+  // server components can request measurement without a handler.
+  trackEvent?: AnalyticsEvent;
+  trackProps?: Record<string, string | number | boolean>;
   // Escape hatch for callers that need a per-instance color (e.g. tied
   // to the current five-element accent) rather than the fixed
   // bg-action-primary every other button on the site correctly shares.
@@ -31,7 +36,7 @@ let rippleId = 0;
 // draws itself in on hover instead, since a glint would just look like
 // a smudge on a pill with no fill behind it to catch the light.
 
-export function LinkButton({ href, children, variant = "primary", className, onClick, style }: ButtonProps) {
+export function LinkButton({ href, children, variant = "primary", className, onClick, style, trackEvent, trackProps }: ButtonProps) {
   const prefersReducedMotion = useReducedMotion();
   const linkRef = useRef<HTMLAnchorElement>(null);
   const spotlightRef = useSpotlight(linkRef, variant !== "primary" || Boolean(prefersReducedMotion));
@@ -44,6 +49,7 @@ export function LinkButton({ href, children, variant = "primary", className, onC
       setRipples((prev) => [...prev, { id, x: e.clientX - rect.left, y: e.clientY - rect.top }]);
       setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 650);
     }
+    if (trackEvent) track(trackEvent, trackProps);
     onClick?.();
   }
 

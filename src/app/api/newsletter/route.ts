@@ -34,6 +34,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
+  // The audit form asks for explicit consent; enforce it server side
+  // so a client bug can never subscribe someone silently.
+  if (parsed.data.source === "recognition-audit" && parsed.data.consent !== true) {
+    return NextResponse.json({ error: "Please confirm the consent box first." }, { status: 422 });
+  }
+
   // Trimmed defensively — a stray leading/trailing space or newline from
   // copy-pasting into Vercel's env var fields is invisible in the
   // dashboard but silently breaks the request: the key itself may be
@@ -67,6 +73,11 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           email_address: parsed.data.email,
           status: "pending",
+          // Audit submissions carry a first name and an origin tag so
+          // the audience can be segmented; the plain newsletter form
+          // sends neither and behaves exactly as before.
+          ...(parsed.data.firstName ? { merge_fields: { FNAME: parsed.data.firstName } } : {}),
+          ...(parsed.data.source ? { tags: [parsed.data.source] } : {}),
         }),
       }
     );

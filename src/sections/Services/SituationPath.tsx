@@ -6,6 +6,7 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { packages } from "@/data/services";
 import { SITUATION_KEY } from "@/sections/Home/VisitorRecognition";
+import { track } from "@/lib/analytics";
 
 // Conversion architecture, Services chapter two: the visitor places
 // themselves before any package is pitched. If they already chose on
@@ -67,6 +68,7 @@ export function SituationPath() {
 
   function pick(id: string) {
     setSelected((prev) => (prev === id ? prev : id));
+    track("situation_selected", { situation: id, page: "services" });
     setCarried(false);
   }
 

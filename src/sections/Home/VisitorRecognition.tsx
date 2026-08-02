@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
+import { track } from "@/lib/analytics";
 
 // Conversion architecture, Home section two: the visitor identifies
 // their own situation before being taught anything. Selection reveals
@@ -52,6 +53,7 @@ export function VisitorRecognition() {
 
   function pick(id: string) {
     setSelected(id);
+    track("situation_selected", { situation: id, page: "home" });
     try {
       window.localStorage.setItem(SITUATION_KEY, id);
     } catch {}

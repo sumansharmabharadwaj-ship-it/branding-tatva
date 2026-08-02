@@ -8,6 +8,7 @@ import { ElementGlyph } from "@/components/ElementGlyph";
 import { packages } from "@/data/services";
 import { projects } from "@/data/projects";
 import { blendHex } from "@/lib/sectionWash";
+import { track } from "@/lib/analytics";
 
 // The brief's "interactive decision moment" idea, built honestly: three
 // buttons map to the site's three real packages (data/services.ts) —
@@ -61,7 +62,10 @@ export function PackageSelector() {
             <motion.button
               key={choice.slug}
               type="button"
-              onClick={() => setActive(choice.slug)}
+              onClick={() => {
+                setActive(choice.slug);
+                track("package_viewed", { package: choice.slug });
+              }}
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 22 }}
               whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "0px 0px -12% 0px" }}
@@ -93,7 +97,12 @@ export function PackageSelector() {
         <button
           type="button"
           aria-pressed={compare}
-          onClick={() => setCompare((c) => !c)}
+          onClick={() =>
+            setCompare((c) => {
+              if (!c) track("packages_compared");
+              return !c;
+            })
+          }
           className="link-underline text-sm text-ivory/70 transition-colors duration-300 hover:text-ivory"
         >
           {compare ? "Back to one recommendation" : "Compare all three side by side"}

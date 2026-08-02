@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { faqs } from "@/data/faqs";
+import { track } from "@/lib/analytics";
 
 // The decision clearing — a full recomposition of "Is this the right
 // fit?" per the direct redesign brief. A sticky editorial panel on the
@@ -213,7 +214,10 @@ export function DecisionClearing() {
                       type="button"
                       aria-expanded={isOpen}
                       aria-controls={panelId}
-                      onClick={() => setOpenQuestion(isOpen ? null : item.question)}
+                      onClick={() => {
+                        if (!isOpen) track("faq_opened", { question: item.question });
+                        setOpenQuestion(isOpen ? null : item.question);
+                      }}
                       className="group relative grid w-full grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A0A690] sm:gap-5"
                     >
                       <span className="font-display text-base text-ivory/35" aria-hidden="true">

@@ -6,6 +6,7 @@ import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
 import { PrecisionMark } from "@/components/PrecisionMark";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
+import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({
@@ -119,6 +120,7 @@ export default function RootLayout({
         <PageLoadVeil />
         <AmbientAudio />
         <PrecisionMark />
+        <Analytics />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
