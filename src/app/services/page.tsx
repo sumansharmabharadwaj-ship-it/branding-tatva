@@ -108,8 +108,8 @@ export default function ServicesPage() {
             items — real wayfinding, not decoration — so the hero itself
             previews the four objections the rest of the page answers. */}
         <PhotoHero
-          video="/videos/pexels-canopy-rays.mp4"
-          poster="/images/pexels-canopy-rays-poster.jpg"
+          video="/videos/pexels-aspen-sunburst.mp4"
+          poster="/images/pexels-aspen-sunburst-poster.jpg"
           minHeight="70vh"
         >
           {/* Approved Chapter 01 footage (Pexels 37218119, standard
