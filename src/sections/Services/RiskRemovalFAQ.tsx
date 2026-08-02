@@ -118,6 +118,7 @@ function Trail({
       <div className="space-y-14 lg:space-y-28">
       {GROUPS.map((group, gi) => {
         const pace = PACE[gi] ?? PACE[0];
+        const stationOpen = openQuestion !== null && (group.questions as readonly string[]).includes(openQuestion);
         return (
         <Reveal
           key={group.label}
@@ -125,6 +126,51 @@ function Trail({
           duration={0.9}
           className={`relative lg:w-[45%] ${gi % 2 === 1 ? "lg:ml-auto" : ""}`}
         >
+          {/* The environment answers the visitor (creative constitution:
+              reward exploration, never just scrolling): while a question
+              at this station is open, a small bloom unfurls beside the
+              trail node — five petals staggering open, folding away when
+              the answer closes. The meadow acknowledging understanding. */}
+          <AnimatePresence>
+            {stationOpen && !prefersReducedMotion && (
+              <motion.svg
+                aria-hidden="true"
+                viewBox="0 0 40 40"
+                className={`absolute top-2 hidden h-10 w-10 lg:block ${gi % 2 === 1 ? "-left-[3.25rem]" : "-right-[3.25rem]"}`}
+                initial={{ opacity: 0, rotate: -20 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                exit={{ opacity: 0, scale: 0.6 }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {[0, 72, 144, 216, 288].map((deg, pi) => (
+                  <g key={deg} transform={`rotate(${deg} 20 20)`}>
+                    <motion.ellipse
+                      cx="20"
+                      cy="11"
+                      rx="3.6"
+                      ry="7.5"
+                      fill="rgba(228,217,180,0.75)"
+                      style={{ transformBox: "fill-box", transformOrigin: "50% 100%" }}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      transition={{ duration: 0.6, delay: 0.15 + pi * 0.09, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  </g>
+                ))}
+                <motion.circle
+                  cx="20"
+                  cy="20"
+                  r="2.6"
+                  fill="#E4D9B4"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                  style={{ transformBox: "fill-box", transformOrigin: "center" }}
+                />
+              </motion.svg>
+            )}
+          </AnimatePresence>
           {/* Station node: a firefly resting where the card meets the
               trail, breathing while its station is the active stop. */}
           <motion.span
@@ -236,7 +282,7 @@ function Trail({
                     onClick={() => setOpenQuestion(isOpen ? null : item.question)}
                   >
                     <span className="flex w-full items-center justify-between">
-                      <span className="transition-transform duration-500 ease-out group-hover:translate-x-1.5">
+                      <span className="flex-1 pr-3 transition-transform duration-500 ease-out group-hover:translate-x-1.5">
                         {item.question}
                       </span>
                       <span
