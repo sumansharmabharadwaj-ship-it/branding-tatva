@@ -103,6 +103,42 @@ export default function ContactPage() {
           </Container>
         </PhotoHero>
 
+        {/* The two paths, up front (governing bible's contact
+            architecture): a visitor either books the call or writes,
+            and both doors are visible before any form field appears.
+            Plain anchor cards, zero novelty — this page's job is to
+            get out of the way. */}
+        <section className="border-b border-soil/10 py-10" style={{ backgroundColor: "#E8DED0" }}>
+          <Container className="grid gap-4 sm:grid-cols-2">
+            <a
+              href="#call"
+              className="group rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm transition-transform duration-300 hover:translate-y-[-2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path one</p>
+              <p className="mt-2 font-display text-xl font-normal text-soil">
+                Book the twenty minute call
+                <span aria-hidden="true" className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
+              </p>
+              <p className="mt-2 text-sm text-foreground-secondary">
+                Pick a time directly. Honest feedback either way, and a clear next step if it fits.
+              </p>
+            </a>
+            <a
+              href="#write"
+              className="group rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm transition-transform duration-300 hover:translate-y-[-2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path two</p>
+              <p className="mt-2 font-display text-xl font-normal text-soil">
+                Write it down instead
+                <span aria-hidden="true" className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
+              </p>
+              <p className="mt-2 text-sm text-foreground-secondary">
+                Prefer thinking in writing? The enquiry form takes as much or as little as you know today.
+              </p>
+            </a>
+          </Container>
+        </section>
+
         {/* Was a one-off terracotta wash (earth blended 22%) — its own
             color, distinct from every other light section on the site.
             Sandstone now: the same single light-anchor tone About uses
@@ -118,7 +154,7 @@ export default function ContactPage() {
             color and light only, no 3D objects) gives it quiet
             atmosphere instead of a flat fill, at the same low opacity
             Services already uses on comparable light sections. */}
-        <section className="relative overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
+        <section id="write" className="relative scroll-mt-24 overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
           <AmbientElementShader opacity={0.14} />
           <Container className="relative grid gap-12 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
@@ -165,6 +201,9 @@ export default function ContactPage() {
 
             <Reveal delay={0.1} className="lg:col-span-3">
               <ContactForm />
+              <p className="mt-4 text-xs leading-relaxed text-foreground-secondary/80">
+                Your details stay with this practice: read personally, shared with nobody, and deleted on request.
+              </p>
             </Reveal>
           </Container>
         </section>
@@ -201,7 +240,7 @@ export default function ContactPage() {
             wildflower meadow, genuinely unused elsewhere on this page
             (or its own Footer), fitting "grab a time / stay in touch."
             Overlay at bg-soil/80, the site's normalized standard. */}
-        <section className="relative overflow-hidden bg-soil py-16">
+        <section id="call" className="relative scroll-mt-24 overflow-hidden bg-soil py-16">
           <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
           <div className="absolute inset-0 bg-soil/80" />
           {/* min-w-0 on both grid items: CalendlyEmbed's own real
@@ -214,6 +253,27 @@ export default function ContactPage() {
               Confirmed via computed-style inspection at 375px width
               (both cards measured 370px, 43px past the actual 327px
               content box) before fixing. */}
+          {/* What happens next — the same four real steps the Services
+              clearing already promises, restated where the booking
+              actually happens. */}
+          <Container className="relative mb-10">
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">What happens next</p>
+            <ol className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                "You describe where the brand stands today, in your own words.",
+                "I ask direct questions about positioning, audience, and where recognition is falling short.",
+                "You get honest feedback either way, no sales pitch.",
+                "If it makes sense to continue, we agree what the first thirty days would look like.",
+              ].map((step, i) => (
+                <li key={step} className="flex items-start gap-3">
+                  <span className="pt-0.5 font-display text-lg leading-none text-ivory/35" aria-hidden="true">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p className="text-sm leading-relaxed text-ivory/85">{step}</p>
+                </li>
+              ))}
+            </ol>
+          </Container>
           <Container className="relative grid gap-8 lg:grid-cols-2 lg:items-start">
             <Reveal className="min-w-0">
               <div

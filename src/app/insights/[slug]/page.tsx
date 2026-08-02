@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: post.title,
     description: post.excerpt,
-    alternates: { canonical: `/blog/${post.slug}` },
+    alternates: { canonical: `/insights/${post.slug}` },
     openGraph: {
       title: post.title,
       description: post.excerpt,
@@ -73,7 +73,7 @@ export default async function BlogPostPage({ params }: Props) {
     dateModified: post.publishedAt,
     author: { "@id": `${site.url}/#person` },
     publisher: { "@id": `${site.url}/#organization` },
-    mainEntityOfPage: `${site.url}/blog/${post.slug}`,
+    mainEntityOfPage: `${site.url}/insights/${post.slug}`,
   };
 
   return (
@@ -154,7 +154,7 @@ export default async function BlogPostPage({ params }: Props) {
                     style={{ color: element?.color }}
                   />
                   <div className="h-16 w-px" style={{ backgroundColor: `${element?.color ?? "#B85A34"}40` }} />
-                  <Link href="/blog" className="link-underline text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+                  <Link href="/insights" className="link-underline text-xs font-medium uppercase tracking-wide text-foreground-secondary">
                     &larr; All posts
                   </Link>
                   {/* Audit found every post ends with only two options,
@@ -196,7 +196,7 @@ export default async function BlogPostPage({ params }: Props) {
 
                 <div className="mt-16 flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-                    <Link href="/blog" className="link-underline text-sm font-medium text-soil lg:hidden">
+                    <Link href="/insights" className="link-underline text-sm font-medium text-soil lg:hidden">
                       &larr; All posts
                     </Link>
                     {/* Mirrors the sticky sidebar's CTA for mobile, where
@@ -207,7 +207,7 @@ export default async function BlogPostPage({ params }: Props) {
                   </div>
                   {next && (
                     <Link
-                      href={`/blog/${next.slug}`}
+                      href={`/insights/${next.slug}`}
                       className="link-underline text-sm font-medium text-soil sm:ml-auto"
                     >
                       Next: {next.title} &rarr;
