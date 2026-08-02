@@ -82,6 +82,61 @@ function bandFor(score: number) {
 
 const MAX_SCORE = QUESTIONS.reduce((sum, q) => sum + q.options[q.options.length - 1].points, 0);
 
+// One theme per real question, in question order — the growth rings
+// below visualize ONLY actual answers (arc length = points/3), never
+// an invented score.
+const THEMES = ["Positioning", "Consistency", "Recognition", "Preference"] as const;
+
+// The diagnostic instrument: four concentric growth rings, read like a
+// tree's rings. Each answered question draws its ring to exactly the
+// chosen option's fraction; the ring awaiting its answer shows a faint
+// dashed track. Abstract on purpose — no meters, no traffic lights.
+function DiagnosticRings({ answers, step, reduced }: { answers: number[]; step: number; reduced: boolean }) {
+  const RADII = [10, 16, 22, 28];
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <svg viewBox="0 0 64 64" className="h-24 w-24" aria-hidden="true">
+        {RADII.map((r, i) => {
+          const c = 2 * Math.PI * r;
+          const answered = i < answers.length;
+          const frac = answered ? Math.max(answers[i] / 3, 0.07) : 0;
+          return (
+            <g key={r}>
+              <circle
+                cx="32"
+                cy="32"
+                r={r}
+                fill="none"
+                stroke="rgba(244,239,230,0.12)"
+                strokeWidth="1.5"
+                strokeDasharray={i === step && !answered ? "2 3" : undefined}
+              />
+              <motion.circle
+                cx="32"
+                cy="32"
+                r={r}
+                fill="none"
+                stroke="#E4D9B4"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                transform="rotate(-90 32 32)"
+                strokeDasharray={c}
+                initial={{ strokeDashoffset: c }}
+                animate={{ strokeDashoffset: c * (1 - frac) }}
+                transition={{ duration: reduced ? 0 : 0.9, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </g>
+          );
+        })}
+        <circle cx="32" cy="32" r="2" fill="#E4D9B4" />
+      </svg>
+      <p className="text-[0.62rem] font-medium uppercase tracking-[0.14em] text-ivory/60">
+        {THEMES[Math.min(step, THEMES.length - 1)]}
+      </p>
+    </div>
+  );
+}
+
 export function BrandHealthCheck() {
   const [step, setStep] = useState(0);
   // Points per answered question, not a running total — storing each
@@ -164,13 +219,20 @@ export function BrandHealthCheck() {
         >
           {/* "Self-check" carried a rendered hyphen — a copywriting
               standard violation caught in the Phase 4 pass. */}
-          <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Self assessment</p>
-          <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-            A quick brand health check.
-          </h2>
-          <p className="mt-4 text-ivory/90">
-            A real pattern, no invented analysis. {QUESTIONS.length} questions, about a minute.
-          </p>
+          <div className="flex items-start justify-between gap-6">
+            <div>
+              <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Self assessment</p>
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                A quick brand health check.
+              </h2>
+              <p className="mt-4 text-ivory/90">
+                A real pattern, no invented analysis. {QUESTIONS.length} questions, about a minute.
+              </p>
+            </div>
+            <div className="hidden sm:block">
+              <DiagnosticRings answers={answers} step={step} reduced={Boolean(prefersReducedMotion)} />
+            </div>
+          </div>
 
           {/* Progress bar — the other real, visible signal that a click
               registered, independent of the question-swap animation. */}
@@ -257,8 +319,15 @@ export function BrandHealthCheck() {
                   <span className="text-ivory/70">/{MAX_SCORE}</span>
                 </p>
               </div>
-              <p className="mt-2 font-display text-xl font-normal text-ivory">{result?.title}</p>
+              <p className="mt-2 text-sm text-ivory/70">Your answers suggest</p>
+              <p className="mt-1 font-display text-xl font-normal text-ivory">{result?.title}</p>
               <p className="mt-3 text-ivory/90">{result?.detail}</p>
+              {answers.length === THEMES.length && Math.max(...answers) > Math.min(...answers) && (
+                <p className="mt-3 text-sm text-ivory/80">
+                  The strongest signal appears in {THEMES[answers.indexOf(Math.max(...answers))].toLowerCase()}. The
+                  clearest gap appears in {THEMES[answers.indexOf(Math.min(...answers))].toLowerCase()}.
+                </p>
+              )}
               {resultPackage && (
                 <p className="mt-4 text-sm text-ivory/70">
                   Closest real match: <span className="text-ivory">{resultPackage.name}</span>

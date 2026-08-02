@@ -9,7 +9,7 @@ import { ScrollProgress } from "@/components/ScrollProgress";
 import { PhotoHero } from "@/components/PhotoHero";
 import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
-import { RiskRemovalFAQ } from "@/sections/Services/RiskRemovalFAQ";
+import { DecisionClearing } from "@/sections/Services/DecisionClearing";
 import { ClearingMist } from "@/sections/Services/ClearingMist";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { SceneHandoff } from "@/sections/Services/SceneHandoff";
@@ -21,7 +21,6 @@ import { PackageSelector } from "@/sections/Services/PackageSelector";
 import { WeakBrandingCost } from "@/sections/Services/WeakBrandingCost";
 import { DeliverablesReveal } from "@/sections/Services/DeliverablesReveal";
 import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
-import { StrategySessionPreview } from "@/sections/Services/StrategySessionPreview";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { LazyAmbientShader } from "@/components/LazyAmbientShader";
 import { Magnetic } from "@/components/Magnetic";
@@ -654,28 +653,7 @@ export default function ServicesPage() {
             />
           </ParallaxDrift>
           <Container className="relative max-w-6xl">
-            {/* Balanced editorial masthead (direct alignment note): the
-                heading and lede hold the left, the call preview holds
-                the right, so the intro reads as one composed row over
-                the meadow instead of a left column facing empty field.
-                The journey trail then takes the full width below. */}
-            <div className="grid gap-12 lg:grid-cols-[1fr_minmax(0,24rem)] lg:items-start lg:gap-16">
-              <Reveal>
-                <p className="text-sm font-medium uppercase tracking-[0.18em] text-ivory/70">Risk removal</p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory sm:text-display-md">
-                  Is this the right fit?
-                </h2>
-                <p className="mt-4 max-w-md text-base text-ivory/90">
-                  Real answers to the questions that come up before a first conversation.
-                </p>
-              </Reveal>
-              <Reveal delay={0.1}>
-                <StrategySessionPreview dark />
-              </Reveal>
-            </div>
-            <div className="mt-16 lg:mt-24">
-              <RiskRemovalFAQ dark />
-            </div>
+            <DecisionClearing />
           </Container>
           <SceneHandoff color="#27221E" heightClass="h-[26vh]" />
         </section>
