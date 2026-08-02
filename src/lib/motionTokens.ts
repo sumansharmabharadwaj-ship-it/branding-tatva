@@ -25,4 +25,8 @@ export const motionTokens = {
   parallaxBase: 0.05,
 
   magneticDistance: 5,
+
+  // The shared InteractiveCard's hover lift — inside the Scroll OS's
+  // own card amplitude band (4 to 10px).
+  cardLift: 4,
 };

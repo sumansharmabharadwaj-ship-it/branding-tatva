@@ -9,6 +9,7 @@ import { ScrollProgress } from "@/components/ScrollProgress";
 import { WorkOpening } from "@/sections/Work/WorkOpening";
 import { WorkIndex } from "@/sections/Work/WorkIndex";
 import { CapabilityMap } from "@/sections/Work/CapabilityMap";
+import { ContextualCTA } from "@/components/conversion/ContextualCTA";
 import { SignatureProject } from "@/sections/Work/SignatureProject";
 import { DecisionMap } from "@/sections/Work/DecisionMap";
 import { WorkArchive } from "@/sections/Work/WorkArchive";
@@ -75,6 +76,14 @@ export default function WorkPage() {
       <main id="main-content" style={{ backgroundColor: "#F2F0E8" }}>
         <WorkOpening />
         <CapabilityMap />
+        <ContextualCTA
+          eyebrow="Medium step"
+          heading="See the full archive of decisions."
+          href="#index"
+          label="Explore selected work"
+          event="contextual_cta_clicked"
+          eventProps={{ source: "work_capability_map" }}
+        />
         <WorkIndex projects={projects} />
         {signature && <SignatureProject project={signature} />}
         <DecisionMap />

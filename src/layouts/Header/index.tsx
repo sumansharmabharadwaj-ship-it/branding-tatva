@@ -120,34 +120,38 @@ export function Header({ transparent = false }: HeaderProps) {
         <div className="nav-pill-glow relative w-full max-w-4xl lg:max-w-5xl">
           <div className="nav-pill-ring rounded-full p-[2.5px] shadow-elevation-md">
             <div
-              className={`flex w-full items-center justify-between gap-4 rounded-full px-4 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-5 ${
+              className={`grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-full px-4 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-5 ${
                 scrolled ? "bg-soil/85" : "bg-soil/55"
               }`}
             >
-              {/* Editorial nav order per direct feedback: identity on
-                  the left, pages in the middle, actions on the right —
-                  the centered logo was colliding with the inline links. */}
-              <Link href="/" className="flex shrink-0 items-center gap-2">
+              {/* True 3 column grid, not a flex left/right split — the
+                  earlier flex version put the nav links inside the
+                  right cluster, so the block widths never matched and
+                  the bar read visibly lopsided. The center column now
+                  centers on its own regardless of how wide the left
+                  (identity) and right (actions) columns are. */}
+              <Link href="/" className="flex shrink-0 items-center gap-2 justify-self-start">
                 <LogoMark size={30} light className="shrink-0" />
                 <Logo light className="hidden origin-left scale-[0.72] min-[400px]:inline-flex sm:scale-[0.78]" />
               </Link>
 
-              <div className="flex items-center justify-end gap-3 sm:gap-5">
-                {/* Direct feedback: visitors should reach other pages
-                    without scrolling to the top and opening the menu.
-                    The primary pages sit inline on desktop; the menu
-                    button remains for mobile and for the fuller list. */}
-                <nav aria-label="Primary" className="hidden items-center gap-4 lg:flex">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="whitespace-nowrap text-[0.68rem] font-medium uppercase tracking-[0.14em] text-ivory/75 transition-colors duration-300 hover:text-ivory"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </nav>
+              {/* Direct feedback: visitors should reach other pages
+                  without scrolling to the top and opening the menu.
+                  The primary pages sit inline on desktop; the menu
+                  button remains for mobile and for the fuller list. */}
+              <nav aria-label="Primary" className="hidden items-center gap-4 justify-self-center lg:flex">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="whitespace-nowrap text-[0.68rem] font-medium uppercase tracking-[0.14em] text-ivory/75 transition-colors duration-300 hover:text-ivory"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+
+              <div className="flex items-center justify-self-end gap-3 sm:gap-5">
                 <div className="hidden sm:block">
                   <LinkButton href="/contact" className="px-4 py-2 text-xs" style={{ backgroundColor: element.color }}>
                     Start a project

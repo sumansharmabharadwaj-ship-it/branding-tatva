@@ -25,7 +25,8 @@ import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
 import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
 import { WeakBrandingCost } from "@/sections/Services/WeakBrandingCost";
-import { DeliverablesReveal } from "@/sections/Services/DeliverablesReveal";
+import { DeliverablesExplorer } from "@/sections/Services/DeliverablesExplorer";
+import { ContextualCTA } from "@/components/conversion/ContextualCTA";
 import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { LazyAmbientShader } from "@/components/LazyAmbientShader";
@@ -548,10 +549,21 @@ export default async function ServicesPage() {
               study. */}
           <SceneVeil color="#1A2026" heightClass="h-[15vh]" />
           <div className="relative">
-            <DeliverablesReveal room />
+            <DeliverablesExplorer />
           </div>
           <SceneHandoff color="#141A15" />
         </section>
+
+        <ContextualCTA
+          eyebrow="Medium step"
+          heading="Not sure which scope is right yet?"
+          body="Twenty minutes settles it, with honest feedback either way."
+          href="#book"
+          label="Discuss the right scope"
+          event="contextual_cta_clicked"
+          eventProps={{ source: "services_deliverables" }}
+          tone="light"
+        />
 
         {/* Proof (the Dr. Haley Nutrition case study) and Future vision
             (the six-stage pinned process) removed on direct request

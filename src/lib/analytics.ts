@@ -10,6 +10,8 @@ export type AnalyticsEvent =
   | "hero_booking_click"
   | "case_study_opened"
   | "capability_selected"
+  | "deliverable_inspected"
+  | "contextual_cta_clicked"
   | "visitor_situation_selected"
   | "package_viewed"
   | "packages_compared"
