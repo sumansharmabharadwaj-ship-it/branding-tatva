@@ -116,7 +116,7 @@ export function PinnedBrandBuild() {
           style={{ objectFit: "cover" }}
           className="opacity-30"
         />
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.7)" }} />
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.35)" }} />
         <Container className="relative">
           <p className="hidden text-sm font-medium uppercase tracking-wide text-ivory/70 sm:block">Authority</p>
           <h2 className="hidden max-w-xl text-display-sm font-display font-normal text-ivory sm:mt-2 sm:block">
@@ -160,10 +160,13 @@ export function PinnedBrandBuild() {
           underneath, becoming visible. Shared with PerceptionLadder's
           own AmbientElementShader right after it, so both "Authority"
           and "Education" keep reading as one continuous visual system. */}
-      <div className="absolute inset-0 saturate-[0.5]" aria-hidden="true">
-        <BackgroundVideo video="/videos/higgsfield-mountain-mist.mp4" poster="/images/higgsfield-mountain-mist-poster.jpg" />
-      </div>
-      <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.6)" }} />
+      {/* Approved Chapter 02 footage (Pexels 38390292, standard
+          license): root network in extreme macro — hidden intelligence
+          beneath the surface, exactly what strategy is. Full frame,
+          slow, no crop, no zoom; the layer parallax carries the
+          movement. */}
+      <BackgroundVideo video="/videos/pexels-root-network.mp4" videoWebm="/videos/pexels-root-network.webm" poster="/images/pexels-root-network-poster.jpg" />
+      <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.3)" }} />
       <AmbientElementShader opacity={0.08} />
       {/* Direct, repeated feedback (two screenshots) that this pinned
           frame read as a narrow content strip with empty video on both

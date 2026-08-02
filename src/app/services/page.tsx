@@ -13,6 +13,7 @@ import { ClearingMist } from "@/sections/Services/ClearingMist";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { SceneHandoff } from "@/sections/Services/SceneHandoff";
 import { SplitReveal } from "@/components/SplitReveal";
+import { HeroReveal } from "@/sections/Services/HeroReveal";
 import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
 import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
@@ -106,10 +107,18 @@ export default function ServicesPage() {
             items — real wayfinding, not decoration — so the hero itself
             previews the four objections the rest of the page answers. */}
         <PhotoHero
-          video="/videos/higgsfield-forest-trail-mist.mp4"
-          poster="/images/higgsfield-forest-trail-mist-poster.jpg"
+          video="/videos/pexels-canopy-rays.mp4"
+          poster="/images/pexels-canopy-rays-poster.jpg"
           minHeight="70vh"
         >
+          {/* Approved Chapter 01 footage (Pexels 37218119, standard
+              license): volumetric rays through lush canopy — discovery,
+              light entering darkness. Graded for organic dopamine
+              (luminous greens, golden highlights), 1440px crf 22,
+              seamless ping-pong. The reveal veil below fades the scene
+              in from near black so the rays are discovered, and the
+              masthead lands at the brightest beat. */}
+          <HeroReveal />
           {/* Phase 1 hero pass. Two localized layers on top of
               PhotoHero's own base gradient: a cool tint pulling the
               warm trail footage toward the page's opening-chapter mood
@@ -117,11 +126,6 @@ export default function ServicesPage() {
               Desire), and a directional left-heavy scrim so the
               masthead column reads perfectly while the right of the
               frame stays open and cinematic. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{ backgroundColor: "rgba(22,28,26,0.28)" }}
-          />
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
@@ -133,7 +137,7 @@ export default function ServicesPage() {
               depth through type, no imagery involved. */}
           <Container className="relative py-20">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
-              <Reveal>
+              <Reveal delay={1.7}>
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/90">
                   Curiosity
                 </span>
