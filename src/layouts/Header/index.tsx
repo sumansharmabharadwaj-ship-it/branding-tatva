@@ -120,22 +120,19 @@ export function Header({ transparent = false }: HeaderProps) {
         <div className="nav-pill-glow relative w-full max-w-4xl lg:max-w-5xl">
           <div className="nav-pill-ring rounded-full p-[2.5px] shadow-elevation-md">
             <div
-              className={`grid w-full grid-cols-3 items-center rounded-full px-3 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-4 ${
+              className={`flex w-full items-center justify-between gap-4 rounded-full px-4 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-5 ${
                 scrolled ? "bg-soil/85" : "bg-soil/55"
               }`}
             >
-              <div className="hidden justify-start sm:flex">
-                <LinkButton href="/contact" className="px-4 py-2 text-xs" style={{ backgroundColor: element.color }}>
-                  Start a project
-                </LinkButton>
-              </div>
-
-              <Link href="/" className="col-start-2 flex items-center justify-center gap-1.5">
+              {/* Editorial nav order per direct feedback: identity on
+                  the left, pages in the middle, actions on the right —
+                  the centered logo was colliding with the inline links. */}
+              <Link href="/" className="flex shrink-0 items-center gap-2">
                 <LogoMark size={30} light className="shrink-0" />
-                <Logo light className="scale-[0.72] sm:scale-[0.78]" />
+                <Logo light className="hidden origin-left scale-[0.72] min-[400px]:inline-flex sm:scale-[0.78]" />
               </Link>
 
-              <div className="flex items-center justify-end gap-5">
+              <div className="flex items-center justify-end gap-3 sm:gap-5">
                 {/* Direct feedback: visitors should reach other pages
                     without scrolling to the top and opening the menu.
                     The primary pages sit inline on desktop; the menu
@@ -151,6 +148,11 @@ export function Header({ transparent = false }: HeaderProps) {
                     </Link>
                   ))}
                 </nav>
+                <div className="hidden sm:block">
+                  <LinkButton href="/contact" className="px-4 py-2 text-xs" style={{ backgroundColor: element.color }}>
+                    Start a project
+                  </LinkButton>
+                </div>
                 <button
                   className="relative flex h-9 w-9 items-center justify-center rounded-full text-ivory transition-colors duration-500"
                   aria-label={open ? "Close menu" : "Open menu"}
