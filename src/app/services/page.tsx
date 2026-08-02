@@ -388,46 +388,60 @@ export default function ServicesPage() {
             Desire's own objection. Same shader treatment as the
             sections around it — see WeakBrandingCost's comment above
             for why. */}
-        {/* Mood: EDITORIAL LIGHT — the page's one clean, bright chapter
-            break, directly after deep water. Phase 1 decision: the
-            emerald river footage here was overpowering a section whose
-            entire job is a readable list of real deliverables — the
-            exact "video before message" failure named in the brief.
-            Content leads absolutely now: parchment ground, dark type,
-            the deliverables presented as what they actually are —
-            printed documents you leave with. (The river clip returns to
-            the pool for Phase 3's reassignment audit rather than being
-            discarded.) */}
-        <section className="relative overflow-hidden bg-background-alt py-16 sm:py-24">
-          {/* Direct feedback that this chapter read as flat white — the
-              pause survives (it is the film's one bright rest, per the
-              approved color script), but the surface now reads as
-              actual paper: an inline SVG grain layer (no asset, no
-              request) at low opacity gives the parchment real tooth
-              instead of a flat fill. */}
+        {/* Mood: THE STUDY — final creative direction on this chapter:
+            every light version (flat white cards, then the parchment
+            dossier) still detached from the cinematic journey and read
+            as a pricing block. The chapter is now a dark, warm
+            strategy room (MOOD.study): cream documents glowing under
+            drifting lamp light on a charcoal-bronze desk, the palette
+            carrying the color story between Desire's cold deep water
+            and Health Check's forest instead of interrupting it. */}
+        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
+          {/* Lamp light — two warm glows drifting slowly through the
+              room on the mist keyframes (constant blur, transform and
+              opacity only): the desk lamp upper left, a fainter bronze
+              answer lower right. The room's continuous life. */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div
+              className="mist-layer-a absolute -left-[12%] -top-[8%] h-[60%] w-[55%] rounded-full"
+              style={{
+                background: "radial-gradient(ellipse at center, rgba(212,185,154,0.13) 0%, rgba(212,185,154,0.04) 50%, transparent 72%)",
+                filter: "blur(60px)",
+                animationDuration: "44s",
+              }}
+            />
+            <div
+              className="mist-layer-b absolute -bottom-[10%] -right-[14%] h-[55%] w-[60%] rounded-full"
+              style={{
+                background: "radial-gradient(ellipse at center, rgba(184,90,52,0.09) 0%, rgba(184,90,52,0.03) 50%, transparent 74%)",
+                filter: "blur(70px)",
+                animationDuration: "36s",
+              }}
+            />
+          </div>
+          {/* Paper-grain air in the room — same inline SVG noise device,
+              now light specks at low opacity against the dark ground. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-[0.5]"
+            className="pointer-events-none absolute inset-0 opacity-[0.4]"
             style={{
               backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E\")",
+                "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' fill='%23F4EFE6' filter='url(%23n)'/%3E%3C/svg%3E\")",
             }}
           />
           <ParallaxDrift distance={55} className="pointer-events-none absolute -top-4 right-0 select-none sm:-top-8">
             <span
               aria-hidden="true"
-              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-soil/[0.05]"
+              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.05]"
             >
               Receive
             </span>
           </ParallaxDrift>
-          {/* Scene dissolve: the shadow of Desire's deep water falls
-              across the top of the desk before the parchment brightens
-              — the page's hardest cut (dark to light) becomes a
-              surfacing instead. */}
-          <SceneVeil color="rgba(15,21,28,0.55)" heightClass="h-[14vh]" />
+          {/* Scene dissolve: Desire's deep water hands into the warm
+              study — cold blue releasing into lamplight. */}
+          <SceneVeil color="#0F151C" heightClass="h-[15vh]" />
           <div className="relative">
-            <DeliverablesReveal light />
+            <DeliverablesReveal room />
           </div>
         </section>
 
@@ -466,7 +480,9 @@ export default function ServicesPage() {
           {/* Scene dissolve: the dossier's parchment light spills into
               the top of the forest — light traveling downward into the
               next scene. */}
-          <SceneVeil color="rgba(232,222,208,0.32)" heightClass="h-[12vh]" />
+          {/* Scene dissolve: the study's warm dark hands into the
+              forest — lamplight dimming into green-black. */}
+          <SceneVeil color="#1F1A15" heightClass="h-[14vh]" />
           <ParallaxDrift distance={70} className="pointer-events-none absolute -top-4 left-0 select-none sm:-top-8">
             <span
               aria-hidden="true"

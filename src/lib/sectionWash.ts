@@ -60,6 +60,15 @@ export const MOOD = {
   deepwater: "#0F151C", // Desire — night-water blue behind the gold
   forest: "#141A15", // Health Check — deep forest green-black
   slate: "#181D21", // FAQ — cool slate calm
+  // Deliverables — "the study": warm charcoal-bronze dark, the room the
+  // strategy documents are read in. Direct creative direction replaced
+  // the chapter's parchment-light ground (which read as a white SaaS
+  // pricing block against the cinematic chapters around it) with a dark
+  // warm interior where the cream documents themselves become the
+  // light. Deliberately the warmest dark on the page short of Book
+  // Call's soil, sitting between Desire's cold deep water and Health
+  // Check's forest.
+  study: "#1F1A15",
 } as const;
 
 function hexToRgb(hex: string): [number, number, number] {
