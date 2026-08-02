@@ -7,6 +7,7 @@ import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { WorkGrid } from "@/sections/CaseStudies";
+import { BrandStudies } from "@/sections/CaseStudies/BrandStudies";
 import { ClipReveal } from "@/components/ClipReveal";
 import { AnnotatedVisual } from "@/components/AnnotatedVisual";
 import { KineticMarquee } from "@/components/KineticMarquee";
@@ -202,6 +203,15 @@ export default function WorkPage() {
             </Container>
           </ClipReveal>
         </section>
+
+        {/* Brand studies — the teaching layer beneath the real client
+            record. Independent dissections of renowned US, UK and
+            Canadian brands through the site's own vocabulary. Framed
+            explicitly as analyses of the public record so no visitor
+            can mistake them for engagements; deliberately styled as
+            numbered editorial rows, a different visual genre from the
+            client cards above. */}
+        <BrandStudies />
 
         {/* Was a static image (higgsfield-canopy-light.jpg) under a quote
             that is literally about "a forest of noise" — real cinematic

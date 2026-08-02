@@ -1,0 +1,142 @@
+// Brand studies — independent dissections of renowned brands, written
+// as teaching. HONESTY CONTRACT (per this project's own commercial
+// honesty rule): these are analyses of the public record. None of
+// these brands is a client, and nothing here may ever imply an
+// engagement, an endorsement, or an affiliation. Every fact cited is
+// widely documented public history (the 1915 Coca Cola bottle brief,
+// the 1971 swoosh commission, the Canadian Oxford Dictionary entry,
+// the Burberry check drawdown). No invented numbers, no invented
+// quotes. The section rendering this data must carry the independence
+// framing in visitor facing copy, not only in this comment.
+//
+// Copy inside follows the sitewide standard: no literal "not", no
+// dashes or hyphens in rendered strings, no banned agency vocabulary,
+// opinionated claims a reader could disagree with.
+
+export type BrandStudy = {
+  slug: string;
+  brand: string;
+  region: string;
+  lens: string;
+  premise: string;
+  observations: { title: string; text: string }[];
+  lesson: string;
+};
+
+export const brandStudies: BrandStudy[] = [
+  {
+    slug: "coca-cola-distinctive-assets",
+    brand: "Coca Cola",
+    region: "United States",
+    lens: "Distinctive assets",
+    premise:
+      "A century of recognition rests on a handful of sensory codes owned so completely that a silhouette sells without a single word.",
+    observations: [
+      {
+        title: "The bottle brief",
+        text: "The 1915 design brief asked for a bottle a person could recognize by touch alone, even shattered on the ground. Recognition was engineered into the object itself decades before anyone called it a distinctive asset.",
+      },
+      {
+        title: "One script across every era",
+        text: "The Spencerian wordmark has survived every design fashion intact. Memory compounds when the symbol refuses to chase trends.",
+      },
+      {
+        title: "Red as property",
+        text: "One color, saturated across every touchpoint for over a century, until the color itself performs the advertising before the name arrives.",
+      },
+    ],
+    lesson: "Distinctive assets outlast campaigns. Choose your codes early, then defend them for decades.",
+  },
+  {
+    slug: "apple-brand-architecture",
+    brand: "Apple",
+    region: "United States",
+    lens: "Brand architecture",
+    premise:
+      "One master brand carries every category it enters, so each product borrows authority instead of building it from zero.",
+    observations: [
+      {
+        title: "The 1997 reset",
+        text: "Near collapse, the company spent its scarce attention on identity before features. Think Different repositioned the maker itself, and every product since has launched inside that frame.",
+      },
+      {
+        title: "A naming system as a family",
+        text: "iPhone, iPad, iMac: one prefix turned every launch into the continuation of a story buyers already trusted.",
+      },
+      {
+        title: "Product as hero",
+        text: "The photography strips away everything except the object. That restraint signals confidence, and confidence signals category leadership.",
+      },
+    ],
+    lesson: "Architecture decides whether each launch starts from zero or from equity already earned.",
+  },
+  {
+    slug: "nike-verbal-identity",
+    brand: "Nike",
+    region: "United States",
+    lens: "Verbal identity",
+    premise:
+      "Three words from 1988 still carry the entire positioning, proof that language can be a brand asset with the durability of a logo.",
+    observations: [
+      {
+        title: "A thirty five dollar mark",
+        text: "The swoosh was commissioned from a design student for thirty five dollars in 1971. The value of a symbol lives in decades of consistent use, never in the price of its creation.",
+      },
+      {
+        title: "Just Do It",
+        text: "The line addresses the buyer's inner life rather than the shoe. Verbal identity at this level sells a self image, and the product rides along.",
+      },
+      {
+        title: "Athletes as one narrative",
+        text: "Decades of athlete stories deposit into a single account of meaning: effort. Every campaign compounds the same idea instead of starting a new one.",
+      },
+    ],
+    lesson: "A verbal asset, repeated with discipline, can outwork a media budget.",
+  },
+  {
+    slug: "burberry-codes-reclaimed",
+    brand: "Burberry",
+    region: "United Kingdom",
+    lens: "Brand codes under pressure",
+    premise:
+      "Heritage codes can be diluted by exposure the house never chose, and still be reclaimed, because the memory structure survives the misuse.",
+    observations: [
+      {
+        title: "The check in crisis",
+        text: "By the mid 2000s the famous check had drifted into associations far from the trench coat that built it. Ubiquity without control turned an asset into a liability.",
+      },
+      {
+        title: "Scarcity as repair",
+        text: "The check was drawn back to a small fraction of product. Scarcity restored status, and the code returned on the house's own terms.",
+      },
+      {
+        title: "Heritage kept in circulation",
+        text: "Art of the Trench placed the heritage coat in customers' own photographs online while rivals guarded distance. The codes stayed alive by moving through culture.",
+      },
+    ],
+    lesson: "Codes are capital. Manage their exposure the way a fund manages risk.",
+  },
+  {
+    slug: "tim-hortons-ritual",
+    brand: "Tim Hortons",
+    region: "Canada",
+    lens: "Ritual and cultural memory",
+    premise:
+      "A brand becomes culture when its language and rituals enter daily life even where the logo is absent.",
+    observations: [
+      {
+        title: "A phrase in the dictionary",
+        text: "Double double entered the Canadian Oxford Dictionary. When buyers speak in a brand's vocabulary, mental availability stops depending on media.",
+      },
+      {
+        title: "Roll Up the Rim",
+        text: "A cup that becomes a game turns every purchase into a ritual, and rituals rehearse the brand into memory on the customer's own initiative.",
+      },
+      {
+        title: "The national frame",
+        text: "Hockey rinks, winter mornings, small towns: the brand tied itself to national life until category membership read as cultural membership.",
+      },
+    ],
+    lesson: "Rituals earn a place in memory that media spend only borrows.",
+  },
+];
