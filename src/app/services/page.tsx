@@ -590,6 +590,20 @@ export default function ServicesPage() {
                 "linear-gradient(180deg, rgba(23,32,28,0.52) 0%, rgba(23,32,28,0.32) 45%, rgba(23,32,28,0.45) 82%, rgba(35,31,27,0.8) 100%)",
             }}
           />
+          {/* Readability system: a LOCAL left-column mask under the
+              chapter heading and call list — the meadow's palest sky
+              sits exactly behind "Is this the right fit?", and a global
+              overlay dark enough to fix it would kill the whole scene.
+              This gradient shields only the text column and dissolves
+              before the meadow's living half of the frame. */}
+          <div
+            className="absolute inset-y-0 left-0 w-[58%]"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, rgba(20,26,23,0.55) 0%, rgba(20,26,23,0.35) 55%, transparent 100%)",
+            }}
+          />
           {/* Three mist depth planes above the overlay — the filmed fog
               is the far plane; these are the mid and near planes, so the
               atmosphere has real parallax instead of one flat backdrop.

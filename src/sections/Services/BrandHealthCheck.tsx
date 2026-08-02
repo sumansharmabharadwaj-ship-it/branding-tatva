@@ -280,7 +280,16 @@ export function BrandHealthCheck() {
           </div>
         </motion.div>
 
-        <aside className="lg:sticky lg:top-28 lg:self-start">
+        {/* Readability system (direct screenshot report: these bands sat
+            as bare hairline cards over the brightest footage on the
+            page and disappeared into the water). The aside now carries
+            its own glass panel — a local reading surface, not a global
+            overlay — so the stream stays luminous around it while the
+            text is guaranteed. */}
+        <aside
+          className="rounded-2xl p-5 backdrop-blur-md lg:sticky lg:top-28 lg:self-start"
+          style={{ backgroundColor: "rgba(20,26,21,0.55)" }}
+        >
           {/* A live diagnostic reads as live: the indicator breathes
               continuously, so the panel keeps feeling like an
               instrument watching the answers rather than a static
