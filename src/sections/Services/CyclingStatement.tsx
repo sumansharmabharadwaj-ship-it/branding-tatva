@@ -9,49 +9,51 @@ import { SplitReveal } from "@/components/SplitReveal";
 // building before reading a question. Two short opinionated lines
 // cycle in, then hand off to the existing char-reveal headline (the
 // same SplitReveal/initSplitTextReveal machinery every other headline
-// on the site uses, not a new reveal system). Under reduced motion the
-// cycling lines are skipped entirely — the headline renders immediately,
-// same as every other motion component's own convention.
+// on the site uses, not a new reveal system).
+//
+// Phase 5 (Lighthouse, real Chrome, throttled mobile): the cycling
+// ritual plus hydration pushed the H1 paint — the page's mobile LCP
+// element — past 7s. CLAUDE.md's own motion rule ("nothing that blocks
+// or delays reading a headline") decides the trade: on small viewports
+// and under reduced motion the headline renders immediately; the
+// two-line ritual is a desktop experience. The choice is made once at
+// mount with a synchronous matchMedia read (an async media-query hook
+// would report "mobile" on desktop's first tick and kill the ritual
+// there too). SSR renders the first cycling line for every visitor —
+// identical markup either way, so there is no hydration mismatch.
 const LINES = ["Most brands compete on price.", "The remembered ones compete on something else."];
 const LINE_DURATION = 1100;
 
+type Mode = "pending" | "cycle" | "headline";
+
 export function CyclingStatement({ headline }: { headline: React.ReactNode }) {
   const prefersReducedMotion = useReducedMotion();
+  const [mode, setMode] = useState<Mode>("pending");
   const [index, setIndex] = useState(0);
-  const [done, setDone] = useState(prefersReducedMotion ?? false);
 
   useEffect(() => {
-    if (prefersReducedMotion) {
-      setDone(true);
-      return;
-    }
+    const mobile = window.matchMedia("(max-width: 1023px)").matches;
+    setMode(prefersReducedMotion || mobile ? "headline" : "cycle");
+  }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    if (mode !== "cycle") return;
     if (index >= LINES.length) {
-      setDone(true);
+      setMode("headline");
       return;
     }
     const timer = setTimeout(() => setIndex((i) => i + 1), LINE_DURATION);
     return () => clearTimeout(timer);
-  }, [index, prefersReducedMotion]);
+  }, [mode, index]);
 
-  if (done) {
+  if (mode === "headline") {
     return (
       <SplitReveal
         as="h1"
         splitType="chars"
-        // Matches Home's own hero headline scale (clamp(2.25rem,5.5vw,4rem),
-        // src/sections/Hero) — direct, repeated feedback that this hero
-        // still read as visually smaller/weaker than Home's despite the
-        // copy and motion already being real. Same type scale closes
-        // that gap without breaking the documented 70vh mid-tier height.
-        // Left-aligned (was mx-auto/centered) — the hero moved from the
-        // generic centered-pill template to the same asymmetric masthead
-        // Work/Contact already use, so this headline now sits in a real
-        // left column rather than a centered block.
-        // Phase 1 typography pass: this page's front door now runs a
-        // step past Home's shared scale — the founder's brief names the
-        // hero as the section that sets the emotional bar for the whole
-        // page, and at 70vh (vs Home's 100svh) the same clamp read
-        // smaller in practice. Tighter leading for display confidence.
+        // Matches Home's hero scale and this hero's documented Phase 1
+        // typography pass — see the git history of this file for the
+        // full sizing rationale.
         className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
       >
         {headline}
@@ -63,14 +65,14 @@ export function CyclingStatement({ headline }: { headline: React.ReactNode }) {
     <div className="mt-6 flex h-[clamp(2.9rem,6.5vw,5rem)] max-w-2xl items-center">
       <AnimatePresence mode="wait">
         <motion.p
-          key={index}
+          key={Math.min(index, LINES.length - 1)}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="font-display text-[clamp(1.85rem,4.5vw,3.25rem)] font-normal leading-[1.12] text-ivory/90"
         >
-          {LINES[index]}
+          {LINES[Math.min(index, LINES.length - 1)]}
         </motion.p>
       </AnimatePresence>
     </div>
