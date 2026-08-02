@@ -17,6 +17,7 @@ export type AnalyticsEvent =
   | "project_map_emailed"
   | "channel_strategy_viewed"
   | "lab_project_explored"
+  | "decision_artifact_expanded"
   | "visitor_situation_selected"
   | "package_viewed"
   | "packages_compared"

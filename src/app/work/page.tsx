@@ -14,6 +14,7 @@ import { SignatureProject } from "@/sections/Work/SignatureProject";
 import { DecisionMap } from "@/sections/Work/DecisionMap";
 import { MarketingEcosystem } from "@/sections/Work/MarketingEcosystem";
 import { TatvaLab } from "@/sections/Work/TatvaLab";
+import { DecisionEvidenceGallery } from "@/sections/Work/DecisionEvidenceGallery";
 import { WorkArchive } from "@/sections/Work/WorkArchive";
 import { Authorship } from "@/sections/Work/Authorship";
 import { BrandStudies } from "@/sections/CaseStudies/BrandStudies";
@@ -88,6 +89,7 @@ export default function WorkPage() {
         />
         <WorkIndex projects={projects} />
         {signature && <SignatureProject project={signature} />}
+        <DecisionEvidenceGallery />
         <DecisionMap />
         <TatvaLab />
         <MarketingEcosystem />
