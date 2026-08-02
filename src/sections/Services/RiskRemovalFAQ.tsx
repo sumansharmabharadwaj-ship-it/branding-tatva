@@ -94,21 +94,63 @@ function Trail({
   const drawn = useSpring(drawnRaw, { stiffness: 55, damping: 20 });
 
   return (
-    <div ref={trailRef} className="relative">
+    <div ref={trailRef} className="relative pt-16 lg:pt-20">
+      {/* The trailhead flower (direct request): the journey grows out of
+          a bloom at the section's start — five gold petals unfurling on
+          arrival, the drawn path emerging from beneath them. */}
+      <motion.svg
+        aria-hidden="true"
+        viewBox="0 0 48 48"
+        className="pointer-events-none absolute left-1/2 top-0 hidden h-12 w-12 -translate-x-1/2 lg:block"
+        initial={prefersReducedMotion ? undefined : { opacity: 0, rotate: -18 }}
+        whileInView={prefersReducedMotion ? undefined : { opacity: 1, rotate: 0 }}
+        viewport={{ once: true, margin: "0px 0px -8% 0px" }}
+        transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {[0, 72, 144, 216, 288].map((deg, pi) => (
+          <g key={deg} transform={`rotate(${deg} 24 24)`}>
+            <motion.ellipse
+              cx="24"
+              cy="13"
+              rx="4.4"
+              ry="9"
+              fill="rgba(228,217,180,0.85)"
+              style={{ transformBox: "fill-box", transformOrigin: "50% 100%" }}
+              initial={prefersReducedMotion ? undefined : { scale: 0 }}
+              whileInView={prefersReducedMotion ? undefined : { scale: 1 }}
+              viewport={{ once: true, margin: "0px 0px -8% 0px" }}
+              transition={{ duration: 0.7, delay: 0.2 + pi * 0.1, ease: [0.22, 1, 0.36, 1] }}
+            />
+          </g>
+        ))}
+        <circle cx="24" cy="24" r="3.4" fill="#E4D9B4" />
+      </motion.svg>
       {/* The trail — a faint track the full journey ahead, and the lit
-          path the visitor has earned so far, drawn by scroll. Desktop
-          only; on mobile stations stack and the trail steps aside. */}
+          path the visitor has earned so far, drawn by scroll. Doubled
+          stroke (soft golden glow beneath a bright draw line) per the
+          direct note that the path read too faint over the meadow.
+          Desktop only; on mobile stations stack and the trail steps
+          aside. */}
       <svg
-        className="pointer-events-none absolute inset-y-0 left-1/2 hidden h-full w-32 -translate-x-1/2 lg:block"
+        className="pointer-events-none absolute bottom-0 left-1/2 top-10 hidden w-32 -translate-x-1/2 lg:block"
         viewBox="0 0 100 1000"
         preserveAspectRatio="none"
         aria-hidden="true"
       >
-        <path d={TRAIL_D} stroke="rgba(160,166,144,0.2)" strokeWidth="1.5" fill="none" vectorEffect="non-scaling-stroke" />
+        <path d={TRAIL_D} stroke="rgba(228,217,180,0.28)" strokeWidth="2" fill="none" vectorEffect="non-scaling-stroke" />
         <motion.path
           d={TRAIL_D}
-          stroke="#C9CDB4"
-          strokeWidth="1.5"
+          stroke="rgba(228,217,180,0.25)"
+          strokeWidth="7"
+          fill="none"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+          style={prefersReducedMotion ? undefined : { pathLength: drawn }}
+        />
+        <motion.path
+          d={TRAIL_D}
+          stroke="#E4D9B4"
+          strokeWidth="2.5"
           fill="none"
           strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
