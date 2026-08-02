@@ -7,14 +7,17 @@ import { LinkButton } from "@/components/Button";
 import { packages } from "@/data/services";
 import { SITUATION_KEY } from "@/sections/Home/VisitorRecognition";
 
-// Conversion architecture, Services chapter two: the visitor chooses
-// their situation before any package is pitched. If they already chose
-// on the Home page, the same choice arrives here preselected (read
-// from the shared localStorage key VisitorRecognition writes), so the
-// site remembers where they stand instead of asking twice. Selection
-// reveals the recommended package, the reason, and the real scope from
-// data/services.ts — never new marketing copy. Two contextual CTAs:
-// the package detail below, and the booking room at the end.
+// Conversion architecture, Services chapter two: the visitor places
+// themselves before any package is pitched. If they already chose on
+// the Home page, the same choice arrives preselected (read from the
+// shared localStorage key VisitorRecognition writes), so the site
+// remembers where they stand instead of asking twice.
+//
+// Continuity pass: recomposed from three equal centered cards (the
+// repeated template the direct feedback called out) into an editorial
+// split — a sticky heading rail on the left, the three situations as
+// numbered full width index rows on the right, and the recommendation
+// unfolding beneath the active row rather than in a detached panel.
 const OPTIONS = [
   {
     id: "idea",
@@ -44,6 +47,8 @@ const HOME_ID_MAP: Record<string, string> = {
   outgrown: "reposition",
 };
 
+const EASE = [0.22, 1, 0.36, 1] as const;
+
 export function SituationPath() {
   const [selected, setSelected] = useState<string | null>(null);
   const [carried, setCarried] = useState(false);
@@ -61,79 +66,123 @@ export function SituationPath() {
   }, []);
 
   function pick(id: string) {
-    setSelected(id);
+    setSelected((prev) => (prev === id ? prev : id));
     setCarried(false);
   }
 
-  const active = OPTIONS.find((o) => o.id === selected);
-  const pkg = active ? packages.find((p) => p.slug === active.slug) : undefined;
-
   return (
-    <Container className="max-w-5xl">
-      <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Choose your situation</p>
-      <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory">
-        Three starting points. One of them is yours.
-      </h2>
-      {carried && (
-        <p className="mt-3 text-sm text-ivory/70">Carried over from where you stood on the Home page.</p>
-      )}
-      <div className="mt-10 grid gap-3 sm:grid-cols-3">
-        {OPTIONS.map((option, i) => {
-          const isActive = selected === option.id;
-          return (
-            <motion.button
-              key={option.id}
-              type="button"
-              aria-pressed={isActive}
-              onClick={() => pick(option.id)}
-              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 18 }}
-              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-              transition={{ duration: 0.5, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              className={`h-full rounded-2xl border p-5 text-left backdrop-blur-md transition-colors duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:p-6 ${
-                isActive
-                  ? "border-sandstone/60 bg-ivory/[0.08] text-ivory"
-                  : "border-ivory/15 bg-ivory/[0.03] text-ivory/85 hover:border-ivory/35 hover:bg-ivory/[0.06]"
-              }`}
-            >
-              <span className="font-display text-lg font-normal leading-snug sm:text-xl">{option.label}</span>
-            </motion.button>
-          );
-        })}
+    <Container className="max-w-6xl">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-20">
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Choose your situation</p>
+          <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+            Three starting points. One of them is yours.
+          </h2>
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/70">
+            The rest of this page reads differently depending on where the brand stands today. Start with the row that
+            sounds like yours.
+          </p>
+          <AnimatePresence>
+            {carried && (
+              <motion.p
+                initial={prefersReducedMotion ? undefined : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="mt-5 inline-flex items-center gap-2 rounded-full border border-sandstone/40 px-3.5 py-1.5 text-xs text-sandstone"
+              >
+                <span aria-hidden="true">↺</span> Carried over from where you stood on the Home page.
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div>
+          {OPTIONS.map((option, i) => {
+            const isActive = selected === option.id;
+            const pkg = packages.find((p) => p.slug === option.slug);
+            return (
+              <div key={option.id} className="relative">
+                <div className="h-px bg-ivory/12" aria-hidden="true" />
+                <motion.button
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => pick(option.id)}
+                  initial={prefersReducedMotion ? undefined : { opacity: 0, y: 14 }}
+                  whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                  transition={{ duration: 0.5, delay: i * 0.07, ease: EASE }}
+                  className="group grid w-full grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:gap-5 sm:py-7"
+                >
+                  <span
+                    className={`font-display text-base transition-colors duration-300 ${isActive ? "text-sandstone" : "text-ivory/35"}`}
+                    aria-hidden="true"
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    className={`font-display text-xl font-normal leading-snug transition-all duration-500 ease-out group-hover:translate-x-1 sm:text-2xl ${
+                      isActive ? "text-ivory" : "text-ivory/80 group-hover:text-ivory"
+                    }`}
+                  >
+                    {option.label}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className={`pt-1 text-xl font-light transition-all duration-300 ${
+                      isActive ? "rotate-45 text-sandstone" : "text-ivory/50 group-hover:text-ivory"
+                    }`}
+                  >
+                    +
+                  </span>
+                </motion.button>
+                <AnimatePresence initial={false}>
+                  {isActive && pkg && (
+                    <motion.div
+                      initial={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: EASE }}
+                      className="overflow-hidden"
+                    >
+                      <div
+                        className="mb-7 rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-7"
+                        style={{ borderTopColor: pkg.color, backgroundColor: "rgba(244,239,230,0.05)" }}
+                      >
+                        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                          <p className="font-display text-xl font-normal text-ivory">{pkg.name}</p>
+                          <p className="text-sm text-ivory/70">{pkg.forWho}</p>
+                        </div>
+                        <p className="mt-3 max-w-2xl text-base leading-relaxed text-ivory/90">{option.reason}</p>
+                        <p className="mt-4 text-xs font-medium uppercase tracking-[0.15em] text-ivory/60">
+                          Indicative scope
+                        </p>
+                        <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
+                          {pkg.includes.map((item) => (
+                            <li key={item} className="text-sm text-ivory/85 before:mr-2 before:content-['•']">
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="mt-6 flex flex-wrap gap-3">
+                          <LinkButton
+                            href="#desire"
+                            variant="secondary"
+                            className="border-ivory/30 text-ivory hover:bg-ivory/10"
+                          >
+                            See the full package
+                          </LinkButton>
+                          <LinkButton href="#book">Book a Brand Strategy Session</LinkButton>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+          <div className="h-px bg-ivory/12" aria-hidden="true" />
+        </div>
       </div>
-      <AnimatePresence mode="wait">
-        {active && pkg && (
-          <motion.div
-            key={active.id}
-            initial={prefersReducedMotion ? undefined : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-8 rounded-2xl border-t-2 border-ivory/12 p-6 backdrop-blur-md sm:p-8"
-            style={{ borderTopColor: pkg.color, backgroundColor: "rgba(244,239,230,0.05)" }}
-          >
-            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-              <p className="font-display text-xl font-normal text-ivory">{pkg.name}</p>
-              <p className="text-sm text-ivory/70">{pkg.forWho}</p>
-            </div>
-            <p className="mt-4 max-w-2xl text-base leading-relaxed text-ivory/90">{active.reason}</p>
-            <p className="mt-4 text-xs font-medium uppercase tracking-[0.15em] text-ivory/60">Indicative scope</p>
-            <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
-              {pkg.includes.map((item) => (
-                <li key={item} className="text-sm text-ivory/85 before:mr-2 before:content-['•']">
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <LinkButton href="#desire" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
-                See the full package
-              </LinkButton>
-              <LinkButton href="#book">Book a Brand Strategy Session</LinkButton>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </Container>
   );
 }

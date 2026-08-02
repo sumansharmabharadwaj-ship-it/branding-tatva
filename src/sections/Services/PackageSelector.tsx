@@ -26,6 +26,10 @@ const CHOICES = [
 
 export function PackageSelector() {
   const [active, setActive] = useState<string | null>(null);
+  // Continuity pass: a real side by side view of all three packages —
+  // same data/services.ts rows, so a visitor deciding between two
+  // paths can weigh them without clicking back and forth.
+  const [compare, setCompare] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const activePackage = packages.find((p) => p.slug === active);
   const proof = activePackage?.proofSlug ? projects.find((p) => p.slug === activePackage.proofSlug) : undefined;
@@ -85,9 +89,61 @@ export function PackageSelector() {
         })}
       </div>
 
-      <div className="relative mt-10 min-h-[240px] text-left">
+      <div className="mt-6">
+        <button
+          type="button"
+          aria-pressed={compare}
+          onClick={() => setCompare((c) => !c)}
+          className="link-underline text-sm text-ivory/70 transition-colors duration-300 hover:text-ivory"
+        >
+          {compare ? "Back to one recommendation" : "Compare all three side by side"}
+        </button>
+      </div>
+
+      <div className="relative mt-8 min-h-[240px] text-left">
         <AnimatePresence mode="wait">
-          {activePackage ? (
+          {compare ? (
+            <motion.div
+              key="compare"
+              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={transition}
+              className="grid gap-4 lg:grid-cols-3"
+            >
+              {packages.map((pkg) => (
+                <div
+                  key={pkg.slug}
+                  className="flex flex-col rounded-lg border-t-2 p-6 backdrop-blur-md"
+                  style={{ borderColor: pkg.color, backgroundColor: blendHex(pkg.color, "#0F151C", 12) }}
+                >
+                  <p className="font-display text-lg font-normal text-ivory">{pkg.name}</p>
+                  <div className="mt-1 flex items-baseline gap-1.5">
+                    {pkg.billing === "monthly" && <span className="text-xs text-ivory/70">from</span>}
+                    <span className="font-display text-xl font-normal text-ivory">
+                      £{pkg.price.toLocaleString("en-GB")}
+                    </span>
+                    {pkg.billing === "monthly" && <span className="text-xs text-ivory/70">/mo</span>}
+                  </div>
+                  <p className="mt-3 text-xs leading-relaxed text-ivory/75">{pkg.forWho}</p>
+                  <ul className="mt-4 flex-1 space-y-1.5 border-t border-ivory/10 pt-4">
+                    {pkg.includes.map((item) => (
+                      <li key={item} className="text-xs leading-relaxed text-ivory/85 before:mr-2 before:content-['•']">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <LinkButton
+                    href="/contact"
+                    className="mt-5 self-start"
+                    style={{ backgroundColor: pkg.color }}
+                  >
+                    Start with {pkg.name}
+                  </LinkButton>
+                </div>
+              ))}
+            </motion.div>
+          ) : activePackage ? (
             <motion.div
               key={activePackage.slug}
               // "Surfacing" — the recommendation rises from beneath the

@@ -491,7 +491,7 @@ export default function ServicesPage() {
         {/* Mood: FOREST — deep green-black after the light editorial
             break; the stream clip's mossy greens finally read as green
             instead of being re-warmed to amber by a soil overlay. */}
-        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.forest }}>
+        <section id="health" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.forest }}>
           {/* Media replaced per direct approval (Pexels id 38507614,
               standard license): near-black still water carrying green
               foliage reflections — the chapter's own question made
