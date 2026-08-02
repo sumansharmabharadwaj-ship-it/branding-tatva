@@ -834,3 +834,24 @@
 .mist-layer-b {
   animation: mist-drift-b 34s ease-in-out infinite;
 }
+
+/* The strategy room's grain layer drifts almost imperceptibly — paper
+   fibres in the air rather than a printed texture. Translate only
+   (no opacity in the keyframe, unlike mist-drift), oversized element
+   (-inset) so the drift never exposes an edge. Covered by the sitewide
+   prefers-reduced-motion rule. */
+@keyframes grain-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-1.5%, 1%, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.grain-drift {
+  animation: grain-drift 50s ease-in-out infinite;
+}

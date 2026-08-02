@@ -22,6 +22,7 @@ import { StrategySessionPreview } from "@/sections/Services/StrategySessionPrevi
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { Magnetic } from "@/components/Magnetic";
+import { DustMotes } from "@/components/DustMotes";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ParallaxDrift } from "@/components/ParallaxDrift";
 import { MOOD } from "@/lib/sectionWash";
@@ -419,11 +420,18 @@ export default function ServicesPage() {
               }}
             />
           </div>
+          {/* Floating dust in the lamp light — the same motes device the
+              site's cinematic cards already use, here as the room's
+              airborne layer. */}
+          <DustMotes />
           {/* Paper-grain air in the room — same inline SVG noise device,
-              now light specks at low opacity against the dark ground. */}
+              now light specks at low opacity against the dark ground,
+              drifting almost imperceptibly (grain-drift keyframes) so
+              even the texture itself is alive. Oversized so the drift
+              never exposes an edge. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-[0.4]"
+            className="grain-drift pointer-events-none absolute -inset-[4%] opacity-[0.4]"
             style={{
               backgroundImage:
                 "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' fill='%23F4EFE6' filter='url(%23n)'/%3E%3C/svg%3E\")",

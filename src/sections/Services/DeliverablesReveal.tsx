@@ -1,10 +1,12 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { TiltCard } from "@/components/TiltCard";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { useSpotlight } from "@/hooks/useSpotlight";
 import { packages } from "@/data/services";
 
 // Art directed from scratch three times on escalating direct feedback:
@@ -51,6 +53,19 @@ const POSES = [
 
 export function DeliverablesReveal({ room = false }: { room?: boolean }) {
   const prefersReducedMotion = useReducedMotion();
+  // Camera layer — the desk arrives the way a camera settles onto a
+  // table: a slight top-down perspective flattening out as the visitor
+  // scrolls in, scale easing to rest. Scroll-scrubbed transform only,
+  // no pin. (Hooks run for both branches; only the room renders them.)
+  const deskRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: deskRef, offset: ["start end", "start 0.22"] });
+  const camRotateX = useTransform(scrollYProgress, [0, 1], [4.5, 0]);
+  const camScale = useTransform(scrollYProgress, [0, 1], [0.96, 1]);
+  const camY = useTransform(scrollYProgress, [0, 1], [44, 0]);
+  // Cursor-light layer — the same warm beam the Hero and Threshold
+  // already use, here reading as the desk lamp following the visitor's
+  // hand across the documents.
+  const spotlightRef = useSpotlight(deskRef, Boolean(prefersReducedMotion));
 
   if (!room) {
     return (
@@ -127,8 +142,19 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
       {/* The desk — sheets overlap down the page, sliding out from
           beneath one another on scroll, each held by the cursor
           (TiltCard: real 3D tilt + a glow in the package's own color,
-          the site's proven physical-object interaction). */}
-      <div className="relative mt-14 lg:mt-20">
+          the site's proven physical-object interaction). The whole
+          desk sits under a camera (scroll-scrubbed perspective settle)
+          and a cursor lamp beam, and each sheet floats on its own slow
+          ambient breath so the room never goes still. */}
+      <div ref={deskRef} className="relative mt-14 lg:mt-20" style={{ perspective: 1200 }}>
+        <div ref={spotlightRef} aria-hidden="true" className="cursor-spotlight pointer-events-none absolute -inset-8 z-30" />
+        <motion.div
+          style={
+            prefersReducedMotion
+              ? undefined
+              : { rotateX: camRotateX, scale: camScale, y: camY, transformOrigin: "50% 20%" }
+          }
+        >
         {packages.map((pkg, pi) => {
           const items = pkg.includes.filter((item) => !item.startsWith("Everything in"));
           const pose = POSES[pi] ?? POSES[0];
@@ -142,6 +168,13 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
               className={`group relative mt-10 first:mt-0 lg:mt-0 ${pose.className}`}
               style={{ zIndex: pi + 10 }}
             >
+              {/* Ambient layer: each sheet breathes on its own period
+                  and phase, so the desk keeps living after every
+                  entrance has finished. */}
+              <motion.div
+                animate={prefersReducedMotion ? undefined : { y: [0, -5, 0] }}
+                transition={{ duration: 7 + pi * 1.4, repeat: Infinity, ease: "easeInOut", delay: pi * 0.9 }}
+              >
               <TiltCard glowColor={pkg.color}>
                 {/* The page beneath this sheet in the stack — separates
                     when the document is picked up. */}
@@ -168,19 +201,33 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
                     className="absolute inset-x-0 top-0 h-[2px]"
                     style={{ backgroundColor: pkg.color }}
                   />
-                  {/* Embossed element glyph — each package's documented
-                      element pressed into its own paper like a maker's
-                      mark. */}
-                  <ElementGlyph
-                    slug={GLYPHS[pkg.slug]}
-                    className="pointer-events-none absolute -bottom-8 -right-6 h-40 w-40 -rotate-6"
-                    style={{ color: pkg.color, opacity: 0.09 }}
-                  />
+                  {/* Embossed element glyph — pressed into the paper as
+                      the sheet settles: it arrives oversized and
+                      transparent and stamps down into place, a maker's
+                      mark being embossed rather than printed. */}
+                  <motion.div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -bottom-8 -right-6"
+                    initial={prefersReducedMotion ? { opacity: 0.09 } : { opacity: 0, scale: 1.18, rotate: -2 }}
+                    whileInView={prefersReducedMotion ? undefined : { opacity: 0.09, scale: 1, rotate: -6 }}
+                    viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                    transition={{ duration: 0.9, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <ElementGlyph slug={GLYPHS[pkg.slug]} className="h-40 w-40" style={{ color: pkg.color }} />
+                  </motion.div>
                   <div className="relative flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
                     <h3 className="font-display text-2xl font-normal text-soil sm:text-3xl">{pkg.name}</h3>
-                    <span className="-rotate-1 font-display text-base italic text-action-secondary">
+                    {/* The margin note is written into the file after
+                        the heading is read — authored, never instant. */}
+                    <motion.span
+                      className="-rotate-1 font-display text-base italic text-action-secondary"
+                      initial={prefersReducedMotion ? undefined : { opacity: 0, y: 4, filter: "blur(3px)" }}
+                      whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
+                      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                      transition={{ duration: 0.7, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    >
                       {ANNOTATIONS[pkg.slug]}
-                    </span>
+                    </motion.span>
                   </div>
                   {/* The rule draws itself across the page. */}
                   <motion.div
@@ -213,9 +260,11 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
                   </ul>
                 </div>
               </TiltCard>
+              </motion.div>
             </motion.article>
           );
         })}
+        </motion.div>
       </div>
     </Container>
   );
