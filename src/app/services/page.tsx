@@ -402,69 +402,40 @@ export default function ServicesPage() {
             Desire's own objection. Same shader treatment as the
             sections around it — see WeakBrandingCost's comment above
             for why. */}
-        {/* Mood: THE STUDY — final creative direction on this chapter:
-            every light version (flat white cards, then the parchment
-            dossier) still detached from the cinematic journey and read
-            as a pricing block. The chapter is now a dark, warm
-            strategy room (MOOD.study): cream documents glowing under
-            drifting lamp light on a charcoal-bronze desk, the palette
-            carrying the color story between Desire's cold deep water
-            and Health Check's forest instead of interrupting it. */}
-        {/* No overflow-hidden on the section itself — the discovery
-            sequence inside DeliverablesReveal uses position: sticky,
-            which an overflow ancestor silently breaks (the documented
-            sticky lesson). Clipping is scoped to the decorative
-            wrapper below instead. */}
-        <section className="relative py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
-          {/* Decorative atmosphere, clipped in its own wrapper: lamp
-              glows, dust, drifting grain, and the oversized watermark. */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-            {/* Environmental light, per direct approval (Pexels id
-                7876536, standard license): window light moving across
-                linen. Screen-blended at low opacity so only its moving
-                highlights survive against the dark study — the visitor
-                perceives shifting daylight on premium material, never
-                "a video playing". Darkened a step in the grade,
-                seamless ping-pong loop, 2.1MB MP4 / 0.5MB WebM. */}
-            <div className="absolute inset-0 opacity-[0.11] mix-blend-screen">
-              <BackgroundVideo
-                video="/videos/pexels-sunlit-cloth.mp4"
-                videoWebm="/videos/pexels-sunlit-cloth.webm"
-                poster="/images/pexels-sunlit-cloth-poster.jpg"
-              />
-            </div>
-            <DustMotes />
-            <div
-              className="grain-drift absolute -inset-[4%] opacity-[0.4]"
-              style={{
-                backgroundImage:
-                  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' fill='%23F4EFE6' filter='url(%23n)'/%3E%3C/svg%3E\")",
-              }}
-            />
-            <ParallaxDrift distance={55} className="absolute -top-4 right-0 select-none sm:-top-8">
-              <span className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.05]">
-                Receive
-              </span>
-            </ParallaxDrift>
-            <div
-              className="mist-layer-a absolute -left-[12%] -top-[8%] h-[60%] w-[55%] rounded-full"
-              style={{
-                background: "radial-gradient(ellipse at center, rgba(226,229,226,0.11) 0%, rgba(226,229,226,0.03) 50%, transparent 72%)",
-                filter: "blur(60px)",
-                animationDuration: "44s",
-              }}
-            />
-            <div
-              className="mist-layer-b absolute -bottom-[10%] -right-[14%] h-[55%] w-[60%] rounded-full"
-              style={{
-                background: "radial-gradient(ellipse at center, rgba(184,90,52,0.05) 0%, rgba(184,90,52,0.02) 50%, transparent 74%)",
-                filter: "blur(70px)",
-                animationDuration: "36s",
-              }}
-            />
-          </div>
-          {/* Scene dissolve: Desire's deep water hands into the warm
-              study — cold blue releasing into lamplight. */}
+        {/* Mood: THE STUDY — final art direction on this chapter, per
+            direct screenshot feedback: the abstract room (lamp glows,
+            cloth light, empty dark field) broke the site's own visual
+            standard — every other chapter lives in serene nature. The
+            study now sits over the emerald river (the approved clip
+            held in the reassignment pool since Phase 1): slow green
+            water, the Pinterest register exactly, darkened by a
+            walnut-tinted overlay so the ivory documents stay the
+            brightest thing in frame. */}
+        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
+          <BackgroundVideo
+            parallax
+            video="/videos/pixabay-emerald-river.mp4"
+            poster="/images/pixabay-emerald-river-poster.jpg"
+          />
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(180deg, rgba(27,25,23,0.88) 0%, rgba(27,25,23,0.72) 50%, rgba(27,25,23,0.88) 100%)",
+            }}
+          />
+          <DustMotes />
+          <ParallaxDrift distance={55} className="pointer-events-none absolute -top-4 right-0 select-none sm:-top-8">
+            <span
+              aria-hidden="true"
+              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.05]"
+            >
+              Receive
+            </span>
+          </ParallaxDrift>
+          {/* Scene dissolve: Desire's deep water hands into the river
+              study. */}
           <SceneVeil color="#0F151C" heightClass="h-[15vh]" />
           <div className="relative">
             <DeliverablesReveal room />
