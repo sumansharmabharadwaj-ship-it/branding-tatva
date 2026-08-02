@@ -15,10 +15,9 @@ import { socialLinks } from "./constants";
 // This keeps the same close-every-page-consistently job (Footer already
 // renders on all 12 pages) but gets to the booking widget immediately,
 // side by side with a brand/CTA card and a contact card — like a taskbar,
-// not another full scene. own-jagged-peaks.mp4 stays as the backdrop
-// texture (chosen earlier because it isn't already load-bearing
-// elsewhere on Home right before this section), just behind a much
-// shorter passage now that there's far less content sitting on top of it.
+// not another full scene. The backdrop is the dandelion release — the
+// film's coda per the ecosystem storyboard — behind a much shorter
+// passage now that there's far less content sitting on top of it.
 
 const WIDGET_CLASS =
   "rounded-2xl border border-white/15 bg-black/20 backdrop-blur-md p-5 sm:p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-black/25";
@@ -38,19 +37,18 @@ export function Footer() {
           way every other section-to-section boundary on the site
           already works. */}
 
-      {/* imagePosition biased down — own-jagged-peaks' own frame is a
-          pale sunset sky over the top ~55%, jagged silhouettes only in
-          the bottom half; center-cropping (the default) put a visibly
-          bright sky band right at this section's own top edge, directly
-          under the closing moonlit-sea break above it — repeated
-          feedback flagged that exact band as a leftover "divider" even
-          after the actual stroke/border was already removed. Cropping
-          toward the peaks instead keeps the section reading as
-          continuously dark from the section above straight through. */}
+      {/* The film's coda (storyboard footer band + Suman's own pick,
+          Pexels 37342950): the dandelion field at golden hour, seeds
+          carried into the world — every page now ends inside the
+          living ecosystem instead of cutting to the old mountain
+          silhouettes, which read as a different movie after the
+          nature-documentary chapters above. Slowed, forward-only
+          dissolve loop, cinematic center crop from the 4K portrait
+          source. */}
       <TexturedDark
-        image="/images/own-jagged-peaks.jpg"
-        video="/videos/own-jagged-peaks.mp4"
-        imagePosition="center 85%"
+        image="/images/pexels-dandelion-release-poster.jpg"
+        video="/videos/pexels-dandelion-release.mp4"
+        videoWebm="/videos/pexels-dandelion-release.webm"
         className="py-12 sm:py-14"
       >
         <Container className="relative">
