@@ -165,9 +165,21 @@ export function PinnedBrandBuild() {
           beneath the surface, exactly what strategy is. Full frame,
           slow, no crop, no zoom; the layer parallax carries the
           movement. */}
-      <BackgroundVideo video="/videos/pexels-root-network.mp4" videoWebm="/videos/pexels-root-network.webm" poster="/images/pexels-root-network-poster.jpg" />
-      <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.3)" }} />
-      <AmbientElementShader opacity={0.08} />
+      {/* Background spans 100vw from the pinned element's own center,
+          deliberately independent of the element's measured width.
+          ScrollTrigger pins by stamping the pre-pin measured width as
+          inline style; a resize or scrollbar-state change between
+          measure and pin can leave that width a strip narrower than
+          the real viewport (direct screenshot report: grey bands down
+          both edges of this chapter on a real display — the charcoal
+          ground showing through). A viewport-width background makes
+          that entire failure class invisible instead of trying to
+          out-guess GSAP's measurement timing. */}
+      <div className="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 overflow-hidden">
+        <BackgroundVideo video="/videos/pexels-root-network.mp4" videoWebm="/videos/pexels-root-network.webm" poster="/images/pexels-root-network-poster.jpg" />
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.3)" }} />
+        <AmbientElementShader opacity={0.08} />
+      </div>
       {/* Direct, repeated feedback (two screenshots) that this pinned
           frame read as a narrow content strip with empty video on both
           sides on a real wide display, and that the stacked
