@@ -147,12 +147,6 @@ export default async function CaseStudyPage({ params }: Props) {
           minHeight="70vh"
           accentColor={project.heroVideo ? project.accent : undefined}
         >
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,13vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06]"
-          >
-            {project.industry}
-          </span>
           <Container className="relative py-20">
             <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal>

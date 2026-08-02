@@ -104,12 +104,6 @@ export default async function BlogPostPage({ params }: Props) {
               <div className="absolute inset-0 bg-soil/80" />
             </>
           )}
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,16vw,11rem)] font-bold uppercase leading-none text-ivory/[0.06]"
-          >
-            {element?.name ?? post.element}
-          </span>
           <Container className="relative">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal>

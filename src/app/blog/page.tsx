@@ -103,12 +103,6 @@ export default function BlogPage() {
               section's own background does (see comment above): a
               slow-to-fire reveal trigger would hide it along with
               everything else it wraps. */}
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-soil/[0.05] sm:-top-8"
-          >
-            NOTES
-          </span>
         <PerspectiveReveal>
           <Container>
             <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">

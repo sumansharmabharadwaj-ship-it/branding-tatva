@@ -177,12 +177,6 @@ export function PinnedBrandBuild() {
           building in the right, both vertically centered. Total column
           height now fits inside h-screen at every common desktop
           height, so nothing gets clipped mid-pin. */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 select-none whitespace-nowrap font-display text-[clamp(4rem,13vw,11rem)] font-bold uppercase leading-none text-ivory/[0.04] lg:block"
-      >
-        Build
-      </span>
       <div className="relative mx-auto flex h-full w-full max-w-[100rem] flex-col justify-center px-6 sm:px-10 lg:px-20">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20">
           <div>

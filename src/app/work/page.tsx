@@ -60,12 +60,6 @@ export default function WorkPage() {
           poster="/images/own-ridge-road-poster.jpg"
           minHeight="70vh"
         >
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,15vw,10rem)] font-bold uppercase leading-none text-ivory/[0.06]"
-          >
-            Work
-          </span>
           <Container className="relative py-20">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal>

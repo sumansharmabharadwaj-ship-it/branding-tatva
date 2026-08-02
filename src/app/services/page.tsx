@@ -131,17 +131,6 @@ export default function ServicesPage() {
               claim assembles (CyclingStatement), and the giant page
               title drifts at a slower rate than the scroll around it —
               depth through type, no imagery involved. */}
-          <ParallaxDrift
-            distance={90}
-            className="pointer-events-none absolute -top-6 right-0 select-none"
-          >
-            <span
-              aria-hidden="true"
-              className="whitespace-nowrap font-display text-[clamp(4rem,15vw,10rem)] font-bold uppercase leading-none text-ivory/[0.06]"
-            >
-              Services
-            </span>
-          </ParallaxDrift>
           <Container className="relative py-20">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal>
@@ -273,7 +262,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(24,27,23,0.92) 0%, rgba(24,27,23,0.74) 50%, rgba(24,27,23,0.9) 100%)",
+                "linear-gradient(180deg, rgba(24,27,23,0.78) 0%, rgba(24,27,23,0.55) 50%, rgba(24,27,23,0.75) 100%)",
             }}
           />
           {/* Scene dissolve: Authority's charcoal handing off into
@@ -284,14 +273,6 @@ export default function ServicesPage() {
               ("WHY"), and Blog ("NOTES") already use, extended here — a
               recurring graphic motif tying new sections into the same
               visual system rather than each reading as a one-off. */}
-          <ParallaxDrift distance={70} className="pointer-events-none absolute -top-4 left-0 select-none sm:-top-8">
-            <span
-              aria-hidden="true"
-              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06]"
-            >
-              Stakes
-            </span>
-          </ParallaxDrift>
           <div className="relative">
             <WeakBrandingCost />
           </div>
@@ -314,7 +295,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(26,32,38,0.9) 0%, rgba(26,32,38,0.78) 55%, rgba(26,32,38,0.88) 100%)",
+                "linear-gradient(180deg, rgba(26,32,38,0.76) 0%, rgba(26,32,38,0.6) 55%, rgba(26,32,38,0.78) 100%)",
             }}
           />
           {/* Scene dissolve: Stakes' dry stone into Education's mist. */}
@@ -382,7 +363,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(14,23,20,0.88) 0%, rgba(14,23,20,0.68) 45%, rgba(14,23,20,0.85) 100%)",
+                "linear-gradient(180deg, rgba(14,23,20,0.75) 0%, rgba(14,23,20,0.55) 45%, rgba(14,23,20,0.78) 100%)",
             }}
           />
           {/* Scene dissolve: Education's blue mist into Desire's deep
@@ -435,14 +416,6 @@ export default function ServicesPage() {
             }}
           />
           <DustMotes />
-          <ParallaxDrift distance={55} className="pointer-events-none absolute -top-4 right-0 select-none sm:-top-8">
-            <span
-              aria-hidden="true"
-              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.05]"
-            >
-              Receive
-            </span>
-          </ParallaxDrift>
           {/* Scene dissolve: Desire's deep water hands into the river
               study. */}
           <SceneVeil color="#0E1714" heightClass="h-[15vh]" />
@@ -495,7 +468,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(20,26,21,0.88) 0%, rgba(20,26,21,0.72) 50%, rgba(20,26,21,0.88) 100%)",
+                "linear-gradient(180deg, rgba(20,26,21,0.75) 0%, rgba(20,26,21,0.55) 50%, rgba(20,26,21,0.78) 100%)",
             }}
           />
           {/* Scene dissolve: the dossier's parchment light spills into
@@ -504,14 +477,6 @@ export default function ServicesPage() {
           {/* Scene dissolve: the study's warm dark hands into the
               forest — lamplight dimming into green-black. */}
           <SceneVeil color="#172019" heightClass="h-[14vh]" />
-          <ParallaxDrift distance={70} className="pointer-events-none absolute -top-4 left-0 select-none sm:-top-8">
-            <span
-              aria-hidden="true"
-              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06]"
-            >
-              Check
-            </span>
-          </ParallaxDrift>
           <div className="relative">
             <BrandHealthCheck />
           </div>
@@ -579,7 +544,7 @@ export default function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(23,32,28,0.84) 0%, rgba(23,32,28,0.6) 45%, rgba(23,32,28,0.7) 82%, rgba(35,31,27,0.9) 100%)",
+                "linear-gradient(180deg, rgba(23,32,28,0.72) 0%, rgba(23,32,28,0.48) 45%, rgba(23,32,28,0.6) 82%, rgba(35,31,27,0.9) 100%)",
             }}
           />
           {/* Three mist depth planes above the overlay — the filmed fog
@@ -625,14 +590,6 @@ export default function ServicesPage() {
               }}
             />
           </ParallaxDrift>
-          <ParallaxDrift distance={55} className="pointer-events-none absolute -top-4 right-0 select-none sm:-top-8">
-            <span
-              aria-hidden="true"
-              className="whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06]"
-            >
-              Ask
-            </span>
-          </ParallaxDrift>
           <Container className="relative max-w-6xl">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-[0.18em] text-ivory/55">Risk removal</p>
@@ -677,7 +634,7 @@ export default function ServicesPage() {
           image="/images/pexels-sunlight-wood-grain-poster.jpg"
           video="/videos/pexels-sunlight-wood-grain.mp4"
           videoWebm="/videos/pexels-sunlight-wood-grain.webm"
-          className="scroll-mt-24 py-24 sm:py-36"
+          className="scroll-mt-24 pb-16 pt-24 sm:pb-20 sm:pt-32"
         >
           {/* The last of the FAQ's fog arrives with the visitor and
               burns off in the warm room — the mist itself crosses the
@@ -696,10 +653,6 @@ export default function ServicesPage() {
             />
           </div>
           <StrategyRoomCTA />
-          {/* The film's final frame settles into darkness before the
-              footer — the last remaining hard cut on the page,
-              found in the Experience Director walkthrough. */}
-          <SceneHandoff color="#27221E" heightClass="h-[18vh]" />
         </TexturedDark>
       </main>
       <Footer />

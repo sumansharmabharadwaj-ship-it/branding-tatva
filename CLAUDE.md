@@ -70,3 +70,14 @@ Browser-verify visually before deploying whenever the change is observable (`pre
 ## Working with Suman
 
 Non-technical founder. Communicates via screenshots and reference links, not code-level detail. Bug reports are reliably real — investigate them as genuine regressions, not misunderstandings. Feedback tends to escalate in strictness across rounds (e.g., the copywriting standard above went from "fix Home" → "strictly everywhere" → "every page" over several messages) — don't assume an earlier, looser pass is the final bar; look for what's still missed. When a brief is large, phase it and ship incrementally with the verify loop above after each phase, rather than batching everything into one unverified change.
+
+## Design language: the living brand system (codified from Suman's moodboard, Aug 2026)
+
+Five principles, applied to every new surface:
+1. **Nature is the interface** — real macro/landscape footage or photography IS the ground; UI floats within it, never boxed beside it.
+2. **Organic glassmorphism** — cards: 16–28px radius, backdrop-blur 20–40px, white borders at 5–10% opacity, fill transparency ~12–20%, large soft shadows. Glass resting on nature, no harsh rectangles.
+3. **Editorial typography** — serif display + thin sans labels, minimal copy, huge whitespace; nothing competes.
+4. **Earth-first desaturated palette** — Forest #1F3A28, Moss #556B4A, Sage #8FAE83, Olive #7D8E52, Cream #F2F0E8, Stone #B5B3AA, Warm Sand #C6A97A, Wood #6F4E37, Mist #DDE2DC, Charcoal #1B1B1B. Every green desaturated; warmth only as natural accents (wood, sand, sunlight).
+5. **Slow organic motion** — wind/water/breathing/fog metaphors, ease cubic-bezier(0.22, 1, 0.36, 1), 2–5px cursor drift, slow parallax, blur-sharpening reveals. Nothing mechanical, nothing fast.
+
+Photography: early morning / golden hour / overcast; macro, shallow depth of field, strong negative space, one dominant subject. Emotional register: calm, quiet confidence, slow luxury, authenticity. Ghost watermark words were removed sitewide on direct feedback (Aug 2026) — do not reintroduce them.
