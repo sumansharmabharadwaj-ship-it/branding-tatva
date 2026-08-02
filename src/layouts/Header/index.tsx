@@ -117,7 +117,7 @@ export function Header({ transparent = false }: HeaderProps) {
             blurred behind the pill as a soft halo, so the palette reads
             as genuinely vivid rather than a hairline most people would
             never consciously notice against a bright white fill. */}
-        <div className="nav-pill-glow relative w-full max-w-3xl">
+        <div className="nav-pill-glow relative w-full max-w-4xl lg:max-w-5xl">
           <div className="nav-pill-ring rounded-full p-[2.5px] shadow-elevation-md">
             <div
               className={`grid w-full grid-cols-3 items-center rounded-full px-3 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-4 ${
@@ -135,7 +135,22 @@ export function Header({ transparent = false }: HeaderProps) {
                 <Logo light className="scale-[0.72] sm:scale-[0.78]" />
               </Link>
 
-              <div className="flex justify-end">
+              <div className="flex items-center justify-end gap-5">
+                {/* Direct feedback: visitors should reach other pages
+                    without scrolling to the top and opening the menu.
+                    The primary pages sit inline on desktop; the menu
+                    button remains for mobile and for the fuller list. */}
+                <nav aria-label="Primary" className="hidden items-center gap-4 lg:flex">
+                  {navigation.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="whitespace-nowrap text-[0.68rem] font-medium uppercase tracking-[0.14em] text-ivory/75 transition-colors duration-300 hover:text-ivory"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </nav>
                 <button
                   className="relative flex h-9 w-9 items-center justify-center rounded-full text-ivory transition-colors duration-500"
                   aria-label={open ? "Close menu" : "Open menu"}

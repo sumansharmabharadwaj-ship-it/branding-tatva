@@ -1,48 +1,35 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ELEMENT_HEX, MOOD } from "@/lib/sectionWash";
 import { elements } from "@/data/elements";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 
-gsap.registerPlugin(ScrollTrigger);
-
-// The one deliberate ScrollTrigger.pin on the site. Every other pinned
-// section (PinnedSlider, PinnedJourney, SelectedWorkPinned, PinnedHold)
-// runs on plain CSS position: sticky, rebuilt that way after real,
-// repeated pin-desync bugs (see CLAUDE.md and this file's own history:
-// git log "Revert Lenis + GSAP ScrollTrigger integration"). This one
-// section is the exception, and on purpose: it needs five independent
-// layers accumulating on top of each other while a single scrubbed
-// GSAP timeline keeps their entrances relative to one another exactly
-// in sync with scroll position — a genuinely different job than
-// crossfading between discrete stages, which sticky + manual rect-top
-// math already does well elsewhere on this site.
+// The Authority build, finally on the same mechanism as every other
+// pinned scene on this site: CSS position sticky plus measured scroll
+// progress. The GSAP ScrollTrigger pin this section used to carry was
+// the last one on the site and the source of a repeatedly reported
+// bug: the pin stamps a measured width as an inline style at pin
+// time, and any stale measurement left the whole scene a strip
+// narrower than the real viewport — visible gaps down both edges on
+// real displays. Two workarounds (viewport width background, charcoal
+// page ground) treated the symptom. This rebuild removes the cause:
+// sticky IS the wrapper's own layout, so it can never disagree with
+// the viewport about width.
 //
-// Guards applied specifically against the two documented failure
-// classes:
-// - invalidateOnRefresh: true — recomputes the pin/scrub range from
-//   live DOM on every ScrollTrigger.refresh() (SmoothScrollProvider
-//   already calls this on window load, document.fonts.ready, and
-//   visibilitychange) instead of trusting a cached start/end captured
-//   before images/fonts settled.
-// - anticipatePin: 1 — removes the one-frame jump at pin start.
-// - pinSpacing left at its default (true) — ScrollTrigger owns the
-//   compensating space itself rather than a manually-sized wrapper.
-// - Wrapped in gsap.context(), reverted on unmount — matters under App
-//   Router client navigation, where this can unmount without a full
-//   page reload and would otherwise leave an orphaned pin spacer.
-// - Scoped to exactly this one section, desktop/motion-allowed only
-//   (useMediaQuery, not a CSS hidden/sm:block split — a pin registered
-//   against a hidden 0-height element would compute a broken range).
+// One responsive structure now serves every visitor: the server, the
+// crawler, mobile, and reduced motion all get the five layers fully
+// visible in normal flow (which also removes the old hydration height
+// swap that once measured 0.21 CLS); desktop with motion gets the
+// tall scroll range where the layers assemble one by one, driven by
+// rect math on Lenis's own scroll event, styles written directly to
+// the nodes with zero per-frame React state.
 const LAYERS = elements.map((el) => ({
   slug: el.slug,
   label: el.name.split("·")[1]?.trim() ?? el.name,
@@ -51,194 +38,127 @@ const LAYERS = elements.map((el) => ({
 }));
 
 export function PinnedBrandBuild() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const prefersReducedMotion = useReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 640px)");
-  const runPinned = isDesktop && !prefersReducedMotion;
+  const lenis = useLenis();
+  const animate = isDesktop && !prefersReducedMotion;
 
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section || !runPinned) return;
-
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: () => `+=${window.innerHeight * (LAYERS.length - 1) * 0.9}`,
-          scrub: 0.6,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
+    if (!animate) {
+      // Static contexts keep every layer fully visible.
+      layerRefs.current.forEach((layer) => {
+        if (!layer) return;
+        layer.style.opacity = "";
+        layer.style.transform = "";
       });
+      return;
+    }
+    const wrap = wrapRef.current;
+    if (!wrap) return;
 
+    function update() {
+      if (!wrap) return;
+      const rect = wrap.getBoundingClientRect();
+      const travel = rect.height - window.innerHeight;
+      const progress = travel > 0 ? Math.min(1, Math.max(0, -rect.top / travel)) : 1;
       layerRefs.current.forEach((layer, i) => {
         if (!layer) return;
-        tl.fromTo(
-          layer,
-          { opacity: 0, y: 36, scale: 0.97 },
-          { opacity: 1, y: 0, scale: 1, duration: 1, ease: "power2.out" },
-          i * 0.85
-        );
+        const start = i / LAYERS.length;
+        const span = 0.92 / LAYERS.length;
+        const local = Math.min(1, Math.max(0, (progress - start) / span));
+        const eased = 1 - (1 - local) * (1 - local);
+        layer.style.opacity = String(eased);
+        layer.style.transform = `translateY(${(36 * (1 - eased)).toFixed(1)}px) scale(${(0.97 + 0.03 * eased).toFixed(3)})`;
       });
-    }, section);
+    }
 
-    return () => ctx.revert();
-  }, [runPinned]);
-
-  if (!runPinned) {
-    // Mobile / reduced-motion / pre-hydration fallback — the exact same
-    // five layers, stacked in normal document flow, no pin.
-    //
-    // The wrapper is no longer `sm:hidden`: this branch is also what
-    // the SERVER renders (useMediaQuery only flips true after
-    // hydration), and hiding it at desktop widths meant desktop
-    // visitors got zero Authority section in the server HTML — then a
-    // full-viewport pinned section popped into existence at hydration,
-    // shifting every section below it by ~100vh. A Lighthouse trace
-    // measured that single insertion as a 0.21+ CLS, the whole page's
-    // worth. (Slow eager video preloading used to push hydration past
-    // the trace window, which is why the score only surfaced after the
-    // perf round sped loading up — the shift itself was always there.)
-    // It also meant desktop reduced-motion visitors permanently saw
-    // nothing here at all. min-h-screen at sm+ reserves exactly the
-    // height the pinned branch occupies, so the hydration swap is
-    // height-neutral and shifts nothing.
-    return (
-      <section className="relative flex flex-col justify-center overflow-hidden py-16 sm:min-h-screen" style={{ backgroundColor: MOOD.charcoal }}>
-        <Image
-          src="/images/higgsfield-mountain-mist-poster.jpg"
-          alt=""
-          fill
-          sizes="100vw"
-          style={{ objectFit: "cover" }}
-          className="opacity-30"
-        />
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.35)" }} />
-        <Container className="relative">
-          <p className="hidden text-sm font-medium uppercase tracking-wide text-ivory/70 sm:block">Authority</p>
-          <h2 className="hidden max-w-xl text-display-sm font-display font-normal text-ivory sm:mt-2 sm:block">
-            Marketing amplifies whatever is already there.
-          </h2>
-          <div className="space-y-8 sm:mt-10 sm:space-y-6">
-            {LAYERS.map((layer, i) => (
-              <div key={layer.slug} className="flex items-start gap-4">
-                <span
-                  className="font-display text-2xl font-normal opacity-50"
-                  style={{ color: layer.color }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <ElementGlyph slug={layer.slug} className="h-4 w-4" style={{ color: layer.color }} />
-                    <p className="font-display text-lg font-normal text-ivory">{layer.label}</p>
-                  </div>
-                  <p className="mt-1 text-sm text-ivory/90">{layer.line}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-    );
-  }
+    update();
+    window.addEventListener("resize", update);
+    if (lenis) {
+      const off = lenis.on("scroll", update);
+      return () => {
+        off?.();
+        window.removeEventListener("resize", update);
+      };
+    }
+    window.addEventListener("scroll", update, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [animate, lenis]);
 
   return (
-    // Mood: CHARCOAL — neutral-cool architectural dark (see MOOD in
-    // sectionWash.ts); the warm soil base + soil overlay here were the
-    // page's second-largest amber contributor after the shared veil.
-    <div ref={sectionRef} className="relative hidden h-screen overflow-hidden sm:block" style={{ backgroundColor: MOOD.charcoal }}>
-      {/* Direct feedback that this section read as flat and motionless —
-          the shader alone (opacity 0.22) is too subtle as the section's
-          only source of visible movement while the five layers are
-          still building. Mist slowly clearing over a ridge doubles as a
-          literal echo of the section's own line ("marketing amplifies
-          whatever is already there") — the shape is already there
-          underneath, becoming visible. Shared with PerceptionLadder's
-          own AmbientElementShader right after it, so both "Authority"
-          and "Education" keep reading as one continuous visual system. */}
-      {/* Approved Chapter 02 footage (Pexels 38390292, standard
-          license): root network in extreme macro — hidden intelligence
-          beneath the surface, exactly what strategy is. Full frame,
-          slow, no crop, no zoom; the layer parallax carries the
-          movement. */}
-      {/* Background spans 100vw from the pinned element's own center,
-          deliberately independent of the element's measured width.
-          ScrollTrigger pins by stamping the pre-pin measured width as
-          inline style; a resize or scrollbar-state change between
-          measure and pin can leave that width a strip narrower than
-          the real viewport (direct screenshot report: grey bands down
-          both edges of this chapter on a real display — the charcoal
-          ground showing through). A viewport-width background makes
-          that entire failure class invisible instead of trying to
-          out-guess GSAP's measurement timing. */}
-      <div className="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 overflow-hidden">
-        <BackgroundVideo video="/videos/pexels-root-network.mp4" videoWebm="/videos/pexels-root-network.webm" poster="/images/pexels-root-network-poster.jpg" />
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.3)" }} />
-        <AmbientElementShader opacity={0.08} />
-      </div>
-      {/* Direct, repeated feedback (two screenshots) that this pinned
-          frame read as a narrow content strip with empty video on both
-          sides on a real wide display, and that the stacked
-          heading-above-layers arrangement overflowed the frame's own
-          height (the heading visibly scrolled out of the top mid-pin).
-          A first attempt answered it with a decorative watermark —
-          wrong diagnosis. The actual fix is the layout: the frame is
-          now a real two-column composition on its own wider grid (the
-          site's max-w-6xl Container is deliberately not used here — a
-          full-viewport cinematic frame earns a wider stage), heading
-          and closing line locked in the left column, the five layers
-          building in the right, both vertically centered. Total column
-          height now fits inside h-screen at every common desktop
-          height, so nothing gets clipped mid-pin. */}
-      <div className="relative mx-auto flex h-full w-full max-w-[100rem] flex-col justify-center px-6 sm:px-10 lg:px-20">
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Authority</p>
-            <h2 className="mt-2 text-display-sm font-display font-normal text-ivory lg:text-display-md">
-              Marketing amplifies whatever is already there.
-            </h2>
-            <p className="mt-8 max-w-md text-sm italic text-ivory/90 lg:text-base">
-              Skip one layer, and marketing amplifies the gap instead of the position.
-            </p>
+    <div ref={wrapRef} className="relative sm:h-[420vh]" style={{ backgroundColor: MOOD.charcoal }}>
+      <div className="relative overflow-hidden sm:sticky sm:top-0 sm:flex sm:h-screen sm:flex-col sm:justify-center">
+        {/* Approved Chapter 02 footage (Pexels 38390292, standard
+            license): root network in extreme macro — hidden
+            intelligence beneath the surface. Sticky children size to
+            their own layout, so a plain inset-0 background always
+            spans the real viewport; the old 100vw translate hack is
+            gone along with the bug it papered over. Mobile carries the
+            still frame instead of the video. */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="hidden h-full w-full sm:block">
+            <BackgroundVideo
+              video="/videos/pexels-root-network.mp4"
+              videoWebm="/videos/pexels-root-network.webm"
+              poster="/images/pexels-root-network-poster.jpg"
+            />
           </div>
-          {/* The GSAP scrub timeline targets these exact ref nodes by
-              index — DOM structure and ref wiring unchanged from the
-              working version, only the surrounding layout moved. */}
-          <div className="relative">
-            {LAYERS.map((layer, i) => (
-              <div
-                key={layer.slug}
-                ref={(node) => {
-                  layerRefs.current[i] = node;
-                }}
-                // Micro-motion (Phase 2): hovering a layer nudges it
-                // forward and brightens its divider — inspecting one
-                // stratum of the build. Deliberately the ONLY motion
-                // added to this section: the scrub assembly is its
-                // primary motion, and anything running alongside it
-                // would compete rather than support.
-                className="group/layer flex items-start gap-6 border-b border-ivory/10 py-4 opacity-0 transition-[border-color,transform] duration-300 last:border-b-0 hover:translate-x-1.5 hover:border-ivory/30 xl:py-5"
-                style={{ marginLeft: `${i * 18}px` }}
-              >
-                <span
-                  className="font-display text-3xl font-normal leading-none opacity-40 xl:text-4xl"
-                  style={{ color: layer.color }}
+          <Image
+            src="/images/pexels-root-network-poster.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            style={{ objectFit: "cover" }}
+            className="sm:hidden"
+          />
+          <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.35)" }} />
+          <div className="hidden sm:block">
+            <AmbientElementShader opacity={0.08} />
+          </div>
+        </div>
+
+        <div className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:px-10 sm:py-0 lg:px-20">
+          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20">
+            <div>
+              <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Authority</p>
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory lg:text-display-md">
+                Marketing amplifies whatever is already there.
+              </h2>
+              <p className="mt-8 max-w-md text-sm italic text-ivory/90 lg:text-base">
+                Skip one layer, and marketing amplifies the gap instead of the position.
+              </p>
+            </div>
+            <div className="relative">
+              {LAYERS.map((layer, i) => (
+                <div
+                  key={layer.slug}
+                  ref={(node) => {
+                    layerRefs.current[i] = node;
+                  }}
+                  className="group/layer flex items-start gap-6 border-b border-ivory/10 py-4 transition-[border-color] duration-300 last:border-b-0 hover:border-ivory/30 xl:py-5"
+                  style={{ marginLeft: `${i * 18}px` }}
                 >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div className="flex items-start gap-4 pt-1">
-                  <ElementGlyph slug={layer.slug} className="mt-1 h-6 w-6 shrink-0" style={{ color: layer.color }} />
-                  <div>
-                    <p className="font-display text-2xl font-normal text-ivory xl:text-3xl">{layer.label}</p>
-                    <p className="mt-1 max-w-lg text-sm text-ivory/90 xl:text-base">{layer.line}</p>
+                  <span
+                    className="font-display text-3xl font-normal leading-none opacity-40 xl:text-4xl"
+                    style={{ color: layer.color }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div className="flex items-start gap-4 pt-1">
+                    <ElementGlyph slug={layer.slug} className="mt-1 h-6 w-6 shrink-0" style={{ color: layer.color }} />
+                    <div>
+                      <p className="font-display text-2xl font-normal text-ivory xl:text-3xl">{layer.label}</p>
+                      <p className="mt-1 max-w-lg text-sm text-ivory/90 xl:text-base">{layer.line}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
