@@ -99,7 +99,7 @@ export default function Home() {
         <TatvaMobileStory elements={elements} />
         <TatvaStory elements={elements} />
 
-        <ProcessFilm stages={process} elementColor={elementColor} />
+        <ProcessFilm stages={process} elementColors={elementColor} />
 
         <DecisionClearingHome />
 
