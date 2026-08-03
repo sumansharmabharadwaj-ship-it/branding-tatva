@@ -191,7 +191,10 @@ export function BrandHealthCheck() {
   // toward, before the quiz is even finished. step > 0 guards against
   // showing a misleading "Foundation stage" trend at score 0 before any
   // question has been answered at all.
-  const trendingBand = step > 0 ? bandFor(score) : null;
+  // Manual guide p12/p69: the outcome read is misleadingly premature
+  // when it reacts to the very first answer, so the trend only appears
+  // once at least half the questions carry real data.
+  const trendingBand = step >= Math.ceil(QUESTIONS.length / 2) ? bandFor(score) : null;
 
   return (
     <Container className="max-w-5xl">

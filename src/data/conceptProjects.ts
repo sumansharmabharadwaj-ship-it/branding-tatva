@@ -119,4 +119,112 @@ export const conceptProjects: ConceptProject[] = [
       "Share of enquiries naming a specific service line",
     ],
   },
+  {
+    slug: "ritu-skincare",
+    title: "An ethical skincare line",
+    conceptName: "Ritu",
+    sector: "Consumer product · skincare",
+    demonstrates: ["Category codes", "Distinctive assets", "Packaging system", "Retail and D2C journey", "Content pillars"],
+    accent: "#AD6F5C",
+    chapters: [
+      {
+        label: "The category assumption",
+        body: "Skincare sells correction: a flaw named, a percentage promised, a before photo waiting for its after. Even the natural brands keep the clinical grammar and just swap the lab for a leaf.",
+      },
+      {
+        label: "The audience tension",
+        body: "The buyer reads ingredient lists like contracts and has been burned by both sides of the shelf: the lab that overpromised and the leaf that underdelivered. She wants routine, honesty, and products that respect her skin's own timing.",
+      },
+      {
+        label: "The positioning decision",
+        body: "Position on rhythm instead of repair: skin kept well through the year beats skin rescued twice a year. The routine changes with the season, the way skin actually behaves, and the brand's authority comes from knowing when, as much as what.",
+      },
+      {
+        label: "The name",
+        body: "Ritu, the Sanskrit word for season. One syllable pair carrying the entire idea: care that turns with the year. It sounds like a person's name, which is exactly how a daily companion should sound.",
+        samples: [
+          "Ritu — chosen: the seasons decide the routine",
+          "Glow Theory — rejected: promise inflation in two words",
+          "Dermaroot — rejected: a borrowed lab coat",
+        ],
+      },
+      {
+        label: "The verbal system",
+        body: "Weather report calm instead of miracle vocabulary. The voice tells you what the season does to skin and what to do about it, in sentences a dermatologist and a grandmother would both sign.",
+        samples: [
+          "Winter takes water first. Give it back slowly.",
+          "Your skin already knows the season. The routine should too.",
+          "Nothing here promises glass. Skin is leather, and that is the point.",
+        ],
+      },
+      {
+        label: "The visual and packaging system",
+        body: "Four seasonal palettes on one steady structure: the label grid never moves while the colorway turns with the calendar, so the shelf reads as one brand having four moods. Refill pouches carry the same grid, making the ethics visible instead of claimed.",
+      },
+      {
+        label: "The retail and content journey",
+        body: "D2C runs on a season subscription that ships the changeover before the weather arrives. Content follows the same clock: one seasonal transition guide, weekly short answers to real routine questions, and zero trend chasing.",
+      },
+    ],
+    measurementPlan: [
+      "Season subscription retention across the first full year",
+      "Refill share of repeat orders",
+      "Routine guide completion and saves",
+      "Unprompted brand mentions naming the seasonal idea",
+    ],
+  },
+  {
+    slug: "barni-foods",
+    title: "A cultural food brand",
+    conceptName: "Barni",
+    sector: "Food · heritage condiments",
+    demonstrates: ["Provenance positioning", "Naming", "Label system", "Subscription journey", "Community strategy"],
+    accent: "#C28A28",
+    chapters: [
+      {
+        label: "The category assumption",
+        body: "Heritage food brands sell nostalgia wrapped as souvenir: a grandmother illustration, a swirl of Devanagari, the word authentic doing all the work. The shelf treats a living food culture like a museum gift shop.",
+      },
+      {
+        label: "The audience tension",
+        body: "Two buyers, one jar: the diaspora cook missing a specific taste memory, and the urban home cook who never learned the family recipe. Both distrust mass production and both can taste the difference between a factory batch and a hand stirred one.",
+      },
+      {
+        label: "The positioning decision",
+        body: "Position on provenance over nostalgia: every jar names its maker, her district, and the batch week. The brand promises a specific person's specific recipe, which mass producers can copy in flavor and never in fact.",
+      },
+      {
+        label: "The name",
+        body: "Barni, the ceramic jar every pickle making household keeps on the highest shelf. The object itself carries the memory; the name just points at it.",
+        samples: [
+          "Barni — chosen: the jar every family remembers",
+          "Spice Story — rejected: souvenir shelf language",
+          "Maa's Secret — rejected: borrowed nostalgia, everybody's mother",
+        ],
+      },
+      {
+        label: "The verbal system",
+        body: "Recipe card plainness: ingredients, place, maker, patience. The voice reads like the back of a family recipe card rather than a menu written for tourists.",
+        samples: [
+          "Mango, mustard oil, and three weeks of sun. Sharda Devi, Amroha, batch of June.",
+          "The recipe is hers. We just keep the jar moving.",
+          "Small batches sell out. That is the proof, and the policy.",
+        ],
+      },
+      {
+        label: "The label and asset system",
+        body: "The barni glaze itself becomes the palette: ochre, iron brown, and cream bands wrapping every label, with the maker's name hand set where mass brands put a logo lockup. The batch stamp works as the distinctive asset a shelf can spot from across the aisle.",
+      },
+      {
+        label: "The subscription and community journey",
+        body: "A season subscription follows the pickle calendar: mango in summer, lime through the rains, gajar and gobhi in winter. Each shipment carries the maker's note, and the community grows through recipe swaps rather than discount codes.",
+      },
+    ],
+    measurementPlan: [
+      "Reorder rate by batch and maker",
+      "Time to sellout per batch as demand evidence",
+      "Maker page visits from jar QR scans",
+      "Share of orders sent as gifts",
+    ],
+  },
 ];

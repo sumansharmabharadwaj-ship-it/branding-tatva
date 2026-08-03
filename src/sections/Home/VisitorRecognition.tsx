@@ -21,6 +21,13 @@ const STATES = [
     need: "Positioning decided before anything gets designed, so every later choice inherits a direction.",
     path: "Foundation",
     pathNote: "The starting package: discovery, positioning, core identity.",
+    // Manual guide p9/p56: proof arrives as the consequence of the
+    // visitor's own choice — one verified fact per situation, straight
+    // from data/projects.ts, linked to its full decision trail.
+    proof: {
+      slug: "myshopineurope",
+      line: "MyShopInEurope began with the same decision: a complete brand foundation, with positioning settled around craft and origin before the platform sold a thing.",
+    },
   },
   {
     id: "inconsistent",
@@ -28,6 +35,10 @@ const STATES = [
     need: "One system aligning what already exists, so every channel says the same thing.",
     path: "Full Brand System",
     pathNote: "Audit, repositioning, and voice alignment across channels.",
+    proof: {
+      slug: "herbalcart",
+      line: "HerbalCart got a full campaign reset built on one repositioning: public perception moved from herbal supplement toward a modern wellness brand.",
+    },
   },
   {
     id: "outgrown",
@@ -35,6 +46,10 @@ const STATES = [
     need: "A position that matches what the business has become, then an identity that carries it.",
     path: "Full Brand System",
     pathNote: "A full audit and repositioning, built for where the business is heading.",
+    proof: {
+      slug: "dr-haley-nutrition",
+      line: "Dr. Haley Nutrition sharpened its position and posted less: engagement climbed from 0.71% to 2.81%, and every post earned 104% more followers.",
+    },
   },
 ] as const;
 
@@ -106,13 +121,26 @@ export function VisitorRecognition() {
               <p className="mt-4 text-sm text-ivory/70">
                 The path for this: <span className="text-ivory">{active.path}</span>. {active.pathNote}
               </p>
-              <Link
-                href="/services"
-                className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory"
-              >
-                Explore the right service path
-                <span aria-hidden="true">→</span>
-              </Link>
+              <div className="mt-5 border-l-2 border-sandstone/50 pl-4">
+                <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/60">Recorded proof</p>
+                <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ivory/85">{active.proof.line}</p>
+              </div>
+              <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
+                <Link
+                  href={`/work/${active.proof.slug}`}
+                  className="inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory"
+                >
+                  See the decisions behind the result
+                  <span aria-hidden="true">→</span>
+                </Link>
+                <Link
+                  href="/services"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory"
+                >
+                  Explore the right service path
+                  <span aria-hidden="true">→</span>
+                </Link>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
