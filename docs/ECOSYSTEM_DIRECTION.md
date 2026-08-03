@@ -187,3 +187,56 @@ and intended section.
 This is the review framework for every page from here, not only the
 studies. It judges what footage teaches, how it moves, and how it
 feels, rather than whether it happens to look beautiful.
+
+### The three review passes
+
+Applied in order, every time footage is selected. The first two run
+before anything reaches Suman, so a candidate that fails them never
+takes up space on a contact sheet.
+
+**Pass 1, silent from a distance.** Two to three seconds on the
+thumbnail, no longer. One question: without reading anything, what idea
+does this communicate? Anything other than an answer close to the
+intended principle is out. A weak thumbnail never gets rescued by
+explaining what the clip supposedly does later in its runtime.
+
+**Pass 2, motion only.** Captions hidden, subject ignored entirely. One
+question: is the motion itself communicating the verb? This is the pass
+that catches a perfect subject carried by generic movement, which is
+the most common near miss.
+
+**Pass 3, ecosystem cohesion.** Every selected clip laid side by side.
+They have to read as chapters of one film. Any clip noticeably louder,
+faster, more cinematic or more saturated than its neighbours gets toned
+down in the grade or replaced.
+
+### Intensity rises and falls on purpose
+
+Making every clip equally beautiful flattens the page even when each
+one is excellent on its own. The studies carry a deliberate curve:
+
+| Study | Intensity |
+| --- | --- |
+| Distinctive assets | Immediate, rhythmic, visually striking. The loudest. |
+| Brand architecture | Calmer, precise, almost meditative. |
+| Verbal identity | Subtle micro movements that reward attention. The quietest. |
+| Codes under pressure | More tension and energy. |
+| Ritual | Slow, familiar, satisfying. |
+
+A clip that is individually excellent but pitched wrong for its slot
+gets dropped or moved to the slot it actually fits.
+
+### Candidates arrive ranked, never as equal options
+
+Twelve equally weighted choices is a worse decision than three ranked
+ones. Every slot presents exactly:
+
+- **Recommended** — the strongest candidate.
+- **Strong alternate** — a credible different answer, differing in
+  motion or temperature so it is a real alternative rather than a near
+  duplicate of the first.
+- **Reserve** — held in case licensing or technical quality rules the
+  first two out later.
+
+Each slot also carries one line on why the recommended candidate beat
+its alternate, so the reasoning survives the decision.
