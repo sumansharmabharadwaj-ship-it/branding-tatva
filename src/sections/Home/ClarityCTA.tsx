@@ -16,7 +16,7 @@ export function ClarityCTA() {
             Need clarity?
           </p>
           <h2 className="mt-5 font-display text-[clamp(2rem,4.2vw,3.4rem)] font-normal leading-[1.08] text-ivory">
-            Not sure which scope is right yet?
+            Unsure which scope fits?
           </h2>
           <span aria-hidden="true" className="mt-6 block h-px w-16" style={{ backgroundColor: "#C6A97A" }} />
           <p className="mt-6 text-sm leading-relaxed text-ivory/75 sm:text-base">

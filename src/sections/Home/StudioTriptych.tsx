@@ -8,7 +8,7 @@ import Link from "next/link";
 // every claim here is one this practice already makes elsewhere.
 const PILLARS = [
   {
-    label: "Strategic thinking",
+    label: "Positioning",
     line: "Rooted in psychology",
     icon: (
       <>

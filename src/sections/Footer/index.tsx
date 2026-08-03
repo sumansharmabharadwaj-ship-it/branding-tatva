@@ -59,7 +59,7 @@ export function Footer() {
           {/* The widget bar itself — three cards side by side on desktop,
               stacked on mobile. The calendar gets the most width: it's
               the one thing here that actually converts, everything else
-              is support. LinkButton "Start a project" duplicates Header's
+              is support. LinkButton "Book a Session" duplicates Header's
               own CTA on purpose here — this bar is the one place a
               visitor lands right at page-bottom with both conversion
               paths (project inquiry, booking) sitting together, instead
@@ -78,7 +78,7 @@ export function Footer() {
                 </p>
               </div>
               <div className="self-start">
-                <ElementAccentButton href="/contact">Start a project</ElementAccentButton>
+                <ElementAccentButton href="/contact">Book a Session</ElementAccentButton>
               </div>
             </div>
 

@@ -104,7 +104,7 @@ export function RecognitionAudit() {
           </ol>
           {!unlocked && (
             <p className="border-t border-ivory/12 pt-4 text-sm text-ivory/60">
-              Checks six through ten unlock with the form beside this list.
+              Checks six through ten open once the form beside this list is complete.
             </p>
           )}
           {unlocked && (
@@ -138,7 +138,7 @@ export function RecognitionAudit() {
                 className="rounded-2xl border border-ivory/15 p-6 backdrop-blur-md sm:p-7"
                 style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
               >
-                <p className="font-display text-lg font-normal text-ivory">Unlock the full ten</p>
+                <p className="font-display text-lg font-normal text-ivory">See all ten checks</p>
                 <label className="mt-5 block text-xs font-medium uppercase tracking-[0.12em] text-ivory/60">
                   First name
                   <input

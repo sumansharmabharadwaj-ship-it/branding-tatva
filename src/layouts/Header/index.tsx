@@ -186,7 +186,7 @@ export function Header({ transparent = false }: HeaderProps) {
                 className="group hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 py-2 text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300 sm:inline-flex"
                 style={{ borderColor: `${accent}c0`, color: accent }}
               >
-                Start a project
+                Book a Session
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
                   →
                 </span>
@@ -285,7 +285,7 @@ export function Header({ transparent = false }: HeaderProps) {
                     className="w-full"
                     style={{ backgroundColor: element.color }}
                   >
-                    Start a project
+                    Book a Session
                   </LinkButton>
                 </motion.div>
               </motion.nav>

@@ -573,7 +573,7 @@ export default async function ServicesPage() {
 
         <ContextualCTA
           eyebrow="Medium step"
-          heading="Not sure which scope is right yet?"
+          heading="Unsure which scope fits?"
           body="Twenty minutes settles it, with honest feedback either way."
           href="#book"
           label="Discuss the right scope"

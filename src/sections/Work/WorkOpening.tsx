@@ -100,7 +100,7 @@ export function WorkOpening() {
               className="mt-6 max-w-md text-base leading-relaxed"
               style={{ color: WORK.wood }}
             >
-              Selected engagements, independent studies, and strategic experiments across positioning, identity, language, digital experience, content, and recognition.
+              Selected engagements, independent studies, and experiments across positioning, identity, language, digital experience, content, and recognition.
             </motion.p>
             <motion.div
               initial={prefersReducedMotion ? undefined : { opacity: 0 }}

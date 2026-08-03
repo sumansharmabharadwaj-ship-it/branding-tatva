@@ -1,4 +1,4 @@
-// Branding Tatva Lab — concept studies. HONESTY CONTRACT: everything
+// Branding Tatva Lab, concept studies. HONESTY CONTRACT: everything
 // in this file is independent, speculative work. Zero clients, zero
 // engagements, zero outcomes are implied anywhere; every study
 // carries the Lab label in data, UI, and any schema that ever
@@ -47,7 +47,7 @@ export const conceptProjects: ConceptProject[] = [
       {
         label: "The name",
         body: "Deodar, the Himalayan cedar, from the Sanskrit for timber of the gods. A real tree over an abstract virtue: rooted, local, unmistakably of the place, and quietly resistant to the category's usual Sanskrit perfume.",
-        samples: ["Deodar — chosen: a living local anchor", "Thaw — rejected: sells the guest's brokenness", "Stillpoint — rejected: category perfume"],
+        samples: ["Deodar, chosen: a living local anchor", "Thaw, rejected: sells the guest's brokenness", "Stillpoint, rejected: category perfume"],
       },
       {
         label: "The verbal system",
@@ -97,7 +97,7 @@ export const conceptProjects: ConceptProject[] = [
       {
         label: "The brand architecture",
         body: "One parent, three named lines: what we untangle, what we build, what we keep running. Each line owns its promise, its proof format, and its buyer conversation, under one voice.",
-        samples: ["Strata Survey — the untangling", "Strata Works — the build", "Strata Steady — the keeping"],
+        samples: ["Strata Survey, the untangling", "Strata Works, the build", "Strata Steady, the keeping"],
       },
       {
         label: "The messaging hierarchy",
@@ -143,9 +143,9 @@ export const conceptProjects: ConceptProject[] = [
         label: "The name",
         body: "Ritu, the Sanskrit word for season. One syllable pair carrying the entire idea: care that turns with the year. It sounds like a person's name, which is exactly how a daily companion should sound.",
         samples: [
-          "Ritu — chosen: the seasons decide the routine",
-          "Glow Theory — rejected: promise inflation in two words",
-          "Dermaroot — rejected: a borrowed lab coat",
+          "Ritu, chosen: the seasons decide the routine",
+          "Glow Theory, rejected: promise inflation in two words",
+          "Dermaroot, rejected: a borrowed lab coat",
         ],
       },
       {
@@ -197,9 +197,9 @@ export const conceptProjects: ConceptProject[] = [
         label: "The name",
         body: "Barni, the ceramic jar every pickle making household keeps on the highest shelf. The object itself carries the memory; the name just points at it.",
         samples: [
-          "Barni — chosen: the jar every family remembers",
-          "Spice Story — rejected: souvenir shelf language",
-          "Maa's Secret — rejected: borrowed nostalgia, everybody's mother",
+          "Barni, chosen: the jar every family remembers",
+          "Spice Story, rejected: souvenir shelf language",
+          "Maa's Secret, rejected: borrowed nostalgia, everybody's mother",
         ],
       },
       {

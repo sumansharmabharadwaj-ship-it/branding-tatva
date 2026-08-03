@@ -14,11 +14,11 @@ import { ELEMENT_HEX } from "@/lib/sectionWash";
 // authored it. The strip links straight down into the full pinned
 // exploration, which is where "scroll to explore" pays off.
 const TATVAS: { slug: keyof typeof ELEMENT_HEX; name: string; role: string; line: string }[] = [
-  { slug: "earth", name: "Prithvi", role: "The Foundation", line: "We uncover the truth that everything stands on." },
-  { slug: "water", name: "Jal", role: "The Flow", line: "We find the emotion that moves people." },
-  { slug: "fire", name: "Agni", role: "The Spark", line: "We create the message that ignites action." },
-  { slug: "air", name: "Vayu", role: "The Voice", line: "We shape the expression that spreads it far." },
-  { slug: "space", name: "Akash", role: "The Space", line: "We build the presence that lasts." },
+  { slug: "earth", name: "Prithvi", role: "The Foundation", line: "The truth everything else stands on." },
+  { slug: "water", name: "Jal", role: "The Flow", line: "The emotion that moves people." },
+  { slug: "fire", name: "Agni", role: "The Spark", line: "The message that ignites action." },
+  { slug: "air", name: "Vayu", role: "The Voice", line: "The expression that carries it far." },
+  { slug: "space", name: "Akash", role: "The Space", line: "The presence that lasts." },
 ];
 
 export function TatvaStrip() {
@@ -28,10 +28,10 @@ export function TatvaStrip() {
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,18rem)_1fr] lg:gap-16">
           <Reveal>
             <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: "#556B4A" }}>
-              Our framework
+              The framework
             </p>
             <h2 className="mt-3 font-display text-display-sm font-normal leading-[1.08] text-soil">
-              The five Tatvas of every brand we build.
+              The five Tatvas of every brand that gets remembered.
             </h2>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-foreground-secondary">
               A timeless framework. A living system. Scroll to explore each element.

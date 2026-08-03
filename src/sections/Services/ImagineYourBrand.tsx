@@ -196,7 +196,7 @@ export function ImagineYourBrand() {
                   const beats: { label: string; body: React.ReactNode }[] = [
                     { label: "What businesses in this situation usually struggle with", body: <p className="text-sm leading-relaxed text-ivory/90">{diag.struggle}</p> },
                     {
-                      label: "The symptoms we usually observe",
+                      label: "The symptoms this pattern produces",
                       body: (
                         <ul className="space-y-1.5">
                           {diag.symptoms.map((sym) => (
@@ -233,7 +233,7 @@ export function ImagineYourBrand() {
                       ),
                     },
                     {
-                      label: "The strategic decisions we would make",
+                      label: "The decisions that follow",
                       body: (
                         <ul className="space-y-2">
                           {map.questions.map((q) => (

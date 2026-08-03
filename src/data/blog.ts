@@ -496,7 +496,7 @@ export const blogPosts: BlogPost[] = [
     slug: "how-to-document-brand-decisions",
     title: "How to document brand decisions",
     excerpt:
-      "An undocumented decision gets remade every quarter by whoever is loudest. The fix is a one-page record, written the day the decision lands.",
+      "An undocumented decision gets remade every quarter by whoever is loudest. The fix is a one page record, written the day the decision lands.",
     element: "space",
     publishedAt: "2026-08-03",
     readingTime: "4 min read",

@@ -64,7 +64,7 @@ export function EvidenceWall() {
                 <span className="font-display text-xs text-ivory/50">{String(projects.length).padStart(2, "0")}</span>
               </div>
               <div>
-                <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">Our work</p>
+                <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">The work</p>
                 <h2 className="mt-3 font-display text-display-sm font-normal leading-[1.05] text-ivory lg:text-display-md">
                   Evidence.
                   <br />
