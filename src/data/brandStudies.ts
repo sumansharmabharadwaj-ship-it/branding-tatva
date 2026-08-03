@@ -24,6 +24,8 @@ export type StudyMedia = {
   observations?: SlotFill;
   applications?: SlotFill;
   closing?: SlotFill;
+  /** Shown inside this study's opened panel on the Work page. */
+  card?: SlotFill;
 };
 
 export type BrandStudy = {
