@@ -9,7 +9,6 @@ import { PhotoHero } from "@/components/PhotoHero";
 import { ClipReveal } from "@/components/ClipReveal";
 import { TexturedDark } from "@/components/TexturedDark";
 import { LinkButton } from "@/components/Button";
-import { ScrollProgress } from "@/components/ScrollProgress";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TopicClusters } from "@/sections/Insights/TopicClusters";
 import { ArticleSearch } from "@/sections/Insights/ArticleSearch";
@@ -69,7 +68,6 @@ export default function InsightsPage() {
   return (
     <>
       <Header transparent />
-      <ScrollProgress />
       <main id="main-content">
         <PhotoHero
           video="/videos/pexels-himalayan-dawn.mp4"

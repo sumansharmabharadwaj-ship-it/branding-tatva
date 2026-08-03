@@ -6,7 +6,6 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { ScrollCue } from "@/components/ScrollCue";
-import { ScrollProgress } from "@/components/ScrollProgress";
 import { PhotoHero } from "@/components/PhotoHero";
 import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
@@ -15,6 +14,7 @@ import { RecognitionAudit } from "@/sections/Services/RecognitionAudit";
 import { PricingProvider } from "@/components/PricingProvider";
 import { REGION_COOKIE, isRegion, regionFromCountry } from "@/data/pricing";
 import { VerifiedOutcome } from "@/sections/Services/VerifiedOutcome";
+import { SkyLife } from "@/components/SkyLife";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { SceneHandoff } from "@/sections/Services/SceneHandoff";
 import { SplitReveal } from "@/components/SplitReveal";
@@ -63,10 +63,21 @@ export const metadata: Metadata = {
 // Conversion order (Phase 2 of the redesign brief): the commercial
 // path — situation, packages, proof — comes before the teaching
 // chapters, so a ready visitor can act inside the first two scrolls.
+// Every immersive chapter needs an escape, and this array feeds both
+// the floating index and the hero's own chapter list. It covered the
+// first three of nine, so a visitor eight chapters deep had no entry
+// to point at and no way back to booking except scrolling the whole
+// way. All nine anchors already exist and already carry scroll-mt-24.
 const JUMP_ITEMS = [
   { href: "#situation", label: "Your situation" },
   { href: "#offerings", label: "Services" },
   { href: "#desire", label: "Packages" },
+  { href: "#authority", label: "Why it works" },
+  { href: "#education", label: "What changes" },
+  { href: "#imagine", label: "The shift" },
+  { href: "#health", label: "Health check" },
+  { href: "#audit", label: "Questions" },
+  { href: "#book", label: "Book a call" },
 ];
 
 // Ambient consolidation (Suman's review: "duplicated ambient effects",
@@ -91,7 +102,6 @@ export default async function ServicesPage() {
   return (
     <>
       <Header transparent />
-      <ScrollProgress />
       {/* Charcoal ground for the whole experience — the permanent fix
           for the "white space at left and right" class of bug. The
           site's body ground is cream; on this page every full-bleed
@@ -431,7 +441,12 @@ export default async function ServicesPage() {
           {/* Tertiary life, story-first: a single distant bird crossing
               above the cloud sea at long, irregular intervals — the one
               thing moving higher than the summit's own stillness,
-              underlining elevation without disturbing it. */}
+              underlining elevation without disturbing it.
+              This comment promised the bird for months while the
+              component sat unmounted anywhere on the site. It is real
+              now. Pale silhouette because the cloud sea is bright, and
+              a high band so it never crosses the summit itself. */}
+          <SkyLife density="rare" solitary band={[6, 26]} color="rgba(238,240,244,0.72)" />
           {/* Overlay stays a step cooler than the stone base and a touch
               denser at the top where the sky sits — the summit clip is
               already graded slate, so this only steadies type contrast

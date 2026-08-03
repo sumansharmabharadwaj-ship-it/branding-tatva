@@ -14,7 +14,6 @@ import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { Fireflies } from "@/components/Fireflies";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
-import { ScrollProgress } from "@/components/ScrollProgress";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { site } from "@/data/site";
 import { credentials } from "@/data/about";
@@ -39,7 +38,6 @@ export default function ContactPage() {
   return (
     <>
       <Header transparent />
-      <ScrollProgress />
       <main id="main-content">
         {/* Every other page on the site opens on a real video/photo
             hero; this page used to open directly on a flat color

@@ -21,7 +21,6 @@ import { VideoBreak } from "@/components/VideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { TexturedDark } from "@/components/TexturedDark";
-import { ScrollProgress } from "@/components/ScrollProgress";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { process } from "@/data/process";
@@ -64,7 +63,6 @@ export default function Home() {
   return (
     <>
       <Header transparent />
-      <ScrollProgress />
       <main id="main-content">
         <CinematicHero
           video="/videos/hero-forest-sanctuary.mp4"
@@ -232,10 +230,16 @@ not repeated here. */}
               higgsfield-element-earth.mp4, architectural blueprints on
               an indoor desk — the same natural-outdoor-footage mismatch
               found across several of this row's clips this round. */}
-          <div className="relative overflow-hidden py-20 sm:py-28">
-            <BackgroundVideo video="/videos/pixabay-roots-stream.mp4" poster="/images/pixabay-roots-stream-poster.jpg" />
-            <div className="absolute inset-0 bg-soil/80" />
-            <Container className="relative">
+          {/* The directing rule: footage argues, never decorates, and
+              nature behind a heading proves nothing. This heading used
+              to sit on a roots and stream clip that was doing no work
+              beyond looking like something. The chapter's own root
+              system draws the actual argument directly below, so the
+              opening is now just the line that sets it up. Cutting it
+              also stops Home loading the same fifteen megabyte clip
+              twice on one page. */}
+          <div className="bg-soil py-20 sm:py-28">
+            <Container>
               <Reveal>
                 <h2 className="text-display-sm font-display font-normal text-ivory">How a project moves</h2>
               </Reveal>
@@ -252,10 +256,12 @@ not repeated here. */}
               scoping matters. Same roots-and-stream clip as the
               heading: a deliberate visual bookend (open and close the
               section on the same footage) rather than a new clip. */}
-          <div className="relative overflow-hidden">
-            <BackgroundVideo video="/videos/pixabay-roots-stream.mp4" poster="/images/pixabay-roots-stream-poster.jpg" />
-            <div className="absolute inset-0 bg-soil/80" />
-            <Container className="relative pb-16 pt-10 text-center sm:pb-20 sm:pt-14">
+          {/* Same cut at the closing end of the chapter: the bookend
+              was the same clip again, carrying one italic line. The
+              root system it now follows is the argument, so this beat
+              closes on ground and type alone. */}
+          <div className="bg-soil">
+            <Container className="pb-16 pt-10 text-center sm:pb-20 sm:pt-14">
               <Reveal>
                 <p className="mx-auto max-w-lg text-sm italic text-ivory/80 sm:text-base">
                   Skipping a step costs you quietly. The recall you paid for simply stops compounding.

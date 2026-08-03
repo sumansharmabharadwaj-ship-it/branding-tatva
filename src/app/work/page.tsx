@@ -5,7 +5,6 @@ import { Container } from "@/components/Container";
 import { ClipReveal } from "@/components/ClipReveal";
 import { TexturedDark } from "@/components/TexturedDark";
 import { LinkButton } from "@/components/Button";
-import { ScrollProgress } from "@/components/ScrollProgress";
 import { WorkOpening } from "@/sections/Work/WorkOpening";
 import { WorkIndex } from "@/sections/Work/WorkIndex";
 import { CapabilityMap } from "@/sections/Work/CapabilityMap";
@@ -75,7 +74,6 @@ export default function WorkPage() {
   return (
     <>
       <Header />
-      <ScrollProgress />
       <main id="main-content" style={{ backgroundColor: "#F2F0E8" }}>
         <WorkOpening />
         <CapabilityMap />
