@@ -1,10 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { Container } from "@/components/Container";
-import { Reveal } from "@/components/Reveal";
 import { track } from "@/lib/analytics";
 
 const STATES = [
@@ -33,7 +39,7 @@ const STATES = [
     symptom: "Every channel is active. None of them feel related.",
     need: "One system aligning what already exists, so every channel says the same thing without becoming repetitive.",
     path: "Full Brand System",
-    pathNote: "Audit, repositioning, verbal identity, and alignment across every customer facing surface.",
+    pathNote: "Audit, repositioning, verbal identity, and alignment across every customer-facing surface.",
     outcome: "Recognition begins compounding instead of restarting on every channel.",
     proof: {
       slug: "herbalcart",
@@ -63,54 +69,36 @@ const STATES = [
 
 export const SITUATION_KEY = "bt-situation";
 
-function SignalMark({ active }: { active: boolean }) {
-  return (
-    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center" aria-hidden="true">
-      <span className={`absolute rounded-full border transition-all duration-700 ${active ? "inset-0 border-sandstone/60" : "inset-2 border-ivory/20"}`} />
-      <span className={`rounded-full transition-all duration-700 ${active ? "h-2.5 w-2.5 bg-sandstone shadow-[0_0_24px_rgba(212,185,154,0.8)]" : "h-1.5 w-1.5 bg-ivory/35"}`} />
-    </span>
-  );
-}
-
-function SignalHandoff({ reduced }: { reduced: boolean | null }) {
-  return (
-    <div className="pointer-events-none absolute inset-x-0 top-0 h-36 -translate-y-20 overflow-hidden" aria-hidden="true">
-      <div className="absolute left-1/2 top-0 h-20 w-px -translate-x-1/2 bg-gradient-to-b from-sandstone/80 to-sandstone/20" />
-      <motion.span
-        className="absolute left-1/2 top-[4.7rem] h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-sandstone shadow-[0_0_32px_rgba(212,185,154,0.75)]"
-        animate={reduced ? undefined : { scale: [0.9, 1.2, 0.9], opacity: [0.7, 1, 0.7] }}
-        transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <svg className="absolute inset-x-0 top-[4.9rem] h-24 w-full" viewBox="0 0 1200 100" preserveAspectRatio="none">
-        {["M600 0 C600 32 240 28 190 100", "M600 0 C600 42 600 45 600 100", "M600 0 C600 32 960 28 1010 100"].map((d, index) => (
-          <motion.path
-            key={d}
-            d={d}
-            fill="none"
-            stroke={index === 1 ? "rgba(212,185,154,.5)" : "rgba(212,185,154,.34)"}
-            strokeWidth={index === 1 ? 1.2 : 1}
-            initial={reduced ? undefined : { pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 1.1, delay: 0.15 + index * 0.13, ease: [0.22, 1, 0.36, 1] }}
-          />
-        ))}
-      </svg>
-    </div>
-  );
-}
+type SituationId = (typeof STATES)[number]["id"];
 
 export function VisitorRecognition() {
-  const [selected, setSelected] = useState<string>(STATES[0].id);
+  const ref = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const [selected, setSelected] = useState<SituationId>(STATES[0].id);
+  const [manual, setManual] = useState(false);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+
+  const fogY = useTransform(scrollYProgress, [0, 1], [80, -120]);
+  const fogOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.18, 0.5, 0.16]);
+  const fieldScale = useTransform(scrollYProgress, [0, 1], [0.96, 1.08]);
+  const resolutionOpacity = useTransform(scrollYProgress, [0.54, 0.75, 1], [0, 1, 1]);
+  const resolutionY = useTransform(scrollYProgress, [0.55, 0.8], [70, 0]);
 
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem(SITUATION_KEY);
+      const saved = window.localStorage.getItem(SITUATION_KEY) as SituationId | null;
       if (saved && STATES.some((state) => state.id === saved)) setSelected(saved);
     } catch {}
   }, []);
 
-  function pick(id: string) {
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    if (prefersReducedMotion || manual) return;
+    const index = Math.min(STATES.length - 1, Math.floor(value * 3.1));
+    setSelected(STATES[index].id);
+  });
+
+  function pick(id: SituationId) {
+    setManual(true);
     setSelected(id);
     track("visitor_situation_selected", { situation: id, page: "home" });
     try {
@@ -121,105 +109,133 @@ export function VisitorRecognition() {
   const active = STATES.find((state) => state.id === selected) ?? STATES[0];
 
   return (
-    <section className="relative overflow-hidden bg-soil pb-20 pt-28 sm:pb-28 sm:pt-36">
-      <SignalHandoff reduced={prefersReducedMotion} />
-      <div className="pointer-events-none absolute inset-0 opacity-70" aria-hidden="true" style={{ background: "radial-gradient(circle at 18% 20%, rgba(184,90,52,0.12), transparent 34%), radial-gradient(circle at 82% 70%, rgba(212,185,154,0.09), transparent 32%)" }} />
+    <section ref={ref} className="relative min-h-[290svh] bg-soil text-ivory">
+      <div className="sticky top-0 flex h-svh min-h-[680px] items-center overflow-hidden">
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-[-10%]"
+          style={{
+            scale: prefersReducedMotion ? 1 : fieldScale,
+            background:
+              "radial-gradient(circle at 22% 32%, rgba(184,90,52,.2), transparent 30%), radial-gradient(circle at 76% 62%, rgba(198,169,122,.14), transparent 34%), linear-gradient(145deg,#17130f 0%,#27211b 52%,#12100d 100%)",
+          }}
+        />
+        <motion.div
+          aria-hidden="true"
+          className="absolute -left-[12%] top-[18%] h-[44%] w-[70%] rounded-full bg-ivory/[0.055] blur-[90px]"
+          style={prefersReducedMotion ? undefined : { y: fogY, opacity: fogOpacity }}
+        />
+        <motion.div
+          aria-hidden="true"
+          className="absolute -right-[18%] bottom-[4%] h-[52%] w-[78%] rounded-full bg-clay/[0.09] blur-[110px]"
+          style={prefersReducedMotion ? undefined : { y: fogY, opacity: fogOpacity }}
+        />
 
-      <Container className="relative max-w-6xl">
-        <Reveal>
-          <div className="flex flex-col gap-6 border-b border-ivory/10 pb-9 sm:flex-row sm:items-end sm:justify-between">
+        <Container className="relative z-[2] max-w-[92rem]">
+          <div className="grid min-h-[72svh] gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
             <div>
-              <p className="text-xs font-medium uppercase tracking-[0.28em] text-sandstone">The signal splits here</p>
-              <h2 className="mt-3 max-w-3xl text-display-md font-display font-normal text-ivory">Which sentence has been following your business around?</h2>
+              <p className="text-[0.65rem] font-medium uppercase tracking-[0.32em] text-sandstone">
+                The mind answers before the mouth does
+              </p>
+              <h2 className="mt-5 max-w-xl font-display text-[clamp(3rem,6.4vw,6.8rem)] font-normal leading-[0.9] tracking-[-0.045em]">
+                Which sentence
+                <br />
+                feels a little
+                <br />
+                <span className="italic text-clay">too familiar?</span>
+              </h2>
+              <p className="mt-7 max-w-md text-sm leading-relaxed text-ivory/58 sm:text-base">
+                Do not analyse it. Notice which one catches first. Recognition usually arrives before explanation.
+              </p>
             </div>
-            <p className="max-w-sm text-sm leading-relaxed text-ivory/55">Choose the closest one. The page will trace the likely strategic gap, the path that resolves it, and a real precedent.</p>
-          </div>
-        </Reveal>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-12">
-          <div className="relative">
-            <div className="absolute bottom-5 left-5 top-5 w-px bg-gradient-to-b from-sandstone/40 via-ivory/15 to-transparent" aria-hidden="true" />
-            <div className="space-y-3">
+            <div className="relative flex min-h-[34rem] items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(198,169,122,.08),transparent_58%)]" aria-hidden="true" />
               {STATES.map((state, index) => {
-                const isActive = selected === state.id;
+                const isActive = state.id === selected;
+                const positions = [
+                  "left-0 top-[8%] max-w-[29rem]",
+                  "right-0 top-[38%] max-w-[31rem]",
+                  "left-[8%] bottom-[2%] max-w-[30rem]",
+                ];
                 return (
-                  <Reveal key={state.id} delay={index * 0.06}>
-                    <button
-                      type="button"
-                      aria-pressed={isActive}
-                      onClick={() => pick(state.id)}
-                      className={`group relative flex w-full items-start gap-4 rounded-2xl border px-4 py-5 text-left transition-all duration-500 sm:px-5 ${isActive ? "translate-x-1 border-sandstone/45 bg-ivory/[0.08] shadow-[0_22px_60px_-35px_rgba(0,0,0,0.8)]" : "border-transparent bg-transparent hover:border-ivory/12 hover:bg-ivory/[0.03]"}`}
-                    >
-                      <SignalMark active={isActive} />
-                      <span className="min-w-0 flex-1">
-                        <span className="flex items-start justify-between gap-4">
-                          <span className={`font-display text-xl leading-tight transition-colors sm:text-2xl ${isActive ? "text-ivory" : "text-ivory/72 group-hover:text-ivory"}`}>“{state.label}”</span>
-                          <span className="pt-1 text-[0.65rem] tracking-[0.2em] text-ivory/30">{state.number}</span>
-                        </span>
-                        <span className={`mt-3 block text-[0.68rem] font-medium uppercase tracking-[0.17em] transition-colors ${isActive ? "text-sandstone" : "text-ivory/30 group-hover:text-ivory/45"}`}>{state.stage}</span>
-                        <span className={`mt-2 block text-sm leading-relaxed transition-colors ${isActive ? "text-ivory/65" : "text-ivory/38 group-hover:text-ivory/55"}`}>{state.symptom}</span>
-                      </span>
-                    </button>
-                  </Reveal>
+                  <motion.button
+                    key={state.id}
+                    type="button"
+                    aria-pressed={isActive}
+                    onClick={() => pick(state.id)}
+                    className={`absolute ${positions[index]} text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-sandstone`}
+                    animate={
+                      prefersReducedMotion
+                        ? undefined
+                        : {
+                            opacity: isActive ? 1 : 0.2,
+                            scale: isActive ? 1 : 0.88,
+                            x: isActive ? 0 : index === 1 ? 36 : -28,
+                            filter: isActive ? "blur(0px)" : "blur(3px)",
+                          }
+                    }
+                    transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <span className="block text-[0.62rem] uppercase tracking-[0.25em] text-sandstone/65">
+                      {state.number} · {state.stage}
+                    </span>
+                    <span className="mt-3 block font-display text-[clamp(2rem,3.6vw,4.4rem)] leading-[0.98] tracking-[-0.035em] text-ivory">
+                      “{state.label}”
+                    </span>
+                    <motion.span
+                      className="mt-4 block h-px origin-left bg-sandstone/70"
+                      animate={{ scaleX: isActive ? 1 : 0.12 }}
+                      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  </motion.button>
                 );
               })}
             </div>
           </div>
 
-          <div className="relative min-h-[520px] overflow-hidden rounded-2xl border border-ivory/12 bg-[#1d1a17] shadow-[0_34px_90px_-42px_rgba(0,0,0,0.9)]">
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sandstone/70 to-transparent" aria-hidden="true" />
-            <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-clay/10 blur-3xl" aria-hidden="true" />
+          <motion.div
+            style={prefersReducedMotion ? undefined : { opacity: resolutionOpacity, y: resolutionY }}
+            className="absolute inset-x-6 bottom-8 z-[4] sm:bottom-10"
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={active.id}
-                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
-                className="relative flex h-full min-h-[520px] flex-col p-6 sm:p-9"
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 18, filter: "blur(8px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12, filter: "blur(5px)" }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.5 }}
+                className="mx-auto grid max-w-5xl gap-5 border-t border-ivory/14 pt-5 md:grid-cols-[0.85fr_1.15fr_auto] md:items-end"
               >
-                <div className="flex items-center justify-between gap-5">
-                  <div>
-                    <p className="text-[0.65rem] font-medium uppercase tracking-[0.24em] text-sandstone">Strategic reading</p>
-                    <p className="mt-2 font-display text-3xl text-ivory sm:text-4xl">{active.path}</p>
-                  </div>
-                  <div className="relative h-20 w-20 shrink-0" aria-hidden="true">
-                    {[0, 1, 2].map((ring) => (
-                      <motion.span key={ring} className="absolute rounded-full border border-sandstone/30" style={{ inset: ring * 10 }} animate={prefersReducedMotion ? undefined : { opacity: [0.22, 0.75, 0.22], scale: [0.96, 1.04, 0.96] }} transition={{ duration: 3.8 + ring * 0.5, repeat: Infinity, delay: ring * 0.35, ease: "easeInOut" }} />
-                    ))}
-                    <span className="absolute inset-[34px] rounded-full bg-sandstone" />
-                  </div>
+                <div>
+                  <p className="text-[0.6rem] uppercase tracking-[0.24em] text-ivory/38">The likely gap</p>
+                  <p className="mt-2 font-display text-2xl text-ivory sm:text-3xl">{active.path}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-ivory/56">{active.symptom}</p>
                 </div>
-
-                <div className="mt-8 grid gap-6 sm:grid-cols-2">
-                  <div><p className="text-[0.65rem] uppercase tracking-[0.2em] text-ivory/35">What the signal means</p><p className="mt-3 text-base leading-relaxed text-ivory/82">{active.need}</p></div>
-                  <div><p className="text-[0.65rem] uppercase tracking-[0.2em] text-ivory/35">What changes</p><p className="mt-3 text-base leading-relaxed text-ivory/82">{active.outcome}</p></div>
+                <div>
+                  <p className="text-[0.6rem] uppercase tracking-[0.24em] text-ivory/38">What changes</p>
+                  <p className="mt-2 text-sm leading-relaxed text-ivory/72 sm:text-base">{active.outcome}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-ivory/42">{active.pathNote}</p>
                 </div>
-
-                <div className="mt-8 rounded-2xl border border-sandstone/20 bg-ivory/[0.045] p-5 sm:p-6">
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div><p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-sandstone">Recorded precedent</p><p className="mt-2 font-display text-2xl text-ivory">{active.proof.title}</p></div>
-                    <p className="font-display text-2xl text-sandstone sm:text-3xl">{active.proof.metric}</p>
-                  </div>
-                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ivory/66">{active.proof.line}</p>
-                </div>
-
-                <p className="mt-6 text-sm leading-relaxed text-ivory/48">{active.pathNote}</p>
-                <div className="mt-auto flex flex-col gap-3 pt-8 sm:flex-row sm:items-center">
-                  <Link href={`/work/${active.proof.slug}`} className="inline-flex min-h-11 items-center justify-center rounded-full bg-sandstone px-5 text-sm font-medium text-soil transition-transform duration-300 hover:-translate-y-0.5">Inspect the evidence <span className="ml-2" aria-hidden="true">↗</span></Link>
-                  <Link href="/services" className="inline-flex min-h-11 items-center justify-center rounded-full border border-ivory/20 px-5 text-sm font-medium text-ivory/80 transition-colors hover:border-ivory/40 hover:text-ivory">See the service path <span className="ml-2" aria-hidden="true">→</span></Link>
+                <div className="flex gap-3 md:flex-col">
+                  <Link
+                    href={`/work/${active.proof.slug}`}
+                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-sandstone px-5 text-xs font-medium uppercase tracking-[0.14em] text-soil transition-transform hover:-translate-y-0.5"
+                  >
+                    See the proof ↗
+                  </Link>
+                  <Link
+                    href="/services"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-ivory/20 px-5 text-xs font-medium uppercase tracking-[0.14em] text-ivory/76 transition-colors hover:border-ivory/45 hover:text-ivory"
+                  >
+                    Trace the path →
+                  </Link>
                 </div>
               </motion.div>
             </AnimatePresence>
-          </div>
-        </div>
-
-        <Reveal delay={0.12} className="mt-10 flex items-center gap-4 text-xs uppercase tracking-[0.2em] text-ivory/35">
-          <span className="h-px flex-1 bg-gradient-to-r from-transparent to-ivory/15" aria-hidden="true" />
-          Recognition becomes useful when it leads to evidence
-          <span className="h-px flex-1 bg-gradient-to-l from-transparent to-ivory/15" aria-hidden="true" />
-        </Reveal>
-      </Container>
+          </motion.div>
+        </Container>
+      </div>
     </section>
   );
 }
