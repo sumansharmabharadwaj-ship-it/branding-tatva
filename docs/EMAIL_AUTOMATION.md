@@ -154,3 +154,31 @@ audit framing and enter at Email 2.
 2. Build one Customer Journey starting at "tag added: recognition-audit" with the delays above; a second journey for untagged signups entering at Email 2.
 3. Attach the audit as a styled PDF or link to /services (the audit lives on the page); the ten checks are in `src/sections/Services/RecognitionAudit.tsx`.
 4. `FNAME` merge field is already populated by the site's form.
+
+## Consent gating: verified state (Aug 2026)
+
+Measured on a clean browser profile, production build, no stored choice:
+
+| Moment | Analytics requests |
+| --- | --- |
+| Before any choice | none |
+| After Reject | none |
+| After Accept | `/_vercel/insights/script.js` loads |
+
+The gate covers two paths, and both are required: the `Analytics`
+component that reports pageviews, and the `track()` helper in
+`src/lib/analytics.ts` that every custom event calls. Gating only the
+component leaves the banner decorative, because one event call loads the
+SDK by itself.
+
+**A false alarm worth recording.** An earlier test reported two requests
+firing before consent. They were `/insights?_rsc=…` and its route chunk:
+Next prefetching this site's own Insights section. The word matched a
+regex looking for analytics traffic. No third party host is contacted
+before consent, confirmed separately.
+
+**Still outstanding for UK compliance**: Accept all / Reject
+non-essential / Manage preferences as three distinct actions, separate
+necessary, analytics and marketing controls with nothing pre-ticked, a
+permanent way to reopen and withdraw, and privacy plus cookie policy
+text matching the implementation. What ships today is a two button gate.
