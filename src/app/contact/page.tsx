@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   // The hero poster is this page's LCP element — a high priority
   // preload so first paint stops waiting behind the video request.
-  preload("/images/higgsfield-forest-light-poster.jpg", { as: "image", fetchPriority: "high" });
+  preload("/images/pexels-studio-morning-light-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
@@ -65,8 +65,8 @@ export default function ContactPage() {
             same two-jobs-one-fact pattern a masthead and a byline
             already play on any real publication. */}
         <PhotoHero
-          video="/videos/higgsfield-forest-light.mp4"
-          poster="/images/higgsfield-forest-light-poster.jpg"
+          video="/videos/pexels-studio-morning-light.mp4"
+          poster="/images/pexels-studio-morning-light-poster.jpg"
           minHeight="70vh"
         >
           {/* Every other atmospheric hero on the site (About's forest
@@ -245,7 +245,7 @@ export default function ContactPage() {
             (or its own Footer), fitting "grab a time / stay in touch."
             Overlay at bg-soil/80, the site's normalized standard. */}
         <section id="call" className="relative scroll-mt-24 overflow-hidden bg-soil py-16">
-          <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
+          <BackgroundVideo video="/videos/pexels-backlit-grasses.mp4" videoWebm="/videos/pexels-backlit-grasses.webm" poster="/images/pexels-backlit-grasses-poster.jpg" />
           <div className="absolute inset-0 bg-soil/80" />
           {/* min-w-0 on both grid items: CalendlyEmbed's own real
               minWidth:320px constraint (its own widget's floor, not

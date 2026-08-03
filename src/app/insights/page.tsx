@@ -72,8 +72,8 @@ export default function InsightsPage() {
       <ScrollProgress />
       <main id="main-content">
         <PhotoHero
-          video="/videos/own-dusk-ridge.mp4"
-          poster="/images/own-dusk-ridge-poster.jpg"
+          video="/videos/pexels-himalayan-dawn.mp4"
+          poster="/images/pexels-himalayan-dawn-poster.jpg"
           minHeight="60vh"
         >
           <Container className="relative py-20">

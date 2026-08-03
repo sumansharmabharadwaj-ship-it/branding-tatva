@@ -349,7 +349,11 @@ not repeated here. */}
               on Services and Work, just running the other direction
               (dark to light instead of light to dark) since that's the
               actual boundary here. */}
-          <BackgroundVideo video="/videos/higgsfield-forest-light-vivid.mp4" poster="/images/higgsfield-forest-light-vivid-poster.jpg" />
+          {/* Round three footage (approved pick 4527565): a fog sea catching
+              first gold — warm and luminous per the Media OS, replacing
+              the flat overcast pines flagged in the round two audit.
+              Graded with the sitewide warm LUT. */}
+          <BackgroundVideo video="/videos/pexels-golden-fog-sea.mp4" videoWebm="/videos/pexels-golden-fog-sea.webm" poster="/images/pexels-golden-fog-sea-poster.jpg" />
           <div
             className="absolute inset-0"
             style={{ backgroundImage: "linear-gradient(180deg, rgba(244,239,230,0.18) 0%, rgba(244,239,230,0.28) 100%)" }}
