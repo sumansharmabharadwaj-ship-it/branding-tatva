@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { faqs } from "@/data/faqs";
+import { track } from "@/lib/analytics";
 import { Reveal } from "@/components/Reveal";
 import { answerVariants, answerTransition, TOGGLE_ROTATION } from "./animations";
 
@@ -24,7 +25,12 @@ export function FAQ({ questions }: { questions?: string[] } = {}) {
               className="flex w-full items-center justify-between rounded-2xl px-3 py-3 text-left font-medium text-soil transition-colors duration-300 hover:bg-clay/8 focus-visible:bg-clay/8"
               aria-expanded={isOpen}
               aria-controls={answerId}
-              onClick={() => setOpenIndex(isOpen ? null : i)}
+              onClick={() => {
+                // Only the opening counts: a close is the same click
+                // twice and would double every question's number.
+                if (!isOpen) track("faq_opened", { question: item.question });
+                setOpenIndex(isOpen ? null : i);
+              }}
             >
               {item.question}
               <span

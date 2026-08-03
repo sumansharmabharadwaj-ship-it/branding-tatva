@@ -78,7 +78,13 @@ export default function Home() {
           }
           subhead="Brand positioning, identity, voice, and market presence for founders and existing businesses that need recognition to compound."
         >
-          <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
+          <LinkButton
+            href="/contact"
+            trackEvent="hero_booking_click"
+            trackProps={{ page: "home" }}
+          >
+            Book a Brand Strategy Session
+          </LinkButton>
           <LinkButton
             href="/work"
             variant="secondary"

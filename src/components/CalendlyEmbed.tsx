@@ -36,6 +36,14 @@ export function CalendlyEmbed({ url }: { url: string }) {
   // Calendly's embed announces a finished booking through postMessage
   // — the one signal that separates opening the calendar from actually
   // scheduling. Origin checked so arbitrary frames can't fire it.
+  // The funnel recorded completed bookings but never recorded the
+  // calendar being reached, so the step where people actually drop was
+  // invisible. Fires once per mount, which is once per visit to the
+  // booking surface.
+  useEffect(() => {
+    track("calendar_opened");
+  }, []);
+
   useEffect(() => {
     function onMessage(e: MessageEvent) {
       if (e.origin === "https://calendly.com" && e.data?.event === "calendly.event_scheduled") {
