@@ -9,17 +9,18 @@ import type { ProcessStage } from "@/data/process";
 
 export function ProcessFilm({
   stages,
-  elementColor,
+  elementColors,
 }: {
   stages: ProcessStage[];
-  elementColor: (element: string) => string;
+  elementColors: Record<string, string>;
 }) {
   const reduce = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
   const active = stages[activeIndex] ?? stages[0];
 
   if (!active || !active.video || !active.poster) return null;
-  const activeColor = elementColor(active.element);
+  const colorFor = (element: string) => elementColors[element] ?? "#C6A97A";
+  const activeColor = colorFor(active.element);
 
   return (
     <section className="relative isolate overflow-hidden bg-[#101813] py-24 text-ivory sm:py-32 lg:py-40">
@@ -51,7 +52,7 @@ export function ProcessFilm({
             <div className="mt-5 space-y-2" role="tablist" aria-label="Choose a project stage">
               {stages.map((stage, index) => {
                 const selected = index === activeIndex;
-                const color = elementColor(stage.element);
+                const color = colorFor(stage.element);
                 return (
                   <button
                     key={stage.stage}
@@ -149,7 +150,7 @@ export function ProcessFilm({
                           cx={x}
                           cy={y}
                           r="6"
-                          animate={{ fill: reached ? elementColor(stage.element) : "rgba(244,239,230,.18)", scale: index === activeIndex ? [0.9, 1.2, 0.9] : 1 }}
+                          animate={{ fill: reached ? colorFor(stage.element) : "rgba(244,239,230,.18)", scale: index === activeIndex ? [0.9, 1.2, 0.9] : 1 }}
                           transition={{ fill: { duration: 0.4 }, scale: { duration: 2.4, repeat: index === activeIndex ? Infinity : 0 } }}
                         />
                       </g>
