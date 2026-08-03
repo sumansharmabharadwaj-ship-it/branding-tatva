@@ -16,7 +16,7 @@ import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { CinematicHero } from "@/sections/Hero";
 import { VisitorRecognition } from "@/sections/Home/VisitorRecognition";
-import { ServicePaths } from "@/sections/Home/ServicePaths";
+import { ThreePathsSection } from "@/sections/Home/ThreePathsSection";
 import { VideoBreak } from "@/components/VideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -181,7 +181,7 @@ not repeated here. */}
         {/* Conversion architecture section five: the three commercial
             paths, before the framework teaches the philosophy behind
             them. */}
-        <ServicePaths />
+        <ThreePathsSection />
 
         {/* Board scene three: the framework arrives as five living
             Tatvas instead of text on brown — the exact block Suman
