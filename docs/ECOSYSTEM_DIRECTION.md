@@ -130,10 +130,20 @@ same subject caught mid action passes.
 | Codes under pressure | Material stressed, identity intact | **Persist** — materials flex, weather changes, identity remains |
 | Ritual | Human behaviour over product | **Return** — a repeated sequence that naturally loops |
 
-The study template carries its own four verbs, proposed rather than
-handed down, so adjust them if they read wrong once footage lands:
-masthead **Open**, observations **Mark**, applications **Translate**,
-closing **Settle**.
+The study template carries its own four verbs, and they are one
+narrative rather than four unrelated labels:
+
+| Section | Verb | The move it makes |
+| --- | --- | --- |
+| Masthead | **Reveal** | Hidden becoming visible. Masks, focus shifts, unfolding, light arriving, detail emerging. |
+| Observations | **Expose** | Unnoticed becoming understood. Surfacing what was already there, never making a fresh mark on it. |
+| Applications | **Translate** | Strategy becoming execution. One system turning into another. |
+| Closing | **Compound** | Execution becoming accumulated equity. The work continuing past the edge of the page. |
+
+The closing verb matters most and is the easiest to get wrong. This
+practice argues that branding accumulates, so the final section can
+never feel like an ending coming to rest. It names the same thing the
+sixth process stage does, deliberately.
 
 ### Each study owns a distinct motion language
 
@@ -152,10 +162,28 @@ cinematic b-roll and the five studies stop feeling like five studies.
 Two candidates that move the same way solve the same problem the same
 way, even when their subjects differ. The weaker one gets replaced.
 
-### The nine approval fields
+### Emotional temperature
+
+The dominant feeling a clip creates, named in a word or two:
+Controlled, Anticipatory, Resolute, Contemplative, Confident. Precision
+machining reads Controlled; condensation forming reads Anticipatory;
+fabric resisting wind reads Resolute; steam rising reads
+Contemplative; type locking into place reads Confident.
+
+This catches a duplication the other fields miss. Two clips can differ
+in subject, verb and movement and still leave a viewer with the same
+impression, which flattens a set of five into one note held too long.
+Candidates get checked on three axes before selection: motion
+language, visual verb, and temperature. A collision on any one of them
+replaces the weaker candidate.
+
+### The ten approval fields
 
 Every candidate reaches Suman with: thumbnail, source, licence,
 duration, seamless loop yes or no, principle reinforced, confirmation
-it repeats no spent motif, **visual verb**, and intended section. The
-verb field exists specifically to expose two candidates accidentally
-solving the same problem the same way.
+it repeats no spent motif, **visual verb**, **emotional temperature**,
+and intended section.
+
+This is the review framework for every page from here, not only the
+studies. It judges what footage teaches, how it moves, and how it
+feels, rather than whether it happens to look beautiful.
