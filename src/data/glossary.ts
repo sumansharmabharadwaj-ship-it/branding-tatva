@@ -163,7 +163,7 @@ export const pillars: Pillar[] = [
     id: "psychology",
     name: "Psychology and branding",
     questions: ["How do attention, association, and memory shape brand decisions?"],
-    articleSlug: "five-elements-working-as-one",
+    articleSlug: "how-psychology-informs-brand-strategy",
     terms: [
       {
         term: "Semiotics",

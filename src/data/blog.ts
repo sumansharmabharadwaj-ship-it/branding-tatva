@@ -321,4 +321,90 @@ export const blogPosts: BlogPost[] = [
       "The map below runs the decision offer by offer. Score it before the naming workshop gets booked.",
     ],
   },
+  {
+    // Month seven pillar article (bible §15): the psychology pillar's
+    // anchor — the four buyer mechanisms and the brand decision each
+    // informs, with the decision prompts as its ungated asset. The
+    // clinical psychology reference is real (see data/about.ts).
+    slug: "how-psychology-informs-brand-strategy",
+    title: "How psychology informs brand strategy",
+    excerpt:
+      "Attention, association, memory, choice: four mechanisms every buyer runs on, and the brand decision each one informs.",
+    element: "water",
+    publishedAt: "2026-08-03",
+    readingTime: "6 min read",
+    pullQuote: "Memory is the only place a brand actually lives.",
+    summary: [
+      "Brand strategy borrows its mechanics from psychology: attention decides what gets seen, association decides what it means, memory decides what survives, choice decides what gets bought.",
+      "Each mechanism maps to a specific brand decision, from asset selection to defaults.",
+      "The prompts below put the four mechanisms to work on your own brand.",
+    ],
+    checklist: {
+      title: "The decision prompts",
+      items: [
+        "Name the exact second of first encounter, and list what else competes inside it.",
+        "Write the three associations your category hands you free of charge. Decide which to keep.",
+        "Identify the feeling your brand gets encoded with. Bored counts as a feeling.",
+        "Check what your buyer would say about you from memory alone, phone away.",
+        "List the shortcuts in your category: the defaults, the safe picks, the names people justify afterward.",
+        "Find the moment your buyer settles for the first acceptable option, and ask what would make you that answer.",
+        "Pick one mechanism your current plan ignores. That gap is usually the cheapest win available.",
+      ],
+    },
+    body: [
+      "Strategy documents love the word audience and rarely mention the machinery an audience runs on. Every buyer processes a brand through the same four mechanisms: attention, association, memory, choice. Each one informs a different decision, and a skipped mechanism usually explains an underperforming decision.",
+      "## Attention is triage",
+      "Attention is ruthless triage, tuned for change and relevance. A brand earns it by being distinct at the exact moment of encounter, which makes it a placement and asset question long before it becomes a message question. The feed teaches this daily: the scroll pauses for pattern breaks, never for effort.",
+      "## Association is inherited before it is built",
+      "Nothing arrives neutral. The category hands you meanings, the price point hands you meanings, the typeface hands you meanings a culture assigned decades ago. Semiotics is the discipline of reading that inheritance before accepting it. Positioning then chooses which associations to keep, which to fight, and which to quietly borrow.",
+      "## Memory is the asset ledger",
+      "Memory keeps whatever got encoded with feeling and repetition, and discards the rest without apology. Memory is the only place a brand actually lives. This is why consistency beats intensity: a modest signal repeated for years outlasts a spectacular one shown twice.",
+      "## Choice runs on shortcuts",
+      "Real buyers settle: they pick the first acceptable option that comes to mind, then justify it afterward. Defaults, familiarity, and social proof carry more weight than comparison tables. A brand that becomes the easy, safe, remembered answer wins deliberations it never has to enter.",
+      "The prompts below come from the clinical side of this practice: questions that surface the mechanism before the decision gets made.",
+    ],
+  },
+  {
+    // Month eight pillar article (bible §15): evaluating a branding
+    // proposal — deliberately including this practice's own proposals
+    // in its scope, per the transparency principle. The comparison
+    // sheet is its ungated asset.
+    slug: "how-to-evaluate-a-branding-proposal",
+    title: "How to evaluate a branding proposal",
+    excerpt:
+      "Most branding proposals get judged on chemistry and price. A better read takes twenty minutes and six questions, and it works on proposals from this practice too.",
+    element: "air",
+    publishedAt: "2026-08-03",
+    readingTime: "5 min read",
+    pullQuote: "A proposal that prescribes before examining is selling inventory.",
+    summary: [
+      "Judge the diagnosis before the deliverables: a proposal that prescribes before examining is selling inventory.",
+      "Verify the evidence policy: real outcomes labeled as real, concept work labeled as concept.",
+      "The comparison sheet below works on any proposal, this practice's included.",
+    ],
+    checklist: {
+      title: "The proposal comparison sheet",
+      items: [
+        "Diagnosis: does the proposal describe your specific situation, or any client's?",
+        "Decision: which single decision does the work claim to settle?",
+        "Evidence: are outcomes real and labeled, with concepts marked as concepts?",
+        "Process: what gets documented, and what do you hold if it ends early?",
+        "Voice: does the proposal itself read like the clarity it promises?",
+        "Boundaries: what does the practitioner decline to do, and do they say so unprompted?",
+        "Price: what does the number buy at the decision level, deliverables aside?",
+      ],
+    },
+    body: [
+      "Branding proposals get judged on the two things easiest to compare: chemistry and price. Both matter, and both say little about whether the work will hold. The better read takes twenty minutes, and it works on any proposal, including one from this practice.",
+      "## Read the diagnosis first",
+      "The deliverables page is inventory; the diagnosis page is judgment. A proposal that prescribes before examining is selling inventory. Look for evidence the practitioner understood your specific situation: your buyer, your comparison set, the decision your business actually faces. Generic diagnosis predicts generic work at any price.",
+      "## Check the evidence policy",
+      "Honest practices label their proof. Real client outcomes come with real numbers and named sources; concept work says concept; illustrative projections say illustrative. A proposal that blurs these lines on its own behalf will blur them on yours.",
+      "## Weigh process against promises",
+      "Outcomes in branding depend on execution the practitioner rarely controls, so grand outcome promises deserve suspicion, and clear process commitments deserve weight: what gets decided, what gets documented, what you hold at the end. Ask which artifact survives if the relationship ends at each stage.",
+      "## Price against decision, never against deliverables",
+      "Two proposals with identical deliverable lists can differ five times over in value, because the value lives in which decisions get made and how well. Compare the decision each proposal claims to settle. The cheapest proposal that settles the wrong decision is the most expensive option on the table.",
+      "The sheet below turns this into columns. Fill it for every proposal you are weighing, this practice's included.",
+    ],
+  },
 ];
