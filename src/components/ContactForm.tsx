@@ -35,6 +35,11 @@ export function ContactForm() {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const spotlightRef = useSpotlight(buttonRef, Boolean(prefersReducedMotion));
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
+  // Manual guide p38 and Suman's reference panel: ask only what is
+  // needed up front. Three essential fields carry the enquiry; the
+  // seven optional ones stay one click away rather than gone, so a
+  // visitor who wants to say more still can.
+  const [showMore, setShowMore] = useState(false);
 
   function handleButtonClick(e: MouseEvent<HTMLButtonElement>) {
     if (prefersReducedMotion) return;
@@ -142,7 +147,27 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+    <div className="rounded-3xl border border-border/60 px-6 py-8 shadow-elevation-md sm:px-10 sm:py-10" style={{ backgroundColor: "#F6F2EA" }}>
+      {/* The panel mirrors the booking card beside it — cream ground,
+          italic display accent, serif line, and the sprig divider —
+          so the two paths on this page read as siblings rather than
+          a styled card next to a bare form. */}
+      <div className="text-center">
+        <p className="font-display text-2xl italic text-clay">Tell me,</p>
+        <p className="mt-1 font-display text-3xl font-normal text-soil sm:text-4xl">what are you building?</p>
+        <span aria-hidden="true" className="mt-5 flex items-center justify-center gap-3">
+          <span className="h-px w-16 bg-border" />
+          <svg viewBox="0 0 24 20" className="h-4 w-5 text-clay" fill="none">
+            <path d="M12 19V6M12 6C12 6 9 1 4 1c0 5 4 6 8 5zM12 6c0 0 3-5 8-5 0 5-4 6-8 5z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="h-px w-16 bg-border" />
+        </span>
+        <p className="mx-auto mt-5 max-w-sm text-sm leading-relaxed text-foreground-secondary">
+          Three questions to start. Add as much detail as you feel like, or keep it short and we will cover the rest on the call.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 space-y-5">
       {/* Honeypot — hidden from real users, visible to bots */}
       <input
         type="text"
@@ -167,72 +192,79 @@ export function ContactForm() {
         </Field>
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}
-        className="grid gap-5 sm:grid-cols-2"
-      >
-        <Field label="Phone (optional)" error={errors.phone?.message}>
-          <input className={inputClass} {...register("phone")} />
-        </Field>
-        <Field label="Business or brand name" error={errors.business?.message}>
-          <input className={inputClass} {...register("business")} />
-        </Field>
-      </motion.div>
-
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}>
-        <Field label="Website or social link (optional)" error={errors.website?.message}>
-          <input className={inputClass} {...register("website")} />
+        <Field label="What are you building, and what feels unclear?" error={errors.description?.message}>
+          <textarea rows={4} className={inputClass} {...register("description")} />
         </Field>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}>
-        <Field label="Where is your brand right now?" error={errors.brandStage?.message}>
-          <select className={inputClass} defaultValue="" {...register("brandStage")}>
-            <option value="" disabled>
-              Choose the closest fit
-            </option>
-            {brandStages.map((stage) => (
-              <option key={stage} value={stage}>
-                {stage}
-              </option>
-            ))}
-          </select>
-        </Field>
-      </motion.div>
+      {/* The optional seven, kept and reachable rather than removed. */}
+      <div className="border-t border-border/70 pt-5">
+        <button
+          type="button"
+          aria-expanded={showMore}
+          aria-controls="contact-more"
+          onClick={() => setShowMore((v) => !v)}
+          className="link-underline inline-flex items-center gap-2 text-sm font-medium text-clay transition-colors duration-300 hover:text-soil"
+        >
+          {showMore ? "Fewer details" : "Add more detail"}
+          <span aria-hidden="true" className={`text-base transition-transform duration-300 ${showMore ? "rotate-45" : ""}`}>
+            +
+          </span>
+        </button>
 
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}>
-        <Field label="What do you think you need?" error={errors.servicesNeeded?.message}>
-          <input className={inputClass} {...register("servicesNeeded")} placeholder="A rough idea is fine" />
-        </Field>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}
-        className="grid gap-5 sm:grid-cols-2"
-      >
-        <Field label="Estimated budget (optional)" error={errors.budget?.message}>
-          <input className={inputClass} {...register("budget")} />
-        </Field>
-        <Field label="Desired timeline (optional)" error={errors.timeline?.message}>
-          <input className={inputClass} {...register("timeline")} />
-        </Field>
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}>
-        <Field label="Tell me about the project" error={errors.description?.message}>
-          <textarea rows={5} className={inputClass} {...register("description")} />
-        </Field>
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}>
-        <Field label="How did you find Branding Tatva? (optional)" error={errors.referral?.message}>
-          <input className={inputClass} {...register("referral")} />
-        </Field>
-      </motion.div>
+        <div id="contact-more" hidden={!showMore}>
+          <AnimatePresence initial={false}>
+            {showMore && (
+              <motion.div
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+                transition={{ duration: 0.4, ease: EASE_AIR }}
+                className="mt-5 space-y-5"
+              >
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <Field label="Business or brand name" error={errors.business?.message}>
+                    <input className={inputClass} {...register("business")} />
+                  </Field>
+                  <Field label="Phone (optional)" error={errors.phone?.message}>
+                    <input className={inputClass} {...register("phone")} />
+                  </Field>
+                </div>
+                <Field label="Website or social link (optional)" error={errors.website?.message}>
+                  <input className={inputClass} {...register("website")} />
+                </Field>
+                <Field label="Where is your brand right now?" error={errors.brandStage?.message}>
+                  <select className={inputClass} defaultValue="" {...register("brandStage")}>
+                    <option value="" disabled>
+                      Choose the closest fit
+                    </option>
+                    {brandStages.map((stage) => (
+                      <option key={stage} value={stage}>
+                        {stage}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="What do you think you need?" error={errors.servicesNeeded?.message}>
+                  <input className={inputClass} {...register("servicesNeeded")} placeholder="A rough idea is fine" />
+                </Field>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <Field label="Estimated budget (optional)" error={errors.budget?.message}>
+                    <input className={inputClass} {...register("budget")} />
+                  </Field>
+                  <Field label="Desired timeline (optional)" error={errors.timeline?.message}>
+                    <input className={inputClass} {...register("timeline")} />
+                  </Field>
+                </div>
+                <Field label="How did you find Branding Tatva? (optional)" error={errors.referral?.message}>
+                  <input className={inputClass} {...register("referral")} />
+                </Field>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
 
       {status === "error" && serverError && (
         <p role="alert" className="text-sm text-state-error">
@@ -240,7 +272,7 @@ export function ContactForm() {
         </p>
       )}
 
-      <Magnetic className="inline-block">
+        <Magnetic className="inline-block">
         <button
           ref={buttonRef}
           type="submit"
@@ -282,8 +314,9 @@ export function ContactForm() {
             )}
           </span>
         </button>
-      </Magnetic>
-    </form>
+        </Magnetic>
+      </form>
+    </div>
   );
 }
 
