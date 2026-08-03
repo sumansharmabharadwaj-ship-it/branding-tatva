@@ -8,6 +8,7 @@ import { ElementsSection } from "@/sections/Elements";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
+import { FounderRouteHandoff } from "@/sections/Home/FounderRouteHandoff";
 import { ClosingSequence } from "@/sections/Home/ClosingSequence";
 import { CinematicHero } from "@/sections/Hero";
 import { VisitorRecognition } from "@/sections/Home/VisitorRecognition";
@@ -91,6 +92,7 @@ export default function Home() {
         <EvidenceWall />
         <ClarityCTA />
         <StudioTriptych />
+        <FounderRouteHandoff />
         <ThreePathsSection />
 
         <div id="elements" className="scroll-mt-24">
