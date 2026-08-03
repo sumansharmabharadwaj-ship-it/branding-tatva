@@ -1,18 +1,8 @@
 import { ImageResponse } from "next/og";
+import { TATVA_CONTOURS, TATVA_MARK_COLORS } from "@/lib/brandMark";
 
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
-
-// Same LogoMark five-bar design as icon.tsx, scaled up — see that
-// file's comment for why this replaced the old five-petal pattern.
-const bars = [
-  { color: "#B85A34", x: 14, height: 34 },
-  { color: "#24394D", x: 30, height: 48 },
-  { color: "#C28A28", x: 46, height: 64 },
-  { color: "#5C6B4A", x: 62, height: 48 },
-  { color: "#27221E", x: 78, height: 34 },
-];
-const BASELINE = 78;
 
 export default function AppleIcon() {
   return new ImageResponse(
@@ -24,24 +14,39 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#F4EFE6",
+          background: "#142018",
         }}
       >
-        <svg width="140" height="140" viewBox="0 0 100 100">
-          {bars.map((b) => (
-            <rect
-              key={b.x}
-              x={b.x}
-              y={BASELINE - b.height}
-              width={10}
-              height={b.height}
-              rx={5}
-              fill={b.color}
-            />
-          ))}
-        </svg>
+        <div
+          style={{
+            width: 146,
+            height: 146,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 42,
+            background: "radial-gradient(circle at 50% 38%, rgba(198,169,122,.17), transparent 48%)",
+            border: "1px solid rgba(244,239,230,.12)",
+          }}
+        >
+          <svg width="118" height="118" viewBox="0 0 100 100" fill="none">
+            {TATVA_CONTOURS.map((path, index) => (
+              <path
+                key={path}
+                d={path}
+                fill="none"
+                stroke={TATVA_MARK_COLORS[index]}
+                strokeWidth={index === 0 ? 4.4 : 3.8}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={0.96}
+              />
+            ))}
+            <circle cx="50" cy="57" r="6" fill={TATVA_MARK_COLORS[4]} />
+          </svg>
+        </div>
       </div>
     ),
-    { ...size }
+    { ...size },
   );
 }
