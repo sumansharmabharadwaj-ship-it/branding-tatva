@@ -2,10 +2,6 @@
 
 import { track as vercelTrack } from "@vercel/analytics";
 
-// One measurement door for the whole site — the conversion events the
-// redesign brief names, nothing else. Wraps Vercel Analytics so every
-// event lands in the project's own dashboard with zero extra setup;
-// swallows errors so measurement can never break an interaction.
 export type AnalyticsEvent =
   | "hero_booking_click"
   | "case_study_opened"
@@ -28,17 +24,14 @@ export type AnalyticsEvent =
   | "calendar_opened"
   | "booking_completed";
 
-// The consent gate applies here too, and this is the half that is easy
-// to miss: mounting the Analytics component behind a banner stops
-// pageviews, but every custom event calling this helper would still
-// load the SDK and report, which would make the banner decorative.
-// Same key CookieConsent writes; a missing or declined value sends
-// nothing at all.
-const CONSENT_KEY = "bt-analytics-consent";
+const CONSENT_KEY = "bt-consent-v2";
 
 function consented() {
   try {
-    return window.localStorage.getItem(CONSENT_KEY) === "granted";
+    const stored = window.localStorage.getItem(CONSENT_KEY);
+    if (!stored) return false;
+    const parsed = JSON.parse(stored) as { analytics?: unknown };
+    return parsed.analytics === true;
   } catch {
     return false;
   }
@@ -48,5 +41,7 @@ export function track(event: AnalyticsEvent, props?: Record<string, string | num
   if (typeof window === "undefined" || !consented()) return;
   try {
     vercelTrack(event, props);
-  } catch {}
+  } catch {
+    // Measurement must never interrupt the visitor's interaction.
+  }
 }
