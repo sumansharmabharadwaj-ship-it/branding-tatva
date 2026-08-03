@@ -7,6 +7,7 @@ import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { CookieConsent } from "@/components/CookieConsent";
 import { VideoWarden } from "@/components/VideoWarden";
 import { MotionPreferenceProvider } from "@/components/MotionPreference";
+import { NarrativeSignal } from "@/components/NarrativeSignal";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({
@@ -43,10 +44,6 @@ export const metadata: Metadata = {
     siteName: site.name,
     type: "website",
     locale: "en_US",
-    // Reuses the opengraph-image.tsx/twitter-image.tsx route convention
-    // already generating a real image at build time — this makes that
-    // explicit instead of relying on Next's implicit file-convention
-    // pickup alone.
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
@@ -63,11 +60,6 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-// Structured data — verified facts only. No aggregateRating/review markup
-// since no real testimonials exist yet (per brief: never fake reviews).
-// Both nodes carry an @id so other pages' schema (BlogPosting's
-// author/publisher, case-study Service schema) can reference them
-// directly instead of duplicating the same facts inline everywhere.
 const PERSON_ID = `${site.url}/#person`;
 const ORG_ID = `${site.url}/#organization`;
 const SOCIAL_LINKS = [site.social.linkedin, site.social.instagram, site.social.facebook].filter(Boolean);
@@ -81,9 +73,6 @@ const structuredData = {
       name: site.founder,
       url: site.url,
       jobTitle: "Brand Strategist",
-      // Entity strategy per the governing bible: knowsAbout carries only
-      // genuine, page-visible areas of expertise — the same vocabulary
-      // the glossary and services actually teach.
       knowsAbout: [
         "Brand positioning",
         "Verbal identity",
@@ -127,26 +116,17 @@ export default function RootLayout({
         <div className="gradient-mesh" aria-hidden="true" />
         <div className="paper-grain" aria-hidden="true" />
         <SmoothScrollProvider>
-          {/* MotionPreference wraps the page tree so every Framer
-              component's useReducedMotion() honors the visitor's own
-              Full/Reduced choice (footer toggle), alongside the OS
-              preference it already respected. */}
-          <MotionPreferenceProvider>{children}</MotionPreferenceProvider>
+          <MotionPreferenceProvider>
+            {children}
+            <NarrativeSignal />
+          </MotionPreferenceProvider>
         </SmoothScrollProvider>
         <PageLoadVeil />
-        {/* Cockpit reduction (Suman's review, item 7): the floating
-            brand badge and the cursor illumination were removed — one
-            adaptive header plus one optional sound control is the whole
-            persistent layer now. SectionJumpNav survives only on
-            Services, where it acts as the contextual chapter indicator
-            inside a genuinely long scene. */}
         <AmbientAudio />
         <VideoWarden />
-        {/* Analytics now mounts only after a visitor allows it. */}
         <CookieConsent />
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </body>
