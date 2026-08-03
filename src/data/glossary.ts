@@ -64,7 +64,7 @@ export const pillars: Pillar[] = [
       "What are distinctive assets?",
       "How does consistency create memory?",
     ],
-    articleSlug: "visible-versus-remembered",
+    articleSlug: "why-visible-brands-stay-forgettable",
     terms: [
       {
         term: "Distinctive assets",

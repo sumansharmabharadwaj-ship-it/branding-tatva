@@ -127,4 +127,38 @@ export const blogPosts: BlogPost[] = [
       "The checklist below is the working version used at the start of engagements here. It gives away the questions on purpose; the answers are where the real work lives.",
     ],
   },
+  {
+    // Month two pillar article (bible §15): the recognition pillar's
+    // anchor. Its conversion asset is the already live Brand
+    // Recognition Audit, which the article template surfaces at the
+    // end of every pillar piece. Deliberately deeper than, rather than
+    // a duplicate of, the earlier short post on visibility versus
+    // recall — this one covers the mechanics: distinctive assets,
+    // consistency compounding, mental availability.
+    slug: "why-visible-brands-stay-forgettable",
+    title: "Why visible brands stay forgettable",
+    excerpt:
+      "Forgettability is rarely a reach problem. It is a structure problem with mechanics: weak distinctive assets, inconsistent repetition, and narrow mental availability.",
+    element: "space",
+    publishedAt: "2026-08-03",
+    readingTime: "5 min read",
+    pullQuote: "Visibility gets you into the room once; memory keeps a seat reserved.",
+    summary: [
+      "Forgettability is a structure problem with mechanics: weak distinctive assets, inconsistent repetition, and narrow mental availability.",
+      "Distinctive assets earn recognition that survives a covered logo. They grow through years of held signals, never through variety.",
+      "Consistency is the compounding mechanism. The same budget spread across five looks buys five separate first impressions.",
+    ],
+    body: [
+      "A brand can pass every visibility test, impressions up, feed active, ads delivering, and still leave nothing behind in the one place purchases start: memory. Forgettability is rarely a reach problem. It is a structure problem, and it has mechanics.",
+      "## Memory does the buying",
+      "Most purchase decisions begin before any search bar: someone remembers a name, then goes looking for confirmation. The brands that win that moment did their work months earlier, through repetition the buyer barely registered at the time. Visibility gets you into the room once; memory keeps a seat reserved.",
+      "## The assets that survive a covered logo",
+      "Distinctive assets are the colors, shapes, sounds, and phrases a brand owns so thoroughly that recognition survives with the logo covered. They get built by holding a small set of signals steady for years, which is exactly why committees struggle with them: variety feels like progress from inside the building and reads as noise from outside it. The test is blunt. Cover your logo on your own homepage and ask what still identifies you.",
+      "## Consistency is the compounding mechanism",
+      "A message repeated consistently compounds; the same budget spread across five looks and five voices buys five separate first impressions and zero accumulated memory. This is why rebrands driven by internal boredom, rather than a real change in the business, quietly reset years of recognition to zero.",
+      "## Being thought of at all",
+      "Mental availability is the share of buying situations in which your name surfaces unprompted. It widens as the brand attaches itself to more of the moments that trigger its category, and it narrows every time the brand goes quiet or shows up looking unfamiliar. Brands lose fewer deals to rivals than to simply going unthought of.",
+      "The Brand Recognition Audit below runs this exact diagnosis on your own brand: positioning clarity, distinctive assets, verbal identity, recognition consistency. Five checks are open to anyone; run them before the next campaign spends money on being seen.",
+    ],
+  },
 ];
