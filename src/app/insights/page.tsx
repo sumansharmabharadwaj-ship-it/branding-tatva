@@ -76,7 +76,7 @@ export default function InsightsPage() {
           poster="/images/pexels-himalayan-dawn-poster.jpg"
           minHeight="60vh"
         >
-          <Container className="relative py-20">
+          <Container className="relative py-20 sm:py-28">
             <Reveal>
               <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
                 Insights
@@ -211,7 +211,7 @@ export default function InsightsPage() {
         <TexturedDark
           image="/images/higgsfield-stream-clarity-poster.jpg"
           video="/videos/higgsfield-stream-clarity.mp4"
-          className="py-24 text-center sm:pb-28"
+          className="py-20 sm:py-28 text-center sm:pb-28"
         >
           <ClipReveal>
             <Container>

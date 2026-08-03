@@ -164,7 +164,7 @@ export function PinnedBrandBuild() {
           </div>
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:px-10 sm:py-0 lg:px-20">
+        <div className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:py-24 sm:px-10 sm:py-0 lg:px-20">
           <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20">
             <div>
               <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Authority</p>

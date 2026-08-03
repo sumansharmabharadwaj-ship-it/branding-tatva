@@ -113,7 +113,7 @@ export default async function BrandStudyPage({ params }: Props) {
           </Container>
         </section>
 
-        <section className="relative overflow-hidden border-t border-ivory/10 py-16 sm:py-20">
+        <section className="relative overflow-hidden border-t border-ivory/10 py-16 sm:py-24">
           <MediaSlot fill={study.media?.observations} scrim={0.86} />
           <Container className="relative max-w-4xl">
             <div className="space-y-12">
@@ -139,7 +139,7 @@ export default async function BrandStudyPage({ params }: Props) {
           </Container>
         </section>
 
-        <section className="relative overflow-hidden border-t border-ivory/10 py-16 sm:py-20">
+        <section className="relative overflow-hidden border-t border-ivory/10 py-16 sm:py-24">
           <MediaSlot fill={study.media?.applications} scrim={0.86} />
           <Container className="relative max-w-4xl">
             <Reveal>

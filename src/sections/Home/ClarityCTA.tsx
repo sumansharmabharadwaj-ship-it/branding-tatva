@@ -10,7 +10,7 @@ import Link from "next/link";
 export function ClarityCTA() {
   return (
     <section className="relative grid items-stretch lg:grid-cols-2" style={{ backgroundColor: "#141210" }}>
-      <div className="flex items-center px-6 py-16 sm:px-12 lg:px-16 lg:py-24 xl:px-24">
+      <div className="flex items-center px-6 py-16 sm:py-24 sm:px-12 lg:px-16 lg:py-24 xl:px-24">
         <div className="max-w-md">
           <p className="text-xs font-medium uppercase tracking-[0.25em]" style={{ color: "#C6A97A" }}>
             Need clarity?

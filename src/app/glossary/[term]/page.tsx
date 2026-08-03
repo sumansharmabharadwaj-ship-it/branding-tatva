@@ -5,6 +5,7 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
+import { SplitReveal } from "@/components/SplitReveal";
 import { allTerms, findTerm } from "@/data/glossary";
 import { blogPosts } from "@/data/blog";
 import { site } from "@/data/site";
@@ -66,10 +67,16 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
     <>
       <Header />
       <main id="main-content">
-        <section className="pb-20 pt-32 sm:pt-36">
+        {/* Was one flat cream section carrying breadcrumb, definition,
+            practice note, questions and related pills all at one visual
+            volume. The term now gets a dark masthead of its own, so the
+            page inherits the light to dark chapter grammar the rest of
+            the site reads by, and the definition lands as a statement
+            rather than as the third paragraph in a stack. */}
+        <section className="bg-soil pb-16 pt-36 sm:pt-44">
           <Container className="max-w-2xl">
             <Reveal>
-              <nav aria-label="Breadcrumb" className="text-xs uppercase tracking-[0.15em] text-foreground-secondary/70">
+              <nav aria-label="Breadcrumb" className="text-xs uppercase tracking-[0.15em] text-ivory/60">
                 <Link href="/insights" className="link-underline">
                   Insights
                 </Link>
@@ -80,12 +87,24 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                   Glossary
                 </Link>
               </nav>
-              <p className="mt-6 text-sm font-medium uppercase tracking-wide text-clay">{entry.pillar.name}</p>
-              <h1 className="mt-2 font-display text-display-md font-normal text-soil">{entry.term}</h1>
-              <p className="mt-6 font-display text-xl italic leading-relaxed text-soil sm:text-2xl">
+              <p className="mt-6 text-sm font-medium uppercase tracking-wide text-sandstone">{entry.pillar.name}</p>
+            </Reveal>
+            <SplitReveal as="h1" className="mt-2 font-display text-display-md font-normal text-ivory">
+              {entry.term}
+            </SplitReveal>
+            <Reveal delay={0.08}>
+              <span aria-hidden="true" className="mt-6 block h-px w-16 bg-sandstone/70" />
+              <p className="mt-6 font-display text-xl italic leading-relaxed text-ivory sm:text-2xl">
                 {entry.definition}
               </p>
-              <p className="mt-6 text-base leading-relaxed text-foreground-secondary">{entry.expanded}</p>
+            </Reveal>
+          </Container>
+        </section>
+
+        <section className="pb-20 pt-14">
+          <Container className="max-w-2xl">
+            <Reveal>
+              <p className="text-base leading-relaxed text-foreground-secondary">{entry.expanded}</p>
             </Reveal>
 
             <Reveal>

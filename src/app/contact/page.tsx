@@ -77,7 +77,7 @@ export default function ContactPage() {
               feel. Same forest register as this hero's own clip, not a
               new visual idea introduced just for this page. */}
           <Fireflies />
-          <Container className="relative py-20">
+          <Container className="relative py-20 sm:py-28">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal className="relative">
                 <NatureAccent
@@ -244,7 +244,7 @@ export default function ContactPage() {
             wildflower meadow, genuinely unused elsewhere on this page
             (or its own Footer), fitting "grab a time / stay in touch."
             Overlay at bg-soil/80, the site's normalized standard. */}
-        <section id="call" className="relative scroll-mt-24 overflow-hidden bg-soil py-16">
+        <section id="call" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
           {/* Restored to the warm meadow per Suman's design: the green
               backlit grasses read harsh behind this cream panel. */}
           <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />

@@ -171,7 +171,7 @@ export default async function BlogPostPage({ params }: Props) {
             block. The reading column itself stays a narrow, single
             measure (no asymmetry inside the prose) since long-form
             legibility shouldn't be traded away for a layout flourish. */}
-        <section className="py-16 sm:py-20">
+        <section className="py-16 sm:py-24">
           <Container>
             <div className="lg:grid lg:grid-cols-[140px_1fr] lg:gap-12">
               <div className="hidden lg:block">

@@ -94,7 +94,7 @@ export function AboutSplitHero({
       />
 
       <motion.div
-        className="relative z-10 flex flex-col items-center px-6 py-16 text-center"
+        className="relative z-10 flex flex-col items-center px-6 py-16 sm:py-24 text-center"
         style={prefersReducedMotion ? undefined : { opacity: contentOpacity }}
       >
         <Reveal>

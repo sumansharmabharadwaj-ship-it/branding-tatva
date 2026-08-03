@@ -96,7 +96,7 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
             initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24, scale: 0.985 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-            className="relative mx-auto flex min-h-full max-w-3xl flex-col justify-center px-6 py-20 sm:px-10"
+            className="relative mx-auto flex min-h-full max-w-3xl flex-col justify-center px-6 py-20 sm:py-28 sm:px-10"
           >
             <button
               ref={closeRef}

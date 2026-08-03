@@ -162,7 +162,7 @@ export default async function ServicesPage() {
               claim assembles (CyclingStatement), and the giant page
               title drifts at a slower rate than the scroll around it —
               depth through type, no imagery involved. */}
-          <Container className="relative py-20">
+          <Container className="relative py-20 sm:py-28">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal delay={1.7}>
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/90">

@@ -107,7 +107,7 @@ export default function WorkPage() {
         {/* Invitation — quiet material reflection as the final frame
             (work-closing.jpg: the forest path regraded this round into
             the page's own cool green register), one consultation path. */}
-        <TexturedDark image="/images/work-closing.jpg" className="py-24 text-center sm:pb-28">
+        <TexturedDark image="/images/work-closing.jpg" className="py-20 sm:py-28 text-center sm:pb-28">
           <ClipReveal>
             <Container>
               <h2 className="text-display-md font-display font-normal text-ivory">

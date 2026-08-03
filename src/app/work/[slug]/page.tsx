@@ -147,7 +147,7 @@ export default async function CaseStudyPage({ params }: Props) {
           minHeight="70vh"
           accentColor={project.heroVideo ? project.accent : undefined}
         >
-          <Container className="relative py-20">
+          <Container className="relative py-20 sm:py-28">
             <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal>
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
@@ -202,7 +202,7 @@ export default async function CaseStudyPage({ params }: Props) {
             .case-study-block::before's ghost numeral stays ivory-toned
             in globals.css — no change needed there, Soil is dark either
             way. */}
-        <section className="bg-soil py-16">
+        <section className="bg-soil py-16 sm:py-24">
           <Container className="grid gap-12 md:grid-cols-3">
             <div className="case-study-blocks md:col-span-2 space-y-10">
               <Reveal><Block id="challenge" title="The challenge">{project.challenge}</Block></Reveal>
@@ -267,7 +267,7 @@ export default async function CaseStudyPage({ params }: Props) {
         />
 
         {related && (
-          <section className="bg-soil py-16">
+          <section className="bg-soil py-16 sm:py-24">
             <Container>
               <Reveal>
                 <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">

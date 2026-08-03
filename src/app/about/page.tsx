@@ -167,7 +167,7 @@ export default function AboutPage() {
             it (the way higgsfield-element-fire does behind Home's
             card-grid Selected-work section, a bright active clip
             because that section has fewer, larger elements). */}
-        <section className="relative overflow-hidden bg-soil py-20">
+        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
           <BackgroundVideo video="/videos/own-moonlit-sea.mp4" poster="/images/own-moonlit-sea-poster.jpg" />
           <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
@@ -241,7 +241,7 @@ export default function AboutPage() {
             real paragraphs need to be read at the reader's own pace, not
             forced through a fixed-duration hold — the moving backdrop
             gives the cinematic feel without stalling the read. */}
-        <section className="relative overflow-hidden bg-soil py-20">
+        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
           <ParallaxVideoBackdrop
             video="/videos/pixabay-misty-ridge-drift.mp4"
             poster="/images/pixabay-misty-ridge-drift-poster.jpg"
@@ -321,7 +321,7 @@ export default function AboutPage() {
             sections directly above it. Mountain-peak light gives the
             page's final "made on purpose" statement real weight instead
             of ending the page on flat color. */}
-        <section className="relative overflow-hidden bg-soil py-20">
+        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
           <ParallaxVideoBackdrop
             video="/videos/higgsfield-golden-peaks.mp4"
             poster="/images/higgsfield-golden-peaks-poster.jpg"

@@ -23,7 +23,7 @@ const TATVAS: { slug: keyof typeof ELEMENT_HEX; name: string; role: string; line
 
 export function TatvaStrip() {
   return (
-    <section className="py-16 sm:py-20" style={{ backgroundColor: "#F2F0E8" }}>
+    <section className="py-16 sm:py-24" style={{ backgroundColor: "#F2F0E8" }}>
       <Container className="max-w-[100rem]">
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,18rem)_1fr] lg:gap-16">
           <Reveal>

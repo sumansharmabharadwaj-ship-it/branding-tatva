@@ -42,7 +42,7 @@ export function PinnedWorkingMethod() {
 function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
   return (
     <section
-      className={`relative flex overflow-hidden bg-soil ${pinned ? "min-h-screen items-center" : "py-20"}`}
+      className={`relative flex overflow-hidden bg-soil ${pinned ? "min-h-screen items-center" : "py-20 sm:py-28"}`}
     >
       <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
       <div className="absolute inset-0 bg-soil/80" />
