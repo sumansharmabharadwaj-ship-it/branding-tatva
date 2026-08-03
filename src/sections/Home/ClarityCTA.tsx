@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import Link from "next/link";
 
 // Suman's layout reference (Aug 2026): a hard vertical split, never a
@@ -36,12 +36,14 @@ export function ClarityCTA() {
       </div>
 
       <div className="relative min-h-[22rem] lg:min-h-[34rem]">
-        <Image
-          src="/images/higgsfield-idea-sketch.jpg"
-          alt="An open notebook, pen, and brand notes on a working desk"
-          fill
-          sizes="(min-width: 1024px) 50vw, 100vw"
-          style={{ objectFit: "cover", objectPosition: "center 55%" }}
+        {/* The desk was a frozen photo next to a decision the visitor
+            is being asked to make. It now moves: the same frame, drifting
+            slowly, so the right half reads as a room rather than a print. */}
+        <BackgroundVideo
+          video="/videos/higgsfield-idea-sketch.mp4"
+          poster="/images/higgsfield-idea-sketch.jpg"
+          imagePosition="center 55%"
+          parallax
         />
         {/* The seam: the dark panel dissolves a short way into the photo
             so the split reads as one frame rather than two images. */}

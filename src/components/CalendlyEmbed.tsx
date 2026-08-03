@@ -58,17 +58,28 @@ export function CalendlyEmbed({ url }: { url: string }) {
     // scrollbar appears when there's nothing to scroll) while letting
     // a cramped one stay fully usable via a swipe instead of quietly
     // losing part of the calendar.
-    <div className="relative mt-8 overflow-x-auto rounded-2xl border-t-2 border-action-primary bg-background-elevated shadow-elevation-sm">
+    // The widget used to sit on a white card with an orange top rule —
+    // a pasted third-party box against a cream panel, with Calendly's
+    // own white ground making every unfilled pixel read as a hole.
+    // It now carries the panel's own cream and a gold hairline, and the
+    // embed itself is themed to the same ground (below), so the seam
+    // between our panel and their iframe disappears.
+    <div
+      className="relative mt-8 overflow-x-auto rounded-2xl border"
+      style={{ borderColor: "rgba(198,169,122,0.45)", backgroundColor: "#F6F2EA" }}
+    >
       {!loaded && (
         <div
-          className="absolute inset-0 animate-pulse bg-background-alt"
-          style={{ height: "min(560px, 72svh)" }}
+          className="absolute inset-0 animate-pulse"
+          // Pulse in the panel's own cream, never a grey card.
+          data-skeleton=""
+          style={{ height: "min(560px, 72svh)", backgroundColor: "rgba(198,169,122,0.10)" }}
           aria-hidden="true"
         />
       )}
       <div
         className="calendly-inline-widget"
-        data-url={`${url}?hide_gdpr_banner=1`}
+        data-url={`${url}?hide_gdpr_banner=1&hide_landing_page_details=1&background_color=F6F2EA&text_color=27221E&primary_color=8A6B3D`}
         data-resize="true"
         style={{ minWidth: "320px", minHeight: "min(560px, 72svh)" }}
       />

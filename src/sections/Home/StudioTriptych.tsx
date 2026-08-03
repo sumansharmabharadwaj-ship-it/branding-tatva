@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { KenBurnsImage } from "@/components/KenBurnsImage";
 import Link from "next/link";
 
 // Suman's layout reference: the studio as a triptych — a dark quote
@@ -98,12 +98,16 @@ export function StudioTriptych() {
 
       {/* The working wall. */}
       <div className="relative min-h-[18rem] lg:min-h-full">
-        <Image
-          src="/images/own-portrait.jpg"
-          alt="Suman Sharma at work"
-          fill
+        {/* Was a static fill image, the only motionless panel in the
+            triptych. KenBurnsImage gives it the same slow drift the rest
+            of the site's photography carries, and skips it entirely under
+            reduced motion. */}
+        <KenBurnsImage
+          image="/images/own-portrait.jpg"
+          gradient="linear-gradient(to top, rgba(20,18,16,0.30), rgba(20,18,16,0))"
+          imagePosition="center 30%"
+          className="absolute inset-0 h-full w-full"
           sizes="(min-width: 1024px) 25vw, 100vw"
-          style={{ objectFit: "cover", objectPosition: "center 30%" }}
         />
       </div>
     </section>

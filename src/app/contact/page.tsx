@@ -275,12 +275,14 @@ export default function ContactPage() {
                 "You get honest feedback either way, no sales pitch.",
                 "If it makes sense to continue, we agree what the first thirty days would look like.",
               ].map((step, i) => (
-                <li key={step} className="flex items-start gap-3">
-                  <span className="pt-0.5 font-display text-lg leading-none text-ivory/35" aria-hidden="true">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <p className="text-sm leading-relaxed text-ivory/85">{step}</p>
-                </li>
+                <Reveal key={step} delay={i * 0.08}>
+                  <li className="flex items-start gap-3">
+                    <span className="pt-0.5 font-display text-lg leading-none text-ivory/35" aria-hidden="true">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <p className="text-sm leading-relaxed text-ivory/85">{step}</p>
+                  </li>
+                </Reveal>
               ))}
             </ol>
           </Container>
