@@ -1,218 +1,250 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { SITUATION_KEY } from "@/sections/Home/VisitorRecognition";
+import { track } from "@/lib/analytics";
 
-// Suman's design, second pass: the film is gone. A sketchbook video
-// decorated this section without explaining it, so the right panel is
-// now a drawn diagram that does the explaining: three real starting
-// points on the left, the stages each one runs through in the middle,
-// one shared outcome on the right. Hovering a path drives both the
-// diagram and the cards, and softens the siblings, so the section
-// behaves like a crossroads rather than three equal boxes.
 const PATHS = [
   {
     n: "01",
     title: "Build the foundation",
-    body: "For founders starting with an idea, before anything is built.",
-    start: "An idea",
+    body: "For a business still carrying several possible identities and no governing decision.",
+    start: "Possibility",
+    finish: "A clear position",
     href: "/services#desire",
     tint: "#6F4E37",
-    route: ["Question", "Architect", "Signal"],
+    route: ["Question", "Position", "Build", "Launch"],
+    outcome: "A brand people can understand before they are asked to buy.",
     icon: <><path d="M20 30V16" /><path d="M20 20c-4 0-7-3-7-7 4 0 7 3 7 7z" /><path d="M20 22c4 0 7-3 7-7-4 0-7 3-7 7z" /></>,
   },
   {
     n: "02",
-    title: "Reposition an existing brand",
-    body: "For brands that feel unclear, inconsistent, or hard to explain in one sentence.",
-    start: "A brand that drifted",
+    title: "Reposition the whole system",
+    body: "For an existing brand whose offer, identity and communication no longer point in one direction.",
+    start: "Drift",
+    finish: "Coherence",
     href: "/services#situation",
     tint: "#556B4A",
-    route: ["Decode", "Architect", "Signal"],
+    route: ["Decode", "Refuse", "Align", "Signal"],
+    outcome: "Recognition begins compounding instead of restarting on every channel.",
     icon: <><circle cx="16" cy="22" r="7" /><circle cx="24" cy="22" r="7" /><circle cx="20" cy="15" r="7" /></>,
   },
   {
     n: "03",
-    title: "Create ongoing consistency",
-    body: "For brands that need ongoing content, consistency, and someone watching the whole system.",
-    start: "A brand in motion",
+    title: "Keep the brand coherent in motion",
+    body: "For a sound brand that needs ongoing content, judgement and consistency across changing channels.",
+    start: "Momentum",
+    finish: "Memory",
     href: "/services#offerings",
-    tint: "#8a6b3d",
-    route: ["Signal", "Influence", "Compound"],
+    tint: "#8A6B3D",
+    route: ["Plan", "Create", "Learn", "Compound"],
+    outcome: "Every new piece strengthens the same meaning instead of adding another personality.",
     icon: <><circle cx="20" cy="20" r="9" /><path d="M20 8v4M20 28v4M8 20h4M28 20h4M20 14l3 6-3 6-3-6z" /></>,
   },
-];
+] as const;
 
-// One curve per path: from its own entry point, into the shared trunk,
-// out to the single outcome.
+const SITUATION_TO_PATH: Record<string, number> = {
+  idea: 0,
+  inconsistent: 1,
+  outgrown: 1,
+};
+
+const SITUATION_COPY: Record<string, string> = {
+  idea: "You said the business keeps changing direction before anything settles.",
+  inconsistent: "You said people see the brand, but every version feels different.",
+  outgrown: "You said the business has grown while the brand still looks behind.",
+};
+
 const CURVES = [
-  "M150 60 C 240 60, 250 150, 330 150",
-  "M150 150 C 240 150, 250 150, 330 150",
-  "M150 240 C 240 240, 250 150, 330 150",
+  "M136 62 C 238 62, 252 150, 340 150",
+  "M136 150 C 238 150, 252 150, 340 150",
+  "M136 238 C 238 238, 252 150, 340 150",
 ];
-const ENTRY_Y = [60, 150, 240];
+const ENTRY_Y = [62, 150, 238];
 
 export function ThreePathsSection() {
-  const [openPath, setOpenPath] = useState<number | null>(null);
-  const shown = openPath ?? 1;
+  const [recommendedPath, setRecommendedPath] = useState(1);
+  const [situation, setSituation] = useState<string | null>(null);
+  const [activePath, setActivePath] = useState<number | null>(null);
+  const shown = activePath ?? recommendedPath;
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(SITUATION_KEY);
+      if (!saved) return;
+      setSituation(saved);
+      setRecommendedPath(SITUATION_TO_PATH[saved] ?? 1);
+    } catch {}
+  }, []);
+
+  const recommendation = PATHS[recommendedPath];
 
   return (
-    <section
-      className="relative transition-colors duration-700"
-      style={{ backgroundColor: openPath === null ? "#F2F0E8" : `${PATHS[openPath].tint}0E` }}
-    >
+    <section className="relative overflow-hidden bg-[#F2F0E8] py-20 sm:py-28">
       <style>{`
-        @keyframes tatva-flow { to { stroke-dashoffset: -28; } }
-        @keyframes tatva-breathe { 0%,100% { opacity: .4 } 50% { opacity: 1 } }
+        @keyframes tatva-flow { to { stroke-dashoffset: -34; } }
+        @keyframes tatva-pulse { 0%,100% { opacity: .35; transform: scale(.94) } 50% { opacity: 1; transform: scale(1.08) } }
         @media (prefers-reduced-motion: reduce) {
-          .tatva-flow, .tatva-breathe { animation: none !important; }
+          .tatva-flow, .tatva-pulse { animation: none !important; }
         }
       `}</style>
 
-      <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
-        <div className="flex items-center px-6 pb-4 pt-14 sm:px-12 lg:px-14 lg:py-14">
-          <div className="max-w-sm">
-            <p className="text-xs font-medium uppercase tracking-[0.25em]" style={{ color: "#8a6b3d" }}>
-              Three paths
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{ background: `radial-gradient(circle at 72% 38%, ${PATHS[shown].tint}18, transparent 34%)` }}
+      />
+
+      <div className="relative mx-auto max-w-[92rem] px-6 sm:px-10 lg:px-14">
+        <div className="grid gap-10 border-b border-soil/10 pb-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.26em]" style={{ color: "#8A6B3D" }}>
+              Three ways into the work
             </p>
-            <h2 className="mt-4 font-display text-[clamp(1.9rem,3.6vw,3rem)] font-normal leading-[1.1] text-soil">
-              The work meets the business wherever it stands.
+            <h2 className="mt-4 max-w-2xl font-display text-[clamp(2.6rem,5vw,5.2rem)] font-normal leading-[0.96] text-soil">
+              The right scope begins with what is actually broken.
             </h2>
-            <span aria-hidden="true" className="mt-5 block h-px w-14" style={{ backgroundColor: "#C6A97A" }} />
-            <p className="mt-5 text-sm leading-relaxed text-foreground-secondary">
-              Three starting points, the same six stages underneath, one place they all arrive.
-            </p>
-            <p className="mt-6 text-xs uppercase tracking-[0.16em] text-foreground-secondary/70">
-              Hover a path to follow it
-            </p>
+          </div>
+
+          <div className="lg:justify-self-end">
+            <div className="max-w-xl rounded-2xl border border-soil/10 bg-white/55 p-5 shadow-[0_20px_70px_-50px_rgba(39,34,30,0.55)] sm:p-6">
+              <div className="flex items-center gap-3">
+                <span className="relative flex h-8 w-8 items-center justify-center" aria-hidden="true">
+                  <span className="tatva-pulse absolute inset-0 rounded-full border" style={{ borderColor: `${recommendation.tint}66`, animation: "tatva-pulse 3.4s ease-in-out infinite" }} />
+                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: recommendation.tint }} />
+                </span>
+                <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em]" style={{ color: recommendation.tint }}>
+                  Recommended from your diagnosis
+                </p>
+              </div>
+              <p className="mt-4 font-display text-2xl leading-tight text-soil sm:text-3xl">{recommendation.title}</p>
+              <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">
+                {situation ? SITUATION_COPY[situation] : "Most existing businesses need alignment before they need more output."}
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* The explainer: where each path enters, what it moves through,
-            and where all three arrive. */}
-        <div className="flex items-center px-4 pb-6 sm:px-8 lg:py-14">
-          <svg
-            viewBox="0 0 900 300"
-            className="h-auto w-full"
-            role="img"
-            aria-label="Three starting points running through the same stages toward one recognised brand"
-          >
-            {CURVES.map((d, i) => {
-              const on = openPath === null || openPath === i;
-              return (
-                <g key={i}>
-                  <path d={d} fill="none" stroke={PATHS[i].tint} strokeWidth={1} opacity={on ? 0.3 : 0.08} style={{ transition: "opacity 500ms" }} />
-                  <path
-                    className="tatva-flow"
-                    d={d}
-                    fill="none"
-                    stroke={PATHS[i].tint}
-                    strokeWidth={openPath === i ? 2.2 : 1.3}
-                    strokeLinecap="round"
-                    strokeDasharray="5 9"
-                    opacity={on ? 1 : 0.12}
-                    style={{
-                      animation: `tatva-flow ${openPath === i ? 1.1 : 2.6}s linear infinite`,
-                      transition: "opacity 500ms, stroke-width 500ms",
-                    }}
-                  />
-                </g>
-              );
-            })}
+        <div className="mt-10 grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+          <div className="order-2 lg:order-1">
+            <ul className="space-y-4">
+              {PATHS.map((path, index) => {
+                const isRecommended = recommendedPath === index;
+                const isActive = shown === index;
+                const isDimmed = activePath !== null && !isActive;
 
-            {PATHS.map((p, i) => {
-              const on = openPath === null || openPath === i;
-              return (
-                <g key={p.n} opacity={on ? 1 : 0.22} style={{ transition: "opacity 500ms" }}>
-                  <circle
-                    className="tatva-breathe"
-                    cx={150}
-                    cy={ENTRY_Y[i]}
-                    r={6}
-                    fill={p.tint}
-                    style={{ animation: `tatva-breathe 3.6s ease-in-out ${i * 0.5}s infinite` }}
-                  />
-                  <text x={132} y={ENTRY_Y[i] + 5} textAnchor="end" fontSize={15} fill="#27221E" opacity={0.78}>
-                    {p.start}
-                  </text>
-                </g>
-              );
-            })}
+                return (
+                  <li key={path.n} style={{ opacity: isDimmed ? 0.42 : 1 }} className="transition-opacity duration-500">
+                    <Link
+                      href={path.href}
+                      onMouseEnter={() => setActivePath(index)}
+                      onMouseLeave={() => setActivePath(null)}
+                      onFocus={() => setActivePath(index)}
+                      onBlur={() => setActivePath(null)}
+                      onClick={() => track("service_path_opened", { path: path.title, recommended: isRecommended, page: "home" })}
+                      className="group relative grid min-h-[11rem] gap-5 overflow-hidden rounded-2xl border p-6 transition-all duration-500 hover:-translate-y-0.5 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-7"
+                      style={{
+                        borderColor: isActive ? `${path.tint}66` : "rgba(39,34,30,0.11)",
+                        backgroundColor: isActive ? "rgba(255,255,255,0.88)" : "rgba(255,255,255,0.48)",
+                        boxShadow: isActive ? `0 28px 80px -52px ${path.tint}` : "none",
+                      }}
+                    >
+                      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1 transition-transform duration-500" style={{ backgroundColor: path.tint, transform: isActive ? "scaleY(1)" : "scaleY(.18)" }} />
 
-            {/* The trunk: the stages this path actually runs through */}
-            <line x1={330} y1={150} x2={650} y2={150} stroke="#C6A97A" strokeWidth={1.6} strokeLinecap="round" />
-            {PATHS[shown].route.map((step, s) => (
-              <g key={step}>
-                <circle cx={380 + s * 100} cy={150} r={4.5} fill="#C6A97A" />
-                <text x={380 + s * 100} y={128} textAnchor="middle" fontSize={13} fill="#27221E" opacity={0.72}>
-                  {step}
-                </text>
-              </g>
-            ))}
+                      <span className="flex h-14 w-14 items-center justify-center rounded-full border border-soil/10 bg-white/55">
+                        <svg viewBox="0 0 40 40" className="h-7 w-7" fill="none" stroke={path.tint} strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round">
+                          {path.icon}
+                        </svg>
+                      </span>
 
-            {/* The outcome */}
-            <circle cx={690} cy={150} r={30} fill="none" stroke="#C6A97A" strokeWidth={1.2} opacity={0.45} />
-            <circle className="tatva-breathe" cx={690} cy={150} r={8} fill="#C6A97A" style={{ animation: "tatva-breathe 3.6s ease-in-out infinite" }} />
-            <text x={734} y={145} fontSize={19} fill="#27221E" className="font-display">
-              A brand people
-            </text>
-            <text x={734} y={170} fontSize={19} fill="#27221E" className="font-display">
-              recognise
-            </text>
-          </svg>
+                      <span>
+                        <span className="flex flex-wrap items-center gap-3">
+                          <span className="text-[0.62rem] uppercase tracking-[0.2em] text-soil/45">Path {path.n}</span>
+                          {isRecommended && (
+                            <span className="rounded-full px-3 py-1 text-[0.58rem] font-medium uppercase tracking-[0.16em] text-white" style={{ backgroundColor: path.tint }}>
+                              Your likely fit
+                            </span>
+                          )}
+                        </span>
+                        <span className="mt-2 block font-display text-2xl leading-tight text-soil sm:text-3xl">{path.title}</span>
+                        <span className="mt-3 block max-w-xl text-sm leading-relaxed text-foreground-secondary">{path.body}</span>
+                      </span>
+
+                      <span className="self-end text-xs font-medium uppercase tracking-[0.16em] sm:self-center" style={{ color: path.tint }}>
+                        See the roadmap <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div className="order-1 overflow-hidden rounded-[1.75rem] border border-soil/10 bg-white/45 p-4 shadow-[0_34px_100px_-70px_rgba(39,34,30,0.6)] sm:p-7 lg:order-2">
+            <div className="flex items-center justify-between border-b border-soil/10 pb-5">
+              <div>
+                <p className="text-[0.62rem] uppercase tracking-[0.2em] text-soil/40">Active transformation</p>
+                <p className="mt-1 font-display text-2xl text-soil">{PATHS[shown].start} → {PATHS[shown].finish}</p>
+              </div>
+              <span className="rounded-full px-3 py-1 text-[0.62rem] uppercase tracking-[0.16em] text-white" style={{ backgroundColor: PATHS[shown].tint }}>
+                {PATHS[shown].n}
+              </span>
+            </div>
+
+            <svg viewBox="0 0 900 310" className="mt-5 h-auto w-full" role="img" aria-label={`${PATHS[shown].title}: ${PATHS[shown].route.join(" to ")}, ending in a recognised brand`}>
+              {CURVES.map((curve, index) => {
+                const active = shown === index;
+                return (
+                  <g key={curve} opacity={active ? 1 : 0.14} style={{ transition: "opacity 500ms" }}>
+                    <path d={curve} fill="none" stroke={PATHS[index].tint} strokeWidth={active ? 2.2 : 1} strokeLinecap="round" opacity={0.35} />
+                    <path
+                      className="tatva-flow"
+                      d={curve}
+                      fill="none"
+                      stroke={PATHS[index].tint}
+                      strokeWidth={active ? 2.7 : 1.2}
+                      strokeLinecap="round"
+                      strokeDasharray="6 10"
+                      style={{ animation: `tatva-flow ${active ? 1.15 : 2.8}s linear infinite` }}
+                    />
+                    <circle cx={136} cy={ENTRY_Y[index]} r={active ? 7 : 4} fill={PATHS[index].tint} />
+                    <text x={118} y={ENTRY_Y[index] + 5} textAnchor="end" fontSize={14} fill="#27221E" opacity={0.72}>{PATHS[index].start}</text>
+                  </g>
+                );
+              })}
+
+              <line x1={340} y1={150} x2={674} y2={150} stroke={PATHS[shown].tint} strokeWidth={2} strokeLinecap="round" opacity={0.5} />
+              {PATHS[shown].route.map((step, index) => {
+                const x = 382 + index * 88;
+                return (
+                  <g key={step}>
+                    <circle cx={x} cy={150} r={6} fill={PATHS[shown].tint} />
+                    <circle className="tatva-pulse" cx={x} cy={150} r={12} fill="none" stroke={PATHS[shown].tint} opacity={0.24} style={{ transformOrigin: `${x}px 150px`, animation: `tatva-pulse 3.2s ease-in-out ${index * 0.35}s infinite` }} />
+                    <text x={x} y={122} textAnchor="middle" fontSize={13} fill="#27221E" opacity={0.72}>{step}</text>
+                  </g>
+                );
+              })}
+
+              <circle cx={718} cy={150} r={38} fill="none" stroke={PATHS[shown].tint} strokeWidth={1.2} opacity={0.35} />
+              <circle className="tatva-pulse" cx={718} cy={150} r={10} fill={PATHS[shown].tint} style={{ transformOrigin: "718px 150px", animation: "tatva-pulse 3.4s ease-in-out infinite" }} />
+              <text x={768} y={143} fontSize={19} fill="#27221E" className="font-display">A meaning people</text>
+              <text x={768} y={168} fontSize={19} fill="#27221E" className="font-display">can recognise</text>
+            </svg>
+
+            <div className="mt-2 rounded-2xl border border-soil/10 bg-[#F7F3EA] p-5 sm:p-6">
+              <p className="text-[0.62rem] uppercase tracking-[0.2em]" style={{ color: PATHS[shown].tint }}>What this path changes</p>
+              <p className="mt-3 font-display text-2xl leading-snug text-soil">{PATHS[shown].outcome}</p>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div className="relative px-6 pb-14 sm:px-10">
-        <ul className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-3">
-          {PATHS.map((p, i) => {
-            const dimmed = openPath !== null && openPath !== i;
-            return (
-              <li
-                key={p.n}
-                className="transition-all duration-500"
-                style={{ opacity: dimmed ? 0.42 : 1, filter: dimmed ? "saturate(0.5)" : "none" }}
-              >
-                <Link
-                  href={p.href}
-                  onMouseEnter={() => setOpenPath(i)}
-                  onMouseLeave={() => setOpenPath(null)}
-                  onFocus={() => setOpenPath(i)}
-                  onBlur={() => setOpenPath(null)}
-                  className="group flex h-full flex-col rounded-2xl border p-7 transition-all duration-500 hover:-translate-y-1"
-                  style={{
-                    borderColor: openPath === i ? `${p.tint}55` : "rgba(39,34,30,0.10)",
-                    backgroundColor: openPath === i ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.55)",
-                    boxShadow: openPath === i ? `0 24px 60px -30px ${p.tint}88` : "none",
-                  }}
-                >
-                  <span className="flex items-center gap-4">
-                    <span className="rounded-2xl px-2.5 py-1 font-display text-sm text-ivory" style={{ backgroundColor: p.tint }}>
-                      {p.n}
-                    </span>
-                    <span className="flex h-14 w-14 items-center justify-center rounded-full border border-soil/12">
-                      <svg viewBox="0 0 40 40" className="h-7 w-7" fill="none" stroke={p.tint} strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round">
-                        {p.icon}
-                      </svg>
-                    </span>
-                  </span>
-                  <span className="mt-5 block font-display text-2xl font-normal leading-tight text-soil">{p.title}</span>
-                  <span className="mt-3 block text-sm leading-relaxed text-foreground-secondary">{p.body}</span>
-                  <span className="mt-auto pt-6 text-xs font-medium uppercase tracking-[0.16em]" style={{ color: p.tint }}>
-                    Explore path{" "}
-                    <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4 text-xs uppercase tracking-[0.16em] text-foreground-secondary">
-          <span>Unsure where to start?</span>
-          <span aria-hidden="true" className="h-4 w-px bg-soil/20" />
-          <Link href="/services#health" className="link-underline font-medium" style={{ color: "#8a6b3d" }}>
-            Take the clarity check <span aria-hidden="true">→</span>
+        <div className="mt-10 flex flex-col items-center justify-between gap-5 rounded-2xl border border-soil/10 bg-white/40 px-6 py-5 text-center sm:flex-row sm:text-left">
+          <p className="text-sm leading-relaxed text-foreground-secondary">
+            A recommendation is a starting hypothesis, not a package pushed before the business is understood.
+          </p>
+          <Link href="/services#health" className="shrink-0 text-xs font-medium uppercase tracking-[0.16em]" style={{ color: "#8A6B3D" }}>
+            Check the fit properly <span aria-hidden="true">→</span>
           </Link>
         </div>
       </div>
