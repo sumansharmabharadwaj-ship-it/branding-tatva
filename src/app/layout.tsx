@@ -42,10 +42,6 @@ export const metadata: Metadata = {
     siteName: site.name,
     type: "website",
     locale: "en_US",
-    // Reuses the opengraph-image.tsx/twitter-image.tsx route convention
-    // already generating a real image at build time — this makes that
-    // explicit instead of relying on Next's implicit file-convention
-    // pickup alone.
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
@@ -57,16 +53,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#27221E",
+  themeColor: "#142018",
   width: "device-width",
   initialScale: 1,
 };
 
-// Structured data — verified facts only. No aggregateRating/review markup
-// since no real testimonials exist yet (per brief: never fake reviews).
-// Both nodes carry an @id so other pages' schema (BlogPosting's
-// author/publisher, case-study Service schema) can reference them
-// directly instead of duplicating the same facts inline everywhere.
 const PERSON_ID = `${site.url}/#person`;
 const ORG_ID = `${site.url}/#organization`;
 const SOCIAL_LINKS = [site.social.linkedin, site.social.instagram, site.social.facebook].filter(Boolean);
@@ -97,15 +88,13 @@ const structuredData = {
         "Remote / Worldwide",
       ],
       image: `${site.url}/opengraph-image`,
-      logo: `${site.url}/opengraph-image`,
+      logo: `${site.url}/icon`,
       sameAs: SOCIAL_LINKS,
     },
   ],
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${displayFont.variable} ${bodyFont.variable}`}>
       <body>
