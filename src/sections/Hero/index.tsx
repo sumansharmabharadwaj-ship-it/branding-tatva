@@ -42,6 +42,10 @@ export function CinematicHero({
   const cameraY = useTransform(scrollYProgress, [0, 1], [0, -48]);
   const sceneBrightness = useTransform(scrollYProgress, [0, 0.42, 1], [1, 0.72, 0.46]);
   const sceneBlur = useTransform(scrollYProgress, [0, 0.62, 1], [0, 0, 3]);
+  const sceneFilter = useTransform(
+    [sceneBrightness, sceneBlur],
+    ([brightness, blur]) => `brightness(${brightness}) blur(${blur}px)`,
+  );
   const openingOpacity = useTransform(scrollYProgress, [0, 0.28, 0.52], [1, 1, 0]);
   const openingY = useTransform(scrollYProgress, [0, 0.5], [0, -72]);
   const questionOpacity = useTransform(scrollYProgress, [0.38, 0.62, 0.9], [0, 1, 1]);
@@ -68,10 +72,7 @@ export function CinematicHero({
                   clipPath: aperture,
                   scale: cameraScale,
                   y: cameraY,
-                  filter: useTransform(
-                    [sceneBrightness, sceneBlur],
-                    ([brightness, blur]) => `brightness(${brightness}) blur(${blur}px)`,
-                  ),
+                  filter: sceneFilter,
                 }
           }
         >
