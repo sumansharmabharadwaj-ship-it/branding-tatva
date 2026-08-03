@@ -28,11 +28,8 @@ import { ContextualCTA } from "@/components/conversion/ContextualCTA";
 import { ImagineYourBrand } from "@/sections/Services/ImagineYourBrand";
 import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
-import { LazyAmbientShader } from "@/components/LazyAmbientShader";
 import { Magnetic } from "@/components/Magnetic";
-import { DustMotes } from "@/components/DustMotes";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { SkyLife } from "@/components/SkyLife";
 import { MOOD } from "@/lib/sectionWash";
 import { offerings } from "@/data/services";
 
@@ -72,6 +69,12 @@ const JUMP_ITEMS = [
   { href: "#desire", label: "Packages" },
 ];
 
+// Ambient consolidation (Suman's review: "duplicated ambient effects",
+// "one motion language"): this page stacked twenty five atmosphere
+// layers — six shaders, particle fields, and the veil/handoff seams —
+// so every chapter competed with its own background. The seams stay as
+// the site's one transition grammar; the shader repeats and particle
+// fields are gone, leaving the filmed footage to carry atmosphere.
 export default async function ServicesPage() {
   // Market aware pricing (governing bible §10): the visitor's explicit
   // region cookie always wins; otherwise Vercel's country header picks
@@ -294,7 +297,6 @@ export default async function ServicesPage() {
             on the page. Editorial rows rather than a card grid; each
             offering keeps its own accent from the data. */}
         <section id="offerings" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
-          <LazyAmbientShader opacity={0.1} />
           <Container className="relative max-w-6xl">
             <div className="grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-20">
               <Reveal className="lg:sticky lg:top-28 lg:self-start">
@@ -367,7 +369,6 @@ export default async function ServicesPage() {
             seamlessly into Authority's identical charcoal. */}
         <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <SceneVeil color="#0E1714" />
-          <LazyAmbientShader opacity={0.1} />
           <div className="relative">
             <VerifiedOutcome />
           </div>
@@ -424,7 +425,6 @@ export default async function ServicesPage() {
               above the cloud sea at long, irregular intervals — the one
               thing moving higher than the summit's own stillness,
               underlining elevation without disturbing it. */}
-          <SkyLife density="rare" solitary band={[8, 26]} color="rgba(18,22,24,0.75)" />
           {/* Overlay stays a step cooler than the stone base and a touch
               denser at the top where the sky sits — the summit clip is
               already graded slate, so this only steadies type contrast
@@ -440,7 +440,6 @@ export default async function ServicesPage() {
           {/* Scene dissolve: Authority's charcoal handing off into
               Stakes' stone. */}
           <SceneVeil color="#171A17" />
-          <LazyAmbientShader opacity={0.1} />
           {/* Same ghost watermark word technique Home ("ELEMENTS"), About
               ("WHY"), and Blog ("NOTES") already use, extended here — a
               recurring graphic motif tying new sections into the same
@@ -541,7 +540,6 @@ export default async function ServicesPage() {
                 "linear-gradient(180deg, rgba(23,32,25,0.55) 0%, rgba(23,32,25,0.28) 45%, rgba(23,32,25,0.6) 100%)",
             }}
           />
-          <DustMotes />
           {/* Scene dissolve: Education's blue mist hands into the river
               study. */}
           <SceneVeil color="#1A2026" heightClass="h-[15vh]" />
@@ -569,7 +567,6 @@ export default async function ServicesPage() {
             before any email is requested. Charcoal interstitial
             between the light CTA breath and the forest health check. */}
         <section id="imagine" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
-          <LazyAmbientShader opacity={0.1} />
           <div className="relative">
             <ImagineYourBrand />
           </div>
@@ -642,7 +639,6 @@ export default async function ServicesPage() {
             strategy room that closes the page. */}
         <section id="audit" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <SceneVeil color="#141A15" />
-          <LazyAmbientShader opacity={0.1} />
           <div className="relative">
             <RecognitionAudit />
           </div>

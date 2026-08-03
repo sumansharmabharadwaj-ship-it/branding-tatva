@@ -13,7 +13,7 @@ import { ElementsSection } from "@/sections/Elements";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
-import { StudioHotspots } from "@/sections/Home/StudioHotspots";
+import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { CinematicHero } from "@/sections/Hero";
 import { VisitorRecognition } from "@/sections/Home/VisitorRecognition";
 import { ServicePaths } from "@/sections/Home/ServicePaths";
@@ -172,43 +172,11 @@ not repeated here. */}
             actually relate to and that visibly moves; a sketchbook
             mid-thought reads as the strategy work itself, not a mood
             board standing in for it. */}
-        {/* Board scene four: the studio, explored instead of read —
-            "Strategy. Story. Soul." with hotspots opening real places
-            on the site. Credentials stay as the quiet factual line
-            underneath; everything a dot opens is a real destination,
-            never an invented artifact. */}
-        <TexturedDark
-          image="/images/higgsfield-idea-sketch.jpg"
-          video="/videos/higgsfield-idea-sketch.mp4"
-          imagePosition="center"
-          className="py-16 sm:py-24"
-        >
-          <StudioHotspots />
-          <Container className="text-center">
-            <Reveal>
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">About Suman</p>
-              <h2 className="mt-3 font-display text-display-sm font-normal text-ivory">Strategy. Story. Soul.</h2>
-              <p className="mx-auto mt-3 max-w-md text-sm text-ivory/85 sm:text-base">
-                A studio built on psychology, storytelling, and design thinking.
-              </p>
-              <div className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs uppercase tracking-[0.15em] text-ivory/50 sm:text-sm">
-                <span>Suman Sharma</span>
-                <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ivory/30" />
-                <span>M.A. Clinical Psychology</span>
-                <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ivory/30" />
-                <span>B.A. (Hons) English Literature</span>
-                <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ivory/30" />
-                <span>5 real client engagements</span>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.1} className="mx-auto mt-8 max-w-xl">
-              <LinkButton href="/about" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
-                Explore the studio
-              </LinkButton>
-            </Reveal>
-          </Container>
-        </TexturedDark>
+        {/* Suman's layout reference: the studio as a triptych —
+            quote card, the three pillars in a cream centre, and the
+            working wall — replacing the full-bleed video with floating
+            hotspots. */}
+        <StudioTriptych />
 
         {/* Conversion architecture section five: the three commercial
             paths, before the framework teaches the philosophy behind
