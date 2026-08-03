@@ -85,18 +85,56 @@ export function PageLoadVeil() {
           style={{ backgroundColor: "#1B1B1B" }}
           aria-hidden="true"
         >
+          {/* The scarf's wind: an SVG turbulence field displacing a
+              second, masked copy of the scene over the fabric region —
+              the cloth genuinely ripples instead of sitting frozen in
+              the still. SMIL drives the turbulence so it needs no JS
+              per frame; the soft radial mask feathers the displaced
+              region into the untouched base so no seam shows. */}
+          <svg width="0" height="0" aria-hidden="true" className="absolute">
+            <filter id="veil-wind" x="-20%" y="-20%" width="140%" height="140%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.006 0.018" numOctaves="2" seed="7" result="noise">
+                <animate
+                  attributeName="baseFrequency"
+                  dur="2.6s"
+                  values="0.006 0.018;0.011 0.03;0.006 0.018"
+                  repeatCount="indefinite"
+                />
+              </feTurbulence>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="22" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </svg>
+
           {/* The scene itself, breathing: a slow settle from a slight
               push-in plus a small lateral drift — the "wind" read at
-              the scale of the whole frame. Runs longer than the veil
-              lives so the motion never visibly stops. */}
-          <motion.img
-            src="/images/loading-cairn-sunrise.jpg"
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
+              the scale of the whole frame. Base image and the displaced
+              scarf copy live inside ONE animated wrapper so they stay
+              pixel aligned through the drift. */}
+          <motion.div
+            className="absolute inset-0"
             initial={{ scale: 1.12, x: 0 }}
             animate={{ scale: 1.02, x: -16 }}
             transition={{ duration: 4, ease: "linear" }}
-          />
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/loading-cairn-sunrise.jpg"
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/loading-cairn-sunrise.jpg"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{
+                filter: "url(#veil-wind)",
+                maskImage: "radial-gradient(ellipse 26% 22% at 59% 68%, rgba(0,0,0,1) 45%, transparent 78%)",
+                WebkitMaskImage: "radial-gradient(ellipse 26% 22% at 59% 68%, rgba(0,0,0,1) 45%, transparent 78%)",
+              }}
+            />
+          </motion.div>
 
           {/* Two fog banks sliding through the valley band — the same
               soft radial sheets the Services mist chapters use, sized
