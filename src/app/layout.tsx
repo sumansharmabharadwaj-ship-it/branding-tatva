@@ -1,10 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
-import { DeferredCursor } from "@/components/DeferredCursor";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
-import { PrecisionMark } from "@/components/PrecisionMark";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { VideoWarden } from "@/components/VideoWarden";
@@ -135,10 +133,14 @@ export default function RootLayout({
               preference it already respected. */}
           <MotionPreferenceProvider>{children}</MotionPreferenceProvider>
         </SmoothScrollProvider>
-        <DeferredCursor />
         <PageLoadVeil />
+        {/* Cockpit reduction (Suman's review, item 7): the floating
+            brand badge and the cursor illumination were removed — one
+            adaptive header plus one optional sound control is the whole
+            persistent layer now. SectionJumpNav survives only on
+            Services, where it acts as the contextual chapter indicator
+            inside a genuinely long scene. */}
         <AmbientAudio />
-        <PrecisionMark />
         <VideoWarden />
         <Analytics />
         <script

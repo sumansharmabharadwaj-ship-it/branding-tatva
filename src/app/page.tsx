@@ -8,7 +8,6 @@ import { LinkButton } from "@/components/Button";
 import { FAQ } from "@/sections/FAQ";
 import { DustMotes } from "@/components/DustMotes";
 import { Reveal } from "@/components/Reveal";
-import { KineticMarquee } from "@/components/KineticMarquee";
 import { ClipReveal } from "@/components/ClipReveal";
 import { ElementsSection } from "@/sections/Elements";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
@@ -105,18 +104,10 @@ export default function Home() {
             persists and Services reads it back. */}
         <VisitorRecognition />
 
-        {/* Direct feedback that this section, ElementsIntro, the two
-            atmospheric quote breaks below, and Threshold all read as
-            "useless" — cut and the videos kept on disk (not deleted)
-            rather than reused elsewhere for now. What used to live here:
-            a "clarity problem" text passage over cinematic-waterlight.mp4.
-            Marquee now leads straight from Hero into the elements grid. */}
-        {/* Was "EARTH · WATER · FIRE · AIR · SPACE" — direct feedback
-            that bare element names are pure philosophy with zero
-            business meaning, right before the section that explains
-            them. Real branding vocabulary instead, doing actual work
-            instead of decoration. */}
-        <KineticMarquee text="POSITIONING · DISTINCTIVENESS · MENTAL AVAILABILITY · CATEGORY DESIGN · BRAND SALIENCE" />
+        {/* The generic marquee between recognition and proof was cut
+            per Suman's review (item 2): the visitor moves from naming
+            their own situation straight into verified evidence, with
+            no decorative interlude in between. */}
 
         {/* Was flat bg-soil — direct feedback that the heading zone here
             still read as a blank gap between the elements grid above and
