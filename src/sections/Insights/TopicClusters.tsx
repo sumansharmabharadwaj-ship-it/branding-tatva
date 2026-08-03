@@ -85,9 +85,15 @@ export function TopicClusters() {
                     </div>
                     <dl className="space-y-4">
                       {pillar.terms.map((t) => (
-                        <div key={t.term} className="rounded-xl border border-ivory/12 p-4" style={{ backgroundColor: "rgba(244,239,230,0.04)" }}>
+                        <div key={t.term} className="rounded-xl border border-ivory/12 p-4 transition-colors duration-300 hover:border-ivory/30" style={{ backgroundColor: "rgba(244,239,230,0.04)" }}>
                           <dt className="font-display text-lg font-normal text-ivory">{t.term}</dt>
                           <dd className="mt-1 text-sm leading-relaxed text-ivory/80">{t.definition}</dd>
+                          {/* Each term now has its own answer-first page. */}
+                          <dd className="mt-2 text-sm">
+                            <Link href={`/glossary/${t.slug}`} className="link-underline text-sandstone transition-colors duration-300 hover:text-ivory">
+                              The full entry <span aria-hidden="true">→</span>
+                            </Link>
+                          </dd>
                         </div>
                       ))}
                     </dl>

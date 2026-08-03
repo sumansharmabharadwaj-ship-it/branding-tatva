@@ -82,6 +82,17 @@ const structuredData = {
       name: site.founder,
       url: site.url,
       jobTitle: "Brand Strategist",
+      // Entity strategy per the governing bible: knowsAbout carries only
+      // genuine, page-visible areas of expertise — the same vocabulary
+      // the glossary and services actually teach.
+      knowsAbout: [
+        "Brand positioning",
+        "Verbal identity",
+        "Brand recognition",
+        "Brand architecture",
+        "Distinctive brand assets",
+        "Consumer psychology",
+      ],
       sameAs: SOCIAL_LINKS,
     },
     {
