@@ -1,107 +1,143 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import Link from "next/link";
 
 const LENSES = [
   {
     label: "Psychology",
-    meaning: "How attention, choice, and memory behave.",
+    question: "What did attention choose before logic arrived?",
+    consequence: "Recognition begins where instinct already leans.",
+    accent: "#C6A97A",
+    x: "-11vw",
+    rotate: -3,
   },
   {
     label: "Literature",
-    meaning: "How language creates tone, tension, and recall.",
+    question: "Which words survive after the explanation disappears?",
+    consequence: "Language gives strategy a shape memory can keep.",
+    accent: "#B87458",
+    x: "9vw",
+    rotate: 2,
   },
   {
     label: "Strategy",
-    meaning: "How separate decisions reinforce one market position.",
+    question: "Which decision must every later decision remember?",
+    consequence: "Coherence turns separate moments into one market position.",
+    accent: "#9AA184",
+    x: "0vw",
+    rotate: 0,
   },
 ] as const;
 
-// This scene sits directly after verified work. Its job is therefore
-// authority, rather than another invitation. The case studies answer
-// "can the work create change?" and this bridge answers the next
-// question: "what kind of thinking produced those decisions?"
-export function ClarityCTA() {
+function LensBeat({
+  index,
+  progress,
+  reduced,
+}: {
+  index: number;
+  progress: ReturnType<typeof useScroll>["scrollYProgress"];
+  reduced: boolean | null;
+}) {
+  const lens = LENSES[index];
+  const start = index * 0.22 + 0.08;
+  const peak = start + 0.12;
+  const end = start + 0.28;
+  const opacity = useTransform(progress, [start, peak, end], [0, 1, 0]);
+  const y = useTransform(progress, [start, peak, end], [70, 0, -55]);
+  const scale = useTransform(progress, [start, peak, end], [0.94, 1, 1.04]);
+  const questionX = useTransform(progress, [start, peak], [index % 2 === 0 ? -80 : 80, 0]);
+
   return (
-    <section
-      aria-labelledby="thinking-behind-work"
-      className="relative overflow-hidden"
-      style={{ backgroundColor: "#17140f" }}
+    <motion.div
+      className="absolute inset-0 flex items-center px-6 sm:px-12 lg:px-20"
+      style={reduced ? undefined : { opacity, y, scale }}
+      aria-hidden={index !== 0 ? undefined : false}
     >
-      <div className="grid min-h-[46rem] items-stretch lg:grid-cols-[0.92fr_1.08fr]">
-        <div className="relative z-10 flex items-center px-6 py-20 sm:px-12 sm:py-24 lg:px-16 xl:px-24">
-          <div className="max-w-xl">
-            <p className="text-xs font-medium uppercase tracking-[0.25em] text-sandstone">
-              Behind the evidence
-            </p>
-            <h2
-              id="thinking-behind-work"
-              className="mt-5 font-display text-[clamp(2.35rem,4.8vw,4.35rem)] font-normal leading-[1.02] text-ivory"
-            >
-              Results show what changed.
-              <span className="mt-2 block italic text-clay">The decisions reveal why.</span>
-            </h2>
-            <p className="mt-7 max-w-lg text-base leading-relaxed text-ivory/72 sm:text-lg">
-              Every project is read through three connected lenses. Together they turn scattered observations into one position people can understand and remember.
-            </p>
+      <div className={`w-full ${index === 1 ? "text-right" : index === 2 ? "mx-auto text-center" : "text-left"}`}>
+        <p className="text-[0.62rem] font-medium uppercase tracking-[0.32em]" style={{ color: lens.accent }}>
+          Lens {String(index + 1).padStart(2, "0")} · {lens.label}
+        </p>
+        <motion.h2
+          className={`mt-6 font-display text-[clamp(2.8rem,7vw,7rem)] font-normal leading-[0.92] tracking-[-0.045em] text-ivory ${index === 2 ? "mx-auto max-w-5xl" : "max-w-4xl"} ${index === 1 ? "ml-auto" : ""}`}
+          style={reduced ? undefined : { x: questionX }}
+        >
+          {lens.question}
+        </motion.h2>
+        <p className={`mt-7 max-w-xl text-sm leading-relaxed text-ivory/62 sm:text-base ${index === 1 ? "ml-auto" : index === 2 ? "mx-auto" : ""}`}>
+          {lens.consequence}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
 
-            <div className="mt-10 border-y border-ivory/12">
-              {LENSES.map((lens, index) => (
-                <div
-                  key={lens.label}
-                  className="group grid grid-cols-[2.5rem_1fr] gap-4 border-b border-ivory/10 py-5 last:border-b-0 sm:grid-cols-[3rem_9rem_1fr]"
-                >
-                  <span className="font-display text-xl text-sandstone/70">0{index + 1}</span>
-                  <span className="font-display text-xl text-ivory sm:text-2xl">{lens.label}</span>
-                  <span className="col-start-2 text-sm leading-relaxed text-ivory/58 sm:col-start-3">
-                    {lens.meaning}
-                  </span>
-                </div>
-              ))}
-            </div>
+export function ClarityCTA() {
+  const ref = useRef<HTMLElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
-            <Link
-              href="/about"
-              className="group mt-9 inline-flex min-h-11 items-center gap-3 rounded-full border border-sandstone/70 px-7 py-3 text-xs font-medium uppercase tracking-[0.18em] text-sandstone transition-colors duration-300 hover:bg-sandstone/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
-            >
-              See how Suman thinks
-              <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
-          </div>
-        </div>
+  const videoScale = useTransform(scrollYProgress, [0, 1], [1.08, 1.24]);
+  const videoX = useTransform(scrollYProgress, [0, 0.35, 0.7, 1], ["0%", "-4%", "5%", "0%"]);
+  const brightness = useTransform(scrollYProgress, [0, 0.32, 0.67, 1], [0.5, 0.68, 0.56, 0.34]);
+  const videoFilter = useTransform(brightness, (value) => `brightness(${value}) saturate(0.9)`);
+  const aperture = useTransform(scrollYProgress, [0.76, 1], ["inset(0% 0% 0% 0% round 0rem)", "inset(8% 12% 8% 12% round 2.5rem)"]);
+  const finalOpacity = useTransform(scrollYProgress, [0.78, 0.9], [0, 1]);
+  const finalY = useTransform(scrollYProgress, [0.78, 0.92], [50, 0]);
 
-        <div className="relative min-h-[30rem] lg:min-h-full">
+  return (
+    <section ref={ref} aria-label="The thinking behind the evidence" className="relative h-[300svh] bg-soil">
+      <div className="sticky top-0 h-svh overflow-hidden">
+        <motion.div
+          className="absolute inset-0"
+          style={reduced ? undefined : { scale: videoScale, x: videoX, filter: videoFilter, clipPath: aperture }}
+        >
           <BackgroundVideo
             video="/videos/higgsfield-idea-sketch.mp4"
             poster="/images/higgsfield-idea-sketch.jpg"
             imagePosition="center 55%"
-            parallax
           />
+        </motion.div>
 
-          <div
-            aria-hidden="true"
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(90deg, #17140f 0%, rgba(23,20,15,0.4) 22%, rgba(23,20,15,0.08) 58%, rgba(23,20,15,0.28) 100%)",
-            }}
-          />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(20,17,14,0.08),rgba(20,17,14,0.88)_78%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/28 via-transparent to-black/72" />
 
-          <div className="absolute inset-x-6 bottom-8 sm:inset-x-10 sm:bottom-10 lg:left-auto lg:right-10 lg:w-[23rem]">
-            <div className="rounded-[1.5rem] border border-ivory/18 bg-soil/72 p-5 backdrop-blur-md sm:p-6">
-              <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-sandstone">
-                The working principle
+        <div className="absolute left-6 top-7 z-20 sm:left-12 sm:top-10 lg:left-20">
+          <p className="text-[0.6rem] font-medium uppercase tracking-[0.3em] text-sandstone/76">Behind the evidence</p>
+          <p className="mt-2 max-w-xs font-display text-lg leading-tight text-ivory/72 sm:text-xl">
+            The result is visible. The judgement that produced it is quieter.
+          </p>
+        </div>
+
+        <div className="relative z-10 h-full">
+          {LENSES.map((_, index) => (
+            <LensBeat key={index} index={index} progress={scrollYProgress} reduced={reduced} />
+          ))}
+
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center px-6 text-center"
+            style={reduced ? undefined : { opacity: finalOpacity, y: finalY }}
+          >
+            <div className="max-w-5xl">
+              <p className="text-[0.62rem] font-medium uppercase tracking-[0.32em] text-sandstone">The author enters</p>
+              <p className="mt-6 font-display text-[clamp(3.2rem,8vw,8rem)] font-normal leading-[0.86] tracking-[-0.055em] text-ivory">
+                Observe widely.
+                <span className="block italic text-clay">Decide narrowly.</span>
               </p>
-              <p className="mt-3 font-display text-2xl leading-snug text-ivory sm:text-3xl">
-                Observe widely. Decide narrowly. Repeat coherently.
+              <p className="mx-auto mt-7 max-w-xl text-sm leading-relaxed text-ivory/62 sm:text-base">
+                Psychology reads behaviour. Literature distils meaning. Strategy makes every expression remember the same decision.
               </p>
-              <div className="mt-5 flex items-center gap-3" aria-hidden="true">
-                <span className="h-2 w-2 rounded-full bg-sandstone" />
-                <span className="h-px flex-1 bg-gradient-to-r from-sandstone/80 to-transparent" />
-              </div>
             </div>
+          </motion.div>
+        </div>
+
+        <div className="absolute bottom-7 left-6 right-6 z-20 flex items-center gap-5 sm:left-12 sm:right-12 lg:left-20 lg:right-20">
+          <span className="text-[0.58rem] uppercase tracking-[0.24em] text-ivory/35">Evidence</span>
+          <div className="h-px flex-1 bg-ivory/12">
+            <motion.div className="h-full origin-left bg-sandstone" style={{ scaleX: scrollYProgress }} />
           </div>
+          <span className="text-[0.58rem] uppercase tracking-[0.24em] text-ivory/35">Author</span>
         </div>
       </div>
     </section>
