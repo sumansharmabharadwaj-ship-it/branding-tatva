@@ -1,9 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { LogoMark } from "@/components/Logo";
 import { site } from "@/data/site";
+
+// useLayoutEffect lands before paint, which is what the reduced motion
+// teardown below needs, but React warns when it runs during SSR. Pick
+// per environment: the branch is stable for the lifetime of the bundle,
+// so hook order never changes between renders.
+const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 // The 2026 loading page, rebuilt to Suman's attached cairn-at-sunrise
 // board: the full scene IS the loading page — snow peaks at first
@@ -49,14 +55,27 @@ const BIRDS = [
 
 export function PageLoadVeil() {
   const prefersReducedMotion = useReducedMotion();
-  const [visible, setVisible] = useState(!prefersReducedMotion);
+  // Both of these used to be seeded from prefersReducedMotion, which
+  // hydrated broken for exactly the people it was meant to protect: the
+  // server has no matchMedia so it always rendered the veil, while a
+  // reduced-motion client returned null on its very first render, and
+  // React threw a hydration mismatch on every page load. They now start
+  // in the same state the server rendered, and the effect below tears
+  // the veil down immediately when reduced motion is on. The teardown
+  // runs in a layout effect on the client so it lands before paint and
+  // nobody sees a frame of veil they asked to be spared.
+  const [visible, setVisible] = useState(true);
   // A hard, animation-independent removal that always wins — see the
   // note on the exit transition below.
-  const [removed, setRemoved] = useState(prefersReducedMotion);
+  const [removed, setRemoved] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    if (prefersReducedMotion) return;
+  useIsomorphicLayoutEffect(() => {
+    if (prefersReducedMotion) {
+      setVisible(false);
+      setRemoved(true);
+      return;
+    }
     const timers = [
       setTimeout(() => setVisible(false), 2750),
       setTimeout(() => setRemoved(true), 3500),
