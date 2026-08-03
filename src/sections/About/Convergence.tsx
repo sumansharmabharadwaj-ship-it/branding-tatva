@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Link from "next/link";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { Container } from "@/components/Container";
 
@@ -50,6 +51,18 @@ export function Convergence() {
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-ivory/85">
           One discipline, practiced where the two overlap: what people notice, what they believe, and what they repeat.
         </p>
+        {/* Reduced motion carries the complete content, including the
+            real decision the diagram resolves into. */}
+        <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-ivory/70">
+          In practice: posting less and saying it sharper took one client&apos;s engagement rate from 0.71% to 2.81%.
+          Psychology chose the moments; language earned them.
+        </p>
+        <Link
+          href="/work/dr-haley-nutrition"
+          className="link-underline mt-2 inline-flex items-center gap-2 text-sm font-medium text-sandstone"
+        >
+          See that decision documented <span aria-hidden="true">→</span>
+        </Link>
       </Container>
     );
   }
@@ -82,6 +95,20 @@ export function Convergence() {
                 One discipline, practiced where the two overlap: what people notice, what they believe, and what they
                 repeat.
               </p>
+              {/* Guide Vol I ch.6 / manual p81: the diagram resolves
+                  into one REAL project decision, so the convergence
+                  reads as practice rather than theory. The claim is
+                  the recorded Dr. Haley outcome (projects.ts). */}
+              <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-ivory/70">
+                In practice: posting less and saying it sharper took one client&apos;s engagement rate from 0.71% to
+                2.81%. Psychology chose the moments; language earned them.
+              </p>
+              <Link
+                href="/work/dr-haley-nutrition"
+                className="link-underline mt-3 inline-flex items-center gap-2 text-sm font-medium text-sandstone transition-colors duration-300 hover:text-ivory"
+              >
+                See that decision documented <span aria-hidden="true">→</span>
+              </Link>
             </motion.div>
           </div>
         </Container>
