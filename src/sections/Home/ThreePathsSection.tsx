@@ -1,7 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { SITUATION_KEY } from "@/sections/Home/VisitorRecognition";
 import { track } from "@/lib/analytics";
 
@@ -13,10 +21,10 @@ const PATHS = [
     start: "Possibility",
     finish: "A clear position",
     href: "/services#desire",
-    tint: "#6F4E37",
+    tint: "#8B6045",
+    atmosphere: "rgba(139,96,69,.34)",
     route: ["Question", "Position", "Build", "Launch"],
     outcome: "A brand people can understand before they are asked to buy.",
-    icon: <><path d="M20 30V16" /><path d="M20 20c-4 0-7-3-7-7 4 0 7 3 7 7z" /><path d="M20 22c4 0 7-3 7-7-4 0-7 3-7 7z" /></>,
   },
   {
     n: "02",
@@ -25,10 +33,10 @@ const PATHS = [
     start: "Drift",
     finish: "Coherence",
     href: "/services#situation",
-    tint: "#556B4A",
+    tint: "#6C7D5A",
+    atmosphere: "rgba(108,125,90,.34)",
     route: ["Decode", "Refuse", "Align", "Signal"],
     outcome: "Recognition begins compounding instead of restarting on every channel.",
-    icon: <><circle cx="16" cy="22" r="7" /><circle cx="24" cy="22" r="7" /><circle cx="20" cy="15" r="7" /></>,
   },
   {
     n: "03",
@@ -37,10 +45,10 @@ const PATHS = [
     start: "Momentum",
     finish: "Memory",
     href: "/services#offerings",
-    tint: "#8A6B3D",
+    tint: "#B28B4D",
+    atmosphere: "rgba(178,139,77,.34)",
     route: ["Plan", "Create", "Learn", "Compound"],
     outcome: "Every new piece strengthens the same meaning instead of adding another personality.",
-    icon: <><circle cx="20" cy="20" r="9" /><path d="M20 8v4M20 28v4M8 20h4M28 20h4M20 14l3 6-3 6-3-6z" /></>,
   },
 ] as const;
 
@@ -56,196 +64,225 @@ const SITUATION_COPY: Record<string, string> = {
   outgrown: "You said the business has grown while the brand still looks behind.",
 };
 
-const CURVES = [
-  "M136 62 C 238 62, 252 150, 340 150",
-  "M136 150 C 238 150, 252 150, 340 150",
-  "M136 238 C 238 238, 252 150, 340 150",
-];
-const ENTRY_Y = [62, 150, 238];
-
 export function ThreePathsSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const prefersReducedMotion = useReducedMotion();
   const [recommendedPath, setRecommendedPath] = useState(1);
   const [situation, setSituation] = useState<string | null>(null);
-  const [activePath, setActivePath] = useState<number | null>(null);
-  const shown = activePath ?? recommendedPath;
+  const [activePath, setActivePath] = useState(0);
+  const [manualPath, setManualPath] = useState(false);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  const horizonY = useTransform(scrollYProgress, [0, 1], ["64%", "35%"]);
+  const fieldScale = useTransform(scrollYProgress, [0, 1], [1.04, 1.18]);
+  const fieldRotate = useTransform(scrollYProgress, [0, 1], [-2, 2]);
+  const routeX = useTransform(scrollYProgress, [0, 1], ["-18%", "18%"]);
+  const wordSpacing = useTransform(scrollYProgress, [0, 1], ["0em", "0.08em"]);
 
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(SITUATION_KEY);
       if (!saved) return;
       setSituation(saved);
-      setRecommendedPath(SITUATION_TO_PATH[saved] ?? 1);
+      const recommendation = SITUATION_TO_PATH[saved] ?? 1;
+      setRecommendedPath(recommendation);
+      setActivePath(recommendation);
     } catch {}
   }, []);
 
-  const recommendation = PATHS[recommendedPath];
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    if (prefersReducedMotion || manualPath) return;
+    const index = Math.min(PATHS.length - 1, Math.floor(value * PATHS.length));
+    setActivePath(index);
+  });
+
+  const active = PATHS[activePath];
+  const isRecommended = activePath === recommendedPath;
+
+  function choosePath(index: number) {
+    setManualPath(true);
+    setActivePath(index);
+    track("service_path_opened", {
+      path: PATHS[index].title,
+      recommended: index === recommendedPath,
+      page: "home",
+    });
+  }
 
   return (
-    <section className="relative overflow-hidden bg-[#F2F0E8] py-20 sm:py-28">
-      <style>{`
-        @keyframes tatva-flow { to { stroke-dashoffset: -34; } }
-        @keyframes tatva-pulse { 0%,100% { opacity: .35; transform: scale(.94) } 50% { opacity: 1; transform: scale(1.08) } }
-        @media (prefers-reduced-motion: reduce) {
-          .tatva-flow, .tatva-pulse { animation: none !important; }
-        }
-      `}</style>
+    <section ref={sectionRef} className="relative h-[330svh] bg-[#ECE7DC] text-soil">
+      <div className="sticky top-0 h-svh min-h-[680px] overflow-hidden">
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-[-8%]"
+          style={prefersReducedMotion ? undefined : { scale: fieldScale, rotate: fieldRotate }}
+        >
+          <div
+            className="absolute inset-0 transition-colors duration-1000"
+            style={{
+              background: `radial-gradient(circle at 50% 42%, ${active.atmosphere}, transparent 30%), linear-gradient(180deg, #f4f0e7 0%, #e7ded0 56%, #cfc1ad 100%)`,
+            }}
+          />
+          <motion.div
+            className="absolute inset-x-[-12%] h-[48%] rounded-[50%] border border-soil/8 bg-white/18 blur-[1px]"
+            style={{ top: horizonY }}
+          />
+          <motion.div
+            className="absolute left-1/2 top-1/2 h-[86vw] w-[86vw] max-h-[70rem] max-w-[70rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-soil/10"
+            animate={prefersReducedMotion ? undefined : { rotate: 360 }}
+            transition={{ duration: 42, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div
+            className="absolute left-1/2 top-1/2 h-[58vw] w-[58vw] max-h-[48rem] max-w-[48rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-soil/8"
+            animate={prefersReducedMotion ? undefined : { rotate: -360 }}
+            transition={{ duration: 34, repeat: Infinity, ease: "linear" }}
+          />
+        </motion.div>
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-60"
-        style={{ background: `radial-gradient(circle at 72% 38%, ${PATHS[shown].tint}18, transparent 34%)` }}
-      />
+        <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-6 pt-7 text-[0.62rem] font-medium uppercase tracking-[0.24em] text-soil/48 sm:px-10 lg:px-14">
+          <span>Three ways into the work</span>
+          <span>{String(activePath + 1).padStart(2, "0")} / 03</span>
+        </div>
 
-      <div className="relative mx-auto max-w-[92rem] px-6 sm:px-10 lg:px-14">
-        <div className="grid gap-10 border-b border-soil/10 pb-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.26em]" style={{ color: "#8A6B3D" }}>
-              Three ways into the work
-            </p>
-            <h2 className="mt-4 max-w-2xl font-display text-[clamp(2.6rem,5vw,5.2rem)] font-normal leading-[0.96] text-soil">
-              The right scope begins with what is actually broken.
-            </h2>
-          </div>
+        <div className="relative z-10 flex h-full flex-col justify-between px-6 pb-8 pt-20 sm:px-10 sm:pb-10 lg:px-14">
+          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+            <div>
+              <p className="max-w-sm text-sm leading-relaxed text-soil/58">
+                {situation
+                  ? SITUATION_COPY[situation]
+                  : "Most businesses do not need more output first. They need to know which problem the output is meant to solve."}
+              </p>
+              <p className="mt-5 text-[0.62rem] font-medium uppercase tracking-[0.2em]" style={{ color: active.tint }}>
+                {isRecommended ? "The route your earlier answer points toward" : "Another possible beginning"}
+              </p>
+            </div>
 
-          <div className="lg:justify-self-end">
-            <div className="max-w-xl rounded-2xl border border-soil/10 bg-white/55 p-5 shadow-[0_20px_70px_-50px_rgba(39,34,30,0.55)] sm:p-6">
-              <div className="flex items-center gap-3">
-                <span className="relative flex h-8 w-8 items-center justify-center" aria-hidden="true">
-                  <span className="tatva-pulse absolute inset-0 rounded-full border" style={{ borderColor: `${recommendation.tint}66`, animation: "tatva-pulse 3.4s ease-in-out infinite" }} />
-                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: recommendation.tint }} />
-                </span>
-                <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em]" style={{ color: recommendation.tint }}>
-                  Recommended from your diagnosis
-                </p>
-              </div>
-              <p className="mt-4 font-display text-2xl leading-tight text-soil sm:text-3xl">{recommendation.title}</p>
-              <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">
-                {situation ? SITUATION_COPY[situation] : "Most existing businesses need alignment before they need more output."}
+            <div className="lg:justify-self-end lg:text-right">
+              <p className="font-display text-[clamp(2.9rem,7vw,7.6rem)] font-normal leading-[0.84] tracking-[-0.055em]">
+                The right scope
+                <br />
+                begins where
+                <br />
+                the signal breaks.
               </p>
             </div>
           </div>
-        </div>
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
-          <div className="order-2 lg:order-1">
-            <ul className="space-y-4">
-              {PATHS.map((path, index) => {
-                const isRecommended = recommendedPath === index;
-                const isActive = shown === index;
-                const isDimmed = activePath !== null && !isActive;
+          <div className="relative flex flex-1 items-center justify-center py-8">
+            <motion.div
+              aria-hidden="true"
+              className="absolute inset-x-[-8%] top-1/2 h-px bg-gradient-to-r from-transparent via-soil/28 to-transparent"
+              style={{ x: routeX }}
+            />
 
-                return (
-                  <li key={path.n} style={{ opacity: isDimmed ? 0.42 : 1 }} className="transition-opacity duration-500">
-                    <Link
-                      href={path.href}
-                      onMouseEnter={() => setActivePath(index)}
-                      onMouseLeave={() => setActivePath(null)}
-                      onFocus={() => setActivePath(index)}
-                      onBlur={() => setActivePath(null)}
-                      onClick={() => track("service_path_opened", { path: path.title, recommended: isRecommended, page: "home" })}
-                      className="group relative grid min-h-[11rem] gap-5 overflow-hidden rounded-2xl border p-6 transition-all duration-500 hover:-translate-y-0.5 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-7"
-                      style={{
-                        borderColor: isActive ? `${path.tint}66` : "rgba(39,34,30,0.11)",
-                        backgroundColor: isActive ? "rgba(255,255,255,0.88)" : "rgba(255,255,255,0.48)",
-                        boxShadow: isActive ? `0 28px 80px -52px ${path.tint}` : "none",
-                      }}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active.n}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 70, filter: "blur(16px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -48, filter: "blur(12px)" }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.72, ease: [0.22, 1, 0.36, 1] }}
+                className="relative w-full max-w-6xl text-center"
+              >
+                <p className="text-[0.62rem] font-medium uppercase tracking-[0.28em]" style={{ color: active.tint }}>
+                  {active.start} becomes {active.finish}
+                </p>
+
+                <motion.h3
+                  className="mx-auto mt-5 max-w-5xl font-display text-[clamp(3.2rem,8vw,8.5rem)] font-normal leading-[0.88] tracking-[-0.055em]"
+                  style={prefersReducedMotion ? undefined : { letterSpacing: wordSpacing }}
+                >
+                  {active.title.split(" ").map((word, index) => (
+                    <motion.span
+                      key={`${active.n}-${word}-${index}`}
+                      className="mr-[0.18em] inline-block"
+                      initial={prefersReducedMotion ? undefined : { opacity: 0, y: 36, rotateX: -24 }}
+                      animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                      transition={{ delay: prefersReducedMotion ? 0 : index * 0.045, duration: 0.6 }}
                     >
-                      <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1 transition-transform duration-500" style={{ backgroundColor: path.tint, transform: isActive ? "scaleY(1)" : "scaleY(.18)" }} />
+                      {word}
+                    </motion.span>
+                  ))}
+                </motion.h3>
 
-                      <span className="flex h-14 w-14 items-center justify-center rounded-full border border-soil/10 bg-white/55">
-                        <svg viewBox="0 0 40 40" className="h-7 w-7" fill="none" stroke={path.tint} strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round">
-                          {path.icon}
-                        </svg>
-                      </span>
+                <p className="mx-auto mt-7 max-w-2xl text-sm leading-relaxed text-soil/62 sm:text-base">
+                  {active.body}
+                </p>
 
-                      <span>
-                        <span className="flex flex-wrap items-center gap-3">
-                          <span className="text-[0.62rem] uppercase tracking-[0.2em] text-soil/45">Path {path.n}</span>
-                          {isRecommended && (
-                            <span className="rounded-full px-3 py-1 text-[0.58rem] font-medium uppercase tracking-[0.16em] text-white" style={{ backgroundColor: path.tint }}>
-                              Your likely fit
-                            </span>
-                          )}
-                        </span>
-                        <span className="mt-2 block font-display text-2xl leading-tight text-soil sm:text-3xl">{path.title}</span>
-                        <span className="mt-3 block max-w-xl text-sm leading-relaxed text-foreground-secondary">{path.body}</span>
+                <div className="mx-auto mt-8 flex max-w-3xl flex-wrap items-center justify-center gap-x-4 gap-y-3">
+                  {active.route.map((step, index) => (
+                    <motion.div
+                      key={step}
+                      className="flex items-center gap-4"
+                      initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: prefersReducedMotion ? 0 : 0.22 + index * 0.12 }}
+                    >
+                      <span className="relative flex h-10 w-10 items-center justify-center rounded-full border border-soil/14 bg-white/28 text-[0.62rem] uppercase tracking-[0.12em]">
+                        {String(index + 1).padStart(2, "0")}
+                        {!prefersReducedMotion && (
+                          <motion.span
+                            className="absolute inset-[-5px] rounded-full border"
+                            style={{ borderColor: `${active.tint}55` }}
+                            animate={{ scale: [0.9, 1.18, 0.9], opacity: [0.12, 0.55, 0.12] }}
+                            transition={{ duration: 3.2, repeat: Infinity, delay: index * 0.35 }}
+                          />
+                        )}
                       </span>
-
-                      <span className="self-end text-xs font-medium uppercase tracking-[0.16em] sm:self-center" style={{ color: path.tint }}>
-                        See the roadmap <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
-                      </span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+                      <span className="text-xs font-medium uppercase tracking-[0.18em] text-soil/52">{step}</span>
+                      {index < active.route.length - 1 && <span aria-hidden="true" className="text-soil/24">→</span>}
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
 
-          <div className="order-1 overflow-hidden rounded-[1.75rem] border border-soil/10 bg-white/45 p-4 shadow-[0_34px_100px_-70px_rgba(39,34,30,0.6)] sm:p-7 lg:order-2">
-            <div className="flex items-center justify-between border-b border-soil/10 pb-5">
-              <div>
-                <p className="text-[0.62rem] uppercase tracking-[0.2em] text-soil/40">Active transformation</p>
-                <p className="mt-1 font-display text-2xl text-soil">{PATHS[shown].start} → {PATHS[shown].finish}</p>
-              </div>
-              <span className="rounded-full px-3 py-1 text-[0.62rem] uppercase tracking-[0.16em] text-white" style={{ backgroundColor: PATHS[shown].tint }}>
-                {PATHS[shown].n}
-              </span>
+          <div className="grid gap-6 border-t border-soil/12 pt-6 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div>
+              <p className="text-[0.62rem] uppercase tracking-[0.2em] text-soil/38">What this route changes</p>
+              <p className="mt-3 max-w-3xl font-display text-[clamp(1.8rem,3.3vw,3.5rem)] leading-[1.02]">
+                {active.outcome}
+              </p>
             </div>
 
-            <svg viewBox="0 0 900 310" className="mt-5 h-auto w-full" role="img" aria-label={`${PATHS[shown].title}: ${PATHS[shown].route.join(" to ")}, ending in a recognised brand`}>
-              {CURVES.map((curve, index) => {
-                const active = shown === index;
-                return (
-                  <g key={curve} opacity={active ? 1 : 0.14} style={{ transition: "opacity 500ms" }}>
-                    <path d={curve} fill="none" stroke={PATHS[index].tint} strokeWidth={active ? 2.2 : 1} strokeLinecap="round" opacity={0.35} />
-                    <path
-                      className="tatva-flow"
-                      d={curve}
-                      fill="none"
-                      stroke={PATHS[index].tint}
-                      strokeWidth={active ? 2.7 : 1.2}
-                      strokeLinecap="round"
-                      strokeDasharray="6 10"
-                      style={{ animation: `tatva-flow ${active ? 1.15 : 2.8}s linear infinite` }}
-                    />
-                    <circle cx={136} cy={ENTRY_Y[index]} r={active ? 7 : 4} fill={PATHS[index].tint} />
-                    <text x={118} y={ENTRY_Y[index] + 5} textAnchor="end" fontSize={14} fill="#27221E" opacity={0.72}>{PATHS[index].start}</text>
-                  </g>
-                );
-              })}
-
-              <line x1={340} y1={150} x2={674} y2={150} stroke={PATHS[shown].tint} strokeWidth={2} strokeLinecap="round" opacity={0.5} />
-              {PATHS[shown].route.map((step, index) => {
-                const x = 382 + index * 88;
-                return (
-                  <g key={step}>
-                    <circle cx={x} cy={150} r={6} fill={PATHS[shown].tint} />
-                    <circle className="tatva-pulse" cx={x} cy={150} r={12} fill="none" stroke={PATHS[shown].tint} opacity={0.24} style={{ transformOrigin: `${x}px 150px`, animation: `tatva-pulse 3.2s ease-in-out ${index * 0.35}s infinite` }} />
-                    <text x={x} y={122} textAnchor="middle" fontSize={13} fill="#27221E" opacity={0.72}>{step}</text>
-                  </g>
-                );
-              })}
-
-              <circle cx={718} cy={150} r={38} fill="none" stroke={PATHS[shown].tint} strokeWidth={1.2} opacity={0.35} />
-              <circle className="tatva-pulse" cx={718} cy={150} r={10} fill={PATHS[shown].tint} style={{ transformOrigin: "718px 150px", animation: "tatva-pulse 3.4s ease-in-out infinite" }} />
-              <text x={768} y={143} fontSize={19} fill="#27221E" className="font-display">A meaning people</text>
-              <text x={768} y={168} fontSize={19} fill="#27221E" className="font-display">can recognise</text>
-            </svg>
-
-            <div className="mt-2 rounded-2xl border border-soil/10 bg-[#F7F3EA] p-5 sm:p-6">
-              <p className="text-[0.62rem] uppercase tracking-[0.2em]" style={{ color: PATHS[shown].tint }}>What this path changes</p>
-              <p className="mt-3 font-display text-2xl leading-snug text-soil">{PATHS[shown].outcome}</p>
-            </div>
+            <Link
+              href={active.href}
+              onClick={() => choosePath(activePath)}
+              className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-soil/18 bg-white/30 px-6 text-xs font-medium uppercase tracking-[0.17em] transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/60"
+            >
+              Enter this route
+              <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
+            </Link>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-5 rounded-2xl border border-soil/10 bg-white/40 px-6 py-5 text-center sm:flex-row sm:text-left">
-          <p className="text-sm leading-relaxed text-foreground-secondary">
-            A recommendation is a starting hypothesis, not a package pushed before the business is understood.
-          </p>
-          <Link href="/services#health" className="shrink-0 text-xs font-medium uppercase tracking-[0.16em]" style={{ color: "#8A6B3D" }}>
-            Check the fit properly <span aria-hidden="true">→</span>
-          </Link>
+        <div className="absolute bottom-8 left-6 z-20 hidden flex-col gap-2 sm:flex lg:left-14" role="tablist" aria-label="Choose a service route">
+          {PATHS.map((path, index) => {
+            const selected = index === activePath;
+            return (
+              <button
+                key={path.n}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => choosePath(index)}
+                className="group flex items-center gap-3 text-left"
+              >
+                <span
+                  className="h-px transition-all duration-500"
+                  style={{ width: selected ? 56 : 20, backgroundColor: selected ? path.tint : "rgba(39,34,30,.22)" }}
+                />
+                <span className={`text-[0.58rem] uppercase tracking-[0.16em] transition-colors ${selected ? "text-soil" : "text-soil/34 group-hover:text-soil/60"}`}>
+                  {path.n} {path.start}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>
