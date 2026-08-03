@@ -1,9 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { KenBurnsImage } from "@/components/KenBurnsImage";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { credentials } from "@/data/about";
 
 const LENSES = [
@@ -14,8 +21,9 @@ const LENSES = [
     discipline: "Clinical psychology",
     question: "What is the audience attending to, avoiding, or misreading?",
     catches: "Assumptions disguised as insight. Messaging that asks for trust before it has earned attention.",
-    changes: "The positioning begins with observable behaviour rather than a founder's preferred description of the business.",
+    changes: "Positioning begins with observable behaviour, not the founder's preferred description of the business.",
     verb: "Observe",
+    tint: "rgba(83,104,75,0.34)",
   },
   {
     id: "name",
@@ -23,9 +31,10 @@ const LENSES = [
     label: "Name",
     discipline: "English literature",
     question: "Which words carry the meaning, and which words merely decorate it?",
-    catches: "Generic language, borrowed category phrases, and a voice that changes every time the channel changes.",
-    changes: "The brand gains a verbal centre: one idea, one rhythm, many expressions without losing recognition.",
+    catches: "Generic language, borrowed category phrases, and a voice that changes whenever the channel changes.",
+    changes: "The brand gains one verbal centre: a recognisable idea and rhythm that can travel without becoming repetitive.",
     verb: "Distil",
+    tint: "rgba(142,88,55,0.30)",
   },
   {
     id: "direct",
@@ -36,152 +45,173 @@ const LENSES = [
     catches: "Beautiful outputs with no sequence, no tension, and no commercial destination.",
     changes: "Every asset becomes part of a journey, from first attention to a believable next action.",
     verb: "Sequence",
+    tint: "rgba(38,52,67,0.34)",
   },
 ] as const;
 
+type LensId = (typeof LENSES)[number]["id"];
+
 export function StudioTriptych() {
-  const [selected, setSelected] = useState<(typeof LENSES)[number]["id"]>("notice");
+  const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const active = LENSES.find((lens) => lens.id === selected) ?? LENSES[0];
-  const featuredCredentials = credentials.filter((credential) => credential.featured);
+  const [activeId, setActiveId] = useState<LensId>("notice");
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
+
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    if (prefersReducedMotion) return;
+    const index = Math.min(LENSES.length - 1, Math.floor(value * LENSES.length));
+    setActiveId(LENSES[index].id);
+  });
+
+  const active = LENSES.find((lens) => lens.id === activeId) ?? LENSES[0];
+  const featuredCredentials = useMemo(() => credentials.filter((credential) => credential.featured), []);
+
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1.04, 1.2]);
+  const imageX = useTransform(scrollYProgress, [0, 0.5, 1], [0, -34, 28]);
+  const imageY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const veilOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.48, 0.28, 0.58]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.16, 0.28], [1, 1, 0]);
+  const titleY = useTransform(scrollYProgress, [0, 0.3], [0, -64]);
+  const lensOpacity = useTransform(scrollYProgress, [0.16, 0.28, 1], [0, 1, 1]);
+  const lensY = useTransform(scrollYProgress, [0.16, 0.34], [54, 0]);
+  const progressScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+  function chooseLens(id: LensId) {
+    setActiveId(id);
+  }
 
   return (
-    <section className="relative overflow-hidden bg-[#ede8dc] text-soil">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-70"
-        style={{
-          background:
-            "radial-gradient(circle at 14% 15%, rgba(184,90,52,0.12), transparent 30%), radial-gradient(circle at 82% 70%, rgba(198,169,122,0.18), transparent 34%)",
-        }}
-      />
-
-      <div className="relative grid min-h-[48rem] lg:grid-cols-[0.82fr_1.35fr]">
-        <div className="relative min-h-[30rem] overflow-hidden lg:min-h-full">
-          <KenBurnsImage
-            image="/images/own-portrait.jpg"
-            gradient="linear-gradient(to top, rgba(20,18,16,0.78) 0%, rgba(20,18,16,0.12) 58%, rgba(20,18,16,0.04) 100%)"
-            imagePosition="center 28%"
-            className="absolute inset-0 h-full w-full"
-            sizes="(min-width: 1024px) 42vw, 100vw"
+    <section ref={sectionRef} className="relative h-[310svh] bg-[#151411] text-ivory">
+      <div className="sticky top-0 h-svh min-h-[660px] overflow-hidden">
+        <motion.div
+          className="absolute inset-[-7%]"
+          style={prefersReducedMotion ? undefined : { scale: imageScale, x: imageX, y: imageY }}
+        >
+          <Image
+            src="/images/own-portrait.jpg"
+            alt="Suman Sharma, founder of Branding Tatva"
+            fill
+            sizes="100vw"
+            className="object-cover"
+            style={{ objectPosition: "center 28%" }}
+            priority={false}
           />
+        </motion.div>
 
-          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12">
-            <p className="text-[0.65rem] font-medium uppercase tracking-[0.28em] text-sandstone">The practitioner behind the work</p>
-            <h2 className="mt-4 max-w-lg font-display text-[clamp(2.4rem,5vw,4.8rem)] font-normal leading-[0.98] text-ivory">
-              I study attention before I design expression.
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-0 bg-black"
+          style={{ opacity: prefersReducedMotion ? 0.46 : veilOpacity }}
+        />
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-0 transition-colors duration-700"
+          animate={{ backgroundColor: active.tint }}
+          transition={{ duration: 0.7 }}
+        />
+        <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(90deg,rgba(16,14,12,.92)_0%,rgba(16,14,12,.62)_38%,rgba(16,14,12,.18)_66%,rgba(16,14,12,.64)_100%)]" />
+        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_68%_34%,rgba(239,217,178,.16),transparent_28%)]" />
+
+        <motion.div
+          className="absolute inset-0 z-10 flex items-end px-6 pb-16 sm:px-10 sm:pb-20 lg:px-16"
+          style={prefersReducedMotion ? undefined : { opacity: titleOpacity, y: titleY }}
+        >
+          <div className="max-w-4xl">
+            <p className="text-[0.65rem] font-medium uppercase tracking-[0.3em] text-sandstone">The author behind the system</p>
+            <h2 className="mt-5 font-display text-[clamp(3.2rem,8vw,8rem)] font-normal leading-[0.88] tracking-[-0.045em]">
+              I study attention
+              <br />
+              before I design
+              <br />
+              <span className="italic text-sandstone">expression.</span>
             </h2>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-ivory/72 sm:text-base">
-              Psychology explains how people notice and decide. Literature explains how language carries meaning. Direction turns both into a system a business can actually use.
+            <p className="mt-7 max-w-xl text-sm leading-relaxed text-ivory/68 sm:text-base">
+              Psychology reads behaviour. Literature gives meaning a voice. Direction decides what the audience should experience next.
             </p>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-col px-6 py-14 sm:px-10 sm:py-20 lg:px-14 xl:px-20">
-          <div className="flex flex-col gap-6 border-b border-soil/12 pb-8 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.26em] text-[#8a6b3d]">A method, not a biography</p>
-              <h3 className="mt-3 max-w-2xl font-display text-[clamp(2rem,4vw,3.7rem)] font-normal leading-[1.02]">
-                Three disciplines. One commercial judgement.
-              </h3>
-            </div>
-            <div className="space-y-2 text-right text-[0.67rem] uppercase tracking-[0.16em] text-soil/52">
-              {featuredCredentials.map((credential) => (
-                <p key={credential.label}>
-                  {credential.label}
-                  <span className="ml-2 text-soil/34">{credential.detail}</span>
+        <motion.div
+          className="absolute inset-0 z-20 flex items-center px-6 sm:px-10 lg:px-16"
+          style={prefersReducedMotion ? undefined : { opacity: lensOpacity, y: lensY }}
+        >
+          <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,.85fr)] lg:items-end">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active.id}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 32, filter: "blur(10px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -22, filter: "blur(8px)" }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.62, ease: [0.22, 1, 0.36, 1] }}
+                className="max-w-4xl"
+              >
+                <p className="text-[0.65rem] font-medium uppercase tracking-[0.28em] text-sandstone">
+                  {active.number} · {active.discipline}
                 </p>
-              ))}
-            </div>
-          </div>
+                <p className="mt-4 font-display text-[clamp(4rem,10vw,10rem)] font-normal leading-[0.82] tracking-[-0.055em]">
+                  {active.verb}.
+                </p>
+                <p className="mt-7 max-w-2xl font-display text-[clamp(1.65rem,3.4vw,3.15rem)] leading-[1.08] text-ivory/92">
+                  {active.question}
+                </p>
+              </motion.div>
+            </AnimatePresence>
 
-          <div className="mt-8 grid gap-8 xl:grid-cols-[0.72fr_1.28fr]">
-            <div role="tablist" aria-label="Suman's strategic lenses" className="space-y-2">
-              {LENSES.map((lens) => {
-                const isActive = lens.id === selected;
-                return (
-                  <button
-                    key={lens.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    onClick={() => setSelected(lens.id)}
-                    className={`group flex w-full items-center gap-4 rounded-2xl border px-4 py-4 text-left transition-all duration-500 ${
-                      isActive
-                        ? "translate-x-1 border-soil/20 bg-soil text-ivory shadow-[0_20px_50px_-32px_rgba(31,26,20,0.65)]"
-                        : "border-transparent bg-white/28 hover:border-soil/12 hover:bg-white/52"
-                    }`}
-                  >
-                    <span className={`font-display text-sm ${isActive ? "text-sandstone" : "text-soil/42"}`}>{lens.number}</span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block font-display text-2xl leading-none">{lens.label}</span>
-                      <span className={`mt-1 block text-xs ${isActive ? "text-ivory/58" : "text-soil/48"}`}>{lens.discipline}</span>
-                    </span>
-                    <span aria-hidden="true" className={`transition-transform duration-300 ${isActive ? "translate-x-0 text-sandstone" : "-translate-x-1 text-soil/25 group-hover:translate-x-0"}`}>
-                      →
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="relative min-h-[29rem] overflow-hidden rounded-3xl border border-soil/12 bg-white/52 p-6 shadow-[0_28px_80px_-52px_rgba(43,35,27,0.45)] sm:p-8">
-              <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-[#c6a97a]/18 blur-3xl" aria-hidden="true" />
-
+            <div className="lg:pb-2">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={active.id}
-                  role="tabpanel"
-                  initial={prefersReducedMotion ? undefined : { opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: [0.22, 1, 0.36, 1] }}
-                  className="relative flex h-full flex-col"
+                  key={`${active.id}-reading`}
+                  initial={prefersReducedMotion ? undefined : { opacity: 0, x: 28 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={prefersReducedMotion ? undefined : { opacity: 0, x: -18 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: [0.22, 1, 0.36, 1] }}
+                  className="space-y-7"
                 >
-                  <div className="flex items-start justify-between gap-6">
-                    <div>
-                      <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-[#8a6b3d]">Working lens</p>
-                      <p className="mt-2 font-display text-4xl">{active.verb}</p>
-                    </div>
-                    <span className="flex h-14 w-14 items-center justify-center rounded-full border border-soil/12 font-display text-lg text-[#8a6b3d]">
-                      {active.number}
-                    </span>
+                  <div>
+                    <p className="text-[0.62rem] uppercase tracking-[0.22em] text-ivory/42">The blind spot it catches</p>
+                    <p className="mt-3 text-sm leading-relaxed text-ivory/72 sm:text-base">{active.catches}</p>
                   </div>
-
-                  <div className="mt-8 space-y-7">
-                    <div>
-                      <p className="text-[0.64rem] uppercase tracking-[0.2em] text-soil/38">The question</p>
-                      <p className="mt-2 font-display text-2xl leading-snug">{active.question}</p>
-                    </div>
-                    <div className="grid gap-6 border-t border-soil/10 pt-6 sm:grid-cols-2">
-                      <div>
-                        <p className="text-[0.64rem] uppercase tracking-[0.2em] text-soil/38">The blind spot it catches</p>
-                        <p className="mt-3 text-sm leading-relaxed text-soil/68">{active.catches}</p>
-                      </div>
-                      <div>
-                        <p className="text-[0.64rem] uppercase tracking-[0.2em] text-soil/38">The decision it improves</p>
-                        <p className="mt-3 text-sm leading-relaxed text-soil/68">{active.changes}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-auto border-t border-soil/10 pt-6">
-                    <p className="font-display text-xl italic text-soil/76">
-                      Observe widely. Decide narrowly. Repeat coherently.
-                    </p>
+                  <div>
+                    <p className="text-[0.62rem] uppercase tracking-[0.22em] text-ivory/42">The decision it changes</p>
+                    <p className="mt-3 text-sm leading-relaxed text-ivory/72 sm:text-base">{active.changes}</p>
                   </div>
                 </motion.div>
               </AnimatePresence>
+
+              <div className="mt-9 flex flex-wrap gap-2" aria-label="Choose a working lens">
+                {LENSES.map((lens) => (
+                  <button
+                    key={lens.id}
+                    type="button"
+                    onClick={() => chooseLens(lens.id)}
+                    aria-pressed={active.id === lens.id}
+                    className={`min-h-11 rounded-full border px-4 text-[0.62rem] font-medium uppercase tracking-[0.16em] transition-all duration-300 ${
+                      active.id === lens.id
+                        ? "border-sandstone bg-sandstone text-soil"
+                        : "border-ivory/20 bg-black/10 text-ivory/58 backdrop-blur-sm hover:border-ivory/45 hover:text-ivory"
+                    }`}
+                  >
+                    {lens.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
+        </motion.div>
 
-          <div className="mt-9 flex flex-col gap-4 border-t border-soil/12 pt-7 sm:flex-row sm:items-center sm:justify-between">
-            <p className="max-w-xl text-sm leading-relaxed text-soil/58">
-              The value is not having three interests. It is knowing which one should lead at each decision.
-            </p>
-            <Link href="/about" className="link-underline inline-flex items-center gap-2 text-sm font-medium text-[#8a6b3d]">
-              Read the full practice <span aria-hidden="true">→</span>
+        <div className="absolute inset-x-6 bottom-5 z-30 sm:inset-x-10 lg:inset-x-16">
+          <div className="flex items-end justify-between gap-5">
+            <div className="hidden max-w-3xl flex-wrap gap-x-5 gap-y-1 text-[0.58rem] uppercase tracking-[0.16em] text-ivory/38 sm:flex">
+              {featuredCredentials.map((credential) => (
+                <span key={credential.label}>{credential.label} · {credential.detail}</span>
+              ))}
+            </div>
+            <Link href="/about" className="shrink-0 text-xs font-medium uppercase tracking-[0.18em] text-sandstone transition-colors hover:text-ivory">
+              Read the full practice ↗
             </Link>
+          </div>
+          <div className="mt-4 h-px overflow-hidden bg-ivory/12">
+            <motion.div className="h-full origin-left bg-sandstone" style={{ scaleX: progressScale }} />
           </div>
         </div>
       </div>
