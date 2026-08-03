@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
+import { AuditInvite } from "@/components/AuditInvite";
 import { LinkButton } from "@/components/Button";
 import { FAQ } from "@/sections/FAQ";
 import { DustMotes } from "@/components/DustMotes";
@@ -403,6 +404,14 @@ not repeated here. */}
                         Bring any other question to a first conversation
                       </Link>
                     </p>
+                    {/* Lead magnet placement (bible §11) — the audit
+                        signpost lives inside this reading section
+                        rather than as its own flat interlude after the
+                        five decisions; a standalone break there was
+                        already removed once as a visible seam. */}
+                    <div className="mt-8">
+                      <AuditInvite tone="light" />
+                    </div>
                   </div>
                 </div>
               </Reveal>

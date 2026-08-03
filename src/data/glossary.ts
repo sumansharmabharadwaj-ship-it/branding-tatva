@@ -32,7 +32,7 @@ export const pillars: Pillar[] = [
       "How is positioning different from messaging?",
       "When should a brand reposition?",
     ],
-    articleSlug: "what-a-brand-audit-actually-finds",
+    articleSlug: "what-brand-positioning-actually-decides",
     terms: [
       {
         term: "Positioning",

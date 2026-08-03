@@ -294,6 +294,21 @@ export default async function CaseStudyPage({ params }: Props) {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(caseStudyStructuredData) }}
       />
+      {/* Route hierarchy for crawlers (manual guide p91 / bible §14). */}
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Work", item: `${site.url}/work` },
+              { "@type": "ListItem", position: 2, name: project.title, item: `${site.url}/work/${project.slug}` },
+            ],
+          }),
+        }}
+      />
     </>
   );
 }

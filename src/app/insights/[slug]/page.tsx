@@ -8,6 +8,7 @@ import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { PullQuote } from "@/components/PullQuote";
+import { AuditInvite } from "@/components/AuditInvite";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { blogPosts } from "@/data/blog";
@@ -50,6 +51,16 @@ export default async function BlogPostPage({ params }: Props) {
   const pullQuoteAfter = post.pullQuote
     ? Math.min(Math.max(1, Math.floor(post.body.length / 2) - 1), post.body.length - 2)
     : -1;
+  // "## " body entries are section headings (see BlogPost's own
+  // comment) — they render as anchored h2s and feed the table of
+  // contents. Manual guide p83: reading progress, TOC, summary.
+  const headingId = (text: string) =>
+    text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, "")
+      .trim()
+      .replace(/\s+/g, "-");
+  const headings = post.body.filter((b) => b.startsWith("## ")).map((b) => b.slice(3));
   const sorted = [...blogPosts].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
@@ -74,6 +85,16 @@ export default async function BlogPostPage({ params }: Props) {
     author: { "@id": `${site.url}/#person` },
     publisher: { "@id": `${site.url}/#organization` },
     mainEntityOfPage: `${site.url}/insights/${post.slug}`,
+  };
+
+  // Route hierarchy for crawlers (manual guide p91 / bible §14).
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Insights", item: `${site.url}/insights` },
+      { "@type": "ListItem", position: 2, name: post.title, item: `${site.url}/insights/${post.slug}` },
+    ],
   };
 
   return (
@@ -170,6 +191,43 @@ export default async function BlogPostPage({ params }: Props) {
               </div>
 
               <div className="max-w-2xl">
+                {/* Answer first (manual p83): the piece's key takeaways
+                    before the argument, for readers and answer engines
+                    alike. */}
+                {post.summary && (
+                  <Reveal>
+                    <aside className="mb-8 rounded-2xl border border-border p-6" style={{ backgroundColor: "rgba(39,34,30,0.03)" }}>
+                      <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: element?.color }}>
+                        In brief
+                      </p>
+                      <ul className="mt-3 space-y-2">
+                        {post.summary.map((line) => (
+                          <li key={line} className="text-sm leading-relaxed text-foreground-secondary before:mr-2 before:content-['·']">
+                            {line}
+                          </li>
+                        ))}
+                      </ul>
+                    </aside>
+                  </Reveal>
+                )}
+                {headings.length > 0 && (
+                  <Reveal>
+                    <nav aria-label="In this article" className="mb-10 border-l-2 pl-5" style={{ borderColor: `${element?.color ?? "#B85A34"}66` }}>
+                      <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
+                        In this article
+                      </p>
+                      <ul className="mt-3 space-y-1.5">
+                        {headings.map((h) => (
+                          <li key={h}>
+                            <a href={`#${headingId(h)}`} className="link-underline text-sm text-foreground-secondary hover:text-soil">
+                              {h}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </nav>
+                  </Reveal>
+                )}
                 <div className="space-y-6 text-foreground-secondary">
                   {/* Each paragraph gets its own Reveal instead of one
                       blanket fade around the whole article — on a
@@ -183,7 +241,16 @@ export default async function BlogPostPage({ params }: Props) {
                   {post.body.map((paragraph, i) => (
                     <Fragment key={i}>
                       <Reveal>
-                        <p className={i === 0 ? "blog-lede text-lg text-soil" : undefined}>{paragraph}</p>
+                        {paragraph.startsWith("## ") ? (
+                          <h2
+                            id={headingId(paragraph.slice(3))}
+                            className="scroll-mt-28 pt-4 font-display text-2xl font-normal text-soil sm:text-3xl"
+                          >
+                            {paragraph.slice(3)}
+                          </h2>
+                        ) : (
+                          <p className={i === 0 ? "blog-lede text-lg text-soil" : undefined}>{paragraph}</p>
+                        )}
                       </Reveal>
                       {i === pullQuoteAfter && post.pullQuote && (
                         <Reveal>
@@ -193,6 +260,36 @@ export default async function BlogPostPage({ params }: Props) {
                     </Fragment>
                   ))}
                 </div>
+
+                {/* The article's ungated working asset (bible §15) —
+                    the full checklist in the open, value before any
+                    email is asked for. */}
+                {post.checklist && (
+                  <Reveal>
+                    <aside className="mt-12 rounded-2xl border p-6 sm:p-8" style={{ borderColor: `${element?.color ?? "#B85A34"}55`, backgroundColor: "rgba(39,34,30,0.03)" }}>
+                      <p className="font-display text-xl font-normal text-soil sm:text-2xl">{post.checklist.title}</p>
+                      <ol className="mt-4 space-y-3">
+                        {post.checklist.items.map((item, n) => (
+                          <li key={item} className="flex gap-4 text-sm leading-relaxed text-foreground-secondary">
+                            <span className="font-display text-base" style={{ color: element?.color }}>
+                              {String(n + 1).padStart(2, "0")}
+                            </span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </aside>
+                  </Reveal>
+                )}
+
+                {/* Lead magnet placement inside pillar articles
+                    (bible §11) — signpost only; the audit lives on
+                    Services. */}
+                <Reveal>
+                  <div className="mt-10">
+                    <AuditInvite tone="light" />
+                  </div>
+                </Reveal>
 
                 <div className="mt-16 flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
@@ -224,6 +321,11 @@ export default async function BlogPostPage({ params }: Props) {
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
     </>
   );

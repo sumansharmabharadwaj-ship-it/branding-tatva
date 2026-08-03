@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
+import { AuditInvite } from "@/components/AuditInvite";
 import { Reveal } from "@/components/Reveal";
 import { TiltCard } from "@/components/TiltCard";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -99,6 +100,13 @@ export default function AboutPage() {
             WebGL; reduced motion gets the resolved state statically. */}
         <section className="bg-soil">
           <Convergence />
+          {/* Lead magnet placement (bible §11): the audit signpost
+              directly after the interdisciplinary section, inside the
+              same soil passage so it lands as a takeaway, never a
+              seam. */}
+          <Container className="max-w-3xl pb-16 pt-4">
+            <AuditInvite />
+          </Container>
         </section>
 
         {/* Direct feedback flagged this quote break (higgsfield-stream-

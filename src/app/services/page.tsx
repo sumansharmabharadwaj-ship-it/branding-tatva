@@ -640,7 +640,7 @@ export default async function ServicesPage() {
             explicit consent form feeding the existing Mailchimp double
             opt in. Charcoal ground between the forest and the warm
             strategy room that closes the page. */}
-        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section id="audit" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <SceneVeil color="#141A15" />
           <LazyAmbientShader opacity={0.1} />
           <div className="relative">

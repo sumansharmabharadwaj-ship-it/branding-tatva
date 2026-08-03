@@ -15,8 +15,18 @@ export type BlogPost = {
   publishedAt: string; // ISO date
   readingTime: string;
   startingSet?: boolean;
-  body: string[]; // paragraphs
+  // Body entries are paragraphs; an entry beginning "## " renders as a
+  // section heading (and feeds the article's table of contents). The
+  // starting-set posts stay heading-free; the pillar articles use them.
+  body: string[];
   pullQuote?: string; // one sentence copied verbatim from `body` — never new copy, just a visual break
+  // Answer-first key takeaways (manual guide p83) — rendered as an
+  // "In brief" block before the article body.
+  summary?: string[];
+  // The article's ungated conversion asset (bible §15) — a working
+  // checklist rendered in full at the end of the piece. Never gated:
+  // the lead-capture rule is value first, email later.
+  checklist?: { title: string; items: string[] };
 };
 
 export const blogPosts: BlogPost[] = [
@@ -69,6 +79,52 @@ export const blogPosts: BlogPost[] = [
       "In practice, that means going through every single place a customer actually meets the brand, the polished ones included. The website says one thing; the last ten social posts say something slightly different; the founder describes the business in a sales call in a third way entirely. Each one holds up fine alone. Stacked together, they conflict, and a customer piecing them together notices the seams even when they struggle to name what's off.",
       "The audit's job is to find exactly where that story stops holding together, and to be specific about it: less \"the brand feels inconsistent\" as a vague note, and more the actual sentence level and decision level places where it splits.",
       "That's also why an audit has to come before a rebuild. Redesigning a website on top of an unresolved positioning problem only dresses it up, the problem stays exactly where it was. Fixing the seam first means everything built afterward, the design, the content, the launch, is reinforcing the same story instead of adding one more version of it.",
+    ],
+  },
+  {
+    // Month one pillar article per the twelve month content plan
+    // (bible §15): the positioning pillar's anchor piece, with its
+    // conversion asset (the checklist) rendered ungated at the end.
+    slug: "what-brand-positioning-actually-decides",
+    title: "What brand positioning actually decides",
+    excerpt:
+      "Positioning is the decision beneath every other brand decision: which single idea should surface with your name. Here is what it settles, and what it costs to skip.",
+    element: "earth",
+    publishedAt: "2026-08-03",
+    readingTime: "6 min read",
+    pullQuote: "Media spend multiplies whatever exists beneath it.",
+    summary: [
+      "Positioning chooses the single idea a brand should own in a buyer's head, before any design work begins.",
+      "It decides who you get compared against, what counts as expensive, and what every campaign has to keep repeating.",
+      "Messaging flexes by channel and audience; positioning stays put underneath it. Confusing the two is the most common expensive mistake.",
+    ],
+    checklist: {
+      title: "The positioning checklist",
+      items: [
+        "Name the single idea you want owned. One sentence, with zero commas doing extra work.",
+        "List who you expect to be compared against, then check who buyers actually compare you with.",
+        "Write the sentence you would want a customer to repeat to a stranger.",
+        "Hold every current channel against that sentence and count the contradictions.",
+        "Identify which buying moments should trigger your name, and which stay silent today.",
+        "Cover the logo on your own homepage and ask what still identifies you.",
+        "Find the claim a rival could never credibly sign. If every competitor could run your headline, it describes the category and the position is still unclaimed.",
+        "Date the decision, and write down what would have to change before you revisit it.",
+      ],
+    },
+    body: [
+      "Every brand already holds a position; the only open question is who decided it. When a business skips the decision, the market makes it instead, usually by filing the brand under the nearest available cliché and moving on.",
+      "## The decision beneath the decisions",
+      "Positioning is the choice about which single idea should surface in a buyer's head when your name comes up. It sounds small, and it governs everything: the identity inherits it, the website argues it, campaigns spend money repeating it. Made deliberately, every later decision reinforces one meaning. Made by accident, the same budget buys a collection of unrelated first impressions.",
+      "Three questions settle most of it. Which buying problem do you want to own? Who should lose the comparison when a buyer weighs you against their alternative? And which single sentence would satisfy you, overheard from a customer describing the business to a stranger?",
+      "## What it actually decides",
+      "The comparison set comes first. A practice positioned as a design studio gets compared with studios; positioned as a strategy practice, with consultancies at several times the price. The frame decides what expensive means before any pricing page loads.",
+      "It also decides what gets designed. Distinctive assets only compound when they express one idea; a brand that keeps changing its mind visually is usually a brand that never made this decision verbally.",
+      "And it decides what marketing can do. Media spend multiplies whatever exists beneath it. A clear position gets louder. A vague one gets expensively vaguer.",
+      "## Positioning and messaging do different jobs",
+      "Messaging flexes: warmer on social, plainer in a proposal, shorter in an ad. Positioning stays put underneath all of it. When a team rewrites the position every quarter and calls it messaging work, memory never accumulates, and the audience meets a new company each campaign.",
+      "## When repositioning earns its cost",
+      "Reposition when the business has genuinely changed shape: the offer moved upmarket, the buyer changed seats, the category split or collapsed. Hold steady when the position has merely become boring to the people inside the business. Internal fatigue arrives years before market fatigue, and most repositioning briefs are internal fatigue wearing a strategy costume.",
+      "The checklist below is the working version used at the start of engagements here. It gives away the questions on purpose; the answers are where the real work lives.",
     ],
   },
 ];
