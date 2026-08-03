@@ -114,3 +114,48 @@ before Suman names the file.
 **Motifs already spent.** Roots, streams, forest, mountains, mist,
 desks, sketchbooks, hands writing, meadows, coastlines. A new clip that
 echoes one of these is rejected regardless of quality.
+
+### Every slot has a dominant visual verb
+
+Footage performs its principle rather than representing it. A viewer
+watching on mute for five seconds should feel the verb before reading
+the title. A beautiful static macro of the right subject fails; the
+same subject caught mid action passes.
+
+| Study | Principle | Visual verb |
+| --- | --- | --- |
+| Distinctive assets | Recognition before identification | **Repeat** — recurring forms, recurring light, recurring rhythm |
+| Brand architecture | Precision, modularity, hierarchy | **Assemble** — pieces align, grids emerge, hierarchy locks into place |
+| Verbal identity | Language in motion | **Refine** — type tightens, edits resolve, layouts gain clarity |
+| Codes under pressure | Material stressed, identity intact | **Persist** — materials flex, weather changes, identity remains |
+| Ritual | Human behaviour over product | **Return** — a repeated sequence that naturally loops |
+
+The study template carries its own four verbs, proposed rather than
+handed down, so adjust them if they read wrong once footage lands:
+masthead **Open**, observations **Mark**, applications **Translate**,
+closing **Settle**.
+
+### Each study owns a distinct motion language
+
+Motifs get catalogued so they stop repeating. Movement gets catalogued
+for the same reason: without it every clip drifts toward the same slow
+cinematic b-roll and the five studies stop feeling like five studies.
+
+| Study | Primary movement |
+| --- | --- |
+| Distinctive assets | Rhythmic repetition |
+| Brand architecture | Linear assembly |
+| Verbal identity | Precise micro adjustments |
+| Codes under pressure | Tension and resilience |
+| Ritual | Cyclical repetition |
+
+Two candidates that move the same way solve the same problem the same
+way, even when their subjects differ. The weaker one gets replaced.
+
+### The nine approval fields
+
+Every candidate reaches Suman with: thumbnail, source, licence,
+duration, seamless loop yes or no, principle reinforced, confirmation
+it repeats no spent motif, **visual verb**, and intended section. The
+verb field exists specifically to expose two candidates accidentally
+solving the same problem the same way.
