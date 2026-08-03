@@ -2,7 +2,7 @@
 
 import { useReducedMotion } from "framer-motion";
 import { VerticalJourney } from "./VerticalJourney";
-import { PinnedJourney } from "./PinnedJourney";
+import { RootSystem } from "./RootSystem";
 import { Container } from "@/components/Container";
 import type { ProcessSectionProps } from "./types";
 
@@ -39,5 +39,5 @@ export function ProcessSection({ stages, elementColor, dark }: ProcessSectionPro
     );
   }
 
-  return <PinnedJourney stages={stages} elementColor={elementColor} />;
+  return <RootSystem stages={stages} />;
 }
