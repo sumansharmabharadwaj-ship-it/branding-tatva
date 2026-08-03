@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
@@ -104,6 +105,21 @@ export function Header({ transparent = false }: HeaderProps) {
   // defaulting to the same one or two tones everywhere.
   const isBarHidden = barHidden && !open;
 
+  // The living pill (Suman's board, item six): the bar's one gold
+  // accent shifts with the page's own world — warm earth at Home,
+  // river green through Services, paper sand across Work, book ochre
+  // in Insights, studio rose at Contact — and the active route gets
+  // named with color and a small node, per the manual's active-state
+  // requirement. One accent at a time; the charcoal glass stays put.
+  const pathname = usePathname() ?? "/";
+  const accent =
+    pathname.startsWith("/services") ? "#8FAE83"
+    : pathname.startsWith("/work") ? "#D4B99A"
+    : pathname.startsWith("/insights") || pathname.startsWith("/glossary") ? "#C28A28"
+    : pathname.startsWith("/contact") ? "#AD6F5C"
+    : "#C6A97A";
+  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+
   return (
     <>
       <motion.header
@@ -140,21 +156,35 @@ export function Header({ transparent = false }: HeaderProps) {
               <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
                 {navigation
                   .filter((item) => item.href !== "/" && item.href !== "/contact")
-                  .map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="whitespace-nowrap text-[0.72rem] font-medium uppercase tracking-[0.18em] text-ivory/85 transition-colors duration-300 hover:text-ivory"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
+                  .map((item) => {
+                    const active = isActive(item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        aria-current={active ? "page" : undefined}
+                        className={`relative whitespace-nowrap text-[0.72rem] font-medium uppercase tracking-[0.18em] transition-colors duration-300 ${
+                          active ? "" : "text-ivory/85 hover:text-ivory"
+                        }`}
+                        style={active ? { color: accent } : undefined}
+                      >
+                        {item.label}
+                        {active && (
+                          <span
+                            aria-hidden="true"
+                            className="absolute -bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full"
+                            style={{ backgroundColor: accent }}
+                          />
+                        )}
+                      </Link>
+                    );
+                  })}
               </nav>
               <span aria-hidden="true" className="hidden h-6 w-px bg-ivory/25 lg:block" />
               <Link
                 href="/contact"
                 className="group hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 py-2 text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300 sm:inline-flex"
-                style={{ borderColor: "rgba(198,169,122,0.75)", color: "#C6A97A" }}
+                style={{ borderColor: `${accent}c0`, color: accent }}
               >
                 Start a project
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
@@ -163,7 +193,7 @@ export function Header({ transparent = false }: HeaderProps) {
               </Link>
               <button
                   className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-500"
-                  style={{ color: "#C6A97A" }}
+                  style={{ color: accent }}
                   aria-label={open ? "Close menu" : "Open menu"}
                   aria-expanded={open}
                   onClick={() => setOpen((v) => !v)}

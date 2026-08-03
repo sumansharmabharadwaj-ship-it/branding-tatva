@@ -11,6 +11,7 @@ import { ParallaxVideoBackdrop } from "@/components/ParallaxVideoBackdrop";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { MeadowClosing } from "@/components/MeadowClosing";
+import { NotebookClose } from "@/components/NotebookClose";
 import { DesignRationaleGrid } from "@/components/DesignRationaleGrid";
 import { PinnedWorkingMethod } from "@/sections/About/PinnedWorkingMethod";
 import { PointOfView } from "@/sections/About/PointOfView";
@@ -366,20 +367,10 @@ export default function AboutPage() {
             this replaced two rejected WebGL attempts at this section. */}
         <MeadowClosing />
 
-        {/* Booking — the page's last word is an invitation, right after
-            the personal closing, per the required order. */}
-        <section className="bg-soil pb-24 pt-4 text-center sm:pb-28">
-          <Container>
-            <p className="mx-auto max-w-md text-ivory/85">
-              The next documented decision could be about your brand.
-            </p>
-            <div className="mt-6">
-              <LinkButton href="/contact" trackEvent="hero_booking_click" trackProps={{ page: "about", position: "closing" }}>
-                Book a Brand Strategy Session
-              </LinkButton>
-            </div>
-          </Container>
-        </section>
+        {/* Booking — Suman's board, scene five: the invitation written
+            inside the notebook on a lit desk, replacing the flat soil
+            block her review named a wasted final CTA. */}
+        <NotebookClose />
       </main>
       <Footer />
     </>

@@ -11,7 +11,10 @@ import { Reveal } from "@/components/Reveal";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { ClipReveal } from "@/components/ClipReveal";
 import { ElementsSection } from "@/sections/Elements";
-import { SelectedWorkPinned } from "@/sections/Home/SelectedWorkPinned";
+import { EvidenceWall } from "@/sections/Home/EvidenceWall";
+import { ClarityCTA } from "@/sections/Home/ClarityCTA";
+import { TatvaStrip } from "@/sections/Home/TatvaStrip";
+import { StudioHotspots } from "@/sections/Home/StudioHotspots";
 import { CinematicHero } from "@/sections/Hero";
 import { VisitorRecognition } from "@/sections/Home/VisitorRecognition";
 import { ServicePaths } from "@/sections/Home/ServicePaths";
@@ -22,7 +25,6 @@ import { TexturedDark } from "@/components/TexturedDark";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
-import { projects } from "@/data/projects";
 import { process } from "@/data/process";
 import { faqs } from "@/data/faqs";
 import { elementColor } from "@/lib/elementColor";
@@ -60,8 +62,6 @@ const faqStructuredData = {
 };
 
 export default function Home() {
-  const featured = projects.filter((p) => p.featured);
-
   return (
     <>
       <Header transparent />
@@ -135,46 +135,18 @@ export default function Home() {
             overflow other than visible (this section's own
             overflow-hidden, kept for the fire video). Same fix pattern
             as every other pinned section on this page. */}
-        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
-          {/* Cinematic OS replacement: the flame texture failed every
-              selection test (single subject, zero layers, stock
-              texture). Sunrise breaking over a rolling fog sea now —
-              what rises above the fog gets seen, which is exactly what
-              this proof chapter argues. Cut and graded from the
-              archived 4K master, warm highlights, forward crossfade
-              loop. */}
-          <BackgroundVideo video="/videos/pexels-fog-sunrise.mp4" videoWebm="/videos/pexels-fog-sunrise.webm" poster="/images/pexels-fog-sunrise-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
-          <Container className="relative">
-            <div className="flex items-baseline justify-between">
-              <Reveal>
-                <div>
-                  <h2 className="text-display-sm font-display font-normal text-ivory">Selected work</h2>
-                  <p className="mt-2 text-sm italic text-ivory/70">
-                    Real projects, real numbers, verified after launch. Everything below actually happened.
-                  </p>
-                </div>
-              </Reveal>
-              <Reveal delay={0.1}>
-                <LinkButton
-                  href="/work"
-                  variant="secondary"
-                  className="border-ivory/30 text-ivory hover:bg-ivory/10"
-                >
-                  View all work
-                </LinkButton>
-              </Reveal>
-            </div>
-          </Container>
-        </section>
+        {/* Suman's board, scene two: the documentary archive replaces
+            the "Selected work" heading + two-stage pinned sequence —
+            her direct verdict named that pairing the page's weakest
+            beat ("Selected Work... then nothing"). Every project now
+            arrives as a living file with its verified number or
+            recorded decision. */}
+        <EvidenceWall />
 
-        {/* Featured work — one large photographic entry, two quiet
-            editorial ones, not three identical cards. Same pinned
-            mechanism as PinnedSlider/PinnedJourney; see
-            SelectedWorkPinned's own comment for why it's 2 stages, not
-            3, and why neither card component conflicts with permanent
-            mounting + opacity toggling. */}
-        <SelectedWorkPinned featured={featured} />
+        {/* Board scene one: the decision moment at the desk — proof
+            above hands into a human invitation before the service
+            paths ask for a choice. */}
+        <ClarityCTA />
 
 
         {/* New trust beat — direct feedback that the page went straight
@@ -209,19 +181,28 @@ not repeated here. */}
             actually relate to and that visibly moves; a sketchbook
             mid-thought reads as the strategy work itself, not a mood
             board standing in for it. */}
+        {/* Board scene four: the studio, explored instead of read —
+            "Strategy. Story. Soul." with hotspots opening real places
+            on the site. Credentials stay as the quiet factual line
+            underneath; everything a dot opens is a real destination,
+            never an invented artifact. */}
         <TexturedDark
           image="/images/higgsfield-idea-sketch.jpg"
           video="/videos/higgsfield-idea-sketch.mp4"
           imagePosition="center"
-          className="py-16 sm:py-20"
+          className="py-16 sm:py-24"
         >
+          <StudioHotspots />
           <Container className="text-center">
             <Reveal>
-              <p className="font-display text-lg text-ivory sm:text-xl">Suman Sharma</p>
-              <p className="mx-auto mt-2 max-w-xl text-sm text-ivory/80 sm:text-base">
-                Clinical psychology and English literature. One studies how people notice and decide. The other studies how language carries meaning.
+              <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">About Suman</p>
+              <h2 className="mt-3 font-display text-display-sm font-normal text-ivory">Strategy. Story. Soul.</h2>
+              <p className="mx-auto mt-3 max-w-md text-sm text-ivory/85 sm:text-base">
+                A studio built on psychology, storytelling, and design thinking.
               </p>
               <div className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs uppercase tracking-[0.15em] text-ivory/50 sm:text-sm">
+                <span>Suman Sharma</span>
+                <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ivory/30" />
                 <span>M.A. Clinical Psychology</span>
                 <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ivory/30" />
                 <span>B.A. (Hons) English Literature</span>
@@ -232,7 +213,7 @@ not repeated here. */}
 
             <Reveal delay={0.1} className="mx-auto mt-8 max-w-xl">
               <LinkButton href="/about" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
-                Work directly with Suman
+                Explore the studio
               </LinkButton>
             </Reveal>
           </Container>
@@ -243,24 +224,15 @@ not repeated here. */}
             them. */}
         <ServicePaths />
 
-        {/* The framework claim leads directly into the five decisions —
-            philosophy taught after relevance and proof, per the
-            conversion architecture. */}
-        <section className="bg-soil pb-4 pt-16 text-center sm:pt-20">
-          <Container>
-            <Reveal>
-              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The framework</p>
-              <h2 className="mx-auto mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory">
-                Every remembered brand made the same five decisions.
-              </h2>
-              <p className="mx-auto mt-4 max-w-xl text-ivory/85">
-                Positioning. Distinctiveness. Narrative. Verbal identity. Salience. Memory ignores agency. It ignores choice too.
-              </p>
-            </Reveal>
-          </Container>
-        </section>
+        {/* Board scene three: the framework arrives as five living
+            Tatvas instead of text on brown — the exact block Suman
+            flagged. The strip is the trailhead; the full pinned
+            exploration below is where "scroll to explore" pays off. */}
+        <TatvaStrip />
 
-        <ElementsSection elements={elements} />
+        <div id="elements" className="scroll-mt-24">
+          <ElementsSection elements={elements} />
+        </div>
 
 
         {/* Was a standalone mid-funnel CTA section here (plain bg-soil,
