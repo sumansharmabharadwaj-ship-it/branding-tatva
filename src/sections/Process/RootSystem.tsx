@@ -4,10 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import type { ProcessStage } from "@/data/process";
 
-// One root network grows as the visitor moves through the process.
-// Each node names the concrete outcome produced by that stage, so the
-// scene communicates transformation without relying on placeholder
-// symbols or a caption to explain what the interaction means.
 const NODES = [
   { x: 200, y: 52, becomes: "The right question" },
   { x: 200, y: 162, becomes: "A clear pattern" },
@@ -17,8 +13,6 @@ const NODES = [
   { x: 200, y: 522, becomes: "A brand ecosystem" },
 ];
 
-// Architect forks into Signal and Influence, and both feed back into
-// Compound: identity and reach grow in parallel from one architecture.
 const SEGMENTS = [
   { d: "M200 60 C 200 100, 200 112, 200 154" },
   { d: "M200 170 C 200 210, 200 222, 200 264" },
@@ -48,9 +42,8 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       const rect = el.getBoundingClientRect();
       const travel = rect.height - window.innerHeight;
       const p = travel > 0 ? Math.min(1, Math.max(0, -rect.top / travel)) : 0;
-
-      // Finish before release so the final ecosystem has a settled beat.
       const grow = Math.min(1, p / 0.88) * SEGMENTS.length;
+
       SEGMENTS.forEach((_, i) => {
         const local = Math.min(1, Math.max(0, grow - i));
         const path = segRefs.current[i];
@@ -76,6 +69,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
 
   const shown = hover ?? (active >= 0 ? active : 0);
   const stage = stages[shown];
+  const progressLabel = active < 0 ? "The root is waiting" : active === stages.length - 1 ? "The system is whole" : `${active + 1} of ${stages.length} decisions connected`;
 
   return (
     <div ref={wrapRef} className="relative" style={{ height: "420svh" }}>
@@ -99,8 +93,20 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
           style={{ background: "radial-gradient(70% 60% at 50% 45%, rgba(20,18,16,0.35), rgba(20,18,16,0.94))" }}
         />
 
-        <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-center px-6 lg:flex-row lg:items-center lg:gap-16">
-          <div className="relative mx-auto w-full max-w-[22rem] lg:mx-0 lg:max-w-md">
+        <div className="pointer-events-none absolute left-6 right-6 top-6 z-20 flex items-start justify-between gap-6 sm:left-10 sm:right-10 sm:top-8">
+          <div>
+            <p className="text-[0.62rem] font-medium uppercase tracking-[0.22em] text-sandstone">How a project moves</p>
+            <p className="mt-2 max-w-xs font-display text-xl font-normal leading-tight text-ivory/90 sm:text-2xl">
+              One decision feeds the next.
+            </p>
+          </div>
+          <p className="max-w-[10rem] text-right text-[0.62rem] uppercase tracking-[0.18em] text-ivory/45 sm:max-w-none">
+            {progressLabel}
+          </p>
+        </div>
+
+        <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-center px-6 pt-20 lg:flex-row lg:items-center lg:gap-16 lg:pt-10">
+          <div className="relative mx-auto w-full max-w-[20rem] sm:max-w-[22rem] lg:mx-0 lg:max-w-md">
             <svg viewBox="0 0 400 600" className="h-auto w-full" role="img" aria-label="Six brand strategy stages growing through one connected root system">
               {SEGMENTS.map((seg, i) => (
                 <path
@@ -181,9 +187,9 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
             ))}
           </div>
 
-          <div className="mt-8 w-full lg:mt-0 lg:w-[26rem]" aria-live="polite">
+          <div className="mt-4 w-full lg:mt-0 lg:w-[26rem]" aria-live="polite">
             <div
-              className="rounded-2xl border p-6 backdrop-blur-md sm:p-7"
+              className="rounded-2xl border p-5 backdrop-blur-md sm:p-7"
               style={{ borderColor: "rgba(246,242,234,0.10)", backgroundColor: "rgba(246,242,234,0.06)" }}
             >
               <p className="text-[0.68rem] font-medium uppercase tracking-[0.2em]" style={{ color: GOLD }}>
@@ -195,7 +201,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               {stage?.video && (
                 <video
                   key={stage.video}
-                  className="mt-5 aspect-video w-full rounded-2xl object-cover"
+                  className="mt-5 hidden aspect-video w-full rounded-2xl object-cover sm:block"
                   src={stage.video}
                   poster={stage.poster}
                   muted
@@ -209,8 +215,10 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                 />
               )}
             </div>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-ivory/45">
-              One decision never grows a brand. It grows because every decision feeds the same root.
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-ivory/55">
+              {active === stages.length - 1
+                ? "Skipping a step costs quietly. The recall you paid for stops compounding where the root breaks."
+                : "A brand becomes memorable when every decision feeds the same root."}
             </p>
           </div>
         </div>
