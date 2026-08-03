@@ -12,7 +12,7 @@ import { track } from "@/lib/analytics";
 
 const FEATURED_SLUGS = ["dr-haley-nutrition", "myshopineurope", "executive-springboard"] as const;
 
-const SITUATION_TO_PROJECT: Record<string, string> = {
+const SITUATION_TO_PROJECT: Record<string, (typeof FEATURED_SLUGS)[number]> = {
   idea: "myshopineurope",
   inconsistent: "executive-springboard",
   outgrown: "dr-haley-nutrition",
@@ -40,7 +40,7 @@ export function EvidenceWall() {
     () => FEATURED_SLUGS.map((slug) => projects.find((project) => project.slug === slug)).filter(Boolean),
     [],
   );
-  const [selectedSlug, setSelectedSlug] = useState(FEATURED_SLUGS[0]);
+  const [selectedSlug, setSelectedSlug] = useState<(typeof FEATURED_SLUGS)[number]>(FEATURED_SLUGS[0]);
   const [activePhase, setActivePhase] = useState<PhaseKey>("challenge");
   const prefersReducedMotion = useReducedMotion();
 
