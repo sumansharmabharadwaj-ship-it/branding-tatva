@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useLenis } from "@/components/SmoothScrollProvider";
@@ -30,16 +31,44 @@ import { AmbientElementShader } from "@/components/AmbientElementShader";
 // tall scroll range where the layers assemble one by one, driven by
 // rect math on Lenis's own scroll event, styles written directly to
 // the nodes with zero per-frame React state.
+// Manual guide p11/p65: the scene must DEMONSTRATE amplification
+// rather than caption it — each layer carries the marketing
+// consequence of skipping it, and the output wave at the top of the
+// diagram literally grows as the layers assemble. Teaching lines,
+// zero invented client facts.
+const SKIPPED: Record<string, string> = {
+  earth: "Skipped: every campaign has to reintroduce the brand from zero.",
+  water: "Skipped: attention arrives and leaks straight out of the journey.",
+  fire: "Skipped: the message is right and nobody stops for it.",
+  air: "Skipped: five channels, five personalities, zero memory.",
+  space: "Skipped: the work performs once and leaves nothing behind.",
+};
+
 const LAYERS = elements.map((el) => ({
   slug: el.slug,
   label: el.name.split("·")[1]?.trim() ?? el.name,
   line: el.manifesto[0],
+  skipped: SKIPPED[el.slug] ?? "",
   color: ELEMENT_HEX[el.slug],
 }));
+
+// The amplified signal: one path whose oscillation widens left to
+// right — small input, growing output. Scaled vertically by scroll
+// progress so the wave visibly gains amplitude as layers activate.
+const WAVE_PATH = (() => {
+  const points: string[] = [];
+  for (let x = 0; x <= 400; x += 4) {
+    const amp = 4 + (x / 400) * 30;
+    const y = 40 + Math.sin((x / 400) * Math.PI * 7) * amp;
+    points.push(`${x === 0 ? "M" : "L"}${x} ${y.toFixed(1)}`);
+  }
+  return points.join(" ");
+})();
 
 export function PinnedBrandBuild() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const waveRef = useRef<SVGGElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const lenis = useLenis();
@@ -47,12 +76,18 @@ export function PinnedBrandBuild() {
 
   useEffect(() => {
     if (!animate) {
-      // Static contexts keep every layer fully visible.
+      // Static contexts keep every layer fully visible and the output
+      // wave at full amplitude.
       layerRefs.current.forEach((layer) => {
         if (!layer) return;
         layer.style.opacity = "";
         layer.style.transform = "";
+        layer.style.setProperty("--act", "1");
       });
+      if (waveRef.current) {
+        waveRef.current.style.transform = "";
+        waveRef.current.style.opacity = "";
+      }
       return;
     }
     const wrap = wrapRef.current;
@@ -71,7 +106,14 @@ export function PinnedBrandBuild() {
         const eased = 1 - (1 - local) * (1 - local);
         layer.style.opacity = String(eased);
         layer.style.transform = `translateY(${(36 * (1 - eased)).toFixed(1)}px) scale(${(0.97 + 0.03 * eased).toFixed(3)})`;
+        layer.style.setProperty("--act", eased.toFixed(3));
       });
+      // The amplification made visible: the output wave gains height
+      // and presence as the layers beneath it assemble.
+      if (waveRef.current) {
+        waveRef.current.style.transform = `scaleY(${(0.12 + 0.88 * progress).toFixed(3)})`;
+        waveRef.current.style.opacity = (0.3 + 0.7 * progress).toFixed(3);
+      }
     }
 
     update();
@@ -132,8 +174,31 @@ export function PinnedBrandBuild() {
               <p className="mt-8 max-w-md text-sm italic text-ivory/90 lg:text-base">
                 Skip one layer, and marketing amplifies the gap instead of the position.
               </p>
+              {/* The insight produces an action (manual p11): the
+                  package that builds every layer, one step away. */}
+              <Link
+                href="#desire"
+                className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory"
+              >
+                The package that builds every layer: Full Brand System
+                <span aria-hidden="true">→</span>
+              </Link>
             </div>
             <div className="relative">
+              {/* The output signal — a wave whose oscillation widens as
+                  the layers beneath it assemble. Decorative twin of the
+                  rows below, which carry the full text alternative. */}
+              <div aria-hidden="true" className="mb-6 border-b border-ivory/10 pb-4">
+                <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/50">
+                  What marketing has to work with
+                </p>
+                <svg viewBox="0 0 400 80" className="mt-2 h-14 w-full max-w-lg" fill="none">
+                  <g ref={waveRef} style={{ transformOrigin: "50% 50%" }}>
+                    <path d={WAVE_PATH} stroke="#C6A97A" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
+                    <path d={WAVE_PATH} stroke="#C6A97A" strokeWidth="5" strokeLinecap="round" opacity="0.12" />
+                  </g>
+                </svg>
+              </div>
               {LAYERS.map((layer, i) => (
                 <div
                   key={layer.slug}
@@ -143,17 +208,28 @@ export function PinnedBrandBuild() {
                   className="group/layer flex items-start gap-6 border-b border-ivory/10 py-4 transition-[border-color] duration-300 last:border-b-0 hover:border-ivory/30 xl:py-5"
                   style={{ marginLeft: `${i * 18}px` }}
                 >
-                  <span
-                    className="font-display text-3xl font-normal leading-none opacity-40 xl:text-4xl"
-                    style={{ color: layer.color }}
-                  >
-                    {String(i + 1).padStart(2, "0")}
+                  <span className="relative flex items-start gap-3">
+                    {/* Activation node: fills with the layer's own color
+                        as the layer arrives, tying row and diagram into
+                        one system. */}
+                    <span
+                      aria-hidden="true"
+                      className="mt-3 h-2 w-2 shrink-0 rounded-full"
+                      style={{ backgroundColor: layer.color, opacity: "var(--act, 1)" }}
+                    />
+                    <span
+                      className="font-display text-3xl font-normal leading-none opacity-40 xl:text-4xl"
+                      style={{ color: layer.color }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
                   </span>
                   <div className="flex items-start gap-4 pt-1">
                     <ElementGlyph slug={layer.slug} className="mt-1 h-6 w-6 shrink-0" style={{ color: layer.color }} />
                     <div>
                       <p className="font-display text-2xl font-normal text-ivory xl:text-3xl">{layer.label}</p>
                       <p className="mt-1 max-w-lg text-sm text-ivory/90 xl:text-base">{layer.line}</p>
+                      <p className="mt-1 max-w-lg text-xs leading-relaxed text-ivory/60 xl:text-sm">{layer.skipped}</p>
                     </div>
                   </div>
                 </div>
