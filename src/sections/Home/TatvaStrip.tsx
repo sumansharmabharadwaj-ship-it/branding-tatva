@@ -17,9 +17,6 @@ const TATVAS: { slug: keyof typeof ELEMENT_HEX; name: string; role: string; line
 export function TatvaStrip() {
   return (
     <section className="relative isolate overflow-hidden bg-[#182019] py-20 text-ivory sm:py-28">
-      {/* A living environmental field, taken directly from the moodboard's
-          landscape-under-glass language. The background never becomes the
-          subject; it gives the whole framework one breathing atmosphere. */}
       <video
         className="absolute inset-0 -z-20 h-full w-full scale-[1.06] object-cover opacity-45 motion-reduce:hidden"
         src="/videos/pixabay-golden-forest-glow.mp4"
@@ -33,9 +30,6 @@ export function TatvaStrip() {
       />
       <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(19,25,20,.92)_0%,rgba(19,25,20,.72)_42%,rgba(19,25,20,.6)_100%)]" />
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_72%_38%,rgba(214,172,93,.18),transparent_34%),radial-gradient(circle_at_22%_78%,rgba(91,118,76,.18),transparent_30%)]" />
-
-      {/* Slow light drift keeps the static poster fallback alive without
-          requiring JavaScript or another video layer. */}
       <div className="tatva-light-drift pointer-events-none absolute -right-[10%] top-[-35%] h-[110%] w-[42%] rotate-[18deg] bg-gradient-to-b from-transparent via-[#f4d69a]/15 to-transparent blur-3xl motion-reduce:hidden" />
 
       <Container className="max-w-[100rem]">
@@ -96,12 +90,9 @@ export function TatvaStrip() {
                       </span>
 
                       <div className="relative mt-auto w-full">
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="text-[0.65rem] font-medium uppercase tracking-[0.24em] text-ivory/66">
-                            {String(i + 1).padStart(2, "0")} · {t.motion}
-                          </span>
-                          <span className="h-px flex-1 origin-left scale-x-30 bg-ivory/45 transition-transform duration-700 group-hover:scale-x-100" />
-                        </div>
+                        <span className="text-[0.65rem] font-medium uppercase tracking-[0.24em] text-ivory/66">
+                          {String(i + 1).padStart(2, "0")} · {t.motion}
+                        </span>
                         <p className="mt-4 font-display text-[2rem] font-normal leading-none text-ivory">{t.name}</p>
                         <p className="mt-1 font-display text-lg italic" style={{ color: "#f0c97d" }}>{t.role}</p>
                         <p className="mt-3 max-w-[14rem] text-xs leading-relaxed text-ivory/72">{t.line}</p>
