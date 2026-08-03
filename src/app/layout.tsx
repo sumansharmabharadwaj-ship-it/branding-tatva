@@ -4,7 +4,7 @@ import "./globals.css";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
-import { Analytics } from "@vercel/analytics/next";
+import { CookieConsent } from "@/components/CookieConsent";
 import { VideoWarden } from "@/components/VideoWarden";
 import { MotionPreferenceProvider } from "@/components/MotionPreference";
 import { site } from "@/data/site";
@@ -142,7 +142,8 @@ export default function RootLayout({
             inside a genuinely long scene. */}
         <AmbientAudio />
         <VideoWarden />
-        <Analytics />
+        {/* Analytics now mounts only after a visitor allows it. */}
+        <CookieConsent />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

@@ -28,7 +28,24 @@ export type AnalyticsEvent =
   | "calendar_opened"
   | "booking_completed";
 
+// The consent gate applies here too, and this is the half that is easy
+// to miss: mounting the Analytics component behind a banner stops
+// pageviews, but every custom event calling this helper would still
+// load the SDK and report, which would make the banner decorative.
+// Same key CookieConsent writes; a missing or declined value sends
+// nothing at all.
+const CONSENT_KEY = "bt-analytics-consent";
+
+function consented() {
+  try {
+    return window.localStorage.getItem(CONSENT_KEY) === "granted";
+  } catch {
+    return false;
+  }
+}
+
 export function track(event: AnalyticsEvent, props?: Record<string, string | number | boolean>) {
+  if (typeof window === "undefined" || !consented()) return;
   try {
     vercelTrack(event, props);
   } catch {}
