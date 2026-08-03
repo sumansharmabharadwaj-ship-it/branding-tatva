@@ -97,7 +97,9 @@ export default function Home() {
         </section>
 
         <TatvaMobileStory elements={elements} />
-        <TatvaStory elements={elements} />
+        <div className="hidden md:block">
+          <TatvaStory elements={elements} />
+        </div>
 
         <ProcessFilm stages={process} elementColors={elementColor} />
 
