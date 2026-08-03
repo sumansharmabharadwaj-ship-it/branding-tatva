@@ -7,62 +7,84 @@ import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { track } from "@/lib/analytics";
 
-// Conversion architecture, Home section two: the visitor identifies
-// their own situation before being taught anything. Selection reveals
-// the likely need and the real service path, persists to localStorage
-// (read again on Services), and offers one contextual CTA. Tactile
-// editorial cards, zero quiz language, zero forms. Copy follows the
-// sitewide standard; every path maps to a real package in
-// data/services.ts.
 const STATES = [
   {
     id: "idea",
+    number: "01",
     label: "I am building from an idea",
+    symptom: "Too many possibilities. No governing decision yet.",
     need: "Positioning decided before anything gets designed, so every later choice inherits a direction.",
     path: "Foundation",
-    pathNote: "The starting package: discovery, positioning, core identity.",
-    // Manual guide p9/p56: proof arrives as the consequence of the
-    // visitor's own choice — one verified fact per situation, straight
-    // from data/projects.ts, linked to its full decision trail.
+    pathNote: "Discovery, positioning, core identity, and the first usable brand system.",
+    outcome: "A business people can understand before they are asked to buy.",
     proof: {
       slug: "myshopineurope",
-      line: "MyShopInEurope began with the same decision: a complete brand foundation, with positioning settled around craft and origin before the platform sold a thing.",
+      title: "MyShopInEurope",
+      metric: "Position before platform",
+      line: "The brand was built around craft and origin before the platform sold a thing, giving every later decision one centre of gravity.",
     },
   },
   {
     id: "inconsistent",
+    number: "02",
     label: "My brand exists but feels inconsistent",
-    need: "One system aligning what already exists, so every channel says the same thing.",
+    symptom: "Every channel is active. None of them feel related.",
+    need: "One system aligning what already exists, so every channel says the same thing without becoming repetitive.",
     path: "Full Brand System",
-    pathNote: "Audit, repositioning, and voice alignment across channels.",
+    pathNote: "Audit, repositioning, verbal identity, and alignment across every customer-facing surface.",
+    outcome: "Recognition begins compounding instead of restarting on every channel.",
     proof: {
       slug: "herbalcart",
-      line: "HerbalCart got a full campaign reset built on one repositioning: public perception moved from herbal supplement toward a modern wellness brand.",
+      title: "HerbalCart",
+      metric: "One repositioning",
+      line: "A complete campaign reset moved public perception from herbal supplement toward a modern wellness brand.",
     },
   },
   {
     id: "outgrown",
-    label: "The business has grown beyond its current position",
-    need: "A position that matches what the business has become, then an identity that carries it.",
+    number: "03",
+    label: "The business has outgrown its current position",
+    symptom: "The offer has matured. The brand still describes an earlier version.",
+    need: "A position that matches what the business has become, then an identity and content system capable of carrying it.",
     path: "Full Brand System",
-    pathNote: "A full audit and repositioning, built for where the business is heading.",
+    pathNote: "Strategic audit, repositioning, identity refinement, and an implementation system for the next stage.",
+    outcome: "The brand catches up with the quality already present in the business.",
     proof: {
       slug: "dr-haley-nutrition",
-      line: "Dr. Haley Nutrition sharpened its position and posted less: engagement climbed from 0.71% to 2.81%, and every post earned 104% more followers.",
+      title: "Dr. Haley Nutrition",
+      metric: "0.71% → 2.81%",
+      line: "Sharper positioning and a more disciplined content system lifted engagement while the brand published less.",
     },
   },
 ] as const;
 
 export const SITUATION_KEY = "bt-situation";
 
+function SignalMark({ active }: { active: boolean }) {
+  return (
+    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center" aria-hidden="true">
+      <span
+        className={`absolute rounded-full border transition-all duration-700 ${
+          active ? "inset-0 border-sandstone/60" : "inset-2 border-ivory/20"
+        }`}
+      />
+      <span
+        className={`rounded-full transition-all duration-700 ${
+          active ? "h-2.5 w-2.5 bg-sandstone shadow-[0_0_24px_rgba(212,185,154,0.8)]" : "h-1.5 w-1.5 bg-ivory/35"
+        }`}
+      />
+    </span>
+  );
+}
+
 export function VisitorRecognition() {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string>(STATES[0].id);
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(SITUATION_KEY);
-      if (saved && STATES.some((s) => s.id === saved)) setSelected(saved);
+      if (saved && STATES.some((state) => state.id === saved)) setSelected(saved);
     } catch {}
   }, []);
 
@@ -74,76 +96,153 @@ export function VisitorRecognition() {
     } catch {}
   }
 
-  const active = STATES.find((s) => s.id === selected);
+  const active = STATES.find((state) => state.id === selected) ?? STATES[0];
 
   return (
-    <section className="bg-soil py-16 sm:py-24">
-      <Container className="max-w-5xl">
+    <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-70"
+        aria-hidden="true"
+        style={{
+          background:
+            "radial-gradient(circle at 18% 20%, rgba(184,90,52,0.12), transparent 34%), radial-gradient(circle at 82% 70%, rgba(212,185,154,0.09), transparent 32%)",
+        }}
+      />
+
+      <Container className="relative max-w-6xl">
         <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Where you stand</p>
-          <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory">
-            Your brand may already be telling you where the gap is.
-          </h2>
+          <div className="flex flex-col gap-6 border-b border-ivory/10 pb-9 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-[0.28em] text-sandstone">A quick diagnosis</p>
+              <h2 className="mt-3 max-w-3xl text-display-md font-display font-normal text-ivory">
+                Most brand problems announce themselves before the numbers do.
+              </h2>
+            </div>
+            <p className="max-w-sm text-sm leading-relaxed text-ivory/55">
+              Choose the sentence closest to where you are. The system will trace the likely gap, the strategic path, and a real precedent.
+            </p>
+          </div>
         </Reveal>
-        <div className="mt-10 grid gap-3 sm:grid-cols-3">
-          {STATES.map((state, i) => {
-            const isActive = selected === state.id;
-            return (
-              <Reveal key={state.id} delay={i * 0.07}>
-                <button
-                  type="button"
-                  aria-pressed={isActive}
-                  onClick={() => pick(state.id)}
-                  className={`h-full w-full rounded-2xl border p-5 text-left transition-all duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:p-6 ${
-                    isActive
-                      ? "border-sandstone/60 bg-ivory/[0.08] text-ivory"
-                      : "border-ivory/15 bg-ivory/[0.03] text-ivory/85 hover:border-ivory/35 hover:bg-ivory/[0.06]"
-                  }`}
-                >
-                  <span className="font-display text-lg font-normal leading-snug sm:text-xl">{state.label}</span>
-                </button>
-              </Reveal>
-            );
-          })}
+
+        <div className="mt-10 grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-12">
+          <div className="relative">
+            <div className="absolute bottom-5 left-5 top-5 w-px bg-gradient-to-b from-sandstone/40 via-ivory/15 to-transparent" aria-hidden="true" />
+            <div className="space-y-3">
+              {STATES.map((state, index) => {
+                const isActive = selected === state.id;
+                return (
+                  <Reveal key={state.id} delay={index * 0.06}>
+                    <button
+                      type="button"
+                      aria-pressed={isActive}
+                      onClick={() => pick(state.id)}
+                      className={`group relative flex w-full items-start gap-4 rounded-2xl border px-4 py-5 text-left transition-all duration-500 sm:px-5 ${
+                        isActive
+                          ? "translate-x-1 border-sandstone/45 bg-ivory/[0.08] shadow-[0_22px_60px_-35px_rgba(0,0,0,0.8)]"
+                          : "border-transparent bg-transparent hover:border-ivory/12 hover:bg-ivory/[0.03]"
+                      }`}
+                    >
+                      <SignalMark active={isActive} />
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center justify-between gap-4">
+                          <span className={`font-display text-xl leading-tight transition-colors sm:text-2xl ${isActive ? "text-ivory" : "text-ivory/72 group-hover:text-ivory"}`}>
+                            {state.label}
+                          </span>
+                          <span className="text-[0.65rem] tracking-[0.2em] text-ivory/30">{state.number}</span>
+                        </span>
+                        <span className={`mt-2 block text-sm leading-relaxed transition-colors ${isActive ? "text-ivory/65" : "text-ivory/38 group-hover:text-ivory/55"}`}>
+                          {state.symptom}
+                        </span>
+                      </span>
+                    </button>
+                  </Reveal>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="relative min-h-[520px] overflow-hidden rounded-2xl border border-ivory/12 bg-[#1d1a17] shadow-[0_34px_90px_-42px_rgba(0,0,0,0.9)]">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sandstone/70 to-transparent" aria-hidden="true" />
+            <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-clay/10 blur-3xl" aria-hidden="true" />
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active.id}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
+                className="relative flex h-full min-h-[520px] flex-col p-6 sm:p-9"
+              >
+                <div className="flex items-center justify-between gap-5">
+                  <div>
+                    <p className="text-[0.65rem] font-medium uppercase tracking-[0.24em] text-sandstone">Strategic reading</p>
+                    <p className="mt-2 font-display text-3xl text-ivory sm:text-4xl">{active.path}</p>
+                  </div>
+                  <div className="relative h-20 w-20 shrink-0" aria-hidden="true">
+                    {[0, 1, 2].map((ring) => (
+                      <motion.span
+                        key={ring}
+                        className="absolute rounded-full border border-sandstone/30"
+                        style={{ inset: ring * 10 }}
+                        animate={prefersReducedMotion ? undefined : { opacity: [0.22, 0.75, 0.22], scale: [0.96, 1.04, 0.96] }}
+                        transition={{ duration: 3.8 + ring * 0.5, repeat: Infinity, delay: ring * 0.35, ease: "easeInOut" }}
+                      />
+                    ))}
+                    <span className="absolute inset-[34px] rounded-full bg-sandstone" />
+                  </div>
+                </div>
+
+                <div className="mt-8 grid gap-6 sm:grid-cols-2">
+                  <div>
+                    <p className="text-[0.65rem] uppercase tracking-[0.2em] text-ivory/35">What the signal means</p>
+                    <p className="mt-3 text-base leading-relaxed text-ivory/82">{active.need}</p>
+                  </div>
+                  <div>
+                    <p className="text-[0.65rem] uppercase tracking-[0.2em] text-ivory/35">What changes</p>
+                    <p className="mt-3 text-base leading-relaxed text-ivory/82">{active.outcome}</p>
+                  </div>
+                </div>
+
+                <div className="mt-8 rounded-2xl border border-sandstone/20 bg-ivory/[0.045] p-5 sm:p-6">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-sandstone">Recorded precedent</p>
+                      <p className="mt-2 font-display text-2xl text-ivory">{active.proof.title}</p>
+                    </div>
+                    <p className="font-display text-2xl text-sandstone sm:text-3xl">{active.proof.metric}</p>
+                  </div>
+                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ivory/66">{active.proof.line}</p>
+                </div>
+
+                <p className="mt-6 text-sm leading-relaxed text-ivory/48">{active.pathNote}</p>
+
+                <div className="mt-auto flex flex-col gap-3 pt-8 sm:flex-row sm:items-center">
+                  <Link
+                    href={`/work/${active.proof.slug}`}
+                    className="inline-flex min-h-11 items-center justify-center rounded-full bg-sandstone px-5 text-sm font-medium text-soil transition-transform duration-300 hover:-translate-y-0.5"
+                  >
+                    Inspect the evidence
+                    <span className="ml-2" aria-hidden="true">↗</span>
+                  </Link>
+                  <Link
+                    href="/services"
+                    className="inline-flex min-h-11 items-center justify-center rounded-full border border-ivory/20 px-5 text-sm font-medium text-ivory/80 transition-colors hover:border-ivory/40 hover:text-ivory"
+                  >
+                    See the service path
+                    <span className="ml-2" aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
-        <AnimatePresence mode="wait">
-          {active && (
-            <motion.div
-              key={active.id}
-              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-8 rounded-2xl border border-ivory/12 p-6 backdrop-blur-md sm:p-8"
-              style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
-            >
-              <p className="max-w-2xl text-base leading-relaxed text-ivory/90">{active.need}</p>
-              <p className="mt-4 text-sm text-ivory/70">
-                The path for this: <span className="text-ivory">{active.path}</span>. {active.pathNote}
-              </p>
-              <div className="mt-5 border-l-2 border-sandstone/50 pl-4">
-                <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/60">Recorded proof</p>
-                <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ivory/85">{active.proof.line}</p>
-              </div>
-              <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
-                <Link
-                  href={`/work/${active.proof.slug}`}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory"
-                >
-                  See the decisions behind the result
-                  <span aria-hidden="true">→</span>
-                </Link>
-                <Link
-                  href="/services"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory"
-                >
-                  Explore the right service path
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
+        <Reveal delay={0.12} className="mt-10 flex items-center gap-4 text-xs uppercase tracking-[0.2em] text-ivory/35">
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent to-ivory/15" aria-hidden="true" />
+          Recognition becomes useful when it leads to evidence
+          <span className="h-px flex-1 bg-gradient-to-l from-transparent to-ivory/15" aria-hidden="true" />
+        </Reveal>
       </Container>
     </section>
   );
