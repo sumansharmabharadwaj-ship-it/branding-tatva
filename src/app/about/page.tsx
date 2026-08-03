@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -308,17 +309,26 @@ export default function AboutPage() {
                 block numerals (.case-study-block::before in globals.css)
                 and Home's "ELEMENTS" watermark — ivory-toned since this
                 section is bold Indigo, not the dark-on-cream version. */}
+            {/* Rewritten per the 80 page manual (p48): the section's job
+                is converting aesthetic curiosity into commercial
+                credibility — the site as a demonstration of method, with
+                each design decision tied to a business purpose and a
+                contextual CTA onward. */}
             <Reveal>
               <h2 className="relative text-display-sm font-display font-normal text-ivory">
-                Why this site looks the way it does
+                This website behaves like the brands it argues for.
               </h2>
             </Reveal>
             <Reveal delay={0.08}>
               <p className="mt-4 max-w-2xl text-ivory/85">
-                I could tell a prospective client what good branding looks
-                like, or I could just let this site be the example. Every
-                choice below was made on purpose, and I&apos;d make the same
-                case for yours.
+                Every surface here is built around the same question used in
+                brand strategy: what should a person notice, understand, and
+                remember? Earth holds the position. Water shapes the
+                experience. Fire earns attention. Air gives the idea
+                language. Space lets recognition settle. The imagery, the
+                pacing, the type, and the movement are part of the argument;
+                each decision below exists to reinforce one meaning, and the
+                coherence you can feel is the method being demonstrated.
               </p>
             </Reveal>
             {/* Was a static 4-item 2-column grid, plain text only — the
@@ -329,6 +339,16 @@ export default function AboutPage() {
                 system on hover or tap, rather than a fabricated
                 brand-asset showcase built for a client with none. */}
             <DesignRationaleGrid />
+            <Reveal>
+              <p className="mt-10 text-sm">
+                <Link
+                  href="/work"
+                  className="link-underline inline-flex items-center gap-2 text-sandstone transition-colors duration-300 hover:text-ivory"
+                >
+                  See the same decisions shaping a client project <span aria-hidden="true">→</span>
+                </Link>
+              </p>
+            </Reveal>
           </Container>
         </section>
 

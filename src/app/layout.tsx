@@ -8,6 +8,7 @@ import { PrecisionMark } from "@/components/PrecisionMark";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { VideoWarden } from "@/components/VideoWarden";
+import { MotionPreferenceProvider } from "@/components/MotionPreference";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({
@@ -127,7 +128,13 @@ export default function RootLayout({
         </a>
         <div className="gradient-mesh" aria-hidden="true" />
         <div className="paper-grain" aria-hidden="true" />
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        <SmoothScrollProvider>
+          {/* MotionPreference wraps the page tree so every Framer
+              component's useReducedMotion() honors the visitor's own
+              Full/Reduced choice (footer toggle), alongside the OS
+              preference it already respected. */}
+          <MotionPreferenceProvider>{children}</MotionPreferenceProvider>
+        </SmoothScrollProvider>
         <DeferredCursor />
         <PageLoadVeil />
         <AmbientAudio />

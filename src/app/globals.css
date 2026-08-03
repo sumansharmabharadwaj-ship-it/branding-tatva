@@ -167,6 +167,19 @@
     }
   }
 
+  /* The same clamp when the visitor uses the site's own motion toggle
+     (80 page manual p23: offer an optional Full/Reduced control) —
+     MotionPreference stamps data-motion on <html>; Framer components
+     get the equivalent via MotionConfig in the same provider. */
+  :root[data-motion="reduced"] *,
+  :root[data-motion="reduced"] *::before,
+  :root[data-motion="reduced"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
   /* A slow-drifting wash of the brand's own five colors behind every
      page, sitting just under paper-grain in the same fixed overlay
      stack — so flat stretches of cream or soil pick up a faint color

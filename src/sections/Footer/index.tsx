@@ -7,6 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { ElementAccentButton } from "@/components/ElementAccentButton";
 import { site, footerLinks } from "@/data/site";
 import { socialLinks } from "./constants";
+import { MotionToggle } from "@/components/MotionPreference";
 
 // Rebuilt as a compact "widget bar" — direct feedback that the previous
 // full-screen closing scene (headline, five glyphs, giant logo, a
@@ -149,7 +150,10 @@ export function Footer() {
             (CC BY 4.0)
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {/* The sitewide Full/Reduced motion control (80 page manual
+              p23) — quiet, but present on every page via the footer. */}
+          <MotionToggle />
           {footerLinks.map((item) => (
             <Link key={item.href} href={item.href} className="text-xs text-ivory/60 hover:text-ivory">
               {item.label}
