@@ -182,3 +182,38 @@ non-essential / Manage preferences as three distinct actions, separate
 necessary, analytics and marketing controls with nothing pre-ticked, a
 permanent way to reopen and withdraw, and privacy plus cookie policy
 text matching the implementation. What ships today is a two button gate.
+
+### Status label and next session order (agreed Aug 2026)
+
+Current state is **functionally gated, incomplete**. It blocks correctly
+and is safe on preview, and it is deliberately short of compliant.
+
+Next session starts here, in this order, before anything else:
+
+1. Accept all, Reject non-essential, and Manage preferences as three
+   distinct actions.
+2. Separate necessary, analytics and marketing categories, with every
+   optional category off until chosen. Nothing pre-ticked.
+3. A persistent way to reopen preferences and withdraw consent after the
+   fact, reachable from every page.
+4. Privacy and cookie policy text rewritten to describe what the code
+   actually does, rather than a generic policy.
+5. Clean profile testing across refreshes, route changes, private
+   browsing, withdrawal, and changed preferences.
+
+Then the full audit, against a production build: design consistency,
+responsive layout at desktop, tablet and mobile, animation timing and
+scroll trigger reliability, reduced motion, accessibility including
+keyboard order, focus states, heading semantics and labels, video
+autoplay, posters, looping and mobile cost, Core Web Vitals and asset
+weight, console errors and hydration warnings, broken links, forms and
+quiz flows, and consent behaviour across all of the above.
+
+**Deployment protection stays enabled.** Reviews use a temporary
+Protection Bypass link from the Vercel dashboard rather than disabling
+protection on previews globally. Weakening access control on a site
+carrying a live booking calendar is the wrong trade for review
+convenience.
+
+**Production stays untouched** until both the finished consent layer and
+the audit fixes have been reviewed.
