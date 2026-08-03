@@ -112,53 +112,58 @@ export function Header({ transparent = false }: HeaderProps) {
         transition={BAR_TRANSITION}
         className="fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5"
       >
-        {/* nav-pill-ring: a slow rotating conic-gradient carrying all
-            five element colors, plus nav-pill-glow — the same gradient
-            blurred behind the pill as a soft halo, so the palette reads
-            as genuinely vivid rather than a hairline most people would
-            never consciously notice against a bright white fill. */}
-        <div className="nav-pill-glow relative w-full max-w-4xl lg:max-w-5xl">
-          <div className="nav-pill-ring rounded-full p-[2.5px] shadow-elevation-md">
-            <div
-              className={`grid w-full grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-full px-4 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-5 ${
-                scrolled ? "bg-soil/85" : "bg-soil/55"
-              }`}
-            >
-              {/* True 3 column grid, not a flex left/right split — the
-                  earlier flex version put the nav links inside the
-                  right cluster, so the block widths never matched and
-                  the bar read visibly lopsided. The center column now
-                  centers on its own regardless of how wide the left
-                  (identity) and right (actions) columns are. */}
-              <Link href="/" className="flex shrink-0 items-center gap-2 justify-self-start">
-                <LogoMark size={30} light className="shrink-0" />
-                <Logo light className="hidden origin-left scale-[0.72] min-[400px]:inline-flex sm:scale-[0.78]" />
-              </Link>
+        {/* Rebuilt to the approved reference board (Aug 2026): one dark
+            glass pill, quiet hairline border, monogram + hairline
+            divider + wordmark as the identity block on the left, the
+            four content pages inline on the right, a second hairline,
+            then an outlined Warm Sand CTA and a Warm Sand menu toggle.
+            The earlier rotating five-color ring and the element-tinted
+            solid CTA are gone on purpose — the reference's whole point
+            is restraint: charcoal glass, ivory type, one gold accent. */}
+        <div className="relative w-full max-w-4xl lg:max-w-5xl">
+          <div
+            className={`flex w-full items-center justify-between gap-4 rounded-full border border-ivory/10 px-4 py-2.5 shadow-elevation-md backdrop-blur-md transition-colors duration-500 sm:px-6 sm:py-3 ${
+              scrolled ? "bg-[#1B1B1B]/90" : "bg-[#1B1B1B]/60"
+            }`}
+          >
+            <Link href="/" className="flex shrink-0 items-center gap-3">
+              <LogoMark size={32} light className="shrink-0" />
+              <span aria-hidden="true" className="hidden h-6 w-px bg-ivory/25 min-[400px]:block" />
+              <Logo light className="hidden origin-left min-[400px]:inline-flex" />
+            </Link>
 
-              {/* Direct feedback: visitors should reach other pages
-                  without scrolling to the top and opening the menu.
-                  The primary pages sit inline on desktop; the menu
-                  button remains for mobile and for the fuller list. */}
-              <nav aria-label="Primary" className="hidden items-center gap-4 justify-self-center lg:flex">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="whitespace-nowrap text-[0.68rem] font-medium uppercase tracking-[0.14em] text-ivory/75 transition-colors duration-300 hover:text-ivory"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
+            <div className="flex items-center gap-4 sm:gap-5 lg:gap-6">
+              {/* Home rides on the logo and Contact rides on the CTA, so
+                  the inline list carries only the four content pages —
+                  exactly the reference's ABOUT · SERVICES · WORK ·
+                  INSIGHTS row. The menu keeps the complete list. */}
+              <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
+                {navigation
+                  .filter((item) => item.href !== "/" && item.href !== "/contact")
+                  .map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="whitespace-nowrap text-[0.72rem] font-medium uppercase tracking-[0.18em] text-ivory/85 transition-colors duration-300 hover:text-ivory"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
               </nav>
-
-              <div className="flex items-center justify-self-end gap-3 sm:gap-5">
-                <div className="hidden sm:block">
-                  <LinkButton href="/contact" className="px-4 py-2 text-xs" style={{ backgroundColor: element.color }}>
-                    Start a project
-                  </LinkButton>
-                </div>
-                <button
-                  className="relative flex h-9 w-9 items-center justify-center rounded-full text-ivory transition-colors duration-500"
+              <span aria-hidden="true" className="hidden h-6 w-px bg-ivory/25 lg:block" />
+              <Link
+                href="/contact"
+                className="group hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 py-2 text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300 sm:inline-flex"
+                style={{ borderColor: "rgba(198,169,122,0.75)", color: "#C6A97A" }}
+              >
+                Start a project
+                <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
+              <button
+                  className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-500"
+                  style={{ color: "#C6A97A" }}
                   aria-label={open ? "Close menu" : "Open menu"}
                   aria-expanded={open}
                   onClick={() => setOpen((v) => !v)}
@@ -191,7 +196,6 @@ export function Header({ transparent = false }: HeaderProps) {
                     )}
                   </AnimatePresence>
                 </button>
-              </div>
             </div>
           </div>
         </div>
