@@ -62,7 +62,7 @@ export function CalendlyEmbed({ url }: { url: string }) {
       {!loaded && (
         <div
           className="absolute inset-0 animate-pulse bg-background-alt"
-          style={{ height: "min(700px, 90svh)" }}
+          style={{ height: "min(560px, 72svh)" }}
           aria-hidden="true"
         />
       )}
@@ -70,7 +70,7 @@ export function CalendlyEmbed({ url }: { url: string }) {
         className="calendly-inline-widget"
         data-url={`${url}?hide_gdpr_banner=1`}
         data-resize="true"
-        style={{ minWidth: "320px", minHeight: "min(700px, 90svh)" }}
+        style={{ minWidth: "320px", minHeight: "min(560px, 72svh)" }}
       />
       <Script
         src="https://assets.calendly.com/assets/external/widget.js"
