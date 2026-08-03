@@ -191,7 +191,7 @@
      seen. */
   .gradient-mesh {
     position: fixed;
-    inset: -20%;
+    inset: -20% 0;
     z-index: 1;
     pointer-events: none;
     opacity: 0.05;
@@ -653,7 +653,7 @@
    additive (lightens) instead of muddying whatever's underneath. */
 .light-rays {
   position: absolute;
-  inset: -10% -50%;
+  inset: -10% 0;
   pointer-events: none;
   opacity: 0.5;
   mix-blend-mode: screen;
