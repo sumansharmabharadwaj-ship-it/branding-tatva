@@ -205,8 +205,14 @@ export function PageLoadVeil() {
                 {/* The wing stroke itself morphs between up and down
                     beats — a real silhouette change, the way distant
                     birds actually read. */}
+                {/* initial is explicit rather than relying on the d
+                    attribute alone: without it the first animation
+                    frame writes d="undefined" before the keyframes take
+                    over, which the browser rejects and logs. Harmless
+                    on screen, real in the console, and free to fix. */}
                 <motion.path
                   d={WING_UP}
+                  initial={{ d: WING_UP }}
                   animate={{ d: [WING_UP, WING_DOWN, WING_UP] }}
                   transition={{ duration: b.flap, repeat: Infinity, ease: "easeInOut", delay: i * 0.19 }}
                   stroke="rgba(38,34,29,0.8)"
