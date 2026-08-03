@@ -67,3 +67,50 @@ No section divisions — one continuous environment; mist/water/branches/birds c
 ## THE STORYBOARD (Aug 2, 2026 — Suman's 8-scene Services board, the master layout spec)
 S00 Hero: sun through forest + stream, chapter dots 01-08, "Scroll to begin". S01 Strategy Foundation: "beneath the surface" — the ROOTS image IS the diagram, real service concepts as labeled root-branches. S02 Brand Positioning: mountain with a LIT PATH climbing to one summit; ladder chips (Recognised/Remembered/Preferred + leadership) ride beside it. S03 Brand Experience Lab: the ONE LIGHT scene (cream/paper, sketchbook) — four chips: identity/messaging/tone/touchpoints. S04 Deliverables Studio: vine with firefly lights over deep green + horizontal card carousel of real deliverables. S05 Brand Health Check: mossy stream, the questions ARE stepping stones in the water (numbered stone buttons, ripples on answer). S06 Right Fit: wildflower meadow + butterflies + firefly trail + question cards (the live trail journey evolves toward this). S07 Process: winding path with icon nodes Discover→Evolve mapped to the six real process stages. S08 Book Call: valley sunrise, journal + coffee still-life warmth. Footer: journey timeline + dandelion + partners.
 Honesty adjustments that always apply when building this board: partner names on boards are placeholders — only the five real engagements ever ship; board copy is rewritten inside the voice standard (banned: "creates magic", "we believe", "impact", "meaningful"); the 2018-2024 journey timeline ships only with Suman's real dates and milestones, never invented ones.
+
+## Footage for the brand studies (Suman's direction, Aug 2026)
+
+The five brand studies teach brand mechanics. They never celebrate
+brands. That distinction governs every footage choice on those pages:
+if a clip leans on a recognisable product, a viewer attributes the
+impact to that brand's fame rather than to the system being explained,
+and the teaching quietly stops working. It also drags in trademark and
+licensing complexity for close to zero editorial gain.
+
+So no clip on a study page may show a real trademark, logo, protected
+trade dress, or a near lookalike of a real product. Footage evokes the
+principle instead of depicting the company.
+
+Per study, the principle to shoot for:
+
+- **Distinctive assets** — recognition before identification.
+  Condensation, curved reflections, saturated red, repetitive
+  silhouettes, familiar but unbranded forms. Something recognised
+  before it can be named.
+- **Brand architecture** — precision, modularity, hierarchy. Machined
+  materials, ordered grids, stacked systems, architectural shadows.
+- **Verbal identity** — language in motion. Editorial layouts,
+  typography being refined, annotations, printed copy, proof marks,
+  rhythm. Never generic writing footage.
+- **Codes under pressure** — materials stressed while staying
+  identifiable. Fabric in wind, paper folding, weathered surfaces,
+  repeated textures, restrained motion.
+- **Ritual** — human behaviour rather than product. Steam, pauses,
+  repeated gestures, anticipation, hands meeting ordinary objects in a
+  familiar sequence, with no brand revealed.
+
+**The mute test, applied to every clip on the site.** A clip has to be
+visually compelling with the page muted and every caption removed. It
+should carry its principle emotionally before any copy explains it
+intellectually. Footage that only makes sense once a caption tells you
+what to think has failed and gets rejected.
+
+**Approval record.** Every candidate is presented with thumbnail,
+source, licence, duration, whether it loops seamlessly, one line on why
+it reinforces the principle, one line on why it repeats no motif
+already in use, and the section it is meant for. Nothing is downloaded
+before Suman names the file.
+
+**Motifs already spent.** Roots, streams, forest, mountains, mist,
+desks, sketchbooks, hands writing, meadows, coastlines. A new clip that
+echoes one of these is rejected regardless of quality.
