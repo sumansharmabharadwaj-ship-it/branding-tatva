@@ -399,8 +399,8 @@ not repeated here. */}
                       ]}
                     />
                     <p className="mt-6 text-sm">
-                      <Link href="/services#risk" className="link-underline text-foreground-secondary hover:text-soil">
-                        Every question, answered on the Services journey
+                      <Link href="/services#book" className="link-underline text-foreground-secondary hover:text-soil">
+                        Bring any other question to a first conversation
                       </Link>
                     </p>
                   </div>

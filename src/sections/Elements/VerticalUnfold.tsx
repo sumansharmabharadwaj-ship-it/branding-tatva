@@ -48,7 +48,7 @@ export function VerticalUnfold({ elements }: { elements: Element[] }) {
           // motion (earth settles, water ripples, etc.) while the row's
           // own visual presence is no longer gated on it.
           <div key={el.slug} className="relative overflow-hidden">
-            <ElementRowBackground image={el.image} video={el.video} color={el.color} imagePosition={el.imagePosition} />
+            <ElementRowBackground gate image={el.image} video={el.video} color={el.color} imagePosition={el.imagePosition} />
             <Container>
               <ElementReveal slug={el.slug} delay={i * 0.06}>
                 <div

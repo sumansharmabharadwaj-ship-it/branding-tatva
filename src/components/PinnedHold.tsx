@@ -29,7 +29,11 @@ import { useEffect, useRef, useState } from "react";
 // than this component checking reduced-motion itself, since it has no
 // opinion on what's inside it.
 export function PinnedHold({
-  extra = "70vh",
+  // Scroll OS fatigue gate: 70vh of held travel per beat pushed Home's
+  // sticky share to 55% of the page against the OS's 40% budget. 45vh
+  // keeps a real, felt hold on every beat while returning roughly a
+  // quarter viewport of scroll to free flow at each of the holds.
+  extra = "45vh",
   bg = "bg-soil",
   children,
 }: {

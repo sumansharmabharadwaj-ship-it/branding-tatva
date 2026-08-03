@@ -77,8 +77,13 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                             surface shows, inline so nothing hides behind
                             hover. */}
                         <span className="mt-4 block overflow-hidden rounded-xl lg:hidden">
+                          {/* Fixed frame instead of natural height — five full-height
+                              stills stacked the mobile index to ~26 screens of
+                              travel in the fatigue audit; a consistent short
+                              band keeps the preview real while the list reads
+                              as a list again. */}
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={project.cardImage} alt="" className="block h-auto w-full" loading="lazy" />
+                          <img src={project.cardImage} alt="" className="block h-40 w-full object-cover" loading="lazy" />
                         </span>
                       </span>
                       <span
