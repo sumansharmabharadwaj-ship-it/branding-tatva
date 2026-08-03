@@ -26,17 +26,17 @@ export function CinematicHero({
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
-  const cameraScale = useTransform(scrollYProgress, [0, 1], [1.03, 1.1]);
-  const cameraY = useTransform(scrollYProgress, [0, 1], [0, -22]);
-  const sceneOpacity = useTransform(scrollYProgress, [0, 0.78, 1], [1, 0.82, 0.68]);
-  const openingOpacity = useTransform(scrollYProgress, [0, 0.3, 0.5], [1, 1, 0]);
-  const openingY = useTransform(scrollYProgress, [0, 0.5], [0, -34]);
-  const clueOpacity = useTransform(scrollYProgress, [0.42, 0.58, 1], [0, 1, 1]);
-  const clueY = useTransform(scrollYProgress, [0.42, 0.64], [36, 0]);
+  const cameraScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.09]);
+  const cameraY = useTransform(scrollYProgress, [0, 1], [0, -18]);
+  const sceneOpacity = useTransform(scrollYProgress, [0, 0.84, 1], [1, 0.86, 0.7]);
+  const openingOpacity = useTransform(scrollYProgress, [0, 0.42, 0.58], [1, 1, 0]);
+  const openingY = useTransform(scrollYProgress, [0, 0.58], [0, -28]);
+  const clueOpacity = useTransform(scrollYProgress, [0.5, 0.66, 1], [0, 1, 1]);
+  const clueY = useTransform(scrollYProgress, [0.5, 0.7], [30, 0]);
   const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <section ref={ref} className="relative h-[150svh] bg-soil">
+    <section ref={ref} className="relative h-[185svh] bg-soil">
       <div className="sticky top-0 h-dvh overflow-hidden bg-soil">
         {video && poster && <link rel="preload" as="image" href={poster} fetchPriority="high" />}
 
