@@ -1,81 +1,115 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { elements } from "@/data/elements";
 import { ELEMENT_HEX } from "@/lib/sectionWash";
 
-// Suman's board, scene three: the framework introduced as five living
-// Tatvas instead of a text block on brown — the exact section she
-// flagged. The Sanskrit names carry the philosophy's real origin;
-// each orb is a circular window into that element's own footage world
-// (the same photography the Elements exploration below uses, so the
-// strip works as its trailhead). Board copy kept verbatim where she
-// authored it. The strip links straight down into the full pinned
-// exploration, which is where "scroll to explore" pays off.
-const TATVAS: { slug: keyof typeof ELEMENT_HEX; name: string; role: string; line: string }[] = [
-  { slug: "earth", name: "Prithvi", role: "The Foundation", line: "The truth everything else stands on." },
-  { slug: "water", name: "Jal", role: "The Flow", line: "The emotion that moves people." },
-  { slug: "fire", name: "Agni", role: "The Spark", line: "The message that ignites action." },
-  { slug: "air", name: "Vayu", role: "The Voice", line: "The expression that carries it far." },
-  { slug: "space", name: "Akash", role: "The Space", line: "The presence that lasts." },
+const TATVAS: { slug: keyof typeof ELEMENT_HEX; name: string; role: string; line: string; motion: string }[] = [
+  { slug: "earth", name: "Prithvi", role: "The Foundation", line: "The truth everything else stands on.", motion: "settles" },
+  { slug: "water", name: "Jal", role: "The Flow", line: "The experience that carries meaning forward.", motion: "travels" },
+  { slug: "fire", name: "Agni", role: "The Spark", line: "The distinction that earns attention.", motion: "ignites" },
+  { slug: "air", name: "Vayu", role: "The Voice", line: "The language people remember and repeat.", motion: "spreads" },
+  { slug: "space", name: "Akash", role: "The Presence", line: "The memory that remains after the moment.", motion: "compounds" },
 ];
 
 export function TatvaStrip() {
   return (
-    <section className="py-16 sm:py-24" style={{ backgroundColor: "#F2F0E8" }}>
+    <section className="relative isolate overflow-hidden bg-[#182019] py-20 text-ivory sm:py-28">
+      {/* A living environmental field, taken directly from the moodboard's
+          landscape-under-glass language. The background never becomes the
+          subject; it gives the whole framework one breathing atmosphere. */}
+      <video
+        className="absolute inset-0 -z-20 h-full w-full scale-[1.06] object-cover opacity-45 motion-reduce:hidden"
+        src="/videos/pixabay-golden-forest-glow.mp4"
+        poster="/images/pixabay-golden-forest-glow-poster.jpg"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(19,25,20,.92)_0%,rgba(19,25,20,.72)_42%,rgba(19,25,20,.6)_100%)]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_72%_38%,rgba(214,172,93,.18),transparent_34%),radial-gradient(circle_at_22%_78%,rgba(91,118,76,.18),transparent_30%)]" />
+
+      {/* Slow light drift keeps the static poster fallback alive without
+          requiring JavaScript or another video layer. */}
+      <div className="tatva-light-drift pointer-events-none absolute -right-[10%] top-[-35%] h-[110%] w-[42%] rotate-[18deg] bg-gradient-to-b from-transparent via-[#f4d69a]/15 to-transparent blur-3xl motion-reduce:hidden" />
+
       <Container className="max-w-[100rem]">
-        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,18rem)_1fr] lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-[minmax(18rem,25rem)_1fr] lg:items-end lg:gap-16">
           <Reveal>
-            <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: "#556B4A" }}>
-              The framework
-            </p>
-            <h2 className="mt-3 font-display text-display-sm font-normal leading-[1.08] text-soil">
-              The five Tatvas of every brand that gets remembered.
-            </h2>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-foreground-secondary">
-              A timeless framework. A living system. Scroll to explore each element.
-            </p>
-            <Link
-              href="#elements"
-              className="link-underline mt-5 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em]"
-              style={{ color: "#556B4A" }}
-            >
-              Explore the framework <span aria-hidden="true">→</span>
-            </Link>
+            <div className="max-w-md">
+              <p className="text-xs font-medium uppercase tracking-[0.28em] text-[#d4ad69]">The living framework</p>
+              <h2 className="mt-4 font-display text-[clamp(2.9rem,5.6vw,5.8rem)] font-normal leading-[0.96] tracking-[-0.035em] text-ivory">
+                Five forces.
+                <br />
+                One remembered
+                <br />
+                <span className="italic text-[#d4ad69]">meaning.</span>
+              </h2>
+              <p className="mt-6 max-w-sm text-sm leading-relaxed text-ivory/68 sm:text-base">
+                A brand becomes coherent when foundation, experience, distinction, language and presence move as one system.
+              </p>
+              <Link
+                href="#elements"
+                className="group mt-7 inline-flex items-center gap-3 rounded-full border border-ivory/22 bg-ivory/[0.06] px-5 py-3 text-xs font-medium uppercase tracking-[0.18em] text-ivory backdrop-blur-md transition duration-500 hover:border-[#d4ad69]/65 hover:bg-[#d4ad69]/10"
+              >
+                Enter the five Tatvas
+                <span className="transition-transform duration-500 group-hover:translate-x-1" aria-hidden="true">→</span>
+              </Link>
+            </div>
           </Reveal>
 
           <Reveal delay={0.1}>
-            <ol className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2">
+            <ol className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
               {TATVAS.map((t, i) => {
                 const el = elements.find((e) => e.slug === t.slug);
                 return (
-                  <li key={t.slug} className="flex items-start lg:flex-1">
-                    <Link href="#elements" className="group flex w-full flex-col items-center text-center">
-                      <span
-                        className="relative block h-24 w-24 overflow-hidden rounded-full ring-2 ring-offset-2 transition-transform duration-500 group-hover:scale-105 lg:h-28 lg:w-28"
-                        style={{ ["--tw-ring-color" as string]: `${ELEMENT_HEX[t.slug]}55`, ["--tw-ring-offset-color" as string]: "#F2F0E8" }}
-                      >
-                        {el?.image && (
-                          <Image src={el.image} alt="" fill sizes="112px" style={{ objectFit: "cover" }} />
-                        )}
+                  <li key={t.slug} className={i === 4 ? "sm:col-span-2 xl:col-span-1" : ""}>
+                    <Link
+                      href={`#${t.slug}`}
+                      className="tatva-card group relative flex min-h-[20rem] overflow-hidden rounded-[1.4rem] border border-ivory/14 bg-[#182019]/48 p-4 shadow-[0_24px_70px_rgba(0,0,0,.24)] backdrop-blur-md transition-[transform,border-color,background-color] duration-700 hover:-translate-y-2 hover:border-ivory/32 hover:bg-[#182019]/62 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4ad69] sm:min-h-[23rem]"
+                    >
+                      <div className="absolute inset-0 overflow-hidden">
+                        {el?.video ? (
+                          <video
+                            className="h-full w-full scale-[1.08] object-cover opacity-62 transition duration-[1400ms] group-hover:scale-100 group-hover:opacity-82 motion-reduce:hidden"
+                            src={el.video}
+                            poster={el.image}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            preload="metadata"
+                            aria-hidden="true"
+                          />
+                        ) : null}
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/90" />
+                        <div className="absolute inset-0 opacity-60 mix-blend-soft-light" style={{ backgroundColor: ELEMENT_HEX[t.slug] }} />
+                      </div>
+
+                      <span className="tatva-orbit pointer-events-none absolute right-3 top-3 h-16 w-16 rounded-full border border-ivory/28 motion-reduce:hidden" aria-hidden="true">
+                        <span className="absolute left-1/2 top-[-3px] h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-ivory shadow-[0_0_14px_rgba(255,255,255,.85)]" />
                       </span>
-                      <span className="mt-4 text-xs font-medium uppercase tracking-[0.25em] text-soil">{t.name}</span>
-                      <span className="mt-1 font-display text-base font-normal" style={{ color: ELEMENT_HEX[t.slug] }}>
-                        {t.role}
-                      </span>
-                      <span className="mt-1 max-w-[11rem] text-xs leading-relaxed text-foreground-secondary">
-                        {t.line}
-                      </span>
+
+                      <div className="relative mt-auto w-full">
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-[0.65rem] font-medium uppercase tracking-[0.24em] text-ivory/66">
+                            {String(i + 1).padStart(2, "0")} · {t.motion}
+                          </span>
+                          <span className="h-px flex-1 origin-left scale-x-30 bg-ivory/45 transition-transform duration-700 group-hover:scale-x-100" />
+                        </div>
+                        <p className="mt-4 font-display text-[2rem] font-normal leading-none text-ivory">{t.name}</p>
+                        <p className="mt-1 font-display text-lg italic" style={{ color: "#f0c97d" }}>{t.role}</p>
+                        <p className="mt-3 max-w-[14rem] text-xs leading-relaxed text-ivory/72">{t.line}</p>
+                        <span className="mt-5 inline-flex items-center gap-2 text-[0.65rem] font-medium uppercase tracking-[0.2em] text-ivory/80 opacity-70 transition duration-500 group-hover:opacity-100">
+                          See it move <span className="transition-transform duration-500 group-hover:translate-x-1" aria-hidden="true">↗</span>
+                        </span>
+                      </div>
                     </Link>
-                    {/* Dotted connector between orbs, desktop row only. */}
-                    {i < TATVAS.length - 1 && (
-                      <span
-                        aria-hidden="true"
-                        className="mt-12 hidden h-px flex-1 border-t border-dashed lg:block"
-                        style={{ borderColor: "#B5B3AA" }}
-                      />
-                    )}
                   </li>
                 );
               })}
@@ -83,6 +117,26 @@ export function TatvaStrip() {
           </Reveal>
         </div>
       </Container>
+
+      <style jsx>{`
+        .tatva-light-drift {
+          animation: tatva-light-drift 9s ease-in-out infinite alternate;
+        }
+        .tatva-orbit {
+          animation: tatva-orbit 8s linear infinite;
+        }
+        .tatva-card:nth-child(even) .tatva-orbit {
+          animation-direction: reverse;
+          animation-duration: 10s;
+        }
+        @keyframes tatva-light-drift {
+          from { transform: translate3d(-7%, -2%, 0) rotate(18deg); opacity: .45; }
+          to { transform: translate3d(10%, 7%, 0) rotate(22deg); opacity: .8; }
+        }
+        @keyframes tatva-orbit {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </section>
   );
 }
