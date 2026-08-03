@@ -4,6 +4,7 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
+import { SplitReveal } from "@/components/SplitReveal";
 import { pillars } from "@/data/glossary";
 
 // The glossary index — the practice's working vocabulary as crawlable
@@ -23,16 +24,23 @@ export const metadata: Metadata = {
 export default function GlossaryPage() {
   return (
     <>
-      <Header />
+      <Header transparent />
       <main id="main-content">
-        <section className="pb-20 pt-32 sm:pt-36">
+        {/* This was the only top level route opening straight onto flat
+            cream with no masthead at all. It now takes the same dark
+            chapter opening every other section of the site uses, and the
+            headline arrives word by word like every other page h1. */}
+        <section className="bg-soil pb-16 pt-36 sm:pt-44">
           <Container className="max-w-3xl">
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-wide text-clay">Glossary</p>
-              <h1 className="mt-2 font-display text-display-md font-normal text-soil">
-                The working vocabulary of brand strategy.
-              </h1>
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-foreground-secondary">
+              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Glossary</p>
+            </Reveal>
+            <SplitReveal as="h1" className="mt-2 font-display text-display-md font-normal text-ivory">
+              The working vocabulary of brand strategy.
+            </SplitReveal>
+            <Reveal delay={0.1}>
+              <span aria-hidden="true" className="mt-6 block h-px w-16 bg-sandstone/70" />
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-ivory/75">
                 Every term defined in plain language, connected to the questions it answers and the places this
                 practice applies it.
               </p>

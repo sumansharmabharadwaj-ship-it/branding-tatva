@@ -39,10 +39,10 @@ export function WorkingDirectly() {
             The terms this practice actually works by.
           </h2>
         </Reveal>
-        <div>
+        <div className="spotlight-grid">
           {TERMS.map((term, i) => (
             <Reveal key={term.title} delay={i * 0.06}>
-              <div className="grid gap-2 border-t border-ivory/15 py-6 sm:grid-cols-[minmax(0,14rem)_1fr] sm:gap-8">
+              <div className="spotlight-card grid gap-2 rounded-2xl border-t border-ivory/15 px-4 py-6 transition-colors duration-500 hover:bg-ivory/[0.04] sm:grid-cols-[minmax(0,14rem)_1fr] sm:gap-8">
                 <p className="flex items-baseline gap-3 font-display text-xl font-normal text-ivory">
                   <span className="text-sm text-ivory/40" aria-hidden="true">
                     {String(i + 1).padStart(2, "0")}

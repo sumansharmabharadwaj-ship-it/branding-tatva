@@ -37,12 +37,12 @@ export function PointOfView() {
           Three claims this practice stakes its work on.
         </h2>
       </Reveal>
-      <div className="mt-12 grid gap-10 lg:grid-cols-3">
+      <div className="spotlight-grid mt-12 grid gap-6 lg:grid-cols-3">
         {CLAIMS.map((item, i) => {
           const project = projects.find((p) => p.slug === item.slug);
           return (
             <Reveal key={item.slug} delay={i * 0.09}>
-              <div className="flex h-full flex-col border-t border-ivory/15 pt-6">
+              <div className="spotlight-card flex h-full flex-col rounded-2xl border border-ivory/12 p-6 transition-colors duration-500 hover:border-sandstone/40 hover:bg-ivory/[0.04]">
                 <p className="font-display text-sm text-ivory/40" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
                 </p>

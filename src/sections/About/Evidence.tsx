@@ -38,13 +38,13 @@ export function Evidence() {
           Ambiguity, decision, result. Three times on record.
         </h2>
       </Reveal>
-      <div className="mt-12 space-y-14">
+      <div className="spotlight-grid mt-12 space-y-8">
         {CASES.map((c, i) => {
           const project = projects.find((p) => p.slug === c.slug);
           if (!project) return null;
           return (
             <Reveal key={c.slug} delay={i * 0.07}>
-              <div className="border-t border-ivory/15 pt-8">
+              <div className="spotlight-card rounded-2xl border-t border-ivory/15 px-5 pb-6 pt-8 transition-colors duration-500 hover:bg-ivory/[0.04]">
                 <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                   <Link
                     href={`/work/${project.slug}`}

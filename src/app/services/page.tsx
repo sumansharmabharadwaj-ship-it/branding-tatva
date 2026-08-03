@@ -309,14 +309,21 @@ export default async function ServicesPage() {
                   plainly.
                 </p>
               </Reveal>
-              <div>
+              {/* Every neighbouring chapter carries footage and a real
+                  interaction; this one was six static rows. spotlight-grid
+                  is pure CSS, so resting on one discipline dims the other
+                  five and the row takes its own accent. */}
+              <div className="spotlight-grid">
                 {offerings.map((offer, i) => (
                   <Reveal key={offer.name} delay={i * 0.05}>
-                    <div className="grid gap-2 border-t border-ivory/12 py-6 sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-8">
+                    <div
+                      className="spotlight-card group grid gap-2 rounded-2xl border-t border-ivory/12 px-4 py-6 transition-colors duration-500 hover:bg-ivory/[0.05] sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-8"
+                      style={{ borderTopColor: "rgba(244,239,230,0.12)" }}
+                    >
                       <p className="flex items-center gap-3 font-display text-xl font-normal text-ivory">
                         <span
                           aria-hidden="true"
-                          className="h-2 w-2 shrink-0 rounded-full"
+                          className="h-2 w-2 shrink-0 rounded-full transition-transform duration-500 group-hover:scale-[2.2]"
                           style={{ backgroundColor: offer.color }}
                         />
                         {offer.name}

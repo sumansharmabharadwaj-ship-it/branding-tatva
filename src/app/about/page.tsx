@@ -204,8 +204,15 @@ export default function AboutPage() {
 
         {/* Evidence — ambiguity, decision, observed result for three
             selected cases, all from recorded project data. */}
-        <section className="bg-soil py-16 sm:py-24">
-          <Evidence />
+        {/* Three flat soil sections ran back to back here with no
+            footage between them. The evidence chapter now sits in a
+            room of its own. */}
+        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+          <BackgroundVideo video="/videos/pixabay-forest-sunbeams.mp4" poster="/images/pixabay-forest-sunbeams-poster.jpg" parallax />
+          <div aria-hidden="true" className="absolute inset-0 bg-soil/85" />
+          <div className="relative">
+            <Evidence />
+          </div>
         </section>
 
         {/* Behaviours instead of values. */}
