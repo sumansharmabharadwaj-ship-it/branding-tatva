@@ -13,6 +13,7 @@ import { ElementsSection } from "@/sections/Elements";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
+import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { CinematicHero } from "@/sections/Hero";
 import { VisitorRecognition } from "@/sections/Home/VisitorRecognition";
@@ -186,6 +187,17 @@ not repeated here. */}
             flagged. The strip is the trailhead; the full pinned
             exploration below is where "scroll to explore" pays off. */}
         <TatvaStrip />
+
+        {/* The Earth chapter as excavation and moving sunlight: daylight
+            crosses the valley, the invisible strategic layers rise out
+            of the ground, lines connect them, and the finished
+            foundation is what is left. Sticky plus a scrubbed GSAP
+            timeline, never a pin.
+            NOTE: this sits alongside the five element slider rather than
+            replacing it. Earth is one of five stages in there, and
+            cutting a single stage would leave the framework with four.
+            Whether the slider goes entirely is Suman's call. */}
+        <BrandFoundationScene />
 
         <div id="elements" className="scroll-mt-24">
           <ElementsSection elements={elements} />
