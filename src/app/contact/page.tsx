@@ -245,8 +245,14 @@ export default function ContactPage() {
             (or its own Footer), fitting "grab a time / stay in touch."
             Overlay at bg-soil/80, the site's normalized standard. */}
         <section id="call" className="relative scroll-mt-24 overflow-hidden bg-soil py-16">
-          <BackgroundVideo video="/videos/pexels-backlit-grasses.mp4" videoWebm="/videos/pexels-backlit-grasses.webm" poster="/images/pexels-backlit-grasses-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
+          {/* Restored to the warm meadow per Suman's design: the green
+              backlit grasses read harsh behind this cream panel. */}
+          <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{ backgroundImage: "linear-gradient(180deg, rgba(38,30,22,0.82) 0%, rgba(45,35,25,0.68) 45%, rgba(30,24,18,0.86) 100%)" }}
+          />
           {/* min-w-0 on both grid items: CalendlyEmbed's own real
               minWidth:320px constraint (its own widget's floor, not
               this page's choice) was propagating up through CSS
@@ -280,29 +286,31 @@ export default function ContactPage() {
           </Container>
           <Container className="relative grid gap-8 lg:grid-cols-2 lg:items-start">
             <Reveal className="min-w-0">
-              <div
-                className="rounded-2xl border p-6 sm:p-8"
-                style={{ borderColor: `${ELEMENT_HEX.water}40`, backgroundColor: `${ELEMENT_HEX.water}14` }}
-              >
-                <ElementGlyph slug="water" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
-                <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
-                  Or skip the form
+              {/* Suman's design: a cream panel carrying the booking,
+                  opening on the italic welcome, her name in serif, and
+                  the sprig divider before the calendar itself. */}
+              <div className="rounded-3xl px-6 py-10 text-center shadow-elevation-lg sm:px-10" style={{ backgroundColor: "#F6F2EA" }}>
+                <p className="font-display text-3xl italic" style={{ color: "#B08A4F" }}>Welcome,</p>
+                <p className="mt-1 font-display text-4xl font-normal text-soil sm:text-5xl">{site.founder}</p>
+                <span aria-hidden="true" className="mx-auto mt-4 block h-px w-16" style={{ backgroundColor: "#C6A97A" }} />
+                <p className="mx-auto mt-5 max-w-xs text-sm leading-relaxed text-foreground-secondary">
+                  Pick any time that suits you. Every slot adjusts to your own timezone automatically.
                 </p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Just grab a time that works for you.
-                </h2>
-                <p className="mt-3 text-ivory/85">
-                  Times shown automatically adjust to your local timezone,
-                  wherever you are.
-                </p>
+                <span aria-hidden="true" className="mt-7 flex items-center justify-center gap-3">
+                  <span className="h-px w-20 bg-soil/15" />
+                  <svg viewBox="0 0 24 20" className="h-4 w-5" fill="none" style={{ color: "#C6A97A" }}>
+                    <path d="M12 19V6M12 6C12 6 9 1 4 1c0 5 4 6 8 5zM12 6c0 0 3-5 8-5 0 5-4 6-8 5z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span className="h-px w-20 bg-soil/15" />
+                </span>
                 <CalendlyEmbed url={site.calendlyUrl} />
-                <p className="mt-3 text-xs text-ivory/75">
+                <p className="mt-3 text-xs text-foreground-secondary">
                   Having trouble with the embed?{" "}
                   <a
                     href={site.calendlyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sandstone link-underline"
+                    className="link-underline text-clay"
                   >
                     Open it directly instead
                   </a>
