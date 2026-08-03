@@ -13,6 +13,7 @@ import { ScrollProgress } from "@/components/ScrollProgress";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
+import { credentials } from "@/data/about";
 import { site } from "@/data/site";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -65,6 +66,13 @@ export default async function BlogPostPage({ params }: Props) {
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
   const next = sorted.find((p) => p.slug !== post.slug);
+  // Related reading: nearest by shared element first, most recent
+  // otherwise, always excluding the piece being read.
+  const others = sorted.filter((p) => p.slug !== post.slug);
+  const related = [
+    ...others.filter((p) => p.element === post.element),
+    ...others.filter((p) => p.element !== post.element),
+  ].slice(0, 2);
 
   // Verified facts only, per the site's own structured-data rule
   // (see layout.tsx) — publish/author info, no invented engagement
@@ -290,6 +298,52 @@ export default async function BlogPostPage({ params }: Props) {
                     <AuditInvite tone="light" />
                   </div>
                 </Reveal>
+
+                {/* Author box (manual guide p83, AEO entity strategy):
+                    the real person behind every piece, credentials from
+                    the same data the About page renders. */}
+                <Reveal>
+                  <div className="mt-10 flex flex-col gap-1 rounded-2xl border border-border p-6" style={{ backgroundColor: "rgba(39,34,30,0.03)" }}>
+                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
+                      Written by
+                    </p>
+                    <p className="mt-1 font-display text-xl font-normal text-soil">{site.founder}</p>
+                    <p className="text-sm leading-relaxed text-foreground-secondary">
+                      {credentials
+                        .filter((c) => c.featured)
+                        .map((c) => c.label)
+                        .join(" · ")}
+                      {" · "}Brand strategist and the one pair of hands on every engagement here.
+                    </p>
+                    <Link href="/about" className="link-underline mt-2 inline-flex items-center gap-2 text-sm font-medium text-clay">
+                      The thinking behind the practice <span aria-hidden="true">→</span>
+                    </Link>
+                  </div>
+                </Reveal>
+
+                {/* Related reading (manual guide p83): the two nearest
+                    pieces by element, most recent otherwise. */}
+                {related.length > 0 && (
+                  <Reveal>
+                    <div className="mt-10 border-t border-border pt-8">
+                      <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
+                        Related reading
+                      </p>
+                      <ul className="mt-3 space-y-3">
+                        {related.map((r) => (
+                          <li key={r.slug}>
+                            <Link href={`/insights/${r.slug}`} className="group block">
+                              <span className="font-display text-lg text-soil transition-colors duration-300 group-hover:text-clay">
+                                {r.title}
+                              </span>
+                              <span className="mt-0.5 block text-sm text-foreground-secondary">{r.excerpt}</span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </Reveal>
+                )}
 
                 <div className="mt-16 flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">

@@ -12,6 +12,7 @@ import { LinkButton } from "@/components/Button";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TopicClusters } from "@/sections/Insights/TopicClusters";
+import { ArticleSearch } from "@/sections/Insights/ArticleSearch";
 import { RecognitionAudit } from "@/sections/Services/RecognitionAudit";
 import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
@@ -118,6 +119,23 @@ export default function InsightsPage() {
             </Container>
           </section>
         )}
+
+        {/* Search over the archive (manual guide p82) — twelve pieces
+            earn a faster path in; the full list below stays primary. */}
+        <section className="bg-background-alt pb-10">
+          <Container className="max-w-5xl">
+            <Reveal>
+              <ArticleSearch
+                posts={sorted.map((p) => ({
+                  slug: p.slug,
+                  title: p.title,
+                  excerpt: p.excerpt,
+                  question: QUESTION_FOR[p.slug] ?? "",
+                }))}
+              />
+            </Reveal>
+          </Container>
+        </section>
 
         {/* Question led articles — each remaining piece introduced by
             the genuine question it answers, per the bible's answer
