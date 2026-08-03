@@ -17,7 +17,7 @@ import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { CinematicHero } from "@/sections/Hero";
 import { VisitorRecognition } from "@/sections/Home/VisitorRecognition";
 import { ServicePaths } from "@/sections/Home/ServicePaths";
-import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
+import { VideoBreak } from "@/components/VideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { TexturedDark } from "@/components/TexturedDark";
@@ -371,7 +371,7 @@ not repeated here. */}
             the Contact page instead per direct feedback), then reverted
             back to this one per direct feedback preferring the night sea
             here after all. */}
-        <PinnedVideoBreak
+        <VideoBreak
           src="/videos/higgsfield-silver-tide.mp4"
           poster="/images/higgsfield-silver-tide-poster.jpg"
           quote="Some things only become visible once everything else goes quiet."
@@ -403,7 +403,7 @@ not repeated here. */}
               </div>
             </div>
           </div>
-        </PinnedVideoBreak>
+        </VideoBreak>
       </main>
       <Footer />
       <script

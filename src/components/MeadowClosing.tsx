@@ -137,7 +137,7 @@ export function MeadowClosing() {
             keeping pin/crossfade behavior but dropping video playback). */}
         {prefersReducedMotion ? (
           <Image
-            src="/images/pexels-backlit-grasses-poster.jpg"
+            src="/images/pixabay-alpine-wildflowers-poster.jpg"
             alt=""
             fill
             sizes="100vw"
@@ -148,8 +148,8 @@ export function MeadowClosing() {
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover"
             style={{ willChange: "transform" }}
-            src="/videos/pexels-backlit-grasses.mp4"
-            poster="/images/pexels-backlit-grasses-poster.jpg"
+            src="/videos/pixabay-alpine-wildflowers.mp4"
+            poster="/images/pixabay-alpine-wildflowers-poster.jpg"
             autoPlay
             muted
             loop
