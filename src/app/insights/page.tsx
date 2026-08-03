@@ -38,8 +38,20 @@ export const metadata: Metadata = {
 // by the genuine question it answers.
 const QUESTION_FOR: Record<string, string> = {
   "five-elements-working-as-one": "Why does brand strategy need five elements working together?",
-  "visible-versus-remembered": "Why do visible brands stay forgettable?",
+  "visible-versus-remembered": "What separates being seen from being remembered?",
   "what-a-brand-audit-actually-finds": "What actually happens in a brand audit?",
+  "what-brand-positioning-actually-decides": "What does positioning actually decide?",
+  "why-visible-brands-stay-forgettable": "Why does visibility fail to create memory?",
+  "verbal-identity-beyond-tone-of-voice": "What belongs in a voice beyond tone?",
+  "when-a-growing-business-needs-repositioning": "When does a position stop fitting?",
+  "distinctive-assets-and-mental-availability": "What makes a brand come to mind at all?",
+  "brand-architecture-for-multiple-offers": "Does the new offer earn its own name?",
+  "how-psychology-informs-brand-strategy": "What machinery does a buyer actually run on?",
+  "how-to-evaluate-a-branding-proposal": "How should a branding proposal be judged?",
+  "category-reframing-a-concept-case-study": "What if the category itself is the problem?",
+  "pricing-brand-strategy-across-markets": "Why does the same work carry different prices?",
+  "how-to-document-brand-decisions": "Who remembers why the brand decided this?",
+  "the-annual-brand-health-review": "How far has the brand drifted this year?",
 };
 
 function elementColor(slug: string) {
