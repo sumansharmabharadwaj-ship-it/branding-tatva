@@ -27,18 +27,22 @@ const COUNTER_DURATION_MS = 2400;
 
 // The flock near the sun, matching the board's composition (upper
 // right, loose formation). Fixed values, no randomness — this renders
-// on the server too, and hydration must match. First version drifted
-// each bird a few dozen pixels with a gentle bob — direct feedback
-// that the page read as static. The flock now genuinely flies: each
-// bird crosses a real stretch of sky during the veil's life, wings
-// visibly beating (a scaleY flap at distant-bird cadence), with a
-// slight descent so the paths feel individual rather than mechanical.
+// on the server too, and hydration must match. Two earlier versions
+// taught the register: a subtle drift read as static, and a hard
+// scaleY squash-flap read as mechanical. Natural distant flight needs
+// three things this version carries: the wing SILHOUETTE morphs
+// between real up and down strokes (path interpolation, never a
+// squash), each bird rides a slightly curved glide with easing rather
+// than a straight constant-speed line, and every bird carries its own
+// cadence and phase so the flock never beats in unison.
+const WING_UP = "M1 5.5 Q 5 1.5 9 5 Q 13 1.5 17 5.5";
+const WING_DOWN = "M1 3.5 Q 5 7 9 4.5 Q 13 7 17 3.5";
 const BIRDS = [
-  { left: 86, top: 25, scale: 1.35, fly: -300, fall: 14, flap: 0.42 },
-  { left: 90, top: 28, scale: 1.1, fly: -250, fall: 8, flap: 0.36 },
-  { left: 93, top: 24, scale: 0.95, fly: -270, fall: 18, flap: 0.46 },
-  { left: 96, top: 30, scale: 1.2, fly: -230, fall: 6, flap: 0.4 },
-  { left: 91, top: 33.5, scale: 0.8, fly: -260, fall: 12, flap: 0.34 },
+  { left: 86, top: 25, scale: 1.35, fly: -240, fall: 16, flap: 0.72 },
+  { left: 90, top: 28, scale: 1.1, fly: -200, fall: 9, flap: 0.62 },
+  { left: 93, top: 24, scale: 0.95, fly: -220, fall: 20, flap: 0.8 },
+  { left: 96, top: 30, scale: 1.2, fly: -185, fall: 7, flap: 0.68 },
+  { left: 91, top: 33.5, scale: 0.8, fly: -210, fall: 13, flap: 0.58 },
 ] as const;
 
 export function PageLoadVeil() {
@@ -94,14 +98,16 @@ export function PageLoadVeil() {
           <svg width="0" height="0" aria-hidden="true" className="absolute">
             <filter id="veil-wind" x="-20%" y="-20%" width="140%" height="140%">
               <feTurbulence type="fractalNoise" baseFrequency="0.006 0.018" numOctaves="2" seed="7" result="noise">
+                {/* Slower, shallower sway — cloth in a breeze, never
+                    jelly. */}
                 <animate
                   attributeName="baseFrequency"
-                  dur="2.6s"
-                  values="0.006 0.018;0.011 0.03;0.006 0.018"
+                  dur="3.8s"
+                  values="0.006 0.018;0.009 0.026;0.006 0.018"
                   repeatCount="indefinite"
                 />
               </feTurbulence>
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="22" xChannelSelector="R" yChannelSelector="G" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="13" xChannelSelector="R" yChannelSelector="G" />
             </filter>
           </svg>
 
@@ -112,9 +118,9 @@ export function PageLoadVeil() {
               pixel aligned through the drift. */}
           <motion.div
             className="absolute inset-0"
-            initial={{ scale: 1.12, x: 0 }}
-            animate={{ scale: 1.02, x: -16 }}
-            transition={{ duration: 4, ease: "linear" }}
+            initial={{ scale: 1.09, x: 0 }}
+            animate={{ scale: 1.015, x: -12 }}
+            transition={{ duration: 4.5, ease: [0.22, 0.61, 0.36, 1] }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -140,40 +146,42 @@ export function PageLoadVeil() {
               soft radial sheets the Services mist chapters use, sized
               and placed for this composition's fog seas. Pure
               transform motion, mid-flight from the first frame. */}
+          {/* Fog as wide, low sheets rather than round blobs — feathered
+              horizontal gradients, gentle eased travel with a slight
+              rise, so the banks breathe through the valleys instead of
+              sliding past like smudges. */}
           <motion.div
-            className="absolute left-[-20%] top-[46%] h-[36%] w-[85%] rounded-full"
+            className="absolute left-[-25%] top-[50%] h-[24%] w-[100%]"
             style={{
               background:
-                "radial-gradient(ellipse at center, rgba(228,228,222,0.34) 0%, rgba(228,228,222,0.1) 50%, transparent 74%)",
-              filter: "blur(6px)",
+                "linear-gradient(90deg, transparent 0%, rgba(228,228,222,0.2) 25%, rgba(228,228,222,0.09) 60%, transparent 100%)",
+              filter: "blur(10px)",
             }}
-            initial={{ x: -70 }}
+            initial={{ x: -45, y: 4 }}
+            animate={{ x: 60, y: -4 }}
+            transition={{ duration: 5.5, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute right-[-28%] top-[58%] h-[22%] w-[95%]"
+            style={{
+              background:
+                "linear-gradient(270deg, transparent 0%, rgba(218,222,218,0.17) 28%, rgba(218,222,218,0.07) 62%, transparent 100%)",
+              filter: "blur(11px)",
+            }}
+            initial={{ x: 50, y: -3 }}
+            animate={{ x: -70, y: 5 }}
+            transition={{ duration: 5.5, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-[4%] left-[-30%] h-[20%] w-[120%]"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent 0%, rgba(222,226,220,0.13) 30%, rgba(222,226,220,0.05) 65%, transparent 100%)",
+              filter: "blur(12px)",
+            }}
+            initial={{ x: -50 }}
             animate={{ x: 90 }}
-            transition={{ duration: 4.5, ease: "linear" }}
-          />
-          <motion.div
-            className="absolute right-[-24%] top-[55%] h-[32%] w-[80%] rounded-full"
-            style={{
-              background:
-                "radial-gradient(ellipse at center, rgba(216,220,216,0.28) 0%, rgba(216,220,216,0.08) 52%, transparent 76%)",
-              filter: "blur(7px)",
-            }}
-            initial={{ x: 70 }}
-            animate={{ x: -100 }}
-            transition={{ duration: 4.5, ease: "linear" }}
-          />
-          {/* A low, near sheet crossing the whole frame — the wind made
-              visible at the foreground plane. */}
-          <motion.div
-            className="absolute bottom-[4%] left-[-30%] h-[22%] w-[120%]"
-            style={{
-              background:
-                "linear-gradient(90deg, transparent 0%, rgba(222,226,220,0.2) 30%, rgba(222,226,220,0.08) 65%, transparent 100%)",
-              filter: "blur(9px)",
-            }}
-            initial={{ x: -60 }}
-            animate={{ x: 130 }}
-            transition={{ duration: 4, ease: "linear" }}
+            transition={{ duration: 5, ease: "easeInOut" }}
           />
 
           {/* The flock by the sun — in the frame and already flying at
@@ -185,27 +193,25 @@ export function PageLoadVeil() {
               className="absolute"
               style={{ left: `${b.left}%`, top: `${b.top}%` }}
               initial={{ x: 0, y: 0 }}
-              animate={{ x: b.fly, y: b.fall }}
-              transition={{ duration: 4, ease: "linear" }}
+              animate={{ x: b.fly, y: [0, b.fall * 0.35, b.fall] }}
+              transition={{
+                x: { duration: 5, ease: [0.3, 0.55, 0.6, 1] },
+                y: { duration: 5, ease: "easeInOut", times: [0, 0.55, 1] },
+              }}
             >
-              {/* Wing beat: the whole glyph compresses and opens on a
-                  distant-bird cadence — unmistakable flight, still just
-                  a silhouette. */}
-              <motion.span
-                className="block"
-                style={{ transformOrigin: "50% 60%" }}
-                animate={{ scaleY: [1, 0.25, 1], y: [0, -2.5, 0] }}
-                transition={{ duration: b.flap, repeat: Infinity, ease: "easeInOut", delay: i * 0.13 }}
-              >
-                <svg width={18 * b.scale} height={8 * b.scale} viewBox="0 0 18 8" fill="none" style={{ display: "block" }}>
-                  <path
-                    d="M1 5 Q 5 1 9 4.6 Q 13 1 17 5"
-                    stroke="rgba(38,34,29,0.85)"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </motion.span>
+              <svg width={18 * b.scale} height={9 * b.scale} viewBox="0 0 18 9" fill="none" style={{ display: "block" }}>
+                {/* The wing stroke itself morphs between up and down
+                    beats — a real silhouette change, the way distant
+                    birds actually read. */}
+                <motion.path
+                  d={WING_UP}
+                  animate={{ d: [WING_UP, WING_DOWN, WING_UP] }}
+                  transition={{ duration: b.flap, repeat: Infinity, ease: "easeInOut", delay: i * 0.19 }}
+                  stroke="rgba(38,34,29,0.8)"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
+              </svg>
             </motion.span>
           ))}
 

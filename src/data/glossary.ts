@@ -114,6 +114,7 @@ export const pillars: Pillar[] = [
       "How does language frame value?",
       "What belongs in a messaging framework?",
     ],
+    articleSlug: "verbal-identity-beyond-tone-of-voice",
     terms: [
       {
         term: "Verbal identity",

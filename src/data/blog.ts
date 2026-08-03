@@ -161,4 +161,85 @@ export const blogPosts: BlogPost[] = [
       "The Brand Recognition Audit below runs this exact diagnosis on your own brand: positioning clarity, distinctive assets, verbal identity, recognition consistency. Five checks are open to anyone; run them before the next campaign spends money on being seen.",
     ],
   },
+  {
+    // Month three pillar article (bible §15): the verbal identity
+    // pillar's anchor, with the voice worksheet as its ungated asset.
+    slug: "verbal-identity-beyond-tone-of-voice",
+    title: "Verbal identity beyond tone of voice",
+    excerpt:
+      "Tone is the smallest part of a verbal identity. The vocabulary, the claims, and the sentences only your brand would say do the heavier lifting.",
+    element: "air",
+    publishedAt: "2026-08-03",
+    readingTime: "5 min read",
+    pullQuote: "Language is the asset customers actually quote, and usually the least protected one.",
+    summary: [
+      "A verbal identity covers vocabulary, claims, rhythm, and refusals; tone is only the temperature it gets delivered at.",
+      "The test of a voice document: three different writers produce copy that reads as one author.",
+      "Language is the brand asset customers actually quote, and usually the least protected one.",
+    ],
+    checklist: {
+      title: "The voice worksheet",
+      items: [
+        "List the twenty words your brand reaches for, pulled from a real month of published copy.",
+        "List the words you refuse. An empty refusal list means the voice is unguarded.",
+        "Write the one claim every page should be able to stake, and the proof it leans on.",
+        "Collect five sentences only your brand would say. Delete any a competitor could sign.",
+        "Describe the rhythm: short and declarative, long and patient, or something owned in between.",
+        "Rewrite one paragraph from your site as a proposal, a caption, and an ad. Check what stayed constant.",
+        "Hand the document to a writer who has never met you. Grade what comes back.",
+      ],
+    },
+    body: [
+      "Ask for a brand's voice guidelines and you usually receive three adjectives and a moodboard. Meanwhile the words themselves, the asset customers actually repeat to each other, get improvised one caption at a time.",
+      "## Tone is the temperature, voice is the language",
+      "Tone shifts by moment: warmer in support, plainer at checkout, shorter in an ad. Voice is what stays constant underneath, the vocabulary the brand reaches for, the words it refuses, the rhythm of its sentences, the claims it is willing to stake. Confuse the two and every channel owner ends up inventing a personality of their own.",
+      "## What a working voice system contains",
+      "Four layers earn their place in a real voice document. A vocabulary: the twenty words the brand owns and the twenty it bans. A claims register: what the brand asserts, with the proof each claim leans on. A rhythm: sentence length, punctuation habits, how a paragraph breathes. And refusals: the phrases, moods, and jokes the brand declines, written down so declining costs nothing at deadline.",
+      "## The three writer test",
+      "A voice document works when three different writers can produce copy that reads as one author. Anything short of that is decoration; guidelines loose enough to permit everything enforce nothing. Language is the asset customers actually quote, and usually the least protected one. Logos live in brand books while sentences get improvised weekly.",
+      "## Where voice earns revenue",
+      "Voice frames value before any claim lands. The same offer sounds assured or desperate depending on the sentence carrying it, and a distinctive sentence gets remembered whole: repeated in meetings, quoted in referrals, searched for verbatim. That is distribution the media budget never has to buy.",
+      "The worksheet below is the starting frame used in voice engagements here. Fill it honestly and the gaps announce themselves.",
+    ],
+  },
+  {
+    // Month four pillar article (bible §15): repositioning readiness,
+    // supporting the positioning cluster, with the readiness test as
+    // its ungated asset.
+    slug: "when-a-growing-business-needs-repositioning",
+    title: "When a growing business needs repositioning",
+    excerpt:
+      "Growth quietly breaks positions. Here are the real signals a position no longer fits, the false alarms that mimic them, and a readiness test to run before any rebrand spend.",
+    element: "earth",
+    publishedAt: "2026-08-03",
+    readingTime: "5 min read",
+    pullQuote: "Repositioning is a business decision with design consequences, never a design decision with business hopes.",
+    summary: [
+      "Growth breaks positions quietly: the offer, the buyer, or the category changes shape while the story stays still.",
+      "Internal boredom mimics every real signal, and it drives most premature rebrands.",
+      "Repositioning is a business decision with design consequences, never a design decision with business hopes.",
+    ],
+    checklist: {
+      title: "The repositioning readiness test",
+      items: [
+        "Name what changed in the business itself: offer, buyer, or category. An honest answer of nothing ends the exercise here.",
+        "Check who you lose deals to now versus two years ago. A changed rival set is a changed category.",
+        "Ask ten current customers what they bought. Compare their words against your homepage.",
+        "Price the memory reset: list every asset the current position has earned, recognition included.",
+        "Write the new position in one sentence before touching any visual. A sentence that refuses to come means the problem lives elsewhere.",
+        "Confirm the founder can defend the new position in a sales call without slides.",
+        "Set the revisit date: which measurable change, by when, would prove the move worked.",
+      ],
+    },
+    body: [
+      "Positions age in silence. A business keeps winning, the offer creeps upmarket, the buyer changes seats, and one day the website describes a company that no longer exists. Nobody decided this; growth did.",
+      "## The real signals",
+      "Three changes reliably break a position. The offer moved: what began as a service became a product, or the entry tier became the flagship. The buyer moved: the founder sold to founders, and now procurement signs. The category moved: it split, collapsed, or got redefined by a rival with better vocabulary. Each one changes who you get compared against, which is the position's whole job.",
+      "## The false alarms",
+      "Internal boredom mimics every real signal. The team has seen the homepage a thousand times; the market has barely seen it once. Falling win rates blamed on the brand often trace to pricing or product instead. And a new leader wanting a visible mark rarely counts as strategy. The inside of a business grows tired of its own story long before the market even learns it.",
+      "## What repositioning actually costs",
+      "The visible cost is design and rollout. The real cost is memory: every asset the old position accumulated, recognition included, gets partially reset. That trade can absolutely be worth making; it should simply be made knowingly, against real signals. Repositioning is a business decision with design consequences, never a design decision with business hopes.",
+      "The readiness test below separates signal from restlessness. Score it honestly before any rebrand budget moves.",
+    ],
+  },
 ];
