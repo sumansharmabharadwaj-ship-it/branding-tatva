@@ -1,102 +1,41 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { site } from "@/data/site";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { TATVA_CONTOURS, TATVA_MARK_COLORS } from "@/lib/brandMark";
 
-// A short, confident arrival — not a spinner, but not a five-beat story
-// either. An earlier version cycled through all five elements' own
-// poetic lines one at a time (~5s total): reads as impressive in
-// isolation, but on every single hard load it started to feel like the
-// site was making someone sit through a pitch before letting them in.
-// A second version cut that down to five flat bars just rising in a
-// row — safe, but the philosophy it's meant to carry was reduced to a
-// generic loading-bar shape with the right colors, nothing more.
-//
-// This version keeps the same ~2s budget and the same restraint (no
-// per-element copy, no guided tour), but gives each element an actual
-// beat: as its own bar settles, its own color blooms behind it in a
-// soft glow — five separate, brief announcements instead of one flat
-// motion — and once all five have landed, a thin stroke draws itself
-// around the whole mark, the visual argument for "five parts, one
-// brand" instead of just stating it. Everything here is Framer Motion
-// animating plain SVG shapes (rect height/y, and rect pathLength for
-// the frame stroke) — no new dependency. This project already had one
-// real incident where a GSAP-hydration-dependent load animation caused
-// an 8+ second render delay; a page-blocking, every-single-visit
-// animation is the wrong place to introduce a new toolkit's risk, so
-// the craft comes from choreography, not new machinery.
-//
-// Lives in the root layout, which Next.js keeps mounted across
-// client-side navigations, so this only plays once per hard load, never
-// on internal link clicks. Skipped entirely for reduced-motion, since a
-// sequence like this is itself exactly the kind of motion some users
-// specifically want to avoid.
-
-const BARS = [
-  { color: "#B85A34", x: 4, height: 34 }, // earth — clay
-  { color: "#24394D", x: 20, height: 48 }, // water — indigo
-  { color: "#C28A28", x: 36, height: 64 }, // fire — ochre
-  { color: "#5C6B4A", x: 52, height: 48 }, // air — sage
-  { color: "#AD6F5C", x: 68, height: 34 }, // space — dusty rose (soil itself would vanish against this dark veil)
-];
-const BAR_WIDTH = 10;
-const MARK_WIDTH = 82;
-const MARK_HEIGHT = 68;
-const BASELINE = 64;
-const EASE = [0.22, 0.61, 0.36, 1] as const;
-
-// How long the counter takes to reach 100 — the same window the rest of
-// the veil's own choreography (bars, frame, brand line) plays out over,
-// so "100" lands right as everything else has already settled rather
-// than racing ahead of or trailing behind it.
-const COUNTER_DURATION_MS = 1450;
+const EASE = [0.22, 1, 0.36, 1] as const;
+const SESSION_KEY = "branding-tatva-arrival-seen";
 
 export function PageLoadVeil() {
-  const prefersReducedMotion = useReducedMotion();
-  const [barsSettled, setBarsSettled] = useState(false);
-  const [frameDrawn, setFrameDrawn] = useState(false);
-  const [brandVisible, setBrandVisible] = useState(false);
-  const [visible, setVisible] = useState(!prefersReducedMotion);
-  // A hard, animation-independent removal that always wins — see the
-  // note in the exit transition below for why this can't just rely on
-  // AnimatePresence's own onExitComplete.
-  const [removed, setRemoved] = useState(prefersReducedMotion);
-  // The small numeric counter next to the brand line — voyeurverite.com
-  // and trionn.com both pair their own loading screens with a ticking
-  // percentage; this is that same beat, synced to COUNTER_DURATION_MS
-  // instead of running as its own independent timer. Driven by rAF
-  // (elapsed-time-based, not tick-count-based) so a throttled/backgrounded
-  // tab still lands on exactly 100 rather than stalling partway — the
-  // same lesson AnimatedStat.tsx already learned the hard way for its
-  // own count-up.
-  const [progress, setProgress] = useState(0);
+  const reduce = useReducedMotion();
+  const [visible, setVisible] = useState(false);
+  const [removed, setRemoved] = useState(true);
+  const [activeElement, setActiveElement] = useState(0);
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
-    const timers = [
-      setTimeout(() => setBarsSettled(true), 700),
-      setTimeout(() => setFrameDrawn(true), 750),
-      setTimeout(() => setBrandVisible(true), 900),
-      setTimeout(() => setVisible(false), 1450),
-      setTimeout(() => setRemoved(true), 2100),
-    ];
+    if (reduce) return;
 
-    const start = performance.now();
-    let frame: number;
-    function tick(now: number) {
-      const elapsed = now - start;
-      const pct = Math.min(100, Math.round((elapsed / COUNTER_DURATION_MS) * 100));
-      setProgress(pct);
-      if (pct < 100) frame = requestAnimationFrame(tick);
-    }
-    frame = requestAnimationFrame(tick);
+    try {
+      if (window.sessionStorage.getItem(SESSION_KEY)) return;
+      window.sessionStorage.setItem(SESSION_KEY, "1");
+    } catch {}
+
+    setRemoved(false);
+    setVisible(true);
+
+    const elementTimers = [0, 1, 2, 3, 4].map((index) =>
+      window.setTimeout(() => setActiveElement(index), 180 + index * 150),
+    );
+    const leave = window.setTimeout(() => setVisible(false), 1540);
+    const remove = window.setTimeout(() => setRemoved(true), 2200);
 
     return () => {
-      timers.forEach(clearTimeout);
-      cancelAnimationFrame(frame);
+      elementTimers.forEach(window.clearTimeout);
+      window.clearTimeout(leave);
+      window.clearTimeout(remove);
     };
-  }, [prefersReducedMotion]);
+  }, [reduce]);
 
   if (removed) return null;
 
@@ -104,95 +43,80 @@ export function PageLoadVeil() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          initial={{ clipPath: "inset(0% 0 0% 0)" }}
-          exit={{ clipPath: "inset(0% 0 100% 0)" }}
-          transition={{ duration: 0.65, ease: EASE }}
-          className="pointer-events-none fixed inset-0 z-100 flex flex-col items-center justify-center gap-6 overflow-hidden bg-soil"
+          initial={{ opacity: 1 }}
+          exit={{ clipPath: "inset(0 0 100% 0)", opacity: 0.98 }}
+          transition={{ duration: 0.72, ease: EASE }}
+          className="pointer-events-none fixed inset-0 z-100 overflow-hidden bg-[#111b15] text-ivory"
           aria-hidden="true"
         >
-          <div className="paper-grain" style={{ opacity: 0.1 }} />
+          <motion.div
+            className="absolute inset-[-18%]"
+            style={{
+              background:
+                "radial-gradient(circle at 50% 44%, rgba(198,169,122,.20), transparent 25%), radial-gradient(circle at 28% 75%, rgba(92,107,74,.18), transparent 34%), radial-gradient(circle at 78% 18%, rgba(78,106,105,.14), transparent 32%)",
+            }}
+            animate={{ scale: [1, 1.05, 1], x: [0, -12, 0], y: [0, 8, 0] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <div className="paper-grain" style={{ opacity: 0.08 }} />
 
-          <div className="relative" style={{ width: MARK_WIDTH, height: MARK_HEIGHT + 4 }}>
-            {BARS.map((bar, i) => (
+          <div className="relative flex h-full flex-col items-center justify-center px-6 text-center">
+            <div className="relative h-48 w-48 sm:h-56 sm:w-56">
               <motion.div
-                key={`glow-${bar.color}`}
-                className="absolute rounded-full"
-                style={{
-                  left: bar.x - 12,
-                  bottom: 0,
-                  width: BAR_WIDTH + 24,
-                  height: BAR_WIDTH + 24,
-                  backgroundColor: bar.color,
-                  filter: "blur(11px)",
-                }}
-                initial={{ opacity: 0, scale: 0.6 }}
-                animate={barsSettled ? { opacity: [0, 0.55, 0], scale: [0.6, 1.5, 1.5] } : undefined}
-                transition={{ duration: 0.4, delay: i * 0.04, ease: "easeOut" }}
+                className="absolute inset-4 rounded-full border border-sandstone/12"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
               />
-            ))}
-            <svg
-              width={MARK_WIDTH}
-              height={MARK_HEIGHT + 4}
-              viewBox={`0 0 ${MARK_WIDTH} ${MARK_HEIGHT + 4}`}
-              fill="none"
-              className="relative"
-            >
-              {BARS.map((bar, i) => (
-                <motion.rect
-                  key={bar.color}
-                  x={bar.x}
-                  width={BAR_WIDTH}
-                  rx={5}
-                  fill={bar.color}
-                  opacity={0.92}
-                  initial={{ height: 0, y: BASELINE }}
-                  animate={{ height: bar.height, y: BASELINE - bar.height }}
-                  transition={{ duration: 0.45, delay: i * 0.06, ease: EASE }}
+              <svg viewBox="0 0 100 100" fill="none" className="relative h-full w-full">
+                {TATVA_CONTOURS.map((path, index) => (
+                  <motion.path
+                    key={path}
+                    d={path}
+                    stroke={TATVA_MARK_COLORS[index]}
+                    strokeWidth={index === 0 ? 3.8 : 3.2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{
+                      pathLength: activeElement >= index ? 1 : 0,
+                      opacity: activeElement >= index ? 0.96 : 0,
+                    }}
+                    transition={{ duration: 0.58, ease: EASE }}
+                  />
+                ))}
+                <motion.circle
+                  cx="50"
+                  cy="57"
+                  r="5.2"
+                  fill={TATVA_MARK_COLORS[4]}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: activeElement >= 4 ? 1 : 0, scale: activeElement >= 4 ? 1 : 0 }}
+                  transition={{ duration: 0.42, ease: EASE }}
+                  style={{ transformOrigin: "50px 57px" }}
                 />
-              ))}
-              {/* The unifying stroke: five separate bars settle first,
-                  each announcing its own element; only once all five have
-                  landed does this frame draw itself around them, the
-                  visual argument for "one brand" instead of just five
-                  colors sitting next to each other. */}
-              <motion.rect
-                x={1}
-                y={1}
-                width={MARK_WIDTH - 2}
-                height={MARK_HEIGHT + 2}
-                rx={10}
-                stroke="#F4EFE6"
-                strokeOpacity={0.32}
-                strokeWidth={1}
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: frameDrawn ? 1 : 0 }}
-                transition={{ duration: 0.5, ease: EASE }}
-              />
-            </svg>
+              </svg>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 14, filter: "blur(8px)" }}
+              animate={{ opacity: activeElement >= 3 ? 1 : 0, y: activeElement >= 3 ? 0 : 14, filter: "blur(0px)" }}
+              transition={{ duration: 0.58, ease: EASE }}
+              className="mt-5"
+            >
+              <p className="font-display text-4xl tracking-[-0.04em] sm:text-5xl">
+                Branding <span className="italic text-sandstone">Tatva</span>
+              </p>
+              <p className="mt-3 text-[0.58rem] font-semibold uppercase tracking-[0.3em] text-ivory/48">
+                Five decisions. One remembered meaning.
+              </p>
+            </motion.div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: brandVisible ? 1 : 0, y: brandVisible ? 0 : 8 }}
-            transition={{ duration: 0.4, ease: EASE }}
-            className="flex flex-col items-center"
-          >
-            <span className="font-body text-[0.65rem] font-bold uppercase tracking-[0.4em] text-ivory/70">
-              {site.name}
-            </span>
-            <span className="mt-2 max-w-xs text-center text-xs text-ivory/40">
-              {site.tagline}
-            </span>
-          </motion.div>
-
-          {/* The numeric counter voyeurverite.com and trionn.com both
-              pair with their own loading screens — placed in a corner
-              rather than beside the mark so it reads as a separate,
-              secondary beat instead of competing with the brand line
-              for attention. */}
-          <div className="pointer-events-none absolute bottom-6 left-6 flex items-baseline gap-2 font-body text-[0.65rem] tracking-[0.3em] text-ivory/40 sm:bottom-8 sm:left-8">
-            <span>LOADING</span>
-            <span className="tabular-nums text-ivory/70">{progress}</span>
+          <div className="absolute inset-x-7 bottom-7 flex items-center gap-4 text-[0.54rem] uppercase tracking-[0.22em] text-ivory/34 sm:inset-x-10 sm:bottom-10">
+            <span>Earth</span>
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent via-sandstone/45 to-transparent" />
+            <span>Space</span>
+            <span className="tabular-nums text-sandstone/72">0{activeElement + 1} / 05</span>
           </div>
         </motion.div>
       )}
