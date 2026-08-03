@@ -217,3 +217,21 @@ convenience.
 
 **Production stays untouched** until both the finished consent layer and
 the audit fixes have been reviewed.
+
+### Confirmed priority order (Suman, Aug 2026)
+
+1. Complete the consent layer: preferences, granular categories,
+   withdraw flow, policy updates.
+2. Run the comprehensive production build audit and resolve every
+   design, animation, accessibility, performance and responsive issue
+   it finds.
+3. Review the footage contact sheets and approve final assets. Nothing
+   is downloaded before selections are explicitly approved.
+4. Revisit the five element slider only after the completed Earth scene
+   can be judged in context. If Earth carries the concept better, the
+   slider may be simplified or removed, but that decision waits for a
+   reading of the whole narrative rather than the section alone.
+
+The framing to carry into that work: the remaining effort is refinement,
+validation, and making sure every interaction earns its place, rather
+than new implementation.
