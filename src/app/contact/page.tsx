@@ -286,8 +286,25 @@ export default function ContactPage() {
               ))}
             </ol>
           </Container>
+          {/* Suman's direction: the booking panel needed emotional
+              weight and a slower approach. The page spent everything
+              above this explaining the thinking, then dropped straight
+              into a scheduling widget. This beat sits between the two,
+              with real space around it, so arriving at the calendar
+              feels like a decision rather than a form. */}
+          <Container className="relative mb-14 sm:mb-20">
+            <Reveal delay={0.12}>
+              <div className="mx-auto max-w-xl text-center">
+                <span aria-hidden="true" className="mx-auto mb-7 block h-10 w-px" style={{ backgroundColor: "rgba(212,185,154,0.5)" }} />
+                <p className="font-display text-2xl font-normal leading-snug text-ivory sm:text-3xl">
+                  Everything above explains the thinking. This is where it becomes a conversation.
+                </p>
+              </div>
+            </Reveal>
+          </Container>
+
           <Container className="relative grid gap-8 lg:grid-cols-2 lg:items-start">
-            <Reveal className="min-w-0">
+            <Reveal delay={0.28} className="min-w-0">
               {/* Suman's design: a cream panel carrying the booking,
                   opening on the italic welcome, her name in serif, and
                   the sprig divider before the calendar itself. */}
@@ -295,7 +312,10 @@ export default function ContactPage() {
                 <p className="font-display text-3xl italic" style={{ color: "#B08A4F" }}>Welcome,</p>
                 <p className="mt-1 font-display text-4xl font-normal text-soil sm:text-5xl">{site.founder}</p>
                 <span aria-hidden="true" className="mx-auto mt-4 block h-px w-16" style={{ backgroundColor: "#C6A97A" }} />
-                <p className="mx-auto mt-5 max-w-xs text-sm leading-relaxed text-foreground-secondary">
+                <p className="mx-auto mt-5 max-w-sm font-display text-lg leading-snug text-soil sm:text-xl">
+                  Thirty minutes with the person who would do the work.
+                </p>
+                <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-foreground-secondary">
                   Pick any time that suits you. Every slot adjusts to your own timezone automatically.
                 </p>
                 <span aria-hidden="true" className="mt-7 flex items-center justify-center gap-3">
