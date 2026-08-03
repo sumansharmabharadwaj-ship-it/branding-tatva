@@ -7,6 +7,7 @@ import { AmbientAudio } from "@/components/AmbientAudio";
 import { PrecisionMark } from "@/components/PrecisionMark";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { Analytics } from "@vercel/analytics/next";
+import { VideoWarden } from "@/components/VideoWarden";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({
@@ -120,6 +121,7 @@ export default function RootLayout({
         <PageLoadVeil />
         <AmbientAudio />
         <PrecisionMark />
+        <VideoWarden />
         <Analytics />
         <script
           type="application/ld+json"
