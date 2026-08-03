@@ -4,223 +4,179 @@ import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import type { ProcessStage } from "@/data/process";
 
-const NODES = [
-  { x: 200, y: 52, becomes: "The right question" },
-  { x: 200, y: 162, becomes: "A clear pattern" },
-  { x: 200, y: 272, becomes: "A committed blueprint" },
-  { x: 112, y: 388, becomes: "A coherent identity" },
-  { x: 288, y: 388, becomes: "Market movement" },
-  { x: 200, y: 522, becomes: "A brand ecosystem" },
-];
-
-const SEGMENTS = [
-  { d: "M200 60 C 200 100, 200 112, 200 154" },
-  { d: "M200 170 C 200 210, 200 222, 200 264" },
-  { d: "M200 280 C 200 330, 132 336, 114 372" },
-  { d: "M200 280 C 200 330, 268 336, 286 372" },
-  { d: "M112 404 C 112 456, 178 466, 196 506" },
-  { d: "M288 404 C 288 456, 222 466, 204 506" },
-];
-
 const GOLD = "#C6A97A";
+
+const OUTCOMES = [
+  "The right question",
+  "A pattern worth trusting",
+  "A blueprint with consequences",
+  "An identity that can hold",
+  "A market signal in motion",
+  "One living brand system",
+] as const;
+
+const MOVES = [
+  { x: -18, y: 18, rotate: -2, origin: "left center" },
+  { x: 14, y: -10, rotate: 1.5, origin: "right center" },
+  { x: 0, y: 22, rotate: 0, origin: "center center" },
+  { x: -12, y: -14, rotate: 1, origin: "left bottom" },
+  { x: 16, y: 12, rotate: -1.2, origin: "right top" },
+  { x: 0, y: -6, rotate: 0, origin: "center center" },
+] as const;
 
 export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
-  const segRefs = useRef<(SVGPathElement | null)[]>([]);
-  const [active, setActive] = useState(-1);
-  const [hover, setHover] = useState<number | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [active, setActive] = useState(0);
   const lenis = useLenis();
 
   useEffect(() => {
     const wrap = wrapRef.current;
     if (!wrap) return;
-    let lastActive = -1;
 
-    function update() {
-      const el = wrapRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const travel = rect.height - window.innerHeight;
-      const p = travel > 0 ? Math.min(1, Math.max(0, -rect.top / travel)) : 0;
-      const grow = Math.min(1, p / 0.88) * SEGMENTS.length;
-
-      SEGMENTS.forEach((_, i) => {
-        const local = Math.min(1, Math.max(0, grow - i));
-        const path = segRefs.current[i];
-        if (path) path.style.strokeDashoffset = String(1 - local);
+    let frame = 0;
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const el = wrapRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const travel = Math.max(1, rect.height - window.innerHeight);
+        const nextProgress = Math.min(1, Math.max(0, -rect.top / travel));
+        const nextActive = Math.min(stages.length - 1, Math.floor(nextProgress * stages.length));
+        setProgress(nextProgress);
+        setActive(nextActive);
       });
-
-      const next = Math.min(NODES.length - 1, Math.floor(grow));
-      if (next !== lastActive) {
-        lastActive = next;
-        setActive(next);
-      }
-    }
+    };
 
     update();
-    if (lenis) return lenis.on("scroll", update);
+    const unsubscribe = lenis?.on("scroll", update);
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
+
     return () => {
+      cancelAnimationFrame(frame);
+      unsubscribe?.();
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [lenis]);
+  }, [lenis, stages.length]);
 
-  const shown = hover ?? (active >= 0 ? active : 0);
-  const stage = stages[shown];
-  const progressLabel = active < 0 ? "The root is waiting" : active === stages.length - 1 ? "The system is whole" : `${active + 1} of ${stages.length} decisions connected`;
+  const stageProgress = progress * stages.length;
+  const cameraY = -progress * 32;
+  const cameraScale = 1 + progress * 0.13;
+  const finalResolve = Math.min(1, Math.max(0, (progress - 0.86) / 0.14));
 
   return (
-    <div ref={wrapRef} className="relative" style={{ height: "420svh" }}>
-      <div className="sticky top-0 h-svh min-h-[620px] overflow-hidden bg-[#141210]">
-        <video
-          className="absolute inset-0 h-full w-full object-cover opacity-30"
-          src="/videos/higgsfield-process-ground.mp4"
-          poster="/images/higgsfield-process-ground-poster.jpg"
-          muted
-          autoPlay
-          loop
-          playsInline
-          preload="metadata"
-          ref={(el) => {
-            if (el && el.paused) void el.play().catch(() => {});
-          }}
-        />
+    <div ref={wrapRef} className="relative bg-[#100e0c]" style={{ height: `${Math.max(620, stages.length * 118)}svh` }}>
+      <div className="sticky top-0 h-svh min-h-[620px] overflow-hidden bg-[#100e0c]">
+        {stages.map((stage, index) => {
+          const distance = Math.abs(stageProgress - (index + 0.5));
+          const visible = Math.max(0, 1 - distance * 1.15);
+          return stage.video ? (
+            <video
+              key={stage.video}
+              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+              src={stage.video}
+              poster={stage.poster}
+              muted
+              autoPlay
+              loop
+              playsInline
+              preload="metadata"
+              style={{ opacity: visible * 0.28, transform: `scale(${1.04 + visible * 0.08})` }}
+              ref={(el) => {
+                if (el && el.paused) void el.play().catch(() => {});
+              }}
+            />
+          ) : null;
+        })}
+
         <div
           aria-hidden="true"
           className="absolute inset-0"
-          style={{ background: "radial-gradient(70% 60% at 50% 45%, rgba(20,18,16,0.35), rgba(20,18,16,0.94))" }}
+          style={{
+            background:
+              "radial-gradient(70% 56% at 50% 40%, rgba(198,169,122,0.10), transparent 65%), linear-gradient(to bottom, rgba(16,14,12,0.5), rgba(16,14,12,0.94))",
+          }}
         />
 
-        <div className="pointer-events-none absolute left-6 right-6 top-6 z-20 flex items-start justify-between gap-6 sm:left-10 sm:right-10 sm:top-8">
+        <div className="pointer-events-none absolute inset-x-6 top-6 z-30 flex items-start justify-between gap-6 sm:inset-x-10 sm:top-8">
           <div>
-            <p className="text-[0.62rem] font-medium uppercase tracking-[0.22em] text-sandstone">How a project moves</p>
-            <p className="mt-2 max-w-xs font-display text-xl font-normal leading-tight text-ivory/90 sm:text-2xl">
-              One decision feeds the next.
-            </p>
+            <p className="text-[0.62rem] font-medium uppercase tracking-[0.24em] text-sandstone">How a project moves</p>
+            <p className="mt-2 max-w-xs font-display text-xl leading-tight text-ivory/88 sm:text-2xl">Not forward. Deeper.</p>
           </div>
-          <p className="max-w-[10rem] text-right text-[0.62rem] uppercase tracking-[0.18em] text-ivory/45 sm:max-w-none">
-            {progressLabel}
+          <p className="text-right text-[0.62rem] uppercase tracking-[0.18em] text-ivory/42">
+            {String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}
           </p>
         </div>
 
-        <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-center px-6 pt-20 lg:flex-row lg:items-center lg:gap-16 lg:pt-10">
-          <div className="relative mx-auto w-full max-w-[20rem] sm:max-w-[22rem] lg:mx-0 lg:max-w-md">
-            <svg viewBox="0 0 400 600" className="h-auto w-full" role="img" aria-label="Six brand strategy stages growing through one connected root system">
-              {SEGMENTS.map((seg, i) => (
-                <path
-                  key={i}
-                  ref={(el) => {
-                    segRefs.current[i] = el;
-                  }}
-                  d={seg.d}
-                  pathLength={1}
-                  fill="none"
-                  stroke={GOLD}
-                  strokeWidth={1.4}
-                  strokeLinecap="round"
-                  strokeDasharray={1}
-                  style={{ strokeDashoffset: 1, opacity: 0.75 }}
-                />
-              ))}
+        <div
+          className="absolute inset-0 will-change-transform"
+          style={{ transform: `translate3d(0, ${cameraY}vh, 0) scale(${cameraScale})`, transformOrigin: "50% 48%" }}
+        >
+          <div className="absolute left-1/2 top-[14%] h-[72%] w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-sandstone/35 to-transparent" aria-hidden="true" />
 
-              {NODES.map((node, i) => {
-                const reached = i <= active;
-                const lit = hover === i;
-                return (
-                  <g key={i}>
-                    {reached && (
-                      <circle
-                        cx={node.x}
-                        cy={node.y}
-                        r={lit ? 22 : 16}
-                        fill={GOLD}
-                        opacity={lit ? 0.22 : 0.12}
-                        style={{ transition: "r 700ms cubic-bezier(0.22,1,0.36,1), opacity 700ms" }}
-                      />
-                    )}
-                    <circle
-                      cx={node.x}
-                      cy={node.y}
-                      r={5}
-                      fill={reached ? GOLD : "transparent"}
-                      stroke={GOLD}
-                      strokeWidth={1.2}
-                      opacity={reached ? 1 : 0.3}
-                      style={{ transition: "fill 700ms, opacity 700ms" }}
-                    />
-                    <text
-                      x={node.x}
-                      y={node.y - 18}
-                      textAnchor="middle"
-                      className="font-display"
-                      fontSize={17}
-                      fill="#F6F2EA"
-                      opacity={reached ? 1 : 0.35}
-                      style={{ transition: "opacity 700ms" }}
-                    >
-                      {stages[i]?.stage}
-                    </text>
-                  </g>
-                );
-              })}
-            </svg>
+          {stages.map((stage, index) => {
+            const local = Math.min(1, Math.max(0, stageProgress - index));
+            const exit = Math.min(1, Math.max(0, stageProgress - index - 0.72));
+            const move = MOVES[index % MOVES.length];
+            const side = index % 2 === 0 ? "left" : "right";
+            const y = 18 + index * 12.4;
+            const opacity = Math.min(1, local * 2.8) * (1 - exit * 0.78);
+            const translateX = (1 - local) * move.x + exit * -move.x * 0.45;
+            const translateY = (1 - local) * move.y - exit * 8;
+            const scale = 0.86 + local * 0.14 - exit * 0.05;
 
-            {NODES.map((node, i) => (
-              <button
-                key={i}
-                type="button"
-                onMouseEnter={() => setHover(i)}
-                onMouseLeave={() => setHover(null)}
-                onFocus={() => setHover(i)}
-                onBlur={() => setHover(null)}
-                aria-label={`${stages[i]?.stage}. Outcome: ${node.becomes}.`}
-                aria-pressed={shown === i}
-                className="absolute h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
+            return (
+              <article
+                key={stage.stage}
+                className={`absolute w-[min(78vw,31rem)] ${side === "left" ? "left-[7%] text-left" : "right-[7%] text-right"}`}
                 style={{
-                  left: `${(node.x / 400) * 100}%`,
-                  top: `${(node.y / 600) * 100}%`,
-                  outlineColor: GOLD,
+                  top: `${y}%`,
+                  opacity,
+                  transform: `translate3d(${translateX}vw, ${translateY}vh, 0) rotate(${move.rotate * (1 - local)}deg) scale(${scale})`,
+                  transformOrigin: move.origin,
                 }}
-              />
-            ))}
-          </div>
+                aria-hidden={active !== index}
+              >
+                <div className={`flex items-center gap-4 ${side === "right" ? "flex-row-reverse" : ""}`}>
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-sandstone/28 bg-black/20 font-display text-sm text-sandstone backdrop-blur-md">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="h-px flex-1 bg-gradient-to-r from-sandstone/45 to-transparent" style={{ transform: side === "right" ? "scaleX(-1)" : undefined }} />
+                </div>
 
-          <div className="mt-4 w-full lg:mt-0 lg:w-[26rem]" aria-live="polite">
-            <div
-              className="rounded-2xl border p-5 backdrop-blur-md sm:p-7"
-              style={{ borderColor: "rgba(246,242,234,0.10)", backgroundColor: "rgba(246,242,234,0.06)" }}
-            >
-              <p className="text-[0.68rem] font-medium uppercase tracking-[0.2em]" style={{ color: GOLD }}>
-                {String(shown + 1).padStart(2, "0")} · {stage?.stage}
-              </p>
-              <p className="mt-3 font-display text-3xl font-normal text-ivory sm:text-4xl">{NODES[shown].becomes}</p>
-              <span aria-hidden="true" className="mt-4 block h-px w-12" style={{ backgroundColor: GOLD }} />
-              <p className="mt-4 text-sm leading-relaxed text-ivory/70">{stage?.description}</p>
-              {stage?.video && (
-                <video
-                  key={stage.video}
-                  className="mt-5 hidden aspect-video w-full rounded-2xl object-cover sm:block"
-                  src={stage.video}
-                  poster={stage.poster}
-                  muted
-                  autoPlay
-                  loop
-                  playsInline
-                  preload="metadata"
-                  ref={(el) => {
-                    if (el && el.paused) void el.play().catch(() => {});
-                  }}
-                />
-              )}
-            </div>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-ivory/55">
-              {active === stages.length - 1
-                ? "Skipping a step costs quietly. The recall you paid for stops compounding where the root breaks."
-                : "A brand becomes memorable when every decision feeds the same root."}
+                <p className="mt-5 text-[0.64rem] font-medium uppercase tracking-[0.22em] text-sandstone/78">{stage.stage}</p>
+                <h3 className="mt-2 font-display text-[clamp(2.2rem,5vw,4.8rem)] font-normal leading-[0.94] text-ivory">
+                  {OUTCOMES[index] ?? stage.stage}
+                </h3>
+                <p className={`mt-4 text-sm leading-relaxed text-ivory/64 sm:text-base ${side === "right" ? "ml-auto" : ""} max-w-md`}>
+                  {stage.description}
+                </p>
+              </article>
+            );
+          })}
+        </div>
+
+        <div
+          className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-[#100e0c] text-center"
+          style={{ opacity: finalResolve }}
+          aria-hidden={finalResolve < 0.5}
+        >
+          <div style={{ transform: `scale(${0.92 + finalResolve * 0.08})`, opacity: finalResolve }}>
+            <p className="text-[0.64rem] font-medium uppercase tracking-[0.26em] text-sandstone">The system closes</p>
+            <p className="mx-auto mt-5 max-w-4xl font-display text-[clamp(3rem,8vw,7.6rem)] font-normal leading-[0.9] text-ivory">
+              Every decision now remembers the one before it.
+            </p>
+            <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-ivory/55 sm:text-base">
+              Skip a stage and the break appears later, where recognition should have compounded.
             </p>
           </div>
+        </div>
+
+        <div className="absolute inset-x-0 bottom-0 z-30 h-px bg-ivory/10">
+          <span className="block h-full bg-sandstone" style={{ width: `${progress * 100}%` }} />
         </div>
       </div>
     </div>
