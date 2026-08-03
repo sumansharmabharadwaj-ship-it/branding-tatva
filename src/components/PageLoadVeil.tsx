@@ -23,17 +23,22 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 // line so a throttled tab still lands on exactly 100.
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
-const COUNTER_DURATION_MS = 1700;
+const COUNTER_DURATION_MS = 2400;
 
 // The flock near the sun, matching the board's composition (upper
 // right, loose formation). Fixed values, no randomness — this renders
-// on the server too, and hydration must match.
+// on the server too, and hydration must match. First version drifted
+// each bird a few dozen pixels with a gentle bob — direct feedback
+// that the page read as static. The flock now genuinely flies: each
+// bird crosses a real stretch of sky during the veil's life, wings
+// visibly beating (a scaleY flap at distant-bird cadence), with a
+// slight descent so the paths feel individual rather than mechanical.
 const BIRDS = [
-  { left: 84, top: 25, scale: 1, drift: -70, bob: 1.5 },
-  { left: 88, top: 28, scale: 0.85, drift: -55, bob: 1.7 },
-  { left: 91.5, top: 24.5, scale: 0.75, drift: -62, bob: 1.4 },
-  { left: 94, top: 30, scale: 0.9, drift: -48, bob: 1.8 },
-  { left: 89, top: 33.5, scale: 0.6, drift: -58, bob: 1.6 },
+  { left: 86, top: 25, scale: 1.35, fly: -300, fall: 14, flap: 0.42 },
+  { left: 90, top: 28, scale: 1.1, fly: -250, fall: 8, flap: 0.36 },
+  { left: 93, top: 24, scale: 0.95, fly: -270, fall: 18, flap: 0.46 },
+  { left: 96, top: 30, scale: 1.2, fly: -230, fall: 6, flap: 0.4 },
+  { left: 91, top: 33.5, scale: 0.8, fly: -260, fall: 12, flap: 0.34 },
 ] as const;
 
 export function PageLoadVeil() {
@@ -47,8 +52,8 @@ export function PageLoadVeil() {
   useEffect(() => {
     if (prefersReducedMotion) return;
     const timers = [
-      setTimeout(() => setVisible(false), 1950),
-      setTimeout(() => setRemoved(true), 2700),
+      setTimeout(() => setVisible(false), 2750),
+      setTimeout(() => setRemoved(true), 3500),
     ];
 
     const start = performance.now();
@@ -88,9 +93,9 @@ export function PageLoadVeil() {
             src="/images/loading-cairn-sunrise.jpg"
             alt=""
             className="absolute inset-0 h-full w-full object-cover"
-            initial={{ scale: 1.07, x: 0 }}
-            animate={{ scale: 1.01, x: -8 }}
-            transition={{ duration: 4.5, ease: "linear" }}
+            initial={{ scale: 1.12, x: 0 }}
+            animate={{ scale: 1.02, x: -16 }}
+            transition={{ duration: 4, ease: "linear" }}
           />
 
           {/* Two fog banks sliding through the valley band — the same
@@ -98,26 +103,39 @@ export function PageLoadVeil() {
               and placed for this composition's fog seas. Pure
               transform motion, mid-flight from the first frame. */}
           <motion.div
-            className="absolute left-[-20%] top-[48%] h-[34%] w-[85%] rounded-full"
+            className="absolute left-[-20%] top-[46%] h-[36%] w-[85%] rounded-full"
             style={{
               background:
-                "radial-gradient(ellipse at center, rgba(226,226,220,0.22) 0%, rgba(226,226,220,0.07) 50%, transparent 74%)",
+                "radial-gradient(ellipse at center, rgba(228,228,222,0.34) 0%, rgba(228,228,222,0.1) 50%, transparent 74%)",
               filter: "blur(6px)",
             }}
-            initial={{ x: -30 }}
-            animate={{ x: 40 }}
-            transition={{ duration: 6, ease: "linear" }}
+            initial={{ x: -70 }}
+            animate={{ x: 90 }}
+            transition={{ duration: 4.5, ease: "linear" }}
           />
           <motion.div
-            className="absolute right-[-24%] top-[56%] h-[30%] w-[80%] rounded-full"
+            className="absolute right-[-24%] top-[55%] h-[32%] w-[80%] rounded-full"
             style={{
               background:
-                "radial-gradient(ellipse at center, rgba(214,218,214,0.18) 0%, rgba(214,218,214,0.05) 52%, transparent 76%)",
+                "radial-gradient(ellipse at center, rgba(216,220,216,0.28) 0%, rgba(216,220,216,0.08) 52%, transparent 76%)",
               filter: "blur(7px)",
             }}
-            initial={{ x: 30 }}
-            animate={{ x: -45 }}
-            transition={{ duration: 6, ease: "linear" }}
+            initial={{ x: 70 }}
+            animate={{ x: -100 }}
+            transition={{ duration: 4.5, ease: "linear" }}
+          />
+          {/* A low, near sheet crossing the whole frame — the wind made
+              visible at the foreground plane. */}
+          <motion.div
+            className="absolute bottom-[4%] left-[-30%] h-[22%] w-[120%]"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent 0%, rgba(222,226,220,0.2) 30%, rgba(222,226,220,0.08) 65%, transparent 100%)",
+              filter: "blur(9px)",
+            }}
+            initial={{ x: -60 }}
+            animate={{ x: 130 }}
+            transition={{ duration: 4, ease: "linear" }}
           />
 
           {/* The flock by the sun — in the frame and already flying at
@@ -128,20 +146,24 @@ export function PageLoadVeil() {
               key={i}
               className="absolute"
               style={{ left: `${b.left}%`, top: `${b.top}%` }}
-              initial={{ x: 0 }}
-              animate={{ x: b.drift }}
-              transition={{ duration: 5, ease: "linear" }}
+              initial={{ x: 0, y: 0 }}
+              animate={{ x: b.fly, y: b.fall }}
+              transition={{ duration: 4, ease: "linear" }}
             >
+              {/* Wing beat: the whole glyph compresses and opens on a
+                  distant-bird cadence — unmistakable flight, still just
+                  a silhouette. */}
               <motion.span
                 className="block"
-                animate={{ y: [0, -3.5, 0] }}
-                transition={{ duration: b.bob, repeat: Infinity, ease: "easeInOut", delay: i * 0.25 }}
+                style={{ transformOrigin: "50% 60%" }}
+                animate={{ scaleY: [1, 0.25, 1], y: [0, -2.5, 0] }}
+                transition={{ duration: b.flap, repeat: Infinity, ease: "easeInOut", delay: i * 0.13 }}
               >
-                <svg width={16 * b.scale} height={7 * b.scale} viewBox="0 0 18 8" fill="none" style={{ display: "block" }}>
+                <svg width={18 * b.scale} height={8 * b.scale} viewBox="0 0 18 8" fill="none" style={{ display: "block" }}>
                   <path
                     d="M1 5 Q 5 1 9 4.6 Q 13 1 17 5"
-                    stroke="rgba(38,34,29,0.8)"
-                    strokeWidth="1.4"
+                    stroke="rgba(38,34,29,0.85)"
+                    strokeWidth="1.5"
                     strokeLinecap="round"
                   />
                 </svg>
