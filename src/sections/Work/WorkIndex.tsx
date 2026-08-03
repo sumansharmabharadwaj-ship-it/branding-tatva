@@ -76,7 +76,7 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                         {/* Mobile preview — the same real still the desktop
                             surface shows, inline so nothing hides behind
                             hover. */}
-                        <span className="mt-4 block overflow-hidden rounded-xl lg:hidden">
+                        <span className="mt-4 block overflow-hidden rounded-2xl lg:hidden">
                           {/* Fixed frame instead of natural height — five full-height
                               stills stacked the mobile index to ~26 screens of
                               travel in the fatigue audit; a consistent short

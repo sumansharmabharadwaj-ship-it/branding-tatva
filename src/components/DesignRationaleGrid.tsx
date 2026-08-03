@@ -72,7 +72,7 @@ function Specimen({ kind }: { kind: (typeof designChoices)[number]["kind"] }) {
   if (kind === "photography") {
     return (
       <div className="flex justify-center py-2">
-        <div className="relative h-24 w-20 overflow-hidden rounded-lg">
+        <div className="relative h-24 w-20 overflow-hidden rounded-2xl">
           <Image src="/images/own-portrait.jpg" alt="" fill sizes="80px" style={{ objectFit: "cover", objectPosition: "center 25%" }} />
         </div>
       </div>
@@ -128,7 +128,7 @@ export function DesignRationaleGrid() {
                     transition={{ duration: 0.35, ease: EASE_AIR }}
                     className="overflow-hidden"
                   >
-                    <div className="mt-4 rounded-lg border border-ivory/15 bg-ivory/5">
+                    <div className="mt-4 rounded-2xl border border-ivory/15 bg-ivory/5">
                       <Specimen kind={choice.kind} />
                     </div>
                   </motion.div>

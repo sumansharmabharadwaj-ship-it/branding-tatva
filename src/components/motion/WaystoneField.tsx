@@ -153,7 +153,7 @@ export function WaystoneField({
               animate={{ x: drift, y: selected && !prefersReducedMotion ? 2 : 0 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.985 }}
               transition={{ duration: motionTokens.durationFast, ease: motionTokens.easeOrganic }}
-              className={`relative overflow-hidden rounded-xl border px-4 py-2.5 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 ${T.outline} ${
+              className={`relative overflow-hidden rounded-2xl border px-4 py-2.5 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 ${T.outline} ${
                 selected ? "waystone-selected border-transparent" : recommended ? T.recommendedBorder : T.stoneBorder
               }`}
               style={{

@@ -286,7 +286,7 @@ export function BrandHealthCheck() {
                       whileHover={prefersReducedMotion || selected ? undefined : { x: 4 }}
                       whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                       transition={{ duration: 0.15 }}
-                      className={`flex w-full items-center justify-between gap-3 rounded-lg border px-4 py-3 text-left text-sm transition-colors duration-200 ${
+                      className={`flex w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left text-sm transition-colors duration-200 ${
                         isSelected
                           ? "border-sandstone bg-sandstone/15 text-ivory"
                           : "border-ivory/20 text-ivory/90 hover:border-ivory/45 hover:bg-ivory/5"
@@ -315,7 +315,7 @@ export function BrandHealthCheck() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={transition}
-              className="rounded-lg border-t-2 p-6 sm:p-8"
+              className="rounded-2xl border-t-2 p-6 sm:p-8"
               style={{ borderColor: resultPackage?.color, backgroundColor: "rgba(244,239,230,0.04)" }}
             >
               <div className="flex items-baseline justify-between gap-4">
@@ -390,7 +390,7 @@ export function BrandHealthCheck() {
               return (
                 <div
                   key={band.title}
-                  className={`rounded-lg border p-4 transition-colors duration-500 ${
+                  className={`rounded-2xl border p-4 transition-colors duration-500 ${
                     isTrending ? "border-sandstone bg-sandstone/10" : "border-ivory/10"
                   }`}
                 >

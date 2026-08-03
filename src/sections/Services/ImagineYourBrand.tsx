@@ -247,7 +247,7 @@ export function ImagineYourBrand() {
                       body: (
                         <div className="flex flex-wrap gap-2">
                           {mapDeliverables.map((d) => (
-                            <span key={d.id} className="rounded-lg border border-ivory/20 px-3 py-1.5 text-xs text-ivory/85">{d.name}</span>
+                            <span key={d.id} className="rounded-2xl border border-ivory/20 px-3 py-1.5 text-xs text-ivory/85">{d.name}</span>
                           ))}
                         </div>
                       ),

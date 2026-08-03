@@ -142,7 +142,7 @@ export function SignatureProject({ project }: { project: Project }) {
                 {beat.key === "outcome" && project.stats && (
                   <div className="mt-6 grid gap-4 sm:grid-cols-2">
                     {project.stats.map((stat) => (
-                      <div key={stat.label} className="rounded-xl border p-4" style={{ borderColor: "rgba(143,174,131,0.3)" }}>
+                      <div key={stat.label} className="rounded-2xl border p-4" style={{ borderColor: "rgba(143,174,131,0.3)" }}>
                         <p className="font-display text-3xl font-normal" style={{ color: WORK.sand }}>
                           <AnimatedStat value={stat.value} />
                         </p>

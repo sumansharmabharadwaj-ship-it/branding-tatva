@@ -186,7 +186,7 @@ export default function AboutPage() {
                   >
                     <TiltCard glowColor={c.color}>
                       <div
-                        className="spotlight-card flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-elevation-sm transition-colors duration-300"
+                        className="spotlight-card flex h-full flex-col rounded-2xl border-t-2 border-border bg-background-elevated p-5 shadow-elevation-sm transition-colors duration-300"
                         style={{ borderTopColor: c.color, ["--card-color" as string]: c.color }}
                       >
                         <p className={c.featured ? "font-display text-lg font-normal text-soil" : "font-medium text-soil"}>

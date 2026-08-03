@@ -141,7 +141,7 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
                 {project.stats.map((s) => (
                   <li
                     key={s.label}
-                    className="rounded-xl border border-ivory/15 px-4 py-3"
+                    className="rounded-2xl border border-ivory/15 px-4 py-3"
                     style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
                   >
                     <p className="font-display text-2xl font-normal leading-none" style={{ color: project.accent }}>

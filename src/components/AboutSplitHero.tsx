@@ -125,7 +125,7 @@ export function AboutSplitHero({
           >
             <TiltCard glowColor="#C28A28" maxDegrees={7}>
               <motion.div
-                className="card-float relative w-[260px] overflow-hidden rounded-lg border-[6px] border-ivory sm:w-[320px]"
+                className="card-float relative w-[260px] overflow-hidden rounded-2xl border-[6px] border-ivory sm:w-[320px]"
                 style={{
                   ...(prefersReducedMotion ? undefined : { y: cardY }),
                   boxShadow: "0 14px 30px rgba(20,17,14,0.4), 0 0 40px 6px rgba(20,17,14,0.2)",

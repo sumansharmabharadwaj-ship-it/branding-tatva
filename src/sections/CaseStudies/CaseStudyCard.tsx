@@ -49,7 +49,7 @@ export function CaseStudyCard({ project }: { project: Project }) {
         <Link
           href={`/work/${project.slug}`}
           data-cursor-label="View case study"
-          className="spotlight-card relative flex h-full flex-col justify-end overflow-hidden rounded-lg p-6 shadow-elevation-sm"
+          className="spotlight-card relative flex h-full flex-col justify-end overflow-hidden rounded-2xl p-6 shadow-elevation-sm"
           style={{ ["--card-color" as string]: project.accent }}
         >
           <CinematicCardMedia
@@ -70,7 +70,7 @@ export function CaseStudyCard({ project }: { project: Project }) {
           {project.stats?.[0] && (
             <motion.div
               aria-hidden="true"
-              className="pointer-events-none absolute left-6 top-6 rounded-md px-3 py-2"
+              className="pointer-events-none absolute left-6 top-6 rounded-2xl px-3 py-2"
               style={{ backgroundColor: `${project.accent}E6` }}
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
               animate={

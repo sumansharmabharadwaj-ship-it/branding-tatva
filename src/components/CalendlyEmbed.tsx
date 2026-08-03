@@ -58,7 +58,7 @@ export function CalendlyEmbed({ url }: { url: string }) {
     // scrollbar appears when there's nothing to scroll) while letting
     // a cramped one stay fully usable via a swipe instead of quietly
     // losing part of the calendar.
-    <div className="relative mt-8 overflow-x-auto rounded-lg border-t-2 border-action-primary bg-background-elevated shadow-elevation-sm">
+    <div className="relative mt-8 overflow-x-auto rounded-2xl border-t-2 border-action-primary bg-background-elevated shadow-elevation-sm">
       {!loaded && (
         <div
           className="absolute inset-0 animate-pulse bg-background-alt"

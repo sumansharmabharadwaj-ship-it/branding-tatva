@@ -276,7 +276,7 @@ export default async function CaseStudyPage({ params }: Props) {
                 <TiltCard glowColor={related.accent} className="mt-3 max-w-md">
                   <a
                     href={`/work/${related.slug}`}
-                    className="block h-full rounded-lg border border-border bg-background-elevated p-6 shadow-elevation-sm transition-colors duration-300 hover:border-action-primary/40"
+                    className="block h-full rounded-2xl border border-border bg-background-elevated p-6 shadow-elevation-sm transition-colors duration-300 hover:border-action-primary/40"
                   >
                     <p className="font-display text-lg font-normal text-soil">{related.title}</p>
                     <p className="mt-2 text-sm text-foreground-secondary">{related.challenge}</p>

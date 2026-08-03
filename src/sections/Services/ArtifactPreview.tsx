@@ -156,7 +156,7 @@ export function ArtifactPreview({ deliverable }: { deliverable: Deliverable }) {
   const Preview = SPECIALIZED[deliverable.id] ?? DocumentPreview;
   return (
     <div
-      className="rounded-lg p-5 shadow-[0_14px_36px_rgba(0,0,0,0.35)] sm:p-6"
+      className="rounded-2xl p-5 shadow-[0_14px_36px_rgba(0,0,0,0.35)] sm:p-6"
       style={{ backgroundColor: "#F2F0E8", transform: "rotate(-0.4deg)" }}
     >
       <div className="flex items-baseline justify-between border-b border-[#1B1B1B]/15 pb-2">

@@ -119,7 +119,7 @@ export function ThreePathsSection() {
                 className="group flex h-full flex-col rounded-2xl border border-soil/10 bg-white/55 p-7 transition-all duration-300 hover:-translate-y-1 hover:border-soil/25"
               >
                 <span className="flex items-center gap-4">
-                  <span className="rounded-lg px-2.5 py-1 font-display text-sm text-ivory" style={{ backgroundColor: p.tint }}>
+                  <span className="rounded-2xl px-2.5 py-1 font-display text-sm text-ivory" style={{ backgroundColor: p.tint }}>
                     {p.n}
                   </span>
                   <span className="flex h-14 w-14 items-center justify-center rounded-full border border-soil/12">

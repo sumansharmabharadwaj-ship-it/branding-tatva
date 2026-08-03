@@ -150,7 +150,7 @@ export function TexturedDark({
         {video && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-3xl sm:-inset-x-10"
+            className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-2xl sm:-inset-x-10"
             style={{
               background:
                 "radial-gradient(ellipse at center, rgba(39,34,30,0.55) 0%, rgba(39,34,30,0.3) 65%, transparent 100%)",

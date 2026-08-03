@@ -119,7 +119,7 @@ export function TatvaLab() {
                                 {chapter.body}
                               </p>
                               {chapter.samples && (
-                                <div className="mt-3 rounded-xl border p-4" style={{ borderColor: WORK.stone + "88", backgroundColor: "rgba(255,255,255,0.5)" }}>
+                                <div className="mt-3 rounded-2xl border p-4" style={{ borderColor: WORK.stone + "88", backgroundColor: "rgba(255,255,255,0.5)" }}>
                                   <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: WORK.stone }}>
                                     Concept material
                                   </p>

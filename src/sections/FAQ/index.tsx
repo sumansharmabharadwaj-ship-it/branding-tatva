@@ -21,7 +21,7 @@ export function FAQ({ questions }: { questions?: string[] } = {}) {
             <button
               type="button"
               id={questionId}
-              className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left font-medium text-soil transition-colors duration-300 hover:bg-clay/8 focus-visible:bg-clay/8"
+              className="flex w-full items-center justify-between rounded-2xl px-3 py-3 text-left font-medium text-soil transition-colors duration-300 hover:bg-clay/8 focus-visible:bg-clay/8"
               aria-expanded={isOpen}
               aria-controls={answerId}
               onClick={() => setOpenIndex(isOpen ? null : i)}

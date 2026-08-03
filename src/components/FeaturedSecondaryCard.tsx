@@ -34,7 +34,7 @@ export function FeaturedSecondaryCard({ project }: { project: Project }) {
     >
       <motion.div
         style={prefersReducedMotion ? undefined : { rotateX, rotateY }}
-        className="relative flex h-full min-h-88 flex-col justify-end overflow-hidden rounded-lg p-6 sm:p-8"
+        className="relative flex h-full min-h-88 flex-col justify-end overflow-hidden rounded-2xl p-6 sm:p-8"
       >
         <CinematicCardMedia
           image={project.cardImage}

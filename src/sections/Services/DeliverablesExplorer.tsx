@@ -87,7 +87,7 @@ export function DeliverablesExplorer() {
                   type="button"
                   aria-pressed={isActive}
                   onClick={() => pick(d.id)}
-                  className={`rounded-xl border px-4 py-2.5 text-left font-display text-base transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:text-lg ${
+                  className={`rounded-2xl border px-4 py-2.5 text-left font-display text-base transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:text-lg ${
                     isActive
                       ? "border-sandstone/70 bg-ivory/[0.08] text-ivory"
                       : "border-ivory/15 bg-ivory/[0.03] text-ivory/80 hover:border-ivory/35 hover:text-ivory"

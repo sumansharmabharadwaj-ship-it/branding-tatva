@@ -53,7 +53,7 @@ export function VerticalUnfold({ elements }: { elements: Element[] }) {
               <ElementReveal slug={el.slug} delay={i * 0.06}>
                 <div
                   id={el.slug}
-                  className={`relative grid items-baseline gap-4 rounded-xl bg-soil/45 px-4 py-9 backdrop-blur-[2px] sm:grid-cols-[auto_1fr_1.2fr] sm:gap-10 sm:bg-transparent sm:px-0 sm:py-11 sm:backdrop-blur-none ${
+                  className={`relative grid items-baseline gap-4 rounded-2xl bg-soil/45 px-4 py-9 backdrop-blur-[2px] sm:grid-cols-[auto_1fr_1.2fr] sm:gap-10 sm:bg-transparent sm:px-0 sm:py-11 sm:backdrop-blur-none ${
                     i % 2 === 1 ? "sm:text-right" : ""
                   }`}
                 >

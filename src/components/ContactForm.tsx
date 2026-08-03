@@ -96,7 +96,7 @@ export function ContactForm() {
         initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.96, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: EASE_AIR }}
-        className="rounded-lg border border-state-success/40 bg-state-success/10 p-6"
+        className="rounded-2xl border border-state-success/40 bg-state-success/10 p-6"
       >
         <motion.svg
           width="40"
@@ -147,7 +147,7 @@ export function ContactForm() {
   }
 
   return (
-    <div className="rounded-3xl border border-border/60 px-6 py-8 shadow-elevation-md sm:px-10 sm:py-10" style={{ backgroundColor: "#F6F2EA" }}>
+    <div className="rounded-2xl border border-border/60 px-6 py-8 shadow-elevation-md sm:px-10 sm:py-10" style={{ backgroundColor: "#F6F2EA" }}>
       {/* The panel mirrors the booking card beside it — cream ground,
           italic display accent, serif line, and the sprig divider —
           so the two paths on this page read as siblings rather than

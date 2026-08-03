@@ -14,7 +14,7 @@ export function Testimonials() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <div className="flex items-center gap-4 rounded-lg border border-dashed border-border bg-background-alt px-6 py-5">
+    <div className="flex items-center gap-4 rounded-2xl border border-dashed border-border bg-background-alt px-6 py-5">
       <motion.p
         className="font-display text-3xl italic text-soil/25"
         animate={prefersReducedMotion ? undefined : { opacity: [0.4, 1, 0.4] }}

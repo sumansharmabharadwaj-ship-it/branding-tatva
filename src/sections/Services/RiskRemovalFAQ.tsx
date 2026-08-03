@@ -292,7 +292,7 @@ function Trail({
                     {isOpen && !prefersReducedMotion && (
                       <motion.div
                         aria-hidden="true"
-                        className="pointer-events-none absolute -inset-x-6 -inset-y-2 rounded-3xl"
+                        className="pointer-events-none absolute -inset-x-6 -inset-y-2 rounded-2xl"
                         style={{
                           background:
                             "radial-gradient(ellipse 70% 60% at 30% 40%, rgba(222,230,220,0.13) 0%, rgba(222,230,220,0.05) 45%, transparent 75%)",
@@ -315,7 +315,7 @@ function Trail({
                   />
                   <button
                     type="button"
-                    className={`group mt-1 flex w-full items-center justify-between rounded-lg px-3 py-3.5 text-left text-[1.05rem] font-medium transition-all duration-500 ${
+                    className={`group mt-1 flex w-full items-center justify-between rounded-2xl px-3 py-3.5 text-left text-[1.05rem] font-medium transition-all duration-500 ${
                       dark
                         ? `text-ivory hover:bg-ivory/[0.07] hover:shadow-[0_0_38px_rgba(222,230,236,0.08)] focus-visible:bg-ivory/[0.07] ${isOpen ? "bg-ivory/[0.05]" : ""}`
                         : "text-soil hover:bg-clay/8 focus-visible:bg-clay/8"

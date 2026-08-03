@@ -74,7 +74,7 @@ export function StudioHotspots() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={prefersReducedMotion ? undefined : { opacity: 0 }}
                     transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute left-1/2 top-8 z-10 w-56 -translate-x-1/2 rounded-xl border border-ivory/15 p-4 text-left backdrop-blur-md"
+                    className="absolute left-1/2 top-8 z-10 w-56 -translate-x-1/2 rounded-2xl border border-ivory/15 p-4 text-left backdrop-blur-md"
                     style={{ backgroundColor: "rgba(23,20,17,0.85)" }}
                   >
                     <p className="text-sm font-medium text-ivory">{s.label}</p>

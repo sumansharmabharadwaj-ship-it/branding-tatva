@@ -51,7 +51,7 @@ export function ArticleSearch({ posts }: { posts: SearchablePost[] }) {
             )}
             {matches.map((p) => (
               <li key={p.slug}>
-                <Link href={`/insights/${p.slug}`} className="group block rounded-xl border border-soil/10 px-4 py-3 transition-colors duration-300 hover:border-clay/50">
+                <Link href={`/insights/${p.slug}`} className="group block rounded-2xl border border-soil/10 px-4 py-3 transition-colors duration-300 hover:border-clay/50">
                   <span className="font-display text-lg text-soil transition-colors duration-300 group-hover:text-clay">
                     {p.title}
                   </span>

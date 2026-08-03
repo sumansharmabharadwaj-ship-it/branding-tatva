@@ -79,7 +79,7 @@ export function PackageSelector() {
               whileHover={prefersReducedMotion ? undefined : { y: -5 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.98, y: -1 }}
               transition={{ duration: 0.45, delay: ci * 0.09, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center gap-3 rounded-lg border-t-2 p-6 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)]"
+              className="flex flex-col items-center gap-3 rounded-2xl border-t-2 p-6 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)]"
               style={{
                 borderColor: pkg?.color,
                 // Glass over deep water (Phase 1 reading surface) — the
@@ -131,7 +131,7 @@ export function PackageSelector() {
               {packages.map((pkg) => (
                 <div
                   key={pkg.slug}
-                  className="flex flex-col rounded-lg border-t-2 p-6 backdrop-blur-md"
+                  className="flex flex-col rounded-2xl border-t-2 p-6 backdrop-blur-md"
                   style={{ borderColor: pkg.color, backgroundColor: blendHex(pkg.color, "#0F151C", 12) }}
                 >
                   <p className="font-display text-lg font-normal text-ivory">{pkg.name}</p>
@@ -169,7 +169,7 @@ export function PackageSelector() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 170, damping: 24 }}
-              className="rounded-lg border-t-2 p-6 backdrop-blur-md sm:p-8"
+              className="rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-8"
               style={{ borderColor: activePackage.color, backgroundColor: blendHex(activePackage.color, "#0F151C", 14) }}
             >
               <p className="font-display text-xl font-normal text-ivory">{activePackage.name}</p>

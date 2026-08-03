@@ -289,7 +289,7 @@ export default function ContactPage() {
               {/* Suman's design: a cream panel carrying the booking,
                   opening on the italic welcome, her name in serif, and
                   the sprig divider before the calendar itself. */}
-              <div className="rounded-3xl px-6 py-10 text-center shadow-elevation-lg sm:px-10" style={{ backgroundColor: "#F6F2EA" }}>
+              <div className="rounded-2xl px-6 py-10 text-center shadow-elevation-lg sm:px-10" style={{ backgroundColor: "#F6F2EA" }}>
                 <p className="font-display text-3xl italic" style={{ color: "#B08A4F" }}>Welcome,</p>
                 <p className="mt-1 font-display text-4xl font-normal text-soil sm:text-5xl">{site.founder}</p>
                 <span aria-hidden="true" className="mx-auto mt-4 block h-px w-16" style={{ backgroundColor: "#C6A97A" }} />

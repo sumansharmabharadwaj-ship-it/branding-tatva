@@ -82,7 +82,7 @@ export function JourneyStage({
           {index + 1}
         </span>
       </span>
-      <div className="relative -mx-4 overflow-hidden rounded-lg px-4 py-3">
+      <div className="relative -mx-4 overflow-hidden rounded-2xl px-4 py-3">
         {stage.poster && (
           <div ref={mediaRef} className="absolute inset-0" aria-hidden="true">
             <Image
@@ -114,7 +114,7 @@ export function JourneyStage({
           <div
             ref={spotlightRef}
             aria-hidden="true"
-            className="stage-spotlight pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity duration-500"
+            className="stage-spotlight pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500"
           />
         )}
         <Reveal delay={delay}>

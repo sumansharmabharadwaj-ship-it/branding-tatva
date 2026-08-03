@@ -43,7 +43,7 @@ export default function TermsPage() {
               </p>
             </div>
 
-            <p className="mt-10 rounded-md border border-state-warning/40 bg-state-warning/10 p-4 text-sm text-soil">
+            <p className="mt-10 rounded-2xl border border-state-warning/40 bg-state-warning/10 p-4 text-sm text-soil">
               This is placeholder legal text meant as a starting structure
               only. Please have this reviewed by a lawyer before launch.
             </p>

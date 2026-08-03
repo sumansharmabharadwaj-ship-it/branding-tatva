@@ -123,7 +123,7 @@ export function DecisionClearing() {
                 role="tab"
                 aria-selected={active}
                 onClick={() => jumpTo(group.id)}
-                className={`relative shrink-0 rounded-xl px-4 py-3 text-left text-sm transition-colors duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A0A690] lg:w-full ${
+                className={`relative shrink-0 rounded-2xl px-4 py-3 text-left text-sm transition-colors duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A0A690] lg:w-full ${
                   active ? "text-ivory" : "text-ivory/60 hover:text-ivory/85"
                 }`}
                 style={{

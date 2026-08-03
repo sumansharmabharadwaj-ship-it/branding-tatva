@@ -132,7 +132,7 @@ export function WeakBrandingCost() {
           <TiltCard glowColor={ELEMENT_HEX.earth} className="group">
             <motion.div
               ref={focusRef}
-              className="h-full rounded-lg border-t-2 p-6 backdrop-blur-md transition-[filter] duration-500 group-hover:!filter-none sm:p-7"
+              className="h-full rounded-2xl border-t-2 p-6 backdrop-blur-md transition-[filter] duration-500 group-hover:!filter-none sm:p-7"
               style={{
                 borderColor: ELEMENT_HEX.earth,
                 backgroundColor: "rgba(24,25,26,0.6)",
@@ -164,7 +164,7 @@ export function WeakBrandingCost() {
         <Reveal delay={0.14}>
           <TiltCard glowColor={ELEMENT_HEX.water}>
             <div
-              className="h-full rounded-lg border-t-2 p-6 backdrop-blur-md sm:p-7"
+              className="h-full rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-7"
               style={{ borderColor: ELEMENT_HEX.water, backgroundColor: "rgba(24,25,26,0.6)" }}
             >
               <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/70">Positioned distinctly</p>
