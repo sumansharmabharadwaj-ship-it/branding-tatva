@@ -407,4 +407,165 @@ export const blogPosts: BlogPost[] = [
       "The sheet below turns this into columns. Fill it for every proposal you are weighing, this practice's included.",
     ],
   },
+  {
+    // Month nine pillar article (bible §15): category reframing walked
+    // through a real, clearly labeled Tatva Lab concept. The Lab
+    // dossiers on the Work page are the article's living asset; the
+    // exercise below is the take-home version.
+    slug: "category-reframing-a-concept-case-study",
+    title: "Category reframing: a concept case study",
+    excerpt:
+      "A category is an argument everyone forgot they were making. Here is the reframing move, walked through a labeled Branding Tatva Lab concept.",
+    element: "earth",
+    publishedAt: "2026-08-03",
+    readingTime: "5 min read",
+    pullQuote: "A category is an argument everyone forgot they were making.",
+    summary: [
+      "Every category carries a buried assumption its members repeat without noticing. Reframing names it and argues the opposite.",
+      "The Deodar Lab concept reframes wellness retreats from escape to return: calm that survives the drive home.",
+      "The exercise below runs the same move on your own category. Concept work stays labeled as concept, here and everywhere.",
+    ],
+    checklist: {
+      title: "The reframing exercise",
+      items: [
+        "Write the sentence every competitor in your category would agree to. That sentence is the frame.",
+        "Name the assumption buried inside it, the thing nobody argues because nobody notices it.",
+        "Argue the opposite in one sentence, and check whether a real customer frustration backs you up.",
+        "List what the new frame makes expensive, cheap, urgent, or irrelevant.",
+        "Test the name, the voice, and the imagery against the new frame. Whatever fits the old frame goes.",
+        "Find the proof the reframe demands. A frame without evidence is a slogan.",
+        "Decide what you would have to stop selling. A reframe that costs nothing changes nothing.",
+      ],
+    },
+    body: [
+      "Every category runs on an argument its members stopped noticing. Wellness retreats argue that rest requires escape. Skincare argues that skin is a problem awaiting correction. Heritage food argues that tradition is best sold as nostalgia. A category is an argument everyone forgot they were making, and reframing begins by writing it down.",
+      "## The move, in the open",
+      "The Branding Tatva Lab exists to rehearse this move in public, on concepts clearly labeled as concepts. The Deodar study, a Himalayan wellness retreat, starts from the category's buried claim: leave your life to find yourself. Every competitor opens with the same infinity view and the same promise of disappearance.",
+      "## Arguing the opposite",
+      "Deodar positions against escape entirely: a retreat that returns you to your life rather than out of it. The promise becomes usable calm, the kind that survives the drive home. Notice what the reframe does mechanically: it changes the comparison set from other retreats to the guest's own ordinary week, and it makes the category's signature imagery, the infinity pool at golden hour, look like the wrong answer.",
+      "## What the frame decides downstream",
+      "Once the frame moves, every decision inherits it. The name becomes a local cedar instead of a Sanskrit virtue. The voice describes what happens instead of what awakens. Booking reads as arrival rather than checkout. None of these are style choices; they are the argument, repeated in different materials.",
+      "## The honest boundary",
+      "Deodar is a concept, and says so everywhere it appears. That label is the point: the reframing move can be demonstrated fully without inventing a client to have done it for. The full dossier, with the rejected names and the measurement plan, lives on the Work page under Tatva Lab.",
+      "The exercise below runs the same move on your own category. It works best done in writing, with a competitor's website open beside yours.",
+    ],
+  },
+  {
+    // Month ten pillar article (bible §15): market pricing, consistent
+    // with the live price book and its transparency note. Zero numbers
+    // in the article itself — the live book on Services is the source
+    // of truth, linked rather than duplicated.
+    slug: "pricing-brand-strategy-across-markets",
+    title: "Pricing brand strategy across markets",
+    excerpt:
+      "Why the same engagement carries different prices in different markets, why currency conversion is the wrong tool, and what a final quotation actually depends on.",
+    element: "air",
+    publishedAt: "2026-08-03",
+    readingTime: "4 min read",
+    pullQuote: "A converted price imports another market's assumptions and calls them yours.",
+    summary: [
+      "Prices differ by market because scope expectations, local anchors, and delivery norms differ, well beyond exchange rates.",
+      "A price book beats live conversion: each market gets a price built for it. A converted price imports another market's assumptions and calls them yours.",
+      "The final quotation always follows the discovery conversation, because scope is a finding, never a preset.",
+    ],
+    checklist: {
+      title: "The scope explainer",
+      items: [
+        "Ask what the engagement decides, before what it delivers. Decisions are the unit of value.",
+        "Check which market anchor the price answers to: local alternatives, local salaries, local norms.",
+        "Confirm what the number excludes: taxes, production, media, printing, development, licensing.",
+        "Ask what changes the number: more decision makers, more offers, more markets, more rounds.",
+        "Ask what happens between paying and receiving: the stages, the checkpoints, the artifacts.",
+        "Get the boundary in writing: where this engagement ends and the next one would begin.",
+      ],
+    },
+    body: [
+      "Ask why the same branding engagement costs differently in London, Toronto, and Delhi, and the honest answer runs deeper than exchange rates. Markets differ in what a project includes by default, what the local alternatives cost, and what a fair professional rate means where the buyer lives. A price is a sentence in a local language.",
+      "## Why conversion is the wrong tool",
+      "Running one home price through a currency converter feels neutral and is anything but. A converted price imports another market's assumptions and calls them yours: its scope norms, its competitive set, its idea of expensive. A price book, one deliberate price per market, treats each market as a real place instead of a decimal shift.",
+      "## What this practice does",
+      "The Services page carries exactly that: a predefined price book per market, detected from location and always overridable by hand, with a plain transparency note underneath. Prices are shown as where projects begin, because the final quotation follows the discovery conversation. Scope is a finding, never a preset.",
+      "## What moves a quotation",
+      "The variables are boringly concrete: how many offers the brand carries, how many decision makers need to align, how many markets the work must survive in, and how much existing material can be kept versus rebuilt. None of these are visible before a real conversation, which is the entire argument for having one before a number gets final.",
+      "The explainer below is the set of questions worth asking any practice about any price, this one included.",
+    ],
+  },
+  {
+    // Month eleven pillar article (bible §15): documenting brand
+    // decisions, with the decision record template as its asset.
+    slug: "how-to-document-brand-decisions",
+    title: "How to document brand decisions",
+    excerpt:
+      "An undocumented decision gets remade every quarter by whoever is loudest. The fix is a one-page record, written the day the decision lands.",
+    element: "space",
+    publishedAt: "2026-08-03",
+    readingTime: "4 min read",
+    pullQuote: "An undocumented decision gets remade every quarter by whoever is loudest.",
+    summary: [
+      "Brands drift because decisions live in memory and memory changes staff. An undocumented decision gets remade every quarter by whoever is loudest.",
+      "A decision record is one page: the decision, the reasons, the rejected alternatives, and the revisit condition.",
+      "Rejected alternatives are the most valuable field: they stop old debates from being reopened as new ideas.",
+    ],
+    checklist: {
+      title: "The decision record template",
+      items: [
+        "The decision, in one sentence a new hire could act on.",
+        "The date, and who made the call.",
+        "The reasons, as they actually were, politics included.",
+        "The alternatives considered, and why each lost.",
+        "What the decision rules out from now on.",
+        "The revisit condition: which measurable change would reopen it.",
+        "Where the record lives, and who keeps the set.",
+      ],
+    },
+    body: [
+      "Brands rarely break in one decision. They drift, meeting by meeting, as choices made two years ago get quietly remade by people who never heard the original reasons. An undocumented decision gets remade every quarter by whoever is loudest, and the brand pays in consistency, the one currency it cannot print more of.",
+      "## One page, written the same day",
+      "A decision record is deliberately small: the decision, the date, the reasons, the alternatives that lost, and the condition that would reopen the question. It gets written the day the decision lands, while the reasons are still true instead of remembered. Ten of these pages outperform any brand book at keeping a brand coherent.",
+      "## The field that pays rent",
+      "Rejected alternatives are the record's most valuable field. Every mature brand carries a graveyard of ideas that were considered and declined for good reasons, and without records that graveyard gets excavated annually as fresh thinking. Writing down why the playful name lost saves the meeting where it almost wins.",
+      "## The revisit condition",
+      "The record also protects against the opposite failure, decisions frozen past their usefulness, by naming its own expiry test: which measurable change in the business would reopen the question. That single line separates commitment from stubbornness. Between records, the site you are reading applies the same rule to itself; every section carries its reasoning in writing.",
+      "The template below is the working format. One page per decision, kept where the next person will actually look.",
+    ],
+  },
+  {
+    // Month twelve pillar article (bible §15): the annual review,
+    // whose working asset is the live Brand Health Check on Services.
+    slug: "the-annual-brand-health-review",
+    title: "The annual brand health review",
+    excerpt:
+      "Brands drift by inches, and inches compound. A yearly review catches the drift while it is still cheap to correct: here is the working agenda.",
+    element: "water",
+    publishedAt: "2026-08-03",
+    readingTime: "4 min read",
+    pullQuote: "Brands drift by inches, and inches compound.",
+    summary: [
+      "Brands drift by inches, and inches compound. An annual review catches drift while correction is still cheap.",
+      "The review checks four ledgers: position, assets, voice, and availability, each against what actually shipped this year.",
+      "The Brand Health Check on the Services page runs the short version in about a minute; the agenda below runs the full one.",
+    ],
+    checklist: {
+      title: "The annual review agenda",
+      items: [
+        "Reread last year's positioning sentence, then your ten most recent pieces of output. Count the contradictions.",
+        "Rerun the covered logo test on your homepage, your packaging, and your last campaign.",
+        "Pull the decision records made this year. Check which got honored and which got quietly remade.",
+        "List the buying moments you gained and lost this year. Availability moves in both directions.",
+        "Read three real customer messages aloud. Compare their vocabulary with yours.",
+        "Score the drift honestly, then choose the one correction with the highest compounding return.",
+        "Date next year's review before closing this one.",
+      ],
+    },
+    body: [
+      "Nobody decides to let a brand slide. The slide is made of reasonable exceptions: the campaign that bent the palette, the hire who never read the voice document, the offer that shipped before the architecture question got asked. Brands drift by inches, and inches compound. The annual review exists to price the inches while they are still cheap.",
+      "## Four ledgers, once a year",
+      "The review audits four accounts. Position: does the sentence still describe the business, and does the output still argue it? Assets: did the signals hold steady, or did variety creep in wearing the word refresh? Voice: would this year's copy pass the three writer test? Availability: which buying moments got gained, and which went quiet?",
+      "## Judge against shipped work",
+      "The review only works when scored against what actually shipped: the real posts, the real proposals, the real packaging, laid beside the documented decisions. Intentions audit clean every year. Output tells the truth.",
+      "## The short version, any day",
+      "The Brand Health Check on the Services page runs the compressed diagnosis in about a minute, and it is the honest place to start if a full review feels heavy. The agenda below is the complete version, best run with the year's work open on the table and the calendar already holding next year's date.",
+      "The one rule: end every review with exactly one correction, chosen for compounding return. A review that ends with ten resolutions ends with zero.",
+    ],
+  },
 ];

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { LogoMark } from "@/components/Logo";
+import { site } from "@/data/site";
 
 // The 2026 loading page, rebuilt to Suman's attached cairn-at-sunrise
 // board: the full scene IS the loading page — snow peaks at first
@@ -214,6 +216,38 @@ export function PageLoadVeil() {
               </svg>
             </motion.span>
           ))}
+
+          {/* The brand itself, over the open sky — direct feedback that
+              the scene alone read as a page without content. Monogram,
+              wordmark, gold divider, and the brand line arrive as one
+              quiet block in the sky's negative space, leaving the
+              cairn and the LOADING beat exactly where the board put
+              them. */}
+          <motion.div
+            initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 1.1, ease: EASE, delay: 0.3 }}
+            className="absolute inset-x-0 top-[13%] flex flex-col items-center text-center"
+          >
+            <LogoMark size={64} light />
+            <span
+              className="mt-4 font-display text-xl font-medium uppercase tracking-[0.4em] text-ivory sm:text-2xl"
+              style={{ textShadow: "0 1px 14px rgba(20,17,14,0.55)" }}
+            >
+              {site.name}
+            </span>
+            <span aria-hidden="true" className="mt-4 flex items-center gap-1.5">
+              <span className="h-px w-10" style={{ backgroundColor: "rgba(198,169,122,0.75)" }} />
+              <span className="h-1 w-1 rounded-full" style={{ backgroundColor: "#C6A97A" }} />
+              <span className="h-px w-10" style={{ backgroundColor: "rgba(198,169,122,0.75)" }} />
+            </span>
+            <span
+              className="mt-3 font-body text-[0.62rem] uppercase tracking-[0.32em] text-ivory/80"
+              style={{ textShadow: "0 1px 10px rgba(20,17,14,0.5)" }}
+            >
+              {site.tagline}
+            </span>
+          </motion.div>
 
           {/* LOADING, exactly as the board sets it: the spaced label
               over a hairline track whose leading edge carries a warm
