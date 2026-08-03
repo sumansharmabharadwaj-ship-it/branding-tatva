@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { ElementRowBackground } from "@/components/ElementRowBackground";
+import { ElementSignature } from "@/sections/Elements/ElementSignature";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import type { Element } from "@/data/elements";
 
@@ -140,6 +141,11 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
               imagePosition={el.imagePosition}
               active={i === activeIndex}
             />
+            {/* The Tatva growth layer (Suman's board): the element
+                performs its nature as its stage arrives — mounted only
+                while active so the choreography replays on every
+                return to the stage. */}
+            {i === activeIndex && <ElementSignature slug={el.slug} color={el.color} />}
             <div className="relative flex h-full items-center px-6 sm:px-16">
               <div className="max-w-xl">
                 <div className="flex items-center gap-4">
