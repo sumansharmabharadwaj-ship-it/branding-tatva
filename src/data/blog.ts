@@ -242,4 +242,83 @@ export const blogPosts: BlogPost[] = [
       "The readiness test below separates signal from restlessness. Score it honestly before any rebrand budget moves.",
     ],
   },
+  {
+    // Month five pillar article (bible §15): distinctive assets and
+    // mental availability, supporting the recognition cluster, with
+    // the asset inventory as its ungated asset.
+    slug: "distinctive-assets-and-mental-availability",
+    title: "Distinctive assets and mental availability",
+    excerpt:
+      "Two ideas explain most recognition: the assets a brand owns in memory, and the buying moments those assets get attached to. Build both on purpose.",
+    element: "space",
+    publishedAt: "2026-08-03",
+    readingTime: "5 min read",
+    pullQuote: "An asset the audience has to relearn every quarter is a cost, never an asset.",
+    summary: [
+      "Distinctive assets are the signals a brand owns in memory: color, shape, phrase, sound. They compound only while they stay put.",
+      "Mental availability is how many buying moments those assets get attached to. Assets store the memory; moments retrieve it.",
+      "The inventory below scores what you own today and where it actually surfaces.",
+    ],
+    checklist: {
+      title: "The asset inventory",
+      items: [
+        "List every signal you repeat on purpose: colors, phrases, shapes, sounds, layouts.",
+        "For each, ask ten customers to name the brand from the signal alone. Score the attributions.",
+        "Mark which signals survived the last redesign, and which quietly changed.",
+        "List the buying moments your category triggers, from daily habits to yearly decisions.",
+        "Map each surviving asset to the moments where it actually appears today.",
+        "Pick the two strongest assets and the two emptiest moments. That pairing is next quarter's brief.",
+        "Write down what stays fixed for the next three years, and who guards it.",
+      ],
+    },
+    body: [
+      "Recognition runs on two gears. Distinctive assets store the brand in memory; mental availability decides how often that memory gets retrieved. Brands usually invest in one and wonder why the other stays weak.",
+      "## What counts as an asset",
+      "An asset is any signal the audience assigns to you without prompting: a color owned so completely the category concedes it, a phrase people finish for you, a label shape spotted across a shop, a sonic tail closing every video. The bar is attribution. When the audience sees the signal and names a rival, or names nobody, the signal is decoration. An asset the audience has to relearn every quarter is a cost, never an asset.",
+      "## Attachment does the retrieving",
+      "Availability grows by attaching those assets to buying situations: the Monday planning slot, the gift search, the quiet audit after a launch flops. Each attachment is a retrieval path. A brand with strong assets and one retrieval path is a beautifully labeled door on an empty street.",
+      "## Building both on purpose",
+      "The order matters. Choose few signals, hold them steady, then spend media attaching them to moments rather than announcing them in the abstract. Campaigns end; attachments persist. This is also the honest argument for consistency over novelty: novelty wins the meeting and loses the memory.",
+      "The inventory below scores what you actually own. Run it with your last quarter of output open in a second window.",
+    ],
+  },
+  {
+    // Month six pillar article (bible §15): the brand architecture
+    // pillar's anchor, with the architecture map as its ungated asset.
+    slug: "brand-architecture-for-multiple-offers",
+    title: "Brand architecture for multiple offers",
+    excerpt:
+      "Growth multiplies offers, and every new offer asks the same quiet question: does this live under the existing name or earn its own? Architecture answers by rule.",
+    element: "earth",
+    publishedAt: "2026-08-03",
+    readingTime: "5 min read",
+    pullQuote: "Every additional name divides the same attention budget.",
+    summary: [
+      "The default answer is one brand: every additional name divides the same attention budget.",
+      "A second name earns its keep only when an offer would damage, or be damaged by, the parent's meaning.",
+      "The map below walks the decision offer by offer, before any naming begins.",
+    ],
+    checklist: {
+      title: "The architecture map",
+      items: [
+        "List every offer, current and planned, in one column.",
+        "For each, write the damage outward: what it could do to the parent's meaning.",
+        "Write the damage inward: what the parent's meaning does to it.",
+        "Mark the offers with real damage in either direction. Only these earn naming conversations.",
+        "For the rest, write the descriptive line: parent name plus a plain label.",
+        "Check the buyer overlap between offers. Shared buyers argue for one roof.",
+        "Decide who owns this rule going forward, so the next offer inherits a decision instead of a debate.",
+      ],
+    },
+    body: [
+      "Growth multiplies offers, and every new offer asks the same quiet question: does this live under the existing name or earn its own? Most businesses answer by mood. Architecture answers by rule.",
+      "## One roof is the default",
+      "A branded house, one name over everything, lets each offer strengthen the rest: the newsletter builds trust the flagship spends, the workshop feeds the retainer. Every additional name divides the same attention budget. Sub brands make sense at conglomerate scale and mostly make invoices at studio scale.",
+      "## When a second name earns its keep",
+      "Two tests justify a new name. Damage outward: the offer would contaminate the parent's meaning, a bargain line under a considered flagship. Damage inward: the parent's meaning caps the offer, a playful consumer product under a sober B2B name. Absent real damage in one direction, the new name is vanity with a trademark bill.",
+      "## The middle paths",
+      "Between the extremes sit endorsed brands, a new name carrying the parent's signature underneath, and descriptive sub lines, the parent's name with a plain label after it. Descriptive wins far more often than founders expect: audiences prefer learning one brand deeply over learning three shallowly.",
+      "The map below runs the decision offer by offer. Score it before the naming workshop gets booked.",
+    ],
+  },
 ];

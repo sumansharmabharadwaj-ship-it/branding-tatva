@@ -145,6 +145,7 @@ export const pillars: Pillar[] = [
       "What is a branded house?",
       "How do multiple offers relate?",
     ],
+    articleSlug: "brand-architecture-for-multiple-offers",
     terms: [
       {
         term: "Brand architecture",
