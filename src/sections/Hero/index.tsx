@@ -14,50 +14,6 @@ const DustMotes = dynamic(() => import("@/components/DustMotes").then((m) => m.D
   ssr: false,
 });
 
-const SIGNAL_PATH =
-  "M0 54 C38 54 48 54 70 54 C91 54 96 18 118 18 C142 18 145 88 169 88 C192 88 195 34 218 34 C242 34 245 70 267 70 C290 70 296 54 330 54 C364 54 370 54 400 54";
-
-function MemorySignal({ reduced }: { reduced: boolean | null }) {
-  return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-[29%] z-[1] mx-auto hidden max-w-5xl px-10 sm:block" aria-hidden="true">
-      <div className="relative h-28 overflow-hidden opacity-70 [mask-image:linear-gradient(90deg,transparent,black_15%,black_85%,transparent)]">
-        <svg viewBox="0 0 400 108" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
-          <path d="M0 54 H400" fill="none" stroke="rgba(244,239,230,0.14)" strokeWidth="0.7" />
-          {[18, 36, 72].map((offset) => (
-            <motion.path
-              key={offset}
-              d={SIGNAL_PATH}
-              fill="none"
-              stroke="rgba(198,169,122,0.18)"
-              strokeWidth="0.7"
-              transform={`translate(0 ${offset - 36}) scale(1 ${1 - Math.abs(offset - 36) / 110})`}
-              initial={false}
-              animate={reduced ? undefined : { opacity: [0.18, 0.42, 0.18] }}
-              transition={{ duration: 5.5 + offset / 20, repeat: Infinity, ease: "easeInOut" }}
-            />
-          ))}
-          <motion.path
-            d={SIGNAL_PATH}
-            fill="none"
-            stroke="#C6A97A"
-            strokeWidth="1.35"
-            strokeLinecap="round"
-            pathLength={1}
-            initial={reduced ? false : { pathLength: 0, opacity: 0 }}
-            animate={reduced ? undefined : { pathLength: 1, opacity: 1 }}
-            transition={{ duration: 2.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          />
-        </svg>
-        <motion.div
-          className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-sandstone/20"
-          animate={reduced ? undefined : { scale: [0.7, 1.55], opacity: [0.5, 0] }}
-          transition={{ duration: 3.6, repeat: Infinity, ease: "easeOut" }}
-        />
-      </div>
-    </div>
-  );
-}
-
 export function CinematicHero({
   image,
   video,
@@ -141,7 +97,6 @@ export function CinematicHero({
       )}
 
       <DustMotes />
-      <MemorySignal reduced={prefersReducedMotion} />
 
       <div className="pointer-events-none absolute inset-y-0 left-5 z-10 hidden items-center md:flex" aria-hidden="true">
         <div className="flex -rotate-90 items-center gap-3 origin-center whitespace-nowrap text-[0.62rem] uppercase tracking-[0.32em] text-ivory/45">
