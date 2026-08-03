@@ -3,17 +3,10 @@
 import { useRef } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
-import { useSpotlight } from "@/hooks/useSpotlight";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { SplitReveal } from "@/components/SplitReveal";
 import type { CinematicHeroProps } from "./types";
 import { HERO_SCRIM_GRADIENT } from "./constants";
-import { useHeroMouseParallax } from "./animations";
 
 const DustMotes = dynamic(() => import("@/components/DustMotes").then((m) => m.DustMotes), {
   ssr: false,
@@ -31,176 +24,101 @@ export function CinematicHero({
 }: CinematicHeroProps) {
   const ref = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const mouseParallax = useHeroMouseParallax(ref, Boolean(prefersReducedMotion));
-  const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
-  });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
-  const cameraScale = useTransform(scrollYProgress, [0, 1], [1.04, 1.2]);
-  const cameraY = useTransform(scrollYProgress, [0, 1], [0, -48]);
-  const sceneBrightness = useTransform(scrollYProgress, [0, 0.42, 1], [1, 0.72, 0.46]);
-  const sceneBlur = useTransform(scrollYProgress, [0, 0.62, 1], [0, 0, 3]);
-  const sceneFilter = useTransform(
-    [sceneBrightness, sceneBlur],
-    ([brightness, blur]) => `brightness(${brightness}) blur(${blur}px)`,
-  );
-  const openingOpacity = useTransform(scrollYProgress, [0, 0.28, 0.52], [1, 1, 0]);
-  const openingY = useTransform(scrollYProgress, [0, 0.5], [0, -72]);
-  const questionOpacity = useTransform(scrollYProgress, [0.38, 0.62, 0.9], [0, 1, 1]);
-  const questionY = useTransform(scrollYProgress, [0.4, 0.72], [60, 0]);
-  const aperture = useTransform(
-    scrollYProgress,
-    [0, 0.48, 1],
-    ["inset(0% 0% 0% 0% round 0px)", "inset(5% 5% 5% 5% round 30px)", "inset(12% 14% 12% 14% round 44px)"],
-  );
-  const lightX = useTransform(scrollYProgress, [0, 1], ["-35%", "42%"]);
-  const clueScale = useTransform(scrollYProgress, [0.48, 0.9], [0.82, 1]);
+  const cameraScale = useTransform(scrollYProgress, [0, 1], [1.03, 1.1]);
+  const cameraY = useTransform(scrollYProgress, [0, 1], [0, -22]);
+  const sceneOpacity = useTransform(scrollYProgress, [0, 0.78, 1], [1, 0.82, 0.68]);
+  const openingOpacity = useTransform(scrollYProgress, [0, 0.3, 0.5], [1, 1, 0]);
+  const openingY = useTransform(scrollYProgress, [0, 0.5], [0, -34]);
+  const clueOpacity = useTransform(scrollYProgress, [0.42, 0.58, 1], [0, 1, 1]);
+  const clueY = useTransform(scrollYProgress, [0.42, 0.64], [36, 0]);
+  const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <section ref={ref} className="relative h-[190svh] bg-soil">
-      <div className="sticky top-0 h-svh min-h-[620px] overflow-hidden bg-soil">
+    <section ref={ref} className="relative h-[150svh] bg-soil">
+      <div className="sticky top-0 h-dvh overflow-hidden bg-soil">
         {video && poster && <link rel="preload" as="image" href={poster} fetchPriority="high" />}
 
         <motion.div
           className="absolute inset-0"
-          style={
-            prefersReducedMotion
-              ? undefined
-              : {
-                  clipPath: aperture,
-                  scale: cameraScale,
-                  y: cameraY,
-                  filter: sceneFilter,
-                }
-          }
+          style={prefersReducedMotion ? undefined : { scale: cameraScale, y: cameraY, opacity: sceneOpacity }}
         >
-          <motion.div
-            className="absolute -inset-8"
-            style={prefersReducedMotion ? undefined : { x: mouseParallax.x, y: mouseParallax.y }}
-          >
-            {video && !prefersReducedMotion ? (
-              <video
-                className="h-full w-full object-cover"
-                style={{ objectPosition: imagePosition }}
-                src={video}
-                poster={poster}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-              />
-            ) : (
-              <Image
-                src={poster ?? image ?? ""}
-                alt=""
-                fill
-                priority
-                sizes="100vw"
-                style={{ objectFit: "cover", objectPosition: imagePosition }}
-              />
-            )}
-          </motion.div>
+          {video && !prefersReducedMotion ? (
+            <video
+              className="h-full w-full object-cover"
+              style={{ objectPosition: imagePosition }}
+              src={video}
+              poster={poster}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          ) : (
+            <Image
+              src={poster ?? image ?? ""}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              style={{ objectFit: "cover", objectPosition: imagePosition }}
+            />
+          )}
           <div className="absolute inset-0" style={{ backgroundImage: HERO_SCRIM_GRADIENT }} />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(18,15,12,.18),rgba(18,15,12,.3)_48%,rgba(18,15,12,.82))]" />
         </motion.div>
 
-        {!prefersReducedMotion && <div className="light-rays" aria-hidden="true" />}
-
-        {!prefersReducedMotion && (
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-1/2 bottom-[-30%] z-[1] w-[32%] rotate-[14deg] bg-gradient-to-b from-transparent via-[#f5d9a0]/16 to-transparent blur-3xl"
-            style={{ x: lightX }}
-          />
-        )}
-
-        {!prefersReducedMotion && (
-          <div
-            ref={spotlightRef}
-            aria-hidden="true"
-            className="cursor-spotlight pointer-events-none absolute inset-0 z-[2] opacity-0 transition-opacity duration-500"
-          />
-        )}
-
-        <DustMotes />
+        {!prefersReducedMotion && <DustMotes />}
 
         <motion.div
           style={prefersReducedMotion ? undefined : { opacity: openingOpacity, y: openingY }}
-          className="absolute inset-0 z-[3] flex flex-col items-center justify-end px-6 pb-20 text-center sm:pb-24"
+          className="absolute inset-0 z-10 flex items-end justify-center px-6 pb-20 text-center sm:pb-24"
         >
-          <motion.span
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
-            animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15 }}
-            className="inline-flex items-center gap-2 rounded-full border border-ivory/25 bg-soil/15 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85 backdrop-blur-sm"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-sandstone shadow-[0_0_14px_rgba(198,169,122,0.9)]" />
-            {badge}
-          </motion.span>
+          <div className="w-full max-w-4xl">
+            <span className="inline-flex items-center gap-2 text-[0.62rem] font-medium uppercase tracking-[0.26em] text-ivory/72">
+              <span className="h-1.5 w-1.5 rounded-full bg-sandstone shadow-[0_0_14px_rgba(198,169,122,.85)]" />
+              {badge}
+            </span>
 
-          <SplitReveal
-            as="h1"
-            className="mt-5 max-w-3xl text-balance font-display text-[clamp(2.5rem,6vw,4.8rem)] font-normal leading-[1.02] text-ivory"
-          >
-            {headline}
-          </SplitReveal>
-
-          <motion.p
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-            animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.7 }}
-            className="mt-5 max-w-xl text-pretty text-sm leading-relaxed text-ivory/78 sm:text-base"
-          >
-            {subhead}
-          </motion.p>
-
-          {children && (
-            <motion.div
-              className="mt-8 flex flex-wrap items-center justify-center gap-4"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
-              animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.95, ease: [0.16, 1, 0.3, 1] }}
+            <SplitReveal
+              as="h1"
+              className="mx-auto mt-5 max-w-3xl text-balance font-display text-[clamp(2.7rem,6.5vw,5.4rem)] font-normal leading-[0.96] tracking-[-0.04em] text-ivory"
             >
-              {children}
-            </motion.div>
-          )}
-        </motion.div>
+              {headline}
+            </SplitReveal>
 
-        <motion.div
-          aria-hidden="true"
-          style={
-            prefersReducedMotion
-              ? undefined
-              : { opacity: questionOpacity, y: questionY, scale: clueScale }
-          }
-          className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center px-6 text-center"
-        >
-          <div className="max-w-3xl">
-            <p className="text-[0.65rem] font-medium uppercase tracking-[0.32em] text-sandstone/85">
-              The first clue
+            <p className="mx-auto mt-5 max-w-xl text-pretty text-sm leading-relaxed text-ivory/74 sm:text-base">
+              {subhead}
             </p>
-            <p className="mt-5 font-display text-[clamp(2.8rem,7vw,7rem)] font-normal leading-[0.92] tracking-[-0.04em] text-ivory">
-              What remains
-              <br />
-              after the moment?
-            </p>
-            <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-ivory/62 sm:text-base">
-              Scroll. The answer is not in what people see first, but in what their mind keeps carrying.
-            </p>
+
+            {children && <div className="mt-8 flex flex-wrap items-center justify-center gap-4">{children}</div>}
           </div>
         </motion.div>
 
         <motion.div
-          aria-hidden="true"
-          className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-[0.58rem] uppercase tracking-[0.28em] text-ivory/45"
-          animate={prefersReducedMotion ? undefined : { opacity: [0.35, 0.8, 0.35] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          style={prefersReducedMotion ? { opacity: 0 } : { opacity: clueOpacity, y: clueY }}
+          className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6 text-center"
         >
-          Follow the clue
-          <span className="h-8 w-px bg-gradient-to-b from-sandstone/70 to-transparent" />
+          <div className="max-w-3xl">
+            <p className="text-[0.62rem] font-medium uppercase tracking-[0.32em] text-sandstone">The first clue</p>
+            <p className="mt-5 font-display text-[clamp(3rem,7vw,7rem)] font-normal leading-[0.9] tracking-[-0.045em] text-ivory">
+              What remains<br />after the moment?
+            </p>
+            <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-ivory/64 sm:text-base">
+              The answer is rarely what people see first. It is what their mind keeps carrying.
+            </p>
+          </div>
         </motion.div>
+
+        <div className="absolute inset-x-6 bottom-6 z-30 flex items-center gap-4 sm:inset-x-10 lg:inset-x-14">
+          <span className="text-[0.56rem] uppercase tracking-[0.24em] text-ivory/45">Opening</span>
+          <div className="h-px flex-1 overflow-hidden bg-ivory/14">
+            <motion.div className="h-full origin-left bg-sandstone" style={{ scaleX: progress }} />
+          </div>
+          <span className="text-[0.56rem] uppercase tracking-[0.24em] text-ivory/45">Recognition</span>
+        </div>
       </div>
     </section>
   );
