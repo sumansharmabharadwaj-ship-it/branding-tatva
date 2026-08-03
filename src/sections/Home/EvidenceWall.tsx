@@ -1,9 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { projects } from "@/data/projects";
+import { ProjectFile } from "@/sections/Home/ProjectFile";
 
 // Suman's board, scene two: the documentary archive wall. "Evidence.
 // Not Portfolio." over a horizontal wall of living project files —
@@ -32,6 +36,10 @@ const DECISION: Record<string, { big: string; label: string }> = {
 };
 
 export function EvidenceWall() {
+  // Board: click a file and the page becomes the project — the card
+  // opens the full-screen ProjectFile overlay; the action link inside
+  // still deep-links straight to the case study page.
+  const [openSlug, setOpenSlug] = useState<string | null>(null);
   return (
     <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
       <BackgroundVideo
@@ -81,11 +89,22 @@ export function EvidenceWall() {
                 const stat = p.stats?.[0];
                 const fallback = DECISION[p.slug];
                 return (
-                  <li key={p.slug} className="w-64 shrink-0 snap-start sm:w-72">
-                    <Link
-                      href={`/work/${p.slug}`}
-                      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-ivory/12 transition-colors duration-300 hover:border-sandstone/60"
-                      style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
+                  <li
+                    key={p.slug}
+                    className="group relative w-64 shrink-0 snap-start transition-transform duration-500 ease-out hover:z-10 hover:scale-[1.04] sm:w-72"
+                  >
+                    {/* The stretched button opens the file; the action
+                        link below layers above it as a sibling, so the
+                        markup stays valid and both stay keyboardable. */}
+                    <button
+                      type="button"
+                      aria-label={`Open project file: ${p.title}`}
+                      onClick={() => setOpenSlug(p.slug)}
+                      className="absolute inset-0 z-[5] rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
+                    />
+                    <span
+                      className="flex h-full flex-col overflow-hidden rounded-2xl border border-ivory/12 transition-[border-color,box-shadow] duration-300 group-hover:border-sandstone/60"
+                      style={{ backgroundColor: "rgba(244,239,230,0.05)", boxShadow: "0 0 0 rgba(0,0,0,0)" }}
                     >
                       <span className="relative block h-36 w-full overflow-hidden" style={{ backgroundColor: p.accent }}>
                         {p.cardImage && (
@@ -112,17 +131,18 @@ export function EvidenceWall() {
                         <span className="mt-auto pt-4 text-[0.65rem] uppercase tracking-[0.15em] text-ivory/50">
                           {p.industry}
                         </span>
-                        <span
-                          className="mt-2 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.15em] transition-colors duration-300 group-hover:text-ivory"
+                        <Link
+                          href={`/work/${p.slug}`}
+                          className="relative z-10 mt-2 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.15em] transition-colors duration-300 hover:text-ivory"
                           style={{ color: p.accent }}
                         >
                           {ACTION[p.slug] ?? "View the case"}{" "}
                           <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
                             →
                           </span>
-                        </span>
+                        </Link>
                       </span>
-                    </Link>
+                    </span>
                   </li>
                 );
               })}
@@ -130,6 +150,7 @@ export function EvidenceWall() {
           </Reveal>
         </div>
       </Container>
+      <ProjectFile project={projects.find((p) => p.slug === openSlug) ?? null} onClose={() => setOpenSlug(null)} />
     </section>
   );
 }
