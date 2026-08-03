@@ -38,7 +38,7 @@ export function ClipReveal({
       className={className}
       initial={{ clipPath: "inset(0% 0 100% 0)" }}
       animate={visible ? { clipPath: "inset(0% 0 0% 0)" } : undefined}
-      transition={{ duration: 1.1, ease: EASE_AIR }}
+      transition={{ duration: 1.2, ease: EASE_AIR }}
     >
       {children}
     </motion.div>

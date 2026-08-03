@@ -120,7 +120,7 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 60, rotate: pose.rotate + 2 }}
               whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, rotate: pose.rotate }}
               viewport={{ once: true, margin: "0px 0px -12% 0px" }}
-              transition={{ duration: 0.7, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.72, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
               whileHover={prefersReducedMotion ? undefined : { y: -6 }}
               className={`group relative mt-10 first:mt-0 lg:mt-0 ${pose.className}`}
               style={{ zIndex: pi + 10 }}
@@ -138,7 +138,7 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
                   initial={prefersReducedMotion ? { opacity: 0.1 } : { opacity: 0, scale: 1.18, rotate: -2 }}
                   whileInView={prefersReducedMotion ? undefined : { opacity: 0.1, scale: 1, rotate: -6 }}
                   viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-                  transition={{ duration: 0.9, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.72, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <ElementGlyph slug={GLYPHS[pkg.slug]} className="h-36 w-36" />
                 </motion.div>
@@ -149,7 +149,7 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
                     initial={prefersReducedMotion ? undefined : { opacity: 0, y: 4, filter: "blur(3px)" }}
                     whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
                     viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-                    transition={{ duration: 0.7, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.72, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
                   >
                     {ANNOTATIONS[pkg.slug]}
                   </motion.span>
@@ -161,7 +161,7 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
                   initial={prefersReducedMotion ? undefined : { scaleX: 0 }}
                   whileInView={prefersReducedMotion ? undefined : { scaleX: 1 }}
                   viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-                  transition={{ duration: 0.9, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.72, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
                 />
                 <ul className="relative mt-5 gap-x-10 space-y-3 sm:columns-2 sm:[&>li]:break-inside-avoid">
                   {items.map((item, ii) => (
@@ -170,7 +170,7 @@ export function DeliverablesReveal({ room = false }: { room?: boolean }) {
                       initial={prefersReducedMotion ? undefined : { opacity: 0, x: -10 }}
                       whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
                       viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-                      transition={{ duration: 0.4, delay: 0.3 + ii * 0.09 }}
+                      transition={{ duration: 0.35, delay: 0.3 + ii * 0.09 }}
                       className="flex items-start gap-2.5 text-[0.95rem] text-ivory/90"
                     >
                       <span aria-hidden="true" className="mt-0.5 shrink-0" style={{ color: pkg.color }}>

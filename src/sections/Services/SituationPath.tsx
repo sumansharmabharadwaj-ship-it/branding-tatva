@@ -112,7 +112,7 @@ export function SituationPath() {
                   initial={prefersReducedMotion ? undefined : { opacity: 0, y: 14 }}
                   whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-                  transition={{ duration: 0.5, delay: i * 0.07, ease: EASE }}
+                  transition={{ duration: 0.35, delay: i * 0.07, ease: EASE }}
                   className="group grid w-full grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:gap-5 sm:py-7"
                 >
                   <span

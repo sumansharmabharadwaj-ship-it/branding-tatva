@@ -99,7 +99,7 @@ export function LinkButton({ href, children, variant = "primary", className, onC
                 style={{ left: r.x, top: r.y, transform: "translate(-50%, -50%)" }}
                 initial={{ width: 0, height: 0, opacity: 0.3 }}
                 animate={{ width: 220, height: 220, opacity: 0 }}
-                transition={{ duration: 0.6, ease: EASE_AIR }}
+                transition={{ duration: 0.72, ease: EASE_AIR }}
               />
             ))}
           </AnimatePresence>

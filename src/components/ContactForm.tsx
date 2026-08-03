@@ -95,7 +95,7 @@ export function ContactForm() {
         role="status"
         initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.96, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: EASE_AIR }}
+        transition={{ duration: 0.35, ease: EASE_AIR }}
         className="rounded-2xl border border-state-success/40 bg-state-success/10 p-6"
       >
         <motion.svg
@@ -117,13 +117,13 @@ export function ContactForm() {
             strokeLinejoin="round"
             initial={prefersReducedMotion ? undefined : { pathLength: 0 }}
             animate={{ pathLength: 1 }}
-            transition={{ duration: 0.45, delay: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.35, delay: 0.3, ease: "easeOut" }}
           />
         </motion.svg>
         <motion.div
           initial={prefersReducedMotion ? undefined : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.5, ease: EASE_AIR }}
+          transition={{ duration: 0.35, delay: 0.5, ease: EASE_AIR }}
         >
           <p className="mt-4 font-display text-xl font-normal text-soil">Thank you, that&apos;s in.</p>
           <p className="mt-2 text-sm text-foreground-secondary">
@@ -181,7 +181,7 @@ export function ContactForm() {
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}
+        transition={{ duration: 0.35, delay: nextDelay(), ease: EASE_AIR }}
         className="grid gap-5 sm:grid-cols-2"
       >
         <Field label="Name" error={errors.name?.message}>
@@ -192,7 +192,7 @@ export function ContactForm() {
         </Field>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: nextDelay(), ease: EASE_AIR }}>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: nextDelay(), ease: EASE_AIR }}>
         <Field label="What are you building, and what feels unclear?" error={errors.description?.message}>
           <textarea rows={4} className={inputClass} {...register("description")} />
         </Field>
@@ -220,7 +220,7 @@ export function ContactForm() {
                 initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-                transition={{ duration: 0.4, ease: EASE_AIR }}
+                transition={{ duration: 0.35, ease: EASE_AIR }}
                 className="mt-5 space-y-5"
               >
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -297,7 +297,7 @@ export function ContactForm() {
                   style={{ left: r.x, top: r.y, transform: "translate(-50%, -50%)" }}
                   initial={{ width: 0, height: 0, opacity: 0.3 }}
                   animate={{ width: 220, height: 220, opacity: 0 }}
-                  transition={{ duration: 0.6, ease: EASE_AIR }}
+                  transition={{ duration: 0.72, ease: EASE_AIR }}
                 />
               ))}
             </AnimatePresence>

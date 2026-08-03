@@ -121,7 +121,7 @@ export function DecisionMap() {
                         aria-hidden="true"
                         className="absolute inset-y-3 left-0 w-[2px] rounded-full"
                         style={{ backgroundColor: WORK.moss }}
-                        transition={{ duration: 0.45, ease: EASE_ORGANIC }}
+                        transition={{ duration: 0.35, ease: EASE_ORGANIC }}
                       />
                     )}
                     <ElementGlyph
@@ -151,7 +151,7 @@ export function DecisionMap() {
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.45, ease: EASE_ORGANIC }}
+                    transition={{ duration: 0.35, ease: EASE_ORGANIC }}
                     className="overflow-hidden rounded-2xl"
                     style={{ backgroundColor: WORK.cream }}
                   >

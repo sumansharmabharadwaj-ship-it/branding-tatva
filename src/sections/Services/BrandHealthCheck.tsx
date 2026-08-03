@@ -219,7 +219,7 @@ export function BrandHealthCheck() {
           initial={prefersReducedMotion ? undefined : { opacity: 0, x: -28 }}
           whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "0px 0px -15% 0px" }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-2xl rounded-2xl p-6 backdrop-blur-md sm:p-8"
           style={{ backgroundColor: "rgba(20,26,21,0.55)" }}
         >
@@ -285,7 +285,7 @@ export function BrandHealthCheck() {
                       aria-pressed={isSelected}
                       whileHover={prefersReducedMotion || selected ? undefined : { x: 4 }}
                       whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                      transition={{ duration: 0.15 }}
+                      transition={{ duration: 0.18 }}
                       className={`flex w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left text-sm transition-colors duration-200 ${
                         isSelected
                           ? "border-sandstone bg-sandstone/15 text-ivory"
@@ -403,7 +403,7 @@ export function BrandHealthCheck() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
+                        transition={{ duration: 0.35 }}
                         className="mt-1.5 overflow-hidden text-sm text-ivory/90"
                       >
                         {band.detail}

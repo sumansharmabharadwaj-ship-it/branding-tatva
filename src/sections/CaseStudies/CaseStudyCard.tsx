@@ -80,7 +80,7 @@ export function CaseStudyCard({ project }: { project: Project }) {
                     ? { opacity: 1, y: 0 }
                     : { opacity: 0, y: -8 }
               }
-              transition={{ duration: 0.3, ease: EASE_AIR }}
+              transition={{ duration: 0.35, ease: EASE_AIR }}
             >
               <p className="font-display text-2xl font-normal leading-none text-ivory">{project.stats[0].value}</p>
               <p className="mt-1 max-w-[9rem] text-[0.65rem] uppercase leading-tight tracking-wide text-ivory/85">

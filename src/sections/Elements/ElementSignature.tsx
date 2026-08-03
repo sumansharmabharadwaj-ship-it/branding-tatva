@@ -49,7 +49,7 @@ export function ElementSignature({ slug, color }: { slug: ElementSlug; color: st
               strokeLinecap="round"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 0.85 }}
-              transition={{ duration: 1.6, ease: EASE, delay: 0.3 + i * 0.18 }}
+              transition={{ duration: 1.2, ease: EASE, delay: 0.3 + i * 0.18 }}
             />
           ))}
         </svg>
@@ -66,7 +66,7 @@ export function ElementSignature({ slug, color }: { slug: ElementSlug; color: st
           style={{ height: "38%", background: `linear-gradient(180deg, transparent 0%, ${color}2e 30%, ${color}52 100%)`, transformOrigin: "bottom" }}
           initial={{ scaleY: 0 }}
           animate={{ scaleY: 1 }}
-          transition={{ duration: 2.2, ease: EASE, delay: 0.3 }}
+          transition={{ duration: 2.4, ease: EASE, delay: 0.3 }}
         />
         {/* The crest: a thin light line breathing at the waterline. */}
         <motion.div
@@ -74,7 +74,7 @@ export function ElementSignature({ slug, color }: { slug: ElementSlug; color: st
           style={{ bottom: "38%", height: 1.5, backgroundColor: `${color}b0` }}
           initial={{ opacity: 0, scaleX: 0.4 }}
           animate={{ opacity: [0, 0.9, 0.6], scaleX: 1 }}
-          transition={{ duration: 2.2, ease: EASE, delay: 0.5 }}
+          transition={{ duration: 2.4, ease: EASE, delay: 0.5 }}
         />
       </div>
     );
@@ -89,7 +89,7 @@ export function ElementSignature({ slug, color }: { slug: ElementSlug; color: st
           style={{ background: `radial-gradient(ellipse at center, ${color}40 0%, transparent 68%)`, filter: "blur(14px)" }}
           initial={{ opacity: 0, scale: 0.55 }}
           animate={{ opacity: [0, 1, 0.55], scale: 1 }}
-          transition={{ duration: 1.4, ease: EASE, delay: 0.3, times: [0, 0.5, 1] }}
+          transition={{ duration: 1.2, ease: EASE, delay: 0.3, times: [0, 0.5, 1] }}
         />
         {/* Three embers lifting off, then a soft endless flicker. */}
         {[26, 34, 30].map((left, i) => (
@@ -99,7 +99,7 @@ export function ElementSignature({ slug, color }: { slug: ElementSlug; color: st
             style={{ left: `${left}%`, bottom: "18%", backgroundColor: color, boxShadow: `0 0 10px 2px ${color}80` }}
             initial={{ opacity: 0, y: 0 }}
             animate={{ opacity: [0, 0.9, 0], y: -140 - i * 40 }}
-            transition={{ duration: 3 + i * 0.7, ease: "easeOut", delay: 0.6 + i * 0.5, repeat: Infinity, repeatDelay: 2.5 }}
+            transition={{ duration: 2.4 + i * 0.7, ease: "easeOut", delay: 0.6 + i * 0.5, repeat: Infinity, repeatDelay: 2.5 }}
           />
         ))}
       </div>
@@ -135,7 +135,7 @@ export function ElementSignature({ slug, color }: { slug: ElementSlug; color: st
           strokeWidth="0.8"
           initial={{ pathLength: 0, opacity: 0 }}
           animate={{ pathLength: 1, opacity: 0.5 }}
-          transition={{ duration: 2.6, ease: EASE, delay: 0.8 }}
+          transition={{ duration: 2.4, ease: EASE, delay: 0.8 }}
         />
         {STARS.map(([x, y], i) => (
           <motion.circle
@@ -146,7 +146,7 @@ export function ElementSignature({ slug, color }: { slug: ElementSlug; color: st
             fill="#F4EFE6"
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: [0, 1, 0.75], scale: 1 }}
-            transition={{ duration: 0.9, ease: EASE, delay: 0.35 + i * 0.14 }}
+            transition={{ duration: 0.72, ease: EASE, delay: 0.35 + i * 0.14 }}
           />
         ))}
       </svg>

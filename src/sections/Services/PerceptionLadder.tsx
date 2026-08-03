@@ -114,7 +114,7 @@ export function PerceptionLadder() {
                           : {
                               borderColor: "#A0A690",
                               scale: [1, 1.35, 1],
-                              transition: { delay: 0.35 + i * 0.18, duration: 0.5 },
+                              transition: { delay: 0.35 + i * 0.18, duration: 0.35 },
                             }
                       }
                       viewport={{ once: true, margin: "0px 0px -25% 0px" }}

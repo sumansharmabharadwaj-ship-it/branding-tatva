@@ -108,7 +108,7 @@ export function CapabilityMap() {
                 initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-                transition={{ duration: 0.4, ease: EASE_ORGANIC }}
+                transition={{ duration: 0.35, ease: EASE_ORGANIC }}
                 className="rounded-2xl p-6 sm:p-7"
                 style={{ backgroundColor: WORK.cream }}
               >

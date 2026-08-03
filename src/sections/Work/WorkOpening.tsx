@@ -71,7 +71,7 @@ export function WorkOpening() {
             <motion.p
               initial={prefersReducedMotion ? undefined : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.72 }}
               className="text-sm font-medium uppercase tracking-[0.2em]"
               style={{ color: WORK.olive }}
             >
@@ -87,7 +87,7 @@ export function WorkOpening() {
                   className="block"
                   initial={prefersReducedMotion ? undefined : { opacity: 0, y: 18, filter: "blur(10px)" }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  transition={{ duration: 0.8, delay: prefersReducedMotion ? 0 : 0.12 + i * 0.16, ease: EASE_ORGANIC }}
+                  transition={{ duration: 0.72, delay: prefersReducedMotion ? 0 : 0.12 + i * 0.16, ease: EASE_ORGANIC }}
                 >
                   {line}
                 </motion.span>
@@ -96,7 +96,7 @@ export function WorkOpening() {
             <motion.p
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: prefersReducedMotion ? 0 : 0.7, ease: EASE_ORGANIC }}
+              transition={{ duration: 0.72, delay: prefersReducedMotion ? 0 : 0.7, ease: EASE_ORGANIC }}
               className="mt-6 max-w-md text-base leading-relaxed"
               style={{ color: WORK.wood }}
             >
@@ -105,7 +105,7 @@ export function WorkOpening() {
             <motion.div
               initial={prefersReducedMotion ? undefined : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.7, delay: prefersReducedMotion ? 0 : 0.9 }}
+              transition={{ duration: 0.72, delay: prefersReducedMotion ? 0 : 0.9 }}
               className="mt-9"
             >
               <a
@@ -123,7 +123,7 @@ export function WorkOpening() {
             <motion.p
               initial={prefersReducedMotion ? undefined : { opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.7, delay: prefersReducedMotion ? 0 : 1.05 }}
+              transition={{ duration: 0.72, delay: prefersReducedMotion ? 0 : 1.05 }}
               className="mt-10 text-xs uppercase tracking-[0.15em]"
               style={{ color: WORK.stone }}
             >
@@ -140,7 +140,7 @@ export function WorkOpening() {
             onPointerMove={onPointerMove}
             initial={prefersReducedMotion ? undefined : { opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: prefersReducedMotion ? 0 : 0.45, ease: EASE_ORGANIC }}
+            transition={{ duration: 0.72, delay: prefersReducedMotion ? 0 : 0.45, ease: EASE_ORGANIC }}
             className="relative hidden aspect-[4/3] lg:block"
             style={{ ["--drift-x" as string]: "0px", ["--drift-y" as string]: "0px" }}
           >

@@ -160,7 +160,7 @@ export function StudioDesk() {
                             initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-                            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                             className="px-5 pb-5"
                           >
                             {d.body.map((p) => (

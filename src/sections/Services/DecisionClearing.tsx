@@ -136,7 +136,7 @@ export function DecisionClearing() {
                     layoutId="clearing-line"
                     aria-hidden="true"
                     className="absolute inset-y-2 left-0 w-[2px] rounded-full bg-[#A0A690]"
-                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5, ease: EASE }}
+                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.35, ease: EASE }}
                   />
                 )}
                 <span className="pl-2">{group.label}</span>
@@ -193,7 +193,7 @@ export function DecisionClearing() {
                     initial={prefersReducedMotion ? undefined : { opacity: 0, y: 16, filter: "blur(3px)" }}
                     whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
                     viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-                    transition={{ duration: 0.6, delay: qi * 0.06, ease: EASE }}
+                    transition={{ duration: 0.72, delay: qi * 0.06, ease: EASE }}
                   >
                     {/* The clearing brightens behind the open row. */}
                     <AnimatePresence>
@@ -205,7 +205,7 @@ export function DecisionClearing() {
                           initial={prefersReducedMotion ? undefined : { opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          transition={{ duration: 0.5, ease: EASE }}
+                          transition={{ duration: 0.35, ease: EASE }}
                         />
                       )}
                     </AnimatePresence>
@@ -237,7 +237,7 @@ export function DecisionClearing() {
                         aria-hidden="true"
                         className="pt-1 text-xl font-light text-ivory/60 transition-colors duration-300 group-hover:text-ivory"
                         animate={{ rotate: isOpen ? 45 : 0 }}
-                        transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.4, ease: EASE }}
+                        transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.35, ease: EASE }}
                       >
                         +
                       </motion.span>

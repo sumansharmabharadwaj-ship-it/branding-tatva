@@ -86,7 +86,7 @@ export function PageLoadVeil() {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.7, ease: EASE }}
+          transition={{ duration: 0.72, ease: EASE }}
           className="pointer-events-none fixed inset-0 z-100 overflow-hidden"
           style={{ backgroundColor: "#1B1B1B" }}
           aria-hidden="true"
@@ -226,7 +226,7 @@ export function PageLoadVeil() {
           <motion.div
             initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 1.1, ease: EASE, delay: 0.3 }}
+            transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}
             className="absolute inset-x-0 top-[13%] flex flex-col items-center text-center"
           >
             <LogoMark size={64} light />
@@ -256,7 +256,7 @@ export function PageLoadVeil() {
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, ease: EASE, delay: 0.2 }}
+              transition={{ duration: 0.72, ease: EASE, delay: 0.2 }}
               className="font-body text-[0.68rem] font-medium uppercase tracking-[0.5em] text-ivory/90"
               style={{ textShadow: "0 1px 12px rgba(20,17,14,0.6)" }}
             >

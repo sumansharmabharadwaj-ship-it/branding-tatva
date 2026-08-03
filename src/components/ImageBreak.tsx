@@ -42,7 +42,7 @@ export function ImageBreak({
         style={{ backgroundImage: shouldLoad ? undefined : overlayGradient }}
         initial={prefersReducedMotion ? undefined : { scale: 1.12 }}
         animate={prefersReducedMotion ? undefined : revealed ? { scale: 1 } : undefined}
-        transition={{ duration: 2.2, ease: EASE_AIR }}
+        transition={{ duration: 2.4, ease: EASE_AIR }}
       >
         {shouldLoad && (
           <>

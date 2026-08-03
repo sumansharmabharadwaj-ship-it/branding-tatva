@@ -38,7 +38,7 @@ export function PackageSelector() {
   const activePackage = packages.find((p) => p.slug === active);
   const proof = activePackage?.proofSlug ? projects.find((p) => p.slug === activePackage.proofSlug) : undefined;
 
-  const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const };
+  const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const };
   // Location aware pricing: figures come from the approved price book
   // (data/pricing.ts) in the visitor's region, never from the GBP
   // fields in services.ts, which remain only as the package registry.
@@ -78,7 +78,7 @@ export function PackageSelector() {
               viewport={{ once: true, margin: "0px 0px -12% 0px" }}
               whileHover={prefersReducedMotion ? undefined : { y: -5 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.98, y: -1 }}
-              transition={{ duration: 0.45, delay: ci * 0.09, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.35, delay: ci * 0.09, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col items-center gap-3 rounded-2xl border-t-2 p-6 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)]"
               style={{
                 borderColor: pkg?.color,

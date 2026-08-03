@@ -69,7 +69,7 @@ export function CyclingStatement({ headline }: { headline: React.ReactNode }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className="font-display text-[clamp(1.85rem,4.5vw,3.25rem)] font-normal leading-[1.12] text-ivory/90"
         >
           {LINES[Math.min(index, LINES.length - 1)]}

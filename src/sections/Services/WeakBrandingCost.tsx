@@ -108,7 +108,7 @@ export function WeakBrandingCost() {
                 initial={prefersReducedMotion ? undefined : { opacity: 0, x: 14, filter: "blur(3px)" }}
                 whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0, filter: "blur(0px)" }}
                 viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-                transition={{ duration: 0.55, delay: 0.3 + i * 0.16, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.72, delay: 0.3 + i * 0.16, ease: [0.16, 1, 0.3, 1] }}
                 className="flex items-baseline gap-3 border-b border-ivory/15 py-2.5"
               >
                 <span className="font-display text-sm text-ivory/70">{String(i + 1).padStart(2, "0")}</span>
@@ -151,7 +151,7 @@ export function WeakBrandingCost() {
                     initial={prefersReducedMotion ? undefined : { opacity: 0, filter: "blur(4px)" }}
                     whileInView={prefersReducedMotion ? undefined : { opacity: 1, filter: "blur(0px)" }}
                     viewport={{ once: true, margin: "0px 0px -12% 0px" }}
-                    transition={{ duration: 0.6, delay: 0.35 + wi * 0.14 }}
+                    transition={{ duration: 0.72, delay: 0.35 + wi * 0.14 }}
                     className="text-[0.95rem] leading-relaxed text-ivory/90"
                   >
                     {item}

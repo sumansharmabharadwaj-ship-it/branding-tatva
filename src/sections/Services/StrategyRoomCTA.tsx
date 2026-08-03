@@ -45,7 +45,7 @@ export function StrategyRoomCTA() {
     track("calendar_opened");
   }
 
-  const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const };
+  const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const };
 
   return (
     <Container className="relative max-w-2xl text-center">
@@ -97,7 +97,7 @@ export function StrategyRoomCTA() {
                     onClick={() => pickStage(option)}
                     whileHover={prefersReducedMotion ? undefined : { y: -2 }}
                     whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                    transition={{ duration: 0.15 }}
+                    transition={{ duration: 0.18 }}
                     className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/90 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
                   >
                     {option}
@@ -118,7 +118,7 @@ export function StrategyRoomCTA() {
                     onClick={() => pickPriority(option)}
                     whileHover={prefersReducedMotion ? undefined : { y: -2 }}
                     whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                    transition={{ duration: 0.15 }}
+                    transition={{ duration: 0.18 }}
                     className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/90 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
                   >
                     {option}
@@ -139,7 +139,7 @@ export function StrategyRoomCTA() {
                     onClick={() => pickFocus(option)}
                     whileHover={prefersReducedMotion ? undefined : { y: -2 }}
                     whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                    transition={{ duration: 0.15 }}
+                    transition={{ duration: 0.18 }}
                     className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/90 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
                   >
                     {option}

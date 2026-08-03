@@ -23,7 +23,7 @@ const CAMERA_PUSH = kenBurnsAnimation({ scale: 1.06, duration: 30 });
 // cut into frame" entrance ImageBreak's photos already use, so a video
 // break isn't the one full-bleed moment on the page that just pops in.
 const ENTRANCE_SCALE_DELTA = 0.06;
-const ENTRANCE_TRANSITION = { duration: 2.2, ease: EASE_AIR };
+const ENTRANCE_TRANSITION = { duration: 2.4, ease: EASE_AIR };
 
 // The video counterpart to ImageBreak: a full-bleed cinematic moment, but
 // with real motion in the shot itself rather than a static photograph.

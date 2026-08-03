@@ -72,7 +72,7 @@ export function JourneyStage({
             initial={{ pathLength: 0 }}
             whileInView={prefersReducedMotion ? undefined : { pathLength: 1 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7, ease: EASE_AIR, delay }}
+            transition={{ duration: 0.72, ease: EASE_AIR, delay }}
           />
         </svg>
         <span

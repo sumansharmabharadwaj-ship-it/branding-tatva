@@ -32,7 +32,7 @@ export function PerspectiveReveal({
       className={className}
       initial={{ scale: 0.94, opacity: 0, filter: "blur(6px)" }}
       animate={visible ? { scale: 1, opacity: 1, filter: "blur(0px)" } : undefined}
-      transition={{ duration: 0.9, ease: EASE }}
+      transition={{ duration: 0.72, ease: EASE }}
     >
       {children}
     </motion.div>

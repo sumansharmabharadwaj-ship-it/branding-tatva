@@ -21,7 +21,7 @@ export function HoverGlyph({ slug, color }: { slug: Slug; color: string }) {
       className="inline-flex cursor-default"
       initial={{ opacity: 0.6 }}
       whileHover={prefersReducedMotion ? undefined : { scale: 1.35, opacity: 1 }}
-      transition={{ duration: 0.3, ease: EASE_AIR }}
+      transition={{ duration: 0.35, ease: EASE_AIR }}
     >
       <ElementGlyph slug={slug} className="h-5 w-5" style={{ color }} strokeWidth={1.2} />
     </motion.span>

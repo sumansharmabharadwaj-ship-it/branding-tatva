@@ -146,7 +146,7 @@ export function SeasonalCalendarPanel() {
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: EASE_AIR }}
+            transition={{ duration: 0.35, ease: EASE_AIR }}
           >
             <div className="mt-5 flex items-baseline justify-between">
               <span className="font-display text-3xl font-normal leading-none text-ivory">
@@ -183,7 +183,7 @@ export function SeasonalCalendarPanel() {
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: EASE_AIR }}
+            transition={{ duration: 0.35, ease: EASE_AIR }}
           >
             <div className="mt-5 grid grid-cols-7 text-center">
               {DAY_LETTERS.map((d, i) => (
@@ -262,7 +262,7 @@ export function SeasonalCalendarPanel() {
             initial={prefersReducedMotion ? undefined : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.4, ease: EASE_AIR }}
+            transition={{ duration: 0.35, ease: EASE_AIR }}
             className="overflow-hidden"
           >
             <div className="mt-5 rounded-2xl bg-background p-1 sm:p-2">

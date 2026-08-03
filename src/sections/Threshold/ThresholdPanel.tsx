@@ -112,7 +112,7 @@ export function ThresholdPanel({
       <motion.div
         className="relative"
         animate={{ y: isActive ? -4 : 0 }}
-        transition={{ duration: 0.4, ease: EASE_AIR }}
+        transition={{ duration: 0.35, ease: EASE_AIR }}
       >
         <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
           {panel.eyebrow}
