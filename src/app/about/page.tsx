@@ -14,6 +14,7 @@ import { MeadowClosing } from "@/components/MeadowClosing";
 import { NotebookClose } from "@/components/NotebookClose";
 import { DesignRationaleGrid } from "@/components/DesignRationaleGrid";
 import { PinnedWorkingMethod } from "@/sections/About/PinnedWorkingMethod";
+import { StudioDesk } from "@/sections/About/StudioDesk";
 import { PointOfView } from "@/sections/About/PointOfView";
 import { Convergence } from "@/sections/About/Convergence";
 import { WorkingDirectly } from "@/sections/About/WorkingDirectly";
@@ -142,6 +143,12 @@ export default function AboutPage() {
             comment for why this section's own overflow-hidden (kept
             for the redwood-canopy video) is safe to wrap this way. */}
         <PinnedWorkingMethod />
+
+        {/* Suman's board, the studio wave: "the visitor explores YOU,
+            never reads about you." Six objects on the desk, each
+            opening real practice material and pointing at where that
+            material actually lives on the site. */}
+        <StudioDesk />
 
         {/* The terms of working directly together — the brief's five
             real commitments, stated as things a client can hold the
