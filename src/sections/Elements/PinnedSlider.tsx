@@ -54,22 +54,46 @@ const TRANSFORMATIONS: Record<
   },
 };
 
+function AnimatedWord({
+  word,
+  index,
+  total,
+  progress,
+  color,
+}: {
+  word: string;
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+  color: string;
+}) {
+  const start = 0.12 + index * 0.055;
+  const opacity = useTransform(progress, [start, start + 0.14], [0, 1]);
+  const y = useTransform(progress, [start, start + 0.14], [34, 0]);
+  const blur = useTransform(progress, [start, start + 0.14], [10, 0]);
+  const filter = useTransform(blur, (value) => `blur(${value}px)`);
+
+  return (
+    <motion.span style={{ opacity, y, filter, color: index === total - 1 ? color : undefined }}>
+      {word}
+    </motion.span>
+  );
+}
+
 function WordAssembly({ text, progress, color }: { text: string; progress: MotionValue<number>; color: string }) {
   const words = text.split(" ");
   return (
     <span className="flex flex-wrap gap-x-[0.22em] gap-y-1">
-      {words.map((word, index) => {
-        const start = 0.12 + index * 0.055;
-        const opacity = useTransform(progress, [start, start + 0.14], [0, 1]);
-        const y = useTransform(progress, [start, start + 0.14], [34, 0]);
-        const blur = useTransform(progress, [start, start + 0.14], [10, 0]);
-        const filter = useTransform(blur, (value) => `blur(${value}px)`);
-        return (
-          <motion.span key={`${word}-${index}`} style={{ opacity, y, filter, color: index === words.length - 1 ? color : undefined }}>
-            {word}
-          </motion.span>
-        );
-      })}
+      {words.map((word, index) => (
+        <AnimatedWord
+          key={`${word}-${index}`}
+          word={word}
+          index={index}
+          total={words.length}
+          progress={progress}
+          color={color}
+        />
+      ))}
     </span>
   );
 }
