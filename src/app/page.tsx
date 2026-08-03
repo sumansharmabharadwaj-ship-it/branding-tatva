@@ -6,9 +6,7 @@ import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { ElementsSection } from "@/sections/Elements";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
-import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
-import { FounderRouteHandoff } from "@/sections/Home/FounderRouteHandoff";
 import { ClosingSequence } from "@/sections/Home/ClosingSequence";
 import { CinematicHero } from "@/sections/Hero";
 import { VisitorRecognition } from "@/sections/Home/VisitorRecognition";
@@ -75,24 +73,17 @@ export default function Home() {
           <LinkButton href="/contact" trackEvent="hero_booking_click" trackProps={{ page: "home" }}>
             Book a Brand Strategy Session
           </LinkButton>
-          <LinkButton
-            href="/work"
-            variant="secondary"
-            className="border-ivory/30 text-ivory hover:bg-ivory/10"
-          >
+          <LinkButton href="/work" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
             Explore the Work
           </LinkButton>
           <p className="w-full text-xs text-ivory/50 sm:text-sm">
-            The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Led
-            directly by Suman, start to finish.
+            The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Led directly by Suman, start to finish.
           </p>
         </CinematicHero>
 
         <VisitorRecognition />
         <EvidenceWall />
-        <ClarityCTA />
         <StudioTriptych />
-        <FounderRouteHandoff />
         <ThreePathsSection />
 
         <div id="elements" className="scroll-mt-24">
@@ -103,12 +94,8 @@ export default function Home() {
           <div className="bg-soil py-20 sm:py-28">
             <Container>
               <Reveal>
-                <p className="text-xs font-medium uppercase tracking-[0.24em] text-sandstone">
-                  From principle to practice
-                </p>
-                <h2 className="mt-4 text-display-sm font-display font-normal text-ivory">
-                  How a project moves
-                </h2>
+                <p className="text-xs font-medium uppercase tracking-[0.24em] text-sandstone">From principle to practice</p>
+                <h2 className="mt-4 text-display-sm font-display font-normal text-ivory">How a project moves</h2>
               </Reveal>
             </Container>
           </div>
@@ -129,7 +116,6 @@ export default function Home() {
       <Footer />
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
       />
     </>
