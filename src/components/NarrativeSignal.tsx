@@ -1,12 +1,13 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const SCENE_COLORS = ["#C6A97A", "#B85A34", "#24394D", "#C28A28", "#5C6B4A", "#AD6F5C"];
 
 export function NarrativeSignal() {
-  const reduced = useReducedMotion();
+  const reduced = useHydratedReducedMotion();
   const [sceneIndex, setSceneIndex] = useState(0);
   const [interactive, setInteractive] = useState(false);
   const [pressed, setPressed] = useState(false);

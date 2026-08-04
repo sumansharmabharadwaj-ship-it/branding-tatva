@@ -1,11 +1,11 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import {
   motion,
-  useReducedMotion,
   useScroll,
   useTransform,
 } from "framer-motion";
@@ -30,7 +30,7 @@ export function CinematicHero({
   children,
 }: CinematicHeroProps) {
   const ref = useRef<HTMLElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const staticLayout = Boolean(prefersReducedMotion);
   const mouseParallax = useHeroMouseParallax(ref, staticLayout);
   const spotlightRef = useSpotlight(ref, staticLayout);

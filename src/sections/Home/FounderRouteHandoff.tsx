@@ -1,11 +1,12 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export function FounderRouteHandoff() {
   const ref = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const light = useTransform(scrollYProgress, [0.35, 0.9], [0, 1]);
   const first = useTransform(scrollYProgress, [0, 0.12, 0.54, 0.76], [0.35, 1, 1, 0]);

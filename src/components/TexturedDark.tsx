@@ -1,8 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
-import { useReducedMotion } from "framer-motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
@@ -49,7 +49,7 @@ export function TexturedDark({
   imagePosition?: string;
 }) {
   const [ref, shouldLoad] = useLazyMount();
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   // Only wired for the video variant (the Footer's closing scene) —

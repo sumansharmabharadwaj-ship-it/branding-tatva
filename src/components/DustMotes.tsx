@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 // A handful of soft drifting light specks over the main hero — the kind
 // of dust visible in a sunbeam through trees, which the reference photo
@@ -20,7 +20,7 @@ const MOTES = [
 ];
 
 export function DustMotes() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   if (prefersReducedMotion) return null;
 
   return (

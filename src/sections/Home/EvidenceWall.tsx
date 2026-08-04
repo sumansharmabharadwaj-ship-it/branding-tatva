@@ -1,9 +1,10 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { projects } from "@/data/projects";
 import { SITUATION_KEY } from "@/sections/Home/VisitorRecognition";
 import { track } from "@/lib/analytics";
@@ -42,7 +43,7 @@ export function EvidenceWall() {
   );
   const [selectedSlug, setSelectedSlug] = useState<(typeof FEATURED_SLUGS)[number]>(FEATURED_SLUGS[0]);
   const [activePhase, setActivePhase] = useState<PhaseKey>("challenge");
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const compactLayout = useMediaQuery("(max-width: 1023px), (max-height: 719px)");
   const staticLayout = Boolean(prefersReducedMotion) || compactLayout;
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });

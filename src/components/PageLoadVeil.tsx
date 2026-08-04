@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { LogoMark } from "@/components/Logo";
 import { site } from "@/data/site";
 
@@ -17,7 +18,7 @@ const ELEMENTS = ["Position", "Experience", "Expression", "Voice", "Memory"] as 
  * no simulated progress and no replay during client navigation.
  */
 export function PageLoadVeil() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [visible, setVisible] = useState(true);
   const [removed, setRemoved] = useState(false);
 

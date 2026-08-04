@@ -1,9 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import {
   motion,
-  useReducedMotion,
   useScroll,
   useTransform,
   type MotionValue,
@@ -174,7 +174,7 @@ function SpaceField({ progress, color }: { progress: MotionValue<number>; color:
 
 function ElementWorld({ element, index }: { element: Element; index: number }) {
   const ref = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const transformation = TRANSFORMATIONS[element.slug];
 

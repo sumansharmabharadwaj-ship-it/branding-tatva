@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
@@ -74,7 +75,7 @@ function LensBeat({
 
 export function ClarityCTA() {
   const ref = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = useHydratedReducedMotion();
   const compactLayout = useMediaQuery("(max-width: 1023px), (max-height: 719px)");
   const staticLayout = Boolean(reduced) || compactLayout;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });

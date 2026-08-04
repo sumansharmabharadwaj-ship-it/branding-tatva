@@ -1,12 +1,12 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   AnimatePresence,
   motion,
-  useReducedMotion,
   useScroll,
   useTransform,
   type MotionValue,
@@ -82,7 +82,7 @@ function QuestionBeat({
 
 export function ClosingSequence({ questions }: { questions: ClosingQuestion[] }) {
   const ref = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = useHydratedReducedMotion();
   const compactLayout = useMediaQuery("(max-width: 1023px), (max-height: 719px)");
   const staticLayout = Boolean(reduced) || compactLayout;
   const [openIndex, setOpenIndex] = useState<number | null>(null);

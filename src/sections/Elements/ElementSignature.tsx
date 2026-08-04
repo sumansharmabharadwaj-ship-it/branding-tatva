@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion } from "framer-motion";
 import type { ElementSlug } from "@/lib/sectionWash";
 
 // Suman's board, the Tatva growth wave: each element PERFORMS its
@@ -33,7 +34,7 @@ const STARS = [
 ] as const;
 
 export function ElementSignature({ slug, color }: { slug: ElementSlug; color: string }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   if (prefersReducedMotion) return null;
 
   if (slug === "earth") {

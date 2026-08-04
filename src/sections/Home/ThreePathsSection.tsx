@@ -1,12 +1,12 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   AnimatePresence,
   motion,
   useMotionValueEvent,
-  useReducedMotion,
   useScroll,
   useTransform,
 } from "framer-motion";
@@ -67,7 +67,7 @@ const SITUATION_COPY: Record<string, string> = {
 
 export function ThreePathsSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const compactLayout = useMediaQuery("(max-width: 1023px), (max-height: 719px)");
   const staticLayout = Boolean(prefersReducedMotion) || compactLayout;
   const [recommendedPath, setRecommendedPath] = useState(1);

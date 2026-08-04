@@ -1,5 +1,6 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,7 +8,6 @@ import {
   AnimatePresence,
   motion,
   useMotionValueEvent,
-  useReducedMotion,
   useScroll,
   useTransform,
 } from "framer-motion";
@@ -54,7 +54,7 @@ type LensId = (typeof LENSES)[number]["id"];
 
 export function StudioTriptych() {
   const sectionRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const compactLayout = useMediaQuery("(max-width: 1023px), (max-height: 719px)");
   const staticLayout = Boolean(prefersReducedMotion) || compactLayout;
   const [activeId, setActiveId] = useState<LensId>("notice");

@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { CalendlyEmbed } from "./CalendlyEmbed";
 import { BackgroundVideo } from "./BackgroundVideo";
 import { EASE_AIR } from "@/lib/motion";
@@ -43,7 +44,7 @@ function buildMonthGrid(year: number, month: number): (number | null)[][] {
 }
 
 export function SeasonalCalendarPanel() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [expanded, setExpanded] = useState(false);
   const [view, setView] = useState<"weekly" | "monthly">("weekly");
   // Resolved client-side only, after mount — computing new Date() during
