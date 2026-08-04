@@ -8,6 +8,7 @@ import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
+import { FrameworkJourneyNudge } from "@/sections/Home/FrameworkJourneyNudge";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomeOpeningSignal } from "@/sections/Home/HomeOpeningSignal";
@@ -101,6 +102,7 @@ export default function Home() {
         <div>
           <TatvaStrip />
           <TatvaSystemLab />
+          <FrameworkJourneyNudge />
         </div>
         <HomeSceneBridge family="space" from="#E9E4D9" to="#27221E" />
 
