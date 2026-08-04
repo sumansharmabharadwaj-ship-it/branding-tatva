@@ -351,7 +351,7 @@ export function MoodboardTatvaFilm() {
           </span>
         </div>
 
-        <div className="relative z-10 mx-auto flex h-full max-w-[94rem] items-center px-6 pb-20 pt-24 sm:px-10 lg:px-14 lg:pt-28">
+        <div className="relative z-10 mx-auto flex h-full max-w-[94rem] items-start px-6 pb-20 pt-36 sm:px-10 lg:px-14 lg:pt-40">
           <div className="grid w-full gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -367,7 +367,7 @@ export function MoodboardTatvaFilm() {
                 >
                   {change.verb}
                 </p>
-                <h2 className="mt-5 font-display text-[clamp(4.15rem,8.7vw,8.45rem)] font-normal leading-[0.84] tracking-[-0.055em]">
+                <h2 className="mt-4 font-display text-[clamp(3.8rem,7.6vw,7.2rem)] font-normal leading-[0.88] tracking-[-0.05em]">
                   {active.name.split(" · ")[0].toLowerCase()}.
                 </h2>
                 <p className="mt-7 max-w-xl font-display text-[clamp(1.8rem,3.15vw,3.2rem)] leading-[1.06]">
@@ -380,7 +380,7 @@ export function MoodboardTatvaFilm() {
             </AnimatePresence>
 
             <div className="grid gap-7 lg:grid-cols-[1fr_0.9fr] lg:items-center">
-              <div className="relative h-[20rem] overflow-hidden rounded-[1.8rem] border border-[#22231F]/14 bg-[#F5F0E8]/82 p-5 shadow-[0_26px_70px_-52px_rgba(34,35,31,.5)] backdrop-blur-xl sm:h-[25rem]">
+              <div className="relative h-[20rem] overflow-hidden rounded-[1.8rem] border border-[#22231F]/14 bg-[#F5F0E8]/82 p-5 shadow-[0_26px_70px_-52px_rgba(34,35,31,.5)] backdrop-blur-xl sm:h-[23rem] min-[1400px]:h-[25rem]">
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={`${active.slug}-diagram`}
