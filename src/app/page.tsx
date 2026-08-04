@@ -10,6 +10,7 @@ import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
+import { HomeOpeningSignal } from "@/sections/Home/HomeOpeningSignal";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { HomeSceneBridge } from "@/sections/Home/HomeSceneBridge";
 import { CinematicHero } from "@/sections/Hero";
@@ -49,31 +50,34 @@ export default function Home() {
     <>
       <Header transparent />
       <main id="main-content">
-        <CinematicHero
-          video="/videos/hero-forest-sanctuary.mp4"
-          poster="/images/hero-forest-sanctuary-poster.jpg"
-          imagePosition="30% 40%"
-          badge="Brand strategy shaped by psychology, language, and market evidence"
-          headline={
-            <>
-              Most brands are visible. Very few are{" "}
-              <span className="italic text-clay">remembered</span>.
-            </>
-          }
-          subhead="I help founders and growing businesses decide what their brand should mean, then build the positioning, identity, voice, website, and market presence that make that meaning recognisable."
-        >
-          <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
-          <LinkButton
-            href="/work"
-            variant="secondary"
-            className="border-ivory/30 text-ivory hover:bg-ivory/10"
+        <div className="relative">
+          <CinematicHero
+            video="/videos/hero-forest-sanctuary.mp4"
+            poster="/images/hero-forest-sanctuary-poster.jpg"
+            imagePosition="30% 40%"
+            badge="Brand strategy shaped by psychology, language, and market evidence"
+            headline={
+              <>
+                Most brands are visible. Very few are{" "}
+                <span className="italic text-clay">remembered</span>.
+              </>
+            }
+            subhead="I help founders and growing businesses decide what their brand should mean, then build the positioning, identity, voice, website, and market presence that make that meaning recognisable."
           >
-            Explore the Work
-          </LinkButton>
-          <p className="w-full text-xs text-ivory/50 sm:text-sm">
-            The same strategic method that moved one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Led directly by Suman, from diagnosis to delivery.
-          </p>
-        </CinematicHero>
+            <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
+            <LinkButton
+              href="/work"
+              variant="secondary"
+              className="border-ivory/30 text-ivory hover:bg-ivory/10"
+            >
+              Explore the Work
+            </LinkButton>
+            <p className="w-full text-xs text-ivory/50 sm:text-sm">
+              The same strategic method that moved one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Led directly by Suman, from diagnosis to delivery.
+            </p>
+          </CinematicHero>
+          <HomeOpeningSignal />
+        </div>
 
         <HomeSceneBridge family="air" from="#141210" to="#141210" />
 
