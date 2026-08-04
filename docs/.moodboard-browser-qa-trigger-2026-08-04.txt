@@ -1,3 +1,3 @@
 Run the moodboard homepage through desktop, short-laptop, mobile, and reduced-motion browser checks before the main preview branch is updated.
 
-Final source gate 2: apply the structural AmbientVideo repair, then run the definitive browser matrix.
+Definitive browser pass: test the final source after all one-time repair gates have been retired.
