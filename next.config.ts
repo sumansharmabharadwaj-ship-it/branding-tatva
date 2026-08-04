@@ -26,6 +26,11 @@ const CSP = [
   "frame-ancestors 'self'",
 ].join("; ");
 
+const previewRobotsHeaders =
+  process.env.VERCEL_ENV === "production"
+    ? []
+    : [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }];
+
 const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
@@ -51,6 +56,7 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          ...previewRobotsHeaders,
         ],
       },
     ];
