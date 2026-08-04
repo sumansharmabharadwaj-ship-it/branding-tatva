@@ -22,7 +22,7 @@ const SCOPE_OPTIONS: ScopeOption[] = [
     id: "foundation",
     number: "01",
     tab: "Starting",
-    title: "Build the foundation",
+    title: "The idea is ahead of the brand.",
     situation: "The business is clear in your head, but the market has not met it yet.",
     diagnosis: "The risk is creating a logo, website, and content before deciding what they must make people believe.",
     move: "Commit the position",
@@ -34,7 +34,7 @@ const SCOPE_OPTIONS: ScopeOption[] = [
     id: "reposition",
     number: "02",
     tab: "Drifting",
-    title: "Reposition the brand",
+    title: "The business and brand have drifted apart.",
     situation: "The brand exists, but every channel seems to be describing a slightly different business.",
     diagnosis: "The risk is producing more visibility for a story that people still cannot repeat back clearly.",
     move: "Remove the contradictions",
@@ -46,7 +46,7 @@ const SCOPE_OPTIONS: ScopeOption[] = [
     id: "momentum",
     number: "03",
     tab: "Growing",
-    title: "Create ongoing consistency",
+    title: "Growth is outrunning consistency.",
     situation: "The position is working, but the brand needs a system that can keep moving without losing itself.",
     diagnosis: "The risk is treating every campaign as a fresh invention and paying for recognition that never compounds.",
     move: "Turn the idea into rules",
@@ -56,6 +56,7 @@ const SCOPE_OPTIONS: ScopeOption[] = [
   },
 ];
 
+const SITUATION_BY_SCOPE = ["idea", "inconsistent", "outgrown"] as const;
 const RADAR_AXES = ["Clarity", "Consistency", "Momentum"] as const;
 const GOLD = "#C6A97A";
 
@@ -85,6 +86,14 @@ export function ClarityCTA() {
     return () => window.clearInterval(timer);
   }, [paused]);
 
+  function choose(index: number) {
+    setActiveIndex(index);
+    setPaused(true);
+    try {
+      window.localStorage.setItem("bt-situation", SITUATION_BY_SCOPE[index]);
+    } catch {}
+  }
+
   const signalPolygon = useMemo(
     () => active.signal.map((value, index) => radarPoint(value, index)).join(" "),
     [active],
@@ -94,8 +103,6 @@ export function ClarityCTA() {
     <section
       className="clarity-lab relative isolate overflow-hidden bg-[#141210] text-ivory"
       aria-labelledby="clarity-lab-title"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
@@ -122,24 +129,23 @@ export function ClarityCTA() {
         <header className="grid gap-7 border-b border-ivory/10 pb-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(26rem,0.7fr)] lg:items-end lg:gap-16">
           <div>
             <p className="text-xs font-medium uppercase tracking-[0.26em]" style={{ color: GOLD }}>
-              Clarity before scope
+              Find the gap
             </p>
             <h2
               id="clarity-lab-title"
               className="mt-4 max-w-3xl font-display text-[clamp(2.35rem,5vw,5.2rem)] font-normal leading-[0.98] tracking-[-0.025em]"
             >
-              Choose the work by the problem it must solve.
+              The right work starts with the right diagnosis.
             </h2>
           </div>
           <p className="max-w-xl text-sm leading-7 text-ivory/70 sm:text-base sm:leading-8">
-            A first conversation should never sell you the largest package. It should reveal the smallest piece of work
-            capable of changing the business.
+            Before choosing a package, identify what is actually failing: the foundation, the coherence, or the ability to compound one recognisable idea.
           </p>
         </header>
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.5fr)] lg:gap-12">
           <div className="flex flex-col justify-between gap-8">
-            <div role="tablist" aria-label="Choose the situation closest to your brand" className="space-y-2">
+            <div role="tablist" aria-label="Choose the condition closest to your brand" className="space-y-2">
               {SCOPE_OPTIONS.map((option, index) => {
                 const selected = index === activeIndex;
                 return (
@@ -149,7 +155,8 @@ export function ClarityCTA() {
                     role="tab"
                     aria-selected={selected}
                     aria-controls="clarity-diagnosis"
-                    onClick={() => setActiveIndex(index)}
+                    onClick={() => choose(index)}
+                    onPointerDown={() => setPaused(true)}
                     className="group relative w-full overflow-hidden rounded-2xl border px-5 py-5 text-left transition-[border-color,background-color,transform] duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:px-6"
                     style={{
                       borderColor: selected ? "rgba(198,169,122,0.68)" : "rgba(244,239,230,0.11)",
@@ -187,8 +194,7 @@ export function ClarityCTA() {
             </div>
 
             <p className="max-w-sm text-xs leading-6 text-ivory/40">
-              This map is a conversation starter, rather than an automated verdict. The right scope is decided from the
-              evidence behind the pattern.
+              The map moves by itself. Choose the pattern closest to your business and it will hold while you read. It is a conversation starter, never an automated verdict.
             </p>
           </div>
 
@@ -203,7 +209,7 @@ export function ClarityCTA() {
             <div className="relative grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(18rem,0.75fr)] xl:items-center">
               <article key={active.id} className="clarity-lab__reveal">
                 <p className="text-[0.68rem] font-medium uppercase tracking-[0.22em]" style={{ color: GOLD }}>
-                  Best first move · {active.number}
+                  The pattern · {active.number}
                 </p>
                 <h3 className="mt-4 max-w-xl font-display text-[clamp(2rem,4vw,3.8rem)] font-normal leading-[1.02]">
                   {active.title}
@@ -212,7 +218,7 @@ export function ClarityCTA() {
                   {active.diagnosis}
                 </p>
 
-                <div className="mt-8 grid gap-3 sm:grid-cols-3" aria-label="Likely outputs from this scope">
+                <div className="mt-8 grid gap-3 sm:grid-cols-3" aria-label="Evidence the diagnosis should clarify">
                   {active.deliverables.map((deliverable, index) => (
                     <div
                       key={deliverable}
@@ -320,8 +326,8 @@ export function ClarityCTA() {
 
         <footer className="mt-10 flex flex-col gap-6 border-t border-ivory/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="font-display text-2xl font-normal text-ivory sm:text-3xl">Twenty minutes. A useful answer either way.</p>
-            <p className="mt-2 text-sm leading-6 text-ivory/50">No pitch deck. No pressure to choose a larger scope.</p>
+            <p className="font-display text-2xl font-normal text-ivory sm:text-3xl">A useful diagnosis before a proposal.</p>
+            <p className="mt-2 text-sm leading-6 text-ivory/50">No pitch deck. No pressure to choose the largest scope.</p>
           </div>
           <Link
             href="/contact"
