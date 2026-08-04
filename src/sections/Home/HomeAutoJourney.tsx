@@ -20,14 +20,18 @@ const CHAPTER_DWELL_MS: Record<string, number> = {
   invitation: 18000,
 };
 
+type ChapterChangeSource = "scroll" | "journey" | "replay";
+
 export function HomeAutoJourney() {
   const pathname = usePathname();
   const lenis = useLenis();
   const prefersReducedMotion = Boolean(useReducedMotion());
   const targetsRef = useRef<HTMLElement[]>([]);
   const activeIndexRef = useRef(0);
+  const lastBroadcastIndexRef = useRef(-1);
   const autoScrollRef = useRef(false);
   const holdUntilRef = useRef(0);
+  const holdTimerRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [holding, setHolding] = useState(false);
@@ -38,6 +42,22 @@ export function HomeAutoJourney() {
       document.querySelectorAll<HTMLElement>("[data-home-chapter]"),
     );
   }, []);
+
+  const broadcastChapter = useCallback(
+    (index: number, source: ChapterChangeSource) => {
+      const target = targetsRef.current[index];
+      const id = target?.dataset.homeChapter;
+      if (!target || !id) return;
+
+      lastBroadcastIndexRef.current = index;
+      window.dispatchEvent(
+        new CustomEvent("bt:home-chapter", {
+          detail: { id, index, source, targetId: target.id },
+        }),
+      );
+    },
+    [],
+  );
 
   const currentIndex = useCallback(() => {
     const targets = targetsRef.current;
@@ -51,19 +71,28 @@ export function HomeAutoJourney() {
     });
 
     activeIndexRef.current = index;
-    setActiveIndex(index);
+    setActiveIndex((current) => (current === index ? current : index));
+
+    if (lastBroadcastIndexRef.current !== index) {
+      broadcastChapter(index, autoScrollRef.current ? "journey" : "scroll");
+    }
+
     return index;
-  }, []);
+  }, [broadcastChapter]);
 
   const dwellForIndex = useCallback((index: number) => {
     const chapter = targetsRef.current[index]?.dataset.homeChapter;
-    return chapter ? CHAPTER_DWELL_MS[chapter] ?? DEFAULT_DWELL_MS : DEFAULT_DWELL_MS;
+    return chapter
+      ? CHAPTER_DWELL_MS[chapter] ?? DEFAULT_DWELL_MS
+      : DEFAULT_DWELL_MS;
   }, []);
 
   const scrollToIndex = useCallback(
-    (index: number) => {
+    (index: number, source: ChapterChangeSource = "journey") => {
       const target = targetsRef.current[index];
       if (!target) return;
+
+      broadcastChapter(index, source);
 
       if (lenis && !prefersReducedMotion) {
         lenis.scrollTo(target, { offset: -72, duration: 1.35 });
@@ -74,16 +103,18 @@ export function HomeAutoJourney() {
         });
       }
     },
-    [lenis, prefersReducedMotion],
+    [broadcastChapter, lenis, prefersReducedMotion],
   );
 
   const pauseForReading = useCallback(() => {
     if (autoScrollRef.current) return;
+
     holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
     setHolding(true);
-    window.setTimeout(() => {
+    window.clearTimeout(holdTimerRef.current);
+    holdTimerRef.current = window.setTimeout(() => {
       if (Date.now() >= holdUntilRef.current) setHolding(false);
-    }, MANUAL_HOLD_MS + 100);
+    }, MANUAL_HOLD_MS + 120);
   }, []);
 
   useEffect(() => {
@@ -211,14 +242,13 @@ export function HomeAutoJourney() {
       }
 
       autoScrollRef.current = true;
-      scrollToIndex(next);
+      scrollToIndex(next, "journey");
       releaseTimer = window.setTimeout(() => {
         autoScrollRef.current = false;
       }, 1900);
-      schedule(dwellForIndex(next));
     }
 
-    schedule(dwellForIndex(activeIndexRef.current));
+    schedule(dwellForIndex(activeIndex));
 
     return () => {
       cancelled = true;
@@ -226,7 +256,23 @@ export function HomeAutoJourney() {
       window.clearTimeout(releaseTimer);
       autoScrollRef.current = false;
     };
-  }, [currentIndex, dwellForIndex, pathname, playing, prefersReducedMotion, resolveTargets, scrollToIndex]);
+  }, [
+    activeIndex,
+    currentIndex,
+    dwellForIndex,
+    pathname,
+    playing,
+    prefersReducedMotion,
+    resolveTargets,
+    scrollToIndex,
+  ]);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(holdTimerRef.current);
+    },
+    [],
+  );
 
   if (pathname !== "/" || prefersReducedMotion) return null;
 
@@ -248,10 +294,12 @@ export function HomeAutoJourney() {
         if (complete) {
           setComplete(false);
           autoScrollRef.current = true;
-          scrollToIndex(0);
+          scrollToIndex(0, "replay");
           window.setTimeout(() => {
             autoScrollRef.current = false;
           }, 1900);
+        } else {
+          broadcastChapter(activeIndexRef.current, "journey");
         }
       }
       return next;
