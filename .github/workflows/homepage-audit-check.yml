@@ -34,3 +34,16 @@ jobs:
 
       - name: Build the Next.js site
         run: pnpm build
+
+      - name: Assemble standalone preview artifact
+        run: |
+          cp -R .next/static .next/standalone/.next/static
+          cp -R public .next/standalone/public
+
+      - name: Upload standalone preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: homepage-audit-standalone
+          path: .next/standalone
+          if-no-files-found: error
+          retention-days: 1
