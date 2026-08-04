@@ -114,52 +114,6 @@ jobs:
               <div ref={wrapRef} className="absolute inset-0 overflow-hidden">'''.replace("          ", "")
           source = source[:active_start] + active_replacement + source[active_end:]
           tatva.write_text(source)
-
-          qa = Path(".github/workflows/moodboard-home-browser-qa.yml")
-          source = qa.read_text()
-          optional_replacements = [
-              (
-                  'async function auditFilm(page: Page, testInfo: TestInfo, reducedMotion = false) {',
-                  'async function auditFilm(page: Page, testInfo: TestInfo, label: string, reducedMotion = false) {',
-              ),
-              (
-                  'Array.from(document.querySelectorAll<HTMLElement>(selectors))',
-                  'Array.from((document.querySelector("main") ?? document.body).querySelectorAll<HTMLElement>(selectors))',
-              ),
-              (
-                  '${testInfo.project.name}-${String(index).padStart(2, "0")}-${Math.round(fraction * 100)}.png',
-                  '${label}-${String(index).padStart(2, "0")}-${Math.round(fraction * 100)}.png',
-              ),
-              ('testInfo.project.name !== "mobile"', 'label !== "mobile"'),
-              ('viewport: testInfo.project.name,', 'viewport: label,'),
-              ('`${testInfo.project.name}.json`', '`${label}.json`'),
-              (
-                  'await auditFilm(page, testInfo);\n            });\n\n            test("short laptop flow"',
-                  'await auditFilm(page, testInfo, "desktop");\n            });\n\n            test("short laptop flow"',
-              ),
-              (
-                  'await page.setViewportSize({ width: 1366, height: 768 });\n              await auditFilm(page, testInfo);',
-                  'await page.setViewportSize({ width: 1366, height: 768 });\n              await auditFilm(page, testInfo, "short-laptop");',
-              ),
-              (
-                  'await page.setViewportSize({ width: 390, height: 844 });\n              await auditFilm(page, testInfo);',
-                  'await page.setViewportSize({ width: 390, height: 844 });\n              await auditFilm(page, testInfo, "mobile");',
-              ),
-              (
-                  'await page.setViewportSize({ width: 1440, height: 1000 });\n              await auditFilm(page, testInfo, true);',
-                  'await page.setViewportSize({ width: 1440, height: 1000 });\n              await auditFilm(page, testInfo, "reduced-desktop", true);',
-              ),
-              (
-                  'await page.setViewportSize({ width: 390, height: 844 });\n              await auditFilm(page, testInfo, true);',
-                  'await page.setViewportSize({ width: 390, height: 844 });\n              await auditFilm(page, testInfo, "reduced-mobile", true);',
-              ),
-          ]
-          for old, new in optional_replacements:
-              if old in source:
-                  source = source.replace(old, new, 1)
-          if 'auditFilm(page, testInfo);' in source or 'auditFilm(page, testInfo, true);' in source:
-              raise SystemExit("Unlabelled browser audit call remains")
-          qa.write_text(source)
           PY
 
       - name: Set up pnpm
@@ -180,13 +134,13 @@ jobs:
       - name: Build the site
         run: pnpm build
 
-      - name: Push the verified repair to the work branch
+      - name: Push the verified source repair to the work branch
         run: |
           git fetch origin work/home-moodboard-film-2026-08-04
           git reset --mixed origin/work/home-moodboard-film-2026-08-04
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/hooks/useHydratedReducedMotion.ts src/sections/Home/MoodboardHome.tsx src/sections/Home/MoodboardTatvaFilm.tsx .github/workflows/moodboard-home-browser-qa.yml
+          git add src/hooks/useHydratedReducedMotion.ts src/sections/Home/MoodboardHome.tsx src/sections/Home/MoodboardTatvaFilm.tsx
           if git diff --cached --quiet; then
             echo "The media repair is already applied."
             exit 0
