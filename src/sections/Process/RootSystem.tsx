@@ -35,7 +35,7 @@ const STAGE_META: StageMeta[] = [
     prevents: "A polished brand built on borrowed assumptions.",
   },
   {
-    becomes: "A pattern, not a pile of opinions.",
+    becomes: "A pattern drawn from evidence.",
     explanation:
       "Customer behaviour, category codes, and competitor habits are read together until the real tension becomes visible. Evidence gets the deciding vote.",
     output: "Audience tensions + category and perception map",
@@ -53,7 +53,7 @@ const STAGE_META: StageMeta[] = [
   {
     becomes: "A recognisable expression.",
     explanation:
-      "Voice, identity, and messaging take the shape the strategy demands. The system learns how to sound, look, and behave without becoming repetitive.",
+      "Voice, identity, and messaging take the shape the strategy demands. The system learns how to sound, look, and behave while staying coherent.",
     output: "Verbal identity + design direction + message system",
     clarity: 81,
     prevents: "A beautiful identity nobody can recognise twice.",
@@ -182,19 +182,19 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   }, []);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video || prefersReducedMotion) return;
+    const currentVideo = videoRef.current;
+    if (!currentVideo || prefersReducedMotion) return;
 
     function syncPlayback() {
-      if (inView && !document.hidden) void video.play().catch(() => {});
-      else video.pause();
+      if (inView && !document.hidden) void currentVideo.play().catch(() => {});
+      else currentVideo.pause();
     }
 
     syncPlayback();
     document.addEventListener("visibilitychange", syncPlayback);
     return () => {
       document.removeEventListener("visibilitychange", syncPlayback);
-      video.pause();
+      currentVideo.pause();
     };
   }, [active, inView, prefersReducedMotion]);
 
@@ -256,6 +256,9 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
             loop
             playsInline
             preload="metadata"
+            onCanPlay={(event) => {
+              if (inView) void event.currentTarget.play().catch(() => {});
+            }}
           />
         )}
       </div>
