@@ -88,25 +88,24 @@ export function StudioTriptych() {
     }
 
     window.addEventListener("bt:home-chapter", onChapter as EventListener);
-    return () => {
-      window.removeEventListener("bt:home-chapter", onChapter as EventListener);
-    };
+    return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
   }, []);
 
   useEffect(() => {
-    const currentVideo = activeVideoRef.current;
-    if (!currentVideo || prefersReducedMotion) return;
+    if (prefersReducedMotion) return;
 
     function syncPlayback() {
-      if (inView && !document.hidden) void currentVideo.play().catch(() => {});
-      else currentVideo.pause();
+      const video = activeVideoRef.current;
+      if (!video) return;
+      if (inView && !document.hidden) void video.play().catch(() => {});
+      else video.pause();
     }
 
     syncPlayback();
     document.addEventListener("visibilitychange", syncPlayback);
     return () => {
       document.removeEventListener("visibilitychange", syncPlayback);
-      currentVideo.pause();
+      activeVideoRef.current?.pause();
     };
   }, [activeIndex, inView, prefersReducedMotion]);
 
@@ -209,9 +208,7 @@ export function StudioTriptych() {
           <motion.span
             aria-hidden="true"
             className="absolute -inset-y-16 -left-1/2 w-1/3 rotate-12 bg-ivory/10 blur-2xl"
-            animate={
-              prefersReducedMotion || !inView ? undefined : { x: ["0%", "650%"] }
-            }
+            animate={prefersReducedMotion || !inView ? undefined : { x: ["0%", "650%"] }}
             transition={
               prefersReducedMotion || !inView
                 ? undefined
@@ -233,20 +230,14 @@ export function StudioTriptych() {
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
             >
-              <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em] text-sandstone">
-                {active.eyebrow}
-              </p>
-              <p className="mt-2 max-w-sm font-display text-3xl font-normal leading-[1.02] text-ivory sm:text-4xl">
-                {active.title}
-              </p>
+              <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em] text-sandstone">{active.eyebrow}</p>
+              <p className="mt-2 max-w-sm font-display text-3xl font-normal leading-[1.02] text-ivory sm:text-4xl">{active.title}</p>
             </motion.div>
           </AnimatePresence>
         </div>
 
         <div className="relative flex flex-col justify-center px-6 py-14 sm:px-10 lg:px-12 lg:py-16">
-          <p className="text-xs font-medium uppercase tracking-[0.24em]" style={{ color: "#8a6b3d" }}>
-            About Suman
-          </p>
+          <p className="text-xs font-medium uppercase tracking-[0.24em]" style={{ color: "#8a6b3d" }}>About Suman</p>
           <h2 className="mt-3 max-w-2xl font-display text-[clamp(2.2rem,4vw,4rem)] font-normal leading-[1.02] text-soil">
             One mind. Three disciplines. One accountable author.
           </h2>
@@ -271,12 +262,8 @@ export function StudioTriptych() {
                     backgroundColor: selected ? "rgba(138,107,61,0.085)" : "rgba(39,34,30,0.025)",
                   }}
                 >
-                  <span className="block text-[0.56rem] tracking-[0.15em]" style={{ color: "#8a6b3d" }}>
-                    {discipline.number}
-                  </span>
-                  <span className="mt-2 block font-display text-base leading-tight text-soil sm:text-lg">
-                    {discipline.title}
-                  </span>
+                  <span className="block text-[0.56rem] tracking-[0.15em]" style={{ color: "#8a6b3d" }}>{discipline.number}</span>
+                  <span className="mt-2 block font-display text-base leading-tight text-soil sm:text-lg">{discipline.title}</span>
                   {selected && (
                     <motion.span
                       aria-hidden="true"
@@ -302,9 +289,7 @@ export function StudioTriptych() {
               transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
               aria-live="polite"
             >
-              <p className="text-sm leading-relaxed text-foreground-secondary sm:text-base">
-                {active.line}
-              </p>
+              <p className="text-sm leading-relaxed text-foreground-secondary sm:text-base">{active.line}</p>
 
               <div className="mt-6 flex items-center gap-2 text-[0.6rem] font-medium uppercase tracking-[0.12em] text-foreground-secondary">
                 {active.diagram.map((step, index) => (
@@ -317,11 +302,7 @@ export function StudioTriptych() {
                         style={{ backgroundColor: "#C6A97A" }}
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
-                        transition={{
-                          duration: prefersReducedMotion ? 0 : 0.9,
-                          delay: prefersReducedMotion ? 0 : index * 0.28,
-                          ease: [0.22, 1, 0.36, 1],
-                        }}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.9, delay: prefersReducedMotion ? 0 : index * 0.28, ease: [0.22, 1, 0.36, 1] }}
                       />
                     )}
                   </div>
@@ -329,9 +310,7 @@ export function StudioTriptych() {
               </div>
 
               <div className="mt-6 border-l-2 pl-4" style={{ borderColor: "#C6A97A" }}>
-                <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em] text-foreground-secondary/65">
-                  What the client receives
-                </p>
+                <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em] text-foreground-secondary/65">What the client receives</p>
                 <p className="mt-1 font-display text-xl leading-tight text-soil">{active.result}</p>
               </div>
 
@@ -340,26 +319,16 @@ export function StudioTriptych() {
                 className="group mt-6 block rounded-2xl border border-soil/10 bg-white/35 p-4 transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-soil/20 hover:bg-white/55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
               >
                 <span className="flex items-center justify-between gap-4">
-                  <span className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: "#8a6b3d" }}>
-                    {active.proofLabel}
-                  </span>
-                  <span aria-hidden="true" className="text-sm text-soil/45 transition-transform duration-300 group-hover:translate-x-1">
-                    →
-                  </span>
+                  <span className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: "#8a6b3d" }}>{active.proofLabel}</span>
+                  <span aria-hidden="true" className="text-sm text-soil/45 transition-transform duration-300 group-hover:translate-x-1">→</span>
                 </span>
-                <span className="mt-2 block text-sm leading-relaxed text-foreground-secondary">
-                  {active.proofLine}
-                </span>
+                <span className="mt-2 block text-sm leading-relaxed text-foreground-secondary">{active.proofLine}</span>
               </Link>
             </motion.div>
           </AnimatePresence>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Link
-              href="/about"
-              className="link-underline inline-flex items-center gap-2 text-sm font-medium"
-              style={{ color: "#8a6b3d" }}
-            >
+            <Link href="/about" className="link-underline inline-flex items-center gap-2 text-sm font-medium" style={{ color: "#8a6b3d" }}>
               Meet the strategist <span aria-hidden="true">→</span>
             </Link>
             <p className="text-xs leading-relaxed text-foreground-secondary/75">
@@ -371,16 +340,8 @@ export function StudioTriptych() {
         <div className="relative min-h-[28rem] overflow-hidden bg-soil lg:min-h-full">
           <motion.div
             className="absolute inset-0"
-            animate={
-              prefersReducedMotion || !inView
-                ? undefined
-                : { scale: [1.03, 1.11, 1.03], x: [0, -8, 0] }
-            }
-            transition={
-              prefersReducedMotion || !inView
-                ? undefined
-                : { duration: 12, repeat: Infinity, ease: "easeInOut" }
-            }
+            animate={prefersReducedMotion || !inView ? undefined : { scale: [1.03, 1.11, 1.03], x: [0, -8, 0] }}
+            transition={prefersReducedMotion || !inView ? undefined : { duration: 12, repeat: Infinity, ease: "easeInOut" }}
           >
             <Image
               src="/images/own-portrait.jpg"
@@ -390,16 +351,10 @@ export function StudioTriptych() {
               className="object-cover object-[center_30%]"
             />
           </motion.div>
-          <div
-            aria-hidden="true"
-            className="absolute inset-0"
-            style={{ background: "linear-gradient(180deg, rgba(20,18,16,0.02) 32%, rgba(20,18,16,0.82) 100%)" }}
-          />
+          <div aria-hidden="true" className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(20,18,16,0.02) 32%, rgba(20,18,16,0.82) 100%)" }} />
 
           <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-ivory/15 bg-soil/70 p-5 text-ivory backdrop-blur-md sm:inset-x-7 sm:bottom-7">
-            <p className="text-[0.6rem] font-medium uppercase tracking-[0.18em] text-sandstone">
-              Direct authorship
-            </p>
+            <p className="text-[0.6rem] font-medium uppercase tracking-[0.18em] text-sandstone">Direct authorship</p>
             <p className="mt-2 font-display text-2xl leading-tight">
               The same person hears the problem, makes the decisions, writes the language, and directs the work.
             </p>
