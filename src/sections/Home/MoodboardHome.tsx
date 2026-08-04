@@ -200,18 +200,14 @@ function AmbientVideo({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
   const reduced = useHydratedReducedMotion();
-  const near = useInView(wrapRef, { margin: "120px 0px 120px 0px" });
+  const near = useInView(wrapRef, { margin: "420px 0px 420px 0px" });
 
   useEffect(() => {
-  const video = videoRef.current;
-  if (!video) return;
-  if (reduced || !near) {
-    video.pause();
-    return;
-  }
-  void video.play().catch(() => {});
-  return () => video.pause();
-}, [near, reduced, src]);
+    const video = videoRef.current;
+    if (!video || reduced) return;
+    if (near) void video.play().catch(() => {});
+    else video.pause();
+  }, [near, reduced, src]);
 
   return (
     <div ref={wrapRef} className={`absolute inset-0 overflow-hidden ${className}`}>
