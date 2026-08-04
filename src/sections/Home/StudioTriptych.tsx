@@ -20,6 +20,10 @@ const DISCIPLINES = [
     video: "/videos/higgsfield-process-listen.mp4",
     poster: "/images/higgsfield-process-listen-poster.jpg",
     diagram: ["Notice", "Interpret", "Choose"],
+    proofLabel: "Applied in HerbalCart",
+    proofLine:
+      "A supplement range being read through a purely herbal lens was repositioned as a modern, supplement-first wellness brand.",
+    proofHref: "/work/herbalcart",
   },
   {
     number: "02",
@@ -30,6 +34,10 @@ const DISCIPLINES = [
     video: "/videos/higgsfield-idea-sketch.mp4",
     poster: "/images/higgsfield-idea-sketch.jpg",
     diagram: ["Meaning", "Language", "Memory"],
+    proofLabel: "Applied in MyShopInEurope",
+    proofLine:
+      "Craft and origin replaced cheap access as the story European buyers could pass on to their own customers.",
+    proofHref: "/work/myshopineurope",
   },
   {
     number: "03",
@@ -40,6 +48,10 @@ const DISCIPLINES = [
     video: "/videos/higgsfield-process-shape.mp4",
     poster: "/images/higgsfield-process-shape-poster.jpg",
     diagram: ["Decision", "System", "Recognition"],
+    proofLabel: "Applied in Dr. Haley Nutrition",
+    proofLine:
+      "A quality-first content system moved engagement from 0.71% to 2.81% while the account posted less.",
+    proofHref: "/work/dr-haley-nutrition",
   },
 ] as const;
 
@@ -284,6 +296,23 @@ export function StudioTriptych() {
                 </p>
                 <p className="mt-1 font-display text-xl leading-tight text-soil">{active.result}</p>
               </div>
+
+              <Link
+                href={active.proofHref}
+                className="group mt-6 block rounded-2xl border border-soil/10 bg-white/35 p-4 transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-soil/20 hover:bg-white/55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
+              >
+                <span className="flex items-center justify-between gap-4">
+                  <span className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: "#8a6b3d" }}>
+                    {active.proofLabel}
+                  </span>
+                  <span aria-hidden="true" className="text-sm text-soil/45 transition-transform duration-300 group-hover:translate-x-1">
+                    →
+                  </span>
+                </span>
+                <span className="mt-2 block text-sm leading-relaxed text-foreground-secondary">
+                  {active.proofLine}
+                </span>
+              </Link>
             </motion.div>
           </AnimatePresence>
 
