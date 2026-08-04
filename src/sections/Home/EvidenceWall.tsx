@@ -75,12 +75,13 @@ const MANUAL_PAUSE_MS = 18000;
 export function EvidenceWall() {
   const sectionRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const activeVideoRef = useRef<HTMLVideoElement>(null);
   const manualPauseUntilRef = useRef(0);
   const frameRef = useRef(0);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.45 });
+  const inView = useInView(sectionRef, { amount: 0.42 });
   const activeProject = projects[activeIndex] ?? projects[0];
   const activeTrail = TRAILS[activeProject.slug];
 
@@ -89,7 +90,7 @@ export function EvidenceWall() {
   }
 
   const moveTo = useCallback(
-    (index: number) => {
+    (index: number, behavior?: ScrollBehavior) => {
       const list = listRef.current;
       if (!list || !projects.length) return;
 
@@ -100,7 +101,7 @@ export function EvidenceWall() {
       setActiveIndex(safeIndex);
       list.scrollTo({
         left: Math.max(0, target.offsetLeft - 8),
-        behavior: prefersReducedMotion ? "auto" : "smooth",
+        behavior: behavior ?? (prefersReducedMotion ? "auto" : "smooth"),
       });
     },
     [prefersReducedMotion],
@@ -150,6 +151,37 @@ export function EvidenceWall() {
     return () => window.clearInterval(timer);
   }, [activeIndex, inView, moveTo, openSlug, prefersReducedMotion]);
 
+  useEffect(() => {
+    function onChapter(event: Event) {
+      const detail = (event as CustomEvent<{ id?: string }>).detail;
+      if (detail?.id !== "evidence") return;
+      manualPauseUntilRef.current = Date.now() + 750;
+      moveTo(0, "auto");
+    }
+
+    window.addEventListener("bt:home-chapter", onChapter as EventListener);
+    return () => {
+      window.removeEventListener("bt:home-chapter", onChapter as EventListener);
+    };
+  }, [moveTo]);
+
+  useEffect(() => {
+    const video = activeVideoRef.current;
+    if (!video || prefersReducedMotion) return;
+
+    function syncPlayback() {
+      if (inView && !document.hidden) void video.play().catch(() => {});
+      else video.pause();
+    }
+
+    syncPlayback();
+    document.addEventListener("visibilitychange", syncPlayback);
+    return () => {
+      document.removeEventListener("visibilitychange", syncPlayback);
+      video.pause();
+    };
+  }, [activeIndex, inView, prefersReducedMotion]);
+
   useEffect(
     () => () => {
       window.cancelAnimationFrame(frameRef.current);
@@ -163,6 +195,8 @@ export function EvidenceWall() {
       className="relative overflow-hidden bg-soil py-16 sm:py-24"
       aria-labelledby="evidence-wall-title"
       onFocusCapture={pauseAutoplay}
+      onPointerDown={pauseAutoplay}
+      onTouchStart={pauseAutoplay}
     >
       <BackgroundVideo
         video="/videos/pexels-fog-sunrise.mp4"
@@ -179,12 +213,12 @@ export function EvidenceWall() {
             "radial-gradient(circle, rgba(184,90,52,0.16), transparent 68%)",
         }}
         animate={
-          prefersReducedMotion
+          prefersReducedMotion || !inView
             ? undefined
             : { x: [0, 110, 0], y: [0, -42, 0], scale: [1, 1.14, 1] }
         }
         transition={
-          prefersReducedMotion
+          prefersReducedMotion || !inView
             ? undefined
             : { duration: 17, repeat: Infinity, ease: "easeInOut" }
         }
@@ -241,7 +275,7 @@ export function EvidenceWall() {
                   Five real engagements. Each one begins with the signal that was misread, then the decision that changed the direction.
                 </p>
                 <p className="mt-3 max-w-xs text-xs leading-relaxed text-ivory/48">
-                  The archive advances while you watch. Touch a file and it waits.
+                  The archive advances while you watch. Select a file and it waits.
                 </p>
                 <Link
                   href="/work"
@@ -259,10 +293,7 @@ export function EvidenceWall() {
               className="-mx-2 flex snap-x snap-mandatory gap-4 overflow-x-auto px-2 pb-5 pt-3"
               aria-label="Project archive"
               onScroll={syncActiveFromScroll}
-              onPointerDown={pauseAutoplay}
-              onPointerEnter={pauseAutoplay}
               onWheel={pauseAutoplay}
-              onTouchStart={pauseAutoplay}
             >
               {projects.map((project, index) => {
                 const stat = project.stats?.[0];
@@ -317,8 +348,9 @@ export function EvidenceWall() {
                         )}
 
                         <AnimatePresence>
-                          {isActive && project.cardVideo && (
+                          {isActive && inView && project.cardVideo && (
                             <motion.video
+                              ref={activeVideoRef}
                               key={project.cardVideo}
                               className="absolute inset-0 h-full w-full object-cover"
                               src={project.cardVideo}
@@ -328,6 +360,11 @@ export function EvidenceWall() {
                               autoPlay
                               playsInline
                               preload="metadata"
+                              onCanPlay={(event) => {
+                                if (isActive && inView) {
+                                  void event.currentTarget.play().catch(() => {});
+                                }
+                              }}
                               initial={{ opacity: 0, scale: 1.04 }}
                               animate={{ opacity: 1, scale: 1.1 }}
                               exit={{ opacity: 0 }}
@@ -347,7 +384,7 @@ export function EvidenceWall() {
                               "linear-gradient(180deg, transparent 38%, rgba(20,17,14,0.5) 100%)",
                           }}
                         />
-                        {isActive && (
+                        {isActive && inView && (
                           <motion.span
                             aria-hidden="true"
                             className="absolute -inset-y-6 -left-1/2 w-1/3 rotate-12 bg-ivory/18 blur-xl"
@@ -478,7 +515,7 @@ export function EvidenceWall() {
                           className="absolute h-1.5 w-1.5 rounded-full"
                           style={{ backgroundColor: activeProject.accent }}
                           animate={
-                            prefersReducedMotion
+                            prefersReducedMotion || !inView
                               ? undefined
                               : { left: ["0%", "100%"], opacity: [0, 1, 1, 0] }
                           }
