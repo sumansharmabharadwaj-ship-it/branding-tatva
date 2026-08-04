@@ -1,0 +1,83 @@
+name: Patch RootSystem playback
+
+"on":
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/patch-root-system.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-root:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+          sparse-checkout: src
+          sparse-checkout-cone-mode: true
+
+      - name: Replace the nullable playback closure
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("src/sections/Process/RootSystem.tsx")
+          text = path.read_text()
+          before = '''  useEffect(() => {
+    const currentVideo = videoRef.current;
+    if (!currentVideo || prefersReducedMotion) return;
+
+    function syncPlayback() {
+      if (inView && !document.hidden) void currentVideo.play().catch(() => {});
+      else currentVideo.pause();
+    }
+
+    syncPlayback();
+    document.addEventListener("visibilitychange", syncPlayback);
+    return () => {
+      document.removeEventListener("visibilitychange", syncPlayback);
+      currentVideo.pause();
+    };
+  }, [active, inView, prefersReducedMotion]);'''
+          after = '''  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const videoAtEffectStart = videoRef.current;
+
+    function syncPlayback() {
+      const video = videoRef.current;
+      if (!video) return;
+      if (inView && !document.hidden) void video.play().catch(() => {});
+      else video.pause();
+    }
+
+    syncPlayback();
+    document.addEventListener("visibilitychange", syncPlayback);
+    return () => {
+      document.removeEventListener("visibilitychange", syncPlayback);
+      videoAtEffectStart?.pause();
+    };
+  }, [active, inView, prefersReducedMotion]);'''
+
+          if before not in text:
+              raise SystemExit("Expected RootSystem playback block was not found")
+          path.write_text(text.replace(before, after, 1))
+          PY
+
+      - name: Commit the source fix
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/sections/Process/RootSystem.tsx
+          git commit -m "Stabilize Process film playback cleanup"
+          git push origin HEAD:reimagine-project-moves
