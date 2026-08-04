@@ -1,3 +1,3 @@
 Run the moodboard homepage through desktop, short-laptop, mobile, and reduced-motion browser checks before the main preview branch is updated.
 
-Repair pass: pause every offscreen or reduced-motion film and rerun the browser matrix with section-only blank-frame checks.
+Repair pass 2: apply the structural media fix, then rerun the browser matrix with section-only blank-frame checks.
