@@ -2,7 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 const DISCIPLINES = [
@@ -43,12 +48,14 @@ const MANUAL_PAUSE_MS = 16000;
 
 export function StudioTriptych() {
   const prefersReducedMotion = Boolean(useReducedMotion());
-  const [activeIndex, setActiveIndex] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
   const pauseUntilRef = useRef(0);
+  const inView = useInView(sectionRef, { amount: 0.4 });
+  const [activeIndex, setActiveIndex] = useState(0);
   const active = DISCIPLINES[activeIndex];
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || !inView) return;
 
     const timer = window.setInterval(() => {
       if (Date.now() < pauseUntilRef.current || document.hidden) return;
@@ -56,7 +63,7 @@ export function StudioTriptych() {
     }, ROTATE_MS);
 
     return () => window.clearInterval(timer);
-  }, [prefersReducedMotion]);
+  }, [inView, prefersReducedMotion]);
 
   function choose(index: number) {
     pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
@@ -65,6 +72,7 @@ export function StudioTriptych() {
 
   return (
     <section
+      ref={sectionRef}
       className="relative isolate overflow-hidden border-y border-soil/10"
       style={{ backgroundColor: "#F2F0E8" }}
       onPointerEnter={() => {
@@ -79,7 +87,7 @@ export function StudioTriptych() {
         className="pointer-events-none absolute -left-32 top-[18%] -z-10 h-96 w-96 rounded-full blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(184,90,52,0.12), transparent 68%)" }}
         animate={
-          prefersReducedMotion
+          prefersReducedMotion || !inView
             ? undefined
             : { x: [0, 84, 0], y: [0, 34, 0], scale: [1, 1.12, 1] }
         }
@@ -94,7 +102,7 @@ export function StudioTriptych() {
         className="pointer-events-none absolute -right-36 bottom-[-18%] -z-10 h-[30rem] w-[30rem] rounded-full blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(85,107,74,0.14), transparent 70%)" }}
         animate={
-          prefersReducedMotion
+          prefersReducedMotion || !inView
             ? undefined
             : { x: [0, -68, 0], y: [0, -36, 0], scale: [1.04, 0.94, 1.04] }
         }
@@ -112,7 +120,7 @@ export function StudioTriptych() {
               key={active.video}
               className="absolute inset-0"
               initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.08, filter: "blur(8px)" }}
-              animate={{ opacity: 1, scale: 1.14, filter: "blur(0px)" }}
+              animate={{ opacity: 1, scale: inView ? 1.14 : 1.06, filter: "blur(0px)" }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 1.04, filter: "blur(6px)" }}
               transition={{
                 opacity: { duration: prefersReducedMotion ? 0 : 0.8 },
@@ -120,7 +128,7 @@ export function StudioTriptych() {
                 scale: { duration: prefersReducedMotion ? 0 : 10, ease: "linear" },
               }}
             >
-              {!prefersReducedMotion && (
+              {!prefersReducedMotion && inView ? (
                 <video
                   className="absolute inset-0 h-full w-full object-cover"
                   src={active.video}
@@ -132,8 +140,7 @@ export function StudioTriptych() {
                   preload="metadata"
                   aria-hidden="true"
                 />
-              )}
-              {prefersReducedMotion && (
+              ) : (
                 <Image src={active.poster} alt="" fill sizes="(min-width: 1024px) 30vw, 100vw" className="object-cover" />
               )}
             </motion.div>
@@ -150,7 +157,9 @@ export function StudioTriptych() {
           <motion.span
             aria-hidden="true"
             className="absolute -inset-y-16 -left-1/2 w-1/3 rotate-12 bg-ivory/10 blur-2xl"
-            animate={prefersReducedMotion ? undefined : { x: ["0%", "650%"] }}
+            animate={
+              prefersReducedMotion || !inView ? undefined : { x: ["0%", "650%"] }
+            }
             transition={
               prefersReducedMotion
                 ? undefined
@@ -295,7 +304,11 @@ export function StudioTriptych() {
         <div className="relative min-h-[28rem] overflow-hidden bg-soil lg:min-h-full">
           <motion.div
             className="absolute inset-0"
-            animate={prefersReducedMotion ? undefined : { scale: [1.03, 1.11, 1.03], x: [0, -8, 0] }}
+            animate={
+              prefersReducedMotion || !inView
+                ? undefined
+                : { scale: [1.03, 1.11, 1.03], x: [0, -8, 0] }
+            }
             transition={
               prefersReducedMotion
                 ? undefined
