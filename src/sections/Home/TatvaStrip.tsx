@@ -61,14 +61,15 @@ const TATVAS: Tatva[] = [
   },
 ];
 
-const AUTO_ADVANCE_MS = 4600;
+const AUTO_ADVANCE_MS = 3600;
 const MANUAL_PAUSE_MS = 15000;
+const HOVER_PREVIEW_MS = 3200;
 
 export function TatvaStrip() {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const pauseUntilRef = useRef(0);
-  const inView = useInView(sectionRef, { amount: 0.5 });
+  const inView = useInView(sectionRef, { amount: 0.18 });
   const [activeIndex, setActiveIndex] = useState(0);
   const active = TATVAS[activeIndex] ?? TATVAS[0];
 
@@ -83,10 +84,26 @@ export function TatvaStrip() {
     return () => window.clearInterval(timer);
   }, [inView, prefersReducedMotion]);
 
-  function choose(index: number) {
-    pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
+  useEffect(() => {
+    function onChapter(event: Event) {
+      const detail = (event as CustomEvent<{ id?: string }>).detail;
+      if (detail?.id !== "framework") return;
+      setActiveIndex(0);
+      pauseUntilRef.current = Date.now() + 650;
+    }
+
+    window.addEventListener("bt:home-chapter", onChapter as EventListener);
+    return () => {
+      window.removeEventListener("bt:home-chapter", onChapter as EventListener);
+    };
+  }, []);
+
+  function choose(index: number, duration = MANUAL_PAUSE_MS) {
+    pauseUntilRef.current = Date.now() + duration;
     setActiveIndex(index);
   }
+
+  const motionActive = inView && !prefersReducedMotion;
 
   return (
     <section
@@ -94,6 +111,12 @@ export function TatvaStrip() {
       className="relative overflow-hidden py-16 sm:py-24"
       style={{ backgroundColor: "#F2F0E8" }}
       aria-labelledby="tatva-framework-title"
+      onPointerDown={() => {
+        pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
+      }}
+      onTouchStart={() => {
+        pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
+      }}
       onFocusCapture={() => {
         pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
       }}
@@ -102,31 +125,15 @@ export function TatvaStrip() {
         aria-hidden="true"
         className="pointer-events-none absolute -left-28 top-[18%] h-80 w-80 rounded-full blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(184,90,52,0.13), transparent 68%)" }}
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: [0, 44, 0], y: [0, 28, 0], scale: [1, 1.12, 1] }
-        }
-        transition={
-          prefersReducedMotion
-            ? undefined
-            : { duration: 14, repeat: Infinity, ease: "easeInOut" }
-        }
+        animate={motionActive ? { x: [0, 44, 0], y: [0, 28, 0], scale: [1, 1.12, 1] } : undefined}
+        transition={motionActive ? { duration: 14, repeat: Infinity, ease: "easeInOut" } : undefined}
       />
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute -right-28 bottom-[8%] h-96 w-96 rounded-full blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(85,107,74,0.14), transparent 68%)" }}
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: [0, -52, 0], y: [0, -24, 0], scale: [1.04, 0.94, 1.04] }
-        }
-        transition={
-          prefersReducedMotion
-            ? undefined
-            : { duration: 17, repeat: Infinity, ease: "easeInOut" }
-        }
+        animate={motionActive ? { x: [0, -52, 0], y: [0, -24, 0], scale: [1.04, 0.94, 1.04] } : undefined}
+        transition={motionActive ? { duration: 17, repeat: Infinity, ease: "easeInOut" } : undefined}
       />
 
       <Container className="relative max-w-[100rem]">
@@ -208,7 +215,7 @@ export function TatvaStrip() {
                     className="flex items-start lg:flex-1"
                     initial={prefersReducedMotion ? false : { opacity: 0, y: 26 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.42 }}
+                    viewport={{ once: true, amount: 0.2 }}
                     animate={{ opacity: isActive ? 1 : 0.56 }}
                     transition={{
                       duration: prefersReducedMotion ? 0 : 0.65,
@@ -221,53 +228,43 @@ export function TatvaStrip() {
                       aria-pressed={isActive}
                       aria-label={`Focus ${tatva.name}: ${tatva.role}`}
                       onClick={() => choose(index)}
-                      onPointerEnter={() => {
-                        pauseUntilRef.current = Date.now() + 9000;
-                        setActiveIndex(index);
-                      }}
+                      onPointerEnter={() => choose(index, HOVER_PREVIEW_MS)}
+                      onFocus={() => choose(index)}
                       className="group flex w-full flex-col items-center rounded-2xl text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
                     >
                       <motion.span
                         className="relative block h-24 w-24 lg:h-28 lg:w-28"
                         animate={
-                          prefersReducedMotion
-                            ? undefined
-                            : {
+                          motionActive
+                            ? {
                                 y: isActive ? [0, -9, 0] : [0, -3, 0],
                                 rotate: isActive ? [0, direction * 1.5, 0] : 0,
                                 scale: isActive ? [1, 1.055, 1] : 0.9,
                               }
+                            : undefined
                         }
                         transition={
-                          prefersReducedMotion
-                            ? undefined
-                            : {
+                          motionActive
+                            ? {
                                 duration: isActive ? 5.6 : 7.5,
                                 repeat: Infinity,
                                 ease: "easeInOut",
                               }
+                            : undefined
                         }
                       >
                         <motion.span
                           aria-hidden="true"
                           className="absolute -inset-3 rounded-full border border-dashed"
                           style={{ borderColor: `${ELEMENT_HEX[tatva.slug]}66` }}
-                          animate={
-                            prefersReducedMotion || !isActive
-                              ? undefined
-                              : { rotate: direction * 360 }
-                          }
-                          transition={{ duration: 17 + index * 1.5, repeat: Infinity, ease: "linear" }}
+                          animate={motionActive && isActive ? { rotate: direction * 360 } : undefined}
+                          transition={motionActive && isActive ? { duration: 17 + index * 1.5, repeat: Infinity, ease: "linear" } : undefined}
                         />
                         <motion.span
                           aria-hidden="true"
                           className="absolute -inset-4 rounded-full"
-                          animate={
-                            prefersReducedMotion || !isActive
-                              ? undefined
-                              : { rotate: direction * -360 }
-                          }
-                          transition={{ duration: 11 + index * 1.2, repeat: Infinity, ease: "linear" }}
+                          animate={motionActive && isActive ? { rotate: direction * -360 } : undefined}
+                          transition={motionActive && isActive ? { duration: 11 + index * 1.2, repeat: Infinity, ease: "linear" } : undefined}
                         >
                           <span
                             className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full"
@@ -289,18 +286,18 @@ export function TatvaStrip() {
                             <motion.span
                               className="absolute inset-0"
                               animate={
-                                prefersReducedMotion
-                                  ? undefined
-                                  : isActive
+                                motionActive
+                                  ? isActive
                                     ? { scale: [1.03, 1.14, 1.03], x: [0, direction * 5, 0], y: [0, -3, 0] }
                                     : { scale: 1.04 }
+                                  : undefined
                               }
-                              transition={{ duration: 8 + index, repeat: Infinity, ease: "easeInOut" }}
+                              transition={motionActive ? { duration: 8 + index, repeat: Infinity, ease: "easeInOut" } : undefined}
                             >
                               <Image src={element.image} alt="" fill sizes="112px" className="object-cover" />
                             </motion.span>
                           )}
-                          {isActive && (
+                          {isActive && motionActive && (
                             <motion.span
                               aria-hidden="true"
                               className="absolute -inset-y-3 -left-1/2 w-1/3 rotate-12 bg-white/20 blur-md"
@@ -325,7 +322,7 @@ export function TatvaStrip() {
                     {index < TATVAS.length - 1 && (
                       <span aria-hidden="true" className="relative mt-14 hidden h-px flex-1 lg:block">
                         <span className="absolute inset-0 border-t border-dashed" style={{ borderColor: "#B5B3AA" }} />
-                        {isActive && (
+                        {isActive && motionActive && (
                           <motion.span
                             className="absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-sandstone"
                             animate={{ left: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
