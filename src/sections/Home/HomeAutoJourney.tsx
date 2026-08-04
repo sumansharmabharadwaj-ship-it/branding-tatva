@@ -17,31 +17,38 @@ export function HomeAutoJourney() {
   const activeIndexRef = useRef(0);
   const autoScrollRef = useRef(false);
   const holdUntilRef = useRef(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [holding, setHolding] = useState(false);
   const [complete, setComplete] = useState(false);
 
-  function resolveTargets() {
-    targetsRef.current = Array.from(document.querySelectorAll<HTMLElement>("[data-home-chapter]"));
-  }
+  const resolveTargets = useCallback(() => {
+    targetsRef.current = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-home-chapter]"),
+    );
+  }, []);
 
-  function currentIndex() {
+  const currentIndex = useCallback(() => {
     const targets = targetsRef.current;
     if (!targets.length) return 0;
+
     const anchor = window.scrollY + window.innerHeight * 0.42;
     let index = 0;
     targets.forEach((target, targetIndex) => {
       const top = window.scrollY + target.getBoundingClientRect().top;
       if (top <= anchor) index = targetIndex;
     });
+
     activeIndexRef.current = index;
+    setActiveIndex(index);
     return index;
-  }
+  }, []);
 
   const scrollToIndex = useCallback(
     (index: number) => {
       const target = targetsRef.current[index];
       if (!target) return;
+
       if (lenis && !prefersReducedMotion) {
         lenis.scrollTo(target, { offset: -72, duration: 1.35 });
       } else {
@@ -54,14 +61,15 @@ export function HomeAutoJourney() {
     [lenis, prefersReducedMotion],
   );
 
-  function pauseForReading() {
+  const pauseForReading = useCallback(() => {
     if (autoScrollRef.current) return;
+
     holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
     setHolding(true);
     window.setTimeout(() => {
       if (Date.now() >= holdUntilRef.current) setHolding(false);
     }, MANUAL_HOLD_MS + 100);
-  }
+  }, []);
 
   useEffect(() => {
     if (pathname !== "/") return;
@@ -86,8 +94,8 @@ export function HomeAutoJourney() {
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
 
-    const retry = window.setInterval(resolveTargets, 600);
-    const stopRetry = window.setTimeout(() => window.clearInterval(retry), 6000);
+    const retry = window.setInterval(resolveTargets, 650);
+    const stopRetry = window.setTimeout(() => window.clearInterval(retry), 5600);
 
     return () => {
       observer.disconnect();
@@ -96,19 +104,28 @@ export function HomeAutoJourney() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [pathname]);
+  }, [currentIndex, pathname, resolveTargets]);
 
   useEffect(() => {
     if (pathname !== "/") return;
 
     function onManualInput(event: Event) {
       const target = event.target;
-      if (target instanceof HTMLElement && target.closest("[data-auto-journey-control]")) return;
+      if (
+        target instanceof HTMLElement &&
+        target.closest("[data-auto-journey-control]")
+      ) {
+        return;
+      }
       pauseForReading();
     }
 
     function onKeydown(event: KeyboardEvent) {
-      if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) {
+      if (
+        ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(
+          event.key,
+        )
+      ) {
         onManualInput(event);
       }
     }
@@ -124,7 +141,7 @@ export function HomeAutoJourney() {
       window.removeEventListener("pointerdown", onManualInput);
       window.removeEventListener("keydown", onKeydown);
     };
-  }, [pathname]);
+  }, [pathname, pauseForReading]);
 
   useEffect(() => {
     if (prefersReducedMotion) {
@@ -152,10 +169,20 @@ export function HomeAutoJourney() {
       const focused = document.activeElement;
       const editing =
         focused instanceof HTMLElement &&
-        Boolean(focused.closest("input, textarea, select, [contenteditable='true']"));
+        Boolean(
+          focused.closest("input, textarea, select, [contenteditable='true']"),
+        );
 
-      if (targets.length < 2 || document.hidden || editing || Date.now() < holdUntilRef.current) {
-        const remaining = Math.max(1200, holdUntilRef.current - Date.now() + 450);
+      if (
+        targets.length < 2 ||
+        document.hidden ||
+        editing ||
+        Date.now() < holdUntilRef.current
+      ) {
+        const remaining = Math.max(
+          1200,
+          holdUntilRef.current - Date.now() + 450,
+        );
         schedule(Math.min(remaining, 4500));
         return;
       }
@@ -184,17 +211,18 @@ export function HomeAutoJourney() {
       window.clearTimeout(releaseTimer);
       autoScrollRef.current = false;
     };
-  }, [pathname, playing, prefersReducedMotion, scrollToIndex]);
+  }, [currentIndex, pathname, playing, prefersReducedMotion, resolveTargets, scrollToIndex]);
 
   if (pathname !== "/" || prefersReducedMotion) return null;
 
   const label = playing
     ? holding
-      ? "Film resting"
-      : "Film playing"
+      ? "Journey resting"
+      : "Journey playing"
     : complete
       ? "Replay journey"
       : "Play journey";
+  const total = Math.max(1, targetsRef.current.length || 11);
 
   function toggle() {
     setPlaying((current) => {
@@ -222,26 +250,32 @@ export function HomeAutoJourney() {
       aria-pressed={playing}
       aria-label={label}
       onClick={toggle}
-      className="fixed bottom-5 right-4 z-[46] inline-flex min-h-12 items-center gap-2.5 rounded-full border border-white/12 bg-[#17140f]/86 px-4 text-[0.6rem] font-medium uppercase tracking-[0.16em] text-ivory/78 shadow-[0_16px_48px_rgba(0,0,0,0.3)] backdrop-blur-xl transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone md:bottom-6 md:right-5"
+      className="fixed bottom-4 right-4 z-[46] inline-flex min-h-10 items-center gap-2 rounded-full border border-white/12 bg-[#17140f]/82 px-3.5 text-[0.56rem] font-medium uppercase tracking-[0.15em] text-ivory/72 shadow-[0_14px_42px_rgba(0,0,0,0.26)] backdrop-blur-xl transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone md:bottom-5 md:left-1/2 md:right-auto md:-translate-x-1/2"
     >
-      <span aria-hidden="true" className="relative flex h-4 w-4 items-center justify-center text-sandstone">
+      <span
+        aria-hidden="true"
+        className="relative flex h-3.5 w-3.5 items-center justify-center text-sandstone"
+      >
         {playing ? (
           <>
-            <span className="h-3 w-px bg-current" />
-            <span className="ml-1 h-3 w-px bg-current" />
+            <span className="h-2.5 w-px bg-current" />
+            <span className="ml-1 h-2.5 w-px bg-current" />
           </>
         ) : (
-          <span className="ml-0.5 h-0 w-0 border-b-[5px] border-l-[8px] border-t-[5px] border-b-transparent border-l-current border-t-transparent" />
+          <span className="ml-0.5 h-0 w-0 border-b-[4px] border-l-[7px] border-t-[4px] border-b-transparent border-l-current border-t-transparent" />
         )}
         {playing && !holding && (
           <motion.span
-            className="absolute inset-0 rounded-full border border-sandstone/45"
-            animate={{ scale: [0.7, 1.55, 0.7], opacity: [0.85, 0, 0.85] }}
+            className="absolute inset-0 rounded-full border border-sandstone/40"
+            animate={{ scale: [0.72, 1.5, 0.72], opacity: [0.8, 0, 0.8] }}
             transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
           />
         )}
       </span>
       <span>{label}</span>
+      <span className="text-sandstone/70">
+        {String(activeIndex + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
+      </span>
     </button>
   );
 }
