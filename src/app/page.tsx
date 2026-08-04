@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MoodboardHome } from "@/sections/Home/MoodboardHome";
+import { HomeMediaDirector } from "@/sections/Home/HomeMediaDirector";
 import { site } from "@/data/site";
 import { faqs } from "@/data/faqs";
 
@@ -28,6 +29,7 @@ const faqStructuredData = {
 export default function Home() {
   return (
     <>
+      <HomeMediaDirector />
       <MoodboardHome />
       <script
         type="application/ld+json"
