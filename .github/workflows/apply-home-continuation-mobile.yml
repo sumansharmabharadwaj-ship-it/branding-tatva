@@ -1,0 +1,98 @@
+name: Apply homepage continuation mobile refinement
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-home-continuation-mobile.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-home:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+          sparse-checkout: src
+          sparse-checkout-cone-mode: true
+
+      - name: Refine mobile invitation and active film refs
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          constellation = Path("src/sections/Home/HomeFilmConstellation.tsx")
+          constellation_text = constellation.read_text()
+          reset_effect = '''  useEffect(() => {
+    videoRefs.current = [];
+  }, [activeChapter]);
+
+'''
+          if reset_effect not in constellation_text:
+              raise SystemExit("Expected constellation ref reset was not found")
+          constellation.write_text(constellation_text.replace(reset_effect, "", 1))
+
+          invitation = Path("src/sections/Home/FinalInvitation.tsx")
+          invitation_text = invitation.read_text()
+          body_block = '''              <p
+                className="mt-5 max-w-xl text-sm leading-relaxed text-ivory/72 sm:text-base"
+                style={{ textShadow: "0 1px 6px rgba(0,0,0,0.8)" }}
+              >
+                {invitation.body}
+              </p>
+
+              <div className="mt-7 flex flex-wrap items-center gap-4">'''
+          body_replacement = '''              <p
+                className="mt-5 max-w-xl text-sm leading-relaxed text-ivory/72 sm:text-base"
+                style={{ textShadow: "0 1px 6px rgba(0,0,0,0.8)" }}
+              >
+                {invitation.body}
+              </p>
+
+              <div className="mt-6 grid gap-2 md:hidden" aria-label="The next three strategic decisions">
+                {invitation.trail.map((step, index) => (
+                  <div
+                    key={step}
+                    className="flex items-center gap-3 rounded-xl border border-ivory/12 bg-ivory/[0.035] px-3 py-2.5"
+                  >
+                    <span
+                      className="text-[0.52rem] font-medium uppercase tracking-[0.15em]"
+                      style={{ color: invitation.accent }}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-xs leading-relaxed text-ivory/68">{step}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-7 flex flex-wrap items-center gap-4">'''
+          if body_block not in invitation_text:
+              raise SystemExit("Expected invitation body block was not found")
+          invitation_text = invitation_text.replace(body_block, body_replacement, 1)
+
+          panel_class = '''          <div className="relative min-h-[19rem] overflow-hidden border-t border-ivory/12 bg-black/10 p-5 sm:p-7 md:min-h-full md:border-l md:border-t-0">'''
+          panel_replacement = '''          <div className="relative hidden min-h-[19rem] overflow-hidden border-t border-ivory/12 bg-black/10 p-5 sm:p-7 md:block md:min-h-full md:border-l md:border-t-0">'''
+          if panel_class not in invitation_text:
+              raise SystemExit("Expected invitation map panel was not found")
+          invitation.write_text(invitation_text.replace(panel_class, panel_replacement, 1))
+          PY
+
+      - name: Commit the refinement
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/sections/Home/HomeFilmConstellation.tsx src/sections/Home/FinalInvitation.tsx
+          git commit -m "Refine the final invitation on mobile and preserve active film refs"
+          git push origin HEAD:reimagine-project-moves
