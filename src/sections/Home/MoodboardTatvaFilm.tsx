@@ -12,6 +12,7 @@ import {
 } from "framer-motion";
 import { elements, type Element } from "@/data/elements";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMotionMediaAllowed } from "@/hooks/useMotionMediaAllowed";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -58,19 +59,19 @@ const transformations: Record<
 function ActiveBackdrop({ element }: { element: Element }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const reduced = useHydratedReducedMotion();
+  const mediaAllowed = useMotionMediaAllowed();
   const visible = useInView(wrapRef, { margin: "80px 0px 80px 0px" });
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (reduced || !visible) {
-      video.pause();
-      return;
-    }
-    void video.play().catch(() => {});
-    return () => video.pause();
-  }, [element.slug, reduced, visible]);
+      const video = videoRef.current;
+      if (!video) return;
+      if (!mediaAllowed || !visible) {
+        video.pause();
+        return;
+      }
+      void video.play().catch(() => {});
+      return () => video.pause();
+    }, [element.slug, mediaAllowed, visible]);
 
   return (
     <div ref={wrapRef} className="absolute inset-0 overflow-hidden">
@@ -82,7 +83,7 @@ function ActiveBackdrop({ element }: { element: Element }) {
         className="object-cover"
         style={{ objectPosition: element.imagePosition ?? "center" }}
       />
-      {!reduced && element.video ? (
+      {mediaAllowed && element.video ? (
         <video
           ref={videoRef}
           key={element.video}

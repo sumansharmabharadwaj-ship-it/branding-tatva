@@ -16,6 +16,7 @@ import { Menu, X } from "lucide-react";
 import { Logo, LogoMark, Sprig } from "@/components/Logo";
 import { LinkButton } from "@/components/Button";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMotionMediaAllowed } from "@/hooks/useMotionMediaAllowed";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { projects } from "@/data/projects";
 import { elements, type Element } from "@/data/elements";
@@ -199,19 +200,19 @@ function AmbientVideo({
   const wrapRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
-  const reduced = useHydratedReducedMotion();
+  const mediaAllowed = useMotionMediaAllowed();
   const near = useInView(wrapRef, { margin: "120px 0px 120px 0px" });
 
   useEffect(() => {
-  const video = videoRef.current;
-  if (!video) return;
-  if (reduced || !near) {
-    video.pause();
-    return;
-  }
-  void video.play().catch(() => {});
-  return () => video.pause();
-}, [near, reduced, src]);
+      const video = videoRef.current;
+      if (!video) return;
+      if (!mediaAllowed || !near) {
+        video.pause();
+        return;
+      }
+      void video.play().catch(() => {});
+      return () => video.pause();
+    }, [mediaAllowed, near, src]);
 
   return (
     <div ref={wrapRef} className={`absolute inset-0 overflow-hidden ${className}`}>
@@ -224,7 +225,7 @@ function AmbientVideo({
         className="object-cover"
         style={{ objectPosition: position }}
       />
-      {!reduced && src ? (
+      {mediaAllowed && src ? (
         <video
           ref={videoRef}
           src={src}
