@@ -1,0 +1,288 @@
+name: Homepage readability and contrast
+
+on:
+  push:
+    branches:
+      - automation/home-readability-contrast-2026-08-04
+
+permissions:
+  contents: write
+
+jobs:
+  readability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out workflow carrier
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Wait for the preceding hardening gate
+        run: sleep 120
+
+      - name: Start from the latest homepage work branch
+        run: |
+          git fetch origin work/home-moodboard-film-2026-08-04
+          git checkout -B home-readability origin/work/home-moodboard-film-2026-08-04
+
+      - name: Strengthen readable text tokens
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          home = Path("src/sections/Home/MoodboardHome.tsx")
+          source = home.read_text()
+
+          # Accent hues remain botanical, but text applications use versions
+          # dark enough to survive at label sizes on parchment surfaces.
+          source = source.replace('  moss: "#748067",', '  moss: "#59664F",')
+          source = source.replace('  clay: "#9D6B4C",', '  clay: "#7F523A",')
+          source = source.replace('  gold: "#B4864C",', '  gold: "#76512A",')
+
+          source = source.replace('text-[#9D6B4C]', 'text-[#7F523A]')
+          source = source.replace('hover:text-[#9D6B4C]', 'hover:text-[#7F523A]')
+          source = source.replace('border-[#A47746]/35 bg-[#A47746]', 'border-[#7F5636]/46 bg-[#7F5636]')
+
+          low_ink = re.compile(r'text-\[#22231F\]/(?:34|36|38|42|44|46|48|50|54|56)')
+          body_ink = re.compile(r'text-\[#22231F\]/(?:58|60|62|68)')
+          source = low_ink.sub('text-[#22231F]/72', source)
+          source = body_ink.sub('text-[#22231F]/76', source)
+
+          soil_low = re.compile(r'text-soil/(?:34|36|38|42|44|46|48|50|54|56|58|60|62|68)')
+          source = soil_low.sub('text-soil/74', source)
+
+          dark_paper = re.compile(r'text-\[#F4EFE6\]/(?:38|42|44|46|48|50|54|56|58|60|62|68|72)')
+          source = dark_paper.sub('text-[#F4EFE6]/80', source)
+
+          ivory_low = re.compile(r'text-ivory/(?:38|42|44|46|48|50|54|56|58|60|62|68)')
+          source = ivory_low.sub('text-ivory/78', source)
+          source = source.replace('text-ivory/72', 'text-ivory/82')
+
+          home.write_text(source)
+
+          tatva = Path("src/sections/Home/MoodboardTatvaFilm.tsx")
+          tatva_source = tatva.read_text()
+
+          if "function readableAccent" not in tatva_source:
+              anchor = 'const CLAY = "#9D6B4C";\n'
+              addition = '''const CLAY = "#9D6B4C";
+
+function readableAccent(color: string) {
+  return `color-mix(in srgb, ${color} 54%, ${INK})`;
+}
+'''
+              if anchor not in tatva_source:
+                  raise SystemExit("Tatva accent helper anchor not found")
+              tatva_source = tatva_source.replace(anchor, addition, 1)
+
+          tatva_source = tatva_source.replace(
+              'style={{ color: element.color }}',
+              'style={{ color: readableAccent(element.color) }}',
+          )
+          tatva_source = tatva_source.replace(
+              'style={{ color: active.color }}',
+              'style={{ color: readableAccent(active.color) }}',
+          )
+          tatva_source = tatva_source.replace(
+              'style={{ color: index === activeIndex ? element.color : INK }}',
+              'style={{ color: index === activeIndex ? readableAccent(element.color) : INK }}',
+          )
+
+          tatva_source = re.sub(
+              r'text-\[#22231F\]/(?:34|36|38|42|44|46|48|50|54|56)',
+              'text-[#22231F]/72',
+              tatva_source,
+          )
+          tatva_source = re.sub(
+              r'text-\[#22231F\]/(?:58|60|62|68)',
+              'text-[#22231F]/76',
+              tatva_source,
+          )
+          tatva_source = tatva_source.replace('opacity-55', 'opacity-72')
+          tatva.write_text(tatva_source)
+          PY
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install temporary browser audit tooling
+        run: |
+          pnpm add --save-dev --ignore-workspace-root-check @playwright/test@1.59.1 @axe-core/playwright
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Build all routes
+        run: pnpm build
+
+      - name: Start production server
+        run: |
+          pnpm start > /tmp/home-readability-server.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/home-readability-server.log
+          exit 1
+
+      - name: Verify solid-surface contrast and structural accessibility
+        run: |
+          cat > /tmp/home-readability-audit.mjs <<'EOF'
+          import { chromium } from "@playwright/test";
+          import AxeBuilder from "@axe-core/playwright";
+
+          function channel(value) {
+            const normalized = value / 255;
+            return normalized <= 0.03928
+              ? normalized / 12.92
+              : Math.pow((normalized + 0.055) / 1.055, 2.4);
+          }
+
+          function rgb(hex) {
+            const value = hex.replace("#", "");
+            return [0, 2, 4].map((index) => Number.parseInt(value.slice(index, index + 2), 16));
+          }
+
+          function blend(foreground, background, alpha) {
+            return foreground.map((value, index) =>
+              Math.round(value * alpha + background[index] * (1 - alpha)),
+            );
+          }
+
+          function luminance(color) {
+            const [red, green, blue] = color.map(channel);
+            return red * 0.2126 + green * 0.7152 + blue * 0.0722;
+          }
+
+          function contrast(foreground, background) {
+            const a = luminance(foreground);
+            const b = luminance(background);
+            return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+          }
+
+          const paper = rgb("#F4EFE6");
+          const parchment = rgb("#EAE1D4");
+          const ink = rgb("#22231F");
+          const forest = rgb("#1E2A22");
+          const ivory = rgb("#F4EFE6");
+          const pairs = [
+            ["secondary ink on paper", blend(ink, paper, 0.72), paper],
+            ["secondary ink on parchment", blend(ink, parchment, 0.72), parchment],
+            ["body ink on paper", blend(ink, paper, 0.76), paper],
+            ["clay label on paper", rgb("#7F523A"), paper],
+            ["moss label on paper", rgb("#59664F"), paper],
+            ["gold label on paper", rgb("#76512A"), paper],
+            ["ivory supporting copy on forest", blend(ivory, forest, 0.8), forest],
+          ].map(([name, foreground, background]) => ({
+            name,
+            ratio: contrast(foreground, background),
+          }));
+          const failingPairs = pairs.filter((pair) => pair.ratio < 4.5);
+          if (failingPairs.length) {
+            throw new Error(`Solid-surface contrast failed: ${JSON.stringify(failingPairs)}`);
+          }
+
+          const browser = await chromium.launch({ headless: true });
+          const context = await browser.newContext({
+            viewport: { width: 1440, height: 1000 },
+            reducedMotion: "no-preference",
+            colorScheme: "light",
+          });
+          const page = await context.newPage();
+          await page.addInitScript(() => {
+            sessionStorage.setItem("bt-intro-seen", "1");
+            localStorage.setItem(
+              "bt-consent-v2",
+              JSON.stringify({ necessary: true, analytics: false, marketing: false }),
+            );
+          });
+          await page.goto("http://127.0.0.1:3000/", { waitUntil: "domcontentloaded" });
+          await page.evaluate(() => document.fonts.ready);
+          await page.waitForTimeout(1800);
+
+          const axe = await new AxeBuilder({ page })
+            .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+            .analyze();
+          const structuralBlocking = axe.violations.filter(
+            (violation) =>
+              violation.id !== "color-contrast" &&
+              (violation.impact === "critical" || violation.impact === "serious"),
+          );
+          if (structuralBlocking.length) {
+            console.error(JSON.stringify(structuralBlocking, null, 2));
+            throw new Error(`${structuralBlocking.length} structural accessibility violations`);
+          }
+
+          const contrastNodes = axe.violations
+            .filter((violation) => violation.id === "color-contrast")
+            .reduce((total, violation) => total + violation.nodes.length, 0);
+
+          const mobileContext = await browser.newContext({
+            viewport: { width: 390, height: 844 },
+            reducedMotion: "reduce",
+            colorScheme: "light",
+          });
+          const mobilePage = await mobileContext.newPage();
+          await mobilePage.addInitScript(() => {
+            sessionStorage.setItem("bt-intro-seen", "1");
+            localStorage.setItem(
+              "bt-consent-v2",
+              JSON.stringify({ necessary: true, analytics: false, marketing: false }),
+            );
+          });
+          await mobilePage.goto("http://127.0.0.1:3000/", { waitUntil: "domcontentloaded" });
+          await mobilePage.waitForTimeout(1200);
+          const mobileAxe = await new AxeBuilder({ page: mobilePage })
+            .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+            .analyze();
+          const mobileStructural = mobileAxe.violations.filter(
+            (violation) =>
+              violation.id !== "color-contrast" &&
+              (violation.impact === "critical" || violation.impact === "serious"),
+          );
+          if (mobileStructural.length) {
+            console.error(JSON.stringify(mobileStructural, null, 2));
+            throw new Error(`${mobileStructural.length} mobile structural accessibility violations`);
+          }
+
+          console.log(JSON.stringify({
+            verifiedPairs: pairs,
+            desktopContrastFindingNodes: contrastNodes,
+            mobileContrastFindingNodes: mobileAxe.violations
+              .filter((violation) => violation.id === "color-contrast")
+              .reduce((total, violation) => total + violation.nodes.length, 0),
+            desktopStructuralViolations: structuralBlocking.length,
+            mobileStructuralViolations: mobileStructural.length,
+          }, null, 2));
+
+          await mobileContext.close();
+          await context.close();
+          await browser.close();
+          EOF
+          node /tmp/home-readability-audit.mjs
+
+      - name: Commit the verified readability pass
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/sections/Home/MoodboardHome.tsx src/sections/Home/MoodboardTatvaFilm.tsx
+          if git diff --cached --quiet; then
+            echo "The readability pass is already present."
+            exit 0
+          fi
+          git commit -m "Sharpen homepage readability and secondary contrast"
+          git push origin HEAD:work/home-moodboard-film-2026-08-04
