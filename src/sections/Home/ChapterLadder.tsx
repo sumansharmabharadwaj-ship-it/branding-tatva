@@ -134,6 +134,7 @@ export function ChapterLadder() {
 
     const mainElement = document.getElementById("main-content");
     if (!mainElement) return;
+    const mainRoot: HTMLElement = mainElement;
 
     let frame = 0;
     let cancelled = false;
@@ -177,7 +178,7 @@ export function ChapterLadder() {
 
     function resolveTargets() {
       if (cancelled) return;
-      const resolved = resolveChapterTargets(mainElement);
+      const resolved = resolveChapterTargets(mainRoot);
       targetsRef.current = resolved.map((entry) => entry.target);
       setChapters(resolved.map((entry) => entry.chapter));
       schedulePositionUpdate();
@@ -187,7 +188,7 @@ export function ChapterLadder() {
 
     resolveTargets();
     observer = new MutationObserver(resolveTargets);
-    observer.observe(mainElement, { childList: true, subtree: true });
+    observer.observe(mainRoot, { childList: true, subtree: true });
 
     const unsubscribe = lenis?.on("scroll", schedulePositionUpdate);
     window.addEventListener("scroll", schedulePositionUpdate, { passive: true });
