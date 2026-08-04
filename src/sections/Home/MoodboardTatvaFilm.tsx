@@ -344,14 +344,14 @@ export function MoodboardTatvaFilm() {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(244,239,230,.9)_0%,rgba(244,239,230,.78)_43%,rgba(244,239,230,.18)_72%,rgba(24,34,28,.42)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(244,239,230,.08),transparent_44%,rgba(24,34,28,.3))]" />
 
-        <div className="absolute inset-x-6 top-7 z-30 flex items-center justify-between text-[0.52rem] uppercase tracking-[0.22em] sm:inset-x-10 lg:inset-x-14">
+        <div className="absolute inset-x-6 top-24 z-30 flex items-center justify-between text-[0.52rem] uppercase tracking-[0.22em] sm:inset-x-10 lg:inset-x-14 lg:top-28">
           <span className="text-[#22231F]/46">The five Tatvas</span>
           <span className="text-[#22231F]/46">
             {String(activeIndex + 1).padStart(2, "0")} / 05
           </span>
         </div>
 
-        <div className="relative z-10 mx-auto flex h-full max-w-[94rem] items-center px-6 sm:px-10 lg:px-14">
+        <div className="relative z-10 mx-auto flex h-full max-w-[94rem] items-center px-6 pb-20 pt-24 sm:px-10 lg:px-14 lg:pt-28">
           <div className="grid w-full gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
