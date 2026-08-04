@@ -44,7 +44,12 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     const syncVideos = (nextActive: number) => {
       videoRefs.current.forEach((video, index) => {
         if (!video) return;
-        const shouldPlay = sectionIsNear && (index === nextActive || index === Math.min(stages.length - 1, nextActive + 1));
+        const shouldPlay = sectionIsNear && index === nextActive;
+        const shouldWarm = sectionIsNear && index === nextActive + 1;
+        if (shouldWarm && video.preload === "none") {
+          video.preload = "metadata";
+          video.load();
+        }
         if (shouldPlay) {
           void video.play().catch(() => {});
         } else {
