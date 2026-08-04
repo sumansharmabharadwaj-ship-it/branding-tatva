@@ -40,8 +40,8 @@ const CHAPTERS: ChapterDefinition[] = [
   {
     id: "scope",
     label: "Right scope",
-    detail: "Find the intervention the business actually needs.",
-    match: "Need clarity?",
+    detail: "Find the smallest intervention capable of changing the business.",
+    match: "Clarity before scope",
   },
   {
     id: "studio",
@@ -77,7 +77,7 @@ const CHAPTERS: ChapterDefinition[] = [
     id: "questions",
     label: "Questions",
     detail: "Resolve the practical details before beginning.",
-    match: "Common questions",
+    match: "The practical questions",
   },
   {
     id: "invitation",
