@@ -5,6 +5,7 @@ import Image from "next/image";
 import {
   AnimatePresence,
   motion,
+  useInView,
   useMotionValueEvent,
   useScroll,
   useSpring,
@@ -55,18 +56,24 @@ const transformations: Record<
 };
 
 function ActiveBackdrop({ element }: { element: Element }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const reduced = useHydratedReducedMotion();
+  const visible = useInView(wrapRef, { margin: "80px 0px 80px 0px" });
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || reduced) return;
+    if (!video) return;
+    if (reduced || !visible) {
+      video.pause();
+      return;
+    }
     void video.play().catch(() => {});
     return () => video.pause();
-  }, [element.slug, reduced]);
+  }, [element.slug, reduced, visible]);
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div ref={wrapRef} className="absolute inset-0 overflow-hidden">
       <Image
         src={element.image}
         alt=""
