@@ -19,10 +19,11 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { projects } from "@/data/projects";
 import { elements, type Element } from "@/data/elements";
-import { process } from "@/data/process";
+import { process as projectProcess } from "@/data/process";
 import { credentials } from "@/data/about";
 import { faqs } from "@/data/faqs";
 import { navigation, site } from "@/data/site";
+import { MoodboardTatvaFilm } from "./MoodboardTatvaFilm";
 import { track } from "@/lib/analytics";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -773,250 +774,7 @@ function TatvaDiagram({ slug, color }: { slug: Element["slug"]; color: string })
 }
 
 function TatvaFilm() {
-  const ref = useRef<HTMLElement>(null);
-  const reduced = useHydratedReducedMotion();
-  const compact = useMediaQuery("(max-width: 767px), (max-height: 660px)");
-  const [activeIndex, setActiveIndex] = useState(0);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
-  });
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 28,
-    mass: 0.25,
-  });
-
-  useMotionValueEvent(scrollYProgress, "change", (value) => {
-    if (reduced || compact) return;
-    const next = Math.min(
-      elements.length - 1,
-      Math.floor(Math.min(0.999, value) * elements.length),
-    );
-    setActiveIndex(next);
-  });
-
-  const active = elements[activeIndex] ?? elements[0];
-  const change = tatvaTransformations[active.slug];
-
-  if (reduced || compact) {
-    return (
-      <section className="film-paper bg-[#F4EFE6] py-24 text-[#22231F] sm:py-32">
-        <div className="mx-auto max-w-[94rem] px-6 sm:px-10">
-          <div className="film-reveal max-w-4xl">
-            <p className="text-[0.6rem] uppercase tracking-[0.3em] text-[#9D6B4C]">
-              The five Tatvas
-            </p>
-            <h2 className="mt-5 font-display text-[clamp(3.3rem,7vw,6.8rem)] leading-[0.9] tracking-[-0.05em]">
-              Five decisions. One remembered brand.
-            </h2>
-          </div>
-
-          <div className="mt-12 space-y-6">
-            {elements.map((element, index) => {
-              const item = tatvaTransformations[element.slug];
-              return (
-                <article
-                  key={element.slug}
-                  className="film-reveal relative overflow-hidden rounded-[1.8rem] border border-[#22231F]/10 bg-[#EAE1D4]/70 p-6 sm:p-8"
-                >
-                  <div className="grid gap-8 sm:grid-cols-[0.84fr_1.16fr] sm:items-center">
-                    <div>
-                      <p
-                        className="text-[0.54rem] uppercase tracking-[0.22em]"
-                        style={{ color: element.color }}
-                      >
-                        Tatva {String(index + 1).padStart(2, "0")} · {item.verb}
-                      </p>
-                      <h3 className="mt-4 font-display text-5xl leading-none">
-                        {element.name.split(" · ")[0]}.
-                      </h3>
-                      <p className="mt-5 text-sm leading-relaxed text-[#22231F]/58">
-                        {element.meaning}
-                      </p>
-                    </div>
-
-                    <div className="grid gap-5">
-                      <div>
-                        <p className="text-[0.52rem] uppercase tracking-[0.18em] text-[#22231F]/34">
-                          Before
-                        </p>
-                        <p className="mt-2 font-display text-2xl leading-tight text-[#22231F]/58">
-                          {item.before}
-                        </p>
-                      </div>
-                      <div>
-                        <p
-                          className="text-[0.52rem] uppercase tracking-[0.18em]"
-                          style={{ color: element.color }}
-                        >
-                          After
-                        </p>
-                        <p className="mt-2 font-display text-2xl leading-tight">
-                          {item.after}
-                        </p>
-                      </div>
-                      <p className="border-t border-[#22231F]/9 pt-4 text-xs leading-relaxed text-[#22231F]/48">
-                        <span className="text-[#22231F]/74">
-                          Without {element.name.split(" · ")[0]}:
-                        </span>{" "}
-                        {item.consequence}
-                      </p>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section
-      ref={ref}
-      className="relative h-[430svh] bg-[#1E2A22] text-[#22231F]"
-    >
-      <div className="sticky top-0 h-svh min-h-[680px] overflow-hidden">
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.div
-            key={active.slug}
-            className="absolute inset-0"
-            initial={{ opacity: 0.16, scale: 1.08 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0.14, scale: 1.035 }}
-            transition={{ duration: 0.82, ease: EASE }}
-          >
-            <AmbientVideo
-              src={active.video}
-              poster={active.image}
-              position={active.imagePosition ?? "center"}
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(244,239,230,.96)_0%,rgba(244,239,230,.88)_43%,rgba(244,239,230,.24)_72%,rgba(24,34,28,.48)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(244,239,230,.18),transparent_42%,rgba(24,34,28,.36))]" />
-
-        <div className="absolute inset-x-6 top-7 z-30 flex items-center justify-between text-[0.52rem] uppercase tracking-[0.22em] sm:inset-x-10 lg:inset-x-14">
-          <span className="text-[#22231F]/46">The five Tatvas</span>
-          <span className="text-[#22231F]/46">
-            {String(activeIndex + 1).padStart(2, "0")} / 05
-          </span>
-        </div>
-
-        <div className="relative z-10 mx-auto flex h-full max-w-[94rem] items-center px-6 sm:px-10 lg:px-14">
-          <div className="grid w-full gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={`${active.slug}-copy`}
-                initial={{ opacity: 0.22, y: 36 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0.18, y: -24 }}
-                transition={{ duration: 0.62, ease: EASE }}
-              >
-                <p
-                  className="text-[0.58rem] font-medium uppercase tracking-[0.28em]"
-                  style={{ color: active.color }}
-                >
-                  {change.verb}
-                </p>
-                <h2 className="mt-5 font-display text-[clamp(4.7rem,10vw,10rem)] font-normal leading-[0.78] tracking-[-0.07em]">
-                  {active.name.split(" · ")[0].toLowerCase()}.
-                </h2>
-                <p className="mt-8 max-w-xl font-display text-[clamp(2rem,3.7vw,3.9rem)] leading-[1.02]">
-                  {active.poetic}
-                </p>
-                <p className="mt-6 max-w-xl text-sm leading-relaxed text-[#22231F]/58 sm:text-base">
-                  {active.meaning}
-                </p>
-              </motion.div>
-            </AnimatePresence>
-
-            <div className="grid gap-7 lg:grid-cols-[1fr_0.9fr] lg:items-center">
-              <div className="relative h-[20rem] overflow-hidden rounded-[1.8rem] border border-[#22231F]/10 bg-[#F5F0E8]/66 p-5 backdrop-blur-xl sm:h-[25rem]">
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.div
-                    key={`${active.slug}-diagram`}
-                    className="h-full w-full"
-                    initial={{ opacity: 0.2, scale: 0.91 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0.18, scale: 1.06 }}
-                    transition={{ duration: 0.64, ease: EASE }}
-                  >
-                    <TatvaDiagram slug={active.slug} color={active.color} />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={`${active.slug}-change`}
-                  initial={{ opacity: 0.22, x: 28 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0.18, x: -18 }}
-                  transition={{ duration: 0.52, ease: EASE }}
-                  className="rounded-[1.5rem] border border-[#22231F]/10 bg-[#F5F0E8]/72 p-5 backdrop-blur-xl sm:p-6"
-                >
-                  <div>
-                    <p className="text-[0.52rem] uppercase tracking-[0.18em] text-[#22231F]/34">
-                      Before
-                    </p>
-                    <p className="mt-3 font-display text-2xl leading-tight text-[#22231F]/58">
-                      {change.before}
-                    </p>
-                  </div>
-                  <div className="mt-6">
-                    <p
-                      className="text-[0.52rem] uppercase tracking-[0.18em]"
-                      style={{ color: active.color }}
-                    >
-                      After
-                    </p>
-                    <p className="mt-3 font-display text-2xl leading-tight">
-                      {change.after}
-                    </p>
-                  </div>
-                  <p className="mt-6 border-t border-[#22231F]/9 pt-5 text-xs leading-relaxed text-[#22231F]/48">
-                    <span className="text-[#22231F]/74">
-                      Without {active.name.split(" · ")[0]}:
-                    </span>{" "}
-                    {change.consequence}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </div>
-        </div>
-
-        <div className="absolute inset-x-6 bottom-6 z-30 sm:inset-x-10 lg:inset-x-14">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            {elements.map((element, index) => (
-              <span
-                key={element.slug}
-                className={`text-[0.48rem] uppercase tracking-[0.13em] transition-opacity ${
-                  index === activeIndex ? "opacity-100" : "opacity-30"
-                }`}
-                style={{
-                  color:
-                    index === activeIndex ? element.color : PALETTE.ink,
-                }}
-              >
-                {String(index + 1).padStart(2, "0")} {element.name.split(" · ")[0]}
-              </span>
-            ))}
-          </div>
-          <div className="h-px bg-[#22231F]/12">
-            <motion.div
-              className="h-full origin-left bg-[#9D6B4C]"
-              style={{ scaleX: progress }}
-            />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  return <MoodboardTatvaFilm />;
 }
 
 function ProcessMountain() {
@@ -1025,7 +783,7 @@ function ProcessMountain() {
   const draw=useSpring(scrollYProgress,{ stiffness:105,damping:26,mass:.3 });
 
   return <section ref={ref} className="film-paper relative overflow-hidden bg-[#EAE1D4] py-24 text-[#22231F] sm:py-32 lg:py-40"><div className="mx-auto max-w-[94rem] px-6 sm:px-10 lg:px-14"><div className="film-reveal mx-auto max-w-5xl text-center"><p className="text-[.6rem] font-medium uppercase tracking-[.3em] text-[#9D6B4C]">From valley to vantage point</p><h2 className="mt-5 font-display text-[clamp(3.3rem,7vw,7rem)] font-normal leading-[.9] tracking-[-.05em]">A project does not move forward. It moves deeper.</h2><p className="mx-auto mt-7 max-w-2xl text-sm leading-relaxed text-[#22231F]/58 sm:text-base">Each decision changes the altitude of the next. Skip one and the break appears later, where recognition should have compounded.</p></div>
-    <div className="relative mt-16"><svg viewBox="0 0 1000 1480" className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-[80%] -translate-x-1/2 lg:block" aria-hidden="true"><path d="M90 1370 C260 1270 184 1120 360 1020 C530 920 380 790 566 670 C720 570 566 430 760 330 C858 280 876 172 910 88" fill="none" stroke="#22231F" strokeOpacity=".09" strokeWidth="4"/><motion.path d="M90 1370 C260 1270 184 1120 360 1020 C530 920 380 790 566 670 C720 570 566 430 760 330 C858 280 876 172 910 88" fill="none" stroke="#9D6B4C" strokeWidth="5" strokeLinecap="round" style={{ pathLength:draw }}/></svg><div className="space-y-8 sm:space-y-10">{process.map((stage,index)=>{const left=index%2===0;return <article key={stage.stage} className={`film-reveal relative grid gap-6 lg:min-h-[13rem] lg:grid-cols-2 lg:items-center ${left?"":"lg:[&>*:first-child]:order-2"}`}><div className={left?"lg:pr-20":"lg:pl-20"}><motion.div className="group relative aspect-[16/8.7] overflow-hidden rounded-[1.6rem] border border-[#22231F]/10 bg-[#1E2A22] shadow-[0_22px_70px_-48px_rgba(34,35,31,.5)]" whileHover={{ y:-7 }} transition={{ duration:.45,ease:EASE }}>{stage.poster?<Image src={stage.poster} alt="" fill sizes="(min-width:1024px) 46vw, 100vw" className="object-cover transition-transform duration-1000 group-hover:scale-[1.055]"/>:null}<div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(23,31,25,.62))]"/><span className="absolute bottom-4 left-4 rounded-full border border-white/20 bg-black/20 px-4 py-2 font-display text-sm text-[#E1C89F] backdrop-blur-md">{String(index+1).padStart(2,"0")}</span></motion.div></div><div className={left?"lg:pl-20":"lg:pr-20 lg:text-right"}><p className="text-[.54rem] font-medium uppercase tracking-[.22em] text-[#9D6B4C]">Stage {String(index+1).padStart(2,"0")} · {stage.element}</p><h3 className="mt-4 font-display text-[clamp(3rem,6vw,5.8rem)] font-normal leading-[.9] tracking-[-.045em]">{stage.stage}</h3><p className={`mt-5 max-w-xl text-sm leading-relaxed text-[#22231F]/58 sm:text-base ${left?"":"lg:ml-auto"}`}>{stage.description}</p></div><motion.span className="absolute left-1/2 top-1/2 hidden h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#9D6B4C] bg-[#EAE1D4] lg:block" whileInView={{ scale:[.4,1.5,1] }} viewport={{ amount:.5 }} transition={{ duration:.7,ease:EASE }}/></article>})}</div></div>
+    <div className="relative mt-16"><svg viewBox="0 0 1000 1480" className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-[80%] -translate-x-1/2 lg:block" aria-hidden="true"><path d="M90 1370 C260 1270 184 1120 360 1020 C530 920 380 790 566 670 C720 570 566 430 760 330 C858 280 876 172 910 88" fill="none" stroke="#22231F" strokeOpacity=".09" strokeWidth="4"/><motion.path d="M90 1370 C260 1270 184 1120 360 1020 C530 920 380 790 566 670 C720 570 566 430 760 330 C858 280 876 172 910 88" fill="none" stroke="#9D6B4C" strokeWidth="5" strokeLinecap="round" style={{ pathLength:draw }}/></svg><div className="space-y-8 sm:space-y-10">{projectProcess.map((stage,index)=>{const left=index%2===0;return <article key={stage.stage} className={`film-reveal relative grid gap-6 lg:min-h-[13rem] lg:grid-cols-2 lg:items-center ${left?"":"lg:[&>*:first-child]:order-2"}`}><div className={left?"lg:pr-20":"lg:pl-20"}><motion.div className="group relative aspect-[16/8.7] overflow-hidden rounded-[1.6rem] border border-[#22231F]/10 bg-[#1E2A22] shadow-[0_22px_70px_-48px_rgba(34,35,31,.5)]" whileHover={{ y:-7 }} transition={{ duration:.45,ease:EASE }}>{stage.poster?<Image src={stage.poster} alt="" fill sizes="(min-width:1024px) 46vw, 100vw" className="object-cover transition-transform duration-1000 group-hover:scale-[1.055]"/>:null}<div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(23,31,25,.62))]"/><span className="absolute bottom-4 left-4 rounded-full border border-white/20 bg-black/20 px-4 py-2 font-display text-sm text-[#E1C89F] backdrop-blur-md">{String(index+1).padStart(2,"0")}</span></motion.div></div><div className={left?"lg:pl-20":"lg:pr-20 lg:text-right"}><p className="text-[.54rem] font-medium uppercase tracking-[.22em] text-[#9D6B4C]">Stage {String(index+1).padStart(2,"0")} · {stage.element}</p><h3 className="mt-4 font-display text-[clamp(3rem,6vw,5.8rem)] font-normal leading-[.9] tracking-[-.045em]">{stage.stage}</h3><p className={`mt-5 max-w-xl text-sm leading-relaxed text-[#22231F]/58 sm:text-base ${left?"":"lg:ml-auto"}`}>{stage.description}</p></div><motion.span className="absolute left-1/2 top-1/2 hidden h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#9D6B4C] bg-[#EAE1D4] lg:block" whileInView={{ scale:[.4,1.5,1] }} viewport={{ amount:.5 }} transition={{ duration:.7,ease:EASE }}/></article>})}</div></div>
     <div className="film-reveal mx-auto mt-16 max-w-4xl border-t border-[#22231F]/10 pt-12 text-center"><p className="text-[.56rem] uppercase tracking-[.22em] text-[#9D6B4C]">The summit is coherence</p><p className="mt-5 font-display text-[clamp(3rem,7vw,6.4rem)] leading-[.9]">Every decision now remembers the one before it.</p></div></div></section>;
 }
 
