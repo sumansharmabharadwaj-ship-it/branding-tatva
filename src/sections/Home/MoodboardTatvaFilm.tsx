@@ -9,6 +9,7 @@ import {
   useMotionValueEvent,
   useScroll,
   useSpring,
+  useTransform,
 } from "framer-motion";
 import { elements, type Element } from "@/data/elements";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -310,6 +311,12 @@ export function MoodboardTatvaFilm() {
     damping: 28,
     mass: 0.25,
   });
+  const foregroundOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.9, 0.975, 1],
+    [1, 1, 0, 0],
+  );
+  const foregroundY = useTransform(scrollYProgress, [0.9, 1], [0, -18]);
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     if (reduced || compact) return;
@@ -344,14 +351,17 @@ export function MoodboardTatvaFilm() {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(244,239,230,.9)_0%,rgba(244,239,230,.78)_43%,rgba(244,239,230,.18)_72%,rgba(24,34,28,.42)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(244,239,230,.08),transparent_44%,rgba(24,34,28,.3))]" />
 
-        <div className="absolute inset-x-6 top-24 z-30 flex items-center justify-between text-[0.52rem] uppercase tracking-[0.22em] sm:inset-x-10 lg:inset-x-14 lg:top-28">
+        <motion.div className="absolute inset-x-6 top-24 z-30 flex items-center justify-between text-[0.52rem] uppercase tracking-[0.22em] sm:inset-x-10 lg:inset-x-14 lg:top-28" style={{ opacity: foregroundOpacity }}>
           <span className="text-[#22231F]/46">The five Tatvas</span>
           <span className="text-[#22231F]/46">
             {String(activeIndex + 1).padStart(2, "0")} / 05
           </span>
-        </div>
+        </motion.div>
 
-        <div className="relative z-10 mx-auto flex h-full max-w-[94rem] items-start px-6 pb-20 pt-36 sm:px-10 lg:px-14 lg:pt-40">
+        <motion.div
+          className="relative z-10 mx-auto flex h-full max-w-[94rem] items-start px-6 pb-20 pt-36 sm:px-10 lg:px-14 lg:pt-40"
+          style={{ opacity: foregroundOpacity, y: foregroundY }}
+        >
           <div className="grid w-full gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -433,7 +443,7 @@ export function MoodboardTatvaFilm() {
               </AnimatePresence>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <div className="absolute inset-x-6 bottom-6 z-30 sm:inset-x-10 lg:inset-x-14">
           <div className="mb-4 flex items-center justify-between gap-3">
