@@ -62,10 +62,7 @@ const CHAPTER_FILMS: Partial<Record<ChapterId, readonly [Film, Film]>> = {
   ],
 };
 
-const PLACEMENTS: Record<
-  keyof typeof CHAPTER_FILMS,
-  readonly [string, string]
-> = {
+const PLACEMENTS: Partial<Record<ChapterId, readonly [string, string]>> = {
   diagnosis: [
     "-left-10 top-[31vh] aspect-[4/5] w-[clamp(6.5rem,7.5vw,8.75rem)] rounded-[1.5rem]",
     "-right-8 bottom-[19vh] aspect-square w-[clamp(5.75rem,6.5vw,7.25rem)] rounded-full",
@@ -207,7 +204,7 @@ export function HomeFilmConstellation() {
   if (pathname !== "/" || prefersReducedMotion) return null;
 
   const chapterFilms = CHAPTER_FILMS[activeChapter];
-  const placements = PLACEMENTS[activeChapter as keyof typeof PLACEMENTS];
+  const placements = PLACEMENTS[activeChapter];
   const films = chapterFilms
     ? showSecondary
       ? chapterFilms
