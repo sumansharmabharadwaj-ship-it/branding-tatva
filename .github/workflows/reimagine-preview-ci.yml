@@ -1,0 +1,40 @@
+name: Reimagine preview build gate
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reimagine-preview-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out preview branch
+        uses: actions/checkout@v4
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build preview
+        run: pnpm build
