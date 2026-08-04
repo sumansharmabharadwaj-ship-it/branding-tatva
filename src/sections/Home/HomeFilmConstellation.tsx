@@ -23,11 +23,10 @@ type Film = {
   label: string;
 };
 
-// Floating films are supplemental, never mandatory. The Clarity Lab,
-// Evidence, Studio, Elements, Process, Questions and closing invitation
-// already carry their own cinematic media, so extra windows would compete
-// with the argument. Only the two lighter explanatory chapters receive a
-// peripheral film fragment.
+// The global floating film is now reserved for the one chapter whose
+// diagram benefits from a peripheral nature cue. Every other chapter has
+// its own local media or motion system, so adding another window would
+// compete with the argument rather than enrich it.
 const CHAPTER_FILMS: Partial<Record<ChapterId, readonly [Film, Film]>> = {
   paths: [
     {
@@ -41,28 +40,12 @@ const CHAPTER_FILMS: Partial<Record<ChapterId, readonly [Film, Film]>> = {
       label: "Then give the business a coherent form.",
     },
   ],
-  framework: [
-    {
-      video: "/videos/higgsfield-process-express.mp4",
-      poster: "/images/higgsfield-process-express-poster.jpg",
-      label: "Expression is one force, never the whole brand.",
-    },
-    {
-      video: "/videos/higgsfield-process-stay.mp4",
-      poster: "/images/higgsfield-process-stay-poster.jpg",
-      label: "Consistency turns exposure into recognition.",
-    },
-  ],
 };
 
 const PLACEMENTS: Partial<Record<ChapterId, readonly [string, string]>> = {
   paths: [
     "-right-9 top-[24vh] aspect-[3/4] w-[clamp(6.5rem,7.5vw,8.5rem)] rounded-[1.5rem]",
     "-left-8 bottom-[18vh] aspect-square w-[clamp(5.5rem,6.2vw,7rem)] rounded-[1.35rem]",
-  ],
-  framework: [
-    "-left-9 bottom-[22vh] aspect-[5/4] w-[clamp(7.5rem,8.5vw,10rem)] rounded-[1.5rem]",
-    "-right-8 top-[27vh] aspect-[3/4] w-[clamp(5.75rem,6.5vw,7.25rem)] rounded-[1.35rem]",
   ],
 };
 
