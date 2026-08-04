@@ -52,12 +52,25 @@ export default async function BrandStudyPage({ params }: Props) {
     "@graph": [
       {
         "@type": "Article",
+        "@id": `${site.url}/work/studies/${study.slug}#article`,
         headline: `${study.brand} branding analysis: ${study.lens}`,
         about: study.brand,
         abstract: study.premise,
         articleSection: study.lens,
-        author: { "@type": "Person", name: "Suman Sharma" },
-        publisher: { "@type": "Organization", name: site.name, url: site.url },
+        // Referenced by id rather than restated inline: the root graph
+        // already defines both, and duplicating them creates two
+        // unlinked entities instead of one authority signal.
+        author: { "@id": `${site.url}/#person` },
+        publisher: { "@id": `${site.url}/#organization` },
+        isPartOf: { "@id": `${site.url}/#website` },
+        // These five studies were published together; the sitemap
+        // already records that date, so schema uses the same one rather
+        // than inventing a per study history that was never tracked.
+        datePublished: "2026-08-02",
+        dateModified: "2026-08-02",
+        image: `${site.url}/opengraph-image`,
+        inLanguage: "en",
+        mainEntityOfPage: `${site.url}/work/studies/${study.slug}`,
         url: `${site.url}/work/studies/${study.slug}`,
         description:
           "Independent brand strategy analysis of the public record. No client relationship with the brand analyzed.",
