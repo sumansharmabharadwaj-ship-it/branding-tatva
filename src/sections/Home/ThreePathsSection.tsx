@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
 
 const PATHS = [
   {
@@ -73,6 +78,7 @@ const SITUATION_TO_PATH: Record<string, number> = {
 export function ThreePathsSection() {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
+  const inView = useInView(sectionRef, { amount: 0.34 });
   const [autoPath, setAutoPath] = useState(0);
   const [heldPath, setHeldPath] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
@@ -81,36 +87,39 @@ export function ThreePathsSection() {
   const active = PATHS[shown];
 
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
+    function applySituation(value: string | null) {
+      const pathIndex = value ? SITUATION_TO_PATH[value] : undefined;
+      if (pathIndex === undefined) return;
+      setAutoPath(pathIndex);
+      setCarriedDiagnosis(true);
+    }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return;
-        try {
-          const saved = window.localStorage.getItem("bt-situation");
-          const pathIndex = saved ? SITUATION_TO_PATH[saved] : undefined;
-          if (pathIndex !== undefined) {
-            setAutoPath(pathIndex);
-            setCarriedDiagnosis(true);
-          }
-        } catch {}
-      },
-      { threshold: 0.2 },
-    );
+    function readSavedSituation() {
+      try {
+        applySituation(window.localStorage.getItem("bt-situation"));
+      } catch {}
+    }
 
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<{ situation?: string }>).detail;
+      applySituation(detail?.situation ?? null);
+    }
+
+    if (inView) readSavedSituation();
+    window.addEventListener("bt:situation", onSituation as EventListener);
+    return () => {
+      window.removeEventListener("bt:situation", onSituation as EventListener);
+    };
+  }, [inView]);
 
   useEffect(() => {
-    if (prefersReducedMotion || paused) return;
+    if (prefersReducedMotion || paused || !inView) return;
     const timer = window.setInterval(() => {
       setAutoPath((current) => (current + 1) % PATHS.length);
       setCarriedDiagnosis(false);
     }, AUTO_ADVANCE_MS);
     return () => window.clearInterval(timer);
-  }, [paused, prefersReducedMotion]);
+  }, [inView, paused, prefersReducedMotion]);
 
   function holdPath(index: number) {
     setHeldPath(index);
@@ -123,10 +132,12 @@ export function ThreePathsSection() {
     setPaused(false);
   }
 
+  const motionActive = inView && !prefersReducedMotion;
+
   return (
     <motion.section
       ref={sectionRef}
-      className="relative isolate overflow-hidden"
+      className={`${inView ? "is-awake" : "is-resting"} relative isolate overflow-hidden`}
       animate={{ backgroundColor: `${active.tint}12` }}
       transition={{ duration: prefersReducedMotion ? 0 : 0.9, ease: [0.22, 1, 0.36, 1] }}
       aria-labelledby="three-paths-title"
@@ -134,6 +145,8 @@ export function ThreePathsSection() {
       <style>{`
         @keyframes tatva-flow { to { stroke-dashoffset: -28; } }
         @keyframes tatva-breathe { 0%,100% { opacity: .4 } 50% { opacity: 1 } }
+        .is-resting .tatva-flow,
+        .is-resting .tatva-breathe { animation-play-state: paused !important; }
         @media (prefers-reduced-motion: reduce) {
           .tatva-flow, .tatva-breathe { animation: none !important; }
         }
@@ -143,31 +156,15 @@ export function ThreePathsSection() {
         aria-hidden="true"
         className="pointer-events-none absolute -left-44 top-[8%] -z-10 h-[30rem] w-[30rem] rounded-full blur-3xl"
         style={{ background: `radial-gradient(circle, ${active.tint}2B, transparent 68%)` }}
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: [0, 74, 0], y: [0, 34, 0], scale: [1, 1.12, 1] }
-        }
-        transition={
-          prefersReducedMotion
-            ? undefined
-            : { duration: 15, repeat: Infinity, ease: "easeInOut" }
-        }
+        animate={motionActive ? { x: [0, 74, 0], y: [0, 34, 0], scale: [1, 1.12, 1] } : undefined}
+        transition={motionActive ? { duration: 15, repeat: Infinity, ease: "easeInOut" } : undefined}
       />
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute -right-48 bottom-[-30%] -z-10 h-[34rem] w-[34rem] rounded-full blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(198,169,122,0.18), transparent 68%)" }}
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: [0, -58, 0], y: [0, -30, 0], scale: [1.06, 0.96, 1.06] }
-        }
-        transition={
-          prefersReducedMotion
-            ? undefined
-            : { duration: 18, repeat: Infinity, ease: "easeInOut" }
-        }
+        animate={motionActive ? { x: [0, -58, 0], y: [0, -30, 0], scale: [1.06, 0.96, 1.06] } : undefined}
+        transition={motionActive ? { duration: 18, repeat: Infinity, ease: "easeInOut" } : undefined}
       />
 
       <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
@@ -189,7 +186,7 @@ export function ThreePathsSection() {
             <p className="mt-6 text-xs uppercase tracking-[0.16em] text-foreground-secondary/70">
               {carriedDiagnosis
                 ? "Your earlier diagnosis is carried into the map."
-                : "The map keeps moving. Touch a path to hold it."}
+                : "The map wakes when it enters view. Touch a path to hold it."}
             </p>
           </div>
         </div>
@@ -272,12 +269,8 @@ export function ThreePathsSection() {
                   cy={150}
                   r={4}
                   fill={active.tint}
-                  animate={prefersReducedMotion ? undefined : { cx: [330, 650], opacity: [0, 1, 1, 0] }}
-                  transition={
-                    prefersReducedMotion
-                      ? undefined
-                      : { duration: 2.8, repeat: Infinity, repeatDelay: 0.8, ease: "easeInOut" }
-                  }
+                  animate={motionActive ? { cx: [330, 650], opacity: [0, 1, 1, 0] } : undefined}
+                  transition={motionActive ? { duration: 2.8, repeat: Infinity, repeatDelay: 0.8, ease: "easeInOut" } : undefined}
                 />
               </motion.g>
             </AnimatePresence>
@@ -366,16 +359,12 @@ export function ThreePathsSection() {
                     boxShadow: isActive ? `0 28px 72px -34px ${path.tint}99` : "none",
                   }}
                 >
-                  {isActive && (
+                  {isActive && motionActive && (
                     <motion.span
                       aria-hidden="true"
                       className="absolute -inset-y-8 -left-1/2 w-1/3 rotate-12 bg-white/35 blur-xl"
-                      animate={prefersReducedMotion ? undefined : { x: ["0%", "620%"] }}
-                      transition={
-                        prefersReducedMotion
-                          ? undefined
-                          : { duration: 4.8, repeat: Infinity, repeatDelay: 2.6, ease: "easeInOut" }
-                      }
+                      animate={{ x: ["0%", "620%"] }}
+                      transition={{ duration: 4.8, repeat: Infinity, repeatDelay: 2.6, ease: "easeInOut" }}
                     />
                   )}
                   <span className="relative flex items-center gap-4">
