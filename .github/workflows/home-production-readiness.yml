@@ -1,0 +1,451 @@
+name: Harden homepage production readiness
+
+on:
+  push:
+    branches:
+      - automation/home-production-readiness-2026-08-04
+
+permissions:
+  contents: write
+
+jobs:
+  harden-and-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check out production-readiness branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply source hardening
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_once(source: str, old: str, new: str, label: str) -> str:
+              if new in source and old not in source:
+                  return source
+              count = source.count(old)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one match, found {count}")
+              return source.replace(old, new, 1)
+
+          # Remove the final hooks warning without weakening video cleanup.
+          root = Path("src/sections/Process/RootSystem.tsx")
+          root_source = root.read_text()
+          if "const mountedVideos = videoRefs.current;" not in root_source:
+              marker = "    let frame = 0;\n    let sectionIsNear = false;"
+              root_source = replace_once(
+                  root_source,
+                  marker,
+                  "    const mountedVideos = videoRefs.current;\n\n" + marker,
+                  "RootSystem video ref snapshot",
+              )
+          root_source = replace_once(
+              root_source,
+              "      videoRefs.current.forEach((video) => video?.pause());",
+              "      mountedVideos.forEach((video) => video?.pause());",
+              "RootSystem cleanup",
+          )
+          root.write_text(root_source)
+
+          home = Path("src/sections/Home/MoodboardHome.tsx")
+          source = home.read_text()
+
+          # Remove the obsolete in-file Tatva implementation now that the
+          # isolated, tested MoodboardTatvaFilm owns that chapter.
+          source, removed_transformations = re.subn(
+              r'\nconst tatvaTransformations: Record<.*?\n};\n\nfunction AmbientVideo',
+              '\nfunction AmbientVideo',
+              source,
+              count=1,
+              flags=re.S,
+          )
+          if removed_transformations == 0 and "const tatvaTransformations" in source:
+              raise SystemExit("The obsolete Tatva transformation table could not be removed")
+
+          source, removed_diagram = re.subn(
+              r'\nfunction TatvaDiagram\(\{ slug, color \}: \{ slug: Element\["slug"\]; color: string \}\) \{.*?\n}\n\nfunction TatvaFilm\(\)',
+              '\nfunction TatvaFilm()',
+              source,
+              count=1,
+              flags=re.S,
+          )
+          if removed_diagram == 0 and "function TatvaDiagram" in source:
+              raise SystemExit("The obsolete Tatva diagram could not be removed")
+
+          source = source.replace('import { elements, type Element } from "@/data/elements";\n', "")
+          if source.count("useMediaQuery") == 1:
+              source = source.replace('import { useMediaQuery } from "@/hooks/useMediaQuery";\n', "")
+
+          # Give the full-screen navigation a proper focus lifecycle and dialog
+          # semantics. It now opens on its first link, locks the document behind
+          # it, and returns focus to the trigger after Escape.
+          state_anchor = '''  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);'''
+          state_new = '''  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const firstMenuLinkRef = useRef<HTMLAnchorElement>(null);'''
+          source = replace_once(source, state_anchor, state_new, "menu refs")
+
+          old_open_effect = '''  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);'''
+          new_open_effect = '''  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const focusFrame = requestAnimationFrame(() => firstMenuLinkRef.current?.focus());
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      requestAnimationFrame(() => triggerRef.current?.focus());
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => {
+      cancelAnimationFrame(focusFrame);
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);'''
+          source = replace_once(source, old_open_effect, new_open_effect, "menu focus lifecycle")
+
+          source = replace_once(
+              source,
+              '''            <button
+              type="button"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}''',
+              '''            <button
+              ref={triggerRef}
+              type="button"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              aria-controls="home-film-menu"''',
+              "menu trigger semantics",
+          )
+
+          source = replace_once(
+              source,
+              '''          <motion.div
+            initial={{ opacity: 0 }}''',
+              '''          <motion.div
+            id="home-film-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site navigation"
+            initial={{ opacity: 0 }}''',
+              "menu dialog semantics",
+          )
+
+          source = replace_once(
+              source,
+              '''                    <Link
+                      href={item.href}
+                      onClick={() => setOpen(false)}''',
+              '''                    <Link
+                      ref={index === 0 ? firstMenuLinkRef : undefined}
+                      href={item.href}
+                      aria-current={item.href === "/" ? "page" : undefined}
+                      onClick={() => setOpen(false)}''',
+              "menu link focus target",
+          )
+
+          # Announce the result of explicit user-controlled diagrams without
+          # making scroll-driven decorative motion noisy to screen readers.
+          source = replace_once(
+              source,
+              '<motion.div key={active.id} initial={{ opacity: .25, y: 18 }}',
+              '<motion.div key={active.id} aria-live="polite" initial={{ opacity: .25, y: 18 }}',
+              "diagnosis live region",
+          )
+          source = replace_once(
+              source,
+              '<motion.div key={`${active.id}-copy`} initial={{ opacity:.2,x:22 }}',
+              '<motion.div key={`${active.id}-copy`} aria-live="polite" initial={{ opacity:.2,x:22 }}',
+              "lens live region",
+          )
+
+          focus_css = '''    :is(header, main, footer) :is(a, button, summary):focus-visible {
+      outline: 2px solid #B4864C;
+      outline-offset: 4px;
+    }
+'''
+          if focus_css not in source:
+              css_anchor = '    @media (prefers-reduced-motion: reduce) {'
+              if css_anchor not in source:
+                  raise SystemExit("Homepage global CSS anchor was not found")
+              source = source.replace(css_anchor, focus_css + css_anchor, 1)
+
+          # Guard against the old implementation or stale imports returning.
+          forbidden = [
+              "const tatvaTransformations",
+              "function TatvaDiagram",
+              'import { elements, type Element } from "@/data/elements";',
+              'import { useMediaQuery } from "@/hooks/useMediaQuery";',
+          ]
+          remaining = [item for item in forbidden if item in source]
+          if remaining:
+              raise SystemExit(f"Obsolete homepage code remains: {remaining}")
+
+          home.write_text(source)
+          PY
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install project dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install temporary audit tooling
+        run: |
+          pnpm add --save-dev --ignore-workspace-root-check @playwright/test@1.59.1 @axe-core/playwright
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Build the complete site without warnings
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee /tmp/branding-tatva-production-build.log
+          if grep -q "react-hooks/exhaustive-deps" /tmp/branding-tatva-production-build.log; then
+            echo "A hooks warning remains in the production build."
+            exit 1
+          fi
+
+      - name: Start production server
+        run: |
+          pnpm start > /tmp/branding-tatva-production-server.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/branding-tatva-production-server.log
+          exit 1
+
+      - name: Run keyboard, accessibility, and stability audit
+        run: |
+          cat > /tmp/home-production-readiness.mjs <<'EOF'
+          import { chromium } from "@playwright/test";
+          import AxeBuilder from "@axe-core/playwright";
+
+          const browser = await chromium.launch({ headless: true });
+          const context = await browser.newContext({
+            viewport: { width: 1440, height: 1000 },
+            reducedMotion: "no-preference",
+            colorScheme: "light",
+          });
+          const page = await context.newPage();
+          const consoleErrors = [];
+          const pageErrors = [];
+          page.on("console", (message) => {
+            if (message.type() === "error") consoleErrors.push(message.text());
+          });
+          page.on("pageerror", (error) => pageErrors.push(error.message));
+
+          await page.addInitScript(() => {
+            sessionStorage.setItem("bt-intro-seen", "1");
+            localStorage.removeItem("bt-motion");
+            localStorage.setItem(
+              "bt-consent-v2",
+              JSON.stringify({
+                necessary: true,
+                analytics: false,
+                marketing: false,
+                updatedAt: "2026-08-04T00:00:00.000Z",
+              }),
+            );
+            window.__brandingTatvaCLS = 0;
+            new PerformanceObserver((list) => {
+              for (const entry of list.getEntries()) {
+                if (!entry.hadRecentInput) window.__brandingTatvaCLS += entry.value;
+              }
+            }).observe({ type: "layout-shift", buffered: true });
+          });
+
+          await page.goto("http://127.0.0.1:3000/", { waitUntil: "domcontentloaded" });
+          await page.evaluate(() => document.fonts.ready);
+          await page.waitForTimeout(2200);
+
+          const axe = await new AxeBuilder({ page })
+            .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+            .analyze();
+          const blockingViolations = axe.violations.filter(
+            (violation) => violation.impact === "critical" || violation.impact === "serious",
+          );
+          if (blockingViolations.length) {
+            console.error(JSON.stringify(blockingViolations, null, 2));
+            throw new Error(`${blockingViolations.length} serious or critical accessibility violations`);
+          }
+
+          const documentChecks = await page.evaluate(() => {
+            const ids = Array.from(document.querySelectorAll("[id]"))
+              .map((element) => element.id)
+              .filter(Boolean);
+            const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
+            const headings = Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6"))
+              .filter((element) => {
+                const style = getComputedStyle(element);
+                return style.display !== "none" && style.visibility !== "hidden";
+              })
+              .map((element) => ({
+                level: Number(element.tagName.slice(1)),
+                text: element.textContent?.trim().slice(0, 90) ?? "",
+              }));
+            const jumps = [];
+            for (let index = 1; index < headings.length; index += 1) {
+              if (headings[index].level - headings[index - 1].level > 1) {
+                jumps.push({ from: headings[index - 1], to: headings[index] });
+              }
+            }
+            const tinyTargets = Array.from(
+              document.querySelectorAll("a,button,summary,input,select,textarea"),
+            )
+              .filter((element) => {
+                const rect = element.getBoundingClientRect();
+                const style = getComputedStyle(element);
+                return (
+                  rect.width > 0 &&
+                  rect.height > 0 &&
+                  style.display !== "none" &&
+                  style.visibility !== "hidden" &&
+                  (rect.width < 24 || rect.height < 24)
+                );
+              })
+              .map((element) => ({
+                tag: element.tagName,
+                text: (element.textContent || element.getAttribute("aria-label") || "")
+                  .trim()
+                  .slice(0, 80),
+                rect: element.getBoundingClientRect().toJSON(),
+              }));
+            return {
+              h1Count: document.querySelectorAll("h1").length,
+              duplicates: [...new Set(duplicates)],
+              jumps,
+              tinyTargets,
+              overflow: Math.max(0, document.documentElement.scrollWidth - innerWidth),
+            };
+          });
+
+          if (documentChecks.h1Count !== 1) throw new Error(`Expected one h1, found ${documentChecks.h1Count}`);
+          if (documentChecks.duplicates.length) throw new Error(`Duplicate IDs: ${documentChecks.duplicates.join(", ")}`);
+          if (documentChecks.jumps.length) throw new Error(`Heading level jumps: ${JSON.stringify(documentChecks.jumps)}`);
+          if (documentChecks.tinyTargets.length) throw new Error(`Small interaction targets: ${JSON.stringify(documentChecks.tinyTargets)}`);
+          if (documentChecks.overflow > 2) throw new Error(`Horizontal overflow: ${documentChecks.overflow}px`);
+
+          const trigger = page.getByRole("button", { name: "Open menu" });
+          await trigger.focus();
+          await page.keyboard.press("Enter");
+          await page.getByRole("dialog", { name: "Site navigation" }).waitFor();
+          const menuState = await page.evaluate(() => ({
+            overflow: document.body.style.overflow,
+            activeText: document.activeElement?.textContent?.trim() ?? "",
+            activeTag: document.activeElement?.tagName ?? "",
+          }));
+          if (menuState.overflow !== "hidden") throw new Error("The open menu did not lock page scrolling");
+          if (menuState.activeTag !== "A" || !menuState.activeText) {
+            throw new Error(`The menu did not focus its first link: ${JSON.stringify(menuState)}`);
+          }
+
+          const menuAxe = await new AxeBuilder({ page })
+            .include("#home-film-menu")
+            .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+            .analyze();
+          const menuBlocking = menuAxe.violations.filter(
+            (violation) => violation.impact === "critical" || violation.impact === "serious",
+          );
+          if (menuBlocking.length) {
+            console.error(JSON.stringify(menuBlocking, null, 2));
+            throw new Error(`${menuBlocking.length} blocking menu accessibility violations`);
+          }
+
+          await page.keyboard.press("Escape");
+          await page.getByRole("dialog", { name: "Site navigation" }).waitFor({ state: "detached" });
+          const returnedFocus = await page.evaluate(() =>
+            document.activeElement?.getAttribute("aria-label"),
+          );
+          if (returnedFocus !== "Open menu") {
+            throw new Error(`Focus did not return to the menu trigger: ${returnedFocus}`);
+          }
+
+          await page.evaluate(() => {
+            const height = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+            scrollTo({ top: height * 0.72, behavior: "instant" });
+          });
+          await page.waitForTimeout(1000);
+          const cls = await page.evaluate(() => window.__brandingTatvaCLS ?? 0);
+          if (cls > 0.15) throw new Error(`Cumulative layout shift exceeded 0.15: ${cls}`);
+
+          if (pageErrors.length) throw new Error(`Page errors: ${JSON.stringify(pageErrors)}`);
+          const relevantConsoleErrors = consoleErrors.filter((message) => !message.includes("favicon"));
+          if (relevantConsoleErrors.length) {
+            throw new Error(`Console errors: ${JSON.stringify(relevantConsoleErrors)}`);
+          }
+
+          const reducedContext = await browser.newContext({
+            viewport: { width: 390, height: 844 },
+            reducedMotion: "reduce",
+            colorScheme: "light",
+          });
+          const reducedPage = await reducedContext.newPage();
+          await reducedPage.addInitScript(() => {
+            sessionStorage.setItem("bt-intro-seen", "1");
+            localStorage.setItem(
+              "bt-consent-v2",
+              JSON.stringify({ necessary: true, analytics: false, marketing: false }),
+            );
+          });
+          await reducedPage.goto("http://127.0.0.1:3000/", { waitUntil: "domcontentloaded" });
+          await reducedPage.waitForTimeout(1500);
+          const reducedVideos = await reducedPage.locator("main video").count();
+          if (reducedVideos !== 0) throw new Error(`Reduced motion mounted ${reducedVideos} video elements`);
+
+          console.log(JSON.stringify({
+            blockingAxeViolations: blockingViolations.length,
+            menuBlockingViolations: menuBlocking.length,
+            cumulativeLayoutShift: cls,
+            documentChecks,
+            consoleErrors: relevantConsoleErrors,
+            pageErrors,
+            reducedVideos,
+          }, null, 2));
+
+          await reducedContext.close();
+          await browser.close();
+          EOF
+          node /tmp/home-production-readiness.mjs
+
+      - name: Push verified source hardening to the homepage branch
+        run: |
+          git fetch origin work/home-moodboard-film-2026-08-04
+          git reset --mixed origin/work/home-moodboard-film-2026-08-04
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/sections/Process/RootSystem.tsx src/sections/Home/MoodboardHome.tsx
+          if git diff --cached --quiet; then
+            echo "The production-readiness hardening is already applied."
+            exit 0
+          fi
+          git commit -m "Harden homepage keyboard access and production cleanup"
+          git push origin HEAD:work/home-moodboard-film-2026-08-04
