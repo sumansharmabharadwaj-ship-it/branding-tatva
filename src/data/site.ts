@@ -34,7 +34,13 @@ export const navigation = [
   { label: "Contact", href: "/contact" },
 ] as const;
 
+// Glossary sits here rather than in the main nav: twelve definition
+// pages had exactly two inbound links sitewide, both breadcrumbs from
+// their own children, which made the most quotable content on the site
+// a near orphan. The footer renders on all thirteen routes, so this
+// gives every page an entry point without crowding the nav.
 export const footerLinks = [
+  { label: "Glossary", href: "/glossary" },
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
 ] as const;
