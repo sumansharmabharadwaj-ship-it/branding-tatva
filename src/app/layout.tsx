@@ -95,6 +95,32 @@ const structuredData = {
     {
       "@type": "Person",
       "@id": PERSON_ID,
+      // Experience and authority signals, taken from the real
+      // credentials in data/about.ts rather than restated by hand, so
+      // the schema can never drift from what the About page shows.
+      // Only the two formal degrees are emitted: internships and awards
+      // are real but are a poor fit for EducationalOccupationalCredential.
+      worksFor: { "@id": ORG_ID },
+      alumniOf: [
+        { "@type": "CollegeOrUniversity", name: "Amity University" },
+        { "@type": "CollegeOrUniversity", name: "University of Delhi" },
+      ],
+      hasCredential: [
+        {
+          "@type": "EducationalOccupationalCredential",
+          credentialCategory: "degree",
+          educationalLevel: "Masters",
+          name: "M.A. Clinical Psychology",
+          recognizedBy: { "@type": "CollegeOrUniversity", name: "Amity University" },
+        },
+        {
+          "@type": "EducationalOccupationalCredential",
+          credentialCategory: "degree",
+          educationalLevel: "Bachelors",
+          name: "B.A. (Hons) English Literature",
+          recognizedBy: { "@type": "CollegeOrUniversity", name: "University of Delhi" },
+        },
+      ],
       name: site.founder,
       url: site.url,
       jobTitle: "Brand Strategist",
