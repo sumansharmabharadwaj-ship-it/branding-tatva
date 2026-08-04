@@ -34,7 +34,8 @@ jobs:
             if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then break; fi
             sleep 1
           done
-          cat > /tmp/reduced-video-diagnostic.mjs <<'EOF'
+          mkdir -p .qa
+          cat > .qa/reduced-video-diagnostic.mjs <<'EOF'
           import { chromium } from "@playwright/test";
 
           const browser = await chromium.launch({ headless: true });
@@ -101,4 +102,4 @@ jobs:
           await browser.close();
           if (playing.length > 0) process.exit(1);
           EOF
-          node /tmp/reduced-video-diagnostic.mjs
+          node .qa/reduced-video-diagnostic.mjs
