@@ -4,26 +4,34 @@ import { useEffect } from "react";
 
 // The sitewide video budget enforcer (SCROLL_OS §17–§18). The
 // scroll fatigue audit measured nineteen videos decoding at once on
-// Home: useVideoFadeIn pauses its own consumers offscreen, but the
-// stage managed components (element rows, pinned stages, card loops)
-// each own their playback and nothing global enforced the budget.
-//
-// The warden watches every video on the page, including ones mounted
-// later, and PAUSES any playing video that leaves the viewport (25%
-// margin so resumes stay ahead of the reveal). It only ever resumes
-// a video it paused itself (marked with a data attribute), so stage
-// managers that deliberately pause an onscreen video keep full
-// authority — the warden never fights a component's own choices, it
-// only stops offscreen decode work.
+// Home: section-level observers pause their own consumers offscreen,
+// while this final guard prevents independently managed clips from
+// escaping the page's playback budget.
 const MARGIN = "5% 0px";
 const FLAG = "wardenPaused";
+const HOME_HIDDEN_FLAG = "homeMotionHidden";
+const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
 
 export function VideoWarden() {
   useEffect(() => {
+    const reducedMotion = window.matchMedia(REDUCED_QUERY);
+
+    const shouldStayPaused = (video: HTMLVideoElement) =>
+      reducedMotion.matches ||
+      document.documentElement.dataset.motion === "reduced" ||
+      Boolean(video.dataset[HOME_HIDDEN_FLAG]) ||
+      video.style.visibility === "hidden";
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           const video = entry.target as HTMLVideoElement;
+
+          if (shouldStayPaused(video)) {
+            video.pause();
+            continue;
+          }
+
           if (!entry.isIntersecting) {
             if (!video.paused) {
               video.dataset[FLAG] = "1";
@@ -35,25 +43,53 @@ export function VideoWarden() {
           }
         }
       },
-      { rootMargin: MARGIN }
+      { rootMargin: MARGIN },
     );
 
     const watched = new WeakSet<HTMLVideoElement>();
     function watchAll() {
-      document.querySelectorAll("video").forEach((v) => {
-        if (!watched.has(v)) {
-          watched.add(v);
-          observer.observe(v);
+      document.querySelectorAll("video").forEach((video) => {
+        if (!watched.has(video)) {
+          watched.add(video);
+          observer.observe(video);
         }
       });
     }
+
+    const pauseForPreference = () => {
+      if (
+        reducedMotion.matches ||
+        document.documentElement.dataset.motion === "reduced"
+      ) {
+        document.querySelectorAll<HTMLVideoElement>("video").forEach((video) =>
+          video.pause(),
+        );
+      }
+    };
+
     watchAll();
-    const mutations = new MutationObserver(watchAll);
+    pauseForPreference();
+
+    const mutations = new MutationObserver(() => {
+      watchAll();
+      pauseForPreference();
+    });
     mutations.observe(document.body, { childList: true, subtree: true });
+
+    if (typeof reducedMotion.addEventListener === "function") {
+      reducedMotion.addEventListener("change", pauseForPreference);
+    } else {
+      reducedMotion.addListener(pauseForPreference);
+    }
 
     return () => {
       observer.disconnect();
       mutations.disconnect();
+      if (typeof reducedMotion.removeEventListener === "function") {
+        reducedMotion.removeEventListener("change", pauseForPreference);
+      } else {
+        reducedMotion.removeListener(pauseForPreference);
+      }
     };
   }, []);
 
