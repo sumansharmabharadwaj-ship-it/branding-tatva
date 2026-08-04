@@ -194,7 +194,7 @@ export function ThreePathsSection() {
           </div>
         </div>
 
-        <div className="flex items-center px-4 pb-6 sm:px-8 lg:py-14">
+        <div className="hidden items-center px-4 pb-6 sm:px-8 md:flex lg:py-14">
           <svg
             viewBox="0 0 900 300"
             className="h-auto w-full"
@@ -297,6 +297,47 @@ export function ThreePathsSection() {
         </div>
       </div>
 
+      <div className="px-6 pb-8 md:hidden">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={`mobile-${shown}`}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 12, filter: "blur(5px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.55 }}
+            className="rounded-2xl border border-soil/12 bg-white/58 p-5 shadow-[0_20px_55px_rgba(39,34,30,0.08)] backdrop-blur-sm"
+          >
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em]" style={{ color: active.tint }}>
+                Path in focus · {active.n}
+              </p>
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: active.tint, boxShadow: `0 0 14px ${active.tint}88` }} />
+            </div>
+            <p className="mt-3 font-display text-2xl leading-tight text-soil">{active.start}</p>
+            <div className="mt-5 flex items-center gap-2">
+              {active.route.map((step, index) => (
+                <div key={step} className="contents">
+                  <span className="rounded-full border border-soil/10 bg-white/60 px-3 py-2 text-[0.6rem] font-medium uppercase tracking-[0.1em] text-soil/75">
+                    {step}
+                  </span>
+                  {index < active.route.length - 1 && (
+                    <motion.span
+                      aria-hidden="true"
+                      className="h-px min-w-3 flex-1 origin-left"
+                      style={{ backgroundColor: active.tint }}
+                      initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: index * 0.18 }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="mt-5 text-sm leading-relaxed text-foreground-secondary">{active.result}</p>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
       <div className="relative px-6 pb-14 sm:px-10">
         <ul className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-3">
           {PATHS.map((path, index) => {
@@ -317,6 +358,7 @@ export function ThreePathsSection() {
                   onMouseLeave={releasePath}
                   onFocus={() => holdPath(index)}
                   onBlur={releasePath}
+                  onTouchStart={() => holdPath(index)}
                   className="group relative flex h-full flex-col overflow-hidden rounded-2xl border p-7 transition-all duration-500"
                   style={{
                     borderColor: isActive ? `${path.tint}66` : "rgba(39,34,30,0.10)",
