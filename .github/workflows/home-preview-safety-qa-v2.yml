@@ -32,7 +32,7 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
           pnpm add --save-dev --ignore-workspace-root-check @playwright/test@1.59.1
-          pnpm exec playwright install --with-deps chromium
+          google-chrome --version
 
       - name: Build the complete site
         run: pnpm build
@@ -56,7 +56,7 @@ jobs:
           import { chromium } from "@playwright/test";
           import fs from "node:fs/promises";
 
-          const browser = await chromium.launch({ headless: true });
+          const browser = await chromium.launch({ headless: true, channel: "chrome" });
           const results = [];
 
           for (const setup of [
