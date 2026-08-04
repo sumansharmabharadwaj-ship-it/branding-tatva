@@ -1,21 +1,33 @@
-import { useEffect, useState } from "react";
+"use client";
 
-// matchMedia-based rather than a resize listener read at mount, so a
-// narrow viewport never briefly reports `false` (and mounts something
-// meant to be skipped on mobile) before a first resize event fires.
+import { useCallback, useSyncExternalStore } from "react";
+
+/**
+ * Hydration-safe media query hook.
+ *
+ * The server snapshot stays false so server markup and the first
+ * hydrated render agree. useSyncExternalStore then reads the real
+ * viewport immediately and keeps the result subscribed to changes.
+ */
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
+  const subscribe = useCallback(
+    (notify: () => void) => {
+      const media = window.matchMedia(query);
+      const listener = () => notify();
 
-  useEffect(() => {
-    const mql = window.matchMedia(query);
-    setMatches(mql.matches);
+      if (typeof media.addEventListener === "function") {
+        media.addEventListener("change", listener);
+        return () => media.removeEventListener("change", listener);
+      }
 
-    function onChange(e: MediaQueryListEvent) {
-      setMatches(e.matches);
-    }
-    mql.addEventListener("change", onChange);
-    return () => mql.removeEventListener("change", onChange);
-  }, [query]);
+      media.addListener(listener);
+      return () => media.removeListener(listener);
+    },
+    [query],
+  );
 
-  return matches;
+  const getSnapshot = useCallback(() => window.matchMedia(query).matches, [query]);
+  const getServerSnapshot = useCallback(() => false, []);
+
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
