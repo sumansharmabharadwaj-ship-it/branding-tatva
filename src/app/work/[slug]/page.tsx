@@ -96,6 +96,26 @@ export default async function CaseStudyPage({ params }: Props) {
     creator: { "@id": `${site.url}/#organization` },
     keywords: project.services.join(", "),
     url: `${site.url}/work/${project.slug}`,
+    "@id": `${site.url}/work/${project.slug}#work`,
+    isPartOf: { "@id": `${site.url}/#website` },
+    mainEntityOfPage: `${site.url}/work/${project.slug}`,
+    inLanguage: "en",
+    image: project.heroPoster,
+    // The recorded outcome, in the field an answer engine reads for a
+    // summary of what happened.
+    abstract: project.outcome,
+    // The verified figures were the most citable thing on the site and
+    // appeared in no schema at all. They are emitted exactly as
+    // recorded in data/projects.ts, never restated or rounded.
+    ...(project.stats?.length
+      ? {
+          additionalProperty: project.stats.map((stat) => ({
+            "@type": "PropertyValue",
+            name: stat.label,
+            value: stat.value,
+          })),
+        }
+      : {}),
   };
 
   // Audit found this always picked the first `featured` project that
