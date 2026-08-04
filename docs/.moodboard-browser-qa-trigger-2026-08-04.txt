@@ -1,3 +1,3 @@
 Run the moodboard homepage through desktop, short-laptop, mobile, and reduced-motion browser checks before the main preview branch is updated.
 
-Final gate: explicitly emulate the native motion preference in every browser context and verify the complete poster-first contract.
+Clean final gate: run the single retained browser audit against the tidied work branch after all temporary repair workflows were removed.
