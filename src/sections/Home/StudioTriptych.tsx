@@ -15,21 +15,21 @@ const DISCIPLINES = [
     number: "01",
     eyebrow: "M.A. Clinical Psychology",
     title: "Read the tension",
-    line: "Audience behaviour is treated as evidence, not a demographic label. The work looks for the friction people feel before they can explain it.",
+    line: "Audience behaviour is treated as evidence, rather than a demographic label. The work looks for the friction people feel before they can explain it.",
     result: "Audience tension + perception map",
     video: "/videos/higgsfield-process-listen.mp4",
     poster: "/images/higgsfield-process-listen-poster.jpg",
     diagram: ["Notice", "Interpret", "Choose"],
     proofLabel: "Applied in HerbalCart",
     proofLine:
-      "A supplement range being read through a purely herbal lens was repositioned as a modern, supplement-first wellness brand.",
+      "A supplement range being read through a purely herbal lens was repositioned as a modern, supplement first wellness brand.",
     proofHref: "/work/herbalcart",
   },
   {
     number: "02",
     eyebrow: "B.A. English Literature",
     title: "Give it language",
-    line: "Voice, narrative, rhythm, and symbolism turn a strategic idea into language people can recognise, repeat, and carry beyond the page.",
+    line: "Voice, narrative, rhythm, and symbolism turn a committed idea into language people can recognise, repeat, and carry beyond the page.",
     result: "Verbal identity + narrative spine",
     video: "/videos/higgsfield-idea-sketch.mp4",
     poster: "/images/higgsfield-idea-sketch.jpg",
@@ -50,7 +50,7 @@ const DISCIPLINES = [
     diagram: ["Decision", "System", "Recognition"],
     proofLabel: "Applied in Dr. Haley Nutrition",
     proofLine:
-      "A quality-first content system moved engagement from 0.71% to 2.81% while the account posted less.",
+      "A quality first content system moved engagement from 0.71% to 2.81% while the account posted less.",
     proofHref: "/work/dr-haley-nutrition",
   },
 ] as const;
@@ -248,7 +248,7 @@ export function StudioTriptych() {
             About Suman
           </p>
           <h2 className="mt-3 max-w-2xl font-display text-[clamp(2.2rem,4vw,4rem)] font-normal leading-[1.02] text-soil">
-            One mind. Three disciplines. No hand-off.
+            One mind. Three disciplines. One accountable author.
           </h2>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-foreground-secondary sm:text-base">
             Psychology reveals what people notice. Literature shapes what they remember. Strategy makes both commercially useful.
@@ -401,7 +401,7 @@ export function StudioTriptych() {
               Direct authorship
             </p>
             <p className="mt-2 font-display text-2xl leading-tight">
-              No account-manager relay. No anonymous production layer.
+              The same person hears the problem, makes the decisions, writes the language, and directs the work.
             </p>
             <p className="mt-3 text-xs leading-relaxed text-ivory/62">
               Every engagement is led directly by Suman, from the first diagnosis to the system delivered at the end.
