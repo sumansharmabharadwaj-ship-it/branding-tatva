@@ -1,3 +1,3 @@
 This temporary marker opens the pull-request build gate that repairs and verifies the moodboard-led homepage before updating the preview branch.
 
-Diagnostic pass 2: inspect the prerender macro failure after isolating the Five Tatvas film.
+Diagnostic pass 3: preserve the global process object while importing the project journey data under an explicit name.
