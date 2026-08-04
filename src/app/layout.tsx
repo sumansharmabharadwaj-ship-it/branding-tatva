@@ -131,7 +131,7 @@ export default function RootLayout({
           {/* MotionPreference wraps the page tree so every Framer
               component's useReducedMotion() honors the visitor's own
               Full/Reduced choice (footer toggle), alongside the OS
-              preference it already respected. The homepage chapter
+              preference it already respected. The eleven-rung homepage
               ladder lives inside the same provider so its scroll and
               motion behavior follow those preferences too. */}
           <MotionPreferenceProvider>
