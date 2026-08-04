@@ -225,10 +225,6 @@ export function HomeFilmConstellation() {
   }, [pathname]);
 
   useEffect(() => {
-    videoRefs.current = [];
-  }, [activeChapter]);
-
-  useEffect(() => {
     if (pathname !== "/" || prefersReducedMotion) return;
     const videos = videoRefs.current.filter(
       (video): video is HTMLVideoElement => Boolean(video),
