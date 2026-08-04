@@ -7,6 +7,7 @@ import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { VideoWarden } from "@/components/VideoWarden";
 import { MotionPreferenceProvider } from "@/components/MotionPreference";
+import { ChapterLadder } from "@/sections/Home/ChapterLadder";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({
@@ -130,16 +131,19 @@ export default function RootLayout({
           {/* MotionPreference wraps the page tree so every Framer
               component's useReducedMotion() honors the visitor's own
               Full/Reduced choice (footer toggle), alongside the OS
-              preference it already respected. */}
-          <MotionPreferenceProvider>{children}</MotionPreferenceProvider>
+              preference it already respected. The homepage chapter
+              ladder lives inside the same provider so its scroll and
+              motion behavior follow those preferences too. */}
+          <MotionPreferenceProvider>
+            {children}
+            <ChapterLadder />
+          </MotionPreferenceProvider>
         </SmoothScrollProvider>
         <PageLoadVeil />
-        {/* Cockpit reduction (Suman's review, item 7): the floating
-            brand badge and the cursor illumination were removed — one
-            adaptive header plus one optional sound control is the whole
-            persistent layer now. SectionJumpNav survives only on
-            Services, where it acts as the contextual chapter indicator
-            inside a genuinely long scene. */}
+        {/* Cockpit reduction still holds: the homepage ladder is a slim
+            contextual navigator rather than another floating brand badge.
+            It appears only on the homepage, explains the active chapter,
+            and collapses to one compact control on small screens. */}
         <AmbientAudio />
         <VideoWarden />
         <Analytics />
