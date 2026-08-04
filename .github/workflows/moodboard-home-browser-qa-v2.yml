@@ -1,0 +1,296 @@
+name: Moodboard homepage browser QA v2
+
+on:
+  pull_request:
+    branches:
+      - work/home-moodboard-film-2026-08-04
+
+permissions:
+  contents: read
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install project dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install temporary browser tooling
+        run: |
+          pnpm add --save-dev --ignore-workspace-root-check @playwright/test@1.59.1
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Build the site
+        run: pnpm build
+
+      - name: Write browser matrix
+        run: |
+          mkdir -p .qa/moodboard-v2 artifacts-v2/screenshots
+          cat > .qa/moodboard-v2/playwright.config.ts <<'EOF'
+          import { defineConfig } from "@playwright/test";
+
+          export default defineConfig({
+            testDir: ".",
+            testMatch: "home.spec.ts",
+            timeout: 100_000,
+            expect: { timeout: 15_000 },
+            workers: 1,
+            retries: 0,
+            reporter: [["line"]],
+            use: {
+              baseURL: "http://127.0.0.1:3000",
+              browserName: "chromium",
+              headless: true,
+              colorScheme: "light",
+              locale: "en-US",
+              trace: "retain-on-failure",
+              screenshot: "only-on-failure",
+            },
+          });
+          EOF
+
+          cat > .qa/moodboard-v2/home.spec.ts <<'EOF'
+          import { expect, test, type Page } from "@playwright/test";
+          import fs from "node:fs/promises";
+          import path from "node:path";
+
+          const artifacts = path.resolve(process.cwd(), "artifacts-v2");
+
+          async function prepare(page: Page) {
+            await page.addInitScript(() => {
+              sessionStorage.setItem("bt-intro-seen", "1");
+              localStorage.setItem(
+                "bt-consent-v2",
+                JSON.stringify({
+                  necessary: true,
+                  analytics: false,
+                  marketing: false,
+                  updatedAt: "2026-08-04T00:00:00.000Z",
+                }),
+              );
+            });
+          }
+
+          async function runAudit(
+            page: Page,
+            label: string,
+            viewport: { width: number; height: number },
+            reduced = false,
+          ) {
+            const consoleErrors: string[] = [];
+            const pageErrors: string[] = [];
+            page.on("console", (message) => {
+              if (message.type() === "error") consoleErrors.push(message.text());
+            });
+            page.on("pageerror", (error) => pageErrors.push(error.message));
+
+            await page.setViewportSize(viewport);
+            await prepare(page);
+            await page.goto("/", { waitUntil: "domcontentloaded" });
+            await page.evaluate(() => document.fonts.ready);
+            await page.waitForTimeout(2_000);
+
+            await expect(page.locator("h1")).toHaveCount(1);
+            await expect(page.getByText("Attention can spike. Recognition has to grow.")).toBeVisible();
+            await expect(page.getByText("Which sentence feels a little too familiar?")).toBeVisible();
+            await expect(page.getByText("The result is the last thing you should look at.")).toBeVisible();
+            await expect(page.getByText("The work meets the business wherever it stands.")).toBeVisible();
+            await expect(page.getByText("A project does not move forward. It moves deeper.")).toBeVisible();
+
+            const fonts = await page.evaluate(() => ({
+              display: getComputedStyle(document.querySelector("h1")!).fontFamily,
+              body: getComputedStyle(document.body).fontFamily,
+            }));
+            expect(fonts.display.toLowerCase()).toContain("newsreader");
+            expect(fonts.body.toLowerCase()).toContain("dm sans");
+
+            const size = await page.evaluate(() => ({
+              scrollWidth: document.documentElement.scrollWidth,
+              viewportWidth: window.innerWidth,
+              height: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight),
+            }));
+            expect(Math.max(0, size.scrollWidth - size.viewportWidth)).toBeLessThanOrEqual(2);
+
+            const fractions = [0, 0.06, 0.13, 0.21, 0.30, 0.39, 0.49, 0.59, 0.69, 0.79, 0.89, 0.98];
+            const blankFrames: Array<{ fraction: number; text: string }> = [];
+            let maxPlayingVideos = 0;
+
+            for (let index = 0; index < fractions.length; index += 1) {
+              const fraction = fractions[index];
+              await page.evaluate((position) => {
+                const height = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+                window.scrollTo({
+                  top: Math.max(0, (height - window.innerHeight) * position),
+                  behavior: "instant",
+                });
+              }, fraction);
+              await page.waitForTimeout(700);
+
+              const sample = await page.evaluate(() => {
+                const root = document.querySelector("main") ?? document.body;
+                const visibleText = Array.from(
+                  root.querySelectorAll<HTMLElement>("h1,h2,h3,p,a,button,summary,figcaption,span"),
+                )
+                  .filter((element) => {
+                    const rect = element.getBoundingClientRect();
+                    const style = getComputedStyle(element);
+                    return (
+                      rect.bottom > 0 &&
+                      rect.top < window.innerHeight &&
+                      rect.right > 0 &&
+                      rect.left < window.innerWidth &&
+                      style.display !== "none" &&
+                      style.visibility !== "hidden" &&
+                      Number.parseFloat(style.opacity || "1") > 0.06
+                    );
+                  })
+                  .map((element) => (element.innerText || element.textContent || "").trim())
+                  .filter(Boolean)
+                  .join(" ")
+                  .replace(/\s+/g, " ")
+                  .slice(0, 700);
+
+                const playing = Array.from(root.querySelectorAll<HTMLVideoElement>("video")).filter(
+                  (video) => !video.paused && !video.ended && video.readyState >= 2,
+                ).length;
+
+                return { visibleText, playing };
+              });
+
+              maxPlayingVideos = Math.max(maxPlayingVideos, sample.playing);
+              if (sample.visibleText.length < 24) {
+                blankFrames.push({ fraction, text: sample.visibleText });
+              }
+
+              if ([0, 5, 8, 11].includes(index)) {
+                await page.screenshot({
+                  path: path.join(
+                    artifacts,
+                    "screenshots",
+                    `${label}-${String(index).padStart(2, "0")}-${Math.round(fraction * 100)}.png`,
+                  ),
+                  animations: "disabled",
+                });
+              }
+            }
+
+            expect(blankFrames, "No sampled viewport may become a blank film frame").toEqual([]);
+            expect(maxPlayingVideos, "At most two scene films may decode together").toBeLessThanOrEqual(2);
+
+            if (reduced) {
+              const playing = await page.locator("main video").evaluateAll((videos) =>
+                videos.filter((item) => {
+                  const video = item as HTMLVideoElement;
+                  return !video.paused && video.readyState >= 2;
+                }).length,
+              );
+              expect(playing, "Reduced motion must pause every film").toBe(0);
+              const visibleVideos = await page.locator("main video").evaluateAll((videos) =>
+                videos.filter((item) => getComputedStyle(item as HTMLElement).visibility !== "hidden").length,
+              );
+              expect(visibleVideos, "Reduced motion must expose the poster, not a video frame").toBe(0);
+            }
+
+            await page.getByRole("button", { name: /People see us, but every version feels different/i }).click();
+            await expect(
+              page.getByText("Attention is arriving, but nothing stable is being stored in memory."),
+            ).toBeVisible();
+            await page.getByRole("tab", { name: "Name" }).click();
+            await expect(
+              page.getByText("Which words survive after the explanation disappears?"),
+            ).toBeVisible();
+
+            expect(pageErrors, "No uncaught page errors").toEqual([]);
+            expect(
+              consoleErrors.filter((message) => !message.includes("favicon")),
+              "No browser console errors",
+            ).toEqual([]);
+
+            await fs.mkdir(path.join(artifacts, "audit-json"), { recursive: true });
+            await fs.writeFile(
+              path.join(artifacts, "audit-json", `${label}.json`),
+              JSON.stringify(
+                {
+                  label,
+                  fonts,
+                  pageHeight: size.height,
+                  blankFrames,
+                  horizontalOverflow: Math.max(0, size.scrollWidth - size.viewportWidth),
+                  maxPlayingVideos,
+                  consoleErrors,
+                  pageErrors,
+                },
+                null,
+                2,
+              ),
+            );
+          }
+
+          test("desktop film", async ({ page }) => {
+            await runAudit(page, "desktop", { width: 1440, height: 1000 });
+          });
+
+          test("short laptop film", async ({ page }) => {
+            await runAudit(page, "short-laptop", { width: 1366, height: 768 });
+          });
+
+          test("mobile authored film", async ({ page }) => {
+            await runAudit(page, "mobile", { width: 390, height: 844 });
+          });
+
+          test.describe("reduced motion", () => {
+            test.use({ reducedMotion: "reduce" });
+
+            test("desktop complete story", async ({ page }) => {
+              await runAudit(page, "reduced-desktop", { width: 1440, height: 1000 }, true);
+            });
+
+            test("mobile complete story", async ({ page }) => {
+              await runAudit(page, "reduced-mobile", { width: 390, height: 844 }, true);
+            });
+          });
+          EOF
+
+      - name: Start production server
+        run: |
+          pnpm start > /tmp/branding-tatva-server-v2.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/branding-tatva-server-v2.log
+          exit 1
+
+      - name: Run browser matrix
+        run: pnpm exec playwright test --config=.qa/moodboard-v2/playwright.config.ts
+
+      - name: Print server log
+        if: always()
+        run: cat /tmp/branding-tatva-server-v2.log || true
+
+      - name: Upload definitive QA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: moodboard-home-browser-qa-v2
+          path: artifacts-v2
+          if-no-files-found: warn
+          retention-days: 3
