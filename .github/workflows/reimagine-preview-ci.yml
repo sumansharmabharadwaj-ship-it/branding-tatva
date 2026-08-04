@@ -53,27 +53,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Stabilize the Process video reference
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          path = Path("src/sections/Process/RootSystem.tsx")
-          text = path.read_text()
-          before = "  useEffect(() => {\n    const currentVideo = videoRef.current;\n    if (!currentVideo || prefersReducedMotion) return;\n\n    function syncPlayback() {\n      if (inView && !document.hidden) void currentVideo.play().catch(() => {});\n      else currentVideo.pause();\n    }\n\n    syncPlayback();\n    document.addEventListener(\"visibilitychange\", syncPlayback);\n    return () => {\n      document.removeEventListener(\"visibilitychange\", syncPlayback);\n      currentVideo.pause();\n    };\n  }, [active, inView, prefersReducedMotion]);"
-          after = "  useEffect(() => {\n    if (prefersReducedMotion) return;\n    const videoAtEffectStart = videoRef.current;\n\n    function syncPlayback() {\n      const video = videoRef.current;\n      if (!video) return;\n      if (inView && !document.hidden) void video.play().catch(() => {});\n      else video.pause();\n    }\n\n    syncPlayback();\n    document.addEventListener(\"visibilitychange\", syncPlayback);\n    return () => {\n      document.removeEventListener(\"visibilitychange\", syncPlayback);\n      videoAtEffectStart?.pause();\n    };\n  }, [active, inView, prefersReducedMotion]);"
-          if before not in text:
-              raise SystemExit("Expected RootSystem playback block was not found")
-          path.write_text(text.replace(before, after, 1))
-          PY
-
-      - name: Export the patched Process source
-        uses: actions/upload-artifact@v4
-        with:
-          name: patched-root-system
-          path: src/sections/Process/RootSystem.tsx
-          if-no-files-found: error
-          retention-days: 1
-
       - name: Build preview
         run: pnpm build
