@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ShieldCheck } from "lucide-react";
 import { Analytics } from "@vercel/analytics/next";
 
 export const CONSENT_STORAGE_KEY = "bt-consent-v2";
@@ -248,9 +249,14 @@ export function CookieConsent() {
         <button
           type="button"
           onClick={reopenPreferences}
-          className="fixed bottom-3 left-3 z-90 rounded-full border border-soil/20 bg-ivory/90 px-3 py-2 text-[0.65rem] font-medium uppercase tracking-[0.12em] text-soil shadow-sm backdrop-blur-md transition-colors hover:border-soil/40 sm:bottom-5 sm:left-5"
+          aria-label="Open privacy preferences"
+          className="group fixed right-[4.15rem] z-90 flex h-11 w-11 items-center justify-center rounded-full border border-[#22231F]/12 bg-[#F5F0E8]/92 text-[#22231F] shadow-[0_12px_34px_-18px_rgba(34,35,31,.65)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#A47746]/45 hover:text-[#8E603D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A47746]/55"
+          style={{ bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
         >
-          Cookie preferences
+          <ShieldCheck size={17} strokeWidth={1.7} aria-hidden="true" />
+          <span className="pointer-events-none absolute bottom-[calc(100%+0.55rem)] right-0 hidden whitespace-nowrap rounded-full border border-[#22231F]/10 bg-[#F5F0E8]/96 px-3 py-1.5 text-[0.55rem] font-medium uppercase tracking-[0.14em] text-[#22231F]/72 opacity-0 shadow-sm backdrop-blur-xl transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 sm:block">
+            Privacy
+          </span>
         </button>
       )}
     </>
