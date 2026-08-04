@@ -7,6 +7,7 @@ import { ElementsSection } from "@/sections/Elements";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
+import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
@@ -93,8 +94,11 @@ export default function Home() {
         <HomeSceneBridge family="air" from="#F2F0E8" to="#F2F0E8" />
         <ThreePathsSection />
         <HomeSceneBridge family="confluence" from="#F2F0E8" to="#F2F0E8" />
-        <TatvaStrip />
-        <HomeSceneBridge family="space" from="#F2F0E8" to="#27221E" />
+        <div>
+          <TatvaStrip />
+          <TatvaSystemLab />
+        </div>
+        <HomeSceneBridge family="space" from="#E9E4D9" to="#27221E" />
 
         {/* The full five-element sequence follows the framework directly.
             The separate Earth-only excavation remains in the codebase for
