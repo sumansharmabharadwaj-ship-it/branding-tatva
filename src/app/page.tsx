@@ -13,7 +13,6 @@ import { ElementsSection } from "@/sections/Elements";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
-import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { CinematicHero } from "@/sections/Hero";
 import { VisitorRecognition } from "@/sections/Home/VisitorRecognition";
@@ -87,8 +86,12 @@ export default function Home() {
         <StudioTriptych />
         <ThreePathsSection />
         <TatvaStrip />
-        <BrandFoundationScene />
 
+        {/* The full five-element sequence now follows the framework
+            immediately. The separate Earth-only excavation remains in the
+            codebase for a deeper Services/About use, but no longer makes
+            Home teach the same foundation twice or adds an unlabelled
+            320vh detour between the ladder's Framework and Elements rungs. */}
         <div id="elements" className="scroll-mt-24">
           <ElementsSection elements={elements} />
         </div>
@@ -116,13 +119,13 @@ export default function Home() {
               <Reveal>
                 <div className="rounded-2xl border border-border/50 bg-background-elevated/92 px-6 py-10 shadow-elevation-md backdrop-blur-sm sm:px-14 sm:py-16">
                   <p className="text-xs font-medium uppercase tracking-[0.2em] text-clay">
-                    Before the work begins
+                    Before we work together
                   </p>
                   <h2 className="mt-3 text-display-sm font-display font-normal text-soil">
-                    The practical questions, answered plainly.
+                    The practical questions, answered without fog.
                   </h2>
                   <p className="mt-4 text-sm leading-relaxed text-foreground-secondary">
-                    The section unfolds on its own. Open anything that matters and it pauses while you read.
+                    Scope, implementation, timing, and distance should feel clear before a first conversation. The answers unfold in sequence, and pause the moment you choose one.
                   </p>
                   <div className="mt-8">
                     <FAQ
