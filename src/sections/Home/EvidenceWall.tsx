@@ -110,7 +110,7 @@ export function EvidenceWall() {
                         {p.cardImage && (
                           <Image
                             src={p.cardImage}
-                            alt=""
+                            alt={`${p.title}: ${p.industry} brand work`}
                             fill
                             sizes="288px"
                             style={{ objectFit: "cover" }}

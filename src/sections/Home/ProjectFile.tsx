@@ -79,7 +79,7 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
             ) : (
               poster && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={poster} alt="" className="h-full w-full object-cover" />
+                <img src={poster} alt={`${project.title}: ${project.industry}`} className="h-full w-full object-cover" />
               )
             )}
             <div className="absolute inset-0" style={{ backgroundColor: `${project.accent}26` }} />
