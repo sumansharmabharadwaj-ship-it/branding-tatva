@@ -346,11 +346,11 @@ export function ClarityCTA() {
             <p className="mt-2 text-sm leading-6 text-ivory/50">No pitch deck. No pressure to choose the largest scope.</p>
           </div>
           <Link
-            href="/contact"
+            href="#evidence-wall-title"
             className="group inline-flex min-h-12 shrink-0 items-center justify-center gap-4 rounded-full border px-7 text-xs font-medium uppercase tracking-[0.18em] transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             style={{ borderColor: "rgba(198,169,122,0.78)", color: GOLD, outlineColor: GOLD }}
           >
-            Discuss the right starting point
+            See how decisions become proof
             <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
           </Link>
         </footer>
