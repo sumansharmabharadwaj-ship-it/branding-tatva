@@ -27,6 +27,9 @@ const CSP = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  // QA branch only: package a self-contained server so the audited build
+  // can be inspected while Vercel's daily deployment quota is exhausted.
+  output: "standalone",
   images: {
     formats: ["image/avif", "image/webp"],
   },
