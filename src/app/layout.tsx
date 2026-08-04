@@ -10,6 +10,7 @@ import { MotionPreferenceProvider } from "@/components/MotionPreference";
 import { ChapterLadder } from "@/sections/Home/ChapterLadder";
 import { HomeFilmConstellation } from "@/sections/Home/HomeFilmConstellation";
 import { HomeAutoJourney } from "@/sections/Home/HomeAutoJourney";
+import { HomeChapterDirector } from "@/sections/Home/HomeChapterDirector";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-display", display: "swap" });
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <MotionPreferenceProvider>
             {children}
             <HomeFilmConstellation />
+            <HomeChapterDirector />
             <HomeAutoJourney />
             <ChapterLadder />
           </MotionPreferenceProvider>
