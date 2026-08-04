@@ -1,8 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import { useReducedMotion } from "framer-motion";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
+import { useInView, useReducedMotion } from "framer-motion";
 import type { ProcessStage } from "@/data/process";
 
 type StageMeta = {
@@ -102,6 +109,10 @@ const SEGMENTS = [
   { d: "M478 238 C540 230 565 198 612 178", to: 5 },
 ];
 
+const AUTO_ADVANCE_MS = 5600;
+const MANUAL_HOLD_MS = 15000;
+const HOVER_PREVIEW_MS = 3200;
+
 function fallbackMeta(index: number): StageMeta {
   return {
     becomes: "A clearer decision.",
@@ -114,20 +125,85 @@ function fallbackMeta(index: number): StageMeta {
 
 export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const prefersReducedMotion = Boolean(useReducedMotion());
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const pauseUntilRef = useRef(0);
+  const holdTimerRef = useRef(0);
+  const inView = useInView(sectionRef, { amount: 0.32 });
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [holding, setHolding] = useState(false);
+
+  const pauseAutoplay = useCallback((duration = MANUAL_HOLD_MS) => {
+    pauseUntilRef.current = Date.now() + duration;
+    setHolding(true);
+    window.clearTimeout(holdTimerRef.current);
+    holdTimerRef.current = window.setTimeout(() => {
+      if (Date.now() >= pauseUntilRef.current) setHolding(false);
+    }, duration + 120);
+  }, []);
+
+  const chooseStage = useCallback(
+    (index: number, duration = MANUAL_HOLD_MS) => {
+      setActive(index);
+      pauseAutoplay(duration);
+    },
+    [pauseAutoplay],
+  );
 
   useEffect(() => {
-    if (prefersReducedMotion || paused || stages.length < 2) return;
+    if (prefersReducedMotion || !inView || stages.length < 2) return;
+
     const timer = window.setInterval(() => {
+      if (document.hidden || Date.now() < pauseUntilRef.current) return;
+      setHolding(false);
       setActive((current) => (current + 1) % stages.length);
-    }, 5600);
+    }, AUTO_ADVANCE_MS);
+
     return () => window.clearInterval(timer);
-  }, [paused, prefersReducedMotion, stages.length]);
+  }, [inView, prefersReducedMotion, stages.length]);
 
   useEffect(() => {
     if (active >= stages.length) setActive(0);
   }, [active, stages.length]);
+
+  useEffect(() => {
+    function onChapter(event: Event) {
+      const detail = (event as CustomEvent<{ id?: string }>).detail;
+      if (detail?.id !== "process") return;
+      setActive(0);
+      setHolding(false);
+      pauseUntilRef.current = Date.now() + 900;
+    }
+
+    window.addEventListener("bt:home-chapter", onChapter as EventListener);
+    return () => {
+      window.removeEventListener("bt:home-chapter", onChapter as EventListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || prefersReducedMotion) return;
+
+    function syncPlayback() {
+      if (inView && !document.hidden) void video.play().catch(() => {});
+      else video.pause();
+    }
+
+    syncPlayback();
+    document.addEventListener("visibilitychange", syncPlayback);
+    return () => {
+      document.removeEventListener("visibilitychange", syncPlayback);
+      video.pause();
+    };
+  }, [active, inView, prefersReducedMotion]);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(holdTimerRef.current);
+    },
+    [],
+  );
 
   const graphPoints = useMemo(() => {
     const count = Math.max(2, Math.min(stages.length, STAGE_META.length));
@@ -152,12 +228,14 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
 
   return (
     <section
+      ref={sectionRef}
       data-project-journey="true"
-      className="project-journey"
+      className={`project-journey ${inView ? "is-awake" : "is-resting"}`}
       style={sectionStyle}
       aria-labelledby="project-journey-title"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onPointerDown={() => pauseAutoplay()}
+      onTouchStart={() => pauseAutoplay()}
+      onFocusCapture={() => pauseAutoplay()}
     >
       <div className="project-journey__media" aria-hidden="true">
         {stage.poster && (
@@ -167,8 +245,9 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
             style={{ backgroundImage: `url(${stage.poster})` }}
           />
         )}
-        {stage.video && !prefersReducedMotion && (
+        {stage.video && !prefersReducedMotion && inView && (
           <video
+            ref={videoRef}
             key={`video-${active}-${stage.video}`}
             src={stage.video}
             poster={stage.poster}
@@ -196,7 +275,13 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               Six decisions turn an unclear business into a recognisable system. Select a stage and the whole
               architecture changes with it, so the process explains itself before a call ever has to.
             </p>
-            <span>{paused ? "Tour paused · choose any stage" : "The diagram advances on its own"}</span>
+            <span>
+              {holding
+                ? "Tour resting while you read"
+                : inView
+                  ? "The diagram advances on its own"
+                  : "The diagram rests outside the viewport"}
+            </span>
           </div>
         </header>
 
@@ -217,9 +302,8 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               aria-controls="project-stage-panel"
               tabIndex={active === index ? 0 : -1}
               className={`project-journey__stage-button${active === index ? " is-active" : ""}`}
-              onClick={() => setActive(index)}
-              onFocus={() => setPaused(true)}
-              onBlur={() => setPaused(false)}
+              onClick={() => chooseStage(index)}
+              onFocus={() => pauseAutoplay()}
             >
               <span>{String(index + 1).padStart(2, "0")}</span>
               <strong>{item.stage}</strong>
@@ -263,7 +347,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                 <p>Decision architecture</p>
                 <h3>One choice feeds the next.</h3>
               </div>
-              <span>Hover or select a node</span>
+              <span>Hover previews briefly · select to hold</span>
             </div>
 
             <div className="project-journey__map" aria-label="Interactive project flow diagram">
@@ -280,7 +364,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                     style={{ strokeDashoffset: active >= segment.to ? 0 : 1 }}
                   />
                 ))}
-                {!prefersReducedMotion && active > 0 && (
+                {!prefersReducedMotion && inView && active > 0 && (
                   <circle r="3.5" fill={accent} className="project-journey__traveller">
                     <animateMotion
                       dur="2.4s"
@@ -300,8 +384,9 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                     type="button"
                     className={`project-journey__node${reached ? " is-reached" : ""}${active === index ? " is-active" : ""}`}
                     style={{ left: `${(node.x / 700) * 100}%`, top: `${(node.y / 340) * 100}%` }}
-                    onClick={() => setActive(index)}
-                    onMouseEnter={() => setActive(index)}
+                    onClick={() => chooseStage(index)}
+                    onMouseEnter={() => chooseStage(index, HOVER_PREVIEW_MS)}
+                    onFocus={() => pauseAutoplay()}
                     aria-label={`Show ${item.stage} stage`}
                   >
                     <i aria-hidden="true" />
@@ -398,6 +483,12 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
           background: #141210;
           color: #f4efe6;
           padding: clamp(5.5rem, 8vw, 8.25rem) 0 clamp(5rem, 7vw, 7.25rem);
+        }
+
+        .project-journey.is-resting .project-journey__orbit,
+        .project-journey.is-resting .project-journey__intro span::before,
+        .project-journey.is-resting .project-journey__node.is-active i {
+          animation-play-state: paused !important;
         }
 
         .project-journey::before {
