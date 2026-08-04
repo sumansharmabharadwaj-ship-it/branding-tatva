@@ -11,6 +11,7 @@ import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
 import { FrameworkJourneyNudge } from "@/sections/Home/FrameworkJourneyNudge";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
+import { HomeChoiceMemory } from "@/sections/Home/HomeChoiceMemory";
 import { HomeOpeningSignal } from "@/sections/Home/HomeOpeningSignal";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { HomeSceneBridge } from "@/sections/Home/HomeSceneBridge";
@@ -50,6 +51,7 @@ export default function Home() {
   return (
     <>
       <Header transparent />
+      <HomeChoiceMemory />
       <main id="main-content">
         <div className="relative">
           <CinematicHero
