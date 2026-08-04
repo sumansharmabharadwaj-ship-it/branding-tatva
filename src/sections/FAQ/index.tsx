@@ -55,6 +55,21 @@ export function FAQ({ questions, autoplay = true, intervalMs = 7200 }: FAQProps 
     return () => window.clearInterval(timer);
   }, [autoplay, held, intervalMs, items.length, prefersReducedMotion, visible]);
 
+  useEffect(() => {
+    function onChapter(event: Event) {
+      const detail = (event as CustomEvent<{ id?: string }>).detail;
+      if (detail?.id !== "questions" || !autoplay) return;
+      window.clearTimeout(holdTimerRef.current);
+      setHeld(false);
+      setOpenIndex(items.length ? 0 : null);
+    }
+
+    window.addEventListener("bt:home-chapter", onChapter as EventListener);
+    return () => {
+      window.removeEventListener("bt:home-chapter", onChapter as EventListener);
+    };
+  }, [autoplay, items.length]);
+
   useEffect(
     () => () => {
       window.clearTimeout(holdTimerRef.current);
@@ -74,7 +89,7 @@ export function FAQ({ questions, autoplay = true, intervalMs = 7200 }: FAQProps 
       ref={rootRef}
       className="divide-y divide-border"
       data-faq-autoplay={autoplay ? "true" : undefined}
-      onPointerEnter={pauseAutoplay}
+      onPointerDown={pauseAutoplay}
       onFocusCapture={pauseAutoplay}
       onTouchStart={pauseAutoplay}
     >
@@ -171,7 +186,7 @@ export function FAQ({ questions, autoplay = true, intervalMs = 7200 }: FAQProps 
 
       {autoplay && !prefersReducedMotion && (
         <p className="px-3 pt-4 text-[0.62rem] uppercase tracking-[0.15em] text-foreground-secondary/60">
-          Answers unfold automatically. Open one and the page waits while you read.
+          Answers unfold automatically. Select one and the page waits while you read.
         </p>
       )}
     </div>
