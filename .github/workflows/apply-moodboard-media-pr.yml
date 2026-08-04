@@ -33,7 +33,7 @@ jobs:
            * Keep the server and first client render identical, then combine
            * Framer's MotionConfig preference with the browser's native media
            * query. The native query also covers browser emulation and prevents
-           * a video from continuing between the first paint and Framer's
+           * a video from continuing between first paint and Framer's
            * preference subscription update.
            */
           export function useHydratedReducedMotion(): boolean {
@@ -66,13 +66,11 @@ jobs:
               'const near = useInView(wrapRef, { margin: "420px 0px 420px 0px" });',
               'const near = useInView(wrapRef, { margin: "120px 0px 120px 0px" });',
           )
-          old_effect = '''  useEffect(() => {
-            const video = videoRef.current;
-            if (!video || reduced) return;
-            if (near) void video.play().catch(() => {});
-            else video.pause();
-          }, [near, reduced, src]);'''
-          new_effect = '''  useEffect(() => {
+          ambient_anchor = source.index("function AmbientVideo")
+          effect_start = source.index("  useEffect(() => {", ambient_anchor)
+          effect_end_marker = "  }, [near, reduced, src]);"
+          effect_end = source.index(effect_end_marker, effect_start) + len(effect_end_marker)
+          source = source[:effect_start] + '''  useEffect(() => {
             const video = videoRef.current;
             if (!video) return;
             if (reduced || !near) {
@@ -81,11 +79,7 @@ jobs:
             }
             void video.play().catch(() => {});
             return () => video.pause();
-          }, [near, reduced, src]);'''
-          if old_effect in source:
-              source = source.replace(old_effect, new_effect, 1)
-          elif new_effect not in source:
-              raise SystemExit("AmbientVideo effect contract is unknown")
+          }, [near, reduced, src]);'''.replace("          ", "") + source[effect_end:]
           home.write_text(source)
 
           tatva = Path("src/sections/Home/MoodboardTatvaFilm.tsx")
@@ -96,20 +90,10 @@ jobs:
                   '  useInView,\n  useMotionValueEvent,\n  useScroll,',
                   1,
               )
-          old_active = '''function ActiveBackdrop({ element }: { element: Element }) {
-            const videoRef = useRef<HTMLVideoElement>(null);
-            const reduced = useHydratedReducedMotion();
-
-            useEffect(() => {
-              const video = videoRef.current;
-              if (!video || reduced) return;
-              void video.play().catch(() => {});
-              return () => video.pause();
-            }, [element.slug, reduced]);
-
-            return (
-              <div className="absolute inset-0 overflow-hidden">'''
-          new_active = '''function ActiveBackdrop({ element }: { element: Element }) {
+          active_start = source.index("function ActiveBackdrop")
+          active_end_marker = '  return (\n    <div className="absolute inset-0 overflow-hidden">'
+          active_end = source.index(active_end_marker, active_start) + len(active_end_marker)
+          active_replacement = '''function ActiveBackdrop({ element }: { element: Element }) {
             const wrapRef = useRef<HTMLDivElement>(null);
             const videoRef = useRef<HTMLVideoElement>(null);
             const reduced = useHydratedReducedMotion();
@@ -127,11 +111,8 @@ jobs:
             }, [element.slug, reduced, visible]);
 
             return (
-              <div ref={wrapRef} className="absolute inset-0 overflow-hidden">'''
-          if old_active in source:
-              source = source.replace(old_active, new_active, 1)
-          elif new_active not in source:
-              raise SystemExit("Tatva backdrop contract is unknown")
+              <div ref={wrapRef} className="absolute inset-0 overflow-hidden">'''.replace("          ", "")
+          source = source[:active_start] + active_replacement + source[active_end:]
           tatva.write_text(source)
 
           qa = Path(".github/workflows/moodboard-home-browser-qa.yml")
