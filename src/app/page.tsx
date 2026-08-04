@@ -23,7 +23,7 @@ import { elementColor } from "@/lib/elementColor";
 // Homepage audit pass: cinematic desktop scenes retain their authored
 // choreography while compact and reduced-motion visitors receive complete,
 // readable static layouts rather than cropped or overlapping pinned frames.
-// This source marker opens a fresh isolated Vercel QA deployment.
+// This source marker opens a fresh isolated Vercel QA deployment and CI check.
 export const metadata: Metadata = {
   title: `${site.name}: Brand Strategy by ${site.founder}`,
   description: site.description,
