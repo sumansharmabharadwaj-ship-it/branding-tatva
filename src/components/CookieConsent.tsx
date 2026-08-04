@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { Analytics } from "@vercel/analytics/next";
+import { useFooterInView } from "@/hooks/useFooterInView";
 
 export const CONSENT_STORAGE_KEY = "bt-consent-v2";
 const LEGACY_STORAGE_KEY = "bt-analytics-consent";
@@ -61,6 +62,7 @@ export function CookieConsent() {
   const [draft, setDraft] = useState<ConsentPreferences>(emptyPreferences);
   const [ready, setReady] = useState(false);
   const [managing, setManaging] = useState(false);
+  const footerInView = useFooterInView();
 
   useEffect(() => {
     const stored = readStoredConsent();
@@ -250,7 +252,7 @@ export function CookieConsent() {
           type="button"
           onClick={reopenPreferences}
           aria-label="Open privacy preferences"
-          className="group fixed right-[4.15rem] z-90 flex h-11 w-11 items-center justify-center rounded-full border border-[#22231F]/12 bg-[#F5F0E8]/92 text-[#22231F] shadow-[0_12px_34px_-18px_rgba(34,35,31,.65)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#A47746]/45 hover:text-[#8E603D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A47746]/55"
+          className={`group fixed right-[4.15rem] z-90 flex h-11 w-11 items-center justify-center rounded-full border border-[#22231F]/12 bg-[#F5F0E8]/92 text-[#22231F] shadow-[0_12px_34px_-18px_rgba(34,35,31,.65)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#A47746]/45 hover:text-[#8E603D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A47746]/55 ${footerInView ? "pointer-events-none translate-y-3 opacity-0" : "opacity-100"}`}
           style={{ bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
         >
           <ShieldCheck size={17} strokeWidth={1.7} aria-hidden="true" />
