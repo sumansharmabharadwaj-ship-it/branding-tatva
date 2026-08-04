@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScro
 import { projects } from "@/data/projects";
 import { SITUATION_KEY } from "@/sections/Home/VisitorRecognition";
 import { track } from "@/lib/analytics";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const FEATURED_SLUGS = ["dr-haley-nutrition", "myshopineurope", "executive-springboard"] as const;
 
@@ -42,6 +43,8 @@ export function EvidenceWall() {
   const [selectedSlug, setSelectedSlug] = useState<(typeof FEATURED_SLUGS)[number]>(FEATURED_SLUGS[0]);
   const [activePhase, setActivePhase] = useState<PhaseKey>("challenge");
   const prefersReducedMotion = useReducedMotion();
+  const compactLayout = useMediaQuery("(max-width: 1023px), (max-height: 719px)");
+  const staticLayout = Boolean(prefersReducedMotion) || compactLayout;
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
 
   const imageScale = useTransform(scrollYProgress, [0, 1], [1.04, 1.22]);
@@ -59,7 +62,7 @@ export function EvidenceWall() {
   }, [featured]);
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
-    if (prefersReducedMotion) return;
+    if (staticLayout) return;
     const index = Math.min(PHASES.length - 1, Math.floor(value * PHASES.length));
     setActivePhase(PHASES[index].key);
   });
@@ -78,10 +81,104 @@ export function EvidenceWall() {
     track("evidence_case_selected", { project: slug, page: "home" });
   }
 
+  if (staticLayout) {
+    return (
+      <section className="relative overflow-hidden bg-[#14110f] px-6 py-24 text-ivory sm:px-10 sm:py-28">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(198,169,122,.1),transparent_34%)]" />
+        <div className="relative z-10 mx-auto max-w-[92rem]">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-[0.62rem] font-medium uppercase tracking-[0.3em] text-sandstone">Case investigation</p>
+              <h2 className="mt-4 max-w-3xl font-display text-[clamp(3rem,7vw,6.6rem)] font-normal leading-[0.92] tracking-[-0.045em]">
+                The result is the last thing you should look at.
+              </h2>
+            </div>
+            <Link href="/work" className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-sandstone transition-colors hover:text-ivory">
+              Complete archive ↗
+            </Link>
+          </div>
+
+          <div className="mt-9 flex flex-wrap gap-2" aria-label="Choose a case study">
+            {featured.map((project, index) => {
+              if (!project) return null;
+              const active = project.slug === selected.slug;
+              return (
+                <button
+                  key={project.slug}
+                  type="button"
+                  onClick={() => chooseProject(project.slug)}
+                  aria-pressed={active}
+                  className={`rounded-full border px-4 py-2 text-xs transition-colors ${
+                    active
+                      ? "border-sandstone/70 bg-sandstone text-soil"
+                      : "border-ivory/16 bg-black/20 text-ivory/58 hover:border-ivory/38 hover:text-ivory"
+                  }`}
+                >
+                  0{index + 1} · {project.title}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="relative mt-6 min-h-[22rem] overflow-hidden rounded-[1.8rem] border border-ivory/14">
+            {selected.cardImage && (
+              <Image
+                src={selected.cardImage}
+                alt=""
+                fill
+                sizes="(max-width: 1023px) 100vw, 1400px"
+                className="object-cover"
+                style={{ objectPosition: selected.cardImagePosition ?? "center" }}
+              />
+            )}
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(20,17,15,.92),rgba(20,17,15,.46)_68%,rgba(20,17,15,.7))]" />
+            <div className="relative flex min-h-[22rem] flex-col justify-end p-6 sm:p-9">
+              <p className="text-[0.62rem] uppercase tracking-[0.22em] text-sandstone">{selected.industry}</p>
+              <h3 className="mt-3 max-w-4xl font-display text-[clamp(3rem,8vw,7.6rem)] leading-[0.86] tracking-[-0.045em]">
+                {selected.title}
+              </h3>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {PHASES.map((phase, index) => (
+              <article key={phase.key} className="rounded-[1.4rem] border border-ivory/12 bg-black/20 p-5 sm:p-6">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-[0.58rem] uppercase tracking-[0.2em] text-ivory/36">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="text-[0.58rem] uppercase tracking-[0.2em] text-sandstone">{phase.label}</span>
+                </div>
+                <p className="mt-5 text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/42">{phase.prompt}</p>
+                <p className="mt-3 text-sm leading-relaxed text-ivory/70 sm:text-base">{shorten(selected[phase.key], 260)}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-col gap-6 border-t border-ivory/14 pt-6 sm:flex-row sm:items-end sm:justify-between">
+            {primaryStat ? (
+              <div className="flex items-end gap-4">
+                <span className="font-display text-6xl text-sandstone">{primaryStat.value}</span>
+                <span className="max-w-52 pb-2 text-xs leading-relaxed text-ivory/55">{primaryStat.label}</span>
+              </div>
+            ) : (
+              <p className="max-w-xl text-sm leading-relaxed text-ivory/56">The complete case documents the decision, execution, and evidence without manufacturing a metric.</p>
+            )}
+            <Link
+              href={`/work/${selected.slug}`}
+              onClick={() => track("evidence_case_opened", { project: selected.slug, page: "home" })}
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-sandstone/55 px-5 text-xs font-medium uppercase tracking-[0.17em] text-sandstone transition-colors hover:bg-sandstone hover:text-soil"
+            >
+              Open the full case ↗
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section ref={sectionRef} className="relative h-[360vh] bg-[#14110f] text-ivory">
       <div className="sticky top-0 h-svh overflow-hidden">
-        <motion.div className="absolute inset-0" style={prefersReducedMotion ? undefined : { scale: imageScale, x: imageX, y: imageY }}>
+        <motion.div className="absolute inset-0" style={{ scale: imageScale, x: imageX, y: imageY }}>
           {selected.cardImage && (
             <Image
               src={selected.cardImage}
@@ -95,11 +192,7 @@ export function EvidenceWall() {
           )}
         </motion.div>
 
-        <motion.div
-          className="absolute inset-0 bg-[#14110f]"
-          style={{ opacity: vignette }}
-          aria-hidden="true"
-        />
+        <motion.div className="absolute inset-0 bg-[#14110f]" style={{ opacity: vignette }} aria-hidden="true" />
         <div
           className="absolute inset-0"
           aria-hidden="true"
@@ -180,21 +273,17 @@ export function EvidenceWall() {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={`${selected.slug}-${activePhase}`}
-                    initial={prefersReducedMotion ? undefined : { opacity: 0, y: 26, filter: "blur(10px)" }}
+                    initial={{ opacity: 0, y: 26, filter: "blur(10px)" }}
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={prefersReducedMotion ? undefined : { opacity: 0, y: -18, filter: "blur(7px)" }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.62, ease: [0.22, 1, 0.36, 1] }}
+                    exit={{ opacity: 0, y: -18, filter: "blur(7px)" }}
+                    transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <p className="text-[0.65rem] font-medium uppercase tracking-[0.24em] text-sandstone">{currentPhase.prompt}</p>
                     <h3 className="mt-3 font-display text-4xl leading-none text-ivory sm:text-5xl">{currentPhase.label}</h3>
                     <p className="mt-6 max-w-xl text-base leading-[1.85] text-ivory/72 sm:text-lg">{shorten(phaseText)}</p>
 
                     {activePhase === "outcome" && primaryStat && (
-                      <motion.div
-                        className="mt-8 flex items-end gap-4"
-                        initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                      >
+                      <motion.div className="mt-8 flex items-end gap-4" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
                         <span className="font-display text-5xl text-sandstone sm:text-7xl">{primaryStat.value}</span>
                         <span className="max-w-48 pb-2 text-xs leading-relaxed text-ivory/55">{primaryStat.label}</span>
                       </motion.div>
