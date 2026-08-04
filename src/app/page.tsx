@@ -1,26 +1,20 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
-import { Container } from "@/components/Container";
-import { AuditInvite } from "@/components/AuditInvite";
 import { LinkButton } from "@/components/Button";
-import { FAQ } from "@/sections/FAQ";
 import { DustMotes } from "@/components/DustMotes";
-import { Reveal } from "@/components/Reveal";
-import { ClipReveal } from "@/components/ClipReveal";
 import { ElementsSection } from "@/sections/Elements";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
+import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { HomeSceneBridge } from "@/sections/Home/HomeSceneBridge";
 import { CinematicHero } from "@/sections/Hero";
 import { ThreePathsSection } from "@/sections/Home/ThreePathsSection";
 import { VideoBreak } from "@/components/VideoBreak";
 import { ProcessSection } from "@/sections/Process";
-import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { process } from "@/data/process";
@@ -121,63 +115,9 @@ export default function Home() {
           <ProcessSection stages={process} elementColor={elementColor} />
         </section>
 
-        <HomeSceneBridge family="water" from="#141210" to="#F2F0E8" />
-
-        <section className="relative overflow-hidden py-20 sm:py-28">
-          <BackgroundVideo
-            video="/videos/pexels-golden-fog-sea.mp4"
-            videoWebm="/videos/pexels-golden-fog-sea.webm"
-            poster="/images/pexels-golden-fog-sea-poster.jpg"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(180deg, rgba(244,239,230,0.18) 0%, rgba(244,239,230,0.28) 100%)",
-            }}
-          />
-          <ClipReveal>
-            <Container className="relative max-w-2xl">
-              <Reveal>
-                <div className="rounded-2xl border border-border/50 bg-background-elevated/92 px-6 py-10 shadow-elevation-md backdrop-blur-sm sm:px-14 sm:py-16">
-                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-clay">
-                    Before we work together
-                  </p>
-                  <h2 className="mt-3 text-display-sm font-display font-normal text-soil">
-                    The practical questions, answered without fog.
-                  </h2>
-                  <p className="mt-4 text-sm leading-relaxed text-foreground-secondary">
-                    Scope, implementation, timing, and distance should feel clear before a first conversation. The answers unfold in sequence, and pause the moment you choose one.
-                  </p>
-                  <div className="mt-8">
-                    <FAQ
-                      questions={[
-                        "Can you help a brand new business?",
-                        "Can you help an existing brand that already has an identity?",
-                        "Can you actually implement, or just strategize?",
-                        "How long does a project take?",
-                        "Can we work remotely?",
-                      ]}
-                    />
-                    <p className="mt-6 text-sm">
-                      <Link
-                        href="/services#book"
-                        className="link-underline text-foreground-secondary hover:text-soil"
-                      >
-                        Bring any other question to a first conversation
-                      </Link>
-                    </p>
-                    <div className="mt-8">
-                      <AuditInvite tone="light" />
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-            </Container>
-          </ClipReveal>
-        </section>
-
-        <HomeSceneBridge family="fire" from="#F2F0E8" to="#141210" />
+        <HomeSceneBridge family="water" from="#141210" to="#141210" />
+        <HomeQuestionsScene />
+        <HomeSceneBridge family="fire" from="#141210" to="#141210" />
 
         <VideoBreak
           src="/videos/higgsfield-silver-tide.mp4"
