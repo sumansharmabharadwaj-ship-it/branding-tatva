@@ -15,6 +15,7 @@ import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
+import { HomeSceneBridge } from "@/sections/Home/HomeSceneBridge";
 import { CinematicHero } from "@/sections/Hero";
 import { ThreePathsSection } from "@/sections/Home/ThreePathsSection";
 import { VideoBreak } from "@/components/VideoBreak";
@@ -79,6 +80,8 @@ export default function Home() {
           </p>
         </CinematicHero>
 
+        <HomeSceneBridge family="air" from="#141210" to="#141210" />
+
         {/* One diagnosis is enough. The richer Clarity Lab performs the
             early recognition job, so the visitor no longer answers the
             same three-situation question here and again two sections
@@ -89,10 +92,15 @@ export default function Home() {
           <ClarityCTA />
         </div>
 
+        <HomeSceneBridge family="earth" from="#141210" to="#27221E" />
         <EvidenceWall />
+        <HomeSceneBridge family="water" from="#27221E" to="#F2F0E8" />
         <StudioTriptych />
+        <HomeSceneBridge family="air" from="#F2F0E8" to="#F2F0E8" />
         <ThreePathsSection />
+        <HomeSceneBridge family="confluence" from="#F2F0E8" to="#F2F0E8" />
         <TatvaStrip />
+        <HomeSceneBridge family="space" from="#F2F0E8" to="#27221E" />
 
         {/* The full five-element sequence follows the framework directly.
             The separate Earth-only excavation remains in the codebase for
@@ -102,6 +110,8 @@ export default function Home() {
           <ElementsSection elements={elements} />
         </div>
 
+        <HomeSceneBridge family="earth" from="#27221E" to="#141210" />
+
         {/* RootSystem already opens with the project question, the six-stage
             rail, the decision map, and the live readiness instruments. The
             separate ProcessChapterIntro repeated the same six labels before
@@ -110,6 +120,8 @@ export default function Home() {
         <section className="bg-soil">
           <ProcessSection stages={process} elementColor={elementColor} />
         </section>
+
+        <HomeSceneBridge family="water" from="#141210" to="#F2F0E8" />
 
         <section className="relative overflow-hidden py-20 sm:py-28">
           <BackgroundVideo
@@ -164,6 +176,8 @@ export default function Home() {
             </Container>
           </ClipReveal>
         </section>
+
+        <HomeSceneBridge family="fire" from="#F2F0E8" to="#141210" />
 
         <VideoBreak
           src="/videos/higgsfield-silver-tide.mp4"
