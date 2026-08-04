@@ -252,10 +252,14 @@ export function CookieConsent() {
           type="button"
           onClick={reopenPreferences}
           aria-label="Open privacy preferences"
-          className={`group fixed right-[4.15rem] sm:right-[4.75rem] z-90 flex h-11 w-11 items-center justify-center rounded-full border border-[#22231F]/12 bg-[#F5F0E8]/92 text-[#22231F] shadow-[0_12px_34px_-18px_rgba(34,35,31,.65)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#A47746]/45 hover:text-[#8E603D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A47746]/55 ${footerInView ? "pointer-events-none translate-y-3 opacity-0" : "opacity-100"}`}
+          aria-hidden={footerInView}
+          tabIndex={footerInView ? -1 : 0}
+          className={`group fixed right-[4.15rem] sm:right-[4.75rem] z-90 flex h-11 w-11 items-center justify-center rounded-full border border-[#22231F]/12 bg-[#F5F0E8]/92 text-[#22231F] shadow-[0_12px_34px_-18px_rgba(34,35,31,.65)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#A47746]/45 hover:text-[#8E603D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A47746]/55 ${footerInView ? "translate-y-3" : "translate-y-0"}`}
           style={{
             bottom: "max(0.75rem, env(safe-area-inset-bottom))",
             opacity: footerInView ? 0 : 1,
+            visibility: footerInView ? "hidden" : "visible",
+            pointerEvents: footerInView ? "none" : "auto",
           }}
         >
           <ShieldCheck size={17} strokeWidth={1.7} aria-hidden="true" />
