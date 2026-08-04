@@ -27,6 +27,10 @@ const CSP = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  // QA branch only: package a self-contained server for the final desktop,
+  // mobile, and reduced-motion browser pass. The preview branch keeps its
+  // ordinary Vercel configuration.
+  output: "standalone",
   images: {
     formats: ["image/avif", "image/webp"],
   },
