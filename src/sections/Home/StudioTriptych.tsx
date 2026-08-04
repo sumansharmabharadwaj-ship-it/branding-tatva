@@ -94,19 +94,19 @@ export function StudioTriptych() {
   }, []);
 
   useEffect(() => {
-    const video = activeVideoRef.current;
-    if (!video || prefersReducedMotion) return;
+    const currentVideo = activeVideoRef.current;
+    if (!currentVideo || prefersReducedMotion) return;
 
     function syncPlayback() {
-      if (inView && !document.hidden) void video.play().catch(() => {});
-      else video.pause();
+      if (inView && !document.hidden) void currentVideo.play().catch(() => {});
+      else currentVideo.pause();
     }
 
     syncPlayback();
     document.addEventListener("visibilitychange", syncPlayback);
     return () => {
       document.removeEventListener("visibilitychange", syncPlayback);
-      video.pause();
+      currentVideo.pause();
     };
   }, [activeIndex, inView, prefersReducedMotion]);
 
