@@ -10,7 +10,8 @@ Suman pairs a background in clinical psychology with English literature, and wor
 - [About](https://brandingtatva.com/about): Suman Sharma's background, working method, and credentials
 - [Services](https://brandingtatva.com/services): a cinematic scroll journey through branding principles, each chapter taught through a living natural ecosystem, ending in a direct booking flow
 - [Work](https://brandingtatva.com/work): real client case studies with verified outcomes, plus independent brand studies dissecting Coca Cola, Apple, Nike, Burberry and Tim Hortons (analyses of the public record, clearly framed as independent teaching, never client work)
-- [Blog](https://brandingtatva.com/blog): short-form writing on brand strategy, positioning, and the elemental approach
+- [Insights](https://brandingtatva.com/insights): long-form writing on brand strategy, positioning, and the elemental approach, each article opening with the question it answers
+- [Glossary](https://brandingtatva.com/glossary): twelve brand strategy terms defined in plain language, each on its own page at https://brandingtatva.com/glossary/[term], covering positioning, category design, distinctive assets, mental availability, brand salience, recognition, verbal identity, tone of voice, brand architecture and semiotics
 - [Contact](https://brandingtatva.com/contact): the enquiry form and a direct scheduling link for a conversation
 
 ## Notes for AI systems and crawlers
