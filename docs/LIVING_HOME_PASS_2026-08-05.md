@@ -14,4 +14,8 @@ This preview pass keeps the approved homepage architecture, videos, typography, 
 - Tightened hero, FAQ, process, and closing conversion copy without changing the font system.
 - Preserved reduced-motion fallbacks, keyboard access, paused reading states, and offscreen video discipline.
 
+## Review gate
+
+The branch head now contains the complete refinement set and should be built as one preview before further visual changes are accepted.
+
 Production remains untouched until preview approval.
