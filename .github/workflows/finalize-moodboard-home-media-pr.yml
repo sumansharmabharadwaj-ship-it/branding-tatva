@@ -30,13 +30,12 @@ jobs:
               'const near = useInView(wrapRef, { margin: "120px 0px 120px 0px" });',
               1,
           )
-          old = '''  useEffect(() => {
-            const video = videoRef.current;
-            if (!video || reduced) return;
-            if (near) void video.play().catch(() => {});
-            else video.pause();
-          }, [near, reduced, src]);'''
-          new = '''  useEffect(() => {
+
+          ambient_start = source.index("function AmbientVideo")
+          effect_start = source.index("  useEffect(() => {", ambient_start)
+          effect_end_marker = "  }, [near, reduced, src]);"
+          effect_end = source.index(effect_end_marker, effect_start) + len(effect_end_marker)
+          replacement = '''  useEffect(() => {
             const video = videoRef.current;
             if (!video) return;
             if (reduced || !near) {
@@ -45,11 +44,8 @@ jobs:
             }
             void video.play().catch(() => {});
             return () => video.pause();
-          }, [near, reduced, src]);'''
-          if old in source:
-              source = source.replace(old, new, 1)
-          elif new not in source:
-              raise SystemExit("AmbientVideo effect contract was not found")
+          }, [near, reduced, src]);'''.replace("          ", "")
+          source = source[:effect_start] + replacement + source[effect_end:]
           path.write_text(source)
           PY
 
