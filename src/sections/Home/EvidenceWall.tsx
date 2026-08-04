@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -12,7 +12,7 @@ import { ProjectFile } from "@/sections/Home/ProjectFile";
 
 const ACTION: Record<string, string> = {
   "dr-haley-nutrition": "Watch the story",
-  "myshopineurope": "Open the file",
+  myshopineurope: "Open the file",
   "executive-springboard": "View the case",
   herbalcart: "View the case",
   "plaxonic-content-portfolio": "Open the file",
@@ -42,23 +42,26 @@ export function EvidenceWall() {
   const listRef = useRef<HTMLUListElement>(null);
   const manualPauseUntilRef = useRef(0);
   const frameRef = useRef(0);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = Boolean(useReducedMotion());
 
   function pauseAutoplay() {
     manualPauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
   }
 
-  function moveTo(index: number) {
-    const list = listRef.current;
-    const target = list?.children[index];
-    if (!list || !(target instanceof HTMLElement)) return;
+  const moveTo = useCallback(
+    (index: number) => {
+      const list = listRef.current;
+      const target = list?.children[index];
+      if (!list || !(target instanceof HTMLElement)) return;
 
-    setActiveIndex(index);
-    list.scrollTo({
-      left: Math.max(0, target.offsetLeft - 8),
-      behavior: prefersReducedMotion ? "auto" : "smooth",
-    });
-  }
+      setActiveIndex(index);
+      list.scrollTo({
+        left: Math.max(0, target.offsetLeft - 8),
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+      });
+    },
+    [prefersReducedMotion],
+  );
 
   function syncActiveFromScroll() {
     if (frameRef.current) return;
@@ -102,7 +105,7 @@ export function EvidenceWall() {
     }, AUTO_ADVANCE_MS);
 
     return () => window.clearInterval(timer);
-  }, [activeIndex, openSlug, prefersReducedMotion]);
+  }, [activeIndex, moveTo, openSlug, prefersReducedMotion]);
 
   useEffect(
     () => () => {
