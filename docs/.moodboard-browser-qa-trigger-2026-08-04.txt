@@ -1,3 +1,3 @@
 Run the moodboard homepage through desktop, short-laptop, mobile, and reduced-motion browser checks before the main preview branch is updated.
 
-QA v2: validate the final media director, luminous editorial typography, blank-frame safety, interactions, and reduced-motion poster fallbacks.
+QA v2 final: verify the video warden no longer revives hidden reduced-motion films.
