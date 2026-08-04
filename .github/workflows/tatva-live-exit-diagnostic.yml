@@ -1,0 +1,208 @@
+name: Tatva live exit diagnostic
+
+on:
+  pull_request:
+    branches:
+      - work/home-moodboard-film-2026-08-04
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies and browser
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm add --save-dev --ignore-workspace-root-check @playwright/test@1.59.1
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Build the complete site
+        run: pnpm build
+
+      - name: Start production server
+        run: |
+          pnpm start > /tmp/tatva-live-server.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/tatva-live-server.log
+          exit 1
+
+      - name: Capture the live short-laptop transition
+        run: |
+          mkdir -p artifacts/tatva-live
+          cat > .qa-tatva-live.mjs <<'EOF'
+          import { chromium } from "@playwright/test";
+          import fs from "node:fs/promises";
+
+          const browser = await chromium.launch({ headless: true });
+          const context = await browser.newContext({
+            viewport: { width: 1366, height: 768 },
+            reducedMotion: "no-preference",
+            colorScheme: "light",
+          });
+          const page = await context.newPage();
+          await page.addInitScript(() => {
+            sessionStorage.setItem("bt-intro-seen", "1");
+            localStorage.removeItem("bt-motion");
+            localStorage.setItem(
+              "bt-consent-v2",
+              JSON.stringify({
+                necessary: true,
+                analytics: false,
+                marketing: false,
+                updatedAt: "2026-08-04T00:00:00.000Z",
+              }),
+            );
+          });
+          await page.goto("http://127.0.0.1:3000/", { waitUntil: "domcontentloaded" });
+          await page.evaluate(() => document.fonts.ready);
+          await page.waitForTimeout(1800);
+
+          const locate = () => {
+            const marker = Array.from(document.querySelectorAll("span")).find(
+              (element) => element.textContent?.trim() === "The five Tatvas",
+            );
+            const section = marker?.closest("section");
+            const sticky = section?.firstElementChild;
+            const foreground = sticky
+              ? Array.from(sticky.children).find(
+                  (element) =>
+                    element.classList.contains("relative") &&
+                    element.classList.contains("z-10"),
+                )
+              : null;
+            return { marker, section, sticky, foreground };
+          };
+
+          async function scrollToTatvaProgress(progress) {
+            await page.evaluate((requested) => {
+              const { section } = locate();
+              if (!section) throw new Error("Tatva section not found");
+              const top = scrollY + section.getBoundingClientRect().top;
+              const travel = Math.max(1, section.getBoundingClientRect().height - innerHeight);
+              scrollTo({ top: top + travel * requested, behavior: "instant" });
+            }, progress);
+            await page.waitForTimeout(1600);
+          }
+
+          async function metrics(label) {
+            return page.evaluate((name) => {
+              const { marker, section, sticky, foreground } = locate();
+              if (!marker || !section || !sticky || !foreground) {
+                throw new Error("Tatva diagnostic nodes not found");
+              }
+              const sectionRect = section.getBoundingClientRect();
+              const travel = Math.max(1, sectionRect.height - innerHeight);
+              const progress = Math.min(1, Math.max(0, -sectionRect.top / travel));
+              const title = section.querySelector("h2");
+              const diagram = Array.from(section.querySelectorAll("div")).find((element) =>
+                element.className.includes("min-[1400px]:h-[25rem]"),
+              );
+              const header = document.querySelector("header > div");
+              const rect = (element) => {
+                if (!element) return null;
+                const value = element.getBoundingClientRect();
+                return {
+                  top: value.top,
+                  right: value.right,
+                  bottom: value.bottom,
+                  left: value.left,
+                  width: value.width,
+                  height: value.height,
+                };
+              };
+              return {
+                label: name,
+                scrollY,
+                progress,
+                section: rect(section),
+                sticky: rect(sticky),
+                header: rect(header),
+                title: rect(title),
+                diagram: rect(diagram),
+                marker: rect(marker),
+                foregroundOpacity: Number.parseFloat(getComputedStyle(foreground).opacity),
+                foregroundTransform: getComputedStyle(foreground).transform,
+                visibleTitle: title?.textContent?.trim() ?? null,
+              };
+            }, label);
+          }
+
+          const results = [];
+
+          await scrollToTatvaProgress(0.83);
+          results.push(await metrics("tatva-83"));
+          await page.screenshot({ path: "artifacts/tatva-live/tatva-83.png" });
+
+          const stable = results.at(-1);
+          if (!stable?.title || !stable.header || !stable.diagram) {
+            throw new Error("Stable Tatva geometry is incomplete");
+          }
+          if (stable.title.top < stable.header.bottom + 12) {
+            throw new Error(
+              `Tatva title enters the header: title ${stable.title.top}, header ${stable.header.bottom}`,
+            );
+          }
+          if (stable.diagram.bottom > 700) {
+            throw new Error(`Tatva diagram collides with the chapter rail: ${stable.diagram.bottom}`);
+          }
+
+          await scrollToTatvaProgress(0.99);
+          results.push(await metrics("tatva-99"));
+          await page.screenshot({ path: "artifacts/tatva-live/tatva-99.png" });
+          const exit = results.at(-1);
+          if ((exit?.foregroundOpacity ?? 1) > 0.12) {
+            throw new Error(`Tatva foreground did not dissolve: ${exit?.foregroundOpacity}`);
+          }
+
+          await page.evaluate(() => {
+            const height = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+            scrollTo({ top: Math.max(0, (height - innerHeight) * 0.69), behavior: "instant" });
+          });
+          await page.waitForTimeout(1600);
+          results.push(await metrics("global-69"));
+          await page.screenshot({ path: "artifacts/tatva-live/global-69.png" });
+
+          await fs.writeFile(
+            "artifacts/tatva-live/metrics.json",
+            JSON.stringify(results, null, 2),
+          );
+          console.log(JSON.stringify(results, null, 2));
+          await browser.close();
+          EOF
+          node .qa-tatva-live.mjs
+
+      - name: Print server log
+        if: always()
+        run: cat /tmp/tatva-live-server.log || true
+
+      - name: Upload diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tatva-live-exit-diagnostic
+          path: artifacts/tatva-live
+          if-no-files-found: error
+          retention-days: 3
