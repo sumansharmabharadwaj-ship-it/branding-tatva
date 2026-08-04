@@ -9,16 +9,9 @@ import { SITUATION_KEY } from "@/sections/Home/VisitorRecognition";
 import { track } from "@/lib/analytics";
 
 // Conversion architecture, Services chapter two: the visitor places
-// themselves before any package is pitched. If they already chose on
-// the Home page, the same choice arrives preselected (read from the
-// shared localStorage key VisitorRecognition writes), so the site
-// remembers where they stand instead of asking twice.
-//
-// Continuity pass: recomposed from three equal centered cards (the
-// repeated template the direct feedback called out) into an editorial
-// split — a sticky heading rail on the left, the three situations as
-// numbered full width index rows on the right, and the recommendation
-// unfolding beneath the active row rather than in a detached panel.
+// themselves before any package is pitched. If they already chose in the
+// Home page Clarity Lab, the same condition arrives preselected, so the
+// site remembers the diagnosis instead of asking the same question again.
 const OPTIONS = [
   {
     id: "idea",
@@ -40,12 +33,14 @@ const OPTIONS = [
   },
 ] as const;
 
-// Home's VisitorRecognition stores its own three ids; both of its
-// existing-brand situations resolve to the repositioning path here.
+// The current Home Clarity Lab stores idea, inconsistent, or outgrown.
+// In that refined diagnosis, outgrown means growth is outrunning the
+// system, so it should carry into ongoing consistency rather than force
+// another repositioning choice on the Services page.
 const HOME_ID_MAP: Record<string, string> = {
   idea: "idea",
   inconsistent: "reposition",
-  outgrown: "reposition",
+  outgrown: "ongoing",
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -67,7 +62,7 @@ export function SituationPath() {
   }, []);
 
   function pick(id: string) {
-    setSelected((prev) => (prev === id ? prev : id));
+    setSelected((previous) => (previous === id ? previous : id));
     track("visitor_situation_selected", { situation: id, page: "services" });
     setCarried(false);
   }
@@ -81,8 +76,7 @@ export function SituationPath() {
             Three starting points. One of them is yours.
           </h2>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/70">
-            The rest of this page reads differently depending on where the brand stands today. Start with the row that
-            sounds like yours.
+            The rest of this page reads differently depending on where the brand stands today. Start with the row that sounds like yours.
           </p>
           <AnimatePresence>
             {carried && (
@@ -92,16 +86,16 @@ export function SituationPath() {
                 exit={{ opacity: 0 }}
                 className="mt-5 inline-flex items-center gap-2 rounded-full border border-sandstone/40 px-3.5 py-1.5 text-xs text-sandstone"
               >
-                <span aria-hidden="true">↺</span> Carried over from where you stood on the Home page.
+                <span aria-hidden="true">↺</span> Carried over from your Home page diagnosis.
               </motion.p>
             )}
           </AnimatePresence>
         </div>
 
         <div>
-          {OPTIONS.map((option, i) => {
+          {OPTIONS.map((option, index) => {
             const isActive = selected === option.id;
-            const pkg = packages.find((p) => p.slug === option.slug);
+            const pkg = packages.find((entry) => entry.slug === option.slug);
             return (
               <div key={option.id} className="relative">
                 <div className="h-px bg-ivory/12" aria-hidden="true" />
@@ -112,14 +106,14 @@ export function SituationPath() {
                   initial={prefersReducedMotion ? undefined : { opacity: 0, y: 14 }}
                   whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-                  transition={{ duration: 0.35, delay: i * 0.07, ease: EASE }}
+                  transition={{ duration: 0.35, delay: index * 0.07, ease: EASE }}
                   className="group grid w-full grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:gap-5 sm:py-7"
                 >
                   <span
                     className={`font-display text-base transition-colors duration-300 ${isActive ? "text-sandstone" : "text-ivory/35"}`}
                     aria-hidden="true"
                   >
-                    {String(i + 1).padStart(2, "0")}
+                    {String(index + 1).padStart(2, "0")}
                   </span>
                   <span
                     className={`font-display text-xl font-normal leading-snug transition-all duration-500 ease-out group-hover:translate-x-1 sm:text-2xl ${
