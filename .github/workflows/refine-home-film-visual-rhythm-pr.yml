@@ -22,6 +22,7 @@ jobs:
         run: |
           python automation/refine_home_film_visual_rhythm.py
           python automation/refine_home_film_visual_rhythm_2.py
+          python automation/refine_home_film_visual_rhythm_3.py
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
@@ -52,5 +53,5 @@ jobs:
             echo "The visual refinement is already applied."
             exit 0
           fi
-          git commit -m "Polish homepage founder frame and Tatva transitions"
+          git commit -m "Protect the homepage film on short viewports"
           git push origin HEAD:work/home-moodboard-film-2026-08-04
