@@ -14,6 +14,9 @@ import { RecognitionAudit } from "@/sections/Services/RecognitionAudit";
 import { PricingProvider } from "@/components/PricingProvider";
 import { REGION_COOKIE, isRegion, regionFromCountry } from "@/data/pricing";
 import { VerifiedOutcome } from "@/sections/Services/VerifiedOutcome";
+import { CadenceOutcome } from "@/sections/Services/CadenceOutcome";
+import { PriceLadder } from "@/sections/Services/PriceLadder";
+import { ScopeComposition } from "@/sections/Services/ScopeComposition";
 import { SkyLife } from "@/components/SkyLife";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { SceneHandoff } from "@/sections/Services/SceneHandoff";
@@ -376,6 +379,14 @@ export default async function ServicesPage() {
           <SceneVeil color="#171A17" />
           <div className="relative">
             <PackageSelector />
+            {/* The same approved price book, drawn instead of listed —
+                switching market morphs the bars and recounts the
+                figures, and it shares the selector's own cookie state
+                so both controls always agree. Every amount comes from
+                data/pricing.ts through priceAmount/formatPrice. */}
+            <div className="mt-20 sm:mt-28">
+              <PriceLadder />
+            </div>
           </div>
           <SceneHandoff color="#171A17" />
         </section>
@@ -388,6 +399,14 @@ export default async function ServicesPage() {
           <SceneVeil color="#0E1714" />
           <div className="relative">
             <VerifiedOutcome />
+            {/* The same verified engagement, drawn. Four real measures
+                from the Dr. Haley Nutrition entry in data/projects.ts,
+                each redrawing on selection and counting up on scroll
+                into view — the proof section's one static number
+                becomes something a visitor can move through. */}
+            <div className="mt-20 sm:mt-28">
+              <CadenceOutcome />
+            </div>
           </div>
         </section>
 
@@ -566,7 +585,15 @@ export default async function ServicesPage() {
               study. */}
           <SceneVeil color="#1A2026" heightClass="h-[15vh]" />
           <div className="relative">
-            <DeliverablesExplorer />
+            {/* The at a glance answer the explorer below cannot give:
+                what actually separates the three packages, as counts of
+                real rows in data/deliverables.ts grouped by their own
+                scope group. Sits first so a visitor sees the shape
+                before selecting individual deliverables. */}
+            <ScopeComposition />
+            <div className="mt-20 sm:mt-28">
+              <DeliverablesExplorer />
+            </div>
           </div>
           <SceneHandoff color="#141A15" />
         </section>
