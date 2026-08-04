@@ -1,0 +1,75 @@
+name: Apply homepage video budget
+
+on:
+  push:
+    branches:
+      - automation/enforce-home-video-budget-2026-08-04
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out automation branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Limit playback to visible media
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          root_system = Path("src/sections/Process/RootSystem.tsx")
+          text = root_system.read_text()
+          old = '        const shouldPlay = sectionIsNear && (index === nextActive || index === Math.min(stages.length - 1, nextActive + 1));\n'
+          new = '''        const shouldPlay = sectionIsNear && index === nextActive;
+          const shouldWarm = sectionIsNear && index === nextActive + 1;
+          if (shouldWarm && video.preload === "none") {
+            video.preload = "metadata";
+            video.load();
+          }
+'''
+          if old not in text:
+              raise SystemExit("RootSystem playback contract was not found")
+          root_system.write_text(text.replace(old, new, 1))
+
+          footer = Path("src/sections/Footer/index.tsx")
+          footer_text = footer.read_text()
+          old_video = '        video="/videos/own-jagged-peaks.mp4"\n'
+          if old_video not in footer_text:
+              raise SystemExit("Footer background video was not found")
+          footer.write_text(footer_text.replace(old_video, "", 1))
+          PY
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build audited site
+        run: pnpm build
+
+      - name: Commit directly on the preview branch
+        run: |
+          rm -f .github/workflows/apply-home-video-budget.yml
+          git fetch origin redesign/conversion-architecture
+          git reset --mixed origin/redesign/conversion-architecture
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/sections/Process/RootSystem.tsx src/sections/Footer/index.tsx
+          git commit -m "Keep homepage playback inside the media budget"
+          git push origin HEAD:redesign/conversion-architecture
