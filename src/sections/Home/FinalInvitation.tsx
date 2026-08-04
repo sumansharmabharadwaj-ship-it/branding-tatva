@@ -180,6 +180,23 @@ export function FinalInvitation() {
                 {invitation.body}
               </p>
 
+              <div className="mt-6 grid gap-2 md:hidden" aria-label="The next three strategic decisions">
+                {invitation.trail.map((step, index) => (
+                  <div
+                    key={step}
+                    className="flex items-center gap-3 rounded-xl border border-ivory/12 bg-ivory/[0.035] px-3 py-2.5"
+                  >
+                    <span
+                      className="text-[0.52rem] font-medium uppercase tracking-[0.15em]"
+                      style={{ color: invitation.accent }}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-xs leading-relaxed text-ivory/68">{step}</span>
+                  </div>
+                ))}
+              </div>
+
               <div className="mt-7 flex flex-wrap items-center gap-4">
                 <LinkButton href="/contact">{invitation.action}</LinkButton>
                 <Link
@@ -203,7 +220,7 @@ export function FinalInvitation() {
             </div>
           </div>
 
-          <div className="relative min-h-[19rem] overflow-hidden border-t border-ivory/12 bg-black/10 p-5 sm:p-7 md:min-h-full md:border-l md:border-t-0">
+          <div className="relative hidden min-h-[19rem] overflow-hidden border-t border-ivory/12 bg-black/10 p-5 sm:p-7 md:block md:min-h-full md:border-l md:border-t-0">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/38">
