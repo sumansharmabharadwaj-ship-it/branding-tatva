@@ -44,6 +44,7 @@ export function HomeQuestionsScene() {
       className="relative isolate overflow-hidden bg-soil py-20 text-ivory sm:py-28"
       aria-labelledby="home-questions-title"
     >
+      <span className="sr-only">The practical questions</span>
       <BackgroundVideo
         video="/videos/pexels-golden-fog-sea.mp4"
         videoWebm="/videos/pexels-golden-fog-sea.webm"
