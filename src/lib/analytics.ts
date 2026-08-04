@@ -18,6 +18,7 @@ export type AnalyticsEvent =
   | "visitor_situation_selected"
   | "evidence_case_selected"
   | "evidence_case_opened"
+  | "home_author_lens_selected"
   | "service_path_opened"
   | "package_viewed"
   | "packages_compared"
