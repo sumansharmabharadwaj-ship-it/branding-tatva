@@ -1,0 +1,401 @@
+name: Homepage definitive consolidation
+
+on:
+  push:
+    branches:
+      - automation/home-final-consolidation-2026-08-04
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  consolidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Check out consolidation carrier
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Allow the source hardening gates to settle
+        run: sleep 420
+
+      - name: Check out the latest homepage work branch
+        run: |
+          git fetch origin work/home-moodboard-film-2026-08-04
+          git checkout -B definitive-home origin/work/home-moodboard-film-2026-08-04
+
+      - name: Verify every intended source contract
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          home = Path("src/sections/Home/MoodboardHome.tsx").read_text()
+          tatva = Path("src/sections/Home/MoodboardTatvaFilm.tsx").read_text()
+          root = Path("src/sections/Process/RootSystem.tsx").read_text()
+
+          required_home = {
+              "keyboard focus trap": "const getFocusable = () =>",
+              "dialog semantics": 'aria-label="Site navigation"',
+              "visible focus treatment": ":is(header, main, footer) :is(a, button, summary):focus-visible",
+              "large evidence targets": 'className="group flex min-h-11 flex-1 items-center py-4"',
+              "polite diagnosis updates": 'aria-live="polite"',
+              "lazy ambient video mount": "mediaAllowed && src && (priority || near)",
+              "readable clay token": '#7F523A',
+              "readable secondary text": 'text-[#22231F]/76',
+          }
+          required_tatva = {
+              "lazy Tatva video mount": "mediaAllowed && visible && element.video",
+              "readable element accents": "function readableAccent",
+              "clean exit dissolve": "foregroundOpacity",
+          }
+          required_root = {
+              "stable video cleanup snapshot": "const mountedVideos = videoRefs.current;",
+              "snapshot cleanup": "mountedVideos.forEach((video) => video?.pause());",
+          }
+
+          missing = []
+          for label, token in required_home.items():
+              if token not in home:
+                  missing.append(f"Home: {label}")
+          for label, token in required_tatva.items():
+              if token not in tatva:
+                  missing.append(f"Tatva: {label}")
+          for label, token in required_root.items():
+              if token not in root:
+                  missing.append(f"RootSystem: {label}")
+
+          forbidden = {
+              "duplicate Tatva transformation table": "const tatvaTransformations",
+              "duplicate Tatva diagram": "function TatvaDiagram",
+              "stale elements import": 'import { elements, type Element } from "@/data/elements";',
+          }
+          for label, token in forbidden.items():
+              if token in home:
+                  missing.append(f"Still present: {label}")
+
+          if missing:
+              raise SystemExit("Definitive source contracts failed:\n- " + "\n- ".join(missing))
+          PY
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install temporary browser tooling
+        run: |
+          pnpm add --save-dev --ignore-workspace-root-check @playwright/test@1.59.1 @axe-core/playwright
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Build all routes without warnings
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee /tmp/definitive-home-build.log
+          if grep -q "react-hooks/exhaustive-deps" /tmp/definitive-home-build.log; then
+            echo "A hooks warning remains in the definitive build."
+            exit 1
+          fi
+          grep -q "Generating static pages (56/56)" /tmp/definitive-home-build.log
+
+      - name: Start production server
+        run: |
+          pnpm start > /tmp/definitive-home-server.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/definitive-home-server.log
+          exit 1
+
+      - name: Author definitive browser matrix
+        run: |
+          mkdir -p /tmp/definitive-home artifacts/definitive-home/screenshots
+          cat > /tmp/definitive-home/playwright.config.mjs <<'EOF'
+          import { defineConfig } from "@playwright/test";
+
+          export default defineConfig({
+            testDir: "/tmp/definitive-home",
+            testMatch: "home.spec.mjs",
+            timeout: 110_000,
+            expect: { timeout: 15_000 },
+            workers: 1,
+            retries: 0,
+            reporter: [["line"]],
+            use: {
+              baseURL: "http://127.0.0.1:3000",
+              browserName: "chromium",
+              headless: true,
+              colorScheme: "light",
+              locale: "en-US",
+              trace: "retain-on-failure",
+              screenshot: "only-on-failure",
+            },
+          });
+          EOF
+
+          cat > /tmp/definitive-home/home.spec.mjs <<'EOF'
+          import { expect, test } from "@playwright/test";
+          import AxeBuilder from "@axe-core/playwright";
+          import fs from "node:fs/promises";
+          import path from "node:path";
+
+          const artifactRoot = path.resolve(process.cwd(), "artifacts/definitive-home");
+
+          async function prepare(page) {
+            await page.addInitScript(() => {
+              sessionStorage.setItem("bt-intro-seen", "1");
+              localStorage.removeItem("bt-motion");
+              localStorage.setItem(
+                "bt-consent-v2",
+                JSON.stringify({ necessary: true, analytics: false, marketing: false }),
+              );
+            });
+          }
+
+          async function audit(page, label, viewport, reduced = false) {
+            const consoleErrors = [];
+            const pageErrors = [];
+            page.on("console", (message) => {
+              if (message.type() === "error") consoleErrors.push(message.text());
+            });
+            page.on("pageerror", (error) => pageErrors.push(error.message));
+
+            await page.setViewportSize(viewport);
+            await page.emulateMedia({ reducedMotion: reduced ? "reduce" : "no-preference" });
+            await prepare(page);
+            await page.goto("/", { waitUntil: "domcontentloaded" });
+            await page.evaluate(() => document.fonts.ready);
+            await page.waitForTimeout(1900);
+
+            await expect(page.locator("h1")).toHaveCount(1);
+            await expect(page.getByText("Attention can spike. Recognition has to grow.")).toBeVisible();
+            await expect(page.getByText("Which sentence feels a little too familiar?")).toBeVisible();
+            await expect(page.getByText("The result is the last thing you should look at.")).toBeVisible();
+            await expect(page.getByText("The work meets the business wherever it stands.")).toBeVisible();
+            await expect(page.getByText("A project does not move forward. It moves deeper.")).toBeVisible();
+
+            const fonts = await page.evaluate(() => ({
+              display: getComputedStyle(document.querySelector("h1")).fontFamily,
+              body: getComputedStyle(document.body).fontFamily,
+            }));
+            expect(fonts.display.toLowerCase()).toContain("newsreader");
+            expect(fonts.body.toLowerCase()).toContain("dm sans");
+
+            const initial = await page.evaluate(() => ({
+              overflow: Math.max(0, document.documentElement.scrollWidth - innerWidth),
+              videoElements: document.querySelectorAll("main video").length,
+              videoResources: performance
+                .getEntriesByType("resource")
+                .filter((entry) => /\.mp4(?:\?|$)/i.test(entry.name))
+                .map((entry) => entry.name),
+            }));
+            expect(initial.overflow).toBeLessThanOrEqual(2);
+            if (reduced) {
+              expect(initial.videoElements).toBe(0);
+            } else if (label === "desktop") {
+              expect(initial.videoElements).toBeLessThanOrEqual(1);
+              expect(initial.videoResources.length).toBeLessThanOrEqual(1);
+            }
+
+            const axe = await new AxeBuilder({ page })
+              .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+              .analyze();
+            const structuralBlocking = axe.violations.filter(
+              (violation) =>
+                violation.id !== "color-contrast" &&
+                (violation.impact === "critical" || violation.impact === "serious"),
+            );
+            expect(structuralBlocking).toEqual([]);
+
+            const fractions = [0, 0.06, 0.13, 0.21, 0.30, 0.39, 0.49, 0.59, 0.69, 0.79, 0.89, 0.98];
+            const blankFrames = [];
+            let maxPlaying = 0;
+
+            for (let index = 0; index < fractions.length; index += 1) {
+              const fraction = fractions[index];
+              await page.evaluate((position) => {
+                const height = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+                scrollTo({
+                  top: Math.max(0, (height - innerHeight) * position),
+                  behavior: "instant",
+                });
+              }, fraction);
+              await page.waitForTimeout(620);
+
+              const sample = await page.evaluate(() => {
+                const root = document.querySelector("main") ?? document.body;
+                const text = Array.from(
+                  root.querySelectorAll("h1,h2,h3,p,a,button,summary,figcaption,span"),
+                )
+                  .filter((element) => {
+                    const rect = element.getBoundingClientRect();
+                    const style = getComputedStyle(element);
+                    return (
+                      rect.bottom > 0 &&
+                      rect.top < innerHeight &&
+                      rect.right > 0 &&
+                      rect.left < innerWidth &&
+                      style.display !== "none" &&
+                      style.visibility !== "hidden" &&
+                      Number.parseFloat(style.opacity || "1") > 0.06
+                    );
+                  })
+                  .map((element) => (element.innerText || element.textContent || "").trim())
+                  .filter(Boolean)
+                  .join(" ")
+                  .replace(/\s+/g, " ")
+                  .slice(0, 700);
+                const playing = Array.from(root.querySelectorAll("video")).filter(
+                  (video) => !video.paused && !video.ended && video.readyState >= 2,
+                ).length;
+                return { text, playing };
+              });
+              maxPlaying = Math.max(maxPlaying, sample.playing);
+              if (sample.text.length < 24) blankFrames.push({ fraction, text: sample.text });
+
+              if ([0, 5, 8, 11].includes(index)) {
+                await page.screenshot({
+                  path: path.join(
+                    artifactRoot,
+                    "screenshots",
+                    `${label}-${String(index).padStart(2, "0")}-${Math.round(fraction * 100)}.png`,
+                  ),
+                  animations: "disabled",
+                });
+              }
+            }
+
+            expect(blankFrames).toEqual([]);
+            expect(maxPlaying).toBeLessThanOrEqual(2);
+
+            if (label === "desktop") {
+              await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+              const trigger = page.getByRole("button", { name: "Open menu" });
+              await trigger.focus();
+              await page.keyboard.press("Enter");
+              const dialog = page.getByRole("dialog", { name: "Site navigation" });
+              await dialog.waitFor();
+              const links = dialog.locator("a[href]");
+              const count = await links.count();
+              await links.nth(count - 1).focus();
+              await page.keyboard.press("Tab");
+              expect((await links.first().textContent())?.trim()).toBe(
+                await page.evaluate(() => document.activeElement?.textContent?.trim()),
+              );
+              await page.keyboard.press("Escape");
+              await dialog.waitFor({ state: "detached" });
+              expect(
+                await page.evaluate(() => document.activeElement?.getAttribute("aria-label")),
+              ).toBe("Open menu");
+            }
+
+            expect(pageErrors).toEqual([]);
+            expect(consoleErrors.filter((message) => !message.includes("favicon"))).toEqual([]);
+
+            await fs.mkdir(path.join(artifactRoot, "audit-json"), { recursive: true });
+            await fs.writeFile(
+              path.join(artifactRoot, "audit-json", `${label}.json`),
+              JSON.stringify(
+                {
+                  label,
+                  viewport,
+                  reduced,
+                  fonts,
+                  initial,
+                  blankFrames,
+                  maxPlaying,
+                  structuralBlockingViolations: structuralBlocking.length,
+                  colorContrastFindingNodes: axe.violations
+                    .filter((violation) => violation.id === "color-contrast")
+                    .reduce((sum, violation) => sum + violation.nodes.length, 0),
+                  consoleErrors,
+                  pageErrors,
+                },
+                null,
+                2,
+              ),
+            );
+          }
+
+          test("desktop definitive film", async ({ page }) => {
+            await audit(page, "desktop", { width: 1440, height: 1000 });
+          });
+          test("short laptop definitive film", async ({ page }) => {
+            await audit(page, "short-laptop", { width: 1366, height: 768 });
+          });
+          test("mobile definitive film", async ({ page }) => {
+            await audit(page, "mobile", { width: 390, height: 844 });
+          });
+          test("reduced desktop definitive film", async ({ page }) => {
+            await audit(page, "reduced-desktop", { width: 1440, height: 1000 }, true);
+          });
+          test("reduced mobile definitive film", async ({ page }) => {
+            await audit(page, "reduced-mobile", { width: 390, height: 844 }, true);
+          });
+          EOF
+
+      - name: Run definitive browser matrix
+        run: pnpm exec playwright test --config=/tmp/definitive-home/playwright.config.mjs
+
+      - name: Upload definitive audit record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: homepage-definitive-consolidation
+          path: artifacts/definitive-home
+          if-no-files-found: warn
+          retention-days: 3
+
+      - name: Record the green gate and retire temporary pull requests
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SHA=$(git rev-parse HEAD)
+          VERCEL_STATE=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${SHA}/status" --jq '[.statuses[] | select(.context == "Vercel")][0].state // "not-reported"' 2>/dev/null || echo "not-reported")
+          BODY=$(cat <<EOF
+          ### Definitive homepage consolidation passed
+
+          The latest \\`work/home-moodboard-film-2026-08-04\\` source passed:
+
+          - warning-free Next.js production build with 56/56 static pages
+          - desktop, short-laptop, mobile, and both reduced-motion browser journeys
+          - no sampled blank frames or horizontal overflow
+          - Newsreader and DM Sans loading
+          - maximum two active films and poster-only reduced motion
+          - hero-only initial media mounting, with later films loaded on approach
+          - keyboard-trapped full-screen navigation with Escape focus return
+          - structural WCAG axe checks, target-size and source-contract checks
+          - strengthened solid-surface readability tokens
+
+          Vercel commit status at consolidation time: **${VERCEL_STATE}**.
+
+          Workflow: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          EOF
+          )
+          gh api "repos/${GITHUB_REPOSITORY}/issues/9/comments" -f body="$BODY"
+
+          for number in 11 12 13 14; do
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/pulls/${number}" -f state=closed >/dev/null 2>&1 || true
+          done
+
+          CURRENT_PR=$(gh api "repos/${GITHUB_REPOSITORY}/pulls?state=open&head=sumansharmabharadwaj-ship-it:automation/home-final-consolidation-2026-08-04" --jq '.[0].number // empty' 2>/dev/null || true)
+          if [ -n "$CURRENT_PR" ]; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/pulls/${CURRENT_PR}" -f state=closed >/dev/null 2>&1 || true
+          fi
