@@ -357,7 +357,7 @@ export function HomeFilmConstellation() {
                   <span className="absolute left-3 top-2.5 text-[0.48rem] font-medium uppercase tracking-[0.16em] text-ivory/48">
                     Fragment {String(index + 1).padStart(2, "0")}
                   </span>
-                  <figcaption className="absolute bottom-2.5 left-3 right-3 font-display text-[0.58rem] leading-snug text-ivory/7o">
+                  <figcaption className="absolute bottom-2.5 left-3 right-3 font-display text-[0.58rem] leading-snug text-ivory/70">
                     {film.label}
                   </figcaption>
                 </motion.figure>

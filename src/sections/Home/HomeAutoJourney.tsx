@@ -33,7 +33,7 @@ export function HomeAutoJourney() {
   const holdUntilRef = useRef(0);
   const holdTimerRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(false);
   const [holding, setHolding] = useState(false);
   const [complete, setComplete] = useState(false);
 

@@ -93,6 +93,7 @@ export function StudioTriptych() {
 
   useEffect(() => {
     if (prefersReducedMotion) return;
+    const videoAtEffectStart = activeVideoRef.current;
 
     function syncPlayback() {
       const video = activeVideoRef.current;
@@ -105,7 +106,7 @@ export function StudioTriptych() {
     document.addEventListener("visibilitychange", syncPlayback);
     return () => {
       document.removeEventListener("visibilitychange", syncPlayback);
-      activeVideoRef.current?.pause();
+      videoAtEffectStart?.pause();
     };
   }, [activeIndex, inView, prefersReducedMotion]);
 

@@ -161,6 +161,7 @@ export function EvidenceWall() {
 
   useEffect(() => {
     if (prefersReducedMotion) return;
+    const videoAtEffectStart = activeVideoRef.current;
 
     function syncPlayback() {
       const video = activeVideoRef.current;
@@ -173,7 +174,7 @@ export function EvidenceWall() {
     document.addEventListener("visibilitychange", syncPlayback);
     return () => {
       document.removeEventListener("visibilitychange", syncPlayback);
-      activeVideoRef.current?.pause();
+      videoAtEffectStart?.pause();
     };
   }, [activeIndex, inView, prefersReducedMotion]);
 
