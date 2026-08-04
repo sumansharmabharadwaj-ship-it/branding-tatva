@@ -66,9 +66,41 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build the site
+        id: build
+        continue-on-error: true
         run: pnpm build
 
+      - name: Diagnose a prerender failure
+        if: steps.build.outcome == 'failure'
+        run: |
+          echo "--- macro locations in dependencies and output ---"
+          grep -R -n --include='*.js' "__NEXT_PRIVATE_MINIMIZE_MACRO_FALSE" node_modules/next node_modules/styled-jsx .next 2>/dev/null | head -40 || true
+          echo "--- compiled homepage context ---"
+          node <<'NODE'
+          const fs = require('fs');
+          const candidates = [
+            '.next/server/app/page.js',
+            '.next/server/chunks/ssr',
+          ];
+          for (const candidate of candidates) {
+            if (!fs.existsSync(candidate)) continue;
+            if (fs.statSync(candidate).isDirectory()) continue;
+            const source = fs.readFileSync(candidate, 'utf8');
+            const needle = '__NEXT_PRIVATE_MINIMIZE_MACRO_FALSE';
+            const index = source.indexOf(needle);
+            console.log(candidate, 'length', source.length, 'needle', index);
+            if (index >= 0) {
+              console.log(source.slice(Math.max(0, index - 1600), index + 1600));
+            }
+          }
+          NODE
+
+      - name: Stop after diagnostics
+        if: steps.build.outcome == 'failure'
+        run: exit 1
+
       - name: Commit the verified repair to the moodboard branch
+        if: steps.build.outcome == 'success'
         run: |
           git fetch origin work/home-moodboard-film-2026-08-04
           git reset --mixed origin/work/home-moodboard-film-2026-08-04
