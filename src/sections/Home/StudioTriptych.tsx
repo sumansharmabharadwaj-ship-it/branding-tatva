@@ -57,12 +57,14 @@ const DISCIPLINES = [
 
 const ROTATE_MS = 6200;
 const MANUAL_PAUSE_MS = 16000;
+const HOVER_PREVIEW_MS = 3400;
 
 export function StudioTriptych() {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
+  const activeVideoRef = useRef<HTMLVideoElement>(null);
   const pauseUntilRef = useRef(0);
-  const inView = useInView(sectionRef, { amount: 0.4 });
+  const inView = useInView(sectionRef, { amount: 0.18 });
   const [activeIndex, setActiveIndex] = useState(0);
   const active = DISCIPLINES[activeIndex];
 
@@ -77,8 +79,39 @@ export function StudioTriptych() {
     return () => window.clearInterval(timer);
   }, [inView, prefersReducedMotion]);
 
-  function choose(index: number) {
-    pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
+  useEffect(() => {
+    function onChapter(event: Event) {
+      const detail = (event as CustomEvent<{ id?: string }>).detail;
+      if (detail?.id !== "studio") return;
+      setActiveIndex(0);
+      pauseUntilRef.current = Date.now() + 700;
+    }
+
+    window.addEventListener("bt:home-chapter", onChapter as EventListener);
+    return () => {
+      window.removeEventListener("bt:home-chapter", onChapter as EventListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    const video = activeVideoRef.current;
+    if (!video || prefersReducedMotion) return;
+
+    function syncPlayback() {
+      if (inView && !document.hidden) void video.play().catch(() => {});
+      else video.pause();
+    }
+
+    syncPlayback();
+    document.addEventListener("visibilitychange", syncPlayback);
+    return () => {
+      document.removeEventListener("visibilitychange", syncPlayback);
+      video.pause();
+    };
+  }, [activeIndex, inView, prefersReducedMotion]);
+
+  function choose(index: number, duration = MANUAL_PAUSE_MS) {
+    pauseUntilRef.current = Date.now() + duration;
     setActiveIndex(index);
   }
 
@@ -87,8 +120,11 @@ export function StudioTriptych() {
       ref={sectionRef}
       className="relative isolate overflow-hidden border-y border-soil/10"
       style={{ backgroundColor: "#F2F0E8" }}
-      onPointerEnter={() => {
-        pauseUntilRef.current = Date.now() + 7000;
+      onPointerDown={() => {
+        pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
+      }}
+      onTouchStart={() => {
+        pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
       }}
       onFocusCapture={() => {
         pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
@@ -104,7 +140,7 @@ export function StudioTriptych() {
             : { x: [0, 84, 0], y: [0, 34, 0], scale: [1, 1.12, 1] }
         }
         transition={
-          prefersReducedMotion
+          prefersReducedMotion || !inView
             ? undefined
             : { duration: 17, repeat: Infinity, ease: "easeInOut" }
         }
@@ -119,7 +155,7 @@ export function StudioTriptych() {
             : { x: [0, -68, 0], y: [0, -36, 0], scale: [1.04, 0.94, 1.04] }
         }
         transition={
-          prefersReducedMotion
+          prefersReducedMotion || !inView
             ? undefined
             : { duration: 20, repeat: Infinity, ease: "easeInOut" }
         }
@@ -142,6 +178,7 @@ export function StudioTriptych() {
             >
               {!prefersReducedMotion && inView ? (
                 <video
+                  ref={activeVideoRef}
                   className="absolute inset-0 h-full w-full object-cover"
                   src={active.video}
                   poster={active.poster}
@@ -151,6 +188,9 @@ export function StudioTriptych() {
                   playsInline
                   preload="metadata"
                   aria-hidden="true"
+                  onCanPlay={(event) => {
+                    if (inView) void event.currentTarget.play().catch(() => {});
+                  }}
                 />
               ) : (
                 <Image src={active.poster} alt="" fill sizes="(min-width: 1024px) 30vw, 100vw" className="object-cover" />
@@ -173,7 +213,7 @@ export function StudioTriptych() {
               prefersReducedMotion || !inView ? undefined : { x: ["0%", "650%"] }
             }
             transition={
-              prefersReducedMotion
+              prefersReducedMotion || !inView
                 ? undefined
                 : { duration: 6.4, repeat: Infinity, repeatDelay: 4.5, ease: "easeInOut" }
             }
@@ -223,10 +263,8 @@ export function StudioTriptych() {
                   type="button"
                   aria-pressed={selected}
                   onClick={() => choose(index)}
-                  onPointerEnter={() => {
-                    pauseUntilRef.current = Date.now() + 9000;
-                    setActiveIndex(index);
-                  }}
+                  onPointerEnter={() => choose(index, HOVER_PREVIEW_MS)}
+                  onFocus={() => choose(index)}
                   className="relative min-h-24 overflow-hidden rounded-2xl border px-3 py-4 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:px-4"
                   style={{
                     borderColor: selected ? "rgba(138,107,61,0.42)" : "rgba(39,34,30,0.1)",
@@ -339,7 +377,7 @@ export function StudioTriptych() {
                 : { scale: [1.03, 1.11, 1.03], x: [0, -8, 0] }
             }
             transition={
-              prefersReducedMotion
+              prefersReducedMotion || !inView
                 ? undefined
                 : { duration: 12, repeat: Infinity, ease: "easeInOut" }
             }
