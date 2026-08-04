@@ -1,0 +1,1 @@
+This temporary marker opens the pull-request build gate that repairs and verifies the moodboard-led homepage before updating the preview branch.
