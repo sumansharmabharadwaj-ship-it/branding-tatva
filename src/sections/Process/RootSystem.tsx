@@ -38,11 +38,15 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     const wrap = wrapRef.current;
     if (!wrap) return;
 
+    // Ref callbacks mutate this array in place. Capturing the array once keeps
+    // effect cleanup pointed at the same film nodes React mounted for this run,
+    // rather than consulting a potentially replaced ref value during teardown.
+    const videos = videoRefs.current;
     let frame = 0;
     let sectionIsNear = false;
 
     const syncVideos = (nextActive: number) => {
-      videoRefs.current.forEach((video, index) => {
+      videos.forEach((video, index) => {
         if (!video) return;
         const shouldPlay = sectionIsNear && index === nextActive;
         const shouldWarm = sectionIsNear && index === nextActive + 1;
@@ -90,7 +94,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
           article.setAttribute("aria-hidden", String(nextActive !== index));
         });
 
-        videoRefs.current.forEach((video, index) => {
+        videos.forEach((video, index) => {
           if (!video) return;
           const distance = Math.abs(stageProgress - (index + 0.5));
           const visible = Math.max(0, 1 - distance * 1.15);
@@ -138,7 +142,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       if (!lenis) window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
       observer.disconnect();
-      videoRefs.current.forEach((video) => video?.pause());
+      videos.forEach((video) => video?.pause());
     };
   }, [lenis, stages.length]);
 
