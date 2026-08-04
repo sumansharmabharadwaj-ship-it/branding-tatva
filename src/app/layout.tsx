@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { DM_Sans, Newsreader } from "next/font/google";
 import "./globals.css";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
@@ -10,14 +10,18 @@ import { MotionPreferenceProvider } from "@/components/MotionPreference";
 import { NarrativeSignal } from "@/components/NarrativeSignal";
 import { site } from "@/data/site";
 
-const displayFont = Cormorant_Garamond({
+// Newsreader carries the moodboard's contemporary editorial voice without
+// the ornate, theatrical feeling of Cormorant Garamond. DM Sans keeps the
+// small uppercase navigation and explanatory copy quiet, crisp, and modern.
+const displayFont = Newsreader({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",
 });
 
-const bodyFont = Manrope({
+const bodyFont = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-body",
@@ -55,7 +59,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#27221E",
+  themeColor: "#F4EFE6",
   width: "device-width",
   initialScale: 1,
 };
