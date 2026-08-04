@@ -5,9 +5,21 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 
-const FIRST_ADVANCE_MS = 14000;
-const CHAPTER_ADVANCE_MS = 16000;
+const DEFAULT_DWELL_MS = 18000;
 const MANUAL_HOLD_MS = 18000;
+const CHAPTER_DWELL_MS: Record<string, number> = {
+  opening: 14000,
+  diagnosis: 22000,
+  evidence: 22000,
+  scope: 22000,
+  studio: 23000,
+  paths: 22000,
+  framework: 19000,
+  elements: 30000,
+  process: 30000,
+  questions: 24000,
+  invitation: 18000,
+};
 
 export function HomeAutoJourney() {
   const pathname = usePathname();
@@ -44,6 +56,11 @@ export function HomeAutoJourney() {
     return index;
   }, []);
 
+  const dwellForIndex = useCallback((index: number) => {
+    const chapter = targetsRef.current[index]?.dataset.homeChapter;
+    return chapter ? CHAPTER_DWELL_MS[chapter] ?? DEFAULT_DWELL_MS : DEFAULT_DWELL_MS;
+  }, []);
+
   const scrollToIndex = useCallback(
     (index: number) => {
       const target = targetsRef.current[index];
@@ -63,7 +80,6 @@ export function HomeAutoJourney() {
 
   const pauseForReading = useCallback(() => {
     if (autoScrollRef.current) return;
-
     holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
     setHolding(true);
     window.setTimeout(() => {
@@ -200,10 +216,10 @@ export function HomeAutoJourney() {
       releaseTimer = window.setTimeout(() => {
         autoScrollRef.current = false;
       }, 1900);
-      schedule(CHAPTER_ADVANCE_MS);
+      schedule(dwellForIndex(next));
     }
 
-    schedule(activeIndexRef.current === 0 ? FIRST_ADVANCE_MS : CHAPTER_ADVANCE_MS);
+    schedule(dwellForIndex(activeIndexRef.current));
 
     return () => {
       cancelled = true;
@@ -211,7 +227,7 @@ export function HomeAutoJourney() {
       window.clearTimeout(releaseTimer);
       autoScrollRef.current = false;
     };
-  }, [currentIndex, pathname, playing, prefersReducedMotion, resolveTargets, scrollToIndex]);
+  }, [currentIndex, dwellForIndex, pathname, playing, prefersReducedMotion, resolveTargets, scrollToIndex]);
 
   if (pathname !== "/" || prefersReducedMotion) return null;
 
