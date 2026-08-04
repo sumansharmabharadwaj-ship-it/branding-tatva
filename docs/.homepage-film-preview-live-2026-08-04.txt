@@ -1,0 +1,1 @@
+The moodboard-led homepage film, compact privacy and sound utilities, preview noindex barriers, and the desktop/mobile/reduced-motion browser matrix have all passed. This marker triggers the familiar review branch deployment without touching production.
