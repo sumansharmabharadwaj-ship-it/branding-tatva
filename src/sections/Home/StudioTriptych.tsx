@@ -12,6 +12,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { credentials } from "@/data/about";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const LENSES = [
   {
@@ -54,12 +55,16 @@ type LensId = (typeof LENSES)[number]["id"];
 export function StudioTriptych() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const compactLayout = useMediaQuery("(max-width: 1023px), (max-height: 719px)");
+  const staticLayout = Boolean(prefersReducedMotion) || compactLayout;
   const [activeId, setActiveId] = useState<LensId>("notice");
+  const [manualLens, setManualLens] = useState(false);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
-    if (prefersReducedMotion) return;
-    const index = Math.min(LENSES.length - 1, Math.floor(value * LENSES.length));
+    if (staticLayout || manualLens || value < 0.24) return;
+    const lensProgress = Math.min(0.999, Math.max(0, (value - 0.24) / 0.76));
+    const index = Math.min(LENSES.length - 1, Math.floor(lensProgress * LENSES.length));
     setActiveId(LENSES[index].id);
   });
 
@@ -70,23 +75,84 @@ export function StudioTriptych() {
   const imageX = useTransform(scrollYProgress, [0, 0.5, 1], [0, -34, 28]);
   const imageY = useTransform(scrollYProgress, [0, 1], [0, -40]);
   const veilOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.48, 0.28, 0.58]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.16, 0.28], [1, 1, 0]);
-  const titleY = useTransform(scrollYProgress, [0, 0.3], [0, -64]);
-  const lensOpacity = useTransform(scrollYProgress, [0.16, 0.28, 1], [0, 1, 1]);
-  const lensY = useTransform(scrollYProgress, [0.16, 0.34], [54, 0]);
+  // The title now clears the frame before the active lens enters. The
+  // previous crossfade placed two enormous serif compositions on top of
+  // one another, which is the overlap visible in the audit screenshot.
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.1, 0.19], [1, 1, 0]);
+  const titleY = useTransform(scrollYProgress, [0, 0.2], [0, -48]);
+  const lensOpacity = useTransform(scrollYProgress, [0.22, 0.31, 1], [0, 1, 1]);
+  const lensY = useTransform(scrollYProgress, [0.22, 0.34], [42, 0]);
   const progressScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   function chooseLens(id: LensId) {
+    setManualLens(true);
     setActiveId(id);
+  }
+
+  if (staticLayout) {
+    return (
+      <section className="relative overflow-hidden bg-[#151411] px-6 py-24 text-ivory sm:px-10 sm:py-28">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/own-portrait.jpg"
+            alt="Suman Sharma, founder of Branding Tatva"
+            fill
+            sizes="100vw"
+            className="object-cover"
+            style={{ objectPosition: "center 28%" }}
+          />
+        </div>
+        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(16,14,12,.94)_0%,rgba(16,14,12,.78)_52%,rgba(16,14,12,.82)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_68%_24%,rgba(239,217,178,.14),transparent_30%)]" />
+
+        <div className="relative z-10 mx-auto max-w-[92rem]">
+          <p className="text-[0.65rem] font-medium uppercase tracking-[0.3em] text-sandstone">The author behind the system</p>
+          <h2 className="mt-5 max-w-4xl font-display text-[clamp(3rem,8vw,7rem)] font-normal leading-[0.9] tracking-[-0.045em]">
+            I study attention before I design <span className="italic text-sandstone">expression.</span>
+          </h2>
+          <p className="mt-7 max-w-2xl text-sm leading-relaxed text-ivory/72 sm:text-base">
+            Psychology reads behaviour. Literature gives meaning a voice. Direction decides what the audience should experience next.
+          </p>
+
+          <div className="mt-12 grid gap-5 lg:grid-cols-3">
+            {LENSES.map((lens) => (
+              <article key={lens.id} className="rounded-[1.6rem] border border-ivory/14 bg-black/30 p-6 backdrop-blur-md sm:p-7">
+                <p className="text-[0.62rem] font-medium uppercase tracking-[0.22em] text-sandstone">
+                  {lens.number} · {lens.discipline}
+                </p>
+                <p className="mt-4 font-display text-5xl leading-none text-ivory">{lens.verb}.</p>
+                <p className="mt-5 font-display text-2xl leading-tight text-ivory/92">{lens.question}</p>
+                <div className="mt-7 border-t border-ivory/12 pt-5">
+                  <p className="text-[0.58rem] uppercase tracking-[0.2em] text-ivory/42">The blind spot it catches</p>
+                  <p className="mt-2 text-sm leading-relaxed text-ivory/70">{lens.catches}</p>
+                </div>
+                <div className="mt-5">
+                  <p className="text-[0.58rem] uppercase tracking-[0.2em] text-ivory/42">The decision it changes</p>
+                  <p className="mt-2 text-sm leading-relaxed text-ivory/70">{lens.changes}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-col gap-5 border-t border-ivory/14 pt-6 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex max-w-3xl flex-wrap gap-x-5 gap-y-2 text-[0.58rem] uppercase tracking-[0.16em] text-ivory/46">
+              {featuredCredentials.map((credential) => (
+                <span key={credential.label}>{credential.label} · {credential.detail}</span>
+              ))}
+            </div>
+            <Link href="/about" className="shrink-0 text-xs font-medium uppercase tracking-[0.18em] text-sandstone transition-colors hover:text-ivory">
+              Read the full practice ↗
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
     <section ref={sectionRef} className="relative h-[310svh] bg-[#151411] text-ivory">
       <div className="sticky top-0 h-svh min-h-[660px] overflow-hidden">
-        <motion.div
-          className="absolute inset-[-7%]"
-          style={prefersReducedMotion ? undefined : { scale: imageScale, x: imageX, y: imageY }}
-        >
+        <motion.div className="absolute inset-[-7%]" style={{ scale: imageScale, x: imageX, y: imageY }}>
           <Image
             src="/images/own-portrait.jpg"
             alt="Suman Sharma, founder of Branding Tatva"
@@ -98,11 +164,7 @@ export function StudioTriptych() {
           />
         </motion.div>
 
-        <motion.div
-          aria-hidden="true"
-          className="absolute inset-0 bg-black"
-          style={{ opacity: prefersReducedMotion ? 0.46 : veilOpacity }}
-        />
+        <motion.div aria-hidden="true" className="absolute inset-0 bg-black" style={{ opacity: veilOpacity }} />
         <motion.div
           aria-hidden="true"
           className="absolute inset-0 transition-colors duration-700"
@@ -112,10 +174,7 @@ export function StudioTriptych() {
         <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(90deg,rgba(16,14,12,.92)_0%,rgba(16,14,12,.62)_38%,rgba(16,14,12,.18)_66%,rgba(16,14,12,.64)_100%)]" />
         <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_68%_34%,rgba(239,217,178,.16),transparent_28%)]" />
 
-        <motion.div
-          className="absolute inset-0 z-10 flex items-end px-6 pb-16 sm:px-10 sm:pb-20 lg:px-16"
-          style={prefersReducedMotion ? undefined : { opacity: titleOpacity, y: titleY }}
-        >
+        <motion.div className="absolute inset-0 z-10 flex items-end px-6 pb-16 sm:px-10 sm:pb-20 lg:px-16" style={{ opacity: titleOpacity, y: titleY }}>
           <div className="max-w-4xl">
             <p className="text-[0.65rem] font-medium uppercase tracking-[0.3em] text-sandstone">The author behind the system</p>
             <h2 className="mt-5 font-display text-[clamp(3.2rem,8vw,8rem)] font-normal leading-[0.88] tracking-[-0.045em]">
@@ -131,18 +190,18 @@ export function StudioTriptych() {
           </div>
         </motion.div>
 
-        <motion.div
-          className="absolute inset-0 z-20 flex items-center px-6 sm:px-10 lg:px-16"
-          style={prefersReducedMotion ? undefined : { opacity: lensOpacity, y: lensY }}
-        >
+        <motion.div className="absolute inset-0 z-20 flex items-center px-6 sm:px-10 lg:px-16" style={{ opacity: lensOpacity, y: lensY }}>
           <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,.85fr)] lg:items-end">
             <AnimatePresence mode="wait">
               <motion.div
                 key={active.id}
-                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 32, filter: "blur(10px)" }}
+                id={`studio-panel-${active.id}`}
+                role="tabpanel"
+                aria-labelledby={`studio-tab-${active.id}`}
+                initial={{ opacity: 0, y: 32, filter: "blur(10px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -22, filter: "blur(8px)" }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.62, ease: [0.22, 1, 0.36, 1] }}
+                exit={{ opacity: 0, y: -22, filter: "blur(8px)" }}
+                transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
                 className="max-w-4xl"
               >
                 <p className="text-[0.65rem] font-medium uppercase tracking-[0.28em] text-sandstone">
@@ -161,10 +220,10 @@ export function StudioTriptych() {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`${active.id}-reading`}
-                  initial={prefersReducedMotion ? undefined : { opacity: 0, x: 28 }}
+                  initial={{ opacity: 0, x: 28 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, x: -18 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: [0.22, 1, 0.36, 1] }}
+                  exit={{ opacity: 0, x: -18 }}
+                  transition={{ duration: 0.52, ease: [0.22, 1, 0.36, 1] }}
                   className="space-y-7"
                 >
                   <div>
@@ -178,13 +237,16 @@ export function StudioTriptych() {
                 </motion.div>
               </AnimatePresence>
 
-              <div className="mt-9 flex flex-wrap gap-2" aria-label="Choose a working lens">
+              <div className="mt-9 flex flex-wrap gap-2" role="tablist" aria-label="Choose a working lens">
                 {LENSES.map((lens) => (
                   <button
                     key={lens.id}
+                    id={`studio-tab-${lens.id}`}
                     type="button"
+                    role="tab"
+                    aria-selected={active.id === lens.id}
+                    aria-controls={`studio-panel-${lens.id}`}
                     onClick={() => chooseLens(lens.id)}
-                    aria-pressed={active.id === lens.id}
                     className={`min-h-11 rounded-full border px-4 text-[0.62rem] font-medium uppercase tracking-[0.16em] transition-all duration-300 ${
                       active.id === lens.id
                         ? "border-sandstone bg-sandstone text-soil"
