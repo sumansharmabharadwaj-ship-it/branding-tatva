@@ -35,16 +35,25 @@ jobs:
       - name: Build the Next.js site
         run: pnpm build
 
-      - name: Assemble standalone preview artifact
+      - name: Assemble audit artifacts
         run: |
           cp -R .next/static .next/standalone/.next/static
           cp -R public .next/standalone/public
           tar -czf homepage-audit-standalone.tar.gz -C .next/standalone .
+          tar -czf homepage-audit-source.tar.gz src next.config.ts package.json pnpm-lock.yaml
 
       - name: Upload standalone preview artifact
         uses: actions/upload-artifact@v4
         with:
           name: homepage-audit-standalone-tar
           path: homepage-audit-standalone.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Upload audited source artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: homepage-audit-source
+          path: homepage-audit-source.tar.gz
           if-no-files-found: error
           retention-days: 1
