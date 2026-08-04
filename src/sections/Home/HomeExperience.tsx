@@ -636,7 +636,6 @@ function AuthorChapter() {
 
   function choose(id: LensId) {
     setActiveId(id);
-    track("home_author_lens_selected", { lens: id, page: "home" });
   }
 
   return (
