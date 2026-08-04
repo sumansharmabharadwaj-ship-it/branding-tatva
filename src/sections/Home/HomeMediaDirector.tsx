@@ -5,12 +5,46 @@ import { useEffect } from "react";
 const MAX_SIMULTANEOUS_FILMS = 2;
 const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
 const HIDDEN_FLAG = "homeMotionHidden";
+const SOURCE_FLAG = "homeFilmSrc";
 
 function visibleArea(video: HTMLVideoElement) {
   const rect = video.getBoundingClientRect();
   const width = Math.max(0, Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0));
   const height = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
   return width * height;
+}
+
+function suspendFilm(video: HTMLVideoElement) {
+  video.pause();
+  video.dataset[HIDDEN_FLAG] = "1";
+  video.style.visibility = "hidden";
+
+  const source = video.getAttribute("src");
+  if (source && !video.dataset[SOURCE_FLAG]) {
+    video.dataset[SOURCE_FLAG] = source;
+  }
+
+  // Pausing alone can lose a race with a component effect or the browser's
+  // autoplay machinery. Detaching the media resource makes playback
+  // impossible while the poster remains underneath the hidden video layer.
+  if (video.hasAttribute("src")) {
+    video.removeAttribute("src");
+    video.load();
+  }
+}
+
+function restoreFilm(video: HTMLVideoElement) {
+  const source = video.dataset[SOURCE_FLAG];
+  if (source && !video.getAttribute("src")) {
+    video.setAttribute("src", source);
+    delete video.dataset[SOURCE_FLAG];
+    video.load();
+  }
+
+  if (video.dataset[HIDDEN_FLAG]) {
+    delete video.dataset[HIDDEN_FLAG];
+    video.style.visibility = "";
+  }
 }
 
 /**
@@ -36,20 +70,11 @@ export function HomeMediaDirector() {
         media.matches || document.documentElement.dataset.motion === "reduced";
 
       if (reduced) {
-        for (const video of videos) {
-          video.pause();
-          video.dataset[HIDDEN_FLAG] = "1";
-          video.style.visibility = "hidden";
-        }
+        for (const video of videos) suspendFilm(video);
         return;
       }
 
-      for (const video of videos) {
-        if (video.dataset[HIDDEN_FLAG]) {
-          delete video.dataset[HIDDEN_FLAG];
-          video.style.visibility = "";
-        }
-      }
+      for (const video of videos) restoreFilm(video);
 
       const visible = videos
         .map((video) => ({ video, area: visibleArea(video) }))
@@ -65,11 +90,27 @@ export function HomeMediaDirector() {
     };
 
     const onPlay = (event: Event) => {
-      if (event.target instanceof HTMLVideoElement) schedule();
+      if (!(event.target instanceof HTMLVideoElement)) return;
+      const reduced =
+        media.matches || document.documentElement.dataset.motion === "reduced";
+      if (reduced) suspendFilm(event.target);
+      schedule();
     };
 
-    const mutations = new MutationObserver(schedule);
-    mutations.observe(document.body, { childList: true, subtree: true });
+    const bodyMutations = new MutationObserver(schedule);
+    bodyMutations.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["src"],
+    });
+
+    const motionMutations = new MutationObserver(schedule);
+    motionMutations.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-motion"],
+    });
+
     document.addEventListener("play", onPlay, true);
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
@@ -85,7 +126,8 @@ export function HomeMediaDirector() {
 
     return () => {
       cancelAnimationFrame(frame);
-      mutations.disconnect();
+      bodyMutations.disconnect();
+      motionMutations.disconnect();
       document.removeEventListener("play", onPlay, true);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
