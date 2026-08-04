@@ -49,9 +49,9 @@ export default function GlossaryPage() {
             <div className="mt-12 space-y-12">
               {pillars.map((pillar) => (
                 <Reveal key={pillar.id}>
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
+                  <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
                     {pillar.name}
-                  </p>
+                  </h2>
                   <ul className="mt-4 divide-y divide-border border-y border-border">
                     {pillar.terms.map((t) => (
                       <li key={t.slug}>
@@ -60,9 +60,9 @@ export default function GlossaryPage() {
                           className="group flex items-baseline justify-between gap-6 py-4"
                         >
                           <span>
-                            <span className="font-display text-xl font-normal text-soil transition-colors duration-300 group-hover:text-clay">
+                            <h3 className="font-display text-xl font-normal text-soil transition-colors duration-300 group-hover:text-clay">
                               {t.term}
-                            </span>
+                            </h3>
                             <span className="mt-1 block text-sm leading-relaxed text-foreground-secondary">
                               {t.definition}
                             </span>

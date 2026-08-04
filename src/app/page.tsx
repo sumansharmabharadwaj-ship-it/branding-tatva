@@ -53,6 +53,13 @@ export const metadata: Metadata = {
 const faqStructuredData = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  // Anchored to the site entity rather than floating: an unattached
+  // FAQPage tells an engine these answers exist, and nothing about
+  // whose answers they are.
+  "@id": `${site.url}/#faq`,
+  isPartOf: { "@id": `${site.url}/#website` },
+  about: { "@id": `${site.url}/#organization` },
+  inLanguage: "en",
   mainEntity: faqs.map((faq) => ({
     "@type": "Question",
     name: faq.question,
