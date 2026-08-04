@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 
 const STATES = [
@@ -19,23 +19,48 @@ const STATES = [
   },
 ] as const;
 
+const AUTO_ADVANCE_MS = 2700;
+const MANUAL_HOLD_MS = 12000;
+
 export function HomeOpeningSignal() {
   const lenis = useLenis();
   const prefersReducedMotion = Boolean(useReducedMotion());
+  const holdTimerRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(prefersReducedMotion ? 2 : 0);
+  const [held, setHeld] = useState(false);
 
   useEffect(() => {
     if (prefersReducedMotion) {
       setActiveIndex(2);
+      setHeld(false);
       return;
     }
 
+    if (held) return;
+
     const timer = window.setInterval(() => {
+      if (document.hidden) return;
       setActiveIndex((current) => (current + 1) % STATES.length);
-    }, 2700);
+    }, AUTO_ADVANCE_MS);
 
     return () => window.clearInterval(timer);
-  }, [prefersReducedMotion]);
+  }, [held, prefersReducedMotion]);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(holdTimerRef.current);
+    },
+    [],
+  );
+
+  function chooseState(index: number) {
+    setActiveIndex(index);
+    if (prefersReducedMotion) return;
+
+    setHeld(true);
+    window.clearTimeout(holdTimerRef.current);
+    holdTimerRef.current = window.setTimeout(() => setHeld(false), MANUAL_HOLD_MS);
+  }
 
   function enterDiagnosis() {
     const target = document.querySelector<HTMLElement>("[data-home-chapter='diagnosis']");
@@ -57,30 +82,49 @@ export function HomeOpeningSignal() {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-5 z-[24] px-4 sm:bottom-7 sm:px-7">
       <div className="mx-auto flex w-full max-w-[96rem] items-end justify-between gap-5">
-        <div className="hidden max-w-sm rounded-2xl border border-ivory/14 bg-soil/44 px-4 py-3 text-left shadow-[0_18px_55px_rgba(0,0,0,0.24)] backdrop-blur-md sm:block">
-          <div className="flex items-center gap-2" aria-label="Seen, understood, remembered">
+        <div className="pointer-events-auto hidden max-w-sm rounded-2xl border border-ivory/14 bg-soil/44 px-4 py-3 text-left shadow-[0_18px_55px_rgba(0,0,0,0.24)] backdrop-blur-md sm:block">
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-[0.48rem] font-medium uppercase tracking-[0.17em] text-ivory/38">
+              Recognition signal
+            </span>
+            <span className="text-[0.48rem] uppercase tracking-[0.14em] text-sandstone/58">
+              Select to compare
+            </span>
+          </div>
+
+          <div
+            className="mt-2.5 flex items-center gap-2"
+            role="tablist"
+            aria-label="Compare the stages from visibility to memory"
+          >
             {STATES.map((state, index) => {
               const selected = index === activeIndex;
               return (
                 <div key={state.label} className="contents">
-                  <motion.span
-                    className="text-[0.55rem] font-medium uppercase tracking-[0.16em]"
+                  <motion.button
+                    type="button"
+                    role="tab"
+                    aria-selected={selected}
+                    onClick={() => chooseState(index)}
+                    className="rounded-md text-[0.55rem] font-medium uppercase tracking-[0.16em] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                     animate={{
                       color: selected ? "#F4EFE6" : "rgba(244,239,230,0.34)",
                       opacity: selected ? 1 : 0.62,
                     }}
+                    whileHover={prefersReducedMotion ? undefined : { y: -1 }}
                     transition={{ duration: prefersReducedMotion ? 0 : 0.45 }}
                   >
                     {state.label}
-                  </motion.span>
+                  </motion.button>
                   {index < STATES.length - 1 && (
                     <span className="relative h-px min-w-5 flex-1 overflow-hidden bg-ivory/12">
-                      {selected && !prefersReducedMotion && (
+                      {selected && !prefersReducedMotion && !held && (
                         <motion.span
+                          key={`opening-signal-${activeIndex}`}
                           className="absolute inset-y-0 left-0 bg-sandstone"
                           initial={{ width: 0 }}
                           animate={{ width: "100%" }}
-                          transition={{ duration: 2.7, ease: "linear" }}
+                          transition={{ duration: AUTO_ADVANCE_MS / 1000, ease: "linear" }}
                         />
                       )}
                     </span>
@@ -93,6 +137,7 @@ export function HomeOpeningSignal() {
           <AnimatePresence mode="wait" initial={false}>
             <motion.p
               key={active.label}
+              role="tabpanel"
               className="mt-2 text-[0.66rem] leading-relaxed text-ivory/55"
               initial={prefersReducedMotion ? false : { opacity: 0, y: 5, filter: "blur(3px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
