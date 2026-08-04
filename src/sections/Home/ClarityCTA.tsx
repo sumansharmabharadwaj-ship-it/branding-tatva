@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useInView, useReducedMotion } from "framer-motion";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 
 type ScopeOption = {
@@ -59,6 +60,8 @@ const SCOPE_OPTIONS: ScopeOption[] = [
 const SITUATION_BY_SCOPE = ["idea", "inconsistent", "outgrown"] as const;
 const RADAR_AXES = ["Clarity", "Consistency", "Momentum"] as const;
 const GOLD = "#C6A97A";
+const AUTO_ADVANCE_MS = 5600;
+const MANUAL_PAUSE_MS = 16000;
 
 function radarPoint(value: number, index: number, radius = 70) {
   const angle = -Math.PI / 2 + index * ((Math.PI * 2) / RADAR_AXES.length);
@@ -71,26 +74,37 @@ function radarRing(value: number) {
 }
 
 export function ClarityCTA() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const pauseUntilRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const prefersReducedMotion = Boolean(useReducedMotion());
+  const inView = useInView(sectionRef, { amount: 0.38 });
   const active = SCOPE_OPTIONS[activeIndex];
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (paused || reducedMotion.matches) return;
+    if (prefersReducedMotion || !inView) return;
 
     const timer = window.setInterval(() => {
+      if (document.hidden || Date.now() < pauseUntilRef.current) return;
       setActiveIndex((current) => (current + 1) % SCOPE_OPTIONS.length);
-    }, 5600);
+    }, AUTO_ADVANCE_MS);
 
     return () => window.clearInterval(timer);
-  }, [paused]);
+  }, [inView, prefersReducedMotion]);
+
+  function pauseAutoplay(duration = MANUAL_PAUSE_MS) {
+    pauseUntilRef.current = Date.now() + duration;
+  }
 
   function choose(index: number) {
+    const situation = SITUATION_BY_SCOPE[index];
     setActiveIndex(index);
-    setPaused(true);
+    pauseAutoplay();
     try {
-      window.localStorage.setItem("bt-situation", SITUATION_BY_SCOPE[index]);
+      window.localStorage.setItem("bt-situation", situation);
+      window.dispatchEvent(
+        new CustomEvent("bt:situation", { detail: { situation } }),
+      );
     } catch {}
   }
 
@@ -101,10 +115,12 @@ export function ClarityCTA() {
 
   return (
     <section
-      className="clarity-lab relative isolate overflow-hidden bg-[#141210] text-ivory"
+      ref={sectionRef}
+      className={`clarity-lab ${inView ? "is-awake" : "is-resting"} relative isolate overflow-hidden bg-[#141210] text-ivory`}
       aria-labelledby="clarity-lab-title"
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
+      onFocusCapture={() => pauseAutoplay()}
+      onPointerDown={() => pauseAutoplay()}
+      onTouchStart={() => pauseAutoplay()}
     >
       <div className="absolute inset-0 -z-30" aria-hidden="true">
         <BackgroundVideo
@@ -156,7 +172,7 @@ export function ClarityCTA() {
                     aria-selected={selected}
                     aria-controls="clarity-diagnosis"
                     onClick={() => choose(index)}
-                    onPointerDown={() => setPaused(true)}
+                    onPointerEnter={() => pauseAutoplay(9000)}
                     className="group relative w-full overflow-hidden rounded-2xl border px-5 py-5 text-left transition-[border-color,background-color,transform] duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:px-6"
                     style={{
                       borderColor: selected ? "rgba(198,169,122,0.68)" : "rgba(244,239,230,0.11)",
@@ -194,7 +210,7 @@ export function ClarityCTA() {
             </div>
 
             <p className="max-w-sm text-xs leading-6 text-ivory/40">
-              The map moves by itself. Choose the pattern closest to your business and it will hold while you read. It is a conversation starter, never an automated verdict.
+              The map wakes when you reach it. Choose the pattern closest to your business and it will hold while you read. It is a conversation starter, never an automated verdict.
             </p>
           </div>
 
@@ -366,6 +382,11 @@ export function ClarityCTA() {
         }
         .clarity-lab__flow span {
           animation: clarity-flow 1.9s linear infinite;
+        }
+        .clarity-lab.is-resting .clarity-lab__glow,
+        .clarity-lab.is-resting .clarity-lab__node,
+        .clarity-lab.is-resting .clarity-lab__flow span {
+          animation-play-state: paused;
         }
         @keyframes clarity-reveal {
           from { opacity: 0; transform: translateY(18px); filter: blur(5px); }
