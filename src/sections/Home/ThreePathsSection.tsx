@@ -69,6 +69,8 @@ const CURVES = [
 ];
 const ENTRY_Y = [60, 150, 240];
 const AUTO_ADVANCE_MS = 6000;
+const HOVER_PREVIEW_MS = 3600;
+const MANUAL_HOLD_MS = 14000;
 const SITUATION_TO_PATH: Record<string, number> = {
   idea: 0,
   inconsistent: 1,
@@ -78,58 +80,64 @@ const SITUATION_TO_PATH: Record<string, number> = {
 export function ThreePathsSection() {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
+  const pauseUntilRef = useRef(0);
   const inView = useInView(sectionRef, { amount: 0.34 });
   const [autoPath, setAutoPath] = useState(0);
-  const [heldPath, setHeldPath] = useState<number | null>(null);
-  const [paused, setPaused] = useState(false);
   const [carriedDiagnosis, setCarriedDiagnosis] = useState(false);
-  const shown = heldPath ?? autoPath;
-  const active = PATHS[shown];
+  const active = PATHS[autoPath];
 
   useEffect(() => {
-    function applySituation(value: string | null) {
+    function applySituation(value: string | null, hold = true) {
       const pathIndex = value ? SITUATION_TO_PATH[value] : undefined;
       if (pathIndex === undefined) return;
       setAutoPath(pathIndex);
       setCarriedDiagnosis(true);
+      if (hold) pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
     }
 
-    function readSavedSituation() {
+    function readSavedSituation(hold = true) {
       try {
-        applySituation(window.localStorage.getItem("bt-situation"));
+        applySituation(window.localStorage.getItem("bt-situation"), hold);
       } catch {}
     }
 
     function onSituation(event: Event) {
       const detail = (event as CustomEvent<{ situation?: string }>).detail;
-      applySituation(detail?.situation ?? null);
+      applySituation(detail?.situation ?? null, true);
     }
 
-    if (inView) readSavedSituation();
+    function onChapter(event: Event) {
+      const detail = (event as CustomEvent<{ id?: string }>).detail;
+      if (detail?.id !== "paths") return;
+      readSavedSituation(false);
+      pauseUntilRef.current = Date.now() + 900;
+    }
+
+    if (inView) readSavedSituation(false);
     window.addEventListener("bt:situation", onSituation as EventListener);
+    window.addEventListener("bt:home-chapter", onChapter as EventListener);
     return () => {
       window.removeEventListener("bt:situation", onSituation as EventListener);
+      window.removeEventListener("bt:home-chapter", onChapter as EventListener);
     };
   }, [inView]);
 
   useEffect(() => {
-    if (prefersReducedMotion || paused || !inView) return;
+    if (prefersReducedMotion || !inView) return;
+
     const timer = window.setInterval(() => {
+      if (document.hidden || Date.now() < pauseUntilRef.current) return;
       setAutoPath((current) => (current + 1) % PATHS.length);
       setCarriedDiagnosis(false);
     }, AUTO_ADVANCE_MS);
+
     return () => window.clearInterval(timer);
-  }, [inView, paused, prefersReducedMotion]);
+  }, [inView, prefersReducedMotion]);
 
-  function holdPath(index: number) {
-    setHeldPath(index);
-    setPaused(true);
+  function previewPath(index: number, duration: number) {
+    setAutoPath(index);
     setCarriedDiagnosis(false);
-  }
-
-  function releasePath() {
-    setHeldPath(null);
-    setPaused(false);
+    pauseUntilRef.current = Date.now() + duration;
   }
 
   const motionActive = inView && !prefersReducedMotion;
@@ -186,7 +194,7 @@ export function ThreePathsSection() {
             <p className="mt-6 text-xs uppercase tracking-[0.16em] text-foreground-secondary/70">
               {carriedDiagnosis
                 ? "Your earlier diagnosis is carried into the map."
-                : "The map wakes when it enters view. Touch a path to hold it."}
+                : "The map keeps moving. Hover previews briefly; selecting a path holds it while you read."}
             </p>
           </div>
         </div>
@@ -199,7 +207,7 @@ export function ThreePathsSection() {
             aria-label="Three service paths moving through the decisions required to create a recognisable brand"
           >
             {CURVES.map((curve, index) => {
-              const isActive = shown === index;
+              const isActive = autoPath === index;
               return (
                 <g key={index}>
                   <path
@@ -229,7 +237,7 @@ export function ThreePathsSection() {
             })}
 
             {PATHS.map((path, index) => {
-              const isActive = shown === index;
+              const isActive = autoPath === index;
               return (
                 <g key={path.n} opacity={isActive ? 1 : 0.25} style={{ transition: "opacity 500ms" }}>
                   <circle
@@ -250,7 +258,7 @@ export function ThreePathsSection() {
             <line x1={330} y1={150} x2={650} y2={150} stroke="#C6A97A" strokeWidth={1.6} strokeLinecap="round" />
             <AnimatePresence mode="wait" initial={false}>
               <motion.g
-                key={shown}
+                key={autoPath}
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 7 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={prefersReducedMotion ? undefined : { opacity: 0, y: -7 }}
@@ -293,7 +301,7 @@ export function ThreePathsSection() {
       <div className="px-6 pb-8 md:hidden">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
-            key={`mobile-${shown}`}
+            key={`mobile-${autoPath}`}
             initial={prefersReducedMotion ? false : { opacity: 0, y: 12, filter: "blur(5px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
@@ -334,7 +342,7 @@ export function ThreePathsSection() {
       <div className="relative px-6 pb-14 sm:px-10">
         <ul className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-3">
           {PATHS.map((path, index) => {
-            const isActive = shown === index;
+            const isActive = autoPath === index;
             return (
               <motion.li
                 key={path.n}
@@ -347,11 +355,9 @@ export function ThreePathsSection() {
               >
                 <Link
                   href={path.href}
-                  onMouseEnter={() => holdPath(index)}
-                  onMouseLeave={releasePath}
-                  onFocus={() => holdPath(index)}
-                  onBlur={releasePath}
-                  onTouchStart={() => holdPath(index)}
+                  onMouseEnter={() => previewPath(index, HOVER_PREVIEW_MS)}
+                  onFocus={() => previewPath(index, MANUAL_HOLD_MS)}
+                  onTouchStart={() => previewPath(index, MANUAL_HOLD_MS)}
                   className="group relative flex h-full flex-col overflow-hidden rounded-2xl border p-7 transition-all duration-500"
                   style={{
                     borderColor: isActive ? `${path.tint}66` : "rgba(39,34,30,0.10)",
