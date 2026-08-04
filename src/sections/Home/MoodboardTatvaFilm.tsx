@@ -358,7 +358,7 @@ export function MoodboardTatvaFilm() {
                 key={`${active.slug}-copy`}
                 initial={{ opacity: 0.74, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0.58, y: -14 }}
+                exit={{ opacity: 0, y: -6, transition: { duration: 0 } }}
                 transition={{ duration: 0.62, ease: EASE }}
               >
                 <p
@@ -387,7 +387,7 @@ export function MoodboardTatvaFilm() {
                     className="h-full w-full"
                     initial={{ opacity: 0.68, scale: 0.96 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0.56, scale: 1.025 }}
+                    exit={{ opacity: 0, scale: 1, transition: { duration: 0 } }}
                     transition={{ duration: 0.64, ease: EASE }}
                   >
                     <TatvaDiagram slug={active.slug} color={active.color} />
@@ -400,7 +400,7 @@ export function MoodboardTatvaFilm() {
                   key={`${active.slug}-change`}
                   initial={{ opacity: 0.72, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0.58, x: -10 }}
+                  exit={{ opacity: 0, x: 0, transition: { duration: 0 } }}
                   transition={{ duration: 0.52, ease: EASE }}
                   className="rounded-[1.5rem] border border-[#22231F]/14 bg-[#F5F0E8]/84 p-5 shadow-[0_22px_64px_-50px_rgba(34,35,31,.46)] backdrop-blur-xl sm:p-6"
                 >

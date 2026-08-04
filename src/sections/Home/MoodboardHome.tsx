@@ -703,8 +703,8 @@ function AuthorLenses() {
           </div>
         </div>
 
-        <div className="film-reveal relative min-h-[38rem] overflow-hidden rounded-[2rem] border border-[#22231F]/10 bg-[#1E2A22] sm:min-h-[44rem]">
-          <Image src="/images/own-portrait.jpg" alt="Suman Sharma, founder of Branding Tatva" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition:"center 62%" }} />
+        <div className="film-reveal relative min-h-[44rem] overflow-hidden rounded-[2rem] border border-[#22231F]/10 bg-[#1E2A22]">
+          <Image src="/images/own-portrait.jpg" alt="Suman Sharma, founder of Branding Tatva" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition:"center 36%" }} />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(30,42,34,.04),rgba(30,42,34,.16)_44%,rgba(30,42,34,.82))]" />
           <motion.div className="absolute -right-20 top-8 h-80 w-80 rounded-full border border-white/12" animate={{ rotate:360 }} transition={{ duration:44,repeat:Infinity,ease:"linear" }} aria-hidden="true" />
           <div className="absolute inset-x-6 bottom-6 rounded-[1.4rem] border border-white/16 bg-black/20 p-5 text-[#F4EFE6] backdrop-blur-lg sm:inset-x-8 sm:bottom-8 sm:p-6">
@@ -738,8 +738,8 @@ function ThreePaths() {
   return (
     <section className="film-paper relative overflow-hidden bg-[#F4EFE6] pt-16 pb-24 text-[#22231F] sm:pt-20 sm:pb-28 lg:pt-24 lg:pb-32">
       <div className="mx-auto max-w-[94rem] px-6 sm:px-10 lg:px-14">
-        <div className="film-reveal grid gap-8 lg:grid-cols-[.82fr_1.18fr] lg:items-end">
-          <div><p className="text-[0.6rem] font-medium uppercase tracking-[0.3em] text-[#9D6B4C]">Three paths</p><h2 className="mt-5 max-w-3xl font-display text-[clamp(3.05rem,6.15vw,6.2rem)] font-normal leading-[0.94] tracking-[-0.045em]">The work meets the business wherever it stands.</h2></div>
+        <div className="film-reveal grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:items-end">
+          <div><p className="text-[0.6rem] font-medium uppercase tracking-[0.3em] text-[#9D6B4C]">Three paths</p><h2 className="mt-5 max-w-4xl font-display text-[clamp(2.85rem,4.8vw,4.9rem)] font-normal leading-[0.96] tracking-[-0.04em]">The work meets the business wherever it stands.</h2></div>
           <p className="max-w-xl text-sm leading-relaxed text-[#22231F]/60 sm:text-base lg:justify-self-end">The route changes. The logic does not: uncover the truth, choose the position, make it recognisable, and protect the meaning as it grows.</p>
         </div>
 
