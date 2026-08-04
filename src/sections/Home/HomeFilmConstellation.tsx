@@ -23,19 +23,12 @@ type Film = {
   label: string;
 };
 
+// Floating films are supplemental, never mandatory. The Clarity Lab,
+// Evidence, Studio, Elements, Process, Questions and closing invitation
+// already carry their own cinematic media, so extra windows would compete
+// with the argument. Only the two lighter explanatory chapters receive a
+// peripheral film fragment.
 const CHAPTER_FILMS: Partial<Record<ChapterId, readonly [Film, Film]>> = {
-  diagnosis: [
-    {
-      video: "/videos/higgsfield-process-notice.mp4",
-      poster: "/images/higgsfield-process-notice-poster.jpg",
-      label: "Patterns surface before answers do.",
-    },
-    {
-      video: "/videos/higgsfield-process-shape.mp4",
-      poster: "/images/higgsfield-process-shape-poster.jpg",
-      label: "The right shape follows the right diagnosis.",
-    },
-  ],
   paths: [
     {
       video: "/videos/higgsfield-process-ground.mp4",
@@ -63,10 +56,6 @@ const CHAPTER_FILMS: Partial<Record<ChapterId, readonly [Film, Film]>> = {
 };
 
 const PLACEMENTS: Partial<Record<ChapterId, readonly [string, string]>> = {
-  diagnosis: [
-    "-left-10 top-[31vh] aspect-[4/5] w-[clamp(6.5rem,7.5vw,8.75rem)] rounded-[1.5rem]",
-    "-right-8 bottom-[19vh] aspect-square w-[clamp(5.75rem,6.5vw,7.25rem)] rounded-full",
-  ],
   paths: [
     "-right-9 top-[24vh] aspect-[3/4] w-[clamp(6.5rem,7.5vw,8.5rem)] rounded-[1.5rem]",
     "-left-8 bottom-[18vh] aspect-square w-[clamp(5.5rem,6.2vw,7rem)] rounded-[1.35rem]",
