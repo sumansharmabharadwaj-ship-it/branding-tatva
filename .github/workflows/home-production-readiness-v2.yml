@@ -1,0 +1,557 @@
+name: Homepage production readiness v2
+
+on:
+  push:
+    branches:
+      - automation/home-production-readiness-v2-2026-08-04
+
+permissions:
+  contents: write
+
+jobs:
+  harden-and-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check out production-readiness branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply production hardening
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_once(source: str, old: str, new: str, label: str) -> str:
+              if new in source and old not in source:
+                  return source
+              count = source.count(old)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one match, found {count}")
+              return source.replace(old, new, 1)
+
+          root = Path("src/sections/Process/RootSystem.tsx")
+          root_source = root.read_text()
+          if "const mountedVideos = videoRefs.current;" not in root_source:
+              marker = "    let frame = 0;\n    let sectionIsNear = false;"
+              root_source = replace_once(
+                  root_source,
+                  marker,
+                  "    const mountedVideos = videoRefs.current;\n\n" + marker,
+                  "RootSystem video snapshot",
+              )
+          root_source = replace_once(
+              root_source,
+              "      videoRefs.current.forEach((video) => video?.pause());",
+              "      mountedVideos.forEach((video) => video?.pause());",
+              "RootSystem cleanup",
+          )
+          root.write_text(root_source)
+
+          home = Path("src/sections/Home/MoodboardHome.tsx")
+          source = home.read_text()
+
+          source, transformation_count = re.subn(
+              r'\nconst tatvaTransformations: Record<.*?\n};\n\nfunction AmbientVideo',
+              '\nfunction AmbientVideo',
+              source,
+              count=1,
+              flags=re.S,
+          )
+          if transformation_count == 0 and "const tatvaTransformations" in source:
+              raise SystemExit("Obsolete Tatva transformations remain")
+
+          source, diagram_count = re.subn(
+              r'\nfunction TatvaDiagram\(\{ slug, color \}: \{ slug: Element\["slug"\]; color: string \}\) \{.*?\n}\n\nfunction TatvaFilm\(\)',
+              '\nfunction TatvaFilm()',
+              source,
+              count=1,
+              flags=re.S,
+          )
+          if diagram_count == 0 and "function TatvaDiagram" in source:
+              raise SystemExit("Obsolete Tatva diagram remains")
+
+          source = source.replace('import { elements, type Element } from "@/data/elements";\n', "")
+          if source.count("useMediaQuery") == 1:
+              source = source.replace('import { useMediaQuery } from "@/hooks/useMediaQuery";\n', "")
+
+          state_old = '''  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);'''
+          state_new = '''  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const firstMenuLinkRef = useRef<HTMLAnchorElement>(null);'''
+          source = replace_once(source, state_old, state_new, "menu refs")
+
+          final_open_effect = '''  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const getFocusable = () =>
+      Array.from(
+        document.querySelectorAll<HTMLElement>(
+          '#home-film-menu a[href], #home-film-menu button:not([disabled]), #home-film-menu [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => {
+        const style = getComputedStyle(element);
+        return style.display !== "none" && style.visibility !== "hidden";
+      });
+
+    const focusFrame = requestAnimationFrame(() => firstMenuLinkRef.current?.focus());
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        requestAnimationFrame(() => triggerRef.current?.focus());
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+      const focusable = getFocusable();
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (!first || !last) return;
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => {
+      cancelAnimationFrame(focusFrame);
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);'''
+
+          if "const getFocusable = () =>" not in source:
+              pattern = re.compile(
+                  r'  useEffect\(\(\) => \{\n    if \(!open\) return;.*?\n  }, \[open\]\);',
+                  re.S,
+              )
+              source, effect_count = pattern.subn(final_open_effect, source, count=1)
+              if effect_count != 1:
+                  raise SystemExit(f"Menu focus effect: expected one match, found {effect_count}")
+
+          source = replace_once(
+              source,
+              '''            <button
+              type="button"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}''',
+              '''            <button
+              ref={triggerRef}
+              type="button"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              aria-controls="home-film-menu"''',
+              "menu trigger",
+          )
+
+          source = replace_once(
+              source,
+              '''          <motion.div
+            initial={{ opacity: 0 }}''',
+              '''          <motion.div
+            id="home-film-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site navigation"
+            initial={{ opacity: 0 }}''',
+              "menu dialog",
+          )
+
+          source = replace_once(
+              source,
+              '''                    <Link
+                      href={item.href}
+                      onClick={() => setOpen(false)}''',
+              '''                    <Link
+                      ref={index === 0 ? firstMenuLinkRef : undefined}
+                      href={item.href}
+                      aria-current={item.href === "/" ? "page" : undefined}
+                      onClick={() => setOpen(false)}''',
+              "menu first link",
+          )
+
+          source = replace_once(
+              source,
+              '''                  className={`text-[0.66rem] font-medium uppercase tracking-[0.2em] transition-colors ${''',
+              '''                  className={`inline-flex min-h-10 items-center text-[0.66rem] font-medium uppercase tracking-[0.2em] transition-colors ${''',
+              "header nav target size",
+          )
+
+          old_dots = '''                {featured.map((project, index) => <button key={project.slug} type="button" onClick={() => setActiveIndex(index)} aria-label={`Show ${project.title}`} aria-pressed={index === activeIndex} className={`h-2 flex-1 rounded-full transition-colors ${index === activeIndex ? "bg-[#9D6B4C]" : "bg-[#22231F]/12"}`} />)}'''
+          new_dots = '''                {featured.map((project, index) => (
+                  <button
+                    key={project.slug}
+                    type="button"
+                    onClick={() => setActiveIndex(index)}
+                    aria-label={`Show ${project.title}`}
+                    aria-pressed={index === activeIndex}
+                    className="group flex min-h-11 flex-1 items-center py-4"
+                  >
+                    <span
+                      className={`h-2 w-full rounded-full transition-colors ${
+                        index === activeIndex
+                          ? "bg-[#9D6B4C]"
+                          : "bg-[#22231F]/12 group-hover:bg-[#22231F]/22"
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </button>
+                ))}'''
+          source = replace_once(source, old_dots, new_dots, "evidence controls")
+
+          source = replace_once(
+              source,
+              '            <Link href="/about" className="mt-6 inline-flex text-[0.58rem] font-medium uppercase tracking-[0.18em] text-[#E1C89F]">Read the full practice ↗</Link>',
+              '            <Link href="/about" className="mt-6 inline-flex min-h-11 items-center text-[0.58rem] font-medium uppercase tracking-[0.18em] text-[#E1C89F]">Read the full practice ↗</Link>',
+              "author link target",
+          )
+
+          source = replace_once(
+              source,
+              'className="font-display text-xl hover:text-[#9D6B4C]">{item.label}</Link>',
+              'className="inline-flex min-h-8 items-center font-display text-xl hover:text-[#9D6B4C]">{item.label}</Link>',
+              "footer nav target",
+          )
+          source = replace_once(
+              source,
+              'className="mt-4 block font-display text-xl hover:text-[#9D6B4C]">{site.email}</a>',
+              'className="mt-4 inline-flex min-h-8 items-center font-display text-xl hover:text-[#9D6B4C]">{site.email}</a>',
+              "footer email target",
+          )
+
+          source = replace_once(
+              source,
+              '<motion.div key={active.id} initial={{ opacity: .25, y: 18 }}',
+              '<motion.div key={active.id} aria-live="polite" initial={{ opacity: .25, y: 18 }}',
+              "diagnosis live region",
+          )
+          source = replace_once(
+              source,
+              '<motion.div key={`${active.id}-copy`} initial={{ opacity:.2,x:22 }}',
+              '<motion.div key={`${active.id}-copy`} aria-live="polite" initial={{ opacity:.2,x:22 }}',
+              "lens live region",
+          )
+
+          source = replace_once(
+              source,
+              '        <div className="absolute right-6 top-1/2 z-30 hidden -translate-y-1/2 text-right lg:block">',
+              '        <div className="absolute right-6 top-1/2 z-30 hidden -translate-y-1/2 text-right lg:block" aria-hidden="true">',
+              "hero decorative keywords",
+          )
+          source = replace_once(
+              source,
+              '        <div className="absolute inset-x-6 bottom-5 z-30 flex items-center gap-4 sm:inset-x-10 lg:inset-x-14">',
+              '        <div className="absolute inset-x-6 bottom-5 z-30 flex items-center gap-4 sm:inset-x-10 lg:inset-x-14" aria-hidden="true">',
+              "hero decorative progress",
+          )
+
+          focus_css = '''    :is(header, main, footer) :is(a, button, summary):focus-visible {
+      outline: 2px solid #B4864C;
+      outline-offset: 4px;
+    }
+'''
+          if focus_css not in source:
+              anchor = '    @media (prefers-reduced-motion: reduce) {'
+              if anchor not in source:
+                  raise SystemExit("Focus CSS anchor not found")
+              source = source.replace(anchor, focus_css + anchor, 1)
+
+          forbidden = [
+              "const tatvaTransformations",
+              "function TatvaDiagram",
+              'import { elements, type Element } from "@/data/elements";',
+              'import { useMediaQuery } from "@/hooks/useMediaQuery";',
+          ]
+          stale = [item for item in forbidden if item in source]
+          if stale:
+              raise SystemExit(f"Stale homepage code remains: {stale}")
+
+          home.write_text(source)
+          PY
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install project dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install temporary audit tooling
+        run: |
+          pnpm add --save-dev --ignore-workspace-root-check @playwright/test@1.59.1 @axe-core/playwright
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Build every route without hooks warnings
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee /tmp/branding-tatva-production-build.log
+          if grep -q "react-hooks/exhaustive-deps" /tmp/branding-tatva-production-build.log; then
+            echo "A hooks warning remains in the production build."
+            exit 1
+          fi
+
+      - name: Start production server
+        run: |
+          pnpm start > /tmp/branding-tatva-production-server.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/branding-tatva-production-server.log
+          exit 1
+
+      - name: Audit structure, keyboard flow, targets, motion, and stability
+        run: |
+          cat > /tmp/home-production-readiness-v2.mjs <<'EOF'
+          import { chromium } from "@playwright/test";
+          import AxeBuilder from "@axe-core/playwright";
+
+          const browser = await chromium.launch({ headless: true });
+          const context = await browser.newContext({
+            viewport: { width: 1440, height: 1000 },
+            reducedMotion: "no-preference",
+            colorScheme: "light",
+          });
+          const page = await context.newPage();
+          const consoleErrors = [];
+          const pageErrors = [];
+          page.on("console", (message) => {
+            if (message.type() === "error") consoleErrors.push(message.text());
+          });
+          page.on("pageerror", (error) => pageErrors.push(error.message));
+
+          await page.addInitScript(() => {
+            sessionStorage.setItem("bt-intro-seen", "1");
+            localStorage.removeItem("bt-motion");
+            localStorage.setItem(
+              "bt-consent-v2",
+              JSON.stringify({
+                necessary: true,
+                analytics: false,
+                marketing: false,
+                updatedAt: "2026-08-04T00:00:00.000Z",
+              }),
+            );
+            window.__brandingTatvaCLS = 0;
+            new PerformanceObserver((list) => {
+              for (const entry of list.getEntries()) {
+                if (!entry.hadRecentInput) window.__brandingTatvaCLS += entry.value;
+              }
+            }).observe({ type: "layout-shift", buffered: true });
+          });
+
+          await page.goto("http://127.0.0.1:3000/", { waitUntil: "domcontentloaded" });
+          await page.evaluate(() => document.fonts.ready);
+          await page.waitForTimeout(2200);
+
+          const axe = await new AxeBuilder({ page })
+            .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+            .analyze();
+          const contrastFindings = axe.violations.filter(
+            (violation) => violation.id === "color-contrast",
+          );
+          const structuralBlocking = axe.violations.filter(
+            (violation) =>
+              violation.id !== "color-contrast" &&
+              (violation.impact === "critical" || violation.impact === "serious"),
+          );
+          if (structuralBlocking.length) {
+            console.error(JSON.stringify(structuralBlocking, null, 2));
+            throw new Error(`${structuralBlocking.length} serious structural accessibility violations`);
+          }
+
+          const checks = await page.evaluate(() => {
+            const ids = Array.from(document.querySelectorAll("[id]"))
+              .map((element) => element.id)
+              .filter(Boolean);
+            const duplicateIds = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
+            const headings = Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6"))
+              .filter((element) => {
+                const style = getComputedStyle(element);
+                return style.display !== "none" && style.visibility !== "hidden";
+              })
+              .map((element) => ({
+                level: Number(element.tagName.slice(1)),
+                text: element.textContent?.trim().slice(0, 90) ?? "",
+              }));
+            const headingJumps = [];
+            for (let index = 1; index < headings.length; index += 1) {
+              if (headings[index].level - headings[index - 1].level > 1) {
+                headingJumps.push({ from: headings[index - 1], to: headings[index] });
+              }
+            }
+            const tinyTargets = Array.from(
+              document.querySelectorAll("a,button,summary,input,select,textarea"),
+            )
+              .filter((element) => {
+                const rect = element.getBoundingClientRect();
+                const style = getComputedStyle(element);
+                return (
+                  rect.width > 0 &&
+                  rect.height > 0 &&
+                  style.display !== "none" &&
+                  style.visibility !== "hidden" &&
+                  (rect.width < 24 || rect.height < 24)
+                );
+              })
+              .map((element) => ({
+                tag: element.tagName,
+                text: (element.textContent || element.getAttribute("aria-label") || "")
+                  .trim()
+                  .slice(0, 80),
+                width: element.getBoundingClientRect().width,
+                height: element.getBoundingClientRect().height,
+              }));
+            return {
+              h1Count: document.querySelectorAll("h1").length,
+              duplicateIds,
+              headingJumps,
+              tinyTargets,
+              overflow: Math.max(0, document.documentElement.scrollWidth - innerWidth),
+            };
+          });
+
+          if (checks.h1Count !== 1) throw new Error(`Expected one h1, found ${checks.h1Count}`);
+          if (checks.duplicateIds.length) throw new Error(`Duplicate IDs: ${checks.duplicateIds.join(", ")}`);
+          if (checks.headingJumps.length) throw new Error(`Heading jumps: ${JSON.stringify(checks.headingJumps)}`);
+          if (checks.tinyTargets.length) throw new Error(`Small targets: ${JSON.stringify(checks.tinyTargets)}`);
+          if (checks.overflow > 2) throw new Error(`Horizontal overflow: ${checks.overflow}px`);
+
+          const trigger = page.getByRole("button", { name: "Open menu" });
+          await trigger.focus();
+          await page.keyboard.press("Enter");
+          const dialog = page.getByRole("dialog", { name: "Site navigation" });
+          await dialog.waitFor();
+
+          const menuState = await page.evaluate(() => ({
+            overflow: document.body.style.overflow,
+            activeText: document.activeElement?.textContent?.trim() ?? "",
+            activeTag: document.activeElement?.tagName ?? "",
+          }));
+          if (menuState.overflow !== "hidden") throw new Error("Menu did not lock the page");
+          if (menuState.activeTag !== "A" || !menuState.activeText) {
+            throw new Error(`Menu did not focus its first link: ${JSON.stringify(menuState)}`);
+          }
+
+          const menuLinks = dialog.locator("a[href]");
+          const linkCount = await menuLinks.count();
+          if (linkCount < 2) throw new Error("Menu focus loop has too few links");
+          await menuLinks.nth(linkCount - 1).focus();
+          await page.keyboard.press("Tab");
+          const forwardLoop = await page.evaluate(() => document.activeElement?.textContent?.trim());
+          const firstText = (await menuLinks.first().textContent())?.trim();
+          if (forwardLoop !== firstText) throw new Error(`Forward focus loop failed: ${forwardLoop}`);
+          await page.keyboard.press("Shift+Tab");
+          const backwardLoop = await page.evaluate(() => document.activeElement?.textContent?.trim());
+          const lastText = (await menuLinks.nth(linkCount - 1).textContent())?.trim();
+          if (backwardLoop !== lastText) throw new Error(`Backward focus loop failed: ${backwardLoop}`);
+
+          const menuAxe = await new AxeBuilder({ page })
+            .include("#home-film-menu")
+            .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+            .analyze();
+          const menuBlocking = menuAxe.violations.filter(
+            (violation) =>
+              violation.id !== "color-contrast" &&
+              (violation.impact === "critical" || violation.impact === "serious"),
+          );
+          if (menuBlocking.length) {
+            console.error(JSON.stringify(menuBlocking, null, 2));
+            throw new Error(`${menuBlocking.length} serious menu accessibility violations`);
+          }
+
+          await page.keyboard.press("Escape");
+          await dialog.waitFor({ state: "detached" });
+          const returnedFocus = await page.evaluate(() =>
+            document.activeElement?.getAttribute("aria-label"),
+          );
+          if (returnedFocus !== "Open menu") {
+            throw new Error(`Focus did not return to the menu trigger: ${returnedFocus}`);
+          }
+
+          await page.evaluate(() => {
+            const height = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+            scrollTo({ top: height * 0.72, behavior: "instant" });
+          });
+          await page.waitForTimeout(1000);
+          const cls = await page.evaluate(() => window.__brandingTatvaCLS ?? 0);
+          if (cls > 0.15) throw new Error(`Cumulative layout shift exceeded 0.15: ${cls}`);
+
+          if (pageErrors.length) throw new Error(`Page errors: ${JSON.stringify(pageErrors)}`);
+          const relevantConsoleErrors = consoleErrors.filter((message) => !message.includes("favicon"));
+          if (relevantConsoleErrors.length) {
+            throw new Error(`Console errors: ${JSON.stringify(relevantConsoleErrors)}`);
+          }
+
+          const reducedContext = await browser.newContext({
+            viewport: { width: 390, height: 844 },
+            reducedMotion: "reduce",
+            colorScheme: "light",
+          });
+          const reducedPage = await reducedContext.newPage();
+          await reducedPage.addInitScript(() => {
+            sessionStorage.setItem("bt-intro-seen", "1");
+            localStorage.setItem(
+              "bt-consent-v2",
+              JSON.stringify({ necessary: true, analytics: false, marketing: false }),
+            );
+          });
+          await reducedPage.goto("http://127.0.0.1:3000/", { waitUntil: "domcontentloaded" });
+          await reducedPage.waitForTimeout(1500);
+          const reducedVideos = await reducedPage.locator("main video").count();
+          if (reducedVideos !== 0) throw new Error(`Reduced motion mounted ${reducedVideos} videos`);
+
+          console.log(JSON.stringify({
+            structuralBlockingViolations: structuralBlocking.length,
+            contrastFindingGroups: contrastFindings.length,
+            contrastFindingNodes: contrastFindings.reduce(
+              (total, finding) => total + finding.nodes.length,
+              0,
+            ),
+            menuStructuralViolations: menuBlocking.length,
+            cumulativeLayoutShift: cls,
+            checks,
+            reducedVideos,
+          }, null, 2));
+
+          await reducedContext.close();
+          await browser.close();
+          EOF
+          node /tmp/home-production-readiness-v2.mjs
+
+      - name: Push verified source hardening to the homepage branch
+        run: |
+          git fetch origin work/home-moodboard-film-2026-08-04
+          git reset --mixed origin/work/home-moodboard-film-2026-08-04
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/sections/Process/RootSystem.tsx src/sections/Home/MoodboardHome.tsx
+          if git diff --cached --quiet; then
+            echo "The production-readiness hardening is already applied."
+            exit 0
+          fi
+          git commit -m "Harden homepage keyboard access and production cleanup"
+          git push origin HEAD:work/home-moodboard-film-2026-08-04
