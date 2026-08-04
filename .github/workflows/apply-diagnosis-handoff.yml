@@ -1,0 +1,65 @@
+name: Apply diagnosis conversion handoff
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-diagnosis-handoff.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-diagnosis:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+          sparse-checkout: src
+          sparse-checkout-cone-mode: true
+
+      - name: Send diagnosis into proof rather than an early sales ask
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("src/sections/Home/ClarityCTA.tsx")
+          text = path.read_text()
+          before = '''          <Link
+            href="/contact"
+            className="group inline-flex min-h-12 shrink-0 items-center justify-center gap-4 rounded-full border px-7 text-xs font-medium uppercase tracking-[0.18em] transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            style={{ borderColor: "rgba(198,169,122,0.78)", color: GOLD, outlineColor: GOLD }}
+          >
+            Discuss the right starting point
+            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+          </Link>'''
+          after = '''          <Link
+            href="#evidence-wall-title"
+            className="group inline-flex min-h-12 shrink-0 items-center justify-center gap-4 rounded-full border px-7 text-xs font-medium uppercase tracking-[0.18em] transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            style={{ borderColor: "rgba(198,169,122,0.78)", color: GOLD, outlineColor: GOLD }}
+          >
+            See how decisions become proof
+            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+          </Link>'''
+
+          if before not in text:
+              raise SystemExit("Expected diagnosis CTA block was not found")
+          path.write_text(text.replace(before, after, 1))
+          PY
+
+      - name: Commit the source change
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/sections/Home/ClarityCTA.tsx
+          git commit -m "Move the diagnosis CTA forward into proof"
+          git push origin HEAD:reimagine-project-moves
