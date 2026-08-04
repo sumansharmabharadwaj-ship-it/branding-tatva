@@ -15,7 +15,6 @@ import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { CinematicHero } from "@/sections/Hero";
-import { VisitorRecognition } from "@/sections/Home/VisitorRecognition";
 import { ThreePathsSection } from "@/sections/Home/ThreePathsSection";
 import { ProcessChapterIntro } from "@/sections/Home/ProcessChapterIntro";
 import { VideoBreak } from "@/components/VideoBreak";
@@ -80,18 +79,20 @@ export default function Home() {
           </p>
         </CinematicHero>
 
-        <VisitorRecognition />
-        <EvidenceWall />
+        {/* One diagnosis is enough. The richer Clarity Lab now performs
+            the early recognition job, so the visitor no longer answers
+            the same three-situation question here and again two sections
+            later. The page moves from problem recognition into evidence. */}
         <ClarityCTA />
+        <EvidenceWall />
         <StudioTriptych />
         <ThreePathsSection />
         <TatvaStrip />
 
-        {/* The full five-element sequence now follows the framework
-            immediately. The separate Earth-only excavation remains in the
-            codebase for a deeper Services/About use, but no longer makes
-            Home teach the same foundation twice or adds an unlabelled
-            320vh detour between the ladder's Framework and Elements rungs. */}
+        {/* The full five-element sequence follows the framework directly.
+            The separate Earth-only excavation remains in the codebase for
+            a deeper Services/About use, but Home no longer teaches the
+            foundation twice or inserts an unlabelled 320vh detour. */}
         <div id="elements" className="scroll-mt-24">
           <ElementsSection elements={elements} />
         </div>
