@@ -1,3 +1,3 @@
 Run the moodboard homepage through desktop, short-laptop, mobile, and reduced-motion browser checks before the main preview branch is updated.
 
-QA v2 final: verify the video warden no longer revives hidden reduced-motion films.
+QA v2 final 2: verify resource detachment makes reduced-motion film playback impossible while preserving every poster and section.
