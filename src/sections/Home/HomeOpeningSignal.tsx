@@ -94,7 +94,6 @@ export function HomeOpeningSignal() {
 
           <div
             className="mt-2.5 flex items-center gap-2"
-            role="tablist"
             aria-label="Compare the stages from visibility to memory"
           >
             {STATES.map((state, index) => {
@@ -103,8 +102,7 @@ export function HomeOpeningSignal() {
                 <div key={state.label} className="contents">
                   <motion.button
                     type="button"
-                    role="tab"
-                    aria-selected={selected}
+                    aria-pressed={selected}
                     onClick={() => chooseState(index)}
                     className="rounded-md text-[0.55rem] font-medium uppercase tracking-[0.16em] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                     animate={{
@@ -137,7 +135,6 @@ export function HomeOpeningSignal() {
           <AnimatePresence mode="wait" initial={false}>
             <motion.p
               key={active.label}
-              role="tabpanel"
               className="mt-2 text-[0.66rem] leading-relaxed text-ivory/55"
               initial={prefersReducedMotion ? false : { opacity: 0, y: 5, filter: "blur(3px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
