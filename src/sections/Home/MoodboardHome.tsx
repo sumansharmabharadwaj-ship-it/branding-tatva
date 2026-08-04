@@ -382,8 +382,8 @@ function FilmProgress() {
 
 function BotanicalDivider({ label, dark = false }: { label: string; dark?: boolean }) {
   return (
-    <div className={`relative isolate flex h-28 items-center overflow-hidden ${dark ? "bg-[#1E2A22] text-[#F4EFE6]" : "bg-[#F4EFE6] text-[#22231F]"}`} aria-hidden="true">
-      <div className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full border border-current/7" />
+    <div className={`relative isolate flex h-20 items-center overflow-hidden sm:h-24 ${dark ? "bg-[#1E2A22] text-[#F4EFE6]" : "bg-[#F4EFE6] text-[#22231F]"}`} aria-hidden="true">
+      <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-current/7 sm:h-36 sm:w-36" />
       <div className="mx-auto flex w-full max-w-[94rem] items-center gap-5 px-6 sm:px-10 lg:px-14">
         <span className="film-divider-line h-px flex-1 bg-current/12" />
         <Sprig className="h-9 w-5 opacity-38" />
@@ -401,10 +401,10 @@ function DawnHero() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const cameraScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.16]);
   const cameraY = useTransform(scrollYProgress, [0, 1], [0, -48]);
-  const firstOpacity = useTransform(scrollYProgress, [0, 0.38, 0.72], [1, 1, 0.14]);
-  const firstY = useTransform(scrollYProgress, [0, 0.72], [0, -64]);
-  const secondOpacity = useTransform(scrollYProgress, [0, 0.35, 0.7, 1], [0.12, 0.12, 1, 1]);
-  const secondY = useTransform(scrollYProgress, [0.36, 0.72], [54, 0]);
+  const firstOpacity = useTransform(scrollYProgress, [0, 0.3, 0.5, 0.64], [1, 1, 0.34, 0]);
+  const firstY = useTransform(scrollYProgress, [0, 0.64], [0, -32]);
+  const secondOpacity = useTransform(scrollYProgress, [0, 0.5, 0.64, 1], [0, 0, 1, 1]);
+  const secondY = useTransform(scrollYProgress, [0.5, 0.7], [28, 0]);
   const frameInset = useTransform(
     scrollYProgress,
     [0, 0.58, 1],
@@ -425,9 +425,9 @@ function DawnHero() {
         <div className="relative z-10 mx-auto flex min-h-svh max-w-[94rem] items-end px-6 pb-16 pt-32 sm:px-10 lg:px-14 lg:pb-20">
           <div className="max-w-5xl">
             <p className="text-[0.62rem] uppercase tracking-[0.3em] text-[#E1C89F]">Revealing essence. Creating impact.</p>
-            <h1 className="mt-6 font-display text-[clamp(3.8rem,9vw,9rem)] font-normal leading-[0.86] tracking-[-0.055em]">
-              We do not create brands.
-              <span className="block italic text-[#E1C89F]">We reveal what is already true.</span>
+            <h1 className="mt-6 max-w-[68rem] font-display text-[clamp(3.45rem,8.2vw,8.2rem)] font-normal leading-[0.9] tracking-[-0.045em]">
+              <span className="block">We do not create brands.</span>
+              <span className="mt-1 block font-medium text-[#E1C89F]">We reveal what is already true.</span>
             </h1>
             <p className="mt-7 max-w-2xl text-sm leading-relaxed text-ivory/72 sm:text-base">Strategy, identity, voice, and experience shaped into one meaning people can recognise, trust, and remember.</p>
             <div className="mt-9 flex flex-wrap gap-4"><LinkButton href="/contact">Start with the real question</LinkButton><LinkButton href="/work" variant="secondary" className="border-ivory/28 text-ivory">See the evidence</LinkButton></div>
@@ -438,7 +438,7 @@ function DawnHero() {
   }
 
   return (
-    <section ref={ref} className="relative h-[190svh] bg-[#1E2A22] text-ivory">
+    <section ref={ref} className="relative h-[172svh] bg-[#1E2A22] text-ivory">
       <div className="sticky top-0 h-svh min-h-[650px] overflow-hidden">
         <motion.div className="absolute inset-0" style={{ scale: cameraScale, y: cameraY, clipPath: frameInset }}>
           <AmbientVideo
@@ -447,7 +447,7 @@ function DawnHero() {
             position="center 44%"
             priority
           />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(16,24,19,.82)_0%,rgba(16,24,19,.43)_54%,rgba(16,24,19,.18)_78%),linear-gradient(180deg,rgba(16,24,19,.18),transparent_42%,rgba(16,24,19,.7))]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(16,24,19,.7)_0%,rgba(16,24,19,.3)_52%,rgba(16,24,19,.08)_78%),linear-gradient(180deg,rgba(16,24,19,.08),transparent_46%,rgba(16,24,19,.56))]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_30%,rgba(245,211,155,.22),transparent_30%)]" />
         </motion.div>
 
@@ -456,9 +456,9 @@ function DawnHero() {
         <motion.div className="absolute inset-0 z-10 flex items-end px-6 pb-16 pt-32 sm:px-10 lg:px-14 lg:pb-20" style={{ opacity: firstOpacity, y: firstY }}>
           <div className="mx-auto w-full max-w-[94rem]">
             <p className="text-[0.6rem] uppercase tracking-[0.32em] text-[#E1C89F]">Revealing essence. Creating impact.</p>
-            <h1 className="mt-6 max-w-6xl font-display text-[clamp(4rem,9.5vw,9.6rem)] font-normal leading-[0.84] tracking-[-0.06em]">
-              We do not create brands.
-              <span className="block italic text-[#E1C89F]">We reveal what is already true.</span>
+            <h1 className="mt-6 max-w-[68rem] font-display text-[clamp(3.55rem,8.25vw,8.45rem)] font-normal leading-[0.9] tracking-[-0.045em]">
+              <span className="block">We do not create brands.</span>
+              <span className="mt-1 block font-medium text-[#E1C89F]">We reveal what is already true.</span>
             </h1>
             <div className="mt-8 flex max-w-5xl flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
               <p className="max-w-xl text-sm leading-relaxed text-ivory/72 sm:text-base">Strategy, identity, voice, and experience shaped into one meaning people can recognise, trust, and remember.</p>
@@ -471,8 +471,8 @@ function DawnHero() {
           <div className="mx-auto grid w-full max-w-[94rem] gap-10 lg:grid-cols-[1.08fr_.92fr] lg:items-end">
             <div>
               <p className="text-[0.6rem] uppercase tracking-[0.32em] text-[#E1C89F]">The first transformation</p>
-              <p className="mt-6 max-w-5xl font-display text-[clamp(4rem,9vw,9rem)] font-normal leading-[0.84] tracking-[-0.06em]">
-                Visibility becomes valuable only when it leaves a <span className="italic text-[#E1C89F]">memory.</span>
+              <p className="mt-6 max-w-4xl font-display text-[clamp(3.25rem,7.2vw,7.15rem)] font-normal leading-[0.9] tracking-[-0.045em]">
+                Visibility becomes valuable only when it leaves a <span className="text-[#E1C89F]">memory.</span>
               </p>
             </div>
             <div className="lg:pb-3">
@@ -684,12 +684,12 @@ function AuthorLenses() {
   }
 
   return (
-    <section className="film-paper relative overflow-hidden bg-[#EAE1D4] py-24 text-[#22231F] sm:py-32 lg:py-40">
-      <div className="mx-auto grid max-w-[94rem] gap-12 px-6 sm:px-10 lg:grid-cols-[1.06fr_.94fr] lg:items-stretch lg:gap-8 lg:px-14">
+    <section className="film-paper relative overflow-hidden bg-[#EAE1D4] pt-24 pb-16 text-[#22231F] sm:pt-28 sm:pb-20 lg:pt-32 lg:pb-24">
+      <div className="mx-auto grid max-w-[94rem] gap-10 px-6 sm:px-10 lg:grid-cols-[1.06fr_.94fr] lg:items-stretch lg:gap-8 lg:px-14">
         <div className="film-reveal flex flex-col justify-between rounded-[2rem] border border-[#22231F]/10 bg-[#F5F0E8]/74 p-6 sm:p-8 lg:p-10">
           <div>
             <p className="text-[0.6rem] font-medium uppercase tracking-[0.3em] text-[#9D6B4C]">The author behind the system</p>
-            <h2 className="mt-5 max-w-4xl font-display text-[clamp(3.5rem,7vw,7.4rem)] font-normal leading-[0.88] tracking-[-0.055em]">I study attention before I design <span className="italic text-[#9D6B4C]">expression.</span></h2>
+            <h2 className="mt-5 max-w-4xl font-display text-[clamp(3.15rem,6.2vw,6.25rem)] font-normal leading-[0.92] tracking-[-0.045em]">I study attention before I design <span className="font-medium text-[#9D6B4C]">expression.</span></h2>
             <p className="mt-7 max-w-2xl text-sm leading-relaxed text-[#22231F]/60 sm:text-base">Psychology reads behaviour. Literature gives meaning a voice. Direction decides what the audience should experience next.</p>
           </div>
 
@@ -703,8 +703,8 @@ function AuthorLenses() {
           </div>
         </div>
 
-        <div className="film-reveal relative min-h-[44rem] overflow-hidden rounded-[2rem] border border-[#22231F]/10 bg-[#1E2A22]">
-          <Image src="/images/own-portrait.jpg" alt="Suman Sharma, founder of Branding Tatva" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition:"center 24%" }} />
+        <div className="film-reveal relative min-h-[38rem] overflow-hidden rounded-[2rem] border border-[#22231F]/10 bg-[#1E2A22] sm:min-h-[44rem]">
+          <Image src="/images/own-portrait.jpg" alt="Suman Sharma, founder of Branding Tatva" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition:"center 62%" }} />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(30,42,34,.04),rgba(30,42,34,.16)_44%,rgba(30,42,34,.82))]" />
           <motion.div className="absolute -right-20 top-8 h-80 w-80 rounded-full border border-white/12" animate={{ rotate:360 }} transition={{ duration:44,repeat:Infinity,ease:"linear" }} aria-hidden="true" />
           <div className="absolute inset-x-6 bottom-6 rounded-[1.4rem] border border-white/16 bg-black/20 p-5 text-[#F4EFE6] backdrop-blur-lg sm:inset-x-8 sm:bottom-8 sm:p-6">
@@ -736,10 +736,10 @@ function ThreePaths() {
   }, []);
 
   return (
-    <section className="film-paper relative overflow-hidden bg-[#F4EFE6] py-24 text-[#22231F] sm:py-32 lg:py-40">
+    <section className="film-paper relative overflow-hidden bg-[#F4EFE6] pt-16 pb-24 text-[#22231F] sm:pt-20 sm:pb-28 lg:pt-24 lg:pb-32">
       <div className="mx-auto max-w-[94rem] px-6 sm:px-10 lg:px-14">
-        <div className="film-reveal grid gap-9 lg:grid-cols-[.82fr_1.18fr] lg:items-end">
-          <div><p className="text-[0.6rem] font-medium uppercase tracking-[0.3em] text-[#9D6B4C]">Three paths</p><h2 className="mt-5 max-w-4xl font-display text-[clamp(3.3rem,7vw,7rem)] font-normal leading-[0.9] tracking-[-0.05em]">The work meets the business wherever it stands.</h2></div>
+        <div className="film-reveal grid gap-8 lg:grid-cols-[.82fr_1.18fr] lg:items-end">
+          <div><p className="text-[0.6rem] font-medium uppercase tracking-[0.3em] text-[#9D6B4C]">Three paths</p><h2 className="mt-5 max-w-3xl font-display text-[clamp(3.05rem,6.15vw,6.2rem)] font-normal leading-[0.94] tracking-[-0.045em]">The work meets the business wherever it stands.</h2></div>
           <p className="max-w-xl text-sm leading-relaxed text-[#22231F]/60 sm:text-base lg:justify-self-end">The route changes. The logic does not: uncover the truth, choose the position, make it recognisable, and protect the meaning as it grows.</p>
         </div>
 
@@ -795,7 +795,7 @@ function ProcessMountain() {
 function QuestionsAndInvitation() {
   const questions=["Can you help a brand new business?","Can you help an existing brand that already has an identity?","Can you actually implement, or just strategize?","How long does a project take?","Can we work remotely?"].map((question)=>faqs.find((faq)=>faq.question===question)).filter(Boolean);
   return <section className="film-paper relative overflow-hidden bg-[#F4EFE6] text-[#22231F]"><div className="mx-auto max-w-[94rem] px-6 py-24 sm:px-10 sm:py-32 lg:px-14 lg:py-40"><div className="film-reveal grid gap-10 lg:grid-cols-[.76fr_1.24fr]"><div><p className="text-[.6rem] font-medium uppercase tracking-[.3em] text-[#9D6B4C]">Common questions</p><h2 className="mt-5 font-display text-[clamp(3.3rem,7vw,6.8rem)] font-normal leading-[.9] tracking-[-.05em]">Answers to what matters most.</h2><p className="mt-7 max-w-sm text-sm leading-relaxed text-[#22231F]/58 sm:text-base">The final decision should feel clear, not pressured. Open the question still holding it back.</p></div><div className="divide-y divide-[#22231F]/10 rounded-[1.8rem] border border-[#22231F]/10 bg-white/44 px-5 sm:px-8">{questions.map((item,index)=>item?<details key={item.question} className="group py-6"><summary className="flex cursor-pointer list-none items-start gap-4 font-display text-2xl leading-tight marker:hidden sm:text-3xl"><span className="mt-1 font-body text-[.52rem] uppercase tracking-[.2em] text-[#9D6B4C]">{String(index+1).padStart(2,"0")}</span><span>{item.question}</span><span className="ml-auto text-xl text-[#9D6B4C] transition-transform group-open:rotate-45">+</span></summary><p className="ml-10 mt-5 max-w-3xl border-l border-[#9D6B4C]/36 pl-5 text-sm leading-relaxed text-[#22231F]/58 sm:text-base">{item.answer}</p></details>:null)}</div></div></div>
-    <div className="relative min-h-[92svh] overflow-hidden bg-[#1E2A22] text-[#F4EFE6]"><AmbientVideo src="/videos/pixabay-sea-of-fog-sunrise.mp4" poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg" position="center"/><div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,31,25,.14),rgba(22,31,25,.38)_48%,rgba(22,31,25,.78))]"/><div className="relative z-10 mx-auto flex min-h-[92svh] max-w-[94rem] items-end px-6 pb-16 pt-28 sm:px-10 sm:pb-20 lg:px-14"><div className="film-reveal max-w-6xl"><p className="text-[.6rem] uppercase tracking-[.3em] text-[#E1C89F]">The last frame belongs to them</p><h2 className="mt-6 font-display text-[clamp(3.8rem,9vw,9rem)] font-normal leading-[.84] tracking-[-.06em]">What should your audience remember after you leave the room?</h2><div className="mt-8 flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between"><p className="max-w-xl text-sm leading-relaxed text-[#F4EFE6]/68 sm:text-base">Twenty minutes. A real diagnosis. No pitch deck waiting behind the curtain.</p><LinkButton href="/contact" trackEvent="closing_booking_click" trackProps={{ page:"home" }}>Begin with the real question</LinkButton></div></div></div></div>
+    <div className="relative min-h-[92svh] overflow-hidden bg-[#1E2A22] text-[#F4EFE6]"><AmbientVideo src="/videos/pixabay-sea-of-fog-sunrise.mp4" poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg" position="center"/><div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(22,31,25,.08),rgba(22,31,25,.3)_52%,rgba(22,31,25,.68))]"/><div className="relative z-10 mx-auto flex min-h-[92svh] max-w-[94rem] items-end px-6 pb-16 pt-28 sm:px-10 sm:pb-20 lg:px-14"><div className="film-reveal max-w-[64rem]"><p className="text-[.6rem] uppercase tracking-[.3em] text-[#E1C89F]">The last frame belongs to them</p><h2 className="mt-6 font-display text-[clamp(3.4rem,7.7vw,7.65rem)] font-normal leading-[.9] tracking-[-.045em]">What should your audience remember after you leave the room?</h2><div className="mt-8 flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between"><p className="max-w-xl text-sm leading-relaxed text-[#F4EFE6]/68 sm:text-base">Twenty minutes. A real diagnosis. No pitch deck waiting behind the curtain.</p><LinkButton href="/contact" trackEvent="closing_booking_click" trackProps={{ page:"home" }}>Begin with the real question</LinkButton></div></div></div></div>
   </section>;
 }
 
@@ -820,10 +820,10 @@ export function MoodboardHome() {
         animation-fill-mode:both;
         animation-timing-function:cubic-bezier(.16,1,.3,1);
         animation-timeline:view();
-        animation-range:entry 2% cover 34%;
+        animation-range:entry 0% cover 24%;
       }
     }
-    @keyframes film-rise { from { opacity:.26; transform:translate3d(0,42px,0) scale(.982); } to { opacity:1; transform:translate3d(0,0,0) scale(1); } }
+    @keyframes film-rise { from { opacity:.72; transform:translate3d(0,22px,0) scale(.992); } to { opacity:1; transform:translate3d(0,0,0) scale(1); } }
     .film-divider-line { animation:film-divider 5.6s ease-in-out infinite; transform-origin:center; }
     @keyframes film-divider { 0%,100%{ transform:scaleX(.68); opacity:.34; } 50%{ transform:scaleX(1); opacity:.82; } }
     .film-sun-sweep { animation:film-sweep 13s ease-in-out infinite; }

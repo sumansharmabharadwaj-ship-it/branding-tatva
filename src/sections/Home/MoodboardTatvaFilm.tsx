@@ -255,16 +255,16 @@ function StaticTatvas() {
                     <h3 className="mt-4 font-display text-5xl leading-none">
                       {element.name.split(" · ")[0]}.
                     </h3>
-                    <p className="mt-5 text-sm leading-relaxed text-[#22231F]/58">
+                    <p className="mt-5 text-sm leading-relaxed text-[#22231F]/68">
                       {element.meaning}
                     </p>
                   </div>
                   <div className="grid gap-5">
                     <div>
-                      <p className="text-[0.52rem] uppercase tracking-[0.18em] text-[#22231F]/34">
+                      <p className="text-[0.52rem] uppercase tracking-[0.18em] text-[#22231F]/46">
                         Before
                       </p>
-                      <p className="mt-2 font-display text-2xl leading-tight text-[#22231F]/58">
+                      <p className="mt-2 font-display text-2xl leading-tight text-[#22231F]/68">
                         {change.before}
                       </p>
                     </div>
@@ -279,7 +279,7 @@ function StaticTatvas() {
                         {change.after}
                       </p>
                     </div>
-                    <p className="border-t border-[#22231F]/9 pt-4 text-xs leading-relaxed text-[#22231F]/48">
+                    <p className="border-t border-[#22231F]/9 pt-4 text-xs leading-relaxed text-[#22231F]/60">
                       <span className="text-[#22231F]/74">
                         Without {element.name.split(" · ")[0]}:
                       </span>{" "}
@@ -326,23 +326,23 @@ export function MoodboardTatvaFilm() {
   const change = transformations[active.slug];
 
   return (
-    <section ref={ref} className="relative h-[430svh] bg-[#1E2A22] text-[#22231F]">
+    <section ref={ref} className="relative h-[390svh] bg-[#1E2A22] text-[#22231F]">
       <div className="sticky top-0 h-svh min-h-[680px] overflow-hidden">
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={active.slug}
             className="absolute inset-0"
-            initial={{ opacity: 0.16, scale: 1.08 }}
+            initial={{ opacity: 0.46, scale: 1.045 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0.14, scale: 1.035 }}
-            transition={{ duration: 0.82, ease: EASE }}
+            exit={{ opacity: 0.34, scale: 1.02 }}
+            transition={{ duration: 0.58, ease: EASE }}
           >
             <ActiveBackdrop element={active} />
           </motion.div>
         </AnimatePresence>
 
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(244,239,230,.96)_0%,rgba(244,239,230,.88)_43%,rgba(244,239,230,.24)_72%,rgba(24,34,28,.48)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(244,239,230,.18),transparent_42%,rgba(24,34,28,.36))]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(244,239,230,.9)_0%,rgba(244,239,230,.78)_43%,rgba(244,239,230,.18)_72%,rgba(24,34,28,.42)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(244,239,230,.08),transparent_44%,rgba(24,34,28,.3))]" />
 
         <div className="absolute inset-x-6 top-7 z-30 flex items-center justify-between text-[0.52rem] uppercase tracking-[0.22em] sm:inset-x-10 lg:inset-x-14">
           <span className="text-[#22231F]/46">The five Tatvas</span>
@@ -356,9 +356,9 @@ export function MoodboardTatvaFilm() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={`${active.slug}-copy`}
-                initial={{ opacity: 0.22, y: 36 }}
+                initial={{ opacity: 0.74, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0.18, y: -24 }}
+                exit={{ opacity: 0.58, y: -14 }}
                 transition={{ duration: 0.62, ease: EASE }}
               >
                 <p
@@ -367,27 +367,27 @@ export function MoodboardTatvaFilm() {
                 >
                   {change.verb}
                 </p>
-                <h2 className="mt-5 font-display text-[clamp(4.7rem,10vw,10rem)] font-normal leading-[0.78] tracking-[-0.07em]">
+                <h2 className="mt-5 font-display text-[clamp(4.15rem,8.7vw,8.45rem)] font-normal leading-[0.84] tracking-[-0.055em]">
                   {active.name.split(" · ")[0].toLowerCase()}.
                 </h2>
-                <p className="mt-8 max-w-xl font-display text-[clamp(2rem,3.7vw,3.9rem)] leading-[1.02]">
+                <p className="mt-7 max-w-xl font-display text-[clamp(1.8rem,3.15vw,3.2rem)] leading-[1.06]">
                   {active.poetic}
                 </p>
-                <p className="mt-6 max-w-xl text-sm leading-relaxed text-[#22231F]/58 sm:text-base">
+                <p className="mt-6 max-w-xl text-sm leading-relaxed text-[#22231F]/68 sm:text-base">
                   {active.meaning}
                 </p>
               </motion.div>
             </AnimatePresence>
 
             <div className="grid gap-7 lg:grid-cols-[1fr_0.9fr] lg:items-center">
-              <div className="relative h-[20rem] overflow-hidden rounded-[1.8rem] border border-[#22231F]/10 bg-[#F5F0E8]/66 p-5 backdrop-blur-xl sm:h-[25rem]">
+              <div className="relative h-[20rem] overflow-hidden rounded-[1.8rem] border border-[#22231F]/14 bg-[#F5F0E8]/82 p-5 shadow-[0_26px_70px_-52px_rgba(34,35,31,.5)] backdrop-blur-xl sm:h-[25rem]">
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={`${active.slug}-diagram`}
                     className="h-full w-full"
-                    initial={{ opacity: 0.2, scale: 0.91 }}
+                    initial={{ opacity: 0.68, scale: 0.96 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0.18, scale: 1.06 }}
+                    exit={{ opacity: 0.56, scale: 1.025 }}
                     transition={{ duration: 0.64, ease: EASE }}
                   >
                     <TatvaDiagram slug={active.slug} color={active.color} />
@@ -398,17 +398,17 @@ export function MoodboardTatvaFilm() {
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={`${active.slug}-change`}
-                  initial={{ opacity: 0.22, x: 28 }}
+                  initial={{ opacity: 0.72, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0.18, x: -18 }}
+                  exit={{ opacity: 0.58, x: -10 }}
                   transition={{ duration: 0.52, ease: EASE }}
-                  className="rounded-[1.5rem] border border-[#22231F]/10 bg-[#F5F0E8]/72 p-5 backdrop-blur-xl sm:p-6"
+                  className="rounded-[1.5rem] border border-[#22231F]/14 bg-[#F5F0E8]/84 p-5 shadow-[0_22px_64px_-50px_rgba(34,35,31,.46)] backdrop-blur-xl sm:p-6"
                 >
                   <div>
-                    <p className="text-[0.52rem] uppercase tracking-[0.18em] text-[#22231F]/34">
+                    <p className="text-[0.52rem] uppercase tracking-[0.18em] text-[#22231F]/46">
                       Before
                     </p>
-                    <p className="mt-3 font-display text-2xl leading-tight text-[#22231F]/58">
+                    <p className="mt-3 font-display text-2xl leading-tight text-[#22231F]/68">
                       {change.before}
                     </p>
                   </div>
@@ -423,7 +423,7 @@ export function MoodboardTatvaFilm() {
                       {change.after}
                     </p>
                   </div>
-                  <p className="mt-6 border-t border-[#22231F]/9 pt-5 text-xs leading-relaxed text-[#22231F]/48">
+                  <p className="mt-6 border-t border-[#22231F]/9 pt-5 text-xs leading-relaxed text-[#22231F]/60">
                     <span className="text-[#22231F]/74">
                       Without {active.name.split(" · ")[0]}:
                     </span>{" "}
@@ -441,7 +441,7 @@ export function MoodboardTatvaFilm() {
               <span
                 key={element.slug}
                 className={`text-[0.48rem] uppercase tracking-[0.13em] transition-opacity ${
-                  index === activeIndex ? "opacity-100" : "opacity-30"
+                  index === activeIndex ? "opacity-100" : "opacity-55"
                 }`}
                 style={{ color: index === activeIndex ? element.color : INK }}
               >
