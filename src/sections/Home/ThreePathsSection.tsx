@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
@@ -64,19 +64,50 @@ const CURVES = [
 ];
 const ENTRY_Y = [60, 150, 240];
 const AUTO_ADVANCE_MS = 6000;
+const SITUATION_TO_PATH: Record<string, number> = {
+  idea: 0,
+  inconsistent: 1,
+  outgrown: 2,
+};
 
 export function ThreePathsSection() {
   const prefersReducedMotion = Boolean(useReducedMotion());
+  const sectionRef = useRef<HTMLElement>(null);
   const [autoPath, setAutoPath] = useState(0);
   const [heldPath, setHeldPath] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
+  const [carriedDiagnosis, setCarriedDiagnosis] = useState(false);
   const shown = heldPath ?? autoPath;
   const active = PATHS[shown];
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        try {
+          const saved = window.localStorage.getItem("bt-situation");
+          const pathIndex = saved ? SITUATION_TO_PATH[saved] : undefined;
+          if (pathIndex !== undefined) {
+            setAutoPath(pathIndex);
+            setCarriedDiagnosis(true);
+          }
+        } catch {}
+      },
+      { threshold: 0.2 },
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (prefersReducedMotion || paused) return;
     const timer = window.setInterval(() => {
       setAutoPath((current) => (current + 1) % PATHS.length);
+      setCarriedDiagnosis(false);
     }, AUTO_ADVANCE_MS);
     return () => window.clearInterval(timer);
   }, [paused, prefersReducedMotion]);
@@ -84,6 +115,7 @@ export function ThreePathsSection() {
   function holdPath(index: number) {
     setHeldPath(index);
     setPaused(true);
+    setCarriedDiagnosis(false);
   }
 
   function releasePath() {
@@ -93,6 +125,7 @@ export function ThreePathsSection() {
 
   return (
     <motion.section
+      ref={sectionRef}
       className="relative isolate overflow-hidden"
       animate={{ backgroundColor: `${active.tint}12` }}
       transition={{ duration: prefersReducedMotion ? 0 : 0.9, ease: [0.22, 1, 0.36, 1] }}
@@ -147,14 +180,16 @@ export function ThreePathsSection() {
               id="three-paths-title"
               className="mt-4 font-display text-[clamp(1.9rem,3.6vw,3rem)] font-normal leading-[1.1] text-soil"
             >
-              The work should begin where the business is, rather than where a package expects it to be.
+              The diagnosis names the gap. The path decides what to build next.
             </h2>
             <span aria-hidden="true" className="mt-5 block h-px w-14" style={{ backgroundColor: "#C6A97A" }} />
             <p className="mt-5 text-sm leading-relaxed text-foreground-secondary">
-              Each path unfolds automatically: the starting tension, the decisions it needs, and the recognition it should earn.
+              Each path shows the real intervention, the decisions it moves through, and what the business should be able to do afterwards.
             </p>
             <p className="mt-6 text-xs uppercase tracking-[0.16em] text-foreground-secondary/70">
-              The map keeps moving. Touch a path to hold it.
+              {carriedDiagnosis
+                ? "Your earlier diagnosis is carried into the map."
+                : "The map keeps moving. Touch a path to hold it."}
             </p>
           </div>
         </div>
@@ -164,7 +199,7 @@ export function ThreePathsSection() {
             viewBox="0 0 900 300"
             className="h-auto w-full"
             role="img"
-            aria-label="Three starting points moving through the decisions required to create a recognisable brand"
+            aria-label="Three service paths moving through the decisions required to create a recognisable brand"
           >
             {CURVES.map((curve, index) => {
               const isActive = shown === index;
