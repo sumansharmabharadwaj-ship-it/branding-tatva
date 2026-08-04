@@ -1,0 +1,190 @@
+name: Apply moodboard media fixes
+
+on:
+  push:
+    branches:
+      - automation/fix-moodboard-media-2026-08-04
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out automation branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Make reduced motion and media playback deterministic
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          hook = Path("src/hooks/useHydratedReducedMotion.ts")
+          hook.write_text('''"use client";
+
+          import { useEffect, useState } from "react";
+          import { useReducedMotion } from "framer-motion";
+
+          /**
+           * Keep the server and first client render identical, then combine
+           * Framer's MotionConfig preference with the browser's native media
+           * query. The native query is important for browser emulation,
+           * accessibility tooling, and environments where Framer's first
+           * subscription update arrives after a video has already started.
+           */
+          export function useHydratedReducedMotion(): boolean {
+            const framerReduced = useReducedMotion();
+            const [hydrated, setHydrated] = useState(false);
+            const [systemReduced, setSystemReduced] = useState(false);
+
+            useEffect(() => {
+              const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+              const update = () => setSystemReduced(media.matches);
+              update();
+              setHydrated(true);
+
+              if (typeof media.addEventListener === "function") {
+                media.addEventListener("change", update);
+                return () => media.removeEventListener("change", update);
+              }
+
+              media.addListener(update);
+              return () => media.removeListener(update);
+            }, []);
+
+            return hydrated && (Boolean(framerReduced) || systemReduced);
+          }
+          '''.replace("          ", ""))
+
+          home = Path("src/sections/Home/MoodboardHome.tsx")
+          source = home.read_text()
+          source = source.replace(
+              'const near = useInView(wrapRef, { margin: "420px 0px 420px 0px" });',
+              'const near = useInView(wrapRef, { margin: "120px 0px 120px 0px" });',
+              1,
+          )
+          old_effect = '''  useEffect(() => {
+            const video = videoRef.current;
+            if (!video || reduced) return;
+            if (near) void video.play().catch(() => {});
+            else video.pause();
+          }, [near, reduced, src]);'''
+          new_effect = '''  useEffect(() => {
+            const video = videoRef.current;
+            if (!video) return;
+            if (reduced || !near) {
+              video.pause();
+              return;
+            }
+            void video.play().catch(() => {});
+            return () => video.pause();
+          }, [near, reduced, src]);'''
+          if old_effect not in source:
+              raise SystemExit("AmbientVideo effect contract was not found")
+          home.write_text(source.replace(old_effect, new_effect, 1))
+
+          tatva = Path("src/sections/Home/MoodboardTatvaFilm.tsx")
+          source = tatva.read_text()
+          source = source.replace(
+              '  useMotionValueEvent,\n  useScroll,',
+              '  useInView,\n  useMotionValueEvent,\n  useScroll,',
+              1,
+          )
+          old_active = '''function ActiveBackdrop({ element }: { element: Element }) {
+            const videoRef = useRef<HTMLVideoElement>(null);
+            const reduced = useHydratedReducedMotion();
+
+            useEffect(() => {
+              const video = videoRef.current;
+              if (!video || reduced) return;
+              void video.play().catch(() => {});
+              return () => video.pause();
+            }, [element.slug, reduced]);
+
+            return (
+              <div className="absolute inset-0 overflow-hidden">'''
+          new_active = '''function ActiveBackdrop({ element }: { element: Element }) {
+            const wrapRef = useRef<HTMLDivElement>(null);
+            const videoRef = useRef<HTMLVideoElement>(null);
+            const reduced = useHydratedReducedMotion();
+            const visible = useInView(wrapRef, { margin: "80px 0px 80px 0px" });
+
+            useEffect(() => {
+              const video = videoRef.current;
+              if (!video) return;
+              if (reduced || !visible) {
+                video.pause();
+                return;
+              }
+              void video.play().catch(() => {});
+              return () => video.pause();
+            }, [element.slug, reduced, visible]);
+
+            return (
+              <div ref={wrapRef} className="absolute inset-0 overflow-hidden">'''
+          if old_active not in source:
+              raise SystemExit("Tatva ActiveBackdrop contract was not found")
+          tatva.write_text(source.replace(old_active, new_active, 1))
+
+          qa = Path(".github/workflows/moodboard-home-browser-qa.yml")
+          source = qa.read_text()
+          replacements = {
+              'async function auditFilm(page: Page, testInfo: TestInfo, reducedMotion = false) {':
+                  'async function auditFilm(page: Page, testInfo: TestInfo, label: string, reducedMotion = false) {',
+              'Array.from(document.querySelectorAll<HTMLElement>(selectors))':
+                  'Array.from((document.querySelector("main") ?? document.body).querySelectorAll<HTMLElement>(selectors))',
+              '${testInfo.project.name}-${String(index).padStart(2, "0")}-${Math.round(fraction * 100)}.png':
+                  '${label}-${String(index).padStart(2, "0")}-${Math.round(fraction * 100)}.png',
+              'testInfo.project.name !== "mobile"': 'label !== "mobile"',
+              'viewport: testInfo.project.name,': 'viewport: label,',
+              '`${testInfo.project.name}.json`': '`${label}.json`',
+              'await auditFilm(page, testInfo);\n            });\n\n            test("short laptop flow"':
+                  'await auditFilm(page, testInfo, "desktop");\n            });\n\n            test("short laptop flow"',
+              'await page.setViewportSize({ width: 1366, height: 768 });\n              await auditFilm(page, testInfo);':
+                  'await page.setViewportSize({ width: 1366, height: 768 });\n              await auditFilm(page, testInfo, "short-laptop");',
+              'await page.setViewportSize({ width: 390, height: 844 });\n              await auditFilm(page, testInfo);':
+                  'await page.setViewportSize({ width: 390, height: 844 });\n              await auditFilm(page, testInfo, "mobile");',
+              'await page.setViewportSize({ width: 1440, height: 1000 });\n              await auditFilm(page, testInfo, true);':
+                  'await page.setViewportSize({ width: 1440, height: 1000 });\n              await auditFilm(page, testInfo, "reduced-desktop", true);',
+              'await page.setViewportSize({ width: 390, height: 844 });\n              await auditFilm(page, testInfo, true);':
+                  'await page.setViewportSize({ width: 390, height: 844 });\n              await auditFilm(page, testInfo, "reduced-mobile", true);',
+          }
+          for old, new in replacements.items():
+              if old not in source:
+                  raise SystemExit(f"QA replacement target not found: {old[:80]}")
+              source = source.replace(old, new, 1)
+          qa.write_text(source)
+          PY
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the site
+        run: pnpm build
+
+      - name: Commit verified fixes to the moodboard branch
+        run: |
+          rm -f .github/workflows/apply-moodboard-media-fixes.yml
+          git fetch origin work/home-moodboard-film-2026-08-04
+          git reset --mixed origin/work/home-moodboard-film-2026-08-04
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/hooks/useHydratedReducedMotion.ts src/sections/Home/MoodboardHome.tsx src/sections/Home/MoodboardTatvaFilm.tsx .github/workflows/moodboard-home-browser-qa.yml
+          git commit -m "Make the moodboard film media-safe and motion-aware"
+          git push origin HEAD:work/home-moodboard-film-2026-08-04
