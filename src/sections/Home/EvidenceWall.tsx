@@ -3,7 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -33,16 +38,51 @@ const DECISION: Record<string, { big: string; label: string }> = {
   },
 };
 
+const TRAILS: Record<
+  string,
+  { signal: string; decision: string; proof: string }
+> = {
+  "dr-haley-nutrition": {
+    signal: "More posts were producing weaker audience response.",
+    decision: "Post less, then make every remaining post earn its place.",
+    proof: "Engagement moved from 0.71% to 2.81%; followers earned per post rose 104%.",
+  },
+  myshopineurope: {
+    signal: "A new marketplace risked reading as generic access and cheap supply.",
+    decision: "Position Indian craft, origin, and wellness heritage ahead of price.",
+    proof: "A complete brand foundation and year-long content operating system.",
+  },
+  "executive-springboard": {
+    signal: "Social content was building awareness without a clear destination.",
+    decision: "Sequence each platform toward webinar registration and mentor action.",
+    proof: "An eight-pillar, platform-specific content system built around conversion.",
+  },
+  herbalcart: {
+    signal: "A modern supplement range was being read through a purely herbal lens.",
+    decision: "Explain supplementation as a practical gap-filler for active lifestyles.",
+    proof: "Five shoot-ready content formats and complete Hinglish video scripts.",
+  },
+  "plaxonic-content-portfolio": {
+    signal: "One content tone could not credibly serve beginners and technical experts.",
+    decision: "Give research, perspective, education, and fast consumption different jobs.",
+    proof: "A sixteen-piece authority portfolio structured to validate, challenge, humanise, and define.",
+  },
+};
+
 const AUTO_ADVANCE_MS = 6200;
 const MANUAL_PAUSE_MS = 18000;
 
 export function EvidenceWall() {
-  const [openSlug, setOpenSlug] = useState<string | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const manualPauseUntilRef = useRef(0);
   const frameRef = useRef(0);
+  const [openSlug, setOpenSlug] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useReducedMotion());
+  const inView = useInView(sectionRef, { amount: 0.45 });
+  const activeProject = projects[activeIndex] ?? projects[0];
+  const activeTrail = TRAILS[activeProject.slug];
 
   function pauseAutoplay() {
     manualPauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
@@ -51,10 +91,13 @@ export function EvidenceWall() {
   const moveTo = useCallback(
     (index: number) => {
       const list = listRef.current;
-      const target = list?.children[index];
-      if (!list || !(target instanceof HTMLElement)) return;
+      if (!list || !projects.length) return;
 
-      setActiveIndex(index);
+      const safeIndex = ((index % projects.length) + projects.length) % projects.length;
+      const target = list.children[safeIndex];
+      if (!(target instanceof HTMLElement)) return;
+
+      setActiveIndex(safeIndex);
       list.scrollTo({
         left: Math.max(0, target.offsetLeft - 8),
         behavior: prefersReducedMotion ? "auto" : "smooth",
@@ -90,7 +133,7 @@ export function EvidenceWall() {
   }
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || !inView) return;
 
     const timer = window.setInterval(() => {
       if (
@@ -101,11 +144,11 @@ export function EvidenceWall() {
         return;
       }
 
-      moveTo((activeIndex + 1) % projects.length);
+      moveTo(activeIndex + 1);
     }, AUTO_ADVANCE_MS);
 
     return () => window.clearInterval(timer);
-  }, [activeIndex, moveTo, openSlug, prefersReducedMotion]);
+  }, [activeIndex, inView, moveTo, openSlug, prefersReducedMotion]);
 
   useEffect(
     () => () => {
@@ -115,7 +158,12 @@ export function EvidenceWall() {
   );
 
   return (
-    <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden bg-soil py-16 sm:py-24"
+      aria-labelledby="evidence-wall-title"
+      onFocusCapture={pauseAutoplay}
+    >
       <BackgroundVideo
         video="/videos/pexels-fog-sunrise.mp4"
         videoWebm="/videos/pexels-fog-sunrise.webm"
@@ -143,8 +191,8 @@ export function EvidenceWall() {
       />
 
       <Container className="relative max-w-[100rem]">
-        <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-14">
-          <Reveal className="lg:w-80 lg:shrink-0">
+        <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-14">
+          <Reveal className="lg:w-80 lg:shrink-0 lg:pt-4">
             <div className="flex gap-5">
               <div aria-hidden="true" className="hidden flex-col items-center pt-2 sm:flex">
                 <AnimatePresence mode="wait" initial={false}>
@@ -181,22 +229,25 @@ export function EvidenceWall() {
                 <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">
                   The work
                 </p>
-                <h2 className="mt-3 font-display text-display-sm font-normal leading-[1.05] text-ivory lg:text-display-md">
+                <h2
+                  id="evidence-wall-title"
+                  className="mt-3 font-display text-display-sm font-normal leading-[1.05] text-ivory lg:text-display-md"
+                >
                   Evidence.
                   <br />
                   Not Portfolio.
                 </h2>
                 <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory/75">
-                  Five real engagements. Each file opens on the decision that changed what the audience could understand.
+                  Five real engagements. Each one begins with the signal that was misread, then the decision that changed the direction.
                 </p>
                 <p className="mt-3 max-w-xs text-xs leading-relaxed text-ivory/48">
-                  The archive moves on its own. Touch any file and it waits for you.
+                  The archive advances while you watch. Touch a file and it waits.
                 </p>
                 <Link
                   href="/work"
                   className="link-underline mt-6 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-sandstone transition-colors duration-300 hover:text-ivory"
                 >
-                  Explore the archive <span aria-hidden="true">→</span>
+                  Explore the full archive <span aria-hidden="true">→</span>
                 </Link>
               </div>
             </div>
@@ -343,6 +394,108 @@ export function EvidenceWall() {
                 );
               })}
             </ul>
+
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-[0.6rem] font-medium uppercase tracking-[0.18em] text-ivory/42">
+                  Active file
+                </p>
+                <p className="mt-1 font-display text-xl text-ivory">
+                  {activeProject.title}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  aria-label="Show previous project"
+                  onClick={() => {
+                    pauseAutoplay();
+                    moveTo(activeIndex - 1);
+                  }}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-ivory/15 text-ivory/70 transition-colors hover:border-sandstone/55 hover:text-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
+                >
+                  ←
+                </button>
+                <button
+                  type="button"
+                  aria-label="Show next project"
+                  onClick={() => {
+                    pauseAutoplay();
+                    moveTo(activeIndex + 1);
+                  }}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-ivory/15 text-ivory/70 transition-colors hover:border-sandstone/55 hover:text-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
+                >
+                  →
+                </button>
+              </div>
+            </div>
+
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={activeProject.slug}
+                className="mt-5 grid overflow-hidden rounded-3xl border border-ivory/12 bg-ivory/[0.045] backdrop-blur-md md:grid-cols-[1fr_auto_1fr_auto_1fr] md:items-stretch"
+                initial={
+                  prefersReducedMotion
+                    ? false
+                    : { opacity: 0, y: 12, filter: "blur(6px)" }
+                }
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0, y: -8, filter: "blur(4px)" }
+                }
+                transition={{
+                  duration: prefersReducedMotion ? 0 : 0.6,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                aria-live="polite"
+              >
+                {[
+                  ["The signal", activeTrail.signal],
+                  ["The decision", activeTrail.decision],
+                  ["Recorded proof", activeTrail.proof],
+                ].map(([label, value], index) => (
+                  <div key={label} className="contents">
+                    <div className="px-5 py-5 sm:px-6 sm:py-6">
+                      <p
+                        className="text-[0.6rem] font-medium uppercase tracking-[0.18em]"
+                        style={{ color: activeProject.accent }}
+                      >
+                        {label}
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-ivory/80">
+                        {value}
+                      </p>
+                    </div>
+                    {index < 2 && (
+                      <div
+                        aria-hidden="true"
+                        className="relative hidden w-12 items-center justify-center md:flex"
+                      >
+                        <span className="h-px w-full bg-ivory/10" />
+                        <motion.span
+                          className="absolute h-1.5 w-1.5 rounded-full"
+                          style={{ backgroundColor: activeProject.accent }}
+                          animate={
+                            prefersReducedMotion
+                              ? undefined
+                              : { left: ["0%", "100%"], opacity: [0, 1, 1, 0] }
+                          }
+                          transition={{
+                            duration: 2.4,
+                            repeat: Infinity,
+                            repeatDelay: 1,
+                            ease: "easeInOut",
+                            delay: index * 0.35,
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
           </Reveal>
         </div>
       </Container>
