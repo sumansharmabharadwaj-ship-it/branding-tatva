@@ -16,8 +16,15 @@ import { MotionConfig } from "framer-motion";
 //   globals.css for raw keyframe animations (mist drift, sky
 //   crossings, aurora) that Framer never sees.
 //
-// The default is "full" until the visitor chooses otherwise; the OS
-// preference already covers the "system says reduce" case on its own.
+// Hydration deserves one extra guard. Framer can read the operating
+// system's reduced-motion preference during the very first client
+// render, while the server cannot. Several authored homepage scenes
+// intentionally return a different static DOM when motion is reduced;
+// letting that switch happen during hydration produces a genuine
+// markup mismatch. The provider therefore renders with motion forced
+// on for the server and first client pass, then applies the stored or
+// operating-system preference immediately after mount. Visitors still
+// receive the same reduced experience, just after React owns the DOM.
 
 type MotionPref = "full" | "reduced";
 const STORAGE_KEY = "bt-motion";
@@ -32,13 +39,16 @@ export function useMotionPreference() {
 }
 
 export function MotionPreferenceProvider({ children }: { children: React.ReactNode }) {
-  // Server render and first client render agree on "full"; the stored
-  // choice applies right after mount, which keeps hydration clean.
   const [pref, setPrefState] = useState<MotionPref>("full");
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === "reduced") setPrefState("reduced");
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEY);
+      if (stored === "reduced") setPrefState("reduced");
+    } finally {
+      setHydrated(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -55,9 +65,11 @@ export function MotionPreferenceProvider({ children }: { children: React.ReactNo
     }
   }
 
+  const reducedMotion = hydrated ? (pref === "reduced" ? "always" : "user") : "never";
+
   return (
     <MotionPrefContext.Provider value={{ pref, setPref }}>
-      <MotionConfig reducedMotion={pref === "reduced" ? "always" : "user"}>{children}</MotionConfig>
+      <MotionConfig reducedMotion={reducedMotion}>{children}</MotionConfig>
     </MotionPrefContext.Provider>
   );
 }
