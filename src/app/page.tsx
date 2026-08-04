@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { Header } from "@/layouts/Header";
-import { Footer } from "@/sections/Footer";
-import { HomeExperience } from "@/sections/Home/HomeExperience";
+import { MoodboardHome } from "@/sections/Home/MoodboardHome";
 import { site } from "@/data/site";
 import { faqs } from "@/data/faqs";
 
@@ -30,11 +28,7 @@ const faqStructuredData = {
 export default function Home() {
   return (
     <>
-      <Header transparent />
-      <main id="main-content">
-        <HomeExperience />
-      </main>
-      <Footer />
+      <MoodboardHome />
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
