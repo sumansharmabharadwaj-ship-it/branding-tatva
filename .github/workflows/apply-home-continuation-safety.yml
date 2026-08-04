@@ -1,0 +1,73 @@
+name: Apply homepage continuation safety
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-home-continuation-safety.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-home:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+          sparse-checkout: src
+          sparse-checkout-cone-mode: true
+
+      - name: Apply playback and journey fixes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              Path("src/sections/Home/EvidenceWall.tsx"): (
+                  "  useEffect(() => {\n    if (prefersReducedMotion) return;\n\n    function syncPlayback() {\n      const video = activeVideoRef.current;\n      if (!video) return;\n      if (inView && !document.hidden) void video.play().catch(() => {});\n      else video.pause();\n    }\n\n    syncPlayback();\n    document.addEventListener(\"visibilitychange\", syncPlayback);\n    return () => {\n      document.removeEventListener(\"visibilitychange\", syncPlayback);\n      activeVideoRef.current?.pause();\n    };\n  }, [activeIndex, inView, prefersReducedMotion]);",
+                  "  useEffect(() => {\n    if (prefersReducedMotion) return;\n    const videoAtEffectStart = activeVideoRef.current;\n\n    function syncPlayback() {\n      const video = activeVideoRef.current;\n      if (!video) return;\n      if (inView && !document.hidden) void video.play().catch(() => {});\n      else video.pause();\n    }\n\n    syncPlayback();\n    document.addEventListener(\"visibilitychange\", syncPlayback);\n    return () => {\n      document.removeEventListener(\"visibilitychange\", syncPlayback);\n      videoAtEffectStart?.pause();\n    };\n  }, [activeIndex, inView, prefersReducedMotion]);",
+              ),
+              Path("src/sections/Home/StudioTriptych.tsx"): (
+                  "  useEffect(() => {\n    if (prefersReducedMotion) return;\n\n    function syncPlayback() {\n      const video = activeVideoRef.current;\n      if (!video) return;\n      if (inView && !document.hidden) void video.play().catch(() => {});\n      else video.pause();\n    }\n\n    syncPlayback();\n    document.addEventListener(\"visibilitychange\", syncPlayback);\n    return () => {\n      document.removeEventListener(\"visibilitychange\", syncPlayback);\n      activeVideoRef.current?.pause();\n    };\n  }, [activeIndex, inView, prefersReducedMotion]);",
+                  "  useEffect(() => {\n    if (prefersReducedMotion) return;\n    const videoAtEffectStart = activeVideoRef.current;\n\n    function syncPlayback() {\n      const video = activeVideoRef.current;\n      if (!video) return;\n      if (inView && !document.hidden) void video.play().catch(() => {});\n      else video.pause();\n    }\n\n    syncPlayback();\n    document.addEventListener(\"visibilitychange\", syncPlayback);\n    return () => {\n      document.removeEventListener(\"visibilitychange\", syncPlayback);\n      videoAtEffectStart?.pause();\n    };\n  }, [activeIndex, inView, prefersReducedMotion]);",
+              ),
+          }
+
+          for path, (before, after) in replacements.items():
+              text = path.read_text()
+              if before not in text:
+                  raise SystemExit(f"Expected playback block missing in {path}")
+              path.write_text(text.replace(before, after, 1))
+
+          journey = Path("src/sections/Home/HomeAutoJourney.tsx")
+          journey_text = journey.read_text()
+          old_journey = "  const [playing, setPlaying] = useState(true);"
+          new_journey = "  const [playing, setPlaying] = useState(false);"
+          if old_journey not in journey_text:
+              raise SystemExit("Expected HomeAutoJourney initial state was not found")
+          journey.write_text(journey_text.replace(old_journey, new_journey, 1))
+
+          constellation = Path("src/sections/Home/HomeFilmConstellation.tsx")
+          constellation_text = constellation.read_text()
+          if "text-ivory/7o" not in constellation_text:
+              raise SystemExit("Expected constellation class typo was not found")
+          constellation.write_text(constellation_text.replace("text-ivory/7o", "text-ivory/70", 1))
+          PY
+
+      - name: Commit the source fixes
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/sections/Home/EvidenceWall.tsx src/sections/Home/StudioTriptych.tsx src/sections/Home/HomeAutoJourney.tsx src/sections/Home/HomeFilmConstellation.tsx
+          git commit -m "Stabilize homepage films and require an explicit journey start"
+          git push origin HEAD:reimagine-project-moves
