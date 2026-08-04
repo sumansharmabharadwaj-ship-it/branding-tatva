@@ -1,0 +1,79 @@
+name: Repair moodboard homepage
+
+on:
+  pull_request:
+    branches:
+      - work/home-moodboard-film-2026-08-04
+
+permissions:
+  contents: write
+
+jobs:
+  repair-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Route the film through the isolated Tatva chapter
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("src/sections/Home/MoodboardHome.tsx")
+          source = path.read_text()
+
+          import_line = 'import { MoodboardTatvaFilm } from "./MoodboardTatvaFilm";\n'
+          anchor = 'import { navigation, site } from "@/data/site";\n'
+          if import_line not in source:
+              if anchor not in source:
+                  raise SystemExit("Import anchor was not found")
+              source = source.replace(anchor, anchor + import_line, 1)
+
+          replacement = '''function TatvaFilm() {
+            return <MoodboardTatvaFilm />;
+          }
+
+          function ProcessMountain() {'''
+          pattern = re.compile(
+              r'function TatvaFilm\(\) \{.*?\n\}\n\nfunction ProcessMountain\(\) \{',
+              re.S,
+          )
+          source, count = pattern.subn(replacement, source, count=1)
+          if count != 1:
+              raise SystemExit(f"Expected one TatvaFilm block, replaced {count}")
+
+          path.write_text(source)
+          PY
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the site
+        run: pnpm build
+
+      - name: Commit the verified repair to the moodboard branch
+        run: |
+          git fetch origin work/home-moodboard-film-2026-08-04
+          git reset --mixed origin/work/home-moodboard-film-2026-08-04
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/sections/Home/MoodboardHome.tsx
+          git commit -m "Route the homepage through the isolated Tatva film"
+          git push origin HEAD:work/home-moodboard-film-2026-08-04
