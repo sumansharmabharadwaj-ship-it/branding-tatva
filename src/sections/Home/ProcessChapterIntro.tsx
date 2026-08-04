@@ -1,6 +1,11 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/Container";
 
@@ -42,11 +47,13 @@ const MANUAL_PAUSE_MS = 14000;
 
 export function ProcessChapterIntro() {
   const prefersReducedMotion = Boolean(useReducedMotion());
-  const [activeIndex, setActiveIndex] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
   const pauseUntilRef = useRef(0);
+  const inView = useInView(rootRef, { amount: 0.45 });
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || !inView) return;
 
     const timer = window.setInterval(() => {
       if (Date.now() < pauseUntilRef.current || document.hidden) return;
@@ -54,7 +61,7 @@ export function ProcessChapterIntro() {
     }, ROTATE_MS);
 
     return () => window.clearInterval(timer);
-  }, [prefersReducedMotion]);
+  }, [inView, prefersReducedMotion]);
 
   function choose(index: number) {
     pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
@@ -65,6 +72,7 @@ export function ProcessChapterIntro() {
 
   return (
     <div
+      ref={rootRef}
       className="relative isolate overflow-hidden border-y border-ivory/10 bg-soil py-12 sm:py-16"
       onPointerEnter={() => {
         pauseUntilRef.current = Date.now() + 7000;
@@ -78,7 +86,7 @@ export function ProcessChapterIntro() {
         className="pointer-events-none absolute -left-32 top-1/2 -z-10 h-80 w-80 -translate-y-1/2 rounded-full blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(184,90,52,0.16), transparent 68%)" }}
         animate={
-          prefersReducedMotion
+          prefersReducedMotion || !inView
             ? undefined
             : { x: [0, 80, 0], y: [0, -30, 0], scale: [1, 1.12, 1] }
         }
@@ -93,7 +101,7 @@ export function ProcessChapterIntro() {
         className="pointer-events-none absolute -right-32 top-[8%] -z-10 h-96 w-96 rounded-full blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(92,107,74,0.17), transparent 70%)" }}
         animate={
-          prefersReducedMotion
+          prefersReducedMotion || !inView
             ? undefined
             : { x: [0, -65, 0], y: [0, 38, 0], scale: [1.05, 0.94, 1.05] }
         }
@@ -149,7 +157,11 @@ export function ProcessChapterIntro() {
               <motion.span
                 aria-hidden="true"
                 className="hidden h-16 w-16 shrink-0 rounded-full border border-dashed border-sandstone/40 sm:block"
-                animate={prefersReducedMotion ? undefined : { rotate: 360, scale: [1, 1.08, 1] }}
+                animate={
+                  prefersReducedMotion || !inView
+                    ? undefined
+                    : { rotate: 360, scale: [1, 1.08, 1] }
+                }
                 transition={
                   prefersReducedMotion
                     ? undefined
