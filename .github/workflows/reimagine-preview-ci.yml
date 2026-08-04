@@ -19,8 +19,13 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - name: Check out preview branch
+      - name: Check out application code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            src
+          sparse-checkout-cone-mode: true
 
       - name: Use Node 24
         uses: actions/setup-node@v4
