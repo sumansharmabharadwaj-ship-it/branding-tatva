@@ -23,11 +23,23 @@ type Film = {
   label: string;
 };
 
-// The global floating film is now reserved for the one chapter whose
-// diagram benefits from a peripheral nature cue. Every other chapter has
-// its own local media or motion system, so adding another window would
-// compete with the argument rather than enrich it.
+// These fragments are reserved for chapters whose main argument benefits
+// from a peripheral nature cue. Only the active chapter mounts its films,
+// and only the primary fragment appears below 1680px. Chapters that already
+// contain several local films remain intentionally free of another layer.
 const CHAPTER_FILMS: Partial<Record<ChapterId, readonly [Film, Film]>> = {
+  diagnosis: [
+    {
+      video: "/videos/higgsfield-process-ground.mp4",
+      poster: "/images/higgsfield-process-ground-poster.jpg",
+      label: "The visible symptom is rarely the whole problem.",
+    },
+    {
+      video: "/videos/higgsfield-idea-sketch.mp4",
+      poster: "/images/higgsfield-idea-sketch.jpg",
+      label: "Diagnosis before decoration.",
+    },
+  ],
   paths: [
     {
       video: "/videos/higgsfield-process-ground.mp4",
@@ -40,13 +52,73 @@ const CHAPTER_FILMS: Partial<Record<ChapterId, readonly [Film, Film]>> = {
       label: "Then give the business a coherent form.",
     },
   ],
+  framework: [
+    {
+      video: "/videos/higgsfield-process-listen.mp4",
+      poster: "/images/higgsfield-process-listen-poster.jpg",
+      label: "Each force answers a different strategic question.",
+    },
+    {
+      video: "/videos/higgsfield-confident-light.mp4",
+      poster: "/images/higgsfield-confident-light-poster.jpg",
+      label: "Five signals, held inside one recognisable system.",
+    },
+  ],
+  questions: [
+    {
+      video: "/videos/hero-valley.mp4",
+      poster: "/images/hero-valley-poster.jpg",
+      label: "Clarity arrives by removing one layer of fog at a time.",
+    },
+    {
+      video: "/videos/pexels-golden-fog-sea.mp4",
+      poster: "/images/pexels-golden-fog-sea-poster.jpg",
+      label: "The practical shape should appear before the first call.",
+    },
+  ],
+  invitation: [
+    {
+      video: "/videos/hero-goldendunes.mp4",
+      poster: "/images/hero-goldendunes-poster.jpg",
+      label: "The next decision should feel warmer than the uncertainty before it.",
+    },
+    {
+      video: "/videos/about-hero-bg-meadow.mp4",
+      poster: "/images/about-hero-bg-meadow-poster.jpg",
+      label: "A living system begins with one committed direction.",
+    },
+  ],
 };
 
 const PLACEMENTS: Partial<Record<ChapterId, readonly [string, string]>> = {
+  diagnosis: [
+    "-right-8 top-[23vh] aspect-[3/4] w-[clamp(6.5rem,7.6vw,8.75rem)] rounded-[1.6rem]",
+    "-left-7 bottom-[16vh] aspect-square w-[clamp(5.2rem,6vw,6.8rem)] rounded-full",
+  ],
   paths: [
     "-right-9 top-[24vh] aspect-[3/4] w-[clamp(6.5rem,7.5vw,8.5rem)] rounded-[1.5rem]",
     "-left-8 bottom-[18vh] aspect-square w-[clamp(5.5rem,6.2vw,7rem)] rounded-[1.35rem]",
   ],
+  framework: [
+    "-left-8 top-[22vh] aspect-[4/5] w-[clamp(6.4rem,7.2vw,8.2rem)] rounded-[42%_58%_48%_52%/58%_42%_58%_42%]",
+    "-right-7 bottom-[17vh] aspect-square w-[clamp(5.6rem,6.4vw,7.2rem)] rounded-[1.4rem]",
+  ],
+  questions: [
+    "-right-8 top-[19vh] aspect-square w-[clamp(6.2rem,7vw,8rem)] rounded-full",
+    "-left-10 bottom-[17vh] aspect-[5/4] w-[clamp(6.2rem,7vw,8.1rem)] rounded-[1.45rem]",
+  ],
+  invitation: [
+    "-right-8 top-[20vh] aspect-[3/4] w-[clamp(6.8rem,7.8vw,9rem)] rounded-[46%_54%_44%_56%/56%_44%_56%_44%]",
+    "-left-8 bottom-[14vh] aspect-square w-[clamp(5.6rem,6.4vw,7.3rem)] rounded-full",
+  ],
+};
+
+const CHAPTER_LABELS: Partial<Record<ChapterId, string>> = {
+  diagnosis: "Find the gap",
+  paths: "Choose the path",
+  framework: "Read the five forces",
+  questions: "Clear the practical fog",
+  invitation: "Make the next decision",
 };
 
 function isChapterId(value: string | undefined): value is ChapterId {
@@ -153,6 +225,10 @@ export function HomeFilmConstellation() {
   }, [pathname]);
 
   useEffect(() => {
+    videoRefs.current = [];
+  }, [activeChapter]);
+
+  useEffect(() => {
     if (pathname !== "/" || prefersReducedMotion) return;
     const videos = videoRefs.current.filter(
       (video): video is HTMLVideoElement => Boolean(video),
@@ -199,6 +275,15 @@ export function HomeFilmConstellation() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
           >
+            <motion.span
+              className="absolute right-5 top-1/2 -translate-y-1/2 font-display text-[0.56rem] uppercase tracking-[0.2em] text-ivory/24 [writing-mode:vertical-rl]"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45, duration: 0.7 }}
+            >
+              {CHAPTER_LABELS[activeChapter]}
+            </motion.span>
+
             {films.map((film, index) => {
               const primary = index === 0;
               const direction = primary ? 1 : -1;
@@ -220,7 +305,7 @@ export function HomeFilmConstellation() {
                     filter: "blur(7px)",
                   }}
                   animate={{
-                    opacity: primary ? 0.54 : 0.42,
+                    opacity: primary ? 0.56 : 0.42,
                     x: [0, direction * 5, 0],
                     y: [0, primary ? -8 : -6, 0],
                     scale: [1, primary ? 1.018 : 1.025, 1],
@@ -256,7 +341,7 @@ export function HomeFilmConstellation() {
                     className="absolute inset-0"
                     style={{
                       background:
-                        "linear-gradient(180deg, rgba(20,17,14,0.02) 32%, rgba(20,17,14,0.68) 100%)",
+                        "linear-gradient(180deg, rgba(20,17,14,0.02) 32%, rgba(20,17,14,0.7) 100%)",
                     }}
                   />
                   <motion.span
@@ -269,7 +354,10 @@ export function HomeFilmConstellation() {
                       ease: "easeInOut",
                     }}
                   />
-                  <figcaption className="absolute bottom-2.5 left-3 right-3 font-display text-[0.58rem] leading-snug text-ivory/68">
+                  <span className="absolute left-3 top-2.5 text-[0.48rem] font-medium uppercase tracking-[0.16em] text-ivory/48">
+                    Fragment {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <figcaption className="absolute bottom-2.5 left-3 right-3 font-display text-[0.58rem] leading-snug text-ivory/7o">
                     {film.label}
                   </figcaption>
                 </motion.figure>
