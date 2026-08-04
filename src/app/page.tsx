@@ -14,9 +14,9 @@ import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
+import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { CinematicHero } from "@/sections/Hero";
 import { ThreePathsSection } from "@/sections/Home/ThreePathsSection";
-import { ProcessChapterIntro } from "@/sections/Home/ProcessChapterIntro";
 import { VideoBreak } from "@/components/VideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -102,8 +102,12 @@ export default function Home() {
           <ElementsSection elements={elements} />
         </div>
 
+        {/* RootSystem already opens with the project question, the six-stage
+            rail, the decision map, and the live readiness instruments. The
+            separate ProcessChapterIntro repeated the same six labels before
+            the visitor reached the real system, so the process now begins
+            directly with the chapter that actually teaches it. */}
         <section className="bg-soil">
-          <ProcessChapterIntro />
           <ProcessSection stages={process} elementColor={elementColor} />
         </section>
 
@@ -174,23 +178,7 @@ export default function Home() {
           overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.35) 0%, rgba(20,17,14,0.15) 30%, rgba(20,17,14,0.2) 55%, rgba(20,17,14,0.9) 100%)"
         >
           <DustMotes />
-          <div className="relative">
-            <h2
-              className="mx-auto max-w-xl text-display-md font-display font-normal text-ivory"
-              style={{ textShadow: "0 2px 14px rgba(0,0,0,0.85), 0 1px 4px rgba(0,0,0,0.9)" }}
-            >
-              Let&apos;s find the Tatva of your business: the idea people should remember after everything else has moved on.
-            </h2>
-            <div className="mt-8">
-              <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
-              <p
-                className="mt-4 text-sm text-ivory/80"
-                style={{ textShadow: "0 1px 6px rgba(0,0,0,0.8)" }}
-              >
-                Twenty minutes, a real conversation, and an honest view of what the brand needs next.
-              </p>
-            </div>
-          </div>
+          <FinalInvitation />
         </VideoBreak>
       </main>
       <Footer />
