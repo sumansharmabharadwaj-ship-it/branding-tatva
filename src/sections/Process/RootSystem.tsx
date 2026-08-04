@@ -182,19 +182,21 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   }, []);
 
   useEffect(() => {
-    const currentVideo = videoRef.current;
-    if (!currentVideo || prefersReducedMotion) return;
+    if (prefersReducedMotion) return;
+    const videoAtEffectStart = videoRef.current;
 
     function syncPlayback() {
-      if (inView && !document.hidden) void currentVideo.play().catch(() => {});
-      else currentVideo.pause();
+      const video = videoRef.current;
+      if (!video) return;
+      if (inView && !document.hidden) void video.play().catch(() => {});
+      else video.pause();
     }
 
     syncPlayback();
     document.addEventListener("visibilitychange", syncPlayback);
     return () => {
       document.removeEventListener("visibilitychange", syncPlayback);
-      currentVideo.pause();
+      videoAtEffectStart?.pause();
     };
   }, [active, inView, prefersReducedMotion]);
 
