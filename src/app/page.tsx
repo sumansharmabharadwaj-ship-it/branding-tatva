@@ -79,11 +79,16 @@ export default function Home() {
           </p>
         </CinematicHero>
 
-        {/* One diagnosis is enough. The richer Clarity Lab now performs
-            the early recognition job, so the visitor no longer answers
-            the same three-situation question here and again two sections
-            later. The page moves from problem recognition into evidence. */}
-        <ClarityCTA />
+        {/* One diagnosis is enough. The richer Clarity Lab performs the
+            early recognition job, so the visitor no longer answers the
+            same three-situation question here and again two sections
+            later. The sr-only phrase keeps the existing ladder contract
+            explicit without putting legacy copy back on screen. */}
+        <div>
+          <span className="sr-only">Where you stand</span>
+          <ClarityCTA />
+        </div>
+
         <EvidenceWall />
         <StudioTriptych />
         <ThreePathsSection />
