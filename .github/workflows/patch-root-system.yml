@@ -1,6 +1,6 @@
 name: Patch RootSystem playback
 
-"on":
+on:
   push:
     branches:
       - reimagine-project-moves
@@ -30,44 +30,10 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-
           path = Path("src/sections/Process/RootSystem.tsx")
           text = path.read_text()
-          before = '''  useEffect(() => {
-    const currentVideo = videoRef.current;
-    if (!currentVideo || prefersReducedMotion) return;
-
-    function syncPlayback() {
-      if (inView && !document.hidden) void currentVideo.play().catch(() => {});
-      else currentVideo.pause();
-    }
-
-    syncPlayback();
-    document.addEventListener("visibilitychange", syncPlayback);
-    return () => {
-      document.removeEventListener("visibilitychange", syncPlayback);
-      currentVideo.pause();
-    };
-  }, [active, inView, prefersReducedMotion]);'''
-          after = '''  useEffect(() => {
-    if (prefersReducedMotion) return;
-    const videoAtEffectStart = videoRef.current;
-
-    function syncPlayback() {
-      const video = videoRef.current;
-      if (!video) return;
-      if (inView && !document.hidden) void video.play().catch(() => {});
-      else video.pause();
-    }
-
-    syncPlayback();
-    document.addEventListener("visibilitychange", syncPlayback);
-    return () => {
-      document.removeEventListener("visibilitychange", syncPlayback);
-      videoAtEffectStart?.pause();
-    };
-  }, [active, inView, prefersReducedMotion]);'''
-
+          before = "  useEffect(() => {\n    const currentVideo = videoRef.current;\n    if (!currentVideo || prefersReducedMotion) return;\n\n    function syncPlayback() {\n      if (inView && !document.hidden) void currentVideo.play().catch(() => {});\n      else currentVideo.pause();\n    }\n\n    syncPlayback();\n    document.addEventListener(\"visibilitychange\", syncPlayback);\n    return () => {\n      document.removeEventListener(\"visibilitychange\", syncPlayback);\n      currentVideo.pause();\n    };\n  }, [active, inView, prefersReducedMotion]);"
+          after = "  useEffect(() => {\n    if (prefersReducedMotion) return;\n    const videoAtEffectStart = videoRef.current;\n\n    function syncPlayback() {\n      const video = videoRef.current;\n      if (!video) return;\n      if (inView && !document.hidden) void video.play().catch(() => {});\n      else video.pause();\n    }\n\n    syncPlayback();\n    document.addEventListener(\"visibilitychange\", syncPlayback);\n    return () => {\n      document.removeEventListener(\"visibilitychange\", syncPlayback);\n      videoAtEffectStart?.pause();\n    };\n  }, [active, inView, prefersReducedMotion]);"
           if before not in text:
               raise SystemExit("Expected RootSystem playback block was not found")
           path.write_text(text.replace(before, after, 1))
