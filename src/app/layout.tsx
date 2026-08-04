@@ -28,6 +28,11 @@ const bodyFont = DM_Sans({
   display: "swap",
 });
 
+// Only the production deployment is indexable. Every Vercel preview and
+// local verification build stays out of search while still carrying the
+// production canonical URL for a clean handoff when the branch is promoted.
+const INDEXABLE_DEPLOYMENT = process.env.VERCEL_ENV === "production";
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
@@ -36,11 +41,17 @@ export const metadata: Metadata = {
   },
   description: site.description,
   alternates: { canonical: "/" },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
-  },
+  robots: INDEXABLE_DEPLOYMENT
+    ? {
+        index: true,
+        follow: true,
+        googleBot: { index: true, follow: true, "max-image-preview": "large" },
+      }
+    : {
+        index: false,
+        follow: false,
+        googleBot: { index: false, follow: false, "max-image-preview": "none" },
+      },
   openGraph: {
     title: site.name,
     description: site.description,
