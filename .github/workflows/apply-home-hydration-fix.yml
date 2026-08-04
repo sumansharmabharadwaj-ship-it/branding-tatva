@@ -1,0 +1,142 @@
+name: Apply homepage hydration fix
+
+on:
+  push:
+    branches:
+      - automation/apply-home-hydration-fix-2026-08-04
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out automation branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply hydration-safe reduced-motion hook
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          files = [
+              "src/components/BackgroundVideo.tsx",
+              "src/components/Button.tsx",
+              "src/components/DustMotes.tsx",
+              "src/components/ElementReveal.tsx",
+              "src/components/ElementRowBackground.tsx",
+              "src/components/Magnetic.tsx",
+              "src/components/NarrativeSignal.tsx",
+              "src/components/PageLoadVeil.tsx",
+              "src/components/Reveal.tsx",
+              "src/components/SeasonalCalendarPanel.tsx",
+              "src/components/SplitReveal.tsx",
+              "src/components/TexturedDark.tsx",
+              "src/layouts/Header/index.tsx",
+              "src/sections/Elements/ElementSignature.tsx",
+              "src/sections/Elements/PinnedSlider.tsx",
+              "src/sections/Elements/index.tsx",
+              "src/sections/Hero/index.tsx",
+              "src/sections/Home/ClarityCTA.tsx",
+              "src/sections/Home/ClosingSequence.tsx",
+              "src/sections/Home/EvidenceWall.tsx",
+              "src/sections/Home/FounderRouteHandoff.tsx",
+              "src/sections/Home/StudioTriptych.tsx",
+              "src/sections/Home/ThreePathsSection.tsx",
+              "src/sections/Home/VisitorRecognition.tsx",
+              "src/sections/Process/JourneyStage.tsx",
+              "src/sections/Process/VerticalJourney.tsx",
+              "src/sections/Process/index.tsx",
+          ]
+
+          hook = Path("src/hooks/useHydratedReducedMotion.ts")
+          hook.write_text('''"use client";
+
+          import { useEffect, useState } from "react";
+          import { useReducedMotion } from "framer-motion";
+
+          /**
+           * Framer can read the operating system motion preference during the first
+           * browser render, while the server cannot. Components that return a different
+           * DOM for reduced motion must wait until hydration has completed before
+           * switching to that fallback.
+           */
+          export function useHydratedReducedMotion(): boolean {
+            const reduced = useReducedMotion();
+            const [hydrated, setHydrated] = useState(false);
+
+            useEffect(() => {
+              setHydrated(true);
+            }, []);
+
+            return hydrated && Boolean(reduced);
+          }
+          '''.replace("          ", ""))
+
+          hydration_import = 'import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";'
+
+          for filename in files:
+              path = Path(filename)
+              text = path.read_text()
+              if "useReducedMotion" not in text:
+                  raise SystemExit(f"Expected useReducedMotion in {filename}")
+
+              text = text.replace("useReducedMotion()", "useHydratedReducedMotion()")
+              text = re.sub(
+                  r'import\s*\{\s*useReducedMotion\s*\}\s*from\s*["\']framer-motion["\'];\n?',
+                  "",
+                  text,
+              )
+              text = re.sub(r'(?m)^[ \t]*useReducedMotion,[ \t]*\n', "", text)
+              text = re.sub(r'\buseReducedMotion,\s*', "", text)
+              text = re.sub(r',\s*useReducedMotion\b', "", text)
+
+              if hydration_import not in text:
+                  marker = '"use client";\n\n'
+                  if marker not in text:
+                      raise SystemExit(f"Missing client marker in {filename}")
+                  text = text.replace(marker, marker + hydration_import + "\n", 1)
+
+              path.write_text(text)
+
+          for filename in files:
+              text = Path(filename).read_text()
+              if "useReducedMotion" in text:
+                  raise SystemExit(f"Stale useReducedMotion remains in {filename}")
+              if "useHydratedReducedMotion()" not in text:
+                  raise SystemExit(f"Hydrated hook missing from {filename}")
+          PY
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build audited site
+        run: pnpm build
+
+      - name: Commit directly on the preview branch
+        run: |
+          rm -f .github/workflows/apply-home-hydration-fix.yml
+          git fetch origin redesign/conversion-architecture
+          git reset --mixed origin/redesign/conversion-architecture
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src
+          git commit -m "Make homepage reduced-motion branches hydration-safe"
+          git push origin HEAD:redesign/conversion-architecture
