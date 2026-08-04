@@ -38,10 +38,7 @@ const DECISION: Record<string, { big: string; label: string }> = {
   },
 };
 
-const TRAILS: Record<
-  string,
-  { signal: string; decision: string; proof: string }
-> = {
+const TRAILS: Record<string, { signal: string; decision: string; proof: string }> = {
   "dr-haley-nutrition": {
     signal: "More posts were producing weaker audience response.",
     decision: "Post less, then make every remaining post earn its place.",
@@ -144,7 +141,6 @@ export function EvidenceWall() {
       ) {
         return;
       }
-
       moveTo(activeIndex + 1);
     }, AUTO_ADVANCE_MS);
 
@@ -160,25 +156,24 @@ export function EvidenceWall() {
     }
 
     window.addEventListener("bt:home-chapter", onChapter as EventListener);
-    return () => {
-      window.removeEventListener("bt:home-chapter", onChapter as EventListener);
-    };
+    return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
   }, [moveTo]);
 
   useEffect(() => {
-    const currentVideo = activeVideoRef.current;
-    if (!currentVideo || prefersReducedMotion) return;
+    if (prefersReducedMotion) return;
 
     function syncPlayback() {
-      if (inView && !document.hidden) void currentVideo.play().catch(() => {});
-      else currentVideo.pause();
+      const video = activeVideoRef.current;
+      if (!video) return;
+      if (inView && !document.hidden) void video.play().catch(() => {});
+      else video.pause();
     }
 
     syncPlayback();
     document.addEventListener("visibilitychange", syncPlayback);
     return () => {
       document.removeEventListener("visibilitychange", syncPlayback);
-      currentVideo.pause();
+      activeVideoRef.current?.pause();
     };
   }, [activeIndex, inView, prefersReducedMotion]);
 
@@ -208,10 +203,7 @@ export function EvidenceWall() {
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute -left-52 bottom-[-30%] h-[34rem] w-[34rem] rounded-full blur-3xl"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(184,90,52,0.16), transparent 68%)",
-        }}
+        style={{ background: "radial-gradient(circle, rgba(184,90,52,0.16), transparent 68%)" }}
         animate={
           prefersReducedMotion || !inView
             ? undefined
@@ -243,13 +235,8 @@ export function EvidenceWall() {
                 <span className="relative my-2 h-20 w-px overflow-hidden bg-ivory/20">
                   <motion.span
                     className="absolute inset-x-0 top-0 origin-top bg-sandstone"
-                    animate={{
-                      height: `${((activeIndex + 1) / projects.length) * 100}%`,
-                    }}
-                    transition={{
-                      duration: prefersReducedMotion ? 0 : 0.7,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
+                    animate={{ height: `${((activeIndex + 1) / projects.length) * 100}%` }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.7, ease: [0.22, 1, 0.36, 1] }}
                   />
                 </span>
                 <span className="h-1.5 w-1.5 rounded-full bg-sandstone" />
@@ -260,9 +247,7 @@ export function EvidenceWall() {
               </div>
 
               <div>
-                <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">
-                  The work
-                </p>
+                <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">The work</p>
                 <h2
                   id="evidence-wall-title"
                   className="mt-3 font-display text-display-sm font-normal leading-[1.05] text-ivory lg:text-display-md"
@@ -304,15 +289,8 @@ export function EvidenceWall() {
                   <motion.li
                     key={project.slug}
                     className="group relative w-64 shrink-0 snap-start sm:w-72"
-                    animate={{
-                      y: isActive ? -8 : 0,
-                      scale: isActive ? 1.035 : 0.985,
-                      opacity: isActive ? 1 : 0.72,
-                    }}
-                    transition={{
-                      duration: prefersReducedMotion ? 0 : 0.65,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
+                    animate={{ y: isActive ? -8 : 0, scale: isActive ? 1.035 : 0.985, opacity: isActive ? 1 : 0.72 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <button
                       type="button"
@@ -332,10 +310,7 @@ export function EvidenceWall() {
                       }`}
                       style={{ backgroundColor: "rgba(244,239,230,0.055)" }}
                     >
-                      <span
-                        className="relative block h-40 w-full overflow-hidden"
-                        style={{ backgroundColor: project.accent }}
-                      >
+                      <span className="relative block h-40 w-full overflow-hidden" style={{ backgroundColor: project.accent }}>
                         {project.cardImage && (
                           <Image
                             src={project.cardImage}
@@ -361,17 +336,12 @@ export function EvidenceWall() {
                               playsInline
                               preload="metadata"
                               onCanPlay={(event) => {
-                                if (isActive && inView) {
-                                  void event.currentTarget.play().catch(() => {});
-                                }
+                                if (isActive && inView) void event.currentTarget.play().catch(() => {});
                               }}
                               initial={{ opacity: 0, scale: 1.04 }}
                               animate={{ opacity: 1, scale: 1.1 }}
                               exit={{ opacity: 0 }}
-                              transition={{
-                                opacity: { duration: 0.8 },
-                                scale: { duration: 7, ease: "linear" },
-                              }}
+                              transition={{ opacity: { duration: 0.8 }, scale: { duration: 7, ease: "linear" } }}
                             />
                           )}
                         </AnimatePresence>
@@ -379,51 +349,33 @@ export function EvidenceWall() {
                         <span
                           aria-hidden="true"
                           className="absolute inset-0"
-                          style={{
-                            background:
-                              "linear-gradient(180deg, transparent 38%, rgba(20,17,14,0.5) 100%)",
-                          }}
+                          style={{ background: "linear-gradient(180deg, transparent 38%, rgba(20,17,14,0.5) 100%)" }}
                         />
                         {isActive && inView && (
                           <motion.span
                             aria-hidden="true"
                             className="absolute -inset-y-6 -left-1/2 w-1/3 rotate-12 bg-ivory/18 blur-xl"
                             animate={{ x: ["0%", "620%"] }}
-                            transition={{
-                              duration: 4.6,
-                              repeat: Infinity,
-                              repeatDelay: 3,
-                              ease: "easeInOut",
-                            }}
+                            transition={{ duration: 4.6, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
                           />
                         )}
                       </span>
 
                       <span className="flex flex-1 flex-col p-5">
-                        <span className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/60">
-                          {project.title}
-                        </span>
+                        <span className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/60">{project.title}</span>
                         <span className="mt-2 font-display text-3xl font-normal leading-none text-ivory sm:text-4xl">
                           {stat ? stat.value : fallback?.big}
                         </span>
                         <span className="mt-2 text-xs leading-relaxed text-ivory/70">
                           {stat ? stat.label : fallback?.label}
                         </span>
-                        <span className="mt-auto pt-4 text-[0.65rem] uppercase tracking-[0.15em] text-ivory/50">
-                          {project.industry}
-                        </span>
+                        <span className="mt-auto pt-4 text-[0.65rem] uppercase tracking-[0.15em] text-ivory/50">{project.industry}</span>
                         <Link
                           href={`/work/${project.slug}`}
                           className="relative z-10 mt-2 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.15em] transition-colors duration-300 hover:text-ivory"
                           style={{ color: project.accent }}
                         >
-                          {ACTION[project.slug] ?? "View the case"}{" "}
-                          <span
-                            aria-hidden="true"
-                            className="transition-transform duration-300 group-hover:translate-x-1"
-                          >
-                            →
-                          </span>
+                          {ACTION[project.slug] ?? "View the case"} <span aria-hidden="true">→</span>
                         </Link>
                       </span>
                     </span>
@@ -434,12 +386,8 @@ export function EvidenceWall() {
 
             <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className="text-[0.6rem] font-medium uppercase tracking-[0.18em] text-ivory/42">
-                  Active file
-                </p>
-                <p className="mt-1 font-display text-xl text-ivory">
-                  {activeProject.title}
-                </p>
+                <p className="text-[0.6rem] font-medium uppercase tracking-[0.18em] text-ivory/42">Active file</p>
+                <p className="mt-1 font-display text-xl text-ivory">{activeProject.title}</p>
               </div>
 
               <div className="flex items-center gap-2" aria-label="Choose a project file">
@@ -455,7 +403,7 @@ export function EvidenceWall() {
                         pauseAutoplay();
                         moveTo(index);
                       }}
-                      className="group flex h-8 min-w-8 items-center justify-center rounded-full border px-2 text-[0.58rem] tracking-[0.12em] transition-[border-color,background-color,color,min-width] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
+                      className="flex h-8 min-w-8 items-center justify-center rounded-full border px-2 text-[0.58rem] tracking-[0.12em] transition-[border-color,background-color,color] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
                       style={{
                         borderColor: selected ? project.accent : "rgba(244,239,230,0.14)",
                         backgroundColor: selected ? `${project.accent}22` : "transparent",
@@ -498,21 +446,10 @@ export function EvidenceWall() {
               <motion.div
                 key={activeProject.slug}
                 className="mt-5 grid overflow-hidden rounded-3xl border border-ivory/12 bg-ivory/[0.045] backdrop-blur-md md:grid-cols-[1fr_auto_1fr_auto_1fr] md:items-stretch"
-                initial={
-                  prefersReducedMotion
-                    ? false
-                    : { opacity: 0, y: 12, filter: "blur(6px)" }
-                }
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 12, filter: "blur(6px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={
-                  prefersReducedMotion
-                    ? undefined
-                    : { opacity: 0, y: -8, filter: "blur(4px)" }
-                }
-                transition={{
-                  duration: prefersReducedMotion ? 0 : 0.6,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.6, ease: [0.22, 1, 0.36, 1] }}
                 aria-live="polite"
               >
                 {[
@@ -522,21 +459,13 @@ export function EvidenceWall() {
                 ].map(([label, value], index) => (
                   <div key={label} className="contents">
                     <div className="px-5 py-5 sm:px-6 sm:py-6">
-                      <p
-                        className="text-[0.6rem] font-medium uppercase tracking-[0.18em]"
-                        style={{ color: activeProject.accent }}
-                      >
+                      <p className="text-[0.6rem] font-medium uppercase tracking-[0.18em]" style={{ color: activeProject.accent }}>
                         {label}
                       </p>
-                      <p className="mt-2 text-sm leading-relaxed text-ivory/80">
-                        {value}
-                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-ivory/80">{value}</p>
                     </div>
                     {index < 2 && (
-                      <div
-                        aria-hidden="true"
-                        className="relative hidden w-12 items-center justify-center md:flex"
-                      >
+                      <div aria-hidden="true" className="relative hidden w-12 items-center justify-center md:flex">
                         <span className="h-px w-full bg-ivory/10" />
                         <motion.span
                           className="absolute h-1.5 w-1.5 rounded-full"
@@ -546,13 +475,7 @@ export function EvidenceWall() {
                               ? undefined
                               : { left: ["0%", "100%"], opacity: [0, 1, 1, 0] }
                           }
-                          transition={{
-                            duration: 2.4,
-                            repeat: Infinity,
-                            repeatDelay: 1,
-                            ease: "easeInOut",
-                            delay: index * 0.35,
-                          }}
+                          transition={{ duration: 2.4, repeat: Infinity, repeatDelay: 1, ease: "easeInOut", delay: index * 0.35 }}
                         />
                       </div>
                     )}
