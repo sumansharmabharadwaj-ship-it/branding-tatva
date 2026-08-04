@@ -1,0 +1,281 @@
+name: Homepage preview safety QA v2
+
+on:
+  pull_request:
+    branches:
+      - work/home-moodboard-film-2026-08-04
+
+permissions:
+  contents: read
+
+jobs:
+  preview-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install project and browser tooling
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm add --save-dev --ignore-workspace-root-check @playwright/test@1.59.1
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Build the complete site
+        run: pnpm build
+
+      - name: Start production server
+        run: |
+          pnpm start > /tmp/home-preview-safety-v2.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --silent --fail http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/home-preview-safety-v2.log
+          exit 1
+
+      - name: Verify preview indexing and utility geometry
+        run: |
+          mkdir -p artifacts/home-preview-safety-v2
+          cat > .qa-home-preview-safety-v2.mjs <<'EOF'
+          import { chromium } from "@playwright/test";
+          import fs from "node:fs/promises";
+
+          const browser = await chromium.launch({ headless: true });
+          const results = [];
+
+          for (const setup of [
+            { label: "desktop", width: 1440, height: 1000 },
+            { label: "mobile", width: 390, height: 844 },
+          ]) {
+            const context = await browser.newContext({
+              viewport: { width: setup.width, height: setup.height },
+              reducedMotion: "no-preference",
+              colorScheme: "light",
+            });
+            const page = await context.newPage();
+
+            await page.addInitScript(() => {
+              sessionStorage.setItem("bt-intro-seen", "1");
+              localStorage.setItem(
+                "bt-consent-v2",
+                JSON.stringify({
+                  necessary: true,
+                  analytics: false,
+                  marketing: false,
+                  updatedAt: "2026-08-04T00:00:00.000Z",
+                }),
+              );
+              localStorage.setItem("ambient-audio-enabled", "false");
+            });
+
+            const response = await page.goto("http://127.0.0.1:3000/", {
+              waitUntil: "domcontentloaded",
+            });
+            await page.evaluate(() => document.fonts.ready);
+            await page.waitForTimeout(1200);
+
+            const xRobots = response?.headers()["x-robots-tag"] ?? "";
+            if (!xRobots.includes("noindex") || !xRobots.includes("nofollow")) {
+              throw new Error(`Missing preview X-Robots-Tag: ${xRobots}`);
+            }
+
+            const robotsMeta =
+              (await page.locator('meta[name="robots"]').getAttribute("content")) ?? "";
+            if (!robotsMeta.includes("noindex") || !robotsMeta.includes("nofollow")) {
+              throw new Error(`Missing preview robots metadata: ${robotsMeta}`);
+            }
+
+            const canonical =
+              (await page.locator('link[rel="canonical"]').getAttribute("href")) ?? "";
+            if (!canonical.startsWith("https://brandingtatva.com")) {
+              throw new Error(`Preview canonical is not production-safe: ${canonical}`);
+            }
+
+            const robotsResponse = await page.request.get(
+              "http://127.0.0.1:3000/robots.txt",
+            );
+            const robotsText = await robotsResponse.text();
+            if (!robotsText.includes("Disallow: /")) {
+              throw new Error(`Preview robots.txt is crawlable: ${robotsText}`);
+            }
+
+            const privacy = page.getByRole("button", {
+              name: "Open privacy preferences",
+            });
+            const sound = page.getByRole("button", {
+              name: "Play ambient sound",
+            });
+            await privacy.waitFor({ state: "visible" });
+            await sound.waitFor({ state: "visible" });
+
+            const geometry = await page.evaluate(() => {
+              const privacyButton = document.querySelector(
+                'button[aria-label="Open privacy preferences"]',
+              );
+              const soundButton = document.querySelector(
+                'button[aria-label="Play ambient sound"]',
+              );
+              if (!(privacyButton instanceof HTMLButtonElement)) {
+                throw new Error("Privacy utility was not mounted");
+              }
+              if (!(soundButton instanceof HTMLButtonElement)) {
+                throw new Error("Sound utility was not mounted");
+              }
+
+              const rect = (element) => {
+                const value = element.getBoundingClientRect();
+                return {
+                  top: value.top,
+                  right: value.right,
+                  bottom: value.bottom,
+                  left: value.left,
+                  width: value.width,
+                  height: value.height,
+                };
+              };
+
+              return {
+                privacy: rect(privacyButton),
+                sound: rect(soundButton),
+              };
+            });
+
+            for (const [name, box] of Object.entries({
+              privacy: geometry.privacy,
+              sound: geometry.sound,
+            })) {
+              if (box.width > 48 || box.height > 48) {
+                throw new Error(`${name} utility grew beyond the compact dock: ${JSON.stringify(box)}`);
+              }
+              if (box.left < 0 || box.right > setup.width || box.bottom > setup.height) {
+                throw new Error(`${name} utility left the viewport: ${JSON.stringify(box)}`);
+              }
+            }
+
+            const horizontalGap = geometry.sound.left - geometry.privacy.right;
+            if (horizontalGap < 8) {
+              throw new Error(`Utility controls are too tightly packed: gap ${horizontalGap}`);
+            }
+
+            await page.screenshot({
+              path: `artifacts/home-preview-safety-v2/${setup.label}-dock.png`,
+            });
+
+            const footer = page.locator("footer");
+            await footer.scrollIntoViewIfNeeded();
+            await page.evaluate(() => {
+              document.querySelector("footer")?.scrollIntoView({
+                block: "end",
+                behavior: "instant",
+              });
+            });
+
+            await page.waitForFunction(
+              () => {
+                const privacyButton = document.querySelector(
+                  'button[aria-label="Open privacy preferences"]',
+                );
+                const soundButton = document.querySelector(
+                  'button[aria-label="Play ambient sound"]',
+                );
+                if (!(privacyButton instanceof HTMLButtonElement)) return false;
+                if (!(soundButton instanceof HTMLButtonElement)) return false;
+                return (
+                  getComputedStyle(privacyButton).visibility === "hidden" &&
+                  getComputedStyle(soundButton).visibility === "hidden"
+                );
+              },
+              undefined,
+              { timeout: 5000 },
+            );
+
+            const footerState = await page.evaluate(() => {
+              const privacyButton = document.querySelector(
+                'button[aria-label="Open privacy preferences"]',
+              );
+              const soundButton = document.querySelector(
+                'button[aria-label="Play ambient sound"]',
+              );
+              if (!(privacyButton instanceof HTMLButtonElement)) return null;
+              if (!(soundButton instanceof HTMLButtonElement)) return null;
+              return {
+                privacyVisibility: getComputedStyle(privacyButton).visibility,
+                privacyPointerEvents: getComputedStyle(privacyButton).pointerEvents,
+                privacyAriaHidden: privacyButton.getAttribute("aria-hidden"),
+                privacyTabIndex: privacyButton.tabIndex,
+                soundVisibility: getComputedStyle(soundButton).visibility,
+                soundPointerEvents: getComputedStyle(soundButton).pointerEvents,
+                soundAriaHidden: soundButton.getAttribute("aria-hidden"),
+                soundTabIndex: soundButton.tabIndex,
+              };
+            });
+
+            if (!footerState) throw new Error("Utility dock disappeared from the DOM");
+            if (
+              footerState.privacyVisibility !== "hidden" ||
+              footerState.soundVisibility !== "hidden" ||
+              footerState.privacyPointerEvents !== "none" ||
+              footerState.soundPointerEvents !== "none" ||
+              footerState.privacyAriaHidden !== "true" ||
+              footerState.soundAriaHidden !== "true" ||
+              footerState.privacyTabIndex !== -1 ||
+              footerState.soundTabIndex !== -1
+            ) {
+              throw new Error(`Utility dock did not yield to the footer: ${JSON.stringify(footerState)}`);
+            }
+
+            await page.screenshot({
+              path: `artifacts/home-preview-safety-v2/${setup.label}-footer.png`,
+            });
+
+            results.push({
+              ...setup,
+              xRobots,
+              robotsMeta,
+              canonical,
+              robotsText,
+              geometry,
+              horizontalGap,
+              footerState,
+            });
+
+            await fs.writeFile(
+              "artifacts/home-preview-safety-v2/results.json",
+              JSON.stringify(results, null, 2),
+            );
+            await context.close();
+          }
+
+          console.log(JSON.stringify(results, null, 2));
+          await browser.close();
+          EOF
+          node .qa-home-preview-safety-v2.mjs
+
+      - name: Print server log
+        if: always()
+        run: cat /tmp/home-preview-safety-v2.log || true
+
+      - name: Upload preview-safety record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: homepage-preview-safety-qa-v2
+          path: artifacts/home-preview-safety-v2
+          if-no-files-found: error
+          retention-days: 3
