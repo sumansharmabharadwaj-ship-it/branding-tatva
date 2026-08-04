@@ -82,10 +82,9 @@ jobs:
 
           async function scrollToTatvaProgress(progress) {
             await page.evaluate((requested) => {
-              const marker = Array.from(document.querySelectorAll("span")).find(
-                (element) => element.textContent?.trim() === "The five Tatvas",
+              const section = Array.from(document.querySelectorAll("section")).find((element) =>
+                String(element.className).includes("h-[390svh]"),
               );
-              const section = marker?.closest("section");
               if (!section) throw new Error("Tatva section not found");
               const top = scrollY + section.getBoundingClientRect().top;
               const travel = Math.max(1, section.getBoundingClientRect().height - innerHeight);
@@ -96,10 +95,9 @@ jobs:
 
           async function metrics(label) {
             return page.evaluate((name) => {
-              const marker = Array.from(document.querySelectorAll("span")).find(
-                (element) => element.textContent?.trim() === "The five Tatvas",
+              const section = Array.from(document.querySelectorAll("section")).find((element) =>
+                String(element.className).includes("h-[390svh]"),
               );
-              const section = marker?.closest("section");
               const sticky = section?.firstElementChild;
               const foreground = sticky
                 ? Array.from(sticky.children).find(
@@ -108,7 +106,12 @@ jobs:
                       element.classList.contains("z-10"),
                   )
                 : null;
-              if (!marker || !section || !sticky || !foreground) {
+              const marker = section
+                ? Array.from(section.querySelectorAll("span")).find(
+                    (element) => element.textContent?.trim() === "The five Tatvas",
+                  )
+                : null;
+              if (!section || !sticky || !foreground) {
                 throw new Error("Tatva diagnostic nodes not found");
               }
               const sectionRect = section.getBoundingClientRect();
