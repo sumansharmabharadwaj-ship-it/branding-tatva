@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { faqs } from "@/data/faqs";
 import { track } from "@/lib/analytics";
 import { Reveal } from "@/components/Reveal";
-import { answerVariants, answerTransition, TOGGLE_ROTATION } from "./animations";
+import { answerTransition, TOGGLE_ROTATION } from "./animations";
 
 export function FAQ({ questions }: { questions?: string[] } = {}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -41,23 +41,26 @@ export function FAQ({ questions }: { questions?: string[] } = {}) {
                 +
               </span>
             </button>
-            <AnimatePresence initial={false}>
-              {isOpen && (
-                <motion.div
-                  id={answerId}
-                  role="region"
-                  aria-labelledby={questionId}
-                  variants={prefersReducedMotion ? undefined : answerVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={answerTransition}
-                  className="overflow-hidden"
-                >
-                  <p className="mt-3 px-3 text-sm text-foreground-secondary">{item.answer}</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* The answer is always in the DOM and only its height
+                animates. It used to mount on open, which meant the
+                server rendered eleven questions with no answers: the
+                FAQPage schema promised text that existed nowhere in the
+                markup, and any crawler that ignores JSON-LD, which
+                includes most LLM crawlers, saw questions alone. */}
+            <motion.div
+              id={answerId}
+              role="region"
+              aria-labelledby={questionId}
+              initial={false}
+              animate={{
+                height: isOpen ? "auto" : 0,
+                opacity: isOpen ? 1 : 0,
+              }}
+              transition={prefersReducedMotion ? { duration: 0 } : answerTransition}
+              className="overflow-hidden"
+            >
+              <p className="mt-3 px-3 text-sm text-foreground-secondary">{item.answer}</p>
+            </motion.div>
           </Reveal>
         );
       })}

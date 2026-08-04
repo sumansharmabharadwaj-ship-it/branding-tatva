@@ -51,7 +51,8 @@ const studiesJsonLd = {
       headline: `${study.brand}: ${study.lens}`,
       about: study.brand,
       abstract: study.premise,
-      url: `${site.url}/work`,
+      url: `${site.url}/work/studies/${study.slug}`,
+      "@id": `${site.url}/work/studies/${study.slug}#article`,
     },
   })),
 };
