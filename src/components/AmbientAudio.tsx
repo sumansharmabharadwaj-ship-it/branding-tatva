@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
+import { useFooterInView } from "@/hooks/useFooterInView";
 
 const STORAGE_KEY = "ambient-audio-enabled";
 
@@ -13,6 +14,7 @@ export function AmbientAudio() {
   const [enabled, setEnabled] = useState(false);
   const [ready, setReady] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const footerInView = useFooterInView();
 
   useEffect(() => {
     setReady(true);
@@ -57,7 +59,7 @@ export function AmbientAudio() {
         onClick={toggle}
         aria-label={label}
         aria-pressed={enabled}
-        className="group fixed right-3 z-90 flex h-11 w-11 items-center justify-center rounded-full border border-[#22231F]/12 bg-[#F5F0E8]/92 text-[#22231F] shadow-[0_12px_34px_-18px_rgba(34,35,31,.65)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#A47746]/45 hover:text-[#8E603D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A47746]/55 sm:right-5"
+        className={`group fixed right-3 z-90 flex h-11 w-11 items-center justify-center rounded-full border border-[#22231F]/12 bg-[#F5F0E8]/92 text-[#22231F] shadow-[0_12px_34px_-18px_rgba(34,35,31,.65)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#A47746]/45 hover:text-[#8E603D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A47746]/55 sm:right-5 ${footerInView ? "pointer-events-none translate-y-3 opacity-0" : "opacity-100"}`}
         style={{ bottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
       >
         {enabled ? (
