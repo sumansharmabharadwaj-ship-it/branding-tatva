@@ -50,22 +50,22 @@ const TRAILS: Record<
   myshopineurope: {
     signal: "A new marketplace risked reading as generic access and cheap supply.",
     decision: "Position Indian craft, origin, and wellness heritage ahead of price.",
-    proof: "A complete brand foundation and year-long content operating system.",
+    proof: "A complete brand foundation and year long content operating system.",
   },
   "executive-springboard": {
     signal: "Social content was building awareness without a clear destination.",
     decision: "Sequence each platform toward webinar registration and mentor action.",
-    proof: "An eight-pillar, platform-specific content system built around conversion.",
+    proof: "An eight pillar, platform specific content system built around conversion.",
   },
   herbalcart: {
     signal: "A modern supplement range was being read through a purely herbal lens.",
-    decision: "Explain supplementation as a practical gap-filler for active lifestyles.",
-    proof: "Five shoot-ready content formats and complete Hinglish video scripts.",
+    decision: "Explain supplementation as a practical gap filler for active lifestyles.",
+    proof: "Five content formats ready to shoot and complete Hinglish video scripts.",
   },
   "plaxonic-content-portfolio": {
-    signal: "One content tone could not credibly serve beginners and technical experts.",
+    signal: "One content tone failed to serve beginners and technical experts with equal credibility.",
     decision: "Give research, perspective, education, and fast consumption different jobs.",
-    proof: "A sixteen-piece authority portfolio structured to validate, challenge, humanise, and define.",
+    proof: "A sixteen piece authority portfolio structured to validate, challenge, humanise, and define.",
   },
 };
 
@@ -267,9 +267,9 @@ export function EvidenceWall() {
                   id="evidence-wall-title"
                   className="mt-3 font-display text-display-sm font-normal leading-[1.05] text-ivory lg:text-display-md"
                 >
-                  Evidence.
+                  Decisions.
                   <br />
-                  Not Portfolio.
+                  Then proof.
                 </h2>
                 <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory/75">
                   Five real engagements. Each one begins with the signal that was misread, then the decision that changed the direction.
@@ -441,6 +441,33 @@ export function EvidenceWall() {
                   {activeProject.title}
                 </p>
               </div>
+
+              <div className="flex items-center gap-2" aria-label="Choose a project file">
+                {projects.map((project, index) => {
+                  const selected = index === activeIndex;
+                  return (
+                    <button
+                      key={project.slug}
+                      type="button"
+                      aria-label={`Show ${project.title}`}
+                      aria-pressed={selected}
+                      onClick={() => {
+                        pauseAutoplay();
+                        moveTo(index);
+                      }}
+                      className="group flex h-8 min-w-8 items-center justify-center rounded-full border px-2 text-[0.58rem] tracking-[0.12em] transition-[border-color,background-color,color,min-width] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
+                      style={{
+                        borderColor: selected ? project.accent : "rgba(244,239,230,0.14)",
+                        backgroundColor: selected ? `${project.accent}22` : "transparent",
+                        color: selected ? "#F4EFE6" : "rgba(244,239,230,0.48)",
+                      }}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </button>
+                  );
+                })}
+              </div>
+
               <div className="flex items-center gap-2">
                 <button
                   type="button"
