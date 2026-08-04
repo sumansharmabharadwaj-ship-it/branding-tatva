@@ -70,11 +70,28 @@ export const viewport: Viewport = {
 // directly instead of duplicating the same facts inline everywhere.
 const PERSON_ID = `${site.url}/#person`;
 const ORG_ID = `${site.url}/#organization`;
+// The graph described who runs the practice and what it offers, and
+// never described the site itself. Search and answer engines use a
+// WebSite node as the anchor every other page node hangs from, so
+// without one each page's schema floated unattached.
+const WEBSITE_ID = `${site.url}/#website`;
 const SOCIAL_LINKS = [site.social.linkedin, site.social.instagram, site.social.facebook].filter(Boolean);
 
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": WEBSITE_ID,
+      url: site.url,
+      name: site.name,
+      description: site.description,
+      inLanguage: "en",
+      publisher: { "@id": ORG_ID },
+      // Suman is the author behind everything published here, which is
+      // the signal an answer engine uses to attribute a quote.
+      author: { "@id": PERSON_ID },
+    },
     {
       "@type": "Person",
       "@id": PERSON_ID,

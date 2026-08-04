@@ -56,6 +56,14 @@ export function isRegion(value: string | undefined | null): value is Region {
   return REGIONS.some((r) => r.id === value);
 }
 
+// The raw amount behind formatPrice, for surfaces that need to draw the
+// figure (bar length, ratio) rather than print it. Same single source of
+// truth as the formatted string, so a chart can never drift from the
+// price it is labelled with.
+export function priceAmount(region: Region, slug: PackageSlug): number {
+  return BOOK[region][slug];
+}
+
 export function formatPrice(region: Region, slug: PackageSlug): string {
   const currency = REGIONS.find((r) => r.id === region)?.currency ?? "USD";
   return new Intl.NumberFormat(LOCALE[region], {
