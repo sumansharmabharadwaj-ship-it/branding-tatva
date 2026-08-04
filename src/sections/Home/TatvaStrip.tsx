@@ -1,67 +1,206 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { elements } from "@/data/elements";
 import { ELEMENT_HEX } from "@/lib/sectionWash";
 
-const TATVAS: { slug: keyof typeof ELEMENT_HEX; name: string; role: string; line: string }[] = [
-  { slug: "earth", name: "Prithvi", role: "The Foundation", line: "The strategic truth everything else stands on." },
-  { slug: "water", name: "Jal", role: "The Flow", line: "The experience that makes every touchpoint feel related." },
-  { slug: "fire", name: "Agni", role: "The Spark", line: "The distinct expression that earns attention." },
-  { slug: "air", name: "Vayu", role: "The Voice", line: "The language people carry beyond the room." },
-  { slug: "space", name: "Akash", role: "The Space", line: "The consistency that turns exposure into memory." },
+type Tatva = {
+  slug: keyof typeof ELEMENT_HEX;
+  name: string;
+  role: string;
+  line: string;
+  governs: string;
+  question: string;
+};
+
+const TATVAS: Tatva[] = [
+  {
+    slug: "earth",
+    name: "Prithvi",
+    role: "The Foundation",
+    line: "The strategic truth everything else stands on.",
+    governs: "Positioning, category, audience, belief",
+    question: "What must people understand before the brand looks like anything?",
+  },
+  {
+    slug: "water",
+    name: "Jal",
+    role: "The Flow",
+    line: "The experience that makes every touchpoint feel related.",
+    governs: "Journey, offers, interaction, continuity",
+    question: "How should every encounter feel connected to the one before it?",
+  },
+  {
+    slug: "fire",
+    name: "Agni",
+    role: "The Spark",
+    line: "The distinct expression that earns attention.",
+    governs: "Identity, distinction, creative direction",
+    question: "What gives the right audience a reason to look twice?",
+  },
+  {
+    slug: "air",
+    name: "Vayu",
+    role: "The Voice",
+    line: "The language people carry beyond the room.",
+    governs: "Voice, messaging, content, distribution",
+    question: "What can people repeat clearly after the brand has stopped speaking?",
+  },
+  {
+    slug: "space",
+    name: "Akash",
+    role: "The Space",
+    line: "The consistency that turns exposure into memory.",
+    governs: "Recognition, governance, repetition, recall",
+    question: "What must remain coherent long enough to become familiar?",
+  },
 ];
 
+const AUTO_ADVANCE_MS = 4600;
+const MANUAL_PAUSE_MS = 15000;
+
 export function TatvaStrip() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = Boolean(useReducedMotion());
+  const sectionRef = useRef<HTMLElement>(null);
+  const pauseUntilRef = useRef(0);
+  const inView = useInView(sectionRef, { amount: 0.5 });
+  const [activeIndex, setActiveIndex] = useState(0);
+  const active = TATVAS[activeIndex] ?? TATVAS[0];
+
+  useEffect(() => {
+    if (prefersReducedMotion || !inView) return;
+
+    const timer = window.setInterval(() => {
+      if (document.hidden || Date.now() < pauseUntilRef.current) return;
+      setActiveIndex((current) => (current + 1) % TATVAS.length);
+    }, AUTO_ADVANCE_MS);
+
+    return () => window.clearInterval(timer);
+  }, [inView, prefersReducedMotion]);
+
+  function choose(index: number) {
+    pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
+    setActiveIndex(index);
+  }
 
   return (
-    <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: "#F2F0E8" }}>
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden py-16 sm:py-24"
+      style={{ backgroundColor: "#F2F0E8" }}
+      aria-labelledby="tatva-framework-title"
+      onFocusCapture={() => {
+        pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
+      }}
+    >
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute -left-28 top-[18%] h-80 w-80 rounded-full blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(184,90,52,0.13), transparent 68%)" }}
-        animate={prefersReducedMotion ? undefined : { x: [0, 44, 0], y: [0, 28, 0], scale: [1, 1.12, 1] }}
-        transition={prefersReducedMotion ? undefined : { duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { x: [0, 44, 0], y: [0, 28, 0], scale: [1, 1.12, 1] }
+        }
+        transition={
+          prefersReducedMotion
+            ? undefined
+            : { duration: 14, repeat: Infinity, ease: "easeInOut" }
+        }
       />
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute -right-28 bottom-[8%] h-96 w-96 rounded-full blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(85,107,74,0.14), transparent 68%)" }}
-        animate={prefersReducedMotion ? undefined : { x: [0, -52, 0], y: [0, -24, 0], scale: [1.04, 0.94, 1.04] }}
-        transition={prefersReducedMotion ? undefined : { duration: 17, repeat: Infinity, ease: "easeInOut" }}
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { x: [0, -52, 0], y: [0, -24, 0], scale: [1.04, 0.94, 1.04] }
+        }
+        transition={
+          prefersReducedMotion
+            ? undefined
+            : { duration: 17, repeat: Infinity, ease: "easeInOut" }
+        }
       />
 
       <Container className="relative max-w-[100rem]">
-        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,18rem)_1fr] lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,21rem)_1fr] lg:items-center lg:gap-16">
           <Reveal>
             <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: "#556B4A" }}>
               The framework
             </p>
-            <h2 className="mt-3 font-display text-display-sm font-normal leading-[1.08] text-soil">
-              The five Tatvas behind every brand people remember.
+            <h2
+              id="tatva-framework-title"
+              className="mt-3 font-display text-display-sm font-normal leading-[1.08] text-soil"
+            >
+              Five forces. One recognisable brand.
             </h2>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-foreground-secondary">
-              One living system: what the brand stands on, how it moves, how it speaks, and what remains.
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-foreground-secondary">
+              Each Tatva governs a different decision. The system works when none of them is forced to compensate for a missing one.
             </p>
+
+            <motion.div
+              key={active.slug}
+              className="mt-7 overflow-hidden rounded-2xl border p-5"
+              style={{
+                borderColor: `${ELEMENT_HEX[active.slug]}55`,
+                backgroundColor: `${ELEMENT_HEX[active.slug]}10`,
+              }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 10, filter: "blur(5px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
+              aria-live="polite"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em] text-soil/55">
+                  Now in focus
+                </p>
+                <span className="text-[0.62rem] tracking-[0.14em]" style={{ color: ELEMENT_HEX[active.slug] }}>
+                  {String(activeIndex + 1).padStart(2, "0")} / 05
+                </span>
+              </div>
+              <p className="mt-3 font-display text-2xl font-normal text-soil">
+                {active.role}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-foreground-secondary">
+                {active.question}
+              </p>
+              <p className="mt-4 text-[0.62rem] font-medium uppercase tracking-[0.14em]" style={{ color: ELEMENT_HEX[active.slug] }}>
+                Governs · {active.governs}
+              </p>
+              <span className="mt-4 block h-px overflow-hidden bg-soil/10">
+                <motion.span
+                  key={`progress-${active.slug}`}
+                  className="block h-full origin-left"
+                  style={{ backgroundColor: ELEMENT_HEX[active.slug] }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : AUTO_ADVANCE_MS / 1000, ease: "linear" }}
+                />
+              </span>
+            </motion.div>
+
             <Link
               href="#elements"
-              className="link-underline mt-5 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em]"
+              className="link-underline mt-6 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em]"
               style={{ color: "#556B4A" }}
             >
-              Explore the living system <span aria-hidden="true">→</span>
+              Enter the five-element chapter <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
 
           <Reveal delay={0.1}>
-            <ol className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2">
+            <ol className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2">
               {TATVAS.map((tatva, index) => {
                 const element = elements.find((entry) => entry.slug === tatva.slug);
                 const direction = index % 2 === 0 ? 1 : -1;
+                const isActive = index === activeIndex;
 
                 return (
                   <motion.li
@@ -70,27 +209,42 @@ export function TatvaStrip() {
                     initial={prefersReducedMotion ? false : { opacity: 0, y: 26 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.42 }}
-                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.8, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                    animate={{ opacity: isActive ? 1 : 0.56 }}
+                    transition={{
+                      duration: prefersReducedMotion ? 0 : 0.65,
+                      delay: prefersReducedMotion ? 0 : index * 0.06,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                   >
-                    <Link href="#elements" className="group flex w-full flex-col items-center text-center">
+                    <button
+                      type="button"
+                      aria-pressed={isActive}
+                      aria-label={`Focus ${tatva.name}: ${tatva.role}`}
+                      onClick={() => choose(index)}
+                      onPointerEnter={() => {
+                        pauseUntilRef.current = Date.now() + 9000;
+                        setActiveIndex(index);
+                      }}
+                      className="group flex w-full flex-col items-center rounded-2xl text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
+                    >
                       <motion.span
                         className="relative block h-24 w-24 lg:h-28 lg:w-28"
                         animate={
                           prefersReducedMotion
                             ? undefined
                             : {
-                                y: [0, -8 - index * 0.7, 0],
-                                rotate: [0, direction * 1.6, 0],
+                                y: isActive ? [0, -9, 0] : [0, -3, 0],
+                                rotate: isActive ? [0, direction * 1.5, 0] : 0,
+                                scale: isActive ? [1, 1.055, 1] : 0.9,
                               }
                         }
                         transition={
                           prefersReducedMotion
                             ? undefined
                             : {
-                                duration: 5.8 + index * 0.7,
+                                duration: isActive ? 5.6 : 7.5,
                                 repeat: Infinity,
                                 ease: "easeInOut",
-                                delay: index * 0.35,
                               }
                         }
                       >
@@ -98,26 +252,34 @@ export function TatvaStrip() {
                           aria-hidden="true"
                           className="absolute -inset-3 rounded-full border border-dashed"
                           style={{ borderColor: `${ELEMENT_HEX[tatva.slug]}66` }}
-                          animate={prefersReducedMotion ? undefined : { rotate: direction * 360 }}
-                          transition={prefersReducedMotion ? undefined : { duration: 17 + index * 2, repeat: Infinity, ease: "linear" }}
+                          animate={
+                            prefersReducedMotion || !isActive
+                              ? undefined
+                              : { rotate: direction * 360 }
+                          }
+                          transition={{ duration: 17 + index * 1.5, repeat: Infinity, ease: "linear" }}
                         />
                         <motion.span
                           aria-hidden="true"
                           className="absolute -inset-4 rounded-full"
-                          animate={prefersReducedMotion ? undefined : { rotate: direction * -360 }}
-                          transition={prefersReducedMotion ? undefined : { duration: 11 + index * 1.4, repeat: Infinity, ease: "linear" }}
+                          animate={
+                            prefersReducedMotion || !isActive
+                              ? undefined
+                              : { rotate: direction * -360 }
+                          }
+                          transition={{ duration: 11 + index * 1.2, repeat: Infinity, ease: "linear" }}
                         >
                           <span
                             className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full"
                             style={{
                               backgroundColor: ELEMENT_HEX[tatva.slug],
-                              boxShadow: `0 0 14px ${ELEMENT_HEX[tatva.slug]}88`,
+                              boxShadow: isActive ? `0 0 16px ${ELEMENT_HEX[tatva.slug]}99` : "none",
                             }}
                           />
                         </motion.span>
 
                         <span
-                          className="absolute inset-0 overflow-hidden rounded-full ring-2 ring-offset-2 transition-transform duration-500 group-hover:scale-[1.08]"
+                          className="absolute inset-0 overflow-hidden rounded-full ring-2 ring-offset-2 transition-transform duration-500 group-hover:scale-[1.05]"
                           style={{
                             ["--tw-ring-color" as string]: `${ELEMENT_HEX[tatva.slug]}66`,
                             ["--tw-ring-offset-color" as string]: "#F2F0E8",
@@ -129,78 +291,47 @@ export function TatvaStrip() {
                               animate={
                                 prefersReducedMotion
                                   ? undefined
-                                  : {
-                                      scale: [1.03, 1.13, 1.03],
-                                      x: [0, direction * 5, 0],
-                                      y: [0, -3, 0],
-                                    }
+                                  : isActive
+                                    ? { scale: [1.03, 1.14, 1.03], x: [0, direction * 5, 0], y: [0, -3, 0] }
+                                    : { scale: 1.04 }
                               }
-                              transition={
-                                prefersReducedMotion
-                                  ? undefined
-                                  : {
-                                      duration: 8 + index,
-                                      repeat: Infinity,
-                                      ease: "easeInOut",
-                                    }
-                              }
+                              transition={{ duration: 8 + index, repeat: Infinity, ease: "easeInOut" }}
                             >
                               <Image src={element.image} alt="" fill sizes="112px" className="object-cover" />
                             </motion.span>
                           )}
-                          <motion.span
-                            aria-hidden="true"
-                            className="absolute -inset-y-3 -left-1/2 w-1/3 rotate-12 bg-white/20 blur-md"
-                            animate={prefersReducedMotion ? undefined : { x: ["0%", "520%"] }}
-                            transition={
-                              prefersReducedMotion
-                                ? undefined
-                                : {
-                                    duration: 3.8,
-                                    repeat: Infinity,
-                                    repeatDelay: 2.2 + index * 0.45,
-                                    ease: "easeInOut",
-                                    delay: index * 0.5,
-                                  }
-                            }
-                          />
+                          {isActive && (
+                            <motion.span
+                              aria-hidden="true"
+                              className="absolute -inset-y-3 -left-1/2 w-1/3 rotate-12 bg-white/20 blur-md"
+                              animate={{ x: ["0%", "520%"] }}
+                              transition={{ duration: 3.8, repeat: Infinity, repeatDelay: 2.4, ease: "easeInOut" }}
+                            />
+                          )}
                         </span>
                       </motion.span>
 
-                      <span className="mt-5 text-xs font-medium uppercase tracking-[0.25em] text-soil">{tatva.name}</span>
+                      <span className="mt-5 text-xs font-medium uppercase tracking-[0.25em] text-soil">
+                        {tatva.name}
+                      </span>
                       <span className="mt-1 font-display text-base font-normal" style={{ color: ELEMENT_HEX[tatva.slug] }}>
                         {tatva.role}
                       </span>
                       <span className="mt-1 max-w-[11rem] text-xs leading-relaxed text-foreground-secondary">
                         {tatva.line}
                       </span>
-                    </Link>
+                    </button>
 
                     {index < TATVAS.length - 1 && (
                       <span aria-hidden="true" className="relative mt-14 hidden h-px flex-1 lg:block">
-                        <motion.span
-                          className="absolute inset-0 origin-left border-t border-dashed"
-                          style={{ borderColor: "#B5B3AA" }}
-                          initial={prefersReducedMotion ? false : { scaleX: 0 }}
-                          whileInView={{ scaleX: 1 }}
-                          viewport={{ once: true, amount: 0.7 }}
-                          transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.9, delay: 0.35 + index * 0.12 }}
-                        />
-                        <motion.span
-                          className="absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-sandstone"
-                          animate={prefersReducedMotion ? undefined : { left: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
-                          transition={
-                            prefersReducedMotion
-                              ? undefined
-                              : {
-                                  duration: 2.4,
-                                  repeat: Infinity,
-                                  repeatDelay: 1.2,
-                                  ease: "easeInOut",
-                                  delay: index * 0.35,
-                                }
-                          }
-                        />
+                        <span className="absolute inset-0 border-t border-dashed" style={{ borderColor: "#B5B3AA" }} />
+                        {isActive && (
+                          <motion.span
+                            className="absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-sandstone"
+                            animate={{ left: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
+                            transition={{ duration: 2.4, repeat: Infinity, repeatDelay: 0.8, ease: "easeInOut" }}
+                          />
+                        )}
                       </span>
                     )}
                   </motion.li>
