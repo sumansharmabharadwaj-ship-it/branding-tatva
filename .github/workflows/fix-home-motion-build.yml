@@ -1,0 +1,60 @@
+name: Fix recovered homepage motion build
+
+on:
+  push:
+    branches:
+      - automation/fix-home-motion-build-2026-08-04
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out automation branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Remove unsupported analytics event
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          path = Path("src/sections/Home/HomeExperience.tsx")
+          text = path.read_text()
+          target = '    track("home_author_lens_selected", { lens: id, page: "home" });\n'
+          if target not in text:
+              raise SystemExit("Expected analytics line was not found")
+          path.write_text(text.replace(target, "", 1))
+          PY
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the Next.js site
+        run: pnpm build
+
+      - name: Commit the verified fix to the work branch
+        run: |
+          rm -f .github/workflows/fix-home-motion-build.yml
+          git fetch origin work/home-motion-recovery-2026-08-04
+          git reset --mixed origin/work/home-motion-recovery-2026-08-04
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/sections/Home/HomeExperience.tsx
+          git commit -m "Fix recovered homepage motion build"
+          git push origin HEAD:work/home-motion-recovery-2026-08-04
