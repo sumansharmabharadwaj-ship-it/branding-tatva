@@ -170,7 +170,7 @@ export function BrandFoundationScene() {
   return (
     <section
       ref={wrapperRef}
-      className="relative h-auto md:h-[320vh]"
+      className="relative h-auto md:h-[240vh]"
       style={{ backgroundColor: "#201d18" }}
       aria-labelledby="brand-foundation-title"
     >

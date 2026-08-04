@@ -97,7 +97,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const stage = stages[shown];
 
   return (
-    <div ref={wrapRef} className="relative" style={{ height: "460vh" }}>
+    <div ref={wrapRef} className="relative" style={{ height: "370vh" }}>
       <div className="sticky top-0 h-screen overflow-hidden bg-[#141210]">
         {/* The ground the roots grow through: macro earth footage, kept
             dim so the network itself carries the light. */}
