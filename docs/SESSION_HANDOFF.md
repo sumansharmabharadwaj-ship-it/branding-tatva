@@ -88,3 +88,42 @@ Only verified numbers from real project data ever appear as proof. This
 matters most wherever charts or diagrams get added, since a chart invites
 invented figures. If a visual needs data that does not exist, the visual
 changes; the data is never fabricated.
+
+## Next creative brief: make it play like a film
+
+Suman, restating a direction she has given several times: every section
+should read as a film rather than as a page, typography included.
+
+This is already diagnosed. Two named gaps deliver most of it, and both
+exist in the codebase rather than needing invention.
+
+**1. Transition grammar, currently on one page out of six.**
+`SceneVeil` and `SceneHandoff` live in `src/sections/Services/` and are
+used nineteen times on `/services` and zero times anywhere else. Home
+cuts hard between chapters: the FAQ chapter sits on a near cream wash
+and hands straight into a night sea video whose overlay bottoms out near
+black, a full luminance inversion at a single boundary. `ClarityCTA`
+butts against `EvidenceWall` with no dissolve.
+
+The fix is promotion, not new work: move both components to
+`src/components/`, then apply them at Home's six boundaries and on Work
+and About, exactly as `services/page.tsx` already does, passing the
+previous section's ground colour in and its own out. The cinematic media
+doc already specifies the rule this satisfies: each boundary shifts at
+most 10 to 15 percent of the palette, at similar luminance.
+
+**2. Typography that performs.**
+`SplitReveal` (GSAP SplitText, word and char variants) already exists and
+is deliberately reserved for real headline moments. Extending it is a
+judgement call rather than a sweep: applying it everywhere would make
+the restraint meaningless. The candidates are the section headings that
+open a chapter, never body copy or labels.
+
+**Do NOT solve this by adding more pinned scenes.** The pinning budget is
+one immersive held sequence per key page and the page is already at it.
+A film reads as a film because of how its cuts work, not because every
+shot is long.
+
+Related, still open from the same audit: the three second breath between
+major sections (mist, wind, minimal type, zero information) exists in the
+spec and nowhere in the code.
