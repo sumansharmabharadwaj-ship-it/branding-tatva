@@ -53,5 +53,61 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Stabilize the Process video reference
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("src/sections/Process/RootSystem.tsx")
+          text = path.read_text()
+          before = '''  useEffect(() => {
+    const currentVideo = videoRef.current;
+    if (!currentVideo || prefersReducedMotion) return;
+
+    function syncPlayback() {
+      if (inView && !document.hidden) void currentVideo.play().catch(() => {});
+      else currentVideo.pause();
+    }
+
+    syncPlayback();
+    document.addEventListener("visibilitychange", syncPlayback);
+    return () => {
+      document.removeEventListener("visibilitychange", syncPlayback);
+      currentVideo.pause();
+    };
+  }, [active, inView, prefersReducedMotion]);'''
+          after = '''  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const videoAtEffectStart = videoRef.current;
+
+    function syncPlayback() {
+      const video = videoRef.current;
+      if (!video) return;
+      if (inView && !document.hidden) void video.play().catch(() => {});
+      else video.pause();
+    }
+
+    syncPlayback();
+    document.addEventListener("visibilitychange", syncPlayback);
+    return () => {
+      document.removeEventListener("visibilitychange", syncPlayback);
+      videoAtEffectStart?.pause();
+    };
+  }, [active, inView, prefersReducedMotion]);'''
+
+          if before not in text:
+              raise SystemExit("Expected RootSystem playback block was not found")
+          path.write_text(text.replace(before, after, 1))
+          PY
+
+      - name: Export the patched Process source
+        uses: actions/upload-artifact@v4
+        with:
+          name: patched-root-system
+          path: src/sections/Process/RootSystem.tsx
+          if-no-files-found: error
+          retention-days: 1
+
       - name: Build preview
         run: pnpm build
