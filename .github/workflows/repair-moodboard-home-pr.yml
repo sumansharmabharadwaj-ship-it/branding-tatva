@@ -27,6 +27,17 @@ jobs:
           path = Path("src/sections/Home/MoodboardHome.tsx")
           source = path.read_text()
 
+          # Next's production minifier injects process.env guards around
+          # effects. Importing the project-stage array as `process` shadows
+          # that global and crashes prerendering, so keep the data name clear.
+          source = source.replace(
+              'import { process } from "@/data/process";',
+              'import { process as projectProcess } from "@/data/process";',
+              1,
+          )
+          source = source.replace('process.map((stage,index)=>', 'projectProcess.map((stage,index)=>')
+          source = source.replace('process.map((stage, index) =>', 'projectProcess.map((stage, index) =>')
+
           import_line = 'import { MoodboardTatvaFilm } from "./MoodboardTatvaFilm";\n'
           anchor = 'import { navigation, site } from "@/data/site";\n'
           if import_line not in source:
@@ -46,6 +57,11 @@ jobs:
           source, count = pattern.subn(replacement, source, count=1)
           if count != 1:
               raise SystemExit(f"Expected one TatvaFilm block, replaced {count}")
+
+          if 'import { process } from "@/data/process";' in source:
+              raise SystemExit("The global process name is still shadowed")
+          if 'process.map(' in source:
+              raise SystemExit("A project-stage process.map reference remains")
 
           path.write_text(source)
           PY
@@ -78,13 +94,8 @@ jobs:
           echo "--- compiled homepage context ---"
           node <<'NODE'
           const fs = require('fs');
-          const candidates = [
-            '.next/server/app/page.js',
-            '.next/server/chunks/ssr',
-          ];
-          for (const candidate of candidates) {
-            if (!fs.existsSync(candidate)) continue;
-            if (fs.statSync(candidate).isDirectory()) continue;
+          const candidate = '.next/server/app/page.js';
+          if (fs.existsSync(candidate)) {
             const source = fs.readFileSync(candidate, 'utf8');
             const needle = '__NEXT_PRIVATE_MINIMIZE_MACRO_FALSE';
             const index = source.indexOf(needle);
