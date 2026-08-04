@@ -38,12 +38,6 @@ const CHAPTERS: ChapterDefinition[] = [
     match: "Evidence.",
   },
   {
-    id: "scope",
-    label: "Right scope",
-    detail: "Find the smallest intervention capable of changing the business.",
-    match: "Clarity before scope",
-  },
-  {
     id: "studio",
     label: "The studio",
     detail: "Meet the thinking behind the work.",
@@ -52,7 +46,7 @@ const CHAPTERS: ChapterDefinition[] = [
   {
     id: "paths",
     label: "Three paths",
-    detail: "Choose where the work should begin.",
+    detail: "Choose what the business should build next.",
     match: "Three paths",
   },
   {
