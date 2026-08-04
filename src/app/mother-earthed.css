@@ -1,0 +1,240 @@
+/*
+ * Mother Earthed colour pass
+ *
+ * Approved direction: use the colour theory of Suman's Mother Earthed
+ * reference without changing the current page architecture, videos,
+ * section order or interaction mechanisms. Light tones are reserved for
+ * typography and focus visibility, never used as full-page canvases.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* Reference-derived core */
+  --mother-canopy: #0f2116;
+  --mother-forest: #17301f;
+  --mother-moss: #34452f;
+  --mother-fern: #5b6843;
+  --mother-olive: #807548;
+  --mother-bark: #633517;
+  --mother-earth: #8d5a2b;
+  --mother-gold: #b99452;
+  --mother-mist: #d8cfb8;
+  --mother-ivory: #f2ead8;
+
+  /* Existing semantic tokens remapped, so every current component keeps
+     its layout and behaviour while entering one synchronized colour world. */
+  --color-ivory: var(--mother-ivory);
+  --color-parchment: #263725;
+  --color-soil: var(--mother-canopy);
+  --color-clay: var(--mother-bark);
+  --color-terracotta: var(--mother-earth);
+  --color-sage: var(--mother-fern);
+  --color-ochre: var(--mother-gold);
+  --color-indigo: #28483e;
+  --color-sandstone: #c5a867;
+  --color-warm-white: #203327;
+  --color-rose-earth: #75453a;
+
+  --color-background: var(--mother-canopy);
+  --color-background-alt: var(--mother-forest);
+  --color-background-elevated: #263a29;
+
+  --color-foreground: var(--mother-ivory);
+  --color-foreground-secondary: #c6bda8;
+
+  --color-action-primary: #9a5b2d;
+  --color-action-primary-hover: #ba7842;
+  --color-action-secondary: var(--mother-fern);
+  --color-action-secondary-hover: #73825a;
+
+  --color-border: #4b5a42;
+  --color-state-focus: #d3ad62;
+  --color-state-success: #71805a;
+  --color-state-warning: #c0924d;
+  --color-state-error: #a5533d;
+
+  --shadow-elevation-sm:
+    0 1px 2px rgba(3, 13, 7, 0.24), 0 8px 24px rgba(3, 13, 7, 0.18);
+  --shadow-elevation-md:
+    0 2px 5px rgba(3, 13, 7, 0.28), 0 18px 45px rgba(3, 13, 7, 0.24);
+  --shadow-elevation-lg:
+    0 5px 14px rgba(3, 13, 7, 0.34), 0 28px 72px rgba(3, 13, 7, 0.3);
+}
+
+html,
+body {
+  background: var(--mother-canopy);
+}
+
+body {
+  color: var(--mother-ivory);
+  background-image:
+    radial-gradient(circle at 16% 4%, rgba(128, 117, 72, 0.14), transparent 33rem),
+    radial-gradient(circle at 92% 30%, rgba(141, 90, 43, 0.12), transparent 38rem),
+    linear-gradient(180deg, #0f2116 0%, #14291b 42%, #0f2116 100%);
+}
+
+/* The approved visual world is dark colour, not black. Replace the old
+   neutral darks and pale fixed panels while leaving their dimensions,
+   content and videos untouched. */
+section[style*="background-color: rgb(242, 240, 232)"],
+section[style*="background-color: #F2F0E8"],
+section[style*="background-color: #f2f0e8"] {
+  background-color: var(--mother-forest) !important;
+}
+
+[style*="background-color: rgb(20, 18, 16)"],
+[style*="background-color: #141210"],
+[style*="background-color: #141210"] {
+  background-color: var(--mother-canopy) !important;
+}
+
+[style*="background-color: rgb(27, 27, 27)"],
+[style*="background-color: #1B1B1B"],
+[style*="background-color: #1b1b1b"] {
+  background-color: #183020 !important;
+}
+
+/* Tailwind's old light utilities now become layered forest surfaces.
+   No pale canvas survives, but ivory remains available for type. */
+.bg-background,
+.bg-background-alt,
+.bg-background-elevated,
+.bg-parchment,
+.bg-warm-white {
+  color: var(--mother-ivory);
+}
+
+.bg-background {
+  background-color: var(--mother-canopy) !important;
+}
+
+.bg-background-alt,
+.bg-parchment {
+  background-color: var(--mother-forest) !important;
+}
+
+.bg-background-elevated,
+.bg-warm-white {
+  background-color: #263a29 !important;
+}
+
+/* Text utilities previously designed for pale canvases are lifted into
+   the ivory/mist range. The soil token itself remains a deep background. */
+.text-soil,
+.text-foreground {
+  color: var(--mother-ivory) !important;
+}
+
+.text-foreground-secondary {
+  color: #c6bda8 !important;
+}
+
+.border-border,
+.border-soil\/10,
+.border-soil\/15,
+.border-soil\/20 {
+  border-color: rgba(216, 207, 184, 0.2) !important;
+}
+
+/* The global atmosphere now carries only Mother Earthed hues. */
+.gradient-mesh {
+  opacity: 0.12 !important;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(185, 148, 82, 0.58) 0%, transparent 38%),
+    radial-gradient(circle at 84% 12%, rgba(99, 53, 23, 0.54) 0%, transparent 40%),
+    radial-gradient(circle at 22% 88%, rgba(40, 72, 62, 0.62) 0%, transparent 42%),
+    radial-gradient(circle at 88% 82%, rgba(91, 104, 67, 0.58) 0%, transparent 42%) !important;
+}
+
+.paper-grain {
+  opacity: 0.09 !important;
+  mix-blend-mode: soft-light !important;
+}
+
+.aurora-glow::before {
+  background: radial-gradient(circle, rgba(185, 148, 82, 0.92) 0%, transparent 70%) !important;
+}
+
+.aurora-glow::after {
+  background: radial-gradient(circle, rgba(141, 90, 43, 0.86) 0%, transparent 70%) !important;
+}
+
+.light-rays {
+  opacity: 0.42;
+  background: repeating-linear-gradient(
+    100deg,
+    transparent 0%,
+    transparent 7%,
+    rgba(242, 234, 216, 0.075) 7.5%,
+    rgba(185, 148, 82, 0.04) 8.2%,
+    transparent 9.4%,
+    transparent 16%
+  ) !important;
+}
+
+/* Five-element chrome now stays inside the approved family rather than
+   rotating through unrelated blue, orange and rose hues. */
+.nav-pill-ring {
+  background: conic-gradient(
+    from var(--nav-angle),
+    #633517,
+    #8d5a2b,
+    #b99452,
+    #807548,
+    #5b6843,
+    #28483e,
+    #633517
+  ) !important;
+}
+
+/* Homepage chapter ladder: same structure and behaviour, recoloured from
+   black glass into translucent forest glass. */
+[data-chapter-ladder] [class*="bg-[#17140f]"],
+[data-chapter-ladder] [class*="bg-[#15120f]"],
+[data-chapter-ladder-mobile] [class*="bg-[#17140f]"] {
+  background-color: rgba(15, 33, 22, 0.9) !important;
+  border-color: rgba(197, 168, 103, 0.22) !important;
+}
+
+[data-chapter-ladder] .bg-sandstone,
+[data-chapter-ladder-mobile] .bg-sandstone {
+  background-color: var(--mother-gold) !important;
+}
+
+/* Cards retain translucency, but every pale card becomes moss glass. */
+[class*="bg-background-elevated/"] {
+  background-color: rgba(38, 58, 41, 0.92) !important;
+  color: var(--mother-ivory) !important;
+}
+
+[class*="bg-ivory/"] {
+  background-color: rgba(216, 207, 184, 0.08) !important;
+}
+
+/* Forms and native controls follow the same dark, calm material system. */
+input,
+textarea,
+select {
+  color: var(--mother-ivory);
+  background-color: rgba(15, 33, 22, 0.72);
+  border-color: rgba(197, 168, 103, 0.3);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(216, 207, 184, 0.55);
+}
+
+::selection {
+  color: var(--mother-canopy);
+  background: var(--mother-gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-mesh {
+    transform: none !important;
+  }
+}
