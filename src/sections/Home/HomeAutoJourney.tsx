@@ -11,7 +11,6 @@ const CHAPTER_DWELL_MS: Record<string, number> = {
   opening: 14000,
   diagnosis: 22000,
   evidence: 22000,
-  scope: 22000,
   studio: 23000,
   paths: 22000,
   framework: 19000,
@@ -238,7 +237,7 @@ export function HomeAutoJourney() {
     : complete
       ? "Replay journey"
       : "Play journey";
-  const total = Math.max(1, targetsRef.current.length || 11);
+  const total = Math.max(1, targetsRef.current.length || 10);
 
   function toggle() {
     setPlaying((current) => {
