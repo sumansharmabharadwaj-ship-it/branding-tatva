@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import type { ProcessStage } from "@/data/process";
 
-const GOLD = "#C6A97A";
-
 const OUTCOMES = [
   "The right question",
   "A pattern worth trusting",
@@ -26,7 +24,13 @@ const MOVES = [
 
 export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
-  const [progress, setProgress] = useState(0);
+  const cameraRef = useRef<HTMLDivElement | null>(null);
+  const stageRefs = useRef<(HTMLElement | null)[]>([]);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const finalOverlayRef = useRef<HTMLDivElement | null>(null);
+  const finalInnerRef = useRef<HTMLDivElement | null>(null);
+  const progressBarRef = useRef<HTMLSpanElement | null>(null);
+  const activeRef = useRef(0);
   const [active, setActive] = useState(0);
   const lenis = useLenis();
 
@@ -35,62 +39,125 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     if (!wrap) return;
 
     let frame = 0;
+    let sectionIsNear = false;
+
+    const syncVideos = (nextActive: number) => {
+      videoRefs.current.forEach((video, index) => {
+        if (!video) return;
+        const shouldPlay = sectionIsNear && (index === nextActive || index === Math.min(stages.length - 1, nextActive + 1));
+        if (shouldPlay) {
+          void video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    };
+
     const update = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const el = wrapRef.current;
         if (!el) return;
+
         const rect = el.getBoundingClientRect();
         const travel = Math.max(1, rect.height - window.innerHeight);
-        const nextProgress = Math.min(1, Math.max(0, -rect.top / travel));
-        const nextActive = Math.min(stages.length - 1, Math.floor(nextProgress * stages.length));
-        setProgress(nextProgress);
-        setActive(nextActive);
+        const progress = Math.min(1, Math.max(0, -rect.top / travel));
+        const stageProgress = progress * stages.length;
+        const nextActive = Math.min(stages.length - 1, Math.floor(stageProgress));
+        const finalResolve = Math.min(1, Math.max(0, (progress - 0.86) / 0.14));
+
+        if (cameraRef.current) {
+          cameraRef.current.style.transform = `translate3d(0, ${-progress * 32}vh, 0) scale(${1 + progress * 0.13})`;
+        }
+
+        stageRefs.current.forEach((article, index) => {
+          if (!article) return;
+          const local = Math.min(1, Math.max(0, stageProgress - index));
+          const exit = Math.min(1, Math.max(0, stageProgress - index - 0.72));
+          const move = MOVES[index % MOVES.length];
+          const opacity = Math.min(1, local * 2.8) * (1 - exit * 0.78);
+          const translateX = (1 - local) * move.x + exit * -move.x * 0.45;
+          const translateY = (1 - local) * move.y - exit * 8;
+          const scale = 0.86 + local * 0.14 - exit * 0.05;
+
+          article.style.opacity = String(opacity);
+          article.style.transform = `translate3d(${translateX}vw, ${translateY}vh, 0) rotate(${move.rotate * (1 - local)}deg) scale(${scale})`;
+          article.setAttribute("aria-hidden", String(nextActive !== index));
+        });
+
+        videoRefs.current.forEach((video, index) => {
+          if (!video) return;
+          const distance = Math.abs(stageProgress - (index + 0.5));
+          const visible = Math.max(0, 1 - distance * 1.15);
+          video.style.opacity = String(visible * 0.28);
+          video.style.transform = `scale(${1.04 + visible * 0.08})`;
+        });
+
+        if (finalOverlayRef.current) {
+          finalOverlayRef.current.style.opacity = String(finalResolve);
+          finalOverlayRef.current.setAttribute("aria-hidden", String(finalResolve < 0.5));
+        }
+        if (finalInnerRef.current) {
+          finalInnerRef.current.style.transform = `scale(${0.92 + finalResolve * 0.08})`;
+          finalInnerRef.current.style.opacity = String(finalResolve);
+        }
+        if (progressBarRef.current) {
+          progressBarRef.current.style.width = `${progress * 100}%`;
+        }
+
+        if (nextActive !== activeRef.current) {
+          activeRef.current = nextActive;
+          setActive(nextActive);
+          syncVideos(nextActive);
+        }
       });
     };
 
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        sectionIsNear = entry.isIntersecting;
+        syncVideos(activeRef.current);
+      },
+      { rootMargin: "55% 0px" },
+    );
+    observer.observe(wrap);
+
     update();
     const unsubscribe = lenis?.on("scroll", update);
-    window.addEventListener("scroll", update, { passive: true });
+    if (!lenis) window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
 
     return () => {
       cancelAnimationFrame(frame);
       unsubscribe?.();
-      window.removeEventListener("scroll", update);
+      if (!lenis) window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
+      observer.disconnect();
+      videoRefs.current.forEach((video) => video?.pause());
     };
   }, [lenis, stages.length]);
 
-  const stageProgress = progress * stages.length;
-  const cameraY = -progress * 32;
-  const cameraScale = 1 + progress * 0.13;
-  const finalResolve = Math.min(1, Math.max(0, (progress - 0.86) / 0.14));
-
   return (
-    <div ref={wrapRef} className="relative bg-[#100e0c]" style={{ height: `${Math.max(620, stages.length * 118)}svh` }}>
+    <div ref={wrapRef} className="relative bg-[#100e0c]" style={{ height: `${Math.max(620, stages.length * 104)}svh` }}>
       <div className="sticky top-0 h-svh min-h-[620px] overflow-hidden bg-[#100e0c]">
-        {stages.map((stage, index) => {
-          const distance = Math.abs(stageProgress - (index + 0.5));
-          const visible = Math.max(0, 1 - distance * 1.15);
-          return stage.video ? (
+        {stages.map((stage, index) =>
+          stage.video ? (
             <video
               key={stage.video}
-              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+              ref={(node) => {
+                videoRefs.current[index] = node;
+              }}
+              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
               src={stage.video}
               poster={stage.poster}
               muted
-              autoPlay
               loop
               playsInline
-              preload="metadata"
-              style={{ opacity: visible * 0.28, transform: `scale(${1.04 + visible * 0.08})` }}
-              ref={(el) => {
-                if (el && el.paused) void el.play().catch(() => {});
-              }}
+              preload="none"
+              style={{ opacity: index === 0 ? 0.12 : 0, transform: "scale(1.04)" }}
             />
-          ) : null;
-        })}
+          ) : null,
+        )}
 
         <div
           aria-hidden="true"
@@ -111,31 +178,25 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
           </p>
         </div>
 
-        <div
-          className="absolute inset-0 will-change-transform"
-          style={{ transform: `translate3d(0, ${cameraY}vh, 0) scale(${cameraScale})`, transformOrigin: "50% 48%" }}
-        >
+        <div ref={cameraRef} className="absolute inset-0 will-change-transform" style={{ transform: "translate3d(0, 0, 0) scale(1)", transformOrigin: "50% 48%" }}>
           <div className="absolute left-1/2 top-[14%] h-[72%] w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-sandstone/35 to-transparent" aria-hidden="true" />
 
           {stages.map((stage, index) => {
-            const local = Math.min(1, Math.max(0, stageProgress - index));
-            const exit = Math.min(1, Math.max(0, stageProgress - index - 0.72));
             const move = MOVES[index % MOVES.length];
             const side = index % 2 === 0 ? "left" : "right";
             const y = 18 + index * 12.4;
-            const opacity = Math.min(1, local * 2.8) * (1 - exit * 0.78);
-            const translateX = (1 - local) * move.x + exit * -move.x * 0.45;
-            const translateY = (1 - local) * move.y - exit * 8;
-            const scale = 0.86 + local * 0.14 - exit * 0.05;
 
             return (
               <article
                 key={stage.stage}
+                ref={(node) => {
+                  stageRefs.current[index] = node;
+                }}
                 className={`absolute w-[min(78vw,31rem)] ${side === "left" ? "left-[7%] text-left" : "right-[7%] text-right"}`}
                 style={{
                   top: `${y}%`,
-                  opacity,
-                  transform: `translate3d(${translateX}vw, ${translateY}vh, 0) rotate(${move.rotate * (1 - local)}deg) scale(${scale})`,
+                  opacity: 0,
+                  transform: `translate3d(${move.x}vw, ${move.y}vh, 0) rotate(${move.rotate}deg) scale(0.86)`,
                   transformOrigin: move.origin,
                 }}
                 aria-hidden={active !== index}
@@ -151,7 +212,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                 <h3 className="mt-2 font-display text-[clamp(2.2rem,5vw,4.8rem)] font-normal leading-[0.94] text-ivory">
                   {OUTCOMES[index] ?? stage.stage}
                 </h3>
-                <p className={`mt-4 text-sm leading-relaxed text-ivory/64 sm:text-base ${side === "right" ? "ml-auto" : ""} max-w-md`}>
+                <p className={`mt-4 max-w-md text-sm leading-relaxed text-ivory/64 sm:text-base ${side === "right" ? "ml-auto" : ""}`}>
                   {stage.description}
                 </p>
               </article>
@@ -160,11 +221,12 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
         </div>
 
         <div
+          ref={finalOverlayRef}
           className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-[#100e0c] text-center"
-          style={{ opacity: finalResolve }}
-          aria-hidden={finalResolve < 0.5}
+          style={{ opacity: 0 }}
+          aria-hidden="true"
         >
-          <div style={{ transform: `scale(${0.92 + finalResolve * 0.08})`, opacity: finalResolve }}>
+          <div ref={finalInnerRef} style={{ transform: "scale(0.92)", opacity: 0 }}>
             <p className="text-[0.64rem] font-medium uppercase tracking-[0.26em] text-sandstone">The system closes</p>
             <p className="mx-auto mt-5 max-w-4xl font-display text-[clamp(3rem,8vw,7.6rem)] font-normal leading-[0.9] text-ivory">
               Every decision now remembers the one before it.
@@ -176,7 +238,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
         </div>
 
         <div className="absolute inset-x-0 bottom-0 z-30 h-px bg-ivory/10">
-          <span className="block h-full bg-sandstone" style={{ width: `${progress * 100}%` }} />
+          <span ref={progressBarRef} className="block h-full bg-sandstone" style={{ width: "0%" }} />
         </div>
       </div>
     </div>
