@@ -1,0 +1,56 @@
+name: Apply homepage chapter landing offsets
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-chapter-landing-offsets.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Give deep chapters a true scene-first landing
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          auto_path = Path("src/sections/Home/HomeAutoJourney.tsx")
+          auto = auto_path.read_text()
+          old_auto = '      if (lenis && !prefersReducedMotion) {\n        lenis.scrollTo(target, { offset: -72, duration: 1.35 });\n      } else {\n        target.scrollIntoView({\n          behavior: prefersReducedMotion ? "auto" : "smooth",\n          block: "start",\n        });\n      }'
+          new_auto = '      const chapter = target.dataset.homeChapter;\n      const offset = ["process", "questions", "invitation"].includes(\n        chapter ?? "",\n      )\n        ? 0\n        : -72;\n\n      if (lenis && !prefersReducedMotion) {\n        lenis.scrollTo(target, { offset, duration: 1.35 });\n      } else {\n        const top =\n          window.scrollY + target.getBoundingClientRect().top + offset;\n        window.scrollTo({\n          top,\n          behavior: prefersReducedMotion ? "auto" : "smooth",\n        });\n      }'
+          if old_auto not in auto:
+              raise SystemExit("HomeAutoJourney landing block was not found")
+          auto_path.write_text(auto.replace(old_auto, new_auto, 1))
+
+          ladder_path = Path("src/sections/Home/ChapterLadder.tsx")
+          ladder = ladder_path.read_text()
+          old_ladder = '    if (lenis && !prefersReducedMotion) {\n      lenis.scrollTo(target, { offset: -72, duration: 1.05 });\n      return;\n    }\n\n    target.scrollIntoView({\n      behavior: prefersReducedMotion ? "auto" : "smooth",\n      block: "start",\n    });'
+          new_ladder = '    const chapter = target.dataset.homeChapter;\n    const offset = ["process", "questions", "invitation"].includes(\n      chapter ?? "",\n    )\n      ? 0\n      : -72;\n\n    if (lenis && !prefersReducedMotion) {\n      lenis.scrollTo(target, { offset, duration: 1.05 });\n      return;\n    }\n\n    const top = window.scrollY + target.getBoundingClientRect().top + offset;\n    window.scrollTo({\n      top,\n      behavior: prefersReducedMotion ? "auto" : "smooth",\n    });'
+          if old_ladder not in ladder:
+              raise SystemExit("ChapterLadder landing block was not found")
+          ladder_path.write_text(ladder.replace(old_ladder, new_ladder, 1))
+          PY
+
+      - name: Commit the landing repair and remove this one-time workflow
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/sections/Home/HomeAutoJourney.tsx src/sections/Home/ChapterLadder.tsx
+          git rm .github/workflows/apply-chapter-landing-offsets.yml
+          git commit -m "Frame Process, Questions, and Begin at their true scene openings"
+          git push origin HEAD:reimagine-project-moves
