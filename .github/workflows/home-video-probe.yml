@@ -1,0 +1,196 @@
+name: Probe homepage scene video playback
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/home-video-probe.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install project and probe dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm add --save-dev --lockfile=false playwright@1.54.2
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Build and start the production app
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: |
+          pnpm build
+          pnpm start --hostname 127.0.0.1 --port 3000 > /tmp/branding-tatva-probe.log 2>&1 &
+          echo $! > /tmp/branding-tatva-probe.pid
+          for attempt in {1..90}; do
+            if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/branding-tatva-probe.log
+          exit 1
+
+      - name: Probe the two sleeping chapters
+        run: |
+          mkdir -p video-probe
+          cat > video-probe.cjs <<'JS'
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+
+          const targets = ['elements', 'process'];
+          const profiles = [
+            { name: 'desktop', viewport: { width: 1440, height: 900 } },
+            { name: 'mobile', viewport: { width: 390, height: 844 } },
+          ];
+
+          const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const report = [];
+
+            for (const profile of profiles) {
+              const context = await browser.newContext({
+                viewport: profile.viewport,
+                reducedMotion: 'no-preference',
+              });
+              const page = await context.newPage();
+              await page.goto('http://127.0.0.1:3000/', { waitUntil: 'networkidle' });
+              await page.waitForFunction(() => document.querySelectorAll('[data-home-chapter]').length >= 10);
+
+              for (const chapter of targets) {
+                const locator = page.locator(`[data-home-chapter="${chapter}"]`);
+                await locator.evaluate((element) => {
+                  const top = window.scrollY + element.getBoundingClientRect().top - 72;
+                  window.scrollTo({ top, behavior: 'instant' });
+                });
+                await page.waitForTimeout(4200);
+
+                const state = await page.evaluate(async ({ chapter, profileName }) => {
+                  const videos = Array.from(document.querySelectorAll('video')).filter((video) => {
+                    const box = video.getBoundingClientRect();
+                    return box.width > 1 && box.height > 1 && box.bottom > 0 && box.top < window.innerHeight;
+                  });
+
+                  const before = videos.map((video, index) => {
+                    const style = getComputedStyle(video);
+                    const ancestors = [];
+                    let node = video.parentElement;
+                    while (node && node !== document.body && ancestors.length < 8) {
+                      ancestors.push({
+                        tag: node.tagName,
+                        ariaHidden: node.getAttribute('aria-hidden'),
+                        decorative: node.hasAttribute('data-video-decorative-root'),
+                        opacity: getComputedStyle(node).opacity,
+                        display: getComputedStyle(node).display,
+                        visibility: getComputedStyle(node).visibility,
+                      });
+                      node = node.parentElement;
+                    }
+
+                    return {
+                      index,
+                      src: video.currentSrc || video.src,
+                      paused: video.paused,
+                      ended: video.ended,
+                      muted: video.muted,
+                      loop: video.loop,
+                      autoplay: video.autoplay,
+                      readyState: video.readyState,
+                      networkState: video.networkState,
+                      currentTime: video.currentTime,
+                      duration: Number.isFinite(video.duration) ? video.duration : null,
+                      error: video.error
+                        ? { code: video.error.code, message: video.error.message }
+                        : null,
+                      opacity: style.opacity,
+                      display: style.display,
+                      visibility: style.visibility,
+                      rect: video.getBoundingClientRect().toJSON(),
+                      ancestors,
+                    };
+                  });
+
+                  const probes = [];
+                  for (const video of videos) {
+                    const start = video.currentTime;
+                    let playError = null;
+                    try {
+                      await video.play();
+                    } catch (error) {
+                      playError = error instanceof Error
+                        ? { name: error.name, message: error.message }
+                        : { name: 'Unknown', message: String(error) };
+                    }
+                    await new Promise((resolve) => setTimeout(resolve, 900));
+                    probes.push({
+                      src: video.currentSrc || video.src,
+                      playError,
+                      pausedAfterProbe: video.paused,
+                      readyStateAfterProbe: video.readyState,
+                      currentTimeBefore: start,
+                      currentTimeAfter: video.currentTime,
+                      advanced: video.currentTime > start + 0.05,
+                      errorAfterProbe: video.error
+                        ? { code: video.error.code, message: video.error.message }
+                        : null,
+                    });
+                  }
+
+                  return { profileName, chapter, before, probes };
+                }, { chapter, profileName: profile.name });
+
+                report.push(state);
+              }
+
+              await context.close();
+            }
+
+            fs.writeFileSync('video-probe/report.json', JSON.stringify(report, null, 2));
+            await browser.close();
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          JS
+          node video-probe.cjs
+
+      - name: Stop the app
+        if: always()
+        run: |
+          if [ -f /tmp/branding-tatva-probe.pid ]; then
+            kill "$(cat /tmp/branding-tatva-probe.pid)" || true
+          fi
+
+      - name: Upload probe report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: branding-tatva-home-video-probe
+          path: video-probe/report.json
+          if-no-files-found: error
+          retention-days: 1
