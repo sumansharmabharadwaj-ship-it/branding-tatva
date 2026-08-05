@@ -49,6 +49,14 @@ jobs:
         with:
           ref: ${{ github.sha }}
           fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            /public/videos/home-reframe-hero.webm
+            /public/videos/home-reframe-framework.webm
+            /public/videos/home-reframe-invitation.webm
 
       - name: Use Node 24
         uses: actions/setup-node@v4
