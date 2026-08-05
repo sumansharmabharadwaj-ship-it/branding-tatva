@@ -85,7 +85,7 @@ export function AmbientAudio() {
         onClick={toggle}
         aria-label={enabled ? "Mute ambient sound" : "Play ambient sound"}
         aria-pressed={enabled}
-        className="fixed bottom-6 right-6 z-40 hidden h-11 w-11 items-center justify-center rounded-full border border-ivory/20 bg-soil/80 text-ivory shadow-elevation-sm backdrop-blur-md transition-all duration-300 hover:border-ivory/40 hover:bg-soil md:flex motion-reduce:flex"
+        className="fixed bottom-6 right-6 z-40 hidden h-11 w-11 items-center justify-center rounded-full border border-ivory/20 bg-soil/80 text-ivory shadow-elevation-sm backdrop-blur-md transition-all duration-300 hover:border-ivory/40 hover:bg-soil lg:flex motion-reduce:flex"
       >
         {enabled ? (
           <Volume2 size={17} strokeWidth={1.75} />
