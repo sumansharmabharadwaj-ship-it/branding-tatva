@@ -182,6 +182,7 @@ export function PathsCinematicChapter() {
 
               {PATHS.map((path, index) => {
                 const selected = index === activeIndex;
+                const center = `112px ${ENTRY_Y[index]}px`;
                 return (
                   <g key={path.start} opacity={selected ? 1 : 0.28}>
                     <motion.circle
@@ -191,9 +192,10 @@ export function PathsCinematicChapter() {
                       fill={path.tint}
                       animate={
                         selected && inView && !prefersReducedMotion
-                          ? { r: [6, 10, 6], opacity: [0.65, 1, 0.65] }
-                          : undefined
+                          ? { scale: [0.78, 1.3, 0.78], opacity: [0.65, 1, 0.65] }
+                          : { scale: 1 }
                       }
+                      style={{ transformOrigin: center }}
                       transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
                     />
                     <text
@@ -208,10 +210,10 @@ export function PathsCinematicChapter() {
                 );
               })}
 
-              <line x1="338" y1="160" x2="678" y2="160" className="paths-cinematic__spine" />
+              <line x1="338" y1="160" x2="648" y2="160" className="paths-cinematic__spine" />
 
               {active.route.map((step, index) => {
-                const x = 408 + index * 104;
+                const x = 405 + index * 96;
                 return (
                   <g key={`${active.number}-${step}`}>
                     <motion.circle
@@ -232,7 +234,7 @@ export function PathsCinematicChapter() {
               })}
 
               <motion.circle
-                cx="724"
+                cx="680"
                 cy="160"
                 r="32"
                 fill="none"
@@ -240,16 +242,17 @@ export function PathsCinematicChapter() {
                 strokeWidth="1.4"
                 animate={
                   inView && !prefersReducedMotion
-                    ? { r: [28, 37, 28], opacity: [0.38, 0.72, 0.38] }
-                    : undefined
+                    ? { scale: [0.88, 1.14, 0.88], opacity: [0.38, 0.72, 0.38] }
+                    : { scale: 1 }
                 }
+                style={{ transformOrigin: "680px 160px" }}
                 transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
               />
-              <circle cx="724" cy="160" r="8" fill={active.tint} />
-              <text x="770" y="151" className="paths-cinematic__svg-result">
+              <circle cx="680" cy="160" r="8" fill={active.tint} />
+              <text x="720" y="151" className="paths-cinematic__svg-result">
                 A brand people
               </text>
-              <text x="770" y="175" className="paths-cinematic__svg-result">
+              <text x="720" y="175" className="paths-cinematic__svg-result">
                 recognise and choose
               </text>
             </svg>

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  motion,
-  useInView,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
 
 type BridgeFamily =
@@ -23,68 +17,66 @@ type HomeSceneBridgeProps = {
   to: string;
 };
 
-const EASE = [0.22, 1, 0.36, 1] as const;
 const SANDSTONE = "#D4B99A";
 const CLAY = "#B85A34";
 const SAGE = "#5C6B4A";
-const INDIGO = "#24394D";
 const OCHRE = "#C28A28";
 const IVORY = "#F4EFE6";
+const WATER = "#7D9BAF";
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 function AirBridge({ active }: { active: boolean }) {
   return (
     <>
-      {[0, 1, 2].map((index) => (
+      {[0, 1].map((index) => (
         <motion.span
           key={index}
-          className="absolute left-[-18%] h-px w-[136%] origin-left rounded-full"
+          className="absolute left-[-12%] h-px w-[124%] origin-left rounded-full"
           style={{
-            top: `${28 + index * 20}%`,
+            top: `${36 + index * 28}%`,
             background:
-              index === 1
-                ? "linear-gradient(90deg, transparent, rgba(244,239,230,0.62), transparent)"
-                : "linear-gradient(90deg, transparent, rgba(212,185,154,0.42), transparent)",
-            filter: `blur(${index === 1 ? 0 : 1.5}px)`,
+              index === 0
+                ? "linear-gradient(90deg, transparent, rgba(244,239,230,0.5), transparent)"
+                : "linear-gradient(90deg, transparent, rgba(212,185,154,0.34), transparent)",
           }}
           animate={
             active
               ? {
-                  x: ["-6%", "8%", "-6%"],
-                  scaleX: [0.82, 1.06, 0.82],
-                  opacity: [0.18, 0.82, 0.18],
+                  x: ["-4%", "5%", "-4%"],
+                  scaleX: [0.9, 1.04, 0.9],
+                  opacity: [0.16, 0.64, 0.16],
                 }
-              : undefined
+              : { opacity: 0.2 }
           }
           transition={{
-            duration: 7.5 + index * 1.4,
-            delay: index * 0.35,
+            duration: 7.6 + index * 1.5,
             repeat: Infinity,
             ease: "easeInOut",
           }}
         />
       ))}
-      {[0, 1, 2, 3, 4].map((index) => (
+      {[0, 1, 2].map((index) => (
         <motion.span
-          key={`seed-${index}`}
+          key={`air-seed-${index}`}
           className="absolute h-1 w-1 rounded-full"
           style={{
-            left: `${13 + index * 18}%`,
-            top: `${35 + (index % 2) * 30}%`,
-            backgroundColor: index % 2 === 0 ? SANDSTONE : IVORY,
-            boxShadow: `0 0 10px ${index % 2 === 0 ? SANDSTONE : IVORY}`,
+            left: `${20 + index * 29}%`,
+            top: `${42 + (index % 2) * 22}%`,
+            backgroundColor: index === 1 ? IVORY : SANDSTONE,
+            boxShadow: `0 0 8px ${index === 1 ? IVORY : SANDSTONE}`,
           }}
           animate={
             active
               ? {
-                  x: [0, 16 + index * 3, 0],
-                  y: [0, index % 2 === 0 ? -10 : 10, 0],
-                  opacity: [0.28, 0.88, 0.28],
+                  x: [0, 12 + index * 4, 0],
+                  y: [0, index % 2 === 0 ? -5 : 5, 0],
+                  opacity: [0.22, 0.72, 0.22],
                 }
-              : undefined
+              : { opacity: 0.24 }
           }
           transition={{
-            duration: 5.5 + index * 0.7,
-            delay: index * 0.28,
+            duration: 5.7 + index * 0.7,
+            delay: index * 0.3,
             repeat: Infinity,
             ease: "easeInOut",
           }}
@@ -96,148 +88,145 @@ function AirBridge({ active }: { active: boolean }) {
 
 function EarthBridge({ active }: { active: boolean }) {
   const paths = [
-    "M-20 65 C120 18 238 104 382 54 C526 4 642 96 820 42 C930 10 1040 38 1140 72",
-    "M-10 82 C140 34 258 122 416 72 C570 22 710 110 864 58 C970 22 1080 52 1160 88",
-    "M40 102 C166 66 304 132 454 92 C612 50 738 136 914 88 C1000 64 1090 76 1160 108",
+    "M-20 48 C150 10 260 80 430 43 C600 5 730 80 900 42 C1000 20 1080 30 1160 55",
+    "M-10 72 C150 38 290 98 450 67 C610 35 760 95 930 61 C1030 42 1100 50 1170 78",
   ];
 
   return (
-    <svg
-      viewBox="0 0 1120 128"
-      preserveAspectRatio="none"
-      className="absolute inset-0 h-full w-full"
-    >
+    <svg viewBox="0 0 1120 96" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
       {paths.map((path, index) => (
         <motion.path
           key={path}
           d={path}
           fill="none"
-          stroke={index === 1 ? CLAY : SANDSTONE}
-          strokeWidth={index === 1 ? 1.5 : 0.8}
+          stroke={index === 0 ? CLAY : SANDSTONE}
+          strokeWidth={index === 0 ? 1.25 : 0.8}
           strokeLinecap="round"
-          strokeDasharray={index === 1 ? "5 10" : "2 8"}
-          initial={{ pathLength: 0.08, opacity: 0.12 }}
+          strokeDasharray={index === 0 ? "5 12" : "2 10"}
           animate={
             active
               ? {
-                  pathLength: [0.08, 1, 1],
-                  pathOffset: [0, 0, 1],
-                  opacity: [0.16, 0.72, 0.16],
+                  strokeDashoffset: [0, -40],
+                  opacity: [0.16, 0.58, 0.16],
                 }
-              : { pathLength: 0.82, opacity: 0.24 }
+              : { opacity: 0.2 }
           }
           transition={{
-            duration: 8.5 + index,
-            delay: index * 0.45,
-            repeat: Infinity,
-            ease: "easeInOut",
+            strokeDashoffset: {
+              duration: 7.8 + index * 1.1,
+              repeat: Infinity,
+              ease: "linear",
+            },
+            opacity: {
+              duration: 5.6,
+              delay: index * 0.35,
+              repeat: Infinity,
+              ease: "easeInOut",
+            },
           }}
         />
       ))}
       <motion.circle
         cx="560"
-        cy="64"
+        cy="50"
         r="4"
         fill={CLAY}
-        animate={
-          active
-            ? { r: [3, 7, 3], opacity: [0.45, 1, 0.45] }
-            : undefined
-        }
-        transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
+        animate={active ? { scale: [0.72, 1.45, 0.72], opacity: [0.42, 0.9, 0.42] } : undefined}
+        style={{ transformOrigin: "560px 50px" }}
+        transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
       />
     </svg>
   );
 }
 
 function WaterBridge({ active }: { active: boolean }) {
+  const rings = [
+    { width: 150, height: 34, delay: 0 },
+    { width: 240, height: 54, delay: 1.05 },
+    { width: 330, height: 74, delay: 2.1 },
+  ];
+
   return (
     <>
-      {[0, 1, 2].map((index) => (
+      {rings.map((ring) => (
         <motion.span
-          key={index}
-          className="absolute left-1/2 top-1/2 rounded-full border"
+          key={ring.width}
+          className="absolute left-1/2 top-1/2 rounded-[50%] border"
           style={{
-            width: `${46 + index * 28}px`,
-            height: `${18 + index * 12}px`,
-            marginLeft: `${-(46 + index * 28) / 2}px`,
-            marginTop: `${-(18 + index * 12) / 2}px`,
+            width: ring.width,
+            height: ring.height,
+            marginLeft: -ring.width / 2,
+            marginTop: -ring.height / 2,
             borderColor:
-              index === 1
-                ? "rgba(212,185,154,0.62)"
-                : "rgba(125,155,175,0.48)",
+              ring.width === 240
+                ? "rgba(212,185,154,0.44)"
+                : "rgba(125,155,175,0.35)",
           }}
           animate={
             active
-              ? {
-                  scale: [0.62, 2.2],
-                  opacity: [0.78, 0],
-                }
-              : { scale: 1.1, opacity: 0.28 }
+              ? { scale: [0.72, 1.55], opacity: [0.55, 0] }
+              : { scale: 1, opacity: 0.18 }
           }
           transition={{
-            duration: 4.6,
-            delay: index * 1.1,
+            duration: 4.8,
+            delay: ring.delay,
             repeat: Infinity,
             ease: "easeOut",
           }}
         />
       ))}
       <motion.span
-        className="absolute inset-y-0 -left-1/3 w-1/3 rotate-6"
+        className="absolute inset-y-0 -left-1/4 w-1/4 rotate-3"
         style={{
-          background:
-            "linear-gradient(90deg, transparent, rgba(244,239,230,0.24), transparent)",
-          filter: "blur(10px)",
+          background: "linear-gradient(90deg, transparent, rgba(244,239,230,0.16), transparent)",
+          filter: "blur(8px)",
         }}
-        animate={active ? { x: ["0%", "520%"] } : undefined}
-        transition={{ duration: 6.8, repeat: Infinity, repeatDelay: 1.8, ease: EASE }}
+        animate={active ? { x: ["0%", "610%"] } : undefined}
+        transition={{ duration: 7, repeat: Infinity, repeatDelay: 2.2, ease: EASE }}
       />
     </>
   );
 }
 
 function ConfluenceBridge({ active }: { active: boolean }) {
-  const starts = [92, 272, 452, 632, 812];
-  const colors = [CLAY, "#7D9BAF", OCHRE, SAGE, "#C08A7B"];
+  const starts = [72, 260, 452, 644, 832];
+  const colors = [CLAY, WATER, OCHRE, SAGE, "#C08A7B"];
 
   return (
-    <svg
-      viewBox="0 0 904 128"
-      preserveAspectRatio="none"
-      className="absolute inset-0 h-full w-full"
-    >
+    <svg viewBox="0 0 904 96" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
       {starts.map((start, index) => (
         <motion.path
           key={start}
-          d={`M${start} -8 C${start} 35 ${452 + (start - 452) * 0.24} 43 452 64 C452 86 452 96 452 136`}
+          d={`M${start} -5 C${start} 24 ${452 + (start - 452) * 0.2} 31 452 48 C452 64 452 72 452 103`}
           fill="none"
           stroke={colors[index]}
-          strokeWidth="1.5"
+          strokeWidth="1.25"
           strokeLinecap="round"
           pathLength="1"
-          strokeDasharray="0.08 0.1"
+          strokeDasharray="0.08 0.12"
           animate={
             active
-              ? {
-                  strokeDashoffset: [0, -1],
-                  opacity: [0.32, 0.88, 0.32],
-                }
-              : { opacity: 0.3 }
+              ? { strokeDashoffset: [0, -1], opacity: [0.22, 0.68, 0.22] }
+              : { opacity: 0.24 }
           }
           transition={{
-            strokeDashoffset: { duration: 5 + index * 0.25, repeat: Infinity, ease: "linear" },
+            strokeDashoffset: {
+              duration: 5 + index * 0.2,
+              repeat: Infinity,
+              ease: "linear",
+            },
             opacity: { duration: 4.5, repeat: Infinity, ease: "easeInOut" },
           }}
         />
       ))}
       <motion.circle
         cx="452"
-        cy="64"
-        r="6"
+        cy="48"
+        r="5"
         fill={SANDSTONE}
-        animate={active ? { r: [4, 9, 4], opacity: [0.55, 1, 0.55] } : undefined}
-        transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
+        animate={active ? { scale: [0.76, 1.42, 0.76], opacity: [0.46, 0.9, 0.46] } : undefined}
+        style={{ transformOrigin: "452px 48px" }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
       />
     </svg>
   );
@@ -245,50 +234,45 @@ function ConfluenceBridge({ active }: { active: boolean }) {
 
 function SpaceBridge({ active }: { active: boolean }) {
   return (
-    <>
+    <svg viewBox="0 0 500 96" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 h-full w-full">
       {[0, 1, 2].map((index) => (
-        <motion.span
+        <motion.ellipse
           key={index}
-          className="absolute left-1/2 top-1/2 rounded-full border border-dashed"
-          style={{
-            width: `${54 + index * 34}px`,
-            height: `${54 + index * 34}px`,
-            marginLeft: `${-(54 + index * 34) / 2}px`,
-            marginTop: `${-(54 + index * 34) / 2}px`,
-            borderColor:
-              index === 0
-                ? "rgba(212,185,154,0.65)"
-                : "rgba(244,239,230,0.24)",
-          }}
+          cx="250"
+          cy="48"
+          rx={42 + index * 35}
+          ry={14 + index * 11}
+          fill="none"
+          stroke={index === 0 ? SANDSTONE : "rgba(244,239,230,0.24)"}
+          strokeWidth={index === 0 ? 1.2 : 0.8}
+          strokeDasharray={index === 0 ? "5 8" : "2 9"}
           animate={
             active
               ? {
                   rotate: index % 2 === 0 ? 360 : -360,
-                  scale: [0.94, 1.06, 0.94],
+                  scale: [0.96, 1.04, 0.96],
+                  opacity: [0.28, 0.62, 0.28],
                 }
-              : undefined
+              : { opacity: 0.24 }
           }
+          style={{ transformOrigin: "250px 48px" }}
           transition={{
-            rotate: { duration: 15 + index * 5, repeat: Infinity, ease: "linear" },
-            scale: { duration: 5 + index, repeat: Infinity, ease: "easeInOut" },
+            rotate: { duration: 17 + index * 5, repeat: Infinity, ease: "linear" },
+            scale: { duration: 5.2 + index, repeat: Infinity, ease: "easeInOut" },
+            opacity: { duration: 5.2 + index, repeat: Infinity, ease: "easeInOut" },
           }}
-        >
-          <span
-            className="absolute left-1/2 top-[-3px] h-1.5 w-1.5 -translate-x-1/2 rounded-full"
-            style={{
-              backgroundColor: index === 0 ? SANDSTONE : IVORY,
-              boxShadow: `0 0 12px ${index === 0 ? SANDSTONE : IVORY}`,
-            }}
-          />
-        </motion.span>
+        />
       ))}
-      <motion.span
-        className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{ backgroundColor: SANDSTONE, boxShadow: `0 0 22px ${SANDSTONE}` }}
-        animate={active ? { scale: [0.8, 1.45, 0.8], opacity: [0.55, 1, 0.55] } : undefined}
+      <motion.circle
+        cx="250"
+        cy="48"
+        r="3.5"
+        fill={SANDSTONE}
+        animate={active ? { scale: [0.82, 1.35, 0.82], opacity: [0.48, 0.92, 0.48] } : undefined}
+        style={{ transformOrigin: "250px 48px" }}
         transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
       />
-    </>
+    </svg>
   );
 }
 
@@ -296,39 +280,33 @@ function FireBridge({ active }: { active: boolean }) {
   return (
     <>
       <motion.span
-        className="absolute bottom-[-85%] left-1/2 h-[180%] w-[62%] -translate-x-1/2 rounded-[50%]"
+        className="absolute bottom-[-115%] left-1/2 h-[220%] w-[54%] -translate-x-1/2 rounded-[50%]"
         style={{
           background:
-            "radial-gradient(circle at 50% 18%, rgba(194,138,40,0.76), rgba(184,90,52,0.28) 28%, transparent 66%)",
-          filter: "blur(8px)",
+            "radial-gradient(circle at 50% 20%, rgba(194,138,40,0.58), rgba(184,90,52,0.2) 30%, transparent 66%)",
+          filter: "blur(7px)",
         }}
-        animate={active ? { scale: [0.82, 1.12, 0.82], opacity: [0.52, 0.92, 0.52] } : undefined}
-        transition={{ duration: 6.4, repeat: Infinity, ease: "easeInOut" }}
+        animate={active ? { scale: [0.86, 1.08, 0.86], opacity: [0.38, 0.72, 0.38] } : undefined}
+        transition={{ duration: 6.3, repeat: Infinity, ease: "easeInOut" }}
       />
       {[0, 1, 2].map((index) => (
         <motion.span
           key={index}
-          className="absolute bottom-0 left-1/2 h-[135%] w-px origin-bottom"
+          className="absolute bottom-0 left-1/2 h-[130%] w-px origin-bottom"
           style={{
-            marginLeft: `${(index - 1) * 34}px`,
-            background:
-              "linear-gradient(0deg, rgba(212,185,154,0.72), transparent 76%)",
-            filter: "blur(0.4px)",
+            marginLeft: `${(index - 1) * 32}px`,
+            background: "linear-gradient(0deg, rgba(212,185,154,0.58), transparent 78%)",
           }}
           animate={
             active
               ? {
-                  rotate: [index * 3 - 6, index * 3 + 5, index * 3 - 6],
-                  scaleY: [0.62, 1.06, 0.62],
-                  opacity: [0.22, 0.72, 0.22],
+                  rotate: [index * 3 - 5, index * 3 + 4, index * 3 - 5],
+                  scaleY: [0.68, 1.02, 0.68],
+                  opacity: [0.18, 0.56, 0.18],
                 }
-              : undefined
+              : { opacity: 0.2 }
           }
-          transition={{
-            duration: 5.2 + index * 0.65,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
+          transition={{ duration: 5.2 + index * 0.6, repeat: Infinity, ease: "easeInOut" }}
         />
       ))}
     </>
@@ -338,41 +316,37 @@ function FireBridge({ active }: { active: boolean }) {
 export function HomeSceneBridge({ family, from, to }: HomeSceneBridgeProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = Boolean(useReducedMotion());
-  const inView = useInView(ref, { margin: "22% 0px 22% 0px" });
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], [10, -10]);
-  const opacity = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0.58, 1, 1, 0.58]);
+  const inView = useInView(ref, { margin: "18% 0px 18% 0px" });
   const active = inView && !prefersReducedMotion;
 
   return (
     <div
       ref={ref}
+      data-home-scene-bridge={family}
       aria-hidden="true"
-      className="pointer-events-none relative z-[18] -my-8 h-16 overflow-hidden sm:-my-12 sm:h-24"
+      className="pointer-events-none relative z-[4] my-0 h-8 overflow-hidden sm:h-10 lg:h-12"
       style={{
-        background: `linear-gradient(180deg, ${from} 0%, color-mix(in srgb, ${from} 50%, ${to}) 48%, ${to} 100%)`,
+        background: `linear-gradient(180deg, ${from} 0%, color-mix(in srgb, ${from} 52%, ${to}) 50%, ${to} 100%)`,
+        WebkitMaskImage:
+          "linear-gradient(180deg, transparent 0%, black 18%, black 82%, transparent 100%)",
+        maskImage:
+          "linear-gradient(180deg, transparent 0%, black 18%, black 82%, transparent 100%)",
       }}
     >
-      <motion.div
-        className="absolute inset-x-0 -top-4 -bottom-4"
-        style={prefersReducedMotion ? undefined : { y, opacity }}
-      >
+      <div className="absolute inset-x-0 -top-2 -bottom-2">
         <span
           className="absolute inset-0"
           style={{
             background:
               family === "water"
-                ? `radial-gradient(ellipse at 50% 50%, rgba(125,155,175,0.18), transparent 58%)`
+                ? "radial-gradient(ellipse at 50% 50%, rgba(125,155,175,0.14), transparent 62%)"
                 : family === "earth"
-                  ? `radial-gradient(ellipse at 50% 55%, rgba(184,90,52,0.13), transparent 60%)`
+                  ? "radial-gradient(ellipse at 50% 54%, rgba(184,90,52,0.11), transparent 62%)"
                   : family === "fire"
-                    ? `radial-gradient(ellipse at 50% 78%, rgba(194,138,40,0.22), transparent 62%)`
+                    ? "radial-gradient(ellipse at 50% 76%, rgba(194,138,40,0.16), transparent 64%)"
                     : family === "space"
-                      ? `radial-gradient(ellipse at 50% 50%, rgba(36,57,77,0.18), transparent 58%)`
-                      : `radial-gradient(ellipse at 50% 50%, rgba(212,185,154,0.14), transparent 60%)`,
+                      ? "radial-gradient(ellipse at 50% 50%, rgba(36,57,77,0.14), transparent 62%)"
+                      : "radial-gradient(ellipse at 50% 50%, rgba(212,185,154,0.1), transparent 62%)",
           }}
         />
 
@@ -382,18 +356,7 @@ export function HomeSceneBridge({ family, from, to }: HomeSceneBridgeProps) {
         {family === "confluence" && <ConfluenceBridge active={active} />}
         {family === "space" && <SpaceBridge active={active} />}
         {family === "fire" && <FireBridge active={active} />}
-
-        <motion.span
-          className="absolute inset-y-0 -left-1/4 w-1/4 rotate-6"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, rgba(244,239,230,0.09), transparent)",
-            filter: "blur(8px)",
-          }}
-          animate={active ? { x: ["0%", "620%"] } : undefined}
-          transition={{ duration: 8.5, repeat: Infinity, repeatDelay: 3, ease: EASE }}
-        />
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -37,6 +37,14 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+function expectedMissingAsset(url) {
+  return (
+    /\/(videos|audio)\//i.test(url) ||
+    /\/_vercel\/insights\//i.test(url) ||
+    /\/_vercel\/speed-insights\//i.test(url)
+  );
+}
+
 async function waitForHref(page, locator, expected, timeoutMs = 2500) {
   const deadline = Date.now() + timeoutMs;
   let actual = null;
@@ -57,11 +65,24 @@ async function auditViewport(browser, viewport) {
   });
   const page = await context.newPage();
   const consoleErrors = [];
+  const failedResponses = [];
+  const failedRequests = [];
 
   page.on("console", (message) => {
     if (message.type() === "error") consoleErrors.push(message.text());
   });
   page.on("pageerror", (error) => consoleErrors.push(error.message));
+  page.on("response", (response) => {
+    if (response.status() >= 400) {
+      failedResponses.push({ status: response.status(), url: response.url() });
+    }
+  });
+  page.on("requestfailed", (request) => {
+    failedRequests.push({
+      url: request.url(),
+      error: request.failure()?.errorText || "request failed",
+    });
+  });
 
   await page.goto(BASE_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await page.evaluate(() => document.fonts.ready);
@@ -96,7 +117,7 @@ async function auditViewport(browser, viewport) {
   for (const id of EXPECTED_CHAPTERS) {
     const section = page.locator(`[data-home-chapter="${id}"]`).first();
     await section.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(430);
+    await page.waitForTimeout(620);
 
     const result = await section.evaluate((element) => {
       const viewportWidth = window.innerWidth;
@@ -246,12 +267,26 @@ async function auditViewport(browser, viewport) {
 
   const actionableErrors = consoleErrors.filter(
     (error) =>
-      !/Failed to load resource.*(mp4|webm|mp3|jpg|png)/i.test(error) &&
+      !/^Failed to load resource:/i.test(error) &&
+      !/_vercel\/(insights|speed-insights)/i.test(error) &&
       !/net::ERR_ABORTED/i.test(error),
   );
+  const actionableResponses = failedResponses.filter(
+    ({ url }) => !expectedMissingAsset(url),
+  );
+  const actionableRequests = failedRequests.filter(
+    ({ url }) => !expectedMissingAsset(url),
+  );
+
   assert(
-    actionableErrors.length === 0,
-    `${viewport.name}: browser errors:\n${actionableErrors.join("\n")}`,
+    actionableErrors.length === 0 &&
+      actionableResponses.length === 0 &&
+      actionableRequests.length === 0,
+    `${viewport.name}: browser/network errors:\n${[
+      ...actionableErrors,
+      ...actionableResponses.map(({ status, url }) => `${status} ${url}`),
+      ...actionableRequests.map(({ error, url }) => `${error} ${url}`),
+    ].join("\n")}`,
   );
 
   await context.close();
@@ -260,6 +295,8 @@ async function auditViewport(browser, viewport) {
     chapters: chapterIds,
     mediaBudget,
     consoleErrors: actionableErrors,
+    failedResponses: actionableResponses,
+    failedRequests: actionableRequests,
   };
 }
 

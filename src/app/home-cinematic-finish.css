@@ -6,6 +6,26 @@
   background: #f2f0e8;
 }
 
+.cinematic-home h1,
+.cinematic-home h2,
+.cinematic-home h3,
+.cinematic-home p[role="text"] {
+  clip-path: none !important;
+  overflow: visible;
+}
+
+.studio-cinematic__media-content {
+  padding-top: clamp(6.25rem, 8vw, 7.5rem);
+}
+
+.studio-cinematic__content {
+  padding-top: clamp(6.5rem, 9vw, 8rem);
+}
+
+.paths-cinematic__svg-result {
+  font-size: 15px;
+}
+
 .invitation-cinematic {
   min-height: 100svh;
   background: #141210;
@@ -48,6 +68,10 @@
   max-height: none;
 }
 
+.invitation-cinematic h2 {
+  overflow: visible;
+}
+
 /* Fixed exploration controls should support the page, never cover it. */
 
 [data-chapter-ladder] {
@@ -67,7 +91,7 @@
 }
 
 [data-auto-journey-control="true"] {
-  max-width: calc(100vw - 2rem);
+  display: none !important;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -158,6 +182,10 @@
 
   .studio-cinematic__content {
     padding: 4.5rem 1.25rem;
+  }
+
+  .studio-cinematic__media-content {
+    padding-top: 5.75rem;
   }
 
   .studio-cinematic__content > h2 {

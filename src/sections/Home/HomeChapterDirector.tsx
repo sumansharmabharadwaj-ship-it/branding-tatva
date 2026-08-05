@@ -20,7 +20,7 @@ const HEADING_SELECTOR: Record<string, string> = {
   elements: "p.font-display, h2",
   process: "h2",
   questions: "h2",
-  invitation: "h2",
+  invitation: "p[role='text'], h2",
 };
 
 const ENTRY_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
@@ -74,20 +74,18 @@ function playEntrance(
   heading.animate(
     [
       {
-        opacity: 0.34,
-        transform: "translate3d(0, 22px, 0)",
-        filter: "blur(8px)",
-        clipPath: "inset(0 0 28% 0)",
+        opacity: 0.62,
+        transform: "translate3d(0, 12px, 0)",
+        filter: "blur(2.5px)",
       },
       {
         opacity: 1,
         transform: "translate3d(0, 0, 0)",
         filter: "blur(0px)",
-        clipPath: "inset(0 0 0% 0)",
       },
     ],
     {
-      duration: source === "journey" || source === "replay" ? 1080 : 860,
+      duration: source === "journey" || source === "replay" ? 620 : 520,
       easing: ENTRY_EASE,
       fill: "none",
     },
@@ -98,12 +96,12 @@ function playEntrance(
     support.getAnimations().forEach((animation) => animation.cancel());
     support.animate(
       [
-        { opacity: 0.42, transform: "translate3d(0, 12px, 0)" },
+        { opacity: 0.76, transform: "translate3d(0, 6px, 0)" },
         { opacity: 1, transform: "translate3d(0, 0, 0)" },
       ],
       {
-        duration: 720,
-        delay: 130,
+        duration: 460,
+        delay: 60,
         easing: ENTRY_EASE,
         fill: "none",
       },
@@ -117,12 +115,12 @@ function playEntrance(
     activeInstrument.getAnimations().forEach((animation) => animation.cancel());
     activeInstrument.animate(
       [
-        { opacity: 0.78, transform: "translate3d(0, 9px, 0) scale(0.992)" },
+        { opacity: 0.9, transform: "translate3d(0, 5px, 0) scale(0.997)" },
         { opacity: 1, transform: "translate3d(0, 0, 0) scale(1)" },
       ],
       {
-        duration: 780,
-        delay: 210,
+        duration: 520,
+        delay: 90,
         easing: ENTRY_EASE,
         fill: "none",
       },
