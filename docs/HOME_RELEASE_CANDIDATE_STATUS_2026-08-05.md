@@ -6,11 +6,11 @@ Branch: `reimagine-project-moves`
 
 Recovery snapshot: `snapshot/reimagine-before-home-audit-sprint-2026-08-05`
 
-Audited source commit: `2242894fbb46cab7796c1c58e93d8aa40fe0a592`
+Audited source commit: `aff053970abf5a026d0639e198089d72165ac195`
 
-Status: **preview release candidate passed the automated release gate; production remains untouched**
+Status: **preview release candidate passed the exact-source build, link-integrity, viewport, media, and autoplay gates; production remains untouched**
 
-This document records the current homepage state, the locked creative direction, the repairs completed during the representability and motion-reliability sprint, and the remaining manual approval checks.
+This document records the current homepage state, the locked creative direction, the repairs completed during the representability and motion-reliability sprint, and the remaining physical-device approval checks.
 
 ## 1. Locked direction
 
@@ -65,11 +65,22 @@ It does not reintroduce:
 - Preserved the moving Himalayan forest and original hierarchy.
 - Added a phone-only dusk gradient, text shadow, and slightly tighter reading field so the promise remains legible over bright film frames.
 
+### Diagnosis
+
+- Rebuilt the phone opening frame so the changing diagnosis result and illustrative signal map appear before the three conditions.
+- Converted the conditions into a horizontal snap rail with the next state visibly peeking in.
+- Kept the active diagnosis, strategic move, and autoplay logic intact.
+
 ### Evidence
 
 - Preserved the archive and verified proof structure.
 - Increased mobile card ownership of the viewport while allowing the next card to peek in.
 - Reserved right-side space for compact navigation.
+
+### Studio
+
+- Shortened the compact thinking-room film field so the authorship proposition arrives sooner without losing the cinematic opening.
+- Preserved the psychology, literature, and strategy interaction and direct-authorship portrait.
 
 ### Three Paths
 
@@ -102,6 +113,19 @@ It does not reintroduce:
 - Preserved the desktop split layout.
 - Retained the moving golden-fog environment and clarity-field metaphor.
 
+### Final invitation
+
+- Added a stable inner contrast lens so the proposition and CTA remain readable across silver, blue, and near-black tide frames.
+- Preserved the remembered diagnosis or chosen service-path handoff.
+
+### Motion and lifecycle reliability
+
+- The homepage heartbeat now stands down while the tab is hidden or reduced motion is active.
+- Save-data and 2G connections use a slower recovery cadence.
+- Visible films receive staged recovery after tab return, browser focus, and back-forward-cache restoration.
+- The video budget warden now resumes only films it paused itself and respects page lifecycle and motion preference changes.
+- Reduced-motion mode removes peripheral film constellations and guided cinema while retaining every complete reading state.
+
 ### Conversion handoffs
 
 - Diagnosis now leads into Evidence before asking for a consultation.
@@ -112,7 +136,7 @@ It does not reintroduce:
 
 ### Production build gate
 
-GitHub Actions run `30994374399` completed successfully.
+GitHub Actions run `30998129606` completed successfully for source commit `aff053970abf5a026d0639e198089d72165ac195`.
 
 It verified:
 
@@ -122,9 +146,20 @@ It verified:
 - lint validation
 - generation of all 56 static pages
 
+### Homepage link-integrity gate
+
+The exact-source audit checked:
+
+- 28 internal homepage destinations
+- 18 unique pages
+- every required case-study route
+- every in-page anchor emitted by the homepage
+
+Result: **0 failures**.
+
 ### Homepage release gate v3
 
-GitHub Actions run `30994374434` completed successfully against source commit `2242894fbb46cab7796c1c58e93d8aa40fe0a592`.
+GitHub Actions run `30998129595` completed successfully against source commit `aff053970abf5a026d0639e198089d72165ac195`.
 
 Results:
 
@@ -157,19 +192,16 @@ Verified behaviours:
 - compact Explore → Cinema and sound interaction worked
 - no unexpected runtime or media errors were recorded
 
-The release-gate evidence is stored as GitHub Actions artifact `8925718539`.
+The release-gate evidence is stored as GitHub Actions artifact `8927274905`.
 
-## 4. Remaining manual approval checks
+## 4. Remaining physical-device approval checks
 
-The automated release blockers are cleared. The remaining work is subjective or device-specific:
+The automated release blockers and desktop screenshot review are cleared. The remaining checks require physical devices or subjective approval:
 
-- Review portrait crop at 375, 768, 1440, and 1920.
-- Review text contrast over every Tatva film frame.
-- Review the final invitation across several tide-film moments.
-- Review the reduced-motion composition as a complete reading experience.
-- Test hidden-tab return and low-power physical-device behaviour.
-- Confirm every case-study and CTA destination in the deployed preview.
-- Confirm the full guided journey feels slow enough for comprehension.
+- Test hidden-tab return and low-power recovery on a real iPhone and Android device.
+- Review the 375 and 1920 portrait crops outside headless Chromium.
+- Confirm the full guided journey feels slow enough for comprehension on a physical trackpad and phone.
+- Approve the deployed preview before any production promotion.
 
 ## 5. Production rule
 
