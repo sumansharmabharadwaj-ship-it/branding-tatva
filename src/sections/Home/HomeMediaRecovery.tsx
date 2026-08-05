@@ -18,9 +18,10 @@ const HOME_MEDIA = [
 ] as const;
 
 function installCompatibleSource(video: HTMLVideoElement, original: string, webm: string) {
-  if (video.dataset.homeCompatibleSource === webm) return;
+  if (video.dataset.homeCompatibleSource === webm) return false;
 
   video.pause();
+  video.autoplay = false;
   video.removeAttribute("src");
   video.querySelectorAll("source").forEach((source) => source.remove());
 
@@ -35,10 +36,20 @@ function installCompatibleSource(video: HTMLVideoElement, original: string, webm
   video.append(preferred, fallback);
   video.dataset.homeCompatibleSource = webm;
   video.load();
+  return true;
+}
 
-  if (!document.hidden && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    void video.play().catch(() => undefined);
+function playVisibleVideo(video: HTMLVideoElement, reducedMotion: MediaQueryList) {
+  if (
+    document.hidden ||
+    reducedMotion.matches ||
+    video.dataset.homeInView !== "true"
+  ) {
+    video.pause();
+    return;
   }
+
+  void video.play().catch(() => undefined);
 }
 
 export function HomeMediaRecovery() {
@@ -46,20 +57,33 @@ export function HomeMediaRecovery() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reducedMotion.matches) return;
 
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const video = entry.target as HTMLVideoElement;
+          video.dataset.homeInView = entry.isIntersecting ? "true" : "false";
+          playVisibleVideo(video, reducedMotion);
+        }
+      },
+      { rootMargin: "28% 0px", threshold: 0.04 },
+    );
+
     const install = () => {
       for (const media of HOME_MEDIA) {
         const video = document.querySelector<HTMLVideoElement>(
           `video[src="${media.original}"]`,
         );
-        if (video) installCompatibleSource(video, media.original, media.webm);
+        if (!video) continue;
+
+        const installed = installCompatibleSource(video, media.original, media.webm);
+        if (installed) observer.observe(video);
       }
     };
 
     const resume = () => {
-      if (document.hidden || reducedMotion.matches) return;
       document
         .querySelectorAll<HTMLVideoElement>("video[data-home-compatible-source]")
-        .forEach((video) => void video.play().catch(() => undefined));
+        .forEach((video) => playVisibleVideo(video, reducedMotion));
     };
 
     install();
@@ -73,6 +97,7 @@ export function HomeMediaRecovery() {
     return () => {
       window.cancelAnimationFrame(animationFrame);
       window.clearTimeout(retry);
+      observer.disconnect();
       document.removeEventListener("visibilitychange", resume);
       window.removeEventListener("pageshow", resume);
       window.removeEventListener("focus", resume);
