@@ -1,16 +1,9 @@
 import type { NextConfig } from "next";
 
 // The only third-party browser-side resources this site actually loads
-// are Calendly's widget script and its iframe (confirmed by grepping
-// every https:// literal in src/ — everything else is either a plain
-// <a> link, a server-side-only fetch in an API route, or same-origin).
-// 'unsafe-inline' stays on script-src/style-src rather than a nonce
-// setup: this site's JSON-LD blocks (dangerouslySetInnerHTML, several
-// pages) and its heavy use of Framer Motion/GSAP/Tailwind arbitrary
-// inline styles would both need a much larger retrofit to run under a
-// strict nonce-based policy, and getting that wrong silently breaks
-// pages rather than failing loudly — a scoped allowlist is the safer
-// tradeoff for this codebase today.
+// are Calendly's widget script and its iframe. 'unsafe-inline' stays on
+// script-src/style-src because the site uses JSON-LD blocks and motion
+// libraries that currently rely on inline styles.
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://assets.calendly.com",
@@ -26,21 +19,36 @@ const CSP = [
   "frame-ancestors 'self'",
 ].join("; ");
 
-// Final preview package marker: the homepage runtime is unchanged from
-// exact-source audit aff053970abf5a026d0639e198089d72165ac195. The branch now
-// also carries its current release manifest and durable audit handoff.
 const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
   reactStrictMode: true,
   poweredByHeader: false,
-  // The blog became Insights (governing bible's site structure) —
-  // permanent redirects preserve every previously indexed URL.
   async redirects() {
     return [
+      // The blog became Insights. Permanent redirects preserve indexed URLs.
       { source: "/blog", destination: "/insights", permanent: true },
       { source: "/blog/:slug", destination: "/insights/:slug", permanent: true },
+
+      // The original homepage MP4 exports use a codec that is not consistently
+      // decoded by Chromium. Keep their public URLs alive while serving the
+      // lightweight VP9 loops produced for the rebuilt homepage.
+      {
+        source: "/videos/hero-forest-sanctuary.mp4",
+        destination: "/videos/home-reframe-hero.webm",
+        permanent: false,
+      },
+      {
+        source: "/videos/pexels-river-dawn.mp4",
+        destination: "/videos/home-reframe-framework.webm",
+        permanent: false,
+      },
+      {
+        source: "/videos/higgsfield-silver-tide.mp4",
+        destination: "/videos/home-reframe-invitation.webm",
+        permanent: false,
+      },
     ];
   },
   async headers() {
