@@ -1,5 +1,5 @@
-name: Homepage release-gate audit v2
-run-name: Homepage release gate v2 · ${{ github.sha }}
+name: Homepage release-gate audit v3
+run-name: Homepage release gate v3 · ${{ github.sha }}
 
 on:
   workflow_dispatch:
@@ -14,15 +14,17 @@ on:
       - src/app/home-*.css
       - src/components/AmbientAudio.tsx
       - src/lib/videoVisibility.ts
+      - src/sections/Hero/**
       - src/sections/Home/**
       - src/sections/Elements/**
       - src/sections/Process/**
+      - src/sections/FAQ/**
 
 permissions:
   contents: read
 
 concurrency:
-  group: branding-tatva-homepage-release-gate-v2
+  group: branding-tatva-homepage-release-gate-v3
   cancel-in-progress: true
 
 jobs:
@@ -31,7 +33,7 @@ jobs:
     timeout-minutes: 28
 
     steps:
-      - name: Check out the preview branch
+      - name: Check out the exact preview branch state
         uses: actions/checkout@v4
         with:
           ref: reimagine-project-moves
@@ -87,11 +89,11 @@ jobs:
             kill "$(cat /tmp/branding-tatva-start.pid)" || true
           fi
 
-      - name: Upload release-gate evidence
+      - name: Upload final release-gate evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: branding-tatva-homepage-release-gate-v2
+          name: branding-tatva-homepage-release-gate-v3
           path: visual-audit-v2/*
           if-no-files-found: error
           retention-days: 7
