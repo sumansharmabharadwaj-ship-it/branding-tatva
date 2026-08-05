@@ -172,7 +172,7 @@ export function ServicesReframe() {
     "--services-accent": healthRecommendation.accent,
   } as CSSProperties;
 
-  function contactHref(packageSlug: string, stage = scenario.key) {
+  function contactHref(packageSlug: string, stage: string = scenario.key) {
     return `/contact?package=${encodeURIComponent(packageSlug)}&stage=${encodeURIComponent(stage)}&source=services`;
   }
 
