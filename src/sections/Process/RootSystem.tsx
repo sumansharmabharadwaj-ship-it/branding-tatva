@@ -129,7 +129,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const pauseUntilRef = useRef(0);
   const holdTimerRef = useRef(0);
-  const inView = useInView(sectionRef, { amount: 0.32 });
+  const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.08 });
   const [active, setActive] = useState(0);
   const [holding, setHolding] = useState(false);
 

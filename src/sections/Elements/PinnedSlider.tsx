@@ -137,6 +137,7 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
     function onChapter(event: Event) {
       const detail = (event as CustomEvent<{ id?: string }>).detail;
       if (detail?.id !== "elements") return;
+      setIsVisible(true);
       pauseAutoplay(900);
       showIndex(0);
     }

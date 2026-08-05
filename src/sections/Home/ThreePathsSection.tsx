@@ -81,7 +81,7 @@ export function ThreePathsSection() {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const pauseUntilRef = useRef(0);
-  const inView = useInView(sectionRef, { amount: 0.34 });
+  const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.1 });
   const [autoPath, setAutoPath] = useState(0);
   const [carriedDiagnosis, setCarriedDiagnosis] = useState(false);
   const active = PATHS[autoPath];

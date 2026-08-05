@@ -78,7 +78,7 @@ export function EvidenceWall() {
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.42 });
+  const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.08 });
   const activeProject = projects[activeIndex] ?? projects[0];
   const activeTrail = TRAILS[activeProject.slug];
 

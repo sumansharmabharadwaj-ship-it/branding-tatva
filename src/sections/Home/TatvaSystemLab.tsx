@@ -68,7 +68,7 @@ export function TatvaSystemLab() {
   const sectionRef = useRef<HTMLElement>(null);
   const pauseUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.28 });
+  const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.1 });
   const [omittedIndex, setOmittedIndex] = useState<number | null>(null);
   const omitted = omittedIndex === null ? null : FORCES[omittedIndex];
   const motionActive = inView && !prefersReducedMotion;

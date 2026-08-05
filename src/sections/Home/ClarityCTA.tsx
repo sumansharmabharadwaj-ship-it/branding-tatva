@@ -78,7 +78,7 @@ export function ClarityCTA() {
   const pauseUntilRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.38 });
+  const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.08 });
   const active = SCOPE_OPTIONS[activeIndex];
 
   useEffect(() => {
