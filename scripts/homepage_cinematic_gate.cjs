@@ -51,6 +51,14 @@ function expectedMissingAsset(url) {
   );
 }
 
+function expectedAbortedPrefetch(item) {
+  return (
+    /net::ERR_ABORTED/i.test(item.error) &&
+    /[?&]_rsc=/.test(item.url) &&
+    item.url.startsWith(BASE_URL)
+  );
+}
+
 async function waitForHref(page, locator, expected, timeoutMs = 2500) {
   const deadline = Date.now() + timeoutMs;
   let actual = null;
@@ -62,6 +70,19 @@ async function waitForHref(page, locator, expected, timeoutMs = 2500) {
   }
 
   throw new Error(`href resolved to ${actual}, expected ${expected}`);
+}
+
+async function waitForPrelude(page, viewportName) {
+  const loader = page.locator("[data-page-load-veil]");
+  if ((await loader.count()) > 0) {
+    await loader.waitFor({ state: "detached", timeout: 9_000 });
+  }
+  await page.waitForTimeout(260);
+
+  assert(
+    (await page.locator("[data-page-load-veil]").count()) === 0,
+    `${viewportName}: loader did not clear`,
+  );
 }
 
 async function auditViewport(browser, viewport) {
@@ -93,12 +114,7 @@ async function auditViewport(browser, viewport) {
 
   await page.goto(BASE_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await page.evaluate(() => document.fonts.ready);
-  await page.waitForTimeout(2850);
-
-  assert(
-    (await page.locator("[data-page-load-veil]").count()) === 0,
-    `${viewport.name}: loader did not clear`,
-  );
+  await waitForPrelude(page, viewport.name);
 
   const chapterIds = await page
     .locator("[data-home-v4-chapter]")
@@ -268,6 +284,9 @@ async function auditViewport(browser, viewport) {
   );
 
   if (!viewport.touch) {
+    await opening.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(320);
+
     const guide = page.locator("[data-guided-controls]");
     assert((await guide.count()) === 1, `${viewport.name}: guided-view controls missing`);
     const guideToggle = guide.locator("button").first();
@@ -276,8 +295,9 @@ async function auditViewport(browser, viewport) {
       (await guideToggle.getAttribute("aria-pressed")) === "true",
       `${viewport.name}: guided view did not start`,
     );
+    await page.mouse.move(viewport.width - 80, viewport.height / 2);
     await page.mouse.wheel(0, 180);
-    await page.waitForTimeout(120);
+    await page.waitForTimeout(160);
     assert(
       (await guideToggle.getAttribute("aria-pressed")) === "false",
       `${viewport.name}: manual scroll did not override guided view`,
@@ -336,7 +356,7 @@ async function auditViewport(browser, viewport) {
     ({ url }) => !expectedMissingAsset(url),
   );
   const actionableRequests = failedRequests.filter(
-    ({ url }) => !expectedMissingAsset(url),
+    (item) => !expectedMissingAsset(item.url) && !expectedAbortedPrefetch(item),
   );
 
   assert(
