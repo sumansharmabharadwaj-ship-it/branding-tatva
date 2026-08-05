@@ -63,8 +63,16 @@
   }
 
   [data-chapter-ladder-mobile] > button {
+    width: 2.8rem !important;
+    height: 2.8rem !important;
     min-height: 2.8rem !important;
-    padding-inline: 0.9rem !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+
+  [data-chapter-ladder-mobile] > button > span:not(:first-child) {
+    display: none !important;
   }
 }
 

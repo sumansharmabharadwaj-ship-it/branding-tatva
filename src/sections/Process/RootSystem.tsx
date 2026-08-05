@@ -239,7 +239,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       onTouchStart={() => pauseAutoplay()}
       onFocusCapture={() => pauseAutoplay()}
     >
-      <div className="project-journey__media" aria-hidden="true">
+      <div className="project-journey__media" data-video-decorative-root aria-hidden="true">
         {stage.poster && (
           <div
             key={`poster-${active}`}

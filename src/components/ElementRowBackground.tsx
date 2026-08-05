@@ -104,7 +104,7 @@ export function ElementRowBackground({
     // as blank empty space rather than a loading section whenever the
     // image was slow to arrive (cold CDN cache, slow network, or simply
     // not the active PinnedSlider slide yet).
-    <div ref={ref} className="absolute inset-0" style={{ backgroundColor: color }} aria-hidden="true">
+    <div ref={ref} data-video-decorative-root className="absolute inset-0" style={{ backgroundColor: color }} aria-hidden="true">
       <motion.div
         className="absolute inset-0"
         initial={KEN_BURNS.initial}
@@ -141,9 +141,13 @@ export function ElementRowBackground({
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
           style={{ opacity: videoReady ? 1 : 0, objectPosition: imagePosition }}
-          onCanPlay={() => setVideoReady(true)}
+          onCanPlay={(event) => {
+            setVideoReady(true);
+            if (playing) void event.currentTarget.play().catch(() => {});
+          }}
           src={video}
           muted
+          autoPlay={playing}
           loop
           playsInline
           preload="metadata"
