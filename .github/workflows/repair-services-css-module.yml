@@ -29,13 +29,15 @@ jobs:
           path = Path("scripts/services_release_gate.cjs")
           source = path.read_text()
 
-          play_before = """      await element.play();"""
-          play_after = """      await Promise.race([
-        element.play(),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error(\"Media play timed out after 5 seconds\")), 5000),
-        ),
-      ]);"""
+          play_before = "      await element.play();"
+          play_after = (
+              "      await Promise.race([\n"
+              "        element.play(),\n"
+              "        new Promise((_, reject) =>\n"
+              "          setTimeout(() => reject(new Error(\"Media play timed out after 5 seconds\")), 5000),\n"
+              "        ),\n"
+              "      ]);"
+          )
           if play_before not in source:
               raise SystemExit("Expected media probe was not found")
           source = source.replace(play_before, play_after, 1)
