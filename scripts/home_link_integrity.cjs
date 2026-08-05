@@ -15,16 +15,17 @@ const ROUTES = [
   "/work/herbalcart",
 ];
 
-const REQUIRED_HOME_IDS = [
+const REQUIRED_HOME_CHAPTERS = [
   "opening",
-  "diagnosis",
-  "evidence",
-  "studio",
+  "recognition",
+  "cost",
+  "foundation",
   "paths",
-  "framework",
-  "elements",
   "process",
-  "questions",
+  "evidence",
+  "tatva",
+  "studio",
+  "decision",
   "invitation",
 ];
 
@@ -40,10 +41,10 @@ const REQUIRED_HOME_IDS = [
   const homepage = await fetch(`${BASE_URL}/`);
   const html = await homepage.text();
 
-  for (const id of REQUIRED_HOME_IDS) {
+  for (const id of REQUIRED_HOME_CHAPTERS) {
     assert(
-      html.includes(`id="${id}"`) || html.includes(`data-home-chapter="${id}"`),
-      `homepage is missing chapter ${id}`,
+      html.includes(`data-home-v4-chapter="${id}"`),
+      `V4 homepage is missing chapter ${id}`,
     );
   }
 
@@ -51,13 +52,20 @@ const REQUIRED_HOME_IDS = [
     'href="/contact"',
     'href="/work"',
     'href="/about"',
+    'href="#recognition"',
+    'href="#cost"',
+    'href="#foundation"',
+    'href="#evidence"',
+    'href="/services#desire"',
+    'href="/services#situation"',
+    'href="/services#offerings"',
   ];
 
   for (const link of serverRenderedLinks) {
-    assert(html.includes(link), `homepage is missing ${link}`);
+    assert(html.includes(link), `V4 homepage is missing ${link}`);
   }
 
-  console.log("Homepage route and server-rendered link gate passed.");
+  console.log("V4 homepage route and server-rendered link gate passed.");
 })().catch((error) => {
   console.error(error);
   process.exit(1);
