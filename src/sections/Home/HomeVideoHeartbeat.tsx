@@ -19,9 +19,20 @@ function isActuallyVisible(video: HTMLVideoElement) {
     return false;
   }
 
+  // Decorative ambient fragments are intentionally aria-hidden from the
+  // accessibility tree even while they are visually present. Treating that
+  // attribute as visual concealment kept exactly those films frozen. Hidden
+  // carousel/sticky slides still use aria-hidden as a real visibility gate.
+  const decorativeAmbientFilm = Boolean(video.closest("[data-home-ambient-film]"));
+
   let node: HTMLElement | null = video;
   while (node && node !== document.body) {
-    if (node.getAttribute("aria-hidden") === "true") return false;
+    if (
+      node.getAttribute("aria-hidden") === "true" &&
+      !decorativeAmbientFilm
+    ) {
+      return false;
+    }
     const style = window.getComputedStyle(node);
     if (
       style.display === "none" ||
