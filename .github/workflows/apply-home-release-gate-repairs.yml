@@ -1,0 +1,98 @@
+name: Apply homepage release-gate repairs
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-home-release-gate-repairs.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Wake Process earlier and clean the two deep mobile scenes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          process_path = Path("src/sections/Process/RootSystem.tsx")
+          process = process_path.read_text()
+          old_process = '  const inView = useInView(sectionRef, { amount: 0.32 });'
+          new_process = '  const inView = useInView(sectionRef, { amount: 0.08 });'
+          if old_process not in process:
+              raise SystemExit("Process visibility threshold was not found")
+          process_path.write_text(process.replace(old_process, new_process, 1))
+
+          vertical_path = Path("src/sections/Elements/VerticalUnfold.tsx")
+          vertical = vertical_path.read_text()
+          old_vertical = '<div className="divide-y divide-border bg-soil pt-16 sm:pt-24">'
+          new_vertical = '<div className="divide-y divide-border bg-soil pt-8 sm:pt-24">'
+          if old_vertical not in vertical:
+              raise SystemExit("VerticalUnfold mobile entry padding was not found")
+          vertical_path.write_text(vertical.replace(old_vertical, new_vertical, 1))
+
+          auto_path = Path("src/sections/Home/HomeAutoJourney.tsx")
+          auto = auto_path.read_text()
+          old_auto = '["process", "questions", "invitation"].includes('
+          new_auto = '["elements", "process", "questions", "invitation"].includes('
+          if old_auto not in auto:
+              raise SystemExit("HomeAutoJourney deep chapter set was not found")
+          auto_path.write_text(auto.replace(old_auto, new_auto, 1))
+
+          ladder_path = Path("src/sections/Home/ChapterLadder.tsx")
+          ladder = ladder_path.read_text()
+          old_ladder = '["process", "questions", "invitation"].includes('
+          new_ladder = '["elements", "process", "questions", "invitation"].includes('
+          if old_ladder not in ladder:
+              raise SystemExit("ChapterLadder deep chapter set was not found")
+          ladder_path.write_text(ladder.replace(old_ladder, new_ladder, 1))
+
+          css_path = Path("src/app/home-audit-fixes.css")
+          css = css_path.read_text()
+          addition = '''
+/* The closing scene is the conversion destination, so its CTA becomes the
+   only fixed visual priority. Default mobile navigation fades away once Begin
+   is active. A running Journey keeps its pause button, because visitor control
+   must always remain immediate. */
+@media (max-width: 767px) {
+  body:has([data-home-chapter="invitation"][data-scene-awake="true"])
+    [data-chapter-ladder-mobile],
+  body:has([data-home-chapter="invitation"][data-scene-awake="true"])
+    [data-auto-journey-control][aria-pressed="false"] {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(10px) !important;
+  }
+}
+'''
+          if 'closing scene is the conversion destination' not in css:
+              css_path.write_text(css + addition)
+          PY
+
+      - name: Commit the repairs and remove this one-time workflow
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add \
+            src/sections/Process/RootSystem.tsx \
+            src/sections/Elements/VerticalUnfold.tsx \
+            src/sections/Home/HomeAutoJourney.tsx \
+            src/sections/Home/ChapterLadder.tsx \
+            src/app/home-audit-fixes.css
+          git rm .github/workflows/apply-home-release-gate-repairs.yml
+          git commit -m "Wake Process and clear the final mobile conversion scene"
+          git push origin HEAD:reimagine-project-moves
