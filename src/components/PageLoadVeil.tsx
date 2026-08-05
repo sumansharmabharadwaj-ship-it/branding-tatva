@@ -9,9 +9,9 @@ const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 const SESSION_KEY = "branding-tatva-v4-prelude-seen";
-const FIRST_VISIT_MS = 2050;
-const REPEAT_VISIT_MS = 1380;
-const REMOVE_BUFFER_MS = 620;
+const FIRST_VISIT_MS = 1680;
+const REPEAT_VISIT_MS = 1080;
+const EXIT_SECONDS = 0.42;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const NODES = [
@@ -56,31 +56,29 @@ export function PageLoadVeil() {
     } catch {}
 
     const duration = seen ? REPEAT_VISIT_MS : FIRST_VISIT_MS;
-    const phaseOne = window.setTimeout(() => setPhase(1), duration * 0.28);
-    const phaseTwo = window.setTimeout(() => setPhase(2), duration * 0.62);
+    const phaseOne = window.setTimeout(() => setPhase(1), duration * 0.27);
+    const phaseTwo = window.setTimeout(() => setPhase(2), duration * 0.59);
     const hideTimer = window.setTimeout(() => {
       try {
         window.sessionStorage.setItem(SESSION_KEY, "true");
       } catch {}
       setVisible(false);
     }, duration);
-    const removeTimer = window.setTimeout(
-      () => setRemoved(true),
-      duration + REMOVE_BUFFER_MS,
-    );
 
     return () => {
       window.clearTimeout(phaseOne);
       window.clearTimeout(phaseTwo);
       window.clearTimeout(hideTimer);
-      window.clearTimeout(removeTimer);
     };
   }, [pathname, prefersReducedMotion]);
 
   if (removed) return null;
 
   return (
-    <AnimatePresence>
+    <AnimatePresence
+      initial={false}
+      onExitComplete={() => setRemoved(true)}
+    >
       {visible && (
         <motion.div
           data-page-load-veil
@@ -90,9 +88,9 @@ export function PageLoadVeil() {
           exit={{
             opacity: 0,
             y: -8,
-            filter: "blur(7px)",
+            filter: "blur(6px)",
           }}
-          transition={{ duration: 0.56, ease: EASE }}
+          transition={{ duration: EXIT_SECONDS, ease: EASE }}
         >
           <div
             className="absolute inset-0"
@@ -128,7 +126,7 @@ export function PageLoadVeil() {
                   pathLength="1"
                   initial={{ pathLength: 0, opacity: 0.2 }}
                   animate={{ pathLength: 1, opacity: 0.78 }}
-                  transition={{ duration: 0.66, ease: EASE }}
+                  transition={{ duration: 0.56, ease: EASE }}
                 />
 
                 {CONNECTIONS.map((path, index) => (
@@ -146,8 +144,8 @@ export function PageLoadVeil() {
                       opacity: phase >= 1 ? 0.72 : 0.16,
                     }}
                     transition={{
-                      duration: 0.5,
-                      delay: index * 0.075,
+                      duration: 0.42,
+                      delay: index * 0.06,
                       ease: EASE,
                     }}
                   />
@@ -167,8 +165,8 @@ export function PageLoadVeil() {
                       }}
                       style={{ transformOrigin: `${node.x}px ${node.y}px` }}
                       transition={{
-                        duration: 0.36,
-                        delay: index * 0.08,
+                        duration: 0.3,
+                        delay: index * 0.065,
                         ease: EASE,
                       }}
                     />
@@ -188,7 +186,7 @@ export function PageLoadVeil() {
                       style={{ transformOrigin: `${node.x}px ${node.y}px` }}
                       transition={{
                         duration: 2.2 + index * 0.12,
-                        delay: index * 0.14,
+                        delay: index * 0.1,
                         repeat: Infinity,
                         ease: "easeInOut",
                       }}
@@ -202,7 +200,7 @@ export function PageLoadVeil() {
                       letterSpacing="2.2"
                       initial={{ opacity: 0, y: 4 }}
                       animate={{ opacity: phase >= 1 ? 1 : 0, y: 0 }}
-                      transition={{ duration: 0.4, delay: 0.2 + index * 0.06 }}
+                      transition={{ duration: 0.32, delay: 0.15 + index * 0.05 }}
                     >
                       {node.name.toUpperCase()}
                     </motion.text>
@@ -218,7 +216,7 @@ export function PageLoadVeil() {
                   pathLength="1"
                   initial={{ pathLength: 0, opacity: 0 }}
                   animate={{ pathLength: phase >= 2 ? 1 : 0, opacity: phase >= 2 ? 0.72 : 0 }}
-                  transition={{ duration: 0.55, ease: EASE }}
+                  transition={{ duration: 0.42, ease: EASE }}
                 />
               </svg>
 
@@ -226,7 +224,7 @@ export function PageLoadVeil() {
                 className="absolute left-1/2 top-1/2 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-ivory/12 bg-[#111518]/72 backdrop-blur-xl"
                 initial={{ opacity: 0, scale: 0.74 }}
                 animate={{ opacity: phase >= 2 ? 1 : 0, scale: phase >= 2 ? 1 : 0.74 }}
-                transition={{ duration: 0.46, ease: EASE }}
+                transition={{ duration: 0.36, ease: EASE }}
               >
                 <LogoMark size={42} light />
               </motion.div>
@@ -241,7 +239,7 @@ export function PageLoadVeil() {
                 initial={{ opacity: 0, y: 7 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.28, ease: EASE }}
+                transition={{ duration: 0.22, ease: EASE }}
               >
                 {COPY[phase]}
               </motion.p>
@@ -251,7 +249,7 @@ export function PageLoadVeil() {
                 className="block h-full origin-left bg-[#d4b99a]"
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
-                transition={{ duration: 1.45, ease: "linear" }}
+                transition={{ duration: 1.18, ease: "linear" }}
               />
             </span>
           </div>
