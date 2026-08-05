@@ -11,6 +11,7 @@ import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
 import { FrameworkJourneyNudge } from "@/sections/Home/FrameworkJourneyNudge";
 import { StudioTriptych } from "@/sections/Home/StudioTriptych";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
+import { HomeAmbientFilm } from "@/sections/Home/HomeAmbientFilm";
 import { HomeChoiceMemory } from "@/sections/Home/HomeChoiceMemory";
 import { HomeOpeningSignal } from "@/sections/Home/HomeOpeningSignal";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
@@ -105,12 +106,25 @@ export default function Home() {
         <HomeSceneBridge family="air" from="#354238" to="#4B342A" />
 
         <div data-home-earth-tone="paths">
+          <HomeAmbientFilm
+            video="/videos/higgsfield-process-ground.mp4"
+            poster="/images/higgsfield-process-ground-poster.jpg"
+            label="A position must hold before expression can travel."
+            direction={-1}
+            className="-left-14 top-[23rem] h-[21rem] w-[15rem] rounded-[44%_56%_48%_52%/58%_42%_58%_42%] sm:-left-12 sm:top-[9rem] sm:h-[30rem] sm:w-[21rem] lg:left-auto lg:right-[-5rem] lg:top-[5rem]"
+          />
           <ThreePathsSection />
         </div>
 
         <HomeSceneBridge family="confluence" from="#4B342A" to="#2F443F" />
 
         <div data-home-earth-tone="framework">
+          <HomeAmbientFilm
+            video="/videos/higgsfield-process-listen.mp4"
+            poster="/images/higgsfield-process-listen-poster.jpg"
+            label="Five signals breathe as one recognisable system."
+            className="-right-16 top-[11rem] h-[22rem] w-[15rem] rounded-full sm:right-[-5rem] sm:top-[7rem] sm:h-[29rem] sm:w-[20rem] lg:right-[-4rem] lg:top-[4rem]"
+          />
           <TatvaStrip />
           <TatvaSystemLab />
           <FrameworkJourneyNudge />
