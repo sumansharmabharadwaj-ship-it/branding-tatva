@@ -1,4 +1,4 @@
-name: Repair Services CSS module selector
+name: Repair Services route typing
 
 on:
   workflow_dispatch:
@@ -21,24 +21,24 @@ jobs:
           ref: reimagine-project-moves
           fetch-depth: 1
 
-      - name: Replace the impure global selector
+      - name: Widen the contextual stage parameter
         run: |
           python - <<'PY'
           from pathlib import Path
 
-          path = Path("src/sections/Services/ServicesReframe.module.css")
+          path = Path("src/sections/Services/ServicesReframe.tsx")
           source = path.read_text()
-          before = ":global(body:has([data-services-reframe])) {"
-          after = ".root[data-services-reframe] {"
+          before = "function contactHref(packageSlug: string, stage = scenario.key) {"
+          after = "function contactHref(packageSlug: string, stage: string = scenario.key) {"
           if before not in source:
-              raise SystemExit("Expected selector was not found")
+              raise SystemExit("Expected helper signature was not found")
           path.write_text(source.replace(before, after, 1))
           PY
 
-      - name: Commit the repaired stylesheet
+      - name: Commit the repaired Services helper
         run: |
           git config user.name "branding-tatva-release-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add src/sections/Services/ServicesReframe.module.css
-          git commit -m "Make the Services stylesheet CSS-module safe"
+          git add src/sections/Services/ServicesReframe.tsx
+          git commit -m "Allow health-check context in Services enquiry links"
           git push origin HEAD:reimagine-project-moves
