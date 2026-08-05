@@ -12,7 +12,6 @@ permissions:
 
 jobs:
   patch-scenes:
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -31,58 +30,52 @@ jobs:
           python - <<'PY'
           from pathlib import Path
 
-          replacements = {
-              "src/sections/Home/ClarityCTA.tsx": [
-                  (
-                      'const inView = useInView(sectionRef, { amount: 0.38 });',
-                      'const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.08 });',
-                  ),
-              ],
-              "src/sections/Home/EvidenceWall.tsx": [
-                  (
-                      'const inView = useInView(sectionRef, { amount: 0.42 });',
-                      'const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.08 });',
-                  ),
-              ],
-              "src/sections/Home/ThreePathsSection.tsx": [
-                  (
-                      'const inView = useInView(sectionRef, { amount: 0.34 });',
-                      'const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.1 });',
-                  ),
-              ],
-              "src/sections/Home/TatvaSystemLab.tsx": [
-                  (
-                      'const inView = useInView(sectionRef, { amount: 0.28 });',
-                      'const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.1 });',
-                  ),
-              ],
-              "src/sections/Process/RootSystem.tsx": [
-                  (
-                      'const inView = useInView(sectionRef, { amount: 0.32 });',
-                      'const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.08 });',
-                  ),
-              ],
-              "src/sections/Elements/PinnedSlider.tsx": [
-                  (
-                      '''      if (detail?.id !== "elements") return;
+          pairs = [
+              (
+                  Path("src/sections/Home/ClarityCTA.tsx"),
+                  "const inView = useInView(sectionRef, { amount: 0.38 });",
+                  "const inView = useInView(sectionRef, { margin: \"12% 0px\", amount: 0.08 });",
+              ),
+              (
+                  Path("src/sections/Home/EvidenceWall.tsx"),
+                  "const inView = useInView(sectionRef, { amount: 0.42 });",
+                  "const inView = useInView(sectionRef, { margin: \"12% 0px\", amount: 0.08 });",
+              ),
+              (
+                  Path("src/sections/Home/ThreePathsSection.tsx"),
+                  "const inView = useInView(sectionRef, { amount: 0.34 });",
+                  "const inView = useInView(sectionRef, { margin: \"12% 0px\", amount: 0.1 });",
+              ),
+              (
+                  Path("src/sections/Home/TatvaSystemLab.tsx"),
+                  "const inView = useInView(sectionRef, { amount: 0.28 });",
+                  "const inView = useInView(sectionRef, { margin: \"12% 0px\", amount: 0.1 });",
+              ),
+              (
+                  Path("src/sections/Process/RootSystem.tsx"),
+                  "const inView = useInView(sectionRef, { amount: 0.32 });",
+                  "const inView = useInView(sectionRef, { margin: \"12% 0px\", amount: 0.08 });",
+              ),
+          ]
+
+          for path, before, after in pairs:
+              text = path.read_text()
+              if before not in text:
+                  raise SystemExit("Expected in-view threshold was not found in " + str(path))
+              path.write_text(text.replace(before, after, 1))
+
+          slider = Path("src/sections/Elements/PinnedSlider.tsx")
+          text = slider.read_text()
+          before = """      if (detail?.id !== \"elements\") return;
       pauseAutoplay(900);
-      showIndex(0);''',
-                      '''      if (detail?.id !== "elements") return;
+      showIndex(0);"""
+          after = """      if (detail?.id !== \"elements\") return;
       setIsVisible(true);
       pauseAutoplay(900);
-      showIndex(0);''',
-                  ),
-              ],
-          }
-
-          for filename, pairs in replacements.items():
-              path = Path(filename)
-              text = path.read_text()
-              for before, after in pairs:
-                  if before not in text:
-                      raise SystemExit(f"Expected block was not found in {filename}: {before}")
-                  text = text.replace(before, after, 1)
-              path.write_text(text)
+      showIndex(0);"""
+          if before not in text:
+              raise SystemExit("Expected Elements chapter handler was not found")
+          slider.write_text(text.replace(before, after, 1))
           PY
 
       - name: Commit the scene wakeups
@@ -90,12 +83,6 @@ jobs:
         run: |
           git config user.name "Branding Tatva Build Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add \
-            src/sections/Home/ClarityCTA.tsx \
-            src/sections/Home/EvidenceWall.tsx \
-            src/sections/Home/ThreePathsSection.tsx \
-            src/sections/Home/TatvaSystemLab.tsx \
-            src/sections/Process/RootSystem.tsx \
-            src/sections/Elements/PinnedSlider.tsx
+          git add src
           git commit -m "Wake tall homepage scenes on mobile"
           git push origin HEAD:reimagine-project-moves
