@@ -1,0 +1,92 @@
+name: Apply homepage film ownership cleanup
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-film-ownership.yml
+
+permissions:
+  contents: write
+
+jobs:
+  clean-film-layers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+          sparse-checkout: src
+          sparse-checkout-cone-mode: true
+
+      - name: Let local WebM fragments own Paths and Framework
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("src/sections/Home/HomeFilmConstellation.tsx")
+          text = path.read_text()
+
+          blocks = [
+              '''  paths: [
+    {
+      video: "/videos/higgsfield-process-ground.mp4",
+      poster: "/images/higgsfield-process-ground-poster.jpg",
+      label: "Begin with what must hold.",
+    },
+    {
+      video: "/videos/higgsfield-process-shape.mp4",
+      poster: "/images/higgsfield-process-shape-poster.jpg",
+      label: "Then give the business a coherent form.",
+    },
+  ],
+''',
+              '''  framework: [
+    {
+      video: "/videos/higgsfield-process-listen.mp4",
+      poster: "/images/higgsfield-process-listen-poster.jpg",
+      label: "Each force answers a different strategic question.",
+    },
+    {
+      video: "/videos/higgsfield-confident-light.mp4",
+      poster: "/images/higgsfield-confident-light-poster.jpg",
+      label: "Five signals, held inside one recognisable system.",
+    },
+  ],
+''',
+              '''  paths: [
+    "-right-9 top-[24vh] aspect-[3/4] w-[clamp(6.5rem,7.5vw,8.5rem)] rounded-[1.5rem]",
+    "-left-8 bottom-[18vh] aspect-square w-[clamp(5.5rem,6.2vw,7rem)] rounded-[1.35rem]",
+  ],
+''',
+              '''  framework: [
+    "-left-8 top-[22vh] aspect-[4/5] w-[clamp(6.4rem,7.2vw,8.2rem)] rounded-[42%_58%_48%_52%/58%_42%_58%_42%]",
+    "-right-7 bottom-[17vh] aspect-square w-[clamp(5.6rem,6.4vw,7.2rem)] rounded-[1.4rem]",
+  ],
+''',
+              '  paths: "Choose the path",\n',
+              '  framework: "Read the five forces",\n',
+          ]
+
+          for block in blocks:
+              if block not in text:
+                  raise SystemExit("Expected film ownership block was not found")
+              text = text.replace(block, "", 1)
+
+          path.write_text(text)
+          PY
+
+      - name: Commit the ownership cleanup
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/sections/Home/HomeFilmConstellation.tsx
+          git commit -m "Let local WebM fragments own Paths and Framework"
+          git push origin HEAD:reimagine-project-moves
