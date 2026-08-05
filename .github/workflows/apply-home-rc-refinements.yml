@@ -30,50 +30,60 @@ jobs:
           python - <<'PY'
           from pathlib import Path
 
-          replacements = {
-              Path("src/sections/Home/ThreePathsSection.tsx"): [
-                  ("A position the business can grow from", "A position built to grow"),
-                  ("One recognisable idea across every touchpoint", "One idea across every touchpoint"),
-                  ("Recognition that keeps earning after launch", "Recognition that keeps compounding"),
-              ],
-              Path("src/sections/Home/TatvaStrip.tsx"): [
-                  (
-                      'className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2"',
-                      'className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2 xl:pr-52 2xl:pr-60"',
-                  ),
-              ],
-              Path("src/sections/Home/ChapterLadder.tsx"): [
-                  (
-                      'className="pointer-events-none w-44 rounded-2xl border border-white/12 bg-[#17140f]/78 px-4 py-3 text-right shadow-[0_18px_55px_rgba(0,0,0,0.24)] backdrop-blur-xl lg:w-52"',
-                      'className="pointer-events-none w-40 rounded-2xl border border-white/12 bg-[#17140f]/78 px-3.5 py-3 text-right shadow-[0_18px_55px_rgba(0,0,0,0.24)] backdrop-blur-xl lg:w-44 2xl:w-52"',
-                  ),
-              ],
-              Path("src/sections/Home/HomeAmbientFilm.tsx"): [
-                  (
-                      'className="absolute bottom-4 left-4 right-4 font-display text-sm leading-snug text-ivory/68"',
-                      'className="absolute bottom-4 left-4 right-4 hidden font-display text-sm leading-snug text-ivory/68 sm:block"',
-                  ),
-              ],
-              Path("src/app/home-earth-tones.css"): [
-                  (
-                      '''
-  [data-home-earth-tone="paths"] svg > text:last-of-type {
-    font-size: 8px;
-    letter-spacing: -0.05px;
-  }
-''',
-                      "\n",
-                  ),
-              ],
-          }
-
-          for path, pairs in replacements.items():
+          def replace_once(filename, before, after):
+              path = Path(filename)
               text = path.read_text()
-              for before, after in pairs:
-                  if before not in text:
-                      raise SystemExit(f"Expected block was not found in {path}: {before[:90]}")
-                  text = text.replace(before, after, 1)
-              path.write_text(text)
+              if before not in text:
+                  raise SystemExit("Expected source block was not found in " + filename)
+              path.write_text(text.replace(before, after, 1))
+
+          replace_once(
+              "src/sections/Home/ThreePathsSection.tsx",
+              "A position the business can grow from",
+              "A position built to grow",
+          )
+          replace_once(
+              "src/sections/Home/ThreePathsSection.tsx",
+              "One recognisable idea across every touchpoint",
+              "One idea across every touchpoint",
+          )
+          replace_once(
+              "src/sections/Home/ThreePathsSection.tsx",
+              "Recognition that keeps earning after launch",
+              "Recognition that keeps compounding",
+          )
+          replace_once(
+              "src/sections/Home/TatvaStrip.tsx",
+              "lg:flex lg:items-start lg:justify-between lg:gap-2",
+              "lg:flex lg:items-start lg:justify-between lg:gap-2 xl:pr-52 2xl:pr-60",
+          )
+          replace_once(
+              "src/sections/Home/ChapterLadder.tsx",
+              "pointer-events-none w-44 rounded-2xl",
+              "pointer-events-none w-40 rounded-2xl",
+          )
+          replace_once(
+              "src/sections/Home/ChapterLadder.tsx",
+              "backdrop-blur-xl lg:w-52",
+              "backdrop-blur-xl lg:w-44 2xl:w-52",
+          )
+          replace_once(
+              "src/sections/Home/HomeAmbientFilm.tsx",
+              "absolute bottom-4 left-4 right-4 font-display",
+              "absolute bottom-4 left-4 right-4 hidden font-display sm:block",
+          )
+
+          css = Path("src/app/home-earth-tones.css")
+          text = css.read_text()
+          marker = '[data-home-earth-tone="paths"] svg > text:last-of-type {'
+          start = text.find(marker)
+          if start >= 0:
+              start = text.rfind("\n", 0, start) + 1
+              end = text.find("\n  }", start)
+              if end < 0:
+                  raise SystemExit("Path result size rule ending was not found")
+              end = end + len("\n  }")
+              css.write_text(text[:start] + text[end:])
           PY
 
       - name: Commit the source refinements
