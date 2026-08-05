@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./home-v4.css";
+import "./home-v4-geometry.css";
 import "./home-studio-cinematic.css";
 import "./home-paths-cinematic.css";
 import "./home-cinematic-finish.css";
