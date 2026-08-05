@@ -1,0 +1,173 @@
+name: Apply homepage audit sprint
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-home-audit-sprint.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-home:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Apply the audited source repairs
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: Path, before: str, after: str) -> None:
+              text = path.read_text()
+              if before not in text:
+                  raise SystemExit(f"Expected source block missing in {path}: {before[:80]!r}")
+              path.write_text(text.replace(before, after, 1))
+
+          # Diagnosis should earn the next proof chapter before asking for a call.
+          clarity = Path("src/sections/Home/ClarityCTA.tsx")
+          text = clarity.read_text()
+          label = "Discuss the right starting point"
+          if label not in text:
+              raise SystemExit("Diagnosis CTA label was not found")
+          label_index = text.index(label)
+          href_index = text.rfind('href="/contact"', 0, label_index)
+          if href_index < 0:
+              raise SystemExit("Diagnosis CTA contact href was not found")
+          text = (
+              text[:href_index]
+              + 'href="#evidence-wall-title"'
+              + text[href_index + len('href="/contact"'):]
+          )
+          text = text.replace(label, "See how decisions become proof", 1)
+          clarity.write_text(text)
+
+          # Framework should unfold in order: understand, stress test, then enter depth.
+          strip = Path("src/sections/Home/TatvaStrip.tsx")
+          text = strip.read_text()
+          label = "Enter the five-element chapter"
+          if label not in text:
+              raise SystemExit("Tatva Strip handoff label was not found")
+          label_index = text.index(label)
+          href_index = text.rfind('href="#elements"', 0, label_index)
+          if href_index < 0:
+              raise SystemExit("Tatva Strip Elements href was not found")
+          text = (
+              text[:href_index]
+              + 'href="#tatva-system-lab-title"'
+              + text[href_index + len('href="#elements"'):]
+          )
+          text = text.replace(label, "Stress test the five force system", 1)
+          strip.write_text(text)
+
+          lab = Path("src/sections/Home/TatvaSystemLab.tsx")
+          text = lab.read_text()
+          text = text.replace(
+              'className="relative overflow-hidden border-t border-soil/10 py-16 sm:py-24"',
+              'className="relative scroll-mt-24 overflow-hidden border-t border-soil/10 py-16 sm:py-24"',
+              1,
+          )
+          text = text.replace(
+              "Examine every Tatva in depth",
+              "Continue into the five living Tatvas",
+              1,
+          )
+          lab.write_text(text)
+
+          # Keep the mobile clarity field and every signal inside the viewport.
+          questions = Path("src/sections/Home/HomeQuestionsScene.tsx")
+          text = questions.read_text()
+          replacements = [
+              ('{ label: "Timing", x: 78, y: 19 }', '{ label: "Timing", x: 76, y: 19 }'),
+              ('{ label: "Implementation", x: 88, y: 66 }', '{ label: "Implementation", x: 78, y: 66 }'),
+              ('{ label: "Fit", x: 10, y: 67 }', '{ label: "Fit", x: 16, y: 67 }'),
+              (
+                  'className="mt-4 max-w-xl font-display text-[clamp(2.6rem,5vw,5.25rem)] font-normal leading-[0.96] tracking-[-0.025em] text-ivory"',
+                  'className="mt-4 max-w-xl break-words font-display text-[clamp(2.35rem,5vw,5.25rem)] font-normal leading-[0.96] tracking-[-0.025em] text-ivory [text-wrap:balance]"',
+              ),
+              (
+                  "Scope, implementation, timing, distance, and fit should feel clear before money enters the room. The page answers each one in sequence.",
+                  "Scope, implementation, timing, distance, and fit should feel clear before a proposal enters the room. The page answers each one in sequence.",
+              ),
+              (
+                  'className="text-[0.55rem] font-medium uppercase tracking-[0.12em] text-ivory/58"',
+                  'className="max-w-[5.25rem] text-center text-[0.55rem] font-medium uppercase leading-tight tracking-[0.12em] text-ivory/58"',
+              ),
+          ]
+          for before, after in replacements:
+              if before not in text:
+                  raise SystemExit(f"Questions source block missing: {before[:80]!r}")
+              text = text.replace(before, after, 1)
+          questions.write_text(text)
+
+          # Source and CSS should agree that bridges dissolve in normal flow.
+          replace_once(
+              Path("src/sections/Home/HomeSceneBridge.tsx"),
+              'className="pointer-events-none relative z-[8] -my-2 h-10 overflow-hidden sm:-my-4 sm:h-14 lg:-my-5 lg:h-16"',
+              'className="pointer-events-none relative z-[4] my-0 h-8 overflow-hidden sm:h-10 lg:h-12"',
+          )
+
+          # Put the new control room and screenshot audit at the beginning of the recovery path.
+          claude = Path("CLAUDE.md")
+          text = claude.read_text()
+          old_list = '''1. `docs/HOME_MASTER_BRIEF.md` — binding creative, commercial, motion, media, copy, accessibility, and deployment rules.
+2. `docs/HOME_MILESTONES_BACKLOG.md` — current milestones, screenshot findings, P0/P1 repairs, and remaining work.
+3. `docs/HOME_QA_CHECKLIST.md` — viewport, autoplay, fixed UI, accessibility, proof, and release gate.
+4. `docs/HOME_REFERENCE_BANK.md` — the exact role of every approved reference and what must remain original.
+5. `docs/HOME_FACT_BANK.md` — verified public facts, outcomes, allowed claims, and blocked unknowns.'''
+          new_list = '''1. `docs/HOME_CONTROL_ROOM.md` — operational index, architecture lock, current sprint, and release gate.
+2. `docs/HOME_MASTER_BRIEF.md` — binding creative, commercial, motion, media, copy, accessibility, and deployment rules.
+3. `docs/HOME_VISUAL_AUDIT_2026-08-05.md` — screenshot findings, P0/P1 repairs, and chapter acceptance criteria.
+4. `docs/HOME_MILESTONES_BACKLOG.md` — current milestones, remaining work, and release dependencies.
+5. `docs/HOME_QA_CHECKLIST.md` — viewport, autoplay, fixed UI, accessibility, proof, and release gate.
+6. `docs/HOME_REFERENCE_BANK.md` — the exact role of every approved reference and what must remain original.
+7. `docs/HOME_FACT_BANK.md` — verified public facts, outcomes, allowed claims, and blocked unknowns.'''
+          if old_list not in text:
+              raise SystemExit("Homepage operating document list was not found in CLAUDE.md")
+          claude.write_text(text.replace(old_list, new_list, 1))
+
+          # Future homepage source changes should run both the build gate and visual audit.
+          audit = Path(".github/workflows/home-audit-current-pass.yml")
+          text = audit.read_text()
+          old_paths = '''    paths:
+      - .github/workflows/home-audit-current-pass.yml'''
+          new_paths = '''    paths:
+      - .github/workflows/home-audit-current-pass.yml
+      - src/app/page.tsx
+      - src/app/home-*.css
+      - src/app/layout.tsx
+      - src/lib/videoVisibility.ts
+      - src/sections/Home/**
+      - src/sections/Elements/**
+      - src/sections/Process/**'''
+          if old_paths not in text:
+              raise SystemExit("Visual audit workflow path filter was not found")
+          audit.write_text(text.replace(old_paths, new_paths, 1))
+          PY
+
+      - name: Commit the homepage audit sprint
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add \
+            CLAUDE.md \
+            .github/workflows/home-audit-current-pass.yml \
+            src/sections/Home/ClarityCTA.tsx \
+            src/sections/Home/TatvaStrip.tsx \
+            src/sections/Home/TatvaSystemLab.tsx \
+            src/sections/Home/HomeQuestionsScene.tsx \
+            src/sections/Home/HomeSceneBridge.tsx
+          git commit -m "Apply the homepage visual audit repairs"
+          git push origin HEAD:reimagine-project-moves
