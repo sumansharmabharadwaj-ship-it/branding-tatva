@@ -2,64 +2,23 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { isVideoVisuallyEligible } from "@/lib/videoVisibility";
 
 const ROOT_MARGIN = "8% 0px";
 const HEARTBEAT_MS = 2200;
 
-function isActuallyVisible(video: HTMLVideoElement) {
-  if (document.hidden || !video.muted || !video.loop) return false;
-
-  const rect = video.getBoundingClientRect();
-  if (
-    rect.width < 2 ||
-    rect.height < 2 ||
-    rect.bottom <= 0 ||
-    rect.top >= window.innerHeight
-  ) {
-    return false;
-  }
-
-  // Decorative ambient fragments are intentionally aria-hidden from the
-  // accessibility tree even while they are visually present. Treating that
-  // attribute as visual concealment kept exactly those films frozen. Hidden
-  // carousel/sticky slides still use aria-hidden as a real visibility gate.
-  const decorativeAmbientFilm = Boolean(video.closest("[data-home-ambient-film]"));
-
-  let node: HTMLElement | null = video;
-  while (node && node !== document.body) {
-    if (
-      node.getAttribute("aria-hidden") === "true" &&
-      !decorativeAmbientFilm
-    ) {
-      return false;
-    }
-    const style = window.getComputedStyle(node);
-    if (
-      style.display === "none" ||
-      style.visibility === "hidden" ||
-      Number.parseFloat(style.opacity || "1") <= 0.025
-    ) {
-      return false;
-    }
-    node = node.parentElement;
-  }
-
-  return true;
-}
-
 function wake(video: HTMLVideoElement) {
-  if (!isActuallyVisible(video) || !video.paused) return;
+  if (!isVideoVisuallyEligible(video) || !video.paused) return;
   void video.play().catch(() => {});
 }
 
 /**
  * A homepage-only safety net for browser autoplay edge cases.
  *
- * Each scene still owns its own active/inactive logic and VideoWarden still
- * pauses anything offscreen. This heartbeat only revives a muted loop when
- * the video and every ancestor are visibly present. It therefore repairs the
- * common delayed-mount race (AnimatePresence, sticky stages, tab return)
- * without waking hidden slides or decoding the whole page at once.
+ * Each scene still owns its active state and VideoWarden still pauses media
+ * outside the viewport. The shared visibility contract allows an active
+ * decorative film to wake while hidden sticky and carousel slides remain
+ * asleep.
  */
 export function HomeVideoHeartbeat() {
   const pathname = usePathname();
@@ -101,8 +60,6 @@ export function HomeVideoHeartbeat() {
 
     inspect();
     const mutations = new MutationObserver(scheduleInspect);
-    // Child-list observation catches delayed AnimatePresence mounts without
-    // subscribing to Framer Motion's per-frame style mutations.
     mutations.observe(document.body, { childList: true, subtree: true });
 
     const heartbeat = window.setInterval(inspect, HEARTBEAT_MS);
