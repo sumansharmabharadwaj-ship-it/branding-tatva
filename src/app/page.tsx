@@ -113,7 +113,8 @@ export default function Home() {
             label="A position must hold before expression can travel."
             direction={-1}
             imagePosition="47% 50%"
-            className="-left-14 top-[23rem] h-[21rem] w-[15rem] rounded-[44%_56%_48%_52%/58%_42%_58%_42%] sm:-left-12 sm:top-[9rem] sm:h-[30rem] sm:w-[21rem] lg:left-auto lg:right-[-5rem] lg:top-[5rem]"
+            peakOpacity={0.34}
+            className="-left-14 top-[23rem] h-[21rem] w-[15rem] rounded-[44%_56%_48%_52%/58%_42%_58%_42%] sm:-left-12 sm:top-[9rem] sm:h-[30rem] sm:w-[21rem] lg:left-auto lg:right-[-6.5rem] lg:top-[18rem]"
           />
           <ThreePathsSection />
         </div>
@@ -127,7 +128,8 @@ export default function Home() {
             poster="/images/pexels-river-dawn-poster.jpg"
             label="Five signals move as one recognisable system."
             imagePosition="58% 50%"
-            className="-right-16 top-[11rem] h-[22rem] w-[15rem] rounded-full sm:right-[-5rem] sm:top-[7rem] sm:h-[29rem] sm:w-[20rem] lg:right-[-4rem] lg:top-[4rem]"
+            peakOpacity={0.26}
+            className="-right-16 top-[11rem] h-[22rem] w-[15rem] rounded-full sm:right-[-7rem] sm:top-[8rem] sm:h-[28rem] sm:w-[19rem] lg:right-[-10rem] lg:top-[5rem] lg:h-[27rem] lg:w-[18rem]"
           />
           <TatvaStrip />
           <TatvaSystemLab />
