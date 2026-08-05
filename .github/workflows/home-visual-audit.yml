@@ -1,6 +1,6 @@
 name: Capture homepage visual audit
-# Final pass validates the restored Evidence chapter, WebM-first nature
-# fragments, mobile scene wakeups and horizontal containment together.
+# Final pass validates the restored Evidence chapter, quieter WebM-first
+# fragments, complete path promise, mobile wakeups and horizontal containment.
 
 on:
   push:
