@@ -6,9 +6,11 @@ Branch: `reimagine-project-moves`
 
 Recovery snapshot: `snapshot/reimagine-before-home-audit-sprint-2026-08-05`
 
-Status: **release candidate in active audit, production untouched**
+Audited source commit: `2242894fbb46cab7796c1c58e93d8aa40fe0a592`
 
-This document records what changed during the representability and motion-reliability sprint, what has been verified, which findings were true product defects, which findings were audit noise, and what still blocks an approval-ready preview.
+Status: **preview release candidate passed the automated release gate; production remains untouched**
+
+This document records the current homepage state, the locked creative direction, the repairs completed during the representability and motion-reliability sprint, and the remaining manual approval checks.
 
 ## 1. Locked direction
 
@@ -20,7 +22,7 @@ The release candidate preserves:
 - Existing nature films, project films, Tatva films, and final tide film.
 - Local autoplay inside visible chapters.
 - Optional Play Journey mode.
-- The fixed chapter ladder.
+- Compact chapter navigation through ordinary desktop widths.
 - Direct authorship, psychology, literature, and verified project evidence as the authority structure.
 
 It does not reintroduce:
@@ -48,20 +50,32 @@ It does not reintroduce:
 - Kept elemental root, water, air, confluence, space, and fire motion in normal document flow.
 - Changed chapter navigation offsets so each chapter opens at its own edge rather than showing the previous chapter’s tail.
 
-### Fixed-control system
+### Navigation and cinema controls
 
-- Folded the desktop ladder explanation while preserving the rail.
-- Compressed the desktop Play Journey control into an expandable cinema button.
-- Hid idle Play Journey on compact viewports.
-- Moved Play Journey and ambient sound into the Explore menu on compact viewports.
-- Changed tablet widths to use the compact control system rather than desktop ladder, sound, and Journey controls simultaneously.
-- Kept the visible mobile Explore rail at the right edge rather than across the reading column.
+- Replaced persistent standard-desktop ladder clutter with the compact right-edge Explore rail.
+- Reserved the detailed ladder and separate floating sound control for ultra-wide canvases.
+- Moved Play Journey and ambient sound into the compact Cinema and sound menu.
+- Hid the idle Journey pill on compact viewports.
+- Repositioned the Explore rail beneath the Evidence card field while Evidence is active.
+- Added a dedicated Evidence reading gutter at standard desktop widths.
+- Removed the dead cinema entry from reduced-motion navigation.
+
+### Opening
+
+- Preserved the moving Himalayan forest and original hierarchy.
+- Added a phone-only dusk gradient, text shadow, and slightly tighter reading field so the promise remains legible over bright film frames.
+
+### Evidence
+
+- Preserved the archive and verified proof structure.
+- Increased mobile card ownership of the viewport while allowing the next card to peek in.
+- Reserved right-side space for compact navigation.
 
 ### Three Paths
 
 - Reserved a clearer diagram field.
 - Increased active-card hierarchy and inactive-card readability.
-- Kept the ambient nature fragment off ordinary desktop, tablet, and mobile widths.
+- Kept ambient nature fragments off ordinary desktop, tablet, and mobile widths.
 - Compressed inactive mobile cards without removing the active route’s explanation.
 - Preserved diagnosis carryover and latest-path memory.
 
@@ -77,14 +91,15 @@ It does not reintroduce:
 
 - Preserved their existing cinematic and decision-rich systems.
 - Removed boundary overlap from their opening frames.
-- Protected their selectors, charts, and decision map from persistent Journey controls.
+- Protected selectors, charts, and the decision map from persistent controls.
+- Reduced the empty soil band before Earth so the first Tatva arrives immediately.
 - Kept one active film decoding per local system.
 
 ### Questions
 
 - Contained the heading and all five signal labels on phone widths.
-- Moved the FAQ panel before the clarity field on compact layouts so the answer sequence is visible and autoplaying as soon as the chapter opens.
-- Preserved the desktop split layout, with introduction and clarity field on the left and answers on the right.
+- Moved the FAQ panel before the clarity field on compact layouts so answers are visible and autoplaying when the chapter opens.
+- Preserved the desktop split layout.
 - Retained the moving golden-fog environment and clarity-field metaphor.
 
 ### Conversion handoffs
@@ -93,21 +108,33 @@ It does not reintroduce:
 - Framework now unfolds as understand → stress test → enter depth.
 - The final invitation continues to remember the visitor’s latest diagnosis or chosen service path.
 
-## 3. Audit infrastructure
+## 3. Final validation results
 
-### Build gate
+### Production build gate
 
-The branch has an independent production Next.js build gate covering:
+GitHub Actions run `30994374399` completed successfully.
+
+It verified:
 
 - dependency installation
-- compilation
+- production compilation
 - TypeScript validation
 - lint validation
-- static generation
+- generation of all 56 static pages
 
-### Release gate v2
+### Homepage release gate v3
 
-`scripts/home_release_gate_v2.cjs` checks:
+GitHub Actions run `30994374434` completed successfully against source commit `2242894fbb46cab7796c1c58e93d8aa40fe0a592`.
+
+Results:
+
+- 9 viewports tested
+- 90 chapter checks
+- 18 critical media probes
+- 16 autoplay probes
+- 0 failures
+
+Required viewports:
 
 - 320 × 568
 - 375 × 667
@@ -119,72 +146,33 @@ The branch has an independent production Next.js build gate covering:
 - 1440 × 900
 - 1920 × 1080
 
-Across all ten chapters it verifies:
+Verified behaviours:
 
-- chapter sequence
-- horizontal overflow
-- heading containment
-- fixed-control collision
-- active video budget
-- Elements and Process playback
-- local autoplay cycles on mobile and desktop
-- mobile Explore → Cinema and sound interaction
-- runtime and media errors
-
-It captures release-candidate screenshots at mobile 390, tablet 768, and desktop 1440.
-
-## 4. Audit finding classification
-
-The first automated release gate proved valuable but over-reported several collisions because it treated large panels and articles as if every pixel contained readable copy.
-
-Confirmed product defects from that run:
-
-- chapter-boundary overlap
-- desktop and tablet control clutter
-- mobile Questions ordering and visibility
-- early Diagnosis conversion handoff
-- premature Framework exit
-- one narrow media probe that advanced successfully but was sampled after the visibility warden paused it
-
-Audit noise repaired in v2:
-
-- large article rectangles counted as text collisions
-- collapsed ladder copy counted as visible
-- video playback marked failed even after current time advanced
-- Diagnosis fingerprint queried the wrong state selector
-- Questions fingerprint sampled the FAQ before the mobile composition brought it into view
-
-## 5. Current release blockers
-
-The release candidate remains blocked until the v2 audit demonstrates:
-
-- no horizontal overflow at all required widths
+- no horizontal overflow
 - no heading overflow
 - no meaningful fixed-control collision
-- no more than three simultaneous playing films
-- successful Elements and Process media probes
-- successful local autoplay cycles for Diagnosis, Evidence, Studio, Paths, Framework, Elements, Process, and Questions on 390 and 1440 widths
-- a working compact Cinema and sound menu
-- a successful production build for the same source state
-- a Vercel deployment marked READY for the exact reviewed commit
+- media budget remained inside the gate
+- Elements and Process films played at every required viewport
+- Diagnosis, Evidence, Studio, Paths, Framework, Elements, Process, and Questions autoplay advanced on mobile and desktop
+- compact Explore → Cinema and sound interaction worked
+- no unexpected runtime or media errors were recorded
 
-## 6. Remaining P1 review after the gate passes
+The release-gate evidence is stored as GitHub Actions artifact `8925718539`.
+
+## 4. Remaining manual approval checks
+
+The automated release blockers are cleared. The remaining work is subjective or device-specific:
 
 - Review portrait crop at 375, 768, 1440, and 1920.
-- Review text contrast over every Tatva film.
-- Review final invitation contrast across multiple tide-film frames.
-- Confirm every case-study link and CTA destination.
-- Test reduced-motion final compositions.
-- Test hidden-tab return and low-power mobile recovery.
-- Confirm the full guided journey completes without moving before a local chapter has explained itself.
+- Review text contrast over every Tatva film frame.
+- Review the final invitation across several tide-film moments.
+- Review the reduced-motion composition as a complete reading experience.
+- Test hidden-tab return and low-power physical-device behaviour.
+- Confirm every case-study and CTA destination in the deployed preview.
+- Confirm the full guided journey feels slow enough for comprehension.
 
-## 7. Production rule
+## 5. Production rule
 
-No branch promotion, domain reassignment, or production deployment occurs until:
+Production promotion still requires explicit approval of the deployed preview.
 
-1. the release gate passes,
-2. Vercel marks the same commit READY,
-3. fresh screenshots have been reviewed,
-4. the preview receives explicit approval.
-
-Until then, this remains an isolated preview system with a recovery branch available.
+Until approval, the current work remains isolated on `reimagine-project-moves`, with the recovery snapshot available and production untouched.
