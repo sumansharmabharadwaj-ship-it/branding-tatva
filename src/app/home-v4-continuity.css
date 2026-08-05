@@ -126,3 +126,40 @@
     min-height: 100svh;
   }
 }
+
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+  /* The animated desktop composition positions four cards radially. Once all
+     of them are expanded at rest, those coordinates can overlap. The comfort
+     version becomes a quiet two-column document instead: same information,
+     no chase, no collision, no artificial scroll length. */
+  .home-v4-chapter--foundation div:has(> [data-foundation-layer]) {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    height: auto !important;
+    margin-top: 3rem !important;
+  }
+
+  .home-v4-chapter--foundation [data-foundation-layer] {
+    position: relative !important;
+    inset: auto !important;
+    width: auto !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  .home-v4-chapter--foundation [data-final-copy] {
+    position: relative !important;
+    inset: auto !important;
+    max-width: 42rem !important;
+    margin-top: 3rem !important;
+    opacity: 1 !important;
+    text-align: left !important;
+  }
+
+  .home-v4-chapter--foundation nav[aria-label="Brand foundation layers"] {
+    display: none !important;
+  }
+}
