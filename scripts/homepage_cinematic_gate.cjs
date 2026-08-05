@@ -6,21 +6,24 @@ const BASE_URL = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const OUTPUT = path.join(process.cwd(), "cinematic-recovery-audit");
 const VIEWPORTS = [
   { name: "desktop-1440x900", width: 1440, height: 900 },
-  { name: "short-desktop-1440x700", width: 1440, height: 700 },
+  { name: "desktop-1280x800", width: 1280, height: 800 },
   { name: "tablet-1024x768", width: 1024, height: 768 },
-  { name: "mobile-390x844", width: 390, height: 844 },
+  { name: "portrait-tablet-768x1024", width: 768, height: 1024 },
+  { name: "mobile-390x844", width: 390, height: 844, touch: true },
+  { name: "mobile-360x800", width: 360, height: 800, touch: true },
 ];
 
 const EXPECTED_CHAPTERS = [
   "opening",
-  "diagnosis",
-  "evidence",
-  "studio",
+  "recognition",
+  "cost",
+  "foundation",
   "paths",
-  "framework",
-  "elements",
   "process",
-  "questions",
+  "evidence",
+  "tatva",
+  "studio",
+  "decision",
   "invitation",
 ];
 
@@ -28,7 +31,10 @@ const EXPECTED_RENDERED_LINKS = [
   "/contact",
   "/work",
   "/about",
-  "/services#health",
+  "#recognition",
+  "#cost",
+  "#foundation",
+  "#evidence",
 ];
 
 fs.mkdirSync(OUTPUT, { recursive: true });
@@ -62,6 +68,7 @@ async function auditViewport(browser, viewport) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     reducedMotion: "no-preference",
+    hasTouch: Boolean(viewport.touch),
   });
   const page = await context.newPage();
   const consoleErrors = [];
@@ -86,19 +93,28 @@ async function auditViewport(browser, viewport) {
 
   await page.goto(BASE_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await page.evaluate(() => document.fonts.ready);
-  await page.waitForTimeout(3400);
+  await page.waitForTimeout(2850);
+
+  assert(
+    (await page.locator("[data-page-load-veil]").count()) === 0,
+    `${viewport.name}: loader did not clear`,
+  );
 
   const chapterIds = await page
-    .locator("[data-home-chapter]")
+    .locator("[data-home-v4-chapter]")
     .evaluateAll((nodes) =>
       nodes
-        .map((node) => node.getAttribute("data-home-chapter"))
+        .map((node) => node.getAttribute("data-home-v4-chapter"))
         .filter((value) => Boolean(value)),
     );
 
   assert(
     EXPECTED_CHAPTERS.every((id) => chapterIds.includes(id)),
-    `${viewport.name}: missing homepage chapters. Found ${chapterIds.join(", ")}`,
+    `${viewport.name}: missing V4 chapters. Found ${chapterIds.join(", ")}`,
+  );
+  assert(
+    new Set(chapterIds).size === EXPECTED_CHAPTERS.length,
+    `${viewport.name}: duplicate or unexpected V4 chapter markers: ${chapterIds.join(", ")}`,
   );
 
   const renderedHrefs = await page.locator("a[href]").evaluateAll((nodes) =>
@@ -115,9 +131,9 @@ async function auditViewport(browser, viewport) {
   }
 
   for (const id of EXPECTED_CHAPTERS) {
-    const section = page.locator(`[data-home-chapter="${id}"]`).first();
+    const section = page.locator(`[data-home-v4-chapter="${id}"]`).first();
     await section.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(620);
+    await page.waitForTimeout(540);
 
     const result = await section.evaluate((element) => {
       const viewportWidth = window.innerWidth;
@@ -139,7 +155,7 @@ async function auditViewport(browser, viewport) {
         .map((heading) => {
           const rect = heading.getBoundingClientRect();
           return {
-            text: (heading.textContent || "").trim().slice(0, 100),
+            text: (heading.textContent || "").trim().slice(0, 110),
             left: rect.left,
             right: rect.right,
             width: rect.width,
@@ -160,8 +176,8 @@ async function auditViewport(browser, viewport) {
       `${viewport.name}/${id}: horizontal overflow ${result.documentWidth}px > ${result.viewportWidth}px`,
     );
     assert(
-      result.sectionHeight > 40,
-      `${viewport.name}/${id}: section collapsed to ${result.sectionHeight}px`,
+      result.sectionHeight >= Math.min(280, viewport.height * 0.45),
+      `${viewport.name}/${id}: scene collapsed to ${result.sectionHeight}px`,
     );
 
     for (const heading of result.visibleHeadings) {
@@ -176,39 +192,40 @@ async function auditViewport(browser, viewport) {
     }
   }
 
-  const studio = page.locator('[data-home-chapter="studio"]').first();
-  await studio.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(700);
-  const studioText = (await studio.textContent()) || "";
+  const opening = page.locator('[data-home-v4-chapter="opening"]').first();
+  const openingText = (await opening.textContent()) || "";
   assert(
-    studioText.includes("One mind. Three disciplines."),
-    `${viewport.name}: studio proposition missing`,
+    openingText.includes("Your audience has already formed an opinion"),
+    `${viewport.name}: V4 opening proposition missing`,
   );
   assert(
-    studioText.includes("Make it usable"),
-    `${viewport.name}: studio third discipline missing`,
+    openingText.includes("0.71 → 2.81%"),
+    `${viewport.name}: opening proof is missing`,
   );
 
-  const paths = page.locator('[data-home-chapter="paths"]').first();
+  const recognition = page.locator('[data-home-v4-chapter="recognition"]').first();
+  await recognition.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(450);
+  assert(
+    ((await recognition.textContent()) || "").includes("Most inconsistency begins"),
+    `${viewport.name}: recognition proposition missing`,
+  );
+
+  const cost = page.locator('[data-home-v4-chapter="cost"]').first();
+  await cost.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(450);
+  assert(
+    ((await cost.textContent()) || "").includes("Marketing becomes expensive"),
+    `${viewport.name}: hidden-cost proposition missing`,
+  );
+
+  const paths = page.locator('[data-home-v4-chapter="paths"]').first();
   await paths.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(700);
+  await page.waitForTimeout(650);
   const pathsText = (await paths.textContent()) || "";
-  assert(
-    pathsText.includes("The path decides what to build next"),
-    `${viewport.name}: paths proposition missing`,
-  );
-  assert(
-    pathsText.includes("Build the foundation"),
-    `${viewport.name}: path one missing`,
-  );
-  assert(
-    pathsText.includes("Reposition the system"),
-    `${viewport.name}: path two missing`,
-  );
-  assert(
-    pathsText.includes("Create consistency"),
-    `${viewport.name}: path three missing`,
-  );
+  assert(pathsText.includes("Build the foundation"), `${viewport.name}: path one missing`);
+  assert(pathsText.includes("Reposition the system"), `${viewport.name}: path two missing`);
+  assert(pathsText.includes("Create consistency"), `${viewport.name}: path three missing`);
 
   const pathDestinations = [
     { tab: /Build the foundation/i, href: "/services#desire" },
@@ -226,12 +243,22 @@ async function auditViewport(browser, viewport) {
     }
   }
 
-  await paths.getByRole("tab", { name: /Build the foundation/i }).click();
-  await waitForHref(page, activePathLink, "/services#desire");
+  const studio = page.locator('[data-home-v4-chapter="studio"]').first();
+  await studio.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(650);
+  const studioText = (await studio.textContent()) || "";
+  assert(
+    studioText.includes("One mind. Three disciplines."),
+    `${viewport.name}: studio proposition missing`,
+  );
+  assert(
+    studioText.includes("Make it usable"),
+    `${viewport.name}: studio third discipline missing`,
+  );
 
-  const invitation = page.locator('[data-home-chapter="invitation"]').first();
+  const invitation = page.locator('[data-home-v4-chapter="invitation"]').first();
   await invitation.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(700);
+  await page.waitForTimeout(650);
   const invitationText = (await invitation.textContent()) || "";
   assert(
     invitationText.includes(
@@ -239,6 +266,43 @@ async function auditViewport(browser, viewport) {
     ),
     `${viewport.name}: invitation quote missing`,
   );
+
+  if (!viewport.touch) {
+    const guide = page.locator("[data-guided-controls]");
+    assert((await guide.count()) === 1, `${viewport.name}: guided-view controls missing`);
+    const guideToggle = guide.locator("button").first();
+    await guideToggle.click();
+    assert(
+      (await guideToggle.getAttribute("aria-pressed")) === "true",
+      `${viewport.name}: guided view did not start`,
+    );
+    await page.mouse.wheel(0, 180);
+    await page.waitForTimeout(120);
+    assert(
+      (await guideToggle.getAttribute("aria-pressed")) === "false",
+      `${viewport.name}: manual scroll did not override guided view`,
+    );
+  }
+
+  const clearDiagram = page.locator("#decision").first();
+  const geometry = await clearDiagram.evaluate((element) => {
+    const label = Array.from(element.querySelectorAll("p")).find((node) =>
+      (node.textContent || "").includes("Clear enough to begin"),
+    );
+    if (!label) return null;
+    const rect = label.getBoundingClientRect();
+    const parent = label.parentElement?.getBoundingClientRect();
+    return parent
+      ? {
+          contained:
+            rect.left >= parent.left - 1 &&
+            rect.right <= parent.right + 1 &&
+            rect.top >= parent.top - 1 &&
+            rect.bottom <= parent.bottom + 1,
+        }
+      : null;
+  });
+  assert(geometry?.contained !== false, `${viewport.name}: central decision text escapes its geometry`);
 
   const mediaBudget = await page.evaluate(() => ({
     playing: Array.from(document.querySelectorAll("video")).filter(
@@ -251,19 +315,16 @@ async function auditViewport(browser, viewport) {
     `${viewport.name}: ${mediaBudget.playing} videos playing; limit is ${mediaBudget.limit}`,
   );
 
-  await page.screenshot({
-    path: path.join(OUTPUT, `${viewport.name}-full.png`),
-    fullPage: true,
-  });
-  await studio.screenshot({
-    path: path.join(OUTPUT, `${viewport.name}-studio.png`),
-  });
-  await paths.screenshot({
-    path: path.join(OUTPUT, `${viewport.name}-paths.png`),
-  });
-  await invitation.screenshot({
-    path: path.join(OUTPUT, `${viewport.name}-invitation.png`),
-  });
+  if (viewport.name === "desktop-1440x900" || viewport.name === "mobile-390x844") {
+    await page.screenshot({
+      path: path.join(OUTPUT, `${viewport.name}-full.png`),
+      fullPage: true,
+    });
+  }
+
+  await opening.screenshot({ path: path.join(OUTPUT, `${viewport.name}-opening.png`) });
+  await paths.screenshot({ path: path.join(OUTPUT, `${viewport.name}-paths.png`) });
+  await invitation.screenshot({ path: path.join(OUTPUT, `${viewport.name}-invitation.png`) });
 
   const actionableErrors = consoleErrors.filter(
     (error) =>
@@ -300,6 +361,37 @@ async function auditViewport(browser, viewport) {
   };
 }
 
+async function auditReducedMotion(browser) {
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 800 },
+    reducedMotion: "reduce",
+  });
+  const page = await context.newPage();
+  await page.goto(BASE_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(900);
+
+  assert(
+    (await page.locator("[data-page-load-veil]").count()) === 0,
+    "reduced motion: loader should be skipped",
+  );
+  assert(
+    (await page.locator("[data-guided-controls]").count()) === 0,
+    "reduced motion: guided autoplay controls should be absent",
+  );
+  assert(
+    (await page.locator("[data-home-v4-chapter]").count()) === EXPECTED_CHAPTERS.length,
+    "reduced motion: complete scene content is missing",
+  );
+
+  const copy = (await page.locator("body").textContent()) || "";
+  assert(copy.includes("Your audience has already formed an opinion"), "reduced motion: opening copy missing");
+  assert(copy.includes("Build the foundation"), "reduced motion: paths content missing");
+
+  await context.close();
+  return { reducedMotion: true };
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const results = [];
@@ -308,6 +400,7 @@ async function auditViewport(browser, viewport) {
     for (const viewport of VIEWPORTS) {
       results.push(await auditViewport(browser, viewport));
     }
+    results.push(await auditReducedMotion(browser));
   } finally {
     await browser.close();
   }
@@ -325,7 +418,7 @@ async function auditViewport(browser, viewport) {
     ),
   );
 
-  console.log(`Cinematic recovery gate passed for ${VIEWPORTS.length} viewports.`);
+  console.log(`Branding Tatva V4 gate passed for ${VIEWPORTS.length} viewports plus reduced motion.`);
 })().catch((error) => {
   console.error(error);
   process.exit(1);
