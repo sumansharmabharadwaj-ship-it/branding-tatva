@@ -1,0 +1,101 @@
+name: Apply homepage mobile scene wakeups
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-home-mobile-awake.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-scenes:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+          sparse-checkout: src
+          sparse-checkout-cone-mode: true
+
+      - name: Wake tall chapters as soon as they enter a phone viewport
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              "src/sections/Home/ClarityCTA.tsx": [
+                  (
+                      'const inView = useInView(sectionRef, { amount: 0.38 });',
+                      'const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.08 });',
+                  ),
+              ],
+              "src/sections/Home/EvidenceWall.tsx": [
+                  (
+                      'const inView = useInView(sectionRef, { amount: 0.42 });',
+                      'const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.08 });',
+                  ),
+              ],
+              "src/sections/Home/ThreePathsSection.tsx": [
+                  (
+                      'const inView = useInView(sectionRef, { amount: 0.34 });',
+                      'const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.1 });',
+                  ),
+              ],
+              "src/sections/Home/TatvaSystemLab.tsx": [
+                  (
+                      'const inView = useInView(sectionRef, { amount: 0.28 });',
+                      'const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.1 });',
+                  ),
+              ],
+              "src/sections/Process/RootSystem.tsx": [
+                  (
+                      'const inView = useInView(sectionRef, { amount: 0.32 });',
+                      'const inView = useInView(sectionRef, { margin: "12% 0px", amount: 0.08 });',
+                  ),
+              ],
+              "src/sections/Elements/PinnedSlider.tsx": [
+                  (
+                      '''      if (detail?.id !== "elements") return;
+      pauseAutoplay(900);
+      showIndex(0);''',
+                      '''      if (detail?.id !== "elements") return;
+      setIsVisible(true);
+      pauseAutoplay(900);
+      showIndex(0);''',
+                  ),
+              ],
+          }
+
+          for filename, pairs in replacements.items():
+              path = Path(filename)
+              text = path.read_text()
+              for before, after in pairs:
+                  if before not in text:
+                      raise SystemExit(f"Expected block was not found in {filename}: {before}")
+                  text = text.replace(before, after, 1)
+              path.write_text(text)
+          PY
+
+      - name: Commit the scene wakeups
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add \
+            src/sections/Home/ClarityCTA.tsx \
+            src/sections/Home/EvidenceWall.tsx \
+            src/sections/Home/ThreePathsSection.tsx \
+            src/sections/Home/TatvaSystemLab.tsx \
+            src/sections/Process/RootSystem.tsx \
+            src/sections/Elements/PinnedSlider.tsx
+          git commit -m "Wake tall homepage scenes on mobile"
+          git push origin HEAD:reimagine-project-moves
