@@ -30,17 +30,20 @@ jobs:
 
       - name: Commit audited homepage repairs
         run: |
-          git checkout -- .github/workflows/home-audit-current-pass.yml
           if ! git diff --quiet; then
             git config user.name "Branding Tatva Build Bot"
             git config user.email "actions@users.noreply.github.com"
             git add \
               CLAUDE.md \
+              src/app/home-release-candidate.css \
               src/sections/Home/ClarityCTA.tsx \
               src/sections/Home/TatvaStrip.tsx \
               src/sections/Home/TatvaSystemLab.tsx \
               src/sections/Home/HomeQuestionsScene.tsx \
-              src/sections/Home/HomeSceneBridge.tsx
+              src/sections/Home/HomeSceneBridge.tsx \
+              src/sections/Home/HomeAutoJourney.tsx \
+              src/sections/Home/ChapterLadder.tsx \
+              src/sections/Home/HomeOpeningSignal.tsx
             git commit -m "Apply the homepage visual audit repairs"
             git push origin HEAD:reimagine-project-moves
           fi
