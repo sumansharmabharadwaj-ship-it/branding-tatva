@@ -43,7 +43,7 @@ export function CinematicHero({
   );
 
   return (
-    <section ref={ref} className="relative h-svh min-h-[620px] overflow-hidden bg-soil">
+    <section ref={ref} data-cinematic-hero className="relative h-svh min-h-[620px] overflow-hidden bg-soil">
       {video && poster && <link rel="preload" as="image" href={poster} fetchPriority="high" />}
       {video && !prefersReducedMotion ? (
         <motion.div
@@ -121,7 +121,7 @@ export function CinematicHero({
 
       <motion.div
         style={prefersReducedMotion ? undefined : { opacity: contentOpacity, y: contentY }}
-        className="relative flex h-full flex-col items-center justify-end px-6 pb-24 text-center sm:pb-28"
+        data-hero-content className="relative flex h-full flex-col items-center justify-end px-6 pb-24 text-center sm:pb-28"
       >
         <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
           {badge}

@@ -31,7 +31,7 @@ export function VerticalUnfold({ elements }: { elements: Element[] }) {
         page background to show through, no matter how the rows above
         settle.
       */}
-      <div className="divide-y divide-border bg-soil pt-16 sm:pt-24">
+      <div className="divide-y divide-border bg-soil pt-5 sm:pt-12">
         {elements.map((el, i) => (
           // ElementRowBackground deliberately sits OUTSIDE ElementReveal
           // now, not wrapped by it — it already carries its own robust

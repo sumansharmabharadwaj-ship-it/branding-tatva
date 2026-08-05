@@ -234,12 +234,7 @@ export function ChapterLadder() {
     setMobileOpen(false);
     window.history.replaceState(null, "", `#${target.id}`);
 
-    const chapter = target.dataset.homeChapter;
-    const offset = ["process", "questions", "invitation"].includes(
-      chapter ?? "",
-    )
-      ? 0
-      : -72;
+    const offset = 0;
 
     if (lenis && !prefersReducedMotion) {
       lenis.scrollTo(target, { offset, duration: 1.05 });
@@ -258,7 +253,7 @@ export function ChapterLadder() {
       <nav
         aria-label="Explore the homepage"
         data-chapter-ladder
-        className="pointer-events-none fixed right-3 top-1/2 z-[45] hidden -translate-y-1/2 xl:block xl:right-5"
+        className="pointer-events-none fixed right-3 top-1/2 z-[45] hidden -translate-y-1/2 min-[2048px]:block min-[2048px]:right-5"
       >
         <div className="flex items-center gap-3">
           <AnimatePresence mode="wait" initial={false}>
@@ -340,7 +335,7 @@ export function ChapterLadder() {
         </div>
       </nav>
 
-      <div className="fixed bottom-5 left-4 z-[45] xl:hidden" data-chapter-ladder-mobile>
+      <div className="fixed bottom-5 left-4 z-[45] min-[2048px]:hidden" data-chapter-ladder-mobile>
         <AnimatePresence>
           {mobileOpen && (
             <motion.div

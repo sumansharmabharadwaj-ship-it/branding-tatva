@@ -444,7 +444,7 @@ section[aria-labelledby="home-questions-title"] h2 {
 
 
 /* Mobile cinema docking repair */
-@media (max-width: 1279px) {
+@media (max-width: 2047px) {
   [data-auto-journey-control][aria-pressed="false"] {
     display: none !important;
   }
@@ -464,10 +464,98 @@ section[aria-labelledby="home-questions-title"] h2 {
     border-right: 0 !important;
     border-radius: 999px 0 0 999px !important;
     padding: 0 !important;
+    overflow: hidden !important;
+    justify-content: center !important;
     background-color: rgba(23, 20, 15, 0.76) !important;
   }
 
   [data-chapter-ladder-mobile] > button > span:first-child {
     gap: 0.3rem !important;
+  }
+}
+
+
+/* Final homepage release-candidate polish */
+
+/* The compact chapter rail is the default navigation instrument through
+   standard desktop widths. It has the same information architecture as the
+   full ladder, but leaves diagrams, proof, and CTA fields undisturbed. */
+@media (min-width: 768px) and (max-width: 2047px) {
+  [data-chapter-ladder-mobile] > button {
+    width: 2rem !important;
+    height: 7.25rem !important;
+    min-height: 7.25rem !important;
+  }
+
+  [data-chapter-ladder-mobile] > #mobile-chapter-ladder {
+    position: fixed !important;
+    top: max(1rem, calc(50% - 20rem)) !important;
+    right: 3.25rem !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: min(21rem, calc(100vw - 5rem)) !important;
+    max-height: min(40rem, calc(100svh - 2rem)) !important;
+    margin: 0 !important;
+  }
+
+  #mobile-cinema-controls {
+    top: calc(50% - 7rem) !important;
+    right: 3.25rem !important;
+    bottom: auto !important;
+  }
+}
+
+/* On phones the forest remains luminous, but the words sit inside a stronger
+   dusk gradient. This is contrast protection, not a palette change. */
+@media (max-width: 767px) {
+  [data-cinematic-hero]::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    z-index: 1;
+    inset: 26% 0 0;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(20, 18, 16, 0.18) 18%, rgba(20, 18, 16, 0.72) 72%, rgba(20, 18, 16, 0.94) 100%);
+  }
+
+  [data-hero-content] {
+    z-index: 2;
+    padding-bottom: 5.75rem !important;
+  }
+
+  [data-hero-content] > span:first-child {
+    max-width: 22rem;
+    background: rgba(20, 18, 16, 0.24);
+    box-shadow: 0 12px 38px rgba(20, 18, 16, 0.16);
+    backdrop-filter: blur(8px);
+  }
+
+  [data-hero-content] h1,
+  [data-hero-content] p {
+    text-shadow: 0 2px 18px rgba(20, 18, 16, 0.72);
+  }
+
+  [data-hero-content] > p {
+    max-width: 34ch;
+    line-height: 1.65;
+  }
+}
+
+/* One mobile proof card now owns the reading field while the next card peeks
+   in as an invitation to continue. */
+@media (max-width: 767px) {
+  section[aria-labelledby="evidence-wall-title"] ul {
+    scroll-padding-inline: 1rem;
+  }
+
+  section[aria-labelledby="evidence-wall-title"] ul > li {
+    width: min(82vw, 18rem) !important;
+  }
+}
+
+/* The first Tatva should arrive as Earth, rather than as an empty soil band. */
+@media (max-width: 767px) {
+  #elements > div > div.divide-y {
+    padding-top: 1.25rem !important;
   }
 }
