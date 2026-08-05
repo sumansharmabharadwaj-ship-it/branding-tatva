@@ -1,6 +1,6 @@
 name: Capture homepage visual audit
-# Final pass validates the restored Evidence chapter, quieter WebM-first
-# fragments, complete path promise, mobile wakeups and horizontal containment.
+# Release candidate validates one owned film per quiet chapter, the complete
+# path outcome, mobile scene wakeups and zero horizontal overflow.
 
 on:
   push:
