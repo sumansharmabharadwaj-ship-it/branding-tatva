@@ -3,10 +3,7 @@ const BASE_URL = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const validContact = {
   name: "Automated QA",
   email: "qa@example.com",
-  business: "Branding Tatva QA",
-  brandStage: "I need help deciding",
-  servicesNeeded: "A protected form contract test",
-  description: "This submission must be swallowed by the honeypot and never delivered.",
+  description: "This three-field submission must pass validation and be swallowed by the honeypot.",
 };
 
 const checks = [
@@ -41,7 +38,7 @@ const checks = [
     status: 422,
   },
   {
-    name: "contact honeypot exits before delivery",
+    name: "three-field contact honeypot exits before delivery",
     path: "/api/contact",
     init: {
       method: "POST",
