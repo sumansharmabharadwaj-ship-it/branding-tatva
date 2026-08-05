@@ -2,6 +2,14 @@
    banner. It opens when the page is guiding or when the visitor approaches;
    manual mode settles into a quiet play-and-chapter instrument. */
 
+.home-v4-cursor-active body,
+.home-v4-cursor-active header a,
+.home-v4-cursor-active header button,
+.home-v4-cursor-active footer a,
+.home-v4-cursor-active footer button {
+  cursor: none !important;
+}
+
 @media (min-width: 821px) and (pointer: fine) {
   .home-v4-guide {
     width: 11.3rem;
