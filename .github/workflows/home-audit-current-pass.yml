@@ -13,6 +13,10 @@ on:
       - src/app/layout.tsx
       - src/app/home-*.css
       - src/components/AmbientAudio.tsx
+      - src/components/BackgroundVideo.tsx
+      - src/components/MotionPreference.tsx
+      - src/components/PageLoadVeil.tsx
+      - src/components/VideoWarden.tsx
       - src/lib/videoVisibility.ts
       - src/sections/Hero/**
       - src/sections/Home/**
@@ -33,10 +37,10 @@ jobs:
     timeout-minutes: 28
 
     steps:
-      - name: Check out the exact preview branch state
+      - name: Check out the exact source revision under review
         uses: actions/checkout@v4
         with:
-          ref: reimagine-project-moves
+          ref: ${{ github.sha }}
           fetch-depth: 1
 
       - name: Use Node 24
