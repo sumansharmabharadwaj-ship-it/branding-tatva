@@ -22,8 +22,20 @@ jobs:
       - name: Check out application code
         uses: actions/checkout@v4
         with:
-          ref: reimagine-project-moves
+          ref: ${{ github.sha }}
           fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.env.example
+            /.eslintrc.json
+            /.gitignore
+            /next.config.ts
+            /package.json
+            /pnpm-lock.yaml
+            /postcss.config.mjs
+            /tsconfig.json
+            /src
 
       - name: Use Node 24
         uses: actions/setup-node@v4
