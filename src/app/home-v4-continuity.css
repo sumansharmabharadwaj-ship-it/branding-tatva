@@ -1,0 +1,114 @@
+/* -------------------------------------------------------------------------- */
+/* Homepage V4 continuity pass                                                 */
+/* -------------------------------------------------------------------------- */
+
+/* The Earth excavation previously held for 320vh. The governing brief asks
+   for roughly 25–35% less dead time and keeps important held chapters inside
+   a 120–220svh range. 220svh preserves the four-layer reveal while making the
+   scene respond much sooner to ordinary wheel and trackpad movement. */
+@media (min-width: 768px) {
+  .home-v4-chapter--foundation > section {
+    height: 220svh !important;
+  }
+}
+
+@supports not (height: 1svh) {
+  @media (min-width: 768px) {
+    .home-v4-chapter--foundation > section {
+      height: 220vh !important;
+    }
+  }
+}
+
+/* Section handoffs should read as a film splice, not a blank strip between
+   blocks. Keep them concise, overlap sub-pixel seams, and give every splice a
+   quiet centre mark that carries the eye into the next chapter. */
+.home-v4-handoff {
+  height: clamp(2.2rem, 3.6vw, 3.85rem);
+  margin-block: -1px;
+  transform: translateZ(0);
+}
+
+.home-v4-handoff::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 0.72rem;
+  width: min(8rem, 22vw);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 185, 154, 0.52), transparent);
+  opacity: 0.72;
+  transform: translateX(-50%);
+}
+
+/* The original studio breakpoint changed from three columns at 1360px. That
+   left a narrow 1361–1400px range where the headline and footer could become
+   visually pinched. Collapse to the authored two-column composition there,
+   then let the portrait become the closing full-width frame. */
+@media (min-width: 1361px) and (max-width: 1400px) {
+  .studio-cinematic__grid {
+    grid-template-columns: minmax(18rem, 0.84fr) minmax(29rem, 1.16fr);
+  }
+
+  .studio-cinematic__portrait {
+    grid-column: 1 / -1;
+    min-height: 34rem;
+  }
+
+  .studio-cinematic__portrait-photo {
+    object-position: center 24%;
+  }
+
+  .studio-cinematic__authorship {
+    right: 1.5rem;
+    left: auto;
+    width: min(31rem, calc(100% - 3rem));
+  }
+
+  .studio-cinematic__content > h2 {
+    max-width: 13ch;
+    font-size: clamp(3rem, 5.15vw, 4.75rem);
+  }
+}
+
+.studio-cinematic__media-content,
+.studio-cinematic__content,
+.studio-cinematic__footer,
+.studio-cinematic__footer p {
+  min-width: 0;
+}
+
+.studio-cinematic__media-caption h3,
+.studio-cinematic__content > h2 {
+  text-wrap: balance;
+}
+
+/* Short viewports need a quicker splice because the fixed header already uses
+   a meaningful portion of the frame. */
+@media (max-height: 720px) {
+  .home-v4-handoff {
+    height: 2rem;
+  }
+
+  .home-v4-handoff::after {
+    bottom: 0.42rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .home-v4-handoff {
+    height: 2.15rem;
+  }
+
+  .home-v4-handoff::after {
+    width: 5.5rem;
+    bottom: 0.48rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4-handoff {
+    transform: none;
+  }
+}
