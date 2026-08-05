@@ -6,6 +6,7 @@ on:
       - reimagine-project-moves
     paths:
       - .github/workflows/home-visual-audit.yml
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -111,14 +112,25 @@ jobs:
                 const safe = chapter.id.replace(/[^a-z0-9_-]+/gi, '-').toLowerCase();
                 const path = `visual-audit/${profile.name}-${String(chapter.index + 1).padStart(2, '0')}-${safe}.png`;
                 await page.screenshot({ path, fullPage: false });
-                const playback = await page.evaluate(() => ({
-                  scrollY: Math.round(window.scrollY),
-                  visibleVideos: Array.from(document.querySelectorAll('video')).filter((video) => {
-                    const rect = video.getBoundingClientRect();
-                    return rect.bottom > 0 && rect.top < window.innerHeight;
-                  }).length,
-                  playingVideos: Array.from(document.querySelectorAll('video')).filter((video) => !video.paused && !video.ended).length,
-                }));
+                const playback = await locator.evaluate((chapterElement) => {
+                  const rect = chapterElement.getBoundingClientRect();
+                  const viewportWidth = document.documentElement.clientWidth;
+                  const documentWidth = document.documentElement.scrollWidth;
+                  return {
+                    scrollY: Math.round(window.scrollY),
+                    viewportWidth,
+                    documentWidth,
+                    horizontalOverflow: Math.max(0, documentWidth - viewportWidth),
+                    chapterLeft: Math.round(rect.left),
+                    chapterRight: Math.round(rect.right),
+                    chapterWidth: Math.round(rect.width),
+                    visibleVideos: Array.from(document.querySelectorAll('video')).filter((video) => {
+                      const videoRect = video.getBoundingClientRect();
+                      return videoRect.bottom > 0 && videoRect.top < window.innerHeight;
+                    }).length,
+                    playingVideos: Array.from(document.querySelectorAll('video')).filter((video) => !video.paused && !video.ended).length,
+                  };
+                });
                 report.captures.push({ profile: profile.name, chapter: chapter.id, path, ...playback });
               }
 
