@@ -91,32 +91,32 @@ export function HomeQuestionsScene() {
       />
 
       <Container className="relative max-w-[92rem]">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.88fr)_minmax(28rem,1.12fr)] lg:items-start lg:gap-16">
-          <div className="lg:sticky lg:top-28">
+        <div className="grid min-w-0 gap-12 lg:grid-cols-[minmax(0,0.88fr)_minmax(28rem,1.12fr)] lg:items-start lg:gap-16">
+          <div className="min-w-0 lg:sticky lg:top-28">
             <p className="text-xs font-medium uppercase tracking-[0.24em] text-sandstone">
               Before we work together
             </p>
             <h2
               id="home-questions-title"
-              className="mt-4 max-w-xl font-display text-[clamp(2.6rem,5vw,5.25rem)] font-normal leading-[0.96] tracking-[-0.025em] text-ivory"
+              className="mt-4 w-full min-w-0 max-w-full break-words font-display text-[clamp(2.3rem,11vw,3.4rem)] font-normal leading-[0.96] tracking-[-0.025em] text-ivory sm:max-w-xl sm:text-[clamp(2.6rem,5vw,5.25rem)]"
             >
               Five practical doubts. One calmer decision.
             </h2>
-            <p className="mt-5 max-w-xl text-sm leading-7 text-ivory/68 sm:text-base sm:leading-8">
+            <p className="mt-5 w-full max-w-xl text-sm leading-7 text-ivory/68 sm:text-base sm:leading-8">
               Scope, implementation, timing, distance, and fit should feel clear before money enters the room. The page answers each one in sequence.
             </p>
 
-            <div className="mt-9 overflow-hidden rounded-[1.75rem] border border-ivory/12 bg-soil/54 p-4 shadow-[0_30px_90px_rgba(0,0,0,0.24)] backdrop-blur-xl sm:p-6">
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em] text-ivory/42">
+            <div className="mt-9 min-w-0 overflow-hidden rounded-[1.75rem] border border-ivory/12 bg-soil/54 p-4 shadow-[0_30px_90px_rgba(0,0,0,0.24)] backdrop-blur-xl sm:p-6">
+              <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 sm:gap-4">
+                <p className="min-w-0 text-[0.6rem] font-medium uppercase tracking-[0.16em] text-ivory/42 sm:text-[0.62rem] sm:tracking-[0.18em]">
                   Clarity field
                 </p>
-                <p className="text-[0.62rem] uppercase tracking-[0.14em] text-sandstone/70">
+                <p className="min-w-0 text-right text-[0.56rem] uppercase tracking-[0.1em] text-sandstone/70 sm:text-[0.62rem] sm:tracking-[0.14em]">
                   Five signals converge
                 </p>
               </div>
 
-              <div className="relative mt-3 aspect-[5/3] min-h-64 overflow-hidden rounded-2xl border border-ivory/8 bg-black/10">
+              <div className="relative mt-3 aspect-[5/3] min-h-64 w-full min-w-0 overflow-hidden rounded-2xl border border-ivory/8 bg-black/10">
                 <svg
                   viewBox="0 0 500 280"
                   className="absolute inset-0 h-full w-full"
@@ -176,9 +176,10 @@ export function HomeQuestionsScene() {
                     strokeWidth="1.2"
                     animate={
                       motionActive
-                        ? { r: [29, 34, 29], opacity: [0.82, 1, 0.82] }
-                        : undefined
+                        ? { scale: [0.94, 1.1, 0.94], opacity: [0.82, 1, 0.82] }
+                        : { scale: 1 }
                     }
+                    style={{ transformOrigin: "250px 145px" }}
                     transition={{ duration: 4.4, repeat: Infinity, ease: "easeInOut" }}
                   />
                 </svg>
@@ -204,7 +205,7 @@ export function HomeQuestionsScene() {
                       className="h-2.5 w-2.5 rounded-full border border-sandstone/60 bg-soil"
                       style={{ boxShadow: "0 0 14px rgba(212,185,154,0.45)" }}
                     />
-                    <span className="text-[0.55rem] font-medium uppercase tracking-[0.12em] text-ivory/58">
+                    <span className="text-[0.52rem] font-medium uppercase tracking-[0.08em] text-ivory/58 sm:text-[0.55rem] sm:tracking-[0.12em]">
                       {signal.label}
                     </span>
                   </motion.div>
@@ -221,9 +222,9 @@ export function HomeQuestionsScene() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-ivory/14 bg-[#171512]/78 p-5 shadow-[0_34px_100px_rgba(0,0,0,0.32)] backdrop-blur-xl sm:p-8 lg:p-9">
-            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ivory/10 pb-7">
-              <div>
+          <div className="min-w-0 rounded-[2rem] border border-ivory/14 bg-[#171512]/78 p-5 shadow-[0_34px_100px_rgba(0,0,0,0.32)] backdrop-blur-xl sm:p-8 lg:p-9">
+            <div className="flex min-w-0 flex-wrap items-end justify-between gap-4 border-b border-ivory/10 pb-7">
+              <div className="min-w-0">
                 <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-sandstone">
                   Answers in motion
                 </p>
@@ -236,7 +237,7 @@ export function HomeQuestionsScene() {
               </span>
             </div>
 
-            <div className="mt-5">
+            <div className="mt-5 min-w-0">
               <FAQ questions={[...QUESTIONS]} tone="dark" />
             </div>
 
@@ -249,7 +250,7 @@ export function HomeQuestionsScene() {
               </Link>
             </p>
 
-            <div className="mt-8">
+            <div className="mt-8 min-w-0">
               <AuditInvite tone="dark" />
             </div>
           </div>
