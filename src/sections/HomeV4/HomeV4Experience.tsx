@@ -11,7 +11,6 @@ import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
-import { ProcessChapterIntro } from "@/sections/Home/ProcessChapterIntro";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
@@ -74,7 +73,6 @@ export function HomeV4Experience() {
         className="home-v4-chapter home-v4-chapter--process"
         aria-label="How the Branding Tatva method moves"
       >
-        <ProcessChapterIntro />
         <ProcessSection stages={processStages} elementColor={elementColor} />
       </section>
 
