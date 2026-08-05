@@ -4,6 +4,7 @@ import "./globals.css";
 import "./home-earth-tones.css";
 import "./home-audit-fixes.css";
 import "./home-release-candidate.css";
+import "./home-evidence-gutter.css";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
