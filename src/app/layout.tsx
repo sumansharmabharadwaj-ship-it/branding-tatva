@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import "./home-reframe.css";
+import "./home-reframe-polish.css";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { VideoWarden } from "@/components/VideoWarden";
