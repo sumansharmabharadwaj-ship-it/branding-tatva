@@ -1,4 +1,4 @@
-name: Instrument Services audit watchdog
+name: Repair Services contact audit selector
 
 on:
   workflow_dispatch:
@@ -29,7 +29,7 @@ jobs:
           sparse-checkout: |
             /scripts/services_release_gate.cjs
 
-      - name: Add bounded screenshots, progress markers, and a watchdog
+      - name: Select the enquiry email exactly and fail immediately on harness errors
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -37,68 +37,32 @@ jobs:
           path = Path("scripts/services_release_gate.cjs")
           source = path.read_text()
 
-          anchor = 'const OUTPUT = "services-audit";\n'
-          watchdog = (
-              'const OUTPUT = "services-audit";\n'
-              'let auditStage = "initialising";\n'
-              'const auditWatchdog = setTimeout(() => {\n'
-              '  console.error(`Services audit exceeded 210 seconds during: ${auditStage}`);\n'
-              '  process.exit(1);\n'
-              '}, 210000);\n'
-          )
-          if anchor not in source:
-              raise SystemExit("OUTPUT anchor was not found")
-          source = source.replace(anchor, watchdog, 1)
+          email_before = '  await contactPage.getByLabel("Email").fill("qa@example.com");'
+          email_after = '  await contactPage.getByRole("textbox", { name: "Email", exact: true }).fill("qa@example.com");'
+          if email_before not in source:
+              raise SystemExit("Contact email selector was not found")
+          source = source.replace(email_before, email_after, 1)
 
-          screenshot_before = '  await page.screenshot({ path: `${OUTPUT}/${profile}-${id}.png`, fullPage: false });'
-          screenshot_after = '  await page.screenshot({ path: `${OUTPUT}/${profile}-${id}.png`, fullPage: false, animations: "disabled", timeout: 10000 });'
-          if screenshot_before not in source:
-              raise SystemExit("Screenshot anchor was not found")
-          source = source.replace(screenshot_before, screenshot_after, 1)
-
-          loop_before = '  for (const profile of profiles) {'
-          loop_after = '  for (const profile of profiles) {\n    auditStage = `${profile.name}: setup`;\n    console.log(`[services-audit] ${auditStage}`);'
-          if loop_before not in source:
-              raise SystemExit("Profile loop anchor was not found")
-          source = source.replace(loop_before, loop_after, 1)
-
-          markers = [
-              ('    await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded" });',
-               '    auditStage = `${profile.name}: navigation`;\n    console.log(`[services-audit] ${auditStage}`);\n    await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded" });'),
-              ('    const heroVideo = page.locator("#opening video").first();',
-               '    auditStage = `${profile.name}: hero media`;\n    console.log(`[services-audit] ${auditStage}`);\n    const heroVideo = page.locator("#opening video").first();'),
-              ('    const scenarioButtons = page.getByRole("group", {',
-               '    auditStage = `${profile.name}: scenarios`;\n    console.log(`[services-audit] ${auditStage}`);\n    const scenarioButtons = page.getByRole("group", {'),
-              ('    const regionSelect = page.locator("#services-region");',
-               '    auditStage = `${profile.name}: regional pricing`;\n    console.log(`[services-audit] ${auditStage}`);\n    const regionSelect = page.locator("#services-region");'),
-              ('    const healthButtons = page.getByRole("group", { name: "Brand health statements" }).getByRole("button");',
-               '    auditStage = `${profile.name}: health instrument`;\n    console.log(`[services-audit] ${auditStage}`);\n    const healthButtons = page.getByRole("group", { name: "Brand health statements" }).getByRole("button");'),
-              ('    const secondQuestion = page.locator("#questions article").nth(1).getByRole("button");',
-               '    auditStage = `${profile.name}: questions`;\n    console.log(`[services-audit] ${auditStage}`);\n    const secondQuestion = page.locator("#questions article").nth(1).getByRole("button");'),
-              ('    await page.locator("#book").scrollIntoViewIfNeeded();',
-               '    auditStage = `${profile.name}: closing media`;\n    console.log(`[services-audit] ${auditStage}`);\n    await page.locator("#book").scrollIntoViewIfNeeded();'),
-              ('    if (profile.captures) {',
-               '    auditStage = `${profile.name}: screenshots`;\n    console.log(`[services-audit] ${auditStage}`);\n    if (profile.captures) {'),
-              ('    await context.close();',
-               '    auditStage = `${profile.name}: close context`;\n    console.log(`[services-audit] ${auditStage}`);\n    await Promise.race([\n      context.close(),\n      new Promise((_, reject) => setTimeout(() => reject(new Error("Context close timed out")), 10000)),\n    ]);'),
-              ('  const contactContext = await browser.newContext({ viewport: { width: 390, height: 844 } });',
-               '  auditStage = "contact-mobile: setup";\n  console.log(`[services-audit] ${auditStage}`);\n  const contactContext = await browser.newContext({ viewport: { width: 390, height: 844 } });'),
-              ('  await browser.close();',
-               '  auditStage = "closing browser";\n  console.log(`[services-audit] ${auditStage}`);\n  await Promise.race([\n    browser.close(),\n    new Promise((_, reject) => setTimeout(() => reject(new Error("Browser close timed out")), 10000)),\n  ]);\n  clearTimeout(auditWatchdog);'),
-          ]
-
-          for before, after in markers:
-              if before not in source:
-                  raise SystemExit(f"Audit marker not found: {before[:70]}")
-              source = source.replace(before, after, 1)
+          catch_before = '''})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});'''
+          catch_after = '''})().catch((error) => {
+  clearTimeout(auditWatchdog);
+  console.error(error);
+  process.exit(1);
+});'''
+          if catch_before not in source:
+              raise SystemExit("Audit catch block was not found")
+          source = source.replace(catch_before, catch_after, 1)
 
           path.write_text(source)
           PY
 
-      - name: Commit the instrumented audit harness
+      - name: Commit the repaired audit selector
         run: |
           git config user.name "branding-tatva-release-bot"
           git config user.email "actions@users.noreply.github.com"
           git add scripts/services_release_gate.cjs
-          git commit -m "Instrument Services audit with hard bounds"
+          git commit -m "Repair Services contact audit selector"
           git push origin HEAD:reimagine-project-moves
