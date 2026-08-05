@@ -319,7 +319,7 @@ async function captureSection(page, profile, id) {
   });
   await contactPage.goto(`${BASE_URL}/contact`, { waitUntil: "domcontentloaded" });
   await contactPage.getByLabel("Name").fill("Services QA");
-  await contactPage.getByLabel("Email").fill("qa@example.com");
+  await contactPage.getByRole("textbox", { name: "Email", exact: true }).fill("qa@example.com");
   await contactPage
     .getByLabel("What are you building, and what feels unclear?")
     .fill("A valid three-field enquiry used to verify that hidden optional details no longer block submission.");
@@ -361,6 +361,7 @@ async function captureSection(page, profile, id) {
 
   if (failures.length) process.exitCode = 1;
 })().catch((error) => {
+  clearTimeout(auditWatchdog);
   console.error(error);
-  process.exitCode = 1;
+  process.exit(1);
 });
