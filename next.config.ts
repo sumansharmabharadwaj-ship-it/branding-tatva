@@ -26,6 +26,9 @@ const CSP = [
   "frame-ancestors 'self'",
 ].join("; ");
 
+// Preview deployment marker: the homepage runtime below is unchanged from
+// exact-source audit aff053970abf5a026d0639e198089d72165ac195. This comment
+// asks the Git-linked preview to package that audited state and its evidence.
 const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
