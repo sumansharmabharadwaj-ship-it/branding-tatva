@@ -1,51 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
+import { isVideoVisuallyEligible } from "@/lib/videoVisibility";
 
 // Sitewide video budget enforcer. It pauses media outside the viewport and
-// only resumes a film it paused itself when the film is still visually and
-// semantically eligible. This prevents a hidden sticky slide or carousel card
-// from waking merely because its DOM rectangle intersects the viewport.
+// only resumes a film it paused itself when the film remains visually eligible.
+// Hidden sticky slides stay asleep while active decorative scene films can
+// continue even when they are removed from the accessibility tree.
 const MARGIN = "5% 0px";
 const FLAG = "wardenPaused";
-
-function canResume(video: HTMLVideoElement) {
-  if (document.hidden || !video.muted || !video.loop) return false;
-
-  const rect = video.getBoundingClientRect();
-  if (
-    rect.width < 2 ||
-    rect.height < 2 ||
-    rect.bottom <= 0 ||
-    rect.top >= window.innerHeight
-  ) {
-    return false;
-  }
-
-  const decorativeFilm = Boolean(
-    video.closest("[data-home-ambient-film], [data-home-film-constellation]"),
-  );
-
-  let node: HTMLElement | null = video;
-  while (node && node !== document.body) {
-    if (node.getAttribute("aria-hidden") === "true" && !decorativeFilm) {
-      return false;
-    }
-
-    const style = window.getComputedStyle(node);
-    if (
-      style.display === "none" ||
-      style.visibility === "hidden" ||
-      Number.parseFloat(style.opacity || "1") <= 0.025
-    ) {
-      return false;
-    }
-
-    node = node.parentElement;
-  }
-
-  return true;
-}
 
 export function VideoWarden() {
   useEffect(() => {
@@ -62,7 +25,7 @@ export function VideoWarden() {
             continue;
           }
 
-          if (video.dataset[FLAG] && canResume(video)) {
+          if (video.dataset[FLAG] && isVideoVisuallyEligible(video)) {
             delete video.dataset[FLAG];
             void video.play().catch(() => {});
           }
@@ -97,7 +60,7 @@ export function VideoWarden() {
       }
 
       document.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
-        if (video.dataset[FLAG] && canResume(video)) {
+        if (video.dataset[FLAG] && isVideoVisuallyEligible(video)) {
           delete video.dataset[FLAG];
           void video.play().catch(() => {});
         }
