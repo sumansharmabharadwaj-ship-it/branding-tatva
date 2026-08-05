@@ -35,7 +35,11 @@ const CHAPTERS: ChapterDefinition[] = [
     id: "evidence",
     label: "Evidence",
     detail: "See the decisions behind the outcomes.",
-    match: "Evidence.",
+    // EvidenceWall was renamed from a generic "Evidence" heading to the
+    // sharper "Decisions. Then proof." The ladder still searched the old
+    // copy, so guided mode silently jumped from Diagnosis to Studio. Match
+    // the current language and keep proof inside the intended journey.
+    match: "Decisions.",
   },
   {
     id: "studio",
@@ -372,8 +376,10 @@ export function ChapterLadder() {
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       <span className="min-w-0">
-                        <span className="block font-display text-base leading-none text-ivory">{chapter.label}</span>
-                        <span className="mt-1 block text-[0.62rem] leading-relaxed text-ivory/45">{chapter.detail}</span>
+                        <span className={`block font-display text-base ${isActive ? "text-ivory" : "text-ivory/65"}`}>
+                          {chapter.label}
+                        </span>
+                        <span className="mt-0.5 block text-[0.62rem] leading-relaxed text-ivory/38">{chapter.detail}</span>
                       </span>
                     </button>
                   );
@@ -387,24 +393,25 @@ export function ChapterLadder() {
           type="button"
           aria-expanded={mobileOpen}
           aria-controls="mobile-chapter-ladder"
+          aria-label={mobileOpen ? "Close homepage chapters" : `Open homepage chapters. Currently ${displayChapter.label}`}
           onClick={() => setMobileOpen((open) => !open)}
-          className="flex min-h-12 items-center gap-3 rounded-full border border-white/12 bg-[#17140f]/88 px-4 text-ivory shadow-[0_16px_45px_rgba(0,0,0,0.32)] backdrop-blur-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
+          className="flex min-h-11 items-center gap-3 rounded-full border border-white/12 bg-[#17140f]/84 px-3.5 text-ivory shadow-[0_16px_48px_rgba(0,0,0,0.3)] backdrop-blur-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
         >
-          <span aria-hidden="true" className="relative block h-6 w-5">
-            <span className="absolute inset-y-0 left-1 w-px bg-ivory/35" />
-            <span className="absolute inset-y-0 right-1 w-px bg-ivory/35" />
-            {[5, 11, 17].map((top, index) => (
+          <span aria-hidden="true" className="flex h-5 w-5 flex-col items-center justify-center gap-1">
+            {[0, 1, 2].map((line) => (
               <motion.span
-                key={top}
-                className="absolute left-1 right-1 h-px bg-sandstone"
-                style={{ top }}
-                animate={{ opacity: index === activeIndex % 3 ? 1 : 0.4, scaleX: index === activeIndex % 3 ? 1.25 : 1 }}
+                key={line}
+                className="block h-px rounded-full bg-sandstone"
+                animate={{ width: line === 1 ? 15 : 10, x: line === 1 ? 2 : 0 }}
                 transition={motionTransition}
               />
             ))}
           </span>
-          <span className="text-[0.62rem] font-medium uppercase tracking-[0.18em]">Explore</span>
-          <span className="text-[0.62rem] tracking-[0.15em] text-sandstone/80">
+          <span className="text-left">
+            <span className="block text-[0.5rem] font-medium uppercase tracking-[0.16em] text-ivory/40">Exploring</span>
+            <span className="mt-0.5 block font-display text-sm leading-none text-ivory">{displayChapter.label}</span>
+          </span>
+          <span className="ml-1 text-[0.58rem] tracking-[0.16em] text-sandstone/70">
             {String(activeIndex + 1).padStart(2, "0")}/{String(chapters.length).padStart(2, "0")}
           </span>
         </button>
