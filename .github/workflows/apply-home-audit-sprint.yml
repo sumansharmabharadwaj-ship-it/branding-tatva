@@ -1,18 +1,17 @@
 name: Apply homepage audit sprint
 
-"on":
+on:
   push:
     branches:
       - reimagine-project-moves
     paths:
-      - ".github/workflows/apply-home-audit-sprint.yml"
+      - .github/workflows/apply-home-audit-sprint.yml
 
 permissions:
   contents: write
 
 jobs:
   patch-home:
-    if: ${{ github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
 
