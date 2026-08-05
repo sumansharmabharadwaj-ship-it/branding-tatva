@@ -30,28 +30,29 @@ jobs:
           source = path.read_text()
 
           anchor = 'const OUTPUT = "services-audit";\n'
-          watchdog = '''const OUTPUT = "services-audit";
-let auditStage = "initialising";
-const auditWatchdog = setTimeout(() => {
-  console.error(`Services audit exceeded 210 seconds during: ${auditStage}`);
-  process.exit(1);
-}, 210000);
-'''
+          watchdog = (
+              'const OUTPUT = "services-audit";\n'
+              'let auditStage = "initialising";\n'
+              'const auditWatchdog = setTimeout(() => {\n'
+              '  console.error(`Services audit exceeded 210 seconds during: ${auditStage}`);\n'
+              '  process.exit(1);\n'
+              '}, 210000);\n'
+          )
           if anchor not in source:
               raise SystemExit("OUTPUT anchor was not found")
           source = source.replace(anchor, watchdog, 1)
 
-          source = source.replace(
-              '  await page.screenshot({ path: `${OUTPUT}/${profile}-${id}.png`, fullPage: false });',
-              '  await page.screenshot({ path: `${OUTPUT}/${profile}-${id}.png`, fullPage: false, animations: "disabled", timeout: 10000 });',
-              1,
-          )
+          screenshot_before = '  await page.screenshot({ path: `${OUTPUT}/${profile}-${id}.png`, fullPage: false });'
+          screenshot_after = '  await page.screenshot({ path: `${OUTPUT}/${profile}-${id}.png`, fullPage: false, animations: "disabled", timeout: 10000 });'
+          if screenshot_before not in source:
+              raise SystemExit("Screenshot anchor was not found")
+          source = source.replace(screenshot_before, screenshot_after, 1)
 
-          source = source.replace(
-              '  for (const profile of profiles) {',
-              '  for (const profile of profiles) {\n    auditStage = `${profile.name}: setup`;\n    console.log(`[services-audit] ${auditStage}`);',
-              1,
-          )
+          loop_before = '  for (const profile of profiles) {'
+          loop_after = '  for (const profile of profiles) {\n    auditStage = `${profile.name}: setup`;\n    console.log(`[services-audit] ${auditStage}`);'
+          if loop_before not in source:
+              raise SystemExit("Profile loop anchor was not found")
+          source = source.replace(loop_before, loop_after, 1)
 
           markers = [
               ('    await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded" });',
