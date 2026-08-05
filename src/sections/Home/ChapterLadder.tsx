@@ -258,7 +258,7 @@ export function ChapterLadder() {
       <nav
         aria-label="Explore the homepage"
         data-chapter-ladder
-        className="pointer-events-none fixed right-3 top-1/2 z-[45] hidden -translate-y-1/2 md:block lg:right-5"
+        className="pointer-events-none fixed right-3 top-1/2 z-[45] hidden -translate-y-1/2 lg:block lg:right-5"
       >
         <div className="flex items-center gap-3">
           <AnimatePresence mode="wait" initial={false}>
@@ -340,7 +340,7 @@ export function ChapterLadder() {
         </div>
       </nav>
 
-      <div className="fixed bottom-5 left-4 z-[45] md:hidden" data-chapter-ladder-mobile>
+      <div className="fixed bottom-5 left-4 z-[45] lg:hidden" data-chapter-ladder-mobile>
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
