@@ -26,7 +26,9 @@ jobs:
           fetch-depth: 1
 
       - name: Apply audited homepage repairs
-        run: python scripts/apply_home_audit_sprint.py
+        run: |
+          python scripts/apply_home_audit_sprint.py
+          python scripts/expand_compact_controls.py
 
       - name: Repair mobile cinema, audit interaction, and chapter framing
         shell: bash
@@ -79,7 +81,7 @@ jobs:
               src/sections/Home/HomeAutoJourney.tsx \
               src/sections/Home/ChapterLadder.tsx \
               src/sections/Home/HomeOpeningSignal.tsx
-            git commit -m "Keep tablet controls compact and outside the content field"
+            git commit -m "Keep compact cinema controls through small laptop widths"
             git push origin HEAD:reimagine-project-moves
           fi
 
