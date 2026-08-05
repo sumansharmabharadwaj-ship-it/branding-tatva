@@ -55,9 +55,9 @@ const CURVES = [
 ] as const;
 
 const ENTRY_Y = [70, 160, 250] as const;
-const AUTO_ADVANCE_MS = 5400;
-const MANUAL_HOLD_MS = 14000;
-const HOVER_HOLD_MS = 4200;
+const AUTO_ADVANCE_MS = 4400;
+const MANUAL_HOLD_MS = 10500;
+const HOVER_HOLD_MS = 3400;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function PathsCinematicChapter() {
@@ -170,7 +170,7 @@ export function PathsCinematicChapter() {
                           : { strokeDashoffset: 0 }
                       }
                       transition={{
-                        duration: selected ? 1.15 : 2.8,
+                        duration: selected ? 1.05 : 2.5,
                         repeat: Infinity,
                         ease: "linear",
                       }}
@@ -196,7 +196,7 @@ export function PathsCinematicChapter() {
                           : { scale: 1 }
                       }
                       style={{ transformOrigin: center }}
-                      transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     />
                     <text
                       x="90"
@@ -223,7 +223,7 @@ export function PathsCinematicChapter() {
                       fill={active.tint}
                       initial={prefersReducedMotion ? false : { scale: 0.4, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: prefersReducedMotion ? 0 : index * 0.16, ease: EASE }}
+                      transition={{ delay: prefersReducedMotion ? 0 : index * 0.13, ease: EASE }}
                       style={{ transformOrigin: `${x}px 160px` }}
                     />
                     <text x={x} y="132" textAnchor="middle" className="paths-cinematic__svg-step">
@@ -246,7 +246,7 @@ export function PathsCinematicChapter() {
                     : { scale: 1 }
                 }
                 style={{ transformOrigin: "680px 160px" }}
-                transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ duration: 3.1, repeat: Infinity, ease: "easeInOut" }}
               />
               <circle cx="680" cy="160" r="8" fill={active.tint} />
               <text x="720" y="151" className="paths-cinematic__svg-result">
@@ -270,10 +270,10 @@ export function PathsCinematicChapter() {
             <motion.article
               key={active.number}
               className="paths-cinematic__focus"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18, filter: "blur(6px)" }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10, filter: "blur(4px)" }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.6, ease: EASE }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(3px)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.46, ease: EASE }}
               aria-live="polite"
             >
               <div className="paths-cinematic__focus-topline">
@@ -284,7 +284,7 @@ export function PathsCinematicChapter() {
               <h3>{active.title}</h3>
               <p className="paths-cinematic__focus-body">{active.body}</p>
               <div className="paths-cinematic__focus-result">
-                <span>What it unlocks</span>
+                <span>What changes next</span>
                 <strong>{active.result}</strong>
               </div>
               <Link href={active.href}>
