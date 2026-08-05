@@ -36,27 +36,16 @@ jobs:
 
           css = Path("src/app/home-release-candidate.css")
           text = css.read_text()
-          before = '''    top: 50% !important;
-    bottom: auto !important;
-    transform: translateY(-50%) !important;'''
-          after = '''    top: calc(50% - 3.25rem) !important;
-    bottom: auto !important;
-    transform: none !important;'''
+          before = "    top: 50% !important;\n    bottom: auto !important;\n    transform: translateY(-50%) !important;"
+          after = "    top: calc(50% - 3.25rem) !important;\n    bottom: auto !important;\n    transform: none !important;"
           if before in text:
               text = text.replace(before, after, 1)
           css.write_text(text)
 
           audit = Path("scripts/home_release_gate.cjs")
           text = audit.read_text()
-          before = '''      await exploreButton.click();
-      await page.getByRole("button", { name: "Cinema and sound" }).click();
-      await page.waitForTimeout(450);'''
-          after = '''      await exploreButton.click();
-      await page.waitForTimeout(420);
-      const cinemaEntry = page.getByRole("button", { name: "Cinema and sound" });
-      await cinemaEntry.waitFor({ state: "visible" });
-      await cinemaEntry.click();
-      await page.waitForTimeout(450);'''
+          before = "      await exploreButton.click();\n      await page.getByRole(\"button\", { name: \"Cinema and sound\" }).click();\n      await page.waitForTimeout(450);"
+          after = "      await exploreButton.click();\n      await page.waitForTimeout(420);\n      const cinemaEntry = page.getByRole(\"button\", { name: \"Cinema and sound\" });\n      await cinemaEntry.waitFor({ state: \"visible\" });\n      await cinemaEntry.click();\n      await page.waitForTimeout(450);"
           if before not in text:
               raise SystemExit("Mobile cinema release-gate interaction was not found")
           audit.write_text(text.replace(before, after, 1))
