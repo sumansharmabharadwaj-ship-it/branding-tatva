@@ -16,15 +16,14 @@ export const contactSchema = z.object({
     .email("That looks like it might have a typo, mind checking it?")
     .max(254),
   phone: z.string().max(60).optional(),
-  business: z.string().min(1, "Let me know your business or brand name.").max(160),
+  // The visible form deliberately begins with three questions. These
+  // deeper project fields only become required when the visitor chooses
+  // to add them, so validation now matches the experience instead of
+  // silently blocking a valid short enquiry.
+  business: z.string().max(160).optional(),
   website: z.string().max(500).optional(),
-  brandStage: z.enum(brandStages, {
-    errorMap: () => ({ message: "Pick the option closest to where you are." }),
-  }),
-  servicesNeeded: z
-    .string()
-    .min(1, "A rough idea is fine, what do you think you need?")
-    .max(1000),
+  brandStage: z.enum(brandStages).optional(),
+  servicesNeeded: z.string().max(1000).optional(),
   budget: z.string().max(120).optional(),
   timeline: z.string().max(120).optional(),
   description: z
