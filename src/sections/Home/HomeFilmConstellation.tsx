@@ -40,30 +40,6 @@ const CHAPTER_FILMS: Partial<Record<ChapterId, readonly [Film, Film]>> = {
       label: "Diagnosis before decoration.",
     },
   ],
-  paths: [
-    {
-      video: "/videos/higgsfield-process-ground.mp4",
-      poster: "/images/higgsfield-process-ground-poster.jpg",
-      label: "Begin with what must hold.",
-    },
-    {
-      video: "/videos/higgsfield-process-shape.mp4",
-      poster: "/images/higgsfield-process-shape-poster.jpg",
-      label: "Then give the business a coherent form.",
-    },
-  ],
-  framework: [
-    {
-      video: "/videos/higgsfield-process-listen.mp4",
-      poster: "/images/higgsfield-process-listen-poster.jpg",
-      label: "Each force answers a different strategic question.",
-    },
-    {
-      video: "/videos/higgsfield-confident-light.mp4",
-      poster: "/images/higgsfield-confident-light-poster.jpg",
-      label: "Five signals, held inside one recognisable system.",
-    },
-  ],
   questions: [
     {
       video: "/videos/hero-valley.mp4",
@@ -95,14 +71,6 @@ const PLACEMENTS: Partial<Record<ChapterId, readonly [string, string]>> = {
     "-right-8 top-[23vh] aspect-[3/4] w-[clamp(6.5rem,7.6vw,8.75rem)] rounded-[1.6rem]",
     "-left-7 bottom-[16vh] aspect-square w-[clamp(5.2rem,6vw,6.8rem)] rounded-full",
   ],
-  paths: [
-    "-right-9 top-[24vh] aspect-[3/4] w-[clamp(6.5rem,7.5vw,8.5rem)] rounded-[1.5rem]",
-    "-left-8 bottom-[18vh] aspect-square w-[clamp(5.5rem,6.2vw,7rem)] rounded-[1.35rem]",
-  ],
-  framework: [
-    "-left-8 top-[22vh] aspect-[4/5] w-[clamp(6.4rem,7.2vw,8.2rem)] rounded-[42%_58%_48%_52%/58%_42%_58%_42%]",
-    "-right-7 bottom-[17vh] aspect-square w-[clamp(5.6rem,6.4vw,7.2rem)] rounded-[1.4rem]",
-  ],
   questions: [
     "-right-8 top-[19vh] aspect-square w-[clamp(6.2rem,7vw,8rem)] rounded-full",
     "-left-10 bottom-[17vh] aspect-[5/4] w-[clamp(6.2rem,7vw,8.1rem)] rounded-[1.45rem]",
@@ -115,8 +83,6 @@ const PLACEMENTS: Partial<Record<ChapterId, readonly [string, string]>> = {
 
 const CHAPTER_LABELS: Partial<Record<ChapterId, string>> = {
   diagnosis: "Find the gap",
-  paths: "Choose the path",
-  framework: "Read the five forces",
   questions: "Clear the practical fog",
   invitation: "Make the next decision",
 };
