@@ -58,7 +58,7 @@ jobs:
       - name: Capture every chapter and audit collisions
         run: |
           mkdir -p visual-audit
-          cat > /tmp/capture-home.js <<'JS'
+          cat > capture-home.cjs <<'JS'
           const { chromium } = require('playwright');
           const fs = require('fs');
 
@@ -180,7 +180,7 @@ jobs:
             process.exit(1);
           });
           JS
-          node /tmp/capture-home.js
+          node capture-home.cjs
 
       - name: Stop the application
         if: always()
