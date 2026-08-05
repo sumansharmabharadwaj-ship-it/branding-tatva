@@ -105,7 +105,7 @@ export function TatvaSystemLab() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden border-t border-soil/10 py-16 sm:py-24"
+      className="relative scroll-mt-24 overflow-hidden border-t border-soil/10 py-16 sm:py-24"
       style={{ backgroundColor: "#E9E4D9" }}
       aria-labelledby="tatva-system-lab-title"
       onPointerDown={() => {
@@ -365,7 +365,7 @@ export function TatvaSystemLab() {
                     href="#elements"
                     className="link-underline mt-5 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] text-[#556B4A]"
                   >
-                    Examine every Tatva in depth <span aria-hidden="true">→</span>
+                    Continue into the five living Tatvas <span aria-hidden="true">→</span>
                   </Link>
                 </motion.div>
               </AnimatePresence>

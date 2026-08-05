@@ -313,7 +313,7 @@ export function HomeSceneBridge({ family, from, to }: HomeSceneBridgeProps) {
       ref={ref}
       data-home-scene-bridge={family}
       aria-hidden="true"
-      className="pointer-events-none relative z-[8] -my-2 h-10 overflow-hidden sm:-my-4 sm:h-14 lg:-my-5 lg:h-16"
+      className="pointer-events-none relative z-[4] my-0 h-8 overflow-hidden sm:h-10 lg:h-12"
       style={{
         background: `linear-gradient(180deg, ${from} 0%, color-mix(in srgb, ${from} 52%, ${to}) 50%, ${to} 100%)`,
         WebkitMaskImage:

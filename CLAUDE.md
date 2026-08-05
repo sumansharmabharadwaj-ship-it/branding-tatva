@@ -4,11 +4,13 @@
 
 Before changing the Home page, read these current documents in order:
 
-1. `docs/HOME_MASTER_BRIEF.md` — binding creative, commercial, motion, media, copy, accessibility, and deployment rules.
-2. `docs/HOME_MILESTONES_BACKLOG.md` — current milestones, screenshot findings, P0/P1 repairs, and remaining work.
-3. `docs/HOME_QA_CHECKLIST.md` — viewport, autoplay, fixed UI, accessibility, proof, and release gate.
-4. `docs/HOME_REFERENCE_BANK.md` — the exact role of every approved reference and what must remain original.
-5. `docs/HOME_FACT_BANK.md` — verified public facts, outcomes, allowed claims, and blocked unknowns.
+1. `docs/HOME_CONTROL_ROOM.md` — operational index, architecture lock, current sprint, and release gate.
+2. `docs/HOME_MASTER_BRIEF.md` — binding creative, commercial, motion, media, copy, accessibility, and deployment rules.
+3. `docs/HOME_VISUAL_AUDIT_2026-08-05.md` — screenshot findings, P0/P1 repairs, and chapter acceptance criteria.
+4. `docs/HOME_MILESTONES_BACKLOG.md` — current milestones, remaining work, and release dependencies.
+5. `docs/HOME_QA_CHECKLIST.md` — viewport, autoplay, fixed UI, accessibility, proof, and release gate.
+6. `docs/HOME_REFERENCE_BANK.md` — the exact role of every approved reference and what must remain original.
+7. `docs/HOME_FACT_BANK.md` — verified public facts, outcomes, allowed claims, and blocked unknowns.
 
 These files are current truth for `reimagine-project-moves`. They override older exploratory palette boards, mockups, and rejected global recolour experiments. Update the backlog and QA evidence whenever a homepage pass changes status.
 

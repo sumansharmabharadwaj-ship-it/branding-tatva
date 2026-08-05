@@ -194,11 +194,11 @@ export function TatvaStrip() {
             </motion.div>
 
             <Link
-              href="#elements"
+              href="#tatva-system-lab-title"
               className="link-underline mt-6 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em]"
               style={{ color: "#556B4A" }}
             >
-              Enter the five-element chapter <span aria-hidden="true">→</span>
+              Stress test the five force system <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
 

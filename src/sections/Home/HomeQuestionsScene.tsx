@@ -18,14 +18,14 @@ const QUESTIONS = [
 
 const SIGNALS = [
   { label: "Scope", x: 18, y: 22 },
-  { label: "Timing", x: 78, y: 19 },
+  { label: "Timing", x: 76, y: 19 },
   // The longest label used to sit at x=88. Once the desktop clarity field
   // collapsed into a phone-width frame, centring the word on that point
   // pushed its final letters outside the mask. The signal remains in the
   // same conceptual quadrant, but now keeps a readable safety margin.
   { label: "Implementation", x: 78, y: 66 },
   { label: "Distance", x: 52, y: 88 },
-  { label: "Fit", x: 10, y: 67 },
+  { label: "Fit", x: 16, y: 67 },
 ] as const;
 
 const PATHS = [
@@ -102,12 +102,12 @@ export function HomeQuestionsScene() {
             </p>
             <h2
               id="home-questions-title"
-              className="mt-4 max-w-xl font-display text-[clamp(2.6rem,5vw,5.25rem)] font-normal leading-[0.96] tracking-[-0.025em] text-ivory"
+              className="mt-4 max-w-xl break-words font-display text-[clamp(2.35rem,5vw,5.25rem)] font-normal leading-[0.96] tracking-[-0.025em] text-ivory [text-wrap:balance]"
             >
               Five practical doubts. One calmer decision.
             </h2>
             <p className="mt-5 max-w-xl text-sm leading-7 text-ivory/68 sm:text-base sm:leading-8">
-              Scope, implementation, timing, distance, and fit should feel clear before money enters the room. The page answers each one in sequence.
+              Scope, implementation, timing, distance, and fit should feel clear before a proposal enters the room. The page answers each one in sequence.
             </p>
 
             <div className="mt-9 overflow-hidden rounded-[1.75rem] border border-ivory/12 bg-soil/54 p-4 shadow-[0_30px_90px_rgba(0,0,0,0.24)] backdrop-blur-xl sm:p-6">
@@ -208,7 +208,7 @@ export function HomeQuestionsScene() {
                       className="h-2.5 w-2.5 rounded-full border border-sandstone/60 bg-soil"
                       style={{ boxShadow: "0 0 14px rgba(212,185,154,0.45)" }}
                     />
-                    <span className="text-[0.55rem] font-medium uppercase tracking-[0.12em] text-ivory/58">
+                    <span className="max-w-[5.25rem] text-center text-[0.55rem] font-medium uppercase leading-tight tracking-[0.12em] text-ivory/58">
                       {signal.label}
                     </span>
                   </motion.div>
