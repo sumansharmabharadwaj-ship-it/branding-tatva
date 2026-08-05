@@ -1,0 +1,89 @@
+name: Apply homepage autoplay eligibility repair
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-home-autoplay-eligibility.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Mark active decorative films and compact mobile Explore
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          element_path = Path('src/components/ElementRowBackground.tsx')
+          element = element_path.read_text()
+          element = element.replace(
+              '<div ref={ref} className="absolute inset-0" style={{ backgroundColor: color }} aria-hidden="true">',
+              '<div ref={ref} data-video-decorative-root className="absolute inset-0" style={{ backgroundColor: color }} aria-hidden="true">',
+              1,
+          )
+          element = element.replace(
+              '          onCanPlay={() => setVideoReady(true)}\n          src={video}\n          muted\n          loop',
+              '          onCanPlay={(event) => {\n            setVideoReady(true);\n            if (playing) void event.currentTarget.play().catch(() => {});\n          }}\n          src={video}\n          muted\n          autoPlay={playing}\n          loop',
+              1,
+          )
+          element_path.write_text(element)
+
+          process_path = Path('src/sections/Process/RootSystem.tsx')
+          process = process_path.read_text()
+          process = process.replace(
+              '<div className="project-journey__media" aria-hidden="true">',
+              '<div className="project-journey__media" data-video-decorative-root aria-hidden="true">',
+              1,
+          )
+          process_path.write_text(process)
+
+          css_path = Path('src/app/home-audit-fixes.css')
+          css = css_path.read_text()
+          css = css.replace(
+              '''  [data-chapter-ladder-mobile] > button {
+    min-height: 2.8rem !important;
+    padding-inline: 0.9rem !important;
+  }
+}''',
+              '''  [data-chapter-ladder-mobile] > button {
+    width: 2.8rem !important;
+    height: 2.8rem !important;
+    min-height: 2.8rem !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+
+  [data-chapter-ladder-mobile] > button > span:not(:first-child) {
+    display: none !important;
+  }
+}''',
+              1,
+          )
+          css_path.write_text(css)
+          PY
+
+      - name: Commit the repair and remove the one time workflow
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/components/ElementRowBackground.tsx src/sections/Process/RootSystem.tsx src/app/home-audit-fixes.css
+          git rm .github/workflows/apply-home-autoplay-eligibility.yml
+          git commit -m "Wake the Elements and Process films without reviving hidden slides"
+          git push origin HEAD:reimagine-project-moves
