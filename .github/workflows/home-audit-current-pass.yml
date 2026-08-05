@@ -8,22 +8,28 @@ on:
       - reimagine-project-moves
     paths:
       - .github/workflows/home-audit-current-pass.yml
+      - scripts/api_contract_gate.cjs
       - scripts/home_link_integrity.cjs
       - scripts/home_release_gate_v2.cjs
       - src/app/page.tsx
       - src/app/layout.tsx
       - src/app/home-*.css
+      - src/app/api/**
       - src/components/AmbientAudio.tsx
       - src/components/BackgroundVideo.tsx
       - src/components/MotionPreference.tsx
       - src/components/PageLoadVeil.tsx
       - src/components/VideoWarden.tsx
+      - src/lib/api-protection.ts
+      - src/lib/contact-schema.ts
+      - src/lib/newsletter-schema.ts
       - src/lib/videoVisibility.ts
       - src/sections/Hero/**
       - src/sections/Home/**
       - src/sections/Elements/**
       - src/sections/Process/**
       - src/sections/FAQ/**
+      - public/videos/home-reframe-*.webm
 
 permissions:
   contents: read
@@ -87,7 +93,12 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/home_link_integrity.cjs
 
-      - name: Audit chapters, media, controls, autoplay, and viewports
+      - name: Verify contact and newsletter route contracts
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/api_contract_gate.cjs
+
+      - name: Audit chapters, media, controls, interactions, and viewports
         env:
           AUDIT_COMMIT: ${{ github.sha }}
         run: node scripts/home_release_gate_v2.cjs
