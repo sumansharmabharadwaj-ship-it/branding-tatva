@@ -1,0 +1,194 @@
+/*
+  Homepage-only Mother Earth fields.
+
+  The page already carries the right structure, typography, diagrams and
+  local films. These wrappers replace the long pale middle with three rich
+  natural atmospheres while keeping every component's original layout and
+  interaction contract intact. Element colours remain accents; the fields
+  move slowly underneath them rather than becoming flat theme blocks.
+*/
+
+[data-home-earth-tone] {
+  --earth-field: #3f463a;
+  --earth-glow-a: rgba(200, 117, 85, 0.28);
+  --earth-glow-b: rgba(125, 133, 101, 0.3);
+  --earth-glow-c: rgba(216, 162, 81, 0.17);
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: var(--earth-field);
+  color: #f4efe6;
+}
+
+[data-home-earth-tone="studio"] {
+  --earth-field: linear-gradient(128deg, #354238 0%, #465041 42%, #513b31 100%);
+  --earth-glow-a: rgba(200, 117, 85, 0.34);
+  --earth-glow-b: rgba(125, 133, 101, 0.36);
+  --earth-glow-c: rgba(82, 117, 111, 0.2);
+}
+
+[data-home-earth-tone="paths"] {
+  --earth-field: linear-gradient(132deg, #4b342a 0%, #5a4031 44%, #3e4937 100%);
+  --earth-glow-a: rgba(216, 162, 81, 0.25);
+  --earth-glow-b: rgba(125, 133, 101, 0.3);
+  --earth-glow-c: rgba(200, 117, 85, 0.32);
+}
+
+[data-home-earth-tone="framework"] {
+  --earth-field: linear-gradient(138deg, #2f443f 0%, #3d5047 48%, #513b31 100%);
+  --earth-glow-a: rgba(82, 117, 111, 0.38);
+  --earth-glow-b: rgba(200, 117, 85, 0.28);
+  --earth-glow-c: rgba(216, 162, 81, 0.2);
+}
+
+[data-home-earth-tone]::before {
+  content: "";
+  position: absolute;
+  inset: -22%;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.88;
+  filter: blur(38px);
+  background:
+    radial-gradient(circle at 18% 22%, var(--earth-glow-a) 0%, transparent 34%),
+    radial-gradient(circle at 78% 24%, var(--earth-glow-b) 0%, transparent 35%),
+    radial-gradient(circle at 57% 82%, var(--earth-glow-c) 0%, transparent 32%);
+  transform: translate3d(0, 0, 0) scale(1.02);
+  animation: bt-home-earth-drift 22s ease-in-out infinite;
+}
+
+[data-home-earth-tone]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.23;
+  mix-blend-mode: soft-light;
+  background-image:
+    repeating-radial-gradient(
+      ellipse at 54% 48%,
+      transparent 0,
+      transparent 34px,
+      rgba(244, 239, 230, 0.055) 35px,
+      transparent 37px
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E");
+  animation: bt-home-contour-breathe 15s ease-in-out infinite;
+}
+
+[data-home-earth-tone] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* The component sections keep their own layout, but their former cream
+   canvases become transparent so the moving field can join them into one
+   continuous chapter. */
+[data-home-earth-tone] section {
+  background-color: transparent !important;
+  color: #f4efe6;
+}
+
+[data-home-earth-tone="framework"] > section:nth-of-type(2) {
+  background-color: rgba(29, 35, 31, 0.2) !important;
+}
+
+/* Re-map only the existing light-theme utilities inside these wrappers.
+   This preserves every component's semantic markup and animation while
+   shifting contrast into ivory and translucent mineral glass. */
+[data-home-earth-tone] [class*="text-soil"] {
+  color: #f4efe6 !important;
+}
+
+[data-home-earth-tone] [class*="text-foreground-secondary"] {
+  color: rgba(244, 239, 230, 0.68) !important;
+}
+
+[data-home-earth-tone] [class*="border-soil"],
+[data-home-earth-tone] [class*="border-border"] {
+  border-color: rgba(244, 239, 230, 0.14) !important;
+}
+
+[data-home-earth-tone] [class*="bg-white"] {
+  background-color: rgba(244, 239, 230, 0.065) !important;
+}
+
+[data-home-earth-tone] [class*="bg-soil/"] {
+  background-color: rgba(20, 18, 16, 0.16) !important;
+}
+
+[data-home-earth-tone] [class*="bg-soil["] {
+  background-color: rgba(20, 18, 16, 0.16) !important;
+}
+
+[data-home-earth-tone="paths"] li > a {
+  background-color: rgba(244, 239, 230, 0.06) !important;
+  border-color: rgba(244, 239, 230, 0.15) !important;
+  box-shadow: 0 24px 64px -42px rgba(20, 18, 16, 0.85) !important;
+  backdrop-filter: blur(12px);
+}
+
+[data-home-earth-tone="paths"] li > a:hover,
+[data-home-earth-tone="paths"] li > a:focus-visible {
+  background-color: rgba(244, 239, 230, 0.105) !important;
+}
+
+[data-home-earth-tone="paths"] svg text {
+  fill: rgba(244, 239, 230, 0.78) !important;
+}
+
+[data-home-earth-tone="framework"] [style*="--tw-ring-offset-color"] {
+  --tw-ring-offset-color: #354840 !important;
+}
+
+[data-home-earth-tone] .link-underline {
+  color: #d4b99a !important;
+}
+
+[data-home-earth-tone] .link-underline:hover {
+  color: #f4efe6 !important;
+}
+
+@keyframes bt-home-earth-drift {
+  0%, 100% {
+    transform: translate3d(-1.5%, -1%, 0) scale(1.02) rotate(-0.5deg);
+  }
+  50% {
+    transform: translate3d(3%, 2%, 0) scale(1.09) rotate(0.8deg);
+  }
+}
+
+@keyframes bt-home-contour-breathe {
+  0%, 100% {
+    opacity: 0.18;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.025);
+  }
+}
+
+@media (max-width: 767px) {
+  [data-home-earth-tone]::before {
+    inset: -14%;
+    filter: blur(28px);
+  }
+
+  [data-home-earth-tone]::after {
+    opacity: 0.17;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-home-earth-tone]::before,
+  [data-home-earth-tone]::after {
+    animation: none;
+  }
+}
+
+:root[data-motion="reduced"] [data-home-earth-tone]::before,
+:root[data-motion="reduced"] [data-home-earth-tone]::after {
+  animation: none;
+}
