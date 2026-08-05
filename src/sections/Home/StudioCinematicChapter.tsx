@@ -58,9 +58,9 @@ const DISCIPLINES = [
   },
 ] as const;
 
-const ROTATE_MS = 5200;
-const MANUAL_HOLD_MS = 14000;
-const HOVER_HOLD_MS = 4200;
+const ROTATE_MS = 4300;
+const MANUAL_HOLD_MS = 10500;
+const HOVER_HOLD_MS = 3400;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function StudioCinematicChapter() {
@@ -94,7 +94,7 @@ export function StudioCinematicChapter() {
     video.defaultMuted = true;
     video.playsInline = true;
     video.loop = true;
-    video.playbackRate = 1.06;
+    video.playbackRate = 1.18;
 
     if (inView && !document.hidden) {
       void video.play().catch(() => undefined);
@@ -138,7 +138,7 @@ export function StudioCinematicChapter() {
               animate={{ opacity: 1, scale: inView ? 1.08 : 1.03 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 1.025 }}
               transition={{
-                opacity: { duration: prefersReducedMotion ? 0 : 0.52, ease: EASE },
+                opacity: { duration: prefersReducedMotion ? 0 : 0.46, ease: EASE },
                 scale: { duration: prefersReducedMotion ? 0 : 9.5, ease: "linear" },
               }}
             >
@@ -180,7 +180,7 @@ export function StudioCinematicChapter() {
               className="studio-cinematic__media-caption"
               initial={prefersReducedMotion ? false : { opacity: 0.64, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
             >
               <p>{active.eyebrow}</p>
               <h3>{active.title}</h3>
@@ -240,7 +240,7 @@ export function StudioCinematicChapter() {
             className="studio-cinematic__panel"
             initial={prefersReducedMotion ? false : { opacity: 0.72, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.34, ease: EASE }}
             aria-live="polite"
           >
             <p className="studio-cinematic__panel-copy">{active.line}</p>
