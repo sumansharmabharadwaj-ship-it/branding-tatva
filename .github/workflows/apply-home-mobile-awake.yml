@@ -66,13 +66,8 @@ jobs:
 
           slider = Path("src/sections/Elements/PinnedSlider.tsx")
           text = slider.read_text()
-          before = """      if (detail?.id !== \"elements\") return;
-      pauseAutoplay(900);
-      showIndex(0);"""
-          after = """      if (detail?.id !== \"elements\") return;
-      setIsVisible(true);
-      pauseAutoplay(900);
-      showIndex(0);"""
+          before = '      if (detail?.id !== "elements") return;\n      pauseAutoplay(900);\n      showIndex(0);'
+          after = '      if (detail?.id !== "elements") return;\n      setIsVisible(true);\n      pauseAutoplay(900);\n      showIndex(0);'
           if before not in text:
               raise SystemExit("Expected Elements chapter handler was not found")
           slider.write_text(text.replace(before, after, 1))
