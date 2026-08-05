@@ -1,4 +1,6 @@
 name: Capture homepage visual audit
+# Final pass validates the restored Evidence chapter, moving nature fragments,
+# mobile scene wakeups and horizontal containment together.
 
 on:
   push:
@@ -116,6 +118,17 @@ jobs:
                   const rect = chapterElement.getBoundingClientRect();
                   const viewportWidth = document.documentElement.clientWidth;
                   const documentWidth = document.documentElement.scrollWidth;
+                  const visibleVideoDetails = Array.from(document.querySelectorAll('video'))
+                    .filter((video) => {
+                      const videoRect = video.getBoundingClientRect();
+                      return videoRect.bottom > 0 && videoRect.top < window.innerHeight;
+                    })
+                    .map((video) => ({
+                      src: video.currentSrc || video.getAttribute('src') || '',
+                      paused: video.paused,
+                      readyState: video.readyState,
+                      opacity: Number.parseFloat(window.getComputedStyle(video).opacity || '1'),
+                    }));
                   return {
                     scrollY: Math.round(window.scrollY),
                     viewportWidth,
@@ -124,11 +137,9 @@ jobs:
                     chapterLeft: Math.round(rect.left),
                     chapterRight: Math.round(rect.right),
                     chapterWidth: Math.round(rect.width),
-                    visibleVideos: Array.from(document.querySelectorAll('video')).filter((video) => {
-                      const videoRect = video.getBoundingClientRect();
-                      return videoRect.bottom > 0 && videoRect.top < window.innerHeight;
-                    }).length,
-                    playingVideos: Array.from(document.querySelectorAll('video')).filter((video) => !video.paused && !video.ended).length,
+                    visibleVideos: visibleVideoDetails.length,
+                    playingVideos: visibleVideoDetails.filter((video) => !video.paused).length,
+                    visibleVideoDetails,
                   };
                 });
                 report.captures.push({ profile: profile.name, chapter: chapter.id, path, ...playback });
