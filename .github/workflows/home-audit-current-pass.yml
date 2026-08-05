@@ -204,3 +204,5 @@ jobs:
           path: visual-audit/*
           if-no-files-found: error
           retention-days: 1
+
+# Audit rerun after the shared decorative-video eligibility repair.
