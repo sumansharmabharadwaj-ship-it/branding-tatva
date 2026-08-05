@@ -1,4 +1,4 @@
-name: Capture current homepage audit pass
+name: Homepage visual and autoplay release gate
 
 on:
   push:
@@ -6,14 +6,19 @@ on:
       - reimagine-project-moves
     paths:
       - .github/workflows/home-audit-current-pass.yml
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: homepage-visual-audit
+  cancel-in-progress: true
+
 jobs:
-  capture:
+  audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
 
     steps:
       - name: Check out the preview branch
@@ -60,7 +65,7 @@ jobs:
           cat /tmp/branding-tatva-start.log
           exit 1
 
-      - name: Capture every chapter and audit collisions
+      - name: Audit all chapters and required viewports
         run: |
           mkdir -p visual-audit
           cat > capture-home.cjs <<'JS'
@@ -68,13 +73,55 @@ jobs:
           const fs = require('fs');
 
           const profiles = [
-            { name: 'desktop', viewport: { width: 1440, height: 900 } },
-            { name: 'mobile', viewport: { width: 390, height: 844 } },
+            { name: 'mobile-320', viewport: { width: 320, height: 568 }, capture: false },
+            { name: 'mobile-375', viewport: { width: 375, height: 667 }, capture: false },
+            { name: 'mobile-390', viewport: { width: 390, height: 844 }, capture: true },
+            { name: 'mobile-430', viewport: { width: 430, height: 932 }, capture: false },
+            { name: 'tablet-768', viewport: { width: 768, height: 1024 }, capture: false },
+            { name: 'desktop-1024', viewport: { width: 1024, height: 768 }, capture: false },
+            { name: 'desktop-1280', viewport: { width: 1280, height: 800 }, capture: false },
+            { name: 'desktop-1440', viewport: { width: 1440, height: 900 }, capture: true },
+            { name: 'desktop-1920', viewport: { width: 1920, height: 1080 }, capture: false },
           ];
+
+          const deepChapters = new Set(['process', 'questions', 'invitation']);
+          const criticalFilmChapters = ['elements', 'process'];
+          const expectedChapters = [
+            'opening',
+            'diagnosis',
+            'evidence',
+            'studio',
+            'paths',
+            'framework',
+            'elements',
+            'process',
+            'questions',
+            'invitation',
+          ];
+
+          const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+          function overlaps(a, b) {
+            return !(
+              a.right <= b.left ||
+              a.left >= b.right ||
+              a.bottom <= b.top ||
+              a.top >= b.bottom
+            );
+          }
 
           (async () => {
             const browser = await chromium.launch({ headless: true });
-            const report = { captures: [], consoleErrors: [], pageErrors: [] };
+            const report = {
+              generatedAt: new Date().toISOString(),
+              commit: process.env.GITHUB_SHA || null,
+              captures: [],
+              mediaProbes: [],
+              cinemaMenu: null,
+              consoleErrors: [],
+              pageErrors: [],
+              failures: [],
+            };
 
             for (const profile of profiles) {
               const context = await browser.newContext({
@@ -83,105 +130,374 @@ jobs:
                 reducedMotion: 'no-preference',
               });
               const page = await context.newPage();
+
               page.on('console', (message) => {
-                if (message.type() === 'error') {
-                  report.consoleErrors.push({ profile: profile.name, text: message.text() });
-                }
+                if (message.type() !== 'error') return;
+                const text = message.text();
+                const expectedLocalAnalyticsFailure =
+                  text.includes('/_vercel/insights') ||
+                  text.includes('/_vercel/speed-insights');
+                report.consoleErrors.push({
+                  profile: profile.name,
+                  text,
+                  expectedLocalAnalyticsFailure,
+                });
               });
               page.on('pageerror', (error) => {
                 report.pageErrors.push({ profile: profile.name, text: error.message });
               });
 
               await page.goto('http://127.0.0.1:3000/', { waitUntil: 'networkidle' });
-              await page.waitForTimeout(3200);
-              await page.waitForFunction(() => document.querySelectorAll('[data-home-chapter]').length >= 10, null, { timeout: 10000 });
-
-              const chapters = await page.locator('[data-home-chapter]').evaluateAll((elements) =>
-                elements.map((element, index) => ({
-                  index,
-                  id: element.getAttribute('data-home-chapter') || `chapter-${index + 1}`,
-                })),
+              await page.waitForTimeout(2600);
+              await page.waitForFunction(
+                () => document.querySelectorAll('[data-home-chapter]').length >= 10,
+                null,
+                { timeout: 10000 },
               );
+
+              const chapters = await page
+                .locator('[data-home-chapter]')
+                .evaluateAll((elements) =>
+                  elements.map((element, index) => ({
+                    index,
+                    id:
+                      element.getAttribute('data-home-chapter') ||
+                      `chapter-${index + 1}`,
+                  })),
+                );
+
+              const chapterIds = chapters.map((chapter) => chapter.id);
+              if (JSON.stringify(chapterIds) !== JSON.stringify(expectedChapters)) {
+                report.failures.push({
+                  profile: profile.name,
+                  chapter: 'document',
+                  type: 'chapter-sequence',
+                  detail: `Expected ${expectedChapters.join(', ')}; received ${chapterIds.join(', ')}`,
+                });
+              }
 
               for (const chapter of chapters) {
                 const locator = page.locator('[data-home-chapter]').nth(chapter.index);
-                await locator.evaluate((element) => {
-                  const top = window.scrollY + element.getBoundingClientRect().top - 72;
-                  window.scrollTo({ top, behavior: 'instant' });
-                });
-                await page.waitForTimeout(3400);
+                const offset = deepChapters.has(chapter.id) ? 0 : -72;
+                await locator.evaluate(
+                  (element, value) => {
+                    const top =
+                      window.scrollY +
+                      element.getBoundingClientRect().top +
+                      value;
+                    window.scrollTo({ top, behavior: 'instant' });
+                  },
+                  offset,
+                );
+                await page.waitForTimeout(profile.capture ? 2600 : 1050);
 
-                const safe = chapter.id.replace(/[^a-z0-9_-]+/gi, '-').toLowerCase();
-                const path = `visual-audit/${profile.name}-${String(chapter.index + 1).padStart(2, '0')}-${safe}.png`;
-                await page.screenshot({ path, fullPage: false });
+                const safe = chapter.id
+                  .replace(/[^a-z0-9_-]+/gi, '-')
+                  .toLowerCase();
+                const screenshotPath = profile.capture
+                  ? `visual-audit/${profile.name}-${String(chapter.index + 1).padStart(2, '0')}-${safe}.png`
+                  : null;
+                if (screenshotPath) {
+                  await page.screenshot({ path: screenshotPath, fullPage: false });
+                }
 
-                const state = await page.evaluate(({ profileName }) => {
-                  const rect = (selector) => {
-                    const element = document.querySelector(selector);
-                    if (!(element instanceof HTMLElement)) return null;
-                    const box = element.getBoundingClientRect();
-                    const style = getComputedStyle(element);
-                    if (style.display === 'none' || style.visibility === 'hidden' || Number.parseFloat(style.opacity || '1') <= 0.025) return null;
-                    return { left: box.left, top: box.top, right: box.right, bottom: box.bottom, width: box.width, height: box.height };
-                  };
+                const state = await page.evaluate(
+                  ({ profileName, chapterId }) => {
+                    const visibleRect = (selector) => {
+                      const element = document.querySelector(selector);
+                      if (!(element instanceof HTMLElement)) return null;
+                      const box = element.getBoundingClientRect();
+                      const style = getComputedStyle(element);
+                      if (
+                        style.display === 'none' ||
+                        style.visibility === 'hidden' ||
+                        Number.parseFloat(style.opacity || '1') <= 0.025
+                      ) {
+                        return null;
+                      }
+                      return {
+                        left: box.left,
+                        top: box.top,
+                        right: box.right,
+                        bottom: box.bottom,
+                        width: box.width,
+                        height: box.height,
+                      };
+                    };
 
-                  const fixed = {
-                    ladder: rect('[data-chapter-ladder]'),
-                    mobileExplore: rect('[data-chapter-ladder-mobile]'),
-                    journey: rect('[data-auto-journey-control]'),
-                    audio: rect('button[aria-label*="ambient sound"]'),
-                  };
+                    const fixed = {
+                      ladder: visibleRect('[data-chapter-ladder]'),
+                      mobileExplore: visibleRect('[data-chapter-ladder-mobile]'),
+                      cinema: visibleRect('[data-auto-journey-control]'),
+                      audio: visibleRect('[data-ambient-audio-control]'),
+                    };
 
-                  const overlapPairs = [];
-                  const entries = Object.entries(fixed).filter(([, value]) => value);
-                  for (let i = 0; i < entries.length; i += 1) {
-                    for (let j = i + 1; j < entries.length; j += 1) {
-                      const [aName, a] = entries[i];
-                      const [bName, b] = entries[j];
-                      if (!(a && b)) continue;
-                      const overlap = !(
-                        a.right <= b.left ||
-                        a.left >= b.right ||
-                        a.bottom <= b.top ||
-                        a.top >= b.bottom
-                      );
-                      if (overlap) overlapPairs.push(`${aName}:${bName}`);
+                    const overlapPairs = [];
+                    const entries = Object.entries(fixed).filter(([, value]) => value);
+                    for (let i = 0; i < entries.length; i += 1) {
+                      for (let j = i + 1; j < entries.length; j += 1) {
+                        const [aName, a] = entries[i];
+                        const [bName, b] = entries[j];
+                        if (a && b && !(
+                          a.right <= b.left ||
+                          a.left >= b.right ||
+                          a.bottom <= b.top ||
+                          a.top >= b.bottom
+                        )) {
+                          overlapPairs.push(`${aName}:${bName}`);
+                        }
+                      }
                     }
-                  }
 
-                  const visibleVideos = Array.from(document.querySelectorAll('video')).filter((video) => {
-                    const box = video.getBoundingClientRect();
-                    const style = getComputedStyle(video);
-                    return box.width > 1 && box.height > 1 && box.bottom > 0 && box.top < window.innerHeight && style.visibility !== 'hidden' && Number.parseFloat(style.opacity || '1') > 0.025;
-                  });
+                    const chapter = document.querySelector(
+                      `[data-home-chapter="${chapterId}"]`,
+                    );
+                    const heading = chapter?.querySelector('h1, h2, [role="heading"]');
+                    const headingBox =
+                      heading instanceof HTMLElement
+                        ? heading.getBoundingClientRect()
+                        : null;
+                    const headingOverflow = Boolean(
+                      headingBox &&
+                        (headingBox.left < -1 ||
+                          headingBox.right > window.innerWidth + 1),
+                    );
 
-                  return {
-                    profileName,
-                    scrollY: Math.round(window.scrollY),
-                    documentWidth: document.documentElement.scrollWidth,
-                    viewportWidth: window.innerWidth,
-                    horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 1,
-                    fixed,
-                    overlapPairs,
-                    visibleVideos: visibleVideos.length,
-                    playingVideos: visibleVideos.filter((video) => !video.paused && !video.ended).length,
-                    totalPlayingVideos: Array.from(document.querySelectorAll('video')).filter((video) => !video.paused && !video.ended).length,
-                  };
-                }, { profileName: profile.name });
+                    const visibleVideos = Array.from(
+                      document.querySelectorAll('video'),
+                    ).filter((video) => {
+                      const box = video.getBoundingClientRect();
+                      const style = getComputedStyle(video);
+                      return (
+                        box.width > 1 &&
+                        box.height > 1 &&
+                        box.bottom > 0 &&
+                        box.top < window.innerHeight &&
+                        style.visibility !== 'hidden' &&
+                        Number.parseFloat(style.opacity || '1') > 0.025
+                      );
+                    });
+
+                    return {
+                      profileName,
+                      chapterId,
+                      scrollY: Math.round(window.scrollY),
+                      documentWidth: document.documentElement.scrollWidth,
+                      viewportWidth: window.innerWidth,
+                      horizontalOverflow:
+                        document.documentElement.scrollWidth >
+                        window.innerWidth + 1,
+                      headingOverflow,
+                      headingRect: headingBox
+                        ? {
+                            left: headingBox.left,
+                            right: headingBox.right,
+                            top: headingBox.top,
+                            bottom: headingBox.bottom,
+                          }
+                        : null,
+                      fixed,
+                      overlapPairs,
+                      visibleVideos: visibleVideos.length,
+                      playingVideos: visibleVideos.filter(
+                        (video) => !video.paused && !video.ended,
+                      ).length,
+                      totalPlayingVideos: Array.from(
+                        document.querySelectorAll('video'),
+                      ).filter((video) => !video.paused && !video.ended).length,
+                    };
+                  },
+                  { profileName: profile.name, chapterId: chapter.id },
+                );
 
                 report.captures.push({
                   profile: profile.name,
                   chapter: chapter.id,
-                  path,
+                  path: screenshotPath,
                   ...state,
                 });
+
+                if (state.horizontalOverflow) {
+                  report.failures.push({
+                    profile: profile.name,
+                    chapter: chapter.id,
+                    type: 'horizontal-overflow',
+                    detail: `${state.documentWidth}px document inside ${state.viewportWidth}px viewport`,
+                  });
+                }
+                if (state.headingOverflow) {
+                  report.failures.push({
+                    profile: profile.name,
+                    chapter: chapter.id,
+                    type: 'heading-overflow',
+                    detail: JSON.stringify(state.headingRect),
+                  });
+                }
+                for (const pair of state.overlapPairs) {
+                  report.failures.push({
+                    profile: profile.name,
+                    chapter: chapter.id,
+                    type: 'fixed-control-overlap',
+                    detail: pair,
+                  });
+                }
+              }
+
+              for (const chapterId of criticalFilmChapters) {
+                const chapter = page.locator(
+                  `[data-home-chapter="${chapterId}"]`,
+                );
+                const video = chapter.locator('video').first();
+                if ((await video.count()) === 0) {
+                  report.failures.push({
+                    profile: profile.name,
+                    chapter: chapterId,
+                    type: 'missing-critical-video',
+                    detail: 'No video element was mounted',
+                  });
+                  continue;
+                }
+
+                await video.evaluate((element) => {
+                  const top =
+                    window.scrollY +
+                    element.getBoundingClientRect().top -
+                    window.innerHeight * 0.28;
+                  window.scrollTo({ top, behavior: 'instant' });
+                });
+                await page.waitForTimeout(2400);
+
+                const probe = await video.evaluate(async (element) => {
+                  const start = element.currentTime;
+                  let playError = null;
+                  try {
+                    await element.play();
+                  } catch (error) {
+                    playError =
+                      error instanceof Error
+                        ? { name: error.name, message: error.message }
+                        : { name: 'Unknown', message: String(error) };
+                  }
+                  await new Promise((resolve) => setTimeout(resolve, 900));
+                  return {
+                    src: element.currentSrc || element.src,
+                    readyState: element.readyState,
+                    paused: element.paused,
+                    start,
+                    end: element.currentTime,
+                    advanced: element.currentTime > start + 0.05,
+                    playError,
+                    mediaError: element.error
+                      ? {
+                          code: element.error.code,
+                          message: element.error.message,
+                        }
+                      : null,
+                  };
+                });
+
+                report.mediaProbes.push({
+                  profile: profile.name,
+                  chapter: chapterId,
+                  ...probe,
+                });
+
+                if (!probe.advanced || probe.paused || probe.playError || probe.mediaError) {
+                  report.failures.push({
+                    profile: profile.name,
+                    chapter: chapterId,
+                    type: 'critical-video-not-playing',
+                    detail: JSON.stringify(probe),
+                  });
+                }
+              }
+
+              if (profile.name === 'mobile-390') {
+                await page.locator('[data-auto-journey-control]').click();
+                await page.waitForTimeout(450);
+                const menu = page.locator('#mobile-cinema-controls');
+                const menuVisible = await menu.isVisible().catch(() => false);
+                const audioButtonVisible = await page
+                  .locator('[data-ambient-audio-control]')
+                  .isVisible()
+                  .catch(() => false);
+                report.cinemaMenu = { menuVisible, audioButtonVisible };
+                if (!menuVisible || audioButtonVisible) {
+                  report.failures.push({
+                    profile: profile.name,
+                    chapter: 'cinema-controls',
+                    type: 'mobile-cinema-menu',
+                    detail: JSON.stringify({ menuVisible, audioButtonVisible }),
+                  });
+                }
+                if (menuVisible) {
+                  await page.screenshot({
+                    path: 'visual-audit/mobile-390-cinema-menu.png',
+                    fullPage: false,
+                  });
+                }
               }
 
               await context.close();
             }
 
-            fs.writeFileSync('visual-audit/report.json', JSON.stringify(report, null, 2));
+            const unexpectedConsoleErrors = report.consoleErrors.filter(
+              (entry) => !entry.expectedLocalAnalyticsFailure,
+            );
+            for (const entry of unexpectedConsoleErrors) {
+              report.failures.push({
+                profile: entry.profile,
+                chapter: 'runtime',
+                type: 'console-error',
+                detail: entry.text,
+              });
+            }
+            for (const entry of report.pageErrors) {
+              report.failures.push({
+                profile: entry.profile,
+                chapter: 'runtime',
+                type: 'page-error',
+                detail: entry.text,
+              });
+            }
+
+            fs.writeFileSync(
+              'visual-audit/report.json',
+              JSON.stringify(report, null, 2),
+            );
+
+            const lines = [
+              '# Branding Tatva homepage release-gate audit',
+              '',
+              `- Commit: ${report.commit ?? 'unknown'}`,
+              `- Viewports tested: ${profiles.length}`,
+              `- Chapters per viewport: ${expectedChapters.length}`,
+              `- Chapter checks: ${report.captures.length}`,
+              `- Critical media probes: ${report.mediaProbes.length}`,
+              `- Failures: ${report.failures.length}`,
+              '',
+              '## Critical media probes',
+              '',
+              ...report.mediaProbes.map(
+                (probe) =>
+                  `- ${probe.profile} / ${probe.chapter}: ${probe.advanced && !probe.paused ? 'PASS' : 'FAIL'} | ${probe.src}`,
+              ),
+              '',
+              '## Failures',
+              '',
+              ...(report.failures.length
+                ? report.failures.map(
+                    (failure) =>
+                      `- ${failure.profile} / ${failure.chapter} / ${failure.type}: ${failure.detail}`,
+                  )
+                : ['- None']),
+              '',
+            ];
+            fs.writeFileSync('visual-audit/report.md', lines.join('\n'));
+            console.log(lines.join('\n'));
+
             await browser.close();
+            if (report.failures.length) process.exitCode = 1;
           })().catch((error) => {
             console.error(error);
             process.exit(1);
@@ -196,13 +512,11 @@ jobs:
             kill "$(cat /tmp/branding-tatva-start.pid)" || true
           fi
 
-      - name: Upload the current audit
+      - name: Upload the release-gate evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: branding-tatva-current-home-audit
+          name: branding-tatva-homepage-release-gate
           path: visual-audit/*
           if-no-files-found: error
-          retention-days: 1
-
-# Audit rerun after the shared decorative-video eligibility repair.
+          retention-days: 7
