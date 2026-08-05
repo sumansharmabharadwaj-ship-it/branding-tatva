@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import "./home-cinematic-recovery.css";
+import "./home-studio-cinematic.css";
+import "./home-paths-cinematic.css";
+import "./home-cinematic-finish.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { LinkButton } from "@/components/Button";
@@ -9,14 +12,14 @@ import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { ClarityCTA } from "@/sections/Home/ClarityCTA";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
-import { StudioTriptych } from "@/sections/Home/StudioTriptych";
+import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
+import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomeOpeningSignal } from "@/sections/Home/HomeOpeningSignal";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { HomeSceneBridge } from "@/sections/Home/HomeSceneBridge";
 import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
 import { CinematicHero } from "@/sections/Hero";
-import { ThreePathsSection } from "@/sections/Home/ThreePathsSection";
 import { VideoBreak } from "@/components/VideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { site } from "@/data/site";
@@ -51,96 +54,153 @@ export default function Home() {
   return (
     <>
       <Header transparent />
-      <main id="main-content">
-        <div className="relative">
-          <CinematicHero
-            video="/videos/hero-forest-sanctuary.mp4"
-            poster="/images/hero-forest-sanctuary-poster.jpg"
-            imagePosition="30% 40%"
-            badge="Brand strategy shaped by psychology, language, and market evidence"
-            headline={
-              <>
-                Most brands are visible. Very few are{" "}
-                <span className="italic text-clay">remembered</span>.
-              </>
-            }
-            subhead="I help founders and growing businesses decide what their brand should mean, then build the positioning, identity, voice, website, and market presence that make that meaning recognisable."
-          >
-            <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
-            <LinkButton
-              href="/work"
-              variant="secondary"
-              className="border-ivory/30 text-ivory hover:bg-ivory/10"
+      <main id="main-content" className="cinematic-home">
+        <section
+          id="opening"
+          data-home-chapter="opening"
+          data-home-section="opening"
+          className="home-scene home-scene--opening"
+          aria-label="Branding Tatva introduction"
+        >
+          <div className="relative">
+            <CinematicHero
+              video="/videos/hero-forest-sanctuary.mp4"
+              poster="/images/hero-forest-sanctuary-poster.jpg"
+              imagePosition="30% 40%"
+              badge="Brand strategy shaped by psychology, language, and market evidence"
+              headline={
+                <>
+                  Most brands are visible. Very few are{" "}
+                  <span className="italic text-clay">remembered</span>.
+                </>
+              }
+              subhead="I help founders and growing businesses decide what their brand should mean, then build the positioning, identity, voice, website, and market presence that make that meaning recognisable."
             >
-              Explore the Work
-            </LinkButton>
-            <p className="w-full text-xs text-ivory/50 sm:text-sm">
-              The same strategic method that moved one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks. Led directly by Suman, from diagnosis to delivery.
-            </p>
-          </CinematicHero>
-          <HomeOpeningSignal />
-        </div>
+              <LinkButton href="/contact">Book a Brand Strategy Session</LinkButton>
+              <LinkButton
+                href="/work"
+                variant="secondary"
+                className="border-ivory/30 text-ivory hover:bg-ivory/10"
+              >
+                Explore the Work
+              </LinkButton>
+              <p className="w-full text-xs text-ivory/55 sm:text-sm">
+                The same strategic method that moved one client&apos;s engagement rate
+                from 0.71% to 2.81% in eight weeks. Led directly by Suman, from
+                diagnosis to delivery.
+              </p>
+            </CinematicHero>
+            <HomeOpeningSignal />
+          </div>
+        </section>
 
         <HomeSceneBridge family="air" from="#141210" to="#141210" />
 
-        <div>
+        <section
+          id="diagnosis"
+          data-home-chapter="diagnosis"
+          data-home-section="diagnosis"
+          className="home-scene"
+          aria-label="Find the strategic gap"
+        >
           <span className="sr-only">Where you stand</span>
           <ClarityCTA />
-        </div>
+        </section>
 
         <HomeSceneBridge family="earth" from="#141210" to="#27221E" />
-        <EvidenceWall />
+
+        <section
+          id="evidence"
+          data-home-chapter="evidence"
+          data-home-section="evidence"
+          className="home-scene"
+          aria-label="Selected work and recorded proof"
+        >
+          <EvidenceWall />
+        </section>
+
         <HomeSceneBridge family="water" from="#27221E" to="#F2F0E8" />
-
-        <div id="studio-home-fix">
-          <StudioTriptych />
-        </div>
+        <StudioCinematicChapter />
         <HomeSceneBridge family="air" from="#F2F0E8" to="#F2F0E8" />
-
-        <div id="paths-home-fix">
-          <ThreePathsSection />
-        </div>
+        <PathsCinematicChapter />
         <HomeSceneBridge family="confluence" from="#F2F0E8" to="#F2F0E8" />
 
-        <div>
+        <section
+          id="framework"
+          data-home-chapter="framework"
+          data-home-section="framework"
+          className="home-scene home-scene--framework"
+          aria-label="The Branding Tatva framework"
+        >
           <TatvaStrip />
           <TatvaSystemLab />
-        </div>
+        </section>
+
         <HomeSceneBridge family="space" from="#E9E4D9" to="#27221E" />
 
-        <div id="elements" className="scroll-mt-24">
+        <section
+          id="elements"
+          data-home-chapter="elements"
+          data-home-section="elements"
+          className="home-scene scroll-mt-24"
+          aria-label="The five Tatvas in depth"
+        >
           <ElementsSection elements={elements} />
-        </div>
+        </section>
 
         <HomeSceneBridge family="earth" from="#27221E" to="#141210" />
 
-        <section className="bg-soil">
+        <section
+          id="process"
+          data-home-chapter="process"
+          data-home-section="process"
+          className="home-scene bg-soil"
+          aria-label="How a project moves"
+        >
           <ProcessSection stages={process} elementColor={elementColor} />
         </section>
 
         <HomeSceneBridge family="water" from="#141210" to="#141210" />
-        <HomeQuestionsScene />
+
+        <section
+          id="questions"
+          data-home-chapter="questions"
+          data-home-section="questions"
+          className="home-scene"
+          aria-label="Practical questions before beginning"
+        >
+          <HomeQuestionsScene />
+        </section>
+
         <HomeSceneBridge family="fire" from="#141210" to="#141210" />
 
-        <div id="invitation-home-fix">
+        <section
+          id="invitation"
+          data-home-chapter="invitation"
+          data-home-section="invitation"
+          className="home-scene invitation-cinematic"
+          aria-label="Begin a conversation with Branding Tatva"
+        >
           <VideoBreak
             src="/videos/higgsfield-silver-tide.mp4"
             poster="/images/higgsfield-silver-tide-poster.jpg"
             quote="Some things only become visible once everything else goes quiet."
-            height="clamp(704px, 100vh, 900px)"
+            height="auto"
             imagePosition="50% 18%"
             quoteVariant="statement"
             cameraPush
             wordFade
-            overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.35) 0%, rgba(20,17,14,0.15) 30%, rgba(20,17,14,0.2) 55%, rgba(20,17,14,0.9) 100%)"
+            overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.42) 0%, rgba(20,17,14,0.16) 26%, rgba(20,17,14,0.28) 54%, rgba(20,17,14,0.94) 100%)"
           >
             <DustMotes />
             <FinalInvitation />
           </VideoBreak>
-        </div>
+        </section>
       </main>
+
       <HomePacingDirector />
       <Footer />
+
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger

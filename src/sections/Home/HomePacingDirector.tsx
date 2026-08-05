@@ -2,8 +2,15 @@
 
 import { useEffect } from "react";
 
-const PLAYBACK_RATE = 1.08;
-const JOURNEY_START_DELAY_MS = 3600;
+const PLAYBACK_RATE = 1.06;
+const DESKTOP_MAX_ACTIVE_FILMS = 2;
+const MOBILE_MAX_ACTIVE_FILMS = 1;
+const SECTION_SELECTOR = "[data-home-section], [data-home-chapter]";
+
+type VideoState = {
+  ratio: number;
+  near: boolean;
+};
 
 function prepareVideo(video: HTMLVideoElement, reducedMotion: MediaQueryList) {
   video.muted = true;
@@ -11,54 +18,178 @@ function prepareVideo(video: HTMLVideoElement, reducedMotion: MediaQueryList) {
   video.playsInline = true;
   video.loop = true;
   video.playbackRate = reducedMotion.matches ? 1 : PLAYBACK_RATE;
-
-  if (!reducedMotion.matches && video.getBoundingClientRect().top < window.innerHeight * 1.25) {
-    void video.play().catch(() => undefined);
-  }
+  video.dataset.autoplayManaged = "true";
 }
 
 export function HomePacingDirector() {
   useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const root = document.getElementById("main-content");
-    if (!root) return;
+    const main = document.getElementById("main-content");
+    if (!main) return;
 
-    const prepareAll = () => {
-      root.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const compactViewport = window.matchMedia("(max-width: 767px)");
+    const states = new Map<HTMLVideoElement, VideoState>();
+    let videoObserver: IntersectionObserver | null = null;
+    let sectionObserver: IntersectionObserver | null = null;
+    let mutationObserver: MutationObserver | null = null;
+    let refreshFrame = 0;
+
+    const maxActiveFilms = () =>
+      compactViewport.matches ? MOBILE_MAX_ACTIVE_FILMS : DESKTOP_MAX_ACTIVE_FILMS;
+
+    function pause(video: HTMLVideoElement) {
+      video.pause();
+      video.dataset.homeFilmState = "resting";
+    }
+
+    function play(video: HTMLVideoElement) {
+      prepareVideo(video, reducedMotion);
+      if (document.hidden || reducedMotion.matches) {
+        pause(video);
+        return;
+      }
+
+      video.dataset.homeFilmState = "playing";
+      void video.play().catch(() => {
+        video.dataset.homeFilmState = "poster";
+      });
+    }
+
+    function reconcilePlayback() {
+      refreshFrame = 0;
+
+      const eligible = Array.from(states.entries())
+        .filter(([, state]) => state.near && state.ratio > 0.04)
+        .sort((a, b) => b[1].ratio - a[1].ratio)
+        .slice(0, maxActiveFilms())
+        .map(([video]) => video);
+
+      states.forEach((_state, video) => {
+        if (eligible.includes(video)) play(video);
+        else pause(video);
+      });
+    }
+
+    function scheduleReconcile() {
+      if (refreshFrame) return;
+      refreshFrame = window.requestAnimationFrame(reconcilePlayback);
+    }
+
+    function registerVideos() {
+      const videos = Array.from(main.querySelectorAll<HTMLVideoElement>("video"));
+
+      videos.forEach((video) => {
         prepareVideo(video, reducedMotion);
+        if (!states.has(video)) {
+          states.set(video, { ratio: 0, near: false });
+          videoObserver?.observe(video);
+        }
+      });
+
+      states.forEach((_state, video) => {
+        if (!main.contains(video)) {
+          videoObserver?.unobserve(video);
+          states.delete(video);
+        }
+      });
+
+      scheduleReconcile();
+    }
+
+    videoObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          states.set(video, {
+            ratio: entry.intersectionRatio,
+            near: entry.isIntersecting,
+          });
+        });
+        scheduleReconcile();
+      },
+      {
+        rootMargin: "28% 0px 24% 0px",
+        threshold: [0, 0.04, 0.14, 0.28, 0.5, 0.72],
+      },
+    );
+
+    sectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const section = entry.target as HTMLElement;
+          const active = entry.isIntersecting && entry.intersectionRatio >= 0.12;
+          section.dataset.homeSceneState = active ? "active" : "resting";
+
+          if (active) {
+            window.dispatchEvent(
+              new CustomEvent("bt:home-scene-enter", {
+                detail: {
+                  id:
+                    section.dataset.homeChapter ||
+                    section.dataset.homeSection ||
+                    section.id ||
+                    undefined,
+                },
+              }),
+            );
+          }
+        });
+      },
+      {
+        rootMargin: "8% 0px -10% 0px",
+        threshold: [0, 0.12, 0.28, 0.5],
+      },
+    );
+
+    const registerSections = () => {
+      main.querySelectorAll<HTMLElement>(SECTION_SELECTOR).forEach((section) => {
+        if (section.dataset.homeSceneObserved === "true") return;
+        section.dataset.homeSceneObserved = "true";
+        section.dataset.homeSceneState = "resting";
+        sectionObserver?.observe(section);
       });
     };
 
-    prepareAll();
-
-    const observer = new MutationObserver(prepareAll);
-    observer.observe(root, { childList: true, subtree: true });
-
-    const onCanPlay = (event: Event) => {
-      if (event.target instanceof HTMLVideoElement && root.contains(event.target)) {
-        prepareVideo(event.target, reducedMotion);
-      }
+    const refresh = () => {
+      registerVideos();
+      registerSections();
     };
 
+    const onVisibility = () => scheduleReconcile();
+    const onViewportChange = () => scheduleReconcile();
+    const onCanPlay = (event: Event) => {
+      if (!(event.target instanceof HTMLVideoElement) || !main.contains(event.target)) return;
+      prepareVideo(event.target, reducedMotion);
+      scheduleReconcile();
+    };
+
+    refresh();
+
+    mutationObserver = new MutationObserver(refresh);
+    mutationObserver.observe(main, {
+      childList: true,
+      subtree: true,
+    });
+
+    document.addEventListener("visibilitychange", onVisibility);
     document.addEventListener("canplay", onCanPlay, true);
-
-    const startJourney = window.setTimeout(() => {
-      if (reducedMotion.matches || document.hidden) return;
-
-      const controls = Array.from(
-        document.querySelectorAll<HTMLElement>("[data-auto-journey-ui] button"),
-      );
-      const playButton = controls.find((button) =>
-        /play journey|begin journey|start journey/i.test(button.textContent ?? ""),
-      );
-
-      playButton?.click();
-    }, JOURNEY_START_DELAY_MS);
+    reducedMotion.addEventListener("change", onViewportChange);
+    compactViewport.addEventListener("change", onViewportChange);
+    window.addEventListener("pageshow", onVisibility);
+    window.addEventListener("focus", onVisibility);
 
     return () => {
-      observer.disconnect();
+      window.cancelAnimationFrame(refreshFrame);
+      mutationObserver?.disconnect();
+      videoObserver?.disconnect();
+      sectionObserver?.disconnect();
+      states.forEach((_state, video) => pause(video));
+      document.removeEventListener("visibilitychange", onVisibility);
       document.removeEventListener("canplay", onCanPlay, true);
-      window.clearTimeout(startJourney);
+      reducedMotion.removeEventListener("change", onViewportChange);
+      compactViewport.removeEventListener("change", onViewportChange);
+      window.removeEventListener("pageshow", onVisibility);
+      window.removeEventListener("focus", onVisibility);
     };
   }, []);
 
