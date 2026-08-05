@@ -14,7 +14,7 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Check out the media library
@@ -23,8 +23,11 @@ jobs:
           ref: reimagine-project-moves
           fetch-depth: 1
 
-      - name: Confirm ffprobe
-        run: ffprobe -version | head -1
+      - name: Install ffmpeg and ffprobe
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffprobe -version | head -1
 
       - name: Inspect every local video stream
         shell: bash
@@ -129,7 +132,7 @@ jobs:
               )
 
           Path("media-codec-audit/report.md").write_text("\n".join(lines) + "\n")
-          print("\n".join(lines[: max(18, min(len(lines), 80))]))
+          print("\n".join(lines[: max(18, min(len(lines), 100))]))
           PY
 
       - name: Upload codec audit
