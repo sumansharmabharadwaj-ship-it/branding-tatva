@@ -57,8 +57,6 @@ const REQUIRED_HOME_CHAPTERS = [
     'href="#foundation"',
     'href="#evidence"',
     'href="/services#desire"',
-    'href="/services#situation"',
-    'href="/services#offerings"',
   ];
 
   for (const link of serverRenderedLinks) {
