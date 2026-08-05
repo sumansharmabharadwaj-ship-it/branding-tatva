@@ -1,0 +1,86 @@
+name: Apply homepage release candidate refinements
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-home-rc-refinements.yml
+
+permissions:
+  contents: write
+
+jobs:
+  refine-home:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+          sparse-checkout: src
+          sparse-checkout-cone-mode: true
+
+      - name: Refine outcome copy and preserve the ladder safe zone
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              Path("src/sections/Home/ThreePathsSection.tsx"): [
+                  ("A position the business can grow from", "A position built to grow"),
+                  ("One recognisable idea across every touchpoint", "One idea across every touchpoint"),
+                  ("Recognition that keeps earning after launch", "Recognition that keeps compounding"),
+              ],
+              Path("src/sections/Home/TatvaStrip.tsx"): [
+                  (
+                      'className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2"',
+                      'className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2 xl:pr-52 2xl:pr-60"',
+                  ),
+              ],
+              Path("src/sections/Home/ChapterLadder.tsx"): [
+                  (
+                      'className="pointer-events-none w-44 rounded-2xl border border-white/12 bg-[#17140f]/78 px-4 py-3 text-right shadow-[0_18px_55px_rgba(0,0,0,0.24)] backdrop-blur-xl lg:w-52"',
+                      'className="pointer-events-none w-40 rounded-2xl border border-white/12 bg-[#17140f]/78 px-3.5 py-3 text-right shadow-[0_18px_55px_rgba(0,0,0,0.24)] backdrop-blur-xl lg:w-44 2xl:w-52"',
+                  ),
+              ],
+              Path("src/sections/Home/HomeAmbientFilm.tsx"): [
+                  (
+                      'className="absolute bottom-4 left-4 right-4 font-display text-sm leading-snug text-ivory/68"',
+                      'className="absolute bottom-4 left-4 right-4 hidden font-display text-sm leading-snug text-ivory/68 sm:block"',
+                  ),
+              ],
+              Path("src/app/home-earth-tones.css"): [
+                  (
+                      '''
+  [data-home-earth-tone="paths"] svg > text:last-of-type {
+    font-size: 8px;
+    letter-spacing: -0.05px;
+  }
+''',
+                      "\n",
+                  ),
+              ],
+          }
+
+          for path, pairs in replacements.items():
+              text = path.read_text()
+              for before, after in pairs:
+                  if before not in text:
+                      raise SystemExit(f"Expected block was not found in {path}: {before[:90]}")
+                  text = text.replace(before, after, 1)
+              path.write_text(text)
+          PY
+
+      - name: Commit the source refinements
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src
+          git commit -m "Refine path outcomes and protect the framework ladder safe zone"
+          git push origin HEAD:reimagine-project-moves
