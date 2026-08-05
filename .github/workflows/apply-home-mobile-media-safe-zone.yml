@@ -1,0 +1,62 @@
+name: Apply homepage mobile media and safe-zone repair
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-home-mobile-media-safe-zone.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Apply the mobile film budget and CTA safe zone
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          evidence_path = Path("src/sections/Home/EvidenceWall.tsx")
+          evidence = evidence_path.read_text()
+          old_evidence = '        poster="/images/pexels-fog-sunrise-poster.jpg"\n      />'
+          new_evidence = '        poster="/images/pexels-fog-sunrise-poster.jpg"\n        mobilePosterOnly\n      />'
+          if old_evidence not in evidence:
+              raise SystemExit("Evidence background-video call was not found")
+          evidence_path.write_text(evidence.replace(old_evidence, new_evidence, 1))
+
+          invitation_path = Path("src/sections/Home/FinalInvitation.tsx")
+          invitation = invitation_path.read_text()
+          old_invitation = '<div ref={rootRef} className="relative mx-auto w-full max-w-5xl">'
+          new_invitation = '<div ref={rootRef} data-final-invitation className="relative mx-auto w-full max-w-5xl pb-20 md:pb-0">'
+          if old_invitation not in invitation:
+              raise SystemExit("Final invitation root was not found")
+          invitation_path.write_text(invitation.replace(old_invitation, new_invitation, 1))
+
+          css_path = Path("src/app/home-audit-fixes.css")
+          css = css_path.read_text()
+          addition = '\n/* The final mobile scene contains a full invitation card plus a statement.\n   Let the scene grow to its content instead of clipping the CTA inside the\n   old fixed-height film frame, and reserve room beneath the card for the\n   three fixed cinema controls. */\n@media (max-width: 767px) {\n  [data-home-chapter="invitation"] {\n    height: auto !important;\n    min-height: 74rem;\n  }\n\n  [data-home-chapter="invitation"] > .relative.flex.flex-1 {\n    flex: none !important;\n    gap: 2.5rem !important;\n    padding-top: 4.5rem !important;\n    padding-bottom: 2rem !important;\n  }\n}\n'
+          if 'data-final-invitation' not in css:
+              css_path.write_text(css + addition)
+          PY
+
+      - name: Commit the repair and remove the one time workflow
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/sections/Home/EvidenceWall.tsx src/sections/Home/FinalInvitation.tsx src/app/home-audit-fixes.css
+          git rm .github/workflows/apply-home-mobile-media-safe-zone.yml
+          git commit -m "Reduce mobile film contention and protect the closing CTA"
+          git push origin HEAD:reimagine-project-moves
