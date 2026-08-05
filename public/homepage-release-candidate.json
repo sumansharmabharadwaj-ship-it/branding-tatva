@@ -1,0 +1,13 @@
+{
+  "status": "preview-ready",
+  "auditedSourceCommit": "2242894fbb46cab7796c1c58e93d8aa40fe0a592",
+  "auditRun": 30994374434,
+  "buildRun": 30994374399,
+  "viewports": 9,
+  "chapterChecks": 90,
+  "mediaProbes": 18,
+  "autoplayProbes": 16,
+  "failures": 0,
+  "productionPromoted": false,
+  "date": "2026-08-05"
+}
