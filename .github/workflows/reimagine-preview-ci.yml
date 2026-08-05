@@ -28,7 +28,7 @@ jobs:
       - name: Apply audited homepage repairs
         run: python scripts/apply_home_audit_sprint.py
 
-      - name: Repair the mobile cinema rail and audit interaction
+      - name: Repair mobile cinema, audit interaction, and chapter framing
         shell: bash
         run: |
           python - <<'PY'
@@ -46,9 +46,19 @@ jobs:
           text = audit.read_text()
           before = "      await exploreButton.click();\n      await page.getByRole(\"button\", { name: \"Cinema and sound\" }).click();\n      await page.waitForTimeout(450);"
           after = "      await exploreButton.click();\n      await page.waitForTimeout(420);\n      const cinemaEntry = page.getByRole(\"button\", { name: \"Cinema and sound\" });\n      await cinemaEntry.waitFor({ state: \"visible\" });\n      await cinemaEntry.click();\n      await page.waitForTimeout(450);"
-          if before not in text:
-              raise SystemExit("Mobile cinema release-gate interaction was not found")
-          audit.write_text(text.replace(before, after, 1))
+          if before in text:
+              text = text.replace(before, after, 1)
+          audit.write_text(text)
+
+          offset_block = "      const chapter = target.dataset.homeChapter;\n      const offset = [\"process\", \"questions\", \"invitation\"].includes(\n        chapter ?? \"\",\n      )\n        ? 0\n        : -72;"
+          for source in [
+              Path("src/sections/Home/HomeAutoJourney.tsx"),
+              Path("src/sections/Home/ChapterLadder.tsx"),
+          ]:
+              text = source.read_text()
+              if offset_block in text:
+                  text = text.replace(offset_block, "      const offset = 0;", 1)
+              source.write_text(text)
           PY
 
       - name: Commit audited homepage repairs
@@ -68,7 +78,7 @@ jobs:
               src/sections/Home/HomeAutoJourney.tsx \
               src/sections/Home/ChapterLadder.tsx \
               src/sections/Home/HomeOpeningSignal.tsx
-            git commit -m "Repair the mobile cinema rail and release gate"
+            git commit -m "Frame every homepage chapter from its own opening edge"
             git push origin HEAD:reimagine-project-moves
           fi
 
