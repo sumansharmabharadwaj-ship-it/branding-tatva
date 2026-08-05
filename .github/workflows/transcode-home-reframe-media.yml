@@ -1,0 +1,85 @@
+name: Transcode homepage films for browser compatibility
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/transcode-home-reframe-media.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-home-media-transcode
+  cancel-in-progress: false
+
+jobs:
+  transcode:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Confirm FFmpeg codecs
+        run: |
+          ffmpeg -hide_banner -version
+          ffmpeg -hide_banner -encoders | grep -E "libvpx-vp9|libvpx"
+
+      - name: Create lightweight VP9 homepage loops
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          transcode() {
+            local source="$1"
+            local output="$2"
+
+            echo "Transcoding ${source} -> ${output}"
+            ffprobe -v error -show_entries stream=codec_name,width,height,pix_fmt -of default=noprint_wrappers=1 "${source}"
+            ffmpeg -y -hide_banner -loglevel warning \
+              -i "${source}" \
+              -an \
+              -vf "scale=1600:900:force_original_aspect_ratio=decrease:force_divisible_by=2,fps=24,format=yuv420p" \
+              -c:v libvpx-vp9 \
+              -deadline realtime \
+              -cpu-used 6 \
+              -row-mt 1 \
+              -tile-columns 2 \
+              -frame-parallel 1 \
+              -crf 32 \
+              -b:v 0 \
+              "${output}"
+            ffprobe -v error -show_entries stream=codec_name,width,height,pix_fmt -of default=noprint_wrappers=1 "${output}"
+          }
+
+          transcode public/videos/hero-forest-sanctuary.mp4 public/videos/home-reframe-hero.webm
+          transcode public/videos/pexels-river-dawn.mp4 public/videos/home-reframe-framework.webm
+          transcode public/videos/higgsfield-silver-tide.mp4 public/videos/home-reframe-invitation.webm
+
+          ls -lh public/videos/home-reframe-*.webm
+
+      - name: Commit compatible films to the preview branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "branding-tatva-release-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/videos/home-reframe-hero.webm \
+                  public/videos/home-reframe-framework.webm \
+                  public/videos/home-reframe-invitation.webm
+
+          if git diff --cached --quiet; then
+            echo "Compatible media is already current."
+            exit 0
+          fi
+
+          git commit -m "Add browser-compatible homepage film loops"
+          git push origin HEAD:reimagine-project-moves
