@@ -275,8 +275,9 @@ function FoundationLayerCard({
   active: boolean;
   staticAll: boolean;
 }) {
-  // Reduced motion gets the complete scene at rest: every layer visible,
-  // every detail open, nothing waiting on a scrub that never runs.
+  // Desktop reveals the system progressively. Mobile has no scrubbed scene,
+  // so every explanation and output remains open in one readable sequence.
+  // Reduced motion follows the same complete-at-rest principle on every size.
   const open = active || staticAll;
   const position = { "--layer-x": layer.x, "--layer-y": layer.y } as CSSProperties;
 
@@ -289,10 +290,11 @@ function FoundationLayerCard({
         "md:absolute md:mb-0 md:left-[var(--layer-x)] md:top-[var(--layer-y)]",
         "md:w-[min(270px,22vw)] md:-translate-x-1/2 md:-translate-y-1/2",
         "rounded-2xl border px-5 py-5 backdrop-blur-lg",
+        "max-md:border-[#b8aa86]/40 max-md:bg-[#111714]/82",
         "transition-[border-color,background-color,box-shadow] duration-500",
         open
-          ? "border-[#b8aa86]/75 bg-[#111714]/88 shadow-[0_20px_60px_rgba(0,0,0,.34)]"
-          : "border-[#efe5d2]/15 bg-[#111714]/68",
+          ? "md:border-[#b8aa86]/75 md:bg-[#111714]/88 md:shadow-[0_20px_60px_rgba(0,0,0,.34)]"
+          : "md:border-[#efe5d2]/15 md:bg-[#111714]/68",
       ].join(" ")}
     >
       <div className="flex items-center justify-between">
@@ -303,7 +305,8 @@ function FoundationLayerCard({
           aria-hidden="true"
           className={[
             "h-2.5 w-2.5 rounded-full border transition-all duration-500",
-            open ? "border-[#b8aa86] bg-[#b8aa86]" : "border-[#efe5d2]/35",
+            "max-md:border-[#b8aa86] max-md:bg-[#b8aa86]",
+            open ? "md:border-[#b8aa86] md:bg-[#b8aa86]" : "md:border-[#efe5d2]/35",
           ].join(" ")}
         />
       </div>
@@ -316,7 +319,8 @@ function FoundationLayerCard({
       <p
         className={[
           "overflow-hidden text-sm leading-6 transition-[max-height,opacity,margin] duration-500",
-          open ? "mt-4 max-h-60 opacity-100" : "mt-0 max-h-0 opacity-0",
+          "max-md:mt-4 max-md:max-h-60 max-md:opacity-100",
+          open ? "md:mt-4 md:max-h-60 md:opacity-100" : "md:mt-0 md:max-h-0 md:opacity-0",
         ].join(" ")}
         style={{ color: "rgba(222,214,200,0.72)" }}
       >
@@ -325,7 +329,10 @@ function FoundationLayerCard({
       <ul
         className={[
           "space-y-1 overflow-hidden border-[#efe5d2]/10 text-xs leading-5 transition-[max-height,opacity,margin,padding] duration-500",
-          open ? "mt-4 max-h-40 border-t pt-4 opacity-100" : "mt-0 max-h-0 opacity-0",
+          "max-md:mt-4 max-md:max-h-40 max-md:border-t max-md:pt-4 max-md:opacity-100",
+          open
+            ? "md:mt-4 md:max-h-40 md:border-t md:pt-4 md:opacity-100"
+            : "md:mt-0 md:max-h-0 md:opacity-0",
         ].join(" ")}
         style={{ color: "rgba(222,214,200,0.6)" }}
       >
