@@ -33,51 +33,31 @@ jobs:
           path = Path("src/sections/Home/HomeFilmConstellation.tsx")
           text = path.read_text()
 
-          blocks = [
-              '''  paths: [
-    {
-      video: "/videos/higgsfield-process-ground.mp4",
-      poster: "/images/higgsfield-process-ground-poster.jpg",
-      label: "Begin with what must hold.",
-    },
-    {
-      video: "/videos/higgsfield-process-shape.mp4",
-      poster: "/images/higgsfield-process-shape-poster.jpg",
-      label: "Then give the business a coherent form.",
-    },
-  ],
-''',
-              '''  framework: [
-    {
-      video: "/videos/higgsfield-process-listen.mp4",
-      poster: "/images/higgsfield-process-listen-poster.jpg",
-      label: "Each force answers a different strategic question.",
-    },
-    {
-      video: "/videos/higgsfield-confident-light.mp4",
-      poster: "/images/higgsfield-confident-light-poster.jpg",
-      label: "Five signals, held inside one recognisable system.",
-    },
-  ],
-''',
-              '''  paths: [
-    "-right-9 top-[24vh] aspect-[3/4] w-[clamp(6.5rem,7.5vw,8.5rem)] rounded-[1.5rem]",
-    "-left-8 bottom-[18vh] aspect-square w-[clamp(5.5rem,6.2vw,7rem)] rounded-[1.35rem]",
-  ],
-''',
-              '''  framework: [
-    "-left-8 top-[22vh] aspect-[4/5] w-[clamp(6.4rem,7.2vw,8.2rem)] rounded-[42%_58%_48%_52%/58%_42%_58%_42%]",
-    "-right-7 bottom-[17vh] aspect-square w-[clamp(5.6rem,6.4vw,7.2rem)] rounded-[1.4rem]",
-  ],
-''',
+          def remove_array_entry(source, container_marker, key):
+              container = source.find(container_marker)
+              if container < 0:
+                  raise SystemExit("Container was not found: " + container_marker)
+              start_marker = "\n  " + key + ": [\n"
+              start = source.find(start_marker, container)
+              if start < 0:
+                  raise SystemExit("Entry was not found: " + key)
+              end = source.find("\n  ],\n", start)
+              if end < 0:
+                  raise SystemExit("Entry ending was not found: " + key)
+              return source[:start] + "\n" + source[end + len("\n  ],\n"):]
+
+          for key in ("paths", "framework"):
+              text = remove_array_entry(text, "const CHAPTER_FILMS", key)
+          for key in ("paths", "framework"):
+              text = remove_array_entry(text, "const PLACEMENTS", key)
+
+          for line in (
               '  paths: "Choose the path",\n',
               '  framework: "Read the five forces",\n',
-          ]
-
-          for block in blocks:
-              if block not in text:
-                  raise SystemExit("Expected film ownership block was not found")
-              text = text.replace(block, "", 1)
+          ):
+              if line not in text:
+                  raise SystemExit("Chapter label was not found: " + line.strip())
+              text = text.replace(line, "", 1)
 
           path.write_text(text)
           PY
