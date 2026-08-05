@@ -58,7 +58,7 @@ jobs:
           mkdir -p visual-audit
           pnpm dlx playwright@1.54.2 screenshot --browser=chromium --device="Desktop Chrome HiDPI" --full-page --wait-for-timeout=7000 http://127.0.0.1:3000/ visual-audit/home-desktop.png
           pnpm dlx playwright@1.54.2 screenshot --browser=chromium --viewport-size="1024,1366" --full-page --wait-for-timeout=7000 http://127.0.0.1:3000/ visual-audit/home-tablet.png
-          pnpm dlx playwright@1.54.2 screenshot --browser=chromium --device="iPhone 13" --full-page --wait-for-timeout=7000 http://127.0.0.1:3000/ visual-audit/home-mobile.png
+          pnpm dlx playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --full-page --wait-for-timeout=7000 http://127.0.0.1:3000/ visual-audit/home-mobile.png
 
       - name: Stop the application
         if: always()
@@ -68,6 +68,7 @@ jobs:
           fi
 
       - name: Upload the visual audit
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: branding-tatva-home-visual-audit
