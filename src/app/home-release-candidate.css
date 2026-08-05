@@ -441,3 +441,33 @@ section[aria-labelledby="home-questions-title"] h2 {
 :root[data-motion="reduced"] [data-auto-journey-control] > span {
   transition: none !important;
 }
+
+
+/* Mobile cinema docking repair */
+@media (max-width: 767px) {
+  [data-auto-journey-control][aria-pressed="false"] {
+    display: none !important;
+  }
+
+  [data-chapter-ladder-mobile] {
+    right: 0 !important;
+    left: auto !important;
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+  }
+
+  [data-chapter-ladder-mobile] > button {
+    width: 1.75rem !important;
+    height: 6.5rem !important;
+    min-height: 6.5rem !important;
+    border-right: 0 !important;
+    border-radius: 999px 0 0 999px !important;
+    padding: 0 !important;
+    background-color: rgba(23, 20, 15, 0.76) !important;
+  }
+
+  [data-chapter-ladder-mobile] > button > span:first-child {
+    gap: 0.3rem !important;
+  }
+}

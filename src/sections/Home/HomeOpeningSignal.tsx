@@ -67,7 +67,7 @@ export function HomeOpeningSignal() {
     if (!target) return;
 
     if (lenis && !prefersReducedMotion) {
-      lenis.scrollTo(target, { offset: -72, duration: 1.05 });
+      lenis.scrollTo(target, { offset: 0, duration: 1.05 });
       return;
     }
 

@@ -361,6 +361,29 @@ export function ChapterLadder() {
                 </span>
               </div>
 
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  window.dispatchEvent(
+                    new CustomEvent("bt:open-cinema-controls"),
+                  );
+                }}
+                className="mb-2 flex w-full items-center justify-between gap-4 rounded-2xl border border-sandstone/20 bg-sandstone/[0.06] px-3 py-3 text-left transition-colors hover:bg-sandstone/[0.1] focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
+              >
+                <span>
+                  <span className="block font-display text-base text-ivory">
+                    Cinema and sound
+                  </span>
+                  <span className="mt-1 block text-[0.62rem] leading-relaxed text-ivory/42">
+                    Start the guided journey or turn on the ambient score.
+                  </span>
+                </span>
+                <span aria-hidden="true" className="text-sandstone">
+                  ▶
+                </span>
+              </button>
+
               <div className="max-h-[54vh] space-y-1 overflow-y-auto pr-1">
                 {chapters.map((chapter, index) => {
                   const isActive = index === activeIndex;

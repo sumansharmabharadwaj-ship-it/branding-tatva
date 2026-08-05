@@ -317,6 +317,24 @@ export function HomeAutoJourney() {
     scrollToIndex,
   ]);
 
+  useEffect(() => {
+    function openMobileCinemaControls() {
+      if (!isMobile || playing) return;
+      setMobileMenuOpen(true);
+    }
+
+    window.addEventListener(
+      "bt:open-cinema-controls",
+      openMobileCinemaControls,
+    );
+    return () => {
+      window.removeEventListener(
+        "bt:open-cinema-controls",
+        openMobileCinemaControls,
+      );
+    };
+  }, [isMobile, playing]);
+
   useEffect(
     () => () => {
       window.clearTimeout(holdTimerRef.current);
