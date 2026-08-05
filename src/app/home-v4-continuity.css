@@ -111,4 +111,18 @@
   .home-v4-handoff {
     transform: none;
   }
+
+  /* With scrubbed motion disabled, a tall sticky wrapper becomes empty
+     scrolling. Present the complete Earth composition once, at rest, and let
+     the visitor continue immediately. */
+  .home-v4-chapter--foundation > section {
+    height: auto !important;
+  }
+
+  .home-v4-chapter--foundation > section > div {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    min-height: 100svh;
+  }
 }
