@@ -1,4 +1,4 @@
-# Final candidate includes the exact enquiry-field selector repair.
+# Final candidate includes shared Footer and Contact media in the QA checkout.
 name: Services reframe release gate
 run-name: Services reframe gate · ${{ github.sha }}
 
@@ -48,12 +48,19 @@ jobs:
             !/public/images/*
             /public/videos/pexels-aspen-sunburst.webm
             /public/videos/pexels-fog-sunrise.webm
+            /public/videos/pixabay-campfire-conversation.mp4
+            /public/videos/own-jagged-peaks.mp4
+            /public/videos/pexels-studio-morning-light.webm
+            /public/videos/pexels-studio-morning-light.mp4
             /public/images/pexels-aspen-sunburst-poster.jpg
             /public/images/higgsfield-himalayan-valley-poster.jpg
             /public/images/pexels-root-network-poster.jpg
             /public/images/pexels-river-dawn-poster.jpg
             /public/images/card-dr-haley-nutrition-poster.jpg
             /public/images/pexels-fog-sunrise-poster.jpg
+            /public/images/pixabay-campfire-conversation-poster.jpg
+            /public/images/own-jagged-peaks.jpg
+            /public/images/pexels-studio-morning-light-poster.jpg
 
       - name: Use Node 24
         uses: actions/setup-node@v4
