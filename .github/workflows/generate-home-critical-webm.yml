@@ -1,0 +1,82 @@
+name: Generate homepage critical WebM films
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/generate-home-critical-webm.yml
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version | head -1
+
+      - name: Encode the eleven critical loops
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            public/videos/higgsfield-himalayan-valley.mp4
+            public/videos/pixabay-stream-mist-rays.mp4
+            public/videos/pixabay-golden-forest-glow.mp4
+            public/videos/pixabay-sea-of-fog-sunrise.mp4
+            public/videos/higgsfield-mountain-mist.mp4
+            public/videos/higgsfield-process-notice.mp4
+            public/videos/higgsfield-process-listen.mp4
+            public/videos/higgsfield-process-ground.mp4
+            public/videos/higgsfield-process-shape.mp4
+            public/videos/higgsfield-process-express.mp4
+            public/videos/higgsfield-process-stay.mp4
+          )
+
+          for source in "${files[@]}"; do
+            target="${source%.mp4}.webm"
+            echo "Encoding ${source} -> ${target}"
+            ffmpeg -y -v warning \
+              -i "$source" \
+              -an \
+              -c:v libvpx-vp9 \
+              -crf 34 \
+              -b:v 0 \
+              -deadline good \
+              -cpu-used 3 \
+              -row-mt 1 \
+              -pix_fmt yuv420p \
+              -vf "scale='min(1600,iw)':-2" \
+              "$target"
+
+            ffprobe -v error \
+              -select_streams v:0 \
+              -show_entries stream=codec_name,pix_fmt,width,height \
+              -of default=noprint_wrappers=1 \
+              "$target"
+          done
+
+          du -h public/videos/*.webm | sort -h | tail -20
+
+      - name: Commit generated films and remove this one-time workflow
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/videos/*.webm
+          git rm .github/workflows/generate-home-critical-webm.yml
+          git commit -m "Add WebM fallbacks for the Tatva and Process films"
+          git push origin HEAD:reimagine-project-moves
