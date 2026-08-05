@@ -35,10 +35,10 @@ jobs:
       - name: Install project and audit dependencies
         run: |
           pnpm install --frozen-lockfile
-          npm install --no-save playwright@1.54.2
+          pnpm add --save-dev --ignore-workspace-root-check --lockfile=false playwright@1.54.2
 
       - name: Install Chromium for the audit
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Start the application
         env:
@@ -58,7 +58,7 @@ jobs:
       - name: Capture every chapter at its real scroll position
         run: |
           mkdir -p visual-audit
-          cat > /tmp/capture-home.js <<'JS'
+          cat > capture-home.cjs <<'JS'
           const { chromium } = require('playwright');
           const fs = require('fs');
 
@@ -87,7 +87,7 @@ jobs:
               await page.waitForTimeout(2500);
 
               await page.screenshot({ path: `visual-audit/${profile.name}-00-opening.png`, fullPage: false });
-              report.captures.push({ profile: profile.name, chapter: 'opening' });
+              report.captures.push({ profile: profile.name, chapter: 'opening', path: `visual-audit/${profile.name}-00-opening.png` });
 
               const chapters = await page.locator('[data-home-chapter]').evaluateAll((elements) =>
                 elements.map((element, index) => ({
@@ -127,7 +127,7 @@ jobs:
             process.exit(1);
           });
           JS
-          node /tmp/capture-home.js
+          node capture-home.cjs
 
       - name: Stop the application
         if: always()
