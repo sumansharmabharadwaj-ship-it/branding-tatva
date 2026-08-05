@@ -28,9 +28,6 @@ const EXPECTED_RENDERED_LINKS = [
   "/contact",
   "/work",
   "/about",
-  "/services#desire",
-  "/services#situation",
-  "/services#offerings",
   "/services#health",
 ];
 
@@ -178,6 +175,26 @@ async function auditViewport(browser, viewport) {
     pathsText.includes("Create consistency"),
     `${viewport.name}: path three missing`,
   );
+
+  const pathDestinations = [
+    { tab: /Build the foundation/i, href: "/services#desire" },
+    { tab: /Reposition the system/i, href: "/services#situation" },
+    { tab: /Create consistency/i, href: "/services#offerings" },
+  ];
+  const activePathLink = paths.locator(".paths-cinematic__focus > a");
+
+  for (const destination of pathDestinations) {
+    await paths.getByRole("tab", { name: destination.tab }).click();
+    await page.waitForTimeout(180);
+    const href = await activePathLink.getAttribute("href");
+    assert(
+      href === destination.href,
+      `${viewport.name}: ${destination.tab} resolved to ${href}, expected ${destination.href}`,
+    );
+  }
+
+  await paths.getByRole("tab", { name: /Build the foundation/i }).click();
+  await page.waitForTimeout(180);
 
   const invitation = page.locator('[data-home-chapter="invitation"]').first();
   await invitation.scrollIntoViewIfNeeded();
