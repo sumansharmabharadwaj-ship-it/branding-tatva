@@ -1,6 +1,6 @@
 name: Capture homepage visual audit
-# Release candidate validates one owned film per quiet chapter, the complete
-# path outcome, mobile scene wakeups and zero horizontal overflow.
+# Final copy and safe-zone pass verifies shortened path outcomes, mobile
+# captions, the framework ladder clearance and zero horizontal overflow.
 
 on:
   push:
