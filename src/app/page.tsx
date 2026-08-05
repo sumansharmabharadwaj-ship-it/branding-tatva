@@ -7,6 +7,7 @@ import "./home-studio-cinematic.css";
 import "./home-paths-cinematic.css";
 import "./home-cinematic-finish.css";
 import "./home-final-polish.css";
+import "./home-v4-continuity.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
