@@ -1,4 +1,5 @@
 name: Homepage release-gate audit
+run-name: Homepage release gate · ${{ github.sha }}
 
 on:
   workflow_dispatch:
