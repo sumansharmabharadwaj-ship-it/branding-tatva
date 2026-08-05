@@ -1,4 +1,4 @@
-name: Repair Services audit bounds
+name: Instrument Services audit watchdog
 
 on:
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
           ref: reimagine-project-moves
           fetch-depth: 1
 
-      - name: Bound navigation and media promises
+      - name: Add bounded screenshots, progress markers, and a watchdog
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -29,41 +29,67 @@ jobs:
           path = Path("scripts/services_release_gate.cjs")
           source = path.read_text()
 
-          play_before = "      await element.play();"
-          play_after = (
-              "      await Promise.race([\n"
-              "        element.play(),\n"
-              "        new Promise((_, reject) =>\n"
-              "          setTimeout(() => reject(new Error(\"Media play timed out after 5 seconds\")), 5000),\n"
-              "        ),\n"
-              "      ]);"
-          )
-          if play_before not in source:
-              raise SystemExit("Expected media probe was not found")
-          source = source.replace(play_before, play_after, 1)
-
-          if 'waitUntil: "networkidle"' not in source:
-              raise SystemExit("Expected navigation waits were not found")
-          source = source.replace('waitUntil: "networkidle"', 'waitUntil: "domcontentloaded"')
+          anchor = 'const OUTPUT = "services-audit";\n'
+          watchdog = '''const OUTPUT = "services-audit";
+let auditStage = "initialising";
+const auditWatchdog = setTimeout(() => {
+  console.error(`Services audit exceeded 210 seconds during: ${auditStage}`);
+  process.exit(1);
+}, 210000);
+'''
+          if anchor not in source:
+              raise SystemExit("OUTPUT anchor was not found")
+          source = source.replace(anchor, watchdog, 1)
 
           source = source.replace(
-              "const page = await context.newPage();",
-              "const page = await context.newPage();\n    page.setDefaultTimeout(10000);",
+              '  await page.screenshot({ path: `${OUTPUT}/${profile}-${id}.png`, fullPage: false });',
+              '  await page.screenshot({ path: `${OUTPUT}/${profile}-${id}.png`, fullPage: false, animations: "disabled", timeout: 10000 });',
               1,
           )
+
           source = source.replace(
-              "const contactPage = await contactContext.newPage();",
-              "const contactPage = await contactContext.newPage();\n  contactPage.setDefaultTimeout(10000);",
+              '  for (const profile of profiles) {',
+              '  for (const profile of profiles) {\n    auditStage = `${profile.name}: setup`;\n    console.log(`[services-audit] ${auditStage}`);',
               1,
           )
+
+          markers = [
+              ('    await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded" });',
+               '    auditStage = `${profile.name}: navigation`;\n    console.log(`[services-audit] ${auditStage}`);\n    await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded" });'),
+              ('    const heroVideo = page.locator("#opening video").first();',
+               '    auditStage = `${profile.name}: hero media`;\n    console.log(`[services-audit] ${auditStage}`);\n    const heroVideo = page.locator("#opening video").first();'),
+              ('    const scenarioButtons = page.getByRole("group", {',
+               '    auditStage = `${profile.name}: scenarios`;\n    console.log(`[services-audit] ${auditStage}`);\n    const scenarioButtons = page.getByRole("group", {'),
+              ('    const regionSelect = page.locator("#services-region");',
+               '    auditStage = `${profile.name}: regional pricing`;\n    console.log(`[services-audit] ${auditStage}`);\n    const regionSelect = page.locator("#services-region");'),
+              ('    const healthButtons = page.getByRole("group", { name: "Brand health statements" }).getByRole("button");',
+               '    auditStage = `${profile.name}: health instrument`;\n    console.log(`[services-audit] ${auditStage}`);\n    const healthButtons = page.getByRole("group", { name: "Brand health statements" }).getByRole("button");'),
+              ('    const secondQuestion = page.locator("#questions article").nth(1).getByRole("button");',
+               '    auditStage = `${profile.name}: questions`;\n    console.log(`[services-audit] ${auditStage}`);\n    const secondQuestion = page.locator("#questions article").nth(1).getByRole("button");'),
+              ('    await page.locator("#book").scrollIntoViewIfNeeded();',
+               '    auditStage = `${profile.name}: closing media`;\n    console.log(`[services-audit] ${auditStage}`);\n    await page.locator("#book").scrollIntoViewIfNeeded();'),
+              ('    if (profile.captures) {',
+               '    auditStage = `${profile.name}: screenshots`;\n    console.log(`[services-audit] ${auditStage}`);\n    if (profile.captures) {'),
+              ('    await context.close();',
+               '    auditStage = `${profile.name}: close context`;\n    console.log(`[services-audit] ${auditStage}`);\n    await Promise.race([\n      context.close(),\n      new Promise((_, reject) => setTimeout(() => reject(new Error("Context close timed out")), 10000)),\n    ]);'),
+              ('  const contactContext = await browser.newContext({ viewport: { width: 390, height: 844 } });',
+               '  auditStage = "contact-mobile: setup";\n  console.log(`[services-audit] ${auditStage}`);\n  const contactContext = await browser.newContext({ viewport: { width: 390, height: 844 } });'),
+              ('  await browser.close();',
+               '  auditStage = "closing browser";\n  console.log(`[services-audit] ${auditStage}`);\n  await Promise.race([\n    browser.close(),\n    new Promise((_, reject) => setTimeout(() => reject(new Error("Browser close timed out")), 10000)),\n  ]);\n  clearTimeout(auditWatchdog);'),
+          ]
+
+          for before, after in markers:
+              if before not in source:
+                  raise SystemExit(f"Audit marker not found: {before[:70]}")
+              source = source.replace(before, after, 1)
 
           path.write_text(source)
           PY
 
-      - name: Commit the bounded audit harness
+      - name: Commit the instrumented audit harness
         run: |
           git config user.name "branding-tatva-release-bot"
           git config user.email "actions@users.noreply.github.com"
           git add scripts/services_release_gate.cjs
-          git commit -m "Bound Services browser audit waits"
+          git commit -m "Instrument Services audit with hard bounds"
           git push origin HEAD:reimagine-project-moves
