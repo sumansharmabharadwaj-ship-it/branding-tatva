@@ -19,7 +19,8 @@ export type Element = {
   services: string[];
   proof: string; // real work that demonstrates this element
   image: string; // backdrop photo, blended to this element's color — see ElementsConstellation.tsx for why this isn't one generic unrelated photo
-  video?: string; // ambient loop for the Home row background (ElementRowBackground) — image stays the Ken Burns fallback/poster
+  video?: string; // H.264 ambient loop for Safari and MP4-capable browsers
+  videoWebm?: string; // VP9 companion preferred by Chromium/Firefox and the visual QA runner
   imagePosition?: string; // object-position override — ElementRowBackground defaults to center, which crops off-center subjects
 };
 
@@ -49,6 +50,7 @@ export const elements: Element[] = [
       "Full brand foundation work for MyShopInEurope, including audience definition, market analysis, and a core belief, mission, and promise.",
     image: "/images/higgsfield-himalayan-valley-poster.jpg",
     video: "/videos/higgsfield-himalayan-valley.mp4",
+    videoWebm: "/videos/higgsfield-himalayan-valley.webm",
   },
   {
     slug: "water",
@@ -75,6 +77,7 @@ export const elements: Element[] = [
     // a moving stream) instead of tweaking the same footage again.
     image: "/images/pixabay-stream-mist-rays-poster.jpg",
     video: "/videos/pixabay-stream-mist-rays.mp4",
+    videoWebm: "/videos/pixabay-stream-mist-rays.webm",
   },
   {
     slug: "fire",
@@ -107,6 +110,7 @@ export const elements: Element[] = [
     // a spark that earns a second look — without literal flame.
     image: "/images/pixabay-golden-forest-glow-poster.jpg",
     video: "/videos/pixabay-golden-forest-glow.mp4",
+    videoWebm: "/videos/pixabay-golden-forest-glow.webm",
   },
   {
     slug: "air",
@@ -167,5 +171,6 @@ export const elements: Element[] = [
     // way before swapping it in.
     image: "/images/pixabay-sea-of-fog-sunrise-poster.jpg",
     video: "/videos/pixabay-sea-of-fog-sunrise.mp4",
+    videoWebm: "/videos/pixabay-sea-of-fog-sunrise.webm",
   },
 ];
