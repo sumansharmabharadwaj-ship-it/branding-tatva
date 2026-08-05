@@ -198,7 +198,7 @@ export function HomeAutoJourney() {
   }, [pathname, pauseForReading]);
 
   useEffect(() => {
-    const query = window.matchMedia("(max-width: 1023px)");
+    const query = window.matchMedia("(max-width: 1279px)");
 
     function syncViewport() {
       setIsMobile(query.matches);
@@ -405,7 +405,7 @@ export function HomeAutoJourney() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.97 }}
             transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-[7.9rem] right-4 z-[47] w-60 overflow-hidden rounded-3xl border border-white/12 bg-[#17140f]/94 p-2 text-left text-ivory shadow-[0_24px_70px_rgba(0,0,0,0.4)] backdrop-blur-xl lg:hidden"
+            className="fixed bottom-[7.9rem] right-4 z-[47] w-60 overflow-hidden rounded-3xl border border-white/12 bg-[#17140f]/94 p-2 text-left text-ivory shadow-[0_24px_70px_rgba(0,0,0,0.4)] backdrop-blur-xl xl:hidden"
           >
             <p className="px-3 pb-2 pt-2 text-[0.55rem] font-medium uppercase tracking-[0.2em] text-ivory/38">
               Cinema controls
@@ -469,7 +469,7 @@ export function HomeAutoJourney() {
         }
         aria-label={controlLabel}
         onClick={handlePrimaryControl}
-        className="fixed bottom-4 right-4 z-[46] inline-flex min-h-10 items-center gap-2 rounded-full border border-white/12 bg-[#17140f]/82 px-3.5 text-[0.56rem] font-medium uppercase tracking-[0.15em] text-ivory/72 shadow-[0_14px_42px_rgba(0,0,0,0.26)] backdrop-blur-xl transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone lg:bottom-5 lg:left-1/2 lg:right-auto lg:-translate-x-1/2"
+        className="fixed bottom-4 right-4 z-[46] inline-flex min-h-10 items-center gap-2 rounded-full border border-white/12 bg-[#17140f]/82 px-3.5 text-[0.56rem] font-medium uppercase tracking-[0.15em] text-ivory/72 shadow-[0_14px_42px_rgba(0,0,0,0.26)] backdrop-blur-xl transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone xl:bottom-5 xl:left-1/2 xl:right-auto xl:-translate-x-1/2"
       >
         <span
           aria-hidden="true"

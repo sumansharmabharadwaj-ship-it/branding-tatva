@@ -444,7 +444,7 @@ section[aria-labelledby="home-questions-title"] h2 {
 
 
 /* Mobile cinema docking repair */
-@media (max-width: 1023px) {
+@media (max-width: 1279px) {
   [data-auto-journey-control][aria-pressed="false"] {
     display: none !important;
   }
