@@ -12,6 +12,7 @@ type HomeAmbientFilmProps = {
   className: string;
   imagePosition?: string;
   direction?: 1 | -1;
+  peakOpacity?: number;
 };
 
 /**
@@ -30,11 +31,14 @@ export function HomeAmbientFilm({
   className,
   imagePosition = "center",
   direction = 1,
+  peakOpacity = 0.42,
 }: HomeAmbientFilmProps) {
   const rootRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = Boolean(useReducedMotion());
   const inView = useInView(rootRef, { margin: "18% 0px", amount: 0.08 });
+  const quietOpacity = Math.max(0.08, peakOpacity * 0.56);
+  const settledOpacity = Math.max(0.1, peakOpacity * 0.74);
 
   useEffect(() => {
     const film = videoRef.current;
@@ -53,17 +57,17 @@ export function HomeAmbientFilm({
       initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.93, filter: "blur(9px)" }}
       animate={
         prefersReducedMotion
-          ? { opacity: 0.34 }
+          ? { opacity: settledOpacity }
           : inView
             ? {
-                opacity: [0.24, 0.42, 0.3],
+                opacity: [quietOpacity, peakOpacity, settledOpacity],
                 x: [0, direction * 11, 0],
                 y: [0, -9, 0],
                 scale: [1, 1.045, 1],
                 rotate: [direction * -1.2, direction * 0.8, direction * -1.2],
                 filter: "blur(0px)",
               }
-            : { opacity: 0.08, scale: 0.97, filter: "blur(6px)" }
+            : { opacity: Math.min(0.08, quietOpacity), scale: 0.97, filter: "blur(6px)" }
       }
       transition={
         prefersReducedMotion
