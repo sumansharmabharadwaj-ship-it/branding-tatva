@@ -11,6 +11,29 @@ const VIEWPORTS = [
   { name: "mobile-390x844", width: 390, height: 844 },
 ];
 
+const EXPECTED_CHAPTERS = [
+  "opening",
+  "diagnosis",
+  "evidence",
+  "studio",
+  "paths",
+  "framework",
+  "elements",
+  "process",
+  "questions",
+  "invitation",
+];
+
+const EXPECTED_RENDERED_LINKS = [
+  "/contact",
+  "/work",
+  "/about",
+  "/services#desire",
+  "/services#situation",
+  "/services#offerings",
+  "/services#health",
+];
+
 fs.mkdirSync(OUTPUT, { recursive: true });
 
 function assert(condition, message) {
@@ -31,7 +54,8 @@ async function auditViewport(browser, viewport) {
   page.on("pageerror", (error) => consoleErrors.push(error.message));
 
   await page.goto(BASE_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
-  await page.waitForTimeout(3300);
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(3400);
 
   const chapterIds = await page
     .locator("[data-home-chapter]")
@@ -41,24 +65,25 @@ async function auditViewport(browser, viewport) {
         .filter((value) => Boolean(value)),
     );
 
-  const expected = [
-    "opening",
-    "diagnosis",
-    "evidence",
-    "studio",
-    "paths",
-    "framework",
-    "elements",
-    "process",
-    "questions",
-    "invitation",
-  ];
   assert(
-    expected.every((id) => chapterIds.includes(id)),
+    EXPECTED_CHAPTERS.every((id) => chapterIds.includes(id)),
     `${viewport.name}: missing homepage chapters. Found ${chapterIds.join(", ")}`,
   );
 
-  for (const id of expected) {
+  const renderedHrefs = await page.locator("a[href]").evaluateAll((nodes) =>
+    nodes
+      .map((node) => node.getAttribute("href"))
+      .filter((value) => Boolean(value)),
+  );
+
+  for (const href of EXPECTED_RENDERED_LINKS) {
+    assert(
+      renderedHrefs.includes(href),
+      `${viewport.name}: rendered DOM is missing link ${href}`,
+    );
+  }
+
+  for (const id of EXPECTED_CHAPTERS) {
     const section = page.locator(`[data-home-chapter="${id}"]`).first();
     await section.scrollIntoViewIfNeeded();
     await page.waitForTimeout(430);
@@ -86,8 +111,6 @@ async function auditViewport(browser, viewport) {
             text: (heading.textContent || "").trim().slice(0, 100),
             left: rect.left,
             right: rect.right,
-            top: rect.top,
-            bottom: rect.bottom,
             width: rect.width,
             height: rect.height,
           };
@@ -125,25 +148,45 @@ async function auditViewport(browser, viewport) {
   const studio = page.locator('[data-home-chapter="studio"]').first();
   await studio.scrollIntoViewIfNeeded();
   await page.waitForTimeout(700);
-  const studioText = await studio.textContent();
-  assert(studioText.includes("One mind. Three disciplines."), `${viewport.name}: studio proposition missing`);
-  assert(studioText.includes("Make it usable"), `${viewport.name}: studio third discipline missing`);
+  const studioText = (await studio.textContent()) || "";
+  assert(
+    studioText.includes("One mind. Three disciplines."),
+    `${viewport.name}: studio proposition missing`,
+  );
+  assert(
+    studioText.includes("Make it usable"),
+    `${viewport.name}: studio third discipline missing`,
+  );
 
   const paths = page.locator('[data-home-chapter="paths"]').first();
   await paths.scrollIntoViewIfNeeded();
   await page.waitForTimeout(700);
-  const pathsText = await paths.textContent();
-  assert(pathsText.includes("The path decides what to build next"), `${viewport.name}: paths proposition missing`);
-  assert(pathsText.includes("Build the foundation"), `${viewport.name}: path one missing`);
-  assert(pathsText.includes("Reposition the system"), `${viewport.name}: path two missing`);
-  assert(pathsText.includes("Create consistency"), `${viewport.name}: path three missing`);
+  const pathsText = (await paths.textContent()) || "";
+  assert(
+    pathsText.includes("The path decides what to build next"),
+    `${viewport.name}: paths proposition missing`,
+  );
+  assert(
+    pathsText.includes("Build the foundation"),
+    `${viewport.name}: path one missing`,
+  );
+  assert(
+    pathsText.includes("Reposition the system"),
+    `${viewport.name}: path two missing`,
+  );
+  assert(
+    pathsText.includes("Create consistency"),
+    `${viewport.name}: path three missing`,
+  );
 
   const invitation = page.locator('[data-home-chapter="invitation"]').first();
   await invitation.scrollIntoViewIfNeeded();
   await page.waitForTimeout(700);
-  const invitationText = await invitation.textContent();
+  const invitationText = (await invitation.textContent()) || "";
   assert(
-    invitationText.includes("Some things only become visible once everything else goes quiet."),
+    invitationText.includes(
+      "Some things only become visible once everything else goes quiet.",
+    ),
     `${viewport.name}: invitation quote missing`,
   );
 
@@ -162,7 +205,6 @@ async function auditViewport(browser, viewport) {
     path: path.join(OUTPUT, `${viewport.name}-full.png`),
     fullPage: true,
   });
-
   await studio.screenshot({
     path: path.join(OUTPUT, `${viewport.name}-studio.png`),
   });

@@ -47,20 +47,17 @@ const REQUIRED_HOME_IDS = [
     );
   }
 
-  const requiredLinks = [
+  const serverRenderedLinks = [
     'href="/contact"',
     'href="/work"',
     'href="/about"',
-    'href="/services#desire"',
-    'href="/services#situation"',
-    'href="/services#offerings"',
   ];
 
-  for (const link of requiredLinks) {
+  for (const link of serverRenderedLinks) {
     assert(html.includes(link), `homepage is missing ${link}`);
   }
 
-  console.log("Homepage link integrity gate passed.");
+  console.log("Homepage route and server-rendered link gate passed.");
 })().catch((error) => {
   console.error(error);
   process.exit(1);
