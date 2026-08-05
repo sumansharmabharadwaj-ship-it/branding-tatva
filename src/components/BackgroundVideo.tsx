@@ -1,16 +1,13 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
 // A bare video-with-poster-fallback fill layer, for sections that already
 // build their own overlay/content on top rather than wrapping in
-// PhotoHero/VideoBreak's own layout and gradient conventions (e.g. the
-// homepage FAQ section, which needs a light custom overlay instead of
-// either component's fixed dark gradient).
-
+// PhotoHero/VideoBreak's own layout and gradient conventions.
 export function BackgroundVideo({
   video,
   videoWebm,
@@ -18,54 +15,59 @@ export function BackgroundVideo({
   imagePosition = "center",
   parallax = false,
   push = false,
+  mobilePosterOnly = false,
 }: {
   video: string;
-  // Optional WebM sibling, tried first via a real <source> list — same
-  // additive pattern TexturedDark established (see its own comment).
-  // `video` alone keeps working exactly as before for every existing
-  // MP4-only call site.
   videoWebm?: string;
   poster: string;
   imagePosition?: string;
-  // Opt-in camera drift: the footage scales slightly past the frame and
-  // travels against scroll, so the scene reads as a camera moving
-  // through an environment rather than a fixed backdrop pinned to its
-  // section — the Services page's scroll-choreography device. Off by
-  // default so every existing call site (Home, SelectedWorkPinned)
-  // renders exactly as before. Transform-only, overscan (1.13) always
-  // exceeds the ±6% travel so edges never show.
   parallax?: boolean;
-  // Opt-in slow push-in for clips whose own camera is locked off (macro
-  // timelapses like the bloom and the leaf): a 55s ease-in-out breathe
-  // between 1.04x and 1.14x (bg-slow-push in globals.css) so the frame
-  // reads as a documentary camera drifting closer, never a static
-  // wallpaper. Disabled automatically under prefers-reduced-motion by
-  // the sitewide animation kill rule.
   push?: boolean;
+  // A chapter that already owns a foreground film can keep its environmental
+  // poster on phones instead of decoding a second loop behind it. The desktop
+  // composition remains unchanged. The initial unknown state also renders the
+  // poster, preventing an unnecessary mobile video request during hydration.
+  mobilePosterOnly?: boolean;
 }) {
   const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start end", "end start"] });
+  const [isMobile, setIsMobile] = useState<boolean | null>(
+    mobilePosterOnly ? null : false,
+  );
+  const { scrollYProgress } = useScroll({
+    target: wrapRef,
+    offset: ["start end", "end start"],
+  });
   const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
-  // The bare `autoplay` attribute alone isn't reliable — confirmed
-  // elsewhere on this site (PhotoHero/TexturedDark hero videos, via
-  // useVideoFadeIn's own comment) that a fully-loaded, muted, autoplay
-  // video can sit paused with nothing ever calling play() on it. This
-  // component previously had no such fallback, unlike every other
-  // video-background component on the site, and every instance of it
-  // sits behind a section heading (Selected work, Process, FAQ,
-  // SelectedWorkPinned's own backdrop) — exactly the sections that
-  // would read as flat/static if their autoplay silently never fired.
-  useVideoFadeIn(videoRef, !prefersReducedMotion);
 
-  if (prefersReducedMotion) {
+  useEffect(() => {
+    if (!mobilePosterOnly) return;
+
+    const query = window.matchMedia("(max-width: 767px)");
+    const sync = () => setIsMobile(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, [mobilePosterOnly]);
+
+  const posterOnly = Boolean(
+    prefersReducedMotion ||
+      (mobilePosterOnly && isMobile !== false),
+  );
+
+  // The bare autoplay attribute is not reliable after a delayed mount or tab
+  // return. This hook owns explicit play/pause only when a video is actually
+  // rendered for the current device.
+  useVideoFadeIn(videoRef, !posterOnly);
+
+  if (posterOnly) {
     return (
       <Image
         src={poster}
         alt=""
         fill
-        priority
+        priority={Boolean(prefersReducedMotion)}
         sizes="100vw"
         style={{ objectFit: "cover", objectPosition: imagePosition }}
       />
@@ -73,8 +75,11 @@ export function BackgroundVideo({
   }
 
   return (
-    <div ref={wrapRef} className="absolute inset-0 overflow-hidden">
-      <motion.div className="absolute inset-0" style={parallax ? { y, scale: 1.13 } : undefined}>
+    <div ref={wrapRef} data-video-decorative-root className="absolute inset-0 overflow-hidden" aria-hidden="true">
+      <motion.div
+        className="absolute inset-0"
+        style={parallax ? { y, scale: 1.13 } : undefined}
+      >
         <video
           ref={videoRef}
           className={`absolute inset-0 h-full w-full object-cover${push ? " bg-slow-push" : ""}`}
@@ -84,13 +89,6 @@ export function BackgroundVideo({
           muted
           loop
           playsInline
-          // Was the browser-default eager preload — a Lighthouse profile of
-          // Services caught every BackgroundVideo instance on the page
-          // (~27MB combined) downloading during initial load, competing
-          // with the LCP hero for bandwidth. metadata-only now; the
-          // offscreen-pause observer in useVideoFadeIn calls play() 25%
-          // before a video becomes visible, which starts its real download
-          // ahead of paint, with the poster covering the gap.
           preload="metadata"
         >
           {videoWebm && <source src={videoWebm} type="video/webm" />}
