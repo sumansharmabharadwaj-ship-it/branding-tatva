@@ -16,7 +16,7 @@ import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
 import { elements } from "@/data/elements";
-import { process } from "@/data/process";
+import { process as processStages } from "@/data/process";
 import { elementColor } from "@/lib/elementColor";
 import { GuidedView, LivingCursor, SceneHandoff } from "./HomeV4Interface";
 import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
@@ -75,7 +75,7 @@ export function HomeV4Experience() {
         aria-label="How the Branding Tatva method moves"
       >
         <ProcessChapterIntro />
-        <ProcessSection stages={process} elementColor={elementColor} />
+        <ProcessSection stages={processStages} elementColor={elementColor} />
       </section>
 
       <SceneHandoff motif="paper" />
