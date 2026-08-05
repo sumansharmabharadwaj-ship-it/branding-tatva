@@ -1,4 +1,4 @@
-# Candidate includes the CSS-module and health-route repairs.
+# Candidate includes bounded media and navigation probes.
 name: Services reframe release gate
 run-name: Services reframe gate · ${{ github.sha }}
 
