@@ -9,6 +9,7 @@ import { REGION_COOKIE, isRegion, regionFromCountry } from "@/data/pricing";
 import { offerings, packages } from "@/data/services";
 import { site } from "@/data/site";
 
+// Release marker: validate the CSS-module-safe Services candidate.
 export const metadata: Metadata = {
   title: "Brand Strategy, Identity, Websites and Content Systems",
   description:
