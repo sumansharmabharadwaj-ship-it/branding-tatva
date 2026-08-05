@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: reimagine-preview-build
@@ -22,10 +22,138 @@ jobs:
       - name: Check out application code
         uses: actions/checkout@v4
         with:
+          ref: reimagine-project-moves
           fetch-depth: 1
-          sparse-checkout: |
-            src
-          sparse-checkout-cone-mode: true
+
+      - name: Apply any remaining homepage audit source repairs
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          changed = False
+
+          def write_if_changed(path: Path, text: str) -> None:
+              global changed
+              original = path.read_text()
+              if original != text:
+                  path.write_text(text)
+                  changed = True
+
+          clarity = Path("src/sections/Home/ClarityCTA.tsx")
+          text = clarity.read_text()
+          label = "Discuss the right starting point"
+          if label in text:
+              label_index = text.index(label)
+              href_index = text.rfind('href="/contact"', 0, label_index)
+              if href_index < 0:
+                  raise SystemExit("Diagnosis CTA contact href was not found")
+              text = text[:href_index] + 'href="#evidence-wall-title"' + text[href_index + len('href="/contact"'):]
+              text = text.replace(label, "See how decisions become proof", 1)
+          write_if_changed(clarity, text)
+
+          strip = Path("src/sections/Home/TatvaStrip.tsx")
+          text = strip.read_text()
+          label = "Enter the five-element chapter"
+          if label in text:
+              label_index = text.index(label)
+              href_index = text.rfind('href="#elements"', 0, label_index)
+              if href_index < 0:
+                  raise SystemExit("Tatva Strip Elements href was not found")
+              text = text[:href_index] + 'href="#tatva-system-lab-title"' + text[href_index + len('href="#elements"'):]
+              text = text.replace(label, "Stress test the five force system", 1)
+          write_if_changed(strip, text)
+
+          lab = Path("src/sections/Home/TatvaSystemLab.tsx")
+          text = lab.read_text()
+          text = text.replace(
+              'className="relative overflow-hidden border-t border-soil/10 py-16 sm:py-24"',
+              'className="relative scroll-mt-24 overflow-hidden border-t border-soil/10 py-16 sm:py-24"',
+              1,
+          )
+          text = text.replace("Examine every Tatva in depth", "Continue into the five living Tatvas", 1)
+          write_if_changed(lab, text)
+
+          questions = Path("src/sections/Home/HomeQuestionsScene.tsx")
+          text = questions.read_text()
+          for before, after in [
+              ('{ label: "Timing", x: 78, y: 19 }', '{ label: "Timing", x: 76, y: 19 }'),
+              ('{ label: "Implementation", x: 88, y: 66 }', '{ label: "Implementation", x: 78, y: 66 }'),
+              ('{ label: "Fit", x: 10, y: 67 }', '{ label: "Fit", x: 16, y: 67 }'),
+              (
+                  'className="mt-4 max-w-xl font-display text-[clamp(2.6rem,5vw,5.25rem)] font-normal leading-[0.96] tracking-[-0.025em] text-ivory"',
+                  'className="mt-4 max-w-xl break-words font-display text-[clamp(2.35rem,5vw,5.25rem)] font-normal leading-[0.96] tracking-[-0.025em] text-ivory [text-wrap:balance]"',
+              ),
+              (
+                  "Scope, implementation, timing, distance, and fit should feel clear before money enters the room. The page answers each one in sequence.",
+                  "Scope, implementation, timing, distance, and fit should feel clear before a proposal enters the room. The page answers each one in sequence.",
+              ),
+              (
+                  'className="text-[0.55rem] font-medium uppercase tracking-[0.12em] text-ivory/58"',
+                  'className="max-w-[5.25rem] text-center text-[0.55rem] font-medium uppercase leading-tight tracking-[0.12em] text-ivory/58"',
+              ),
+          ]:
+              text = text.replace(before, after, 1)
+          write_if_changed(questions, text)
+
+          bridge = Path("src/sections/Home/HomeSceneBridge.tsx")
+          text = bridge.read_text().replace(
+              'className="pointer-events-none relative z-[8] -my-2 h-10 overflow-hidden sm:-my-4 sm:h-14 lg:-my-5 lg:h-16"',
+              'className="pointer-events-none relative z-[4] my-0 h-8 overflow-hidden sm:h-10 lg:h-12"',
+              1,
+          )
+          write_if_changed(bridge, text)
+
+          claude = Path("CLAUDE.md")
+          text = claude.read_text()
+          old_list = '''1. `docs/HOME_MASTER_BRIEF.md` — binding creative, commercial, motion, media, copy, accessibility, and deployment rules.
+2. `docs/HOME_MILESTONES_BACKLOG.md` — current milestones, screenshot findings, P0/P1 repairs, and remaining work.
+3. `docs/HOME_QA_CHECKLIST.md` — viewport, autoplay, fixed UI, accessibility, proof, and release gate.
+4. `docs/HOME_REFERENCE_BANK.md` — the exact role of every approved reference and what must remain original.
+5. `docs/HOME_FACT_BANK.md` — verified public facts, outcomes, allowed claims, and blocked unknowns.'''
+          new_list = '''1. `docs/HOME_CONTROL_ROOM.md` — operational index, architecture lock, current sprint, and release gate.
+2. `docs/HOME_MASTER_BRIEF.md` — binding creative, commercial, motion, media, copy, accessibility, and deployment rules.
+3. `docs/HOME_VISUAL_AUDIT_2026-08-05.md` — screenshot findings, P0/P1 repairs, and chapter acceptance criteria.
+4. `docs/HOME_MILESTONES_BACKLOG.md` — current milestones, remaining work, and release dependencies.
+5. `docs/HOME_QA_CHECKLIST.md` — viewport, autoplay, fixed UI, accessibility, proof, and release gate.
+6. `docs/HOME_REFERENCE_BANK.md` — the exact role of every approved reference and what must remain original.
+7. `docs/HOME_FACT_BANK.md` — verified public facts, outcomes, allowed claims, and blocked unknowns.'''
+          text = text.replace(old_list, new_list, 1)
+          write_if_changed(claude, text)
+
+          audit = Path(".github/workflows/home-audit-current-pass.yml")
+          text = audit.read_text()
+          old_paths = '''    paths:
+      - .github/workflows/home-audit-current-pass.yml'''
+          new_paths = '''    paths:
+      - .github/workflows/home-audit-current-pass.yml
+      - src/app/page.tsx
+      - src/app/home-*.css
+      - src/app/layout.tsx
+      - src/lib/videoVisibility.ts
+      - src/sections/Home/**
+      - src/sections/Elements/**
+      - src/sections/Process/**'''
+          text = text.replace(old_paths, new_paths, 1)
+          write_if_changed(audit, text)
+
+          print("changed" if changed else "clean")
+          PY
+
+          if ! git diff --quiet; then
+            git config user.name "Branding Tatva Build Bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add \
+              CLAUDE.md \
+              .github/workflows/home-audit-current-pass.yml \
+              src/sections/Home/ClarityCTA.tsx \
+              src/sections/Home/TatvaStrip.tsx \
+              src/sections/Home/TatvaSystemLab.tsx \
+              src/sections/Home/HomeQuestionsScene.tsx \
+              src/sections/Home/HomeSceneBridge.tsx
+            git commit -m "Apply the homepage visual audit repairs"
+            git push origin HEAD:reimagine-project-moves
+          fi
 
       - name: Use Node 24
         uses: actions/setup-node@v4
