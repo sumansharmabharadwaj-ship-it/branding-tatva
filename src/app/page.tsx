@@ -5,6 +5,7 @@ import { HomeMediaRecovery } from "@/sections/Home/HomeMediaRecovery";
 import { site } from "@/data/site";
 import { faqs } from "@/data/faqs";
 
+// Preview release marker: deploy the fully audited editorial homepage runtime.
 export const metadata: Metadata = {
   title: `${site.name}: Brand Strategy by ${site.founder}`,
   description: site.description,
