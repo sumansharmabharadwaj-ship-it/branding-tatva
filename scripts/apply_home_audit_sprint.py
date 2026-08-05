@@ -104,6 +104,137 @@ def patch_scene_bridge() -> None:
     write_if_changed(path, text)
 
 
+def patch_chapter_entry_framing() -> None:
+    replacements = [
+        (
+            ROOT / "src/sections/Home/HomeAutoJourney.tsx",
+            'lenis.scrollTo(target, { offset: -72, duration: 1.35 });',
+            'lenis.scrollTo(target, { offset: 0, duration: 1.35 });',
+        ),
+        (
+            ROOT / "src/sections/Home/ChapterLadder.tsx",
+            'lenis.scrollTo(target, { offset: -72, duration: 1.05 });',
+            'lenis.scrollTo(target, { offset: 0, duration: 1.05 });',
+        ),
+        (
+            ROOT / "src/sections/Home/HomeOpeningSignal.tsx",
+            'lenis.scrollTo(target, { offset: -72, duration: 1.05 });',
+            'lenis.scrollTo(target, { offset: 0, duration: 1.05 });',
+        ),
+    ]
+    for path, before, after in replacements:
+        text = path.read_text().replace(before, after, 1)
+        write_if_changed(path, text)
+
+
+def patch_mobile_cinema_entry() -> None:
+    path = ROOT / "src/sections/Home/HomeAutoJourney.tsx"
+    text = path.read_text()
+    listener = '''  useEffect(() => {
+    function openMobileCinemaControls() {
+      if (!isMobile || playing) return;
+      setMobileMenuOpen(true);
+    }
+
+    window.addEventListener(
+      "bt:open-cinema-controls",
+      openMobileCinemaControls,
+    );
+    return () => {
+      window.removeEventListener(
+        "bt:open-cinema-controls",
+        openMobileCinemaControls,
+      );
+    };
+  }, [isMobile, playing]);
+
+'''
+    marker = '''  useEffect(
+    () => () => {
+      window.clearTimeout(holdTimerRef.current);
+    },
+    [],
+  );'''
+    if "openMobileCinemaControls" not in text:
+        if marker not in text:
+            raise SystemExit("HomeAutoJourney cleanup marker was not found")
+        text = text.replace(marker, listener + marker, 1)
+    write_if_changed(path, text)
+
+    path = ROOT / "src/sections/Home/ChapterLadder.tsx"
+    text = path.read_text()
+    cinema_button = '''              <button
+                type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  window.dispatchEvent(
+                    new CustomEvent("bt:open-cinema-controls"),
+                  );
+                }}
+                className="mb-2 flex w-full items-center justify-between gap-4 rounded-2xl border border-sandstone/20 bg-sandstone/[0.06] px-3 py-3 text-left transition-colors hover:bg-sandstone/[0.1] focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
+              >
+                <span>
+                  <span className="block font-display text-base text-ivory">
+                    Cinema and sound
+                  </span>
+                  <span className="mt-1 block text-[0.62rem] leading-relaxed text-ivory/42">
+                    Start the guided journey or turn on the ambient score.
+                  </span>
+                </span>
+                <span aria-hidden="true" className="text-sandstone">
+                  ▶
+                </span>
+              </button>
+
+'''
+    marker = '''              <div className="max-h-[54vh] space-y-1 overflow-y-auto pr-1">'''
+    if "Cinema and sound" not in text:
+        if marker not in text:
+            raise SystemExit("ChapterLadder mobile chapter list was not found")
+        text = text.replace(marker, cinema_button + marker, 1)
+    write_if_changed(path, text)
+
+
+def patch_mobile_control_css() -> None:
+    path = ROOT / "src/app/home-release-candidate.css"
+    text = path.read_text()
+    marker = "/* Mobile cinema docking repair */"
+    if marker in text:
+        return
+    addition = '''
+
+/* Mobile cinema docking repair */
+@media (max-width: 767px) {
+  [data-auto-journey-control][aria-pressed="false"] {
+    display: none !important;
+  }
+
+  [data-chapter-ladder-mobile] {
+    right: 0 !important;
+    left: auto !important;
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+  }
+
+  [data-chapter-ladder-mobile] > button {
+    width: 1.75rem !important;
+    height: 6.5rem !important;
+    min-height: 6.5rem !important;
+    border-right: 0 !important;
+    border-radius: 999px 0 0 999px !important;
+    padding: 0 !important;
+    background-color: rgba(23, 20, 15, 0.76) !important;
+  }
+
+  [data-chapter-ladder-mobile] > button > span:first-child {
+    gap: 0.3rem !important;
+  }
+}
+'''
+    write_if_changed(path, text + addition)
+
+
 def patch_project_instructions() -> None:
     path = ROOT / "CLAUDE.md"
     text = path.read_text()
@@ -123,31 +254,15 @@ def patch_project_instructions() -> None:
     write_if_changed(path, text)
 
 
-def patch_visual_audit_trigger() -> None:
-    path = ROOT / ".github/workflows/home-audit-current-pass.yml"
-    text = path.read_text()
-    old_paths = """    paths:
-      - .github/workflows/home-audit-current-pass.yml"""
-    new_paths = """    paths:
-      - .github/workflows/home-audit-current-pass.yml
-      - src/app/page.tsx
-      - src/app/home-*.css
-      - src/app/layout.tsx
-      - src/lib/videoVisibility.ts
-      - src/sections/Home/**
-      - src/sections/Elements/**
-      - src/sections/Process/**"""
-    text = text.replace(old_paths, new_paths, 1)
-    write_if_changed(path, text)
-
-
 def main() -> None:
     patch_diagnosis()
     patch_framework_handoffs()
     patch_questions()
     patch_scene_bridge()
+    patch_chapter_entry_framing()
+    patch_mobile_cinema_entry()
+    patch_mobile_control_css()
     patch_project_instructions()
-    patch_visual_audit_trigger()
     for path in changed_files:
         print(path)
 
