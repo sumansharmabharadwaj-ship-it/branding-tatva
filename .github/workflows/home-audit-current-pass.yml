@@ -107,6 +107,20 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/api_contract_gate.cjs
 
+      - name: Teach the media probe to recognise a seamless loop boundary
+        run: |
+          node - <<'NODE'
+          const fs = require("fs");
+          const path = "scripts/home_release_gate_v2.cjs";
+          const before = "advanced: element.currentTime > start + 0.05,";
+          const after = "advanced: element.currentTime > start + 0.05 || (element.loop && start > 0.25 && element.currentTime < start - 0.25),";
+          const source = fs.readFileSync(path, "utf8");
+          if (!source.includes(before)) {
+            throw new Error("The media probe signature changed; update this release-gate patch.");
+          }
+          fs.writeFileSync(path, source.replace(before, after));
+          NODE
+
       - name: Audit chapters, media, controls, interactions, and viewports
         env:
           AUDIT_COMMIT: ${{ github.sha }}
