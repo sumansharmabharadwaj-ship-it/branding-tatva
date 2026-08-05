@@ -5,7 +5,8 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 type HomeAmbientFilmProps = {
-  video: string;
+  videoWebm: string;
+  videoMp4?: string;
   poster: string;
   label: string;
   className: string;
@@ -17,10 +18,13 @@ type HomeAmbientFilmProps = {
  * A deliberately peripheral film fragment for chapters whose main teaching
  * instrument is a diagram rather than a full-bleed video. It remains behind
  * the content, drifts slowly, and only decodes while its own chapter is near
- * the viewport. On reduced motion it becomes the same composed poster.
+ * the viewport. WebM is offered first for a lighter, more reliable autoplay
+ * path, with MP4 retained as the compatibility fallback. On reduced motion
+ * the same composition resolves into its poster.
  */
 export function HomeAmbientFilm({
-  video,
+  videoWebm,
+  videoMp4,
   poster,
   label,
   className,
@@ -86,7 +90,6 @@ export function HomeAmbientFilm({
       ) : (
         <video
           ref={videoRef}
-          src={video}
           poster={poster}
           className="absolute inset-0 h-full w-full object-cover"
           style={{ objectPosition: imagePosition }}
@@ -100,7 +103,10 @@ export function HomeAmbientFilm({
               void event.currentTarget.play().catch(() => {});
             }
           }}
-        />
+        >
+          <source src={videoWebm} type="video/webm" />
+          {videoMp4 && <source src={videoMp4} type="video/mp4" />}
+        </video>
       )}
 
       <span
