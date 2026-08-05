@@ -11,15 +11,23 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: branding-tatva-services-audit-instrumentation
+  cancel-in-progress: true
+
 jobs:
   repair:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the preview branch
+      - name: Check out only the audit harness
         uses: actions/checkout@v4
         with:
           ref: reimagine-project-moves
           fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/services_release_gate.cjs
 
       - name: Add bounded screenshots, progress markers, and a watchdog
         run: |
