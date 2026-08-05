@@ -37,6 +37,19 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+async function waitForHref(page, locator, expected, timeoutMs = 2500) {
+  const deadline = Date.now() + timeoutMs;
+  let actual = null;
+
+  while (Date.now() < deadline) {
+    actual = await locator.getAttribute("href");
+    if (actual === expected) return actual;
+    await page.waitForTimeout(90);
+  }
+
+  throw new Error(`href resolved to ${actual}, expected ${expected}`);
+}
+
 async function auditViewport(browser, viewport) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
@@ -181,27 +194,19 @@ async function auditViewport(browser, viewport) {
     { tab: /Reposition the system/i, href: "/services#situation" },
     { tab: /Create consistency/i, href: "/services#offerings" },
   ];
-  const activePathLinkSelector =
-    '[data-home-chapter="paths"] .paths-cinematic__focus > a';
+  const activePathLink = paths.locator(".paths-cinematic__focus > a");
 
   for (const destination of pathDestinations) {
     await paths.getByRole("tab", { name: destination.tab }).click();
-    await page.waitForFunction(
-      ({ selector, href }) =>
-        document.querySelector(selector)?.getAttribute("href") === href,
-      { selector: activePathLinkSelector, href: destination.href },
-      { timeout: 2500 },
-    );
+    try {
+      await waitForHref(page, activePathLink, destination.href);
+    } catch (error) {
+      throw new Error(`${viewport.name}: ${destination.tab} ${error.message}`);
+    }
   }
 
   await paths.getByRole("tab", { name: /Build the foundation/i }).click();
-  await page.waitForFunction(
-    ({ selector }) =>
-      document.querySelector(selector)?.getAttribute("href") ===
-      "/services#desire",
-    { selector: activePathLinkSelector },
-    { timeout: 2500 },
-  );
+  await waitForHref(page, activePathLink, "/services#desire");
 
   const invitation = page.locator('[data-home-chapter="invitation"]').first();
   await invitation.scrollIntoViewIfNeeded();
