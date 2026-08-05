@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 const ROOT_MARGIN = "8% 0px";
-const HEARTBEAT_MS = 3200;
+const HEARTBEAT_MS = 2200;
 
 function isActuallyVisible(video: HTMLVideoElement) {
   if (document.hidden || !video.muted || !video.loop) return false;
@@ -83,18 +83,21 @@ export function HomeVideoHeartbeat() {
       frame = window.requestAnimationFrame(inspect);
     }
 
+    function onChapter() {
+      scheduleInspect();
+      window.setTimeout(scheduleInspect, 950);
+    }
+
     inspect();
     const mutations = new MutationObserver(scheduleInspect);
-    mutations.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["aria-hidden", "class", "style", "src"],
-    });
+    // Child-list observation catches delayed AnimatePresence mounts without
+    // subscribing to Framer Motion's per-frame style mutations.
+    mutations.observe(document.body, { childList: true, subtree: true });
 
     const heartbeat = window.setInterval(inspect, HEARTBEAT_MS);
     document.addEventListener("visibilitychange", scheduleInspect);
     window.addEventListener("pageshow", scheduleInspect);
+    window.addEventListener("bt:home-chapter", onChapter as EventListener);
 
     return () => {
       observer.disconnect();
@@ -103,6 +106,7 @@ export function HomeVideoHeartbeat() {
       window.cancelAnimationFrame(frame);
       document.removeEventListener("visibilitychange", scheduleInspect);
       window.removeEventListener("pageshow", scheduleInspect);
+      window.removeEventListener("bt:home-chapter", onChapter as EventListener);
     };
   }, [pathname]);
 
