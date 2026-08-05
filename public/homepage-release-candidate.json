@@ -1,14 +1,17 @@
 {
   "status": "preview-ready",
-  "auditedSourceCommit": "2242894fbb46cab7796c1c58e93d8aa40fe0a592",
-  "auditRun": 30994374434,
-  "buildRun": 30994374399,
+  "auditedSourceCommit": "aff053970abf5a026d0639e198089d72165ac195",
+  "auditRun": 30998129595,
+  "buildRun": 30998129606,
   "viewports": 9,
   "chapterChecks": 90,
   "mediaProbes": 18,
   "autoplayProbes": 16,
+  "internalDestinations": 28,
+  "uniqueLinkedPages": 18,
+  "linkFailures": 0,
   "failures": 0,
   "productionPromoted": false,
-  "deploymentRequestedAt": "2026-08-05T09:55:00Z",
+  "deploymentRequestedAt": "2026-08-05T10:47:00Z",
   "date": "2026-08-05"
 }
