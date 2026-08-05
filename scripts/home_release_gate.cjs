@@ -446,7 +446,10 @@ async function chapterFingerprint(page, chapterId) {
         .catch(() => false);
       const exploreButton = page.locator("[data-chapter-ladder-mobile] > button");
       await exploreButton.click();
-      await page.getByRole("button", { name: "Cinema and sound" }).click();
+      await page.waitForTimeout(420);
+      const cinemaEntry = page.getByRole("button", { name: "Cinema and sound" });
+      await cinemaEntry.waitFor({ state: "visible" });
+      await cinemaEntry.click();
       await page.waitForTimeout(450);
       const menuVisible = await page.locator("#mobile-cinema-controls").isVisible().catch(() => false);
       const globalAudioVisible = await page

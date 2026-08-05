@@ -452,9 +452,9 @@ section[aria-labelledby="home-questions-title"] h2 {
   [data-chapter-ladder-mobile] {
     right: 0 !important;
     left: auto !important;
-    top: 50% !important;
+    top: calc(50% - 3.25rem) !important;
     bottom: auto !important;
-    transform: translateY(-50%) !important;
+    transform: none !important;
   }
 
   [data-chapter-ladder-mobile] > button {
