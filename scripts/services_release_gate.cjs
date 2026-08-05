@@ -31,7 +31,12 @@ async function probeVideo(video) {
     const start = element.currentTime;
     let playError = null;
     try {
-      await element.play();
+      await Promise.race([
+        element.play(),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Media play timed out after 5 seconds")), 5000),
+        ),
+      ]);
     } catch (error) {
       playError = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
     }
@@ -78,6 +83,7 @@ async function captureSection(page, profile, id) {
       reducedMotion: "no-preference",
     });
     const page = await context.newPage();
+    page.setDefaultTimeout(10000);
     const consoleErrors = [];
     const pageErrors = [];
     const failedResponses = [];
@@ -92,7 +98,7 @@ async function captureSection(page, profile, id) {
       }
     });
 
-    await page.goto(`${BASE_URL}/services`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(1400);
 
     const root = page.locator("[data-services-reframe]");
@@ -273,6 +279,7 @@ async function captureSection(page, profile, id) {
   // requiring a live Resend key inside CI.
   const contactContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const contactPage = await contactContext.newPage();
+  contactPage.setDefaultTimeout(10000);
   await contactPage.route("**/api/contact", async (route) => {
     await route.fulfill({
       status: 200,
@@ -280,7 +287,7 @@ async function captureSection(page, profile, id) {
       body: JSON.stringify({ ok: true, requestId: "services-release-gate" }),
     });
   });
-  await contactPage.goto(`${BASE_URL}/contact`, { waitUntil: "networkidle" });
+  await contactPage.goto(`${BASE_URL}/contact`, { waitUntil: "domcontentloaded" });
   await contactPage.getByLabel("Name").fill("Services QA");
   await contactPage.getByLabel("Email").fill("qa@example.com");
   await contactPage
