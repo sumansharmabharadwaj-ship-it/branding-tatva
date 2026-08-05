@@ -2,26 +2,24 @@
 
 import { useEffect } from "react";
 
-const HOME_MEDIA = [
-  {
-    original: "/videos/hero-forest-sanctuary.mp4",
-    webm: "/videos/home-reframe-hero.webm",
-  },
-  {
-    original: "/videos/pexels-river-dawn.mp4",
-    webm: "/videos/home-reframe-framework.webm",
-  },
-  {
-    original: "/videos/higgsfield-silver-tide.mp4",
-    webm: "/videos/home-reframe-invitation.webm",
-  },
-] as const;
+const COMPATIBLE_SOURCES = new Map<string, string>([
+  ["/videos/hero-forest-sanctuary.mp4", "/videos/home-reframe-hero.webm"],
+  ["/videos/pexels-river-dawn.mp4", "/videos/home-reframe-framework.webm"],
+  ["/videos/higgsfield-silver-tide.mp4", "/videos/home-reframe-invitation.webm"],
+]);
 
-function installCompatibleSource(video: HTMLVideoElement, original: string, webm: string) {
-  if (video.dataset.homeCompatibleSource === webm) return false;
+function getOriginalSource(video: HTMLVideoElement) {
+  return video.dataset.homeOriginalSource || video.getAttribute("src") || "";
+}
 
+function installCompatibleSource(video: HTMLVideoElement) {
+  const original = getOriginalSource(video);
+  const webm = COMPATIBLE_SOURCES.get(original);
+
+  if (!original || !webm || video.dataset.homeCompatibleSource === webm) return;
+
+  video.dataset.homeOriginalSource = original;
   video.pause();
-  video.autoplay = false;
   video.removeAttribute("src");
   video.querySelectorAll("source").forEach((source) => source.remove());
 
@@ -36,16 +34,28 @@ function installCompatibleSource(video: HTMLVideoElement, original: string, webm
   video.append(preferred, fallback);
   video.dataset.homeCompatibleSource = webm;
   video.load();
-  return true;
+}
+
+function prepareVideo(video: HTMLVideoElement) {
+  video.muted = true;
+  video.defaultMuted = true;
+  video.loop = true;
+  video.autoplay = true;
+  video.playsInline = true;
+  video.setAttribute("muted", "");
+  video.setAttribute("playsinline", "");
+  video.setAttribute("webkit-playsinline", "");
+  installCompatibleSource(video);
 }
 
 function playVisibleVideo(video: HTMLVideoElement, reducedMotion: MediaQueryList) {
-  if (
-    document.hidden ||
-    reducedMotion.matches ||
-    video.dataset.homeInView !== "true"
-  ) {
+  if (document.hidden || reducedMotion.matches || video.dataset.homeInView !== "true") {
     video.pause();
+    return;
+  }
+
+  if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+    video.load();
     return;
   }
 
@@ -55,7 +65,10 @@ function playVisibleVideo(video: HTMLVideoElement, reducedMotion: MediaQueryList
 export function HomeMediaRecovery() {
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (reducedMotion.matches) return;
+    const root = document.querySelector<HTMLElement>("[data-home-reframe]");
+    if (!root) return;
+
+    const tracked = new Set<HTMLVideoElement>();
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -65,42 +78,55 @@ export function HomeMediaRecovery() {
           playVisibleVideo(video, reducedMotion);
         }
       },
-      { rootMargin: "28% 0px", threshold: 0.04 },
+      { rootMargin: "35% 0px", threshold: 0.01 },
     );
 
-    const install = () => {
-      for (const media of HOME_MEDIA) {
-        const video = document.querySelector<HTMLVideoElement>(
-          `video[src="${media.original}"]`,
-        );
-        if (!video) continue;
+    const register = (video: HTMLVideoElement) => {
+      if (tracked.has(video)) return;
 
-        const installed = installCompatibleSource(video, media.original, media.webm);
-        if (installed) observer.observe(video);
-      }
+      prepareVideo(video);
+      tracked.add(video);
+      observer.observe(video);
+
+      const resume = () => playVisibleVideo(video, reducedMotion);
+      video.addEventListener("loadeddata", resume);
+      video.addEventListener("canplay", resume);
+      video.addEventListener("stalled", resume);
+      video.addEventListener("suspend", resume);
+      video.dataset.homeRecoveryBound = "true";
     };
 
-    const resume = () => {
-      document
-        .querySelectorAll<HTMLVideoElement>("video[data-home-compatible-source]")
-        .forEach((video) => playVisibleVideo(video, reducedMotion));
-    };
+    const scan = () => root.querySelectorAll<HTMLVideoElement>("video").forEach(register);
 
-    install();
-    const animationFrame = window.requestAnimationFrame(install);
-    const retry = window.setTimeout(install, 650);
+    const resumeAll = () => tracked.forEach((video) => playVisibleVideo(video, reducedMotion));
+    const handleMotionPreference = () => resumeAll();
 
-    document.addEventListener("visibilitychange", resume);
-    window.addEventListener("pageshow", resume);
-    window.addEventListener("focus", resume);
+    scan();
+
+    const mutationObserver = new MutationObserver(scan);
+    mutationObserver.observe(root, { childList: true, subtree: true });
+
+    const animationFrame = window.requestAnimationFrame(scan);
+    const retryOne = window.setTimeout(scan, 500);
+    const retryTwo = window.setTimeout(scan, 1600);
+
+    document.addEventListener("visibilitychange", resumeAll);
+    window.addEventListener("pageshow", resumeAll);
+    window.addEventListener("focus", resumeAll);
+    window.addEventListener("pointerdown", resumeAll, { passive: true });
+    reducedMotion.addEventListener("change", handleMotionPreference);
 
     return () => {
       window.cancelAnimationFrame(animationFrame);
-      window.clearTimeout(retry);
+      window.clearTimeout(retryOne);
+      window.clearTimeout(retryTwo);
       observer.disconnect();
-      document.removeEventListener("visibilitychange", resume);
-      window.removeEventListener("pageshow", resume);
-      window.removeEventListener("focus", resume);
+      mutationObserver.disconnect();
+      document.removeEventListener("visibilitychange", resumeAll);
+      window.removeEventListener("pageshow", resumeAll);
+      window.removeEventListener("focus", resumeAll);
+      window.removeEventListener("pointerdown", resumeAll);
+      reducedMotion.removeEventListener("change", handleMotionPreference);
     };
   }, []);
 
