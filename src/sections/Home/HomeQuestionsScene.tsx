@@ -19,7 +19,11 @@ const QUESTIONS = [
 const SIGNALS = [
   { label: "Scope", x: 18, y: 22 },
   { label: "Timing", x: 78, y: 19 },
-  { label: "Implementation", x: 88, y: 66 },
+  // The longest label used to sit at x=88. Once the desktop clarity field
+  // collapsed into a phone-width frame, centring the word on that point
+  // pushed its final letters outside the mask. The signal remains in the
+  // same conceptual quadrant, but now keeps a readable safety margin.
+  { label: "Implementation", x: 78, y: 66 },
   { label: "Distance", x: 52, y: 88 },
   { label: "Fit", x: 10, y: 67 },
 ] as const;
