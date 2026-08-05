@@ -161,6 +161,15 @@
   fill: rgba(244, 239, 230, 0.86) !important;
 }
 
+/* The three outcome labels are the only direct text nodes in this SVG.
+   Pulling them inward keeps the complete promise inside the frame at the
+   exact desktop width used by the chapter ladder and the peripheral film. */
+@media (min-width: 768px) {
+  [data-home-earth-tone="paths"] svg > text {
+    transform: translateX(-24px);
+  }
+}
+
 [data-home-earth-tone="framework"] [style*="--tw-ring-offset-color"] {
   --tw-ring-offset-color: #354840 !important;
 }
