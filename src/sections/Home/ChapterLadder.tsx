@@ -234,14 +234,22 @@ export function ChapterLadder() {
     setMobileOpen(false);
     window.history.replaceState(null, "", `#${target.id}`);
 
+    const chapter = target.dataset.homeChapter;
+    const offset = ["process", "questions", "invitation"].includes(
+      chapter ?? "",
+    )
+      ? 0
+      : -72;
+
     if (lenis && !prefersReducedMotion) {
-      lenis.scrollTo(target, { offset: -72, duration: 1.05 });
+      lenis.scrollTo(target, { offset, duration: 1.05 });
       return;
     }
 
-    target.scrollIntoView({
+    const top = window.scrollY + target.getBoundingClientRect().top + offset;
+    window.scrollTo({
+      top,
       behavior: prefersReducedMotion ? "auto" : "smooth",
-      block: "start",
     });
   }
 
