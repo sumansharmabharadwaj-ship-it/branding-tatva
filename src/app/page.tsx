@@ -3,6 +3,7 @@ import "./home-cinematic-recovery.css";
 import "./home-studio-cinematic.css";
 import "./home-paths-cinematic.css";
 import "./home-cinematic-finish.css";
+import "./home-final-polish.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { LinkButton } from "@/components/Button";

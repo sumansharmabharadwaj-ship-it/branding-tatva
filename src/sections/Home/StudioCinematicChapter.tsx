@@ -130,16 +130,15 @@ export function StudioCinematicChapter() {
 
       <div className="studio-cinematic__grid">
         <article className="studio-cinematic__media" aria-live="polite">
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="sync" initial={false}>
             <motion.div
               key={active.video}
               className="studio-cinematic__media-layer"
-              initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.045, filter: "blur(8px)" }}
-              animate={{ opacity: 1, scale: inView ? 1.08 : 1.03, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 1.025, filter: "blur(5px)" }}
+              initial={prefersReducedMotion ? false : { opacity: 0.35, scale: 1.045 }}
+              animate={{ opacity: 1, scale: inView ? 1.08 : 1.03 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 1.025 }}
               transition={{
-                opacity: { duration: prefersReducedMotion ? 0 : 0.72 },
-                filter: { duration: prefersReducedMotion ? 0 : 0.72 },
+                opacity: { duration: prefersReducedMotion ? 0 : 0.52, ease: EASE },
                 scale: { duration: prefersReducedMotion ? 0 : 9.5, ease: "linear" },
               }}
             >
@@ -176,19 +175,16 @@ export function StudioCinematicChapter() {
               <span>{active.number} / 03</span>
             </div>
 
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={active.title}
-                className="studio-cinematic__media-caption"
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 16, filter: "blur(5px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10, filter: "blur(4px)" }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: EASE }}
-              >
-                <p>{active.eyebrow}</p>
-                <h3>{active.title}</h3>
-              </motion.div>
-            </AnimatePresence>
+            <motion.div
+              key={`caption-${active.title}`}
+              className="studio-cinematic__media-caption"
+              initial={prefersReducedMotion ? false : { opacity: 0.64, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+            >
+              <p>{active.eyebrow}</p>
+              <h3>{active.title}</h3>
+            </motion.div>
           </div>
         </article>
 
@@ -237,42 +233,40 @@ export function StudioCinematicChapter() {
             })}
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.article
-              key={active.title}
-              id="studio-cinematic-panel"
-              role="tabpanel"
-              className="studio-cinematic__panel"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(5px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -9, filter: "blur(4px)" }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
-            >
-              <p className="studio-cinematic__panel-copy">{active.line}</p>
+          <motion.article
+            key={`panel-${active.title}`}
+            id="studio-cinematic-panel"
+            role="tabpanel"
+            className="studio-cinematic__panel"
+            initial={prefersReducedMotion ? false : { opacity: 0.72, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
+            aria-live="polite"
+          >
+            <p className="studio-cinematic__panel-copy">{active.line}</p>
 
-              <div className="studio-cinematic__logic" aria-label={`${active.title} decision sequence`}>
-                {active.diagram.map((step, index) => (
-                  <div key={step} className="studio-cinematic__logic-step">
-                    <span>{step}</span>
-                    {index < active.diagram.length - 1 && <i aria-hidden="true" />}
-                  </div>
-                ))}
-              </div>
+            <div className="studio-cinematic__logic" aria-label={`${active.title} decision sequence`}>
+              {active.diagram.map((step, index) => (
+                <div key={step} className="studio-cinematic__logic-step">
+                  <span>{step}</span>
+                  {index < active.diagram.length - 1 && <i aria-hidden="true" />}
+                </div>
+              ))}
+            </div>
 
-              <div className="studio-cinematic__result">
-                <span>What the client receives</span>
-                <strong>{active.result}</strong>
-              </div>
+            <div className="studio-cinematic__result">
+              <span>What the client receives</span>
+              <strong>{active.result}</strong>
+            </div>
 
-              <Link href={active.proofHref} className="studio-cinematic__proof">
-                <span>
-                  <small>{active.proofLabel}</small>
-                  <strong>{active.proofLine}</strong>
-                </span>
-                <i aria-hidden="true">↗</i>
-              </Link>
-            </motion.article>
-          </AnimatePresence>
+            <Link href={active.proofHref} className="studio-cinematic__proof">
+              <span>
+                <small>{active.proofLabel}</small>
+                <strong>{active.proofLine}</strong>
+              </span>
+              <i aria-hidden="true">↗</i>
+            </Link>
+          </motion.article>
 
           <div className="studio-cinematic__footer">
             <Link href="/about">

@@ -74,18 +74,16 @@ function playEntrance(
   heading.animate(
     [
       {
-        opacity: 0.62,
-        transform: "translate3d(0, 12px, 0)",
-        filter: "blur(2.5px)",
+        opacity: 0.88,
+        transform: "translate3d(0, 8px, 0)",
       },
       {
         opacity: 1,
         transform: "translate3d(0, 0, 0)",
-        filter: "blur(0px)",
       },
     ],
     {
-      duration: source === "journey" || source === "replay" ? 620 : 520,
+      duration: source === "journey" || source === "replay" ? 520 : 420,
       easing: ENTRY_EASE,
       fill: "none",
     },
@@ -96,12 +94,12 @@ function playEntrance(
     support.getAnimations().forEach((animation) => animation.cancel());
     support.animate(
       [
-        { opacity: 0.76, transform: "translate3d(0, 6px, 0)" },
+        { opacity: 0.9, transform: "translate3d(0, 4px, 0)" },
         { opacity: 1, transform: "translate3d(0, 0, 0)" },
       ],
       {
-        duration: 460,
-        delay: 60,
+        duration: 380,
+        delay: 40,
         easing: ENTRY_EASE,
         fill: "none",
       },
@@ -115,12 +113,12 @@ function playEntrance(
     activeInstrument.getAnimations().forEach((animation) => animation.cancel());
     activeInstrument.animate(
       [
-        { opacity: 0.9, transform: "translate3d(0, 5px, 0) scale(0.997)" },
+        { opacity: 0.94, transform: "translate3d(0, 3px, 0) scale(0.999)" },
         { opacity: 1, transform: "translate3d(0, 0, 0) scale(1)" },
       ],
       {
-        duration: 520,
-        delay: 90,
+        duration: 420,
+        delay: 60,
         easing: ENTRY_EASE,
         fill: "none",
       },
