@@ -26,27 +26,10 @@ const expectedChapters = [
   "invitation",
 ];
 
-const cycleProfiles = new Set(["mobile-390", "desktop-1440"]);
-const cycleDurations = {
-  diagnosis: 6200,
-  evidence: 6800,
-  studio: 6800,
-  paths: 6500,
-  framework: 5200,
-  elements: 5400,
-  process: 6200,
-  questions: 7800,
-};
-
-const criticalFilmChapters = ["elements", "process"];
+const interactionProfiles = new Set(["mobile-390", "desktop-1440"]);
+const criticalFilmChapters = ["opening", "framework", "invitation"];
 const analyticsRequest = (url) =>
   url.includes("/_vercel/insights") || url.includes("/_vercel/speed-insights");
-
-function intersection(a, b) {
-  const width = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
-  const height = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
-  return { width, height, area: width * height };
-}
 
 async function scrollChapter(page, index) {
   const locator = page.locator("[data-home-chapter]").nth(index);
@@ -54,56 +37,27 @@ async function scrollChapter(page, index) {
     const top = window.scrollY + element.getBoundingClientRect().top;
     window.scrollTo({ top, behavior: "instant" });
   });
-  await page.waitForTimeout(1250);
+  await page.waitForTimeout(650);
   return locator;
 }
 
-async function fingerprint(page, chapterId) {
-  return page.evaluate((id) => {
-    const chapter = document.querySelector(`[data-home-chapter="${id}"]`);
-    if (!(chapter instanceof HTMLElement)) return null;
-    const compact = (value) => value?.replace(/\s+/g, " ").trim() || null;
+function compact(value) {
+  return value?.replace(/\s+/g, " ").trim() || null;
+}
 
-    if (id === "diagnosis") {
-      return compact(chapter.querySelector("#clarity-diagnosis h3")?.textContent);
-    }
-    if (id === "evidence") {
-      return compact(chapter.querySelector('[aria-live="polite"]')?.textContent);
-    }
-    if (id === "studio") {
-      return compact(chapter.querySelector('button[aria-pressed="true"]')?.textContent);
-    }
-    if (id === "paths") {
-      const cards = Array.from(chapter.querySelectorAll("li > a"));
-      const active = cards
-        .map((card) => ({
-          text: compact(card.textContent),
-          opacity: Number.parseFloat(getComputedStyle(card.parentElement).opacity || "0"),
-        }))
-        .sort((a, b) => b.opacity - a.opacity)[0];
-      return active?.text || null;
-    }
-    if (id === "framework") {
-      return compact(
-        chapter.querySelector(
-          'section[aria-labelledby="tatva-framework-title"] button[aria-pressed="true"]',
-        )?.textContent,
-      );
-    }
-    if (id === "elements") {
-      const visible = Array.from(chapter.querySelectorAll('[aria-hidden="false"]')).find(
-        (element) => element instanceof HTMLElement && element.textContent?.trim(),
-      );
-      return compact(visible?.textContent);
-    }
-    if (id === "process") {
-      return compact(chapter.querySelector('[role="tab"][aria-selected="true"]')?.textContent);
-    }
-    if (id === "questions") {
-      return compact(chapter.querySelector('button[aria-expanded="true"]')?.textContent);
-    }
-    return null;
-  }, chapterId);
+async function clickAndCompare(page, selector, panelSelector, index) {
+  const buttons = page.locator(selector);
+  if ((await buttons.count()) <= index) return { passed: false, detail: `${selector} missing index ${index}` };
+
+  const before = compact(await page.locator(panelSelector).textContent());
+  await buttons.nth(index).click();
+  await page.waitForTimeout(420);
+  const after = compact(await page.locator(panelSelector).textContent());
+
+  return {
+    passed: Boolean(before && after && before !== after),
+    detail: before === after ? `${panelSelector} did not change` : null,
+  };
 }
 
 (async () => {
@@ -116,8 +70,7 @@ async function fingerprint(page, chapterId) {
     commit: process.env.AUDIT_COMMIT || process.env.GITHUB_SHA || null,
     captures: [],
     mediaProbes: [],
-    autoplayCycles: [],
-    cinemaMenu: null,
+    interactions: [],
     failedResponses: [],
     consoleErrors: [],
     pageErrors: [],
@@ -141,6 +94,7 @@ async function fingerprint(page, chapterId) {
         expected: analyticsRequest(response.url()),
       });
     });
+
     page.on("console", (message) => {
       if (message.type() !== "error") return;
       const text = message.text();
@@ -153,12 +107,13 @@ async function fingerprint(page, chapterId) {
           text.includes("/_vercel/speed-insights"),
       });
     });
+
     page.on("pageerror", (error) => {
       report.pageErrors.push({ profile: profile.name, text: error.message });
     });
 
     await page.goto("http://127.0.0.1:3000/", { waitUntil: "networkidle" });
-    await page.waitForTimeout(2400);
+    await page.waitForTimeout(1600);
     await page.waitForFunction(
       () => document.querySelectorAll("[data-home-chapter]").length === 10,
       null,
@@ -171,6 +126,7 @@ async function fingerprint(page, chapterId) {
         id: element.getAttribute("data-home-chapter") || `chapter-${index + 1}`,
       })),
     );
+
     const ids = chapters.map((chapter) => chapter.id);
     if (JSON.stringify(ids) !== JSON.stringify(expectedChapters)) {
       report.failures.push({
@@ -183,7 +139,7 @@ async function fingerprint(page, chapterId) {
 
     for (const chapter of chapters) {
       await scrollChapter(page, chapter.index);
-      if (profile.capture) await page.waitForTimeout(900);
+      if (profile.capture) await page.waitForTimeout(450);
 
       const screenshotPath = profile.capture
         ? `visual-audit-v2/${profile.name}-${String(chapter.index + 1).padStart(2, "0")}-${chapter.id}.png`
@@ -191,133 +147,60 @@ async function fingerprint(page, chapterId) {
       if (screenshotPath) await page.screenshot({ path: screenshotPath, fullPage: false });
 
       const state = await page.evaluate((chapterId) => {
-        const rectFor = (element) => {
-          if (!(element instanceof HTMLElement)) return null;
-          const style = getComputedStyle(element);
-          const box = element.getBoundingClientRect();
-          if (
-            style.display === "none" ||
-            style.visibility === "hidden" ||
-            Number.parseFloat(style.opacity || "1") <= 0.04 ||
-            box.width <= 1 ||
-            box.height <= 1
-          ) {
-            return null;
-          }
-          return {
-            left: box.left,
-            top: box.top,
-            right: box.right,
-            bottom: box.bottom,
-            width: box.width,
-            height: box.height,
-            area: box.width * box.height,
-          };
-        };
-
         const chapter = document.querySelector(`[data-home-chapter="${chapterId}"]`);
         const heading = chapter?.querySelector("h1, h2, [role=heading]");
-        const headingRect = rectFor(heading);
+        const chapterRect = chapter?.getBoundingClientRect();
+        const headingRect = heading?.getBoundingClientRect();
 
-        const controls = {
-          ladderRail: rectFor(
-            document.querySelector("[data-chapter-ladder] > div > div:last-child"),
-          ),
-          mobileExplore: rectFor(
-            document.querySelector("[data-chapter-ladder-mobile] > button"),
-          ),
-          cinema: rectFor(document.querySelector("[data-auto-journey-control]")),
-          audio: rectFor(document.querySelector("[data-ambient-audio-control]")),
-        };
-
-        const controlPairs = [];
-        const entries = Object.entries(controls).filter(([, rect]) => rect);
-        for (let i = 0; i < entries.length; i += 1) {
-          for (let j = i + 1; j < entries.length; j += 1) {
-            const [aName, a] = entries[i];
-            const [bName, b] = entries[j];
-            const width = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
-            const height = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
-            if (width * height > 24) controlPairs.push(`${aName}:${bName}`);
-          }
-        }
-
-        const protectedLeaves = chapter
-          ? Array.from(
-              chapter.querySelectorAll(
-                "h1, h2, h3, p, a[href], button, [role=tab]",
-              ),
-            )
-              .filter((element) => !element.closest("[data-auto-journey-ui], [data-chapter-ladder], [data-chapter-ladder-mobile], [data-ambient-audio-control]"))
-              .map((element) => ({
-                tag: element.tagName.toLowerCase(),
-                text: element.textContent?.replace(/\s+/g, " ").trim().slice(0, 88) || "",
-                rect: rectFor(element),
-              }))
-              .filter((entry) => entry.rect)
+        const visibleButtons = chapter
+          ? Array.from(chapter.querySelectorAll("button, summary, a[href]")).filter((element) => {
+              if (!(element instanceof HTMLElement)) return false;
+              const rect = element.getBoundingClientRect();
+              const style = getComputedStyle(element);
+              return (
+                rect.width > 1 &&
+                rect.height > 1 &&
+                style.display !== "none" &&
+                style.visibility !== "hidden" &&
+                Number.parseFloat(style.opacity || "1") > 0.04
+              );
+            })
           : [];
 
-        const contentOverlaps = [];
-        for (const [controlName, controlRect] of Object.entries(controls)) {
-          if (!controlRect || (window.innerWidth < 1024 && controlName === "mobileExplore")) continue;
-          const controlCenter = {
-            x: (controlRect.left + controlRect.right) / 2,
-            y: (controlRect.top + controlRect.bottom) / 2,
-          };
-          for (const entry of protectedLeaves) {
-            const contentRect = entry.rect;
-            const width = Math.max(
-              0,
-              Math.min(controlRect.right, contentRect.right) -
-                Math.max(controlRect.left, contentRect.left),
-            );
-            const height = Math.max(
-              0,
-              Math.min(controlRect.bottom, contentRect.bottom) -
-                Math.max(controlRect.top, contentRect.top),
-            );
-            const area = width * height;
-            const ratio = area / Math.max(1, Math.min(controlRect.area, contentRect.area));
-            const centerInside =
-              controlCenter.x >= contentRect.left &&
-              controlCenter.x <= contentRect.right &&
-              controlCenter.y >= contentRect.top &&
-              controlCenter.y <= contentRect.bottom;
-            if (area > 260 && ratio > 0.22 && centerInside) {
-              contentOverlaps.push(`${controlName}:${entry.tag}:${entry.text || "unlabelled"}`);
-            }
-          }
-        }
+        const unlabeledControls = visibleButtons.filter((element) => {
+          const label =
+            element.getAttribute("aria-label") ||
+            element.getAttribute("title") ||
+            element.textContent?.replace(/\s+/g, " ").trim();
+          return !label;
+        }).length;
 
-        const visibleVideos = Array.from(document.querySelectorAll("video")).filter((video) => {
-          const box = video.getBoundingClientRect();
-          const style = getComputedStyle(video);
-          return (
-            box.width > 1 &&
-            box.height > 1 &&
-            box.bottom > 0 &&
-            box.top < window.innerHeight &&
-            style.visibility !== "hidden" &&
-            Number.parseFloat(style.opacity || "1") > 0.04
-          );
-        });
+        const playingVideos = Array.from(document.querySelectorAll("video")).filter(
+          (video) => !video.paused && !video.ended,
+        );
 
         return {
+          horizontalOverflow:
+            document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
           documentWidth: document.documentElement.scrollWidth,
-          viewportWidth: window.innerWidth,
-          horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 1,
+          viewportWidth: document.documentElement.clientWidth,
+          headingMissing: !heading,
           headingOverflow: Boolean(
             headingRect &&
               (headingRect.left < -1 || headingRect.right > window.innerWidth + 1),
           ),
-          headingRect,
-          controls,
-          controlPairs,
-          contentOverlaps,
-          visibleVideos: visibleVideos.length,
-          totalPlayingVideos: Array.from(document.querySelectorAll("video")).filter(
-            (video) => !video.paused && !video.ended,
-          ).length,
+          headingRect: headingRect
+            ? {
+                left: headingRect.left,
+                right: headingRect.right,
+                width: headingRect.width,
+                height: headingRect.height,
+              }
+            : null,
+          chapterHeight: chapterRect?.height || 0,
+          unlabeledControls,
+          totalPlayingVideos: playingVideos.length,
+          visibleTextLength: chapter?.textContent?.replace(/\s+/g, " ").trim().length || 0,
         };
       }, chapter.id);
 
@@ -336,6 +219,14 @@ async function fingerprint(page, chapterId) {
           detail: `${state.documentWidth}px document inside ${state.viewportWidth}px viewport`,
         });
       }
+      if (state.headingMissing) {
+        report.failures.push({
+          profile: profile.name,
+          chapter: chapter.id,
+          type: "missing-heading",
+          detail: "Chapter has no h1 or h2",
+        });
+      }
       if (state.headingOverflow) {
         report.failures.push({
           profile: profile.name,
@@ -344,23 +235,31 @@ async function fingerprint(page, chapterId) {
           detail: JSON.stringify(state.headingRect),
         });
       }
-      for (const detail of state.controlPairs) {
+      if (state.chapterHeight < Math.min(320, profile.viewport.height * 0.4)) {
         report.failures.push({
           profile: profile.name,
           chapter: chapter.id,
-          type: "fixed-control-overlap",
-          detail,
+          type: "collapsed-chapter",
+          detail: `${Math.round(state.chapterHeight)}px high`,
         });
       }
-      for (const detail of state.contentOverlaps) {
+      if (state.visibleTextLength < 30) {
         report.failures.push({
           profile: profile.name,
           chapter: chapter.id,
-          type: "fixed-control-content-overlap",
-          detail,
+          type: "empty-chapter",
+          detail: `${state.visibleTextLength} visible characters`,
         });
       }
-      if (state.totalPlayingVideos > 3) {
+      if (state.unlabeledControls > 0) {
+        report.failures.push({
+          profile: profile.name,
+          chapter: chapter.id,
+          type: "unlabeled-controls",
+          detail: `${state.unlabeledControls} interactive controls have no accessible label`,
+        });
+      }
+      if (state.totalPlayingVideos > 2) {
         report.failures.push({
           profile: profile.name,
           chapter: chapter.id,
@@ -374,14 +273,15 @@ async function fingerprint(page, chapterId) {
       const index = chapters.findIndex((chapter) => chapter.id === chapterId);
       if (index < 0) continue;
       const chapter = await scrollChapter(page, index);
-      await page.waitForTimeout(1400);
+      await page.waitForTimeout(700);
       const video = chapter.locator("video").first();
+
       if ((await video.count()) === 0) {
         report.failures.push({
           profile: profile.name,
           chapter: chapterId,
           type: "missing-critical-video",
-          detail: "No active film was mounted after the chapter entered view",
+          detail: "No film exists in the chapter",
         });
         continue;
       }
@@ -392,16 +292,12 @@ async function fingerprint(page, chapterId) {
         try {
           await element.play();
         } catch (error) {
-          playError =
-            error instanceof Error
-              ? { name: error.name, message: error.message }
-              : { name: "Unknown", message: String(error) };
+          playError = error instanceof Error ? error.message : String(error);
         }
-        await new Promise((resolve) => setTimeout(resolve, 900));
+        await new Promise((resolve) => setTimeout(resolve, 700));
         return {
           src: element.currentSrc || element.src,
           readyState: element.readyState,
-          pausedAtSample: element.paused,
           start,
           end: element.currentTime,
           advanced: element.currentTime > start + 0.05,
@@ -417,69 +313,76 @@ async function fingerprint(page, chapterId) {
         report.failures.push({
           profile: profile.name,
           chapter: chapterId,
-          type: "critical-video-not-playing",
+          type: "critical-video-playback",
           detail: JSON.stringify(probe),
         });
       }
     }
 
-    if (cycleProfiles.has(profile.name)) {
-      for (const [chapterId, duration] of Object.entries(cycleDurations)) {
-        const index = chapters.findIndex((chapter) => chapter.id === chapterId);
-        if (index < 0) continue;
-        await scrollChapter(page, index);
-        const before = await fingerprint(page, chapterId);
-        await page.waitForTimeout(duration);
-        const after = await fingerprint(page, chapterId);
-        const changed = Boolean(before && after && before !== after);
-        report.autoplayCycles.push({
-          profile: profile.name,
-          chapter: chapterId,
-          before,
-          after,
-          changed,
-        });
-        if (!changed) {
-          report.failures.push({
-            profile: profile.name,
-            chapter: chapterId,
-            type: "autoplay-cycle-stalled",
-            detail: JSON.stringify({ before, after }),
-          });
-        }
-      }
-    }
-
-    if (profile.name === "mobile-390") {
-      const idleJourneyVisible = await page
-        .locator('[data-auto-journey-control][aria-pressed="false"]')
-        .isVisible()
-        .catch(() => false);
-      const exploreButton = page.locator("[data-chapter-ladder-mobile] > button");
-      await exploreButton.click();
-      await page.waitForTimeout(420);
-      const cinemaEntry = page.getByRole("button", { name: "Cinema and sound" });
-      await cinemaEntry.waitFor({ state: "visible" });
-      await cinemaEntry.click();
-      await page.waitForTimeout(450);
-      const menuVisible = await page.locator("#mobile-cinema-controls").isVisible().catch(() => false);
-      const globalAudioVisible = await page
-        .locator("[data-ambient-audio-control]")
-        .isVisible()
-        .catch(() => false);
-      report.cinemaMenu = { idleJourneyVisible, menuVisible, globalAudioVisible };
-      if (idleJourneyVisible || !menuVisible || globalAudioVisible) {
+    if (interactionProfiles.has(profile.name)) {
+      const diagnosisResult = await clickAndCompare(
+        page,
+        "[data-diagnosis-option]",
+        ".home-reframe__diagnosis-panel",
+        1,
+      );
+      report.interactions.push({ profile: profile.name, name: "diagnosis", ...diagnosisResult });
+      if (!diagnosisResult.passed) {
         report.failures.push({
           profile: profile.name,
-          chapter: "cinema-controls",
-          type: "mobile-cinema-menu",
-          detail: JSON.stringify(report.cinemaMenu),
+          chapter: "diagnosis",
+          type: "interaction",
+          detail: diagnosisResult.detail,
         });
       }
-      if (menuVisible) {
-        await page.screenshot({
-          path: "visual-audit-v2/mobile-390-cinema-menu.png",
-          fullPage: false,
+
+      const projectResult = await clickAndCompare(
+        page,
+        "[data-project-option]",
+        "[data-project-panel]",
+        2,
+      );
+      report.interactions.push({ profile: profile.name, name: "evidence", ...projectResult });
+      if (!projectResult.passed) {
+        report.failures.push({
+          profile: profile.name,
+          chapter: "evidence",
+          type: "interaction",
+          detail: projectResult.detail,
+        });
+      }
+
+      const tatvaResult = await clickAndCompare(
+        page,
+        "[data-tatva-option]",
+        "[data-tatva-panel]",
+        3,
+      );
+      report.interactions.push({ profile: profile.name, name: "elements", ...tatvaResult });
+      if (!tatvaResult.passed) {
+        report.failures.push({
+          profile: profile.name,
+          chapter: "elements",
+          type: "interaction",
+          detail: tatvaResult.detail,
+        });
+      }
+
+      const questionDetails = page.locator("#questions details").nth(1);
+      await questionDetails.locator("summary").click();
+      await page.waitForTimeout(200);
+      const questionOpen = await questionDetails.getAttribute("open");
+      const questionResult = {
+        passed: questionOpen !== null,
+        detail: questionOpen === null ? "FAQ did not open" : null,
+      };
+      report.interactions.push({ profile: profile.name, name: "questions", ...questionResult });
+      if (!questionResult.passed) {
+        report.failures.push({
+          profile: profile.name,
+          chapter: "questions",
+          type: "interaction",
+          detail: questionResult.detail,
         });
       }
     }
@@ -487,53 +390,76 @@ async function fingerprint(page, chapterId) {
     await context.close();
   }
 
-  for (const response of report.failedResponses) {
-    if (response.expected) continue;
+  const reducedContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    reducedMotion: "reduce",
+  });
+  const reducedPage = await reducedContext.newPage();
+  await reducedPage.goto("http://127.0.0.1:3000/", { waitUntil: "networkidle" });
+  await reducedPage.waitForTimeout(800);
+  const reducedState = await reducedPage.evaluate(() => ({
+    visibleVideos: Array.from(document.querySelectorAll("video")).filter((video) => {
+      const style = getComputedStyle(video);
+      const rect = video.getBoundingClientRect();
+      return style.display !== "none" && rect.width > 1 && rect.height > 1;
+    }).length,
+    chapters: document.querySelectorAll("[data-home-chapter]").length,
+    overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+  }));
+  if (reducedState.visibleVideos > 0 || reducedState.chapters !== 10 || reducedState.overflow) {
     report.failures.push({
-      profile: response.profile,
-      chapter: "runtime",
-      type: "failed-response",
-      detail: `${response.status} ${response.url}`,
+      profile: "reduced-motion",
+      chapter: "document",
+      type: "reduced-motion-composition",
+      detail: JSON.stringify(reducedState),
     });
   }
-  for (const entry of report.consoleErrors) {
-    if (entry.expected) continue;
+  await reducedContext.close();
+
+  await browser.close();
+
+  const unexpectedResponses = report.failedResponses.filter((item) => !item.expected);
+  const unexpectedConsoleErrors = report.consoleErrors.filter((item) => !item.expected);
+  if (unexpectedResponses.length) {
     report.failures.push({
-      profile: entry.profile,
-      chapter: "runtime",
-      type: "console-error",
-      detail: entry.text,
+      profile: "all",
+      chapter: "network",
+      type: "failed-responses",
+      detail: JSON.stringify(unexpectedResponses.slice(0, 20)),
     });
   }
-  for (const entry of report.pageErrors) {
+  if (unexpectedConsoleErrors.length) {
     report.failures.push({
-      profile: entry.profile,
+      profile: "all",
       chapter: "runtime",
-      type: "page-error",
-      detail: entry.text,
+      type: "console-errors",
+      detail: JSON.stringify(unexpectedConsoleErrors.slice(0, 20)),
+    });
+  }
+  if (report.pageErrors.length) {
+    report.failures.push({
+      profile: "all",
+      chapter: "runtime",
+      type: "page-errors",
+      detail: JSON.stringify(report.pageErrors.slice(0, 20)),
     });
   }
 
   fs.writeFileSync("visual-audit-v2/report.json", JSON.stringify(report, null, 2));
-  const lines = [
-    "# Branding Tatva homepage release-gate audit v2",
+
+  const summary = [
+    "# Branding Tatva homepage release-gate audit v3",
     "",
-    `- Commit: ${report.commit ?? "unknown"}`,
+    `- Commit: ${report.commit || "unknown"}`,
     `- Viewports tested: ${profiles.length}`,
     `- Chapter checks: ${report.captures.length}`,
     `- Critical media probes: ${report.mediaProbes.length}`,
-    `- Autoplay probes: ${report.autoplayCycles.length}`,
+    `- Interaction probes: ${report.interactions.length}`,
     `- Failures: ${report.failures.length}`,
     "",
-    "## Media",
-    ...report.mediaProbes.map(
-      (probe) =>
-        `- ${probe.profile} / ${probe.chapter}: ${probe.advanced && !probe.playError && !probe.mediaError ? "PASS" : "FAIL"}`,
-    ),
-    "",
-    "## Autoplay",
-    ...report.autoplayCycles.map(
-      (probe) => `- ${probe.profile} / ${probe.chapter}: ${probe.changed ? "PASS" : "FAIL"}`,
+    "## Interaction checks",
+    ...report.interactions.map(
+      (item) => `- ${item.profile} / ${item.name}: ${item.passed ? "PASS" : "FAIL"}`,
     ),
     "",
     "## Failures",
@@ -544,13 +470,13 @@ async function fingerprint(page, chapterId) {
         )
       : ["- None"]),
     "",
-  ];
-  fs.writeFileSync("visual-audit-v2/report.md", lines.join("\n"));
-  console.log(lines.join("\n"));
+  ].join("\n");
 
-  await browser.close();
+  fs.writeFileSync("visual-audit-v2/report.md", summary);
+  console.log(summary);
+
   if (report.failures.length) process.exitCode = 1;
 })().catch((error) => {
   console.error(error);
-  process.exit(1);
+  process.exitCode = 1;
 });
