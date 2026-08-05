@@ -8,6 +8,7 @@ on:
       - reimagine-project-moves
     paths:
       - .github/workflows/home-audit-current-pass.yml
+      - next.config.ts
       - scripts/api_contract_gate.cjs
       - scripts/home_link_integrity.cjs
       - scripts/home_release_gate_v2.cjs
