@@ -1,0 +1,131 @@
+name: Finish homepage critical WebM wiring
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/wire-home-critical-webm.yml
+
+permissions:
+  contents: write
+
+jobs:
+  wire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Encode the current Air film and wire every source
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ffmpeg -y -v warning \
+            -i public/videos/pixabay-golden-reeds-wind.mp4 \
+            -an \
+            -c:v libvpx-vp9 \
+            -crf 34 \
+            -b:v 0 \
+            -deadline good \
+            -cpu-used 3 \
+            -row-mt 1 \
+            -pix_fmt yuv420p \
+            -vf "scale='min(1600,iw)':-2" \
+            public/videos/pixabay-golden-reeds-wind.webm
+
+          python - <<'PY'
+          from pathlib import Path
+
+          elements_path = Path("src/data/elements.ts")
+          elements = elements_path.read_text()
+          old_air = '    video: "/videos/pixabay-golden-reeds-wind.mp4",\n'
+          new_air = '    video: "/videos/pixabay-golden-reeds-wind.mp4",\n    videoWebm: "/videos/pixabay-golden-reeds-wind.webm",\n'
+          if old_air not in elements:
+              raise SystemExit("Current Air film entry was not found")
+          elements_path.write_text(elements.replace(old_air, new_air, 1))
+
+          pinned_path = Path("src/sections/Elements/PinnedSlider.tsx")
+          pinned = pinned_path.read_text()
+          old_pinned = '              video={element.video}\n              color={element.color}'
+          new_pinned = '              video={element.video}\n              videoWebm={element.videoWebm}\n              color={element.color}'
+          if old_pinned not in pinned:
+              raise SystemExit("PinnedSlider media props were not found")
+          pinned_path.write_text(pinned.replace(old_pinned, new_pinned, 1))
+
+          vertical_path = Path("src/sections/Elements/VerticalUnfold.tsx")
+          vertical = vertical_path.read_text()
+          old_vertical = '<ElementRowBackground gate image={el.image} video={el.video} color={el.color} imagePosition={el.imagePosition} />'
+          new_vertical = '<ElementRowBackground gate image={el.image} video={el.video} videoWebm={el.videoWebm} color={el.color} imagePosition={el.imagePosition} />'
+          if old_vertical not in vertical:
+              raise SystemExit("VerticalUnfold media props were not found")
+          vertical_path.write_text(vertical.replace(old_vertical, new_vertical, 1))
+
+          process_path = Path("src/sections/Process/RootSystem.tsx")
+          process = process_path.read_text()
+          old_process = '''          <video
+            ref={videoRef}
+            key={`video-${active}-${stage.video}`}
+            src={stage.video}
+            poster={stage.poster}
+            muted
+            autoPlay
+            loop
+            playsInline
+            preload="metadata"
+            onCanPlay={(event) => {
+              if (inView) void event.currentTarget.play().catch(() => {});
+            }}
+          />'''
+          new_process = '''          <video
+            ref={videoRef}
+            key={`video-${active}-${stage.videoWebm ?? stage.video}`}
+            poster={stage.poster}
+            muted
+            autoPlay
+            loop
+            playsInline
+            preload="metadata"
+            onCanPlay={(event) => {
+              if (inView) void event.currentTarget.play().catch(() => {});
+            }}
+          >
+            {stage.videoWebm && <source src={stage.videoWebm} type="video/webm" />}
+            <source src={stage.video} type="video/mp4" />
+          </video>'''
+          if old_process not in process:
+              raise SystemExit("RootSystem active video block was not found")
+          process_path.write_text(process.replace(old_process, new_process, 1))
+          PY
+
+          ffprobe -v error \
+            -select_streams v:0 \
+            -show_entries stream=codec_name,pix_fmt,width,height \
+            -of default=noprint_wrappers=1 \
+            public/videos/pixabay-golden-reeds-wind.webm
+
+      - name: Commit the final media wiring and remove this one-time workflow
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add \
+            public/videos/pixabay-golden-reeds-wind.webm \
+            src/data/elements.ts \
+            src/sections/Elements/PinnedSlider.tsx \
+            src/sections/Elements/VerticalUnfold.tsx \
+            src/sections/Process/RootSystem.tsx
+          git rm .github/workflows/wire-home-critical-webm.yml
+          git commit -m "Prefer WebM across the Tatva and Process chapters"
+          git push origin HEAD:reimagine-project-moves
