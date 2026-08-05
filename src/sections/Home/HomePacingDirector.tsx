@@ -23,8 +23,9 @@ function prepareVideo(video: HTMLVideoElement, reducedMotion: MediaQueryList) {
 
 export function HomePacingDirector() {
   useEffect(() => {
-    const main = document.getElementById("main-content");
-    if (!main) return;
+    const mainContent = document.getElementById("main-content");
+    if (!mainContent) return;
+    const main = mainContent;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const compactViewport = window.matchMedia("(max-width: 767px)");
