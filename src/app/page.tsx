@@ -13,6 +13,7 @@ import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomeOpeningSignal } from "@/sections/Home/HomeOpeningSignal";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { HomeSceneBridge } from "@/sections/Home/HomeSceneBridge";
+import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
 import { CinematicHero } from "@/sections/Hero";
 import { ThreePathsSection } from "@/sections/Home/ThreePathsSection";
 import { VideoBreak } from "@/components/VideoBreak";
@@ -81,11 +82,6 @@ export default function Home() {
 
         <HomeSceneBridge family="air" from="#141210" to="#141210" />
 
-        {/* One diagnosis is enough. The richer Clarity Lab performs the
-            early recognition job, so the visitor no longer answers the
-            same three-situation question here and again two sections
-            later. The sr-only phrase keeps the existing ladder contract
-            explicit without putting legacy copy back on screen. */}
         <div>
           <span className="sr-only">Where you stand</span>
           <ClarityCTA />
@@ -94,31 +90,29 @@ export default function Home() {
         <HomeSceneBridge family="earth" from="#141210" to="#27221E" />
         <EvidenceWall />
         <HomeSceneBridge family="water" from="#27221E" to="#F2F0E8" />
-        <StudioTriptych />
+
+        <div id="studio-home-fix">
+          <StudioTriptych />
+        </div>
         <HomeSceneBridge family="air" from="#F2F0E8" to="#F2F0E8" />
-        <ThreePathsSection />
+
+        <div id="paths-home-fix">
+          <ThreePathsSection />
+        </div>
         <HomeSceneBridge family="confluence" from="#F2F0E8" to="#F2F0E8" />
+
         <div>
           <TatvaStrip />
           <TatvaSystemLab />
         </div>
         <HomeSceneBridge family="space" from="#E9E4D9" to="#27221E" />
 
-        {/* The full five-element sequence follows the framework directly.
-            The separate Earth-only excavation remains in the codebase for
-            a deeper Services/About use, but Home no longer teaches the
-            foundation twice or inserts an unlabelled 320vh detour. */}
         <div id="elements" className="scroll-mt-24">
           <ElementsSection elements={elements} />
         </div>
 
         <HomeSceneBridge family="earth" from="#27221E" to="#141210" />
 
-        {/* RootSystem already opens with the project question, the six-stage
-            rail, the decision map, and the live readiness instruments. The
-            separate ProcessChapterIntro repeated the same six labels before
-            the visitor reached the real system, so the process now begins
-            directly with the chapter that actually teaches it. */}
         <section className="bg-soil">
           <ProcessSection stages={process} elementColor={elementColor} />
         </section>
@@ -127,22 +121,24 @@ export default function Home() {
         <HomeQuestionsScene />
         <HomeSceneBridge family="fire" from="#141210" to="#141210" />
 
-        <VideoBreak
-          src="/videos/higgsfield-silver-tide.mp4"
-          poster="/images/higgsfield-silver-tide-poster.jpg"
-          quote="Some things only become visible once everything else goes quiet."
-          height="min(900px, 108vh)"
-          imagePosition="50% 12%"
-          quoteVariant="statement"
-          parallax
-          cameraPush
-          wordFade
-          overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.35) 0%, rgba(20,17,14,0.15) 30%, rgba(20,17,14,0.2) 55%, rgba(20,17,14,0.9) 100%)"
-        >
-          <DustMotes />
-          <FinalInvitation />
-        </VideoBreak>
+        <div id="invitation-home-fix">
+          <VideoBreak
+            src="/videos/higgsfield-silver-tide.mp4"
+            poster="/images/higgsfield-silver-tide-poster.jpg"
+            quote="Some things only become visible once everything else goes quiet."
+            height="clamp(704px, 100vh, 900px)"
+            imagePosition="50% 18%"
+            quoteVariant="statement"
+            cameraPush
+            wordFade
+            overlayGradient="linear-gradient(180deg, rgba(20,17,14,0.35) 0%, rgba(20,17,14,0.15) 30%, rgba(20,17,14,0.2) 55%, rgba(20,17,14,0.9) 100%)"
+          >
+            <DustMotes />
+            <FinalInvitation />
+          </VideoBreak>
+        </div>
       </main>
+      <HomePacingDirector />
       <Footer />
       <script
         type="application/ld+json"
