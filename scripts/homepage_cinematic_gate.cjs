@@ -181,20 +181,27 @@ async function auditViewport(browser, viewport) {
     { tab: /Reposition the system/i, href: "/services#situation" },
     { tab: /Create consistency/i, href: "/services#offerings" },
   ];
-  const activePathLink = paths.locator(".paths-cinematic__focus > a");
+  const activePathLinkSelector =
+    '[data-home-chapter="paths"] .paths-cinematic__focus > a';
 
   for (const destination of pathDestinations) {
     await paths.getByRole("tab", { name: destination.tab }).click();
-    await page.waitForTimeout(180);
-    const href = await activePathLink.getAttribute("href");
-    assert(
-      href === destination.href,
-      `${viewport.name}: ${destination.tab} resolved to ${href}, expected ${destination.href}`,
+    await page.waitForFunction(
+      ({ selector, href }) =>
+        document.querySelector(selector)?.getAttribute("href") === href,
+      { selector: activePathLinkSelector, href: destination.href },
+      { timeout: 2500 },
     );
   }
 
   await paths.getByRole("tab", { name: /Build the foundation/i }).click();
-  await page.waitForTimeout(180);
+  await page.waitForFunction(
+    ({ selector }) =>
+      document.querySelector(selector)?.getAttribute("href") ===
+      "/services#desire",
+    { selector: activePathLinkSelector },
+    { timeout: 2500 },
+  );
 
   const invitation = page.locator('[data-home-chapter="invitation"]').first();
   await invitation.scrollIntoViewIfNeeded();
