@@ -1,18 +1,18 @@
 name: Apply homepage audit sprint
 
-on:
+"on":
   push:
     branches:
       - reimagine-project-moves
     paths:
-      - .github/workflows/apply-home-audit-sprint.yml
+      - ".github/workflows/apply-home-audit-sprint.yml"
 
 permissions:
   contents: write
 
 jobs:
   patch-home:
-    if: github.actor != 'github-actions[bot]'
+    if: ${{ github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
 
@@ -35,7 +35,6 @@ jobs:
                   raise SystemExit(f"Expected source block missing in {path}: {before[:80]!r}")
               path.write_text(text.replace(before, after, 1))
 
-          # Diagnosis should earn the next proof chapter before asking for a call.
           clarity = Path("src/sections/Home/ClarityCTA.tsx")
           text = clarity.read_text()
           label = "Discuss the right starting point"
@@ -45,15 +44,10 @@ jobs:
           href_index = text.rfind('href="/contact"', 0, label_index)
           if href_index < 0:
               raise SystemExit("Diagnosis CTA contact href was not found")
-          text = (
-              text[:href_index]
-              + 'href="#evidence-wall-title"'
-              + text[href_index + len('href="/contact"'):]
-          )
+          text = text[:href_index] + 'href="#evidence-wall-title"' + text[href_index + len('href="/contact"'):]
           text = text.replace(label, "See how decisions become proof", 1)
           clarity.write_text(text)
 
-          # Framework should unfold in order: understand, stress test, then enter depth.
           strip = Path("src/sections/Home/TatvaStrip.tsx")
           text = strip.read_text()
           label = "Enter the five-element chapter"
@@ -63,11 +57,7 @@ jobs:
           href_index = text.rfind('href="#elements"', 0, label_index)
           if href_index < 0:
               raise SystemExit("Tatva Strip Elements href was not found")
-          text = (
-              text[:href_index]
-              + 'href="#tatva-system-lab-title"'
-              + text[href_index + len('href="#elements"'):]
-          )
+          text = text[:href_index] + 'href="#tatva-system-lab-title"' + text[href_index + len('href="#elements"'):]
           text = text.replace(label, "Stress test the five force system", 1)
           strip.write_text(text)
 
@@ -78,14 +68,9 @@ jobs:
               'className="relative scroll-mt-24 overflow-hidden border-t border-soil/10 py-16 sm:py-24"',
               1,
           )
-          text = text.replace(
-              "Examine every Tatva in depth",
-              "Continue into the five living Tatvas",
-              1,
-          )
+          text = text.replace("Examine every Tatva in depth", "Continue into the five living Tatvas", 1)
           lab.write_text(text)
 
-          # Keep the mobile clarity field and every signal inside the viewport.
           questions = Path("src/sections/Home/HomeQuestionsScene.tsx")
           text = questions.read_text()
           replacements = [
@@ -111,14 +96,12 @@ jobs:
               text = text.replace(before, after, 1)
           questions.write_text(text)
 
-          # Source and CSS should agree that bridges dissolve in normal flow.
           replace_once(
               Path("src/sections/Home/HomeSceneBridge.tsx"),
               'className="pointer-events-none relative z-[8] -my-2 h-10 overflow-hidden sm:-my-4 sm:h-14 lg:-my-5 lg:h-16"',
               'className="pointer-events-none relative z-[4] my-0 h-8 overflow-hidden sm:h-10 lg:h-12"',
           )
 
-          # Put the new control room and screenshot audit at the beginning of the recovery path.
           claude = Path("CLAUDE.md")
           text = claude.read_text()
           old_list = '''1. `docs/HOME_MASTER_BRIEF.md` — binding creative, commercial, motion, media, copy, accessibility, and deployment rules.
@@ -137,7 +120,6 @@ jobs:
               raise SystemExit("Homepage operating document list was not found in CLAUDE.md")
           claude.write_text(text.replace(old_list, new_list, 1))
 
-          # Future homepage source changes should run both the build gate and visual audit.
           audit = Path(".github/workflows/home-audit-current-pass.yml")
           text = audit.read_text()
           old_paths = '''    paths:
