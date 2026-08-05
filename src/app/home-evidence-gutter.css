@@ -1,0 +1,9 @@
+@media (min-width: 1024px) and (max-width: 2047px) {
+  section[aria-labelledby="evidence-wall-title"] > .container-page {
+    padding-right: clamp(4.25rem, 5vw, 5.75rem) !important;
+  }
+
+  section[aria-labelledby="evidence-wall-title"] ul {
+    scroll-padding-right: clamp(4.25rem, 5vw, 5.75rem);
+  }
+}
