@@ -1,0 +1,50 @@
+name: Register homepage operating documents
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/apply-home-operating-index.yml
+
+permissions:
+  contents: write
+
+jobs:
+  register:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Register the durable homepage source of truth
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("CLAUDE.md")
+          text = path.read_text()
+          marker = "## Homepage operating system"
+          if marker not in text:
+              insertion = '''\n## Homepage operating system\n\nBefore changing the Home page, read these current documents in order:\n\n1. `docs/HOME_MASTER_BRIEF.md` — binding creative, commercial, motion, media, copy, accessibility, and deployment rules.\n2. `docs/HOME_MILESTONES_BACKLOG.md` — current milestones, screenshot findings, P0/P1 repairs, and remaining work.\n3. `docs/HOME_QA_CHECKLIST.md` — viewport, autoplay, fixed UI, accessibility, proof, and release gate.\n4. `docs/HOME_REFERENCE_BANK.md` — the exact role of every approved reference and what must remain original.\n5. `docs/HOME_FACT_BANK.md` — verified public facts, outcomes, allowed claims, and blocked unknowns.\n\nThese files are current truth for `reimagine-project-moves`. They override older exploratory palette boards, mockups, and rejected global recolour experiments. Update the backlog and QA evidence whenever a homepage pass changes status.\n'''
+              first_break = text.find("\n", text.find("\n") + 1)
+              text = text[:first_break] + insertion + text[first_break:]
+              path.write_text(text)
+          PY
+
+      - name: Commit the project instruction update and remove the one time workflow
+        shell: bash
+        run: |
+          git config user.name "Branding Tatva Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add CLAUDE.md
+          git rm .github/workflows/apply-home-operating-index.yml
+          git commit -m "Make the homepage operating system the durable source of truth"
+          git push origin HEAD:reimagine-project-moves
