@@ -198,6 +198,7 @@ export function EvidenceWall() {
         video="/videos/pexels-fog-sunrise.mp4"
         videoWebm="/videos/pexels-fog-sunrise.webm"
         poster="/images/pexels-fog-sunrise-poster.jpg"
+        mobilePosterOnly
       />
       <div className="absolute inset-0 bg-soil/82" />
 

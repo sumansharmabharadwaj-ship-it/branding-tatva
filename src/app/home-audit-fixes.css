@@ -225,3 +225,21 @@ section[aria-labelledby="home-questions-title"] [role="region"] {
 :root[data-motion="reduced"] [data-chapter-ladder] > div > div:first-child {
   transition: none !important;
 }
+
+/* The final mobile scene contains a full invitation card plus a statement.
+   Let the scene grow to its content instead of clipping the CTA inside the
+   old fixed-height film frame, and reserve room beneath the card for the
+   three fixed cinema controls. */
+@media (max-width: 767px) {
+  [data-home-chapter="invitation"] {
+    height: auto !important;
+    min-height: 74rem;
+  }
+
+  [data-home-chapter="invitation"] > .relative.flex.flex-1 {
+    flex: none !important;
+    gap: 2.5rem !important;
+    padding-top: 4.5rem !important;
+    padding-bottom: 2rem !important;
+  }
+}

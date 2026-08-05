@@ -118,7 +118,7 @@ export function FinalInvitation() {
   const motionActive = inView && !prefersReducedMotion;
 
   return (
-    <div ref={rootRef} className="relative mx-auto w-full max-w-5xl">
+    <div ref={rootRef} data-final-invitation className="relative mx-auto w-full max-w-5xl pb-20 md:pb-0">
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={situation}
