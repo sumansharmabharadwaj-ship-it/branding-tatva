@@ -70,6 +70,7 @@ jobs:
               CLAUDE.md \
               scripts/home_release_gate.cjs \
               src/app/home-release-candidate.css \
+              src/components/AmbientAudio.tsx \
               src/sections/Home/ClarityCTA.tsx \
               src/sections/Home/TatvaStrip.tsx \
               src/sections/Home/TatvaSystemLab.tsx \
@@ -78,7 +79,7 @@ jobs:
               src/sections/Home/HomeAutoJourney.tsx \
               src/sections/Home/ChapterLadder.tsx \
               src/sections/Home/HomeOpeningSignal.tsx
-            git commit -m "Frame every homepage chapter from its own opening edge"
+            git commit -m "Keep tablet controls compact and outside the content field"
             git push origin HEAD:reimagine-project-moves
           fi
 
