@@ -3,6 +3,11 @@ const fs = require("fs");
 
 const BASE_URL = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const OUTPUT = "services-audit";
+let auditStage = "initialising";
+const auditWatchdog = setTimeout(() => {
+  console.error(`Services audit exceeded 210 seconds during: ${auditStage}`);
+  process.exit(1);
+}, 210000);
 
 const profiles = [
   { name: "mobile-390", viewport: { width: 390, height: 844 }, captures: true },
@@ -58,7 +63,7 @@ async function captureSection(page, profile, id) {
   const section = page.locator(`#${id}`);
   await section.scrollIntoViewIfNeeded();
   await page.waitForTimeout(700);
-  await page.screenshot({ path: `${OUTPUT}/${profile}-${id}.png`, fullPage: false });
+  await page.screenshot({ path: `${OUTPUT}/${profile}-${id}.png`, fullPage: false, animations: "disabled", timeout: 10000 });
 }
 
 (async () => {
@@ -77,6 +82,8 @@ async function captureSection(page, profile, id) {
   };
 
   for (const profile of profiles) {
+    auditStage = `${profile.name}: setup`;
+    console.log(`[services-audit] ${auditStage}`);
     const context = await browser.newContext({
       viewport: profile.viewport,
       deviceScaleFactor: 1,
@@ -98,6 +105,8 @@ async function captureSection(page, profile, id) {
       }
     });
 
+    auditStage = `${profile.name}: navigation`;
+    console.log(`[services-audit] ${auditStage}`);
     await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(1400);
 
@@ -153,6 +162,8 @@ async function captureSection(page, profile, id) {
       record(failures, profile.name, "video-budget", `${geometry.playingVideos} videos playing on first paint.`);
     }
 
+    auditStage = `${profile.name}: hero media`;
+    console.log(`[services-audit] ${auditStage}`);
     const heroVideo = page.locator("#opening video").first();
     if ((await heroVideo.count()) !== 1) {
       record(failures, profile.name, "hero-media", "Hero film is missing.");
@@ -164,6 +175,8 @@ async function captureSection(page, profile, id) {
       }
     }
 
+    auditStage = `${profile.name}: scenarios`;
+    console.log(`[services-audit] ${auditStage}`);
     const scenarioButtons = page.getByRole("group", {
       name: "Choose the closest business situation",
     }).getByRole("button");
@@ -191,6 +204,8 @@ async function captureSection(page, profile, id) {
       }
     }
 
+    auditStage = `${profile.name}: regional pricing`;
+    console.log(`[services-audit] ${auditStage}`);
     const regionSelect = page.locator("#services-region");
     await regionSelect.selectOption("in");
     await page.waitForTimeout(120);
@@ -206,6 +221,8 @@ async function captureSection(page, profile, id) {
     report.interactions.push({ profile: profile.name, interaction: "pricing-uk", passed: ukPassed });
     if (!ukPassed) record(failures, profile.name, "pricing-uk", "GBP pricing did not render.");
 
+    auditStage = `${profile.name}: health instrument`;
+    console.log(`[services-audit] ${auditStage}`);
     const healthButtons = page.getByRole("group", { name: "Brand health statements" }).getByRole("button");
     for (let index = 0; index < 4; index += 1) await healthButtons.nth(index).click();
     await page.waitForTimeout(180);
@@ -221,6 +238,8 @@ async function captureSection(page, profile, id) {
       record(failures, profile.name, "health-check", `Expected score 4, received ${healthScore}`);
     }
 
+    auditStage = `${profile.name}: questions`;
+    console.log(`[services-audit] ${auditStage}`);
     const secondQuestion = page.locator("#questions article").nth(1).getByRole("button");
     await secondQuestion.click();
     const faqPassed = (await secondQuestion.getAttribute("aria-expanded")) === "true";
@@ -232,6 +251,8 @@ async function captureSection(page, profile, id) {
       record(failures, profile.name, "conversion-links", `Only ${contactLinks} contextual contact links were rendered.`);
     }
 
+    auditStage = `${profile.name}: closing media`;
+    console.log(`[services-audit] ${auditStage}`);
     await page.locator("#book").scrollIntoViewIfNeeded();
     await page.waitForTimeout(1000);
     const closingVideo = page.locator("#book video").first();
@@ -245,6 +266,8 @@ async function captureSection(page, profile, id) {
       }
     }
 
+    auditStage = `${profile.name}: screenshots`;
+    console.log(`[services-audit] ${auditStage}`);
     if (profile.captures) {
       for (const id of ["opening", "diagnose", "packages", "proof", "health", "book"]) {
         await captureSection(page, profile.name, id);
@@ -271,12 +294,19 @@ async function captureSection(page, profile, id) {
       failedResponses,
     });
 
-    await context.close();
+    auditStage = `${profile.name}: close context`;
+    console.log(`[services-audit] ${auditStage}`);
+    await Promise.race([
+      context.close(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Context close timed out")), 10000)),
+    ]);
   }
 
   // The visible form says three questions. Intercept delivery so this
   // verifies client validation and the success transition without
   // requiring a live Resend key inside CI.
+  auditStage = "contact-mobile: setup";
+  console.log(`[services-audit] ${auditStage}`);
   const contactContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const contactPage = await contactContext.newPage();
   contactPage.setDefaultTimeout(10000);
@@ -301,7 +331,13 @@ async function captureSection(page, profile, id) {
   }
   await contactContext.close();
 
-  await browser.close();
+  auditStage = "closing browser";
+  console.log(`[services-audit] ${auditStage}`);
+  await Promise.race([
+    browser.close(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error("Browser close timed out")), 10000)),
+  ]);
+  clearTimeout(auditWatchdog);
 
   fs.writeFileSync(`${OUTPUT}/report.json`, JSON.stringify(report, null, 2));
   const markdown = [
