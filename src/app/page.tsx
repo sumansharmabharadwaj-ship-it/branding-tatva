@@ -107,10 +107,12 @@ export default function Home() {
 
         <div data-home-earth-tone="paths">
           <HomeAmbientFilm
-            video="/videos/higgsfield-process-ground.mp4"
-            poster="/images/higgsfield-process-ground-poster.jpg"
+            videoWebm="/videos/pexels-root-network.webm"
+            videoMp4="/videos/pexels-root-network.mp4"
+            poster="/images/pexels-root-network-poster.jpg"
             label="A position must hold before expression can travel."
             direction={-1}
+            imagePosition="47% 50%"
             className="-left-14 top-[23rem] h-[21rem] w-[15rem] rounded-[44%_56%_48%_52%/58%_42%_58%_42%] sm:-left-12 sm:top-[9rem] sm:h-[30rem] sm:w-[21rem] lg:left-auto lg:right-[-5rem] lg:top-[5rem]"
           />
           <ThreePathsSection />
@@ -120,9 +122,11 @@ export default function Home() {
 
         <div data-home-earth-tone="framework">
           <HomeAmbientFilm
-            video="/videos/higgsfield-process-listen.mp4"
-            poster="/images/higgsfield-process-listen-poster.jpg"
-            label="Five signals breathe as one recognisable system."
+            videoWebm="/videos/pexels-river-dawn.webm"
+            videoMp4="/videos/pexels-river-dawn.mp4"
+            poster="/images/pexels-river-dawn-poster.jpg"
+            label="Five signals move as one recognisable system."
+            imagePosition="58% 50%"
             className="-right-16 top-[11rem] h-[22rem] w-[15rem] rounded-full sm:right-[-5rem] sm:top-[7rem] sm:h-[29rem] sm:w-[20rem] lg:right-[-4rem] lg:top-[4rem]"
           />
           <TatvaStrip />
