@@ -1,0 +1,206 @@
+name: Capture current homepage audit pass
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/home-audit-current-pass.yml
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install project and audit dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          npm install --no-save playwright@1.54.2
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start the application
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: |
+          pnpm dev --hostname 127.0.0.1 --port 3000 > /tmp/branding-tatva-dev.log 2>&1 &
+          echo $! > /tmp/branding-tatva-dev.pid
+          for attempt in {1..90}; do
+            if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/branding-tatva-dev.log
+          exit 1
+
+      - name: Capture every chapter and audit collisions
+        run: |
+          mkdir -p visual-audit
+          cat > /tmp/capture-home.js <<'JS'
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+
+          const profiles = [
+            { name: 'desktop', viewport: { width: 1440, height: 900 } },
+            { name: 'mobile', viewport: { width: 390, height: 844 } },
+          ];
+
+          const intersects = (a, b) => !(
+            a.right <= b.left ||
+            a.left >= b.right ||
+            a.bottom <= b.top ||
+            a.top >= b.bottom
+          );
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const report = { captures: [], consoleErrors: [], pageErrors: [] };
+
+            for (const profile of profiles) {
+              const context = await browser.newContext({
+                viewport: profile.viewport,
+                deviceScaleFactor: 1,
+                reducedMotion: 'no-preference',
+              });
+              const page = await context.newPage();
+              page.on('console', (message) => {
+                if (message.type() === 'error') {
+                  report.consoleErrors.push({ profile: profile.name, text: message.text() });
+                }
+              });
+              page.on('pageerror', (error) => {
+                report.pageErrors.push({ profile: profile.name, text: error.message });
+              });
+
+              await page.goto('http://127.0.0.1:3000/', { waitUntil: 'networkidle' });
+              await page.waitForTimeout(3000);
+
+              const chapters = await page.locator('[data-home-chapter]').evaluateAll((elements) =>
+                elements.map((element, index) => ({
+                  index,
+                  id: element.getAttribute('data-home-chapter') || `chapter-${index + 1}`,
+                })),
+              );
+
+              for (const chapter of chapters) {
+                const locator = page.locator('[data-home-chapter]').nth(chapter.index);
+                await locator.evaluate((element) => {
+                  const top = window.scrollY + element.getBoundingClientRect().top - 72;
+                  window.scrollTo({ top, behavior: 'instant' });
+                });
+                await page.waitForTimeout(3200);
+
+                const safe = chapter.id.replace(/[^a-z0-9_-]+/gi, '-').toLowerCase();
+                const path = `visual-audit/${profile.name}-${String(chapter.index + 1).padStart(2, '0')}-${safe}.png`;
+                await page.screenshot({ path, fullPage: false });
+
+                const state = await page.evaluate(({ profileName }) => {
+                  const rect = (selector) => {
+                    const element = document.querySelector(selector);
+                    if (!(element instanceof HTMLElement)) return null;
+                    const box = element.getBoundingClientRect();
+                    const style = getComputedStyle(element);
+                    if (style.display === 'none' || style.visibility === 'hidden' || Number.parseFloat(style.opacity || '1') <= 0.025) return null;
+                    return { left: box.left, top: box.top, right: box.right, bottom: box.bottom, width: box.width, height: box.height };
+                  };
+
+                  const fixed = {
+                    ladder: rect('[data-chapter-ladder]'),
+                    mobileExplore: rect('[data-chapter-ladder-mobile]'),
+                    journey: rect('[data-auto-journey-control]'),
+                    audio: rect('button[aria-label*="ambient sound"]'),
+                  };
+
+                  const overlapPairs = [];
+                  const entries = Object.entries(fixed).filter(([, value]) => value);
+                  for (let i = 0; i < entries.length; i += 1) {
+                    for (let j = i + 1; j < entries.length; j += 1) {
+                      const [aName, a] = entries[i];
+                      const [bName, b] = entries[j];
+                      if (!(a && b)) continue;
+                      const overlap = !(
+                        a.right <= b.left ||
+                        a.left >= b.right ||
+                        a.bottom <= b.top ||
+                        a.top >= b.bottom
+                      );
+                      if (overlap) overlapPairs.push(`${aName}:${bName}`);
+                    }
+                  }
+
+                  const visibleVideos = Array.from(document.querySelectorAll('video')).filter((video) => {
+                    const box = video.getBoundingClientRect();
+                    return box.width > 1 && box.height > 1 && box.bottom > 0 && box.top < window.innerHeight;
+                  });
+
+                  return {
+                    profileName,
+                    scrollY: Math.round(window.scrollY),
+                    documentWidth: document.documentElement.scrollWidth,
+                    viewportWidth: window.innerWidth,
+                    horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 1,
+                    fixed,
+                    overlapPairs,
+                    visibleVideos: visibleVideos.length,
+                    playingVideos: visibleVideos.filter((video) => !video.paused && !video.ended).length,
+                    totalPlayingVideos: Array.from(document.querySelectorAll('video')).filter((video) => !video.paused && !video.ended).length,
+                  };
+                }, { profileName: profile.name });
+
+                report.captures.push({
+                  profile: profile.name,
+                  chapter: chapter.id,
+                  path,
+                  ...state,
+                });
+              }
+
+              await context.close();
+            }
+
+            fs.writeFileSync('visual-audit/report.json', JSON.stringify(report, null, 2));
+            await browser.close();
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          JS
+          node /tmp/capture-home.js
+
+      - name: Stop the application
+        if: always()
+        run: |
+          if [ -f /tmp/branding-tatva-dev.pid ]; then
+            kill "$(cat /tmp/branding-tatva-dev.pid)" || true
+          fi
+
+      - name: Upload the current audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: branding-tatva-current-home-audit
+          path: visual-audit/*
+          if-no-files-found: error
+          retention-days: 1
