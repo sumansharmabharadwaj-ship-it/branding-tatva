@@ -22,7 +22,7 @@
   }
 }
 
-@media (max-width: 820px), (pointer: coarse) {
+@media (pointer: coarse) {
   .home-v4-guide {
     display: none !important;
   }
