@@ -1,0 +1,141 @@
+name: Audit cinematic media codecs
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/media-codec-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the media library
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Confirm ffprobe
+        run: ffprobe -version | head -1
+
+      - name: Inspect every local video stream
+        shell: bash
+        run: |
+          mkdir -p media-codec-audit
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          roots = [Path("public/videos")]
+          files = []
+          for root in roots:
+              if root.exists():
+                  files.extend(
+                      path
+                      for path in root.rglob("*")
+                      if path.is_file() and path.suffix.lower() in {".mp4", ".webm", ".mov", ".m4v"}
+                  )
+
+          report = []
+          for path in sorted(files):
+              command = [
+                  "ffprobe",
+                  "-v",
+                  "error",
+                  "-show_entries",
+                  "format=format_name,duration,size,bit_rate:stream=index,codec_type,codec_name,profile,pix_fmt,width,height,r_frame_rate,level",
+                  "-of",
+                  "json",
+                  str(path),
+              ]
+              result = subprocess.run(command, capture_output=True, text=True)
+              entry = {
+                  "path": str(path),
+                  "extension": path.suffix.lower(),
+                  "bytes": path.stat().st_size,
+                  "probe_error": result.stderr.strip() or None,
+                  "streams": [],
+                  "browser_safe": False,
+                  "reason": "No video stream",
+              }
+
+              if result.returncode == 0:
+                  payload = json.loads(result.stdout or "{}")
+                  entry["format"] = payload.get("format", {})
+                  entry["streams"] = payload.get("streams", [])
+                  videos = [stream for stream in entry["streams"] if stream.get("codec_type") == "video"]
+                  if videos:
+                      stream = videos[0]
+                      codec = (stream.get("codec_name") or "").lower()
+                      pix_fmt = (stream.get("pix_fmt") or "").lower()
+                      extension = entry["extension"]
+
+                      if extension in {".mp4", ".m4v", ".mov"}:
+                          codec_ok = codec == "h264"
+                          pixel_ok = pix_fmt in {"yuv420p", "yuvj420p"}
+                          entry["browser_safe"] = codec_ok and pixel_ok
+                          if not codec_ok:
+                              entry["reason"] = f"MP4-family file uses {codec or 'unknown'} instead of H.264"
+                          elif not pixel_ok:
+                              entry["reason"] = f"H.264 pixel format {pix_fmt or 'unknown'} is not 8-bit 4:2:0"
+                          else:
+                              entry["reason"] = "H.264 8-bit 4:2:0"
+                      elif extension == ".webm":
+                          codec_ok = codec in {"vp8", "vp9", "av1"}
+                          entry["browser_safe"] = codec_ok
+                          entry["reason"] = (
+                              f"WebM {codec}" if codec_ok else f"WebM uses unsupported codec {codec or 'unknown'}"
+                          )
+
+              report.append(entry)
+
+          Path("media-codec-audit/report.json").write_text(json.dumps(report, indent=2))
+
+          unsafe = [entry for entry in report if not entry["browser_safe"]]
+          safe = [entry for entry in report if entry["browser_safe"]]
+          lines = [
+              "# Cinematic media codec audit",
+              "",
+              f"- Total files: {len(report)}",
+              f"- Browser-safe by the project rule: {len(safe)}",
+              f"- Require repair: {len(unsafe)}",
+              "",
+              "## Files requiring repair",
+              "",
+          ]
+          if unsafe:
+              for entry in unsafe:
+                  stream = next((stream for stream in entry.get("streams", []) if stream.get("codec_type") == "video"), {})
+                  lines.append(
+                      f"- `{entry['path']}` — codec `{stream.get('codec_name', 'none')}`, pixel format `{stream.get('pix_fmt', 'none')}`: {entry['reason']}"
+                  )
+          else:
+              lines.append("- None")
+
+          lines.extend(["", "## Browser-safe files", ""])
+          for entry in safe:
+              stream = next((stream for stream in entry.get("streams", []) if stream.get("codec_type") == "video"), {})
+              lines.append(
+                  f"- `{entry['path']}` — `{stream.get('codec_name', 'unknown')}` / `{stream.get('pix_fmt', 'unknown')}`"
+              )
+
+          Path("media-codec-audit/report.md").write_text("\n".join(lines) + "\n")
+          print("\n".join(lines[: max(18, min(len(lines), 80))]))
+          PY
+
+      - name: Upload codec audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: branding-tatva-media-codec-audit
+          path: media-codec-audit/*
+          if-no-files-found: error
+          retention-days: 3
