@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 
-const PLAYBACK_RATE = 1.06;
+const PLAYBACK_RATE = 1.18;
 const DESKTOP_MAX_ACTIVE_FILMS = 2;
 const MOBILE_MAX_ACTIVE_FILMS = 1;
-const SECTION_SELECTOR = "[data-home-section], [data-home-chapter]";
+const SECTION_SELECTOR = "[data-home-section], [data-home-chapter], [data-home-v4-chapter]";
 
 type VideoState = {
   ratio: number;
@@ -60,7 +60,7 @@ export function HomePacingDirector() {
       refreshFrame = 0;
 
       const eligible = Array.from(states.entries())
-        .filter(([, state]) => state.near && state.ratio > 0.04)
+        .filter(([, state]) => state.near && state.ratio > 0.035)
         .sort((a, b) => b[1].ratio - a[1].ratio)
         .slice(0, maxActiveFilms())
         .map(([video]) => video);
@@ -109,8 +109,8 @@ export function HomePacingDirector() {
         scheduleReconcile();
       },
       {
-        rootMargin: "28% 0px 24% 0px",
-        threshold: [0, 0.04, 0.14, 0.28, 0.5, 0.72],
+        rootMargin: "22% 0px 18% 0px",
+        threshold: [0, 0.035, 0.12, 0.26, 0.48, 0.72],
       },
     );
 
@@ -118,7 +118,7 @@ export function HomePacingDirector() {
       (entries) => {
         entries.forEach((entry) => {
           const section = entry.target as HTMLElement;
-          const active = entry.isIntersecting && entry.intersectionRatio >= 0.12;
+          const active = entry.isIntersecting && entry.intersectionRatio >= 0.1;
           section.dataset.homeSceneState = active ? "active" : "resting";
 
           if (active) {
@@ -126,6 +126,7 @@ export function HomePacingDirector() {
               new CustomEvent("bt:home-scene-enter", {
                 detail: {
                   id:
+                    section.dataset.homeV4Chapter ||
                     section.dataset.homeChapter ||
                     section.dataset.homeSection ||
                     section.id ||
@@ -137,8 +138,8 @@ export function HomePacingDirector() {
         });
       },
       {
-        rootMargin: "8% 0px -10% 0px",
-        threshold: [0, 0.12, 0.28, 0.5],
+        rootMargin: "7% 0px -9% 0px",
+        threshold: [0, 0.1, 0.25, 0.48],
       },
     );
 
