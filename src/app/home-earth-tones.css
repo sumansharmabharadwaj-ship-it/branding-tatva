@@ -77,15 +77,22 @@
   animation: bt-home-contour-breathe 15s ease-in-out infinite;
 }
 
-[data-home-earth-tone] > * {
+[data-home-earth-tone] > *:not([data-home-ambient-film]) {
   position: relative;
   z-index: 1;
+}
+
+[data-home-earth-tone] > [data-home-ambient-film] {
+  position: absolute;
+  z-index: 0;
 }
 
 /* The component sections keep their own layout, but their former cream
    canvases become transparent so the moving field can join them into one
    continuous chapter. */
 [data-home-earth-tone] section {
+  position: relative;
+  z-index: 1;
   background-color: transparent !important;
   color: #f4efe6;
 }
@@ -102,7 +109,7 @@
 }
 
 [data-home-earth-tone] [class*="text-foreground-secondary"] {
-  color: rgba(244, 239, 230, 0.68) !important;
+  color: rgba(244, 239, 230, 0.72) !important;
 }
 
 [data-home-earth-tone] [class*="border-soil"],
@@ -122,20 +129,36 @@
   background-color: rgba(20, 18, 16, 0.16) !important;
 }
 
+[data-home-earth-tone="paths"] [class*="text-foreground-secondary"] {
+  color: rgba(244, 239, 230, 0.82) !important;
+}
+
+[data-home-earth-tone="paths"] section > .grid > div:first-child p:first-child,
+[data-home-earth-tone="paths"] p[style*="color"],
+[data-home-earth-tone="paths"] li > a > span:last-child {
+  color: #e0bb78 !important;
+}
+
+[data-home-earth-tone="paths"] li[style*="opacity: 0.52"] {
+  opacity: 0.76 !important;
+}
+
 [data-home-earth-tone="paths"] li > a {
-  background-color: rgba(244, 239, 230, 0.06) !important;
-  border-color: rgba(244, 239, 230, 0.15) !important;
+  background-color: rgba(244, 239, 230, 0.085) !important;
+  border-color: rgba(244, 239, 230, 0.2) !important;
   box-shadow: 0 24px 64px -42px rgba(20, 18, 16, 0.85) !important;
   backdrop-filter: blur(12px);
 }
 
+[data-home-earth-tone="paths"] li[style*="opacity: 1"] > a,
 [data-home-earth-tone="paths"] li > a:hover,
 [data-home-earth-tone="paths"] li > a:focus-visible {
-  background-color: rgba(244, 239, 230, 0.105) !important;
+  background-color: rgba(244, 239, 230, 0.14) !important;
+  border-color: rgba(224, 187, 120, 0.42) !important;
 }
 
 [data-home-earth-tone="paths"] svg text {
-  fill: rgba(244, 239, 230, 0.78) !important;
+  fill: rgba(244, 239, 230, 0.86) !important;
 }
 
 [data-home-earth-tone="framework"] [style*="--tw-ring-offset-color"] {
@@ -148,6 +171,28 @@
 
 [data-home-earth-tone] .link-underline:hover {
   color: #f4efe6 !important;
+}
+
+/* A one-column grid must be minmax(0,1fr) on small screens. The browser's
+   implicit auto track was sizing itself to the widest FAQ sentence and
+   pushing the Questions heading, body and clarity diagram past the right
+   edge of a phone. */
+@media (max-width: 1023px) {
+  [aria-labelledby="home-questions-title"] .container-page > .grid {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  [aria-labelledby="home-questions-title"] .container-page > .grid > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  [aria-labelledby="home-questions-title"] h2,
+  [aria-labelledby="home-questions-title"] p,
+  [aria-labelledby="home-questions-title"] [class*="rounded-"] {
+    max-width: 100%;
+  }
 }
 
 @keyframes bt-home-earth-drift {
