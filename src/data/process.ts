@@ -10,6 +10,7 @@ export type ProcessStage = {
   // six autoplaying videos in a plain scrolling list isn't worth the
   // mobile data cost for a section without the pinned scroll payoff.
   video?: string;
+  videoWebm?: string;
   poster?: string;
 };
 
@@ -25,6 +26,7 @@ export const process: ProcessStage[] = [
       "Before any framework: what does this business actually believe, and where does its own language contradict it? The real position is usually already there, buried under how it thinks it should sound.",
     element: "Air",
     video: "/videos/higgsfield-process-listen.mp4",
+    videoWebm: "/videos/higgsfield-process-listen.webm",
     poster: "/images/higgsfield-process-listen-poster.jpg",
   },
   {
@@ -33,6 +35,7 @@ export const process: ProcessStage[] = [
       "What attention is actually doing right now: what gets read, what gets skipped, where the story stops making sense to someone outside the business. Pattern, always, over opinion.",
     element: "Fire",
     video: "/videos/higgsfield-process-notice.mp4",
+    videoWebm: "/videos/higgsfield-process-notice.webm",
     poster: "/images/higgsfield-process-notice-poster.jpg",
   },
   {
@@ -41,6 +44,7 @@ export const process: ProcessStage[] = [
       "Purpose, audience, and category get committed to language, the brand's own architecture, before anything else moves. Everything built after this step either compounds it or fights it.",
     element: "Earth",
     video: "/videos/higgsfield-process-ground.mp4",
+    videoWebm: "/videos/higgsfield-process-ground.webm",
     poster: "/images/higgsfield-process-ground-poster.jpg",
   },
   {
@@ -49,6 +53,7 @@ export const process: ProcessStage[] = [
       "Voice, identity, and messaging take the shape the architecture demands, always built on what Architect already decided, always after it.",
     element: "Water",
     video: "/videos/higgsfield-process-shape.mp4",
+    videoWebm: "/videos/higgsfield-process-shape.webm",
     poster: "/images/higgsfield-process-shape-poster.jpg",
   },
   {
@@ -57,6 +62,7 @@ export const process: ProcessStage[] = [
       "The brand becomes something people actually encounter: the site, the content, the campaign. Strategy only counts once it reaches an audience. Anything short of that stays a deck.",
     element: "Fire",
     video: "/videos/higgsfield-process-express.mp4",
+    videoWebm: "/videos/higgsfield-process-express.webm",
     poster: "/images/higgsfield-process-express-poster.jpg",
   },
   {
@@ -65,6 +71,7 @@ export const process: ProcessStage[] = [
       "Recognition accrues gradually across the months after a campaign ends, exactly where most brands already stopped paying attention.",
     element: "Space",
     video: "/videos/higgsfield-process-stay.mp4",
+    videoWebm: "/videos/higgsfield-process-stay.webm",
     poster: "/images/higgsfield-process-stay-poster.jpg",
   },
 ];
