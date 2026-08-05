@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 
 const STORAGE_KEY = "ambient-audio-enabled";
@@ -20,6 +20,26 @@ export function AmbientAudio() {
   const [enabled, setEnabled] = useState(false);
   const [ready, setReady] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const toggle = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (!audio.paused) {
+      audio.pause();
+      setEnabled(false);
+      window.localStorage.setItem(STORAGE_KEY, "false");
+      return;
+    }
+
+    audio.play().then(
+      () => {
+        setEnabled(true);
+        window.localStorage.setItem(STORAGE_KEY, "true");
+      },
+      () => setEnabled(false),
+    );
+  }, []);
 
   useEffect(() => {
     setReady(true);
@@ -52,27 +72,7 @@ export function AmbientAudio() {
       window.removeEventListener("bt:ambient-audio-toggle", onToggleRequest);
       window.removeEventListener("bt:ambient-audio-query", onStateRequest);
     };
-  }, [enabled]);
-
-  function toggle() {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (!audio.paused) {
-      audio.pause();
-      setEnabled(false);
-      window.localStorage.setItem(STORAGE_KEY, "false");
-      return;
-    }
-
-    audio.play().then(
-      () => {
-        setEnabled(true);
-        window.localStorage.setItem(STORAGE_KEY, "true");
-      },
-      () => setEnabled(false),
-    );
-  }
+  }, [enabled, toggle]);
 
   if (!ready) return null;
 
