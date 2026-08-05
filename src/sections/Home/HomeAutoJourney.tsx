@@ -97,12 +97,7 @@ export function HomeAutoJourney() {
 
       broadcastChapter(index, source);
 
-      const chapter = target.dataset.homeChapter;
-      const offset = ["process", "questions", "invitation"].includes(
-        chapter ?? "",
-      )
-        ? 0
-        : -72;
+      const offset = 0;
 
       if (lenis && !prefersReducedMotion) {
         lenis.scrollTo(target, { offset, duration: 1.35 });
