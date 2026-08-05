@@ -7,9 +7,6 @@ import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { VideoWarden } from "@/components/VideoWarden";
 import { MotionPreferenceProvider } from "@/components/MotionPreference";
-import { ChapterLadder } from "@/sections/Home/ChapterLadder";
-import { HomeAutoJourney } from "@/sections/Home/HomeAutoJourney";
-import { HomeChapterDirector } from "@/sections/Home/HomeChapterDirector";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({
@@ -127,12 +124,7 @@ export default function RootLayout({
         <div className="paper-grain" aria-hidden="true" />
 
         <SmoothScrollProvider>
-          <MotionPreferenceProvider>
-            {children}
-            <HomeChapterDirector />
-            <HomeAutoJourney />
-            <ChapterLadder />
-          </MotionPreferenceProvider>
+          <MotionPreferenceProvider>{children}</MotionPreferenceProvider>
         </SmoothScrollProvider>
 
         <PageLoadVeil />
