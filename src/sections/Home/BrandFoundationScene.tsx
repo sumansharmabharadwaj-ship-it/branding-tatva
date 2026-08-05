@@ -6,23 +6,20 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "framer-motion";
 
-// Suman's excavation and moving sunlight concept: the Earth chapter
-// stops being a list laid over mountain footage and becomes the idea
-// itself. Daylight travels across a valley, the invisible strategic
-// layers rise out of the ground, lines connect them, and the finished
-// foundation is what the visitor is left looking at.
+// Suman's excavation concept: the Earth chapter stops being a list over a
+// scenic landscape and becomes the idea itself. A real root network fills the
+// frame, mineral light travels through it, the invisible strategic layers rise
+// from the ground, and their connections become the finished foundation.
 //
-// Deliberately NO ScrollTrigger.pin. The outer wrapper supplies the
-// scroll travel and the scene holds itself with CSS sticky, which is
-// the same discipline every other held sequence here uses and the
-// reason none of them can desync. GSAP drives only the internal
-// timeline, scrubbed against that wrapper. Lenis already bridges into
-// ScrollTrigger centrally in SmoothScrollProvider, so nothing here
-// creates a second scroll system.
+// Deliberately NO ScrollTrigger.pin. The outer wrapper supplies the scroll
+// travel and the scene holds itself with CSS sticky, which is the same
+// discipline every other held sequence here uses. GSAP drives only the
+// internal timeline, scrubbed against that wrapper. Lenis already bridges into
+// ScrollTrigger centrally in SmoothScrollProvider, so nothing here creates a
+// second scroll system.
 gsap.registerPlugin(ScrollTrigger);
 
-// useLayoutEffect measures the scene, and React warns if it runs during
-// SSR. Same isomorphic pick used by the loading veil.
+// useLayoutEffect measures the scene, and React warns if it runs during SSR.
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 type FoundationLayer = {
@@ -93,8 +90,8 @@ export function BrandFoundationScene() {
     const wrapper = wrapperRef.current;
     const scene = sceneRef.current;
     if (!wrapper || !scene || prefersReducedMotion) return;
-    // Desktop only: on a phone the cards sit in normal flow, so there is
-    // no scrubbed sequence to drive.
+    // Desktop only: on a phone the cards sit in normal flow, so there is no
+    // scrubbed sequence to drive.
     if (!window.matchMedia("(min-width: 768px)").matches) return;
 
     const context = gsap.context(() => {
@@ -131,13 +128,13 @@ export function BrandFoundationScene() {
 
       timeline
         .to(landscape, { scale: 1.12, yPercent: -3, duration: 1.7 }, 0)
-        .to(sunlight, { xPercent: 190, yPercent: -30, rotate: 8, opacity: 0.8, duration: 2.5 }, 0.15)
+        .to(sunlight, { xPercent: 190, yPercent: -30, rotate: 8, opacity: 0.76, duration: 2.5 }, 0.15)
         .to(openingCopy, { opacity: 0, y: -22, filter: "blur(8px)", duration: 0.45 }, 0.42)
         .to(depthGrid, { opacity: 0.62, scaleY: 1, duration: 0.7 }, 0.5);
 
       layers.forEach((layer, index) => {
-        // Moving sunlight: each layer arrives out of shadow as the light
-        // reaches its position, rather than simply fading up.
+        // Each layer arrives out of shadow when the mineral light reaches it,
+        // rather than simply fading upward like another website card.
         timeline.fromTo(
           layer,
           { opacity: 0, y: 36, scale: 0.96, filter: "brightness(0.5) blur(8px)" },
@@ -170,8 +167,8 @@ export function BrandFoundationScene() {
   return (
     <section
       ref={wrapperRef}
-      className="relative h-auto md:h-[320vh]"
-      style={{ backgroundColor: "#201d18" }}
+      className="relative h-auto md:h-[220svh]"
+      style={{ backgroundColor: "#121713" }}
       aria-labelledby="brand-foundation-title"
     >
       <div
@@ -185,23 +182,24 @@ export function BrandFoundationScene() {
             autoPlay={!prefersReducedMotion}
             playsInline
             preload="metadata"
-            poster="/images/pexels-valley-first-light-poster.jpg"
+            poster="/images/pexels-root-network-poster.jpg"
             aria-hidden="true"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover object-[center_52%]"
           >
-            <source src="/videos/pexels-valley-first-light.webm" type="video/webm" />
-            <source src="/videos/pexels-valley-first-light.mp4" type="video/mp4" />
+            <source src="/videos/pexels-root-network.webm" type="video/webm" />
+            <source src="/videos/pexels-root-network.mp4" type="video/mp4" />
           </video>
         </div>
 
-        {/* Localized scrim only where type sits, never a blanket wash:
-            the valley stays bright enough to keep its depth. */}
+        {/* The scrim protects the reading zones while leaving a clear window
+            through the centre-right roots. It is local contrast, not a brown
+            filter poured over the entire film. */}
         <div
           aria-hidden="true"
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "linear-gradient(105deg, rgba(24,22,18,0.82) 0%, rgba(24,22,18,0.45) 42%, rgba(24,22,18,0.12) 68%, rgba(24,22,18,0.55) 100%)",
+              "linear-gradient(105deg, rgba(8,13,10,0.93) 0%, rgba(8,13,10,0.64) 41%, rgba(8,13,10,0.18) 67%, rgba(8,13,10,0.72) 100%), linear-gradient(180deg, rgba(8,13,10,0.08) 0%, rgba(8,13,10,0.84) 100%)",
           }}
         />
 
@@ -211,7 +209,7 @@ export function BrandFoundationScene() {
           className="pointer-events-none absolute -left-[28%] top-[4%] hidden h-[80%] w-[34%] rotate-[-18deg] blur-2xl will-change-transform md:block"
           style={{
             backgroundImage:
-              "linear-gradient(90deg, transparent, rgba(255,195,112,0.16), rgba(255,218,157,0.42), transparent)",
+              "linear-gradient(90deg, transparent, rgba(181,197,170,0.1), rgba(233,225,193,0.32), transparent)",
           }}
         />
 
@@ -219,7 +217,7 @@ export function BrandFoundationScene() {
 
         <div className="relative z-20 mx-auto flex h-full max-w-[1500px] flex-col px-6 py-20 md:px-12 lg:px-16">
           <div data-opening-copy className="max-w-xl md:pt-[8vh]">
-            <p className="mb-5 text-xs font-medium uppercase tracking-[0.28em]" style={{ color: "#db9c6a" }}>
+            <p className="mb-5 text-xs font-medium uppercase tracking-[0.28em]" style={{ color: "#b8aa86" }}>
               01 · Earth
             </p>
             <h2
@@ -293,19 +291,19 @@ function FoundationLayerCard({
         "rounded-2xl border px-5 py-5 backdrop-blur-lg",
         "transition-[border-color,background-color,box-shadow] duration-500",
         open
-          ? "border-[#dda06c]/75 bg-[#1c2119]/86 shadow-[0_20px_60px_rgba(0,0,0,.3)]"
-          : "border-[#efe5d2]/15 bg-[#1c2119]/64",
+          ? "border-[#b8aa86]/75 bg-[#111714]/88 shadow-[0_20px_60px_rgba(0,0,0,.34)]"
+          : "border-[#efe5d2]/15 bg-[#111714]/68",
       ].join(" ")}
     >
       <div className="flex items-center justify-between">
-        <span className="text-[0.68rem] uppercase tracking-[0.24em]" style={{ color: "#dda06c" }}>
+        <span className="text-[0.68rem] uppercase tracking-[0.24em]" style={{ color: "#b8aa86" }}>
           {layer.number}
         </span>
         <span
           aria-hidden="true"
           className={[
             "h-2.5 w-2.5 rounded-full border transition-all duration-500",
-            open ? "border-[#dda06c] bg-[#dda06c]" : "border-[#efe5d2]/35",
+            open ? "border-[#b8aa86] bg-[#b8aa86]" : "border-[#efe5d2]/35",
           ].join(" ")}
         />
       </div>
@@ -324,8 +322,6 @@ function FoundationLayerCard({
       >
         {layer.description}
       </p>
-      {/* What the layer actually produces, so the scene says what a
-          client receives rather than only what it means. */}
       <ul
         className={[
           "space-y-1 overflow-hidden border-[#efe5d2]/10 text-xs leading-5 transition-[max-height,opacity,margin,padding] duration-500",
@@ -354,7 +350,7 @@ function FoundationConnections() {
         "M420 298 C510 340 590 338 660 315",
         "M662 315 C760 280 842 248 925 240",
       ].map((d) => (
-        <path key={d} data-connection-line d={d} fill="none" stroke="rgba(221,160,108,.72)" strokeWidth="2" />
+        <path key={d} data-connection-line d={d} fill="none" stroke="rgba(184,170,134,.72)" strokeWidth="2" />
       ))}
     </svg>
   );
@@ -369,14 +365,14 @@ function DepthGrid() {
     >
       <div
         className="absolute inset-0"
-        style={{ backgroundImage: "linear-gradient(to top, rgba(18,20,15,.92), transparent)" }}
+        style={{ backgroundImage: "linear-gradient(to top, rgba(9,14,11,.94), transparent)" }}
       />
       <div className="absolute inset-x-[6%] bottom-[-8%] h-[92%] [perspective:700px]">
         <div
           className="h-full w-full origin-bottom [transform:rotateX(62deg)]"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(218,153,99,.16) 1px, transparent 1px), linear-gradient(90deg, rgba(218,153,99,.16) 1px, transparent 1px)",
+              "linear-gradient(rgba(184,170,134,.16) 1px, transparent 1px), linear-gradient(90deg, rgba(184,170,134,.16) 1px, transparent 1px)",
             backgroundSize: "72px 54px",
           }}
         />
@@ -394,7 +390,7 @@ function FinalCopy({ staticAll }: { staticAll: boolean }) {
         staticAll ? "opacity-100" : "md:opacity-0",
       ].join(" ")}
     >
-      <p className="text-xs uppercase tracking-[0.26em]" style={{ color: "#dda06c" }}>
+      <p className="text-xs uppercase tracking-[0.26em]" style={{ color: "#b8aa86" }}>
         The foundation
       </p>
       <p
@@ -405,8 +401,8 @@ function FinalCopy({ staticAll }: { staticAll: boolean }) {
       </p>
       <Link
         href="/services#desire"
-        className="mt-6 inline-flex min-h-12 items-center gap-4 rounded-full border border-[#eadfcb]/30 bg-[#171a15]/55 px-6 text-sm backdrop-blur-md transition-colors duration-300 hover:border-[#dda06c]/70 hover:bg-[#24291f] focus-visible:outline focus-visible:outline-2"
-        style={{ color: "#f1eadc", outlineColor: "#dda06c" }}
+        className="mt-6 inline-flex min-h-12 items-center gap-4 rounded-full border border-[#eadfcb]/30 bg-[#101612]/68 px-6 text-sm backdrop-blur-md transition-colors duration-300 hover:border-[#b8aa86]/70 hover:bg-[#1d271f] focus-visible:outline focus-visible:outline-2"
+        style={{ color: "#f1eadc", outlineColor: "#b8aa86" }}
       >
         Explore the foundation path
         <span aria-hidden="true">↗</span>
