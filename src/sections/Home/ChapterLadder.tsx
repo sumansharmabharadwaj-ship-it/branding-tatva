@@ -260,7 +260,7 @@ export function ChapterLadder() {
               animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, x: 8, filter: "blur(4px)" }}
               transition={motionTransition}
-              className="pointer-events-none w-44 rounded-2xl border border-white/12 bg-[#17140f]/78 px-4 py-3 text-right shadow-[0_18px_55px_rgba(0,0,0,0.24)] backdrop-blur-xl lg:w-52"
+              className="pointer-events-none w-40 rounded-2xl border border-white/12 bg-[#17140f]/78 px-4 py-3 text-right shadow-[0_18px_55px_rgba(0,0,0,0.24)] backdrop-blur-xl lg:w-44 2xl:w-52"
             >
               <p className="text-[0.58rem] font-medium uppercase tracking-[0.22em] text-ivory/45">
                 What you are exploring

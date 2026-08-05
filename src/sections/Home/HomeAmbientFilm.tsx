@@ -129,7 +129,7 @@ export function HomeAmbientFilm({
             : { duration: 6.8, repeat: Infinity, repeatDelay: 4.4, ease: "easeInOut" }
         }
       />
-      <figcaption className="absolute bottom-4 left-4 right-4 font-display text-sm leading-snug text-ivory/68">
+      <figcaption className="absolute bottom-4 left-4 right-4 hidden font-display sm:block text-sm leading-snug text-ivory/68">
         {label}
       </figcaption>
     </motion.figure>

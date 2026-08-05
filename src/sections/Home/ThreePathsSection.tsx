@@ -18,7 +18,7 @@ const PATHS = [
     href: "/services#desire",
     tint: "#6F4E37",
     route: ["Question", "Architect", "Signal"],
-    result: "A position the business can grow from",
+    result: "A position built to grow",
     icon: (
       <>
         <path d="M20 30V16" />
@@ -35,7 +35,7 @@ const PATHS = [
     href: "/services#situation",
     tint: "#556B4A",
     route: ["Decode", "Architect", "Signal"],
-    result: "One recognisable idea across every touchpoint",
+    result: "One idea across every touchpoint",
     icon: (
       <>
         <circle cx="16" cy="22" r="7" />
@@ -52,7 +52,7 @@ const PATHS = [
     href: "/services#offerings",
     tint: "#8A6B3D",
     route: ["Signal", "Influence", "Compound"],
-    result: "Recognition that keeps earning after launch",
+    result: "Recognition that keeps compounding",
     icon: (
       <>
         <circle cx="20" cy="20" r="9" />

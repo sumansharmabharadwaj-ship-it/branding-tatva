@@ -203,7 +203,7 @@ export function TatvaStrip() {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <ol className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2">
+            <ol className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2 xl:pr-52 2xl:pr-60">
               {TATVAS.map((tatva, index) => {
                 const element = elements.find((entry) => entry.slug === tatva.slug);
                 const direction = index % 2 === 0 ? 1 : -1;
