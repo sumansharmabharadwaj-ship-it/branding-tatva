@@ -1,4 +1,4 @@
-# Candidate includes bounded media and navigation probes.
+# Candidate includes hard-bounded browser probes and progress instrumentation.
 name: Services reframe release gate
 run-name: Services reframe gate · ${{ github.sha }}
 
