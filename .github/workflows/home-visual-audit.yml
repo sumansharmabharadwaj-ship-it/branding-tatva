@@ -13,7 +13,7 @@ permissions:
 jobs:
   capture:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Check out the preview branch
@@ -32,11 +32,13 @@ jobs:
           corepack enable
           corepack prepare pnpm@10.28.0 --activate
 
-      - name: Install project dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install project and audit dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          npm install --no-save playwright@1.54.2
 
       - name: Install Chromium for the audit
-        run: pnpm dlx playwright@1.54.2 install --with-deps chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Start the application
         env:
@@ -53,12 +55,79 @@ jobs:
           cat /tmp/branding-tatva-dev.log
           exit 1
 
-      - name: Capture desktop, tablet and mobile films
+      - name: Capture every chapter at its real scroll position
         run: |
           mkdir -p visual-audit
-          pnpm dlx playwright@1.54.2 screenshot --browser=chromium --device="Desktop Chrome HiDPI" --full-page --wait-for-timeout=7000 http://127.0.0.1:3000/ visual-audit/home-desktop.png
-          pnpm dlx playwright@1.54.2 screenshot --browser=chromium --viewport-size="1024,1366" --full-page --wait-for-timeout=7000 http://127.0.0.1:3000/ visual-audit/home-tablet.png
-          pnpm dlx playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --full-page --wait-for-timeout=7000 http://127.0.0.1:3000/ visual-audit/home-mobile.png
+          cat > /tmp/capture-home.js <<'JS'
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+
+          const profiles = [
+            { name: 'desktop', viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1 },
+            { name: 'mobile', viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 },
+          ];
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const report = { captures: [], consoleErrors: [], pageErrors: [] };
+
+            for (const profile of profiles) {
+              const context = await browser.newContext({
+                viewport: profile.viewport,
+                deviceScaleFactor: profile.deviceScaleFactor,
+                reducedMotion: 'no-preference',
+              });
+              const page = await context.newPage();
+              page.on('console', (message) => {
+                if (message.type() === 'error') report.consoleErrors.push({ profile: profile.name, text: message.text() });
+              });
+              page.on('pageerror', (error) => report.pageErrors.push({ profile: profile.name, text: error.message }));
+
+              await page.goto('http://127.0.0.1:3000/', { waitUntil: 'networkidle' });
+              await page.waitForTimeout(2500);
+
+              await page.screenshot({ path: `visual-audit/${profile.name}-00-opening.png`, fullPage: false });
+              report.captures.push({ profile: profile.name, chapter: 'opening' });
+
+              const chapters = await page.locator('[data-home-chapter]').evaluateAll((elements) =>
+                elements.map((element, index) => ({
+                  index,
+                  id: element.getAttribute('data-home-chapter') || `chapter-${index + 1}`,
+                })),
+              );
+
+              for (const chapter of chapters) {
+                const locator = page.locator('[data-home-chapter]').nth(chapter.index);
+                await locator.evaluate((element) => {
+                  const top = window.scrollY + element.getBoundingClientRect().top - 72;
+                  window.scrollTo({ top, behavior: 'instant' });
+                });
+                await page.waitForTimeout(2600);
+                const safe = chapter.id.replace(/[^a-z0-9_-]+/gi, '-').toLowerCase();
+                const path = `visual-audit/${profile.name}-${String(chapter.index + 1).padStart(2, '0')}-${safe}.png`;
+                await page.screenshot({ path, fullPage: false });
+                const playback = await page.evaluate(() => ({
+                  scrollY: Math.round(window.scrollY),
+                  visibleVideos: Array.from(document.querySelectorAll('video')).filter((video) => {
+                    const rect = video.getBoundingClientRect();
+                    return rect.bottom > 0 && rect.top < window.innerHeight;
+                  }).length,
+                  playingVideos: Array.from(document.querySelectorAll('video')).filter((video) => !video.paused && !video.ended).length,
+                }));
+                report.captures.push({ profile: profile.name, chapter: chapter.id, path, ...playback });
+              }
+
+              await context.close();
+            }
+
+            fs.writeFileSync('visual-audit/report.json', JSON.stringify(report, null, 2));
+            await browser.close();
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          JS
+          node /tmp/capture-home.js
 
       - name: Stop the application
         if: always()
@@ -72,6 +141,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: branding-tatva-home-visual-audit
-          path: visual-audit/*.png
+          path: visual-audit/*
           if-no-files-found: error
           retention-days: 1
