@@ -7,11 +7,12 @@ import type { Element } from "@/data/elements";
 
 // The reduced-motion / no-JS-pin fallback — a slow vertical unfolding
 // instead of the pinned slide sequence in PinnedSlider. This was the
-// only version of this section for most of the site's life; kept
-// exactly as-is rather than a lesser fallback, since it already reads
-// as a complete, deliberate design on its own (the same reasoning
-// Process/VerticalJourney's own history already established for this
-// site — see that component's comments).
+// only version of this section for most of the site's life; kept as a
+// complete, deliberate design rather than a lesser fallback. On phones,
+// each Tatva now owns most of one viewport, so Earth and Water no longer
+// compete inside the same frame and every environmental film has enough
+// time to establish its own atmosphere. Desktop reduced-motion retains
+// the compact row rhythm.
 export function VerticalUnfold({ elements }: { elements: Element[] }) {
   return (
     <>
@@ -41,15 +42,22 @@ export function VerticalUnfold({ elements }: { elements: Element[] }) {
           // guarantee at a level up: if that reveal's trigger doesn't
           // fire promptly during real, fast mobile scrolling, the entire
           // row — background included — stayed invisible, showing the
-          // plain page background through it instead. Confirmed via
-          // real device screenshots: several rows rendering as blank
-          // cream gaps while scrolling normally. Scoping ElementReveal
-          // to just the text block keeps the per-element entrance
-          // motion (earth settles, water ripples, etc.) while the row's
-          // own visual presence is no longer gated on it.
-          <div key={el.slug} className="relative overflow-hidden">
-            <ElementRowBackground gate image={el.image} video={el.video} videoWebm={el.videoWebm} color={el.color} imagePosition={el.imagePosition} />
-            <Container>
+          // plain page background through it instead. Scoping ElementReveal
+          // to just the text block keeps the per-element entrance motion
+          // while the row's visual presence is no longer gated on it.
+          <div
+            key={el.slug}
+            className="relative flex min-h-[72svh] items-center overflow-hidden md:block md:min-h-0"
+          >
+            <ElementRowBackground
+              gate
+              image={el.image}
+              video={el.video}
+              videoWebm={el.videoWebm}
+              color={el.color}
+              imagePosition={el.imagePosition}
+            />
+            <Container className="relative w-full">
               <ElementReveal slug={el.slug} delay={i * 0.06}>
                 <div
                   id={el.slug}
@@ -78,10 +86,10 @@ export function VerticalUnfold({ elements }: { elements: Element[] }) {
                     {el.name}
                   </p>
                   <div className={i % 2 === 1 ? "sm:order-2" : ""}>
-                    {/* Same spacing fix as PinnedSlider's own desktop
+                    {/* Same spacing fix as PinnedSlider's desktop
                         version — Tailwind's preflight zeroes default <p>
-                        margins, so stacked manifesto lines/concepts with
-                        no gap utility read as cramped. */}
+                        margins, so stacked manifesto lines/concepts need
+                        an explicit rhythm. */}
                     <div className="space-y-1 font-display text-lg italic text-ivory/85">
                       {el.manifesto.map((line, li) => (
                         <p key={li}>{line}</p>
