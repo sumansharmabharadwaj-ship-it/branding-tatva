@@ -1,4 +1,4 @@
-name: Repair Services route typing
+name: Repair Services audit bounds
 
 on:
   workflow_dispatch:
@@ -21,24 +21,47 @@ jobs:
           ref: reimagine-project-moves
           fetch-depth: 1
 
-      - name: Widen the contextual stage parameter
+      - name: Bound navigation and media promises
         run: |
           python - <<'PY'
           from pathlib import Path
 
-          path = Path("src/sections/Services/ServicesReframe.tsx")
+          path = Path("scripts/services_release_gate.cjs")
           source = path.read_text()
-          before = "function contactHref(packageSlug: string, stage = scenario.key) {"
-          after = "function contactHref(packageSlug: string, stage: string = scenario.key) {"
-          if before not in source:
-              raise SystemExit("Expected helper signature was not found")
-          path.write_text(source.replace(before, after, 1))
+
+          play_before = """      await element.play();"""
+          play_after = """      await Promise.race([
+        element.play(),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(\"Media play timed out after 5 seconds\")), 5000),
+        ),
+      ]);"""
+          if play_before not in source:
+              raise SystemExit("Expected media probe was not found")
+          source = source.replace(play_before, play_after, 1)
+
+          if 'waitUntil: "networkidle"' not in source:
+              raise SystemExit("Expected navigation waits were not found")
+          source = source.replace('waitUntil: "networkidle"', 'waitUntil: "domcontentloaded"')
+
+          source = source.replace(
+              "const page = await context.newPage();",
+              "const page = await context.newPage();\n    page.setDefaultTimeout(10000);",
+              1,
+          )
+          source = source.replace(
+              "const contactPage = await contactContext.newPage();",
+              "const contactPage = await contactContext.newPage();\n  contactPage.setDefaultTimeout(10000);",
+              1,
+          )
+
+          path.write_text(source)
           PY
 
-      - name: Commit the repaired Services helper
+      - name: Commit the bounded audit harness
         run: |
           git config user.name "branding-tatva-release-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add src/sections/Services/ServicesReframe.tsx
-          git commit -m "Allow health-check context in Services enquiry links"
+          git add scripts/services_release_gate.cjs
+          git commit -m "Bound Services browser audit waits"
           git push origin HEAD:reimagine-project-moves
