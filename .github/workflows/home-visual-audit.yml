@@ -1,0 +1,76 @@
+name: Capture homepage visual audit
+
+on:
+  push:
+    branches:
+      - reimagine-project-moves
+    paths:
+      - .github/workflows/home-visual-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: reimagine-project-moves
+          fetch-depth: 1
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install project dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium for the audit
+        run: pnpm dlx playwright@1.54.2 install --with-deps chromium
+
+      - name: Start the application
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: |
+          pnpm dev --hostname 127.0.0.1 --port 3000 > /tmp/branding-tatva-dev.log 2>&1 &
+          echo $! > /tmp/branding-tatva-dev.pid
+          for attempt in {1..90}; do
+            if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/branding-tatva-dev.log
+          exit 1
+
+      - name: Capture desktop, tablet and mobile films
+        run: |
+          mkdir -p visual-audit
+          pnpm dlx playwright@1.54.2 screenshot --browser=chromium --device="Desktop Chrome HiDPI" --full-page --wait-for-timeout=7000 http://127.0.0.1:3000/ visual-audit/home-desktop.png
+          pnpm dlx playwright@1.54.2 screenshot --browser=chromium --viewport-size="1024,1366" --full-page --wait-for-timeout=7000 http://127.0.0.1:3000/ visual-audit/home-tablet.png
+          pnpm dlx playwright@1.54.2 screenshot --browser=chromium --device="iPhone 13" --full-page --wait-for-timeout=7000 http://127.0.0.1:3000/ visual-audit/home-mobile.png
+
+      - name: Stop the application
+        if: always()
+        run: |
+          if [ -f /tmp/branding-tatva-dev.pid ]; then
+            kill "$(cat /tmp/branding-tatva-dev.pid)" || true
+          fi
+
+      - name: Upload the visual audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: branding-tatva-home-visual-audit
+          path: visual-audit/*.png
+          if-no-files-found: error
+          retention-days: 1
