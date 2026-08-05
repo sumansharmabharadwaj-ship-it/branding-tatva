@@ -79,12 +79,23 @@ async function main() {
     }
   }
 
-  const requiredDestinations = [
+  const requiredStaticDestinations = [
     "/contact",
     "/work",
     "/about",
     "/services",
     "/insights",
+  ];
+
+  for (const path of requiredStaticDestinations) {
+    const emitted = Array.from(urls.values()).some((url) => url.pathname === path);
+    if (!emitted) failures.push(`${path}: required homepage destination is absent`);
+  }
+
+  // The evidence archive renders one active case link at a time. Its client-side
+  // interaction gate verifies that selecting each project swaps the href. This
+  // server-side check confirms every possible destination still resolves.
+  const interactiveCaseDestinations = [
     "/work/dr-haley-nutrition",
     "/work/myshopineurope",
     "/work/executive-springboard",
@@ -92,14 +103,20 @@ async function main() {
     "/work/plaxonic-content-portfolio",
   ];
 
-  for (const path of requiredDestinations) {
-    if (!urls.has(path)) {
-      failures.push(`${path}: required homepage destination is absent`);
+  for (const path of interactiveCaseDestinations) {
+    if (checkedPages.has(path)) continue;
+    const url = new URL(path, homeUrl);
+    const { response, text } = await fetchPage(url);
+    if (!response.ok) {
+      failures.push(`${path}: interactive case destination returned HTTP ${response.status}`);
+      continue;
     }
+    checkedPages.set(path, text);
   }
 
   console.log("# Branding Tatva homepage link integrity");
-  console.log(`- Internal destinations checked: ${urls.size}`);
+  console.log(`- Initially emitted internal destinations checked: ${urls.size}`);
+  console.log(`- Interactive case-study destinations checked: ${interactiveCaseDestinations.length}`);
   console.log(`- Unique pages requested: ${checkedPages.size}`);
   console.log(`- Failures: ${failures.length}`);
 
@@ -110,7 +127,7 @@ async function main() {
     return;
   }
 
-  console.log("- Every homepage CTA, case-study route, and in-page anchor resolved.");
+  console.log("- Every static CTA, in-page anchor, and interactive case-study route resolved.");
 }
 
 main().catch((error) => {
