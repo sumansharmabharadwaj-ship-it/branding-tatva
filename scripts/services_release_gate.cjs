@@ -96,7 +96,17 @@ async function captureSection(page, profile, id) {
     const failedResponses = [];
 
     page.on("console", (message) => {
-      if (message.type() === "error") consoleErrors.push(message.text());
+      if (message.type() !== "error") return;
+      const text = message.text();
+      const location = message.location();
+      if (
+        location.url.includes("/_vercel/") ||
+        text.includes("/_vercel/insights") ||
+        text.includes("/_vercel/speed-insights")
+      ) {
+        return;
+      }
+      consoleErrors.push(text);
     });
     page.on("pageerror", (error) => pageErrors.push(error.message));
     page.on("response", (response) => {
