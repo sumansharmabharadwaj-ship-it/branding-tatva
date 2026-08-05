@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./home-cinematic-recovery.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { LinkButton } from "@/components/Button";
