@@ -28,6 +28,7 @@ const KEN_BURNS = kenBurnsAnimation({ scale: 1.06, duration: 26 });
 export function ElementRowBackground({
   image,
   video,
+  videoWebm,
   color,
   imagePosition = "center",
   active = true,
@@ -35,6 +36,7 @@ export function ElementRowBackground({
 }: {
   image: string;
   video?: string;
+  videoWebm?: string;
   color: string;
   imagePosition?: string;
   // Lets a caller with several of these mounted at once (PinnedSlider:
@@ -70,7 +72,7 @@ export function ElementRowBackground({
     if (!gate || !el) return;
     const observer = new IntersectionObserver(
       ([entry]) => setInFocus(entry.isIntersecting),
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -104,7 +106,13 @@ export function ElementRowBackground({
     // as blank empty space rather than a loading section whenever the
     // image was slow to arrive (cold CDN cache, slow network, or simply
     // not the active PinnedSlider slide yet).
-    <div ref={ref} data-video-decorative-root className="absolute inset-0" style={{ backgroundColor: color }} aria-hidden="true">
+    <div
+      ref={ref}
+      data-video-decorative-root
+      className="absolute inset-0"
+      style={{ backgroundColor: color }}
+      aria-hidden="true"
+    >
       <motion.div
         className="absolute inset-0"
         initial={KEN_BURNS.initial}
@@ -145,16 +153,28 @@ export function ElementRowBackground({
             setVideoReady(true);
             if (playing) void event.currentTarget.play().catch(() => {});
           }}
-          src={video}
           muted
           autoPlay={playing}
           loop
           playsInline
           preload="metadata"
-        />
+        >
+          {videoWebm && <source src={videoWebm} type="video/webm" />}
+          <source src={video} type="video/mp4" />
+        </video>
       )}
-      <div className="absolute inset-0" style={{ backgroundColor: color, opacity: 0.16, mixBlendMode: "multiply" }} />
-      <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundColor: color,
+          opacity: 0.16,
+          mixBlendMode: "multiply",
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }}
+      />
     </div>
   );
 }
