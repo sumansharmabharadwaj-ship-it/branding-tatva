@@ -62,22 +62,7 @@ jobs:
 
           css_path = Path("src/app/home-audit-fixes.css")
           css = css_path.read_text()
-          addition = '''
-/* The closing scene is the conversion destination, so its CTA becomes the
-   only fixed visual priority. Default mobile navigation fades away once Begin
-   is active. A running Journey keeps its pause button, because visitor control
-   must always remain immediate. */
-@media (max-width: 767px) {
-  body:has([data-home-chapter="invitation"][data-scene-awake="true"])
-    [data-chapter-ladder-mobile],
-  body:has([data-home-chapter="invitation"][data-scene-awake="true"])
-    [data-auto-journey-control][aria-pressed="false"] {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transform: translateY(10px) !important;
-  }
-}
-'''
+          addition = '\n/* The closing scene is the conversion destination, so its CTA becomes the\n   only fixed visual priority. Default mobile navigation fades away once Begin\n   is active. A running Journey keeps its pause button because visitor control\n   must always remain immediate. */\n@media (max-width: 767px) {\n  body:has([data-home-chapter="invitation"][data-scene-awake="true"])\n    [data-chapter-ladder-mobile],\n  body:has([data-home-chapter="invitation"][data-scene-awake="true"])\n    [data-auto-journey-control][aria-pressed="false"] {\n    opacity: 0 !important;\n    pointer-events: none !important;\n    transform: translateY(10px) !important;\n  }\n}\n'
           if 'closing scene is the conversion destination' not in css:
               css_path.write_text(css + addition)
           PY
