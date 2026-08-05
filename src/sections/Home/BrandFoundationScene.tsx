@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useReducedMotion } from "framer-motion";
+import { useInView, useReducedMotion } from "framer-motion";
 
 // Suman's excavation concept: the Earth chapter stops being a list over a
 // scenic landscape and becomes the idea itself. A real root network fills the
@@ -83,8 +83,30 @@ const FOUNDATION_LAYERS: FoundationLayer[] = [
 export function BrandFoundationScene() {
   const wrapperRef = useRef<HTMLElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const sceneInView = useInView(wrapperRef, { amount: 0.08 });
   const [activeLayer, setActiveLayer] = useState<string>(FOUNDATION_LAYERS[0].id);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    function syncPlayback() {
+      if (prefersReducedMotion || !sceneInView || document.hidden) {
+        video.pause();
+        return;
+      }
+      void video.play().catch(() => {});
+    }
+
+    syncPlayback();
+    document.addEventListener("visibilitychange", syncPlayback);
+    return () => {
+      document.removeEventListener("visibilitychange", syncPlayback);
+      video.pause();
+    };
+  }, [prefersReducedMotion, sceneInView]);
 
   useIsomorphicLayoutEffect(() => {
     const wrapper = wrapperRef.current;
@@ -177,11 +199,12 @@ export function BrandFoundationScene() {
       >
         <div data-landscape className="absolute inset-0 will-change-transform">
           <video
+            ref={videoRef}
             muted
             loop
-            autoPlay={!prefersReducedMotion}
+            autoPlay={Boolean(sceneInView && !prefersReducedMotion)}
             playsInline
-            preload="metadata"
+            preload={sceneInView ? "metadata" : "none"}
             poster="/images/pexels-root-network-poster.jpg"
             aria-hidden="true"
             className="h-full w-full object-cover object-[center_52%]"
