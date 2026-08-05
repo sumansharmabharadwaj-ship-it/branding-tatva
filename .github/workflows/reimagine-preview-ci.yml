@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: reimagine-preview-build
@@ -24,25 +24,6 @@ jobs:
         with:
           ref: reimagine-project-moves
           fetch-depth: 1
-
-      - name: Apply final homepage polish
-        run: python scripts/finalize_home_release_candidate.py
-
-      - name: Commit final homepage polish
-        run: |
-          if ! git diff --quiet; then
-            git config user.name "Branding Tatva Build Bot"
-            git config user.email "actions@users.noreply.github.com"
-            git add \
-              src/app/home-release-candidate.css \
-              src/components/AmbientAudio.tsx \
-              src/sections/Elements/VerticalUnfold.tsx \
-              src/sections/Hero/index.tsx \
-              src/sections/Home/HomeAutoJourney.tsx \
-              src/sections/Home/ChapterLadder.tsx
-            git commit -m "Polish the homepage reading field and compact navigation"
-            git push origin HEAD:reimagine-project-moves
-          fi
 
       - name: Use Node 24
         uses: actions/setup-node@v4
@@ -70,5 +51,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build preview
+      - name: Build, lint, type-check, and generate all static pages
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
         run: pnpm build
