@@ -13,7 +13,7 @@ permissions:
 jobs:
   capture:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     steps:
       - name: Check out the preview branch
@@ -40,19 +40,24 @@ jobs:
       - name: Install Chromium for the audit
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Start the application
+      - name: Build the production application
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: pnpm build
+
+      - name: Start the production application
         env:
           NEXT_TELEMETRY_DISABLED: "1"
         run: |
-          pnpm dev --hostname 127.0.0.1 --port 3000 > /tmp/branding-tatva-dev.log 2>&1 &
-          echo $! > /tmp/branding-tatva-dev.pid
+          pnpm start --hostname 127.0.0.1 --port 3000 > /tmp/branding-tatva-start.log 2>&1 &
+          echo $! > /tmp/branding-tatva-start.pid
           for attempt in {1..90}; do
             if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then
               exit 0
             fi
             sleep 1
           done
-          cat /tmp/branding-tatva-dev.log
+          cat /tmp/branding-tatva-start.log
           exit 1
 
       - name: Capture every chapter at its real scroll position
@@ -84,7 +89,7 @@ jobs:
               page.on('pageerror', (error) => report.pageErrors.push({ profile: profile.name, text: error.message }));
 
               await page.goto('http://127.0.0.1:3000/', { waitUntil: 'networkidle' });
-              await page.waitForTimeout(2500);
+              await page.waitForTimeout(5200);
 
               await page.screenshot({ path: `visual-audit/${profile.name}-00-opening.png`, fullPage: false });
               report.captures.push({ profile: profile.name, chapter: 'opening', path: `visual-audit/${profile.name}-00-opening.png` });
@@ -102,7 +107,7 @@ jobs:
                   const top = window.scrollY + element.getBoundingClientRect().top - 72;
                   window.scrollTo({ top, behavior: 'instant' });
                 });
-                await page.waitForTimeout(2600);
+                await page.waitForTimeout(3000);
                 const safe = chapter.id.replace(/[^a-z0-9_-]+/gi, '-').toLowerCase();
                 const path = `visual-audit/${profile.name}-${String(chapter.index + 1).padStart(2, '0')}-${safe}.png`;
                 await page.screenshot({ path, fullPage: false });
@@ -132,8 +137,8 @@ jobs:
       - name: Stop the application
         if: always()
         run: |
-          if [ -f /tmp/branding-tatva-dev.pid ]; then
-            kill "$(cat /tmp/branding-tatva-dev.pid)" || true
+          if [ -f /tmp/branding-tatva-start.pid ]; then
+            kill "$(cat /tmp/branding-tatva-start.pid)" || true
           fi
 
       - name: Upload the visual audit
