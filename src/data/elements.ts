@@ -138,6 +138,7 @@ export const elements: Element[] = [
       "A content portfolio of sixteen pieces for Plaxonic.com, spanning research papers, perspective pieces, blogs, and articles.",
     image: "/images/pixabay-golden-reeds-wind-poster.jpg",
     video: "/videos/pixabay-golden-reeds-wind.mp4",
+    videoWebm: "/videos/pixabay-golden-reeds-wind.webm",
   },
   {
     slug: "space",

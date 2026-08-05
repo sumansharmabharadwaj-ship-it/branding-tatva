@@ -249,19 +249,21 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
         )}
         {stage.video && !prefersReducedMotion && inView && (
           <video
-            ref={videoRef}
-            key={`video-${active}-${stage.video}`}
-            src={stage.video}
-            poster={stage.poster}
-            muted
-            autoPlay
-            loop
-            playsInline
-            preload="metadata"
-            onCanPlay={(event) => {
-              if (inView) void event.currentTarget.play().catch(() => {});
-            }}
-          />
+  ref={videoRef}
+  key={`video-${active}-${stage.videoWebm ?? stage.video}`}
+  poster={stage.poster}
+  muted
+  autoPlay
+  loop
+  playsInline
+  preload="metadata"
+  onCanPlay={(event) => {
+    if (inView) void event.currentTarget.play().catch(() => {});
+  }}
+>
+  {stage.videoWebm && <source src={stage.videoWebm} type="video/webm" />}
+  <source src={stage.video} type="video/mp4" />
+</video>
         )}
       </div>
       <div className="project-journey__wash" aria-hidden="true" />

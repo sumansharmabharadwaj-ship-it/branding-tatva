@@ -198,6 +198,7 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
             <ElementRowBackground
               image={element.image}
               video={element.video}
+              videoWebm={element.videoWebm}
               color={element.color}
               imagePosition={element.imagePosition}
               active={index === activeIndex && isVisible}
