@@ -89,10 +89,10 @@ export function BrandFoundationScene() {
   const [activeLayer, setActiveLayer] = useState<string>(FOUNDATION_LAYERS[0].id);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
     function syncPlayback() {
+      const video = videoRef.current;
+      if (!video) return;
+
       if (prefersReducedMotion || !sceneInView || document.hidden) {
         video.pause();
         return;
@@ -104,7 +104,7 @@ export function BrandFoundationScene() {
     document.addEventListener("visibilitychange", syncPlayback);
     return () => {
       document.removeEventListener("visibilitychange", syncPlayback);
-      video.pause();
+      videoRef.current?.pause();
     };
   }, [prefersReducedMotion, sceneInView]);
 
