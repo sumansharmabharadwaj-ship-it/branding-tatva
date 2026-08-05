@@ -1,90 +1,113 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { contactSchema } from "@/lib/contact-schema";
+import {
+  fetchWithTimeout,
+  guardJsonRequest,
+  jsonNoStore,
+  singleLine,
+} from "@/lib/api-protection";
 
-// This route validates and emails contact form submissions via Resend.
-// If RESEND_API_KEY or CONTACT_TO_EMAIL is missing (e.g. a fresh clone
-// without .env.local), it falls back to logging server-side instead of
-// failing the submission outright.
+export const runtime = "nodejs";
 
-export async function POST(req: NextRequest) {
-  const body = await req.json().catch(() => null);
+export async function POST(request: NextRequest) {
+  const guarded = guardJsonRequest(request, { scope: "contact", limit: 5 });
+  if (guarded) return guarded;
+
+  const body = await request.json().catch(() => null);
   if (!body) {
-    return NextResponse.json({ error: "Invalid submission." }, { status: 400 });
+    return jsonNoStore({ error: "Invalid submission." }, { status: 400 });
   }
 
   const parsed = contactSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Please check the highlighted fields.", issues: parsed.error.flatten() },
-      { status: 422 }
+    return jsonNoStore(
+      {
+        error: "Please check the highlighted fields.",
+        issues: parsed.error.flatten(),
+      },
+      { status: 422 },
     );
   }
 
-  // Honeypot triggered — silently accept without sending, so bots don't
-  // learn their submission was rejected.
   if (parsed.data.company_website) {
-    return NextResponse.json({ ok: true });
+    return jsonNoStore({ ok: true });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.CONTACT_TO_EMAIL;
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const toEmail = process.env.CONTACT_TO_EMAIL?.trim();
+  const fromEmail =
+    process.env.CONTACT_FROM_EMAIL?.trim() || "Branding Tatva <contact@brandingtatva.com>";
+  const requestId = crypto.randomUUID();
 
   if (!apiKey || !toEmail) {
-    console.log("Contact form submission (email delivery still pending setup):", parsed.data);
-    return NextResponse.json(
-      { ok: true, note: "Received. Email delivery setup is still pending." },
-      { status: 200 }
+    console.error(`[contact:${requestId}] Email delivery is not configured.`);
+    return jsonNoStore(
+      {
+        error:
+          "The enquiry form is temporarily unavailable. Please email suman@brandingtatva.com directly.",
+        requestId,
+      },
+      { status: 503 },
     );
   }
 
   try {
-    const d = parsed.data;
-    // Readable, labeled body instead of a raw JSON dump — this is a real
-    // business enquiry someone reads on a phone, not a debug log.
+    const data = parsed.data;
     const text = [
-      `Name: ${d.name}`,
-      `Email: ${d.email}`,
-      d.phone && `Phone: ${d.phone}`,
-      `Business: ${d.business}`,
-      d.website && `Website: ${d.website}`,
-      `Brand stage: ${d.brandStage}`,
-      `Services needed: ${d.servicesNeeded}`,
-      d.budget && `Budget: ${d.budget}`,
-      d.timeline && `Timeline: ${d.timeline}`,
-      d.referral && `Found via: ${d.referral}`,
+      `Request ID: ${requestId}`,
+      `Name: ${singleLine(data.name)}`,
+      `Email: ${singleLine(data.email)}`,
+      data.phone && `Phone: ${singleLine(data.phone)}`,
+      `Business: ${singleLine(data.business)}`,
+      data.website && `Website: ${singleLine(data.website)}`,
+      `Brand stage: ${singleLine(data.brandStage)}`,
+      `Services needed: ${singleLine(data.servicesNeeded)}`,
+      data.budget && `Budget: ${singleLine(data.budget)}`,
+      data.timeline && `Timeline: ${singleLine(data.timeline)}`,
+      data.referral && `Found via: ${singleLine(data.referral)}`,
       "",
       "Project description:",
-      d.description,
+      data.description.trim(),
     ]
       .filter(Boolean)
       .join("\n");
 
-    const res = await fetch("https://api.resend.com/emails", {
+    const response = await fetchWithTimeout("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Branding Tatva <contact@brandingtatva.com>",
-        to: toEmail,
-        // Lets Suman just hit "reply" in her inbox to respond directly
-        // to the person who submitted the form.
-        reply_to: d.email,
-        subject: `New enquiry from ${d.name}`,
+        from: fromEmail,
+        to: [toEmail],
+        reply_to: data.email.trim(),
+        subject: `Branding Tatva enquiry · ${singleLine(data.name)}`,
         text,
       }),
     });
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error("Resend delivery failed:", errText);
-      return NextResponse.json({ error: "Delivery failed. Please try again shortly." }, { status: 502 });
+    if (!response.ok) {
+      const deliveryError = await response.text().catch(() => "Unknown delivery error");
+      console.error(`[contact:${requestId}] Resend failed:`, deliveryError.slice(0, 600));
+      return jsonNoStore(
+        {
+          error: "Delivery failed. Please try again shortly or email Suman directly.",
+          requestId,
+        },
+        { status: 502 },
+      );
     }
 
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    console.error("Contact form error:", err);
-    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+    return jsonNoStore({ ok: true, requestId });
+  } catch (error) {
+    console.error(`[contact:${requestId}] Submission error:`, error);
+    return jsonNoStore(
+      {
+        error: "Something went wrong. Please try again or email Suman directly.",
+        requestId,
+      },
+      { status: 500 },
+    );
   }
 }
