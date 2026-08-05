@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Header } from "@/layouts/Header";
 import { HomeReframe } from "@/sections/Home/HomeReframe";
+import { HomeMediaRecovery } from "@/sections/Home/HomeMediaRecovery";
 import { site } from "@/data/site";
 import { faqs } from "@/data/faqs";
 
@@ -33,6 +34,7 @@ export default function Home() {
       <main id="main-content">
         <HomeReframe />
       </main>
+      <HomeMediaRecovery />
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
