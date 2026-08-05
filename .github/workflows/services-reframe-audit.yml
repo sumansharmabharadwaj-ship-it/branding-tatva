@@ -1,3 +1,4 @@
+# Candidate includes the CSS-module and health-route repairs.
 name: Services reframe release gate
 run-name: Services reframe gate · ${{ github.sha }}
 
