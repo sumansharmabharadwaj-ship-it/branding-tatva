@@ -52,24 +52,8 @@ jobs:
 
           css_path = Path("src/app/home-audit-fixes.css")
           css = css_path.read_text()
-          old_css = """  [data-chapter-ladder-mobile] > button {
-    min-height: 2.8rem !important;
-    padding-inline: 0.9rem !important;
-  }
-}"""
-          new_css = """  [data-chapter-ladder-mobile] > button {
-    width: 2.8rem !important;
-    height: 2.8rem !important;
-    min-height: 2.8rem !important;
-    justify-content: center !important;
-    gap: 0 !important;
-    padding: 0 !important;
-  }
-
-  [data-chapter-ladder-mobile] > button > span:not(:first-child) {
-    display: none !important;
-  }
-}"""
+          old_css = '  [data-chapter-ladder-mobile] > button {\n    min-height: 2.8rem !important;\n    padding-inline: 0.9rem !important;\n  }\n}'
+          new_css = '  [data-chapter-ladder-mobile] > button {\n    width: 2.8rem !important;\n    height: 2.8rem !important;\n    min-height: 2.8rem !important;\n    justify-content: center !important;\n    gap: 0 !important;\n    padding: 0 !important;\n  }\n\n  [data-chapter-ladder-mobile] > button > span:not(:first-child) {\n    display: none !important;\n  }\n}'
           if old_css not in css:
               raise SystemExit("Mobile Explore repair block was not found")
           css_path.write_text(css.replace(old_css, new_css, 1))
