@@ -96,17 +96,27 @@ export default function Home() {
 
         <HomeSceneBridge family="earth" from="#141210" to="#27221E" />
         <EvidenceWall />
-        <HomeSceneBridge family="water" from="#27221E" to="#F2F0E8" />
-        <StudioTriptych />
-        <HomeSceneBridge family="air" from="#F2F0E8" to="#F2F0E8" />
-        <ThreePathsSection />
-        <HomeSceneBridge family="confluence" from="#F2F0E8" to="#F2F0E8" />
-        <div>
+        <HomeSceneBridge family="water" from="#27221E" to="#354238" />
+
+        <div data-home-earth-tone="studio">
+          <StudioTriptych />
+        </div>
+
+        <HomeSceneBridge family="air" from="#354238" to="#4B342A" />
+
+        <div data-home-earth-tone="paths">
+          <ThreePathsSection />
+        </div>
+
+        <HomeSceneBridge family="confluence" from="#4B342A" to="#2F443F" />
+
+        <div data-home-earth-tone="framework">
           <TatvaStrip />
           <TatvaSystemLab />
           <FrameworkJourneyNudge />
         </div>
-        <HomeSceneBridge family="space" from="#E9E4D9" to="#27221E" />
+
+        <HomeSceneBridge family="space" from="#2F443F" to="#27221E" />
 
         {/* The full five-element sequence follows the framework directly.
             The separate Earth-only excavation remains in the codebase for
