@@ -195,16 +195,58 @@ def patch_mobile_cinema_entry() -> None:
     write_if_changed(path, text)
 
 
+def patch_tablet_controls() -> None:
+    path = ROOT / "src/sections/Home/HomeAutoJourney.tsx"
+    text = path.read_text()
+    text = text.replace(
+        'window.matchMedia("(max-width: 767px)")',
+        'window.matchMedia("(max-width: 1023px)")',
+        1,
+    )
+    text = text.replace(
+        'backdrop-blur-xl md:hidden',
+        'backdrop-blur-xl lg:hidden',
+        1,
+    )
+    text = text.replace(
+        'md:bottom-5 md:left-1/2 md:right-auto md:-translate-x-1/2',
+        'lg:bottom-5 lg:left-1/2 lg:right-auto lg:-translate-x-1/2',
+        1,
+    )
+    write_if_changed(path, text)
+
+    path = ROOT / "src/sections/Home/ChapterLadder.tsx"
+    text = path.read_text()
+    text = text.replace(
+        'hidden -translate-y-1/2 md:block lg:right-5',
+        'hidden -translate-y-1/2 lg:block lg:right-5',
+        1,
+    )
+    text = text.replace(
+        'fixed bottom-5 left-4 z-[45] md:hidden',
+        'fixed bottom-5 left-4 z-[45] lg:hidden',
+        1,
+    )
+    write_if_changed(path, text)
+
+    path = ROOT / "src/components/AmbientAudio.tsx"
+    text = path.read_text().replace(
+        'md:flex motion-reduce:flex',
+        'lg:flex motion-reduce:flex',
+        1,
+    )
+    write_if_changed(path, text)
+
+
 def patch_mobile_control_css() -> None:
     path = ROOT / "src/app/home-release-candidate.css"
     text = path.read_text()
     marker = "/* Mobile cinema docking repair */"
-    if marker in text:
-        return
-    addition = '''
+    if marker not in text:
+        text += '''
 
 /* Mobile cinema docking repair */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   [data-auto-journey-control][aria-pressed="false"] {
     display: none !important;
   }
@@ -212,9 +254,9 @@ def patch_mobile_control_css() -> None:
   [data-chapter-ladder-mobile] {
     right: 0 !important;
     left: auto !important;
-    top: 50% !important;
+    top: calc(50% - 3.25rem) !important;
     bottom: auto !important;
-    transform: translateY(-50%) !important;
+    transform: none !important;
   }
 
   [data-chapter-ladder-mobile] > button {
@@ -232,7 +274,13 @@ def patch_mobile_control_css() -> None:
   }
 }
 '''
-    write_if_changed(path, text + addition)
+    else:
+        text = text.replace(
+            '@media (max-width: 767px) {\n  [data-auto-journey-control][aria-pressed="false"]',
+            '@media (max-width: 1023px) {\n  [data-auto-journey-control][aria-pressed="false"]',
+            1,
+        )
+    write_if_changed(path, text)
 
 
 def patch_project_instructions() -> None:
@@ -261,6 +309,7 @@ def main() -> None:
     patch_scene_bridge()
     patch_chapter_entry_framing()
     patch_mobile_cinema_entry()
+    patch_tablet_controls()
     patch_mobile_control_css()
     patch_project_instructions()
     for path in changed_files:
