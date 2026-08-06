@@ -41,7 +41,7 @@ export function CapabilityMap() {
   }
 
   return (
-    <section id="find-relevant-proof" className="scroll-mt-24 py-16 sm:py-24" style={{ backgroundColor: WORK.mist }}>
+    <section id="find-relevant-proof" className="scroll-mt-24 py-14 sm:py-24" style={{ backgroundColor: WORK.mist }}>
       <Container className="max-w-6xl">
         <div>
           <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.moss }}>
@@ -55,7 +55,7 @@ export function CapabilityMap() {
           </p>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-7 sm:mt-8">
           <WaystoneField
             stones={NEED_STONES}
             activeId={activeNeed}
@@ -65,25 +65,25 @@ export function CapabilityMap() {
           />
         </div>
 
-        <div className="mt-8 grid gap-7 lg:mt-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
+        <div className="mt-7 grid gap-5 lg:mt-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
           <div className="order-2 lg:order-1">
             <div
               data-mobile-capability-map
               data-active-capability-count={activeCapabilities.length}
-              className="rounded-2xl border p-5 lg:hidden"
+              className="rounded-2xl border p-4 lg:hidden"
               style={{ borderColor: WORK.stone + "88", backgroundColor: "rgba(255,255,255,0.38)" }}
             >
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
                 <div>
-                  <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em]" style={{ color: WORK.moss }}>
+                  <p className="text-[0.6rem] font-medium uppercase tracking-[0.17em]" style={{ color: WORK.moss }}>
                     Capability path
                   </p>
-                  <h3 className="mt-1 max-w-[13rem] font-display text-xl font-normal" style={{ color: WORK.charcoal }}>
+                  <h3 className="mt-1 max-w-[13rem] font-display text-lg font-normal" style={{ color: WORK.charcoal }}>
                     What this evidence actually used
                   </h3>
                 </div>
                 <p
-                  className="max-w-[6.5rem] pt-1 text-right text-[0.58rem] uppercase leading-relaxed tracking-[0.13em]"
+                  className="max-w-[6rem] pt-0.5 text-right text-[0.56rem] uppercase leading-relaxed tracking-[0.12em]"
                   style={{ color: WORK.olive }}
                 >
                   {activeCapabilities.length} of {CAPABILITIES.length} active
@@ -97,19 +97,19 @@ export function CapabilityMap() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={animateTransitions ? { opacity: 0, y: -motionTokens.distanceMicro } : undefined}
                   transition={{ duration: animateTransitions ? motionTokens.durationFast : 0, ease: motionTokens.easeOrganic }}
-                  className="mt-5 grid grid-cols-2 gap-2"
+                  className="mt-4 flex flex-wrap gap-2"
                   aria-label="Active capability areas for the selected problem"
                 >
                   {activeCapabilities.map((capability, index) => (
                     <li
                       key={capability.id}
-                      className="min-w-0 rounded-xl border px-3 py-3"
+                      className="inline-flex min-h-10 items-center gap-2 rounded-full border px-3 py-2"
                       style={{ borderColor: WORK.stone + "88", backgroundColor: WORK.cream }}
                     >
-                      <span className="text-[0.56rem] font-medium uppercase tracking-[0.14em]" style={{ color: WORK.olive }}>
+                      <span className="text-[0.54rem] font-medium uppercase tracking-[0.12em]" style={{ color: WORK.olive }}>
                         {String(index + 1).padStart(2, "0")}
                       </span>
-                      <span className="mt-1 block font-display text-base leading-tight" style={{ color: WORK.forest }}>
+                      <span className="font-display text-sm leading-none" style={{ color: WORK.forest }}>
                         {capability.name}
                       </span>
                     </li>
@@ -117,8 +117,8 @@ export function CapabilityMap() {
                 </motion.ul>
               </AnimatePresence>
 
-              <p className="mt-4 border-t pt-3 text-xs leading-relaxed" style={{ borderColor: WORK.stone + "66", color: WORK.wood }}>
-                Only the capability areas evidenced by this route are shown here. The wider map contains fifteen distinct areas.
+              <p className="mt-4 border-t pt-3 text-[0.72rem] leading-relaxed" style={{ borderColor: WORK.stone + "66", color: WORK.wood }}>
+                Only the areas evidenced by this route are shown. The complete map contains fifteen.
               </p>
             </div>
 
@@ -158,7 +158,7 @@ export function CapabilityMap() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={animateTransitions ? { opacity: 0, y: -6 } : undefined}
                 transition={{ duration: animateTransitions ? 0.35 : 0, ease: EASE_ORGANIC }}
-                className="rounded-2xl p-6 sm:p-7"
+                className="rounded-2xl p-5 sm:p-7"
                 style={{ backgroundColor: WORK.cream }}
               >
                 <div className="flex items-start justify-between gap-4">
