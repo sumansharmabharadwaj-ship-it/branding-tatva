@@ -23,6 +23,7 @@ function decisiveLine(index: number) {
 
 export function WorkOpening() {
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const animateTransitions = hydrated && !prefersReducedMotion;
   const lenis = useLenis();
   const stageRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -184,10 +185,10 @@ export function WorkOpening() {
                       src={record.evidencePoster}
                       alt={`${current.title} evidence diagram`}
                       className="absolute inset-0 h-full w-full object-cover"
-                      initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.025 }}
+                      initial={animateTransitions ? { opacity: 0, scale: 1.025 } : false}
                       animate={{ opacity: 1, scale: 1 }}
-                      exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE_ORGANIC }}
+                      exit={animateTransitions ? { opacity: 0 } : undefined}
+                      transition={{ duration: animateTransitions ? 0.58 : 0, ease: EASE_ORGANIC }}
                     />
                   </AnimatePresence>
                   <div
@@ -204,10 +205,10 @@ export function WorkOpening() {
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.div
                       key={`${current.slug}-copy`}
-                      initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+                      initial={animateTransitions ? { opacity: 0, y: 10 } : false}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE_ORGANIC }}
+                      exit={animateTransitions ? { opacity: 0, y: -6 } : undefined}
+                      transition={{ duration: animateTransitions ? 0.38 : 0, ease: EASE_ORGANIC }}
                     >
                       <div className="flex items-start justify-between gap-5">
                         <div className="min-w-0">
