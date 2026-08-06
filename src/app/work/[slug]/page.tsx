@@ -48,17 +48,17 @@ export default async function CaseStudyPage({ params }: Props) {
   const taxonomy = getWorkTaxonomy(project.slug);
   const presentation = getCaseStudyPresentation(project.slug);
 
-  // The current project videos are generated or atmospheric context
-  // films, not recorded client outputs. The case-study evidence layer
-  // therefore uses the approved project stills until genuine project
-  // footage is explicitly cleared and labelled in the data model. This
-  // also gives the server and reduced-motion client an identical first
-  // render, preventing media-tree hydration mismatches.
+  // The generated or atmospheric context films are not recorded client
+  // outputs. Case-study media therefore uses project-specific editorial
+  // evidence diagrams built from the verified strategy, execution, and
+  // results. Genuine client artefacts can replace these only after they
+  // are cleared and labelled in the source data.
   const evidenceProject = {
     ...project,
     heroVideo: undefined,
     cardVideo: undefined,
-    heroPoster: project.cardImage ?? project.heroPoster,
+    cardImage: taxonomy.evidencePoster,
+    heroPoster: taxonomy.evidencePoster,
   };
 
   const caseStudyStructuredData = {
@@ -71,7 +71,7 @@ export default async function CaseStudyPage({ params }: Props) {
     author: { "@id": `${site.url}/#person` },
     creator: { "@id": `${site.url}/#organization` },
     keywords: project.services.join(", "),
-    image: project.cardImage ? `${site.url}${project.cardImage}` : project.heroPoster ? `${site.url}${project.heroPoster}` : undefined,
+    image: `${site.url}${taxonomy.evidencePoster}`,
     url: `${site.url}/work/${project.slug}`,
   };
 
