@@ -33,9 +33,9 @@ export function CalendlyEmbed({ url }: { url: string }) {
   }, []);
 
   // Observe the wrapper because Calendly inserts its iframe after its
-  // external script evaluates. The iframe load event is available even
-  // though its document is cross-origin, which gives us the exact visual
-  // handoff without inspecting any third-party content.
+  // external script evaluates. Passing the non-null root into the
+  // callback keeps the DOM contract explicit even when the observer
+  // executes after this effect's initial synchronous guard.
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
@@ -48,16 +48,16 @@ export function CalendlyEmbed({ url }: { url: string }) {
       setWidgetReady(true);
     }
 
-    function bindIframe() {
-      const nextIframe = wrapper.querySelector<HTMLIFrameElement>("iframe");
+    function bindIframe(root: HTMLDivElement) {
+      const nextIframe = root.querySelector<HTMLIFrameElement>("iframe");
       if (!nextIframe || nextIframe === iframe) return;
       if (iframe) iframe.removeEventListener("load", markReady);
       iframe = nextIframe;
       iframe.addEventListener("load", markReady, { once: true });
     }
 
-    bindIframe();
-    const observer = new MutationObserver(bindIframe);
+    bindIframe(wrapper);
+    const observer = new MutationObserver(() => bindIframe(wrapper));
     observer.observe(wrapper, { childList: true, subtree: true });
 
     return () => {
