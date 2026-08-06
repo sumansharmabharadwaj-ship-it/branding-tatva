@@ -4,12 +4,19 @@ import { useEffect, useMemo, useState } from "react";
 
 // Long-page wayfinding uses two deliberately different densities. Wide
 // screens retain the quiet technical index along the bottom edge. On
-// mobile, a full-width fixed strip sat directly across the case-study
-// copy, so it now collapses into one safe-area-aware pill and opens the
-// four section destinations only when requested.
+// mobile, the full-width strip collapses into one safe-area-aware pill
+// and opens the destinations only when requested.
 type JumpItem = { href: string; label: string };
 
-export function SectionJumpNav({ items }: { items: JumpItem[] }) {
+type SectionJumpNavProps = {
+  items: JumpItem[];
+  // Conversion chapters such as a booking room need the viewport back.
+  // Opting in removes the fixed guide once the final indexed section is
+  // active, while every existing call site keeps the persistent default.
+  hideOnLast?: boolean;
+};
+
+export function SectionJumpNav({ items, hideOnLast = false }: SectionJumpNavProps) {
   const [activeHref, setActiveHref] = useState(items[0]?.href ?? "");
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -38,15 +45,26 @@ export function SectionJumpNav({ items }: { items: JumpItem[] }) {
 
   const activeIndex = Math.max(0, items.findIndex((item) => item.href === activeHref));
   const activeItem = items[activeIndex] ?? items[0];
+  const finalHref = items[items.length - 1]?.href;
+  const hiddenForFinalScene = hideOnLast && Boolean(finalHref) && activeHref === finalHref;
   const position = useMemo(
     () => `${String(activeIndex + 1).padStart(2, "0")} / ${String(items.length).padStart(2, "0")}`,
     [activeIndex, items.length]
   );
 
+  useEffect(() => {
+    if (hiddenForFinalScene) setMobileOpen(false);
+  }, [hiddenForFinalScene]);
+
   function choose(href: string) {
     setActiveHref(href);
     setMobileOpen(false);
   }
+
+  // The final section can now become a true arrival scene. Returning
+  // null also removes every hidden link from keyboard order instead of
+  // leaving an invisible fixed layer above the booking interface.
+  if (hiddenForFinalScene) return null;
 
   return (
     <>
@@ -82,7 +100,7 @@ export function SectionJumpNav({ items }: { items: JumpItem[] }) {
         <button
           type="button"
           aria-expanded={mobileOpen}
-          aria-label={`${mobileOpen ? "Close" : "Open"} case-study section navigation`}
+          aria-label={`${mobileOpen ? "Close" : "Open"} section navigation`}
           onClick={() => setMobileOpen((open) => !open)}
           className="flex min-h-12 w-full items-center justify-between rounded-full border border-ivory/14 bg-soil/95 px-4 py-2.5 shadow-elevation-lg backdrop-blur-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
         >
