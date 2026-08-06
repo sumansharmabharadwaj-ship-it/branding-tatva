@@ -33,6 +33,7 @@ Authority / five-layer amplification
 - poster: /images/generated/bt-services-authority-layers-poster.jpg
 - role: carries one restrained signal through five material layers and widens only after the system is complete
 - renderer: scripts/generate_services_authority_film.py
+
 Stakes / distinctive positioning
 - still: /images/generated/bt-services-stakes-positioning.png
 - treatment: scroll-linked camera drift and a restrained mineral-light catch
