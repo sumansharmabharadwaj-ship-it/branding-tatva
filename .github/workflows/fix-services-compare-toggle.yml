@@ -1,0 +1,83 @@
+name: Make Services comparison toggle stable and touch-safe
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/fix-services-compare-toggle.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-fix-services-compare-toggle
+  cancel-in-progress: false
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out the affected Services controls
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/fix-services-compare-toggle.yml
+            src/sections/Services/PackageSelector.tsx
+            src/components/RegionSelector.tsx
+
+      - name: Apply stable toggle semantics and touch targets
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          package = Path("src/sections/Services/PackageSelector.tsx")
+          text = package.read_text()
+          old = '          type="button"\n          aria-pressed={compare}\n          onClick={() =>'
+          new = '          type="button"\n          aria-label="Compare all three side by side"\n          aria-pressed={compare}\n          onClick={() =>'
+          if text.count(old) != 1:
+              raise SystemExit(f"Compare toggle semantic insertion point count: {text.count(old)}")
+          text = text.replace(old, new, 1)
+          old = 'className="link-underline text-sm text-ivory/70 transition-colors duration-300 hover:text-ivory"'
+          new = 'className="link-underline inline-flex min-h-11 items-center rounded-full px-3 py-2.5 text-sm text-ivory/70 transition-colors duration-300 hover:bg-ivory/[0.05] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"'
+          if text.count(old) != 1:
+              raise SystemExit(f"Compare toggle class insertion point count: {text.count(old)}")
+          package.write_text(text.replace(old, new, 1))
+
+          region = Path("src/components/RegionSelector.tsx")
+          text = region.read_text()
+          old = 'className="rounded-full border border-ivory/25 bg-transparent px-3 py-1.5 text-xs text-ivory outline-none transition-colors focus:border-sandstone [&>option]:text-soil"'
+          new = 'className="min-h-11 rounded-full border border-ivory/25 bg-transparent px-3 py-2 text-xs text-ivory outline-none transition-colors focus:border-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone [&>option]:text-soil"'
+          if text.count(old) != 1:
+              raise SystemExit(f"Region selector class insertion point count: {text.count(old)}")
+          region.write_text(text.replace(old, new, 1))
+          PY
+
+          grep -q 'aria-label="Compare all three side by side"' src/sections/Services/PackageSelector.tsx
+          grep -q 'inline-flex min-h-11' src/sections/Services/PackageSelector.tsx
+          grep -q 'min-h-11 rounded-full' src/components/RegionSelector.tsx
+
+      - name: Remove the one-time patch workflow
+        run: rm .github/workflows/fix-services-compare-toggle.yml
+
+      - name: Commit the control repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/sections/Services/PackageSelector.tsx \
+            src/components/RegionSelector.tsx \
+            .github/workflows/fix-services-compare-toggle.yml
+          git diff --cached --check
+          git commit -m "Give package comparison stable toggle semantics"
+          git pull --rebase origin homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
