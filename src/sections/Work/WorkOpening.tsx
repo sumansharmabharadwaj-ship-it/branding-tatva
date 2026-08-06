@@ -47,6 +47,23 @@ export function WorkOpening() {
   }, []);
 
   useEffect(() => {
+    function trackPointer(event: PointerEvent) {
+      const stage = stageRef.current;
+      if (!stage) return;
+      const bounds = stage.getBoundingClientRect();
+      const inside =
+        event.clientX >= bounds.left &&
+        event.clientX <= bounds.right &&
+        event.clientY >= bounds.top &&
+        event.clientY <= bounds.bottom;
+      setPointerPaused(inside);
+    }
+
+    window.addEventListener("pointermove", trackPointer, { passive: true });
+    return () => window.removeEventListener("pointermove", trackPointer);
+  }, []);
+
+  useEffect(() => {
     const canRotate =
       hydrated &&
       !prefersReducedMotion &&
@@ -159,8 +176,11 @@ export function WorkOpening() {
           <div
             ref={stageRef}
             data-work-preview-stage="true"
-            onMouseEnter={() => setPointerPaused(true)}
-            onMouseLeave={() => setPointerPaused(false)}
+            data-pointer-paused={pointerPaused ? "true" : "false"}
+            data-focus-paused={focusPaused ? "true" : "false"}
+            data-preview-in-view={inView ? "true" : "false"}
+            onPointerEnter={() => setPointerPaused(true)}
+            onPointerLeave={() => setPointerPaused(false)}
             onFocusCapture={() => setFocusPaused(true)}
             onBlurCapture={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
