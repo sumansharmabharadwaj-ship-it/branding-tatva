@@ -1,0 +1,59 @@
+name: Extend Work visual evidence matrix
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/extend-work-visual-audit.yml
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: extend-work-visual-audit
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the working branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Extend, validate, publish, and dispatch
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+            git clean -fd
+
+            echo 'ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgpST09UID0gUGF0aCgiLiIpClRBUkdFVCA9IFJPT1QgLyAic2NyaXB0cy93b3JrX3BhZ2VfZ2F0ZV92My5janMiCldPUktGTE9XID0gUk9PVCAvICIuZ2l0aHViL3dvcmtmbG93cy9leHRlbmQtd29yay12aXN1YWwtYXVkaXQueW1sIgoKZGVmIHJlcGxhY2Vfb25jZSh0ZXh0OiBzdHIsIG9sZDogc3RyLCBuZXc6IHN0cikgLT4gc3RyOgogICAgY291bnQgPSB0ZXh0LmNvdW50KG9sZCkKICAgIGlmIGNvdW50ICE9IDE6CiAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKGYiRXhwZWN0ZWQgb25lIG9jY3VycmVuY2UsIGZvdW5kIHtjb3VudH06IHtvbGRbOjEyMF0hcn0iKQogICAgcmV0dXJuIHRleHQucmVwbGFjZShvbGQsIG5ldywgMSkKCnRleHQgPSBUQVJHRVQucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCgpvbGQgPSAnJycgICAgYXdhaXQgY2FwdHVyZUxvY2F0b3IocGFnZSwgcGFnZS5sb2NhdG9yKCIjaW5kZXgiKSwgYHdvcmstJHt2aWV3cG9ydC5uYW1lfS1pbmRleC5wbmdgKTsKICAgIGF3YWl0IGNhcHR1cmVMb2NhdG9yKHBhZ2UsIHBhZ2UubG9jYXRvcigiI2ZpbmQtcmVsZXZhbnQtcHJvb2YiKSwgYHdvcmstJHt2aWV3cG9ydC5uYW1lfS1zZWxlY3Rvci5wbmdgKTsKICB9JycnCgpuZXcgPSAnJycgICAgYXdhaXQgY2FwdHVyZUxvY2F0b3IocGFnZSwgcGFnZS5sb2NhdG9yKCIjaW5kZXgiKSwgYHdvcmstJHt2aWV3cG9ydC5uYW1lfS1pbmRleC5wbmdgKTsKICAgIGF3YWl0IGNhcHR1cmVMb2NhdG9yKHBhZ2UsIHBhZ2UubG9jYXRvcigiI2ZpbmQtcmVsZXZhbnQtcHJvb2YiKSwgYHdvcmstJHt2aWV3cG9ydC5uYW1lfS1zZWxlY3Rvci5wbmdgKTsKCiAgICBhd2FpdCBkZWNpc2lvbkJ1dHRvbnMuZmlyc3QoKS5jbGljaygpOwogICAgYXdhaXQgcGFnZS53YWl0Rm9yVGltZW91dCgyMjApOwogICAgY29uc3QgZGVjaXNpb25zU2VjdGlvbiA9IHBhZ2UKICAgICAgLmdldEJ5Um9sZSgiaGVhZGluZyIsIHsgbmFtZTogIlNldmVuIGRlY2lzaW9ucywga2VwdCBzbWFsbCBlbm91Z2ggdG8gaW5zcGVjdC4iIH0pCiAgICAgIC5sb2NhdG9yKCJ4cGF0aD1hbmNlc3Rvcjo6c2VjdGlvblsxXSIpOwogICAgYXdhaXQgY2FwdHVyZUxvY2F0b3IocGFnZSwgZGVjaXNpb25zU2VjdGlvbiwgYHdvcmstJHt2aWV3cG9ydC5uYW1lfS1kZWNpc2lvbnMucG5nYCk7CgogICAgY29uc3QgZmluYWxTZWN0aW9uID0gcGFnZQogICAgICAuZ2V0QnlSb2xlKCJoZWFkaW5nIiwgeyBuYW1lOiAiQnJpbmcgdGhlIHBhcnQgb2YgdGhlIGJyYW5kIHRoYXQgbm8gbG9uZ2VyIG1ha2VzIHNlbnNlLiIgfSkKICAgICAgLmxvY2F0b3IoInhwYXRoPWFuY2VzdG9yOjpzZWN0aW9uWzFdIik7CiAgICBhd2FpdCBjYXB0dXJlTG9jYXRvcihwYWdlLCBmaW5hbFNlY3Rpb24sIGB3b3JrLSR7dmlld3BvcnQubmFtZX0tZmluYWwucG5nYCk7CiAgfScnJwoKdGV4dCA9IHJlcGxhY2Vfb25jZSh0ZXh0LCBvbGQsIG5ldykKVEFSR0VULndyaXRlX3RleHQodGV4dCwgZW5jb2Rpbmc9InV0Zi04IikKV09SS0ZMT1cudW5saW5rKCkKcHJpbnQoIkV4dGVuZGVkIFdvcmsgZXZpZGVuY2UgY2FwdHVyZSB0byB0aGUgZGVjaXNpb24gYXJjaGl2ZSBhbmQgZmluYWwgY29udmVyc2lvbiBzY2VuZSIpCg==' | base64 -d > /tmp/extend-work-audit.py
+            python /tmp/extend-work-audit.py
+            node --check scripts/work_page_gate_v3.cjs
+
+            git add scripts/work_page_gate_v3.cjs .github/workflows/extend-work-visual-audit.yml
+            git commit -m "Capture Work decisions and final conversion scenes"
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              gh workflow run work-page-gate.yml --ref homepage-cinematic-recovery
+              exit 0
+            fi
+          done
+
+          exit 1
