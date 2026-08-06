@@ -1,12 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public scripts/services_project_room_gate.cjs package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json",
   "git": {
-    "deploymentEnabled": {
-      "homepage-cinematic-recovery": false,
-      "feat/insights-authority-hub": false,
-      "staging/site-integration": false,
-      "services-project-room-packages-v2": true
-    }
+    "deploymentEnabled": false
   }
 }
