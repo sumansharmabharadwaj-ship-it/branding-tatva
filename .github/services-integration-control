@@ -1,0 +1,11 @@
+Project Room final verification
+
+Validate the complete Services decision journey after the Project Room accessibility contract was merged into services-complete-journey-integration.
+
+Required coverage:
+- production build
+- 1440x900 desktop
+- 1024x768 tablet
+- 390x844 mobile
+- Project Room brief, route, scope, and investment chapters
+- keyboard, touch targets, quotation path, proof path, localized investment, scroll density
