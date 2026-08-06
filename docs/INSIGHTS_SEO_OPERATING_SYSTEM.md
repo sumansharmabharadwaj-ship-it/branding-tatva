@@ -18,8 +18,10 @@ The current authority layer is deliberately focused:
 6. website messaging hierarchy for service businesses
 7. distinctive brand assets and asset auditing
 8. customer journey mapping for service businesses
+9. how to position a consulting business
+10. how to measure brand recall with a limited research budget
 
-The first five pages form the pillar layer. The three supporting guides connect those foundations with website decisions, recognisable assets, and the real service journey.
+The first five pages form the pillar layer. The supporting guides connect those foundations with website decisions, recognisable assets, customer experience, consulting positioning, and practical brand research.
 
 ## Page contract
 
@@ -48,8 +50,10 @@ No article should exist only to occupy a keyword. If the piece cannot add a usef
 Current pillar:
 - Brand positioning strategy for service businesses
 
-Next supporting articles:
+Published supporting article:
 - How to position a consulting business without narrowing the offer too far
+
+Next supporting articles:
 - Brand positioning statement examples and why most of them stay generic
 - Category design versus brand positioning for smaller businesses
 - How to find a real differentiator in a crowded service market
@@ -102,11 +106,13 @@ Next supporting articles:
 Current pillar:
 - Five element brand strategy framework
 
+Published supporting article:
+- How to measure brand recall with a limited research budget
+
 Next supporting articles:
 - How brand consistency creates recognition over time
 - Mental availability for small and service businesses
 - How long brand recognition takes to build
-- Measuring brand recall without a large research budget
 - When a rebrand destroys useful brand equity
 
 ## Publishing sequence
@@ -116,8 +122,8 @@ Publish supporting articles in interleaved clusters rather than completing one t
 1. Website messaging hierarchy for service businesses — complete
 2. Distinctive brand assets: how to choose and audit them — complete
 3. Customer journey mapping for service businesses — complete
-4. How to position a consulting business
-5. Measuring brand recall without a large research budget
+4. How to position a consulting business — complete
+5. Measuring brand recall without a large research budget — complete
 6. Value proposition versus positioning versus tagline
 7. Brand consistency checklist across website, sales, and delivery
 8. Why a beautiful identity can still be forgettable
@@ -140,7 +146,7 @@ Anchor text should describe the destination. Avoid repeated generic anchors such
 
 Whenever a new article is published, update at least two older articles with contextual links to it. This keeps the library connected and gives the new page established crawl paths.
 
-The first three supporting guides are registered in their topic hubs, sitemap, RSS feed, AI-readable index, and the related-reading paths of the relevant pillar articles.
+The first five supporting guides are registered in their topic hubs, sitemap, RSS feed, AI-readable index, and the related-reading paths of the relevant pillar articles.
 
 ## Evidence and citation rules
 
