@@ -65,11 +65,14 @@ export function SectionJumpNav({ items, hideOnLast = false }: SectionJumpNavProp
 
   return (
     <>
-      {/* Mobile: one compact guide rather than a bar across the copy. */}
+      {/* Mobile: one 48px chapter dial. Earlier 56px evidence showed the
+          control covering live Authority and Audit content. This keeps a
+          compliant touch target while returning more of the reading
+          plane to the chapter underneath it. */}
       <nav
         aria-label="Jump to section"
         data-section-jump-nav-mobile="true"
-        className="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-[calc(0.75rem+env(safe-area-inset-right))] z-30 sm:hidden"
+        className="fixed bottom-[calc(0.65rem+env(safe-area-inset-bottom))] right-[calc(0.65rem+env(safe-area-inset-right))] z-30 sm:hidden"
       >
         {mobileOpen && (
           <div className="absolute bottom-[calc(100%+0.5rem)] right-0 grid w-[min(19rem,calc(100vw-1.5rem))] grid-cols-2 gap-1.5 rounded-2xl border border-ivory/12 bg-soil/95 p-2 shadow-elevation-lg backdrop-blur-md">
@@ -101,19 +104,19 @@ export function SectionJumpNav({ items, hideOnLast = false }: SectionJumpNavProp
           aria-expanded={mobileOpen}
           aria-label={`${mobileOpen ? "Close" : "Open"} section navigation. Current chapter ${activeIndex + 1} of ${items.length}: ${activeItem?.label ?? "Sections"}`}
           onClick={() => setMobileOpen((open) => !open)}
-          className="relative flex h-14 w-14 items-center justify-center rounded-full border border-ivory/16 bg-soil/92 shadow-elevation-lg backdrop-blur-md transition-[opacity,transform] duration-300 hover:scale-[1.03] hover:bg-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
+          className="relative flex h-12 w-12 items-center justify-center rounded-full border border-ivory/14 bg-soil/88 shadow-elevation-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 hover:scale-[1.03] hover:bg-soil focus-visible:bg-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
         >
           <span className="flex flex-col items-center justify-center leading-none" aria-hidden="true">
-            <span className="font-display text-base text-terracotta">
+            <span className="font-display text-sm text-terracotta">
               {String(activeIndex + 1).padStart(2, "0")}
             </span>
-            <span className="mt-0.5 text-[0.48rem] font-medium uppercase tracking-[0.12em] text-ivory/48">
+            <span className="mt-0.5 text-[0.43rem] font-medium uppercase tracking-[0.1em] text-ivory/46">
               / {String(items.length).padStart(2, "0")}
             </span>
           </span>
           <span
             aria-hidden="true"
-            className={`absolute right-1.5 top-1 text-xs text-terracotta transition-transform duration-300 ${mobileOpen ? "rotate-45" : ""}`}
+            className={`absolute right-1 top-0.5 text-[0.68rem] text-terracotta transition-transform duration-300 ${mobileOpen ? "rotate-45" : ""}`}
           >
             +
           </span>
