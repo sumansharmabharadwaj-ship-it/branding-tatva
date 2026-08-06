@@ -1,0 +1,119 @@
+name: Generate original Services Situation film v2
+
+on:
+  push:
+    branches:
+      - services-original-situation-film
+    paths:
+      - .github/workflows/import-services-situation-film-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  generate-film:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out focused branch
+        uses: actions/checkout@v4
+        with:
+          ref: services-original-situation-film
+          fetch-depth: 0
+
+      - name: Prepare image and video tools
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check --quiet pillow numpy
+          ffmpeg -version | head -n 1
+
+      - name: Download the original material-world keyframe
+        env:
+          SITUATION_IMAGE_URL: "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:4141260a-9659-4581-8c62-70366359865f"
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 4 --retry-all-errors \
+            "$SITUATION_IMAGE_URL" \
+            --output /tmp/bt-services-situation-source.png
+          test -s /tmp/bt-services-situation-source.png
+          file /tmp/bt-services-situation-source.png | grep -q "PNG image data"
+
+      - name: Direct and render the seamless Situation film
+        run: |
+          set -euo pipefail
+          mkdir -p \
+            /tmp/situation-desktop \
+            /tmp/situation-mobile \
+            public/videos/generated \
+            public/images/generated
+
+          python scripts/generate_services_situation_film.py \
+            --source /tmp/bt-services-situation-source.png \
+            --desktop-dir /tmp/situation-desktop \
+            --mobile-dir /tmp/situation-mobile
+
+          ffmpeg -hide_banner -loglevel error -y \
+            -framerate 25 -i /tmp/situation-desktop/frame-%04d.jpg \
+            -c:v libx264 -preset slow -crf 24 -pix_fmt yuv420p -movflags +faststart -an \
+            public/videos/generated/bt-services-situation-paths.mp4
+
+          ffmpeg -hide_banner -loglevel error -y \
+            -framerate 25 -i /tmp/situation-mobile/frame-%04d.jpg \
+            -c:v libx264 -preset slow -crf 25 -pix_fmt yuv420p -movflags +faststart -an \
+            public/videos/generated/bt-services-situation-paths-mobile.mp4
+
+          cp /tmp/situation-desktop/frame-0075.jpg \
+            public/images/generated/bt-services-situation-paths-poster.jpg
+
+      - name: Validate the responsive silent media contract
+        run: |
+          set -euo pipefail
+          for file in \
+            public/videos/generated/bt-services-situation-paths.mp4 \
+            public/videos/generated/bt-services-situation-paths-mobile.mp4 \
+            public/images/generated/bt-services-situation-paths-poster.jpg
+          do
+            test -s "$file"
+          done
+
+          python <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          videos = [
+              Path('public/videos/generated/bt-services-situation-paths.mp4'),
+              Path('public/videos/generated/bt-services-situation-paths-mobile.mp4'),
+          ]
+          for path in videos:
+              probe = json.loads(subprocess.check_output([
+                  'ffprobe', '-v', 'error', '-show_streams', '-show_format',
+                  '-of', 'json', str(path)
+              ]))
+              duration = float(probe['format']['duration'])
+              audio = [stream for stream in probe['streams'] if stream.get('codec_type') == 'audio']
+              video = [stream for stream in probe['streams'] if stream.get('codec_type') == 'video']
+              if not 5.8 <= duration <= 6.2:
+                  raise SystemExit(f'{path}: unexpected duration {duration}')
+              if audio:
+                  raise SystemExit(f'{path}: audio stream found')
+              if len(video) != 1:
+                  raise SystemExit(f'{path}: expected one video stream')
+              print(path, duration, video[0]['width'], video[0]['height'], path.stat().st_size)
+          PY
+
+      - name: Commit the original Situation film
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/videos/generated/bt-services-situation-paths.mp4 \
+            public/videos/generated/bt-services-situation-paths-mobile.mp4 \
+            public/images/generated/bt-services-situation-paths-poster.jpg
+          git commit -m "Generate the original Services Situation film"
+          git push origin HEAD:services-original-situation-film
