@@ -1,0 +1,206 @@
+name: Apply Work Lab visibility fix
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/apply-work-lab-visibility-fix.yml
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: apply-work-lab-visibility-fix
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out application without the media archive
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: corepack enable
+
+      - name: Apply, build, publish, and verify
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            echo "Work Lab visibility attempt ${attempt}"
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+
+            python <<'PY'
+          from pathlib import Path
+
+          path = Path("src/sections/Work/TatvaLab.tsx")
+          workflow = Path(".github/workflows/apply-work-lab-visibility-fix.yml")
+          text = path.read_text(encoding="utf-8")
+
+          def replace_once(old: str, new: str) -> None:
+              global text
+              count = text.count(old)
+              if count != 1:
+                  raise RuntimeError(f"Expected one occurrence, found {count}: {old[:120]!r}")
+              text = text.replace(old, new, 1)
+
+          replace_once(
+              'import { Reveal } from "@/components/Reveal";\n',
+              '',
+          )
+          replace_once(
+              '<section className="py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>',
+              '<section className="scroll-mt-28 py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>',
+          )
+          replace_once(
+              '''          <Reveal>
+            <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>
+              Branding Tatva Lab
+            </p>
+            <h2 className="mt-2 max-w-2xl font-display text-display-sm font-normal" style={{ color: WORK.charcoal }}>
+              Concept studies: the method, demonstrated in the open.
+            </h2>
+            <p className="mt-4 max-w-xl text-base leading-relaxed" style={{ color: WORK.wood }}>
+              Independent, speculative brand work. Zero clients are implied and zero outcomes are claimed; each study
+              exists to show how the decisions get made.
+            </p>
+          </Reveal>''',
+              '''          <div>
+            <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>
+              Branding Tatva Lab
+            </p>
+            <h2 className="mt-2 max-w-2xl font-display text-display-sm font-normal" style={{ color: WORK.charcoal }}>
+              Concept studies: the method, demonstrated in the open.
+            </h2>
+            <p className="mt-4 max-w-xl text-base leading-relaxed" style={{ color: WORK.wood }}>
+              Independent, speculative brand work. Zero clients are implied and zero outcomes are claimed; each study
+              exists to show how the decisions get made.
+            </p>
+          </div>''',
+          )
+          replace_once(
+              '''          <Reveal delay={0.06}>
+            <div
+              className="grid grid-cols-3 overflow-hidden rounded-2xl border bg-white/40"
+              style={{ borderColor: WORK.stone + "66" }}
+              aria-label="Lab evidence boundary"
+            >
+              {[
+                ["04", "Concept studies"],
+                ["00", "Clients implied"],
+                ["00", "Outcomes claimed"],
+              ].map(([value, label], index) => (
+                <div
+                  key={label}
+                  className={`px-3 py-4 text-center sm:px-4 ${index ? "border-l" : ""}`}
+                  style={{ borderColor: WORK.stone + "55" }}
+                >
+                  <p className="font-display text-2xl font-normal" style={{ color: WORK.charcoal }}>
+                    {value}
+                  </p>
+                  <p className="mt-1 text-[0.55rem] font-medium uppercase tracking-[0.13em]" style={{ color: WORK.wood }}>
+                    {label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Reveal>''',
+              '''          <div
+            className="grid grid-cols-3 overflow-hidden rounded-2xl border bg-white/40"
+            style={{ borderColor: WORK.stone + "66" }}
+            aria-label="Lab evidence boundary"
+          >
+            {[
+              ["04", "Concept studies"],
+              ["00", "Clients implied"],
+              ["00", "Outcomes claimed"],
+            ].map(([value, label], index) => (
+              <div
+                key={label}
+                className={`px-3 py-4 text-center sm:px-4 ${index ? "border-l" : ""}`}
+                style={{ borderColor: WORK.stone + "55" }}
+              >
+                <p className="font-display text-2xl font-normal" style={{ color: WORK.charcoal }}>
+                  {value}
+                </p>
+                <p className="mt-1 text-[0.55rem] font-medium uppercase leading-snug tracking-[0.13em]" style={{ color: WORK.wood }}>
+                  {label}
+                </p>
+              </div>
+            ))}
+          </div>''',
+          )
+          replace_once(
+              'className="group relative flex min-h-[12rem] w-full sm:min-h-[18rem] flex-col overflow-hidden rounded-[1.4rem] border p-5 text-left',
+              'className="group relative flex min-h-[11rem] w-full flex-col overflow-hidden rounded-[1.4rem] border p-4 text-left sm:min-h-[18rem] sm:p-6',
+          )
+          replace_once(
+              'className="mt-4 block text-[0.6rem] font-medium uppercase tracking-[0.15em]"',
+              'className="mt-3 block text-[0.6rem] font-medium uppercase tracking-[0.15em] sm:mt-4"',
+          )
+          replace_once(
+              'className="relative mt-auto block pt-5 sm:pt-8"',
+              'className="relative mt-auto block pt-4 sm:pt-8"',
+          )
+          replace_once(
+              'className="absolute left-[8%] right-[8%] top-[1.65rem] h-px sm:top-[2.35rem]"',
+              'className="absolute left-[8%] right-[8%] top-[1.35rem] h-px sm:top-[2.35rem]"',
+          )
+          replace_once(
+              'className="mt-2 block text-[0.52rem] uppercase tracking-[0.1em]"',
+              'className="mt-2 block text-[0.56rem] uppercase tracking-[0.08em] sm:text-[0.52rem] sm:tracking-[0.1em]"',
+          )
+          replace_once(
+              'className="mt-6 scroll-mt-28 overflow-hidden rounded-[1.7rem] border"',
+              'className="mt-6 scroll-mt-32 overflow-hidden rounded-[1.7rem] border"',
+          )
+
+          path.write_text(text, encoding="utf-8")
+          workflow.unlink()
+          print("Installed static Lab framing, denser mobile dossiers, and safer anchor spacing")
+          PY
+
+            pnpm install --frozen-lockfile
+            pnpm build
+
+            git add src/sections/Work/TatvaLab.tsx .github/workflows/apply-work-lab-visibility-fix.yml
+            if git diff --cached --quiet; then
+              echo "Work Lab visibility fixes are already present."
+              gh workflow run work-page-gate.yml --ref homepage-cinematic-recovery
+              exit 0
+            fi
+
+            git commit -m "Keep the Work Lab visible during fast scrolls"
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              gh workflow run work-page-gate.yml --ref homepage-cinematic-recovery
+              echo "Work Lab fixes published and Work gate dispatched."
+              exit 0
+            fi
+
+            echo "Branch moved during verification; replaying on the newest head."
+          done
+
+          exit 1
