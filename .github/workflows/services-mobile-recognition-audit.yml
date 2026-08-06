@@ -1,4 +1,5 @@
 name: Build and verify the two-chapter mobile Recognition Audit
+run-name: Services mobile Recognition Audit pass 2 · ${{ github.sha }}
 
 on:
   push:
