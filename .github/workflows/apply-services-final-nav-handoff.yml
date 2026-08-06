@@ -1,0 +1,65 @@
+name: Apply Services final navigation handoff
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/apply-services-final-nav-handoff.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-services-final-nav-handoff
+  cancel-in-progress: false
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out the Services page and one-time patch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/apply-services-final-nav-handoff.yml
+            src/app/services/page.tsx
+
+      - name: Give the Strategy Room the full viewport
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path("src/app/services/page.tsx")
+          text = page.read_text()
+          old = '<SectionJumpNav items={JUMP_ITEMS} />'
+          new = '<SectionJumpNav items={JUMP_ITEMS} hideOnLast />'
+          count = text.count(old)
+          if count != 1:
+              raise SystemExit(f"Expected one SectionJumpNav call, found {count}")
+          page.write_text(text.replace(old, new, 1))
+          PY
+
+          grep -q '<SectionJumpNav items={JUMP_ITEMS} hideOnLast />' src/app/services/page.tsx
+
+      - name: Remove the one-time patch workflow
+        run: rm .github/workflows/apply-services-final-nav-handoff.yml
+
+      - name: Commit the final-scene handoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/app/services/page.tsx .github/workflows/apply-services-final-nav-handoff.yml
+          git diff --cached --check
+          git commit -m "Hide the Services jump guide inside the Strategy Room"
+          git pull --rebase origin homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
