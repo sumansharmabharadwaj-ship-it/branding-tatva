@@ -65,9 +65,10 @@ export function WorkArchive({ projects }: { projects: Project[] }) {
                 <div>
                   {entries.map((project, index) => {
                     const record = getWorkTaxonomy(project.slug);
-                    const needs = record.needs
-                      .map((needId) => WORK_NEEDS.find((need) => need.id === needId)?.label)
-                      .filter((label): label is string => Boolean(label));
+                    const needs = record.needs.map((needId) => {
+                      const need = WORK_NEEDS.find((item) => item.id === needId);
+                      return need ? need.label : needId;
+                    });
 
                     return (
                       <Reveal key={project.slug} delay={index * 0.05}>
