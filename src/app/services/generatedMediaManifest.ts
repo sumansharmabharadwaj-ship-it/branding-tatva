@@ -1,7 +1,7 @@
 export const GENERATED_SERVICES_MEDIA_REVISION = {
   installed: "2026-08-06",
-  desktopLoops: 5,
-  mobileLoops: 5,
+  desktopLoops: 6,
+  mobileLoops: 6,
   silent: true,
   posters: true,
   auditHarness: "strict-csp-compatible",
@@ -31,6 +31,12 @@ export const GENERATED_SERVICES_MEDIA = {
     mobile: "/videos/generated/bt-services-perception-ascent-mobile.mp4",
     poster: "/images/generated/bt-services-perception-ascent-poster.jpg",
     purpose: "Make the landscape and its recognisable signal become clearer together.",
+  },
+  strategyRoom: {
+    desktop: "/videos/generated/bt-services-strategy-room.mp4",
+    mobile: "/videos/generated/bt-services-strategy-room-mobile.mp4",
+    poster: "/images/generated/bt-services-strategy-room-poster.jpg",
+    purpose: "Let surface noise settle into one calm, legible reflection before the conversation begins.",
   },
   health: {
     desktop: "/videos/generated/bt-services-health-reflection.mp4",

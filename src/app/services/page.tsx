@@ -672,30 +672,18 @@ export default async function ServicesPage() {
           <SceneHandoff color="#27221E" />
         </section>
 
-        {/* Book call — the strategy room. Direct feedback that the
-            previous asset (a blurred coffee cup and notebook photo)
-            read as a generic desk stock cliché on the page's single
-            most consequential section. Replaced after a real search
-            against the site's own established language (rejected along
-            the way: a portrait-oriented curtain clip, a cluttered dark
-            cabin interior, a cluttered kids' playroom) with sunlight
-            drifting across weathered wood grain (Pexels id 4102353,
-            standard license) — genuinely macro, muted, and quiet,
-            verified across the full clip's motion, not just its poster
-            frame. Trimmed to a 5s graded segment, then built into a
-            mathematically seamless 10s ping-pong loop (forward +
-            time-reversed twin), so there is no loop-point jump. First
-            WebM asset on the site (TexturedDark's own comment covers
-            why), MP4 fallback alongside it. */}
-        {/* Phase 1: the emotional resting point before conversion — the
-            page's kept golden moment gets the most generous vertical
-            breathing room on the page, arriving like a quiet studio
-            after the cool chapters rather than "the end of a website." */}
+        {/* Book call becomes the film's arrival rather than a
+            stock-location ending. Surface movement gradually settles
+            into one mineral-gold reflection, mirroring the visitor's
+            shift from scattered questions to a focused conversation.
+            The source is original, silent, mathematically seamless,
+            responsive, and preserved as a still under reduced motion. */}
         <TexturedDark
           id="book"
-          image="/images/pexels-valley-first-light-poster.jpg"
-          video="/videos/pexels-valley-first-light.mp4"
-          videoWebm="/videos/pexels-valley-first-light.webm"
+          image="/images/generated/bt-services-strategy-room-poster.jpg"
+          video="/videos/generated/bt-services-strategy-room.mp4"
+          videoMobile="/videos/generated/bt-services-strategy-room-mobile.mp4"
+          overlayGradient="linear-gradient(180deg, rgba(10,15,16,0.42) 0%, rgba(14,18,18,0.52) 52%, rgba(20,17,14,0.74) 100%)"
           className="scroll-mt-24 pb-16 pt-24 sm:pb-20 sm:pt-32"
         >
           <StrategyRoomCTA />

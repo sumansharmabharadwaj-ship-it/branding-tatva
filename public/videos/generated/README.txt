@@ -32,6 +32,12 @@ Brand Health Check
 - poster: /images/generated/bt-services-health-reflection-poster.jpg
 - role: reveals hidden misalignment beneath an apparently coherent surface
 
+Strategy Room / booking
+- bt-services-strategy-room.mp4
+- bt-services-strategy-room-mobile.mp4
+- poster: /images/generated/bt-services-strategy-room-poster.jpg
+- role: lets surface noise settle into one calm reflection before a focused conversation begins
+
 Implementation rules
 - silent, muted, autoplay, loop, playsInline
 - generated poster fallback for reduced motion and slow connections
