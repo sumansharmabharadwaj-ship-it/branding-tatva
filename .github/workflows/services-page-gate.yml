@@ -1,10 +1,10 @@
 name: Complete Services page journey gate
-run-name: Complete Services integration · ${{ github.sha }}
+run-name: Complete Services integration pass 1 · ${{ github.sha }}
 
 on:
   push:
     branches:
-      - homepage-cinematic-recovery
+      - services-complete-journey-integration
     paths:
       - .github/workflows/services-page-gate.yml
   workflow_dispatch:
@@ -125,6 +125,7 @@ jobs:
           rm scripts/apply_services_practical_faq.py
           rm scripts/apply_services_strategy_room_gate.py
           rm .github/workflows/services-complete-journey-integration.yml
+          rm .github/workflows/services-complete-journey-gate.yml
           cat > vercel.json <<'JSON'
           {
             "$schema": "https://openapi.vercel.sh/vercel.json",
