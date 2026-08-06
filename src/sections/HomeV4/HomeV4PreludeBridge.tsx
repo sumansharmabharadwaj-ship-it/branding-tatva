@@ -34,6 +34,8 @@ export function HomeV4PreludeBridge() {
         window.cancelAnimationFrame(readyFrame);
         readyFrame = window.requestAnimationFrame(() => setReady(true));
       } else {
+        window.cancelAnimationFrame(readyFrame);
+        readyFrame = 0;
         setReady(false);
       }
     }
