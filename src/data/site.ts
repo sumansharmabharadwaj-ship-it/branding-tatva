@@ -1,3 +1,5 @@
+import "@/data/registerSupportingInsights";
+
 // Central site configuration. Edit this file to change copy that appears
 // in multiple places (nav, footer, metadata) without hunting through pages.
 //
