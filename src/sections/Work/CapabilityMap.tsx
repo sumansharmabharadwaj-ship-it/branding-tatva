@@ -12,9 +12,6 @@ import { WORK, EASE_ORGANIC } from "@/sections/Work/palette";
 import { motionTokens } from "@/lib/motionTokens";
 import { WaystoneField, type Waystone } from "@/components/motion/WaystoneField";
 
-// Each need waystone teaches in one line and carries the real count
-// of capability areas it illuminates — computed from the need paths
-// themselves, never typed by hand.
 const NEED_TEACH: Record<string, string> = {
   clarity: "One position instead of several.",
   recognition: "Known before compared.",
@@ -23,41 +20,37 @@ const NEED_TEACH: Record<string, string> = {
   marketing: "Amplify clarity, never confusion.",
 };
 
-const NEED_STONES: Waystone[] = NEED_PATHS.map((n) => ({
-  id: n.id,
-  title: n.label,
-  teach: NEED_TEACH[n.id] ?? "",
-  meta: `${n.capabilityIds.length} capability areas`,
+const NEED_STONES: Waystone[] = NEED_PATHS.map((need) => ({
+  id: need.id,
+  title: need.label,
+  teach: NEED_TEACH[need.id] ?? "",
+  meta: `${need.capabilityIds.length} capability areas`,
 }));
 
-// The capability and experience map — breadth communicated through
-// visible judgment rather than claimed volume. The visitor names
-// their need; the map illuminates the capabilities that answer it,
-// then shows the one real engagement that evidences those
-// capabilities and the real package that serves the need. Accessible
-// buttons throughout, nothing lives behind hover, reduced motion gets
-// instant state changes, and every fact resolves to recorded data.
 export function CapabilityMap() {
   const [activeNeed, setActiveNeed] = useState(NEED_PATHS[0].id);
   const prefersReducedMotion = useReducedMotion();
-  const need = NEED_PATHS.find((n) => n.id === activeNeed) ?? NEED_PATHS[0];
-  const project = projects.find((p) => p.slug === need.projectSlug);
+  const need = NEED_PATHS.find((item) => item.id === activeNeed) ?? NEED_PATHS[0];
+  const project = projects.find((item) => item.slug === need.projectSlug);
 
   function pick(id: string) {
     setActiveNeed(id);
-    track("capability_selected", { need: id });
+    track("capability_selected", { need: id, source: "work_case_selector" });
   }
 
   return (
-    <section className="py-16 sm:py-24" style={{ backgroundColor: WORK.mist }}>
+    <section id="find-relevant-proof" className="scroll-mt-24 py-16 sm:py-24" style={{ backgroundColor: WORK.mist }}>
       <Container className="max-w-6xl">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.moss }}>
-            Capability map
+            Find relevant proof
           </p>
           <h2 className="mt-2 max-w-2xl font-display text-display-sm font-normal" style={{ color: WORK.charcoal }}>
-            Name the need. The map shows the work that answers it.
+            What are you trying to fix?
           </h2>
+          <p className="mt-4 max-w-xl text-base leading-relaxed" style={{ color: WORK.wood }}>
+            Choose the condition that feels familiar. The selector reveals the recorded project, capability areas, and service path most closely connected to it.
+          </p>
         </Reveal>
 
         <div className="mt-8">
@@ -65,22 +58,18 @@ export function CapabilityMap() {
             stones={NEED_STONES}
             activeId={activeNeed}
             onSelect={pick}
-            ariaLabel="Choose your need"
+            ariaLabel="Choose the brand problem you are trying to fix"
             tone="light"
           />
         </div>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
-          {/* The organic cluster — fifteen real capability areas; the
-              active need's set illuminates. Offsets give the field a
-              terrain feel while every node stays an ordinary, readable
-              element in DOM order. */}
           <ul className="flex flex-wrap items-start gap-x-3 gap-y-4" aria-label="Capability areas">
-            {CAPABILITIES.map((cap, i) => {
-              const lit = need.capabilityIds.includes(cap.id);
+            {CAPABILITIES.map((capability, index) => {
+              const lit = need.capabilityIds.includes(capability.id);
               return (
                 <motion.li
-                  key={cap.id}
+                  key={capability.id}
                   animate={
                     prefersReducedMotion
                       ? undefined
@@ -89,13 +78,13 @@ export function CapabilityMap() {
                   transition={{ duration: motionTokens.durationFast, ease: motionTokens.easeOrganic }}
                   className="rounded-full border px-4 py-2 font-display text-base transition-colors duration-500 sm:text-lg"
                   style={{
-                    marginTop: `${(i % 3) * 8}px`,
+                    marginTop: `${(index % 3) * 8}px`,
                     borderColor: lit ? WORK.moss : WORK.stone + "77",
                     backgroundColor: lit ? "rgba(85,107,74,0.14)" : "transparent",
                     color: lit ? WORK.forest : WORK.stone,
                   }}
                 >
-                  {cap.name}
+                  {capability.name}
                 </motion.li>
               );
             })}
@@ -113,7 +102,7 @@ export function CapabilityMap() {
                 style={{ backgroundColor: WORK.cream }}
               >
                 <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: WORK.moss }}>
-                  The evidence
+                  Closest recorded evidence
                 </p>
                 {project && (
                   <p className="mt-2 font-display text-2xl font-normal" style={{ color: WORK.charcoal }}>
@@ -130,7 +119,7 @@ export function CapabilityMap() {
                       className="link-underline inline-flex items-center gap-2 font-medium"
                       style={{ color: WORK.forest }}
                     >
-                      See the work behind this capability <span aria-hidden="true">→</span>
+                      See the work behind this problem <span aria-hidden="true">→</span>
                     </Link>
                   )}
                   <Link
