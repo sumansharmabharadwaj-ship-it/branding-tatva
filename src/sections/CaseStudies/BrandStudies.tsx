@@ -18,9 +18,9 @@ const CARD_SPANS = [
 
 // The teaching layer is deliberately separated from client evidence.
 // These five studies analyse the public record with zero implied client
-// relationship. On mobile, unopened covers become compact summaries so
-// choosing one lesson does not require dragging four full covers behind
-// it. Larger screens retain the complete editorial mechanism cards.
+// relationship. On phones, selecting one study temporarily hides the
+// unrelated covers so the chosen lesson hands directly into its evidence.
+// Tablets and larger screens retain the complete editorial gallery.
 export function BrandStudies() {
   const [open, setOpen] = useState(-1);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -38,7 +38,7 @@ export function BrandStudies() {
   }, [open, prefersReducedMotion]);
 
   return (
-    <section className="scroll-mt-28 py-16 sm:py-24" style={{ backgroundColor: "#071A20" }}>
+    <section className="scroll-mt-32 py-14 sm:py-24" style={{ backgroundColor: "#071A20" }}>
       <Container className="max-w-6xl">
         {/* This framing is factual orientation, not decorative motion.
             Keeping it immediately visible prevents direct jumps or fast
@@ -85,7 +85,9 @@ export function BrandStudies() {
 
             return (
               <Fragment key={study.slug}>
-                <article className={`min-w-0 ${CARD_SPANS[index] ?? "lg:col-span-4"}`}>
+                <article
+                  className={`min-w-0 ${open >= 0 && !isOpen ? "hidden md:block" : ""} ${CARD_SPANS[index] ?? "lg:col-span-4"}`}
+                >
                   <h3 className="h-full">
                     <button
                       type="button"
@@ -181,7 +183,7 @@ export function BrandStudies() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
                       transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
-                      className="scroll-mt-28 overflow-hidden rounded-[1.55rem] border md:col-span-2 lg:col-span-12"
+                      className="scroll-mt-32 overflow-hidden rounded-[1.55rem] border md:col-span-2 lg:col-span-12"
                       style={{
                         borderColor: accent + "55",
                         background: `radial-gradient(circle at 12% 0%, ${accent}20, transparent 34%), #0A242B`,
