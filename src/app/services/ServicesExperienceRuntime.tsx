@@ -28,12 +28,13 @@ export function ServicesExperienceRuntime() {
     if (!main) return;
 
     const scenes = orderedScenes(main);
-    if (!scenes.length) return;
+    const firstScene = scenes[0];
+    if (!firstScene) return;
+    const hero = firstScene;
 
     document.documentElement.dataset.servicesExperience = "active";
     const ratios = new Map<HTMLElement, number>();
     const signalLayers = new Map<HTMLElement, HTMLSpanElement>();
-    const hero = scenes[0];
     const heroMedia = Array.from(
       hero.querySelectorAll<HTMLElement>(":scope > img, :scope > video"),
     );
@@ -77,8 +78,10 @@ export function ServicesExperienceRuntime() {
 
     function publishChapter(index: number) {
       if (index === activeIndex && document.documentElement.dataset.servicesActiveChapter) return;
+      const chapter = scenes[index] ?? scenes[0];
+      if (!chapter) return;
+
       activeIndex = index;
-      const chapter = scenes[index];
       const progress = scenes.length > 1 ? index / (scenes.length - 1) : 1;
 
       document.documentElement.dataset.servicesActiveChapter =
@@ -161,10 +164,6 @@ export function ServicesExperienceRuntime() {
         "--services-hero-aperture-opacity",
         (0.08 + apertureProgress * 0.72).toFixed(4),
       );
-      hero.style.setProperty(
-        "--services-hero-fragment-shift",
-        `${(1 - resolveProgress).toFixed(4)}`,
-      );
       hero.dataset.servicesHeroPhase =
         exitProgress > 0.72 ? "handoff" : resolveProgress >= 0.85 ? "resolved" : "assembling";
     }
@@ -234,7 +233,6 @@ export function ServicesExperienceRuntime() {
         "--services-hero-index-opacity",
         "--services-hero-aperture-scale",
         "--services-hero-aperture-opacity",
-        "--services-hero-fragment-shift",
       ].forEach((property) => hero.style.removeProperty(property));
 
       scenes.forEach((scene) => {

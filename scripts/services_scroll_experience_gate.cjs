@@ -36,6 +36,12 @@ async function noHorizontalOverflow(page, label) {
   );
 }
 
+async function selectedTabIndex(tabs) {
+  return tabs.evaluateAll((nodes) =>
+    nodes.findIndex((node) => node.getAttribute("aria-selected") === "true"),
+  );
+}
+
 async function auditViewport(browser, viewport) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
@@ -71,21 +77,60 @@ async function auditViewport(browser, viewport) {
   assert(metrics.activeChapter, `${label}: active chapter was not published`);
   assert(metrics.chapterProgress, `${label}: chapter progress was not published`);
 
+  const hero = page.locator('[data-services-hero-scene="true"]');
+  assert((await hero.count()) === 1, `${label}: Services hero director is missing`);
+  assert((await hero.locator('[data-services-hero-heading="true"]').count()) === 1, `${label}: hero heading is not directed`);
+  assert((await hero.locator('[data-services-hero-aperture="true"]').count()) === 1, `${label}: hero aperture is missing`);
+  const heroStart = await hero.evaluate((node) => ({
+    phase: node.getAttribute("data-services-hero-phase"),
+    scale: getComputedStyle(node).getPropertyValue("--services-hero-scale").trim(),
+  }));
+
   const beforeScroll = await page.evaluate(() => window.scrollY);
   await page.evaluate(() => window.scrollBy({ top: 320, behavior: "instant" }));
-  await page.waitForTimeout(120);
+  await page.waitForTimeout(160);
   const afterScroll = await page.evaluate(() => window.scrollY);
   assert(afterScroll > beforeScroll + 250, `${label}: native scroll did not respond immediately`);
+  const heroAfter = await hero.evaluate((node) => ({
+    phase: node.getAttribute("data-services-hero-phase"),
+    scale: getComputedStyle(node).getPropertyValue("--services-hero-scale").trim(),
+  }));
+  assert(
+    heroAfter.phase !== heroStart.phase || heroAfter.scale !== heroStart.scale,
+    `${label}: the first gesture did not change the hero composition`,
+  );
 
   const offerings = page.locator("#offerings");
   await offerings.scrollIntoViewIfNeeded();
   await page.waitForTimeout(650);
   const tabs = offerings.getByRole("tab");
   assert((await tabs.count()) === 6, `${label}: the service explorer should expose six disciplines`);
-  const firstSelected = await tabs.evaluateAll((nodes) => nodes.findIndex((node) => node.getAttribute("aria-selected") === "true"));
-  await page.waitForTimeout(4_200);
-  const advancedSelected = await tabs.evaluateAll((nodes) => nodes.findIndex((node) => node.getAttribute("aria-selected") === "true"));
-  assert(advancedSelected !== firstSelected, `${label}: in-view service disciplines did not advance`);
+  const firstSelected = await selectedTabIndex(tabs);
+
+  const journey = offerings.locator('[data-services-discipline-journey="true"]');
+  assert((await journey.count()) === 1, `${label}: the service-discipline journey is missing`);
+
+  let journeyRange = null;
+  if (viewport.width >= 1024) {
+    journeyRange = await journey.evaluate((node) => node.getBoundingClientRect().height / window.innerHeight);
+    assert(
+      journeyRange >= 1.62 && journeyRange <= 1.78,
+      `${label}: service ecosystem uses ${journeyRange.toFixed(2)} viewports; expected about 1.7`,
+    );
+
+    await journey.evaluate((node) => {
+      const rect = node.getBoundingClientRect();
+      const top = window.scrollY + rect.top;
+      const travel = Math.max(0, node.getBoundingClientRect().height - window.innerHeight);
+      window.scrollTo({ top: top + travel * 0.58, behavior: "instant" });
+    });
+    await page.waitForTimeout(520);
+  } else {
+    await page.waitForTimeout(4_200);
+  }
+
+  const advancedSelected = await selectedTabIndex(tabs);
+  assert(advancedSelected !== firstSelected, `${label}: the service ecosystem did not advance`);
 
   const websiteTab = offerings.getByRole("tab", { name: "Website Development", exact: true });
   await websiteTab.click();
@@ -93,7 +138,7 @@ async function auditViewport(browser, viewport) {
   await page.waitForTimeout(4_200);
   assert(
     (await websiteTab.getAttribute("aria-selected")) === "true",
-    `${label}: autoplay fought the visitor's manual choice`,
+    `${label}: automatic progression fought the visitor's manual choice`,
   );
 
   const authority = page.locator("#authority");
@@ -132,7 +177,13 @@ async function auditViewport(browser, viewport) {
   });
 
   await context.close();
-  return { viewport: viewport.name, ...metrics, sceneCount, playingVideos };
+  return {
+    viewport: viewport.name,
+    ...metrics,
+    sceneCount,
+    playingVideos,
+    journeyRange,
+  };
 }
 
 async function auditReducedMotion(browser) {
@@ -145,11 +196,19 @@ async function auditReducedMotion(browser) {
   await waitForPrelude(page);
 
   const authority = page.locator("#authority > div").first();
-  const style = await authority.evaluate((node) => ({
-    height: getComputedStyle(node).height,
-    position: getComputedStyle(node.firstElementChild || node).position,
-  }));
-  assert(style.height !== "1980px", "services-scroll/reduced: Authority retained the 220svh scroll cage");
+  const authorityRange = await authority.evaluate(
+    (node) => node.getBoundingClientRect().height / window.innerHeight,
+  );
+  assert(
+    authorityRange < 2.05,
+    `services-scroll/reduced: Authority retained a ${authorityRange.toFixed(2)}-viewport scroll cage`,
+  );
+
+  const journey = page.locator('[data-services-discipline-journey="true"]');
+  const journeyPosition = await journey.locator(":scope > div").evaluate((node) =>
+    getComputedStyle(node).position,
+  );
+  assert(journeyPosition !== "sticky", "services-scroll/reduced: service journey remained sticky");
 
   const playingVideos = await page.locator("video").evaluateAll((videos) =>
     videos.filter((video) => !video.paused && !video.ended).length,
@@ -157,7 +216,7 @@ async function auditReducedMotion(browser) {
   assert(playingVideos === 0, `services-scroll/reduced: ${playingVideos} videos are still playing`);
   await noHorizontalOverflow(page, "services-scroll/reduced");
   await context.close();
-  return { authorityHeight: style.height, playingVideos };
+  return { authorityRange, journeyPosition, playingVideos };
 }
 
 (async () => {
