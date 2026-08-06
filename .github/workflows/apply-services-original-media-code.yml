@@ -27,6 +27,11 @@ jobs:
         run: |
           python <<'PY'
           from pathlib import Path
+          from textwrap import dedent
+          import re
+
+          def block(value: str) -> str:
+              return dedent(value).strip("\n")
 
           def replace_once(text: str, old: str, new: str, label: str) -> str:
               count = text.count(old)
@@ -34,204 +39,140 @@ jobs:
                   raise SystemExit(f"{label}: expected one match, found {count}")
               return text.replace(old, new, 1)
 
-          photo_path = Path("src/components/PhotoHero.tsx")
-          photo = photo_path.read_text()
-
-          photo = replace_once(
-              photo,
-              '''  className,
-              accentColor,
-            }: {''',
-              '''  className,
-              accentColor,
-              videoPreload = "metadata",
-              playbackRate = 1,
-              overlayGradient = gradient,
-            }: {''',
-              "PhotoHero parameter defaults",
-          )
-
-          photo = replace_once(
-              photo,
-              '''  className?: string;
-              accentColor?: string;
-            }) {''',
-              '''  className?: string;
-              accentColor?: string;
-              videoPreload?: "none" | "metadata" | "auto";
-              playbackRate?: number;
-              overlayGradient?: string;
-            }) {''',
-              "PhotoHero prop types",
-          )
-
-          photo = replace_once(
-              photo,
-              '''  useVideoFadeIn(videoRef, Boolean(video) && !prefersReducedMotion);
-
-              // A case study's hero footage''',
-              '''  useVideoFadeIn(videoRef, Boolean(video) && !prefersReducedMotion);
-              const safePlaybackRate = Math.min(1.5, Math.max(0.75, playbackRate));
-
-              // A case study's hero footage''',
-              "PhotoHero safe playback rate",
-          )
-
-          photo = replace_once(
-              photo,
-              '''            src={video}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                      />''',
-              '''            src={video}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload={videoPreload}
-                        onLoadedMetadata={(event) => {
-                          event.currentTarget.defaultPlaybackRate = safePlaybackRate;
-                          event.currentTarget.playbackRate = safePlaybackRate;
-                        }}
-                      />''',
-              "PhotoHero video controls",
-          )
-
-          photo = photo.replace(
-              '''          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />''',
-              '''          <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />''',
-          )
-          if photo.count("backgroundImage: overlayGradient") != 2:
-              raise SystemExit("PhotoHero overlay gradient: expected two replacements")
-
-          photo_path.write_text(photo)
-
-          reveal_path = Path("src/sections/Services/HeroReveal.tsx")
-          reveal = reveal_path.read_text()
-          reveal = replace_once(
-              reveal,
-              '''// The awakening (film script, scene one): the page begins in forest
-          // darkness — near black with a breath of green, never pure void — with
-          // the aspen scene and the masthead both hidden inside it. Scrolling
-          // breaks the light: the veil is driven by scroll position, so the
-          // visitor's own movement wakes the forest and reveals the headline
-          // only once the light arrives. A slower time-based wake runs in
-          // parallel as the floor, so a visitor who simply waits still sees the
-          // page open (the veil takes whichever of the two is clearer at any
-          // moment). The veil sits above the masthead deliberately — the title
-          // is revealed WITH the scene, per the script's "only then" beat.
-          // Opacity only, one composited layer; removed entirely under reduced
-          // motion so the page is immediately readable.''',
-              '''// The awakening now reveals Branding Tatva's original root-system
-          // film rather than hiding a generic background for several seconds.
-          // A short scroll-linked veil and a faster time-based wake work in
-          // parallel, so the visitor receives an immediate response while the
-          // scene still feels directed. The title remains part of the reveal,
-          // but comprehension is never held hostage by atmosphere. Opacity only,
-          // one composited layer; removed entirely under reduced motion.''',
-              "HeroReveal direction comment",
-          )
-          reveal = replace_once(
-              reveal,
-              '''  // Scroll wake: darkness fully broken after ~420px of intent.
-              const scrollVeil = useTransform(scrollY, [0, 420], [0.93, 0]);
-              // Time wake: the forest opens on its own over ~5.5s for the patient.
-              const timeVeil = useMotionValue(0.93);''',
-              '''  // A small gesture reveals the defining visual event.
-              const scrollVeil = useTransform(scrollY, [0, 260], [0.86, 0]);
-              // A still visitor receives the complete opening in roughly 2.5s.
-              const timeVeil = useMotionValue(0.86);''',
-              "HeroReveal progress values",
-          )
-          reveal = replace_once(
-              reveal,
-              '''    const controls = animate(timeVeil, 0, { duration: 4.2, delay: 1.3, ease: [0.22, 1, 0.36, 1] });''',
-              '''    const controls = animate(timeVeil, 0, { duration: 2.15, delay: 0.25, ease: [0.22, 1, 0.36, 1] });''',
-              "HeroReveal timing",
-          )
-          reveal_path.write_text(reveal)
+          def regex_once(text: str, pattern: str, replacement: str, label: str) -> str:
+              updated, count = re.subn(pattern, replacement, text, count=1, flags=re.S)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one match, found {count}")
+              return updated
 
           page_path = Path("src/app/services/page.tsx")
           page = page_path.read_text()
 
           page = replace_once(
               page,
-              '''  preload("/images/pexels-aspen-sunburst-poster.jpg", { as: "image", fetchPriority: "high" });''',
-              '''  preload("/images/services-hero-root-system-poster.jpg", { as: "image", fetchPriority: "high" });''',
+              'import { PhotoHero } from "@/components/PhotoHero";',
+              'import { ServicesCinematicHero } from "@/sections/Services/ServicesCinematicHero";',
+              "Services hero import",
+          )
+
+          page = replace_once(
+              page,
+              '  preload("/images/pexels-aspen-sunburst-poster.jpg", { as: "image", fetchPriority: "high" });',
+              '  preload("/images/services-hero-root-system-poster.jpg", { as: "image", fetchPriority: "high" });',
               "Services hero poster preload",
           )
 
           page = replace_once(
               page,
-              '''        <PhotoHero
-              video="/videos/pexels-aspen-sunburst.mp4"
-              poster="/images/pexels-aspen-sunburst-poster.jpg"
-              minHeight="70vh"
-            >''',
-              '''        <PhotoHero
-              video="/videos/services-hero-root-system.mp4"
-              poster="/images/services-hero-root-system-poster.jpg"
-              minHeight="70vh"
-              imagePosition="60% center"
-              videoPreload="auto"
-              playbackRate={1.15}
-              overlayGradient="linear-gradient(180deg, rgba(8,13,11,0.5) 0%, rgba(8,13,11,0.64) 58%, rgba(8,13,11,0.9) 100%)"
-            >''',
+              block('''
+                <PhotoHero
+                  video="/videos/pexels-aspen-sunburst.mp4"
+                  poster="/images/pexels-aspen-sunburst-poster.jpg"
+                  minHeight="70vh"
+                >
+              '''),
+              block('''
+                <ServicesCinematicHero
+                  video="/videos/services-hero-root-system.mp4"
+                  poster="/images/services-hero-root-system-poster.jpg"
+                  minHeight="70vh"
+                >
+              '''),
               "Services hero media",
           )
 
-          page = replace_once(
+          page = replace_once(page, "        </PhotoHero>", "        </ServicesCinematicHero>", "Services hero closing tag")
+
+          page = regex_once(
               page,
-              '''          {/* Approved awakening footage (Pexels 31883946, Joshua
-                  Woroniecki, free license): a sun star breaking through
-                  backlit trembling aspens, birch trunks in bokeh depth —
-                  the first candidate to pass all five hero questions
-                  (clear visual event, revealing light, layered depth,
-                  scroll-stopping, stronger than its predecessor). Full 20s
-                  slowed to 24s, 2s forward dissolve, no reverse motion.
-                  The reveal veil below lifts the forest darkness so the
-                  page wakes into the burst. */}''',
-              '''          {/* Original Branding Tatva film: a realistic underground
-                  root network whose connected paths become visible through a
-                  restrained ivory-mineral pulse. The visual now teaches the
-                  opening idea before the copy completes it: recognition breaks
-                  when the system beneath the visible work is disconnected. */}''',
-              "Services hero source comment",
+              r'''          /\*\{ Approved awakening footage.*?page wakes into the burst\. \*/\}'''.replace("/*{", "{/*"),
+              block('''
+                {/* Original Branding Tatva film: a realistic underground root
+                    network whose connected paths become visible through a
+                    restrained ivory-mineral pulse. The visual teaches the
+                    opening idea before the copy completes it: recognition
+                    breaks when the system beneath visible work disconnects. */}
+              '''),
+              "Services hero source note",
           )
 
-          page = replace_once(page, '''              <Reveal delay={1.7}>''', '''              <Reveal delay={0.35}>''', "Services hero copy delay")
-          page = replace_once(page, '''                  splitType="chars"''', '''                  splitType="words"''', "Services hero text reveal")
+          page = replace_once(page, "              <Reveal delay={1.7}>", "              <Reveal delay={0.35}>", "Services hero copy delay")
 
           page = replace_once(
               page,
-              '''          <BackgroundVideo
-                parallax
-                video="/videos/pexels-redwood-ferns.mp4"
-                videoWebm="/videos/pexels-redwood-ferns.webm"
-                poster="/images/pexels-redwood-ferns-poster.jpg"
-              />''',
-              '''          <BackgroundVideo
-                video="/videos/services-strategy-topography.mp4"
-                poster="/images/services-strategy-topography-poster.jpg"
-              />''',
+              block('''
+                <SplitReveal
+                  as="h1"
+                  splitType="chars"
+              '''),
+              block('''
+                <SplitReveal
+                  as="h1"
+                  splitType="words"
+              '''),
+              "Services hero word reveal",
+          )
+
+          page = replace_once(
+              page,
+              block('''
+                <BackgroundVideo
+                  parallax
+                  video="/videos/pexels-redwood-ferns.mp4"
+                  videoWebm="/videos/pexels-redwood-ferns.webm"
+                  poster="/images/pexels-redwood-ferns-poster.jpg"
+                />
+              '''),
+              block('''
+                <BackgroundVideo
+                  video="/videos/services-strategy-topography.mp4"
+                  poster="/images/services-strategy-topography-poster.jpg"
+                />
+              '''),
               "Services strategy media",
           )
 
+          page = regex_once(
+              page,
+              r'''          \{\/\* Approved Education footage.*?reads as shrinking\)\. \*\/\}''',
+              block('''
+                {/* Original Brand Strategy film: dark topographic terrain
+                    clarifies into one deliberate route. It gives the education
+                    chapter a service-specific visual argument rather than
+                    another interchangeable forest scene. */}
+              '''),
+              "Services strategy source note",
+          )
+
           page = replace_once(
               page,
-              '''          <BackgroundVideo
-                parallax
-                video="/videos/pexels-moss-stream.mp4"
-                videoWebm="/videos/pexels-moss-stream.webm"
-                poster="/images/pexels-moss-stream-poster.jpg"
-              />''',
-              '''          <BackgroundVideo
-                video="/videos/services-health-reflection.mp4"
-                poster="/images/services-health-reflection-poster.jpg"
-              />''',
+              block('''
+                <BackgroundVideo
+                  parallax
+                  video="/videos/pexels-moss-stream.mp4"
+                  videoWebm="/videos/pexels-moss-stream.webm"
+                  poster="/images/pexels-moss-stream-poster.jpg"
+                />
+              '''),
+              block('''
+                <BackgroundVideo
+                  video="/videos/services-health-reflection.mp4"
+                  poster="/images/services-health-reflection-poster.jpg"
+                />
+              '''),
               "Services health media",
+          )
+
+          page = regex_once(
+              page,
+              r'''          \{\/\* Media replaced per direct approval.*?2\.0MB MP4 / 0\.7MB WebM\. \*\/\}''',
+              block('''
+                {/* Original Brand Health film: a glass-dark reflective surface
+                    reveals quiet structural fractures beneath it, then settles.
+                    The movement behaves like diagnosis, not decorative nature
+                    footage, while preserving the page's calm forest register. */}
+              '''),
+              "Services health source note",
           )
 
           page_path.write_text(page)
@@ -244,7 +185,7 @@ jobs:
           git diff --stat
           grep -R "services-hero-root-system\|services-strategy-topography\|services-health-reflection" \
             src/app/services/page.tsx \
-            src/components/PhotoHero.tsx \
+            src/sections/Services/ServicesCinematicHero.tsx \
             src/sections/Services/HeroReveal.tsx
 
       - name: Commit the original-media integration
@@ -252,9 +193,6 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            src/app/services/page.tsx \
-            src/components/PhotoHero.tsx \
-            src/sections/Services/HeroReveal.tsx
+          git add src/app/services/page.tsx
           git commit -m "Integrate original generated Services films"
           git push origin HEAD:services-original-media-rollout
