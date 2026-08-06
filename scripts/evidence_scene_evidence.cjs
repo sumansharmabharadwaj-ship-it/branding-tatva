@@ -50,6 +50,23 @@ async function assertNoOverflow(page, label) {
   );
 }
 
+async function assertHeaderOutOfFrame(page, label) {
+  await page.waitForTimeout(560);
+  const state = await page.locator("header").evaluate((node) => {
+    const rect = node.getBoundingClientRect();
+    return {
+      top: rect.top,
+      bottom: rect.bottom,
+      nativeHidden: node.dataset.homeNativeHidden,
+    };
+  });
+
+  assert(
+    state.nativeHidden === "true" && state.bottom <= 2,
+    `${label}: header re-entered the case file top=${state.top.toFixed(1)} bottom=${state.bottom.toFixed(1)} hidden=${state.nativeHidden}`,
+  );
+}
+
 async function assertTouchTargets(locator, minimum, label) {
   const boxes = await locator.evaluateAll((nodes) =>
     nodes.map((node) => {
@@ -102,6 +119,7 @@ async function capture(browser, viewport) {
 
   await chapter.scrollIntoViewIfNeeded();
   await page.waitForTimeout(760);
+  await assertHeaderOutOfFrame(page, `${viewport.name}/evidence/opening`);
 
   const headline = (await scene.getByRole("heading", { level: 2 }).textContent()) || "";
   assert(
@@ -144,6 +162,7 @@ async function capture(browser, viewport) {
     "Indian craft, origin, and wellness heritage",
     `${viewport.name}: MyShopInEurope decision trail did not update`,
   );
+  await assertHeaderOutOfFrame(page, `${viewport.name}/evidence/after-project-change`);
 
   if (viewport.name.startsWith("desktop")) {
     await scene.screenshot({
