@@ -12,6 +12,7 @@ import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
 import { differentiationInsightPosts } from "@/data/differentiationInsights";
 import { distinctiveAssetInsightPosts } from "@/data/distinctiveAssetInsights";
 import { forgettableIdentityInsightPosts } from "@/data/forgettableIdentityInsights";
+import { homepageMessagingInsightPosts } from "@/data/homepageMessagingInsights";
 import { interviewSynthesisInsightPosts } from "@/data/interviewSynthesisInsights";
 import { positioningStatementInsightPosts } from "@/data/positioningStatementInsights";
 import { repositioningInsightPosts } from "@/data/repositioningInsights";
@@ -54,6 +55,7 @@ const combinedPosts = [
   ...competitorResearchInsightPosts,
   ...brandVoiceInsightPosts,
   ...brandDiscoveryWorkshopInsightPosts,
+  ...homepageMessagingInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter((post, index) => combinedPosts.findIndex((candidate) => candidate.slug === post.slug) === index);
@@ -79,6 +81,7 @@ const relatedRegistrations = [
   { supportingSlug: "competitor-research-brand-strategy-without-copying-category", pillarSlugs: ["find-real-differentiator-crowded-service-market", "brand-positioning-strategy-service-businesses", "distinctive-brand-assets-audit"] },
   { supportingSlug: "brand-voice-guidelines-writers-can-use", pillarSlugs: ["brand-messaging-framework", "website-messaging-hierarchy-service-businesses", "service-line-naming-strategy"] },
   { supportingSlug: "brand-discovery-workshop-questions", pillarSlugs: ["customer-interviews-brand-strategy", "turn-customer-interviews-into-positioning-brief", "brand-positioning-strategy-service-businesses"] },
+  { supportingSlug: "homepage-messaging-service-businesses", pillarSlugs: ["website-messaging-hierarchy-service-businesses", "brand-messaging-framework", "turn-client-proof-into-positioning-advantage"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {
