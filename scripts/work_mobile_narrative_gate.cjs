@@ -260,7 +260,7 @@ async function auditCaseStudyMobile(browser) {
     "case/mobile-narratives: mobile chapter control did not expose aria-pressed=true",
   );
 
-  const originalButtons = originalNav.getByRole("button");
+  const originalButtons = originalNav.locator("button");
   assert(
     (await originalButtons.nth(targetIndex).getAttribute("aria-current")) === "step",
     "case/mobile-narratives: compact chapter selection did not synchronise the hidden desktop state",
