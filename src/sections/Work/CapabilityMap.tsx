@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Container } from "@/components/Container";
-import { Reveal } from "@/components/Reveal";
 import { CAPABILITIES, NEED_PATHS } from "@/data/capabilities";
 import { projects } from "@/data/projects";
 import { track } from "@/lib/analytics";
@@ -41,7 +40,10 @@ export function CapabilityMap() {
   return (
     <section id="find-relevant-proof" className="scroll-mt-24 py-16 sm:py-24" style={{ backgroundColor: WORK.mist }}>
       <Container className="max-w-6xl">
-        <Reveal>
+        {/* The selector is a high-intent decision point, so its heading is
+            readable immediately rather than entering through another
+            repeated fade-up. The interaction below carries the motion. */}
+        <div>
           <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.moss }}>
             Find relevant proof
           </p>
@@ -51,7 +53,7 @@ export function CapabilityMap() {
           <p className="mt-4 max-w-xl text-base leading-relaxed" style={{ color: WORK.wood }}>
             Choose the condition that feels familiar. The selector reveals the recorded project, capability areas, and service path most closely connected to it.
           </p>
-        </Reveal>
+        </div>
 
         <div className="mt-8">
           <WaystoneField
@@ -79,9 +81,9 @@ export function CapabilityMap() {
                   className="rounded-full border px-4 py-2 font-display text-base transition-colors duration-500 sm:text-lg"
                   style={{
                     marginTop: `${(index % 3) * 8}px`,
-                    borderColor: lit ? WORK.moss : WORK.stone + "77",
-                    backgroundColor: lit ? "rgba(85,107,74,0.14)" : "transparent",
-                    color: lit ? WORK.forest : WORK.stone,
+                    borderColor: lit ? WORK.moss : "rgba(111,78,55,0.28)",
+                    backgroundColor: lit ? "rgba(85,107,74,0.14)" : "rgba(255,255,255,0.12)",
+                    color: lit ? WORK.forest : "rgba(111,78,55,0.68)",
                   }}
                 >
                   {capability.name}
