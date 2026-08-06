@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
@@ -45,6 +45,13 @@ const OPTIONS: ReadonlyArray<{
 ];
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+const MANUAL_HOLD_MS = 14000;
+
+type ServicesProgressDetail = {
+  id?: string;
+  progress?: number;
+};
 
 function publishSituation(id: ServicesSituationId) {
   try {
@@ -59,7 +66,9 @@ function publishSituation(id: ServicesSituationId) {
 
 export function SituationPath() {
   const [selected, setSelected] = useState<ServicesSituationId | null>(null);
+  const [preview, setPreview] = useState<ServicesSituationId>(OPTIONS[0].id);
   const [carried, setCarried] = useState(false);
+  const holdUntilRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
@@ -67,6 +76,7 @@ export function SituationPath() {
       const savedServicesChoice = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
       if (isServicesSituation(savedServicesChoice)) {
         setSelected(savedServicesChoice);
+        setPreview(savedServicesChoice);
         setCarried(true);
         publishSituation(savedServicesChoice);
         return;
@@ -76,18 +86,45 @@ export function SituationPath() {
       const mapped = savedHomeChoice ? HOME_TO_SERVICES_SITUATION[savedHomeChoice] : undefined;
       if (mapped) {
         setSelected(mapped);
+        setPreview(mapped);
         setCarried(true);
         publishSituation(mapped);
       }
     } catch {}
   }, []);
 
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    function onSceneProgress(event: Event) {
+      const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
+      if (detail?.id !== "situation" || typeof detail.progress !== "number") return;
+      if (selected || Date.now() < holdUntilRef.current) return;
+
+      const index = Math.min(
+        OPTIONS.length - 1,
+        Math.max(0, Math.floor(detail.progress * OPTIONS.length)),
+      );
+      const next = OPTIONS[index].id;
+      setPreview((current) => (current === next ? current : next));
+    }
+
+    window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    return () => {
+      window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    };
+  }, [prefersReducedMotion, selected]);
+
   function pick(id: ServicesSituationId) {
+    holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+    setPreview(id);
     setSelected((previous) => (previous === id ? previous : id));
     publishSituation(id);
     track("visitor_situation_selected", { situation: id, page: "services" });
     setCarried(false);
   }
+
+  const displayed = selected ?? preview;
 
   return (
     <Container className="max-w-6xl">
@@ -98,7 +135,7 @@ export function SituationPath() {
             Three starting points. One of them is yours.
           </h2>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/70">
-            The rest of this page reads differently depending on where the brand stands today. Start with the row that sounds like yours.
+            A short scroll previews each path. Select the row that sounds like yours and the rest of the page carries that decision forward.
           </p>
           <AnimatePresence>
             {carried && (
@@ -116,14 +153,16 @@ export function SituationPath() {
 
         <div>
           {OPTIONS.map((option, index) => {
-            const isActive = selected === option.id;
+            const isActive = displayed === option.id;
+            const isCommitted = selected === option.id;
             const pkg = packages.find((entry) => entry.slug === SITUATION_TO_PACKAGE[option.id]);
             return (
               <div key={option.id} className="relative">
                 <div className="h-px bg-ivory/12" aria-hidden="true" />
                 <motion.button
                   type="button"
-                  aria-pressed={isActive}
+                  aria-pressed={isCommitted}
+                  data-situation-preview={isActive && !isCommitted ? "true" : "false"}
                   onClick={() => pick(option.id)}
                   initial={prefersReducedMotion ? undefined : { opacity: 0, y: 14 }}
                   whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
@@ -159,7 +198,7 @@ export function SituationPath() {
                       initial={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: EASE }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
                       className="overflow-hidden"
                     >
                       <div
@@ -170,6 +209,11 @@ export function SituationPath() {
                           <p className="font-display text-xl font-normal text-ivory">{pkg.name}</p>
                           <p className="text-sm text-ivory/70">{pkg.forWho}</p>
                         </div>
+                        {!isCommitted && (
+                          <p className="mt-3 text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">
+                            Previewing this route · select the row to carry it forward
+                          </p>
+                        )}
                         <p className="mt-3 max-w-2xl text-base leading-relaxed text-ivory/90">{option.reason}</p>
                         <p className="mt-4 text-xs font-medium uppercase tracking-[0.15em] text-ivory/60">
                           Indicative scope
