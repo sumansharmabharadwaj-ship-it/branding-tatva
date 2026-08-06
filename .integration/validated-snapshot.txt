@@ -1,0 +1,4 @@
+site-base=b64b849442781e3b71e9f38656c48ad2b9d87e88
+insights-snapshot=88a13abfc28ea03f876d86c188da6ac3c1887c74
+integration=121f3a25beaa93cc583136700c20a018a713022a
+purpose=trigger build-only validation without a Vercel deployment
