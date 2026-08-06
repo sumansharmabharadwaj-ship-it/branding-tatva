@@ -32,6 +32,8 @@ on:
 permissions:
   contents: read
 
+# Preview-only concurrency keeps this verification independent from the
+# shared homepage branch and its parallel Services checks.
 concurrency:
   group: branding-tatva-work-final-preview
   cancel-in-progress: true
