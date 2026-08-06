@@ -9,6 +9,8 @@ import { LinkButton } from "@/components/Button";
 import { brandStudies } from "@/data/brandStudies";
 import { site } from "@/data/site";
 import { MOOD } from "@/lib/sectionWash";
+import { MediaSlot } from "@/components/MediaSlot";
+import { SplitReveal } from "@/components/SplitReveal";
 
 // Dedicated page per brand study — the SEO/GEO build: five indexable
 // URLs targeting the exact questions people search ("Nike branding
@@ -76,14 +78,22 @@ export default async function BrandStudyPage({ params }: Props) {
       <main id="main-content" style={{ backgroundColor: MOOD.charcoal }}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-        <section className="py-20 sm:py-28">
-          <Container className="max-w-4xl">
+        {/* Four media slots run down this template, one per section.
+            They stay empty until footage is approved per file, so the
+            page reads as designed either way. */}
+        <section className="relative overflow-hidden py-20 sm:py-28">
+          <MediaSlot fill={study.media?.masthead} scrim={0.8} />
+          <Container className="relative max-w-4xl">
             <Reveal>
               <Link href="/work" className="text-sm text-ivory/60 transition-colors hover:text-ivory">
                 ← All work and studies
               </Link>
               <p className="mt-8 text-sm font-medium uppercase tracking-[0.18em] text-ivory/70">Brand study</p>
-              <h1 className="mt-2 font-display text-display-md font-normal text-ivory">{study.brand}</h1>
+            </Reveal>
+            <SplitReveal as="h1" className="mt-2 font-display text-display-md font-normal text-ivory">
+              {study.brand}
+            </SplitReveal>
+            <Reveal delay={0.08}>
               <div className="mt-4 flex flex-wrap gap-2">
                 <span className="rounded-full border border-ivory/20 px-3 py-1 text-xs text-ivory/70">
                   {study.region}
@@ -103,8 +113,9 @@ export default async function BrandStudyPage({ params }: Props) {
           </Container>
         </section>
 
-        <section className="border-t border-ivory/10 py-16 sm:py-20">
-          <Container className="max-w-4xl">
+        <section className="relative overflow-hidden border-t border-ivory/10 py-16 sm:py-24">
+          <MediaSlot fill={study.media?.observations} scrim={0.86} />
+          <Container className="relative max-w-4xl">
             <div className="space-y-12">
               {study.observations.map((obs, i) => (
                 <Reveal key={obs.title} delay={Math.min(i * 0.08, 0.16)}>
@@ -128,8 +139,9 @@ export default async function BrandStudyPage({ params }: Props) {
           </Container>
         </section>
 
-        <section className="border-t border-ivory/10 py-16 sm:py-20">
-          <Container className="max-w-4xl">
+        <section className="relative overflow-hidden border-t border-ivory/10 py-16 sm:py-24">
+          <MediaSlot fill={study.media?.applications} scrim={0.86} />
+          <Container className="relative max-w-4xl">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-[0.18em] text-ivory/70">At founder scale</p>
               <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
@@ -151,8 +163,9 @@ export default async function BrandStudyPage({ params }: Props) {
             route that momentum into the journey and the calendar.
             Regional line reflects the markets the practice serves
             (matching the areaServed schema in the root layout). */}
-        <section className="border-t border-ivory/10 py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
-          <Container className="max-w-4xl">
+        <section className="relative overflow-hidden border-t border-ivory/10 py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
+          <MediaSlot fill={study.media?.closing} scrim={0.84} />
+          <Container className="relative max-w-4xl">
             <Reveal>
               <h2 className="max-w-xl text-display-sm font-display font-normal text-ivory">
                 Your brand runs on the same mechanics.

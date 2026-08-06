@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { faqs } from "@/data/faqs";
 import { answerVariants, answerTransition, TOGGLE_ROTATION } from "@/sections/FAQ/animations";
@@ -45,7 +46,7 @@ const GROUPS = [
 // so every hardcoded light-only color needs a dark-bg equivalent.
 export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
   const [openQuestion, setOpenQuestion] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   // Guided-discovery pacing (direct creative direction: "a conversation
   // unfolding, chapters not paragraphs"): each group carries its own
@@ -105,7 +106,7 @@ function Trail({
         initial={prefersReducedMotion ? undefined : { opacity: 0, rotate: -18 }}
         whileInView={prefersReducedMotion ? undefined : { opacity: 1, rotate: 0 }}
         viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-        transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
       >
         {[0, 72, 144, 216, 288].map((deg, pi) => (
           <g key={deg} transform={`rotate(${deg} 24 24)`}>
@@ -119,7 +120,7 @@ function Trail({
               initial={prefersReducedMotion ? undefined : { scale: 0 }}
               whileInView={prefersReducedMotion ? undefined : { scale: 1 }}
               viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-              transition={{ duration: 0.7, delay: 0.2 + pi * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.72, delay: 0.2 + pi * 0.1, ease: [0.22, 1, 0.36, 1] }}
             />
           </g>
         ))}
@@ -182,7 +183,7 @@ function Trail({
                 initial={{ opacity: 0, rotate: -20 }}
                 animate={{ opacity: 1, rotate: 0 }}
                 exit={{ opacity: 0, scale: 0.6 }}
-                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
               >
                 {[0, 72, 144, 216, 288].map((deg, pi) => (
                   <g key={deg} transform={`rotate(${deg} 20 20)`}>
@@ -196,7 +197,7 @@ function Trail({
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       exit={{ scale: 0 }}
-                      transition={{ duration: 0.6, delay: 0.15 + pi * 0.09, ease: [0.22, 1, 0.36, 1] }}
+                      transition={{ duration: 0.72, delay: 0.15 + pi * 0.09, ease: [0.22, 1, 0.36, 1] }}
                     />
                   </g>
                 ))}
@@ -207,7 +208,7 @@ function Trail({
                   fill="#E4D9B4"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.1 }}
+                  transition={{ duration: 0.35, delay: 0.1 }}
                   style={{ transformBox: "fill-box", transformOrigin: "center" }}
                 />
               </motion.svg>
@@ -243,7 +244,7 @@ function Trail({
               initial={prefersReducedMotion ? { letterSpacing: "0.18em" } : { letterSpacing: "0.42em", opacity: 0 }}
               whileInView={prefersReducedMotion ? undefined : { letterSpacing: "0.18em", opacity: 1 }}
               viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-              transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             >
               {group.label}
             </motion.p>
@@ -255,7 +256,7 @@ function Trail({
             initial={prefersReducedMotion ? undefined : { scaleX: 0 }}
             whileInView={prefersReducedMotion ? undefined : { scaleX: 1 }}
             viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-            transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.72, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           />
           {/* Interaction language — "the fog clearing", this chapter's
               own motion identity: dividers draw themselves in like
@@ -292,7 +293,7 @@ function Trail({
                     {isOpen && !prefersReducedMotion && (
                       <motion.div
                         aria-hidden="true"
-                        className="pointer-events-none absolute -inset-x-6 -inset-y-2 rounded-3xl"
+                        className="pointer-events-none absolute -inset-x-6 -inset-y-2 rounded-2xl"
                         style={{
                           background:
                             "radial-gradient(ellipse 70% 60% at 30% 40%, rgba(222,230,220,0.13) 0%, rgba(222,230,220,0.05) 45%, transparent 75%)",
@@ -300,7 +301,7 @@ function Trail({
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 1.05 }}
-                        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
                       />
                     )}
                   </AnimatePresence>
@@ -311,11 +312,11 @@ function Trail({
                     initial={prefersReducedMotion ? undefined : { scaleX: 0 }}
                     whileInView={prefersReducedMotion ? undefined : { scaleX: 1 }}
                     viewport={{ once: true, margin: "0px 0px -6% 0px" }}
-                    transition={{ duration: 1.1, delay: 0.15 + qi * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 1.2, delay: 0.15 + qi * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   />
                   <button
                     type="button"
-                    className={`group mt-1 flex w-full items-center justify-between rounded-lg px-3 py-3.5 text-left text-[1.05rem] font-medium transition-all duration-500 ${
+                    className={`group mt-1 flex w-full items-center justify-between rounded-2xl px-3 py-3.5 text-left text-[1.05rem] font-medium transition-all duration-500 ${
                       dark
                         ? `text-ivory hover:bg-ivory/[0.07] hover:shadow-[0_0_38px_rgba(222,230,236,0.08)] focus-visible:bg-ivory/[0.07] ${isOpen ? "bg-ivory/[0.05]" : ""}`
                         : "text-soil hover:bg-clay/8 focus-visible:bg-clay/8"
@@ -370,7 +371,7 @@ function Trail({
                         <motion.p
                           initial={prefersReducedMotion ? undefined : { opacity: 0, filter: "blur(6px)", y: 4 }}
                           animate={prefersReducedMotion ? undefined : { opacity: 1, filter: "blur(0px)", y: 0 }}
-                          transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                          transition={{ duration: 0.35, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
                           className={`max-w-2xl pb-4 text-base leading-relaxed ${dark ? "text-ivory/90" : "text-foreground-secondary"}`}
                         >
                           {item.answer}

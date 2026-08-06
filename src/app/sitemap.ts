@@ -3,6 +3,7 @@ import { site } from "@/data/site";
 import { projects } from "@/data/projects";
 import { blogPosts } from "@/data/blog";
 import { brandStudies } from "@/data/brandStudies";
+import { allTerms } from "@/data/glossary";
 
 // No per-page edit-history is tracked anywhere in this codebase, so
 // `new Date()` (recomputed on every single sitemap request) was
@@ -25,7 +26,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { route: "/about", priority: 0.7, changeFrequency: "monthly" },
     { route: "/services", priority: 0.9, changeFrequency: "monthly" },
     { route: "/work", priority: 0.9, changeFrequency: "weekly" },
-    { route: "/blog", priority: 0.8, changeFrequency: "weekly" },
+    { route: "/insights", priority: 0.8, changeFrequency: "weekly" },
+    { route: "/glossary", priority: 0.6, changeFrequency: "monthly" },
     { route: "/contact", priority: 0.8, changeFrequency: "yearly" },
     { route: "/privacy", priority: 0.2, changeFrequency: "yearly" },
     { route: "/terms", priority: 0.2, changeFrequency: "yearly" },
@@ -52,11 +54,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const blogRoutes = blogPosts.map((p) => ({
-    url: `${site.url}/blog/${p.slug}`,
+    url: `${site.url}/insights/${p.slug}`,
     lastModified: new Date(p.publishedAt),
     changeFrequency: "yearly" as const,
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...workRoutes, ...blogRoutes , ...studyRoutes];
+  const glossaryRoutes = allTerms.map((t) => ({
+    url: `${site.url}/glossary/${t.slug}`,
+    lastModified: new Date("2026-08-03"),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
+
+  return [...staticRoutes, ...workRoutes, ...blogRoutes, ...studyRoutes, ...glossaryRoutes];
 }

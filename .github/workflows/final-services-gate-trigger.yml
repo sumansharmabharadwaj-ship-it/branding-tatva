@@ -1,0 +1,43 @@
+name: Trigger final Services verification
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/final-services-gate-trigger.yml
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  trigger-and-clean:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out the current cinematic head
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+
+      - name: Remove this one-use trigger
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/final-services-gate-trigger.yml
+          git add .github/workflows/final-services-gate-trigger.yml
+          git commit -m "Remove final Services gate trigger"
+          git pull --rebase origin homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
+
+      - name: Dispatch the complete Services journey on the cleaned head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: gh workflow run services-page-gate.yml --repo "$GH_REPO" --ref homepage-cinematic-recovery

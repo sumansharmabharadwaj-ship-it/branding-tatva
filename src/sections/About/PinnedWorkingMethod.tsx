@@ -1,48 +1,30 @@
 "use client";
 
 import Image from "next/image";
-import { useReducedMotion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { ClipReveal } from "@/components/ClipReveal";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { PinnedHold } from "@/components/PinnedHold";
 import { experience } from "@/data/about";
 
-// "Working method" + "Recent experience" — a single beat (portrait,
-// method text, and the experience list all shown together, nothing
-// sequential), so it fits PinnedHold directly rather than needing the
-// full multi-stage crossfade machinery. The section's own
-// overflow-hidden (kept for the redwood-canopy video) is safe to wrap
-// here — it's PinnedHold's sticky child that would break under an
-// overflow-hidden ANCESTOR, not the other way around; this section's
-// own overflow-hidden is a descendant of the sticky wrapper, not an
-// ancestor of it.
+// "Working method" + "Recent experience" — portrait, method text and
+// the experience list all shown together, nothing sequential.
+//
+// This used to be wrapped in PinnedHold. The pinning budget says one
+// immersive held sequence per key page, and the test for whether a pin
+// earns its scroll is whether each held viewport reveals something new.
+// This one never did: it stopped the page dead on a beat the visitor
+// had already finished reading, which is the cost of a pin with none of
+// the payoff. It now sits in normal flow and the About page keeps its
+// one real held sequence for the closing meadow.
 export function PinnedWorkingMethod() {
-  const prefersReducedMotion = useReducedMotion();
-
-  if (prefersReducedMotion) {
-    return <WorkingMethodSection />;
-  }
-
-  return (
-    <>
-      <div className="hidden sm:block">
-        <PinnedHold>
-          <WorkingMethodSection pinned />
-        </PinnedHold>
-      </div>
-      <div className="sm:hidden">
-        <WorkingMethodSection />
-      </div>
-    </>
-  );
+  return <WorkingMethodSection />;
 }
 
 function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
   return (
     <section
-      className={`relative flex overflow-hidden bg-soil ${pinned ? "min-h-screen items-center" : "py-20"}`}
+      className={`relative flex overflow-hidden bg-soil ${pinned ? "min-h-screen items-center" : "py-20 sm:py-28"}`}
     >
       <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
       <div className="absolute inset-0 bg-soil/80" />

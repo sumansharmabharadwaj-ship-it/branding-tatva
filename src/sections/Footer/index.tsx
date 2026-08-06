@@ -7,6 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { ElementAccentButton } from "@/components/ElementAccentButton";
 import { site, footerLinks } from "@/data/site";
 import { socialLinks } from "./constants";
+import { MotionToggle } from "@/components/MotionPreference";
 
 // Rebuilt as a compact "widget bar" — direct feedback that the previous
 // full-screen closing scene (headline, five glyphs, giant logo, a
@@ -22,7 +23,9 @@ import { socialLinks } from "./constants";
 const WIDGET_CLASS =
   "rounded-2xl border border-white/15 bg-black/20 backdrop-blur-md p-5 sm:p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-black/25";
 
-export function Footer() {
+type FooterProps = { compact?: boolean };
+
+export function Footer({ compact = false }: FooterProps) {
   return (
     <footer className="relative">
       {/* This used to carry a decorative IndianPattern strip here —
@@ -41,7 +44,8 @@ export function Footer() {
           request; the dandelion release now lives in the Deliverables
           chapter on Services instead. imagePosition biased down keeps
           the pale sky band out of the section's top edge. */}
-      <TexturedDark
+      {!compact && (
+        <TexturedDark
         image="/images/own-jagged-peaks.jpg"
         video="/videos/own-jagged-peaks.mp4"
         imagePosition="center 85%"
@@ -58,7 +62,7 @@ export function Footer() {
           {/* The widget bar itself — three cards side by side on desktop,
               stacked on mobile. The calendar gets the most width: it's
               the one thing here that actually converts, everything else
-              is support. LinkButton "Start a project" duplicates Header's
+              is support. LinkButton "Book a Session" duplicates Header's
               own CTA on purpose here — this bar is the one place a
               visitor lands right at page-bottom with both conversion
               paths (project inquiry, booking) sitting together, instead
@@ -77,7 +81,7 @@ export function Footer() {
                 </p>
               </div>
               <div className="self-start">
-                <ElementAccentButton href="/contact">Start a project</ElementAccentButton>
+                <ElementAccentButton href="/contact">Book a Session</ElementAccentButton>
               </div>
             </div>
 
@@ -116,7 +120,8 @@ export function Footer() {
             </div>
           </Reveal>
         </Container>
-      </TexturedDark>
+        </TexturedDark>
+      )}
 
       {/* Was sectionWash("space", 14) — rgb(234,221,211), a pale near-cream
           strip sitting directly under a near-black video section, the same
@@ -149,7 +154,10 @@ export function Footer() {
             (CC BY 4.0)
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {/* The sitewide Full/Reduced motion control (80 page manual
+              p23) — quiet, but present on every page via the footer. */}
+          <MotionToggle />
           {footerLinks.map((item) => (
             <Link key={item.href} href={item.href} className="text-xs text-ivory/60 hover:text-ivory">
               {item.label}

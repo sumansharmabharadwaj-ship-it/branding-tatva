@@ -13,6 +13,21 @@
 // dashes or hyphens in rendered strings, no banned agency vocabulary,
 // opinionated claims a reader could disagree with.
 
+import type { SlotFill } from "@/components/MediaSlot";
+
+// Named media slots, one per section of the study template. Every one
+// is optional: a study with no approved footage renders exactly as it
+// does today, and approving a clip later is a data edit here rather
+// than a layout change in the template.
+export type StudyMedia = {
+  masthead?: SlotFill;
+  observations?: SlotFill;
+  applications?: SlotFill;
+  closing?: SlotFill;
+  /** Shown inside this study's opened panel on the Work page. */
+  card?: SlotFill;
+};
+
 export type BrandStudy = {
   slug: string;
   brand: string;
@@ -22,6 +37,7 @@ export type BrandStudy = {
   observations: { title: string; text: string }[];
   lesson: string;
   applications: string[];
+  media?: StudyMedia;
 };
 
 export const brandStudies: BrandStudy[] = [

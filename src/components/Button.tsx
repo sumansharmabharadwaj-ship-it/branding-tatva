@@ -1,12 +1,14 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
 import { ReactNode, useRef, useState, type MouseEvent } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/Magnetic";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { EASE_AIR } from "@/lib/motion";
+import { track, type AnalyticsEvent } from "@/lib/analytics";
 
 type ButtonProps = {
   href: string;
@@ -14,6 +16,10 @@ type ButtonProps = {
   variant?: "primary" | "secondary";
   className?: string;
   onClick?: () => void;
+  // Optional conversion event reported on click — serializable, so
+  // server components can request measurement without a handler.
+  trackEvent?: AnalyticsEvent;
+  trackProps?: Record<string, string | number | boolean>;
   // Escape hatch for callers that need a per-instance color (e.g. tied
   // to the current five-element accent) rather than the fixed
   // bg-action-primary every other button on the site correctly shares.
@@ -31,8 +37,8 @@ let rippleId = 0;
 // draws itself in on hover instead, since a glint would just look like
 // a smudge on a pill with no fill behind it to catch the light.
 
-export function LinkButton({ href, children, variant = "primary", className, onClick, style }: ButtonProps) {
-  const prefersReducedMotion = useReducedMotion();
+export function LinkButton({ href, children, variant = "primary", className, onClick, style, trackEvent, trackProps }: ButtonProps) {
+  const prefersReducedMotion = useHydratedReducedMotion();
   const linkRef = useRef<HTMLAnchorElement>(null);
   const spotlightRef = useSpotlight(linkRef, variant !== "primary" || Boolean(prefersReducedMotion));
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
@@ -44,6 +50,7 @@ export function LinkButton({ href, children, variant = "primary", className, onC
       setRipples((prev) => [...prev, { id, x: e.clientX - rect.left, y: e.clientY - rect.top }]);
       setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 650);
     }
+    if (trackEvent) track(trackEvent, trackProps);
     onClick?.();
   }
 
@@ -93,7 +100,7 @@ export function LinkButton({ href, children, variant = "primary", className, onC
                 style={{ left: r.x, top: r.y, transform: "translate(-50%, -50%)" }}
                 initial={{ width: 0, height: 0, opacity: 0.3 }}
                 animate={{ width: 220, height: 220, opacity: 0 }}
-                transition={{ duration: 0.6, ease: EASE_AIR }}
+                transition={{ duration: 0.72, ease: EASE_AIR }}
               />
             ))}
           </AnimatePresence>

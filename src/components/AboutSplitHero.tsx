@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { LinkButton } from "@/components/Button";
@@ -29,6 +30,8 @@ export function AboutSplitHero({
   body,
   ctaHref,
   ctaLabel,
+  secondaryCtaHref,
+  secondaryCtaLabel,
   video,
   poster,
   bgVideo,
@@ -39,13 +42,17 @@ export function AboutSplitHero({
   body: string;
   ctaHref: string;
   ctaLabel: string;
+  // Optional second action — the redesign brief wants the authority
+  // hero to carry both the booking path and the work path.
+  secondaryCtaHref?: string;
+  secondaryCtaLabel?: string;
   video: string;
   poster: string;
   bgVideo: string;
   bgPoster: string;
 }) {
   const ref = useRef<HTMLElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const [cardRef, cardVisible] = useRevealTrigger();
 
@@ -88,7 +95,7 @@ export function AboutSplitHero({
       />
 
       <motion.div
-        className="relative z-10 flex flex-col items-center px-6 py-16 text-center"
+        className="relative z-10 flex flex-col items-center px-6 py-16 sm:py-24 text-center"
         style={prefersReducedMotion ? undefined : { opacity: contentOpacity }}
       >
         <Reveal>
@@ -119,7 +126,7 @@ export function AboutSplitHero({
           >
             <TiltCard glowColor="#C28A28" maxDegrees={7}>
               <motion.div
-                className="card-float relative w-[260px] overflow-hidden rounded-lg border-[6px] border-ivory sm:w-[320px]"
+                className="card-float relative w-[260px] overflow-hidden rounded-2xl border-[6px] border-ivory sm:w-[320px]"
                 style={{
                   ...(prefersReducedMotion ? undefined : { y: cardY }),
                   boxShadow: "0 14px 30px rgba(20,17,14,0.4), 0 0 40px 6px rgba(20,17,14,0.2)",
@@ -167,7 +174,16 @@ export function AboutSplitHero({
         </div>
 
         <Reveal delay={0.2} className="mt-9">
-          <LinkButton href={ctaHref}>{ctaLabel}</LinkButton>
+          <div className="flex flex-wrap gap-3">
+            <LinkButton href={ctaHref} trackEvent="hero_booking_click" trackProps={{ page: "about" }}>
+              {ctaLabel}
+            </LinkButton>
+            {secondaryCtaHref && secondaryCtaLabel && (
+              <LinkButton href={secondaryCtaHref} variant="secondary" className="border-ivory/40 text-ivory hover:bg-ivory/10">
+                {secondaryCtaLabel}
+              </LinkButton>
+            )}
+          </div>
         </Reveal>
       </motion.div>
 

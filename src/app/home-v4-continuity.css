@@ -1,0 +1,165 @@
+/* -------------------------------------------------------------------------- */
+/* Homepage V4 continuity pass                                                 */
+/* -------------------------------------------------------------------------- */
+
+/* The Earth excavation now resolves four strategic layers inside 180svh.
+   The tighter range raises discovery density without turning the held scene
+   into a scroll cage. Keep this source of truth aligned with the component so
+   a legacy continuity rule cannot silently stretch the chapter again. */
+@media (min-width: 768px) {
+  .home-v4-chapter--foundation > section {
+    height: 180svh !important;
+  }
+}
+
+@supports not (height: 1svh) {
+  @media (min-width: 768px) {
+    .home-v4-chapter--foundation > section {
+      height: 180vh !important;
+    }
+  }
+}
+
+/* Section handoffs should read as a film splice, not a blank strip between
+   blocks. Keep them concise, overlap sub-pixel seams, and give every splice a
+   quiet centre mark that carries the eye into the next chapter. */
+.home-v4-handoff {
+  height: clamp(2.2rem, 3.6vw, 3.85rem);
+  margin-block: -1px;
+  transform: translateZ(0);
+}
+
+.home-v4-handoff::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 0.72rem;
+  width: min(8rem, 22vw);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 185, 154, 0.52), transparent);
+  opacity: 0.72;
+  transform: translateX(-50%);
+}
+
+/* The original studio breakpoint changed from three columns at 1360px. That
+   left a narrow 1361–1400px range where the headline and footer could become
+   visually pinched. Collapse to the authored two-column composition there,
+   then let the portrait become the closing full-width frame. */
+@media (min-width: 1361px) and (max-width: 1400px) {
+  .studio-cinematic__grid {
+    grid-template-columns: minmax(18rem, 0.84fr) minmax(29rem, 1.16fr);
+  }
+
+  .studio-cinematic__portrait {
+    grid-column: 1 / -1;
+    min-height: 34rem;
+  }
+
+  .studio-cinematic__portrait-photo {
+    object-position: center 24%;
+  }
+
+  .studio-cinematic__authorship {
+    right: 1.5rem;
+    left: auto;
+    width: min(31rem, calc(100% - 3rem));
+  }
+
+  .studio-cinematic__content > h2 {
+    max-width: 13ch;
+    font-size: clamp(3rem, 5.15vw, 4.75rem);
+  }
+}
+
+.studio-cinematic__media-content,
+.studio-cinematic__content,
+.studio-cinematic__footer,
+.studio-cinematic__footer p {
+  min-width: 0;
+}
+
+.studio-cinematic__media-caption h3,
+.studio-cinematic__content > h2 {
+  text-wrap: balance;
+}
+
+/* Short viewports need a quicker splice because the fixed header already uses
+   a meaningful portion of the frame. */
+@media (max-height: 720px) {
+  .home-v4-handoff {
+    height: 2rem;
+  }
+
+  .home-v4-handoff::after {
+    bottom: 0.42rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .home-v4-handoff {
+    height: 2.15rem;
+  }
+
+  .home-v4-handoff::after {
+    width: 5.5rem;
+    bottom: 0.48rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4-handoff {
+    transform: none;
+  }
+
+  /* With scrubbed motion disabled, a tall sticky wrapper becomes empty
+     scrolling. Present the complete Earth composition once, at rest, and let
+     the visitor continue immediately. */
+  .home-v4-chapter--foundation > section {
+    height: auto !important;
+  }
+
+  .home-v4-chapter--foundation > section > div {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    min-height: 100svh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+  /* The animated desktop composition positions four cards radially. Once all
+     of them are expanded at rest, those coordinates can overlap. The comfort
+     version becomes a quiet two-column document instead: same information,
+     no chase, no collision, no artificial scroll length. */
+  .home-v4-chapter--foundation div:has(> [data-foundation-layer]) {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    height: auto !important;
+    margin-top: 3rem !important;
+  }
+
+  .home-v4-chapter--foundation [data-foundation-layer] {
+    position: relative !important;
+    inset: auto !important;
+    width: auto !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  .home-v4-chapter--foundation [data-final-copy] {
+    position: relative !important;
+    inset: auto !important;
+    max-width: 42rem !important;
+    margin-top: 3rem !important;
+    opacity: 1 !important;
+    text-align: left !important;
+  }
+
+  .home-v4-chapter--foundation nav[aria-label="Brand foundation layers"] {
+    display: none !important;
+  }
+}

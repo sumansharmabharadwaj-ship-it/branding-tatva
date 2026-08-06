@@ -1,0 +1,60 @@
+/* Content-led geometry corrections for V4 diagrams. */
+
+/* The decision scene previously placed a 112px text block over a 62px SVG
+   circle. The visible core now owns its geometry: text, padding, border, and
+   minimum diameter are one responsive object instead of unrelated numbers. */
+#decision .relative:has(> svg[aria-label*="converge"]) > div:last-child {
+  display: grid;
+  width: clamp(8.7rem, 13vw, 10.6rem) !important;
+  min-height: clamp(8.7rem, 13vw, 10.6rem);
+  place-items: center;
+  padding: clamp(1rem, 2vw, 1.35rem);
+  border: 1px solid rgba(212, 185, 154, 0.58);
+  border-radius: 999px;
+  background: rgba(20, 18, 16, 0.82);
+  box-shadow:
+    0 0 0 1rem rgba(212, 185, 154, 0.035),
+    0 20px 52px rgba(0, 0, 0, 0.24);
+  text-align: center;
+  backdrop-filter: blur(12px);
+}
+
+#decision .relative:has(> svg[aria-label*="converge"]) > div:last-child p {
+  width: 100%;
+  margin: 0;
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+#decision svg[aria-label*="converge"] circle[stroke="#D4B99A"] {
+  opacity: 0;
+}
+
+#decision .relative:has(> svg[aria-label*="converge"]) > div:not(:last-child) span:last-child {
+  max-width: min(7.4rem, 24vw);
+  text-align: center;
+  white-space: normal;
+}
+
+.home-v4 svg text {
+  text-rendering: geometricPrecision;
+}
+
+.home-v4-recognition__core,
+.home-v4-recognition__diagram button,
+.home-v4-cost__stage dl > div {
+  contain: layout paint;
+}
+
+@media (max-width: 560px) {
+  #decision .relative:has(> svg[aria-label*="converge"]) > div:last-child {
+    width: 8.2rem !important;
+    min-height: 8.2rem;
+    padding: 0.95rem;
+  }
+
+  #decision .relative:has(> svg[aria-label*="converge"]) > div:last-child p {
+    font-size: 1rem;
+  }
+}

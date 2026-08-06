@@ -1,0 +1,76 @@
+name: Remove temporary Services integration workflows
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/cleanup-services-temporary-workflows.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: cleanup-services-temporary-workflows
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out the cinematic branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+
+      - name: Remove one-use integration files
+        shell: bash
+        run: |
+          rm -f .github/workflows/merge-services-mobile-recognition-audit.yml
+          rm -f .github/workflows/merge-services-mobile-authority-deck.yml
+          rm -f .github/workflows/cleanup-services-temporary-workflows.yml
+
+      - name: Commit the clean workflow tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A .github/workflows
+
+          if git diff --cached --quiet; then
+            echo "No temporary workflow files remain."
+          else
+            git diff --cached --check
+            git commit -m "Remove temporary Services integration workflows"
+            git pull --rebase origin homepage-cinematic-recovery
+            git push origin HEAD:homepage-cinematic-recovery
+          fi
+
+      - name: Rerun the complete Services journey gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: gh workflow run services-page-gate.yml --repo "$GH_REPO" --ref homepage-cinematic-recovery
+
+      - name: Remove stale focused branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          for branch in \
+            noop-test \
+            services-mobile-recognition-audit-final \
+            services-mobile-recognition-audit \
+            services-mobile-authority-deck
+          do
+            gh api --method DELETE "repos/${GH_REPO}/git/refs/heads/${branch}" || true
+          done

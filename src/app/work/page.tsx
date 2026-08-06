@@ -1,290 +1,249 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
-import { Reveal } from "@/components/Reveal";
-import { SplitReveal } from "@/components/SplitReveal";
-import { PhotoHero } from "@/components/PhotoHero";
-import { VideoBreak } from "@/components/VideoBreak";
-import { WorkGrid } from "@/sections/CaseStudies";
+import { ClipReveal } from "@/components/ClipReveal";
+import { TexturedDark } from "@/components/TexturedDark";
+import { LinkButton } from "@/components/Button";
+import { ContextualCTA } from "@/components/conversion/ContextualCTA";
+import { WorkOpening } from "@/sections/Work/WorkOpening";
+import { WorkProofStrip } from "@/sections/Work/WorkProofStrip";
+import { WorkIndex } from "@/sections/Work/WorkIndex";
+import { SignatureProject } from "@/sections/Work/SignatureProject";
+import { SystemFlagship } from "@/sections/Work/SystemFlagship";
+import { MobileSystemEvidenceBoard } from "@/sections/Work/MobileSystemEvidenceBoard";
+import { ProjectStoryWall } from "@/sections/Work/ProjectStoryWall";
+import { DecisionEvidenceGallery } from "@/sections/Work/DecisionEvidenceGallery";
+import { CapabilityMap } from "@/sections/Work/CapabilityMap";
+import { TatvaLab } from "@/sections/Work/TatvaLab";
+import { Authorship } from "@/sections/Work/Authorship";
+import { WorkMobileNarrativeEnhancers } from "@/sections/Work/MobileNarrativeEnhancers";
 import { BrandStudies } from "@/sections/CaseStudies/BrandStudies";
 import { brandStudies } from "@/data/brandStudies";
+import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 
-// AEO/GEO: the brand studies as structured data, so search and answer
-// engines can cite each dissection individually. Articles, deliberately
-// never CaseStudy/Service types — these are independent analyses of the
-// public record, and the schema must say so as clearly as the page copy.
+const WORK_URL = `${site.url}/work`;
+const PERSON_ID = `${site.url}/#person`;
+const ORGANIZATION_ID = `${site.url}/#organization`;
+const WORK_DESCRIPTION =
+  "Explore founder-led brand strategy case studies spanning positioning, messaging, content systems, campaigns, customer journeys, and measurable performance.";
+
+const projectsJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${WORK_URL}#collection`,
+  url: WORK_URL,
+  name: "Brand Strategy Case Studies and Portfolio | Branding Tatva",
+  description: WORK_DESCRIPTION,
+  author: { "@id": PERSON_ID },
+  publisher: { "@id": ORGANIZATION_ID },
+  breadcrumb: {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: site.url,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Work",
+        item: WORK_URL,
+      },
+    ],
+  },
+  mainEntity: {
+    "@type": "ItemList",
+    name: "Branding Tatva client work",
+    numberOfItems: projects.length,
+    itemListElement: projects.map((project, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "CreativeWork",
+        name: project.title,
+        description: project.hook ?? project.challenge,
+        url: `${WORK_URL}/${project.slug}`,
+        about: project.industry,
+        genre: project.services,
+        creator: { "@id": PERSON_ID },
+        publisher: { "@id": ORGANIZATION_ID },
+      },
+    })),
+  },
+};
+
 const studiesJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: "Brand studies",
+  name: "Independent brand studies",
   description:
     "Independent brand strategy analyses of renowned brands, written as teaching. No client relationship with the brands analyzed.",
-  itemListElement: brandStudies.map((study, i) => ({
+  itemListElement: brandStudies.map((study, index) => ({
     "@type": "ListItem",
-    position: i + 1,
+    position: index + 1,
     item: {
       "@type": "Article",
       headline: `${study.brand}: ${study.lens}`,
       about: study.brand,
       abstract: study.premise,
-      url: `${site.url}/work`,
+      url: `${WORK_URL}/studies/${study.slug}`,
+      author: { "@id": PERSON_ID },
+      publisher: { "@id": ORGANIZATION_ID },
     },
   })),
 };
-import { ClipReveal } from "@/components/ClipReveal";
-import { AnnotatedVisual } from "@/components/AnnotatedVisual";
-import { KineticMarquee } from "@/components/KineticMarquee";
-import { TexturedDark } from "@/components/TexturedDark";
-import { LinkButton } from "@/components/Button";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { AnimatedStat } from "@/components/AnimatedStat";
-import { ElementGlyph } from "@/components/ElementGlyph";
-import { projects } from "@/data/projects";
-import { elements } from "@/data/elements";
 
 export const metadata: Metadata = {
-  title: "Work",
-  description:
-    "Selected brand and content strategy work, plus independent brand studies dissecting Coca Cola, Apple, Nike, Burberry and Tim Hortons.",
+  title: "Brand Strategy Case Studies & Portfolio",
+  description: WORK_DESCRIPTION,
   alternates: { canonical: "/work" },
   openGraph: {
-    title: "Work | Branding Tatva",
-    description:
-    "Selected brand and content strategy work, plus independent brand studies dissecting Coca Cola, Apple, Nike, Burberry and Tim Hortons.",
+    title: "Brand Strategy Case Studies & Portfolio | Branding Tatva",
+    description: WORK_DESCRIPTION,
+    url: "/work",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Brand Strategy Case Studies & Portfolio | Branding Tatva",
+    description: WORK_DESCRIPTION,
   },
 };
 
 export default function WorkPage() {
-  const industries = [...new Set(projects.map((p) => p.industry))];
-  // Real derived fact, not a decorative element grid: which of the five
-  // elements at least one real project's own services field actually
-  // names, kept in the framework's canonical Earth/Water/Fire/Air/Space
-  // order rather than data-insertion order.
-  const elementsCovered = elements
-    .map((e) => e.slug)
-    .filter((slug) => projects.some((p) => p.services.some((s) => s.toLowerCase().startsWith(slug))));
+  const performanceSignature = projects.find((project) => project.slug === "dr-haley-nutrition");
+  const systemSignature = projects.find((project) => project.slug === "myshopineurope");
 
   return (
     <>
-      <Header transparent />
-      <ScrollProgress />
-      <main id="main-content">
-        {/* Redesigned from the centered pill-badge-plus-headline template
-            every secondary page's hero used to share (identical to
-            Services/Blog/Contact) — an asymmetric masthead instead, the
-            exact technique already proven on this site's own case-study
-            and blog-post templates (large offset headline in one
-            column, a real-data aside in the other, a giant faint
-            watermark word behind both), just never applied to this
-            page's own top-level hero until now. Real industries list
-            (already computed below for the numbers strip) fills the
-            aside — distinct from that strip's own lead (the project
-            count), not a repeat of it. */}
-        <PhotoHero
-          video="/videos/own-ridge-road.mp4"
-          poster="/images/own-ridge-road-poster.jpg"
-          minHeight="70vh"
-        >
-          <Container className="relative py-20">
-            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
-              <Reveal>
-                <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                  Work
-                </span>
-                <SplitReveal
-                  as="h1"
-                  className="mt-6 max-w-2xl font-display text-[clamp(2.4rem,6.5vw,4.5rem)] font-normal leading-[1.05] text-ivory"
-                >
-                  Projects across very different categories.
-                </SplitReveal>
-                <p className="mt-4 max-w-lg text-ivory/80">
-                  Different industries, the same underlying method.
-                </p>
-              </Reveal>
-              <Reveal delay={0.1} className="flex flex-row flex-wrap gap-2 lg:max-w-56 lg:flex-col lg:items-end lg:pb-2">
-                {industries.map((industry) => (
-                  <span
-                    key={industry}
-                    className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/85 lg:text-right"
-                  >
-                    {industry}
-                  </span>
-                ))}
-              </Reveal>
-            </div>
-          </Container>
-        </PhotoHero>
+      <Header />
+      <main id="main-content" style={{ backgroundColor: "#F2F0E8" }}>
+        {/* Overview: immediate proposition, genuine project montage,
+            then a compact evidence line before any explanatory layer. */}
+        <WorkOpening />
+        <WorkProofStrip projects={projects} />
 
-        {/* Direct feedback pointed at alethia.earth/solutions/nature-based's
-            "OUR SOLUTION" section as the technique to borrow — a photo
-            with dot-and-line callouts, not another card grid — but the
-            first pass leaned too hard on the reference itself: an
-            isolated single tree, same composition, same idea, not just
-            the same technique. Swapped for a brass compass instead —
-            takes the "one clear object explains it" gist without
-            reproducing what alethia's own asset actually shows, and
-            ties into "starts with real direction" more literally than a
-            tree did. Added here, not in place of the project grid
-            below: those five projects are genuinely distinct case
-            studies someone needs to click into individually, the same
-            reason alethia's own case-study list stays a normal list
-            further down their page. This explains the method behind
-            all five before the grid, the one thing a card grid can't
-            easily say on its own. */}
-        <section className="bg-background-alt py-20 sm:py-28">
-          <Container>
-            <Reveal>
-              <AnnotatedVisual
-                image="/images/higgsfield-brass-compass.jpg"
-                alt=""
-                callouts={[
-                  {
-                    dotTop: "38%",
-                    dotLeft: "44%",
-                    side: "left",
-                    title: "A real audit, built for your actual market",
-                    text: "I look at what's actually happening in your market first, then build a plan specific to where your brand stands today.",
-                  },
-                  {
-                    dotTop: "58%",
-                    dotLeft: "56%",
-                    side: "right",
-                    title: "One connected system, start to finish",
-                    text: "Positioning, identity, and content built to carry the same throughline, from the first conversation to the last deliverable.",
-                  },
-                ]}
-              />
-            </Reveal>
-          </Container>
-        </section>
+        {/* Scan: buyer-problem filters establish relevance before the
+            page asks for a long read. */}
+        <WorkIndex projects={projects} />
 
-        {/* A section-transition beat between the compass explainer and
-            the project grid — this page had no divider at all between
-            its two flat-light sections. Reuses the exact industry list
-            already stated in this page's own hero subhead above, not
-            new copy. */}
-        <KineticMarquee text="MARKETPLACES · WELLNESS · D2C · ENTERPRISE · COACHING" />
-
-        {/* Redesigned: the industries list here duplicated the exact
-            same real data the new hero aside above now already shows,
-            and the section itself read as a plain flex row rather than
-            a real moment. The count now counts up on scroll (the same
-            AnimatedStat device the case-study numbers sections already
-            use, real motion instead of a static digit), and the second
-            fact is a genuinely different one: which of the five
-            elements real client work has actually touched, derived
-            directly from every project's own services field, not a
-            repeated industries list or a decorative element grid for
-            its own sake. */}
-        <section className="bg-soil py-16 sm:py-20">
-          <Container>
-            <Reveal className="flex flex-col items-center gap-10 text-center sm:flex-row sm:items-end sm:justify-between sm:text-left">
-              <div>
-                <p className="font-display text-6xl font-normal text-sandstone sm:text-7xl">
-                  <AnimatedStat value={String(projects.length)} />
-                </p>
-                <p className="mt-2 text-sm text-ivory/80">Real client engagements, each one different.</p>
-              </div>
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-ivory/60 sm:text-right">
-                  Every element, in real work
-                </p>
-                <div className="mt-3 flex justify-center gap-4 sm:justify-end">
-                  {elementsCovered.map((slug) => (
-                    <ElementGlyph
-                      key={slug}
-                      slug={slug}
-                      className="h-6 w-6 text-sandstone"
-                      strokeWidth={1.3}
-                    />
-                  ))}
-                </div>
-              </div>
-            </Reveal>
-          </Container>
-        </section>
-
-        {/* Was bold solid Soil, matching every other photo/video section
-            site-wide — but per direct feedback pointing at the reference
-            site's own restraint, a card grid doesn't need that: these
-            cards are already dark, self-contained photographic tiles, so
-            they read as their own visual weight regardless of what's
-            behind them. Letting them sit on the site's own light neutral
-            instead lets the photography carry the color, the same way
-            the reference's own image-forward sections do. */}
-        {/* bg-background-alt lives on the outer section now, outside
-            ClipReveal — clip-path:inset(...100%...) hides an element's
-            entire rendered box, background-color included, so wrapping
-            the whole section meant a slow-to-fire reveal trigger showed
-            blank page background instead of this section's own fill
-            during fast real-device scrolling. Same fix as Home's
-            PerspectiveReveal/ClipReveal sections and VerticalUnfold's
-            element rows. */}
-        <section className="bg-background-alt py-16">
-          <ClipReveal>
-            <Container>
-              <WorkGrid projects={projects} />
-            </Container>
-          </ClipReveal>
-        </section>
-
-        {/* Brand studies — the teaching layer beneath the real client
-            record. Independent dissections of renowned US, UK and
-            Canadian brands through the site's own vocabulary. Framed
-            explicitly as analyses of the public record so no visitor
-            can mistake them for engagements; deliberately styled as
-            numbered editorial rows, a different visual genre from the
-            client cards above. */}
-        <BrandStudies />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(studiesJsonLd) }} />
-
-        {/* Was a static image (higgsfield-canopy-light.jpg) under a quote
-            that is literally about "a forest of noise" — real cinematic
-            footage instead, sourced and verified this session: sunbeams
-            breaking through mist in a real forest (Pexels, id 33237395,
-            standard Pexels license, free for commercial use, no
-            attribution required), trimmed to an 8s loop and re-encoded
-            at 1080p/crf22 (5.6MB, verified via frame extraction against
-            the original before compressing further). The copy's own
-            metaphor is now the thing actually on screen, not a
-            coincidentally-similar stock photo. */}
-        <VideoBreak
-          src="/videos/pexels-misty-forest-sunbeams.mp4"
-          poster="/images/pexels-misty-forest-sunbeams-poster.jpg"
-          quote="Every one of these projects started in a forest of noise, the same place yours is starting from."
-          height="60vh"
+        {/* Immersion one: measured performance. The project's own frame
+            regains colour as the evidence resolves. */}
+        {performanceSignature && <SignatureProject project={performanceSignature} />}
+        <ContextualCTA
+          eyebrow="A similar pattern"
+          heading="Posting more, but earning less attention?"
+          href="/contact"
+          label="Discuss the pattern"
+          event="contextual_cta_clicked"
+          eventProps={{ source: "work_performance_signature" }}
         />
 
-        {/* This page used to end on the ImageBreak above with no next
-            step — every other page (Home, About, Services, Contact)
-            closes with an explicit CTA. Same TexturedDark + ClipReveal
-            + LinkButton combination Services already proves at its own
-            closing section. */}
-        <TexturedDark image="/images/higgsfield-forest-path.jpg" className="py-24 text-center sm:pb-28">
+        {/* A faster middle tier resets the viewing mode before the next
+            long sticky chapter. Three focused engagements receive real
+            context and proportionate depth without becoming miniature
+            versions of the flagship above. */}
+        <ProjectStoryWall projects={projects} />
+
+        {/* Immersion two: system building. A different scroll language
+            assembles foundation, content architecture, and rollout. The
+            project-story wall above prevents two long sticky narratives
+            from sitting directly beside one another. */}
+        {systemSignature && <SystemFlagship project={systemSignature} />}
+        {systemSignature && <MobileSystemEvidenceBoard project={systemSignature} />}
+        <WorkMobileNarrativeEnhancers />
+
+        {/* Tier three: real decisions shown at artefact scale. The
+            fragments demonstrate breadth without turning every small
+            decision into a theatrical case study. */}
+        <DecisionEvidenceGallery />
+
+        {/* Relevance: after seeing the record, the visitor can name the
+            condition they are trying to change and reach the closest
+            project evidence and service path. */}
+        <CapabilityMap />
+
+        {/* Wider practice: concept work and public-record analysis are
+            deliberately separated from client engagements so neither
+            borrows credibility from the other. */}
+        <TatvaLab />
+        <BrandStudies />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(studiesJsonLd) }} />
+
+        <Authorship />
+
+        <TexturedDark
+          image="/images/work-closing.jpg"
+          imagePosition="center 62%"
+          overlayGradient="radial-gradient(circle at 18% 14%, rgba(123,151,108,0.28) 0%, transparent 34%), linear-gradient(118deg, rgba(7,21,17,0.94) 0%, rgba(12,31,26,0.9) 48%, rgba(7,16,22,0.95) 100%)"
+          className="py-20 sm:py-28 sm:pb-28"
+        >
           <ClipReveal>
-            <Container>
-              <h2 className="text-display-md font-display font-normal text-ivory">
-                Want a project like these on your own brand?
-              </h2>
-              <p className="mx-auto mt-4 max-w-md text-ivory/80">
-                Every one of these started with a conversation about where
-                the brand actually stood. Yours can start the same way.
-              </p>
-              <div className="mt-8">
-                {/* Was "Book a Brand Strategy Session," identical to Home's
-                    and Blog's own closing CTAs — worded to match "yours can
-                    start the same way" right above it instead of repeating
-                    the same three pages' label verbatim. */}
-                <LinkButton href="/contact">Book Your Own Strategy Session</LinkButton>
+            <Container className="max-w-6xl">
+              <div className="grid gap-10 text-left lg:grid-cols-[minmax(0,1.12fr)_minmax(19rem,0.88fr)] lg:items-end lg:gap-16">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#B9C8AE]">The next decision</p>
+                  <h2 className="mt-3 max-w-3xl font-display text-display-md font-normal text-ivory">
+                    Bring the part of the brand that no longer makes sense.
+                  </h2>
+                  <p className="mt-5 max-w-2xl text-base leading-relaxed text-ivory/80 sm:text-lg">
+                    The first conversation separates the symptom from the decision: what feels unclear, where the system stops holding together, and what should be solved first.
+                  </p>
+
+                  <div className="mt-8 flex flex-wrap items-center gap-5">
+                    <LinkButton
+                      href="/contact"
+                      className="bg-[#65785A] text-[#F6F1E7] hover:bg-[#74896A]"
+                    >
+                      Discuss the brand problem
+                    </LinkButton>
+                    <Link href="/services" className="link-underline text-sm font-medium text-[#EEE9DD]">
+                      See the service paths <span aria-hidden="true">→</span>
+                    </Link>
+                  </div>
+                </div>
+
+                <aside
+                  aria-label="What the first conversation covers"
+                  className="rounded-[1.5rem] border border-ivory/20 bg-[#06130F]/75 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-sm sm:p-7"
+                >
+                  <p className="text-[0.64rem] font-medium uppercase tracking-[0.18em] text-[#AFC19F]">
+                    First conversation
+                  </p>
+                  <ol className="mt-5 space-y-5">
+                    {[
+                      ["01", "Name what feels unclear", "The page, message, journey, or system that has started to resist the business."],
+                      ["02", "Locate where it breaks", "Whether the problem begins in perception, structure, recognition, or conversion."],
+                      ["03", "Frame the next decision", "The clearest move to make before commissioning another disconnected output."],
+                    ].map(([number, title, description]) => (
+                      <li key={number} className="grid grid-cols-[2rem_1fr] gap-3 border-t border-ivory/15 pt-4 first:border-t-0 first:pt-0">
+                        <span className="font-display text-lg text-[#9DB18F]">{number}</span>
+                        <div>
+                          <p className="font-display text-xl font-normal text-ivory">{title}</p>
+                          <p className="mt-1 text-sm leading-relaxed text-ivory/65">{description}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </aside>
+              </div>
+
+              <div className="mt-10 grid gap-3 border-t border-ivory/20 pt-5 text-center text-[0.64rem] uppercase tracking-[0.16em] text-ivory/65 sm:grid-cols-3 lg:text-left">
+                <span>Founder-led</span>
+                <span>Direct collaboration</span>
+                <span>Strategy before output</span>
               </div>
             </Container>
           </ClipReveal>
         </TexturedDark>
       </main>
-      <Footer />
+      <Footer compact />
     </>
   );
 }
