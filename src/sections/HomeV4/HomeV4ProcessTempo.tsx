@@ -9,6 +9,7 @@ const TAB_SELECTOR = '.project-journey__rail [role="tab"]';
 const FIRST_ADVANCE_MS = 2400;
 const AUTO_ADVANCE_MS = 4200;
 const USER_HOLD_MS = 12000;
+const PAUSE_PULSE_MS = 4200;
 
 /**
  * The Process scene already owns its semantic state and accessible tabs.
@@ -26,6 +27,7 @@ export function HomeV4ProcessTempo() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const holdUntilRef = useRef(0);
   const timerRef = useRef(0);
+  const pausePulseRef = useRef(0);
   const firstAdvanceRef = useRef(true);
 
   useEffect(() => {
@@ -79,8 +81,37 @@ export function HomeV4ProcessTempo() {
       delete section.dataset.processTempoManaged;
       sectionRef.current = null;
       window.clearTimeout(timerRef.current);
+      window.clearInterval(pausePulseRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    window.clearInterval(pausePulseRef.current);
+    const section = sectionRef.current;
+    if (!section) return;
+
+    if (guideMode === "paused") {
+      const pulse = () => {
+        section.dispatchEvent(
+          new PointerEvent("pointerdown", {
+            bubbles: true,
+            pointerType: "mouse",
+          }),
+        );
+      };
+
+      pulse();
+      pausePulseRef.current = window.setInterval(pulse, PAUSE_PULSE_MS);
+      return () => window.clearInterval(pausePulseRef.current);
+    }
+
+    // The external director can resume immediately even though the internal
+    // scene has a longer manual-reading hold. That keeps Continue responsive.
+    holdUntilRef.current = 0;
+    setRevision((value) => value + 1);
+
+    return () => window.clearInterval(pausePulseRef.current);
+  }, [guideMode]);
 
   useEffect(() => {
     window.clearTimeout(timerRef.current);
