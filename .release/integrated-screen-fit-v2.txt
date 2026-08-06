@@ -1,0 +1,5 @@
+source=staging/site-integration
+frozen-source=0b62285d10d600024c7fa74f2cf2dbbafb158499
+release-branch=release/integrated-screen-fit-v2
+intent=build the complete integrated site on an isolated Windows runner and publish one Vercel preview only after success
+requested-at=2026-08-06T18:24:00Z
