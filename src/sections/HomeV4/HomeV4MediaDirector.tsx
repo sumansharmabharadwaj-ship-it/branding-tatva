@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useReducedMotion } from "framer-motion";
 import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
 
-const DEFAULT_PLAYBACK_RATE = 1.18;
+const DEFAULT_PLAYBACK_RATE = 1.22;
 const FORM_CONTROL_SELECTOR =
   "input, textarea, select, [contenteditable='true'], [role='textbox']";
 
@@ -16,7 +16,7 @@ type NavigatorWithHints = Navigator & {
 function requestedPlaybackRate(video: HTMLVideoElement) {
   const requested = Number(video.dataset.homePlaybackRate ?? DEFAULT_PLAYBACK_RATE);
   if (!Number.isFinite(requested)) return DEFAULT_PLAYBACK_RATE;
-  return Math.min(1.5, Math.max(0.75, requested));
+  return Math.min(1.55, Math.max(0.75, requested));
 }
 
 function applyPlaybackRate(video: HTMLVideoElement) {
