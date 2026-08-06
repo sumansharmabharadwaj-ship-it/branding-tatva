@@ -64,6 +64,11 @@ Strategy Room / booking
 - poster: /images/generated/bt-services-strategy-room-poster.jpg
 - role: lets surface noise settle into one calm reflection before a focused conversation begins
 
+Clean core media revision
+- hero root system, strategy topography, and health reflection are rendered procedurally from NumPy and Pillow geometry
+- no imported raster footage, third-party title card, logo, or watermark is used in these three families
+- the public file paths remain unchanged, so page wiring and responsive fallbacks continue without migration
+
 Implementation rules
 - silent, muted, autoplay, loop, playsInline for moving media
 - generated poster fallback for reduced motion and slow connections
