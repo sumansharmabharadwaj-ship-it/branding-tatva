@@ -22,10 +22,63 @@ import { brandStudies } from "@/data/brandStudies";
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 
+const WORK_URL = `${site.url}/work`;
+const PERSON_ID = `${site.url}/#person`;
+const ORGANIZATION_ID = `${site.url}/#organization`;
+const WORK_DESCRIPTION =
+  "Explore founder-led brand strategy case studies spanning positioning, messaging, content systems, campaigns, customer journeys, and measurable performance.";
+
+const projectsJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${WORK_URL}#collection`,
+  url: WORK_URL,
+  name: "Brand Strategy Case Studies and Portfolio | Branding Tatva",
+  description: WORK_DESCRIPTION,
+  author: { "@id": PERSON_ID },
+  publisher: { "@id": ORGANIZATION_ID },
+  breadcrumb: {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: site.url,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Work",
+        item: WORK_URL,
+      },
+    ],
+  },
+  mainEntity: {
+    "@type": "ItemList",
+    name: "Branding Tatva client work",
+    numberOfItems: projects.length,
+    itemListElement: projects.map((project, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "CreativeWork",
+        name: project.title,
+        description: project.hook ?? project.challenge,
+        url: `${WORK_URL}/${project.slug}`,
+        about: project.industry,
+        genre: project.services,
+        creator: { "@id": PERSON_ID },
+        publisher: { "@id": ORGANIZATION_ID },
+      },
+    })),
+  },
+};
+
 const studiesJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: "Brand studies",
+  name: "Independent brand studies",
   description:
     "Independent brand strategy analyses of renowned brands, written as teaching. No client relationship with the brands analyzed.",
   itemListElement: brandStudies.map((study, index) => ({
@@ -36,21 +89,27 @@ const studiesJsonLd = {
       headline: `${study.brand}: ${study.lens}`,
       about: study.brand,
       abstract: study.premise,
-      url: `${site.url}/work`,
+      url: `${WORK_URL}/studies/${study.slug}`,
+      author: { "@id": PERSON_ID },
+      publisher: { "@id": ORGANIZATION_ID },
     },
   })),
 };
 
 export const metadata: Metadata = {
-  title: "Work",
-  description:
-    "A living archive of brand strategy work: positioning, verbal identity, and recognition built for real clients, plus clearly labelled concept work and independent brand studies.",
+  title: "Brand Strategy Case Studies & Portfolio",
+  description: WORK_DESCRIPTION,
   alternates: { canonical: "/work" },
   openGraph: {
-    title: "Work | Branding Tatva",
-    description:
-      "A living archive of brand strategy work: positioning, verbal identity, and recognition built for real clients, plus clearly labelled concept work and independent brand studies.",
+    title: "Brand Strategy Case Studies & Portfolio | Branding Tatva",
+    description: WORK_DESCRIPTION,
+    url: "/work",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Brand Strategy Case Studies & Portfolio | Branding Tatva",
+    description: WORK_DESCRIPTION,
   },
 };
 
@@ -110,6 +169,7 @@ export default function WorkPage() {
             borrows credibility from the other. */}
         <TatvaLab />
         <BrandStudies />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(studiesJsonLd) }} />
 
         <Authorship />
