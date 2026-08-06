@@ -13,6 +13,7 @@ import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
 export function BackgroundVideo({
   video,
+  videoMobile,
   videoWebm,
   poster,
   imagePosition = "center",
@@ -20,6 +21,8 @@ export function BackgroundVideo({
   push = false,
 }: {
   video: string;
+  // Optional lower-bandwidth MP4 selected by the browser on phones.
+  videoMobile?: string;
   // Optional WebM sibling, tried first via a real <source> list — same
   // additive pattern TexturedDark established (see its own comment).
   // `video` alone keeps working exactly as before for every existing
@@ -93,6 +96,7 @@ export function BackgroundVideo({
           // ahead of paint, with the poster covering the gap.
           preload="metadata"
         >
+          {videoMobile && <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />}
           {videoWebm && <source src={videoWebm} type="video/webm" />}
           <source src={video} type="video/mp4" />
         </video>

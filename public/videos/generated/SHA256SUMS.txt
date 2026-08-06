@@ -1,3 +1,6 @@
-b5ad7551b05fddd11bcb4928dbd8d4358b5ac589c76402f2500fc47d2d9afbb4  public/videos/generated/bt-services-health-reflection.mp4
-815193497a9d776bf9e2d68b443aa48ef15d4fd547127f4f3eca139d80508a73  public/videos/generated/bt-services-hero-root-system.mp4
-b57e6859d29141837a9af712a7df119a1a71f95f5dca0f9ff3075dd10f290658  public/videos/generated/bt-services-strategy-topography.mp4
+5bd4bd4c14475e2f3c6d99a85559d9a1c6bb99a2c9bc062ded2c4381ba4b342d  public/videos/generated/bt-services-health-reflection-mobile.mp4
+be0b5b022a1b7a7d5457de4ca7279357f2558fa42adb595e095cc6414430978b  public/videos/generated/bt-services-health-reflection.mp4
+4ea5bb511e2a275987b6f125b0b618d2959e56b05fe1bf152a8e27b8aea358d6  public/videos/generated/bt-services-hero-root-system-mobile.mp4
+478551c4267f6cc2562b786c88c932d069935fab03e69a9805b802f288db9392  public/videos/generated/bt-services-hero-root-system.mp4
+95a91368b542ce11bef6165c7fc014d7f9ea6a30a23d8c422243b57147b0a694  public/videos/generated/bt-services-strategy-topography-mobile.mp4
+df6e9ec9ae0e6f1be6c2a07e5a59dfae046b7a091e5e35f55a2440e65904da00  public/videos/generated/bt-services-strategy-topography.mp4

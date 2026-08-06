@@ -42,20 +42,24 @@ export function PhotoHero({
   children,
   image,
   video,
+  videoMobile,
   poster,
   minHeight = "60vh",
   imagePosition = "center",
   className,
   accentColor,
+  overlayGradient = gradient,
 }: {
   children?: React.ReactNode;
   image?: string;
   video?: string;
+  videoMobile?: string;
   poster?: string;
   minHeight?: string;
   imagePosition?: string;
   className?: string;
   accentColor?: string;
+  overlayGradient?: string;
 }) {
   const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -97,14 +101,17 @@ export function PhotoHero({
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
             style={{ objectPosition: imagePosition }}
-            src={video}
             autoPlay
             muted
             loop
             playsInline
-          />
+            preload="auto"
+          >
+            {videoMobile && <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />}
+            <source src={video} type="video/mp4" />
+          </video>
           {accentWash}
-          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
+          <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
         </>
       ) : (
         <motion.div
@@ -122,7 +129,7 @@ export function PhotoHero({
             style={{ objectFit: "cover", objectPosition: imagePosition }}
           />
           {accentWash}
-          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
+          <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
         </motion.div>
       )}
       {children}

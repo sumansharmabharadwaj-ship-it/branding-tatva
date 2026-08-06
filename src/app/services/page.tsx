@@ -98,7 +98,7 @@ export default async function ServicesPage() {
   const region = isRegion(savedRegion) ? savedRegion : regionFromCountry(hdrs.get("x-vercel-ip-country"));
   // The hero poster is the page's first paint — a high priority preload
   // hint so the awakening scene arrives before the veil starts lifting.
-  preload("/images/pexels-aspen-sunburst-poster.jpg", { as: "image", fetchPriority: "high" });
+  preload("/images/generated/bt-services-hero-root-system-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
@@ -142,19 +142,19 @@ export default async function ServicesPage() {
             items — real wayfinding, not decoration — so the hero itself
             previews the four objections the rest of the page answers. */}
         <PhotoHero
-          video="/videos/pexels-aspen-sunburst.mp4"
-          poster="/images/pexels-aspen-sunburst-poster.jpg"
+          video="/videos/generated/bt-services-hero-root-system.mp4"
+          videoMobile="/videos/generated/bt-services-hero-root-system-mobile.mp4"
+          poster="/images/generated/bt-services-hero-root-system-poster.jpg"
           minHeight="70vh"
+          overlayGradient="linear-gradient(180deg, rgba(12,17,16,0.54) 0%, rgba(12,17,16,0.64) 58%, rgba(12,17,16,0.82) 100%)"
         >
-          {/* Approved awakening footage (Pexels 31883946, Joshua
-              Woroniecki, free license): a sun star breaking through
-              backlit trembling aspens, birch trunks in bokeh depth —
-              the first candidate to pass all five hero questions
-              (clear visual event, revealing light, layered depth,
-              scroll-stopping, stronger than its predecessor). Full 20s
-              slowed to 24s, 2s forward dissolve, no reverse motion.
-              The reveal veil below lifts the forest darkness so the
-              page wakes into the burst. */}
+          {/* Original generated hero loop: a living underground root
+              network becomes legible as a restrained mineral-ivory
+              signal travels through connected paths. The image explains
+              the page's premise before the copy does: brand recognition
+              is a system beneath the visible surface, not one isolated
+              deliverable. A dedicated mobile encode and generated poster
+              keep the first paint quiet, fast, and semantically intact. */}
           <HeroReveal />
           {/* Phase 1 hero pass. Two localized layers on top of
               PhotoHero's own base gradient: a cool tint pulling the
@@ -307,6 +307,25 @@ export default async function ServicesPage() {
             on the page. Editorial rows rather than a card grid; each
             offering keeps its own accent from the data. */}
         <section id="offerings" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          {/* Original generated strategy terrain: mist withdraws from a
+              tactile topographic world while one pale route becomes
+              clear. The six disciplines stay distinct in the foreground,
+              but the moving terrain makes the shared strategic foundation
+              visible without turning the chapter into another card grid. */}
+          <BackgroundVideo
+            parallax
+            video="/videos/generated/bt-services-strategy-topography.mp4"
+            videoMobile="/videos/generated/bt-services-strategy-topography-mobile.mp4"
+            poster="/images/generated/bt-services-strategy-topography-poster.jpg"
+          />
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, rgba(16,20,19,0.9) 0%, rgba(16,20,19,0.74) 46%, rgba(16,20,19,0.56) 100%)",
+            }}
+          />
           <Container className="relative max-w-6xl">
             <div className="grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-20">
               <Reveal className="lg:sticky lg:top-28 lg:self-start">
@@ -617,20 +636,17 @@ export default async function ServicesPage() {
             break; the stream clip's mossy greens finally read as green
             instead of being re-warmed to amber by a soil overlay. */}
         <section id="health" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.forest }}>
-          {/* Media replaced per direct approval (Pexels id 38507614,
-              standard license): near-black still water carrying green
-              foliage reflections — the chapter's own question made
-              visual, a self assessment as looking into still water,
-              replacing the generic forest stream. Trimmed to the
-              strongest 8s, slowed 0.85x, graded a step darker and
-              quieter into the forest mood, built into the same
-              seamless ping-pong loop as the other Pexels assets.
-              2.0MB MP4 / 0.7MB WebM. */}
+          {/* Original generated diagnostic reflection loop: the
+              surface first reads as coherent, then faint misalignments
+              reveal themselves beneath it before settling into visible
+              priorities. It turns the Health Check's actual job into the
+              motion itself, with a smaller mobile encode and a still
+              generated from the same visual world for reduced motion. */}
           <BackgroundVideo
             parallax
-            video="/videos/pexels-moss-stream.mp4"
-            videoWebm="/videos/pexels-moss-stream.webm"
-            poster="/images/pexels-moss-stream-poster.jpg"
+            video="/videos/generated/bt-services-health-reflection.mp4"
+            videoMobile="/videos/generated/bt-services-health-reflection-mobile.mp4"
+            poster="/images/generated/bt-services-health-reflection-poster.jpg"
           />
           <div
             className="absolute inset-0"
