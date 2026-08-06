@@ -113,13 +113,19 @@ export function Header({ transparent = false }: HeaderProps) {
               scrolled ? "bg-[#1B1B1B]/90" : "bg-[#1B1B1B]/60"
             }`}
           >
-            <Link href="/" className="flex shrink-0 items-center gap-3">
+            <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3">
               <LogoMark size={32} light className="shrink-0" />
-              <span aria-hidden="true" className="hidden h-6 w-px bg-ivory/25 min-[400px]:block" />
-              <Logo light className="hidden origin-left min-[400px]:inline-flex" />
+              <span aria-hidden="true" className="hidden h-6 w-px bg-ivory/25 min-[376px]:block" />
+              {/* Logo owns an inline-flex display internally, so the
+                  responsive visibility belongs to a parent wrapper.
+                  This keeps the wordmark at 390px while leaving enough
+                  room for sound and menu controls at 360px. */}
+              <span className="hidden min-[376px]:inline-flex">
+                <Logo light className="origin-left" />
+              </span>
             </Link>
 
-            <div className="flex items-center gap-3 sm:gap-4 lg:gap-5">
+            <div className="flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-5">
               <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
                 {navigation
                   .filter((item) => item.href !== "/" && item.href !== "/contact")
