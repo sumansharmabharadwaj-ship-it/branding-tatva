@@ -9,16 +9,17 @@ export function HomeV4HeaderDirector() {
   useEffect(() => {
     const header = document.querySelector<HTMLElement>("header");
     if (!header) return;
+    const homeHeader = header;
 
     let lastCommittedScroll = window.scrollY;
 
     function setHidden(hidden: boolean) {
-      header.dataset.homeNativeHidden = hidden ? "true" : "false";
+      homeHeader.dataset.homeNativeHidden = hidden ? "true" : "false";
     }
 
     function syncHeader() {
       const current = window.scrollY;
-      const openMenu = Boolean(header.querySelector('[aria-expanded="true"]'));
+      const openMenu = Boolean(homeHeader.querySelector('[aria-expanded="true"]'));
 
       if (openMenu || current <= TOP_REVEAL_PX) {
         setHidden(false);
@@ -40,7 +41,7 @@ export function HomeV4HeaderDirector() {
     return () => {
       window.removeEventListener("scroll", syncHeader);
       window.removeEventListener("pageshow", syncHeader);
-      delete header.dataset.homeNativeHidden;
+      delete homeHeader.dataset.homeNativeHidden;
     };
   }, []);
 
