@@ -302,8 +302,23 @@ async function auditWorkViewport(browser, viewport) {
     assert(labText.includes("Zero clients are implied"), `${label}: Lab honesty framing is missing`);
     await captureLocator(page, labSection, `work-${viewport.name}-lab-closed.png`);
     await labButtons.first().click();
-    await page.waitForTimeout(260);
+    await page.waitForTimeout(900);
     assert((await labButtons.first().getAttribute("aria-expanded")) === "true", `${label}: Lab dossier did not open`);
+
+    if (viewport.name === "mobile-390x844") {
+      const dossierTop = await page.locator("#lab-deodar-retreat").evaluate(
+        (node) => node.getBoundingClientRect().top,
+      );
+      assert(
+        dossierTop >= 72 && dossierTop <= 220,
+        `${label}: opened Lab dossier did not hand off into the viewport, top=${dossierTop}`,
+      );
+      await page.screenshot({
+        path: path.join(OUTPUT, "work-mobile-390x844-lab-handoff.png"),
+        animations: "disabled",
+      });
+    }
+
     await captureLocator(page, labSection, `work-${viewport.name}-lab-open.png`);
 
     const studiesHeading = page.getByRole("heading", {
