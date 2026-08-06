@@ -1,3 +1,3 @@
 # Insights SEO operating system
 
-Status: reset will restore the parent branch document
+Status: temporary reconciliation branch, snapshot preserved
