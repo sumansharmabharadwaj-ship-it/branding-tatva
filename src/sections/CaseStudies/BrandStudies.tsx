@@ -25,6 +25,7 @@ export function BrandStudies() {
   const [open, setOpen] = useState(-1);
   const prefersReducedMotion = useHydratedReducedMotion();
   const openPanelRef = useRef<HTMLDivElement>(null);
+  const coverRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     if (open < 0 || !openPanelRef.current || !window.matchMedia("(max-width: 767px)").matches) return;
@@ -36,6 +37,11 @@ export function BrandStudies() {
     });
     return () => window.cancelAnimationFrame(frame);
   }, [open, prefersReducedMotion]);
+
+  function closeStudy(index: number) {
+    setOpen(-1);
+    window.requestAnimationFrame(() => coverRefs.current[index]?.focus());
+  }
 
   return (
     <section className="scroll-mt-32 py-14 sm:py-24" style={{ backgroundColor: "#071A20" }}>
@@ -90,6 +96,9 @@ export function BrandStudies() {
                 >
                   <h3 className="h-full">
                     <button
+                      ref={(element) => {
+                        coverRefs.current[index] = element;
+                      }}
                       type="button"
                       onClick={() => setOpen(isOpen ? -1 : index)}
                       aria-expanded={isOpen}
@@ -191,9 +200,19 @@ export function BrandStudies() {
                     >
                       <div className="grid gap-7 border-b border-white/10 p-5 sm:p-7 lg:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] lg:gap-12">
                         <div>
-                          <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em]" style={{ color: accent }}>
-                            Memory mechanism · {study.lens}
-                          </p>
+                          <div className="flex items-start justify-between gap-4">
+                            <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em]" style={{ color: accent }}>
+                              Memory mechanism · {study.lens}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => closeStudy(index)}
+                              className="shrink-0 rounded-full border px-3 py-1.5 text-[0.56rem] font-medium uppercase tracking-[0.12em] transition-colors hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                              style={{ borderColor: accent + "66", color: accent, outlineColor: accent }}
+                            >
+                              Close study
+                            </button>
+                          </div>
                           <p className="mt-3 font-display text-4xl font-normal text-ivory sm:text-5xl">{study.brand}</p>
                           <p className="mt-4 max-w-md text-sm leading-relaxed text-ivory/70">{study.premise}</p>
                           <blockquote className="mt-6 border-l-2 pl-4 font-display text-xl italic leading-relaxed text-ivory sm:mt-7 sm:pl-5 sm:text-2xl" style={{ borderColor: accent }}>
