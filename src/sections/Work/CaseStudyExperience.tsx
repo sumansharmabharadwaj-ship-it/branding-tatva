@@ -202,32 +202,65 @@ function SystemVisual({
   accent: string;
 }) {
   const settled = active >= 3;
+  const revealed = Math.max(1, active);
+
   return (
-    <div className="relative h-full px-3 pb-4 pt-10 sm:px-7">
-      {artifacts.map((artifact, index) => (
-        <motion.div
-          key={artifact.label}
-          className="absolute inset-x-3 rounded-2xl border p-4 backdrop-blur-md sm:inset-x-7"
-          animate={{
-            y: settled ? index * 68 : index * 42,
-            x: settled ? 0 : (index - 1.5) * 8,
-            rotate: settled ? 0 : (index - 1.5) * 1.2,
-            opacity: index <= Math.max(1, active) ? 1 : 0.38,
-          }}
-          transition={{ duration: 0.65, ease: EASE }}
-          style={{
-            top: "1.25rem",
-            borderColor: settled ? `${accent}88` : "rgba(255,255,255,0.18)",
-            backgroundColor: settled ? "rgba(31,58,40,0.82)" : "rgba(8,13,16,0.68)",
-          }}
-        >
-          <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: accent }}>
-            {String(index + 1).padStart(2, "0")} · {artifact.label}
-          </p>
-          <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-white/75">{artifact.detail}</p>
-        </motion.div>
-      ))}
-    </div>
+    <>
+      <div className="grid h-full grid-cols-2 content-center gap-2 px-3 py-3 sm:hidden">
+        {artifacts.map((artifact, index) => {
+          const visible = index <= revealed;
+          return (
+            <motion.div
+              key={artifact.label}
+              data-system-card-mobile
+              className="flex min-h-[4.25rem] flex-col justify-between rounded-xl border p-3"
+              animate={{ opacity: visible ? 1 : 0.32, y: visible ? 0 : 5, scale: visible ? 1 : 0.97 }}
+              transition={{ duration: 0.48, ease: EASE }}
+              style={{
+                borderColor: visible ? `${accent}88` : "rgba(255,255,255,0.14)",
+                backgroundColor: visible ? "rgba(31,58,40,0.78)" : "rgba(8,13,16,0.56)",
+              }}
+            >
+              <span
+                className="text-[0.52rem] font-medium uppercase tracking-[0.14em]"
+                style={{ color: visible ? accent : "rgba(255,255,255,0.38)" }}
+              >
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <p className="mt-1 line-clamp-2 font-display text-sm leading-tight text-white/85">
+                {artifact.label}
+              </p>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      <div className="relative hidden h-full px-7 pb-4 pt-10 sm:block">
+        {artifacts.map((artifact, index) => (
+          <motion.div
+            key={artifact.label}
+            className="absolute inset-x-7 rounded-2xl border p-4 backdrop-blur-md"
+            animate={{
+              y: settled ? index * 68 : index * 42,
+              x: settled ? 0 : (index - 1.5) * 8,
+              rotate: settled ? 0 : (index - 1.5) * 1.2,
+              opacity: index <= Math.max(1, active) ? 1 : 0.38,
+            }}
+            transition={{ duration: 0.65, ease: EASE }}
+            style={{
+              top: "1.25rem",
+              borderColor: settled ? `${accent}88` : "rgba(255,255,255,0.18)",
+              backgroundColor: settled ? "rgba(31,58,40,0.82)" : "rgba(8,13,16,0.68)",
+            }}
+          >
+            <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: accent }}>
+              {String(index + 1).padStart(2, "0")} · {artifact.label}
+            </p>
+            <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-white/75">{artifact.detail}</p>
+          </motion.div>
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -365,9 +398,13 @@ function NarrativeVisual({
         {project.cardImage && <img src={project.cardImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />}
         <div className="absolute inset-0" style={{ background: `linear-gradient(145deg, ${palette.ink}66, ${palette.ink}F2 72%)` }} />
         <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4 sm:p-5">
-          <span className="rounded-full border border-white/20 bg-black/20 px-3 py-1 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-white/75 backdrop-blur-sm">
-            {presentation.descriptor}
-          </span>
+          <span
+  data-narrative-descriptor
+  className="rounded-full border border-white/20 bg-black/20 px-3 py-1 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-white/75 backdrop-blur-sm"
+>
+  <span className="sm:hidden">Evidence map</span>
+  <span className="hidden sm:inline">{presentation.descriptor}</span>
+</span>
           <span className="font-display text-sm text-white/65">
             {String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
           </span>
