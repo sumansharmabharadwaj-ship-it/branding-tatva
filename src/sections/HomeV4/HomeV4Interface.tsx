@@ -9,12 +9,29 @@ import {
 import { Compass, Hand, Pause, Play } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
+import {
+  publishHomeGuideMode,
+  type HomeGuideMode,
+} from "@/hooks/useHomeGuideMode";
 
 const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
-const DWELL_MS = [7200, 6800, 7200, 8200, 7200, 7600, 8200, 7600, 7200, 7000, 8200];
+const DWELL_MS = [5200, 4900, 5200, 5900, 5200, 5400, 5900, 5400, 5100, 5000, 5800];
+const CHAPTER_NAMES = [
+  "opening signal",
+  "recognition",
+  "hidden cost",
+  "foundation",
+  "three paths",
+  "working method",
+  "evidence",
+  "tatva system",
+  "studio",
+  "decision",
+  "invitation",
+] as const;
 const CURSOR_SPRING = { stiffness: 460, damping: 34, mass: 0.34 } as const;
 
-type GuideMode = "manual" | "guided" | "paused";
+type GuideMode = HomeGuideMode;
 type CursorWorld = "dark" | "light";
 type HandoffMotif = "mist" | "river" | "root" | "aperture" | "paper" | "constellation" | "light";
 
@@ -23,9 +40,13 @@ export function GuidedView() {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const [mode, setMode] = useState<GuideMode>("manual");
   const [activeIndex, setActiveIndex] = useState(0);
+  const guideRef = useRef<HTMLDivElement>(null);
   const chaptersRef = useRef<HTMLElement[]>([]);
   const guidedScrollRef = useRef(false);
   const releaseTimerRef = useRef(0);
+  const progressFrameRef = useRef(0);
+  const autoStartTimerRef = useRef(0);
+  const userIntentRef = useRef(false);
 
   const resolveChapters = useCallback(() => {
     const chapters = Array.from(
@@ -46,7 +67,7 @@ export function GuidedView() {
 
       if (lenis) {
         lenis.scrollTo(target, {
-          duration: 1.08,
+          duration: 0.92,
           easing: (value: number) => 1 - Math.pow(1 - value, 4),
         });
       } else {
@@ -58,7 +79,7 @@ export function GuidedView() {
 
       releaseTimerRef.current = window.setTimeout(() => {
         guidedScrollRef.current = false;
-      }, 1450);
+      }, 1180);
     },
     [lenis, prefersReducedMotion, resolveChapters],
   );
@@ -96,7 +117,48 @@ export function GuidedView() {
   }, [resolveChapters]);
 
   useEffect(() => {
-    if (prefersReducedMotion || mode !== "guided") return;
+    publishHomeGuideMode(mode);
+  }, [mode]);
+
+  useEffect(
+    () => () => {
+      document.documentElement.removeAttribute("data-home-guide-mode");
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const eligible = window.matchMedia("(min-width: 821px) and (pointer: fine)");
+
+    function scheduleAutoStart() {
+      window.clearTimeout(autoStartTimerRef.current);
+      if (!eligible.matches || userIntentRef.current) {
+        if (!eligible.matches) setMode("manual");
+        return;
+      }
+
+      autoStartTimerRef.current = window.setTimeout(() => {
+        if (!userIntentRef.current && eligible.matches) setMode("guided");
+      }, 1100);
+    }
+
+    scheduleAutoStart();
+    eligible.addEventListener("change", scheduleAutoStart);
+    return () => {
+      eligible.removeEventListener("change", scheduleAutoStart);
+      window.clearTimeout(autoStartTimerRef.current);
+    };
+  }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    window.cancelAnimationFrame(progressFrameRef.current);
+    const guide = guideRef.current;
+
+    if (prefersReducedMotion || mode !== "guided") {
+      guide?.style.setProperty("--guide-progress", "0deg");
+      return;
+    }
 
     const chapters = resolveChapters();
     const nextIndex = activeIndex + 1;
@@ -105,12 +167,25 @@ export function GuidedView() {
       return;
     }
 
+    const duration = DWELL_MS[Math.min(activeIndex, DWELL_MS.length - 1)] ?? 5200;
+    const startedAt = performance.now();
+
+    function tick(now: number) {
+      const progress = Math.min(1, Math.max(0, (now - startedAt) / duration));
+      guide?.style.setProperty("--guide-progress", `${progress * 360}deg`);
+      if (progress < 1) progressFrameRef.current = window.requestAnimationFrame(tick);
+    }
+
+    progressFrameRef.current = window.requestAnimationFrame(tick);
     const timer = window.setTimeout(() => {
       if (document.hidden || mode !== "guided") return;
       scrollToChapter(nextIndex);
-    }, DWELL_MS[Math.min(activeIndex, DWELL_MS.length - 1)] ?? 7200);
+    }, duration);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      window.cancelAnimationFrame(progressFrameRef.current);
+    };
   }, [activeIndex, mode, prefersReducedMotion, resolveChapters, scrollToChapter]);
 
   useEffect(() => {
@@ -120,6 +195,9 @@ export function GuidedView() {
       if (guidedScrollRef.current) return;
       const target = event.target;
       if (target instanceof Element && target.closest("[data-guided-controls]")) return;
+
+      userIntentRef.current = true;
+      window.clearTimeout(autoStartTimerRef.current);
       setMode("manual");
     }
 
@@ -135,22 +213,27 @@ export function GuidedView() {
       window.removeEventListener("pointerdown", takeControl);
       window.removeEventListener("keydown", takeControl);
       window.clearTimeout(releaseTimerRef.current);
+      window.clearTimeout(autoStartTimerRef.current);
+      window.cancelAnimationFrame(progressFrameRef.current);
     };
   }, [prefersReducedMotion]);
 
   if (prefersReducedMotion) return null;
 
-  const count = Math.max(1, chaptersRef.current.length || 11);
+  const count = Math.max(1, chaptersRef.current.length || CHAPTER_NAMES.length);
+  const chapterName = CHAPTER_NAMES[Math.min(activeIndex, CHAPTER_NAMES.length - 1)] ?? "scene";
   const label =
     mode === "guided"
-      ? "guided view active"
+      ? "the page is moving with you"
       : mode === "paused"
         ? "guided view paused"
-        : "guided view ready";
+        : "explore at your pace";
 
   return (
     <div
+      ref={guideRef}
       data-guided-controls
+      data-guide-mode={mode}
       className="home-v4-guide"
       aria-label="Guided homepage controls"
     >
@@ -161,13 +244,16 @@ export function GuidedView() {
               ? { scale: [0.72, 1.5, 0.72], opacity: [0.9, 0, 0.9] }
               : { scale: 1, opacity: 0.42 }
           }
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 2.1, repeat: Infinity, ease: "easeInOut" }}
         />
         <Compass size={13} strokeWidth={1.55} />
       </span>
 
       <span className="home-v4-guide__copy" aria-live="polite">
-        <small>{label}</small>
+        <span className="home-v4-guide__status">
+          <small>{label}</small>
+          <em>{chapterName}</em>
+        </span>
         <strong>
           {String(activeIndex + 1).padStart(2, "0")}/{String(count).padStart(2, "0")}
         </strong>
@@ -175,20 +261,28 @@ export function GuidedView() {
 
       <button
         type="button"
-        onClick={() => setMode((current) => (current === "guided" ? "paused" : "guided"))}
+        onClick={() => {
+          userIntentRef.current = true;
+          setMode((current) => (current === "guided" ? "paused" : "guided"));
+        }}
         aria-label={mode === "guided" ? "Pause guided view" : "Continue guided view"}
         aria-pressed={mode === "guided"}
         data-cursor-label={mode === "guided" ? "pause" : "continue"}
+        title={mode === "guided" ? "Pause guided view" : "Continue guided view"}
       >
         {mode === "guided" ? <Pause size={13} /> : <Play size={13} />}
       </button>
 
       <button
         type="button"
-        onClick={() => setMode("manual")}
+        onClick={() => {
+          userIntentRef.current = true;
+          setMode("manual");
+        }}
         aria-label="Explore the homepage manually"
         aria-pressed={mode === "manual"}
         data-cursor-label="manual"
+        title="Explore manually"
       >
         <Hand size={13} />
       </button>
