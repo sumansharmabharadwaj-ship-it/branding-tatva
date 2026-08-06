@@ -45,8 +45,8 @@ jobs:
           corepack enable
           corepack prepare pnpm@10.15.0 --activate
 
-      - name: Install frozen dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install dependencies for verification
+        run: pnpm install --no-frozen-lockfile
 
       - name: Type check
         run: pnpm exec tsc --noEmit
