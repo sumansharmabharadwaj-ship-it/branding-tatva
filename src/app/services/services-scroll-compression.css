@@ -197,10 +197,22 @@ html[data-services-experience="active"] {
   transform: translateX(-50%);
 }
 
-/* The existing chapter navigation remains the orientation system. The
-   runtime adds a true journey-progress line without creating a second fixed
-   interface. */
-html[data-services-experience="active"] nav[aria-label="Jump to section"]:not([data-section-jump-nav-mobile="true"])::after {
+/* Forms own the viewport while a visitor is answering them. The media
+   director publishes this state from real focused form controls; wayfinding
+   fades out without being removed from layout and returns as soon as focus
+   leaves the form. */
+html[data-services-experience="active"] nav[aria-label="Jump to section"] {
+  transition: opacity 220ms ease;
+}
+
+html[data-services-form-interaction="true"] nav[aria-label="Jump to section"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The bottom-bar variant receives a journey-progress line. Services uses its
+   own vertical rail progress, so it is intentionally excluded here. */
+html[data-services-experience="active"] nav[aria-label="Jump to section"]:not([data-section-jump-nav-mobile="true"]):not([data-section-jump-nav-desktop-mode="rail"])::after {
   content: "";
   position: absolute;
   top: 0;
@@ -268,7 +280,7 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
     display: none;
   }
 
-  html[data-services-experience="active"] nav[aria-label="Jump to section"]:not([data-section-jump-nav-mobile="true"])::after {
+  html[data-services-experience="active"] nav[aria-label="Jump to section"]:not([data-section-jump-nav-mobile="true"]):not([data-section-jump-nav-desktop-mode="rail"])::after {
     transition: none;
   }
 }
