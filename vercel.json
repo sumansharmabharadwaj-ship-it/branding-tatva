@@ -5,7 +5,8 @@
     "deploymentEnabled": {
       "homepage-cinematic-recovery": false,
       "feat/insights-authority-hub": false,
-      "staging/site-integration": false
+      "staging/site-integration": false,
+      "services-scroll-experience-v1": false
     }
   }
 }
