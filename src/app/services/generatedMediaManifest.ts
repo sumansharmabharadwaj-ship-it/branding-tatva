@@ -1,7 +1,7 @@
 export const GENERATED_SERVICES_MEDIA_REVISION = {
   installed: "2026-08-06",
-  desktopLoops: 7,
-  mobileLoops: 7,
+  desktopLoops: 8,
+  mobileLoops: 8,
   stillScenes: 2,
   silent: true,
   posters: true,
@@ -32,6 +32,12 @@ export const GENERATED_SERVICES_MEDIA = {
     mobile: "/videos/generated/bt-services-package-current-mobile.mp4",
     poster: "/images/generated/bt-services-package-current-poster.jpg",
     purpose: "Let several legitimate paths settle into one clear scope.",
+  },
+  authority: {
+    desktop: "/videos/generated/bt-services-authority-layers.mp4",
+    mobile: "/videos/generated/bt-services-authority-layers-mobile.mp4",
+    poster: "/images/generated/bt-services-authority-layers-poster.jpg",
+    purpose: "Let a signal travel through five brand layers and widen only after the system is complete.",
   },
   perception: {
     desktop: "/videos/generated/bt-services-perception-ascent.mp4",
