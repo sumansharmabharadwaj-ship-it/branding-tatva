@@ -209,7 +209,7 @@ export function TatvaStrip() {
             </motion.div>
 
             <Link
-              href="#elements"
+              href="#tatva"
               className="link-underline mt-6 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em]"
               style={{ color: "#D4B99A" }}
             >
