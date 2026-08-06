@@ -36,13 +36,13 @@ async function assertNoOverflow(page, label) {
   );
 }
 
-async function waitForChangedText(page, locator, previousText, label) {
+async function waitForChangedText(page, selector, previousText, label) {
   await page.waitForFunction(
-    ({ selector, before }) => {
-      const node = document.querySelector(selector);
+    ({ selector: query, before }) => {
+      const node = document.querySelector(query);
       return Boolean(node && node.textContent && node.textContent.replace(/\s+/g, " ").trim() !== before);
     },
-    { selector: locator, before: previousText },
+    { selector, before: previousText },
     { timeout: 3_000 },
   ).catch(() => {
     throw new Error(`${label}: active evidence text did not change`);
@@ -89,6 +89,15 @@ async function auditWorkMobile(browser) {
   const systemText = (await systemPanel.textContent()) || "";
   assert(systemText.includes("The strategic choice") && systemText.includes("origin"), "work/mobile-narratives: system board did not switch to ORIGIN");
 
+  const decisionButtons = page.locator('ul[aria-label="Decision artefacts"] button[aria-expanded]');
+  assert((await decisionButtons.count()) === 7, "work/mobile-narratives: decision archive does not expose seven artefacts");
+  await decisionButtons.first().click();
+  await page.waitForTimeout(260);
+  assert((await visibleCount(decisionButtons)) === 1, "work/mobile-narratives: unrelated decision cards remain visible during inspection");
+  await decisionButtons.first().click();
+  await page.waitForTimeout(180);
+  assert((await visibleCount(decisionButtons)) === 7, "work/mobile-narratives: decision archive did not restore after closing the artefact");
+
   const labHeading = page.getByRole("heading", { name: "Concept studies: the method, demonstrated in the open." });
   const labSection = labHeading.locator("xpath=ancestor::section[1]");
   await labHeading.scrollIntoViewIfNeeded();
@@ -106,6 +115,16 @@ async function auditWorkMobile(browser) {
   await studyButtons.first().click();
   await page.waitForTimeout(700);
   assert((await visibleCount(studyButtons)) === 1, "work/mobile-narratives: unrelated study covers remain visible after opening one lesson");
+
+  const closeStudy = studiesSection.getByRole("button", { name: "Close study" });
+  await closeStudy.click();
+  await page.waitForTimeout(180);
+  assert((await visibleCount(studyButtons)) === 5, "work/mobile-narratives: study covers did not return after closing the lesson");
+  const focusedLabel = await page.evaluate(() => document.activeElement?.getAttribute("aria-label") || "");
+  assert(
+    focusedLabel === "Open Coca Cola public-record study",
+    `work/mobile-narratives: study focus did not return to its cover, active=${focusedLabel}`,
+  );
 
   await assertNoOverflow(page, "work/mobile-narratives");
   assert(pageErrors.length === 0, `work/mobile-narratives: page exceptions ${JSON.stringify(pageErrors.slice(0, 6))}`);
@@ -159,8 +178,10 @@ async function auditCaseStudyMobile(browser) {
         "first-screen project proof",
         "six-beat performance deck",
         "three-state system board",
+        "focused decision artefact",
         "focused Lab dossier",
         "focused public brand study",
+        "study close and focus return",
         "selectable project chapter deck",
         "mobile overflow",
         "page exceptions",
