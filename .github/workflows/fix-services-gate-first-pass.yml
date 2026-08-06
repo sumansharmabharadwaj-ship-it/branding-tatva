@@ -41,21 +41,16 @@ jobs:
 
           package = Path("src/sections/Services/PackageSelector.tsx")
           text = package.read_text()
-          old = '''              type="button"
-              onClick={() => {
-                setActive(choice.slug);'''
-          new = '''              type="button"
-              aria-pressed={isActive}
-              onClick={() => {
-                setActive(choice.slug);'''
+          old = '              type="button"\n              onClick={() => {'
+          new = '              type="button"\n              aria-pressed={isActive}\n              onClick={() => {'
           if text.count(old) != 1:
               raise SystemExit(f"Package selector insertion point count: {text.count(old)}")
           package.write_text(text.replace(old, new, 1))
 
           deliverables = Path("src/sections/Services/DeliverablesExplorer.tsx")
           text = deliverables.read_text()
-          old = '''className={`rounded-full border px-3.5 py-1.5 text-xs uppercase tracking-[0.12em] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone ${'''
-          new = '''className={`min-h-11 rounded-full border px-3.5 py-1.5 text-xs uppercase tracking-[0.12em] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone ${'''
+          old = 'className={`rounded-full border px-3.5 py-1.5 text-xs uppercase tracking-[0.12em] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone ${'
+          new = 'className={`min-h-11 rounded-full border px-3.5 py-1.5 text-xs uppercase tracking-[0.12em] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone ${'
           if text.count(old) != 1:
               raise SystemExit(f"Deliverables filter insertion point count: {text.count(old)}")
           deliverables.write_text(text.replace(old, new, 1))
