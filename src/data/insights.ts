@@ -1,3 +1,4 @@
+import { brandConsistencyInsightPosts } from "@/data/brandConsistencyInsights";
 import { brandRecallMeasurementInsightPosts } from "@/data/brandRecallMeasurementInsights";
 import { consultingPositioningInsightPosts } from "@/data/consultingPositioningInsights";
 import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
@@ -33,6 +34,7 @@ const combinedPosts = [
   ...consultingPositioningInsightPosts,
   ...brandRecallMeasurementInsightPosts,
   ...valuePropositionInsightPosts,
+  ...brandConsistencyInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
@@ -82,6 +84,14 @@ const relatedRegistrations = [
       "brand-positioning-strategy-service-businesses",
       "brand-messaging-framework",
       "website-messaging-hierarchy-service-businesses",
+    ],
+  },
+  {
+    supportingSlug: "brand-consistency-checklist-service-businesses",
+    pillarSlugs: [
+      "brand-audit-checklist-before-rebrand",
+      "customer-journey-mapping-service-businesses",
+      "five-element-brand-strategy-framework",
     ],
   },
 ] as const;
