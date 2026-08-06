@@ -41,10 +41,16 @@ async function capture(browser, viewport) {
   await page.evaluate(() => document.fonts.ready);
   await waitForPrelude(page);
 
+  // Evidence captures inspect the scene itself. The guided controller is
+  // deliberately hidden here because it is absent on coarse pointers and can
+  // otherwise make a Playwright click wait forever for an invisible button.
   const guide = page.locator("[data-guided-controls]");
   if ((await guide.count()) > 0) {
-    const manualButton = guide.locator("button").nth(1);
-    if ((await manualButton.count()) > 0) await manualButton.click();
+    await guide.evaluateAll((nodes) => {
+      nodes.forEach((node) => {
+        node.style.display = "none";
+      });
+    });
   }
 
   const framework = page.locator('[aria-labelledby="tatva-framework-title"]').first();
