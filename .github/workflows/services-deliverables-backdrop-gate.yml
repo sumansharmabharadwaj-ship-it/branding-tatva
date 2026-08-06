@@ -1,0 +1,150 @@
+name: Verify original Services Deliverables backdrop
+
+on:
+  push:
+    branches:
+      - services-original-deliverables-backdrop
+    paths:
+      - .github/workflows/services-deliverables-backdrop-gate.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: services-original-deliverables-backdrop
+  cancel-in-progress: true
+
+jobs:
+  integrate-and-build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out focused branch
+        uses: actions/checkout@v4
+        with:
+          ref: services-original-deliverables-backdrop
+          fetch-depth: 0
+
+      - name: Replace the unrelated stock film with the original paper archive
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("src/app/services/page.tsx")
+          page = path.read_text()
+
+          old_import = 'import { DeliverablesExplorer } from "@/sections/Services/DeliverablesExplorer";'
+          new_import = (
+              'import { DeliverablesExplorer } from "@/sections/Services/DeliverablesExplorer";\n'
+              'import { DeliverablesCinematicBackdrop } from "@/sections/Services/DeliverablesCinematicBackdrop";'
+          )
+          if page.count(old_import) != 1:
+              raise SystemExit(f"Deliverables import: expected one match, found {page.count(old_import)}")
+          page = page.replace(old_import, new_import, 1)
+
+          old_direction = '''        {/* Mood: THE STUDY — final art direction on this chapter, per
+            direct screenshot feedback: the abstract room (lamp glows,
+            cloth light, empty dark field) broke the site's own visual
+            standard — every other chapter lives in serene nature. The
+            study now sits over the emerald river (the approved clip
+            held in the reassignment pool since Phase 1): slow green
+            water, the Pinterest register exactly, darkened by a
+            walnut-tinted overlay so the ivory documents stay the
+            brightest thing in frame. */}'''
+          new_direction = '''        {/* Mood: THE ARCHIVE. The background now belongs to the work
+            being explained: layered paper, vellum, blind-debossed grids,
+            and dark folios form one ordered material system. The live
+            ArtifactPreview remains the chapter's primary interaction;
+            the environment only gives that interaction a tactile world. */}'''
+          if page.count(old_direction) != 1:
+              raise SystemExit(f"Deliverables direction note: expected one match, found {page.count(old_direction)}")
+          page = page.replace(old_direction, new_direction, 1)
+
+          media_pattern = re.compile(
+              r'^[ \t]*\{/\* Fresh clip per direct instruction.*?3\.2MB MP4 / 2\.0MB WebM\. \*/\}\n'
+              r'[ \t]*<BackgroundVideo\n'
+              r'[ \t]+parallax\n'
+              r'[ \t]+push\n'
+              r'[ \t]+video="/videos/pexels-dandelion-release\.mp4"\n'
+              r'[ \t]+videoWebm="/videos/pexels-dandelion-release\.webm"\n'
+              r'[ \t]+poster="/images/pexels-dandelion-release-poster\.jpg"\n'
+              r'[ \t]*/>',
+              re.S | re.M,
+          )
+          media_replacement = '''          {/* Original generated Deliverables archive: ivory papers,
+              translucent vellum, embossed grids, dark folios, and one
+              stone weight make the invisible work feel tangible before
+              a visitor opens an individual artifact. Its scroll-linked
+              drift and edge light remain secondary to the explorer. */}
+          <DeliverablesCinematicBackdrop image="/images/generated/bt-services-deliverables-archive.png" />'''
+          page, media_count = media_pattern.subn(media_replacement, page, count=1)
+          if media_count != 1:
+              raise SystemExit(f"Deliverables media block: expected one match, found {media_count}")
+
+          old_gradient = (
+              '"linear-gradient(180deg, rgba(23,32,25,0.55) 0%, '
+              'rgba(23,32,25,0.28) 45%, rgba(23,32,25,0.6) 100%)"'
+          )
+          new_gradient = (
+              '"linear-gradient(180deg, rgba(13,17,16,0.72) 0%, '
+              'rgba(13,17,16,0.46) 44%, rgba(13,17,16,0.68) 100%)"'
+          )
+          if page.count(old_gradient) != 1:
+              raise SystemExit(f"Deliverables overlay gradient: expected one match, found {page.count(old_gradient)}")
+          page = page.replace(old_gradient, new_gradient, 1)
+
+          old_handoff = '''          {/* Scene dissolve: Education's blue mist hands into the river
+              study. */}'''
+          new_handoff = '''          {/* Scene dissolve: Education's blue mist settles onto the
+              archive's charcoal and paper planes. */}'''
+          if page.count(old_handoff) != 1:
+              raise SystemExit(f"Deliverables handoff note: expected one match, found {page.count(old_handoff)}")
+          page = page.replace(old_handoff, new_handoff, 1)
+
+          path.write_text(page)
+          PY
+
+      - name: Check the focused source and media contract
+        run: |
+          set -euo pipefail
+          test -s public/images/generated/bt-services-deliverables-archive.png
+          grep -q 'DeliverablesCinematicBackdrop' src/app/services/page.tsx
+          grep -q 'bt-services-deliverables-archive.png' src/app/services/page.tsx
+          grep -q 'bt-services-deliverables-archive.png' src/app/services/generatedMediaManifest.ts
+          ! grep -q 'pexels-dandelion-release' src/app/services/page.tsx
+          git diff --check
+          git diff --stat
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the Next.js application
+        run: pnpm build
+
+      - name: Commit the verified Deliverables scene and remove one-time gates
+        run: |
+          set -euo pipefail
+          rm -f \
+            .github/workflows/import-services-deliverables-backdrop.yml \
+            .github/workflows/services-deliverables-backdrop-gate.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/app/services/page.tsx \
+            .github/workflows/import-services-deliverables-backdrop.yml \
+            .github/workflows/services-deliverables-backdrop-gate.yml
+          git commit -m "Replace the stock Deliverables film with an original paper archive"
+          git push origin HEAD:services-original-deliverables-backdrop
