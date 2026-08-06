@@ -12,6 +12,7 @@ on:
       - scripts/homepage_process_tempo_gate.cjs
       - scripts/home_v4_pacing_gate.cjs
       - scripts/home_v4_semantic_tempo_gate.cjs
+      - scripts/home_v4_density_report.cjs
       - scripts/prelude_handoff_evidence.cjs
       - scripts/tatva_observatory_evidence.cjs
       - scripts/studio_scene_evidence.cjs
@@ -127,6 +128,12 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:3000
           AUDIT_COMMIT: ${{ github.sha }}
         run: node scripts/homepage_cinematic_gate.cjs
+
+      - name: Measure V4 scroll density across six release viewports
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+          AUDIT_COMMIT: ${{ github.sha }}
+        run: node scripts/home_v4_density_report.cjs
 
       - name: Verify live guided-view speed, interruption, and film pacing
         env:
