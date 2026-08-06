@@ -8,16 +8,16 @@ import { LinkButton } from "@/components/Button";
 import {
   SITUATIONS,
   CHANGES,
-  JOURNEY_STAGES,
   DIAGNOSTICS,
-  CHANGE_INSIGHTS,
   RECOMMENDED_CHANGE,
   baseDeliverableCount,
   buildProjectMap,
   type SituationId,
   type ChangeId,
 } from "@/lib/recommendationEngine";
-import { WaystoneField, type Waystone } from "@/components/motion/WaystoneField";
+import type { Waystone } from "@/components/motion/WaystoneField";
+import { ProjectMapChoiceDeck } from "@/sections/Services/ProjectMapChoiceDeck";
+import { ProjectMapConsultationDeck } from "@/sections/Services/ProjectMapConsultationDeck";
 import { deliverables } from "@/data/deliverables";
 import { packages } from "@/data/services";
 import { usePricing } from "@/components/PricingProvider";
@@ -141,37 +141,17 @@ export function ImagineYourBrand() {
         the path that fits.
       </p>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-2">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-ivory/60">01 · Your situation</p>
-          <div className="mt-3">
-            <WaystoneField
-              stones={SITUATION_STONES}
-              activeId={situation}
-              onSelect={(id) => pickSituation(id as SituationId)}
-              ariaLabel="Your situation"
-            />
-          </div>
-        </div>
-        <div>
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-ivory/60">02 · The change you want</p>
-          <div className="mt-3">
-            {/* Once a situation is placed, the change this practice
-                would usually recommend first carries a quiet marker —
-                grounded in that situation's own diagnostic root cause,
-                never pretend intelligence. */}
-            <WaystoneField
-              stones={CHANGE_STONES}
-              activeId={change}
-              onSelect={(id) => pickChange(id as ChangeId)}
-              ariaLabel="The change you want"
-              recommendedId={situation && !change ? RECOMMENDED_CHANGE[situation] : null}
-            />
-          </div>
-        </div>
-      </div>
+      <ProjectMapChoiceDeck
+        situationStones={SITUATION_STONES}
+        changeStones={CHANGE_STONES}
+        situation={situation}
+        change={change}
+        recommendedChange={situation && !change ? RECOMMENDED_CHANGE[situation] : null}
+        onSituation={(id) => pickSituation(id as SituationId)}
+        onChange={(id) => pickChange(id as ChangeId)}
+      />
 
-      <div aria-live="polite" className="mt-10 min-h-[200px]">
+      <div data-project-map-result="true" aria-live="polite" className="mt-8 min-h-[200px]">
         <AnimatePresence mode="wait">
           {map && pkg ? (
             <motion.div
@@ -180,115 +160,17 @@ export function ImagineYourBrand() {
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0 }}
               transition={{ duration: motionTokens.durationBase, ease: motionTokens.easeOrganic }}
-              className="grid gap-8 rounded-2xl border border-ivory/15 p-6 backdrop-blur-md sm:p-8 lg:grid-cols-[1.3fr_1fr]"
+              className="grid gap-6 rounded-2xl border border-ivory/15 p-5 backdrop-blur-md sm:p-7 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.72fr)]"
               style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
             >
               <div>
-                {/* The first consultation before the consultation: the
-                    map arrives as eight observations written in
-                    sequence, the way a strategist would talk through a
-                    desk, rather than a spec sheet appearing at once.
-                    Pattern language throughout ("usually", "may") —
-                    honest observation of the situation type, never a
-                    claim about this visitor's specific business.
-                    Reduced motion renders every beat instantly. */}
-                {(() => {
-                  const diag = DIAGNOSTICS[situation!];
-                  const beats: { label: string; body: React.ReactNode }[] = [
-                    { label: "What businesses in this situation usually struggle with", body: <p className="text-sm leading-relaxed text-ivory/90">{diag.struggle}</p> },
-                    {
-                      label: "The symptoms this pattern produces",
-                      body: (
-                        <ul className="space-y-1.5">
-                          {diag.symptoms.map((sym) => (
-                            <li key={sym} className="text-sm leading-relaxed text-ivory/85 before:mr-2 before:content-['·']">{sym}</li>
-                          ))}
-                        </ul>
-                      ),
-                    },
-                    { label: "What customers may currently perceive", body: <p className="text-sm leading-relaxed text-ivory/90">{diag.perception}</p> },
-                    { label: "The likely root cause", body: <p className="text-sm leading-relaxed text-ivory/90">{diag.rootCause}</p> },
-                    {
-                      label: "Where Branding Tatva would begin",
-                      body: (
-                        <ol className="flex flex-wrap items-center gap-y-2">
-                          {JOURNEY_STAGES.map((stage, i) => {
-                            const active = map.stages.includes(i);
-                            return (
-                              <li key={stage} className="flex items-center">
-                                <span
-                                  className={`rounded-full border px-2.5 py-1 text-xs transition-colors duration-500 ${
-                                    active ? "border-sandstone/70 text-ivory" : "border-ivory/12 text-ivory/35"
-                                  }`}
-                                  style={active ? { backgroundColor: `${pkg.color}33` } : undefined}
-                                >
-                                  {stage}
-                                </span>
-                                {i < JOURNEY_STAGES.length - 1 && (
-                                  <span aria-hidden="true" className="mx-1 text-ivory/25">→</span>
-                                )}
-                              </li>
-                            );
-                          })}
-                        </ol>
-                      ),
-                    },
-                    {
-                      label: "The decisions that follow",
-                      body: (
-                        <ul className="space-y-2">
-                          {map.questions.map((q) => (
-                            <li key={q} className="text-sm leading-relaxed text-ivory/90">{q}</li>
-                          ))}
-                        </ul>
-                      ),
-                    },
-                    {
-                      label: "What you would actually receive",
-                      body: (
-                        <div className="flex flex-wrap gap-2">
-                          {mapDeliverables.map((d) => (
-                            <span key={d.id} className="rounded-2xl border border-ivory/20 px-3 py-1.5 text-xs text-ivory/85">{d.name}</span>
-                          ))}
-                        </div>
-                      ),
-                    },
-                    {
-                      label: "How this influences recognition, marketing, and growth",
-                      body: (
-                        <div className="space-y-2">
-                          <p className="text-sm italic leading-relaxed text-sandstone/90">{CHANGE_INSIGHTS[change!]}</p>
-                          {map.marketingLayer && (
-                            <p className="text-sm leading-relaxed text-ivory/75">Optional marketing layer: {map.marketingLayer}</p>
-                          )}
-                        </div>
-                      ),
-                    },
-                  ];
-                  return (
-                    <div className="space-y-5">
-                      {beats.map((beat, i) => (
-                        <motion.div
-                          key={beat.label}
-                          initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10, filter: "blur(6px)", rotate: -0.3 }}
-                          animate={{ opacity: 1, y: 0, filter: "blur(0px)", rotate: 0 }}
-                          transition={{
-                            duration: motionTokens.durationBase,
-                            delay: prefersReducedMotion ? 0 : 0.25 + i * 0.4,
-                            ease: motionTokens.easeOrganic,
-                          }}
-                          className="border-l-2 border-sandstone/40 pl-4"
-                        >
-                          <p className="flex items-baseline gap-2 text-[0.62rem] font-medium uppercase tracking-[0.18em] text-ivory/55">
-                            <span className="font-display text-xs text-sandstone/80" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-                            {beat.label}
-                          </p>
-                          <div className="mt-1.5">{beat.body}</div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  );
-                })()}
+                <ProjectMapConsultationDeck
+                  situation={situation!}
+                  change={change!}
+                  map={map}
+                  mapDeliverables={mapDeliverables}
+                  packageColor={pkg.color}
+                />
               </div>
 
               <div className="border-t border-ivory/12 pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">

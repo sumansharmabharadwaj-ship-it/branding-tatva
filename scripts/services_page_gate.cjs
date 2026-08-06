@@ -445,28 +445,50 @@ async function auditServicesViewport(browser, viewport) {
   }
   if (viewport.screenshots) await captureViewport(page, `services-${viewport.name}-deliverables.png`);
 
-  // Imagine Your Brand: two real choices must produce a complete map
-  // before any form is needed.
+  // Imagine Your Brand: the two decisions now happen sequentially in
+  // one screen-led deck. The complete consultation remains available in
+  // eight indexed chapters instead of eight document-length blocks.
   const imagine = page.locator("#imagine");
   await scrollTo(page, imagine, `${label}/imagine`);
-  const situationStones = imagine.getByRole("group", { name: "Your situation" }).getByRole("button");
-  const changeStones = imagine.getByRole("group", { name: "The change you want" }).getByRole("button");
+  const situationGroup = imagine.getByRole("group", { name: "Your situation" });
+  const situationStones = situationGroup.getByRole("button");
   await waitForCount(situationStones, 6, `${label}: project-map situations`);
-  await waitForCount(changeStones, 6, `${label}: project-map changes`);
   await assertTouchTargets(situationStones, 40, `${label}: project-map situations`);
-  await assertTouchTargets(changeStones, 40, `${label}: project-map changes`);
-  const launchStone = imagine.getByRole("button", { name: /Launching something new/i }).first();
-  const positionStone = imagine.getByRole("button", { name: /A clearer position/i }).first();
+  const launchStone = situationGroup.getByRole("button", { name: /Launching something new/i }).first();
   await launchStone.click();
+
+  const changeGroup = imagine.getByRole("group", { name: "The change you want" });
+  const changeStones = changeGroup.getByRole("button");
+  await waitForCount(changeStones, 6, `${label}: project-map changes`);
+  await assertTouchTargets(changeStones, 40, `${label}: project-map changes`);
+  const positionStone = changeGroup.getByRole("button", { name: /A clearer position/i }).first();
   await positionStone.click();
-  assert((await launchStone.getAttribute("aria-pressed")) === "true", `${label}: project-map situation is not pressed`);
-  assert((await positionStone.getAttribute("aria-pressed")) === "true", `${label}: project-map change is not pressed`);
-  const projectMap = imagine.locator('[aria-live="polite"]');
+
+  const brief = imagine.locator('[data-project-map-brief="true"]');
+  await waitForVisibleText(brief, "Launching something new", `${label}: project-map brief situation`);
+  await waitForVisibleText(brief, "A clearer position", `${label}: project-map brief change`);
+
+  const projectMap = imagine.locator('[data-project-map-result="true"]');
   await waitForVisibleText(projectMap, "The path that fits", `${label}: project map`);
   assert(
     /Foundation|Full Brand System|Brand Partnership/.test((await projectMap.textContent()) || ""),
     `${label}: project map has no real package recommendation`,
   );
+
+  const insightTabs = imagine
+    .getByRole("tablist", { name: "Project map consultation chapters" })
+    .getByRole("tab");
+  await waitForCount(insightTabs, 8, `${label}: project-map consultation chapters`);
+  await assertTouchTargets(insightTabs, 40, `${label}: project-map consultation chapters`);
+  const rootCauseTab = imagine.getByRole("tab", { name: /The likely root cause/i }).first();
+  await rootCauseTab.click();
+  const insightPanel = imagine.getByRole("tabpanel");
+  await waitForVisibleText(
+    insightPanel,
+    "Design decisions are being made before the positioning decision",
+    `${label}: project-map root-cause chapter`,
+  );
+  await scrollTo(page, projectMap, `${label}/project-map-result`);
   if (viewport.screenshots) await captureViewport(page, `services-${viewport.name}-project-map.png`);
 
   // Health check: an answer advances visibly and Back remains available.
@@ -525,6 +547,8 @@ async function auditServicesViewport(browser, viewport) {
     perceptionRungs: 4,
     deliverables: 14,
     projectMapChoices: 12,
+    projectMapSteps: 2,
+    projectMapInsights: 8,
     healthQuestions: 4,
     publicAuditChecks: 5,
     strategyRoomQuestions: 3,
