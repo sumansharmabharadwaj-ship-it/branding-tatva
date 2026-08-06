@@ -9,6 +9,7 @@ on:
     paths:
       - .github/workflows/services-page-gate.yml
       - scripts/services_page_gate.cjs
+      - scripts/recognition_audit_deck_gate.cjs
       - src/app/services/**
       - src/sections/Services/**
       - src/components/BackgroundVideo.tsx
@@ -97,6 +98,11 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/services_page_gate.cjs
+
+      - name: Verify the compact Recognition Audit instrument
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/recognition_audit_deck_gate.cjs
 
       - name: Stop the production server
         if: always()
