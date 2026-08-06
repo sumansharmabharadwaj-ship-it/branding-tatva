@@ -44,6 +44,7 @@ const OPTIONS: ReadonlyArray<{
   },
 ];
 
+const FIRST_OPTION = OPTIONS[0];
 const EASE = [0.22, 1, 0.36, 1] as const;
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const MANUAL_HOLD_MS = 14000;
@@ -66,7 +67,7 @@ function publishSituation(id: ServicesSituationId) {
 
 export function SituationPath() {
   const [selected, setSelected] = useState<ServicesSituationId | null>(null);
-  const [preview, setPreview] = useState<ServicesSituationId>(OPTIONS[0].id);
+  const [preview, setPreview] = useState<ServicesSituationId>(FIRST_OPTION.id);
   const [carried, setCarried] = useState(false);
   const holdUntilRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -105,7 +106,7 @@ export function SituationPath() {
         OPTIONS.length - 1,
         Math.max(0, Math.floor(detail.progress * OPTIONS.length)),
       );
-      const next = OPTIONS[index].id;
+      const next = OPTIONS[index]?.id ?? FIRST_OPTION.id;
       setPreview((current) => (current === next ? current : next));
     }
 
