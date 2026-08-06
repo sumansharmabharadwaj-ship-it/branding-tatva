@@ -1,0 +1,120 @@
+name: Seal the Services original-media system v2
+
+on:
+  push:
+    branches:
+      - services-original-media-cleanup
+    paths:
+      - .github/workflows/services-original-media-cleanup-v2.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: services-original-media-cleanup-v2
+  cancel-in-progress: true
+
+jobs:
+  clean-audit-build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out the focused branch
+        uses: actions/checkout@v4
+        with:
+          ref: services-original-media-cleanup
+          fetch-depth: 0
+
+      - name: Teach the auditor about the intentional hero poster preload
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          path = Path("scripts/audit_services_original_media.py")
+          source = path.read_text()
+          old = '''            occurrences = live_source.count(path_value)
+            if occurrences != 1:
+                fail(f"{film.key}: {path_value} should appear once in live sources, found {occurrences}")'''
+          new = '''            occurrences = live_source.count(path_value)
+            expected_occurrences = 2 if film.key == "hero" and path_value == film.poster else 1
+            if occurrences != expected_occurrences:
+                fail(
+                    f"{film.key}: {path_value} should appear {expected_occurrences} time(s) "
+                    f"in live sources, found {occurrences}"
+                )'''
+          if source.count(old) != 1:
+              raise SystemExit(f"Hero preload audit patch: expected one match, found {source.count(old)}")
+          source = source.replace(old, new, 1)
+
+          old_report = '        "- every manifest path exists and appears exactly once in live Services sources",'
+          new_report = '        "- every manifest path is wired to its intended live scene; the hero poster is also preloaded for first paint",'
+          if source.count(old_report) != 1:
+              raise SystemExit(f"Audit report wording: expected one match, found {source.count(old_report)}")
+          source = source.replace(old_report, new_report, 1)
+          path.write_text(source)
+          PY
+
+      - name: Remove stale stock-era direction and repair source formatting
+        run: python scripts/clean_services_media_direction.py
+
+      - name: Install the media inspector
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffprobe -version | head -n 1
+
+      - name: Audit every generated Services film and still
+        run: python scripts/audit_services_original_media.py --write-report
+
+      - name: Check the cleaned source contract
+        run: |
+          set -euo pipefail
+          ! grep -qi 'Pexels' src/app/services/page.tsx
+          ! grep -q 'fungi clip' src/app/services/page.tsx
+          ! grep -q 'stream clip' src/app/services/page.tsx
+          ! grep -q 'ScrollTrigger.pin' src/app/services/page.tsx
+          ! grep -q 'GSAP-pinned' src/app/services/page.tsx
+          ! grep -q '^<BackgroundVideo' src/app/services/page.tsx
+          ! grep -q '^<DeliverablesCinematicBackdrop' src/app/services/page.tsx
+          grep -q 'zero stock-library media paths' docs/SERVICES_ORIGINAL_MEDIA_AUDIT.md
+          grep -q '8 responsive silent films' docs/SERVICES_ORIGINAL_MEDIA_AUDIT.md
+          grep -q '2 generated material stills' docs/SERVICES_ORIGINAL_MEDIA_AUDIT.md
+          git diff --check
+          git diff --stat
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the Next.js application
+        run: pnpm build
+
+      - name: Commit the sealed original-media pass and remove one-time gates
+        run: |
+          set -euo pipefail
+          rm -f \
+            .github/workflows/services-original-media-cleanup.yml \
+            .github/workflows/services-original-media-cleanup-v2.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/app/services/page.tsx \
+            public/videos/generated/README.txt \
+            docs/SERVICES_ORIGINAL_MEDIA_AUDIT.md \
+            scripts/audit_services_original_media.py \
+            .github/workflows/services-original-media-cleanup.yml \
+            .github/workflows/services-original-media-cleanup-v2.yml
+          git commit -m "Seal the Services original-media system"
+          git push origin HEAD:services-original-media-cleanup
