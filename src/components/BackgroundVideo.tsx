@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
@@ -19,6 +19,7 @@ export function BackgroundVideo({
   imagePosition = "center",
   parallax = false,
   push = false,
+  playbackRate = 1,
 }: {
   video: string;
   // Optional lower-bandwidth MP4 selected by the browser on phones.
@@ -45,6 +46,9 @@ export function BackgroundVideo({
   // wallpaper. Disabled automatically under prefers-reduced-motion by
   // the sitewide animation kill rule.
   push?: boolean;
+  // An opt-in pace adjustment for generated or unusually slow ambient
+  // clips. Existing sections remain at their encoded 1x speed.
+  playbackRate?: number;
 }) {
   const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -61,6 +65,14 @@ export function BackgroundVideo({
   // SelectedWorkPinned's own backdrop) — exactly the sections that
   // would read as flat/static if their autoplay silently never fired.
   useVideoFadeIn(videoRef, !prefersReducedMotion);
+
+  useEffect(() => {
+    const element = videoRef.current;
+    if (!element) return;
+    const safePlaybackRate = Math.min(1.5, Math.max(0.75, playbackRate));
+    element.defaultPlaybackRate = safePlaybackRate;
+    element.playbackRate = safePlaybackRate;
+  }, [playbackRate, video]);
 
   if (prefersReducedMotion) {
     return (
