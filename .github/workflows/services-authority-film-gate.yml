@@ -31,7 +31,6 @@ jobs:
         run: |
           python <<'PY'
           from pathlib import Path
-          import re
 
           path = Path("src/sections/Services/PinnedBrandBuild.tsx")
           source = path.read_text()
@@ -44,38 +43,37 @@ jobs:
                   raise SystemExit(f"{label}: expected one match, found {source.count(old_import)}")
               source = source.replace(old_import, "", 1)
 
-          pattern = re.compile(
-              r'^[ \t]*\{/\* Approved Chapter 02 footage.*?'
-              r'[ \t]*<div className="hidden sm:block">\n'
-              r'[ \t]*<AmbientElementShader opacity=\{0\.08\} />\n'
-              r'[ \t]*</div>\n'
-              r'[ \t]*</div>',
-              re.S | re.M,
-          )
-          replacement = '''        {/* Original procedural Authority film: a restrained signal rises
-            through five natural material layers and widens only after
-            the full system is present. The pinned rows remain the primary
-            scroll-led demonstration; the film gives them one coherent
-            material world instead of repeating the hero's root metaphor. */}
-        <div className="absolute inset-0 overflow-hidden">
-          <BackgroundVideo
-            video="/videos/generated/bt-services-authority-layers.mp4"
-            videoMobile="/videos/generated/bt-services-authority-layers-mobile.mp4"
-            poster="/images/generated/bt-services-authority-layers-poster.jpg"
-            playbackRate={1.04}
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(100deg, rgba(15,17,19,0.88) 0%, rgba(15,17,19,0.62) 46%, rgba(15,17,19,0.46) 100%)",
-            }}
-          />
-        </div>'''
-          source, count = pattern.subn(replacement, source, count=1)
-          if count != 1:
-              raise SystemExit(f"Authority media block: expected one match, found {count}")
+          start_marker = "        {/* Approved Chapter 02 footage"
+          end_marker = '\n\n        <div className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:py-24 sm:px-10 sm:py-0 lg:px-20">'
+          start = source.find(start_marker)
+          end = source.find(end_marker, start)
+          if start < 0 or end < 0:
+              raise SystemExit(f"Authority media boundaries not found: start={start}, end={end}")
 
+          replacement = "\n".join([
+              "        {/* Original procedural Authority film: a restrained signal rises",
+              "            through five natural material layers and widens only after",
+              "            the full system is present. The pinned rows remain the primary",
+              "            scroll-led demonstration; the film gives them one coherent",
+              "            material world instead of repeating the hero's root metaphor. */}",
+              "        <div className=\"absolute inset-0 overflow-hidden\">",
+              "          <BackgroundVideo",
+              "            video=\"/videos/generated/bt-services-authority-layers.mp4\"",
+              "            videoMobile=\"/videos/generated/bt-services-authority-layers-mobile.mp4\"",
+              "            poster=\"/images/generated/bt-services-authority-layers-poster.jpg\"",
+              "            playbackRate={1.04}",
+              "          />",
+              "          <div",
+              "            className=\"absolute inset-0\"",
+              "            style={{",
+              "              backgroundImage:",
+              "                \"linear-gradient(100deg, rgba(15,17,19,0.88) 0%, rgba(15,17,19,0.62) 46%, rgba(15,17,19,0.46) 100%)\",",
+              "            }}",
+              "          />",
+              "        </div>",
+          ])
+
+          source = source[:start] + replacement + source[end:]
           path.write_text(source)
           PY
 
