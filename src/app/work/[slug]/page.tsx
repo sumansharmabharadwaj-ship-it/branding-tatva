@@ -154,7 +154,7 @@ export default async function CaseStudyPage({ params }: Props) {
           next={nextEvidence}
         />
       </main>
-      <Footer />
+      <Footer compact />
       <SectionJumpNav items={jumpItems} />
       <script
         type="application/ld+json"
