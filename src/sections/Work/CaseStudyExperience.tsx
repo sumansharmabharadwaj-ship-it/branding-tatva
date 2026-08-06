@@ -465,6 +465,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
           />
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${palette.ink}66 0%, ${palette.ink}B8 60%, ${palette.ink}F5 100%)` }} />
           <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 78% 22%, ${palette.accent}33, transparent 38%)` }} />
+          <div aria-hidden="true" className="absolute inset-0 bg-black/30 sm:hidden" />
         </div>
 
         <Container className="relative flex min-h-[82vh] flex-col justify-end pb-14 pt-32 sm:pb-20 sm:pt-40">

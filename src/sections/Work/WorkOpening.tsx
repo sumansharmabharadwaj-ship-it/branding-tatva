@@ -58,7 +58,7 @@ export function WorkOpening() {
       />
 
       <Container className="relative pb-16 pt-28 sm:pb-24 sm:pt-36">
-        <div className="grid items-center gap-12 lg:grid-cols-[0.95fr_1.15fr] lg:gap-16 xl:gap-20">
+        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-12 xl:gap-16">
           <div>
             <motion.p
               initial={prefersReducedMotion ? undefined : { opacity: 0 }}
@@ -71,13 +71,13 @@ export function WorkOpening() {
             </motion.p>
 
             <h1
-              className="mt-5 font-display text-[clamp(2.75rem,5.8vw,4.9rem)] font-normal leading-[1.03] tracking-[-0.015em]"
+              className="mt-5 font-display text-[clamp(2.75rem,5.1vw,4.55rem)] font-normal leading-[1.03] tracking-[-0.015em]"
               style={{ color: WORK.charcoal }}
             >
               {LINES.map((line, index) => (
                 <motion.span
                   key={line}
-                  className="block"
+                  className="block lg:whitespace-nowrap"
                   initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.7, delay: prefersReducedMotion ? 0 : 0.08 + index * 0.14, ease: EASE_ORGANIC }}
@@ -143,7 +143,7 @@ export function WorkOpening() {
             onMouseLeave={() => setPaused(false)}
             onFocusCapture={() => setPaused(true)}
             onBlurCapture={() => setPaused(false)}
-            className="min-w-0"
+            className="min-w-0 lg:pt-14"
           >
             <div
               id="hero-project-preview"
@@ -151,58 +151,62 @@ export function WorkOpening() {
               className="relative overflow-hidden rounded-[1.5rem] border shadow-[0_26px_80px_rgba(31,58,40,0.18)]"
               style={{ borderColor: "rgba(85,107,74,0.24)", backgroundColor: WORK.forest }}
             >
-              <Link href={`/work/${current.slug}`} className="group block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4" style={{ outlineColor: WORK.moss }}>
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.img
-                      key={current.slug}
-                      src={record.evidencePoster}
-                      alt={`${current.title} evidence diagram`}
-                      className="absolute inset-0 h-full w-full object-cover"
-                      initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.025 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE_ORGANIC }}
-                    />
-                  </AnimatePresence>
+              <Link
+      href={`/work/${current.slug}`}
+      className="group block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
+      style={{ outlineColor: WORK.moss }}
+    >
+      <div className="relative aspect-[4/3] overflow-hidden bg-black/10">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.img
+            key={current.slug}
+            src={record.evidencePoster}
+            alt={`${current.title} evidence diagram`}
+            className="absolute inset-0 h-full w-full object-cover"
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.025 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE_ORGANIC }}
+          />
+        </AnimatePresence>
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-16"
+          style={{ background: "linear-gradient(180deg, transparent, rgba(8,12,10,0.3))" }}
+        />
+      </div>
 
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-0"
-                    style={{ background: "linear-gradient(180deg, rgba(8,12,10,0.02) 32%, rgba(8,12,10,0.9) 100%)" }}
-                  />
-
-                  <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4 sm:p-5">
-                    <span className="rounded-full border border-white/30 bg-black/20 px-3 py-1 text-[0.62rem] font-medium uppercase tracking-[0.16em] text-white backdrop-blur-sm">
-                      {record.tier === "flagship" ? "Flagship case study" : "Project story"}
-                    </span>
-                    <span className="font-display text-sm text-white/85">
-                      {String(active + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
-                    </span>
-                  </div>
-
-                  <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
-                    <AnimatePresence mode="wait" initial={false}>
-                      <motion.div
-                        key={`${current.slug}-copy`}
-                        initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
-                        transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE_ORGANIC }}
-                      >
-                        <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em]" style={{ color: WORK.sand }}>
-                          {record.evidenceLabel} · {current.industry}
-                        </p>
-                        <h2 className="mt-1 font-display text-3xl font-normal text-white sm:text-4xl">{current.title}</h2>
-                        <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/80 sm:text-base">{decisiveLine(active)}</p>
-                        <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-white">
-                          Open the project <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-                        </span>
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-                </div>
-              </Link>
+      <div
+        className="border-t p-5 sm:p-6"
+        style={{ borderColor: "rgba(255,255,255,0.12)", backgroundColor: WORK.forest }}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={`${current.slug}-copy`}
+            initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE_ORGANIC }}
+          >
+            <div className="flex items-start justify-between gap-5">
+              <div className="min-w-0">
+                <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em]" style={{ color: WORK.sand }}>
+                  {record.evidenceLabel} · {current.industry}
+                </p>
+                <h2 className="mt-1 font-display text-3xl font-normal text-white sm:text-4xl">{current.title}</h2>
+              </div>
+              <span className="shrink-0 font-display text-sm text-white/70">
+                {String(active + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+              </span>
+            </div>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/80 sm:text-base">{decisiveLine(active)}</p>
+            <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-white">
+              Open the project <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+            </span>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </Link>
             </div>
 
             <div role="tablist" aria-label="Choose a project preview" className="mt-3 grid grid-cols-5 gap-2">
