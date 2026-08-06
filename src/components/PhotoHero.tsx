@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
@@ -49,6 +49,7 @@ export function PhotoHero({
   className,
   accentColor,
   overlayGradient = gradient,
+  playbackRate = 1,
 }: {
   children?: React.ReactNode;
   image?: string;
@@ -60,10 +61,22 @@ export function PhotoHero({
   className?: string;
   accentColor?: string;
   overlayGradient?: string;
+  playbackRate?: number;
 }) {
   const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   useVideoFadeIn(videoRef, Boolean(video) && !prefersReducedMotion);
+
+  // Keep ambient films inside a calm range. The Services hero opts into
+  // 1.15x so its defining visual event arrives before attention drifts,
+  // while every existing call site retains the native 1x pace.
+  useEffect(() => {
+    const element = videoRef.current;
+    if (!element) return;
+    const safePlaybackRate = Math.min(1.5, Math.max(0.75, playbackRate));
+    element.defaultPlaybackRate = safePlaybackRate;
+    element.playbackRate = safePlaybackRate;
+  }, [playbackRate, video]);
 
   // A case study's hero footage is industry-specific (an office, a
   // warehouse) rather than generic nature photography, so an
