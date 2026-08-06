@@ -47,10 +47,10 @@ function MeasuredDecisionCore({
   const [diameter, setDiameter] = useState(CORE_MIN_DIAMETER);
 
   useEffect(() => {
-    const text = textRef.current;
-    if (!text) return;
-
     function measure() {
+      const text = textRef.current;
+      if (!text) return;
+
       const bounds = text.getBoundingClientRect();
       const nextDiameter = Math.ceil(
         Math.max(
@@ -62,11 +62,14 @@ function MeasuredDecisionCore({
       setDiameter((current) => (Math.abs(current - nextDiameter) > 1 ? nextDiameter : current));
     }
 
+    const observedText = textRef.current;
+    if (!observedText) return;
+
     measure();
     window.addEventListener("resize", measure, { passive: true });
 
     const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
-    observer?.observe(text);
+    observer?.observe(observedText);
 
     return () => {
       window.removeEventListener("resize", measure);
