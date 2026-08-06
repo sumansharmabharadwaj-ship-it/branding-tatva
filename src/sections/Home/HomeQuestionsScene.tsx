@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AuditInvite } from "@/components/AuditInvite";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
@@ -31,6 +31,75 @@ const PATHS = [
   "M260 246 C256 210 253 179 250 145",
   "M48 187 C116 177 181 164 250 145",
 ] as const;
+
+const CORE_MIN_DIAMETER = 122;
+const CORE_HORIZONTAL_PADDING = 28;
+const CORE_VERTICAL_PADDING = 20;
+
+function MeasuredDecisionCore({
+  motionActive,
+  prefersReducedMotion,
+}: {
+  motionActive: boolean;
+  prefersReducedMotion: boolean;
+}) {
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const [diameter, setDiameter] = useState(CORE_MIN_DIAMETER);
+
+  useEffect(() => {
+    const text = textRef.current;
+    if (!text) return;
+
+    function measure() {
+      const bounds = text.getBoundingClientRect();
+      const nextDiameter = Math.ceil(
+        Math.max(
+          CORE_MIN_DIAMETER,
+          bounds.width + CORE_HORIZONTAL_PADDING * 2,
+          bounds.height + CORE_VERTICAL_PADDING * 2,
+        ),
+      );
+      setDiameter((current) => (Math.abs(current - nextDiameter) > 1 ? nextDiameter : current));
+    }
+
+    measure();
+    window.addEventListener("resize", measure, { passive: true });
+
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
+    observer?.observe(text);
+
+    return () => {
+      window.removeEventListener("resize", measure);
+      observer?.disconnect();
+    };
+  }, []);
+
+  return (
+    <motion.div
+      className="absolute left-1/2 top-[52%] z-10 grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-sandstone/70 bg-[#171512]/88 text-center shadow-[0_0_0_12px_rgba(212,185,154,0.05),0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur-md"
+      style={{ width: diameter, height: diameter }}
+      animate={
+        motionActive
+          ? { scale: [0.97, 1.045, 0.97], opacity: [0.88, 1, 0.88] }
+          : { scale: 1, opacity: 1 }
+      }
+      transition={{
+        duration: prefersReducedMotion ? 0 : 4.4,
+        repeat: motionActive ? Infinity : 0,
+        ease: "easeInOut",
+      }}
+      role="group"
+      aria-label="Clear enough to begin"
+    >
+      <p
+        ref={textRef}
+        className="inline-block max-w-[8.5rem] px-1 font-display text-lg leading-[1.02] text-ivory sm:text-xl"
+      >
+        Clear enough to begin
+      </p>
+    </motion.div>
+  );
+}
 
 export function HomeQuestionsScene() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -116,7 +185,7 @@ export function HomeQuestionsScene() {
                 </p>
               </div>
 
-              <div className="relative mt-3 aspect-[5/3] min-h-64 w-full min-w-0 overflow-hidden rounded-2xl border border-ivory/8 bg-black/10">
+              <div className="relative mt-3 aspect-[25/14] min-h-64 w-full min-w-0 overflow-hidden rounded-2xl border border-ivory/8 bg-black/10">
                 <svg
                   viewBox="0 0 500 280"
                   className="absolute inset-0 h-full w-full"
@@ -167,28 +236,16 @@ export function HomeQuestionsScene() {
                       />
                     </g>
                   ))}
-                  <motion.circle
-                    cx="250"
-                    cy="145"
-                    r="31"
-                    fill="rgba(20,18,16,0.78)"
-                    stroke="#D4B99A"
-                    strokeWidth="1.2"
-                    animate={
-                      motionActive
-                        ? { scale: [0.94, 1.1, 0.94], opacity: [0.82, 1, 0.82] }
-                        : { scale: 1 }
-                    }
-                    style={{ transformOrigin: "250px 145px" }}
-                    transition={{ duration: 4.4, repeat: Infinity, ease: "easeInOut" }}
-                  />
                 </svg>
 
                 {SIGNALS.map((signal, index) => (
                   <motion.div
                     key={signal.label}
-                    className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
-                    style={{ left: `${signal.x}%`, top: `${signal.y}%` }}
+                    className="absolute flex w-max max-w-[6.5rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5 text-center"
+                    style={{
+                      left: `clamp(3.4rem, ${signal.x}%, calc(100% - 3.4rem))`,
+                      top: `clamp(2rem, ${signal.y}%, calc(100% - 2rem))`,
+                    }}
                     animate={
                       motionActive
                         ? { y: [0, index % 2 === 0 ? -5 : 5, 0], opacity: [0.62, 1, 0.62] }
@@ -211,9 +268,10 @@ export function HomeQuestionsScene() {
                   </motion.div>
                 ))}
 
-                <div className="absolute left-1/2 top-[52%] w-28 -translate-x-1/2 -translate-y-1/2 text-center">
-                  <p className="font-display text-lg leading-tight text-ivory">Clear enough to begin</p>
-                </div>
+                <MeasuredDecisionCore
+                  motionActive={motionActive}
+                  prefersReducedMotion={prefersReducedMotion}
+                />
               </div>
 
               <p className="mt-4 text-xs leading-relaxed text-ivory/48">
