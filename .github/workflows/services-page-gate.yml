@@ -1,5 +1,5 @@
 name: Complete Services page journey gate
-run-name: Complete Services integration pass 1 · ${{ github.sha }}
+run-name: Complete Services integration pass 2 · ${{ github.sha }}
 
 on:
   push:
