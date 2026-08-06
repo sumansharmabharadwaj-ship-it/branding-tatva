@@ -458,14 +458,22 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
     <>
       <section className="relative min-h-[82vh] overflow-hidden" style={{ backgroundColor: palette.ink }}>
         <div className="absolute inset-0">
-          <ManagedVideo
-            src={project.heroVideo}
-            poster={project.heroPoster ?? project.cardImage}
-            className="absolute inset-0 h-full w-full object-cover"
+          <div className="absolute inset-0 hidden sm:block">
+            <ManagedVideo
+              src={project.heroVideo}
+              poster={project.heroPoster ?? project.cardImage}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 sm:hidden"
+            style={{
+              background: `radial-gradient(circle at 82% 16%, ${palette.accent}2E, transparent 34%), linear-gradient(180deg, ${palette.ink} 0%, ${palette.surface} 100%)`,
+            }}
           />
           <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${palette.ink}66 0%, ${palette.ink}B8 60%, ${palette.ink}F5 100%)` }} />
           <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 78% 22%, ${palette.accent}33, transparent 38%)` }} />
-          <div aria-hidden="true" className="absolute inset-0 bg-black/30 sm:hidden" />
         </div>
 
         <Container className="relative flex min-h-[82vh] flex-col justify-end pb-14 pt-32 sm:pb-20 sm:pt-40">
@@ -524,6 +532,33 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
               </div>
             </Reveal>
           </div>
+
+          {(project.heroPoster ?? project.cardImage) && (
+            <figure
+              className="mt-8 overflow-hidden rounded-[1.4rem] border sm:hidden"
+              style={{ borderColor: `${palette.accent}55`, backgroundColor: palette.surface }}
+            >
+              <div className="relative aspect-[4/3] overflow-hidden bg-black/20">
+                <img
+                  src={project.heroPoster ?? project.cardImage}
+                  alt={`${project.title} project evidence`}
+                  className="h-full w-full object-cover"
+                />
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-x-0 bottom-0 h-16"
+                  style={{ background: `linear-gradient(180deg, transparent, ${palette.surface}CC)` }}
+                />
+              </div>
+              <figcaption
+                className="flex items-center justify-between gap-4 border-t px-4 py-3 text-[0.58rem] font-medium uppercase tracking-[0.15em]"
+                style={{ borderColor: `${palette.accent}44`, color: palette.secondary }}
+              >
+                <span>Project evidence</span>
+                <span>{evidenceLabel}</span>
+              </figcaption>
+            </figure>
+          )}
 
           <a href="#result" className="mt-10 inline-flex w-fit items-center gap-2 text-sm text-white/65 transition-colors hover:text-white">
             See the result first <span aria-hidden="true">↓</span>
