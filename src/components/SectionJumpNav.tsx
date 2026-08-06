@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 // Long-page wayfinding uses two deliberately different densities. Wide
 // screens retain the quiet technical index along the bottom edge. On
-// mobile, the full-width strip collapses into one safe-area-aware pill
-// and opens the destinations only when requested.
+// mobile, wayfinding becomes one small corner dial. The complete index
+// occupies the viewport only after the visitor explicitly opens it, so
+// reading, forms, and calls to action keep their full width.
 type JumpItem = { href: string; label: string };
 
 type SectionJumpNavProps = {
@@ -47,10 +48,6 @@ export function SectionJumpNav({ items, hideOnLast = false }: SectionJumpNavProp
   const activeItem = items[activeIndex] ?? items[0];
   const finalHref = items[items.length - 1]?.href;
   const hiddenForFinalScene = hideOnLast && Boolean(finalHref) && activeHref === finalHref;
-  const position = useMemo(
-    () => `${String(activeIndex + 1).padStart(2, "0")} / ${String(items.length).padStart(2, "0")}`,
-    [activeIndex, items.length]
-  );
 
   useEffect(() => {
     if (hiddenForFinalScene) setMobileOpen(false);
@@ -71,10 +68,11 @@ export function SectionJumpNav({ items, hideOnLast = false }: SectionJumpNavProp
       {/* Mobile: one compact guide rather than a bar across the copy. */}
       <nav
         aria-label="Jump to section"
-        className="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-1/2 z-30 w-[min(19rem,calc(100vw-1.5rem))] -translate-x-1/2 sm:hidden"
+        data-section-jump-nav-mobile="true"
+        className="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-[calc(0.75rem+env(safe-area-inset-right))] z-30 sm:hidden"
       >
         {mobileOpen && (
-          <div className="mb-2 grid grid-cols-2 gap-1.5 rounded-2xl border border-ivory/12 bg-soil/95 p-2 shadow-elevation-lg backdrop-blur-md">
+          <div className="absolute bottom-[calc(100%+0.5rem)] right-0 grid w-[min(19rem,calc(100vw-1.5rem))] grid-cols-2 gap-1.5 rounded-2xl border border-ivory/12 bg-soil/95 p-2 shadow-elevation-lg backdrop-blur-md">
             {items.map((item, index) => {
               const active = activeHref === item.href;
               return (
@@ -99,20 +97,23 @@ export function SectionJumpNav({ items, hideOnLast = false }: SectionJumpNavProp
 
         <button
           type="button"
+          data-section-jump-nav-trigger="true"
           aria-expanded={mobileOpen}
-          aria-label={`${mobileOpen ? "Close" : "Open"} section navigation`}
+          aria-label={`${mobileOpen ? "Close" : "Open"} section navigation. Current chapter ${activeIndex + 1} of ${items.length}: ${activeItem?.label ?? "Sections"}`}
           onClick={() => setMobileOpen((open) => !open)}
-          className="flex min-h-12 w-full items-center justify-between rounded-full border border-ivory/14 bg-soil/95 px-4 py-2.5 shadow-elevation-lg backdrop-blur-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
+          className="relative flex h-14 w-14 items-center justify-center rounded-full border border-ivory/16 bg-soil/92 shadow-elevation-lg backdrop-blur-md transition-[opacity,transform] duration-300 hover:scale-[1.03] hover:bg-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
         >
-          <span className="flex min-w-0 items-center gap-3">
-            <span className="shrink-0 font-display text-sm text-terracotta">{position}</span>
-            <span className="truncate text-[0.64rem] font-medium uppercase tracking-[0.16em] text-ivory/78">
-              {activeItem?.label ?? "Sections"}
+          <span className="flex flex-col items-center justify-center leading-none" aria-hidden="true">
+            <span className="font-display text-base text-terracotta">
+              {String(activeIndex + 1).padStart(2, "0")}
+            </span>
+            <span className="mt-0.5 text-[0.48rem] font-medium uppercase tracking-[0.12em] text-ivory/48">
+              / {String(items.length).padStart(2, "0")}
             </span>
           </span>
           <span
             aria-hidden="true"
-            className={`ml-3 text-base text-terracotta transition-transform duration-300 ${mobileOpen ? "rotate-45" : ""}`}
+            className={`absolute right-1.5 top-1 text-xs text-terracotta transition-transform duration-300 ${mobileOpen ? "rotate-45" : ""}`}
           >
             +
           </span>

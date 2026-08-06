@@ -10,6 +10,7 @@ import { useLenis } from "@/components/SmoothScrollProvider";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ELEMENT_HEX, MOOD } from "@/lib/sectionWash";
 import { elements } from "@/data/elements";
+import { MobileAuthorityDeck, type AuthorityLayer } from "@/sections/Services/MobileAuthorityDeck";
 
 // The Authority build, finally on the same mechanism as every other
 // pinned scene on this site: CSS position sticky plus measured scroll
@@ -43,12 +44,12 @@ const SKIPPED: Record<string, string> = {
   space: "Skipped: the work performs once and leaves nothing behind.",
 };
 
-const LAYERS = elements.map((el) => ({
+const LAYERS: AuthorityLayer[] = elements.map((el) => ({
   slug: el.slug,
   label: el.name.split("·")[1]?.trim() ?? el.name,
   line: el.manifesto[0],
   skipped: SKIPPED[el.slug] ?? "",
-  color: ELEMENT_HEX[el.slug],
+  color: ELEMENT_HEX[el.slug] ?? "#C6A97A",
 }));
 
 // The amplified signal: one path whose oscillation widens left to
@@ -69,7 +70,7 @@ export function PinnedBrandBuild() {
   const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const waveRef = useRef<SVGGElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
-  const isDesktop = useMediaQuery("(min-width: 640px)");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const lenis = useLenis();
   const animate = isDesktop && !prefersReducedMotion;
 
@@ -132,8 +133,8 @@ export function PinnedBrandBuild() {
   }, [animate, lenis]);
 
   return (
-    <div ref={wrapRef} className="relative sm:h-[420vh]" style={{ backgroundColor: MOOD.charcoal }}>
-      <div className="relative overflow-hidden sm:sticky sm:top-0 sm:flex sm:h-screen sm:flex-col sm:justify-center">
+    <div ref={wrapRef} className="relative lg:h-[420vh]" style={{ backgroundColor: MOOD.charcoal }}>
+      <div className="relative overflow-hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center">
         {/* Original procedural Authority film: a restrained signal rises
             through five natural material layers and widens only after
             the full system is present. The pinned rows remain the primary
@@ -155,7 +156,7 @@ export function PinnedBrandBuild() {
           />
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:py-24 sm:px-10 sm:py-0 lg:px-20">
+        <div className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:px-10 sm:py-20 lg:px-20 lg:py-0">
           <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20">
             <div>
               <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Authority</p>
@@ -175,7 +176,8 @@ export function PinnedBrandBuild() {
                 <span aria-hidden="true">→</span>
               </Link>
             </div>
-            <div className="relative">
+            <MobileAuthorityDeck layers={LAYERS} wavePath={WAVE_PATH} />
+            <div className="relative hidden lg:block">
               {/* The output signal — a wave whose oscillation widens as
                   the layers beneath it assemble. Decorative twin of the
                   rows below, which carry the full text alternative. */}
@@ -193,6 +195,7 @@ export function PinnedBrandBuild() {
               {LAYERS.map((layer, i) => (
                 <div
                   key={layer.slug}
+                  data-authority-desktop-layer="true"
                   ref={(node) => {
                     layerRefs.current[i] = node;
                   }}
