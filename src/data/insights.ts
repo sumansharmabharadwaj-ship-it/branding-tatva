@@ -15,6 +15,8 @@ import {
   type InsightSection,
   type InsightTopic,
 } from "@/data/pillarInsights";
+import { positioningStatementInsightPosts } from "@/data/positioningStatementInsights";
+import { repositioningInsightPosts } from "@/data/repositioningInsights";
 import { supportingInsightPosts } from "@/data/supportingInsights";
 import { valuePropositionInsightPosts } from "@/data/valuePropositionInsights";
 
@@ -39,6 +41,8 @@ const combinedPosts = [
   ...brandConsistencyInsightPosts,
   ...forgettableIdentityInsightPosts,
   ...differentiationInsightPosts,
+  ...positioningStatementInsightPosts,
+  ...repositioningInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
@@ -112,6 +116,22 @@ const relatedRegistrations = [
       "brand-positioning-strategy-service-businesses",
       "how-to-position-a-consulting-business",
       "value-proposition-vs-positioning-vs-tagline",
+    ],
+  },
+  {
+    supportingSlug: "brand-positioning-statement-examples-why-generic",
+    pillarSlugs: [
+      "brand-positioning-strategy-service-businesses",
+      "how-to-position-a-consulting-business",
+      "value-proposition-vs-positioning-vs-tagline",
+    ],
+  },
+  {
+    supportingSlug: "reposition-service-business-without-losing-recognition",
+    pillarSlugs: [
+      "brand-positioning-strategy-service-businesses",
+      "brand-audit-checklist-before-rebrand",
+      "brand-consistency-checklist-service-businesses",
     ],
   },
 ] as const;
