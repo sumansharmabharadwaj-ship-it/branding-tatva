@@ -105,9 +105,10 @@ export function HomeV4ProcessTempo() {
       return () => window.clearInterval(pausePulseRef.current);
     }
 
-    // The external director can resume immediately even though the internal
-    // scene has a longer manual-reading hold. That keeps Continue responsive.
+    // Continue should feel immediate. Reset the local hold and return to the
+    // short opening beat before the longer steady rhythm resumes.
     holdUntilRef.current = 0;
+    firstAdvanceRef.current = true;
     setRevision((value) => value + 1);
 
     return () => window.clearInterval(pausePulseRef.current);
