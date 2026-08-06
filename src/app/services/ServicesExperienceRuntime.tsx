@@ -67,6 +67,7 @@ export function ServicesExperienceRuntime() {
     const heroFragments = document.createElement("span");
     let activeIndex = 0;
     let frame = 0;
+    let hashRestoreFrame = 0;
 
     hero.dataset.servicesHeroScene = "true";
     heroMedia.forEach((media) => {
@@ -121,6 +122,18 @@ export function ServicesExperienceRuntime() {
         detail: { chapters: chapterDetail },
       }),
     );
+
+    // Some chapters receive their stable IDs during this client runtime. On a
+    // fresh URL such as /services#stakes the browser performs its native hash
+    // lookup before those IDs exist, so it has nothing to scroll to. Re-run
+    // that one native alignment after IDs are assigned. Ordinary anchor clicks
+    // after hydration remain completely browser controlled.
+    const requestedHash = window.location.hash.slice(1);
+    if (requestedHash && scenes.some((scene) => scene.id === requestedHash)) {
+      hashRestoreFrame = window.requestAnimationFrame(() => {
+        document.getElementById(requestedHash)?.scrollIntoView({ behavior: "auto", block: "start" });
+      });
+    }
 
     function publishChapter(index: number) {
       if (index === activeIndex && document.documentElement.dataset.servicesActiveChapter) return;
@@ -268,6 +281,7 @@ export function ServicesExperienceRuntime() {
 
     return () => {
       window.cancelAnimationFrame(frame);
+      window.cancelAnimationFrame(hashRestoreFrame);
       observer.disconnect();
       window.removeEventListener("scroll", scheduleProgress);
       window.removeEventListener("resize", scheduleProgress);
