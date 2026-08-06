@@ -1,7 +1,6 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
@@ -10,6 +9,7 @@ import { deliverables, SCOPE_GROUPS, type ScopeGroup } from "@/data/deliverables
 import { packages } from "@/data/services";
 import { track } from "@/lib/analytics";
 import { motionTokens } from "@/lib/motionTokens";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { ArtifactPreview } from "@/sections/Services/ArtifactPreview";
 
 const DETAIL_MODES = [
@@ -18,42 +18,82 @@ const DETAIL_MODES = [
   { id: "use", label: "How it gets used" },
 ] as const;
 
-type DetailMode = (typeof DETAIL_MODES)[number]["id"];
+const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+const MANUAL_HOLD_MS = 12_000;
 
-// Fourteen stacked chips made the archive accurate but expensive to
-// travel through, particularly on a phone. The same real catalog now
-// opens through five scope drawers. Only the active drawer's three or
-// four artifacts occupy the scene, while a second compact switcher lets
-// the visitor inspect what, why, and use without adding three paragraphs
-// to the page height. Every item and sentence still comes directly from
-// data/deliverables.ts.
+type DetailMode = (typeof DETAIL_MODES)[number]["id"];
+type ServicesProgressDetail = { id?: string; progress?: number };
+
+function poolFor(scope: ScopeGroup) {
+  return deliverables.filter((deliverable) => deliverable.group === scope);
+}
+
+// Fourteen stacked chips made the archive accurate but expensive to travel
+// through. The same real catalog now lives inside five drawers. A short native
+// scroll previews those drawers in sequence; any deliberate click, focus, or
+// keyboard choice holds the visitor's selection so automation never fights
+// inspection. No deliverable or explanatory copy is invented here.
 export function DeliverablesExplorer() {
-  const [group, setGroup] = useState<ScopeGroup>(SCOPE_GROUPS[0]);
-  const [activeId, setActiveId] = useState(deliverables[0].id);
+  const initialGroup = SCOPE_GROUPS[0];
+  const initialDeliverable = poolFor(initialGroup)[0] ?? deliverables[0];
+  const [group, setGroup] = useState<ScopeGroup>(initialGroup);
+  const [activeId, setActiveId] = useState(initialDeliverable.id);
   const [detailMode, setDetailMode] = useState<DetailMode>("what");
   const groupRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const detailRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const activeGroupRef = useRef<ScopeGroup>(initialGroup);
+  const holdUntilRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
 
-  const visible = deliverables.filter((deliverable) => deliverable.group === group);
+  const visible = poolFor(group);
   const active = deliverables.find((deliverable) => deliverable.id === activeId) ?? visible[0] ?? deliverables[0];
   const activeGroupIndex = SCOPE_GROUPS.indexOf(group);
-  const groupCount = (scope: ScopeGroup) => deliverables.filter((deliverable) => deliverable.group === scope).length;
   const detailText = detailMode === "what" ? active.what : detailMode === "why" ? active.why : active.use;
 
+  function holdManualControl() {
+    holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+  }
+
+  function applyGroup(nextGroup: ScopeGroup, resetDetail = true) {
+    const changed = activeGroupRef.current !== nextGroup;
+    activeGroupRef.current = nextGroup;
+    setGroup(nextGroup);
+
+    const pool = poolFor(nextGroup);
+    setActiveId((current) => (pool.some((deliverable) => deliverable.id === current) ? current : (pool[0]?.id ?? current)));
+    if (changed && resetDetail) setDetailMode("what");
+  }
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    function onSceneProgress(event: Event) {
+      const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
+      if (detail?.id !== "deliverables" || typeof detail.progress !== "number") return;
+      if (Date.now() < holdUntilRef.current) return;
+
+      const index = Math.min(
+        SCOPE_GROUPS.length - 1,
+        Math.max(0, Math.floor(detail.progress * SCOPE_GROUPS.length)),
+      );
+      const nextGroup = SCOPE_GROUPS[index];
+      if (nextGroup) applyGroup(nextGroup);
+    }
+
+    window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    return () => window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+  }, [prefersReducedMotion]);
+
   function pick(id: string) {
+    holdManualControl();
     setActiveId(id);
     setDetailMode("what");
     track("deliverable_inspected", { deliverable: id });
   }
 
   function pickGroup(nextGroup: ScopeGroup) {
-    setGroup(nextGroup);
-    const pool = deliverables.filter((deliverable) => deliverable.group === nextGroup);
-    if (pool.length && !pool.some((deliverable) => deliverable.id === activeId)) {
-      setActiveId(pool[0].id);
-      setDetailMode("what");
-    }
+    holdManualControl();
+    applyGroup(nextGroup);
     track("capability_selected", {
       page: "services",
       capability: `Deliverables: ${nextGroup}`,
@@ -93,6 +133,7 @@ export function DeliverablesExplorer() {
 
   function selectDetail(index: number, focus = false) {
     const nextIndex = (index + DETAIL_MODES.length) % DETAIL_MODES.length;
+    holdManualControl();
     setDetailMode(DETAIL_MODES[nextIndex].id);
     if (focus) requestAnimationFrame(() => detailRefs.current[nextIndex]?.focus());
   }
@@ -122,7 +163,12 @@ export function DeliverablesExplorer() {
   }
 
   return (
-    <div data-deliverables-explorer="drawers" data-deliverable-total={deliverables.length}>
+    <div
+      data-deliverables-explorer="drawers"
+      data-deliverables-scroll-controlled="true"
+      data-deliverables-active-group={group}
+      data-deliverable-total={deliverables.length}
+    >
       <Container className="max-w-6xl">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Deliverables</p>
@@ -130,20 +176,34 @@ export function DeliverablesExplorer() {
             What you actually leave with.
           </h2>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-ivory/85">
-            Fourteen real deliverables across five drawers. Open a scope, choose an artifact, then inspect what it is,
-            why it matters, and how it gets used without leaving the scene.
+            Fourteen real deliverables across five drawers. A short scroll previews the archive; select any drawer or
+            artifact and the page waits while you inspect it.
           </p>
         </Reveal>
+
+        <div className="mt-7 flex items-center gap-3" aria-hidden="true">
+          <span className="font-display text-xs text-sandstone">{String(activeGroupIndex + 1).padStart(2, "0")}</span>
+          <span className="relative h-px flex-1 overflow-hidden bg-ivory/10">
+            <motion.span
+              className="absolute inset-y-0 left-0 bg-sandstone"
+              animate={{ width: `${((activeGroupIndex + 1) / SCOPE_GROUPS.length) * 100}%` }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: motionTokens.easeOrganic }}
+            />
+          </span>
+          <span className="text-[0.58rem] font-medium uppercase tracking-[0.14em] text-ivory/45">
+            / {String(SCOPE_GROUPS.length).padStart(2, "0")}
+          </span>
+        </div>
 
         <div
           role="tablist"
           aria-label="Deliverable scope drawers"
           aria-orientation="horizontal"
-          className="mt-8 flex snap-x gap-2 overflow-x-auto pb-2 lg:grid lg:grid-cols-5 lg:overflow-visible"
+          className="mt-5 flex snap-x gap-2 overflow-x-auto pb-2 lg:grid lg:grid-cols-5 lg:overflow-visible"
         >
           {SCOPE_GROUPS.map((scope, index) => {
             const selected = group === scope;
-            const count = groupCount(scope);
+            const count = poolFor(scope).length;
             return (
               <button
                 key={scope}
@@ -159,6 +219,7 @@ export function DeliverablesExplorer() {
                 data-deliverable-count={count}
                 tabIndex={selected ? 0 : -1}
                 onClick={() => selectGroup(index)}
+                onFocus={holdManualControl}
                 onKeyDown={(event) => handleGroupKey(event, index)}
                 className={`relative min-h-20 min-w-[9.5rem] snap-start overflow-hidden rounded-2xl border px-4 py-3 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone lg:min-w-0 ${
                   selected
@@ -223,6 +284,7 @@ export function DeliverablesExplorer() {
                         type="button"
                         aria-pressed={selected}
                         onClick={() => pick(deliverable.id)}
+                        onFocus={holdManualControl}
                         className={`relative flex min-h-32 w-full flex-col justify-between overflow-hidden rounded-2xl border p-3.5 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:min-h-36 sm:p-4 ${
                           selected
                             ? "border-sandstone/65 bg-ivory/[0.075] text-ivory"
@@ -291,6 +353,7 @@ export function DeliverablesExplorer() {
                         aria-controls="deliverable-explanation-panel"
                         tabIndex={selected ? 0 : -1}
                         onClick={() => selectDetail(index)}
+                        onFocus={holdManualControl}
                         onKeyDown={(event) => handleDetailKey(event, index)}
                         className={`relative min-h-11 rounded-xl px-2 py-2 text-center text-[0.58rem] font-medium uppercase tracking-[0.12em] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:text-[0.64rem] ${
                           selected ? "bg-sandstone/12 text-ivory" : "text-ivory/48 hover:text-ivory"
