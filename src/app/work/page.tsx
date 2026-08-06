@@ -1,51 +1,35 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { ClipReveal } from "@/components/ClipReveal";
 import { TexturedDark } from "@/components/TexturedDark";
 import { LinkButton } from "@/components/Button";
-import { WorkOpening } from "@/sections/Work/WorkOpening";
-import { WorkIndex } from "@/sections/Work/WorkIndex";
-import { CapabilityMap } from "@/sections/Work/CapabilityMap";
 import { ContextualCTA } from "@/components/conversion/ContextualCTA";
+import { WorkOpening } from "@/sections/Work/WorkOpening";
+import { WorkProofStrip } from "@/sections/Work/WorkProofStrip";
+import { WorkIndex } from "@/sections/Work/WorkIndex";
 import { SignatureProject } from "@/sections/Work/SignatureProject";
-import { DecisionMap } from "@/sections/Work/DecisionMap";
-import { MarketingEcosystem } from "@/sections/Work/MarketingEcosystem";
-import { TatvaLab } from "@/sections/Work/TatvaLab";
 import { DecisionEvidenceGallery } from "@/sections/Work/DecisionEvidenceGallery";
 import { WorkArchive } from "@/sections/Work/WorkArchive";
+import { CapabilityMap } from "@/sections/Work/CapabilityMap";
+import { TatvaLab } from "@/sections/Work/TatvaLab";
 import { Authorship } from "@/sections/Work/Authorship";
 import { BrandStudies } from "@/sections/CaseStudies/BrandStudies";
 import { brandStudies } from "@/data/brandStudies";
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 
-// Work Page 2.0 — rebuilt per the interactive design handoff: a living
-// editorial archive instead of a portfolio grid. The page unfolds as
-// proof, depth, range, authorship, and invitation: opening proposition
-// (cream, line by line reveal, real project material as the visual) →
-// contents index with a live preview surface → the signature project
-// as a six beat evidence narrative (sticky media, color returning as
-// the story resolves) → the decision map (five questions, five real
-// projects) → the archive ledger → the brand studies teaching layer →
-// authorship → consultation. Every visible number and sentence traces
-// to data/projects.ts; the palette is the handoff's own token table
-// (sections/Work/palette.ts).
-
-// AEO/GEO: the brand studies as structured data, so search and answer
-// engines can cite each dissection individually. Articles, deliberately
-// never CaseStudy/Service types — these are independent analyses of the
-// public record, and the schema must say so as clearly as the page copy.
 const studiesJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   name: "Brand studies",
   description:
     "Independent brand strategy analyses of renowned brands, written as teaching. No client relationship with the brands analyzed.",
-  itemListElement: brandStudies.map((study, i) => ({
+  itemListElement: brandStudies.map((study, index) => ({
     "@type": "ListItem",
-    position: i + 1,
+    position: index + 1,
     item: {
       "@type": "Article",
       headline: `${study.brand}: ${study.lens}`,
@@ -59,63 +43,87 @@ const studiesJsonLd = {
 export const metadata: Metadata = {
   title: "Work",
   description:
-    "A living archive of brand strategy work: positioning, verbal identity, and recognition built for real clients, plus independent brand studies of Coca Cola, Apple, Nike, Burberry and Tim Hortons.",
+    "A living archive of brand strategy work: positioning, verbal identity, and recognition built for real clients, plus clearly labelled concept work and independent brand studies.",
   alternates: { canonical: "/work" },
   openGraph: {
     title: "Work | Branding Tatva",
     description:
-      "A living archive of brand strategy work: positioning, verbal identity, and recognition built for real clients, plus independent brand studies of Coca Cola, Apple, Nike, Burberry and Tim Hortons.",
+      "A living archive of brand strategy work: positioning, verbal identity, and recognition built for real clients, plus clearly labelled concept work and independent brand studies.",
     type: "website",
   },
 };
 
 export default function WorkPage() {
-  const signature = projects.find((p) => p.slug === "dr-haley-nutrition");
+  const signature = projects.find((project) => project.slug === "dr-haley-nutrition");
+
   return (
     <>
       <Header />
       <main id="main-content" style={{ backgroundColor: "#F2F0E8" }}>
+        {/* Overview: immediate proposition, genuine project montage,
+            then a compact evidence line before any explanatory layer. */}
         <WorkOpening />
-        <CapabilityMap />
-        <ContextualCTA
-          eyebrow="Medium step"
-          heading="See the full archive of decisions."
-          href="#index"
-          label="Explore selected work"
-          event="contextual_cta_clicked"
-          eventProps={{ source: "work_capability_map" }}
-        />
-        <WorkIndex projects={projects} />
-        {signature && <SignatureProject project={signature} />}
-        <DecisionEvidenceGallery />
-        <DecisionMap />
-        <TatvaLab />
-        <MarketingEcosystem />
-        <WorkArchive projects={projects} />
+        <WorkProofStrip projects={projects} />
 
-        {/* Brand studies — the teaching layer beneath the client record.
-            Independent dissections of renowned US, UK and Canadian
-            brands, framed explicitly as analyses of the public record
-            so no visitor can mistake them for engagements. */}
+        {/* Scan: buyer-problem filters establish relevance before the
+            page asks for a long read. */}
+        <WorkIndex projects={projects} />
+
+        {/* Immersion: the strongest numbers-backed engagement remains
+            the first deep chapter. */}
+        {signature && <SignatureProject project={signature} />}
+        <ContextualCTA
+          eyebrow="A similar pattern"
+          heading="Posting more, but earning less attention?"
+          href="/contact"
+          label="Discuss the pattern"
+          event="contextual_cta_clicked"
+          eventProps={{ source: "work_signature_project" }}
+        />
+
+        {/* Judgment: real decisions shown at inspectable scale. The
+            earlier DecisionMap and MarketingEcosystem remain in the
+            codebase, but leave this route during consolidation because
+            they repeated the same teaching job. */}
+        <DecisionEvidenceGallery />
+
+        {/* Range: client work is tiered rather than flattened into one
+            list; the selector then helps a buyer find the closest proof
+            and service path. */}
+        <WorkArchive projects={projects} />
+        <CapabilityMap />
+
+        {/* Wider practice: concept work and public-record analysis are
+            deliberately separated from client engagements so neither
+            borrows credibility from the other. */}
+        <TatvaLab />
         <BrandStudies />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(studiesJsonLd) }} />
 
         <Authorship />
 
-        {/* Invitation — quiet material reflection as the final frame
-            (work-closing.jpg: the forest path regraded this round into
-            the page's own cool green register), one consultation path. */}
-        <TexturedDark image="/images/work-closing.jpg" className="py-20 sm:py-28 text-center sm:pb-28">
+        <TexturedDark image="/images/work-closing.jpg" className="py-20 text-center sm:py-28 sm:pb-28">
           <ClipReveal>
             <Container>
-              <h2 className="text-display-md font-display font-normal text-ivory">
-                The next decision on record could be yours.
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-ivory/70">The next decision</p>
+              <h2 className="mx-auto mt-3 max-w-3xl font-display text-display-md font-normal text-ivory">
+                Bring the part of the brand that no longer makes sense.
               </h2>
-              <p className="mx-auto mt-4 max-w-md text-ivory/85">
-                Every engagement in this archive started with a conversation about where the brand actually stood.
+              <p className="mx-auto mt-5 max-w-2xl text-ivory/82">
+                The first conversation identifies the decision underneath the deliverable, whether the problem is clarity, recognition, conversion, or a system that has stopped holding together.
               </p>
-              <div className="mt-8">
-                <LinkButton href="/contact">Book Your Own Strategy Session</LinkButton>
+
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-5">
+                <LinkButton href="/contact">Discuss the brand problem</LinkButton>
+                <Link href="/services" className="link-underline text-sm font-medium text-ivory">
+                  See the service paths <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+
+              <div className="mx-auto mt-9 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 border-t border-ivory/20 pt-5 text-[0.64rem] uppercase tracking-[0.16em] text-ivory/65">
+                <span>Founder-led</span>
+                <span>Direct collaboration</span>
+                <span>Strategy before output</span>
               </div>
             </Container>
           </ClipReveal>
