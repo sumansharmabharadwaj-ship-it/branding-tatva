@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
@@ -52,8 +52,20 @@ export function TatvaLab() {
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [activePhase, setActivePhase] = useState(0);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const dossierRef = useRef<HTMLElement>(null);
   const openProject = conceptProjects.find((project) => project.slug === openSlug) ?? null;
   const phase = PHASES[activePhase] ?? PHASES[0];
+
+  useEffect(() => {
+    if (!openSlug || !dossierRef.current) return;
+    const frame = window.requestAnimationFrame(() => {
+      dossierRef.current?.scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [openSlug, prefersReducedMotion]);
 
   function toggle(slug: string) {
     const next = openSlug === slug ? null : slug;
@@ -117,7 +129,7 @@ export function TatvaLab() {
                   aria-expanded={open}
                   aria-controls={`lab-${project.slug}`}
                   onClick={() => toggle(project.slug)}
-                  className="group relative flex min-h-[18rem] w-full flex-col overflow-hidden rounded-[1.4rem] border p-5 text-left transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:p-6"
+                  className="group relative flex min-h-[12rem] w-full sm:min-h-[18rem] flex-col overflow-hidden rounded-[1.4rem] border p-5 text-left transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:p-6"
                   style={{
                     borderColor: open ? project.accent : WORK.stone + "66",
                     background: `radial-gradient(circle at 88% 12%, ${project.accent}24 0%, transparent 35%), linear-gradient(145deg, rgba(255,255,255,0.76), ${project.accent}0D)`,
@@ -154,10 +166,10 @@ export function TatvaLab() {
                     {project.sector}
                   </span>
 
-                  <span className="relative mt-auto block pt-8">
+                  <span className="relative mt-auto block pt-5 sm:pt-8">
                     <span
                       aria-hidden="true"
-                      className="absolute left-[8%] right-[8%] top-[2.35rem] h-px"
+                      className="absolute left-[8%] right-[8%] top-[1.65rem] h-px sm:top-[2.35rem]"
                       style={{ backgroundColor: project.accent + "44" }}
                     />
                     <span className="relative grid grid-cols-4 gap-2">
@@ -186,13 +198,14 @@ export function TatvaLab() {
         <AnimatePresence mode="wait" initial={false}>
           {openProject && (
             <motion.article
+              ref={dossierRef}
               id={`lab-${openProject.slug}`}
               key={openProject.slug}
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: motionTokens.distanceSmall }}
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -motionTokens.distanceMicro }}
               transition={{ duration: motionTokens.durationBase, ease: motionTokens.easeOrganic }}
-              className="mt-6 overflow-hidden rounded-[1.7rem] border"
+              className="mt-6 scroll-mt-28 overflow-hidden rounded-[1.7rem] border"
               style={{ borderColor: openProject.accent + "66", backgroundColor: "rgba(255,255,255,0.58)" }}
             >
               <div
@@ -374,7 +387,7 @@ export function TatvaLab() {
                       A plan for measuring, never a claimed result
                     </p>
                   </div>
-                  <ol className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <ol className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
                     {openProject.measurementPlan.map((item, index) => (
                       <li key={item} className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
                         <span className="font-display text-sm" style={{ color: openProject.accent }} aria-hidden="true">
