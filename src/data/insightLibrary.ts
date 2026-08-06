@@ -1,3 +1,4 @@
+import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
 import { distinctiveAssetInsightPosts } from "@/data/distinctiveAssetInsights";
 import {
   insightPosts as pillarInsightPosts,
@@ -13,6 +14,7 @@ const combinedPosts = [
   ...pillarInsightPosts,
   ...supportingInsightPosts,
   ...distinctiveAssetInsightPosts,
+  ...customerJourneyInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
