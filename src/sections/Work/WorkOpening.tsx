@@ -27,9 +27,11 @@ export function WorkOpening() {
   const lenis = useLenis();
   const stageRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
-  const [interactionPaused, setInteractionPaused] = useState(false);
+  const [pointerPaused, setPointerPaused] = useState(false);
+  const [focusPaused, setFocusPaused] = useState(false);
   const [manualPaused, setManualPaused] = useState(false);
   const [inView, setInView] = useState(true);
+  const interactionPaused = pointerPaused || focusPaused;
   const current = projects[active] ?? projects[0];
 
   useEffect(() => {
@@ -156,12 +158,13 @@ export function WorkOpening() {
 
           <div
             ref={stageRef}
-            onMouseEnter={() => setInteractionPaused(true)}
-            onMouseLeave={() => setInteractionPaused(false)}
-            onFocusCapture={() => setInteractionPaused(true)}
+            data-work-preview-stage="true"
+            onMouseEnter={() => setPointerPaused(true)}
+            onMouseLeave={() => setPointerPaused(false)}
+            onFocusCapture={() => setFocusPaused(true)}
             onBlurCapture={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-                setInteractionPaused(false);
+                setFocusPaused(false);
               }
             }}
             className="min-w-0 lg:pt-14"
@@ -267,6 +270,7 @@ export function WorkOpening() {
 
               <button
                 type="button"
+                data-work-preview-toggle="true"
                 aria-label={
                   prefersReducedMotion
                     ? "Project preview is static in reduced-motion mode"
