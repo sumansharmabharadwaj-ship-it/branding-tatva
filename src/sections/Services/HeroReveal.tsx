@@ -3,38 +3,40 @@
 import { useEffect } from "react";
 import { animate, motion, useMotionValue, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
-// The awakening (film script, scene one): the page begins in forest
-// darkness — near black with a breath of green, never pure void — with
-// the aspen scene and the masthead both hidden inside it. Scrolling
-// breaks the light: the veil is driven by scroll position, so the
-// visitor's own movement wakes the forest and reveals the headline
-// only once the light arrives. A slower time-based wake runs in
-// parallel as the floor, so a visitor who simply waits still sees the
-// page open (the veil takes whichever of the two is clearer at any
-// moment). The veil sits above the masthead deliberately — the title
-// is revealed WITH the scene, per the script's "only then" beat.
-// Opacity only, one composited layer; removed entirely under reduced
-// motion so the page is immediately readable.
+// The awakening now reveals Branding Tatva's original root-system film
+// rather than hiding a generic background for several seconds. A short
+// scroll-linked veil and a faster time-based wake work in parallel, so the
+// visitor receives immediate feedback while the scene still feels directed.
+// The title remains part of the reveal, but comprehension is never held
+// hostage by atmosphere. Opacity only, one composited layer; removed entirely
+// under reduced motion so the page is immediately readable.
 export function HeroReveal() {
   const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
-  // Scroll wake: darkness fully broken after ~420px of intent.
-  const scrollVeil = useTransform(scrollY, [0, 420], [0.93, 0]);
-  // Time wake: the forest opens on its own over ~5.5s for the patient.
-  const timeVeil = useMotionValue(0.93);
+  // One small gesture reveals the defining visual event.
+  const scrollVeil = useTransform(scrollY, [0, 260], [0.86, 0]);
+  // A still visitor receives the complete opening in roughly 2.4 seconds.
+  const timeVeil = useMotionValue(0.86);
+
   useEffect(() => {
     if (prefersReducedMotion) return;
-    const controls = animate(timeVeil, 0, { duration: 4.2, delay: 1.3, ease: [0.22, 1, 0.36, 1] });
+    const controls = animate(timeVeil, 0, {
+      duration: 2.15,
+      delay: 0.25,
+      ease: [0.22, 1, 0.36, 1],
+    });
     return () => controls.stop();
   }, [prefersReducedMotion, timeVeil]);
+
   const veil = useTransform([scrollVeil, timeVeil], (values: number[]) => Math.min(values[0], values[1]));
 
   if (prefersReducedMotion) return null;
+
   return (
     <motion.div
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 z-20"
-      style={{ opacity: veil, backgroundColor: "#0A0F0B" }}
+      style={{ opacity: veil, backgroundColor: "#080D0B" }}
     />
   );
 }
