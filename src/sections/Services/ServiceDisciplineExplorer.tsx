@@ -145,7 +145,7 @@ export function ServiceDisciplineExplorer() {
                   }`}
                   style={{ backgroundColor: offer.color }}
                 />
-                {isActive && inView && !prefersReducedMotion && Date.now() >= holdUntilRef.current && (
+                {isActive && inView && !prefersReducedMotion && (
                   <motion.span
                     key={`discipline-progress-${activeIndex}`}
                     aria-hidden="true"
