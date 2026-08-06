@@ -1,4 +1,5 @@
 name: Run the complete Services integration gate
+# Review-merge execution refresh: 2026-08-07
 run-name: Services integration control plane · ${{ github.sha }}
 
 on:
@@ -7,10 +8,19 @@ on:
       - main
     paths:
       - .github/workflows/run-services-complete-integration.yml
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: read
 
 concurrency:
   group: branding-tatva-services-integration-control-plane
@@ -18,6 +28,7 @@ concurrency:
 
 jobs:
   integrate-build-audit-commit:
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.head.ref == 'services-integration-main-control-trigger'
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
