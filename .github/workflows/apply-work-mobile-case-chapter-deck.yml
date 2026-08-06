@@ -1,0 +1,162 @@
+name: Apply Work mobile case-study chapter deck
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/apply-work-mobile-case-chapter-deck.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-work-mobile-case-chapter-deck
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the working branch without the media archive
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Apply, build, and publish
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            echo "Mobile case-study deck attempt ${attempt}"
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+
+            python <<'PY'
+          from pathlib import Path
+
+          path = Path("src/sections/Work/CaseStudyExperience.tsx")
+          workflow = Path(".github/workflows/apply-work-mobile-case-chapter-deck.yml")
+          text = path.read_text(encoding="utf-8")
+
+          def replace_once(old: str, new: str) -> None:
+              global text
+              count = text.count(old)
+              if count != 1:
+                  raise RuntimeError(f"Expected one occurrence, found {count}: {old[:140]!r}")
+              text = text.replace(old, new, 1)
+
+          replace_once(
+              '  const [activeChapter, setActiveChapter] = useState(0);\n  const chapterRefs = useRef<(HTMLElement | null)[]>([]);',
+              '  const [activeChapter, setActiveChapter] = useState(0);\n  const currentChapter = chapters[activeChapter] ?? chapters[0];\n  const chapterRefs = useRef<(HTMLElement | null)[]>([]);',
+          )
+          replace_once(
+              '<section id="story" className="scroll-mt-24 py-20 sm:py-28"',
+              '<section id="story" className="scroll-mt-24 py-14 sm:py-28"',
+          )
+          replace_once(
+              '          <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_1.08fr] lg:gap-16">',
+              '          <div className="mt-8 grid gap-8 sm:mt-12 sm:gap-12 lg:grid-cols-[1fr_1.08fr] lg:gap-16">',
+          )
+          replace_once(
+              '''                      aria-current={activeChapter === index ? "step" : undefined}
+                      onClick={() => {
+                        setActiveChapter(index);
+                        chapterRefs.current[index]?.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "center" });
+                      }}''',
+              '''                      aria-current={activeChapter === index ? "step" : undefined}
+                      aria-pressed={activeChapter === index}
+                      aria-controls="mobile-case-study-chapter"
+                      onClick={() => {
+                        setActiveChapter(index);
+                        if (window.matchMedia("(min-width: 1024px)").matches) {
+                          chapterRefs.current[index]?.scrollIntoView({
+                            behavior: prefersReducedMotion ? "auto" : "smooth",
+                            block: "center",
+                          });
+                        }
+                      }}''',
+          )
+          replace_once(
+              '''              </ol>
+            </div>
+
+            <div>
+              {chapters.map((chapter, index) => (''',
+              '''              </ol>
+
+              {currentChapter && (
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.article
+                    id="mobile-case-study-chapter"
+                    key={currentChapter.id}
+                    role="region"
+                    aria-label={`${currentChapter.label}: ${currentChapter.title}`}
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+                    className="mt-5 rounded-[1.35rem] border p-5 lg:hidden"
+                    style={{ borderColor: `${palette.accent}66`, backgroundColor: `${palette.surface}F2` }}
+                  >
+                    <p
+                      className="flex items-center justify-between gap-4 text-[0.58rem] font-medium uppercase tracking-[0.17em]"
+                      style={{ color: palette.secondary }}
+                    >
+                      <span>{currentChapter.label}</span>
+                      <span className="font-display text-sm" aria-hidden="true">
+                        {String(activeChapter + 1).padStart(2, "0")} / {String(chapters.length).padStart(2, "0")}
+                      </span>
+                    </p>
+                    <h3 className="mt-3 font-display text-2xl font-normal leading-tight text-white min-[430px]:text-3xl">
+                      {currentChapter.title}
+                    </h3>
+                    <p className="mt-4 text-[0.95rem] leading-relaxed text-white/76">
+                      {currentChapter.body}
+                    </p>
+                  </motion.article>
+                </AnimatePresence>
+              )}
+            </div>
+
+            <div className="hidden lg:block">
+              {chapters.map((chapter, index) => (''',
+          )
+
+          path.write_text(text, encoding="utf-8")
+          workflow.unlink()
+          PY
+
+            pnpm install --frozen-lockfile
+            pnpm build
+
+            git add src/sections/Work/CaseStudyExperience.tsx .github/workflows/apply-work-mobile-case-chapter-deck.yml
+            git commit -m "Turn mobile case studies into a selectable chapter deck"
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              exit 0
+            fi
+          done
+
+          exit 1
