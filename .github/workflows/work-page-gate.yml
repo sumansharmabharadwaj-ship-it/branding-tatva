@@ -16,6 +16,7 @@ on:
       - scripts/work_mobile_index_control_gate.cjs
       - scripts/work_lab_accessibility_gate.cjs
       - scripts/work_decision_context_gate.cjs
+      - scripts/work_brand_study_context_gate.cjs
       - public/images/work-evidence-*.svg
       - src/app/work/**
       - src/sections/Work/**
@@ -123,6 +124,11 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/work_decision_context_gate.cjs
+
+      - name: Audit fifth-study mobile close context restoration
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/work_brand_study_context_gate.cjs
 
       - name: Stop production server
         if: always()
