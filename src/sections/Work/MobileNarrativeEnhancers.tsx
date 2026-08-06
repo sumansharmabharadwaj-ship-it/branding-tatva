@@ -25,14 +25,6 @@ type CaseDeckModel = {
   originalButtons: HTMLButtonElement[];
 };
 
-type SystemDeckModel = {
-  host: HTMLElement;
-  imageSrc: string;
-  steps: NarrativeChapter[];
-  outcome: string;
-  href: string;
-};
-
 type SignatureDeckModel = {
   host: HTMLElement;
   imageSrc: string;
@@ -40,41 +32,15 @@ type SignatureDeckModel = {
   href: string;
 };
 
-const SYSTEM_STATES = [
-  {
-    word: "ACCESS",
-    eyebrow: "The default meaning",
-    line: "A generic route to inexpensive supply.",
-  },
-  {
-    word: "ORIGIN",
-    eyebrow: "The positioning decision",
-    line: "Craft and story before price.",
-  },
-  {
-    word: "SYSTEM",
-    eyebrow: "What the work built",
-    line: "One foundation carried through channels and rollout.",
-  },
-] as const;
-
-const SYSTEM_CARDS = [
-  ["Foundation", "Belief · mission · promise · value"],
-  ["Content architecture", "65% authority · 25% culture · 10% direct brand"],
-  ["Rollout", "Foundation → audience pull → lead quality → market position"],
-] as const;
-
 const MOBILE_ENHANCEMENT_CSS = `
 @media (max-width: 1023px) {
   [data-mobile-narrative-original-case="true"],
-  [data-mobile-narrative-original-system="true"],
   [data-mobile-narrative-original-signature="true"],
   [data-mobile-narrative-original-nav="true"] {
     display: none !important;
   }
 
   [data-mobile-case-deck-host="true"],
-  [data-mobile-system-deck-host="true"],
   [data-mobile-signature-deck-host="true"] {
     display: block;
   }
@@ -82,7 +48,6 @@ const MOBILE_ENHANCEMENT_CSS = `
 
 @media (min-width: 1024px) {
   [data-mobile-case-deck-host="true"],
-  [data-mobile-system-deck-host="true"],
   [data-mobile-signature-deck-host="true"] {
     display: none !important;
   }
@@ -114,9 +79,10 @@ function extractStats(element: HTMLElement): EvidenceStat[] {
 
 function extractNarrative(element: HTMLElement): NarrativeChapter {
   const paragraphs = directParagraphs(element);
+  const finalParagraph = paragraphs.length > 0 ? paragraphs[paragraphs.length - 1] : undefined;
   const label = text(element.querySelector(":scope > p span:last-child")) || text(paragraphs[0]).replace(/^\d+\s*/, "");
   const title = text(element.querySelector(":scope > h2, :scope > h3"));
-  const body = text(paragraphs[1] ?? paragraphs.at(-1));
+  const body = text(paragraphs[1] ?? finalParagraph);
   return { label, title, body, stats: extractStats(element) };
 }
 
@@ -378,159 +344,11 @@ function SignatureDeck() {
   );
 }
 
-function SystemDeck() {
-  const [model, setModel] = useState<SystemDeckModel | null>(null);
-  const [active, setActive] = useState(0);
-  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
-  const animate = hydrated && !prefersReducedMotion;
-
-  useEffect(() => {
-    if (document.getElementById("mobile-system-step")) return;
-
-    const firstStep = document.querySelector<HTMLElement>("[data-system-step]");
-    const section = firstStep?.closest("section");
-    const stepElements = section ? Array.from(section.querySelectorAll<HTMLElement>("[data-system-step]")) : [];
-    const narrativeColumn = firstStep?.parentElement;
-    const grid = narrativeColumn?.parentElement;
-    const container = grid?.parentElement;
-
-    if (!section || !stepElements.length || !narrativeColumn || !grid || !container) return;
-
-    const outcomeContainer = narrativeColumn.lastElementChild as HTMLElement | null;
-    const outcomeParagraphs = outcomeContainer ? directParagraphs(outcomeContainer) : [];
-    const host = document.createElement("div");
-    host.dataset.mobileSystemDeckHost = "true";
-    container.insertBefore(host, grid);
-    grid.dataset.mobileNarrativeOriginalSystem = "true";
-
-    setModel({
-      host,
-      imageSrc: section.querySelector<HTMLImageElement>("img")?.getAttribute("src") ?? "",
-      steps: stepElements.map(extractNarrative),
-      outcome: text(outcomeParagraphs[1] ?? outcomeParagraphs.at(-1)),
-      href: outcomeContainer?.querySelector<HTMLAnchorElement>('a[href^="/work/"]')?.getAttribute("href") ?? "/work",
-    });
-
-    return () => {
-      host.remove();
-      delete grid.dataset.mobileNarrativeOriginalSystem;
-    };
-  }, []);
-
-  if (!model) return null;
-  const step = model.steps[active] ?? model.steps[0];
-  const visual = SYSTEM_STATES[active] ?? SYSTEM_STATES[0];
-  if (!step) return null;
-
-  return createPortal(
-    <div className="mt-8 lg:hidden" data-mobile-system-deck="true">
-      <div className="relative overflow-hidden rounded-[1.45rem] border" style={{ borderColor: "rgba(198,169,122,0.28)", backgroundColor: "#172027" }}>
-        {model.imageSrc && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={model.imageSrc} alt="Brand-system evidence diagram" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-        )}
-        <div aria-hidden="true" className="absolute inset-0" style={{ background: "linear-gradient(145deg, rgba(16,21,26,0.26), rgba(16,21,26,0.95) 76%)" }} />
-
-        <div className="relative p-5">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={visual.word}
-              initial={animate ? { opacity: 0, y: 8 } : false}
-              animate={{ opacity: 1, y: 0 }}
-              exit={animate ? { opacity: 0, y: -6 } : undefined}
-              transition={{ duration: animate ? 0.4 : 0, ease: EASE_ORGANIC }}
-            >
-              <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em]" style={{ color: WORK.sand }}>{visual.eyebrow}</p>
-              <p className="mt-1 font-display text-[2.85rem] leading-none tracking-[-0.04em] text-white">{visual.word}</p>
-              <p className="mt-2 text-[0.82rem] leading-relaxed text-white/68">{visual.line}</p>
-            </motion.div>
-          </AnimatePresence>
-
-          <div className="mt-6 grid gap-2.5">
-            {SYSTEM_CARDS.map(([label, detail], index) => (
-              <div
-                key={label}
-                className="rounded-xl border p-3.5 transition-colors duration-300"
-                style={{
-                  borderColor: active >= index ? "rgba(198,169,122,0.42)" : "rgba(255,255,255,0.12)",
-                  backgroundColor: active >= index ? "rgba(31,58,40,0.82)" : "rgba(8,13,16,0.48)",
-                }}
-              >
-                <p className="text-[0.54rem] font-medium uppercase tracking-[0.14em]" style={{ color: WORK.sand }}>
-                  {String(index + 1).padStart(2, "0")} · {label}
-                </p>
-                <p className="mt-1 text-[0.74rem] leading-relaxed text-white/72">{detail}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-4 grid grid-cols-3 gap-2" role="group" aria-label="Choose a system-building case-study stage">
-        {model.steps.map((item, index) => {
-          const selected = active === index;
-          return (
-            <button
-              key={`${item.label}-${index}`}
-              type="button"
-              aria-pressed={selected}
-              aria-controls="mobile-system-deck-panel"
-              onClick={() => setActive(index)}
-              className="min-h-11 rounded-xl border px-2 py-2 font-display text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-              style={{
-                borderColor: selected ? WORK.sand : "rgba(198,169,122,0.22)",
-                backgroundColor: selected ? "rgba(198,169,122,0.12)" : "transparent",
-                color: selected ? WORK.sand : "rgba(242,240,232,0.58)",
-                outlineColor: WORK.sand,
-              }}
-              aria-label={`${String(index + 1).padStart(2, "0")}: ${item.label}`}
-            >
-              {String(index + 1).padStart(2, "0")}
-            </button>
-          );
-        })}
-      </div>
-
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.article
-          id="mobile-system-deck-panel"
-          key={`${active}-${step.label}`}
-          role="region"
-          aria-label={`${step.label}: ${step.title}`}
-          initial={animate ? { opacity: 0, y: 10 } : false}
-          animate={{ opacity: 1, y: 0 }}
-          exit={animate ? { opacity: 0, y: -8 } : undefined}
-          transition={{ duration: animate ? 0.42 : 0, ease: EASE_ORGANIC }}
-          className="mt-4 rounded-[1.35rem] border p-5"
-          style={{ borderColor: "rgba(198,169,122,0.3)", backgroundColor: "rgba(23,32,39,0.92)" }}
-        >
-          <p className="flex items-center justify-between gap-4 text-[0.58rem] font-medium uppercase tracking-[0.17em]" style={{ color: WORK.sand }}>
-            <span>{step.label}</span>
-            <span className="font-display text-sm" aria-hidden="true">{String(active + 1).padStart(2, "0")} / 03</span>
-          </p>
-          <h3 className="mt-3 font-display text-2xl font-normal leading-tight text-white min-[430px]:text-3xl">{step.title}</h3>
-          <p className="mt-4 text-[0.95rem] leading-relaxed text-white/76">{step.body}</p>
-        </motion.article>
-      </AnimatePresence>
-
-      <div className="mt-4 rounded-[1.35rem] border p-5" style={{ borderColor: "rgba(198,169,122,0.3)", backgroundColor: "rgba(198,169,122,0.08)" }}>
-        <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em]" style={{ color: WORK.sand }}>Outcome on record</p>
-        <p className="mt-3 text-[0.95rem] leading-relaxed text-white/82">{model.outcome}</p>
-        <a href={model.href} className="mt-5 inline-flex min-h-11 items-center text-sm font-medium" style={{ color: WORK.sand }}>
-          Read the full case study <span aria-hidden="true" className="ml-2">→</span>
-        </a>
-      </div>
-    </div>,
-    model.host,
-  );
-}
-
 export function WorkMobileNarrativeEnhancers() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: MOBILE_ENHANCEMENT_CSS }} />
       <SignatureDeck />
-      <SystemDeck />
     </>
   );
 }
