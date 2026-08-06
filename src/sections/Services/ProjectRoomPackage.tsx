@@ -89,6 +89,8 @@ export function ProjectRoomPackage({
   return (
     <article
       data-project-room="true"
+      data-project-room-version="2"
+      data-project-room-package={pkg.slug}
       data-project-room-tab={tab}
       className="overflow-hidden rounded-[1.75rem] border border-ivory/14 bg-[rgba(12,17,20,0.78)] text-left shadow-[0_28px_80px_rgba(0,0,0,0.28)] backdrop-blur-xl"
       style={{ borderTopColor: pkg.color, borderTopWidth: 2 }}
@@ -157,6 +159,7 @@ export function ProjectRoomPackage({
         id={`${pkg.slug}-room-panel`}
         role="tabpanel"
         aria-labelledby={`${pkg.slug}-room-tab-${tab}`}
+        aria-live="polite"
         className="relative min-h-[20rem] px-5 py-6 sm:min-h-[21rem] sm:px-7 sm:py-7"
       >
         <AnimatePresence mode="wait" initial={false}>
@@ -177,7 +180,7 @@ export function ProjectRoomPackage({
                   <p className="text-[0.64rem] font-medium uppercase tracking-[0.18em] text-ivory/45">Core decision</p>
                   <p className="mt-3 text-sm leading-relaxed text-ivory/82 sm:text-base">{pkg.description}</p>
                 </div>
-                <p className="md:col-span-2 border-t border-ivory/10 pt-4 text-sm leading-relaxed text-ivory/58">
+                <p className="border-t border-ivory/10 pt-4 text-sm leading-relaxed text-ivory/58 md:col-span-2">
                   This is the working scope, not an instant quote. Discovery confirms what stays, what changes, and what the final proposal needs to contain.
                 </p>
               </div>
@@ -329,6 +332,7 @@ export function ProjectRoomPackage({
         </p>
         <button
           type="button"
+          data-project-room-next="true"
           onClick={() => selectTab(activeTabIndex + 1)}
           className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-xs text-ivory/65 transition-colors hover:bg-ivory/[0.04] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
         >
