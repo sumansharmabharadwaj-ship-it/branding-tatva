@@ -70,6 +70,29 @@
     transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Positioning cost is a two-state argument with four causal beats. It needs a
+   stable comparison frame, but not four separate screens. Native scrolling
+   moves through the complete argument inside 128svh and the content stage
+   releases immediately in either direction. */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  [data-services-scene="stakes"] {
+    min-height: 128svh !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    padding-block: 0 !important;
+  }
+
+  [data-services-scene="stakes"] > .relative {
+    position: sticky;
+    top: 0;
+    display: flex;
+    min-height: 100svh;
+    width: 100%;
+    align-items: center;
+    padding-block: clamp(4.75rem, 8vh, 6.5rem);
+  }
+}
+
 @supports not (height: 1svh) {
   @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
     [data-services-scene="opening"] {
@@ -78,6 +101,10 @@
 
     #offerings {
       min-height: 165vh !important;
+    }
+
+    [data-services-scene="stakes"] {
+      min-height: 128vh !important;
     }
   }
 
