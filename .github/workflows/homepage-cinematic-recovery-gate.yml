@@ -45,7 +45,7 @@ permissions:
 
 concurrency:
   group: branding-tatva-cinematic-recovery
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   audit:
