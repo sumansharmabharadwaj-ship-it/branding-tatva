@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
@@ -18,12 +18,24 @@ const CARD_SPANS = [
 
 // The teaching layer is deliberately separated from client evidence.
 // These five studies analyse the public record with zero implied client
-// relationship. The closed state exposes the mechanism and its three
-// supporting observations. Opening one creates a visual lesson board,
-// rather than another long brown accordion.
+// relationship. On mobile, unopened covers become compact summaries so
+// choosing one lesson does not require dragging four full covers behind
+// it. Larger screens retain the complete editorial mechanism cards.
 export function BrandStudies() {
   const [open, setOpen] = useState(-1);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const openPanelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (open < 0 || !openPanelRef.current || !window.matchMedia("(max-width: 767px)").matches) return;
+    const frame = window.requestAnimationFrame(() => {
+      openPanelRef.current?.scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [open, prefersReducedMotion]);
 
   return (
     <section className="scroll-mt-28 py-16 sm:py-24" style={{ backgroundColor: "#071A20" }}>
@@ -65,7 +77,7 @@ export function BrandStudies() {
           </div>
         </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:mt-12 lg:grid-cols-12" aria-label="Independent brand-study mechanisms">
+        <div className="mt-10 grid gap-3 sm:gap-4 md:grid-cols-2 lg:mt-12 lg:grid-cols-12" aria-label="Independent brand-study mechanisms">
           {brandStudies.map((study, index) => {
             const isOpen = open === index;
             const panelId = `study-panel-${study.slug}`;
@@ -80,7 +92,10 @@ export function BrandStudies() {
                       onClick={() => setOpen(isOpen ? -1 : index)}
                       aria-expanded={isOpen}
                       aria-controls={panelId}
-                      className="group relative flex min-h-[15rem] w-full flex-col overflow-hidden rounded-[1.35rem] border p-5 text-left transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-[17rem] sm:p-6"
+                      aria-label={`${isOpen ? "Close" : "Open"} ${study.brand} public-record study`}
+                      className={`group relative flex w-full flex-col overflow-hidden rounded-[1.35rem] border p-4 text-left transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-[17rem] sm:p-6 ${
+                        isOpen ? "min-h-[7.5rem]" : "min-h-[11.5rem]"
+                      }`}
                       style={{
                         borderColor: isOpen ? accent : "rgba(255,255,255,0.12)",
                         background: `radial-gradient(circle at 88% 10%, ${accent}20, transparent 36%), linear-gradient(145deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018))`,
@@ -93,7 +108,7 @@ export function BrandStudies() {
                           <span className="font-display text-sm" style={{ color: accent }} aria-hidden="true">
                             {String(index + 1).padStart(2, "0")}
                           </span>
-                          <span className="mt-2 block font-display text-3xl font-normal text-ivory sm:text-4xl">
+                          <span className="mt-1.5 block font-display text-3xl font-normal text-ivory sm:mt-2 sm:text-4xl">
                             {study.brand}
                           </span>
                         </span>
@@ -110,30 +125,41 @@ export function BrandStudies() {
                         </span>
                       </span>
 
-                      <span className="mt-3 flex flex-wrap gap-2">
-                        <span className="rounded-full border border-white/15 px-3 py-1 text-[0.62rem] text-ivory/60">
+                      <span className="mt-2.5 flex flex-wrap gap-2 sm:mt-3">
+                        <span className="rounded-full border border-white/15 px-2.5 py-1 text-[0.58rem] text-ivory/60 sm:px-3 sm:text-[0.62rem]">
                           {study.region}
                         </span>
-                        <span className="rounded-full border px-3 py-1 text-[0.62rem]" style={{ borderColor: accent + "66", color: accent }}>
+                        <span className="rounded-full border px-2.5 py-1 text-[0.58rem] sm:px-3 sm:text-[0.62rem]" style={{ borderColor: accent + "66", color: accent }}>
                           {study.lens}
                         </span>
                       </span>
 
-                      <span className="mt-4 block max-w-xl text-sm leading-relaxed text-ivory/72">
+                      <span className={`max-w-xl text-[0.82rem] leading-relaxed text-ivory/72 sm:mt-4 sm:block sm:text-sm ${isOpen ? "hidden" : "mt-3 line-clamp-2 block"}`}>
                         {study.premise}
                       </span>
 
-                      <span className="mt-auto block pt-5 sm:pt-6">
+                      {!isOpen && (
+                        <span className="mt-auto block pt-3 sm:hidden">
+                          <span className="block text-[0.56rem] font-medium uppercase tracking-[0.12em] text-ivory/42">
+                            Three mechanisms
+                          </span>
+                          <span className="mt-1.5 block line-clamp-2 text-xs leading-relaxed text-ivory/68">
+                            {study.observations.map((observation) => observation.title).join(" · ")}
+                          </span>
+                        </span>
+                      )}
+
+                      <span className="mt-auto hidden pt-6 sm:block">
                         <span className="block text-[0.6rem] font-medium uppercase tracking-[0.13em] text-ivory/45">
                           The mechanism is visible in
                         </span>
                         <span className="mt-3 grid grid-cols-3 gap-2">
                           {study.observations.map((observation, observationIndex) => (
-                            <span key={observation.title} className="min-w-0 rounded-xl border border-white/10 bg-black/10 p-2.5 sm:p-3">
+                            <span key={observation.title} className="min-w-0 rounded-xl border border-white/10 bg-black/10 p-3">
                               <span className="font-display text-xs" style={{ color: accent }} aria-hidden="true">
                                 {String(observationIndex + 1).padStart(2, "0")}
                               </span>
-                              <span className="mt-1 block line-clamp-3 text-[0.62rem] font-medium uppercase leading-snug tracking-[0.04em] text-ivory/72 sm:text-[0.66rem] sm:tracking-[0.08em]">
+                              <span className="mt-1 block line-clamp-3 text-[0.66rem] font-medium uppercase leading-snug tracking-[0.08em] text-ivory/72">
                                 {observation.title}
                               </span>
                             </span>
@@ -147,6 +173,7 @@ export function BrandStudies() {
                 <AnimatePresence initial={false}>
                   {isOpen && (
                     <motion.div
+                      ref={openPanelRef}
                       id={panelId}
                       role="region"
                       aria-label={`${study.brand} public-record study`}
