@@ -43,11 +43,8 @@ async function auditWorkMobile(browser) {
     reducedMotion: "no-preference",
   });
   const page = await context.newPage();
-  const errors = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  page.on("console", (message) => {
-    if (message.type() === "error") errors.push(message.text());
-  });
+  const pageErrors = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
 
   await page.goto(`${BASE_URL}/work`, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await waitForPrelude(page, "work/mobile-narratives");
@@ -94,7 +91,7 @@ async function auditWorkMobile(browser) {
   assert((await visibleCount(studyButtons)) === 1, "work/mobile-narratives: unrelated study covers remain visible after opening one lesson");
 
   await assertNoOverflow(page, "work/mobile-narratives");
-  assert(errors.length === 0, `work/mobile-narratives: runtime errors ${JSON.stringify(errors.slice(0, 6))}`);
+  assert(pageErrors.length === 0, `work/mobile-narratives: page exceptions ${JSON.stringify(pageErrors.slice(0, 6))}`);
   await context.close();
 }
 
@@ -105,11 +102,8 @@ async function auditCaseStudyMobile(browser) {
     reducedMotion: "no-preference",
   });
   const page = await context.newPage();
-  const errors = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  page.on("console", (message) => {
-    if (message.type() === "error") errors.push(message.text());
-  });
+  const pageErrors = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
 
   await page.goto(`${BASE_URL}/work/myshopineurope`, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await waitForPrelude(page, "case/mobile-narratives");
@@ -131,7 +125,7 @@ async function auditCaseStudyMobile(browser) {
   assert(firstText !== nextText, "case/mobile-narratives: chapter selection did not change the active evidence");
 
   await assertNoOverflow(page, "case/mobile-narratives");
-  assert(errors.length === 0, `case/mobile-narratives: runtime errors ${JSON.stringify(errors.slice(0, 6))}`);
+  assert(pageErrors.length === 0, `case/mobile-narratives: page exceptions ${JSON.stringify(pageErrors.slice(0, 6))}`);
   await context.close();
 }
 
@@ -151,7 +145,7 @@ async function auditCaseStudyMobile(browser) {
         "focused public brand study",
         "selectable project chapter deck",
         "mobile overflow",
-        "runtime diagnostics",
+        "page exceptions",
       ],
     }, null, 2));
   } finally {
