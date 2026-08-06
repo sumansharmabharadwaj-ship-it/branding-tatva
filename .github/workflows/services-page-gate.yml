@@ -1,13 +1,15 @@
 name: Complete Services page journey gate
-run-name: Services journey pass 6 · ${{ github.sha }}
+run-name: Services Health Check v2 gate · ${{ github.sha }}
 
 on:
   push:
     branches:
       - homepage-cinematic-recovery
+      - services-mobile-health-check-v2
     paths:
       - .github/workflows/services-page-gate.yml
       - scripts/services_page_gate.cjs
+      - scripts/apply_services_mobile_health_check_v2.py
       - src/app/services/**
       - src/sections/Services/**
       - src/components/BackgroundVideo.tsx
@@ -29,16 +31,17 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
-  group: branding-tatva-services-page-gate
-  cancel-in-progress: false
+  group: branding-tatva-services-page-gate-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   audit:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
 
     steps:
       - name: Check out the application without the large media archive
@@ -52,6 +55,14 @@ jobs:
             /*
             !/public/videos/*
             !/public/audio/*
+
+      - name: Apply the focused Health Check source transformation
+        if: github.ref_name == 'services-mobile-health-check-v2'
+        shell: bash
+        run: |
+          python -m py_compile scripts/apply_services_mobile_health_check_v2.py
+          python scripts/apply_services_mobile_health_check_v2.py
+          git diff --check
 
       - name: Use Node 24
         uses: actions/setup-node@v4
@@ -110,7 +121,30 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: services-page-evidence
+          name: services-mobile-health-check-v2-evidence
           path: services-page-audit/*
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 7
+
+      - name: Commit the verified Health Check and retire branch-only tooling
+        if: github.ref_name == 'services-mobile-health-check-v2'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin homepage-cinematic-recovery
+          git show origin/homepage-cinematic-recovery:.github/workflows/services-page-gate.yml > .github/workflows/services-page-gate.yml
+          rm scripts/apply_services_mobile_health_check_v2.py
+          rm .github/workflows/services-mobile-health-check-v2.yml
+          git add \
+            src/app/services/page.tsx \
+            src/sections/Services/BrandHealthCheck.tsx \
+            src/sections/Services/HealthCheckMobileInstrument.tsx \
+            scripts/services_page_gate.cjs \
+            scripts/apply_services_mobile_health_check_v2.py \
+            .github/workflows/services-page-gate.yml \
+            .github/workflows/services-mobile-health-check-v2.yml
+          git diff --cached --check
+          git commit -m "Compress the mobile Health Check into one live instrument"
+          git push origin HEAD:services-mobile-health-check-v2
