@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 // Scroll-controlled atmosphere for the FAQ chapter — the piece that
 // turns a tall section into a guided descent: an extra mist wash sits
@@ -14,7 +15,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 // atmosphere there.
 export function ClearingMist() {
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const opacity = useTransform(scrollYProgress, [0, 0.3, 1], [0.9, 0.5, 0.05]);
 

@@ -1,0 +1,122 @@
+/* -------------------------------------------------------------------------- */
+/* Branding Tatva Services · native-first scroll compression                   */
+/* -------------------------------------------------------------------------- */
+
+html[data-services-experience="active"] {
+  --services-chapter-progress: 0%;
+  --services-chapter-angle: 0deg;
+}
+
+/* Authority previously consumed 420vh for five states. That made each layer
+   require almost a full viewport of physical travel and contradicted the
+   page's small-input / large-discovery direction. The same sticky composition
+   now completes inside the documented 220svh ceiling. */
+@media (min-width: 1024px) {
+  #authority > div:first-child {
+    height: 220svh !important;
+  }
+}
+
+@supports not (height: 1svh) {
+  @media (min-width: 1024px) {
+    #authority > div:first-child {
+      height: 220vh !important;
+    }
+  }
+}
+
+/* Every meaningful chapter receives one quiet continuity signal. It lives at
+   the scene edge, never behind body copy: a line grows while a restrained
+   light pool travels with the visitor's native scroll position. */
+[data-services-scroll-scene] {
+  isolation: isolate;
+}
+
+[data-services-scroll-scene] > [data-services-scene-signal="true"] {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: clamp(2.5rem, 7vh, 5rem);
+  overflow: hidden;
+  pointer-events: none;
+  opacity: calc(0.12 + var(--services-scene-presence, 0) * 0.28);
+}
+
+[data-services-scroll-scene] > [data-services-scene-signal="true"]::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0.7rem;
+  left: 0;
+  height: 1px;
+  width: var(--services-scene-signal-x, 0%);
+  background: linear-gradient(90deg, transparent, rgba(212, 185, 154, 0.7), rgba(125, 155, 175, 0.46), transparent);
+  box-shadow: 0 0 18px rgba(212, 185, 154, 0.12);
+}
+
+[data-services-scroll-scene] > [data-services-scene-signal="true"]::after {
+  content: "";
+  position: absolute;
+  bottom: -2.7rem;
+  left: var(--services-scene-signal-x, 0%);
+  width: min(24rem, 34vw);
+  height: 5.4rem;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(212, 185, 154, 0.16), rgba(125, 155, 175, 0.06) 42%, transparent 72%);
+  filter: blur(9px);
+  transform: translateX(-50%);
+}
+
+/* The existing chapter navigation remains the orientation system. The
+   runtime adds a true journey-progress line without creating a second fixed
+   interface. */
+html[data-services-experience="active"] nav[aria-label="Jump to section"]:not([data-section-jump-nav-mobile="true"])::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--services-chapter-progress);
+  height: 1px;
+  background: linear-gradient(90deg, #c77752, #d4b99a, #7d9baf);
+  box-shadow: 0 0 14px rgba(212, 185, 154, 0.28);
+  transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
+  background-image:
+    radial-gradient(circle at center, rgba(39, 34, 30, 0.98) 63%, transparent 64%),
+    conic-gradient(#d4b99a 0deg var(--services-chapter-angle), rgba(244, 239, 230, 0.12) var(--services-chapter-angle) 360deg);
+}
+
+@media (max-width: 767px) {
+  [data-services-scroll-scene] > [data-services-scene-signal="true"] {
+    height: 2.7rem;
+    opacity: calc(0.08 + var(--services-scene-presence, 0) * 0.2);
+  }
+
+  [data-services-scroll-scene] > [data-services-scene-signal="true"]::after {
+    width: 48vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #authority > div:first-child {
+    height: auto !important;
+  }
+
+  #authority > div:first-child > div:first-child {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+  }
+
+  [data-services-scroll-scene] > [data-services-scene-signal="true"] {
+    display: none;
+  }
+
+  html[data-services-experience="active"] nav[aria-label="Jump to section"]:not([data-section-jump-nav-mobile="true"])::after {
+    transition: none;
+  }
+}

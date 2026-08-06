@@ -32,6 +32,14 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   poweredByHeader: false,
+  // The blog became Insights (governing bible's site structure) —
+  // permanent redirects preserve every previously indexed URL.
+  async redirects() {
+    return [
+      { source: "/blog", destination: "/insights", permanent: true },
+      { source: "/blog/:slug", destination: "/insights/:slug", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

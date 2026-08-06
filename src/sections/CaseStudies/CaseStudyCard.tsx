@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { CinematicCardMedia } from "@/components/CinematicCardMedia";
 import { useTilt } from "@/hooks/useTilt";
 import { EASE_AIR } from "@/lib/motion";
@@ -12,7 +13,7 @@ import { CARD_MEDIA_GRADIENT, CARD_TILT_MAX_DEGREES } from "./constants";
 export function CaseStudyCard({ project }: { project: Project }) {
   const [isHovered, setIsHovered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const { rotateX, rotateY } = useTilt(ref, CARD_TILT_MAX_DEGREES, Boolean(prefersReducedMotion));
 
   return (
@@ -49,7 +50,7 @@ export function CaseStudyCard({ project }: { project: Project }) {
         <Link
           href={`/work/${project.slug}`}
           data-cursor-label="View case study"
-          className="spotlight-card relative flex h-full flex-col justify-end overflow-hidden rounded-lg p-6 shadow-elevation-sm"
+          className="spotlight-card relative flex h-full flex-col justify-end overflow-hidden rounded-2xl p-6 shadow-elevation-sm"
           style={{ ["--card-color" as string]: project.accent }}
         >
           <CinematicCardMedia
@@ -70,7 +71,7 @@ export function CaseStudyCard({ project }: { project: Project }) {
           {project.stats?.[0] && (
             <motion.div
               aria-hidden="true"
-              className="pointer-events-none absolute left-6 top-6 rounded-md px-3 py-2"
+              className="pointer-events-none absolute left-6 top-6 rounded-2xl px-3 py-2"
               style={{ backgroundColor: `${project.accent}E6` }}
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
               animate={
@@ -80,7 +81,7 @@ export function CaseStudyCard({ project }: { project: Project }) {
                     ? { opacity: 1, y: 0 }
                     : { opacity: 0, y: -8 }
               }
-              transition={{ duration: 0.3, ease: EASE_AIR }}
+              transition={{ duration: 0.35, ease: EASE_AIR }}
             >
               <p className="font-display text-2xl font-normal leading-none text-ivory">{project.stats[0].value}</p>
               <p className="mt-1 max-w-[9rem] text-[0.65rem] uppercase leading-tight tracking-wide text-ivory/85">

@@ -47,7 +47,7 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
               <motion.span
                 layoutId="work-filter-underline"
                 className="absolute inset-x-0 -bottom-px h-px bg-soil"
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               />
             )}
           </button>

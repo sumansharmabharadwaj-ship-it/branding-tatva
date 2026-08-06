@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
+import { motion } from "framer-motion";
 import { EASE_AIR } from "@/lib/motion";
 import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 
@@ -29,10 +30,10 @@ export function Reveal({
   delay?: number;
   duration?: number;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const [ref, visible] = useRevealTrigger("0px 0px -80px 0px");
 
-  if (prefersReducedMotion) {
+  if (!hydrated || prefersReducedMotion) {
     return <div className={className}>{children}</div>;
   }
 

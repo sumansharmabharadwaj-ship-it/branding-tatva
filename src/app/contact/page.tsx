@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { preload } from "react-dom";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -13,7 +14,6 @@ import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { Fireflies } from "@/components/Fireflies";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
-import { ScrollProgress } from "@/components/ScrollProgress";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { site } from "@/data/site";
 import { credentials } from "@/data/about";
@@ -32,10 +32,12 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
+  // The hero poster is this page's LCP element — a high priority
+  // preload so first paint stops waiting behind the video request.
+  preload("/images/pexels-studio-morning-light-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
-      <ScrollProgress />
       <main id="main-content">
         {/* Every other page on the site opens on a real video/photo
             hero; this page used to open directly on a flat color
@@ -61,8 +63,8 @@ export default function ContactPage() {
             same two-jobs-one-fact pattern a masthead and a byline
             already play on any real publication. */}
         <PhotoHero
-          video="/videos/higgsfield-forest-light.mp4"
-          poster="/images/higgsfield-forest-light-poster.jpg"
+          video="/videos/pexels-studio-morning-light.mp4"
+          poster="/images/pexels-studio-morning-light-poster.jpg"
           minHeight="70vh"
         >
           {/* Every other atmospheric hero on the site (About's forest
@@ -73,7 +75,7 @@ export default function ContactPage() {
               feel. Same forest register as this hero's own clip, not a
               new visual idea introduced just for this page. */}
           <Fireflies />
-          <Container className="relative py-20">
+          <Container className="relative py-20 sm:py-28">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal className="relative">
                 <NatureAccent
@@ -103,6 +105,42 @@ export default function ContactPage() {
           </Container>
         </PhotoHero>
 
+        {/* The two paths, up front (governing bible's contact
+            architecture): a visitor either books the call or writes,
+            and both doors are visible before any form field appears.
+            Plain anchor cards, zero novelty — this page's job is to
+            get out of the way. */}
+        <section className="border-b border-soil/10 py-10" style={{ backgroundColor: "#E8DED0" }}>
+          <Container className="grid gap-4 sm:grid-cols-2">
+            <a
+              href="#call"
+              className="group rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm transition-transform duration-300 hover:translate-y-[-2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path one</p>
+              <p className="mt-2 font-display text-xl font-normal text-soil">
+                Book the twenty minute call
+                <span aria-hidden="true" className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
+              </p>
+              <p className="mt-2 text-sm text-foreground-secondary">
+                Pick a time directly. Honest feedback either way, and a clear next step if it fits.
+              </p>
+            </a>
+            <a
+              href="#write"
+              className="group rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm transition-transform duration-300 hover:translate-y-[-2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path two</p>
+              <p className="mt-2 font-display text-xl font-normal text-soil">
+                Write it down instead
+                <span aria-hidden="true" className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
+              </p>
+              <p className="mt-2 text-sm text-foreground-secondary">
+                Prefer thinking in writing? The enquiry form takes as much or as little as you know today.
+              </p>
+            </a>
+          </Container>
+        </section>
+
         {/* Was a one-off terracotta wash (earth blended 22%) — its own
             color, distinct from every other light section on the site.
             Sandstone now: the same single light-anchor tone About uses
@@ -118,7 +156,7 @@ export default function ContactPage() {
             color and light only, no 3D objects) gives it quiet
             atmosphere instead of a flat fill, at the same low opacity
             Services already uses on comparable light sections. */}
-        <section className="relative overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
+        <section id="write" className="relative scroll-mt-24 overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
           <AmbientElementShader opacity={0.14} />
           <Container className="relative grid gap-12 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
@@ -165,6 +203,9 @@ export default function ContactPage() {
 
             <Reveal delay={0.1} className="lg:col-span-3">
               <ContactForm />
+              <p className="mt-4 text-xs leading-relaxed text-foreground-secondary/80">
+                Your details stay with this practice: read personally, shared with nobody, and deleted on request.
+              </p>
             </Reveal>
           </Container>
         </section>
@@ -201,9 +242,15 @@ export default function ContactPage() {
             wildflower meadow, genuinely unused elsewhere on this page
             (or its own Footer), fitting "grab a time / stay in touch."
             Overlay at bg-soil/80, the site's normalized standard. */}
-        <section className="relative overflow-hidden bg-soil py-16">
+        <section id="call" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
+          {/* Restored to the warm meadow per Suman's design: the green
+              backlit grasses read harsh behind this cream panel. */}
           <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{ backgroundImage: "linear-gradient(180deg, rgba(38,30,22,0.82) 0%, rgba(45,35,25,0.68) 45%, rgba(30,24,18,0.86) 100%)" }}
+          />
           {/* min-w-0 on both grid items: CalendlyEmbed's own real
               minWidth:320px constraint (its own widget's floor, not
               this page's choice) was propagating up through CSS
@@ -214,31 +261,76 @@ export default function ContactPage() {
               Confirmed via computed-style inspection at 375px width
               (both cards measured 370px, 43px past the actual 327px
               content box) before fixing. */}
+          {/* What happens next — the same four real steps the Services
+              clearing already promises, restated where the booking
+              actually happens. */}
+          <Container className="relative mb-10">
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">What happens next</p>
+            <ol className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                "You describe where the brand stands today, in your own words.",
+                "I ask direct questions about positioning, audience, and where recognition is falling short.",
+                "You get honest feedback either way, no sales pitch.",
+                "If it makes sense to continue, we agree what the first thirty days would look like.",
+              ].map((step, i) => (
+                <Reveal key={step} delay={i * 0.08}>
+                  <li className="flex items-start gap-3">
+                    <span className="pt-0.5 font-display text-lg leading-none text-ivory/35" aria-hidden="true">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <p className="text-sm leading-relaxed text-ivory/85">{step}</p>
+                  </li>
+                </Reveal>
+              ))}
+            </ol>
+          </Container>
+          {/* Suman's direction: the booking panel needed emotional
+              weight and a slower approach. The page spent everything
+              above this explaining the thinking, then dropped straight
+              into a scheduling widget. This beat sits between the two,
+              with real space around it, so arriving at the calendar
+              feels like a decision rather than a form. */}
+          <Container className="relative mb-14 sm:mb-20">
+            <Reveal delay={0.12}>
+              <div className="mx-auto max-w-xl text-center">
+                <span aria-hidden="true" className="mx-auto mb-7 block h-10 w-px" style={{ backgroundColor: "rgba(212,185,154,0.5)" }} />
+                <p className="font-display text-2xl font-normal leading-snug text-ivory sm:text-3xl">
+                  Everything above explains the thinking. This is where it becomes a conversation.
+                </p>
+              </div>
+            </Reveal>
+          </Container>
+
           <Container className="relative grid gap-8 lg:grid-cols-2 lg:items-start">
-            <Reveal className="min-w-0">
-              <div
-                className="rounded-2xl border p-6 sm:p-8"
-                style={{ borderColor: `${ELEMENT_HEX.water}40`, backgroundColor: `${ELEMENT_HEX.water}14` }}
-              >
-                <ElementGlyph slug="water" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
-                <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
-                  Or skip the form
+            <Reveal delay={0.28} className="min-w-0">
+              {/* Suman's design: a cream panel carrying the booking,
+                  opening on the italic welcome, her name in serif, and
+                  the sprig divider before the calendar itself. */}
+              <div className="rounded-2xl px-6 py-10 text-center shadow-elevation-lg sm:px-10" style={{ backgroundColor: "#F6F2EA" }}>
+                <p className="font-display text-3xl italic" style={{ color: "#B08A4F" }}>Welcome,</p>
+                <p className="mt-1 font-display text-4xl font-normal text-soil sm:text-5xl">{site.founder}</p>
+                <span aria-hidden="true" className="mx-auto mt-4 block h-px w-16" style={{ backgroundColor: "#C6A97A" }} />
+                <p className="mx-auto mt-5 max-w-sm font-display text-lg leading-snug text-soil sm:text-xl">
+                  Thirty minutes with the person who would do the work.
                 </p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Just grab a time that works for you.
-                </h2>
-                <p className="mt-3 text-ivory/85">
-                  Times shown automatically adjust to your local timezone,
-                  wherever you are.
+                <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-foreground-secondary">
+                  Pick any time that suits you. Every slot adjusts to your own timezone automatically.
                 </p>
+                <span aria-hidden="true" className="mt-7 flex items-center justify-center gap-3">
+                  <span className="h-px w-20 bg-soil/15" />
+                  <svg viewBox="0 0 24 20" className="h-4 w-5" fill="none" style={{ color: "#C6A97A" }}>
+                    <path d="M12 19V6M12 6C12 6 9 1 4 1c0 5 4 6 8 5zM12 6c0 0 3-5 8-5 0 5-4 6-8 5z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span className="h-px w-20 bg-soil/15" />
+                </span>
                 <CalendlyEmbed url={site.calendlyUrl} />
-                <p className="mt-3 text-xs text-ivory/75">
+                <p className="mt-3 text-xs text-foreground-secondary">
                   Having trouble with the embed?{" "}
                   <a
                     href={site.calendlyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sandstone link-underline"
+                    className="link-underline text-clay"
                   >
                     Open it directly instead
                   </a>

@@ -1,11 +1,13 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { packages } from "@/data/services";
+import { track } from "@/lib/analytics";
 
 // A real, transparent scored self-assessment, not a fake "AI analyzes
 // your brand" claim — every question and point value is visible in this
@@ -150,13 +152,15 @@ export function BrandHealthCheck() {
   // show a pressed state for a beat before advancing, real tactile
   // feedback rather than relying only on the AnimatePresence swap.
   const [selected, setSelected] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const done = step >= QUESTIONS.length;
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.35 };
   const score = answers.reduce((sum, points) => sum + points, 0);
 
   function answer(label: string, points: number) {
     if (selected) return;
+    if (answers.length === 0) track("health_check_started");
+    if (step === QUESTIONS.length - 1) track("health_check_completed");
     setSelected(label);
     window.setTimeout(
       () => {
@@ -188,7 +192,10 @@ export function BrandHealthCheck() {
   // toward, before the quiz is even finished. step > 0 guards against
   // showing a misleading "Foundation stage" trend at score 0 before any
   // question has been answered at all.
-  const trendingBand = step > 0 ? bandFor(score) : null;
+  // Manual guide p12/p69: the outcome read is misleadingly premature
+  // when it reacts to the very first answer, so the trend only appears
+  // once at least half the questions carry real data.
+  const trendingBand = step >= Math.ceil(QUESTIONS.length / 2) ? bandFor(score) : null;
 
   return (
     <Container className="max-w-5xl">
@@ -213,7 +220,7 @@ export function BrandHealthCheck() {
           initial={prefersReducedMotion ? undefined : { opacity: 0, x: -28 }}
           whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "0px 0px -15% 0px" }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-2xl rounded-2xl p-6 backdrop-blur-md sm:p-8"
           style={{ backgroundColor: "rgba(20,26,21,0.55)" }}
         >
@@ -279,8 +286,8 @@ export function BrandHealthCheck() {
                       aria-pressed={isSelected}
                       whileHover={prefersReducedMotion || selected ? undefined : { x: 4 }}
                       whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                      transition={{ duration: 0.15 }}
-                      className={`flex w-full items-center justify-between gap-3 rounded-lg border px-4 py-3 text-left text-sm transition-colors duration-200 ${
+                      transition={{ duration: 0.18 }}
+                      className={`flex w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left text-sm transition-colors duration-200 ${
                         isSelected
                           ? "border-sandstone bg-sandstone/15 text-ivory"
                           : "border-ivory/20 text-ivory/90 hover:border-ivory/45 hover:bg-ivory/5"
@@ -309,7 +316,7 @@ export function BrandHealthCheck() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={transition}
-              className="rounded-lg border-t-2 p-6 sm:p-8"
+              className="rounded-2xl border-t-2 p-6 sm:p-8"
               style={{ borderColor: resultPackage?.color, backgroundColor: "rgba(244,239,230,0.04)" }}
             >
               <div className="flex items-baseline justify-between gap-4">
@@ -334,7 +341,13 @@ export function BrandHealthCheck() {
                 </p>
               )}
               <div className="mt-6 flex flex-wrap gap-3">
-                <LinkButton href="#desire">See that package</LinkButton>
+                {/* Conversion architecture: the diagnosis connects
+                    straight to the booking room, with the package
+                    detail as the secondary path. */}
+                <LinkButton href="#book">Book a Brand Strategy Session</LinkButton>
+                <LinkButton href="#desire" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
+                  See that package
+                </LinkButton>
                 <button
                   type="button"
                   onClick={reset}
@@ -378,7 +391,7 @@ export function BrandHealthCheck() {
               return (
                 <div
                   key={band.title}
-                  className={`rounded-lg border p-4 transition-colors duration-500 ${
+                  className={`rounded-2xl border p-4 transition-colors duration-500 ${
                     isTrending ? "border-sandstone bg-sandstone/10" : "border-ivory/10"
                   }`}
                 >
@@ -391,7 +404,7 @@ export function BrandHealthCheck() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
+                        transition={{ duration: 0.35 }}
                         className="mt-1.5 overflow-hidden text-sm text-ivory/90"
                       >
                         {band.detail}

@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { useLazyMount } from "@/hooks/useLazyMount";
 
@@ -35,7 +36,7 @@ export function KenBurnsImage({
   imagePosition?: string;
   sizes?: string;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [ref, shouldLoad] = useLazyMount();
 
   return (

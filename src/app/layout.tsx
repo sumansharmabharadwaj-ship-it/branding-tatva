@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
-import { DeferredCursor } from "@/components/DeferredCursor";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
-import { PrecisionMark } from "@/components/PrecisionMark";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
+import { Analytics } from "@vercel/analytics/next";
+import { VideoWarden } from "@/components/VideoWarden";
+import { MotionPreferenceProvider } from "@/components/MotionPreference";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({
@@ -33,7 +34,11 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+    },
   },
   openGraph: {
     title: site.name,
@@ -42,10 +47,6 @@ export const metadata: Metadata = {
     siteName: site.name,
     type: "website",
     locale: "en_US",
-    // Reuses the opengraph-image.tsx/twitter-image.tsx route convention
-    // already generating a real image at build time — this makes that
-    // explicit instead of relying on Next's implicit file-convention
-    // pickup alone.
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
@@ -62,14 +63,13 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-// Structured data — verified facts only. No aggregateRating/review markup
-// since no real testimonials exist yet (per brief: never fake reviews).
-// Both nodes carry an @id so other pages' schema (BlogPosting's
-// author/publisher, case-study Service schema) can reference them
-// directly instead of duplicating the same facts inline everywhere.
 const PERSON_ID = `${site.url}/#person`;
 const ORG_ID = `${site.url}/#organization`;
-const SOCIAL_LINKS = [site.social.linkedin, site.social.instagram, site.social.facebook].filter(Boolean);
+const SOCIAL_LINKS = [
+  site.social.linkedin,
+  site.social.instagram,
+  site.social.facebook,
+].filter(Boolean);
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -80,6 +80,14 @@ const structuredData = {
       name: site.founder,
       url: site.url,
       jobTitle: "Brand Strategist",
+      knowsAbout: [
+        "Brand positioning",
+        "Verbal identity",
+        "Brand recognition",
+        "Brand architecture",
+        "Distinctive brand assets",
+        "Consumer psychology",
+      ],
       sameAs: SOCIAL_LINKS,
     },
     {
@@ -114,14 +122,18 @@ export default function RootLayout({
         </a>
         <div className="gradient-mesh" aria-hidden="true" />
         <div className="paper-grain" aria-hidden="true" />
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
-        <DeferredCursor />
+
+        <SmoothScrollProvider>
+          <MotionPreferenceProvider>{children}</MotionPreferenceProvider>
+        </SmoothScrollProvider>
+
         <PageLoadVeil />
         <AmbientAudio />
-        <PrecisionMark />
+        <VideoWarden />
+        <Analytics />
+
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </body>

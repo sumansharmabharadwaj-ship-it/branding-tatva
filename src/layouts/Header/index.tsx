@@ -1,10 +1,13 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Logo, LogoMark } from "@/components/Logo";
+import { AmbientAudioButton } from "@/components/AmbientAudio";
 import { LinkButton } from "@/components/Button";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useCurrentElement } from "@/lib/currentElement";
@@ -40,7 +43,7 @@ export function Header({ transparent = false }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [barHidden, setBarHidden] = useState(false);
   const lastScrollRef = useRef(0);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
   const element = useCurrentElement();
 
@@ -60,11 +63,6 @@ export function Header({ transparent = false }: HeaderProps) {
       lastScrollRef.current = current;
     }
 
-    // Lenis drives real scroll, but doesn't reliably fire the native
-    // `scroll` event alongside it — a prior attempt at this integration
-    // broke on exactly that assumption. Subscribe to Lenis's own scroll
-    // event when it's active; fall back to the native listener when it
-    // isn't (prefers-reduced-motion, or before Lenis has mounted).
     if (lenis) {
       handleScroll(lenis.scroll);
       return lenis.on("scroll", (instance) => handleScroll(instance.scroll));
@@ -91,18 +89,15 @@ export function Header({ transparent = false }: HeaderProps) {
     setOpen(false);
   }, [transparent]);
 
-  // Was a two-tone system — a plain white/cream pill once scrolled past
-  // a transparent hero, dark glass only at the very top. Direct, blunt
-  // feedback three times over: first that the pill was "boring and
-  // conventional," then that a thin gradient ring on the same white
-  // pill still read as "bland white and plain orange," then that even
-  // after going to one consistent dark-glass pill, an ivory CTA button
-  // was still "white and boring." The CTA is now tied to the current
-  // month's element color (useCurrentElement, shared with the footer's
-  // own buttons and the calendar's own accent) instead of a fixed
-  // ivory or clay — it actually changes through the year rather than
-  // defaulting to the same one or two tones everywhere.
   const isBarHidden = barHidden && !open;
+  const pathname = usePathname() ?? "/";
+  const accent =
+    pathname.startsWith("/services") ? "#8FAE83"
+    : pathname.startsWith("/work") ? "#D4B99A"
+    : pathname.startsWith("/insights") || pathname.startsWith("/glossary") ? "#C28A28"
+    : pathname.startsWith("/contact") ? "#AD6F5C"
+    : "#C6A97A";
+  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
   return (
     <>
@@ -112,65 +107,99 @@ export function Header({ transparent = false }: HeaderProps) {
         transition={BAR_TRANSITION}
         className="fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5"
       >
-        {/* nav-pill-ring: a slow rotating conic-gradient carrying all
-            five element colors, plus nav-pill-glow — the same gradient
-            blurred behind the pill as a soft halo, so the palette reads
-            as genuinely vivid rather than a hairline most people would
-            never consciously notice against a bright white fill. */}
-        <div className="nav-pill-glow relative w-full max-w-3xl">
-          <div className="nav-pill-ring rounded-full p-[2.5px] shadow-elevation-md">
-            <div
-              className={`grid w-full grid-cols-3 items-center rounded-full px-3 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-4 ${
-                scrolled ? "bg-soil/85" : "bg-soil/55"
-              }`}
-            >
-              <div className="hidden justify-start sm:flex">
-                <LinkButton href="/contact" className="px-4 py-2 text-xs" style={{ backgroundColor: element.color }}>
-                  Start a project
-                </LinkButton>
-              </div>
+        <div className="relative w-full max-w-4xl lg:max-w-5xl">
+          <div
+            className={`flex w-full items-center justify-between gap-4 rounded-full border border-ivory/10 px-4 py-2.5 shadow-elevation-md backdrop-blur-md transition-colors duration-500 sm:px-6 sm:py-3 ${
+              scrolled ? "bg-[#1B1B1B]/90" : "bg-[#1B1B1B]/60"
+            }`}
+          >
+            <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3">
+              <LogoMark size={32} light className="shrink-0" />
+              <span aria-hidden="true" className="hidden h-6 w-px bg-ivory/25 min-[376px]:block" />
+              {/* Logo owns an inline-flex display internally, so the
+                  responsive visibility belongs to a parent wrapper.
+                  This keeps the wordmark at 390px while leaving enough
+                  room for sound and menu controls at 360px. */}
+              <span className="hidden min-[376px]:inline-flex">
+                <Logo light className="origin-left" />
+              </span>
+            </Link>
 
-              <Link href="/" className="col-start-2 flex items-center justify-center gap-1.5">
-                <LogoMark size={22} className="shrink-0" />
-                <Logo light className="scale-[0.72] sm:scale-[0.78]" />
+            <div className="flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-5">
+              <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
+                {navigation
+                  .filter((item) => item.href !== "/" && item.href !== "/contact")
+                  .map((item) => {
+                    const active = isActive(item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        aria-current={active ? "page" : undefined}
+                        className={`relative whitespace-nowrap text-[0.72rem] font-medium uppercase tracking-[0.18em] transition-colors duration-300 ${
+                          active ? "" : "text-ivory/85 hover:text-ivory"
+                        }`}
+                        style={active ? { color: accent } : undefined}
+                      >
+                        {item.label}
+                        {active && (
+                          <span
+                            aria-hidden="true"
+                            className="absolute -bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full"
+                            style={{ backgroundColor: accent }}
+                          />
+                        )}
+                      </Link>
+                    );
+                  })}
+              </nav>
+              <span aria-hidden="true" className="hidden h-6 w-px bg-ivory/25 lg:block" />
+              <Link
+                href="/contact"
+                className="group hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 py-2 text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300 sm:inline-flex"
+                style={{ borderColor: `${accent}c0`, color: accent }}
+              >
+                Book a Session
+                <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
               </Link>
-
-              <div className="flex justify-end">
-                <button
-                  className="relative flex h-9 w-9 items-center justify-center rounded-full text-ivory transition-colors duration-500"
-                  aria-label={open ? "Close menu" : "Open menu"}
-                  aria-expanded={open}
-                  onClick={() => setOpen((v) => !v)}
-                >
-                  <AnimatePresence initial={false}>
-                    {open ? (
-                      <motion.span
-                        key="close"
-                        variants={prefersReducedMotion ? undefined : closeIconVariants}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                        transition={ICON_TRANSITION}
-                        className="absolute flex"
-                      >
-                        <X size={20} />
-                      </motion.span>
-                    ) : (
-                      <motion.span
-                        key="menu"
-                        variants={prefersReducedMotion ? undefined : menuIconVariants}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                        transition={ICON_TRANSITION}
-                        className="absolute flex"
-                      >
-                        <Menu size={20} />
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </button>
-              </div>
+              <AmbientAudioButton accent={accent} />
+              <button
+                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors duration-500"
+                style={{ color: accent }}
+                aria-label={open ? "Close menu" : "Open menu"}
+                aria-expanded={open}
+                onClick={() => setOpen((v) => !v)}
+              >
+                <AnimatePresence initial={false}>
+                  {open ? (
+                    <motion.span
+                      key="close"
+                      variants={prefersReducedMotion ? undefined : closeIconVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={ICON_TRANSITION}
+                      className="absolute flex"
+                    >
+                      <X size={20} />
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="menu"
+                      variants={prefersReducedMotion ? undefined : menuIconVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={ICON_TRANSITION}
+                      className="absolute flex"
+                    >
+                      <Menu size={20} />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
             </div>
           </div>
         </div>
@@ -196,13 +225,10 @@ export function Header({ transparent = false }: HeaderProps) {
                 animate="animate"
                 exit="exit"
                 transition={MOBILE_NAV_TRANSITION}
-                className="w-full max-w-sm rounded-lg border border-border bg-background-elevated p-3 shadow-elevation-lg"
+                className="w-full max-w-sm rounded-2xl border border-border bg-background-elevated p-3 shadow-elevation-lg"
                 aria-label="Primary"
               >
-                <motion.ul
-                  variants={prefersReducedMotion ? undefined : navListVariants}
-                  className="flex flex-col"
-                >
+                <motion.ul variants={prefersReducedMotion ? undefined : navListVariants} className="flex flex-col">
                   {navigation.map((item) => (
                     <motion.li
                       key={item.href}
@@ -212,7 +238,7 @@ export function Header({ transparent = false }: HeaderProps) {
                       <Link
                         href={item.href}
                         onClick={() => setOpen(false)}
-                        className="block rounded-lg px-4 py-3 text-center font-display text-xl text-soil transition-colors hover:bg-soil/5 hover:text-clay"
+                        className="block rounded-2xl px-4 py-3 text-center font-display text-xl text-soil transition-colors hover:bg-soil/5 hover:text-clay"
                       >
                         {item.label}
                       </Link>
@@ -230,7 +256,7 @@ export function Header({ transparent = false }: HeaderProps) {
                     className="w-full"
                     style={{ backgroundColor: element.color }}
                   >
-                    Start a project
+                    Book a Session
                   </LinkButton>
                 </motion.div>
               </motion.nav>

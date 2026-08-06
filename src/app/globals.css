@@ -80,7 +80,7 @@
 
 @utility skip-link {
   @apply sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50
-      focus:bg-warm-white focus:text-soil focus:px-4 focus:py-2 focus:rounded-md;
+      focus:bg-warm-white focus:text-soil focus:px-4 focus:py-2 focus:rounded-2xl;
 }
 
 @utility container-page {
@@ -165,6 +165,19 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+
+  /* The same clamp when the visitor uses the site's own motion toggle
+     (80 page manual p23: offer an optional Full/Reduced control) —
+     MotionPreference stamps data-motion on <html>; Framer components
+     get the equivalent via MotionConfig in the same provider. */
+  :root[data-motion="reduced"] *,
+  :root[data-motion="reduced"] *::before,
+  :root[data-motion="reduced"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 
   /* A slow-drifting wash of the brand's own five colors behind every
@@ -472,13 +485,24 @@
    cards sitting at identical, static weight. Pure CSS (:has), no JS
    state — every card already knows its own color via the inline
    --card-color custom property. */
-.spotlight-grid:has(.spotlight-card:hover) .spotlight-card:not(:hover) {
-  opacity: 0.55;
+.spotlight-card {
+  transition-property: opacity, background-color, border-color;
+  transition-duration: 500ms;
 }
 
-.spotlight-card:hover {
-  background-color: color-mix(in srgb, var(--card-color) 22%, transparent);
-  border-color: var(--card-color);
+/* The spotlight belongs to fine-pointer exploration only. Touch
+   browsers can retain :hover after a tap, which previously dimmed five
+   disciplines indefinitely. Siblings now remain readable, and each row
+   finally receives the discipline color already authored in its data. */
+@media (hover: hover) and (pointer: fine) {
+  .spotlight-grid:has(.spotlight-card:hover) .spotlight-card:not(:hover) {
+    opacity: 0.72;
+  }
+
+  .spotlight-card:hover {
+    background-color: color-mix(in srgb, var(--card-color) 22%, transparent);
+    border-color: var(--card-color);
+  }
 }
 
 /* Underline draws in on hover instead of sitting there static — a small
@@ -888,3 +912,22 @@
   50% { transform: translateY(-5px); }
 }
 .sky-bob { animation: sky-bob 3.2s ease-in-out infinite; }
+
+/* Waystone field (Living Compass) — the selected marker breathes: a
+   soft glow pulse every ~9s and a faint light sweep every ~13s.
+   Both sit under the sitewide prefers-reduced-motion clamp. */
+@keyframes waystone-pulse {
+  0%, 88%, 100% { box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 0 0 rgba(85, 107, 74, 0); }
+  93% { box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 0 22px rgba(85, 107, 74, 0.45); }
+}
+.waystone-selected {
+  animation: waystone-pulse 9s ease-in-out infinite;
+}
+@keyframes waystone-sweep {
+  0%, 90%, 100% { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
+  94% { opacity: 0.35; }
+  97% { transform: translateX(140%) skewX(-12deg); opacity: 0; }
+}
+.waystone-sweep {
+  animation: waystone-sweep 13s ease-in-out infinite;
+}

@@ -1,201 +1,258 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { site } from "@/data/site";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { LogoMark } from "@/components/Logo";
 
-// A short, confident arrival — not a spinner, but not a five-beat story
-// either. An earlier version cycled through all five elements' own
-// poetic lines one at a time (~5s total): reads as impressive in
-// isolation, but on every single hard load it started to feel like the
-// site was making someone sit through a pitch before letting them in.
-// A second version cut that down to five flat bars just rising in a
-// row — safe, but the philosophy it's meant to carry was reduced to a
-// generic loading-bar shape with the right colors, nothing more.
-//
-// This version keeps the same ~2s budget and the same restraint (no
-// per-element copy, no guided tour), but gives each element an actual
-// beat: as its own bar settles, its own color blooms behind it in a
-// soft glow — five separate, brief announcements instead of one flat
-// motion — and once all five have landed, a thin stroke draws itself
-// around the whole mark, the visual argument for "five parts, one
-// brand" instead of just stating it. Everything here is Framer Motion
-// animating plain SVG shapes (rect height/y, and rect pathLength for
-// the frame stroke) — no new dependency. This project already had one
-// real incident where a GSAP-hydration-dependent load animation caused
-// an 8+ second render delay; a page-blocking, every-single-visit
-// animation is the wrong place to introduce a new toolkit's risk, so
-// the craft comes from choreography, not new machinery.
-//
-// Lives in the root layout, which Next.js keeps mounted across
-// client-side navigations, so this only plays once per hard load, never
-// on internal link clicks. Skipped entirely for reduced-motion, since a
-// sequence like this is itself exactly the kind of motion some users
-// specifically want to avoid.
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
-const BARS = [
-  { color: "#B85A34", x: 4, height: 34 }, // earth — clay
-  { color: "#24394D", x: 20, height: 48 }, // water — indigo
-  { color: "#C28A28", x: 36, height: 64 }, // fire — ochre
-  { color: "#5C6B4A", x: 52, height: 48 }, // air — sage
-  { color: "#AD6F5C", x: 68, height: 34 }, // space — dusty rose (soil itself would vanish against this dark veil)
-];
-const BAR_WIDTH = 10;
-const MARK_WIDTH = 82;
-const MARK_HEIGHT = 68;
-const BASELINE = 64;
-const EASE = [0.22, 0.61, 0.36, 1] as const;
+const SESSION_KEY = "branding-tatva-v4-prelude-seen";
+const FIRST_VISIT_MS = 1550;
+const REPEAT_VISIT_MS = 950;
+const EXIT_MS = 360;
+const EXIT_SECONDS = EXIT_MS / 1000;
+const EASE = [0.22, 1, 0.36, 1] as const;
 
-// How long the counter takes to reach 100 — the same window the rest of
-// the veil's own choreography (bars, frame, brand line) plays out over,
-// so "100" lands right as everything else has already settled rather
-// than racing ahead of or trailing behind it.
-const COUNTER_DURATION_MS = 1450;
+const NODES = [
+  { name: "Earth", x: 92, y: 248, color: "#C77752" },
+  { name: "Water", x: 204, y: 132, color: "#7D9BAF" },
+  { name: "Fire", x: 318, y: 252, color: "#C6A04E" },
+  { name: "Air", x: 430, y: 126, color: "#8FA283" },
+  { name: "Space", x: 544, y: 246, color: "#C08A7B" },
+] as const;
+
+const CONNECTIONS = [
+  "M92 248 C136 214 162 166 204 132",
+  "M204 132 C245 168 277 220 318 252",
+  "M318 252 C356 216 390 162 430 126",
+  "M430 126 C474 162 506 214 544 246",
+  "M92 248 C224 316 412 316 544 246",
+] as const;
+
+const COPY = [
+  "finding the signal",
+  "the pattern is forming",
+  "bringing the system into view",
+] as const;
 
 export function PageLoadVeil() {
-  const prefersReducedMotion = useReducedMotion();
-  const [barsSettled, setBarsSettled] = useState(false);
-  const [frameDrawn, setFrameDrawn] = useState(false);
-  const [brandVisible, setBrandVisible] = useState(false);
-  const [visible, setVisible] = useState(!prefersReducedMotion);
-  // A hard, animation-independent removal that always wins — see the
-  // note in the exit transition below for why this can't just rely on
-  // AnimatePresence's own onExitComplete.
-  const [removed, setRemoved] = useState(prefersReducedMotion);
-  // The small numeric counter next to the brand line — voyeurverite.com
-  // and trionn.com both pair their own loading screens with a ticking
-  // percentage; this is that same beat, synced to COUNTER_DURATION_MS
-  // instead of running as its own independent timer. Driven by rAF
-  // (elapsed-time-based, not tick-count-based) so a throttled/backgrounded
-  // tab still lands on exactly 100 rather than stalling partway — the
-  // same lesson AnimatedStat.tsx already learned the hard way for its
-  // own count-up.
-  const [progress, setProgress] = useState(0);
+  const pathname = usePathname();
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const [visible, setVisible] = useState(pathname === "/");
+  const [removed, setRemoved] = useState(pathname !== "/");
+  const [phase, setPhase] = useState(0);
 
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-    const timers = [
-      setTimeout(() => setBarsSettled(true), 700),
-      setTimeout(() => setFrameDrawn(true), 750),
-      setTimeout(() => setBrandVisible(true), 900),
-      setTimeout(() => setVisible(false), 1450),
-      setTimeout(() => setRemoved(true), 2100),
-    ];
-
-    const start = performance.now();
-    let frame: number;
-    function tick(now: number) {
-      const elapsed = now - start;
-      const pct = Math.min(100, Math.round((elapsed / COUNTER_DURATION_MS) * 100));
-      setProgress(pct);
-      if (pct < 100) frame = requestAnimationFrame(tick);
+  useIsomorphicLayoutEffect(() => {
+    if (pathname !== "/" || prefersReducedMotion) {
+      setVisible(false);
+      setRemoved(true);
+      return;
     }
-    frame = requestAnimationFrame(tick);
+
+    let seen = false;
+    try {
+      seen = window.sessionStorage.getItem(SESSION_KEY) === "true";
+    } catch {}
+
+    const duration = seen ? REPEAT_VISIT_MS : FIRST_VISIT_MS;
+    const phaseOne = window.setTimeout(() => setPhase(1), duration * 0.27);
+    const phaseTwo = window.setTimeout(() => setPhase(2), duration * 0.58);
+    const hideTimer = window.setTimeout(() => {
+      try {
+        window.sessionStorage.setItem(SESSION_KEY, "true");
+      } catch {}
+      setVisible(false);
+    }, duration);
+    const removeTimer = window.setTimeout(
+      () => setRemoved(true),
+      duration + EXIT_MS + 40,
+    );
 
     return () => {
-      timers.forEach(clearTimeout);
-      cancelAnimationFrame(frame);
+      window.clearTimeout(phaseOne);
+      window.clearTimeout(phaseTwo);
+      window.clearTimeout(hideTimer);
+      window.clearTimeout(removeTimer);
     };
-  }, [prefersReducedMotion]);
+  }, [pathname, prefersReducedMotion]);
 
   if (removed) return null;
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ clipPath: "inset(0% 0 0% 0)" }}
-          exit={{ clipPath: "inset(0% 0 100% 0)" }}
-          transition={{ duration: 0.65, ease: EASE }}
-          className="pointer-events-none fixed inset-0 z-100 flex flex-col items-center justify-center gap-6 overflow-hidden bg-soil"
-          aria-hidden="true"
-        >
-          <div className="paper-grain" style={{ opacity: 0.1 }} />
+    <motion.div
+      data-page-load-veil
+      data-page-load-state={visible ? "present" : "leaving"}
+      aria-hidden="true"
+      className="fixed inset-0 z-100 overflow-hidden bg-[#111518]"
+      initial={false}
+      animate={
+        visible
+          ? { opacity: 1, y: 0, filter: "blur(0px)" }
+          : { opacity: 0, y: -8, filter: "blur(6px)" }
+      }
+      transition={{ duration: EXIT_SECONDS, ease: EASE }}
+    >
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 48%, rgba(125,155,175,0.10), transparent 34%), radial-gradient(circle at 18% 82%, rgba(199,119,82,0.08), transparent 32%), linear-gradient(180deg, #111518, #0d1215)",
+        }}
+      />
 
-          <div className="relative" style={{ width: MARK_WIDTH, height: MARK_HEIGHT + 4 }}>
-            {BARS.map((bar, i) => (
-              <motion.div
-                key={`glow-${bar.color}`}
-                className="absolute rounded-full"
-                style={{
-                  left: bar.x - 12,
-                  bottom: 0,
-                  width: BAR_WIDTH + 24,
-                  height: BAR_WIDTH + 24,
-                  backgroundColor: bar.color,
-                  filter: "blur(11px)",
+      <motion.span
+        className="absolute left-[-12%] top-[18%] h-[64%] w-[28%] rotate-[11deg]"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(212,185,154,0.09), transparent)",
+          filter: "blur(16px)",
+        }}
+        animate={{ x: ["0%", "430%"], opacity: [0.12, 0.56, 0.12] }}
+        transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div className="absolute inset-0 flex items-center justify-center px-5">
+        <div className="relative w-full max-w-3xl">
+          <svg
+            viewBox="0 0 636 380"
+            className="block h-auto w-full overflow-visible"
+          >
+            <motion.path
+              d="M-20 192 C28 192 52 224 92 248"
+              fill="none"
+              stroke="rgba(212,185,154,.58)"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              pathLength="1"
+              initial={{ pathLength: 0, opacity: 0.2 }}
+              animate={{ pathLength: 1, opacity: 0.78 }}
+              transition={{ duration: 0.5, ease: EASE }}
+            />
+
+            {CONNECTIONS.map((path, index) => (
+              <motion.path
+                key={path}
+                d={path}
+                fill="none"
+                stroke={NODES[Math.min(index, NODES.length - 1)].color}
+                strokeWidth="1.15"
+                strokeLinecap="round"
+                pathLength="1"
+                initial={{ pathLength: 0, opacity: 0.16 }}
+                animate={{
+                  pathLength: phase >= 1 ? 1 : 0,
+                  opacity: phase >= 1 ? 0.72 : 0.16,
                 }}
-                initial={{ opacity: 0, scale: 0.6 }}
-                animate={barsSettled ? { opacity: [0, 0.55, 0], scale: [0.6, 1.5, 1.5] } : undefined}
-                transition={{ duration: 0.4, delay: i * 0.04, ease: "easeOut" }}
+                transition={{
+                  duration: 0.38,
+                  delay: index * 0.055,
+                  ease: EASE,
+                }}
               />
             ))}
-            <svg
-              width={MARK_WIDTH}
-              height={MARK_HEIGHT + 4}
-              viewBox={`0 0 ${MARK_WIDTH} ${MARK_HEIGHT + 4}`}
-              fill="none"
-              className="relative"
-            >
-              {BARS.map((bar, i) => (
-                <motion.rect
-                  key={bar.color}
-                  x={bar.x}
-                  width={BAR_WIDTH}
-                  rx={5}
-                  fill={bar.color}
-                  opacity={0.92}
-                  initial={{ height: 0, y: BASELINE }}
-                  animate={{ height: bar.height, y: BASELINE - bar.height }}
-                  transition={{ duration: 0.45, delay: i * 0.06, ease: EASE }}
+
+            {NODES.map((node, index) => (
+              <g key={node.name}>
+                <motion.circle
+                  cx={node.x}
+                  cy={node.y}
+                  r="4.5"
+                  fill={node.color}
+                  initial={{ scale: 0.3, opacity: 0 }}
+                  animate={{
+                    scale: phase >= 1 ? 1 : 0.3,
+                    opacity: phase >= 1 ? 1 : 0,
+                  }}
+                  style={{ transformOrigin: `${node.x}px ${node.y}px` }}
+                  transition={{
+                    duration: 0.28,
+                    delay: index * 0.058,
+                    ease: EASE,
+                  }}
                 />
-              ))}
-              {/* The unifying stroke: five separate bars settle first,
-                  each announcing its own element; only once all five have
-                  landed does this frame draw itself around them, the
-                  visual argument for "one brand" instead of just five
-                  colors sitting next to each other. */}
-              <motion.rect
-                x={1}
-                y={1}
-                width={MARK_WIDTH - 2}
-                height={MARK_HEIGHT + 2}
-                rx={10}
-                stroke="#F4EFE6"
-                strokeOpacity={0.32}
-                strokeWidth={1}
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: frameDrawn ? 1 : 0 }}
-                transition={{ duration: 0.5, ease: EASE }}
-              />
-            </svg>
-          </div>
+                <motion.circle
+                  cx={node.x}
+                  cy={node.y}
+                  r="13"
+                  fill="none"
+                  stroke={node.color}
+                  strokeWidth="0.8"
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={
+                    phase >= 2
+                      ? { scale: [0.72, 1.34, 0.72], opacity: [0.46, 0, 0.46] }
+                      : { scale: 0.5, opacity: 0 }
+                  }
+                  style={{ transformOrigin: `${node.x}px ${node.y}px` }}
+                  transition={{
+                    duration: 2.2 + index * 0.12,
+                    delay: index * 0.09,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                />
+                <motion.text
+                  x={node.x}
+                  y={node.y + (index % 2 === 0 ? 34 : -27)}
+                  textAnchor="middle"
+                  fill="rgba(244,239,230,.48)"
+                  fontSize="9"
+                  letterSpacing="2.2"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: phase >= 1 ? 1 : 0, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.14 + index * 0.045 }}
+                >
+                  {node.name.toUpperCase()}
+                </motion.text>
+              </g>
+            ))}
+
+            <motion.path
+              d="M544 246 C582 220 600 194 660 194"
+              fill="none"
+              stroke="rgba(244,239,230,.56)"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              pathLength="1"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: phase >= 2 ? 1 : 0, opacity: phase >= 2 ? 0.72 : 0 }}
+              transition={{ duration: 0.38, ease: EASE }}
+            />
+          </svg>
 
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: brandVisible ? 1 : 0, y: brandVisible ? 0 : 8 }}
-            transition={{ duration: 0.4, ease: EASE }}
-            className="flex flex-col items-center"
+            className="absolute left-1/2 top-1/2 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-ivory/12 bg-[#111518]/72 backdrop-blur-xl"
+            initial={{ opacity: 0, scale: 0.74 }}
+            animate={{ opacity: phase >= 2 ? 1 : 0, scale: phase >= 2 ? 1 : 0.74 }}
+            transition={{ duration: 0.32, ease: EASE }}
           >
-            <span className="font-body text-[0.65rem] font-bold uppercase tracking-[0.4em] text-ivory/70">
-              {site.name}
-            </span>
-            <span className="mt-2 max-w-xs text-center text-xs text-ivory/40">
-              {site.tagline}
-            </span>
+            <LogoMark size={42} light />
           </motion.div>
+        </div>
+      </div>
 
-          {/* The numeric counter voyeurverite.com and trionn.com both
-              pair with their own loading screens — placed in a corner
-              rather than beside the mark so it reads as a separate,
-              secondary beat instead of competing with the brand line
-              for attention. */}
-          <div className="pointer-events-none absolute bottom-6 left-6 flex items-baseline gap-2 font-body text-[0.65rem] tracking-[0.3em] text-ivory/40 sm:bottom-8 sm:left-8">
-            <span>LOADING</span>
-            <span className="tabular-nums text-ivory/70">{progress}</span>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+      <div className="absolute inset-x-0 bottom-[10%] px-6 text-center">
+        <motion.p
+          key={COPY[phase]}
+          className="text-[0.58rem] font-semibold uppercase tracking-[0.26em] text-ivory/58"
+          initial={{ opacity: 0, y: 7 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, ease: EASE }}
+        >
+          {COPY[phase]}
+        </motion.p>
+        <span className="mx-auto mt-4 block h-px w-24 overflow-hidden bg-ivory/12">
+          <motion.span
+            className="block h-full origin-left bg-[#d4b99a]"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1.05, ease: "linear" }}
+          />
+        </span>
+      </div>
+    </motion.div>
   );
 }
