@@ -21,7 +21,6 @@ const CHAPTERS = [
 ] as const;
 
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
-const ACTIVE_CHAPTER_EVENT = "bt:services-active-chapter";
 const FORM_CONTROL_SELECTOR =
   "input, textarea, select, [contenteditable='true'], [role='textbox']";
 
@@ -37,8 +36,8 @@ type NavigatorWithHints = Navigator & {
   deviceMemory?: number;
 };
 
-function clamp(value: number, minimum = 0, maximum = 1) {
-  return Math.min(maximum, Math.max(minimum, value));
+function clamp(value: number) {
+  return Math.min(1, Math.max(0, value));
 }
 
 function ensureSceneSignal(scene: HTMLElement, name: string) {
@@ -49,12 +48,17 @@ function ensureSceneSignal(scene: HTMLElement, name: string) {
   scene.append(signal);
 }
 
-function assignSceneIdentity(root: HTMLElement) {
+function prepareScenes(root: HTMLElement) {
   const main = root.querySelector<HTMLElement>("main");
   const hero = main?.querySelector<HTMLElement>(":scope > section:first-of-type");
   if (hero) {
     hero.id ||= "services-opening";
     hero.dataset.servicesScene = "opening";
+    const copy = Array.from(hero.children).find(
+      (child): child is HTMLElement =>
+        child instanceof HTMLElement && Boolean(child.querySelector("h1")),
+    );
+    if (copy) copy.dataset.servicesHeroCopy = "true";
   }
 
   CHAPTERS.forEach((chapter, index) => {
@@ -62,40 +66,26 @@ function assignSceneIdentity(root: HTMLElement) {
       root.querySelector<HTMLElement>(`#${chapter.id}`) ??
       root.querySelector<HTMLElement>(`[data-services-scene="${chapter.scene}"]`);
     if (!scene) return;
-
     scene.id ||= chapter.id;
     scene.dataset.servicesScene ||= chapter.scene;
     scene.dataset.servicesChapterIndex = String(index);
     scene.dataset.servicesChapterLabel = chapter.label;
-    scene.style.setProperty("--services-progress", "0");
-    scene.style.setProperty("--services-line", "0%");
-    scene.style.setProperty("--services-shift-x", "0px");
-    scene.style.setProperty("--services-shift-y", "0px");
-    scene.style.setProperty("--services-scene-scale", "1");
     ensureSceneSignal(scene, chapter.scene);
   });
 
   const offeringScene = root.querySelector<HTMLElement>("#offerings");
-  if (offeringScene) {
-    const stage = Array.from(offeringScene.children).find(
-      (child): child is HTMLElement =>
-        child instanceof HTMLElement &&
-        child.classList.contains("relative") &&
-        Boolean(child.querySelector('[role="tablist"]')),
-    );
-    if (stage) stage.dataset.servicesStickyStage = "true";
-  }
-
-  const heroCopy = hero
-    ? Array.from(hero.children).find(
+  const offeringStage = offeringScene
+    ? Array.from(offeringScene.children).find(
         (child): child is HTMLElement =>
-          child instanceof HTMLElement && Boolean(child.querySelector("h1")),
+          child instanceof HTMLElement &&
+          child.classList.contains("relative") &&
+          Boolean(child.querySelector('[role="tablist"]')),
       )
     : null;
-  if (heroCopy) heroCopy.dataset.servicesHeroCopy = "true";
+  if (offeringStage) offeringStage.dataset.servicesStickyStage = "true";
 }
 
-function collectScenes(root: HTMLElement): SceneRecord[] {
+function readScenes(root: HTMLElement): SceneRecord[] {
   return CHAPTERS.flatMap((chapter) => {
     const element = root.querySelector<HTMLElement>(`#${chapter.id}`);
     return element
@@ -124,86 +114,71 @@ export function ServicesScrollExperience() {
   );
 
   useEffect(() => {
-    const marker = markerRef.current;
-    const root = marker?.closest<HTMLElement>("[data-services-scroll-root]");
+    const root = markerRef.current?.closest<HTMLElement>("[data-services-scroll-root]")!;
     if (!root) return;
 
-    assignSceneIdentity(root);
-    let scenes = collectScenes(root);
+    prepareScenes(root);
+    const scenes = readScenes(root);
     if (!scenes.length) return;
 
     root.dataset.servicesScrollReady = "true";
     root.dataset.servicesDirection = "down";
     root.dataset.servicesActiveScene = scenes[0].id;
+    scenes[0].element.dataset.servicesActive = "true";
 
-    const ratios = new Map<HTMLElement, number>();
     let activeScene = scenes[0];
     let lastScrollY = window.scrollY;
-    let scheduledFrame = 0;
+    let frame = 0;
     let formInteraction = false;
+    const ratios = new Map<HTMLElement, number>();
 
-    function announceActive(next: SceneRecord) {
+    function activate(next: SceneRecord) {
       if (next.id === activeScene.id) return;
       activeScene.element.dataset.servicesActive = "false";
       next.element.dataset.servicesActive = "true";
       activeScene = next;
       root.dataset.servicesActiveScene = next.id;
       setActiveId(next.id);
-      window.dispatchEvent(
-        new CustomEvent(ACTIVE_CHAPTER_EVENT, {
-          detail: { id: next.id, label: next.label },
-        }),
-      );
       if (next.id === "book") setMobileOpen(false);
     }
 
-    scenes[0].element.dataset.servicesActive = "true";
-
-    const chapterObserver = new IntersectionObserver(
+    const sceneObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           ratios.set(entry.target as HTMLElement, entry.isIntersecting ? entry.intersectionRatio : 0);
         });
-
-        let best = activeScene;
-        let bestRatio = -1;
-        scenes.forEach((scene) => {
-          const ratio = ratios.get(scene.element) ?? 0;
-          if (ratio > bestRatio) {
-            bestRatio = ratio;
-            best = scene;
-          }
-        });
-        if (bestRatio > 0) announceActive(best);
+        const ranked = scenes
+          .map((scene) => ({ scene, ratio: ratios.get(scene.element) ?? 0 }))
+          .sort((a, b) => b.ratio - a.ratio);
+        if (ranked[0]?.ratio > 0) activate(ranked[0].scene);
       },
       {
         rootMargin: "-16% 0px -48% 0px",
         threshold: [0, 0.08, 0.2, 0.42, 0.68],
       },
     );
-    scenes.forEach((scene) => chapterObserver.observe(scene.element));
+    scenes.forEach((scene) => sceneObserver.observe(scene.element));
 
-    function updateSceneProgress() {
-      scheduledFrame = 0;
-      const viewportHeight = Math.max(1, window.innerHeight);
-      const nextScrollY = window.scrollY;
-      const direction = nextScrollY >= lastScrollY ? "down" : "up";
+    function updateProgress() {
+      frame = 0;
+      const viewport = Math.max(1, window.innerHeight);
+      const scrollY = window.scrollY;
+      const direction = scrollY >= lastScrollY ? "down" : "up";
       root.dataset.servicesDirection = direction;
-      lastScrollY = nextScrollY;
+      lastScrollY = scrollY;
 
       scenes.forEach((scene) => {
         const bounds = scene.element.getBoundingClientRect();
-        const start = viewportHeight * 0.84;
-        const end = viewportHeight * 0.16 - bounds.height;
-        const denominator = Math.max(1, start - end);
+        const start = viewport * 0.84;
+        const end = viewport * 0.16 - bounds.height;
         const progress = prefersReducedMotion
-          ? bounds.bottom > 0 && bounds.top < viewportHeight
+          ? bounds.bottom > 0 && bounds.top < viewport
             ? 1
             : 0
-          : clamp((start - bounds.top) / denominator);
-
+          : clamp((start - bounds.top) / Math.max(1, start - end));
         if (Math.abs(progress - scene.progress) < 0.002) return;
         scene.progress = progress;
+
         scene.element.style.setProperty("--services-progress", progress.toFixed(4));
         scene.element.style.setProperty("--services-line", `${(progress * 100).toFixed(2)}%`);
         scene.element.style.setProperty(
@@ -219,7 +194,7 @@ export function ServicesScrollExperience() {
           (1 + progress * 0.018).toFixed(4),
         );
 
-        if (bounds.bottom >= -viewportHeight * 0.2 && bounds.top <= viewportHeight * 1.2) {
+        if (bounds.bottom >= -viewport * 0.2 && bounds.top <= viewport * 1.2) {
           window.dispatchEvent(
             new CustomEvent(SCENE_PROGRESS_EVENT, {
               detail: {
@@ -235,24 +210,23 @@ export function ServicesScrollExperience() {
     }
 
     function scheduleProgress() {
-      if (scheduledFrame) return;
-      scheduledFrame = window.requestAnimationFrame(updateSceneProgress);
+      if (frame) return;
+      frame = window.requestAnimationFrame(updateProgress);
     }
 
     const videos = new Set<HTMLVideoElement>();
     const videoRatios = new Map<HTMLVideoElement, number>();
-    const videoCleanups = new Map<HTMLVideoElement, () => void>();
-    const viewportProfile = window.matchMedia("(max-width: 767px)");
-    const navigatorHints = navigator as NavigatorWithHints;
-    const constrainedConnection =
-      Boolean(navigatorHints.connection?.saveData) ||
-      navigatorHints.connection?.effectiveType === "2g" ||
-      navigatorHints.connection?.effectiveType === "slow-2g";
-    const lowMemory =
-      typeof navigatorHints.deviceMemory === "number" && navigatorHints.deviceMemory <= 4;
+    const videoCleanup = new Map<HTMLVideoElement, () => void>();
+    const compactViewport = window.matchMedia("(max-width: 767px)");
+    const hints = navigator as NavigatorWithHints;
+    const constrained =
+      Boolean(hints.connection?.saveData) ||
+      hints.connection?.effectiveType === "2g" ||
+      hints.connection?.effectiveType === "slow-2g" ||
+      (typeof hints.deviceMemory === "number" && hints.deviceMemory <= 4);
 
-    function videoBudget() {
-      return viewportProfile.matches || constrainedConnection || lowMemory ? 1 : 2;
+    function mediaBudget() {
+      return compactViewport.matches || constrained ? 1 : 2;
     }
 
     function distanceFromCentre(video: HTMLVideoElement) {
@@ -268,21 +242,15 @@ export function ServicesScrollExperience() {
             if (Math.abs(ratioA - ratioB) > 0.04) return ratioB - ratioA;
             return distanceFromCentre(videoA) - distanceFromCentre(videoB);
           })
-          .slice(0, videoBudget())
+          .slice(0, mediaBudget())
           .map(([video]) => video),
       );
 
       videos.forEach((video) => {
         const shouldPlay =
-          !prefersReducedMotion &&
-          !document.hidden &&
-          !formInteraction &&
-          allowed.has(video);
-        if (shouldPlay) {
-          if (video.paused) void video.play().catch(() => undefined);
-        } else if (!video.paused) {
-          video.pause();
-        }
+          !prefersReducedMotion && !document.hidden && !formInteraction && allowed.has(video);
+        if (shouldPlay && video.paused) void video.play().catch(() => undefined);
+        if (!shouldPlay && !video.paused) video.pause();
       });
     }
 
@@ -296,46 +264,31 @@ export function ServicesScrollExperience() {
         });
         syncVideos();
       },
-      {
-        rootMargin: "20% 0px",
-        threshold: [0, 0.02, 0.25, 0.5, 0.75],
-      },
+      { rootMargin: "20% 0px", threshold: [0, 0.02, 0.25, 0.5, 0.75] },
     );
 
-    function trackVideo(video: HTMLVideoElement) {
+    function registerVideo(video: HTMLVideoElement) {
       if (videos.has(video)) return;
       videos.add(video);
       video.dataset.servicesMediaManaged = "true";
       const resync = () => queueMicrotask(syncVideos);
       video.addEventListener("play", resync);
       videoObserver.observe(video);
-      videoCleanups.set(video, () => {
+      videoCleanup.set(video, () => {
         video.removeEventListener("play", resync);
         videoObserver.unobserve(video);
-        videoRatios.delete(video);
       });
     }
-    root.querySelectorAll<HTMLVideoElement>("video").forEach(trackVideo);
+    root.querySelectorAll<HTMLVideoElement>("video").forEach(registerVideo);
 
     const mutationObserver = new MutationObserver((records) => {
-      let refreshScenes = false;
       records.forEach((record) => {
         record.addedNodes.forEach((node) => {
           if (!(node instanceof Element)) return;
-          if (node instanceof HTMLVideoElement) trackVideo(node);
-          node.querySelectorAll<HTMLVideoElement>("video").forEach(trackVideo);
-          if (node.matches?.("[data-services-scene]") || node.querySelector?.("[data-services-scene]")) {
-            refreshScenes = true;
-          }
+          if (node instanceof HTMLVideoElement) registerVideo(node);
+          node.querySelectorAll<HTMLVideoElement>("video").forEach(registerVideo);
         });
       });
-      if (refreshScenes) {
-        scenes.forEach((scene) => chapterObserver.unobserve(scene.element));
-        assignSceneIdentity(root);
-        scenes = collectScenes(root);
-        scenes.forEach((scene) => chapterObserver.observe(scene.element));
-      }
-      scheduleProgress();
       syncVideos();
     });
     mutationObserver.observe(root, { childList: true, subtree: true });
@@ -344,7 +297,6 @@ export function ServicesScrollExperience() {
       const target = event.target;
       if (!(target instanceof Element) || !target.matches(FORM_CONTROL_SELECTOR)) return;
       formInteraction = true;
-      root.dataset.servicesFormInteraction = "true";
       syncVideos();
     }
 
@@ -354,40 +306,35 @@ export function ServicesScrollExperience() {
         formInteraction = Boolean(
           active instanceof Element && root.contains(active) && active.matches(FORM_CONTROL_SELECTOR),
         );
-        root.dataset.servicesFormInteraction = formInteraction ? "true" : "false";
         syncVideos();
       }, 0);
     }
 
-    function onVisibilityChange() {
-      syncVideos();
-    }
-
     window.addEventListener("scroll", scheduleProgress, { passive: true });
     window.addEventListener("resize", scheduleProgress, { passive: true });
-    viewportProfile.addEventListener("change", syncVideos);
-    document.addEventListener("visibilitychange", onVisibilityChange);
+    compactViewport.addEventListener("change", syncVideos);
+    document.addEventListener("visibilitychange", syncVideos);
     root.addEventListener("focusin", onFocusIn);
     root.addEventListener("focusout", onFocusOut);
-    updateSceneProgress();
+    updateProgress();
     syncVideos();
 
     return () => {
-      window.cancelAnimationFrame(scheduledFrame);
+      window.cancelAnimationFrame(frame);
       window.removeEventListener("scroll", scheduleProgress);
       window.removeEventListener("resize", scheduleProgress);
-      viewportProfile.removeEventListener("change", syncVideos);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
+      compactViewport.removeEventListener("change", syncVideos);
+      document.removeEventListener("visibilitychange", syncVideos);
       root.removeEventListener("focusin", onFocusIn);
       root.removeEventListener("focusout", onFocusOut);
       mutationObserver.disconnect();
-      chapterObserver.disconnect();
+      sceneObserver.disconnect();
       videoObserver.disconnect();
-      videoCleanups.forEach((cleanup) => cleanup());
+      videoCleanup.forEach((cleanup) => cleanup());
       videos.forEach((video) => video.pause());
-      root.removeAttribute("data-services-scroll-ready");
-      root.removeAttribute("data-services-active-scene");
-      root.removeAttribute("data-services-direction");
+      delete root.dataset.servicesScrollReady;
+      delete root.dataset.servicesActiveScene;
+      delete root.dataset.servicesDirection;
     };
   }, [prefersReducedMotion]);
 
@@ -410,22 +357,19 @@ export function ServicesScrollExperience() {
             <span>{active.label}</span>
           </span>
           <ol>
-            {CHAPTERS.map((chapter, index) => {
-              const selected = chapter.id === active.id;
-              return (
-                <li key={chapter.id}>
-                  <button
-                    type="button"
-                    aria-current={selected ? "step" : undefined}
-                    aria-label={`Open chapter ${index + 1}: ${chapter.label}`}
-                    onClick={() => chooseChapter(chapter.id)}
-                  >
-                    <i aria-hidden="true" />
-                    <span>{chapter.label}</span>
-                  </button>
-                </li>
-              );
-            })}
+            {CHAPTERS.map((chapter, index) => (
+              <li key={chapter.id}>
+                <button
+                  type="button"
+                  aria-current={chapter.id === active.id ? "step" : undefined}
+                  aria-label={`Open chapter ${index + 1}: ${chapter.label}`}
+                  onClick={() => chooseChapter(chapter.id)}
+                >
+                  <i aria-hidden="true" />
+                  <span>{chapter.label}</span>
+                </button>
+              </li>
+            ))}
           </ol>
         </nav>
       )}
