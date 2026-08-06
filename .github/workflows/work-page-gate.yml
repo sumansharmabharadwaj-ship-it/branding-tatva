@@ -14,6 +14,7 @@ on:
       - scripts/work_page_gate_v3.cjs
       - scripts/work_mobile_narrative_gate.cjs
       - scripts/work_mobile_index_control_gate.cjs
+      - scripts/work_lab_accessibility_gate.cjs
       - public/images/work-evidence-*.svg
       - src/app/work/**
       - src/sections/Work/**
@@ -111,6 +112,11 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/work_mobile_index_control_gate.cjs
+
+      - name: Audit Lab focus restoration and phase-keyboard navigation
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/work_lab_accessibility_gate.cjs
 
       - name: Stop production server
         if: always()
