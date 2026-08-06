@@ -13,6 +13,7 @@ import {
   type InsightTopic,
 } from "@/data/pillarInsights";
 import { supportingInsightPosts } from "@/data/supportingInsights";
+import { valuePropositionInsightPosts } from "@/data/valuePropositionInsights";
 
 export { insightTopics };
 export type {
@@ -31,6 +32,7 @@ const combinedPosts = [
   ...customerJourneyInsightPosts,
   ...consultingPositioningInsightPosts,
   ...brandRecallMeasurementInsightPosts,
+  ...valuePropositionInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
@@ -72,6 +74,14 @@ const relatedRegistrations = [
     pillarSlugs: [
       "brand-awareness-vs-brand-recall",
       "distinctive-brand-assets-audit",
+    ],
+  },
+  {
+    supportingSlug: "value-proposition-vs-positioning-vs-tagline",
+    pillarSlugs: [
+      "brand-positioning-strategy-service-businesses",
+      "brand-messaging-framework",
+      "website-messaging-hierarchy-service-businesses",
     ],
   },
 ] as const;
