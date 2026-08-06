@@ -105,31 +105,56 @@ export default function ContactPage() {
           </Container>
         </PhotoHero>
 
-        {/* The two paths, up front (governing bible's contact
-            architecture): a visitor either books the call or writes,
-            and both doors are visible before any form field appears.
+        {/* The three contact paths, up front (governing bible's contact
+            architecture): a visitor can schedule, call or message directly, or write,
+            and every door is visible before any form field appears.
             Plain anchor cards, zero novelty — this page's job is to
             get out of the way. */}
         <section className="border-b border-soil/10 py-10" style={{ backgroundColor: "#E8DED0" }}>
-          <Container className="grid gap-4 sm:grid-cols-2">
+          <Container className="grid gap-4 md:grid-cols-3">
             <a
               href="#call"
               className="group rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm transition-transform duration-300 hover:translate-y-[-2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
             >
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path one</p>
               <p className="mt-2 font-display text-xl font-normal text-soil">
-                Book the twenty minute call
+                Schedule a thirty-minute call
                 <span aria-hidden="true" className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
               </p>
               <p className="mt-2 text-sm text-foreground-secondary">
                 Pick a time directly. Honest feedback either way, and a clear next step if it fits.
               </p>
             </a>
+            <div className="rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm">
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path two</p>
+              <p className="mt-2 font-display text-xl font-normal text-soil">Speak directly</p>
+              <p className="mt-2 text-sm text-foreground-secondary">
+                Prefer a quicker first step? Call or send a WhatsApp message directly to Suman.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <a
+                  href={`tel:${site.phone.tel}`}
+                  className="rounded-full bg-soil px-4 py-2 text-sm font-medium text-ivory transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
+                  aria-label={`Call Suman at ${site.phone.display}`}
+                >
+                  Call now
+                </a>
+                <a
+                  href={site.phone.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-soil/20 px-4 py-2 text-sm font-medium text-soil transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
+                >
+                  WhatsApp
+                </a>
+              </div>
+              <p className="mt-3 text-xs text-foreground-secondary">{site.phone.display}</p>
+            </div>
             <a
               href="#write"
               className="group rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm transition-transform duration-300 hover:translate-y-[-2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
             >
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path two</p>
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path three</p>
               <p className="mt-2 font-display text-xl font-normal text-soil">
                 Write it down instead
                 <span aria-hidden="true" className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
@@ -168,6 +193,21 @@ export default function ContactPage() {
                   Prefer email?{" "}
                   <a href={`mailto:${site.email}`} className="text-action-primary-hover link-underline">
                     {site.email}
+                  </a>
+                </p>
+                <p>
+                  Call or WhatsApp:{" "}
+                  <a href={`tel:${site.phone.tel}`} className="text-action-primary-hover link-underline">
+                    {site.phone.display}
+                  </a>
+                  {" · "}
+                  <a
+                    href={site.phone.whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-action-primary-hover link-underline"
+                  >
+                    Open WhatsApp
                   </a>
                 </p>
                 <p>
@@ -311,10 +351,10 @@ export default function ContactPage() {
                 <p className="mt-1 font-display text-4xl font-normal text-soil sm:text-5xl">{site.founder}</p>
                 <span aria-hidden="true" className="mx-auto mt-4 block h-px w-16" style={{ backgroundColor: "#C6A97A" }} />
                 <p className="mx-auto mt-5 max-w-sm font-display text-lg leading-snug text-soil sm:text-xl">
-                  Thirty minutes with the person who would do the work.
+                  {site.consultationMinutes} minutes with the person who would do the work.
                 </p>
                 <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-foreground-secondary">
-                  Pick any time that suits you. Every slot adjusts to your own timezone automatically.
+                  Choose a time that suits you. Every slot adjusts to your timezone automatically, and confirmation arrives after booking.
                 </p>
                 <span aria-hidden="true" className="mt-7 flex items-center justify-center gap-3">
                   <span className="h-px w-20 bg-soil/15" />

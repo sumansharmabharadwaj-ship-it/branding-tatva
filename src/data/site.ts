@@ -17,6 +17,13 @@ export const site = {
     "Most brands are visible and still go unnoticed. Suman Sharma works with founders and existing businesses on positioning, voice, and the consistency that turns attention into recognition.",
   url: "https://brandingtatva.com",
   email: "suman@brandingtatva.com",
+  phone: {
+    display: "+91 84477 25381",
+    tel: "+918447725381",
+    whatsappUrl:
+      "https://wa.me/918447725381?text=Hello%20Suman%2C%20I%27d%20like%20to%20discuss%20my%20brand.",
+  },
+  consultationMinutes: 30,
   calendlyUrl: "https://calendly.com/suman-brandingtatva",
   social: {
     linkedin: "https://linkedin.com/in/suman-sharma-b6a682232",
