@@ -1,5 +1,5 @@
 name: Generate clean procedural Services core media
-run-name: Clean core media pass 3 · ${{ github.sha }}
+run-name: Clean core media pass 4 · ${{ github.sha }}
 
 on:
   push:
@@ -125,6 +125,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config rerere.enabled true
           git add \
             public/videos/generated \
             public/images/generated \
@@ -137,5 +138,19 @@ jobs:
 
           git diff --cached --check
           git commit -m "feat: replace contaminated Services core films with clean procedural media"
-          git pull --rebase origin homepage-cinematic-recovery
-          git push origin HEAD:homepage-cinematic-recovery
+
+          for attempt in 1 2 3 4 5; do
+            echo "Integration attempt ${attempt}/5"
+            git fetch origin homepage-cinematic-recovery
+            git rebase origin/homepage-cinematic-recovery
+
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              echo "Clean Services media integrated successfully."
+              exit 0
+            fi
+
+            sleep $((attempt * 2))
+          done
+
+          echo "The branch kept moving after five integration attempts."
+          exit 1
