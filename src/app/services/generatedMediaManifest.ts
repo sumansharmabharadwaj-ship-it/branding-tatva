@@ -1,7 +1,7 @@
 export const GENERATED_SERVICES_MEDIA_REVISION = {
   installed: "2026-08-06",
-  desktopLoops: 6,
-  mobileLoops: 6,
+  desktopLoops: 7,
+  mobileLoops: 7,
   stillScenes: 2,
   silent: true,
   posters: true,
@@ -14,6 +14,12 @@ export const GENERATED_SERVICES_MEDIA = {
     mobile: "/videos/generated/bt-services-hero-root-system-mobile.mp4",
     poster: "/images/generated/bt-services-hero-root-system-poster.jpg",
     purpose: "Reveal the interconnected system beneath the visible brand surface.",
+  },
+  situation: {
+    desktop: "/videos/generated/bt-services-situation-paths.mp4",
+    mobile: "/videos/generated/bt-services-situation-paths-mobile.mp4",
+    poster: "/images/generated/bt-services-situation-paths-poster.jpg",
+    purpose: "Express three different starting conditions inside one coherent material world.",
   },
   strategy: {
     desktop: "/videos/generated/bt-services-strategy-topography.mp4",
