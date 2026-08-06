@@ -146,8 +146,7 @@
   mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
 }
 
-.tatva-pressure-lab > div:not([aria-hidden="true"]),
-.tatva-pressure-lab > div:not([aria-hidden="true"]) * {
+.tatva-pressure-lab > div:last-child {
   position: relative;
   z-index: 2;
 }
