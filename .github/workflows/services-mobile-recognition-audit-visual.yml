@@ -1,4 +1,5 @@
 name: Verify the anchored mobile Recognition Audit composition
+run-name: Services Recognition Audit composition pass 2 · ${{ github.sha }}
 
 on:
   push:
