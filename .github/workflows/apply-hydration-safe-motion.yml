@@ -1,0 +1,269 @@
+name: Apply hydration-safe reduced-motion handling
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/apply-hydration-safe-motion.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hydration-safe-motion-patch
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the working branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: corepack enable
+
+      - name: Apply, verify, and publish the atomic patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            echo "Hydration-safe motion patch attempt ${attempt}"
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+            git clean -fd
+
+            python <<'PY'
+          from pathlib import Path
+          import re
+
+          ROOT = Path(".")
+          HOOK_PATH = ROOT / "src/hooks/useHydratedReducedMotion.ts"
+          WORKFLOW_PATH = ROOT / ".github/workflows/apply-hydration-safe-motion.yml"
+
+          HOOK_CONTENT = '''"use client";
+
+          import { useEffect, useState } from "react";
+          import { useReducedMotion } from "framer-motion";
+          import { useMotionPreference } from "@/components/MotionPreference";
+
+          /**
+           * Keeps the server render and the browser's hydration render identical,
+           * then honours both the operating-system preference and Branding Tatva's
+           * explicit Full/Reduced control after mount.
+           */
+          export function useHydratedMotionPreference() {
+            const osReducedMotion = useReducedMotion();
+            const { pref } = useMotionPreference();
+            const [hydrated, setHydrated] = useState(false);
+
+            useEffect(() => {
+              setHydrated(true);
+            }, []);
+
+            return {
+              hydrated,
+              prefersReducedMotion:
+                hydrated && (pref === "reduced" || Boolean(osReducedMotion)),
+            };
+          }
+
+          export function useHydratedReducedMotion() {
+            return useHydratedMotionPreference().prefersReducedMotion;
+          }
+          '''
+
+          # Strip the indentation introduced by the workflow heredoc while keeping
+          # the source file itself conventionally formatted.
+          HOOK_CONTENT = "\n".join(line[10:] if line.startswith("          ") else line for line in HOOK_CONTENT.splitlines()) + "\n"
+          HOOK_PATH.write_text(HOOK_CONTENT, encoding="utf-8")
+
+          def rewrite_framer_import(match: re.Match[str]) -> str:
+            names = [part.strip() for part in match.group(1).replace("\n", " ").split(",")]
+            names = [name for name in names if name and name != "useReducedMotion"]
+            if not names:
+              return ""
+            return f'import {{ {", ".join(names)} }} from "framer-motion";'
+
+          changed = []
+          for path in sorted((ROOT / "src").rglob("*.tsx")):
+            text = path.read_text(encoding="utf-8")
+            if "useReducedMotion" not in text:
+              continue
+
+            original = text
+            text, import_count = re.subn(
+              r'import\s*\{([\s\S]*?)\}\s*from\s*"framer-motion";',
+              rewrite_framer_import,
+              text,
+              count=1,
+            )
+            if import_count != 1:
+              raise RuntimeError(f"Could not rewrite Framer Motion import in {path}")
+
+            marker = '"use client";\n\n'
+            if marker not in text:
+              raise RuntimeError(f"Hydration-sensitive motion file is not a client component: {path}")
+            text = text.replace(
+              marker,
+              marker + 'import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";\n',
+              1,
+            )
+            text = text.replace("useReducedMotion()", "useHydratedReducedMotion()")
+            if "useReducedMotion" in text:
+              raise RuntimeError(f"Raw useReducedMotion reference remains in {path}")
+
+            if text != original:
+              path.write_text(text, encoding="utf-8")
+              changed.append(str(path))
+
+          def read(path: str) -> str:
+            return (ROOT / path).read_text(encoding="utf-8")
+
+          def write(path: str, text: str) -> None:
+            (ROOT / path).write_text(text, encoding="utf-8")
+
+          def replace_once(text: str, old: str, new: str, path: str) -> str:
+            count = text.count(old)
+            if count != 1:
+              raise RuntimeError(f"Expected one occurrence in {path}, found {count}: {old[:80]!r}")
+            return text.replace(old, new, 1)
+
+          # Shared reveal wrappers stay static for the server and hydration pass.
+          for path in ("src/components/Reveal.tsx", "src/components/ClipReveal.tsx"):
+            text = read(path)
+            text = replace_once(
+              text,
+              'import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";',
+              'import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";',
+              path,
+            )
+            text = replace_once(
+              text,
+              "const prefersReducedMotion = useHydratedReducedMotion();",
+              "const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();",
+              path,
+            )
+            text = replace_once(
+              text,
+              "if (prefersReducedMotion) {",
+              "if (!hydrated || prefersReducedMotion) {",
+              path,
+            )
+            write(path, text)
+
+          # The evidence ticker is static until motion preference is known.
+          path = "src/sections/Work/WorkProofStrip.tsx"
+          text = read(path)
+          text = replace_once(
+            text,
+            'import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";',
+            'import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";',
+            path,
+          )
+          text = replace_once(
+            text,
+            "const prefersReducedMotion = useHydratedReducedMotion();",
+            "const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();\n  const shouldAnimate = hydrated && !prefersReducedMotion;",
+            path,
+          )
+          text = replace_once(text, "{prefersReducedMotion ? (", "{!shouldAnimate ? (", path)
+          write(path, text)
+
+          # Case-study video renders its poster until hydration establishes that
+          # motion is allowed, preventing both mismatched HTML and a one-frame
+          # autoplay leak for Reduce users.
+          path = "src/sections/Work/CaseStudyExperience.tsx"
+          text = read(path)
+          text = replace_once(
+            text,
+            'import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";',
+            'import { useHydratedMotionPreference, useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";',
+            path,
+          )
+          text = replace_once(
+            text,
+            "const prefersReducedMotion = useHydratedReducedMotion();",
+            "const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();",
+            path,
+          )
+          text = replace_once(
+            text,
+            "if (!video || prefersReducedMotion) return;",
+            "if (!hydrated || !video || prefersReducedMotion) return;",
+            path,
+          )
+          text = replace_once(
+            text,
+            "}, [prefersReducedMotion]);",
+            "}, [hydrated, prefersReducedMotion]);",
+            path,
+          )
+          text = replace_once(
+            text,
+            "if (!src || prefersReducedMotion) {",
+            "if (!hydrated || !src || prefersReducedMotion) {",
+            path,
+          )
+          write(path, text)
+
+          # MotionConfig governs Motion components. Bespoke DOM/media fallbacks
+          # use the hydration-safe hook above rather than reading matchMedia
+          # during hydration.
+          path = "src/components/MotionPreference.tsx"
+          text = read(path)
+          needle = '  const reducedMotion = !hydrated ? "never" : pref === "reduced" ? "always" : "user";'
+          replacement = '''  // MotionConfig governs Motion components. Bespoke DOM and media
+          // fallbacks use useHydratedReducedMotion so they never branch while
+          // React is hydrating server-rendered markup.
+          const reducedMotion = !hydrated ? "never" : pref === "reduced" ? "always" : "user";'''
+          replacement = "\n".join(line[10:] if line.startswith("          ") else line for line in replacement.splitlines())
+          text = replace_once(text, needle, replacement, path)
+          write(path, text)
+
+          WORKFLOW_PATH.unlink()
+
+          remaining = []
+          for path in sorted((ROOT / "src").rglob("*.tsx")):
+            text = path.read_text(encoding="utf-8")
+            if "useReducedMotion" in text:
+              remaining.append(str(path))
+          if remaining:
+            raise RuntimeError(f"Raw useReducedMotion references remain: {remaining}")
+
+          print(f"Created {HOOK_PATH}")
+          print(f"Codemodded {len(changed)} client files")
+          PY
+
+            pnpm install --frozen-lockfile
+            pnpm build
+
+            git add src .github/workflows/apply-hydration-safe-motion.yml
+            if git diff --cached --quiet; then
+              echo "Patch already present on the latest branch."
+              exit 0
+            fi
+
+            git commit -m "Make reduced-motion rendering hydration-safe"
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              echo "Hydration-safe motion patch published."
+              exit 0
+            fi
+
+            echo "Branch moved during verification; replaying on the newest head."
+          done
+
+          echo "Could not publish after three conflict-safe attempts."
+          exit 1
