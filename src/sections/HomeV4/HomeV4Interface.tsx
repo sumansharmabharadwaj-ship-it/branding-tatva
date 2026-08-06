@@ -11,8 +11,11 @@ import {
 } from "@/hooks/useHomeGuideMode";
 
 const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
-const DWELL_MS = [4700, 4400, 4700, 5300, 4700, 4900, 5300, 4900, 4600, 4600, 5200];
-const GUIDE_HINT_MS = 8200;
+// The live V4 guide previously held each chapter for 4.4–5.3 seconds. These
+// chapter dwell times are about 30% shorter, while complex chapters still get
+// a little more room than simple recognition or decision beats.
+const DWELL_MS = [3300, 3100, 3300, 3700, 3300, 3400, 3700, 3400, 3200, 3200, 3600];
+const GUIDE_HINT_MS = 6200;
 const CHAPTER_NAMES = [
   "opening signal",
   "recognition",
@@ -69,7 +72,7 @@ export function GuidedView() {
 
       if (lenis) {
         lenis.scrollTo(target, {
-          duration: 0.82,
+          duration: 0.72,
           easing: (value: number) => 1 - Math.pow(1 - value, 4),
         });
       } else {
@@ -81,7 +84,7 @@ export function GuidedView() {
 
       releaseTimerRef.current = window.setTimeout(() => {
         guidedScrollRef.current = false;
-      }, 1050);
+      }, 900);
     },
     [lenis, prefersReducedMotion, resolveChapters],
   );
@@ -175,7 +178,7 @@ export function GuidedView() {
       return;
     }
 
-    const duration = DWELL_MS[Math.min(activeIndex, DWELL_MS.length - 1)] ?? 4700;
+    const duration = DWELL_MS[Math.min(activeIndex, DWELL_MS.length - 1)] ?? 3300;
     const startedAt = performance.now();
 
     function tick(now: number) {
@@ -200,9 +203,19 @@ export function GuidedView() {
     if (prefersReducedMotion) return;
 
     function takeControl(event: Event) {
-      if (guidedScrollRef.current) return;
       const target = event.target;
       if (target instanceof Element && target.closest("[data-guided-controls]")) return;
+
+      // Real wheel/touch/pointer/key input always wins, even while the guide's
+      // short Lenis transition is still settling. Auto-scrolling itself does
+      // not emit these input events, so there is no need to ignore them during
+      // a guided move.
+      if (guidedScrollRef.current) {
+        window.clearTimeout(releaseTimerRef.current);
+        guidedScrollRef.current = false;
+        if (lenis) lenis.scrollTo(window.scrollY, { immediate: true });
+        else window.scrollTo({ top: window.scrollY, behavior: "auto" });
+      }
 
       dismissHint();
       setMode("manual");
@@ -223,7 +236,7 @@ export function GuidedView() {
       window.clearTimeout(hintTimerRef.current);
       window.cancelAnimationFrame(progressFrameRef.current);
     };
-  }, [dismissHint, prefersReducedMotion]);
+  }, [dismissHint, lenis, prefersReducedMotion]);
 
   if (prefersReducedMotion) return null;
 
@@ -234,11 +247,11 @@ export function GuidedView() {
   const label = atFinalChapter
     ? "journey complete"
     : mode === "guided"
-      ? "the page is moving with you"
+      ? "guided view active"
       : mode === "paused"
-        ? "guided journey paused"
+        ? "guided view paused"
         : showHint
-          ? "play the journey"
+          ? "play the guided view"
           : "explore at your pace";
   const detail = atFinalChapter
     ? "the invitation"
