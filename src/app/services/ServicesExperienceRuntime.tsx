@@ -32,6 +32,7 @@ export function ServicesExperienceRuntime() {
 
     document.documentElement.dataset.servicesExperience = "active";
     const ratios = new Map<HTMLElement, number>();
+    const signalLayers = new Map<HTMLElement, HTMLSpanElement>();
     let activeIndex = 0;
     let frame = 0;
 
@@ -40,6 +41,12 @@ export function ServicesExperienceRuntime() {
         scene.dataset.servicesScene || scene.id || (index === 0 ? "opening" : `scene-${index + 1}`);
       scene.dataset.servicesScrollIndex = String(index);
       scene.style.setProperty("--services-scene-progress", index === 0 ? "0" : "-1");
+
+      const signal = document.createElement("span");
+      signal.dataset.servicesSceneSignal = "true";
+      signal.setAttribute("aria-hidden", "true");
+      scene.appendChild(signal);
+      signalLayers.set(scene, signal);
     });
 
     function publishChapter(index: number) {
@@ -103,7 +110,12 @@ export function ServicesExperienceRuntime() {
         scene.style.setProperty("--services-scene-presence", centred.toFixed(4));
         scene.style.setProperty("--services-scene-signal-x", `${(progress * 100).toFixed(3)}%`);
 
-        const phase = bounds.top > viewportHeight * 0.35 ? "entering" : bounds.bottom < viewportHeight * 0.65 ? "leaving" : "present";
+        const phase =
+          bounds.top > viewportHeight * 0.35
+            ? "entering"
+            : bounds.bottom < viewportHeight * 0.65
+              ? "leaving"
+              : "present";
         scene.dataset.servicesPhase = phase;
       });
     }
@@ -131,6 +143,7 @@ export function ServicesExperienceRuntime() {
       document.documentElement.style.removeProperty("--services-chapter-angle");
 
       scenes.forEach((scene) => {
+        signalLayers.get(scene)?.remove();
         delete scene.dataset.servicesScrollScene;
         delete scene.dataset.servicesScrollIndex;
         delete scene.dataset.servicesActive;
@@ -139,6 +152,7 @@ export function ServicesExperienceRuntime() {
         scene.style.removeProperty("--services-scene-presence");
         scene.style.removeProperty("--services-scene-signal-x");
       });
+      signalLayers.clear();
     };
   }, []);
 
