@@ -21,9 +21,27 @@ export function DecisionEvidenceGallery() {
   const [openId, setOpenId] = useState<string | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
 
-  function toggle(id: string) {
+  function keepMobileTriggerInView(trigger: HTMLButtonElement) {
+    if (!window.matchMedia("(max-width: 639px)").matches) return;
+
+    const settleDelay = prefersReducedMotion ? 0 : Math.ceil(motionTokens.durationBase * 1000) + 80;
+    window.setTimeout(() => {
+      window.requestAnimationFrame(() => {
+        if (!trigger.isConnected) return;
+        trigger.focus({ preventScroll: true });
+        trigger.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "center",
+          inline: "nearest",
+        });
+      });
+    }, settleDelay);
+  }
+
+  function toggle(id: string, trigger: HTMLButtonElement) {
     const next = openId === id ? null : id;
     setOpenId(next);
+    keepMobileTriggerInView(trigger);
     if (next) track("decision_artifact_expanded", { artifact: id });
   }
 
@@ -73,7 +91,7 @@ export function DecisionEvidenceGallery() {
                     aria-expanded={open}
                     aria-controls={panelId}
                     aria-label={`${open ? "Close" : "Inspect"} ${artifact.kind}: ${artifact.question}`}
-                    onClick={() => toggle(artifact.id)}
+                    onClick={(event) => toggle(artifact.id, event.currentTarget)}
                     className={`w-full text-left focus-visible:outline focus-visible:outline-2 ${
                       open
                         ? "p-4 sm:p-6"
@@ -141,7 +159,10 @@ export function DecisionEvidenceGallery() {
                             ] as const
                           ).map(([label, text]) => (
                             <div key={label}>
-                              <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em] sm:text-[0.6rem] sm:tracking-[0.18em]" style={{ color: WORK.sage }}>
+                              <p
+                                className="text-[0.58rem] font-medium uppercase tracking-[0.17em] sm:text-[0.6rem] sm:tracking-[0.18em]"
+                                style={{ color: WORK.sage }}
+                              >
                                 {label}
                               </p>
                               <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "rgba(242,240,232,0.9)" }}>
@@ -151,7 +172,10 @@ export function DecisionEvidenceGallery() {
                           ))}
                         </div>
                         {project && (
-                          <div className="border-t px-4 pb-5 pt-4 sm:px-6" style={{ borderColor: "rgba(143,174,131,0.25)" }}>
+                          <div
+                            className="border-t px-4 pb-5 pt-4 sm:px-6"
+                            style={{ borderColor: "rgba(143,174,131,0.25)" }}
+                          >
                             <Link
                               href={`/work/${project.slug}`}
                               className="link-underline inline-flex items-center gap-2 text-sm font-medium"
