@@ -378,9 +378,59 @@ async function auditServicesViewport(browser, viewport) {
   const compareButton = desire.getByRole("button", { name: "Compare all three side by side", exact: true });
   await compareButton.click();
   assert((await compareButton.getAttribute("aria-pressed")) === "true", `${label}: comparison did not expose its pressed state`);
+
+  const comparisonDeck = desire.locator('[data-package-comparison-deck="true"]');
+  await comparisonDeck.waitFor({ state: "visible", timeout: 8_000 });
+  const comparisonCards = comparisonDeck.locator('[data-package-comparison-card="true"]');
+  await waitForCount(comparisonCards, 3, `${label}: package comparison cards`);
+  const comparisonLinks = comparisonDeck.getByRole("link", { name: /Start with /i });
+  await waitForCount(comparisonLinks, 3, `${label}: package comparison links`);
+  await assertTouchTargets(comparisonLinks, 40, `${label}: package comparison links`);
   for (const name of ["Foundation", "Full Brand System", "Brand Partnership"]) {
-    assert((await desire.getByRole("link", { name: new RegExp(`Start with ${name}`, "i") }).count()) === 1, `${label}: comparison is missing ${name}`);
+    assert(
+      (await comparisonDeck.getByRole("link", { name: new RegExp(`Start with ${name}`, "i") }).count()) === 1,
+      `${label}: comparison is missing ${name}`,
+    );
   }
+
+  const comparisonControls = comparisonDeck.locator('[data-package-comparison-controls="true"]');
+  if (viewport.width < 1024) {
+    assert((await visibleCount(comparisonControls)) === 1, `${label}: compact comparison controls are not visible`);
+    const comparisonArrows = comparisonControls.getByRole("button");
+    await waitForCount(comparisonArrows, 2, `${label}: package comparison arrows`);
+    await assertTouchTargets(comparisonArrows, 40, `${label}: package comparison arrows`);
+    const comparisonDots = comparisonDeck.getByRole("group", { name: "Choose a package comparison" }).getByRole("button");
+    await waitForCount(comparisonDots, 3, `${label}: package comparison position controls`);
+    await assertTouchTargets(comparisonDots, 40, `${label}: package comparison position controls`);
+    const track = comparisonDeck.getByRole("list", { name: "All three package comparisons" });
+    const trackMetrics = await track.evaluate((node) => ({
+      clientWidth: node.clientWidth,
+      scrollWidth: node.scrollWidth,
+    }));
+    assert(
+      trackMetrics.scrollWidth > trackMetrics.clientWidth,
+      `${label}: compact package comparison is not horizontally scrollable`,
+    );
+    await comparisonControls.getByRole("button", { name: "Next package", exact: true }).click();
+    assert(
+      (await comparisonDeck.getAttribute("data-active-index")) === "1",
+      `${label}: package comparison did not advance to the second card`,
+    );
+  } else {
+    assert((await visibleCount(comparisonControls)) === 0, `${label}: mobile comparison controls remain visible on desktop`);
+    const cardBoxes = await comparisonCards.evaluateAll((nodes) =>
+      nodes.map((node) => {
+        const rect = node.getBoundingClientRect();
+        return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+      }),
+    );
+    const yValues = cardBoxes.map((box) => box.y);
+    assert(
+      Math.max(...yValues) - Math.min(...yValues) < 3,
+      `${label}: desktop package cards are no longer side by side ${JSON.stringify(cardBoxes)}`,
+    );
+  }
+
   if (viewport.screenshots) await captureViewport(page, `services-${viewport.name}-package-comparison.png`);
 
   const verifiedHeading = page.getByRole("heading", { level: 2, name: /eight weeks of exactly this work/i }).first();
@@ -600,6 +650,8 @@ async function auditServicesViewport(browser, viewport) {
     screenFitScenes: 10,
     carriedRecommendation: true,
     packageChoices: 3,
+    packageComparisonCards: 3,
+    compactPackageComparison: true,
     perceptionRungs: 4,
     deliverables: 14,
     deliverableDrawers: 5,
