@@ -74,8 +74,10 @@ jobs:
 
           config_path = Path("vercel.json")
           config = json.loads(config_path.read_text(encoding="utf-8"))
-          enabled = config.setdefault("git", {}).setdefault("deploymentEnabled", {})
-          enabled.pop("preview/cinematic-release", None)
+          # Staging disables every automatic Git deployment. The release
+          # commit removes that global lock only after the production build
+          # has succeeded, so its push creates exactly one Vercel preview.
+          config.setdefault("git", {}).pop("deploymentEnabled", None)
           config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
 
           release_dir = Path(".release")
