@@ -93,69 +93,71 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
           </p>
         </Reveal>
 
-        <div className="mt-8 lg:hidden" aria-live="polite" aria-atomic="true">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.article
-              id="mobile-work-preview"
-              key={current.slug}
-              data-mobile-work-preview
-              initial={animateTransitions ? { opacity: 0, y: 10 } : false}
-              animate={{ opacity: 1, y: 0 }}
-              exit={animateTransitions ? { opacity: 0, y: -8 } : undefined}
-              transition={{ duration: animateTransitions ? 0.38 : 0, ease: EASE_ORGANIC }}
-              className="overflow-hidden rounded-[1.4rem] border shadow-[0_18px_55px_rgba(31,58,40,0.1)]"
-              style={{ borderColor: WORK.stone + "88", backgroundColor: WORK.forest }}
-            >
-              <Link
-                href={`/work/${current.slug}`}
-                onClick={() => openProject(current, "mobile_active_work_preview")}
-                className="group block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
-                style={{ outlineColor: WORK.moss }}
-              >
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={currentRecord.evidencePoster}
-                    alt={`${current.title} evidence diagram`}
-                    className="absolute inset-0 h-full w-full object-contain"
-                    loading="eager"
-                    decoding="async"
-                  />
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-x-0 bottom-0 h-16"
-                    style={{ background: "linear-gradient(180deg, transparent, rgba(8,12,10,0.28))" }}
-                  />
-                </div>
-
-                <div className="border-t p-5" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: WORK.sand }}>
-                        {currentRecord.evidenceLabel} · {current.industry}
-                      </p>
-                      <h3 className="mt-1 font-display text-3xl font-normal leading-tight text-white">{current.title}</h3>
+        <div className="mt-8 grid gap-4 lg:mt-10 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
+          <div className="order-1 lg:order-2" aria-live="polite" aria-atomic="true">
+            <div className="lg:sticky lg:top-28">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.article
+                  id="active-work-preview"
+                  key={current.slug}
+                  data-active-work-preview
+                  initial={animateTransitions ? { opacity: 0, y: 10 } : false}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={animateTransitions ? { opacity: 0, y: -8 } : undefined}
+                  transition={{ duration: animateTransitions ? 0.38 : 0, ease: EASE_ORGANIC }}
+                  className="overflow-hidden rounded-[1.4rem] border shadow-[0_18px_55px_rgba(31,58,40,0.1)]"
+                  style={{ borderColor: WORK.stone + "88", backgroundColor: WORK.forest }}
+                >
+                  <Link
+                    href={`/work/${current.slug}`}
+                    onClick={() => openProject(current, "active_work_preview")}
+                    className="group block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
+                    style={{ outlineColor: WORK.moss }}
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={currentRecord.evidencePoster}
+                        alt={`${current.title} evidence diagram`}
+                        className="absolute inset-0 h-full w-full object-contain"
+                        loading="eager"
+                        decoding="async"
+                      />
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-x-0 bottom-0 h-16"
+                        style={{ background: "linear-gradient(180deg, transparent, rgba(8,12,10,0.28))" }}
+                      />
                     </div>
-                    <span
-                      className="shrink-0 rounded-full border px-2.5 py-1 text-[0.54rem] font-medium uppercase tracking-[0.11em]"
-                      style={{ borderColor: "rgba(255,255,255,0.22)", color: WORK.sage }}
-                    >
-                      {currentRecord.tier === "flagship" ? "Flagship" : "Project story"}
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm leading-relaxed text-white/78">{decisiveLine(current)}</p>
-                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-white">
-                    {currentRecord.tier === "flagship" ? "Open the case study" : "Open the project story"}
-                    <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-                  </span>
-                </div>
-              </Link>
-            </motion.article>
-          </AnimatePresence>
-        </div>
 
-        <div className="mt-4 grid gap-12 lg:mt-10 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
-          <div role="list" aria-label="Filtered projects">
+                    <div className="border-t p-5" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                          <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: WORK.sand }}>
+                            {currentRecord.evidenceLabel} · {current.industry}
+                          </p>
+                          <h3 className="mt-1 font-display text-3xl font-normal leading-tight text-white">{current.title}</h3>
+                        </div>
+                        <span
+                          className="shrink-0 rounded-full border px-2.5 py-1 text-[0.54rem] font-medium uppercase tracking-[0.11em]"
+                          style={{ borderColor: "rgba(255,255,255,0.22)", color: WORK.sage }}
+                        >
+                          {currentRecord.tier === "flagship" ? "Flagship" : "Project story"}
+                        </span>
+                      </div>
+                      <p className="mt-3 text-sm leading-relaxed text-white/78">{decisiveLine(current)}</p>
+                      <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-white">
+                        {currentRecord.tier === "flagship" ? "Open the case study" : "Open the project story"}
+                        <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                      </span>
+                    </div>
+                  </Link>
+                </motion.article>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          <div role="list" aria-label="Filtered projects" className="order-2 lg:order-1">
             <AnimatePresence mode="popLayout" initial={false}>
               {filtered.map((project, index) => {
                 const isActive = active === index;
@@ -174,7 +176,7 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                     <button
                       type="button"
                       aria-pressed={isActive}
-                      aria-controls="mobile-work-preview"
+                      aria-controls="active-work-preview"
                       onClick={() => setActive(index)}
                       className="grid min-h-[4.75rem] w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-3 border-t px-1 py-3 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 lg:hidden"
                       style={{
@@ -272,39 +274,6 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
               })}
             </AnimatePresence>
             <div className="h-px" style={{ backgroundColor: WORK.stone + "66" }} aria-hidden="true" />
-          </div>
-
-          <div className="relative hidden lg:block">
-            <div className="sticky top-28 overflow-hidden rounded-2xl" style={{ backgroundColor: WORK.mist }}>
-              <div className="relative aspect-[4/3]">
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.img
-                    key={current.slug}
-                    src={currentRecord.evidencePoster}
-                    alt={`${current.title} evidence diagram`}
-                    className="absolute inset-0 h-full w-full object-cover"
-                    initial={animateTransitions ? { opacity: 0, scale: 1.02 } : false}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={animateTransitions ? { opacity: 0 } : undefined}
-                    transition={{ duration: animateTransitions ? 0.52 : 0, ease: EASE_ORGANIC }}
-                  />
-                </AnimatePresence>
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0"
-                  style={{ background: "linear-gradient(180deg, transparent 58%, rgba(10,14,12,0.48) 100%)" }}
-                />
-                <p className="absolute bottom-4 left-4 rounded-full bg-black/30 px-3 py-1 text-[0.58rem] font-medium uppercase tracking-[0.14em] text-white backdrop-blur-sm">
-                  {currentRecord.tier === "flagship" ? "Flagship case study" : "Project story"}
-                </p>
-              </div>
-              <div className="flex items-baseline justify-between gap-4 px-5 py-4" style={{ backgroundColor: WORK.forest }}>
-                <p className="font-display text-lg font-normal text-white">{current.title}</p>
-                <p className="text-right text-[0.58rem] uppercase tracking-[0.14em]" style={{ color: WORK.sage }}>
-                  {currentRecord.evidenceLabel}
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </Container>
