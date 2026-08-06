@@ -1,0 +1,423 @@
+name: Insights recall guide source and release gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/insights-authority-hub
+    paths:
+      - .github/workflows/insights-recall-sources-qa.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-insights-recall-sources
+  cancel-in-progress: true
+
+jobs:
+  integrate-and-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+
+    steps:
+      - name: Check out the Insights authority branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/insights-authority-hub
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/images/*
+            /public/videos/pixabay-sea-of-fog-sunrise.mp4
+            /public/images/pixabay-sea-of-fog-sunrise-poster.jpg
+            /public/videos/own-jagged-peaks.mp4
+            /public/images/own-jagged-peaks.jpg
+            /public/videos/pixabay-campfire-conversation.mp4
+            /public/images/pixabay-campfire-conversation-poster.jpg
+
+      - name: Add visible research sources and citation schema
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("src/app/insights/[slug]/page.tsx")
+          source = path.read_text()
+
+          props_before = '''type Props = {
+            params: Promise<{ slug: string }>;
+          };'''.replace("          ", "")
+          props_after = '''type Props = {
+            params: Promise<{ slug: string }>;
+          };
+
+          type InsightResearchSource = {
+            title: string;
+            publisher: string;
+            url: string;
+            note?: string;
+          };
+
+          type InsightPostWithSources = InsightPost & {
+            sources?: InsightResearchSource[];
+          };'''.replace("          ", "")
+          if props_before not in source:
+              raise SystemExit("Props anchor was not found")
+          source = source.replace(props_before, props_after, 1)
+
+          robots_before = '    robots: { index: true, follow: true },'
+          robots_after = '''    robots: {
+              index: true,
+              follow: true,
+              googleBot: {
+                index: true,
+                follow: true,
+                "max-video-preview": -1,
+                "max-image-preview": "large",
+                "max-snippet": -1,
+              },
+            },'''.replace("            ", "")
+          if robots_before not in source:
+              raise SystemExit("Robots metadata anchor was not found")
+          source = source.replace(robots_before, robots_after, 1)
+
+          post_before = '''  if (!post) notFound();
+
+            const element = elements.find((item) => item.slug === post.element);'''.replace("            ", "")
+          post_after = '''  if (!post) notFound();
+
+            const sources = (post as InsightPostWithSources).sources ?? [];
+            const element = elements.find((item) => item.slug === post.element);'''.replace("            ", "")
+          if post_before not in source:
+              raise SystemExit("Post narrowing anchor was not found")
+          source = source.replace(post_before, post_after, 1)
+
+          about_before = '        about: [post.primaryKeyword, ...post.secondaryKeywords],'
+          about_after = '''        about: [post.primaryKeyword, ...post.secondaryKeywords],
+                ...(sources.length > 0
+                  ? { citation: sources.map((researchSource) => researchSource.url) }
+                  : {}),'''.replace("                ", "")
+          if about_before not in source:
+              raise SystemExit("Structured-data about anchor was not found")
+          source = source.replace(about_before, about_after, 1)
+
+          toc_before = '''                      <li>
+                        <a
+                          href="#frequent-questions"'''
+          toc_after = '''                      {sources.length > 0 && (
+                        <li>
+                          <a
+                            href="#research-sources"
+                            className="text-xs leading-5 text-foreground-secondary transition hover:text-soil"
+                          >
+                            Research sources
+                          </a>
+                        </li>
+                      )}
+                      <li>
+                        <a
+                          href="#frequent-questions"'''
+          if toc_before not in source:
+              raise SystemExit("Article contents anchor was not found")
+          source = source.replace(toc_before, toc_after, 1)
+
+          author_before = '''                  <Reveal>
+                    <aside className="mt-16 grid gap-6 rounded-[1.5rem] border border-soil/10 bg-background-alt p-6 sm:grid-cols-[auto_1fr] sm:items-center sm:p-8">'''
+          sources_block = '''                  {sources.length > 0 && (
+                    <Reveal>
+                      <section
+                        id="research-sources"
+                        aria-labelledby="research-sources-heading"
+                        className="scroll-mt-32 pt-20"
+                      >
+                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+                          Research sources
+                        </p>
+                        <h2
+                          id="research-sources-heading"
+                          className="mt-4 font-display text-display-sm font-normal text-soil"
+                        >
+                          The evidence beneath the method.
+                        </h2>
+                        <p className="mt-5 max-w-2xl text-base leading-8 text-foreground-secondary">
+                          These sources establish the survey, memory, and measurement principles used in this guide. The practical recommendations are Branding Tatva&apos;s application of that evidence to smaller service businesses.
+                        </p>
+                        <ol className="mt-8 grid gap-4">
+                          {sources.map((researchSource, index) => (
+                            <li
+                              key={researchSource.url}
+                              className="rounded-[1.25rem] border border-soil/10 bg-background-alt p-5"
+                            >
+                              <div className="flex gap-4">
+                                <span
+                                  className="font-display text-2xl leading-none"
+                                  style={{ color }}
+                                  aria-hidden="true"
+                                >
+                                  {String(index + 1).padStart(2, "0")}
+                                </span>
+                                <div className="min-w-0">
+                                  <a
+                                    href={researchSource.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="link-underline font-medium text-soil"
+                                  >
+                                    {researchSource.title}
+                                    <span aria-hidden="true"> ↗</span>
+                                  </a>
+                                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-clay">
+                                    {researchSource.publisher}
+                                  </p>
+                                  {researchSource.note && (
+                                    <p className="mt-3 text-sm leading-7 text-foreground-secondary">
+                                      {researchSource.note}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </li>
+                          ))}
+                        </ol>
+                      </section>
+                    </Reveal>
+                  )}
+
+                  <Reveal>
+                    <aside className="mt-16 grid gap-6 rounded-[1.5rem] border border-soil/10 bg-background-alt p-6 sm:grid-cols-[auto_1fr] sm:items-center sm:p-8">'''
+          if author_before not in source:
+              raise SystemExit("Author card anchor was not found")
+          source = source.replace(author_before, sources_block, 1)
+
+          path.write_text(source)
+          PY
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install application and browser dependencies
+        run: |
+          pnpm install --no-frozen-lockfile
+          pnpm add --save-dev --lockfile=false playwright@1.54.2
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Build the production application
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+        run: pnpm build
+
+      - name: Start the production application
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+        run: |
+          pnpm start --hostname 127.0.0.1 --port 3000 > /tmp/branding-tatva-insights.log 2>&1 &
+          echo $! > /tmp/branding-tatva-insights.pid
+          for attempt in {1..90}; do
+            if curl --fail --silent http://127.0.0.1:3000/insights/measure-brand-recall-limited-budget > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/branding-tatva-insights.log
+          exit 1
+
+      - name: Audit article, archive, topic, feed, sitemap, and AI index
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: |
+          mkdir -p insights-recall-qa
+          cat > /tmp/insights-recall-audit.cjs <<'JS'
+          const { chromium } = require("playwright");
+          const fs = require("fs");
+
+          const base = process.env.AUDIT_BASE_URL;
+          const slug = "measure-brand-recall-limited-budget";
+          const articlePath = `/insights/${slug}`;
+          const expectedSources = [
+            "marketingscience.info/news-and-insights/mental-availability-is-not-awareness-brand-salience-is-not-awareness",
+            "marketingscience.info/learn-with-us/commercial-research/identifying-and-prioritising-category-entry-points",
+            "aapor.org/standards-and-ethics/best-practices",
+            "pewresearch.org/writing-survey-questions",
+            "pewresearch.org/methods/2016/05/02/evaluating-online-nonprobability-surveys",
+            "qualtrics.com/en-au/articles/strategy-research/what-is-brand-awareness",
+          ];
+          const failures = [];
+          const report = { articlePath, profiles: [], resources: {}, failures };
+          const browser = await chromium.launch({ headless: true });
+
+          for (const profile of [
+            { name: "mobile-390", viewport: { width: 390, height: 844 } },
+            { name: "desktop-1440", viewport: { width: 1440, height: 900 } },
+          ]) {
+            const context = await browser.newContext({
+              viewport: profile.viewport,
+              reducedMotion: "no-preference",
+            });
+            const page = await context.newPage();
+            page.setDefaultTimeout(12000);
+            const consoleErrors = [];
+            const pageErrors = [];
+
+            page.on("console", (message) => {
+              if (
+                message.type() === "error" &&
+                !message.text().includes("/_vercel/")
+              ) {
+                consoleErrors.push(message.text());
+              }
+            });
+            page.on("pageerror", (error) => pageErrors.push(error.message));
+
+            await page.goto(`${base}${articlePath}`, { waitUntil: "domcontentloaded" });
+            await page.waitForTimeout(1400);
+
+            const heading = (await page.locator("h1").textContent())?.trim();
+            if (heading !== "How to measure brand recall with a limited research budget") {
+              failures.push(`${profile.name}: unexpected H1 ${heading}`);
+            }
+
+            const sourceSection = page.locator("#research-sources");
+            if ((await sourceSection.count()) !== 1) {
+              failures.push(`${profile.name}: research source section missing`);
+            }
+
+            const links = await sourceSection.locator('a[target="_blank"]').evaluateAll((items) =>
+              items.map((item) => item.href),
+            );
+            if (links.length !== expectedSources.length) {
+              failures.push(`${profile.name}: expected ${expectedSources.length} source links, found ${links.length}`);
+            }
+            for (const expected of expectedSources) {
+              if (!links.some((link) => link.includes(expected))) {
+                failures.push(`${profile.name}: missing source ${expected}`);
+              }
+            }
+
+            const geometry = await page.evaluate(() => ({
+              documentWidth: document.documentElement.scrollWidth,
+              viewportWidth: window.innerWidth,
+              overflow: document.documentElement.scrollWidth > window.innerWidth + 1,
+            }));
+            if (geometry.overflow) {
+              failures.push(`${profile.name}: horizontal overflow ${geometry.documentWidth}/${geometry.viewportWidth}`);
+            }
+
+            const jsonLd = await page.locator('script[type="application/ld+json"]').allTextContents();
+            const structured = JSON.parse(jsonLd.at(-1));
+            const article = structured["@graph"].find((item) => item["@type"] === "BlogPosting");
+            if (!Array.isArray(article?.citation) || article.citation.length !== expectedSources.length) {
+              failures.push(`${profile.name}: BlogPosting citation array is incomplete`);
+            }
+
+            const heroVideo = page.locator("article header video").first();
+            if ((await heroVideo.count()) !== 1) {
+              failures.push(`${profile.name}: hero video missing`);
+            } else {
+              const media = await heroVideo.evaluate(async (video) => {
+                const before = video.currentTime;
+                try { await video.play(); } catch {}
+                await new Promise((resolve) => setTimeout(resolve, 900));
+                return {
+                  before,
+                  after: video.currentTime,
+                  readyState: video.readyState,
+                  error: video.error ? video.error.code : null,
+                };
+              });
+              if (media.error || media.readyState < 2 || media.after <= media.before + 0.04) {
+                failures.push(`${profile.name}: hero media did not advance ${JSON.stringify(media)}`);
+              }
+            }
+
+            if (consoleErrors.length) failures.push(`${profile.name}: console ${consoleErrors.join(" | ")}`);
+            if (pageErrors.length) failures.push(`${profile.name}: page ${pageErrors.join(" | ")}`);
+
+            await page.screenshot({
+              path: `insights-recall-qa/${profile.name}-article.png`,
+              fullPage: false,
+              animations: "disabled",
+            });
+            await sourceSection.scrollIntoViewIfNeeded();
+            await page.waitForTimeout(300);
+            await page.screenshot({
+              path: `insights-recall-qa/${profile.name}-sources.png`,
+              fullPage: false,
+              animations: "disabled",
+            });
+
+            report.profiles.push({ name: profile.name, heading, links, geometry, consoleErrors, pageErrors });
+            await context.close();
+          }
+
+          const browserPage = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+          await browserPage.goto(`${base}/insights`, { waitUntil: "domcontentloaded" });
+          if ((await browserPage.getByText("How to measure brand recall with a limited research budget", { exact: true }).count()) < 1) {
+            failures.push("archive: article is not discoverable");
+          }
+          await browserPage.goto(`${base}/insights/topic/brand-memory`, { waitUntil: "domcontentloaded" });
+          if ((await browserPage.getByText("How to measure brand recall with a limited research budget", { exact: true }).count()) < 1) {
+            failures.push("topic: article is not registered in Brand memory");
+          }
+          await browserPage.close();
+
+          for (const resource of ["/sitemap.xml", "/insights/feed.xml", "/llms.txt"]) {
+            const response = await fetch(`${base}${resource}`);
+            const body = await response.text();
+            report.resources[resource] = { status: response.status, containsSlug: body.includes(slug) };
+            if (!response.ok || !body.includes(slug)) {
+              failures.push(`${resource}: missing ${slug} or response failed`);
+            }
+          }
+
+          await browser.close();
+          fs.writeFileSync("insights-recall-qa/report.json", JSON.stringify(report, null, 2));
+          const summary = [
+            "# Branding Tatva recall guide release gate",
+            "",
+            `- Profiles: ${report.profiles.length}`,
+            `- Visible research sources: ${expectedSources.length}`,
+            `- Archive, topic, sitemap, feed, and llms registration: checked`,
+            `- Failures: ${failures.length}`,
+            "",
+            ...(failures.length ? failures.map((failure) => `- ${failure}`) : ["- None"]),
+            "",
+          ].join("\n");
+          fs.writeFileSync("insights-recall-qa/summary.md", summary);
+          console.log(summary);
+          if (failures.length) process.exit(1);
+          JS
+          node /tmp/insights-recall-audit.cjs
+
+      - name: Commit the cited article experience
+        run: |
+          git config user.name "branding-tatva-release-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add 'src/app/insights/[slug]/page.tsx'
+          git commit -m "Expose research sources in the Insight article contract"
+          git push origin HEAD:feat/insights-authority-hub
+
+      - name: Stop the application
+        if: always()
+        run: |
+          if [ -f /tmp/branding-tatva-insights.pid ]; then
+            kill "$(cat /tmp/branding-tatva-insights.pid)" || true
+          fi
+
+      - name: Upload recall guide evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: branding-tatva-insights-recall-guide-qa
+          path: insights-recall-qa/*
+          if-no-files-found: warn
+          retention-days: 7

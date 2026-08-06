@@ -1,16 +1,5 @@
 import type { NextConfig } from "next";
 
-// The only third-party browser-side resources this site actually loads
-// are Calendly's widget script and its iframe (confirmed by grepping
-// every https:// literal in src/ — everything else is either a plain
-// <a> link, a server-side-only fetch in an API route, or same-origin).
-// 'unsafe-inline' stays on script-src/style-src rather than a nonce
-// setup: this site's JSON-LD blocks (dangerouslySetInnerHTML, several
-// pages) and its heavy use of Framer Motion/GSAP/Tailwind arbitrary
-// inline styles would both need a much larger retrofit to run under a
-// strict nonce-based policy, and getting that wrong silently breaks
-// pages rather than failing loudly — a scoped allowlist is the safer
-// tradeoff for this codebase today.
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://assets.calendly.com",
@@ -32,6 +21,35 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: "/blog",
+        destination: "/insights",
+        permanent: true,
+      },
+      {
+        source: "/blog/five-elements-working-as-one",
+        destination: "/insights/five-element-brand-strategy-framework",
+        permanent: true,
+      },
+      {
+        source: "/blog/visible-versus-remembered",
+        destination: "/insights/brand-awareness-vs-brand-recall",
+        permanent: true,
+      },
+      {
+        source: "/blog/what-a-brand-audit-actually-finds",
+        destination: "/insights/brand-audit-checklist-before-rebrand",
+        permanent: true,
+      },
+      {
+        source: "/blog/:slug",
+        destination: "/insights/:slug",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
@@ -40,9 +58,18 @@ const nextConfig: NextConfig = {
           { key: "Content-Security-Policy", value: CSP },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
-          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
         ],
       },
     ];
