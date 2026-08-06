@@ -158,14 +158,27 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                           })}
                         </span>
 
-                        <span className="mt-4 block overflow-hidden rounded-2xl lg:hidden">
+                        <span
+                          className="mt-4 block overflow-hidden rounded-2xl border lg:hidden"
+                          style={{ borderColor: WORK.stone + "88", backgroundColor: WORK.forest }}
+                        >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={record.evidencePoster}
                             alt={`${project.title} evidence diagram`}
-                            className="block h-40 w-full object-cover"
+                            className="block aspect-[4/3] w-full object-contain"
                             loading="lazy"
+                            decoding="async"
+                            data-work-index-poster
                           />
+                        </span>
+
+                        <span
+                          className="mt-3 inline-flex items-center gap-2 text-sm font-medium sm:hidden"
+                          style={{ color: WORK.forest }}
+                        >
+                          {record.tier === "flagship" ? "Open the case study" : "Open the project story"}
+                          <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                         </span>
                       </span>
 
