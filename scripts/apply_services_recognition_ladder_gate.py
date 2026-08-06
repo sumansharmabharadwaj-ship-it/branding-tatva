@@ -3,7 +3,11 @@ from pathlib import Path
 path = Path("scripts/services_page_gate.cjs")
 text = path.read_text()
 
-replacements = [
+# Most changes are singular structural contracts. The remembered-stage
+# implication appears once in the mobile deck and once in the desktop
+# ladder, so that phrase is deliberately replaced twice instead of being
+# treated as an accidental duplicate.
+singular_replacements = [
     (
         "// Education: mobile now spends one panel-height on the four-rung\n  // ladder and places the 0.71% to 2.81% proof in one horizontal rail.",
         "// Education: mobile spends one panel-height on the complete five-stage\n  // ladder and places the qualified 0.71% to 2.81% signal in one horizontal rail.",
@@ -11,19 +15,36 @@ replacements = [
     ("waitForCount(rungTabs, 4,", "waitForCount(rungTabs, 5,"),
     ("waitForCount(rungPanels, 4,", "waitForCount(rungPanels, 5,"),
     ('name: /03 Remembered/i', 'name: /04 Remembered/i'),
-    ('data-active-perception-index\")) === \"2\",\n      `${label}: compact perception climb did not reach Remembered`', 'data-active-perception-index\")) === \"3\",\n      `${label}: compact perception climb did not reach Remembered`'),
-    ('data-active-perception-index\")) === \"3\",\n      `${label}: perception next-rung control did not advance`', 'data-active-perception-index\")) === \"4\",\n      `${label}: perception next-stage control did not advance`'),
-    ("The brand comes to mind unprompted", "Mental availability starts carrying part of the sale."),
+    (
+        'data-active-perception-index\")) === \"2\",\n      `${label}: compact perception climb did not reach Remembered`',
+        'data-active-perception-index\")) === \"3\",\n      `${label}: compact perception climb did not reach Remembered`',
+    ),
+    (
+        'data-active-perception-index\")) === \"3\",\n      `${label}: perception next-rung control did not advance`',
+        'data-active-perception-index\")) === \"4\",\n      `${label}: perception next-stage control did not advance`',
+    ),
     ("Comparison ends before it begins", "Price no longer carries the whole decision."),
     ("waitForCount(rungButtons, 4,", "waitForCount(rungButtons, 5,"),
-    ("    perceptionRungs: 4,", "    perceptionRungs: 5,\n    perceptionFieldsPerStage: 5,\n    recognitionProofQualified: true,"),
+    (
+        "    perceptionRungs: 4,",
+        "    perceptionRungs: 5,\n    perceptionFieldsPerStage: 5,\n    recognitionProofQualified: true,",
+    ),
 ]
 
-for old, new in replacements:
+for old, new in singular_replacements:
     count = text.count(old)
     if count != 1:
         raise SystemExit(f"expected one match for {old!r}, found {count}")
     text = text.replace(old, new, 1)
+
+remembered_old = "The brand comes to mind unprompted"
+remembered_new = "Mental availability starts carrying part of the sale."
+remembered_count = text.count(remembered_old)
+if remembered_count != 2:
+    raise SystemExit(
+        f"expected the remembered implication in mobile and desktop contracts, found {remembered_count}"
+    )
+text = text.replace(remembered_old, remembered_new)
 
 mobile_anchor = '''    await waitForVisibleText(
       mobilePerceptionDeck.locator('[data-perception-rung="remembered"]'),
