@@ -53,16 +53,16 @@ jobs:
           HOOK_PATH = ROOT / "src/hooks/useHydratedReducedMotion.ts"
           WORKFLOW_PATH = ROOT / ".github/workflows/apply-hydration-safe-motion.yml"
 
-          HOOK_CONTENT = '''"use client";
+          HOOK_PATH.write_text('''"use client";
 
           import { useEffect, useState } from "react";
           import { useReducedMotion } from "framer-motion";
           import { useMotionPreference } from "@/components/MotionPreference";
 
           /**
-           * Keeps the server render and the browser's hydration render identical,
-           * then honours both the operating-system preference and Branding Tatva's
-           * explicit Full/Reduced control after mount.
+           * Keeps the server render and hydration render identical, then honours
+           * both the operating-system setting and Branding Tatva's Full/Reduced
+           * control after mount.
            */
           export function useHydratedMotionPreference() {
             const osReducedMotion = useReducedMotion();
@@ -83,51 +83,44 @@ jobs:
           export function useHydratedReducedMotion() {
             return useHydratedMotionPreference().prefersReducedMotion;
           }
-          '''
-
-          # Strip the indentation introduced by the workflow heredoc while keeping
-          # the source file itself conventionally formatted.
-          HOOK_CONTENT = "\n".join(line[10:] if line.startswith("          ") else line for line in HOOK_CONTENT.splitlines()) + "\n"
-          HOOK_PATH.write_text(HOOK_CONTENT, encoding="utf-8")
+          '''.replace("          ", ""), encoding="utf-8")
 
           def rewrite_framer_import(match: re.Match[str]) -> str:
             names = [part.strip() for part in match.group(1).replace("\n", " ").split(",")]
             names = [name for name in names if name and name != "useReducedMotion"]
-            if not names:
-              return ""
-            return f'import {{ {", ".join(names)} }} from "framer-motion";'
+            return f'import {{ {", ".join(names)} }} from "framer-motion";' if names else ""
 
           changed = []
+          raw_call = re.compile(r"\buseReducedMotion\s*\(")
+          import_pattern = re.compile(
+            r'import\s*\{([^}]*)\}\s*from\s*["\']framer-motion["\'];',
+            re.MULTILINE,
+          )
+
           for path in sorted((ROOT / "src").rglob("*.tsx")):
             text = path.read_text(encoding="utf-8")
-            if "useReducedMotion" not in text:
+            if not raw_call.search(text):
               continue
 
             original = text
-            text, import_count = re.subn(
-              r'import\s*\{([\s\S]*?)\}\s*from\s*"framer-motion";',
-              rewrite_framer_import,
-              text,
-              count=1,
-            )
+            text, import_count = import_pattern.subn(rewrite_framer_import, text, count=1)
             if import_count != 1:
-              raise RuntimeError(f"Could not rewrite Framer Motion import in {path}")
+              raise RuntimeError(f"Could not isolate the Framer Motion import in {path}")
 
             marker = '"use client";\n\n'
             if marker not in text:
-              raise RuntimeError(f"Hydration-sensitive motion file is not a client component: {path}")
+              raise RuntimeError(f"Motion hook used outside a client component: {path}")
             text = text.replace(
               marker,
               marker + 'import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";\n',
               1,
             )
-            text = text.replace("useReducedMotion()", "useHydratedReducedMotion()")
-            if "useReducedMotion" in text:
-              raise RuntimeError(f"Raw useReducedMotion reference remains in {path}")
+            text = raw_call.sub("useHydratedReducedMotion(", text)
+            if raw_call.search(text):
+              raise RuntimeError(f"Raw reduced-motion call remains in {path}")
 
-            if text != original:
-              path.write_text(text, encoding="utf-8")
-              changed.append(str(path))
+            path.write_text(text, encoding="utf-8")
+            changed.append(str(path))
 
           def read(path: str) -> str:
             return (ROOT / path).read_text(encoding="utf-8")
@@ -141,7 +134,6 @@ jobs:
               raise RuntimeError(f"Expected one occurrence in {path}, found {count}: {old[:80]!r}")
             return text.replace(old, new, 1)
 
-          # Shared reveal wrappers stay static for the server and hydration pass.
           for path in ("src/components/Reveal.tsx", "src/components/ClipReveal.tsx"):
             text = read(path)
             text = replace_once(
@@ -156,15 +148,9 @@ jobs:
               "const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();",
               path,
             )
-            text = replace_once(
-              text,
-              "if (prefersReducedMotion) {",
-              "if (!hydrated || prefersReducedMotion) {",
-              path,
-            )
+            text = replace_once(text, "if (prefersReducedMotion) {", "if (!hydrated || prefersReducedMotion) {", path)
             write(path, text)
 
-          # The evidence ticker is static until motion preference is known.
           path = "src/sections/Work/WorkProofStrip.tsx"
           text = read(path)
           text = replace_once(
@@ -182,9 +168,6 @@ jobs:
           text = replace_once(text, "{prefersReducedMotion ? (", "{!shouldAnimate ? (", path)
           write(path, text)
 
-          # Case-study video renders its poster until hydration establishes that
-          # motion is allowed, preventing both mismatched HTML and a one-frame
-          # autoplay leak for Reduce users.
           path = "src/sections/Work/CaseStudyExperience.tsx"
           text = read(path)
           text = replace_once(
@@ -199,49 +182,30 @@ jobs:
             "const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();",
             path,
           )
-          text = replace_once(
-            text,
-            "if (!video || prefersReducedMotion) return;",
-            "if (!hydrated || !video || prefersReducedMotion) return;",
-            path,
-          )
-          text = replace_once(
-            text,
-            "}, [prefersReducedMotion]);",
-            "}, [hydrated, prefersReducedMotion]);",
-            path,
-          )
-          text = replace_once(
-            text,
-            "if (!src || prefersReducedMotion) {",
-            "if (!hydrated || !src || prefersReducedMotion) {",
-            path,
-          )
+          text = replace_once(text, "if (!video || prefersReducedMotion) return;", "if (!hydrated || !video || prefersReducedMotion) return;", path)
+          text = replace_once(text, "}, [prefersReducedMotion]);", "}, [hydrated, prefersReducedMotion]);", path)
+          text = replace_once(text, "if (!src || prefersReducedMotion) {", "if (!hydrated || !src || prefersReducedMotion) {", path)
           write(path, text)
 
-          # MotionConfig governs Motion components. Bespoke DOM/media fallbacks
-          # use the hydration-safe hook above rather than reading matchMedia
-          # during hydration.
           path = "src/components/MotionPreference.tsx"
           text = read(path)
           needle = '  const reducedMotion = !hydrated ? "never" : pref === "reduced" ? "always" : "user";'
           replacement = '''  // MotionConfig governs Motion components. Bespoke DOM and media
-          // fallbacks use useHydratedReducedMotion so they never branch while
-          // React is hydrating server-rendered markup.
-          const reducedMotion = !hydrated ? "never" : pref === "reduced" ? "always" : "user";'''
-          replacement = "\n".join(line[10:] if line.startswith("          ") else line for line in replacement.splitlines())
+            // fallbacks use the hydration-safe hook so React never branches while
+            // hydrating server-rendered markup.
+            const reducedMotion = !hydrated ? "never" : pref === "reduced" ? "always" : "user";'''.replace("            ", "")
           text = replace_once(text, needle, replacement, path)
           write(path, text)
 
           WORKFLOW_PATH.unlink()
 
-          remaining = []
-          for path in sorted((ROOT / "src").rglob("*.tsx")):
-            text = path.read_text(encoding="utf-8")
-            if "useReducedMotion" in text:
-              remaining.append(str(path))
+          remaining = [
+            str(path)
+            for path in sorted((ROOT / "src").rglob("*.tsx"))
+            if raw_call.search(path.read_text(encoding="utf-8"))
+          ]
           if remaining:
-            raise RuntimeError(f"Raw useReducedMotion references remain: {remaining}")
+            raise RuntimeError(f"Raw reduced-motion calls remain: {remaining}")
 
           print(f"Created {HOOK_PATH}")
           print(f"Codemodded {len(changed)} client files")
