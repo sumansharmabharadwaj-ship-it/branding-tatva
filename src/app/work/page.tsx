@@ -12,8 +12,8 @@ import { WorkProofStrip } from "@/sections/Work/WorkProofStrip";
 import { WorkIndex } from "@/sections/Work/WorkIndex";
 import { SignatureProject } from "@/sections/Work/SignatureProject";
 import { SystemFlagship } from "@/sections/Work/SystemFlagship";
+import { ProjectStoryWall } from "@/sections/Work/ProjectStoryWall";
 import { DecisionEvidenceGallery } from "@/sections/Work/DecisionEvidenceGallery";
-import { WorkArchive } from "@/sections/Work/WorkArchive";
 import { CapabilityMap } from "@/sections/Work/CapabilityMap";
 import { TatvaLab } from "@/sections/Work/TatvaLab";
 import { Authorship } from "@/sections/Work/Authorship";
@@ -88,16 +88,20 @@ export default function WorkPage() {
             instead of repeating the first flagship's treatment. */}
         {systemSignature && <SystemFlagship project={systemSignature} />}
 
+        {/* The middle tier: three focused engagements in an irregular
+            editorial wall. This replaces the duplicate archive ledger
+            with project context, real imagery, and proportional depth. */}
+        <ProjectStoryWall projects={projects} />
+
         {/* Judgment: real decisions shown at inspectable scale. The
             earlier DecisionMap and MarketingEcosystem remain in the
             codebase, but leave this route during consolidation because
             they repeated the same teaching job. */}
         <DecisionEvidenceGallery />
 
-        {/* Range: client work is tiered rather than flattened into one
-            list; the selector then helps a buyer find the closest proof
-            and service path. */}
-        <WorkArchive projects={projects} />
+        {/* Relevance: after seeing the record, the visitor can name the
+            condition they are trying to change and reach the closest
+            project evidence and service path. */}
         <CapabilityMap />
 
         {/* Wider practice: concept work and public-record analysis are
