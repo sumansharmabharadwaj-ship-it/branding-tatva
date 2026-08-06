@@ -8,10 +8,12 @@ on:
       - homepage-cinematic-recovery
     paths:
       - .github/workflows/services-page-gate.yml
+      - docs/SERVICES_SCROLL_MAP.md
       - scripts/services_page_gate.cjs
       - scripts/services_scroll_experience_gate.cjs
       - scripts/services_semantic_progress_gate.cjs
       - scripts/services_native_input_gate.cjs
+      - scripts/services_archive_gate.cjs
       - src/app/services/**
       - src/sections/Services/**
       - src/components/SectionJumpNav.tsx
@@ -110,7 +112,12 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/services_semantic_progress_gate.cjs
 
-      - name: Verify wheel, keyboard, anchors, reversal, and sticky re-entry
+      - name: Verify archive progression on desktop and tap control on touch
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/services_archive_gate.cjs
+
+      - name: Verify wheel, keyboard, anchors, history, reversal, and sticky re-entry
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/services_native_input_gate.cjs
