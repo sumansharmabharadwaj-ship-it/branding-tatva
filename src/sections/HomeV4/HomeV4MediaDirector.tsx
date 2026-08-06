@@ -5,7 +5,11 @@ import { useEffect } from "react";
 
 import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
 
-const DEFAULT_PLAYBACK_RATE = 1.22;
+// The former V4 default was 1.22x. The homepage brief asks for a noticeable
+// increase without turning atmospheric footage frantic. 1.30x shortens visual
+// dead time while preserving calm motion; individual films can still request a
+// lower or higher rate through data-home-playback-rate within the safe clamp.
+const DEFAULT_PLAYBACK_RATE = 1.3;
 const FORM_CONTROL_SELECTOR =
   "input, textarea, select, [contenteditable='true'], [role='textbox']";
 
@@ -108,8 +112,8 @@ export function HomeV4MediaDirector() {
       applyPlaybackRate(video);
 
       // Individual media components still own their own lifecycle. Whenever
-      // one of them tries to resume, the director reapplies the faster pace
-      // and immediately arbitrates the shared decoding budget again.
+      // one of them tries to resume, the director reapplies the shared pace
+      // and immediately arbitrates the decoding budget again.
       const refreshMediaState = () => {
         applyPlaybackRate(video);
         queueMicrotask(syncAll);
