@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, FocusEvent, PointerEvent } from "react";
+import type { CSSProperties, PointerEvent } from "react";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
@@ -26,8 +26,8 @@ export function ServiceDisciplineExplorer() {
   function activate(index: number, source: "hover" | "focus" | "click") {
     if (index === activeIndex) return;
     setActiveIndex(index);
-    track("service_discipline_viewed", {
-      discipline: offerings[index].name,
+    track("capability_selected", {
+      capability: offerings[index].name,
       source,
       page: "services",
     });
@@ -39,10 +39,6 @@ export function ServiceDisciplineExplorer() {
     if (event.pointerType === "mouse" || event.pointerType === "pen") {
       activate(index, "hover");
     }
-  }
-
-  function handleFocus(index: number, _event: FocusEvent<HTMLButtonElement>) {
-    activate(index, "focus");
   }
 
   return (
@@ -79,7 +75,7 @@ export function ServiceDisciplineExplorer() {
                 aria-controls="service-discipline-panel"
                 tabIndex={isActive ? 0 : -1}
                 onPointerEnter={(event) => handlePointerEnter(index, event)}
-                onFocus={(event) => handleFocus(index, event)}
+                onFocus={() => activate(index, "focus")}
                 onClick={() => activate(index, "click")}
                 className="group relative flex min-h-14 w-full items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:px-4"
                 style={{ "--discipline-color": offer.color } as CSSProperties}
@@ -155,7 +151,7 @@ export function ServiceDisciplineExplorer() {
                 <h3 className="mt-5 max-w-xl font-display text-3xl font-normal leading-tight text-ivory sm:text-4xl">
                   {active.name}
                 </h3>
-                <p className="mt-6 max-w-2xl text-base leading-relaxed text-ivory/88 sm:text-lg">{active.detail}</p>
+                <p className="mt-6 max-w-2xl text-base leading-relaxed text-ivory/[0.88] sm:text-lg">{active.detail}</p>
               </div>
 
               <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-ivory/12 pt-5">
