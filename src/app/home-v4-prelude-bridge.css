@@ -2,35 +2,35 @@
 /* Homepage V4 prelude → opening handoff                                       */
 /* -------------------------------------------------------------------------- */
 
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__topline,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__eyebrow,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > span,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > em,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__lede,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__actions,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__proof,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__scroll,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__signal {
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__topline,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__eyebrow,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > span,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > em,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__lede,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__actions,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__proof,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__scroll,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__signal {
   opacity: 0 !important;
   filter: blur(7px) !important;
   pointer-events: none !important;
 }
 
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__topline,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__eyebrow,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > span,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__lede,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__actions,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__scroll {
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__topline,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__eyebrow,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > span,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__lede,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__actions,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__scroll {
   transform: translate3d(0, 18px, 0) !important;
 }
 
-html:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > em,
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__proof {
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > em,
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__proof {
   transform: translate3d(22px, 0, 0) !important;
 }
 
-html:not([data-home-prelude-ready="true"]) .home-v4-opening__signal {
+html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__signal {
   transform: translate3d(-28px, 12px, 0) scale(0.94) !important;
 }
 
@@ -103,15 +103,15 @@ html[data-home-prelude-ready="true"] .home-v4-opening::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html:not([data-home-prelude-ready="true"]) .home-v4-opening__topline,
-  html:not([data-home-prelude-ready="true"]) .home-v4-opening__eyebrow,
-  html:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > span,
-  html:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > em,
-  html:not([data-home-prelude-ready="true"]) .home-v4-opening__lede,
-  html:not([data-home-prelude-ready="true"]) .home-v4-opening__actions,
-  html:not([data-home-prelude-ready="true"]) .home-v4-opening__proof,
-  html:not([data-home-prelude-ready="true"]) .home-v4-opening__scroll,
-  html:not([data-home-prelude-ready="true"]) .home-v4-opening__signal {
+  html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__topline,
+  html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__eyebrow,
+  html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > span,
+  html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > em,
+  html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__lede,
+  html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__actions,
+  html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__proof,
+  html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__scroll,
+  html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__signal {
     opacity: 1 !important;
     filter: none !important;
     transform: none !important;
