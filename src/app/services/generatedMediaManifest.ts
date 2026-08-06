@@ -1,3 +1,12 @@
+export const GENERATED_SERVICES_MEDIA_REVISION = {
+  installed: "2026-08-06",
+  desktopLoops: 5,
+  mobileLoops: 5,
+  silent: true,
+  posters: true,
+  auditHarness: "strict-csp-compatible",
+} as const;
+
 export const GENERATED_SERVICES_MEDIA = {
   hero: {
     desktop: "/videos/generated/bt-services-hero-root-system.mp4",
