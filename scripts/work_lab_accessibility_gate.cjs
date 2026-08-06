@@ -79,13 +79,11 @@ async function assertSelectedAndFocused(page, tabs, index, label) {
     await page.goto(`${BASE_URL}/work`, { waitUntil: "domcontentloaded", timeout: 90_000 });
     await waitForPrelude(page);
 
-    const heading = page.getByRole("heading", {
-      name: "Concept studies: the method, demonstrated in the open.",
-    });
-    const section = heading.locator("xpath=ancestor::section[1]");
-    await heading.scrollIntoViewIfNeeded();
+    const dossierGrid = page.locator('[aria-label="Concept study dossiers"]');
+    const section = dossierGrid.locator("xpath=ancestor::section[1]");
+    await dossierGrid.scrollIntoViewIfNeeded();
 
-    const covers = section.locator('[aria-label="Concept study dossiers"] button[aria-expanded]');
+    const covers = dossierGrid.locator("button[aria-expanded]");
     assert((await covers.count()) === 4, "work/lab-a11y: expected four concept dossier covers");
 
     const originCover = covers.last();
