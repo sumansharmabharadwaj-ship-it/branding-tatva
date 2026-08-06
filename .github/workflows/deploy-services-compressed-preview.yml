@@ -1,0 +1,104 @@
+name: Deploy compressed Services preview through CI
+
+on:
+  push:
+    branches:
+      - preview/services-compressed-journey-v2
+    paths:
+      - .github/workflows/deploy-services-compressed-preview.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out the frozen preview with its generated Services films
+        uses: actions/checkout@v4
+        with:
+          ref: preview/services-compressed-journey-v2
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+            /public/videos/generated/*
+
+      - name: Select the available Vercel credential
+        id: credential
+        shell: bash
+        env:
+          VERCEL_TOKEN_PRIMARY: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TOKEN_ALTERNATE: ${{ secrets.VERCEL_ACCESS_TOKEN }}
+        run: |
+          TOKEN="${VERCEL_TOKEN_PRIMARY:-${VERCEL_TOKEN_ALTERNATE:-}}"
+          if [ -z "$TOKEN" ]; then
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "### Preview deployment" >> "$GITHUB_STEP_SUMMARY"
+            echo "No Vercel deployment token is configured in the repository secrets." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "available=true" >> "$GITHUB_OUTPUT"
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+          echo "::add-mask::$TOKEN"
+
+      - name: Use Node 24
+        if: steps.credential.outputs.available == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        if: steps.credential.outputs.available == 'true'
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Link, build, and deploy the preview
+        if: steps.credential.outputs.available == 'true'
+        id: deploy
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ steps.credential.outputs.token }}
+          VERCEL_ORG_ID: team_Y7dQ5jNk61chQvy2A92AEyTt
+          VERCEL_PROJECT_ID: prj_oqWzTWCHURqzPAdpjXv3b7cubJwJ
+          NEXT_TELEMETRY_DISABLED: 1
+        run: |
+          mkdir -p .vercel
+          printf '%s\n' '{"orgId":"team_Y7dQ5jNk61chQvy2A92AEyTt","projectId":"prj_oqWzTWCHURqzPAdpjXv3b7cubJwJ"}' > .vercel/project.json
+          pnpm dlx vercel@latest pull --yes --environment=preview --token="$VERCEL_TOKEN"
+          pnpm dlx vercel@latest build --token="$VERCEL_TOKEN"
+          URL="$(pnpm dlx vercel@latest deploy --prebuilt --token="$VERCEL_TOKEN")"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$URL" > /tmp/services-preview-url.txt
+          echo "### Preview deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "$URL" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the preview URL
+        if: steps.deploy.outputs.url != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: services-compressed-preview-url
+          path: /tmp/services-preview-url.txt
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Remove this one-time workflow
+        if: always()
+        shell: bash
+        run: |
+          rm .github/workflows/deploy-services-compressed-preview.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/deploy-services-compressed-preview.yml
+          git diff --cached --check
+          git commit -m "Remove the one-time Services preview deployer"
+          git push origin HEAD:preview/services-compressed-journey-v2
