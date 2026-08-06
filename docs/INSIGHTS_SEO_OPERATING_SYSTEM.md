@@ -15,8 +15,9 @@ The first commercial wedge is deliberately narrow:
 3. brand awareness versus brand recall
 4. brand messaging framework
 5. brand strategy framework
+6. website messaging hierarchy for service businesses
 
-These pages form the initial authority cluster. Each article owns a distinct intent and links into the next useful question rather than competing for the same query.
+The first five pages form the initial pillar layer. The website messaging hierarchy guide begins the supporting layer and connects positioning directly with homepage and service-page decisions.
 
 ## Page contract
 
@@ -81,8 +82,10 @@ Next supporting articles:
 Current pillar:
 - Brand messaging framework
 
-Next supporting articles:
+Published supporting article:
 - Website messaging hierarchy for service businesses
+
+Next supporting articles:
 - Brand voice guidelines that teams can actually use
 - Value proposition versus positioning versus tagline
 - How to write service page copy from a positioning strategy
@@ -104,7 +107,7 @@ Next supporting articles:
 
 Publish supporting articles in interleaved clusters rather than completing one topic in isolation. The recommended first ten are:
 
-1. Website messaging hierarchy for service businesses
+1. Website messaging hierarchy for service businesses — complete
 2. Distinctive brand assets: how to choose and audit them
 3. Customer journey mapping for service businesses
 4. How to position a consulting business
@@ -153,7 +156,7 @@ After the branch reaches production:
 1. Verify that `/insights`, every article, and every topic hub return HTTP 200.
 2. Confirm the old `/blog` routes return permanent redirects to the intended new destinations.
 3. Submit `https://brandingtatva.com/sitemap.xml` in Google Search Console.
-4. Inspect the Insights archive and five pillar URLs individually.
+4. Inspect the Insights archive and pillar URLs individually.
 5. Request indexing for the archive and pillars.
 6. Confirm the canonical URL selected by Google matches the declared canonical.
 7. Monitor indexing, enhancement reports, crawl errors, and Core Web Vitals.
