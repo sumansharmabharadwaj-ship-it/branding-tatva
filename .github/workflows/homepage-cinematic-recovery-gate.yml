@@ -10,6 +10,7 @@ on:
       - .github/workflows/homepage-cinematic-recovery-gate.yml
       - scripts/homepage_cinematic_gate.cjs
       - scripts/tatva_observatory_evidence.cjs
+      - scripts/studio_scene_evidence.cjs
       - scripts/work_page_gate.cjs
       - scripts/work_page_gate_v2.cjs
       - scripts/work_page_gate_v3.cjs
@@ -108,6 +109,11 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/tatva_observatory_evidence.cjs
+
+      - name: Capture Studio thinking-room states
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/studio_scene_evidence.cjs
 
       - name: Audit Work hierarchy, filters, case studies, reduced motion, and viewports
         env:
