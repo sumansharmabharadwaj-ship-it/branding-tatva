@@ -1,19 +1,11 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { track } from "@/lib/analytics";
 
-// The Brand Recognition Audit keeps ten real checks drawn from the site's
-// own frameworks: positioning, distinctive assets, mental availability,
-// verbal identity, and consistency. Five checks remain public with no email
-// required. The second five open only after the existing double opt-in flow.
-//
-// This scene used to stack every public check in one long receipt. The check
-// deck preserves the complete source copy while letting one compact frame
-// change state, update the visitor's score, and expose the next decision.
 const CHECKS = [
   "One sentence says what the brand stands for, and everyone involved repeats the same one.",
   "The category you compete in was named deliberately, well before any tagline.",
@@ -27,13 +19,14 @@ const CHECKS = [
   "Someone who saw the brand six months ago would recognize it today.",
 ] as const;
 
-const VISIBLE = 5;
+const PUBLIC_CHECKS = 5;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 type Status = "idle" | "submitting" | "done" | "error";
 type Answer = "holds" | "gap" | null;
 
 export function RecognitionAudit() {
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const [firstName, setFirstName] = useState("");
@@ -44,20 +37,20 @@ export function RecognitionAudit() {
   const [answers, setAnswers] = useState<Answer[]>(() =>
     Array.from({ length: CHECKS.length }, () => null),
   );
-  const prefersReducedMotion = useHydratedReducedMotion();
+
   const unlocked = status === "done";
-  const shown = unlocked ? CHECKS : CHECKS.slice(0, VISIBLE);
-  const currentCheck = shown[activeIndex] ?? shown[0];
+  const visibleChecks = unlocked ? CHECKS : CHECKS.slice(0, PUBLIC_CHECKS);
+  const currentCheck = visibleChecks[activeIndex] ?? visibleChecks[0];
   const currentAnswer = answers[activeIndex] ?? null;
-  const answered = shown.reduce(
+  const answered = visibleChecks.reduce(
     (total, _check, index) => total + (answers[index] ? 1 : 0),
     0,
   );
-  const holding = shown.reduce(
+  const holding = visibleChecks.reduce(
     (total, _check, index) => total + (answers[index] === "holds" ? 1 : 0),
     0,
   );
-  const completion = shown.length ? answered / shown.length : 0;
+  const completion = visibleChecks.length ? answered / visibleChecks.length : 0;
 
   function focusTab(index: number) {
     window.requestAnimationFrame(() => {
@@ -65,23 +58,23 @@ export function RecognitionAudit() {
     });
   }
 
-  function moveTo(index: number, shouldFocus = false) {
-    const safeIndex = Math.max(0, Math.min(index, shown.length - 1));
+  function moveTo(index: number, focus = false) {
+    const safeIndex = Math.max(0, Math.min(index, visibleChecks.length - 1));
     setActiveIndex(safeIndex);
-    if (shouldFocus) focusTab(safeIndex);
+    if (focus) focusTab(safeIndex);
   }
 
   function handleTabKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let nextIndex: number | null = null;
 
     if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-      nextIndex = (index + 1) % shown.length;
+      nextIndex = (index + 1) % visibleChecks.length;
     } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-      nextIndex = (index - 1 + shown.length) % shown.length;
+      nextIndex = (index - 1 + visibleChecks.length) % visibleChecks.length;
     } else if (event.key === "Home") {
       nextIndex = 0;
     } else if (event.key === "End") {
-      nextIndex = shown.length - 1;
+      nextIndex = visibleChecks.length - 1;
     }
 
     if (nextIndex === null) return;
@@ -100,6 +93,7 @@ export function RecognitionAudit() {
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!consent || status === "submitting") return;
+
     setStatus("submitting");
     setError(null);
 
@@ -125,7 +119,7 @@ export function RecognitionAudit() {
 
       track("lead_magnet_requested");
       setStatus("done");
-      setActiveIndex(VISIBLE);
+      setActiveIndex(PUBLIC_CHECKS);
     } catch {
       setError("The server was unreachable. Check your connection and try again.");
       setStatus("error");
@@ -159,11 +153,9 @@ export function RecognitionAudit() {
                 Current reading
               </p>
               <p className="mt-1 font-display text-2xl font-normal text-ivory">
-                {holding} / {shown.length}
+                {holding} / {visibleChecks.length}
               </p>
-              <p className="mt-1 text-xs text-ivory/58">
-                {answered} considered
-              </p>
+              <p className="mt-1 text-xs text-ivory/58">{answered} considered</p>
             </div>
           </div>
 
@@ -183,7 +175,7 @@ export function RecognitionAudit() {
                   Recognition instrument
                 </p>
                 <p className="mt-1 font-display text-lg text-ivory">
-                  Check {String(activeIndex + 1).padStart(2, "0")} of {String(shown.length).padStart(2, "0")}
+                  Check {String(activeIndex + 1).padStart(2, "0")} of {String(visibleChecks.length).padStart(2, "0")}
                 </p>
               </div>
               <p className="max-w-xs text-xs leading-relaxed text-ivory/52 sm:text-right">
@@ -191,58 +183,63 @@ export function RecognitionAudit() {
               </p>
             </div>
 
-            <div
+            <ol
               role="tablist"
               aria-label="Brand recognition checks"
-              className={`relative mt-5 grid gap-2 ${shown.length > VISIBLE ? "grid-cols-5 sm:grid-cols-10" : "grid-cols-5"}`}
+              className={`relative mt-5 grid gap-2 ${
+                visibleChecks.length > PUBLIC_CHECKS ? "grid-cols-5 sm:grid-cols-10" : "grid-cols-5"
+              }`}
             >
-              {shown.map((check, index) => {
+              {visibleChecks.map((check, index) => {
                 const selected = index === activeIndex;
                 const answer = answers[index];
+                const borderColor = selected
+                  ? "rgba(212,185,154,0.72)"
+                  : answer === "holds"
+                    ? "rgba(92,107,74,0.72)"
+                    : answer === "gap"
+                      ? "rgba(205,122,76,0.72)"
+                      : "rgba(244,239,230,0.12)";
+                const backgroundColor = selected
+                  ? "rgba(212,185,154,0.14)"
+                  : answer === "holds"
+                    ? "rgba(92,107,74,0.14)"
+                    : answer === "gap"
+                      ? "rgba(205,122,76,0.12)"
+                      : "rgba(244,239,230,0.025)";
 
                 return (
-                  <button
-                    key={check}
-                    id={`recognition-check-tab-${index}`}
-                    type="button"
-                    role="tab"
-                    aria-selected={selected}
-                    aria-controls="recognition-check-panel"
-                    aria-label={`Check ${index + 1}: ${check}`}
-                    tabIndex={selected ? 0 : -1}
-                    onClick={() => moveTo(index)}
-                    onKeyDown={(event) => handleTabKey(event, index)}
-                    className="relative grid min-h-11 min-w-11 place-items-center overflow-hidden rounded-xl border text-xs font-medium transition-[border-color,background-color,color,transform] duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
-                    style={{
-                      borderColor: selected
-                        ? "rgba(212,185,154,0.72)"
-                        : answer === "holds"
-                          ? "rgba(92,107,74,0.72)"
-                          : answer === "gap"
-                            ? "rgba(205,122,76,0.72)"
-                            : "rgba(244,239,230,0.12)",
-                      backgroundColor: selected
-                        ? "rgba(212,185,154,0.14)"
-                        : answer === "holds"
-                          ? "rgba(92,107,74,0.14)"
-                          : answer === "gap"
-                            ? "rgba(205,122,76,0.12)"
-                            : "rgba(244,239,230,0.025)",
-                      color: selected ? "#F4EFE6" : "rgba(244,239,230,0.62)",
-                    }}
-                  >
-                    <span className="relative">{String(index + 1).padStart(2, "0")}</span>
-                    {answer && (
-                      <span
-                        aria-hidden="true"
-                        className="absolute bottom-1.5 h-1 w-1 rounded-full"
-                        style={{ backgroundColor: answer === "holds" ? "#91A082" : "#CD7A4C" }}
-                      />
-                    )}
-                  </button>
+                  <li key={check} className="contents">
+                    <button
+                      id={`recognition-check-tab-${index}`}
+                      type="button"
+                      role="tab"
+                      aria-selected={selected}
+                      aria-controls="recognition-check-panel"
+                      aria-label={`Check ${index + 1}: ${check}`}
+                      tabIndex={selected ? 0 : -1}
+                      onClick={() => moveTo(index)}
+                      onKeyDown={(event) => handleTabKey(event, index)}
+                      className="relative grid min-h-11 min-w-11 place-items-center overflow-hidden rounded-xl border text-xs font-medium transition-[border-color,background-color,color,transform] duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                      style={{
+                        borderColor,
+                        backgroundColor,
+                        color: selected ? "#F4EFE6" : "rgba(244,239,230,0.62)",
+                      }}
+                    >
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      {answer && (
+                        <span
+                          aria-hidden="true"
+                          className="absolute bottom-1.5 h-1 w-1 rounded-full"
+                          style={{ backgroundColor: answer === "holds" ? "#91A082" : "#CD7A4C" }}
+                        />
+                      )}
+                    </button>
+                  </li>
                 );
               })}
-            </div>
+            </ol>
 
             <span className="relative mt-4 block h-px overflow-hidden bg-ivory/10" aria-hidden="true">
               <motion.span
@@ -326,29 +323,27 @@ export function RecognitionAudit() {
               <button
                 type="button"
                 aria-label="Previous check"
-                onClick={() => moveTo(activeIndex === 0 ? shown.length - 1 : activeIndex - 1)}
+                onClick={() => moveTo(activeIndex === 0 ? visibleChecks.length - 1 : activeIndex - 1)}
                 className="inline-flex min-h-11 items-center gap-2 rounded-full border border-ivory/14 px-4 text-sm text-ivory/68 transition-colors duration-300 hover:border-sandstone/55 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
               >
-                <span aria-hidden="true">←</span>
-                Previous
+                <span aria-hidden="true">←</span> Previous
               </button>
               <p className="text-center text-xs text-ivory/46">
-                {answered === shown.length
+                {answered === visibleChecks.length
                   ? "This pass is complete. You can still revise any answer."
-                  : `${shown.length - answered} check${shown.length - answered === 1 ? "" : "s"} left in this pass.`}
+                  : `${visibleChecks.length - answered} check${visibleChecks.length - answered === 1 ? "" : "s"} left in this pass.`}
               </p>
               <button
                 type="button"
                 aria-label="Next check"
-                onClick={() => moveTo(activeIndex === shown.length - 1 ? 0 : activeIndex + 1)}
+                onClick={() => moveTo(activeIndex === visibleChecks.length - 1 ? 0 : activeIndex + 1)}
                 className="inline-flex min-h-11 items-center gap-2 rounded-full border border-ivory/14 px-4 text-sm text-ivory/68 transition-colors duration-300 hover:border-sandstone/55 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
               >
-                Next
-                <span aria-hidden="true">→</span>
+                Next <span aria-hidden="true">→</span>
               </button>
             </div>
 
-            {!unlocked && (
+            {!unlocked ? (
               <div className="relative mt-5 flex items-start gap-4 rounded-2xl border border-sandstone/20 bg-sandstone/[0.055] p-4">
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-sandstone/35 font-display text-sm text-sandstone">
                   +5
@@ -361,9 +356,7 @@ export function RecognitionAudit() {
                   </p>
                 </div>
               </div>
-            )}
-
-            {unlocked && (
+            ) : (
               <p className="relative mt-5 rounded-2xl border border-ivory/12 bg-ivory/[0.035] p-4 text-sm leading-relaxed text-ivory/72">
                 Fewer than seven holding true usually means recognition is leaking somewhere specific. The health
                 check above narrows down where.
@@ -391,7 +384,7 @@ export function RecognitionAudit() {
                 </p>
                 <button
                   type="button"
-                  onClick={() => moveTo(VISIBLE, true)}
+                  onClick={() => moveTo(PUBLIC_CHECKS, true)}
                   className="mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-sandstone/45 px-5 text-sm text-sandstone transition-colors duration-300 hover:bg-sandstone/10 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                 >
                   Continue at check 06 <span aria-hidden="true">→</span>
