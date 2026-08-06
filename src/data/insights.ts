@@ -4,6 +4,7 @@ import { brandRefreshInsightPosts } from "@/data/brandRefreshInsights";
 import { brandRecallMeasurementInsightPosts } from "@/data/brandRecallMeasurementInsights";
 import { clientProofInsightPosts } from "@/data/clientProofInsights";
 import { consultingPositioningInsightPosts } from "@/data/consultingPositioningInsights";
+import { customerInterviewInsightPosts } from "@/data/customerInterviewInsights";
 import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
 import { differentiationInsightPosts } from "@/data/differentiationInsights";
 import { distinctiveAssetInsightPosts } from "@/data/distinctiveAssetInsights";
@@ -49,6 +50,7 @@ const combinedPosts = [
   ...brandRefreshInsightPosts,
   ...clientProofInsightPosts,
   ...brandArchitectureInsightPosts,
+  ...customerInterviewInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
@@ -163,6 +165,14 @@ const relatedRegistrations = [
       "brand-positioning-strategy-service-businesses",
       "reposition-established-service-business-without-losing-recognition",
       "brand-refresh-vs-rebrand-how-much-change",
+    ],
+  },
+  {
+    supportingSlug: "customer-interviews-brand-strategy",
+    pillarSlugs: [
+      "brand-positioning-strategy-service-businesses",
+      "customer-journey-mapping-service-businesses",
+      "turn-client-proof-into-positioning-advantage",
     ],
   },
 ] as const;
