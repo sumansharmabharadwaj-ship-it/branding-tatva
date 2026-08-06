@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, PointerEvent } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
@@ -10,20 +10,53 @@ import { offerings } from "@/data/services";
 import { track } from "@/lib/analytics";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+const CLICK_HOLD_MS = 12000;
+const HOVER_HOLD_MS = 3400;
+
+type ServicesProgressDetail = {
+  id?: string;
+  scene?: string;
+  progress?: number;
+};
 
 // Six stacked description rows made the complete Services list read like
 // a catalogue and consumed almost two screens before the visitor reached
 // the package decision. This explorer keeps all six disciplines visible
 // in one scene: the names form the index, and one substantial explanation
-// changes beside them on hover, focus, or tap. Nothing is hidden behind a
-// carousel and no new service claims are invented; every line still comes
-// from data/services.ts.
+// changes beside them on hover, focus, tap, or a short vertical scroll.
+// Nothing is hidden behind a carousel and no new service claims are invented;
+// every line still comes from data/services.ts.
 export function ServiceDisciplineExplorer() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const pauseUntilRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
   const active = offerings[activeIndex];
 
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    function onSceneProgress(event: Event) {
+      const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
+      if (detail?.id !== "offerings" || typeof detail.progress !== "number") return;
+      if (Date.now() < pauseUntilRef.current) return;
+
+      const nextIndex = Math.min(
+        offerings.length - 1,
+        Math.max(0, Math.floor(detail.progress * offerings.length)),
+      );
+      setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+    }
+
+    window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    return () => {
+      window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    };
+  }, [prefersReducedMotion]);
+
   function activate(index: number, source: "hover" | "focus" | "click") {
+    pauseUntilRef.current =
+      Date.now() + (source === "hover" ? HOVER_HOLD_MS : CLICK_HOLD_MS);
     if (index === activeIndex) return;
     setActiveIndex(index);
     track("capability_selected", {
@@ -43,7 +76,10 @@ export function ServiceDisciplineExplorer() {
 
   return (
     <Container className="relative max-w-7xl">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-12 xl:grid-cols-[minmax(0,18rem)_minmax(18rem,0.82fr)_minmax(0,1.18fr)] xl:gap-14">
+      <div
+        data-services-discipline-explorer="true"
+        className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-12 xl:grid-cols-[minmax(0,18rem)_minmax(18rem,0.82fr)_minmax(0,1.18fr)] xl:gap-14"
+      >
         <Reveal className="lg:col-span-2 xl:col-span-1">
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The full practice</p>
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
@@ -54,13 +90,14 @@ export function ServiceDisciplineExplorer() {
             this scene.
           </p>
           <p className="mt-6 max-w-xs text-xs uppercase tracking-[0.16em] text-ivory/50">
-            Hover, focus, or tap a discipline
+            Scroll, hover, focus, or tap a discipline
           </p>
         </Reveal>
 
         <div
           role="tablist"
           aria-label="Branding Tatva service disciplines"
+          data-services-scroll-controlled="true"
           className="relative overflow-hidden rounded-2xl border border-ivory/12 bg-[rgba(11,17,16,0.46)] p-2 backdrop-blur-md"
         >
           {offerings.map((offer, index) => {
@@ -89,7 +126,7 @@ export function ServiceDisciplineExplorer() {
                       borderColor: `${offer.color}99`,
                       background: `linear-gradient(100deg, ${offer.color}2E 0%, rgba(244,239,230,0.035) 76%)`,
                     }}
-                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.42, ease: EASE }}
+                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.36, ease: EASE }}
                   />
                 )}
                 <span
@@ -133,11 +170,12 @@ export function ServiceDisciplineExplorer() {
               id="service-discipline-panel"
               role="tabpanel"
               aria-labelledby={`service-discipline-tab-${activeIndex}`}
-              initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 18 }}
+              initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
-              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.42, ease: EASE }}
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
+              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.34, ease: EASE }}
               className="relative flex min-h-[18rem] flex-col justify-between lg:min-h-[21rem]"
+              aria-live="polite"
             >
               <div>
                 <div className="flex items-baseline justify-between gap-4">
