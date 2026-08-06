@@ -1,4 +1,5 @@
 name: Complete Services page journey gate
+run-name: Services journey · ${{ github.sha }}
 
 on:
   push:
