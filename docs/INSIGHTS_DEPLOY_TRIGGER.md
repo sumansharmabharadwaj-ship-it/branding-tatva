@@ -1,19 +1,17 @@
 # Insights preview deployment status
 
 Canonical Insights branch: `feat/insights-authority-hub`
-Previous blocked head: `34bd92aeba5191aa6dba78be14c328c260cf847d`
-Fresh preview trigger requested: 2026-08-07
+Canonical library before retry: `0a9ea517d8557b8151d2a54f2d21f291446c8ced`
+Fresh preview retrigger: 2026-08-07 01:27 IST
 
-## Previous result
+## Rate-limit state
 
-The GitHub-to-Vercel webhook was successfully regenerated through a clean branch push and temporary pull request. Vercel attached a failure status before cloning or compiling the repository:
+Vercel is accepting fresh Branding Tatva deployments again. Recent project deployments have reached READY, so the previous account-level build-rate limit is no longer blocking all builds.
 
-`https://vercel.com/suman22?upgradeToPro=build-rate-limit`
+## Retry purpose
 
-## Current retry
-
-Other Branding Tatva deployments are being accepted again, including a successful production deployment. This commit retriggers the canonical Insights preview so the complete library can receive a fresh build and route verification.
+This documentation-only commit retriggers the canonical Insights branch after the twenty-guide library expansion. The preview must prove the current canonical branch can clone, compile, render, and expose the Insights routes successfully.
 
 ## Safe boundary
 
-Main and production remain untouched by this retry.
+Main and production are not modified by this retry.
