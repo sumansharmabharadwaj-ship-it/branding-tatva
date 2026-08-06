@@ -1,3 +1,4 @@
+import { distinctiveAssetInsightPosts } from "@/data/distinctiveAssetInsights";
 import {
   insightPosts as pillarInsightPosts,
   insightTopics,
@@ -8,7 +9,11 @@ import { supportingInsightPosts } from "@/data/supportingInsights";
 export { insightTopics };
 export type { InsightPost };
 
-const combinedPosts = [...pillarInsightPosts, ...supportingInsightPosts];
+const combinedPosts = [
+  ...pillarInsightPosts,
+  ...supportingInsightPosts,
+  ...distinctiveAssetInsightPosts,
+];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
   (post, index) =>
