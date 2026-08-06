@@ -45,7 +45,7 @@ export function DecisionEvidenceGallery() {
         </Reveal>
 
         <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Decision artefacts">
-          {decisionArtifacts.map((artifact) => {
+          {decisionArtifacts.map((artifact, index) => {
             const open = openId === artifact.id;
             const project = projects.find((item) => item.slug === artifact.projectSlug);
             return (
@@ -68,14 +68,25 @@ export function DecisionEvidenceGallery() {
                     type="button"
                     aria-expanded={open}
                     onClick={() => toggle(artifact.id)}
-                    className="w-full p-5 text-left focus-visible:outline focus-visible:outline-2 sm:p-6"
+                    className={`w-full p-5 text-left focus-visible:outline focus-visible:outline-2 sm:p-6 ${
+                      open ? "" : "flex min-h-[9.75rem] flex-col"
+                    }`}
                     style={{ outlineColor: WORK.moss }}
                   >
-                    <span
-                      className="text-[0.6rem] font-medium uppercase tracking-[0.18em]"
-                      style={{ color: open ? WORK.sand : WORK.olive }}
-                    >
-                      {artifact.kind}
+                    <span className="flex items-center justify-between gap-4">
+                      <span
+                        className="text-[0.6rem] font-medium uppercase tracking-[0.18em]"
+                        style={{ color: open ? WORK.sand : WORK.olive }}
+                      >
+                        {artifact.kind}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className="font-display text-sm"
+                        style={{ color: open ? WORK.sage : WORK.wood }}
+                      >
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
                     </span>
                     <span
                       className="mt-1.5 block font-display text-xl font-normal leading-snug"
@@ -84,8 +95,11 @@ export function DecisionEvidenceGallery() {
                       {artifact.question}
                     </span>
                     {!open && (
-                      <span className="mt-3 inline-block text-xs" style={{ color: WORK.stone }}>
-                        Open the decision <span aria-hidden="true">→</span>
+                      <span
+                        className="mt-auto inline-flex items-center gap-1 pt-5 text-[0.68rem] font-medium"
+                        style={{ color: WORK.wood }}
+                      >
+                        Inspect the decision <span aria-hidden="true">→</span>
                       </span>
                     )}
                   </button>

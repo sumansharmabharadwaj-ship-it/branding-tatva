@@ -114,25 +114,63 @@ export default function WorkPage() {
 
         <Authorship />
 
-        <TexturedDark image="/images/work-closing.jpg" className="py-20 text-center sm:py-28 sm:pb-28">
+        <TexturedDark
+          image="/images/work-closing.jpg"
+          imagePosition="center 62%"
+          overlayGradient="radial-gradient(circle at 18% 14%, rgba(123,151,108,0.28) 0%, transparent 34%), linear-gradient(118deg, rgba(7,21,17,0.94) 0%, rgba(12,31,26,0.9) 48%, rgba(7,16,22,0.95) 100%)"
+          className="py-20 sm:py-28 sm:pb-28"
+        >
           <ClipReveal>
-            <Container>
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-ivory/70">The next decision</p>
-              <h2 className="mx-auto mt-3 max-w-3xl font-display text-display-md font-normal text-ivory">
-                Bring the part of the brand that no longer makes sense.
-              </h2>
-              <p className="mx-auto mt-5 max-w-2xl text-ivory/80">
-                The first conversation identifies the decision underneath the deliverable, whether the problem is clarity, recognition, conversion, or a system that has stopped holding together.
-              </p>
+            <Container className="max-w-6xl">
+              <div className="grid gap-10 text-left lg:grid-cols-[minmax(0,1.12fr)_minmax(19rem,0.88fr)] lg:items-end lg:gap-16">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#B9C8AE]">The next decision</p>
+                  <h2 className="mt-3 max-w-3xl font-display text-display-md font-normal text-ivory">
+                    Bring the part of the brand that no longer makes sense.
+                  </h2>
+                  <p className="mt-5 max-w-2xl text-base leading-relaxed text-ivory/80 sm:text-lg">
+                    The first conversation separates the symptom from the decision: what feels unclear, where the system stops holding together, and what should be solved first.
+                  </p>
 
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-5">
-                <LinkButton href="/contact">Discuss the brand problem</LinkButton>
-                <Link href="/services" className="link-underline text-sm font-medium text-ivory">
-                  See the service paths <span aria-hidden="true">→</span>
-                </Link>
+                  <div className="mt-8 flex flex-wrap items-center gap-5">
+                    <LinkButton
+                      href="/contact"
+                      className="bg-[#65785A] text-[#F6F1E7] hover:bg-[#74896A]"
+                    >
+                      Discuss the brand problem
+                    </LinkButton>
+                    <Link href="/services" className="link-underline text-sm font-medium text-[#EEE9DD]">
+                      See the service paths <span aria-hidden="true">→</span>
+                    </Link>
+                  </div>
+                </div>
+
+                <aside
+                  aria-label="What the first conversation covers"
+                  className="rounded-[1.5rem] border border-ivory/20 bg-[#06130F]/75 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-sm sm:p-7"
+                >
+                  <p className="text-[0.64rem] font-medium uppercase tracking-[0.18em] text-[#AFC19F]">
+                    First conversation
+                  </p>
+                  <ol className="mt-5 space-y-5">
+                    {[
+                      ["01", "Name what feels unclear", "The page, message, journey, or system that has started to resist the business."],
+                      ["02", "Locate where it breaks", "Whether the problem begins in perception, structure, recognition, or conversion."],
+                      ["03", "Frame the next decision", "The clearest move to make before commissioning another disconnected output."],
+                    ].map(([number, title, description]) => (
+                      <li key={number} className="grid grid-cols-[2rem_1fr] gap-3 border-t border-ivory/15 pt-4 first:border-t-0 first:pt-0">
+                        <span className="font-display text-lg text-[#9DB18F]">{number}</span>
+                        <div>
+                          <p className="font-display text-xl font-normal text-ivory">{title}</p>
+                          <p className="mt-1 text-sm leading-relaxed text-ivory/65">{description}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </aside>
               </div>
 
-              <div className="mx-auto mt-9 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 border-t border-ivory/20 pt-5 text-[0.64rem] uppercase tracking-[0.16em] text-ivory/60">
+              <div className="mt-10 grid gap-3 border-t border-ivory/20 pt-5 text-center text-[0.64rem] uppercase tracking-[0.16em] text-ivory/65 sm:grid-cols-3 lg:text-left">
                 <span>Founder-led</span>
                 <span>Direct collaboration</span>
                 <span>Strategy before output</span>
