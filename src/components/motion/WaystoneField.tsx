@@ -81,6 +81,7 @@ export function WaystoneField({
   const T = TONES[tone];
   const prefersReducedMotion = useHydratedReducedMotion();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [focusedId, setFocusedId] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const raf = useRef<number | null>(null);
 
@@ -99,7 +100,8 @@ export function WaystoneField({
     });
   }
 
-  const hoveredIndex = stones.findIndex((s) => s.id === hoveredId);
+  const attentionId = focusedId ?? hoveredId;
+  const attentionIndex = stones.findIndex((stone) => stone.id === attentionId);
 
   return (
     <div
@@ -133,24 +135,25 @@ export function WaystoneField({
         {stones.map((stone, i) => {
           const selected = activeId === stone.id;
           const recommended = recommendedId === stone.id && !selected;
-          const open = prefersReducedMotion || selected || hoveredId === stone.id;
-          // Neighbours make space: stones before the hovered one drift
+          const open = prefersReducedMotion || selected || attentionId === stone.id;
+          // Neighbours make space: stones before the attended one drift
           // left, stones after drift right — a few pixels, never a jump.
           const drift =
-            prefersReducedMotion || hoveredIndex === -1 || hoveredId === stone.id
+            prefersReducedMotion || attentionIndex === -1 || attentionId === stone.id
               ? 0
-              : i < hoveredIndex
+              : i < attentionIndex
                 ? -3
                 : 3;
           return (
             <motion.button
               key={stone.id}
               type="button"
+              data-waystone-id={stone.id}
               aria-pressed={selected}
               onClick={() => onSelect(stone.id)}
               onMouseEnter={() => setHoveredId(stone.id)}
-              onFocus={() => setHoveredId(stone.id)}
-              onBlur={() => setHoveredId((h) => (h === stone.id ? null : h))}
+              onFocus={() => setFocusedId(stone.id)}
+              onBlur={() => setFocusedId((id) => (id === stone.id ? null : id))}
               animate={{ x: drift, y: selected && !prefersReducedMotion ? 2 : 0 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.985 }}
               transition={{ duration: motionTokens.durationFast, ease: motionTokens.easeOrganic }}
@@ -204,6 +207,7 @@ export function WaystoneField({
               {/* The stone's second and third layers unfold on
                   attention instead of hiding behind a click. */}
               <span
+                data-waystone-details
                 className="grid transition-[grid-template-rows,opacity] duration-500"
                 style={{ gridTemplateRows: open ? "1fr" : "0fr", opacity: open ? 1 : 0 }}
               >
