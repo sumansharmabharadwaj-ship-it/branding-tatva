@@ -1,0 +1,74 @@
+name: Import original Services media
+
+on:
+  push:
+    branches:
+      - services-original-media-rollout
+    paths:
+      - .github/workflows/import-services-original-media.yml
+
+permissions:
+  contents: write
+
+jobs:
+  import-media:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out rollout branch
+        uses: actions/checkout@v4
+        with:
+          ref: services-original-media-rollout
+          fetch-depth: 0
+
+      - name: Download generated films and matching posters
+        env:
+          HERO_VIDEO_URL: "https://production-273614-media-export.storage.googleapis.com/58971987-3d4a-433e-8b32-561326d17874/original.mp4?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=descript-api%40production-273614.iam.gserviceaccount.com%2F20260806%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260806T092616Z&X-Goog-Expires=86400&X-Goog-SignedHeaders=host&X-Goog-Signature=427c1fb2fa40cbe1cbc7f6062dd12db8a711f44822deb8edd206b443dd8d37c74332220dd4ef41fcc380d8ce3f6d5eccabaa8dfa5a2a6eb0ea1036cb4dbb6b58b9606a8a8517ae4a51852c23d5554e6a7b40945648a202fac8f2951f0ccabb8b7594528e66b1a5a8df2aacf82aee032ee33e50d41edd7d7fd32177bffcab289b68be7091eab4421be7095555c0c94da759a0320998cda222aa63da3e8d4b8d124f5d53292fd09557b3f7cef31afd12a0e4e8fadfd8a858574f96cc1ada6c6ea64f5327999a6f905f5066342fbcd7dfe1e2260e40375a5be53de0b88475d08b4caa3d4e83af528d2c3751c78497f9a8ac94262d6928e9568ef365e5b63b0fc2ab"
+          STRATEGY_VIDEO_URL: "https://production-273614-media-export.storage.googleapis.com/50334337-5602-4de5-b8a9-3d2c2dedee84/original.mp4?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=descript-api%40production-273614.iam.gserviceaccount.com%2F20260806%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260806T095605Z&X-Goog-Expires=86400&X-Goog-SignedHeaders=host&X-Goog-Signature=751cb3370b477b880010c2f687b1381598c82053236d81172794d6216fb3dae676395d8cfc1db7e05422119c209edd0573266098bf1002a534cbca9abffe6ad977da9942514f2700f651314d77358a19ea9ca73e14ef156b435c576df5f47405aa85d24ce0e1132607c3c65c85267da4dfda7bc6f95dead136d920817f91e02293190c490743e6d8c96c634287d3ca9b88bd8e24ff9bbc0e6dcd7f298b1bef7a55e7613cc22bea8187525f05dffc298dc3c46f3ef699e21a5dfabf6cbc2177dd1955e0c97c17db0c47150afd5e18095118b487208cbdbedf22b59725e5cf66e152e370795a22fdeec5d491fe96091ada13f7d7497b53d5a8b64c04f545d8d1a7"
+          HEALTH_VIDEO_URL: "https://production-273614-media-export.storage.googleapis.com/54e3d353-4a4f-4ab4-b6c4-1a6c31c45874/original.mp4?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=descript-api%40production-273614.iam.gserviceaccount.com%2F20260806%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260806T095720Z&X-Goog-Expires=86400&X-Goog-SignedHeaders=host&X-Goog-Signature=a11083263991c37ab92fc51ed4032e7b2e9609c8b011273915cc24f17d5d76318ca45552aed70d28328dda18e05848866820ce4292ca328daa2367550ee507c619a531a2ca323a358769d765ea3cc4c6b98984cabdf6afe54db497cd4d61d6fca029f5f793aa0cb695eabcbd81a4dd22885fb9643247d1e74625ca3be35346a7bc395d8a1a98c18c01854088808a2866e88a9f07768ebf83b4d19b18706aef09973f027e03065fb2157cc81a12b9d816c2ea36bedaa1290824f3a57c90224078639e1b9a652dea5c3eae5986ce9d81b4b8df488d78d2a48cd36b74a81d57d3db7f7080998a7ae5249b27e37f701d2e142656dd8bc02149a6bc2d7958d4d3ef8b"
+          HERO_POSTER_URL: "https://media.canva.com/v2/files/uri:ifs%3A%2F%2FV%2FpQ7MHtzakHxXfFfG3Bl6xTpzRLEy4Q-KFcGoyZSjHHY.jpg?csig=AAAAAAAAAAAAAAAAAAAAAJQ1Wnk4Mf7dthzQmH4cdaOa3pLG8ZgYrxKTQlAPaLuc&exp=1786017900&signer=video-rpc&token=AAIAAVYAL3BRN01IdHpha0h4WGZGZkczQmw2eFRwelJMRXk0US1LRmNHb3laU2pISFkuanBnAAAAAAGf1vZl4P0BSXFnJzsRqls0y3R-TAh9DG6DM82f_rENChYpFUQB"
+          STRATEGY_POSTER_URL: "https://media.canva.com/v2/files/uri:ifs%3A%2F%2FV%2F9Bv0ERDvES5QIr479D5BfqEnAv-lXRj4WZtkgEDStmo.jpg?csig=AAAAAAAAAAAAAAAAAAAAAC8iQCgCgjCGWJtnhtVkJgJotlWV8ocTxJwteT1ixScs&exp=1786020420&signer=video-rpc&token=AAIAAVYALzlCdjBFUkR2RVM1UUlyNDc5RDVCZnFFbkF2LWxYUmo0V1p0a2dFRFN0bW8uanBnAAAAAAGf1xzZoJcYA0hcIfN4iEaBEsWsBcJXhd2yjPejmDkHwMQ-pxOz"
+          HEALTH_POSTER_URL: "https://media.canva.com/v2/files/uri:ifs%3A%2F%2FV%2FLGMNgZYlP7Aj_j23piTSu4oYu2z-NzFUsd_EO1Q6QPE.jpg?csig=AAAAAAAAAAAAAAAAAAAAAOrbTd3AeIe-R0OTOAfmQyhSWMGc10lM5XJ1H4LteLBj&exp=1786018920&signer=video-rpc&token=AAIAAVYAL0xHTU5nWllsUDdBal9qMjNwaVRTdTRvWXUyei1OekZVc2RfRU8xUTZRUEUuanBnAAAAAAGf1wX2QGTpdJwhTZGevbp1ip4E_p0o-oy-IdEIjw7wFMRbw5p7"
+        run: |
+          set -euo pipefail
+          mkdir -p public/videos public/images
+
+          curl --fail --location --retry 3 --retry-all-errors "$HERO_VIDEO_URL" --output public/videos/services-hero-root-system.mp4
+          curl --fail --location --retry 3 --retry-all-errors "$STRATEGY_VIDEO_URL" --output public/videos/services-strategy-topography.mp4
+          curl --fail --location --retry 3 --retry-all-errors "$HEALTH_VIDEO_URL" --output public/videos/services-health-reflection.mp4
+
+          curl --fail --location --retry 3 --retry-all-errors "$HERO_POSTER_URL" --output public/images/services-hero-root-system-poster.jpg
+          curl --fail --location --retry 3 --retry-all-errors "$STRATEGY_POSTER_URL" --output public/images/services-strategy-topography-poster.jpg
+          curl --fail --location --retry 3 --retry-all-errors "$HEALTH_POSTER_URL" --output public/images/services-health-reflection-poster.jpg
+
+          test -s public/videos/services-hero-root-system.mp4
+          test -s public/videos/services-strategy-topography.mp4
+          test -s public/videos/services-health-reflection.mp4
+          test -s public/images/services-hero-root-system-poster.jpg
+          test -s public/images/services-strategy-topography-poster.jpg
+          test -s public/images/services-health-reflection-poster.jpg
+
+          ls -lh \
+            public/videos/services-hero-root-system.mp4 \
+            public/videos/services-strategy-topography.mp4 \
+            public/videos/services-health-reflection.mp4 \
+            public/images/services-hero-root-system-poster.jpg \
+            public/images/services-strategy-topography-poster.jpg \
+            public/images/services-health-reflection-poster.jpg
+
+      - name: Commit generated media to the rollout branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/videos/services-hero-root-system.mp4 \
+            public/videos/services-strategy-topography.mp4 \
+            public/videos/services-health-reflection.mp4 \
+            public/images/services-hero-root-system-poster.jpg \
+            public/images/services-strategy-topography-poster.jpg \
+            public/images/services-health-reflection-poster.jpg
+          git commit -m "Install original generated Services media"
+          git push origin HEAD:services-original-media-rollout
