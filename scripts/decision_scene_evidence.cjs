@@ -24,6 +24,19 @@ async function waitForPrelude(page) {
   await page.waitForTimeout(260);
 }
 
+async function waitForText(locator, expected, label, timeoutMs = 5_000) {
+  const deadline = Date.now() + timeoutMs;
+  let copy = "";
+
+  while (Date.now() < deadline) {
+    copy = (await locator.textContent()) || "";
+    if (copy.includes(expected)) return;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
+  throw new Error(`${label}: expected "${expected}" in "${copy.slice(0, 240)}"`);
+}
+
 async function assertNoOverflow(page, label) {
   const dimensions = await page.evaluate(() => ({
     viewport: window.innerWidth,
@@ -102,9 +115,9 @@ async function capture(browser, viewport) {
   await assertNoOverflow(page, `${viewport.name}/decision`);
 
   const panel = scene.locator("#questions-cinematic-panel");
-  const initialText = (await panel.textContent()) || "";
-  assert(
-    initialText.includes("Discovery → positioning → audience"),
+  await waitForText(
+    panel,
+    "Discovery → positioning → audience",
     `${viewport.name}: Scope state is incomplete`,
   );
 
@@ -115,10 +128,9 @@ async function capture(browser, viewport) {
 
   if (viewport.name.startsWith("desktop")) {
     await scene.getByRole("tab", { name: /Implementation/i }).click();
-    await page.waitForTimeout(420);
-    const implementationText = (await panel.textContent()) || "";
-    assert(
-      implementationText.includes("Strategy → website → content → campaigns"),
+    await waitForText(
+      panel,
+      "Strategy → website → content → campaigns",
       `${viewport.name}: Implementation state did not update`,
     );
     await scene.screenshot({
