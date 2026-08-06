@@ -17,6 +17,7 @@ import "./home-v4-tatva-depth.css";
 import "./home-v4-tatva-mobile-fix.css";
 import "./home-v4-studio-depth.css";
 import "./home-v4-studio-portrait-fix.css";
+import "./home-v4-decision-depth.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
