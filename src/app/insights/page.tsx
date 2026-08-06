@@ -103,9 +103,9 @@ export default function InsightsPage() {
                   Featured
                 </p>
                 <Link href={`/insights/${featured.slug}`} className="group mt-3 block">
-                  <p className="max-w-2xl font-display text-[clamp(1.8rem,4vw,3rem)] font-normal leading-tight text-soil transition-colors duration-300 group-hover:text-clay">
+                  <h2 className="max-w-2xl font-display text-[clamp(1.8rem,4vw,3rem)] font-normal leading-tight text-soil transition-colors duration-300 group-hover:text-clay">
                     {featured.title}
-                  </p>
+                  </h2>
                   <p className="mt-4 max-w-2xl text-base leading-relaxed text-foreground-secondary">
                     {featured.excerpt}
                   </p>
@@ -151,9 +151,9 @@ export default function InsightsPage() {
                       <ElementGlyph slug={post.element} className="h-4 w-4" strokeWidth={1.3} />
                       {QUESTION_FOR[post.slug] ?? "A question from a real project"}
                     </span>
-                    <span className="mt-2 block font-display text-2xl font-normal text-soil transition-transform duration-300 group-hover:translate-x-1">
+                    <h3 className="mt-2 block font-display text-2xl font-normal text-soil transition-transform duration-300 group-hover:translate-x-1">
                       {post.title}
-                    </span>
+                    </h3>
                     <span className="mt-2 block max-w-xl text-sm leading-relaxed text-foreground-secondary">
                       {post.excerpt}
                     </span>
