@@ -8,10 +8,12 @@ import { supportingInsightPosts } from "@/data/supportingInsights";
 export { insightTopics };
 export type { InsightPost };
 
-export const insightPosts: InsightPost[] = [
-  ...pillarInsightPosts,
-  ...supportingInsightPosts,
-];
+const combinedPosts = [...pillarInsightPosts, ...supportingInsightPosts];
+
+export const insightPosts: InsightPost[] = combinedPosts.filter(
+  (post, index) =>
+    combinedPosts.findIndex((candidate) => candidate.slug === post.slug) === index
+);
 
 export function getInsightBySlug(slug: string) {
   return insightPosts.find((post) => post.slug === slug);
