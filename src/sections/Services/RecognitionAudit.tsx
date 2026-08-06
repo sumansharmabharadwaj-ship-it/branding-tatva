@@ -39,7 +39,7 @@ export function RecognitionAudit() {
   );
 
   const unlocked = status === "done";
-  const visibleChecks = unlocked ? CHECKS : CHECKS.slice(0, PUBLIC_CHECKS);
+  const visibleChecks: readonly string[] = unlocked ? CHECKS : CHECKS.slice(0, PUBLIC_CHECKS);
   const currentCheck = visibleChecks[activeIndex] ?? visibleChecks[0];
   const currentAnswer = answers[activeIndex] ?? null;
   const answered = visibleChecks.reduce(
