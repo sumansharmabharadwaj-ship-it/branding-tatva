@@ -50,7 +50,7 @@ export function WorkProofStrip({ projects }: { projects: Project[] }) {
               transition={{ duration: 24, ease: "linear", repeat: Infinity }}
             >
               {[...items, ...items].map((item, index) => (
-                <span key={`${item}-${index}`} className="flex shrink-0 items-center text-xs uppercase tracking-[0.15em] text-white/82">
+                <span key={`${item}-${index}`} className="flex shrink-0 items-center text-xs uppercase tracking-[0.15em] text-white/80">
                   <span className="px-5 sm:px-7">{item}</span>
                   <span className="h-1 w-1 rounded-full" style={{ backgroundColor: WORK.sand }} />
                 </span>
