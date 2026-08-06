@@ -12,6 +12,7 @@ on:
       - scripts/services_page_gate.cjs
       - scripts/services_scroll_gate.cjs
       - scripts/services_authority_gate.cjs
+      - scripts/services_state_progress_gate.cjs
       - src/app/services/**
       - src/sections/Services/**
       - src/components/BackgroundVideo.tsx
@@ -112,6 +113,11 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/services_authority_gate.cjs
+
+      - name: Verify Situation and perception progress states
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/services_state_progress_gate.cjs
 
       - name: Stop the production server
         if: always()
