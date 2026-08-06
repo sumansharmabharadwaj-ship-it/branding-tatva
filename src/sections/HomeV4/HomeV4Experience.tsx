@@ -20,6 +20,7 @@ import { elementColor } from "@/lib/elementColor";
 import { HomeV4HeaderDirector } from "./HomeV4HeaderDirector";
 import { GuidedView, LivingCursor, SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
+import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
 import { HomeV4ProcessTempo } from "./HomeV4ProcessTempo";
 import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
 
@@ -31,6 +32,7 @@ export function HomeV4Experience() {
 
   return (
     <div className="home-v4" data-home-v4>
+      <HomeV4PreludeBridge />
       <HomeV4MediaDirector />
       <HomeV4HeaderDirector />
       <HomeV4ProcessTempo />
