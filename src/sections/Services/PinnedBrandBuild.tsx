@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
-import { useReducedMotion } from "framer-motion";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ElementGlyph } from "@/components/ElementGlyph";
@@ -69,7 +70,7 @@ export function PinnedBrandBuild() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const waveRef = useRef<SVGGElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const lenis = useLenis();
   const animate = isDesktop && !prefersReducedMotion;

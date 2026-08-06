@@ -1,11 +1,7 @@
 "use client";
 
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useReducedMotion,
-} from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/Container";
 
@@ -46,7 +42,7 @@ const ROTATE_MS = 4200;
 const MANUAL_PAUSE_MS = 14000;
 
 export function ProcessChapterIntro() {
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const rootRef = useRef<HTMLDivElement>(null);
   const pauseUntilRef = useRef(0);
   const inView = useInView(rootRef, { amount: 0.45 });

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { LogoMark } from "@/components/Logo";
@@ -39,7 +40,7 @@ const COPY = [
 
 export function PageLoadVeil() {
   const pathname = usePathname();
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const [visible, setVisible] = useState(pathname === "/");
   const [removed, setRemoved] = useState(pathname !== "/");
   const [phase, setPhase] = useState(0);

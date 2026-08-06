@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { TiltCard } from "@/components/TiltCard";
@@ -59,7 +60,7 @@ export function WeakBrandingCost() {
   // (not time-based) so the visitor's own progress performs the focus
   // pull. Bounded to one element; hover still completes the sharpen.
   const focusRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: focusRef, offset: ["start 0.95", "start 0.35"] });
   const blurPx = useTransform(scrollYProgress, [0, 1], [7, 1.5]);
   // Quantized to whole pixels: the GPU frame map located a carpet of

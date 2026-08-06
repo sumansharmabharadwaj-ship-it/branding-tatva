@@ -1,13 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useReducedMotion,
-} from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 
 const PATHS = [
   {
@@ -78,7 +74,7 @@ const SITUATION_TO_PATH: Record<string, number> = {
 };
 
 export function ThreePathsSection() {
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const pauseUntilRef = useRef(0);
   const inView = useInView(sectionRef, { amount: 0.34 });

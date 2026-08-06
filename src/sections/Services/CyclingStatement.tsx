@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { SplitReveal } from "@/components/SplitReveal";
 
 // Direct feedback that the hero's static question read as weak next to
@@ -27,7 +28,7 @@ const LINE_DURATION = 1100;
 type Mode = "pending" | "cycle" | "headline";
 
 export function CyclingStatement({ headline }: { headline: React.ReactNode }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [mode, setMode] = useState<Mode>("pending");
   const [index, setIndex] = useState(0);
 

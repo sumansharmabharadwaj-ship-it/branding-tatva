@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/Container";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { brandStages } from "@/lib/contact-schema";
@@ -33,7 +34,7 @@ export function StrategyRoomCTA() {
   const [stage, setStage] = useState<string | null>(null);
   const [priority, setPriority] = useState<string | null>(null);
   const [focus, setFocus] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   function pickStage(value: string) {
     setStage(value);

@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { AnimatedStat } from "@/components/AnimatedStat";
@@ -151,7 +152,7 @@ export function BrandHealthCheck() {
   // show a pressed state for a beat before advancing, real tactile
   // feedback rather than relying only on the AnimatePresence swap.
   const [selected, setSelected] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const done = step >= QUESTIONS.length;
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.35 };
   const score = answers.reduce((sum, points) => sum + points, 0);

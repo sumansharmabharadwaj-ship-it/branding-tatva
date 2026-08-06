@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
@@ -55,7 +56,7 @@ export function ElementRowBackground({
   // reading".
   gate?: boolean;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ref, shouldLoad] = useLazyMount();
   const [videoReady, setVideoReady] = useState(false);

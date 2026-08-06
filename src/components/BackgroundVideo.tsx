@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
 // A bare video-with-poster-fallback fill layer, for sections that already
@@ -50,7 +51,7 @@ export function BackgroundVideo({
   // clips. Existing sections remain at their encoded 1x speed.
   playbackRate?: number;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start end", "end start"] });

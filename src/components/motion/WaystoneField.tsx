@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { motionTokens } from "@/lib/motionTokens";
 
 // The Living Compass — waystones on a carved matte glass panel, per
@@ -78,7 +79,7 @@ export function WaystoneField({
   tone?: "dark" | "light";
 }) {
   const T = TONES[tone];
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const raf = useRef<number | null>(null);

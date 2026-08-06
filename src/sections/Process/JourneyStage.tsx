@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useLazyMount } from "@/hooks/useLazyMount";
@@ -41,7 +42,7 @@ export function JourneyStage({
   dark?: boolean;
 }) {
   const ref = useRef<HTMLLIElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));
   const [mediaRef, shouldLoad] = useLazyMount();
   const videoRef = useRef<HTMLVideoElement>(null);

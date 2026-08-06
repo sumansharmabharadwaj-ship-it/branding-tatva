@@ -1,12 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useReducedMotion,
-} from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/Container";
 
@@ -67,7 +63,7 @@ const MANUAL_HOLD_MS = 16000;
 export function TatvaSystemLab() {
   const sectionRef = useRef<HTMLElement>(null);
   const pauseUntilRef = useRef(0);
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.28 });
   const [omittedIndex, setOmittedIndex] = useState<number | null>(null);
   const omitted = omittedIndex === null ? null : FORCES[omittedIndex];

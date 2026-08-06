@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion } from "framer-motion";
 
 // Honest placeholder, not filled with invented quotes. Real client
 // testimonials go here once collected; see the outreach note in
@@ -11,7 +12,7 @@ import { motion, useReducedMotion } from "framer-motion";
 // space rather than a dead one, without pretending there's content here.
 
 export function Testimonials() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   return (
     <div className="flex items-center gap-4 rounded-2xl border border-dashed border-border bg-background-alt px-6 py-5">

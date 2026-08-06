@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+
 import { ElementRowBackground } from "@/components/ElementRowBackground";
 import { ElementSignature } from "@/sections/Elements/ElementSignature";
 import { ElementGlyph } from "@/components/ElementGlyph";
@@ -13,7 +14,7 @@ const MANUAL_HOLD_MS = 14000;
 export function PinnedSlider({ elements }: { elements: Element[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const holdUntilRef = useRef(0);
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 

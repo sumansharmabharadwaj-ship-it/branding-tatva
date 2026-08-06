@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 import { EASE_AIR } from "@/lib/motion";
 
@@ -44,7 +45,7 @@ export function AnnotatedVisual({
 }) {
   const [left, right] = callouts;
   const [ref, visible] = useRevealTrigger();
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   return (
     <div ref={ref} className="mx-auto max-w-5xl">

@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { faqs } from "@/data/faqs";
 import { answerVariants, answerTransition, TOGGLE_ROTATION } from "@/sections/FAQ/animations";
@@ -45,7 +46,7 @@ const GROUPS = [
 // so every hardcoded light-only color needs a dark-bg equivalent.
 export function RiskRemovalFAQ({ dark = false }: { dark?: boolean }) {
   const [openQuestion, setOpenQuestion] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   // Guided-discovery pacing (direct creative direction: "a conversation
   // unfolding, chapters not paragraphs"): each group carries its own

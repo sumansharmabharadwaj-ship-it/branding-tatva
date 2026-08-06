@@ -1,9 +1,10 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { motion, useTransform, useReducedMotion } from "framer-motion";
+import { motion, useTransform } from "framer-motion";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 import { SplitReveal } from "@/components/SplitReveal";
@@ -27,7 +28,7 @@ export function CinematicHero({
 }: CinematicHeroProps) {
   const ref = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const { imageY, contentOpacity, contentY } = useHeroParallax(ref);
   const mouseParallax = useHeroMouseParallax(ref, Boolean(prefersReducedMotion));
   const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));

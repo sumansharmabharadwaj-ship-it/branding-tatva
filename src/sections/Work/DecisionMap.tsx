@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { ElementGlyph } from "@/components/ElementGlyph";
@@ -57,7 +58,7 @@ function proofLine(projectSlug: string) {
 
 export function DecisionMap() {
   const [active, setActive] = useState(0);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const entries = MAP.map((m) => ({ ...m, proof: proofLine(m.projectSlug) }));
   const current = entries[active];
 

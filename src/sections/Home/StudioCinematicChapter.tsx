@@ -1,13 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useReducedMotion,
-} from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 const DISCIPLINES = [
@@ -70,7 +66,7 @@ export function StudioCinematicChapter() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const holdUntilRef = useRef(0);
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, {
     amount: 0.18,
     margin: "8% 0px -12% 0px",

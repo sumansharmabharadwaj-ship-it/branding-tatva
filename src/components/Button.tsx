@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
 import { ReactNode, useRef, useState, type MouseEvent } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/Magnetic";
 import { useSpotlight } from "@/hooks/useSpotlight";
@@ -37,7 +38,7 @@ let rippleId = 0;
 // a smudge on a pill with no fill behind it to catch the light.
 
 export function LinkButton({ href, children, variant = "primary", className, onClick, style, trackEvent, trackProps }: ButtonProps) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const linkRef = useRef<HTMLAnchorElement>(null);
   const spotlightRef = useSpotlight(linkRef, variant !== "primary" || Boolean(prefersReducedMotion));
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);

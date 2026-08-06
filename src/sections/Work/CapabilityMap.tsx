@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { CAPABILITIES, NEED_PATHS } from "@/data/capabilities";
 import { projects } from "@/data/projects";
@@ -28,7 +29,7 @@ const NEED_STONES: Waystone[] = NEED_PATHS.map((need) => ({
 
 export function CapabilityMap() {
   const [activeNeed, setActiveNeed] = useState(NEED_PATHS[0].id);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const need = NEED_PATHS.find((item) => item.id === activeNeed) ?? NEED_PATHS[0];
   const project = projects.find((item) => item.slug === need.projectSlug);
 

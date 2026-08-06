@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { cloneElement, isValidElement, useId, useRef, useState, type MouseEvent, type ReactElement } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { contactSchema, brandStages, type ContactFormValues } from "@/lib/contact-schema";
@@ -31,7 +32,7 @@ let rippleId = 0;
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const spotlightRef = useSpotlight(buttonRef, Boolean(prefersReducedMotion));
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);

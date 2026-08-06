@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Container } from "@/components/Container";
 
 // About redesign, the interdisciplinary convergence — the brief's two
@@ -24,7 +25,7 @@ const FIELDS = [
 
 export function Convergence() {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start end", "end start"] });
 
   // The two disciplines start apart and arrive at center; the merged

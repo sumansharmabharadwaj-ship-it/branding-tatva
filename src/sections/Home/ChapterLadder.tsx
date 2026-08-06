@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
@@ -113,7 +114,7 @@ function resolveChapterTargets(main: HTMLElement) {
 export function ChapterLadder() {
   const pathname = usePathname();
   const lenis = useLenis();
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const targetsRef = useRef<HTMLElement[]>([]);
   const activeIndexRef = useRef(0);
   const progressRef = useRef(0);

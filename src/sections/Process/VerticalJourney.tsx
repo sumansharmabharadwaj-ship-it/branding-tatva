@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { ProcessSectionProps } from "./types";
 import { useVerticalLineProgress } from "./animations";
 import { JourneyStage } from "./JourneyStage";
@@ -25,7 +26,7 @@ import { JourneyStage } from "./JourneyStage";
 // even before any individual stage's own poster has loaded.
 export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const lineHeight = useVerticalLineProgress(ref);
 
   return (

@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { toSvh } from "@/lib/media";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
@@ -63,7 +64,7 @@ export function PhotoHero({
   overlayGradient?: string;
   playbackRate?: number;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   useVideoFadeIn(videoRef, Boolean(video) && !prefersReducedMotion);
 

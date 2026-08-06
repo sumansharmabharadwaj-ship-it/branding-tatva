@@ -1,5 +1,6 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
 import {
   useCallback,
@@ -9,7 +10,7 @@ import {
   useState,
   type CSSProperties,
 } from "react";
-import { useInView, useReducedMotion } from "framer-motion";
+import { useInView } from "framer-motion";
 import type { ProcessStage } from "@/data/process";
 
 type StageMeta = {
@@ -124,7 +125,7 @@ function fallbackMeta(index: number): StageMeta {
 }
 
 export function RootSystem({ stages }: { stages: ProcessStage[] }) {
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const pauseUntilRef = useRef(0);

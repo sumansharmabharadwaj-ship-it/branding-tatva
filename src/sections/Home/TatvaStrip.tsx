@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -66,7 +67,7 @@ const MANUAL_PAUSE_MS = 15000;
 const HOVER_PREVIEW_MS = 3000;
 
 export function TatvaStrip() {
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const pauseUntilRef = useRef(0);
   const inView = useInView(sectionRef, { amount: 0.18 });

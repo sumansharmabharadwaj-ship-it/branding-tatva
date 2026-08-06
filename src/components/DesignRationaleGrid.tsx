@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { NatureAccent } from "@/components/NatureAccent";
 import { LogoMark } from "@/components/Logo";
@@ -95,7 +96,7 @@ export function DesignRationaleGrid() {
   // moved away, before a desktop user could even read the specimen.
   const [pinned, setPinned] = useState<number | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   return (
     <div className="mt-14 grid gap-x-12 gap-y-12 sm:grid-cols-2">

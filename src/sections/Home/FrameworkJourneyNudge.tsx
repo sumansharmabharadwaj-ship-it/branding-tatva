@@ -1,6 +1,7 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+
 import { useEffect, useRef } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 
@@ -13,7 +14,7 @@ const LAB_REVEAL_DELAY_MS = 9400;
 
 export function FrameworkJourneyNudge() {
   const lenis = useLenis();
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const timerRef = useRef(0);
 
   useEffect(() => {

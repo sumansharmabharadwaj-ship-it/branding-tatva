@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 
@@ -21,7 +22,7 @@ const STATES = [
 
 export function HomeOpeningSignal() {
   const lenis = useLenis();
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const [activeIndex, setActiveIndex] = useState(prefersReducedMotion ? 2 : 0);
 
   useEffect(() => {

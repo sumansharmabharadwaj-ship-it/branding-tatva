@@ -1,11 +1,7 @@
 "use client";
 
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-} from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { Compass, Hand, Pause, Play } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
@@ -38,7 +34,7 @@ type HandoffMotif = "mist" | "river" | "root" | "aperture" | "paper" | "constell
 
 export function GuidedView() {
   const lenis = useLenis();
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const [mode, setMode] = useState<GuideMode>("manual");
   const [activeIndex, setActiveIndex] = useState(0);
   const [hintVisible, setHintVisible] = useState(false);
@@ -303,7 +299,7 @@ export function GuidedView() {
 }
 
 export function LivingCursor() {
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const x = useMotionValue(-80);
   const y = useMotionValue(-80);
   const springX = useSpring(x, CURSOR_SPRING);

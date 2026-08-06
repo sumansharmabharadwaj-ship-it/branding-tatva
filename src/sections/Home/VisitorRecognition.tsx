@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { track } from "@/lib/analytics";
@@ -20,7 +21,7 @@ const MANUAL_PAUSE_MS = 20000;
 export function VisitorRecognition() {
   const [selected, setSelected] = useState<string>(STATES[0].id);
   const manualPauseUntilRef = useRef(0);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
     try {

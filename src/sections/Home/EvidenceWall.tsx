@@ -1,14 +1,10 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useReducedMotion,
-} from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -77,7 +73,7 @@ export function EvidenceWall() {
   const frameRef = useRef(0);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.42 });
   const activeProject = projects[activeIndex] ?? projects[0];
   const activeTrail = TRAILS[activeProject.slug];

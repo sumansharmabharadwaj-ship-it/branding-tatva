@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { CinematicCardMedia } from "@/components/CinematicCardMedia";
 import { useTilt } from "@/hooks/useTilt";
 import { EASE_AIR } from "@/lib/motion";
@@ -12,7 +13,7 @@ import { CARD_MEDIA_GRADIENT, CARD_TILT_MAX_DEGREES } from "./constants";
 export function CaseStudyCard({ project }: { project: Project }) {
   const [isHovered, setIsHovered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const { rotateX, rotateY } = useTilt(ref, CARD_TILT_MAX_DEGREES, Boolean(prefersReducedMotion));
 
   return (

@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { LazyAmbientShader } from "@/components/LazyAmbientShader";
@@ -46,7 +47,7 @@ const RUNGS = [
 export function PerceptionLadder() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [openRung, setOpenRung] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   // Direct critique (Creative Direction Audit) flagged this as the
   // weakest execution on the page — real content, but a plain bordered
   // list with zero motion. The ladder metaphor now literally climbs:

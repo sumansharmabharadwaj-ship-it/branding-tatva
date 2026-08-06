@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect } from "react";
-import { animate, motion, useMotionValue, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { animate, motion, useMotionValue, useScroll, useTransform } from "framer-motion";
 
 // The opening now reveals Branding Tatva's original root-system film
 // immediately enough to signal that the page is alive. A short scroll-linked
@@ -10,7 +11,7 @@ import { animate, motion, useMotionValue, useReducedMotion, useScroll, useTransf
 // the complete scene without waiting through an ornamental blackout.
 // Opacity only, one composited layer; removed for reduced motion.
 export function HeroReveal() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollY } = useScroll();
   // The defining visual event becomes clear within a modest first gesture.
   const scrollVeil = useTransform(scrollY, [0, 260], [0.86, 0]);

@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import type { Project } from "@/data/projects";
 import { getWorkTaxonomy } from "@/data/workTaxonomy";
@@ -42,7 +43,7 @@ const SYSTEM_CARDS = [
 ] as const;
 
 export function SystemFlagship({ project }: { project: Project }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [active, setActive] = useState(0);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
   const evidencePoster = getWorkTaxonomy(project.slug).evidencePoster;

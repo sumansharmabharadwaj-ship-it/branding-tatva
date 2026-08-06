@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Container } from "@/components/Container";
 import { BREAK_OVERLAY_GRADIENT, toSvh } from "@/lib/media";
 import { EASE_AIR } from "@/lib/motion";
@@ -94,7 +95,7 @@ export function VideoBreak({
   topContent?: React.ReactNode;
   children?: React.ReactNode;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ref, shouldLoadVideo] = useLazyMount();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });

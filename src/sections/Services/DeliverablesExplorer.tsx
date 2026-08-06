@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { LinkButton } from "@/components/Button";
@@ -22,7 +23,7 @@ import { ArtifactPreview } from "@/sections/Services/ArtifactPreview";
 export function DeliverablesExplorer() {
   const [group, setGroup] = useState<ScopeGroup | "all">("all");
   const [activeId, setActiveId] = useState(deliverables[0].id);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   const visible = group === "all" ? deliverables : deliverables.filter((d) => d.group === group);
   const active = deliverables.find((d) => d.id === activeId) ?? deliverables[0];

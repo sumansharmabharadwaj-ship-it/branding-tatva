@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import type { Transition } from "framer-motion";
 import { EASE_AIR } from "@/lib/motion";
@@ -59,7 +60,7 @@ export function ElementReveal({
   className?: string;
   children: ReactNode;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const recipe = recipes[slug];
   const [ref, visible] = useRevealTrigger("0px 0px -100px 0px");
 

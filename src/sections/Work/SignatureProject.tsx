@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { AnimatedStat } from "@/components/AnimatedStat";
@@ -27,7 +28,7 @@ const BEATS = [
 export function SignatureProject({ project }: { project: Project }) {
   const [activeBeat, setActiveBeat] = useState(0);
   const [mounted, setMounted] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const beatRefs = useRef<(HTMLDivElement | null)[]>([]);
   const evidencePoster = getWorkTaxonomy(project.slug).evidencePoster;
 

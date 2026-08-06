@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { faqs } from "@/data/faqs";
 import { Reveal } from "@/components/Reveal";
 import { answerVariants, answerTransition, TOGGLE_ROTATION } from "./animations";
@@ -30,7 +31,7 @@ export function FAQ({
   const [visible, setVisible] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const holdTimerRef = useRef(0);
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const dark = tone === "dark";
 
   useEffect(() => {

@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { track } from "@/lib/analytics";
 
@@ -38,7 +39,7 @@ export function RecognitionAudit() {
   const [email, setEmail] = useState("");
   const [business, setBusiness] = useState("");
   const [consent, setConsent] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const unlocked = status === "done";
 
   async function submit(e: React.FormEvent) {

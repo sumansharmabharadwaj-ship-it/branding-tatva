@@ -1,12 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useReducedMotion,
-} from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { AuditInvite } from "@/components/AuditInvite";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -76,7 +72,7 @@ function answerFor(question: string) {
 export function HomeQuestionsScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const holdUntilRef = useRef(0);
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
   const [activeIndex, setActiveIndex] = useState(0);
   const decisions = useMemo(

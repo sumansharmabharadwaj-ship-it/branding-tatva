@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import type { Project } from "@/data/projects";
 import { useLenis } from "@/components/SmoothScrollProvider";
@@ -18,7 +19,7 @@ import { useLenis } from "@/components/SmoothScrollProvider";
 // both exit; the close button takes focus on open so keyboard users
 // land inside the file. Reduced motion opens and closes instantly.
 export function ProjectFile({ project, onClose }: { project: Project | null; onClose: () => void }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
   const closeRef = useRef<HTMLButtonElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);

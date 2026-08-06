@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { conceptProjects } from "@/data/conceptProjects";
@@ -18,7 +19,7 @@ import { motionTokens } from "@/lib/motionTokens";
 // never through implied experience.
 export function TatvaLab() {
   const [openSlug, setOpenSlug] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   function toggle(slug: string) {
     const next = openSlug === slug ? null : slug;

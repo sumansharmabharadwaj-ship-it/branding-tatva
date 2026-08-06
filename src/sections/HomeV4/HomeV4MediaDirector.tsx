@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect } from "react";
-import { useReducedMotion } from "framer-motion";
+
 import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
 
 const DEFAULT_PLAYBACK_RATE = 1.22;
@@ -32,7 +33,7 @@ function distanceFromViewportCentre(video: HTMLVideoElement) {
 }
 
 export function HomeV4MediaDirector() {
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const guideMode = useHomeGuideMode();
 
   useEffect(() => {

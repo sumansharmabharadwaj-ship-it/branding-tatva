@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion } from "framer-motion";
 import type { KeyboardEvent, ReactNode } from "react";
 import { motionTokens } from "@/lib/motionTokens";
 
@@ -22,7 +23,7 @@ type InteractiveCardProps = {
 };
 
 export function InteractiveCard({ children, onClick, ariaLabel, ariaPressed, className = "" }: InteractiveCardProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useHydratedReducedMotion();
 
   function onKeyDown(event: KeyboardEvent<HTMLElement>) {
     if (!onClick) return;

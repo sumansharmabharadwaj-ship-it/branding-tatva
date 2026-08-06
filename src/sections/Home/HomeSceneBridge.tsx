@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
 type BridgeFamily =
@@ -315,7 +316,7 @@ function FireBridge({ active }: { active: boolean }) {
 
 export function HomeSceneBridge({ family, from, to }: HomeSceneBridgeProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(ref, { margin: "18% 0px 18% 0px" });
   const active = inView && !prefersReducedMotion;
 

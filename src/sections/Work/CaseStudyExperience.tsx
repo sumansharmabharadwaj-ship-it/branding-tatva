@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedMotionPreference, useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { Reveal } from "@/components/Reveal";
@@ -104,13 +105,13 @@ function ManagedVideo({
   imageAlt?: string;
   preload?: "none" | "metadata";
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || prefersReducedMotion) return;
+    if (!hydrated || !video || prefersReducedMotion) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -129,9 +130,9 @@ function ManagedVideo({
       observer.disconnect();
       video.pause();
     };
-  }, [prefersReducedMotion]);
+  }, [hydrated, prefersReducedMotion]);
 
-  if (!src || prefersReducedMotion) {
+  if (!hydrated || !src || prefersReducedMotion) {
     return poster ? <img src={poster} alt={imageAlt} className={className} /> : null;
   }
 
@@ -430,7 +431,7 @@ function ProjectNeighbour({ project, direction, accent }: { project: Project; di
 }
 
 export function CaseStudyExperience({ project, presentation, tierLabel, evidenceLabel, previous, next }: Props) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const chapters = buildChapters(project);
   const [activeChapter, setActiveChapter] = useState(0);
   const chapterRefs = useRef<(HTMLElement | null)[]>([]);

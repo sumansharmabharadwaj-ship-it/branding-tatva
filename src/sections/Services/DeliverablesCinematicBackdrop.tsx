@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 /**
  * Turns the generated paper archive into a quiet moving environment.
@@ -12,7 +13,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
  * complete, legible still without an abbreviated animation state.
  */
 export function DeliverablesCinematicBackdrop({ image }: { image: string }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const frameRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: frameRef,

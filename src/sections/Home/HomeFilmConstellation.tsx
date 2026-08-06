@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -142,7 +143,7 @@ function isChapterId(value: string | undefined): value is ChapterId {
 
 export function HomeFilmConstellation() {
   const pathname = usePathname();
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const [activeChapter, setActiveChapter] = useState<ChapterId>("opening");
   const [showSecondary, setShowSecondary] = useState(false);
   const chapterTargetsRef = useRef<HTMLElement[]>([]);

@@ -1,9 +1,10 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -98,7 +99,7 @@ const DRAWERS: Drawer[] = [
 
 export function StudioDesk() {
   const [open, setOpen] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   return (
     <section className="relative overflow-hidden bg-soil py-16 sm:py-24">

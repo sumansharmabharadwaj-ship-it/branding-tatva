@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import type { Project } from "@/data/projects";
@@ -18,7 +19,7 @@ function decisiveLine(project: Project) {
 export function WorkIndex({ projects }: { projects: Project[] }) {
   const [filter, setFilter] = useState<WorkFilterId>("all");
   const [active, setActive] = useState(0);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   const filtered = useMemo(
     () => (filter === "all" ? projects : projects.filter((project) => getWorkTaxonomy(project.slug).needs.includes(filter))),

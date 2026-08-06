@@ -1,10 +1,11 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useInView, useReducedMotion } from "framer-motion";
+import { useInView } from "framer-motion";
 
 // Suman's excavation concept: the Earth chapter stops being a list over a
 // scenic landscape and becomes the idea itself. A real root network fills the
@@ -84,7 +85,7 @@ export function BrandFoundationScene() {
   const wrapperRef = useRef<HTMLElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const sceneInView = useInView(wrapperRef, { amount: 0.08 });
   const [activeLayer, setActiveLayer] = useState<string>(FOUNDATION_LAYERS[0].id);
 

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
+import { motion } from "framer-motion";
 import type { Project } from "@/data/projects";
 import { WORK } from "@/sections/Work/palette";
 
@@ -14,7 +15,8 @@ const CAPABILITY_EVIDENCE = [
 ];
 
 export function WorkProofStrip({ projects }: { projects: Project[] }) {
-  const prefersReducedMotion = useReducedMotion();
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const shouldAnimate = hydrated && !prefersReducedMotion;
   const items = [`${projects.length} engagements on record`, ...CAPABILITY_EVIDENCE, "Founder-led direction"];
 
   return (
@@ -34,7 +36,7 @@ export function WorkProofStrip({ projects }: { projects: Project[] }) {
         <div className="min-w-0 flex-1 overflow-hidden py-4 sm:py-5">
           <p className="sr-only">{items.join(". ")}.</p>
 
-          {prefersReducedMotion ? (
+          {!shouldAnimate ? (
             <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 px-5" aria-hidden="true">
               {items.map((item) => (
                 <li key={item} className="text-xs uppercase tracking-[0.14em] text-white/80">

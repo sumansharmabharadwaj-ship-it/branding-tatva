@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { faqs } from "@/data/faqs";
 import { track } from "@/lib/analytics";
@@ -63,7 +64,7 @@ function previewOf(answer: string) {
 export function DecisionClearing() {
   const [activeCategory, setActiveCategory] = useState<string>(GROUPS[0].id);
   const [openQuestion, setOpenQuestion] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
   const chapterRefs = useRef<Record<string, HTMLDivElement | null>>({});
 

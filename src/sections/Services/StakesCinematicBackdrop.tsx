@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 /**
  * A restrained cinematic treatment for the positioning chapter.
@@ -15,7 +16,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
  * composite and reduced-motion visitors receive the complete still.
  */
 export function StakesCinematicBackdrop({ image }: { image: string }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const frameRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: frameRef,

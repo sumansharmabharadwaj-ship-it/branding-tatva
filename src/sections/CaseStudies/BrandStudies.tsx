@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { MediaSlot } from "@/components/MediaSlot";
@@ -21,7 +22,7 @@ import { brandStudies } from "@/data/brandStudies";
 // study claims is hidden behind an interaction.
 export function BrandStudies() {
   const [open, setOpen] = useState(-1);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   return (
     <section className="bg-soil py-20 sm:py-28">

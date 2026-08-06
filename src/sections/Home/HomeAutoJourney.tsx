@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
@@ -25,7 +26,7 @@ type ChapterChangeSource = "scroll" | "journey" | "replay";
 export function HomeAutoJourney() {
   const pathname = usePathname();
   const lenis = useLenis();
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const targetsRef = useRef<HTMLElement[]>([]);
   const activeIndexRef = useRef(0);
   const lastBroadcastIndexRef = useRef(-1);

@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { CHANNEL_FAMILIES, BUSINESS_TYPES } from "@/data/marketingChannels";
@@ -39,7 +40,7 @@ const TYPE_STONES: Waystone[] = BUSINESS_TYPES.map((t) => ({
 // instantly.
 export function MarketingEcosystem() {
   const [typeId, setTypeId] = useState(BUSINESS_TYPES[0].id);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const type = BUSINESS_TYPES.find((t) => t.id === typeId) ?? BUSINESS_TYPES[0];
 
   function pick(id: string) {

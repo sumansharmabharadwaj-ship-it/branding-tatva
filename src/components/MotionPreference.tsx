@@ -44,6 +44,9 @@ export function MotionPreferenceProvider({ children }: { children: React.ReactNo
     }
   }
 
+  // MotionConfig governs Motion components. Bespoke DOM and media
+  // fallbacks use the hydration-safe hook so React never branches while
+  // hydrating server-rendered markup.
   const reducedMotion = !hydrated ? "never" : pref === "reduced" ? "always" : "user";
 
   return (

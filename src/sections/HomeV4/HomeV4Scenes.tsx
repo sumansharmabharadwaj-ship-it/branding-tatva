@@ -1,15 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { AnimatePresence, motion, useInView, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -81,7 +74,7 @@ const COST_STAGES = [
 
 export function V4OpeningScene() {
   const sectionRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.28 });
 
   return (
@@ -278,7 +271,7 @@ export function V4OpeningScene() {
 export function V4RecognitionScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const holdUntilRef = useRef(0);
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.34 });
   const [activeIndex, setActiveIndex] = useState(0);
   const active = RECOGNITION_STATES[activeIndex];
@@ -468,7 +461,7 @@ export function V4RecognitionScene() {
 
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],

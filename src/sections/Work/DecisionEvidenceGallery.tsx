@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { decisionArtifacts } from "@/data/decisionArtifacts";
@@ -19,7 +20,7 @@ import { motionTokens } from "@/lib/motionTokens";
 // visitors receive the same information.
 export function DecisionEvidenceGallery() {
   const [openId, setOpenId] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   function toggle(id: string) {
     const next = openId === id ? null : id;

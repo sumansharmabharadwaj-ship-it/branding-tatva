@@ -1,6 +1,7 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
@@ -128,7 +129,7 @@ function playEntrance(
 
 export function HomeChapterDirector() {
   const pathname = usePathname();
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
 
   useEffect(() => {
     if (pathname !== "/" || prefersReducedMotion) return;

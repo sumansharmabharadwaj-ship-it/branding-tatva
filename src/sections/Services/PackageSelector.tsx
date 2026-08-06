@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { ElementGlyph } from "@/components/ElementGlyph";
@@ -34,7 +35,7 @@ export function PackageSelector() {
   // same data/services.ts rows, so a visitor deciding between two
   // paths can weigh them without clicking back and forth.
   const [compare, setCompare] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const activePackage = packages.find((p) => p.slug === active);
   const proof = activePackage?.proofSlug ? projects.find((p) => p.slug === activePackage.proofSlug) : undefined;
 

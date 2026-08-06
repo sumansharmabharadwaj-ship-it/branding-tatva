@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { LinkButton } from "@/components/Button";
 
@@ -87,7 +88,7 @@ export function FinalInvitation() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [situation, setSituation] = useState<Situation>("default");
   const inView = useInView(rootRef, { amount: 0.28 });
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
 
   useEffect(() => {
     if (!inView) return;

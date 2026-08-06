@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { packages } from "@/data/services";
@@ -48,7 +49,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 export function SituationPath() {
   const [selected, setSelected] = useState<string | null>(null);
   const [carried, setCarried] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
     try {

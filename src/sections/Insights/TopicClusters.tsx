@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { pillars } from "@/data/glossary";
@@ -18,7 +19,7 @@ import { blogPosts } from "@/data/blog";
 // open at a time, no motion beyond a quiet height reveal.
 export function TopicClusters() {
   const [open, setOpen] = useState<string | null>(pillars[0].id);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   return (
     <Container className="max-w-5xl">

@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { projects } from "@/data/projects";
@@ -20,7 +21,7 @@ function decisiveLine(index: number) {
 }
 
 export function WorkOpening() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);

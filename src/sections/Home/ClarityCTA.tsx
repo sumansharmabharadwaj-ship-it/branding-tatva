@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useInView, useReducedMotion } from "framer-motion";
+import { useInView } from "framer-motion";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 
 type ScopeOption = {
@@ -77,7 +78,7 @@ export function ClarityCTA() {
   const sectionRef = useRef<HTMLElement>(null);
   const pauseUntilRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
-  const prefersReducedMotion = Boolean(useReducedMotion());
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.38 });
   const active = SCOPE_OPTIONS[activeIndex];
 
