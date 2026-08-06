@@ -1,155 +1,244 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
-import { MediaSlot } from "@/components/MediaSlot";
 import { brandStudies } from "@/data/brandStudies";
 
-// Brand studies — the Work page's teaching layer. Renowned brands from
-// the US, UK and Canada dissected through the same vocabulary the rest
-// of the site uses (distinctive assets, architecture, verbal identity,
-// codes, ritual). CRITICAL FRAMING: these are independent analyses of
-// the public record and must never read as client work — the framing
-// line under the heading carries that in visitor facing copy, and the
-// section sits visually distinct from the real client sequence above it
-// (numbered editorial rows, no project card chrome, no outcome stats).
-// One study opens at a time only after the visitor asks for depth. Brand,
-// region, lens and premise all stay visible while closed, so nothing a
-// study claims is hidden behind an interaction.
+const STUDY_ACCENTS = ["#D9C4A4", "#9AB8C7", "#C7AE68", "#9EBB9B", "#C68F78"] as const;
+const CARD_SPANS = [
+  "lg:col-span-7",
+  "lg:col-span-5",
+  "lg:col-span-4",
+  "lg:col-span-4",
+  "lg:col-span-4",
+] as const;
+
+// The teaching layer is deliberately separated from client evidence.
+// These five studies analyse the public record with zero implied client
+// relationship. The closed state exposes the mechanism and its three
+// supporting observations. Opening one creates a visual lesson board,
+// rather than another long brown accordion.
 export function BrandStudies() {
   const [open, setOpen] = useState(-1);
   const prefersReducedMotion = useHydratedReducedMotion();
 
   return (
-    <section className="bg-soil py-20 sm:py-28">
+    <section className="py-20 sm:py-28" style={{ backgroundColor: "#071A20" }}>
       <Container className="max-w-6xl">
-        <Reveal>
-          <p className="text-sm font-medium uppercase tracking-[0.18em] text-ivory/70">Brand studies</p>
-          <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory sm:text-display-md">
-            Lessons from brands the whole world already knows.
-          </h2>
-          <p className="mt-4 max-w-xl text-base text-ivory/90">
-            Independent dissections of the public record, written as study. Each brand below earned its place in
-            memory through a specific mechanism, and each study names it.
-          </p>
-        </Reveal>
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.72fr)] lg:items-end lg:gap-16">
+          <Reveal>
+            <p className="text-sm font-medium uppercase tracking-[0.18em] text-[#9AB8C7]">Brand studies</p>
+            <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory sm:text-display-md">
+              Lessons from brands the whole world already knows.
+            </h2>
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-ivory/80">
+              Independent dissections of the public record, written as study. Each brand below earned its place in
+              memory through a specific mechanism, and each study names it.
+            </p>
+          </Reveal>
 
-        <div className="mt-12">
-          {brandStudies.map((study, i) => {
-            const isOpen = open === i;
+          <Reveal delay={0.06}>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 sm:p-6">
+              <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em] text-[#9AB8C7]">
+                Evidence boundary
+              </p>
+              <div className="mt-4 grid grid-cols-3 gap-3">
+                {[
+                  ["05", "Public studies"],
+                  ["00", "Client claims"],
+                  ["03", "Mechanisms each"],
+                ].map(([value, label]) => (
+                  <div key={label} className="border-l border-white/10 pl-3 first:border-l-0 first:pl-0">
+                    <p className="font-display text-2xl text-ivory">{value}</p>
+                    <p className="mt-1 text-[0.5rem] uppercase tracking-[0.12em] text-ivory/45">{label}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-5 border-t border-white/10 pt-4 text-xs leading-relaxed text-ivory/55">
+                Analysis, teaching, and application. No engagement, endorsement, or affiliation is implied.
+              </p>
+            </div>
+          </Reveal>
+        </div>
+
+        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-12" aria-label="Independent brand-study mechanisms">
+          {brandStudies.map((study, index) => {
+            const isOpen = open === index;
             const panelId = `study-panel-${study.slug}`;
+            const accent = STUDY_ACCENTS[index] ?? STUDY_ACCENTS[0];
+
             return (
-              <Reveal key={study.slug} delay={Math.min(i * 0.06, 0.2)}>
-                <article className="border-t border-ivory/15">
-                  <h3>
+              <Fragment key={study.slug}>
+                <article className={`min-w-0 ${CARD_SPANS[index] ?? "lg:col-span-4"}`}>
+                  <h3 className="h-full">
                     <button
                       type="button"
-                      onClick={() => setOpen(isOpen ? -1 : i)}
+                      onClick={() => setOpen(isOpen ? -1 : index)}
                       aria-expanded={isOpen}
                       aria-controls={panelId}
-                      className="group grid w-full grid-cols-[2.5rem_1fr_2.5rem] items-start gap-4 py-8 text-left transition-colors duration-500 hover:bg-ivory/[0.03] sm:gap-6"
+                      className="group relative flex min-h-[17rem] w-full flex-col overflow-hidden rounded-[1.35rem] border p-5 text-left transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:p-6"
+                      style={{
+                        borderColor: isOpen ? accent : "rgba(255,255,255,0.12)",
+                        background: `radial-gradient(circle at 88% 10%, ${accent}20, transparent 36%), linear-gradient(145deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018))`,
+                        boxShadow: isOpen ? `0 26px 90px ${accent}18` : "0 22px 70px rgba(0,0,0,0.16)",
+                        outlineColor: accent,
+                      }}
                     >
-                      <span className="pt-2 font-display text-sm text-ivory/50" aria-hidden="true">
-                        0{i + 1}
-                      </span>
-                      <span>
-                        <span className="block font-display text-2xl font-normal text-ivory sm:text-3xl">
-                          {study.brand}
-                        </span>
-                        <span className="mt-3 flex flex-wrap gap-2">
-                          <span className="rounded-full border border-ivory/20 px-3 py-1 text-xs text-ivory/70">
-                            {study.region}
+                      <span className="flex items-start justify-between gap-5">
+                        <span>
+                          <span className="font-display text-sm" style={{ color: accent }} aria-hidden="true">
+                            {String(index + 1).padStart(2, "0")}
                           </span>
-                          <span className="rounded-full border border-[#A0A690]/40 px-3 py-1 text-xs text-[#A0A690]">
-                            {study.lens}
+                          <span className="mt-2 block font-display text-3xl font-normal text-ivory sm:text-4xl">
+                            {study.brand}
                           </span>
                         </span>
-                        <span className="mt-4 block max-w-xl text-base leading-relaxed text-ivory/85">
-                          {study.premise}
+                        <span
+                          aria-hidden="true"
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-lg transition-transform duration-500"
+                          style={{
+                            borderColor: accent + "66",
+                            color: accent,
+                            transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
+                          }}
+                        >
+                          +
                         </span>
                       </span>
-                      <span
-                        aria-hidden="true"
-                        className="mt-2 flex h-8 w-8 items-center justify-center rounded-full border border-ivory/25 text-lg leading-none text-ivory/70 transition-all duration-500 group-hover:border-[#A0A690]/70 group-hover:text-[#A0A690]"
-                        style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}
-                      >
-                        +
+
+                      <span className="mt-3 flex flex-wrap gap-2">
+                        <span className="rounded-full border border-white/15 px-3 py-1 text-[0.62rem] text-ivory/60">
+                          {study.region}
+                        </span>
+                        <span className="rounded-full border px-3 py-1 text-[0.62rem]" style={{ borderColor: accent + "66", color: accent }}>
+                          {study.lens}
+                        </span>
+                      </span>
+
+                      <span className="mt-4 block max-w-xl text-sm leading-relaxed text-ivory/72">
+                        {study.premise}
+                      </span>
+
+                      <span className="mt-auto block pt-6">
+                        <span className="block text-[0.54rem] font-medium uppercase tracking-[0.15em] text-ivory/35">
+                          The mechanism is visible in
+                        </span>
+                        <span className="mt-3 grid gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+                          {study.observations.map((observation, observationIndex) => (
+                            <span key={observation.title} className="rounded-xl border border-white/10 bg-black/10 p-3">
+                              <span className="font-display text-xs" style={{ color: accent }} aria-hidden="true">
+                                {String(observationIndex + 1).padStart(2, "0")}
+                              </span>
+                              <span className="mt-1 block text-[0.64rem] font-medium uppercase leading-snug tracking-[0.1em] text-ivory/65">
+                                {observation.title}
+                              </span>
+                            </span>
+                          ))}
+                        </span>
                       </span>
                     </button>
                   </h3>
-
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        id={panelId}
-                        key="panel"
-                        initial={prefersReducedMotion ? false : { height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
-                        transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <div className="relative overflow-hidden rounded-2xl">
-                          {/* This study's own approved footage. Empty until
-                              a clip is approved per file, and the panel
-                              reads as designed with nothing in it. */}
-                          <MediaSlot fill={study.media?.card} scrim={0.88} parallax={false} />
-                          <div className="relative grid gap-8 pb-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-16 lg:px-6">
-                            <div className="space-y-5 lg:col-start-2">
-                              {study.observations.map((obs) => (
-                                <div key={obs.title}>
-                                  <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">
-                                    {obs.title}
-                                  </p>
-                                  <p className="mt-1.5 max-w-2xl text-[0.95rem] leading-relaxed text-ivory/90">
-                                    {obs.text}
-                                  </p>
-                                </div>
-                              ))}
-                              <p className="mt-7 border-l-2 border-[#A0A690]/60 pl-4 font-display text-lg italic text-ivory sm:text-xl">
-                                {study.lesson}
-                              </p>
-                              <Link
-                                href={`/work/studies/${study.slug}`}
-                                className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#A0A690] underline decoration-[#A0A690]/40 underline-offset-4 transition-colors hover:text-ivory"
-                              >
-                                Read the full study
-                                <span aria-hidden="true">→</span>
-                              </Link>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </article>
-              </Reveal>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      id={panelId}
+                      role="region"
+                      aria-label={`${study.brand} public-record study`}
+                      initial={prefersReducedMotion ? undefined : { opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden rounded-[1.55rem] border md:col-span-2 lg:col-span-12"
+                      style={{
+                        borderColor: accent + "55",
+                        background: `radial-gradient(circle at 12% 0%, ${accent}20, transparent 34%), #0A242B`,
+                      }}
+                    >
+                      <div className="grid gap-8 border-b border-white/10 p-5 sm:p-7 lg:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] lg:gap-12">
+                        <div>
+                          <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em]" style={{ color: accent }}>
+                            Memory mechanism · {study.lens}
+                          </p>
+                          <p className="mt-3 font-display text-4xl font-normal text-ivory sm:text-5xl">{study.brand}</p>
+                          <p className="mt-4 max-w-md text-sm leading-relaxed text-ivory/65">{study.premise}</p>
+                          <blockquote className="mt-7 border-l-2 pl-5 font-display text-xl italic leading-relaxed text-ivory sm:text-2xl" style={{ borderColor: accent }}>
+                            {study.lesson}
+                          </blockquote>
+                          <Link
+                            href={`/work/studies/${study.slug}`}
+                            className="mt-7 inline-flex items-center gap-2 text-sm font-medium underline decoration-current/40 underline-offset-4 transition-colors hover:text-ivory"
+                            style={{ color: accent }}
+                          >
+                            Read the full study <span aria-hidden="true">→</span>
+                          </Link>
+                        </div>
+
+                        <ol className="grid gap-3">
+                          {study.observations.map((observation, observationIndex) => (
+                            <li key={observation.title} className="grid gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-4 sm:grid-cols-[2.4rem_1fr] sm:p-5">
+                              <span className="font-display text-lg" style={{ color: accent }} aria-hidden="true">
+                                {String(observationIndex + 1).padStart(2, "0")}
+                              </span>
+                              <div>
+                                <p className="text-[0.62rem] font-medium uppercase tracking-[0.15em] text-ivory/65">
+                                  {observation.title}
+                                </p>
+                                <p className="mt-2 text-sm leading-relaxed text-ivory/78">{observation.text}</p>
+                              </div>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+
+                      <div className="p-5 sm:p-7">
+                        <div className="flex flex-wrap items-end justify-between gap-4">
+                          <div>
+                            <p className="text-[0.56rem] font-medium uppercase tracking-[0.16em]" style={{ color: accent }}>
+                              Transfer the lesson
+                            </p>
+                            <p className="mt-1 font-display text-2xl font-normal text-ivory sm:text-3xl">
+                              Three applications for a growing brand.
+                            </p>
+                          </div>
+                          <p className="text-[0.54rem] uppercase tracking-[0.14em] text-ivory/35">Teaching, never client proof</p>
+                        </div>
+                        <ol className="mt-5 grid gap-3 lg:grid-cols-3">
+                          {study.applications.map((application, applicationIndex) => (
+                            <li key={application} className="rounded-2xl border border-white/10 bg-black/10 p-4 sm:p-5">
+                              <span className="font-display text-sm" style={{ color: accent }} aria-hidden="true">
+                                {String(applicationIndex + 1).padStart(2, "0")}
+                              </span>
+                              <p className="mt-3 text-sm leading-relaxed text-ivory/72">{application}</p>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Fragment>
             );
           })}
-          <div className="h-px bg-ivory/15" aria-hidden="true" />
         </div>
 
-        {/* The bridge: the studies teach the mechanisms, the Services
-            journey applies them. One link, closing the argument. */}
-        <Reveal delay={0.1}>
-          <div className="mt-16 border-t border-ivory/15 pt-8">
-            <p className="max-w-xl text-base text-ivory/90">
-              The same mechanisms scale down. The Services journey applies them to brands still earning their place
-              in memory.
-            </p>
-            <Link
-              href="/services"
-              className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[#A0A690] underline decoration-[#A0A690]/40 underline-offset-4 transition-colors hover:text-ivory"
-            >
-              Walk the journey
-              <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </Reveal>
+        <div className="mt-16 grid gap-5 border-t border-white/10 pt-8 lg:grid-cols-[1fr_auto] lg:items-end">
+          <p className="max-w-xl text-base leading-relaxed text-ivory/75">
+            The same mechanisms scale down. The Services journey applies them to brands still earning their place
+            in memory.
+          </p>
+          <Link
+            href="/services"
+            className="inline-flex w-fit items-center gap-2 text-sm font-medium text-[#9AB8C7] underline decoration-[#9AB8C7]/40 underline-offset-4 transition-colors hover:text-ivory"
+          >
+            Walk the journey <span aria-hidden="true">→</span>
+          </Link>
+        </div>
       </Container>
     </section>
   );
