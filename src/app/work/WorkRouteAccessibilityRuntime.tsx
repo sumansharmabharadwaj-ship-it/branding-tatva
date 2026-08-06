@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const LAB_DOSSIERS_LABEL = "Concept study dossiers";
 const LAB_PHASES_SUFFIX = "strategy phases";
+const STUDY_PANEL_PREFIX = "study-panel-";
 
 function normaliseText(value: string | null | undefined) {
   return value?.replace(/\s+/g, " ").trim() ?? "";
@@ -41,6 +42,32 @@ function restoredScrollBehavior(): ScrollBehavior {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 }
 
+function findTriggerForPanel(panelId: string) {
+  return Array.from(document.querySelectorAll<HTMLButtonElement>("button[aria-controls]")).find(
+    (button) => button.getAttribute("aria-controls") === panelId,
+  );
+}
+
+function restoreStudyCover(panelId: string) {
+  if (!window.matchMedia("(max-width: 767px)").matches) return;
+
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      const trigger = findTriggerForPanel(panelId);
+      if (!trigger || !trigger.isConnected) return;
+      const rect = trigger.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
+      trigger.focus({ preventScroll: true });
+      trigger.scrollIntoView({
+        behavior: restoredScrollBehavior(),
+        block: "center",
+        inline: "nearest",
+      });
+    });
+  });
+}
+
 export function WorkRouteAccessibilityRuntime() {
   const pathname = usePathname();
   const labSectionRef = useRef<HTMLElement | null>(null);
@@ -71,8 +98,16 @@ export function WorkRouteAccessibilityRuntime() {
 
     function handleClick(event: MouseEvent) {
       const target = event.target instanceof Element ? event.target.closest<HTMLButtonElement>("button") : null;
+      if (!target) return;
+
+      if (normaliseText(target.textContent) === "Close study") {
+        const panel = target.closest<HTMLElement>(`[role="region"][id^="${STUDY_PANEL_PREFIX}"]`);
+        if (panel?.id) restoreStudyCover(panel.id);
+        return;
+      }
+
       const section = labSectionRef.current;
-      if (!target || !section?.contains(target)) return;
+      if (!section?.contains(target)) return;
 
       const dossierGrid = target.closest<HTMLElement>(`[aria-label="${LAB_DOSSIERS_LABEL}"]`);
       const controlledId = target.getAttribute("aria-controls") ?? "";
