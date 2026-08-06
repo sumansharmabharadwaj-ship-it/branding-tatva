@@ -12,6 +12,7 @@ import { forgettableIdentityInsightPosts } from "@/data/forgettableIdentityInsig
 import { interviewSynthesisInsightPosts } from "@/data/interviewSynthesisInsights";
 import { positioningStatementInsightPosts } from "@/data/positioningStatementInsights";
 import { repositioningInsightPosts } from "@/data/repositioningInsights";
+import { serviceNamingInsightPosts } from "@/data/serviceNamingInsights";
 import {
   insightPosts as pillarInsightPosts,
   insightTopics,
@@ -26,16 +27,8 @@ import { supportingInsightPosts } from "@/data/supportingInsights";
 import { valuePropositionInsightPosts } from "@/data/valuePropositionInsights";
 
 export { insightTopics };
-export type {
-  InsightElement,
-  InsightFaq,
-  InsightFramework,
-  InsightPost,
-  InsightSection,
-  InsightTopic,
-};
+export type { InsightElement, InsightFaq, InsightFramework, InsightPost, InsightSection, InsightTopic };
 
-// Canonical registry consumed by every Insights discovery surface.
 const combinedPosts = [
   ...pillarInsightPosts,
   ...supportingInsightPosts,
@@ -54,12 +47,10 @@ const combinedPosts = [
   ...brandArchitectureInsightPosts,
   ...customerInterviewInsightPosts,
   ...interviewSynthesisInsightPosts,
+  ...serviceNamingInsightPosts,
 ];
 
-export const insightPosts: InsightPost[] = combinedPosts.filter(
-  (post, index) =>
-    combinedPosts.findIndex((candidate) => candidate.slug === post.slug) === index
-);
+export const insightPosts: InsightPost[] = combinedPosts.filter((post, index) => combinedPosts.findIndex((candidate) => candidate.slug === post.slug) === index);
 
 const relatedRegistrations = [
   { supportingSlug: "website-messaging-hierarchy-service-businesses", pillarSlugs: ["brand-messaging-framework", "brand-positioning-strategy-service-businesses"] },
@@ -78,6 +69,7 @@ const relatedRegistrations = [
   { supportingSlug: "brand-architecture-service-businesses", pillarSlugs: ["brand-positioning-strategy-service-businesses", "reposition-established-service-business-without-losing-recognition", "brand-refresh-vs-rebrand-how-much-change"] },
   { supportingSlug: "customer-interviews-brand-strategy", pillarSlugs: ["brand-positioning-strategy-service-businesses", "customer-journey-mapping-service-businesses", "turn-client-proof-into-positioning-advantage"] },
   { supportingSlug: "turn-customer-interviews-into-positioning-brief", pillarSlugs: ["customer-interviews-brand-strategy", "brand-positioning-strategy-service-businesses", "brand-positioning-statement-examples-why-generic"] },
+  { supportingSlug: "service-line-naming-strategy", pillarSlugs: ["brand-architecture-service-businesses", "website-messaging-hierarchy-service-businesses", "brand-consistency-checklist-service-businesses"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {
@@ -89,14 +81,6 @@ for (const registration of relatedRegistrations) {
   }
 }
 
-export function getInsightBySlug(slug: string) {
-  return insightPosts.find((post) => post.slug === slug);
-}
-
-export function getInsightTopic(slug: string) {
-  return insightTopics.find((topic) => topic.slug === slug);
-}
-
-export function getInsightsByTopic(topicSlug: string) {
-  return insightPosts.filter((post) => post.topicSlug === topicSlug);
-}
+export function getInsightBySlug(slug: string) { return insightPosts.find((post) => post.slug === slug); }
+export function getInsightTopic(slug: string) { return insightTopics.find((topic) => topic.slug === slug); }
+export function getInsightsByTopic(topicSlug: string) { return insightPosts.filter((post) => post.topicSlug === topicSlug); }
