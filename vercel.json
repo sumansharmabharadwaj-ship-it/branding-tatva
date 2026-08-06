@@ -4,7 +4,8 @@
   "git": {
     "deploymentEnabled": {
       "homepage-cinematic-recovery": false,
-      "feat/insights-authority-hub": false
+      "feat/insights-authority-hub": false,
+      "staging/site-integration": false
     }
   }
 }
