@@ -1,0 +1,49 @@
+"use client";
+
+import { useEffect } from "react";
+
+const VEIL_SELECTOR = "[data-page-load-veil]";
+const READY_ATTRIBUTE = "data-home-prelude-ready";
+
+export function HomeV4PreludeBridge() {
+  useEffect(() => {
+    const root = document.documentElement;
+    let readyFrame = 0;
+
+    function setReady(ready: boolean) {
+      root.setAttribute(READY_ATTRIBUTE, ready ? "true" : "false");
+      if (ready) {
+        window.dispatchEvent(new CustomEvent("bt:home-prelude-ready"));
+      }
+    }
+
+    function sync() {
+      const veil = document.querySelector<HTMLElement>(VEIL_SELECTOR);
+      const leaving = veil?.dataset.pageLoadState === "leaving";
+
+      if (!veil || leaving) {
+        window.cancelAnimationFrame(readyFrame);
+        readyFrame = window.requestAnimationFrame(() => setReady(true));
+      } else {
+        setReady(false);
+      }
+    }
+
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-page-load-state"],
+    });
+
+    return () => {
+      observer.disconnect();
+      window.cancelAnimationFrame(readyFrame);
+      root.removeAttribute(READY_ATTRIBUTE);
+    };
+  }, []);
+
+  return null;
+}
