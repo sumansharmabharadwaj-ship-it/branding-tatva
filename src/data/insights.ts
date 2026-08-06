@@ -1,3 +1,4 @@
+import { brandRecallMeasurementInsightPosts } from "@/data/brandRecallMeasurementInsights";
 import { consultingPositioningInsightPosts } from "@/data/consultingPositioningInsights";
 import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
 import { distinctiveAssetInsightPosts } from "@/data/distinctiveAssetInsights";
@@ -29,6 +30,7 @@ const combinedPosts = [
   ...distinctiveAssetInsightPosts,
   ...customerJourneyInsightPosts,
   ...consultingPositioningInsightPosts,
+  ...brandRecallMeasurementInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
@@ -63,6 +65,13 @@ const relatedRegistrations = [
     pillarSlugs: [
       "brand-positioning-strategy-service-businesses",
       "brand-messaging-framework",
+    ],
+  },
+  {
+    supportingSlug: "measure-brand-recall-limited-budget",
+    pillarSlugs: [
+      "brand-awareness-vs-brand-recall",
+      "distinctive-brand-assets-audit",
     ],
   },
 ] as const;
