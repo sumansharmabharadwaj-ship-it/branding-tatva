@@ -3,30 +3,30 @@
 import { useEffect } from "react";
 import { animate, motion, useMotionValue, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
-// The awakening (film script, scene one): the page begins in forest
-// darkness — near black with a breath of green, never pure void — with
-// the aspen scene and the masthead both hidden inside it. Scrolling
-// breaks the light: the veil is driven by scroll position, so the
-// visitor's own movement wakes the forest and reveals the headline
-// only once the light arrives. A slower time-based wake runs in
-// parallel as the floor, so a visitor who simply waits still sees the
-// page open (the veil takes whichever of the two is clearer at any
-// moment). The veil sits above the masthead deliberately — the title
-// is revealed WITH the scene, per the script's "only then" beat.
-// Opacity only, one composited layer; removed entirely under reduced
-// motion so the page is immediately readable.
+// The opening now reveals Branding Tatva's original root-system film
+// immediately enough to signal that the page is alive. A short scroll-linked
+// veil and a faster time-based wake run in parallel: one small gesture causes
+// a substantial visual response, while a visitor who pauses still receives
+// the complete scene without waiting through an ornamental blackout.
+// Opacity only, one composited layer; removed for reduced motion.
 export function HeroReveal() {
   const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
-  // Scroll wake: darkness fully broken after ~420px of intent.
-  const scrollVeil = useTransform(scrollY, [0, 420], [0.93, 0]);
-  // Time wake: the forest opens on its own over ~5.5s for the patient.
-  const timeVeil = useMotionValue(0.93);
+  // The defining visual event becomes clear within a modest first gesture.
+  const scrollVeil = useTransform(scrollY, [0, 260], [0.86, 0]);
+  // The film also opens on its own in roughly 2.4 seconds.
+  const timeVeil = useMotionValue(0.86);
+
   useEffect(() => {
     if (prefersReducedMotion) return;
-    const controls = animate(timeVeil, 0, { duration: 4.2, delay: 1.3, ease: [0.22, 1, 0.36, 1] });
+    const controls = animate(timeVeil, 0, {
+      duration: 2.15,
+      delay: 0.25,
+      ease: [0.22, 1, 0.36, 1],
+    });
     return () => controls.stop();
   }, [prefersReducedMotion, timeVeil]);
+
   const veil = useTransform([scrollVeil, timeVeil], (values: number[]) => Math.min(values[0], values[1]));
 
   if (prefersReducedMotion) return null;
