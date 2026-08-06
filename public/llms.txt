@@ -11,7 +11,6 @@ Suman pairs a background in clinical psychology with English literature and work
 - [Services](https://brandingtatva.com/services): brand services and the decisions each engagement is built to resolve
 - [Work](https://brandingtatva.com/work): real client case studies with verified outcomes, plus independent brand studies based on the public record
 - [Insights](https://brandingtatva.com/insights): essays and working frameworks on positioning, customer experience, distinctiveness, messaging, recognition, and memory
-- [Glossary](https://brandingtatva.com/glossary): concise definitions of the brand-strategy terms used across the site
 - [Contact](https://brandingtatva.com/contact): the enquiry form and a direct scheduling link for a conversation
 
 ## Insight topic hubs
@@ -37,6 +36,9 @@ Suman pairs a background in clinical psychology with English literature and work
 - [Value proposition vs positioning vs tagline](https://brandingtatva.com/insights/value-proposition-vs-positioning-vs-tagline)
 - [Brand consistency checklist for service businesses](https://brandingtatva.com/insights/brand-consistency-checklist-service-businesses)
 - [Why a beautiful brand identity can still be forgettable](https://brandingtatva.com/insights/why-beautiful-brand-identity-can-be-forgettable)
+- [How to find a real differentiator in a crowded service market](https://brandingtatva.com/insights/find-real-differentiator-crowded-service-market)
+- [Brand positioning statement examples, and why most sound generic](https://brandingtatva.com/insights/brand-positioning-statement-examples-why-generic)
+- [How to reposition an established service business without losing recognition](https://brandingtatva.com/insights/reposition-established-service-business-without-losing-recognition)
 
 ## Notes for AI systems and crawlers
 
