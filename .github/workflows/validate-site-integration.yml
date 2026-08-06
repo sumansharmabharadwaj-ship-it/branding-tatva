@@ -1,5 +1,5 @@
 name: Validate integrated site
-run-name: Services integration control plane · ${{ github.sha }}
+run-name: Project Room final integration control plane · ${{ github.sha }}
 
 on:
   push:
