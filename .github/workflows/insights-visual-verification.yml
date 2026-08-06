@@ -82,9 +82,9 @@ jobs:
         run: |
           mkdir -p qa-artifacts
           pnpm dlx playwright@1.55.0 screenshot --full-page --wait-for-timeout 5000 --viewport-size "1440,1100" http://127.0.0.1:3000/insights qa-artifacts/insights-desktop.png
-          pnpm dlx playwright@1.55.0 screenshot --full-page --wait-for-timeout 5000 --device "iPhone 13" http://127.0.0.1:3000/insights qa-artifacts/insights-mobile.png
+          pnpm dlx playwright@1.55.0 screenshot --full-page --wait-for-timeout 5000 --viewport-size "390,844" http://127.0.0.1:3000/insights qa-artifacts/insights-mobile.png
           pnpm dlx playwright@1.55.0 screenshot --full-page --wait-for-timeout 5000 --viewport-size "1440,1100" http://127.0.0.1:3000/insights/brand-positioning-strategy-service-businesses qa-artifacts/article-desktop.png
-          pnpm dlx playwright@1.55.0 screenshot --full-page --wait-for-timeout 5000 --device "iPhone 13" http://127.0.0.1:3000/insights/brand-positioning-strategy-service-businesses qa-artifacts/article-mobile.png
+          pnpm dlx playwright@1.55.0 screenshot --full-page --wait-for-timeout 5000 --viewport-size "390,844" http://127.0.0.1:3000/insights/brand-positioning-strategy-service-businesses qa-artifacts/article-mobile.png
 
       - name: Upload visual QA
         uses: actions/upload-artifact@v4
