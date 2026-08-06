@@ -12,6 +12,14 @@ import { site } from "@/data/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
+function conciseDescription(value: string, maximum = 158) {
+  const clean = value.replace(/\s+/g, " ").trim();
+  if (clean.length <= maximum) return clean;
+  const clipped = clean.slice(0, maximum - 1);
+  const lastSpace = clipped.lastIndexOf(" ");
+  return `${clipped.slice(0, Math.max(lastSpace, maximum - 24)).replace(/[,:;\s]+$/, "")}…`;
+}
+
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
 }
@@ -21,16 +29,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const project = projects.find((item) => item.slug === slug);
   if (!project) return {};
 
-  const description = project.hook ?? project.outcome ?? project.challenge;
+  const taxonomy = getWorkTaxonomy(project.slug);
+  const routeType = taxonomy.tier === "flagship" ? "Case Study" : "Project Story";
+  const description = conciseDescription(
+    `${project.title} ${routeType.toLowerCase()}: ${project.hook ?? project.outcome ?? project.challenge}`,
+  );
+  const title = `${project.title} ${routeType}`;
+  const image = taxonomy.evidencePoster;
 
   return {
-    title: project.title,
+    title,
     description,
+    keywords: [
+      project.title,
+      project.industry,
+      taxonomy.evidenceLabel,
+      ...project.services,
+      "brand strategy case study",
+      "Branding Tatva",
+      "Suman Sharma",
+    ],
+    authors: [{ name: site.founder, url: site.url }],
     alternates: { canonical: `/work/${project.slug}` },
     openGraph: {
-      title: `${project.title} | ${site.name}`,
+      title: `${title} | ${site.name}`,
       description,
+      url: `/work/${project.slug}`,
       type: "article",
+      images: [{ url: image, alt: `${project.title} evidence diagram` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${site.name}`,
+      description,
+      images: [image],
     },
   };
 }
@@ -47,6 +79,8 @@ export default async function CaseStudyPage({ params }: Props) {
   const next = projects[(projectIndex + 1) % projects.length] ?? project;
   const taxonomy = getWorkTaxonomy(project.slug);
   const presentation = getCaseStudyPresentation(project.slug);
+  const routeType = taxonomy.tier === "flagship" ? "Flagship case study" : "Project story";
+  const projectUrl = `${site.url}/work/${project.slug}`;
 
   // The generated or atmospheric context films are not recorded client
   // outputs. Case-study media therefore uses project-specific editorial
@@ -72,23 +106,30 @@ export default async function CaseStudyPage({ params }: Props) {
   const caseStudyStructuredData = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
+    "@id": `${projectUrl}#project`,
+    url: projectUrl,
+    mainEntityOfPage: projectUrl,
     name: project.title,
+    headline: `${project.title}: ${taxonomy.evidenceLabel}`,
     about: project.industry,
+    genre: [routeType, taxonomy.evidenceLabel, ...project.services],
     description: project.challenge,
-    abstract: project.hook ?? project.outcome,
+    abstract: presentation.resultSummary,
     author: { "@id": `${site.url}/#person` },
-    creator: { "@id": `${site.url}/#organization` },
-    keywords: project.services.join(", "),
+    creator: { "@id": `${site.url}/#person` },
+    publisher: { "@id": `${site.url}/#organization` },
+    isPartOf: { "@id": `${site.url}/work#collection` },
+    keywords: [project.industry, taxonomy.evidenceLabel, ...project.services],
     image: `${site.url}${taxonomy.evidencePoster}`,
-    url: `${site.url}/work/${project.slug}`,
   };
 
   const breadcrumbStructuredData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Work", item: `${site.url}/work` },
-      { "@type": "ListItem", position: 2, name: project.title, item: `${site.url}/work/${project.slug}` },
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+      { "@type": "ListItem", position: 2, name: "Work", item: `${site.url}/work` },
+      { "@type": "ListItem", position: 3, name: project.title, item: projectUrl },
     ],
   };
 
@@ -107,7 +148,7 @@ export default async function CaseStudyPage({ params }: Props) {
         <CaseStudyExperience
           project={evidenceProject}
           presentation={presentation}
-          tierLabel={taxonomy.tier === "flagship" ? "Flagship case study" : "Project story"}
+          tierLabel={routeType}
           evidenceLabel={taxonomy.evidenceLabel}
           previous={previousEvidence}
           next={nextEvidence}
