@@ -4,7 +4,6 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
-import { Reveal } from "@/components/Reveal";
 import { conceptProjects } from "@/data/conceptProjects";
 import { track } from "@/lib/analytics";
 import { WORK } from "@/sections/Work/palette";
@@ -75,11 +74,11 @@ export function TatvaLab() {
   }
 
   return (
-    <section className="py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
+    <section className="scroll-mt-28 py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
       <Container className="max-w-6xl">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.72fr)] lg:items-end lg:gap-16">
-          <Reveal>
-            <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>
+          <div>
+<p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>
               Branding Tatva Lab
             </p>
             <h2 className="mt-2 max-w-2xl font-display text-display-sm font-normal" style={{ color: WORK.charcoal }}>
@@ -89,10 +88,9 @@ export function TatvaLab() {
               Independent, speculative brand work. Zero clients are implied and zero outcomes are claimed; each study
               exists to show how the decisions get made.
             </p>
-          </Reveal>
+</div>
 
-          <Reveal delay={0.06}>
-            <div
+          <div
               className="grid grid-cols-3 overflow-hidden rounded-2xl border bg-white/40"
               style={{ borderColor: WORK.stone + "66" }}
               aria-label="Lab evidence boundary"
@@ -116,7 +114,6 @@ export function TatvaLab() {
                 </div>
               ))}
             </div>
-          </Reveal>
         </div>
 
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-12" aria-label="Concept study dossiers">
@@ -129,7 +126,7 @@ export function TatvaLab() {
                   aria-expanded={open}
                   aria-controls={`lab-${project.slug}`}
                   onClick={() => toggle(project.slug)}
-                  className="group relative flex min-h-[12rem] w-full sm:min-h-[18rem] flex-col overflow-hidden rounded-[1.4rem] border p-5 text-left transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:p-6"
+                  className="group relative flex min-h-[11rem] w-full flex-col overflow-hidden rounded-[1.4rem] border p-4 text-left sm:min-h-[18rem] sm:p-6 transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:p-6"
                   style={{
                     borderColor: open ? project.accent : WORK.stone + "66",
                     background: `radial-gradient(circle at 88% 12%, ${project.accent}24 0%, transparent 35%), linear-gradient(145deg, rgba(255,255,255,0.76), ${project.accent}0D)`,
@@ -162,14 +159,14 @@ export function TatvaLab() {
                     </span>
                   </span>
 
-                  <span className="mt-4 block text-[0.6rem] font-medium uppercase tracking-[0.15em]" style={{ color: WORK.stone }}>
+                  <span className="mt-3 block text-[0.6rem] font-medium uppercase tracking-[0.15em] sm:mt-4" style={{ color: WORK.stone }}>
                     {project.sector}
                   </span>
 
-                  <span className="relative mt-auto block pt-5 sm:pt-8">
+                  <span className="relative mt-auto block pt-4 sm:pt-8">
                     <span
                       aria-hidden="true"
-                      className="absolute left-[8%] right-[8%] top-[1.65rem] h-px sm:top-[2.35rem]"
+                      className="absolute left-[8%] right-[8%] top-[1.35rem] h-px sm:top-[2.35rem]"
                       style={{ backgroundColor: project.accent + "44" }}
                     />
                     <span className="relative grid grid-cols-4 gap-2">
@@ -181,7 +178,7 @@ export function TatvaLab() {
                           >
                             <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: project.accent }} />
                           </span>
-                          <span className="mt-2 block text-[0.52rem] uppercase tracking-[0.1em]" style={{ color: WORK.wood }}>
+                          <span className="mt-2 block text-[0.56rem] uppercase tracking-[0.08em] sm:text-[0.52rem] sm:tracking-[0.1em]" style={{ color: WORK.wood }}>
                             {label}
                           </span>
                           <span className="sr-only">Step {routeIndex + 1}</span>
@@ -205,7 +202,7 @@ export function TatvaLab() {
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -motionTokens.distanceMicro }}
               transition={{ duration: motionTokens.durationBase, ease: motionTokens.easeOrganic }}
-              className="mt-6 scroll-mt-28 overflow-hidden rounded-[1.7rem] border"
+              className="mt-6 scroll-mt-32 overflow-hidden rounded-[1.7rem] border"
               style={{ borderColor: openProject.accent + "66", backgroundColor: "rgba(255,255,255,0.58)" }}
             >
               <div
