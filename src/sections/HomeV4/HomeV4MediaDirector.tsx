@@ -75,8 +75,8 @@ export function HomeV4MediaDirector() {
       tracked.forEach((video) => {
         applyPlaybackRate(video);
         if (!globallyPaused() && allowed.has(video)) {
-          void video.play().catch(() => {});
-        } else {
+          if (video.paused) void video.play().catch(() => {});
+        } else if (!video.paused) {
           video.pause();
         }
       });
@@ -106,9 +106,15 @@ export function HomeV4MediaDirector() {
 
       applyPlaybackRate(video);
 
-      const reapplyRate = () => applyPlaybackRate(video);
-      video.addEventListener("loadedmetadata", reapplyRate);
-      video.addEventListener("play", reapplyRate);
+      // Individual media components still own their own lifecycle. Whenever
+      // one of them tries to resume, the director reapplies the faster pace
+      // and immediately arbitrates the shared decoding budget again.
+      const refreshMediaState = () => {
+        applyPlaybackRate(video);
+        queueMicrotask(syncAll);
+      };
+      video.addEventListener("loadedmetadata", refreshMediaState);
+      video.addEventListener("play", refreshMediaState);
 
       const bounds = video.getBoundingClientRect();
       const nearViewport =
@@ -118,8 +124,8 @@ export function HomeV4MediaDirector() {
       observer.observe(video);
 
       cleanups.set(video, () => {
-        video.removeEventListener("loadedmetadata", reapplyRate);
-        video.removeEventListener("play", reapplyRate);
+        video.removeEventListener("loadedmetadata", refreshMediaState);
+        video.removeEventListener("play", refreshMediaState);
         observer.unobserve(video);
         visibleRatios.delete(video);
       });
