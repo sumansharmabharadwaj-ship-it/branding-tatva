@@ -85,10 +85,18 @@ jobs:
           done
 
           python - <<'PY'
-          import numpy as np
-          from scripts.generate_services_clean_core_media import FAMILIES
+          import importlib.util
+          from pathlib import Path
 
-          for name, frame_function in FAMILIES.items():
+          import numpy as np
+
+          generator_path = Path("scripts/generate_services_clean_core_media.py")
+          spec = importlib.util.spec_from_file_location("services_clean_core_media", generator_path)
+          assert spec and spec.loader
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+
+          for name, frame_function in module.FAMILIES.items():
               opening = np.asarray(frame_function(0.0, 320, 180))
               closing = np.asarray(frame_function(1.0, 320, 180))
               assert np.array_equal(opening, closing), f"{name} is not mathematically seamless"
