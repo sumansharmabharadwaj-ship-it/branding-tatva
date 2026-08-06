@@ -13,11 +13,11 @@ import { motionTokens } from "@/lib/motionTokens";
 // level as client work and labelled so clearly that confusion is
 // impossible: the section frame, every dossier, and every sample line
 // carries the concept framing. The studies open as dossiers, one at a
-// time, using the accessible accordion pattern (aria-expanded plus
-// hidden); reduced motion opens instantly. Capability proven through
-// the quality of the thinking, never through implied experience.
+// time, only after a visitor asks for depth; reduced motion opens
+// instantly. Capability is proven through the quality of the thinking,
+// never through implied experience.
 export function TatvaLab() {
-  const [openSlug, setOpenSlug] = useState<string | null>(conceptProjects[0].slug);
+  const [openSlug, setOpenSlug] = useState<string | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   function toggle(slug: string) {
