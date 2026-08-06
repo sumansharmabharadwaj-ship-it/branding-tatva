@@ -1,5 +1,7 @@
 import { brandConsistencyInsightPosts } from "@/data/brandConsistencyInsights";
+import { brandRefreshInsightPosts } from "@/data/brandRefreshInsights";
 import { brandRecallMeasurementInsightPosts } from "@/data/brandRecallMeasurementInsights";
+import { clientProofInsightPosts } from "@/data/clientProofInsights";
 import { consultingPositioningInsightPosts } from "@/data/consultingPositioningInsights";
 import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
 import { differentiationInsightPosts } from "@/data/differentiationInsights";
@@ -43,6 +45,8 @@ const combinedPosts = [
   ...differentiationInsightPosts,
   ...positioningStatementInsightPosts,
   ...repositioningInsightPosts,
+  ...brandRefreshInsightPosts,
+  ...clientProofInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
@@ -133,6 +137,22 @@ const relatedRegistrations = [
       "brand-audit-checklist-before-rebrand",
       "distinctive-brand-assets-audit",
       "brand-positioning-strategy-service-businesses",
+    ],
+  },
+  {
+    supportingSlug: "brand-refresh-vs-rebrand-how-much-change",
+    pillarSlugs: [
+      "brand-audit-checklist-before-rebrand",
+      "reposition-established-service-business-without-losing-recognition",
+      "distinctive-brand-assets-audit",
+    ],
+  },
+  {
+    supportingSlug: "turn-client-proof-into-positioning-advantage",
+    pillarSlugs: [
+      "find-real-differentiator-crowded-service-market",
+      "brand-positioning-strategy-service-businesses",
+      "website-messaging-hierarchy-service-businesses",
     ],
   },
 ] as const;
