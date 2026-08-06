@@ -5,6 +5,7 @@ import { Footer } from "@/sections/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { CaseStudyExperience } from "@/sections/Work/CaseStudyExperience";
+import { CaseStudyMobileNarrativeEnhancer } from "@/sections/Work/MobileNarrativeEnhancers";
 import { projects } from "@/data/projects";
 import { getWorkTaxonomy } from "@/data/workTaxonomy";
 import { getCaseStudyPresentation } from "@/data/caseStudyPresentation";
@@ -153,6 +154,7 @@ export default async function CaseStudyPage({ params }: Props) {
           previous={previousEvidence}
           next={nextEvidence}
         />
+        <CaseStudyMobileNarrativeEnhancer />
       </main>
       <Footer compact />
       <SectionJumpNav items={jumpItems} />
