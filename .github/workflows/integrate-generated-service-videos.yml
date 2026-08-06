@@ -35,6 +35,12 @@ jobs:
             src/components/BackgroundVideo.tsx
             src/components/PhotoHero.tsx
 
+      - name: Install media tooling
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+
       - name: Optimise, validate, and wire the generated media
         shell: bash
         run: bash scripts/integrate-generated-service-media.sh
