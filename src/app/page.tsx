@@ -15,6 +15,7 @@ import "./home-v4-paths-depth.css";
 import "./home-v4-mobile-polish.css";
 import "./home-v4-tatva-depth.css";
 import "./home-v4-tatva-mobile-fix.css";
+import "./home-v4-studio-depth.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
