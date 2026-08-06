@@ -28,6 +28,7 @@ type CaseDeckModel = {
 type SignatureDeckModel = {
   host: HTMLElement;
   imageSrc: string;
+  imageAlt: string;
   beats: NarrativeChapter[];
   href: string;
 };
@@ -62,6 +63,14 @@ function directParagraphs(element: HTMLElement) {
   return Array.from(element.children).filter((child): child is HTMLParagraphElement => child.tagName === "P");
 }
 
+function narrativeContentRoot(element: HTMLElement) {
+  const hasDirectTitle = Boolean(element.querySelector(":scope > h2, :scope > h3"));
+  if (hasDirectTitle || directParagraphs(element).length > 0) return element;
+
+  const wrapper = Array.from(element.children).find((child) => child.tagName === "DIV");
+  return wrapper instanceof HTMLElement ? wrapper : element;
+}
+
 function extractStats(element: HTMLElement): EvidenceStat[] {
   const directDiv = Array.from(element.children).find((child) => child.tagName === "DIV");
   if (!directDiv) return [];
@@ -78,12 +87,14 @@ function extractStats(element: HTMLElement): EvidenceStat[] {
 }
 
 function extractNarrative(element: HTMLElement): NarrativeChapter {
-  const paragraphs = directParagraphs(element);
+  const contentRoot = narrativeContentRoot(element);
+  const paragraphs = directParagraphs(contentRoot);
   const finalParagraph = paragraphs.length > 0 ? paragraphs[paragraphs.length - 1] : undefined;
-  const label = text(element.querySelector(":scope > p span:last-child")) || text(paragraphs[0]).replace(/^\d+\s*/, "");
-  const title = text(element.querySelector(":scope > h2, :scope > h3"));
+  const label =
+    text(contentRoot.querySelector(":scope > p span:last-child")) || text(paragraphs[0]).replace(/^\d+\s*/, "");
+  const title = text(contentRoot.querySelector(":scope > h2, :scope > h3"));
   const body = text(paragraphs[1] ?? finalParagraph);
-  return { label, title, body, stats: extractStats(element) };
+  return { label, title, body, stats: extractStats(contentRoot) };
 }
 
 function restoreScrollIntoView(element: HTMLElement, original: HTMLElement["scrollIntoView"]) {
@@ -99,7 +110,7 @@ function CaseStudyDeck() {
   const animate = hydrated && !prefersReducedMotion;
 
   useEffect(() => {
-    if (document.getElementById("mobile-case-study-chapter")) return;
+    if (document.getElementById("mobile-case-study-deck-panel")) return;
 
     const story = document.getElementById("story");
     if (!story) return;
@@ -191,7 +202,10 @@ function CaseStudyDeck() {
           transition={{ duration: animate ? 0.42 : 0, ease: EASE_ORGANIC }}
           className="mt-4 rounded-[1.35rem] border border-white/12 bg-black/15 p-5"
         >
-          <p className="flex items-center justify-between gap-4 text-[0.58rem] font-medium uppercase tracking-[0.17em]" style={{ color: WORK.sand }}>
+          <p
+            className="flex items-center justify-between gap-4 text-[0.58rem] font-medium uppercase tracking-[0.17em]"
+            style={{ color: WORK.sand }}
+          >
             <span>{chapter.label}</span>
             <span className="font-display text-sm" aria-hidden="true">
               {String(active + 1).padStart(2, "0")} / {String(model.chapters.length).padStart(2, "0")}
@@ -205,8 +219,13 @@ function CaseStudyDeck() {
           {chapter.stats.length > 0 && (
             <div className="mt-5 grid grid-cols-2 gap-3">
               {chapter.stats.map((stat) => (
-                <div key={`${stat.value}-${stat.label}`} className="rounded-xl border border-white/10 bg-white/[0.035] p-3.5">
-                  <p className="font-display text-xl" style={{ color: WORK.sand }}>{stat.value}</p>
+                <div
+                  key={`${stat.value}-${stat.label}`}
+                  className="rounded-xl border border-white/10 bg-white/[0.035] p-3.5"
+                >
+                  <p className="font-display text-xl" style={{ color: WORK.sand }}>
+                    {stat.value}
+                  </p>
                   <p className="mt-1 text-[0.68rem] leading-relaxed text-white/58">{stat.label}</p>
                 </div>
               ))}
@@ -237,6 +256,7 @@ function SignatureDeck() {
 
     if (!section || !beatElements.length || !grid || !container) return;
 
+    const evidenceImage = section.querySelector<HTMLImageElement>("img");
     const host = document.createElement("div");
     host.dataset.mobileSignatureDeckHost = "true";
     container.insertBefore(host, grid);
@@ -244,7 +264,8 @@ function SignatureDeck() {
 
     setModel({
       host,
-      imageSrc: section.querySelector<HTMLImageElement>("img")?.getAttribute("src") ?? "",
+      imageSrc: evidenceImage?.getAttribute("src") ?? "",
+      imageAlt: evidenceImage?.getAttribute("alt") || "Performance evidence diagram",
       beats: beatElements.map(extractNarrative),
       href: section.querySelector<HTMLAnchorElement>('a[href^="/work/"]')?.getAttribute("href") ?? "/work",
     });
@@ -261,14 +282,19 @@ function SignatureDeck() {
 
   return createPortal(
     <div className="mt-8 lg:hidden" data-mobile-signature-deck="true">
-      <div className="overflow-hidden rounded-[1.35rem] border" style={{ borderColor: "rgba(143,174,131,0.28)" }}>
+      <div
+        className="overflow-hidden rounded-[1.35rem] border"
+        style={{ borderColor: "rgba(143,174,131,0.28)" }}
+      >
         {model.imageSrc && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={model.imageSrc}
-            alt="Performance evidence diagram"
+            alt={model.imageAlt}
             className="block aspect-[4/3] w-full object-cover transition-[filter] duration-500"
-            style={{ filter: `grayscale(${Math.max(0, 0.78 * (1 - active / Math.max(1, model.beats.length - 1))).toFixed(2)})` }}
+            style={{
+              filter: `grayscale(${Math.max(0, 0.78 * (1 - active / Math.max(1, model.beats.length - 1))).toFixed(2)})`,
+            }}
           />
         )}
       </div>
@@ -311,7 +337,10 @@ function SignatureDeck() {
           className="mt-4 rounded-[1.35rem] border p-5"
           style={{ borderColor: "rgba(143,174,131,0.28)", backgroundColor: "rgba(255,255,255,0.035)" }}
         >
-          <p className="flex items-center justify-between gap-4 text-[0.58rem] font-medium uppercase tracking-[0.17em]" style={{ color: WORK.sage }}>
+          <p
+            className="flex items-center justify-between gap-4 text-[0.58rem] font-medium uppercase tracking-[0.17em]"
+            style={{ color: WORK.sage }}
+          >
             <span>{beat.label}</span>
             <span className="font-display text-sm" aria-hidden="true">
               {String(active + 1).padStart(2, "0")} / {String(model.beats.length).padStart(2, "0")}
@@ -323,7 +352,9 @@ function SignatureDeck() {
             <div className="mt-5 grid grid-cols-2 gap-3">
               {beat.stats.map((stat) => (
                 <div key={`${stat.value}-${stat.label}`} className="rounded-xl border border-white/10 p-3.5">
-                  <p className="font-display text-xl" style={{ color: WORK.sand }}>{stat.value}</p>
+                  <p className="font-display text-xl" style={{ color: WORK.sand }}>
+                    {stat.value}
+                  </p>
                   <p className="mt-1 text-[0.68rem] leading-relaxed text-white/58">{stat.label}</p>
                 </div>
               ))}
