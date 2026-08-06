@@ -9,6 +9,7 @@ on:
     paths:
       - .github/workflows/work-page-gate.yml
       - scripts/work_page_gate_v2.cjs
+      - scripts/work_page_gate_v3.cjs
       - src/app/work/**
       - src/sections/Work/**
       - src/sections/CaseStudies/BrandStudies.tsx
@@ -93,7 +94,7 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
           AUDIT_COMMIT: ${{ github.sha }}
-        run: node scripts/work_page_gate_v2.cjs
+        run: node scripts/work_page_gate_v3.cjs
 
       - name: Stop production server
         if: always()
