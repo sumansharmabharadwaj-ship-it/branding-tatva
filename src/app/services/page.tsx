@@ -117,30 +117,12 @@ export default async function ServicesPage() {
           paints its own bg-background-alt deliberately. */}
       <main id="main-content" style={{ backgroundColor: MOOD.charcoal }}>
         <PricingProvider initialRegion={region}>
-        {/* Curiosity — the opening objection: why care about branding at
-            all. Two short opinionated lines build the claim (Framer
-            Motion AnimatePresence, CyclingStatement.tsx) before handing
-            off to the same char-level SplitText reveal every other
-            headline moment already uses — visitors experience a claim
-            forming rather than reading a static question. Height stays
-            Tier 3 (70vh), the documented mid-page tier in PhotoHero's
-            own comment — this page's ambition shows in what follows the
-            hero, not in breaking the site's hero-height hierarchy. A
-            newly-sourced "ink dispersing in dark water" clip was tried
-            here and reverted immediately on direct feedback — a black-
-            background studio abstraction breaks the site's own
-            established warm, sunlit, natural register (documented in
-            CLAUDE.md's own video-sourcing standard), regardless of how
-            cinematically it reads on its own. Back to the calm misty
-            pine trail already proven here.
-            Redesigned from the centered pill-badge-plus-headline
-            template (identical to what Work/Contact used to share)
-            into the same asymmetric masthead already proven on those
-            pages and on the case-study/blog-post templates: a large
-            offset headline in one column, a real-data aside in the
-            other. The aside reuses this exact page's own SectionJumpNav
-            items — real wayfinding, not decoration — so the hero itself
-            previews the four objections the rest of the page answers. */}
+        {/* Curiosity opens on Branding Tatva's original root-system
+            film. The visible work sits above an interconnected
+            foundation, so the first scene demonstrates the page's
+            central argument before the visitor reads it. The hero
+            remains a compact secondary-page masthead, while the
+            chapter index supplies immediate orientation and escape. */}
         <ServicesCinematicHero
           video="/videos/services-hero-root-system.mp4"
           poster="/images/services-hero-root-system-poster.jpg"
@@ -152,22 +134,19 @@ export default async function ServicesPage() {
               opening idea before the copy completes it: recognition
               breaks when the system beneath visible work disconnects. */}
           <HeroReveal />
-          {/* Phase 1 hero pass. Two localized layers on top of
-              PhotoHero's own base gradient: a cool tint pulling the
-              warm trail footage toward the page's opening-chapter mood
-              (the color script starts cool; gold only arrives at
-              Desire), and a directional left-heavy scrim so the
-              masthead column reads perfectly while the right of the
-              frame stays open and cinematic. */}
+          {/* A restrained directional scrim protects the masthead
+              while leaving the root architecture readable on the
+              right. The hero shell already carries the cool global
+              contrast layer, so this remains a local composition aid. */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
             style={{ backgroundImage: "linear-gradient(90deg, rgba(15,18,17,0.38) 0%, rgba(15,18,17,0.12) 45%, transparent 70%)" }}
           />
-          {/* Phase 2, hero motion language: "typography forming." The
-              claim assembles (CyclingStatement), and the giant page
-              title drifts at a slower rate than the scroll around it —
-              depth through type, no imagery involved. */}
+          {/* The word-level headline reveal arrives quickly enough to
+              remain readable while still participating in the opening
+              scene. The footage supplies depth; the type supplies the
+              first clear narrative beat. */}
           <Container className="relative py-20 sm:py-28">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal delay={0.35}>
