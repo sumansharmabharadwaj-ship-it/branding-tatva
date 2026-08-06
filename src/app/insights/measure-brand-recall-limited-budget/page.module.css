@@ -1,0 +1,7 @@
+.articleShell > footer {
+  display: none;
+}
+
+.articleShell main > section:last-of-type {
+  display: none;
+}
