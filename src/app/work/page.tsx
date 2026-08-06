@@ -179,7 +179,7 @@ export default function WorkPage() {
           </ClipReveal>
         </TexturedDark>
       </main>
-      <Footer />
+      <Footer compact />
     </>
   );
 }

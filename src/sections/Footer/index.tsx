@@ -23,7 +23,9 @@ import { MotionToggle } from "@/components/MotionPreference";
 const WIDGET_CLASS =
   "rounded-2xl border border-white/15 bg-black/20 backdrop-blur-md p-5 sm:p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-black/25";
 
-export function Footer() {
+type FooterProps = { compact?: boolean };
+
+export function Footer({ compact = false }: FooterProps) {
   return (
     <footer className="relative">
       {/* This used to carry a decorative IndianPattern strip here —
@@ -42,7 +44,8 @@ export function Footer() {
           request; the dandelion release now lives in the Deliverables
           chapter on Services instead. imagePosition biased down keeps
           the pale sky band out of the section's top edge. */}
-      <TexturedDark
+      {!compact && (
+        <TexturedDark
         image="/images/own-jagged-peaks.jpg"
         video="/videos/own-jagged-peaks.mp4"
         imagePosition="center 85%"
@@ -117,7 +120,8 @@ export function Footer() {
             </div>
           </Reveal>
         </Container>
-      </TexturedDark>
+        </TexturedDark>
+      )}
 
       {/* Was sectionWash("space", 14) — rgb(234,221,211), a pale near-cream
           strip sitting directly under a near-black video section, the same

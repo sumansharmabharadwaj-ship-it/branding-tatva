@@ -215,6 +215,10 @@ async function auditWorkViewport(browser, viewport) {
     (await page.getByRole("link", { name: /Discuss the brand problem/i }).count()) >= 1,
     `${label}: final conversion action missing`,
   );
+  assert(
+    (await page.getByRole("heading", { name: "Every brand is visible. Let's make yours unforgettable." }).count()) === 0,
+    `${label}: generic global footer pitch duplicates the tailored Work ending`,
+  );
 
   await page.locator('#index a[href="/work/dr-haley-nutrition"]').first().click();
   await page.waitForURL("**/work/dr-haley-nutrition", { timeout: 12_000 });
