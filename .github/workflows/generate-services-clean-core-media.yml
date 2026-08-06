@@ -1,4 +1,5 @@
 name: Generate clean procedural Services core media
+run-name: Clean core media pass 3 · ${{ github.sha }}
 
 on:
   push:
