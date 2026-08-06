@@ -1,0 +1,120 @@
+name: Build and verify the five-stage Services recognition ladder
+run-name: Services recognition ladder macOS · ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - services-recognition-ladder-five-stage
+    paths:
+      - .github/workflows/services-recognition-ladder-five-stage.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-services-recognition-ladder-five-stage
+  cancel-in-progress: true
+
+jobs:
+  build-audit-commit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: macos-14
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out the focused branch without the media archive
+        uses: actions/checkout@v4
+        with:
+          ref: services-recognition-ladder-five-stage
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Install the five-stage browser contract
+        run: |
+          python3 -m py_compile scripts/apply_services_recognition_ladder_gate.py
+          python3 scripts/apply_services_recognition_ladder_gate.py
+          git diff --check
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install dependencies and Chromium
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm add --save-dev --lockfile=false playwright@1.54.2
+          pnpm exec playwright install chromium
+
+      - name: Build the production application
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+        run: pnpm build
+
+      - name: Start the production server
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+        run: |
+          pnpm start --hostname 127.0.0.1 --port 3000 > /tmp/services-recognition-ladder.log 2>&1 &
+          echo $! > /tmp/services-recognition-ladder.pid
+          for attempt in {1..90}; do
+            if curl --fail --silent http://127.0.0.1:3000/services > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/services-recognition-ladder.log
+          exit 1
+
+      - name: Walk the complete Services journey at three viewports
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/services_page_gate.cjs
+
+      - name: Stop the production server
+        if: always()
+        run: |
+          if [ -f /tmp/services-recognition-ladder.pid ]; then
+            kill "$(cat /tmp/services-recognition-ladder.pid)" || true
+          fi
+          cat /tmp/services-recognition-ladder.log || true
+
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: services-recognition-ladder-five-stage-evidence
+          path: services-page-audit/*
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Remove one-time verification tools
+        run: |
+          rm scripts/apply_services_recognition_ladder_gate.py
+          rm .github/workflows/services-recognition-ladder-five-stage.yml
+
+      - name: Commit the verified five-stage recognition ladder
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/sections/Services/PerceptionLadder.tsx \
+            src/sections/Services/MobilePerceptionClimb.tsx \
+            scripts/services_page_gate.cjs \
+            scripts/apply_services_recognition_ladder_gate.py \
+            .github/workflows/services-recognition-ladder-five-stage.yml
+          git diff --cached --check
+          git commit -m "Complete the five-stage Services recognition ladder"
+          git push origin HEAD:services-recognition-ladder-five-stage
