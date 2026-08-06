@@ -38,6 +38,7 @@ export function HomeV4MediaDirector() {
   useEffect(() => {
     const root = document.querySelector<HTMLElement>("[data-home-v4]");
     if (!root) return;
+    const homeRoot = root;
 
     const tracked = new Set<HTMLVideoElement>();
     const visibleRatios = new Map<HTMLVideoElement, number>();
@@ -124,7 +125,7 @@ export function HomeV4MediaDirector() {
       });
     }
 
-    root.querySelectorAll<HTMLVideoElement>("video").forEach(track);
+    homeRoot.querySelectorAll<HTMLVideoElement>("video").forEach(track);
 
     const mutationObserver = new MutationObserver((records) => {
       records.forEach((record) => {
@@ -136,7 +137,7 @@ export function HomeV4MediaDirector() {
       });
       syncAll();
     });
-    mutationObserver.observe(root, { childList: true, subtree: true });
+    mutationObserver.observe(homeRoot, { childList: true, subtree: true });
 
     function onVisibilityChange() {
       syncAll();
@@ -157,7 +158,9 @@ export function HomeV4MediaDirector() {
       window.setTimeout(() => {
         const active = document.activeElement;
         formInteraction = Boolean(
-          active instanceof Element && root.contains(active) && active.matches(FORM_CONTROL_SELECTOR),
+          active instanceof Element &&
+            homeRoot.contains(active) &&
+            active.matches(FORM_CONTROL_SELECTOR),
         );
         syncAll();
       }, 0);
@@ -166,8 +169,8 @@ export function HomeV4MediaDirector() {
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("resize", onViewportProfileChange, { passive: true });
     compactViewport.addEventListener("change", onViewportProfileChange);
-    root.addEventListener("focusin", onFocusIn);
-    root.addEventListener("focusout", onFocusOut);
+    homeRoot.addEventListener("focusin", onFocusIn);
+    homeRoot.addEventListener("focusout", onFocusOut);
     syncAll();
 
     return () => {
@@ -176,8 +179,8 @@ export function HomeV4MediaDirector() {
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("resize", onViewportProfileChange);
       compactViewport.removeEventListener("change", onViewportProfileChange);
-      root.removeEventListener("focusin", onFocusIn);
-      root.removeEventListener("focusout", onFocusOut);
+      homeRoot.removeEventListener("focusin", onFocusIn);
+      homeRoot.removeEventListener("focusout", onFocusOut);
       cleanups.forEach((cleanup) => cleanup());
       tracked.forEach((video) => video.pause());
       cleanups.clear();
