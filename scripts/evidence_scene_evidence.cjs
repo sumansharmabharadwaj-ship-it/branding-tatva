@@ -52,7 +52,7 @@ async function assertNoOverflow(page, label) {
 
 async function assertHeaderOutOfFrame(page, label) {
   await page.waitForTimeout(560);
-  const state = await page.locator("header").evaluate((node) => {
+  const state = await page.getByRole("banner").first().evaluate((node) => {
     const rect = node.getBoundingClientRect();
     return {
       top: rect.top,
