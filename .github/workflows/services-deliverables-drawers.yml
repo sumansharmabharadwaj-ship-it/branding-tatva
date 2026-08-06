@@ -1,5 +1,5 @@
 name: Build and verify the compressed deliverables archive
-run-name: Services deliverables drawers pass 2 · ${{ github.sha }}
+run-name: Services deliverables drawers pass 3 · ${{ github.sha }}
 
 on:
   push:
