@@ -7,6 +7,11 @@ on:
       - main
     paths:
       - .github/workflows/run-services-complete-integration.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/services-integration-main-control
   workflow_dispatch:
 
 permissions:
