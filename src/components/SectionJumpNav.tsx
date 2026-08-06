@@ -38,13 +38,43 @@ export function SectionJumpNav({
 
     if (sections.length === 0) return;
 
+    const initialHash = window.location.hash;
+    if (items.some((item) => item.href === initialHash)) {
+      setActiveHref(initialHash);
+    }
+
+    // Keep the last known ratio for every section. IntersectionObserver
+    // callbacks contain only sections whose intersection changed, so choosing
+    // from the current callback alone can incorrectly relabel a pinned scene
+    // when a neighbouring section briefly crosses a threshold.
+    const ratios = new Map<Element, number>();
+    sections.forEach((section) => ratios.set(section, 0));
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        entries.forEach((entry) => {
+          ratios.set(entry.target, entry.isIntersecting ? entry.intersectionRatio : 0);
+        });
 
-        if (visible) setActiveHref(`#${visible.target.id}`);
+        const focalY = window.innerHeight * 0.32;
+        const ranked = sections
+          .map((section) => {
+            const bounds = section.getBoundingClientRect();
+            return {
+              section,
+              ratio: ratios.get(section) ?? 0,
+              distance: Math.abs(bounds.top + Math.min(bounds.height, window.innerHeight) / 2 - focalY),
+            };
+          })
+          .sort((a, b) => {
+            if (Math.abs(a.ratio - b.ratio) > 0.01) return b.ratio - a.ratio;
+            return a.distance - b.distance;
+          });
+
+        const next = ranked[0];
+        if (next?.ratio > 0 && next.section.id) {
+          setActiveHref(`#${next.section.id}`);
+        }
       },
       { rootMargin: "-20% 0px -55% 0px", threshold: [0, 0.12, 0.3, 0.55] },
     );
