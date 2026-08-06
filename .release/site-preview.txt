@@ -1,3 +1,4 @@
-candidate=9fb684fa79426081cad8392bb2b947b50618a46f
-requested_at=2026-08-06T18:21:00Z
-note=Newest consolidated preview superseding stale queued candidates; includes homepage screen-fit, current Services journey, Work mobile narrative, and Insights integration.
+source-branch=release/integrated-site-final
+source-commit=262c8eaa04e740dd332299d4ef8ce0c4716ae26b
+release-note=Final integrated site verification
+deployment-enabled=true
