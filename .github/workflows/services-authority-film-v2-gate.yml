@@ -1,0 +1,225 @@
+name: Rebase and verify original Services Authority film
+
+on:
+  push:
+    branches:
+      - services-original-authority-film-v2
+    paths:
+      - .github/workflows/services-authority-film-v2-gate.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: services-original-authority-film-v2
+  cancel-in-progress: true
+
+jobs:
+  integrate-and-build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+
+    steps:
+      - name: Check out latest cinematic branch snapshot
+        uses: actions/checkout@v4
+        with:
+          ref: services-original-authority-film-v2
+          fetch-depth: 0
+
+      - name: Import the validated Authority media and renderer
+        run: |
+          set -euo pipefail
+          git fetch origin services-original-authority-film
+          git checkout origin/services-original-authority-film -- \
+            public/videos/generated/bt-services-authority-layers.mp4 \
+            public/videos/generated/bt-services-authority-layers-mobile.mp4 \
+            public/images/generated/bt-services-authority-layers-poster.jpg \
+            scripts/generate_services_authority_film.py
+
+      - name: Integrate the five-layer film without overwriting newer Services work
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          component_path = Path("src/sections/Services/PinnedBrandBuild.tsx")
+          component = component_path.read_text()
+
+          for old_import, label in [
+              ('import Image from "next/image";\n', "Next Image import"),
+              ('import { AmbientElementShader } from "@/components/AmbientElementShader";\n', "ambient shader import"),
+          ]:
+              if component.count(old_import) != 1:
+                  raise SystemExit(f"{label}: expected one match, found {component.count(old_import)}")
+              component = component.replace(old_import, "", 1)
+
+          start_marker = "        {/* Approved Chapter 02 footage"
+          end_marker = '\n\n        <div className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:py-24 sm:px-10 sm:py-0 lg:px-20">'
+          start = component.find(start_marker)
+          end = component.find(end_marker, start)
+          if start < 0 or end < 0:
+              raise SystemExit(f"Authority media boundaries not found: start={start}, end={end}")
+
+          replacement = "\n".join([
+              "        {/* Original procedural Authority film: a restrained signal rises",
+              "            through five natural material layers and widens only after",
+              "            the full system is present. The pinned rows remain the primary",
+              "            scroll-led demonstration; the film gives them one coherent",
+              "            material world instead of repeating the hero's root metaphor. */}",
+              "        <div className=\"absolute inset-0 overflow-hidden\">",
+              "          <BackgroundVideo",
+              "            video=\"/videos/generated/bt-services-authority-layers.mp4\"",
+              "            videoMobile=\"/videos/generated/bt-services-authority-layers-mobile.mp4\"",
+              "            poster=\"/images/generated/bt-services-authority-layers-poster.jpg\"",
+              "            playbackRate={1.04}",
+              "          />",
+              "          <div",
+              "            className=\"absolute inset-0\"",
+              "            style={{",
+              "              backgroundImage:",
+              "                \"linear-gradient(100deg, rgba(15,17,19,0.88) 0%, rgba(15,17,19,0.62) 46%, rgba(15,17,19,0.46) 100%)\",",
+              "            }}",
+              "          />",
+              "        </div>",
+          ])
+          component = component[:start] + replacement + component[end:]
+          component_path.write_text(component)
+
+          manifest_path = Path("src/app/services/generatedMediaManifest.ts")
+          manifest = manifest_path.read_text()
+          for old, new, label in [
+              ("  desktopLoops: 7,", "  desktopLoops: 8,", "desktop loop count"),
+              ("  mobileLoops: 7,", "  mobileLoops: 8,", "mobile loop count"),
+          ]:
+              if manifest.count(old) != 1:
+                  raise SystemExit(f"{label}: expected one match, found {manifest.count(old)}")
+              manifest = manifest.replace(old, new, 1)
+
+          authority_block = "\n".join([
+              "  authority: {",
+              "    desktop: \"/videos/generated/bt-services-authority-layers.mp4\",",
+              "    mobile: \"/videos/generated/bt-services-authority-layers-mobile.mp4\",",
+              "    poster: \"/images/generated/bt-services-authority-layers-poster.jpg\",",
+              "    purpose: \"Let a signal travel through five brand layers and widen only after the system is complete.\",",
+              "  },",
+          ]) + "\n"
+          marker = "  perception: {\n"
+          if manifest.count(marker) != 1:
+              raise SystemExit(f"Authority manifest marker: expected one match, found {manifest.count(marker)}")
+          manifest = manifest.replace(marker, authority_block + marker, 1)
+          manifest_path.write_text(manifest)
+
+          readme_path = Path("public/videos/generated/README.txt")
+          readme = readme_path.read_text()
+          authority_docs = "\n".join([
+              "Authority / five-layer amplification",
+              "- bt-services-authority-layers.mp4",
+              "- bt-services-authority-layers-mobile.mp4",
+              "- poster: /images/generated/bt-services-authority-layers-poster.jpg",
+              "- role: carries one restrained signal through five material layers and widens only after the system is complete",
+              "- renderer: scripts/generate_services_authority_film.py",
+              "",
+          ])
+          docs_marker = "Stakes / distinctive positioning\n"
+          if readme.count(docs_marker) != 1:
+              raise SystemExit(f"Authority README marker: expected one match, found {readme.count(docs_marker)}")
+          readme = readme.replace(docs_marker, authority_docs + docs_marker, 1)
+
+          old_renderers = "- procedural films remain reproducible through scripts/generate_services_procedural_media.py and scripts/generate_services_situation_film.py"
+          new_renderers = "- procedural films remain reproducible through scripts/generate_services_procedural_media.py, scripts/generate_services_situation_film.py, and scripts/generate_services_authority_film.py"
+          if readme.count(old_renderers) != 1:
+              raise SystemExit(f"Renderer documentation: expected one match, found {readme.count(old_renderers)}")
+          readme = readme.replace(old_renderers, new_renderers, 1)
+          readme_path.write_text(readme)
+          PY
+
+      - name: Validate the responsive silent media contract
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+
+          for file in \
+            public/videos/generated/bt-services-authority-layers.mp4 \
+            public/videos/generated/bt-services-authority-layers-mobile.mp4 \
+            public/images/generated/bt-services-authority-layers-poster.jpg
+          do
+            test -s "$file"
+          done
+
+          python <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          expected = {
+              Path('public/videos/generated/bt-services-authority-layers.mp4'): (1600, 900),
+              Path('public/videos/generated/bt-services-authority-layers-mobile.mp4'): (720, 1280),
+          }
+          for path, dimensions in expected.items():
+              probe = json.loads(subprocess.check_output([
+                  'ffprobe', '-v', 'error', '-show_streams', '-show_format',
+                  '-of', 'json', str(path)
+              ]))
+              duration = float(probe['format']['duration'])
+              audio = [stream for stream in probe['streams'] if stream.get('codec_type') == 'audio']
+              video = [stream for stream in probe['streams'] if stream.get('codec_type') == 'video']
+              if not 5.8 <= duration <= 6.2:
+                  raise SystemExit(f'{path}: unexpected duration {duration}')
+              if audio:
+                  raise SystemExit(f'{path}: audio stream found')
+              if len(video) != 1:
+                  raise SystemExit(f'{path}: expected one video stream')
+              actual = (video[0]['width'], video[0]['height'])
+              if actual != dimensions:
+                  raise SystemExit(f'{path}: expected {dimensions}, found {actual}')
+              print(path, duration, actual, path.stat().st_size)
+          PY
+
+      - name: Check the focused source contract
+        run: |
+          set -euo pipefail
+          grep -q 'useHydratedReducedMotion' src/sections/Services/PinnedBrandBuild.tsx
+          grep -q 'bt-services-authority-layers.mp4' src/sections/Services/PinnedBrandBuild.tsx
+          grep -q 'bt-services-authority-layers-mobile.mp4' src/sections/Services/PinnedBrandBuild.tsx
+          grep -q 'bt-services-authority-layers-poster.jpg' src/sections/Services/PinnedBrandBuild.tsx
+          grep -q 'bt-services-authority-layers.mp4' src/app/services/generatedMediaManifest.ts
+          ! grep -q 'pexels-root-network' src/sections/Services/PinnedBrandBuild.tsx
+          ! grep -q 'AmbientElementShader' src/sections/Services/PinnedBrandBuild.tsx
+          ! grep -q 'next/image' src/sections/Services/PinnedBrandBuild.tsx
+          git diff --check
+          git diff --stat
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the Next.js application
+        run: pnpm build
+
+      - name: Commit the rebased verified Authority film
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/services-authority-film-v2-gate.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/videos/generated/bt-services-authority-layers.mp4 \
+            public/videos/generated/bt-services-authority-layers-mobile.mp4 \
+            public/images/generated/bt-services-authority-layers-poster.jpg \
+            public/videos/generated/README.txt \
+            scripts/generate_services_authority_film.py \
+            src/app/services/generatedMediaManifest.ts \
+            src/sections/Services/PinnedBrandBuild.tsx \
+            .github/workflows/services-authority-film-v2-gate.yml
+          git commit -m "Integrate the original Authority film on the latest Services branch"
+          git push origin HEAD:services-original-authority-film-v2
