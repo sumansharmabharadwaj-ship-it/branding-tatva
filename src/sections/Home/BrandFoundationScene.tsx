@@ -139,7 +139,7 @@ export function BrandFoundationScene() {
           trigger: wrapper,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.65,
+          scrub: 0.48,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             const index = Math.min(
@@ -152,10 +152,10 @@ export function BrandFoundationScene() {
       });
 
       timeline
-        .to(landscape, { scale: 1.12, yPercent: -3, duration: 1.7 }, 0)
-        .to(sunlight, { xPercent: 190, yPercent: -30, rotate: 8, opacity: 0.76, duration: 2.5 }, 0.15)
-        .to(openingCopy, { opacity: 0, y: -22, filter: "blur(8px)", duration: 0.45 }, 0.42)
-        .to(depthGrid, { opacity: 0.62, scaleY: 1, duration: 0.7 }, 0.5);
+        .to(landscape, { scale: 1.12, yPercent: -3, duration: 1.45 }, 0)
+        .to(sunlight, { xPercent: 190, yPercent: -30, rotate: 8, opacity: 0.76, duration: 2.1 }, 0.08)
+        .to(openingCopy, { opacity: 0, y: -22, filter: "blur(8px)", duration: 0.36 }, 0.32)
+        .to(depthGrid, { opacity: 0.62, scaleY: 1, duration: 0.56 }, 0.38);
 
       layers.forEach((layer, index) => {
         // Each layer arrives out of shadow when the mineral light reaches it,
@@ -168,22 +168,22 @@ export function BrandFoundationScene() {
             y: 0,
             scale: 1,
             filter: "brightness(1) blur(0px)",
-            duration: 0.5,
+            duration: 0.42,
             ease: "power2.out",
           },
-          0.8 + index * 0.45,
+          0.58 + index * 0.36,
         );
       });
 
       lines.forEach((line, index) => {
         timeline.to(
           line,
-          { strokeDashoffset: 0, duration: 0.55, ease: "power2.inOut" },
-          1.15 + index * 0.45,
+          { strokeDashoffset: 0, duration: 0.42, ease: "power2.inOut" },
+          0.88 + index * 0.36,
         );
       });
 
-      timeline.to(finalCopy, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 2.45);
+      timeline.to(finalCopy, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 1.88);
     }, wrapper);
 
     return () => context.revert();
@@ -192,7 +192,7 @@ export function BrandFoundationScene() {
   return (
     <section
       ref={wrapperRef}
-      className="relative h-auto md:h-[220svh]"
+      className="relative h-auto md:h-[190svh]"
       style={{ backgroundColor: "#121713" }}
       aria-labelledby="brand-foundation-title"
     >
