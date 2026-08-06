@@ -36,7 +36,13 @@ jobs:
           path = Path("src/app/services/page.tsx")
           page = path.read_text()
 
-          media_pattern = re.compile(
+          def regex_once(pattern: str, replacement: str, label: str) -> None:
+              global page
+              page, count = re.subn(pattern, replacement, page, count=1, flags=re.S | re.M)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one match, found {count}")
+
+          regex_once(
               r'^[ \t]*\{/\* Deliberate art direction, cut this round from the archived.*?motion\. \*/\}\n'
               r'[ \t]*<BackgroundVideo\n'
               r'[ \t]+parallax\n'
@@ -44,9 +50,7 @@ jobs:
               r'[ \t]+videoWebm="/videos/pexels-river-dawn\.webm"\n'
               r'[ \t]+poster="/images/pexels-river-dawn-poster\.jpg"\n'
               r'[ \t]*/>',
-              re.S | re.M,
-          )
-          media_replacement = '''          {/* Original procedural Situation film: one coherent material
+              '''          {/* Original procedural Situation film: one coherent material
               world holds three different starting conditions. A pale
               mineral seed begins, shifted strata wait to realign, and
               repeating rings carry consistency forward. The chapter now
@@ -58,20 +62,17 @@ jobs:
             videoMobile="/videos/generated/bt-services-situation-paths-mobile.mp4"
             poster="/images/generated/bt-services-situation-paths-poster.jpg"
             playbackRate={1.06}
-          />'''
-          page, media_count = media_pattern.subn(media_replacement, page, count=1)
-          if media_count != 1:
-              raise SystemExit(f"Situation media block: expected one match, found {media_count}")
+          />''',
+              "Situation media block",
+          )
 
-          old_scrim_note = '''          {/* Left weighted scrim — the sticky heading rail sits on the
-              darker stops while the sunrise and river stay open on the
-              right of the frame. */}'''
-          new_scrim_note = '''          {/* A left-weighted charcoal scrim protects the diagnosis copy
+          regex_once(
+              r'^[ \t]*\{/\* Left weighted scrim.*?right of the frame\. \*/\}',
+              '''          {/* A left-weighted charcoal scrim protects the diagnosis copy
               while keeping all three material states visible across the
-              lower frame. */}'''
-          if page.count(old_scrim_note) != 1:
-              raise SystemExit(f"Situation scrim note: expected one match, found {page.count(old_scrim_note)}")
-          page = page.replace(old_scrim_note, new_scrim_note, 1)
+              lower frame. */}''',
+              "Situation scrim note",
+          )
 
           old_gradient = (
               '"linear-gradient(100deg, rgba(23,26,23,0.82) 0%, '
