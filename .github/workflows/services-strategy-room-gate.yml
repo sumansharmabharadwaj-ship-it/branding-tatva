@@ -9,6 +9,7 @@ on:
       - src/app/services/page.tsx
       - src/components/TexturedDark.tsx
       - src/components/SectionJumpNav.tsx
+      - src/components/CalendlyEmbed.tsx
       - src/sections/Services/StrategyRoomCTA.tsx
       - public/images/generated/bt-services-strategy-room-poster.jpg
   workflow_dispatch:
@@ -196,6 +197,22 @@ jobs:
               for (const answer of ["I am beginning with an idea", "Building recognition", "Content & voice"]) {
                 assert(summaryText.includes(answer), `${viewport.name}: answer summary is missing ${answer}`);
               }
+
+              const loadingSurface = section.locator("[data-calendar-loading]");
+              const calendarFrame = section.locator(".calendly-inline-widget iframe");
+              await page.waitForTimeout(500);
+              const usefulLoadingState = (await loadingSurface.count()) > 0 && (await loadingSurface.isVisible());
+              const readyFrame = (await calendarFrame.count()) > 0 && (await calendarFrame.isVisible());
+              assert(
+                usefulLoadingState || readyFrame,
+                `${viewport.name}: Calendly is neither ready nor covered by a useful loading state`,
+              );
+              if (usefulLoadingState) {
+                const directScheduling = loadingSurface.getByRole("link", { name: /Open the scheduling page/i });
+                assert(await directScheduling.isVisible(), `${viewport.name}: direct scheduling fallback is missing`);
+                await assertTouchTargets(directScheduling, `${viewport.name}/calendar-fallback`);
+              }
+
               const changeAnswers = section.getByRole("button", { name: /Change answers/i });
               assert((await changeAnswers.count()) === 1, `${viewport.name}: change-answers action missing`);
               await assertTouchTargets(section.getByRole("button"), `${viewport.name}/calendar`);
@@ -238,7 +255,7 @@ jobs:
             );
             await motionContext.close();
             await browser.close();
-            console.log("Services Strategy Room visual, navigation, and decision-journey gate passed.");
+            console.log("Services Strategy Room visual, navigation, booking fallback, and decision-journey gate passed.");
           })().catch((error) => {
             console.error(error);
             process.exit(1);
