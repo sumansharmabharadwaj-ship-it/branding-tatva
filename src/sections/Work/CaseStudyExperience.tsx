@@ -2,6 +2,7 @@
 
 import { useHydratedMotionPreference, useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
@@ -133,12 +134,30 @@ function ManagedVideo({
   }, [hydrated, prefersReducedMotion]);
 
   if (!hydrated || !src || prefersReducedMotion) {
-    return poster ? <img src={poster} alt={imageAlt} className={className} /> : null;
+    return poster ? (
+      <Image
+        src={poster}
+        alt={imageAlt ?? ""}
+        width={1600}
+        height={900}
+        sizes="100vw"
+        className={className}
+      />
+    ) : null;
   }
 
   return (
     <div className="absolute inset-0">
-      {poster && <img src={poster} alt={imageAlt} className={`${className} transition-opacity duration-700 ${ready ? "opacity-0" : "opacity-100"}`} />}
+      {poster && (
+        <Image
+          src={poster}
+          alt={imageAlt ?? ""}
+          width={1600}
+          height={900}
+          sizes="100vw"
+          className={`${className} transition-opacity duration-700 ${ready ? "opacity-0" : "opacity-100"}`}
+        />
+      )}
       <video
         ref={videoRef}
         src={src}
@@ -395,7 +414,15 @@ function NarrativeVisual({
   return (
     <div className="overflow-hidden rounded-[1.6rem] border shadow-[0_28px_90px_rgba(0,0,0,0.28)]" style={{ borderColor: `${palette.accent}44`, backgroundColor: palette.surface }}>
       <div className="relative aspect-[4/3] overflow-hidden">
-        {project.cardImage && <img src={project.cardImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />}
+        {project.cardImage && (
+          <Image
+            src={project.cardImage}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 42vw, 100vw"
+            className="object-cover opacity-30"
+          />
+        )}
         <div className="absolute inset-0" style={{ background: `linear-gradient(145deg, ${palette.ink}66, ${palette.ink}F2 72%)` }} />
         <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4 sm:p-5">
           <span
@@ -445,11 +472,12 @@ function ProjectNeighbour({ project, direction, accent }: { project: Project; di
       style={{ outlineColor: accent }}
     >
       {project.cardImage && (
-        <img
+        <Image
           src={project.cardImage}
           alt=""
-          loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover opacity-45 transition-transform duration-700 group-hover:scale-[1.025]"
+          fill
+          sizes="(min-width: 640px) 50vw, 100vw"
+          className="object-cover opacity-45 transition-transform duration-700 group-hover:scale-[1.025]"
         />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
@@ -576,10 +604,12 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
               style={{ borderColor: `${palette.accent}55`, backgroundColor: palette.surface }}
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-black/20">
-                <img
-                  src={project.heroPoster ?? project.cardImage}
+                <Image
+                  src={(project.heroPoster ?? project.cardImage)!}
                   alt={`${project.title} project evidence`}
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="100vw"
+                  className="object-cover"
                 />
                 <div
                   aria-hidden="true"
