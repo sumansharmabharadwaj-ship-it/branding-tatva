@@ -1,6 +1,6 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -29,7 +29,8 @@ const NEED_STONES: Waystone[] = NEED_PATHS.map((need) => ({
 
 export function CapabilityMap() {
   const [activeNeed, setActiveNeed] = useState(NEED_PATHS[0].id);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const animateTransitions = hydrated && !prefersReducedMotion;
   const need = NEED_PATHS.find((item) => item.id === activeNeed) ?? NEED_PATHS[0];
   const project = projects.find((item) => item.slug === need.projectSlug);
   const activeCapabilities = CAPABILITIES.filter((capability) => need.capabilityIds.includes(capability.id));
@@ -72,43 +73,49 @@ export function CapabilityMap() {
               className="rounded-2xl border p-5 lg:hidden"
               style={{ borderColor: WORK.stone + "88", backgroundColor: "rgba(255,255,255,0.38)" }}
             >
-              <div className="flex items-end justify-between gap-5">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
                 <div>
                   <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em]" style={{ color: WORK.moss }}>
                     Capability path
                   </p>
-                  <h3 className="mt-1 font-display text-xl font-normal" style={{ color: WORK.charcoal }}>
+                  <h3 className="mt-1 max-w-[13rem] font-display text-xl font-normal" style={{ color: WORK.charcoal }}>
                     What this evidence actually used
                   </h3>
                 </div>
-                <p className="shrink-0 text-right text-[0.62rem] uppercase tracking-[0.15em]" style={{ color: WORK.olive }}>
+                <p
+                  className="max-w-[6.5rem] pt-1 text-right text-[0.58rem] uppercase leading-relaxed tracking-[0.13em]"
+                  style={{ color: WORK.olive }}
+                >
                   {activeCapabilities.length} of {CAPABILITIES.length} active
                 </p>
               </div>
 
-              <ul className="mt-5 grid grid-cols-2 gap-2" aria-label="Active capability areas for the selected problem">
-                {activeCapabilities.map((capability, index) => (
-                  <motion.li
-                    key={capability.id}
-                    initial={prefersReducedMotion ? undefined : { opacity: 0, y: motionTokens.distanceMicro }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: motionTokens.durationFast,
-                      delay: prefersReducedMotion ? 0 : index * 0.035,
-                      ease: motionTokens.easeOrganic,
-                    }}
-                    className="min-w-0 rounded-xl border px-3 py-3"
-                    style={{ borderColor: WORK.stone + "88", backgroundColor: WORK.cream }}
-                  >
-                    <span className="text-[0.56rem] font-medium uppercase tracking-[0.14em]" style={{ color: WORK.olive }}>
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="mt-1 block font-display text-base leading-tight" style={{ color: WORK.forest }}>
-                      {capability.name}
-                    </span>
-                  </motion.li>
-                ))}
-              </ul>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.ul
+                  key={need.id}
+                  initial={animateTransitions ? { opacity: 0, y: motionTokens.distanceMicro } : false}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={animateTransitions ? { opacity: 0, y: -motionTokens.distanceMicro } : undefined}
+                  transition={{ duration: animateTransitions ? motionTokens.durationFast : 0, ease: motionTokens.easeOrganic }}
+                  className="mt-5 grid grid-cols-2 gap-2"
+                  aria-label="Active capability areas for the selected problem"
+                >
+                  {activeCapabilities.map((capability, index) => (
+                    <li
+                      key={capability.id}
+                      className="min-w-0 rounded-xl border px-3 py-3"
+                      style={{ borderColor: WORK.stone + "88", backgroundColor: WORK.cream }}
+                    >
+                      <span className="text-[0.56rem] font-medium uppercase tracking-[0.14em]" style={{ color: WORK.olive }}>
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="mt-1 block font-display text-base leading-tight" style={{ color: WORK.forest }}>
+                        {capability.name}
+                      </span>
+                    </li>
+                  ))}
+                </motion.ul>
+              </AnimatePresence>
 
               <p className="mt-4 border-t pt-3 text-xs leading-relaxed" style={{ borderColor: WORK.stone + "66", color: WORK.wood }}>
                 Only the capability areas evidenced by this route are shown here. The wider map contains fifteen distinct areas.
@@ -122,11 +129,11 @@ export function CapabilityMap() {
                   <motion.li
                     key={capability.id}
                     animate={
-                      prefersReducedMotion
-                        ? undefined
-                        : { y: lit ? 0 : motionTokens.distanceMicro, scale: lit ? 1 : 0.97 }
+                      animateTransitions
+                        ? { y: lit ? 0 : motionTokens.distanceMicro, scale: lit ? 1 : 0.97 }
+                        : undefined
                     }
-                    transition={{ duration: motionTokens.durationFast, ease: motionTokens.easeOrganic }}
+                    transition={{ duration: animateTransitions ? motionTokens.durationFast : 0, ease: motionTokens.easeOrganic }}
                     className="rounded-full border px-4 py-2 font-display text-lg transition-colors duration-500"
                     style={{
                       marginTop: `${(index % 3) * 8}px`,
@@ -142,15 +149,15 @@ export function CapabilityMap() {
             </ul>
           </div>
 
-          <div className="order-1 lg:order-2" aria-live="polite">
-            <AnimatePresence mode="wait">
+          <div className="order-1 lg:order-2" aria-live="polite" aria-atomic="true">
+            <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={need.id}
                 data-recommended-proof
-                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
+                initial={animateTransitions ? { opacity: 0, y: 10 } : false}
                 animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-                transition={{ duration: 0.35, ease: EASE_ORGANIC }}
+                exit={animateTransitions ? { opacity: 0, y: -6 } : undefined}
+                transition={{ duration: animateTransitions ? 0.35 : 0, ease: EASE_ORGANIC }}
                 className="rounded-2xl p-6 sm:p-7"
                 style={{ backgroundColor: WORK.cream }}
               >
