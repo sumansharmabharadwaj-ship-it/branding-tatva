@@ -27,7 +27,10 @@ export function DecisionEvidenceGallery() {
     const settleDelay = prefersReducedMotion ? 0 : Math.ceil(motionTokens.durationBase * 1000) + 80;
     window.setTimeout(() => {
       window.requestAnimationFrame(() => {
-        if (!trigger.isConnected) return;
+        if (!window.matchMedia("(max-width: 639px)").matches || !trigger.isConnected) return;
+        const rect = trigger.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return;
+
         trigger.focus({ preventScroll: true });
         trigger.scrollIntoView({
           behavior: prefersReducedMotion ? "auto" : "smooth",
