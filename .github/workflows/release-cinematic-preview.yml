@@ -1,4 +1,4 @@
-name: Release consolidated cinematic preview
+name: Release consolidated site preview
 
 on:
   workflow_dispatch:
@@ -6,28 +6,28 @@ on:
       release_note:
         description: Short note for this consolidated preview
         required: false
-        default: Consolidated cinematic preview
+        default: Consolidated site preview
   push:
     branches:
-      - homepage-cinematic-recovery
+      - staging/site-integration
     paths:
-      - .release/cinematic-preview.txt
+      - .release/site-preview.txt
 
 permissions:
   contents: write
 
 concurrency:
-  group: release-cinematic-preview
+  group: release-site-preview
   cancel-in-progress: false
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the latest cinematic working branch
+      - name: Check out the latest integrated site
         uses: actions/checkout@v4
         with:
-          ref: homepage-cinematic-recovery
+          ref: staging/site-integration
           fetch-depth: 0
           filter: blob:none
           sparse-checkout-cone-mode: false
@@ -49,8 +49,8 @@ jobs:
       - name: Synchronize the exact release candidate
         run: |
           set -euo pipefail
-          git fetch origin homepage-cinematic-recovery
-          git reset --hard origin/homepage-cinematic-recovery
+          git fetch origin staging/site-integration
+          git reset --hard origin/staging/site-integration
           echo "RELEASE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
       - name: Install dependencies
@@ -78,9 +78,9 @@ jobs:
       - name: Write release summary
         run: |
           {
-            echo "## Consolidated cinematic preview"
+            echo "## Consolidated site preview"
             echo
-            echo "- Source branch: \`homepage-cinematic-recovery\`"
+            echo "- Source branch: \`staging/site-integration\`"
             echo "- Released commit: \`${RELEASE_SHA}\`"
             echo "- Vercel branch: \`preview/cinematic-release\`"
             echo "- Release note: ${{ github.event.inputs.release_note || 'trigger-file release' }}"
