@@ -23,6 +23,11 @@ async function waitForPrelude(page) {
     undefined,
     { timeout: 12_000 },
   );
+  await page.waitForFunction(
+    () => Number(document.documentElement.dataset.servicesChapterCount || 0) === 13,
+    undefined,
+    { timeout: 4_000 },
+  );
   await page.waitForTimeout(260);
 }
 
@@ -172,6 +177,25 @@ async function reloadClean(page) {
     animations: "disabled",
   });
 
+  const verifiedOutcome = page.locator('#verified-outcome [data-verified-outcome-phase]');
+  assert((await verifiedOutcome.count()) === 1, "Verified outcome progression is missing");
+
+  await scrollSceneToProgress(page, "#verified-outcome", 0.08);
+  const proofEarly = await verifiedOutcome.getAttribute("data-verified-outcome-phase");
+  await scrollSceneToProgress(page, "#verified-outcome", 0.56);
+  const proofMiddle = await verifiedOutcome.getAttribute("data-verified-outcome-phase");
+  await scrollSceneToProgress(page, "#verified-outcome", 0.92);
+  const proofLate = await verifiedOutcome.getAttribute("data-verified-outcome-phase");
+
+  assert(proofEarly === "0", `Verified proof began at beat ${proofEarly}`);
+  assert(proofMiddle === "1", `Verified proof middle resolved to beat ${proofMiddle}`);
+  assert(proofLate === "2", `Verified proof ended at beat ${proofLate}`);
+
+  await page.locator("#verified-outcome").screenshot({
+    path: path.join(OUTPUT, "desktop-1440x900-verified-outcome-result.png"),
+    animations: "disabled",
+  });
+
   const stakes = page.locator("#stakes");
   const stakesStory = stakes.locator('[data-stakes-scroll-story="true"]');
   assert((await stakesStory.count()) === 1, "Positioning cost story is missing");
@@ -248,6 +272,7 @@ async function reloadClean(page) {
         generatedAt: new Date().toISOString(),
         situation: { earlySituation, lateSituation, committedSituation },
         package: { earlyPackage, latePackage, committed: true },
+        proof: { proofEarly, proofMiddle, proofLate },
         positioning: { earlyFocus, lateFocus, earlyStep, lateStep },
         perception: { earlyPerception, latePerception },
         formComfort,
