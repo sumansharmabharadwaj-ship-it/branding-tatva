@@ -1,0 +1,56 @@
+name: Validate integrated site
+
+on:
+  push:
+    branches:
+      - staging/site-integration
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-site-integration
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the integrated site without the media archive
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build every route
+        run: pnpm build
+
+      - name: Record the validated integration
+        run: |
+          {
+            echo "## Integrated site validation"
+            echo
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Branch: \`staging/site-integration\`"
+            echo "- Result: the complete Next.js production build succeeded"
+            echo "- Deployment: deliberately skipped"
+          } >> "$GITHUB_STEP_SUMMARY"

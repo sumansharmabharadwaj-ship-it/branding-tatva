@@ -1,3 +1,5 @@
+import "@/data/registerSupportingInsights";
+
 export {
   getInsightBySlug,
   getInsightTopic,
