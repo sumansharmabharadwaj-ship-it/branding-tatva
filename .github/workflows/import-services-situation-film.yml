@@ -1,0 +1,217 @@
+name: Generate original Services Situation film
+
+on:
+  push:
+    branches:
+      - services-original-situation-film
+    paths:
+      - .github/workflows/import-services-situation-film.yml
+
+permissions:
+  contents: write
+
+jobs:
+  generate-film:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out focused branch
+        uses: actions/checkout@v4
+        with:
+          ref: services-original-situation-film
+          fetch-depth: 0
+
+      - name: Prepare image and video tools
+        run: |
+          set -euo pipefail
+          ffmpeg -version | head -n 1
+          python -m pip install --disable-pip-version-check --quiet pillow numpy
+
+      - name: Download the original material-world keyframe
+        env:
+          SITUATION_IMAGE_URL: "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:4141260a-9659-4581-8c62-70366359865f"
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 4 --retry-all-errors \
+            "$SITUATION_IMAGE_URL" \
+            --output /tmp/bt-services-situation-source.png
+          test -s /tmp/bt-services-situation-source.png
+          file /tmp/bt-services-situation-source.png | grep -q "PNG image data"
+
+      - name: Direct and render the seamless Situation film
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/situation-desktop /tmp/situation-mobile public/videos/generated public/images/generated
+          python <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+          import numpy as np
+          import math
+
+          SOURCE = Path('/tmp/bt-services-situation-source.png')
+          DESKTOP = Path('/tmp/situation-desktop')
+          MOBILE = Path('/tmp/situation-mobile')
+          FRAME_COUNT = 150
+          DESKTOP_SIZE = (1600, 900)
+          MOBILE_SIZE = (720, 1280)
+
+          base = Image.open(SOURCE).convert('RGB')
+          base = ImageEnhance.Color(base).enhance(0.86)
+          base = ImageEnhance.Contrast(base).enhance(1.05)
+          base = ImageEnhance.Brightness(base).enhance(0.94)
+          bw, bh = base.size
+
+          yy, xx = np.ogrid[:bh, :bw]
+
+          def radial_mask(cx: float, cy: float, rx: float, ry: float, power: float = 1.7) -> Image.Image:
+              distance = ((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2
+              mask = np.clip(1.0 - distance, 0.0, 1.0) ** power
+              return Image.fromarray(np.uint8(mask * 255), mode='L').filter(ImageFilter.GaussianBlur(18))
+
+          masks = [
+              radial_mask(360, 1125, 260, 250, 1.9),
+              radial_mask(1360, 1070, 610, 390, 1.8),
+              radial_mask(2290, 1080, 620, 470, 1.7),
+          ]
+          glow_colours = [
+              (238, 232, 215),
+              (211, 190, 148),
+              (222, 196, 142),
+          ]
+
+          def add_glow(image: Image.Image, mask: Image.Image, colour: tuple[int, int, int], opacity: float) -> Image.Image:
+              rgba = image.convert('RGBA')
+              alpha = mask.point(lambda value: int(value * opacity))
+              layer = Image.new('RGBA', image.size, (*colour, 0))
+              layer.putalpha(alpha)
+              return Image.alpha_composite(rgba, layer).convert('RGB')
+
+          def camera_frame(image: Image.Image, phase: float, target: tuple[int, int]) -> Image.Image:
+              target_ratio = target[0] / target[1]
+              zoom = 1.03 + 0.018 * (0.5 - 0.5 * math.cos(phase))
+              crop_w = bw / zoom
+              crop_h = crop_w / target_ratio
+              if crop_h > bh:
+                  crop_h = bh / zoom
+                  crop_w = crop_h * target_ratio
+              drift_x = 22 * math.sin(phase)
+              drift_y = 8 * (math.cos(phase) - 1)
+              cx = bw / 2 + drift_x
+              cy = bh / 2 + drift_y
+              box = (
+                  int(cx - crop_w / 2),
+                  int(cy - crop_h / 2),
+                  int(cx + crop_w / 2),
+                  int(cy + crop_h / 2),
+              )
+              return image.crop(box).resize(target, Image.Resampling.LANCZOS)
+
+          for index in range(FRAME_COUNT):
+              phase = 2 * math.pi * index / (FRAME_COUNT - 1)
+
+              # Each material state receives a different rhythm, but all
+              # return to the same first frame for a clean loop.
+              pulses = [
+                  0.08 + 0.12 * (0.5 + 0.5 * math.sin(phase - math.pi / 2)),
+                  0.07 + 0.10 * (0.5 + 0.5 * math.sin(phase - math.pi / 2 + 2.0)),
+                  0.06 + 0.11 * (0.5 + 0.5 * math.sin(phase - math.pi / 2 + 4.0)),
+              ]
+
+              lit = base
+              for mask, colour, opacity in zip(masks, glow_colours, pulses):
+                  lit = add_glow(lit, mask, colour, opacity)
+
+              desktop = camera_frame(lit, phase, DESKTOP_SIZE)
+              desktop.save(DESKTOP / f'frame-{index:04d}.jpg', quality=89, subsampling=1, optimize=True)
+
+              # Mobile preserves all three states in a lower material band
+              # while leaving a dark, low-detail field for the copy above.
+              background = ImageOps.fit(lit, MOBILE_SIZE, method=Image.Resampling.LANCZOS, centering=(0.5, 0.48))
+              background = background.filter(ImageFilter.GaussianBlur(22))
+              background = ImageEnhance.Brightness(background).enhance(0.26)
+
+              strip_w = 760
+              strip_h = round(strip_w * bh / bw)
+              strip = lit.resize((strip_w, strip_h), Image.Resampling.LANCZOS)
+              strip_x = -20 + round(8 * math.sin(phase))
+              strip_y = 760 + round(5 * (math.cos(phase) - 1))
+
+              alpha = Image.new('L', strip.size, 255)
+              alpha_array = np.full((strip_h, strip_w), 255, dtype=np.uint8)
+              fade_top = min(100, strip_h // 3)
+              fade_bottom = min(70, strip_h // 4)
+              alpha_array[:fade_top] = np.linspace(0, 255, fade_top, dtype=np.uint8)[:, None]
+              alpha_array[-fade_bottom:] = np.linspace(255, 0, fade_bottom, dtype=np.uint8)[:, None]
+              alpha = Image.fromarray(alpha_array, mode='L')
+
+              mobile = background.convert('RGBA')
+              strip_rgba = strip.convert('RGBA')
+              strip_rgba.putalpha(alpha)
+              mobile.alpha_composite(strip_rgba, (strip_x, strip_y))
+              mobile = mobile.convert('RGB')
+              mobile.save(MOBILE / f'frame-{index:04d}.jpg', quality=87, subsampling=1, optimize=True)
+          PY
+
+          ffmpeg -hide_banner -loglevel error -y \
+            -framerate 25 -i /tmp/situation-desktop/frame-%04d.jpg \
+            -c:v libx264 -preset slow -crf 24 -pix_fmt yuv420p -movflags +faststart -an \
+            public/videos/generated/bt-services-situation-paths.mp4
+
+          ffmpeg -hide_banner -loglevel error -y \
+            -framerate 25 -i /tmp/situation-mobile/frame-%04d.jpg \
+            -c:v libx264 -preset slow -crf 25 -pix_fmt yuv420p -movflags +faststart -an \
+            public/videos/generated/bt-services-situation-paths-mobile.mp4
+
+          cp /tmp/situation-desktop/frame-0075.jpg \
+            public/images/generated/bt-services-situation-paths-poster.jpg
+
+      - name: Validate the responsive silent media contract
+        run: |
+          set -euo pipefail
+          for file in \
+            public/videos/generated/bt-services-situation-paths.mp4 \
+            public/videos/generated/bt-services-situation-paths-mobile.mp4 \
+            public/images/generated/bt-services-situation-paths-poster.jpg
+          do
+            test -s "$file"
+          done
+
+          python <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          videos = [
+              Path('public/videos/generated/bt-services-situation-paths.mp4'),
+              Path('public/videos/generated/bt-services-situation-paths-mobile.mp4'),
+          ]
+          for path in videos:
+              probe = json.loads(subprocess.check_output([
+                  'ffprobe', '-v', 'error', '-show_streams', '-show_format',
+                  '-of', 'json', str(path)
+              ]))
+              duration = float(probe['format']['duration'])
+              audio = [stream for stream in probe['streams'] if stream.get('codec_type') == 'audio']
+              video = [stream for stream in probe['streams'] if stream.get('codec_type') == 'video']
+              if not 5.8 <= duration <= 6.2:
+                  raise SystemExit(f'{path}: unexpected duration {duration}')
+              if audio:
+                  raise SystemExit(f'{path}: audio stream found')
+              if len(video) != 1:
+                  raise SystemExit(f'{path}: expected one video stream')
+              print(path, duration, video[0]['width'], video[0]['height'], path.stat().st_size)
+          PY
+
+      - name: Commit the original Situation film
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/videos/generated/bt-services-situation-paths.mp4 \
+            public/videos/generated/bt-services-situation-paths-mobile.mp4 \
+            public/images/generated/bt-services-situation-paths-poster.jpg
+          git commit -m "Generate the original Services Situation film"
+          git push origin HEAD:services-original-situation-film
