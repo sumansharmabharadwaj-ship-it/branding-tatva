@@ -9,16 +9,20 @@ export function HomeV4HeaderDirector() {
   useEffect(() => {
     const header = document.querySelector<HTMLElement>("header");
     if (!header) return;
+    // Preserve the narrowed element type inside the event callbacks below.
+    // TypeScript cannot safely carry DOM-query narrowing into nested
+    // functions because the callback executes later.
+    const headerElement = header;
 
     let lastCommittedScroll = window.scrollY;
 
     function setHidden(hidden: boolean) {
-      header.dataset.homeNativeHidden = hidden ? "true" : "false";
+      headerElement.dataset.homeNativeHidden = hidden ? "true" : "false";
     }
 
     function syncHeader() {
       const current = window.scrollY;
-      const openMenu = Boolean(header.querySelector('[aria-expanded="true"]'));
+      const openMenu = Boolean(headerElement.querySelector('[aria-expanded="true"]'));
 
       if (openMenu || current <= TOP_REVEAL_PX) {
         setHidden(false);
@@ -40,7 +44,7 @@ export function HomeV4HeaderDirector() {
     return () => {
       window.removeEventListener("scroll", syncHeader);
       window.removeEventListener("pageshow", syncHeader);
-      delete header.dataset.homeNativeHidden;
+      delete headerElement.dataset.homeNativeHidden;
     };
   }, []);
 
