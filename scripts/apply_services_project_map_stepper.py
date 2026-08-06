@@ -144,7 +144,7 @@ def update_services_gate() -> None:
     .getByRole("tab");
   await waitForCount(insightTabs, 8, `${label}: project-map consultation chapters`);
   await assertTouchTargets(insightTabs, 40, `${label}: project-map consultation chapters`);
-  const rootCauseTab = imagine.getByRole("tab", { name: "The likely root cause", exact: true });
+  const rootCauseTab = imagine.getByRole("tab", { name: /The likely root cause/i }).first();
   await rootCauseTab.click();
   const insightPanel = imagine.getByRole("tabpanel");
   await waitForVisibleText(
@@ -178,6 +178,7 @@ def validate() -> None:
             "project-map consultation chapters",
             "projectMapSteps: 2",
             "projectMapInsights: 8",
+            "/The likely root cause/i",
         ],
     }
     for path, needles in contracts.items():
