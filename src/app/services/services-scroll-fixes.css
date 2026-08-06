@@ -56,6 +56,20 @@
     rotate(8deg);
 }
 
+/* Health checks, audits, project maps, and the strategy room contain real
+   controls. When one receives focus, the floating chapter guide yields the
+   edge completely rather than hovering over the visitor's answer. */
+[data-services-scroll-root][data-services-form-interaction="true"] .services-progress {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.services-progress {
+  transition:
+    opacity 240ms ease,
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @supports not (height: 1svh) {
   @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
     [data-services-scene="opening"] {
