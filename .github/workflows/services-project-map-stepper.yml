@@ -1,4 +1,5 @@
 name: Build and verify the compressed project-map journey
+run-name: Services project-map stepper pass 2 · ${{ github.sha }}
 
 on:
   push:
