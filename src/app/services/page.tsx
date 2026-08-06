@@ -691,7 +691,7 @@ export default async function ServicesPage() {
         </PricingProvider>
       </main>
       <Footer />
-      <SectionJumpNav items={JUMP_ITEMS} />
+      <SectionJumpNav items={JUMP_ITEMS} hideOnLast />
     </>
   );
 }
