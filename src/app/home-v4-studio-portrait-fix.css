@@ -4,6 +4,8 @@
 
 .studio-cinematic__portrait-photo {
   object-position: center 78%;
+  transform: translateY(-18%) scale(1.12);
+  transform-origin: center center;
 }
 
 .studio-cinematic__portrait-wash {
@@ -25,12 +27,14 @@
 @media (max-width: 900px) {
   .studio-cinematic__portrait-photo {
     object-position: center 82%;
+    transform: translateY(-19%) scale(1.12);
   }
 }
 
 @media (max-width: 640px) {
   .studio-cinematic__portrait-photo {
     object-position: center 86%;
+    transform: translateY(-21%) scale(1.14);
   }
 
   .studio-cinematic__portrait-wash {
