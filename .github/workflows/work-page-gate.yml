@@ -7,6 +7,32 @@ on:
   push:
     branches:
       - homepage-cinematic-recovery
+      - preview/work-page-final-verification-2026-08-07
+    paths:
+      - .github/workflows/work-page-gate.yml
+      - scripts/work_page_gate_v2.cjs
+      - scripts/work_page_gate_v3.cjs
+      - scripts/work_mobile_narrative_gate.cjs
+      - public/images/work-evidence-*.svg
+      - src/app/work/**
+      - src/sections/Work/**
+      - src/sections/CaseStudies/BrandStudies.tsx
+      - src/data/projects.ts
+      - src/data/workTaxonomy.ts
+      - src/data/caseStudyPresentation.ts
+      - src/data/decisionArtifacts.ts
+      - src/data/conceptProjects.ts
+      - src/data/brandStudies.ts
+      - src/data/capabilities.ts
+      - src/components/**
+      - src/layouts/**
+      - src/lib/**
+      - package.json
+      - pnpm-lock.yaml
+      - next.config.ts
+  pull_request:
+    branches:
+      - homepage-cinematic-recovery
     paths:
       - .github/workflows/work-page-gate.yml
       - scripts/work_page_gate_v2.cjs

@@ -2,6 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json",
   "git": {
-    "deploymentEnabled": false
+    "deploymentEnabled": {
+      "homepage-cinematic-recovery": false,
+      "feat/insights-authority-hub": false,
+      "staging/site-integration": false
+    }
   }
 }
