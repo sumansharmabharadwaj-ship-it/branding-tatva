@@ -22,8 +22,12 @@ The current authority layer is deliberately focused:
 10. measuring brand recall with a limited research budget
 11. value proposition versus positioning versus tagline
 12. brand consistency checklist for service businesses
+13. why a beautiful brand identity can still be forgettable
+14. how to find a real differentiator in a crowded service market
+15. brand positioning statement examples for service businesses
+16. how to reposition a service business without losing recognition
 
-The first five pages form the pillar layer. The seven supporting guides connect those foundations with website decisions, recognisable assets, service journeys, consulting positioning, practical research, message hierarchy, and customer-experience consistency.
+The first five pages form the pillar layer. The eleven supporting guides connect those foundations with website decisions, recognisable assets, service journeys, consulting positioning, practical research, message hierarchy, customer-experience consistency, memorability, differentiation, positioning examples, and recognition-preserving repositioning.
 
 ## Page contract
 
@@ -52,14 +56,16 @@ No article should exist only to occupy a keyword. If the piece cannot add a usef
 Current pillar:
 - Brand positioning strategy for service businesses
 
-Published supporting article:
+Published supporting articles:
 - How to position a consulting business without narrowing the offer too far
+- How to find a real differentiator in a crowded service market
+- Brand positioning statement examples for service businesses
+- How to reposition a service business without losing recognition
 
 Next supporting articles:
-- Brand positioning statement examples and why most of them stay generic
 - Category design versus brand positioning for smaller businesses
-- How to find a real differentiator in a crowded service market
-- Repositioning an established business without losing recognition
+- When specialisation strengthens a service brand and when it traps one
+- How to test a new position before changing the website
 
 ### Water: Customer experience
 
@@ -80,12 +86,12 @@ Next supporting articles:
 Current pillar:
 - Brand awareness versus brand recall
 
-Published supporting article:
+Published supporting articles:
 - Distinctive brand assets: how to choose and audit them
+- Why a beautiful brand identity can still be forgettable
 
 Next supporting articles:
 - Brand salience explained for founder-led businesses
-- Why a beautiful identity can still be forgettable
 - Visual consistency versus visual sameness
 - How to stand out in a category without becoming confusing
 
@@ -117,22 +123,30 @@ Next supporting articles:
 - How long brand recognition takes to build
 - When a rebrand destroys useful brand equity
 
-## Publishing sequence
+## Published sequence and next editorial moves
 
-Publish supporting articles in interleaved clusters rather than completing one topic in isolation. The recommended first ten are:
+The supporting layer has been built in interleaved clusters rather than completing one topic in isolation:
 
-1. Website messaging hierarchy for service businesses — complete
-2. Distinctive brand assets: how to choose and audit them — complete
-3. Customer journey mapping for service businesses — complete
-4. How to position a consulting business — complete
-5. Measuring brand recall without a large research budget — complete
-6. Value proposition versus positioning versus tagline — complete
-7. Brand consistency checklist across website, sales, and delivery — complete
-8. Why a beautiful identity can still be forgettable
-9. How to find a real differentiator in a crowded service market
-10. How brand consistency creates recognition over time
+1. Website messaging hierarchy for service businesses: complete
+2. Distinctive brand assets, how to choose and audit them: complete
+3. Customer journey mapping for service businesses: complete
+4. How to position a consulting business: complete
+5. Measuring brand recall without a large research budget: complete
+6. Value proposition versus positioning versus tagline: complete
+7. Brand consistency checklist across website, sales, and delivery: complete
+8. Why a beautiful identity can still be forgettable: complete
+9. How to find a real differentiator in a crowded service market: complete
+10. Brand positioning statement examples for service businesses: complete
+11. How to reposition a service business without losing recognition: complete
 
-This sequence gives every hub a second and third layer while creating natural cross-links between neighbouring decisions.
+The next four editorial moves should be selected in this order unless Search Console evidence points elsewhere:
+
+1. Category design versus brand positioning for smaller businesses
+2. Brand voice guidelines that teams can actually use
+3. Why onboarding is part of the brand
+4. Brand salience explained for founder-led businesses
+
+This sequence deepens the strongest commercial cluster while continuing to give every hub a second and third layer.
 
 ## Internal linking rules
 
@@ -148,7 +162,7 @@ Anchor text should describe the destination. Avoid repeated generic anchors such
 
 Whenever a new article is published, update at least two older articles with contextual links to it. This keeps the library connected and gives the new page established crawl paths.
 
-The first seven supporting guides are registered in their topic hubs, sitemap, RSS feed, AI-readable index, and the related-reading paths of the relevant pillar articles.
+The eleven supporting guides are registered in their topic hubs, sitemap, RSS feed, AI-readable index, and the related-reading paths of the relevant pillar or neighbouring articles.
 
 ## Evidence and citation rules
 
@@ -163,7 +177,7 @@ Use first-party evidence wherever possible:
 
 Use reputable external sources when a claim depends on research, law, platform behaviour, or a named theory. Prefer original research, official documentation, books, academic papers, and primary datasets. Avoid decorative citation piles.
 
-Every factual claim should be traceable. Every opinion should be clearly framed as analysis or practice-based judgement.
+Fictional examples must be labelled as fictional and should demonstrate decision logic rather than imply invented commercial results. Every factual claim should be traceable. Every opinion should be clearly framed as analysis or practice-based judgement.
 
 ## Search Console launch sequence
 
@@ -193,7 +207,7 @@ Actions:
 - repair indexing or canonical issues
 - rewrite titles and descriptions where impressions arrive without clicks
 - add links from relevant service and work pages
-- publish the first three supporting articles
+- confirm all sixteen guides are present in the sitemap, feed, and topic hubs
 
 ### Days 31 to 60
 
@@ -206,7 +220,7 @@ Measure:
 Actions:
 - resolve cannibalisation through clearer intent, headings, and internal links
 - add examples, diagrams, or missing subtopics to pages already earning impressions
-- publish supporting articles four through seven
+- refresh the pages with the highest impressions and weakest click-through rate
 - seek relevant citations, partnerships, interviews, and editorial mentions
 
 ### Days 61 to 90
@@ -222,8 +236,8 @@ Actions:
 - refresh pages that are close to first-page thresholds
 - expand sections that match real search queries
 - consolidate any weak overlap
-- publish supporting articles eight through ten
-- choose the next cluster using evidence rather than intuition
+- publish the next supporting pages using evidence rather than intuition
+- choose the next cluster from query and conversion data
 
 ## Monthly refresh rule
 
