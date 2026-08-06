@@ -16,7 +16,7 @@ export function RegionSelector() {
         onChange={(e) => {
           if (isRegion(e.target.value)) setRegion(e.target.value);
         }}
-        className="rounded-full border border-ivory/25 bg-transparent px-3 py-1.5 text-xs text-ivory outline-none transition-colors focus:border-sandstone [&>option]:text-soil"
+        className="min-h-11 rounded-full border border-ivory/25 bg-transparent px-3 py-2 text-xs text-ivory outline-none transition-colors focus:border-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone [&>option]:text-soil"
       >
         {REGIONS.map((r) => (
           <option key={r.id} value={r.id}>

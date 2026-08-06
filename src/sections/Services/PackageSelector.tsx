@@ -106,6 +106,7 @@ export function PackageSelector() {
         <RegionSelector />
         <button
           type="button"
+          aria-label="Compare all three side by side"
           aria-pressed={compare}
           onClick={() =>
             setCompare((c) => {
@@ -113,7 +114,7 @@ export function PackageSelector() {
               return !c;
             })
           }
-          className="link-underline text-sm text-ivory/70 transition-colors duration-300 hover:text-ivory"
+          className="link-underline inline-flex min-h-11 items-center rounded-full px-3 py-2.5 text-sm text-ivory/70 transition-colors duration-300 hover:bg-ivory/[0.05] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
         >
           {compare ? "Back to one recommendation" : "Compare all three side by side"}
         </button>
