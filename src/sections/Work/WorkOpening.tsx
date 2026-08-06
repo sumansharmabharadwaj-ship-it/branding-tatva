@@ -105,15 +105,15 @@ export function WorkOpening() {
         }}
       />
 
-      <Container className="relative pb-16 pt-28 sm:pb-24 sm:pt-36">
-        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-12 xl:gap-16">
+      <Container className="relative pb-12 pt-24 min-[430px]:pt-28 sm:pb-24 sm:pt-36">
+        <div className="grid items-start gap-8 sm:gap-12 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-12 xl:gap-16">
           <div>
             <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>
               Work / evidence
             </p>
 
             <h1
-              className="mt-5 font-display text-[clamp(2.75rem,5.1vw,4.55rem)] font-normal leading-[1.03] tracking-[-0.015em]"
+              className="mt-4 font-display text-[2.45rem] font-normal leading-[1.02] tracking-[-0.015em] min-[430px]:text-[2.65rem] sm:mt-5 sm:text-[clamp(2.75rem,5.1vw,4.55rem)] sm:leading-[1.03]"
               style={{ color: WORK.charcoal }}
             >
               {LINES.map((line) => (
@@ -123,15 +123,15 @@ export function WorkOpening() {
               ))}
             </h1>
 
-            <p className="mt-6 max-w-lg text-base leading-relaxed sm:text-lg" style={{ color: WORK.wood }}>
+            <p className="mt-4 max-w-lg text-[0.98rem] leading-[1.62] sm:mt-6 sm:text-lg sm:leading-relaxed" style={{ color: WORK.wood }}>
               Real engagements first. Clearly labelled concept work and independent analysis after. Every chapter reveals the problem, the call, and what changed.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4">
+            <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8 sm:gap-4">
               <a
                 href="#index"
                 onClick={(event) => jumpTo(event, "index")}
-                className="group inline-flex items-center gap-3 rounded-full px-6 py-3 text-sm font-medium text-white transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="group inline-flex items-center gap-3 rounded-full px-5 py-2.5 text-sm font-medium text-white transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:px-6 sm:py-3"
                 style={{ backgroundColor: WORK.forest, outlineColor: WORK.moss }}
               >
                 Explore the evidence
@@ -142,14 +142,14 @@ export function WorkOpening() {
               <a
                 href="#find-relevant-proof"
                 onClick={(event) => jumpTo(event, "find-relevant-proof")}
-                className="link-underline text-sm font-medium"
+                className="link-underline text-[0.82rem] font-medium sm:text-sm"
                 style={{ color: WORK.forest }}
               >
                 Start with your problem <span aria-hidden="true">→</span>
               </a>
             </div>
 
-            <p className="mt-8 text-xs uppercase tracking-[0.15em]" style={{ color: WORK.stone }}>
+            <p className="mt-8 hidden text-xs uppercase tracking-[0.15em] sm:block" style={{ color: WORK.stone }}>
               Founder-led strategy, writing, direction, and delivery
             </p>
           </div>
@@ -199,7 +199,7 @@ export function WorkOpening() {
                 </div>
 
                 <div
-                  className="border-t p-5 sm:p-6"
+                  className="border-t p-4 sm:p-6"
                   style={{ borderColor: "rgba(255,255,255,0.12)", backgroundColor: WORK.forest }}
                 >
                   <AnimatePresence mode="wait" initial={false}>
@@ -210,19 +210,19 @@ export function WorkOpening() {
                       exit={animateTransitions ? { opacity: 0, y: -6 } : undefined}
                       transition={{ duration: animateTransitions ? 0.38 : 0, ease: EASE_ORGANIC }}
                     >
-                      <div className="flex items-start justify-between gap-5">
+                      <div className="flex items-start justify-between gap-4 sm:gap-5">
                         <div className="min-w-0">
-                          <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em]" style={{ color: WORK.sand }}>
+                          <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em] sm:text-[0.62rem] sm:tracking-[0.18em]" style={{ color: WORK.sand }}>
                             {record.evidenceLabel} · {current.industry}
                           </p>
-                          <h2 className="mt-1 font-display text-3xl font-normal text-white sm:text-4xl">{current.title}</h2>
+                          <h2 className="mt-1 font-display text-2xl font-normal text-white min-[430px]:text-3xl sm:text-4xl">{current.title}</h2>
                         </div>
-                        <span className="shrink-0 font-display text-sm text-white/70">
+                        <span className="shrink-0 font-display text-xs text-white/70 sm:text-sm">
                           {String(active + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
                         </span>
                       </div>
-                      <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/80 sm:text-base">{decisiveLine(active)}</p>
-                      <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-white">
+                      <p className="mt-2.5 max-w-xl text-[0.82rem] leading-relaxed text-white/80 sm:mt-3 sm:text-base">{decisiveLine(active)}</p>
+                      <span className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-white sm:mt-4">
                         Open the project <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                       </span>
                     </motion.div>
