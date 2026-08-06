@@ -27,41 +27,6 @@ jobs:
           ref: services-original-media-cleanup
           fetch-depth: 1
 
-      - name: Teach the auditor about the intentional hero poster preload
-        run: |
-          python <<'PY'
-          from pathlib import Path
-
-          path = Path("scripts/audit_services_original_media.py")
-          source = path.read_text()
-          indent = " " * 12
-          old = (
-              indent + "occurrences = live_source.count(path_value)\n"
-              + indent + "if occurrences != 1:\n"
-              + indent + "    fail(f\"{film.key}: {path_value} should appear once in live sources, found {occurrences}\")"
-          )
-          new = (
-              indent + "occurrences = live_source.count(path_value)\n"
-              + indent + "expected_occurrences = 2 if film.key == \"hero\" and path_value == film.poster else 1\n"
-              + indent + "if occurrences != expected_occurrences:\n"
-              + indent + "    fail(\n"
-              + indent + "        f\"{film.key}: {path_value} should appear {expected_occurrences} time(s) \"\n"
-              + indent + "        f\"in live sources, found {occurrences}\"\n"
-              + indent + "    )"
-          )
-          if source.count(old) != 1:
-              raise SystemExit(f"Hero preload audit patch: expected one match, found {source.count(old)}")
-          source = source.replace(old, new, 1)
-
-          report_indent = " " * 8
-          old_report = report_indent + '"- every manifest path exists and appears exactly once in live Services sources",'
-          new_report = report_indent + '"- every manifest path is wired to its intended live scene; the hero poster is also preloaded for first paint",'
-          if source.count(old_report) != 1:
-              raise SystemExit(f"Audit report wording: expected one match, found {source.count(old_report)}")
-          source = source.replace(old_report, new_report, 1)
-          path.write_text(source)
-          PY
-
       - name: Remove stale stock-era direction and repair source formatting
         run: python scripts/clean_services_media_direction.py
 
@@ -107,12 +72,13 @@ jobs:
       - name: Build the Next.js application
         run: pnpm build
 
-      - name: Commit the sealed original-media pass and remove one-time gates
+      - name: Commit the sealed original-media pass and remove one-time tools
         run: |
           set -euo pipefail
           rm -f \
             .github/workflows/services-original-media-cleanup.yml \
-            .github/workflows/services-original-media-cleanup-v2.yml
+            .github/workflows/services-original-media-cleanup-v2.yml \
+            scripts/clean_services_media_direction.py
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add \
@@ -120,6 +86,7 @@ jobs:
             public/videos/generated/README.txt \
             docs/SERVICES_ORIGINAL_MEDIA_AUDIT.md \
             scripts/audit_services_original_media.py \
+            scripts/clean_services_media_direction.py \
             .github/workflows/services-original-media-cleanup.yml \
             .github/workflows/services-original-media-cleanup-v2.yml
           git commit -m "Seal the Services original-media system"
