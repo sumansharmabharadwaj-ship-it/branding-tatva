@@ -48,6 +48,19 @@ export default async function CaseStudyPage({ params }: Props) {
   const taxonomy = getWorkTaxonomy(project.slug);
   const presentation = getCaseStudyPresentation(project.slug);
 
+  // The current project videos are generated or atmospheric context
+  // films, not recorded client outputs. The case-study evidence layer
+  // therefore uses the approved project stills until genuine project
+  // footage is explicitly cleared and labelled in the data model. This
+  // also gives the server and reduced-motion client an identical first
+  // render, preventing media-tree hydration mismatches.
+  const evidenceProject = {
+    ...project,
+    heroVideo: undefined,
+    cardVideo: undefined,
+    heroPoster: project.cardImage ?? project.heroPoster,
+  };
+
   const caseStudyStructuredData = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
@@ -58,7 +71,7 @@ export default async function CaseStudyPage({ params }: Props) {
     author: { "@id": `${site.url}/#person` },
     creator: { "@id": `${site.url}/#organization` },
     keywords: project.services.join(", "),
-    image: project.heroPoster ? `${site.url}${project.heroPoster}` : project.cardImage ? `${site.url}${project.cardImage}` : undefined,
+    image: project.cardImage ? `${site.url}${project.cardImage}` : project.heroPoster ? `${site.url}${project.heroPoster}` : undefined,
     url: `${site.url}/work/${project.slug}`,
   };
 
@@ -84,7 +97,7 @@ export default async function CaseStudyPage({ params }: Props) {
       <ScrollProgress />
       <main id="main-content">
         <CaseStudyExperience
-          project={project}
+          project={evidenceProject}
           presentation={presentation}
           tierLabel={taxonomy.tier === "flagship" ? "Flagship case study" : "Project story"}
           evidenceLabel={taxonomy.evidenceLabel}
