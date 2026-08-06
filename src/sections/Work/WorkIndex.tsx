@@ -1,6 +1,6 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,11 +19,12 @@ function decisiveLine(project: Project) {
 export function WorkIndex({ projects }: { projects: Project[] }) {
   const [filter, setFilter] = useState<WorkFilterId>("all");
   const [active, setActive] = useState(0);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const animateTransitions = hydrated && !prefersReducedMotion;
 
   const filtered = useMemo(
     () => (filter === "all" ? projects : projects.filter((project) => getWorkTaxonomy(project.slug).needs.includes(filter))),
-    [filter, projects]
+    [filter, projects],
   );
   const current = filtered[active] ?? filtered[0] ?? projects[0];
   const activeNeed = WORK_NEEDS.find((need) => need.id === filter) ?? WORK_NEEDS[0];
@@ -96,13 +97,13 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                 const record = getWorkTaxonomy(project.slug);
                 return (
                   <motion.div
-                    layout={!prefersReducedMotion}
+                    layout={animateTransitions}
                     key={project.slug}
                     role="listitem"
-                    initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
+                    initial={animateTransitions ? { opacity: 0, y: 10 } : false}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE_ORGANIC }}
+                    exit={animateTransitions ? { opacity: 0, y: -8 } : undefined}
+                    transition={{ duration: animateTransitions ? 0.36 : 0, ease: EASE_ORGANIC }}
                     className="relative"
                   >
                     <div className="h-px" style={{ backgroundColor: WORK.stone + "66" }} aria-hidden="true" />
@@ -115,7 +116,7 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                         isActive ? "opacity-100" : "opacity-100 lg:opacity-[0.82]"
                       }`}
                       style={{
-                        transform: !prefersReducedMotion && isActive ? "translateX(8px)" : "translateX(0)",
+                        transform: animateTransitions && isActive ? "translateX(8px)" : "translateX(0)",
                         outlineColor: WORK.moss,
                       }}
                     >
@@ -205,10 +206,10 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                     src={currentRecord.evidencePoster}
                     alt={`${current.title} evidence diagram`}
                     className="absolute inset-0 h-full w-full object-cover"
-                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.02 }}
+                    initial={animateTransitions ? { opacity: 0, scale: 1.02 } : false}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: EASE_ORGANIC }}
+                    exit={animateTransitions ? { opacity: 0 } : undefined}
+                    transition={{ duration: animateTransitions ? 0.52 : 0, ease: EASE_ORGANIC }}
                   />
                 </AnimatePresence>
                 <div
