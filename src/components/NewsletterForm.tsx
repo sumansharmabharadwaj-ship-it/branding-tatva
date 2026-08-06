@@ -28,6 +28,7 @@ export function NewsletterForm() {
     formState: { errors },
   } = useForm<NewsletterFormValues>({
     resolver: zodResolver(newsletterSchema),
+    defaultValues: { source: "newsletter" },
   });
 
   async function onSubmit(values: NewsletterFormValues) {

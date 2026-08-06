@@ -169,15 +169,16 @@ function CaseStudyDeck() {
   }, []);
 
   if (!model) return null;
+  const activeModel = model;
 
-  const chapter = model.chapters[active] ?? model.chapters[0];
+  const chapter = activeModel.chapters[active] ?? activeModel.chapters[0];
   if (!chapter) return null;
 
   function choose(index: number) {
     setActive(index);
 
-    const article = model.articles[index];
-    const originalButton = model.originalButtons[index];
+    const article = activeModel.articles[index];
+    const originalButton = activeModel.originalButtons[index];
     if (!article || !originalButton) return;
 
     const originalScrollIntoView = article.scrollIntoView;
@@ -189,7 +190,7 @@ function CaseStudyDeck() {
   return createPortal(
     <div className="mt-5 lg:hidden" data-mobile-case-study-deck="true">
       <div className="grid grid-cols-4 gap-2" role="group" aria-label="Choose a case-study chapter">
-        {model.chapters.map((item, index) => {
+        {activeModel.chapters.map((item, index) => {
           const selected = active === index;
           return (
             <button
@@ -249,7 +250,7 @@ function CaseStudyDeck() {
         </motion.article>
       </AnimatePresence>
     </div>,
-    model.host,
+    activeModel.host,
   );
 }
 

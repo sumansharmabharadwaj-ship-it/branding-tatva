@@ -107,7 +107,7 @@ function collectScenes(root: HTMLElement): SceneRecord[] {
 export function ServicesScrollExperience() {
   const markerRef = useRef<HTMLSpanElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const [activeId, setActiveId] = useState(CHAPTERS[0].id);
+  const [activeId, setActiveId] = useState<string>(CHAPTERS[0].id);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const chooseChapter = useCallback(
@@ -127,14 +127,15 @@ export function ServicesScrollExperience() {
     const marker = markerRef.current;
     const root = marker?.closest<HTMLElement>("[data-services-scroll-root]");
     if (!root) return;
+    const activeRoot = root;
 
-    assignSceneIdentity(root);
-    let scenes = collectScenes(root);
+    assignSceneIdentity(activeRoot);
+    let scenes = collectScenes(activeRoot);
     if (!scenes.length) return;
 
-    root.dataset.servicesScrollReady = "true";
-    root.dataset.servicesDirection = "down";
-    root.dataset.servicesActiveScene = scenes[0].id;
+    activeRoot.dataset.servicesScrollReady = "true";
+    activeRoot.dataset.servicesDirection = "down";
+    activeRoot.dataset.servicesActiveScene = scenes[0].id;
 
     const ratios = new Map<HTMLElement, number>();
     let activeScene = scenes[0];
@@ -147,7 +148,7 @@ export function ServicesScrollExperience() {
       activeScene.element.dataset.servicesActive = "false";
       next.element.dataset.servicesActive = "true";
       activeScene = next;
-      root.dataset.servicesActiveScene = next.id;
+      activeRoot.dataset.servicesActiveScene = next.id;
       setActiveId(next.id);
       window.dispatchEvent(
         new CustomEvent(ACTIVE_CHAPTER_EVENT, {
@@ -188,7 +189,7 @@ export function ServicesScrollExperience() {
       const viewportHeight = Math.max(1, window.innerHeight);
       const nextScrollY = window.scrollY;
       const direction = nextScrollY >= lastScrollY ? "down" : "up";
-      root.dataset.servicesDirection = direction;
+      activeRoot.dataset.servicesDirection = direction;
       lastScrollY = nextScrollY;
 
       scenes.forEach((scene) => {
@@ -315,7 +316,7 @@ export function ServicesScrollExperience() {
         videoRatios.delete(video);
       });
     }
-    root.querySelectorAll<HTMLVideoElement>("video").forEach(trackVideo);
+    activeRoot.querySelectorAll<HTMLVideoElement>("video").forEach(trackVideo);
 
     const mutationObserver = new MutationObserver((records) => {
       let refreshScenes = false;
@@ -331,20 +332,20 @@ export function ServicesScrollExperience() {
       });
       if (refreshScenes) {
         scenes.forEach((scene) => chapterObserver.unobserve(scene.element));
-        assignSceneIdentity(root);
-        scenes = collectScenes(root);
+        assignSceneIdentity(activeRoot);
+        scenes = collectScenes(activeRoot);
         scenes.forEach((scene) => chapterObserver.observe(scene.element));
       }
       scheduleProgress();
       syncVideos();
     });
-    mutationObserver.observe(root, { childList: true, subtree: true });
+    mutationObserver.observe(activeRoot, { childList: true, subtree: true });
 
     function onFocusIn(event: FocusEvent) {
       const target = event.target;
       if (!(target instanceof Element) || !target.matches(FORM_CONTROL_SELECTOR)) return;
       formInteraction = true;
-      root.dataset.servicesFormInteraction = "true";
+      activeRoot.dataset.servicesFormInteraction = "true";
       syncVideos();
     }
 
@@ -352,9 +353,11 @@ export function ServicesScrollExperience() {
       window.setTimeout(() => {
         const active = document.activeElement;
         formInteraction = Boolean(
-          active instanceof Element && root.contains(active) && active.matches(FORM_CONTROL_SELECTOR),
+          active instanceof Element &&
+            activeRoot.contains(active) &&
+            active.matches(FORM_CONTROL_SELECTOR),
         );
-        root.dataset.servicesFormInteraction = formInteraction ? "true" : "false";
+        activeRoot.dataset.servicesFormInteraction = formInteraction ? "true" : "false";
         syncVideos();
       }, 0);
     }
@@ -367,8 +370,8 @@ export function ServicesScrollExperience() {
     window.addEventListener("resize", scheduleProgress, { passive: true });
     viewportProfile.addEventListener("change", syncVideos);
     document.addEventListener("visibilitychange", onVisibilityChange);
-    root.addEventListener("focusin", onFocusIn);
-    root.addEventListener("focusout", onFocusOut);
+    activeRoot.addEventListener("focusin", onFocusIn);
+    activeRoot.addEventListener("focusout", onFocusOut);
     updateSceneProgress();
     syncVideos();
 
@@ -378,16 +381,16 @@ export function ServicesScrollExperience() {
       window.removeEventListener("resize", scheduleProgress);
       viewportProfile.removeEventListener("change", syncVideos);
       document.removeEventListener("visibilitychange", onVisibilityChange);
-      root.removeEventListener("focusin", onFocusIn);
-      root.removeEventListener("focusout", onFocusOut);
+      activeRoot.removeEventListener("focusin", onFocusIn);
+      activeRoot.removeEventListener("focusout", onFocusOut);
       mutationObserver.disconnect();
       chapterObserver.disconnect();
       videoObserver.disconnect();
       videoCleanups.forEach((cleanup) => cleanup());
       videos.forEach((video) => video.pause());
-      root.removeAttribute("data-services-scroll-ready");
-      root.removeAttribute("data-services-active-scene");
-      root.removeAttribute("data-services-direction");
+      activeRoot.removeAttribute("data-services-scroll-ready");
+      activeRoot.removeAttribute("data-services-active-scene");
+      activeRoot.removeAttribute("data-services-direction");
     };
   }, [prefersReducedMotion]);
 

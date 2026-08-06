@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Terms of Use",
   description: `The terms that govern using ${site.name}'s website and working with ${site.founder}.`,
   alternates: { canonical: "/terms" },
+  robots: { index: false, follow: false },
 };
 
 export default function TermsPage() {

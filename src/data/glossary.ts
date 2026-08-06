@@ -32,7 +32,7 @@ export const pillars: Pillar[] = [
       "How is positioning different from messaging?",
       "When should a brand reposition?",
     ],
-    articleSlug: "what-brand-positioning-actually-decides",
+    articleSlug: "brand-positioning-strategy-service-businesses",
     terms: [
       {
         term: "Positioning",
@@ -64,7 +64,7 @@ export const pillars: Pillar[] = [
       "What are distinctive assets?",
       "How does consistency create memory?",
     ],
-    articleSlug: "why-visible-brands-stay-forgettable",
+    articleSlug: "brand-awareness-vs-brand-recall",
     terms: [
       {
         term: "Distinctive assets",
@@ -114,7 +114,7 @@ export const pillars: Pillar[] = [
       "How does language frame value?",
       "What belongs in a messaging framework?",
     ],
-    articleSlug: "verbal-identity-beyond-tone-of-voice",
+    articleSlug: "brand-messaging-framework",
     terms: [
       {
         term: "Verbal identity",
@@ -145,7 +145,7 @@ export const pillars: Pillar[] = [
       "What is a branded house?",
       "How do multiple offers relate?",
     ],
-    articleSlug: "brand-architecture-for-multiple-offers",
+    articleSlug: "five-element-brand-strategy-framework",
     terms: [
       {
         term: "Brand architecture",
@@ -163,7 +163,7 @@ export const pillars: Pillar[] = [
     id: "psychology",
     name: "Psychology and branding",
     questions: ["How do attention, association, and memory shape brand decisions?"],
-    articleSlug: "how-psychology-informs-brand-strategy",
+    articleSlug: "five-element-brand-strategy-framework",
     terms: [
       {
         term: "Semiotics",
