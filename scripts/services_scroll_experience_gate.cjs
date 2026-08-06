@@ -6,6 +6,7 @@ const BASE_URL = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const OUTPUT = path.join(process.cwd(), "services-scroll-audit");
 const VIEWPORTS = [
   { name: "desktop-1440x900", width: 1440, height: 900, touch: false },
+  { name: "tablet-1024x768", width: 1024, height: 768, touch: true },
   { name: "mobile-390x844", width: 390, height: 844, touch: true },
 ];
 
@@ -42,6 +43,52 @@ async function selectedTabIndex(tabs) {
   );
 }
 
+async function visible(locator) {
+  return (await locator.count()) > 0 && (await locator.first().isVisible());
+}
+
+async function assertWayfinding(page, viewport, label) {
+  const rail = page.locator('[data-section-jump-nav-desktop-mode="rail"]');
+  const bar = page.locator('[data-section-jump-nav-desktop-mode="bar"]');
+  const mobile = page.locator('[data-section-jump-nav-mobile="true"]');
+
+  if (viewport.width >= 1024) {
+    assert(await visible(rail), `${label}: compact desktop chapter rail is not visible`);
+    assert(!(await visible(bar)), `${label}: full-width bottom chapter bar is still visible`);
+    assert(!(await visible(mobile)), `${label}: mobile chapter dial is visible beside the desktop rail`);
+
+    const geometry = await rail.first().evaluate((node) => {
+      const bounds = node.getBoundingClientRect();
+      return {
+        width: bounds.width,
+        rightGap: window.innerWidth - bounds.right,
+        top: bounds.top,
+        bottom: bounds.bottom,
+      };
+    });
+    assert(geometry.width <= 80, `${label}: chapter rail is ${geometry.width.toFixed(1)}px wide`);
+    assert(geometry.rightGap <= 28, `${label}: chapter rail drifted ${geometry.rightGap.toFixed(1)}px from the edge`);
+    assert(geometry.top >= -2 && geometry.bottom <= viewport.height + 2, `${label}: chapter rail exceeds the viewport`);
+  } else {
+    assert(!(await visible(rail)), `${label}: desktop chapter rail is visible on mobile`);
+    assert(!(await visible(bar)), `${label}: bottom chapter bar is visible on mobile`);
+    assert(await visible(mobile), `${label}: compact mobile chapter dial is missing`);
+  }
+}
+
+async function assertFinalArrivalOwnsViewport(page, label) {
+  await page.locator("#book").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(700);
+  const visibleGuides = await page.locator('nav[aria-label="Jump to section"]').evaluateAll((nodes) =>
+    nodes.filter((node) => {
+      const style = getComputedStyle(node);
+      const bounds = node.getBoundingClientRect();
+      return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) > 0.05 && bounds.width > 0 && bounds.height > 0;
+    }).length,
+  );
+  assert(visibleGuides === 0, `${label}: ${visibleGuides} fixed chapter guides remain in the strategy room`);
+}
+
 async function auditViewport(browser, viewport) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
@@ -55,6 +102,7 @@ async function auditViewport(browser, viewport) {
 
   const label = `services-scroll/${viewport.name}`;
   await page.waitForFunction(() => document.documentElement.dataset.servicesExperience === "active");
+  await assertWayfinding(page, viewport, label);
 
   const sceneCount = await page.locator("[data-services-scroll-scene]").count();
   assert(sceneCount >= 13, `${label}: expected at least 13 directed scenes, found ${sceneCount}`);
@@ -166,7 +214,7 @@ async function auditViewport(browser, viewport) {
   const playingVideos = await page.locator("video").evaluateAll((videos) =>
     videos.filter((video) => !video.paused && !video.ended).length,
   );
-  const videoLimit = viewport.width < 768 ? 2 : 3;
+  const videoLimit = viewport.width < 768 ? 1 : 2;
   assert(playingVideos <= videoLimit, `${label}: ${playingVideos} videos playing; limit ${videoLimit}`);
 
   await noHorizontalOverflow(page, label);
@@ -176,12 +224,15 @@ async function auditViewport(browser, viewport) {
     animations: "disabled",
   });
 
+  await assertFinalArrivalOwnsViewport(page, label);
+
   await context.close();
   return {
     viewport: viewport.name,
     ...metrics,
     sceneCount,
     playingVideos,
+    videoLimit,
     journeyRange,
   };
 }
