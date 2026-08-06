@@ -1,0 +1,4 @@
+Current cinematic browser-QA preview.
+Base commit: 5710cb130fb22bbbc1a52152c8acfbe901ca329c
+Created: 2026-08-06
+Purpose: verify Services, Work, and homepage motion on the latest shared branch.
