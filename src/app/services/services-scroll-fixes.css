@@ -73,8 +73,9 @@
 /* Positioning cost is a two-state argument with four causal beats. It needs a
    stable comparison frame, but not four separate screens. Native scrolling
    moves through the complete argument inside 128svh and the content stage
-   releases immediately in either direction. */
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+   releases immediately in either direction. Short laptop viewports remain in
+   normal flow so the stage can never crop its lower comparison cards. */
+@media (min-width: 900px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
   [data-services-scene="stakes"] {
     min-height: 128svh !important;
     align-items: stretch !important;
@@ -102,7 +103,9 @@
     #offerings {
       min-height: 165vh !important;
     }
+  }
 
+  @media (min-width: 900px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
     [data-services-scene="stakes"] {
       min-height: 128vh !important;
     }
