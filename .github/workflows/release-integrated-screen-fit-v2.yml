@@ -1,0 +1,103 @@
+name: Release integrated screen-fit preview v2
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - release/integrated-screen-fit-v2
+    paths:
+      - .release/integrated-screen-fit-v2.txt
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-integrated-screen-fit-v2
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Check out the frozen integrated candidate
+        uses: actions/checkout@v4
+        with:
+          ref: release/integrated-screen-fit-v2
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        shell: pwsh
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Synchronize the frozen release branch
+        shell: pwsh
+        run: |
+          git fetch origin release/integrated-screen-fit-v2
+          git reset --hard origin/release/integrated-screen-fit-v2
+          "RELEASE_SHA=$(git rev-parse HEAD)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Install locked dependencies
+        shell: pwsh
+        run: pnpm install --frozen-lockfile
+
+      - name: Build every application route
+        shell: pwsh
+        run: pnpm build
+
+      - name: Create the one-time Vercel deployment commit
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          $config = Get-Content vercel.json -Raw | ConvertFrom-Json
+          if ($config.git -and $config.git.PSObject.Properties['deploymentEnabled']) {
+            $config.git.PSObject.Properties.Remove('deploymentEnabled')
+          }
+          $config | ConvertTo-Json -Depth 50 | Set-Content vercel.json -Encoding utf8
+
+          New-Item -ItemType Directory -Force -Path .release | Out-Null
+          @"
+source-branch=release/integrated-screen-fit-v2
+source-commit=$env:RELEASE_SHA
+release-note=Integrated Homepage screen-fit, Services journey, Work narrative, and Insights authority system
+deployment-enabled=true
+"@ | Set-Content .release/site-preview.txt -Encoding utf8
+
+          git add vercel.json .release/site-preview.txt
+          git commit -m "Release integrated preview $($env:RELEASE_SHA.Substring(0,8))"
+          "DEPLOY_SHA=$(git rev-parse HEAD)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Publish exactly one tested preview commit
+        shell: pwsh
+        run: |
+          git fetch origin preview/cinematic-release
+          $leaseSha = git rev-parse refs/remotes/origin/preview/cinematic-release
+          git push --force-with-lease="refs/heads/preview/cinematic-release:$leaseSha" origin HEAD:refs/heads/preview/cinematic-release
+
+      - name: Record the release handoff
+        shell: pwsh
+        run: |
+          @"
+## Integrated screen-fit preview v2
+
+- Frozen source: ``$env:RELEASE_SHA``
+- Deployment commit: ``$env:DEPLOY_SHA``
+- Vercel branch: ``preview/cinematic-release``
+- Production: untouched
+
+The Vercel deployment lock was removed only after the complete production build succeeded.
+"@ | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
