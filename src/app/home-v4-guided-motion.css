@@ -93,8 +93,27 @@ html[data-home-guide-mode="paused"] .home-v4 *::after {
 }
 
 @media (min-width: 821px) and (pointer: fine) {
+  /* The idle controller becomes a quiet scene counter instead of laying a
+     long black bar across diagrams, CTA cards, or project controls. Hovering
+     restores the full explanatory interface immediately. */
+  .home-v4-guide:not(:hover):has(> button:first-of-type[aria-pressed="false"]) {
+    min-width: 5.7rem;
+  }
+
+  .home-v4-guide:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__copy {
+    width: 2.6rem;
+    min-width: 2.6rem;
+    flex: 0 0 2.6rem;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
   .home-v4-guide:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__status {
     display: none;
+  }
+
+  .home-v4-guide:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__copy strong {
+    justify-self: end;
   }
 }
 
