@@ -5,6 +5,23 @@ import { useEffect } from "react";
 const ACTIVE_ROOT_MARGIN = "-18% 0px -50% 0px";
 const SCENE_SELECTOR = "[data-services-scene], #authority, #book";
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+const CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
+
+const CHAPTER_META: Record<string, { id: string; label: string }> = {
+  opening: { id: "services-opening", label: "Opening signal" },
+  situation: { id: "situation", label: "Your situation" },
+  offerings: { id: "offerings", label: "Six disciplines" },
+  desire: { id: "desire", label: "Package paths" },
+  "verified-outcome": { id: "verified-outcome", label: "Verified outcome" },
+  authority: { id: "authority", label: "Brand foundation" },
+  stakes: { id: "stakes", label: "Positioning cost" },
+  education: { id: "education", label: "Perception" },
+  deliverables: { id: "deliverables", label: "The archive" },
+  imagine: { id: "imagine", label: "Project map" },
+  health: { id: "health", label: "Health check" },
+  audit: { id: "audit", label: "Recognition audit" },
+  book: { id: "book", label: "Strategy room" },
+};
 
 function clamp(value: number, minimum = 0, maximum = 1) {
   return Math.min(maximum, Math.max(minimum, value));
@@ -23,6 +40,10 @@ function orderedScenes(main: HTMLElement) {
   });
 }
 
+function sceneKey(scene: HTMLElement, index: number) {
+  return scene.dataset.servicesScene || scene.id || (index === 0 ? "opening" : `scene-${index + 1}`);
+}
+
 export function ServicesExperienceRuntime() {
   useEffect(() => {
     const main = document.getElementById("main-content");
@@ -36,6 +57,7 @@ export function ServicesExperienceRuntime() {
     document.documentElement.dataset.servicesExperience = "active";
     const ratios = new Map<HTMLElement, number>();
     const signalLayers = new Map<HTMLElement, HTMLSpanElement>();
+    const generatedIds = new Set<HTMLElement>();
     const heroMedia = Array.from(
       hero.querySelectorAll<HTMLElement>(":scope > img, :scope > video"),
     );
@@ -65,9 +87,19 @@ export function ServicesExperienceRuntime() {
     hero.append(heroFragments, heroAperture);
 
     scenes.forEach((scene, index) => {
-      scene.dataset.servicesScrollScene =
-        scene.dataset.servicesScene || scene.id || (index === 0 ? "opening" : `scene-${index + 1}`);
+      const key = sceneKey(scene, index);
+      const meta = CHAPTER_META[key] ?? {
+        id: scene.id || `services-scene-${index + 1}`,
+        label: `Chapter ${index + 1}`,
+      };
+
+      scene.dataset.servicesScrollScene = key;
       scene.dataset.servicesScrollIndex = String(index);
+      scene.dataset.servicesChapterLabel = meta.label;
+      if (!scene.id) {
+        scene.id = meta.id;
+        generatedIds.add(scene);
+      }
       scene.style.setProperty("--services-scene-progress", index === 0 ? "0" : "-1");
 
       const signal = document.createElement("span");
@@ -76,6 +108,19 @@ export function ServicesExperienceRuntime() {
       scene.appendChild(signal);
       signalLayers.set(scene, signal);
     });
+
+    const chapterDetail = scenes.map((scene, index) => ({
+      id: scene.id,
+      href: `#${scene.id}`,
+      label: scene.dataset.servicesChapterLabel || `Chapter ${index + 1}`,
+      scene: scene.dataset.servicesScrollScene || `scene-${index + 1}`,
+    }));
+    document.documentElement.dataset.servicesChapterCount = String(chapterDetail.length);
+    window.dispatchEvent(
+      new CustomEvent(CHAPTERS_READY_EVENT, {
+        detail: { chapters: chapterDetail },
+      }),
+    );
 
     function publishChapter(index: number) {
       if (index === activeIndex && document.documentElement.dataset.servicesActiveChapter) return;
@@ -87,6 +132,7 @@ export function ServicesExperienceRuntime() {
 
       document.documentElement.dataset.servicesActiveChapter =
         chapter.dataset.servicesScrollScene || String(index + 1);
+      document.documentElement.dataset.servicesActiveChapterId = chapter.id;
       document.documentElement.style.setProperty(
         "--services-chapter-progress",
         `${(progress * 100).toFixed(3)}%`,
@@ -196,8 +242,9 @@ export function ServicesExperienceRuntime() {
           window.dispatchEvent(
             new CustomEvent(SCENE_PROGRESS_EVENT, {
               detail: {
-                id: scene.id || scene.dataset.servicesScene || scene.dataset.servicesScrollScene,
+                id: scene.id,
                 scene: scene.dataset.servicesScrollScene,
+                label: scene.dataset.servicesChapterLabel,
                 progress,
                 presence: centred,
                 phase,
@@ -227,6 +274,8 @@ export function ServicesExperienceRuntime() {
       window.removeEventListener("pageshow", scheduleProgress);
       delete document.documentElement.dataset.servicesExperience;
       delete document.documentElement.dataset.servicesActiveChapter;
+      delete document.documentElement.dataset.servicesActiveChapterId;
+      delete document.documentElement.dataset.servicesChapterCount;
       document.documentElement.style.removeProperty("--services-chapter-progress");
       document.documentElement.style.removeProperty("--services-chapter-angle");
 
@@ -254,13 +303,16 @@ export function ServicesExperienceRuntime() {
         signalLayers.get(scene)?.remove();
         delete scene.dataset.servicesScrollScene;
         delete scene.dataset.servicesScrollIndex;
+        delete scene.dataset.servicesChapterLabel;
         delete scene.dataset.servicesActive;
         delete scene.dataset.servicesPhase;
+        if (generatedIds.has(scene)) scene.removeAttribute("id");
         scene.style.removeProperty("--services-scene-progress");
         scene.style.removeProperty("--services-scene-presence");
         scene.style.removeProperty("--services-scene-signal-x");
       });
       signalLayers.clear();
+      generatedIds.clear();
     };
   }, []);
 
