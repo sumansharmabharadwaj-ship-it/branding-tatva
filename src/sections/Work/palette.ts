@@ -8,7 +8,7 @@
 // this shared navigation, archive, conversion, or mobile-deck palette.
 // Changes in this boundary deliberately pass through the complete Work
 // evidence gate because the same tokens govern every verified viewport,
-// including combined-branch builds that contain parallel page repairs.
+// including combined-branch builds and the isolated final preview.
 export const WORK = {
   forest: "#1F3A28",
   moss: "#556B4A",
