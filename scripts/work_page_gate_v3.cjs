@@ -242,6 +242,18 @@ async function auditWorkViewport(browser, viewport) {
     });
     await captureLocator(page, page.locator("#index"), `work-${viewport.name}-index.png`);
     await captureLocator(page, page.locator("#find-relevant-proof"), `work-${viewport.name}-selector.png`);
+
+    await decisionButtons.first().click();
+    await page.waitForTimeout(220);
+    const decisionsSection = page
+      .getByRole("heading", { name: "Seven decisions, kept small enough to inspect." })
+      .locator("xpath=ancestor::section[1]");
+    await captureLocator(page, decisionsSection, `work-${viewport.name}-decisions.png`);
+
+    const finalSection = page
+      .getByRole("heading", { name: "Bring the part of the brand that no longer makes sense." })
+      .locator("xpath=ancestor::section[1]");
+    await captureLocator(page, finalSection, `work-${viewport.name}-final.png`);
   }
 
   assertDiagnosticsClean(diagnostics, label);
