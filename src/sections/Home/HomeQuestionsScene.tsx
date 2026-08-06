@@ -1,14 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useInView, useReducedMotion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { AuditInvite } from "@/components/AuditInvite";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
-import { FAQ } from "@/sections/FAQ";
+import { faqs } from "@/data/faqs";
 
-const QUESTIONS = [
+const QUESTION_ORDER = [
   "Can you help a brand new business?",
   "Can you help an existing brand that already has an identity?",
   "Can you actually implement, or just strategize?",
@@ -16,105 +21,116 @@ const QUESTIONS = [
   "Can we work remotely?",
 ] as const;
 
-const SIGNALS = [
-  { label: "Scope", x: 18, y: 22 },
-  { label: "Timing", x: 78, y: 19 },
-  { label: "Implementation", x: 88, y: 66 },
-  { label: "Distance", x: 52, y: 88 },
-  { label: "Fit", x: 10, y: 67 },
+const DECISION_META = [
+  {
+    signal: "Scope",
+    title: "Begin before assumptions become assets.",
+    outcome: "Discovery → positioning → audience",
+    color: "#D4B99A",
+    x: 50,
+    y: 11,
+  },
+  {
+    signal: "Fit",
+    title: "Keep the useful. Rework what confuses.",
+    outcome: "Clarity → sharper expression → continuity",
+    color: "#8FA283",
+    x: 84,
+    y: 35,
+  },
+  {
+    signal: "Implementation",
+    title: "The plan continues into the build.",
+    outcome: "Strategy → website → content → campaigns",
+    color: "#C77752",
+    x: 80,
+    y: 78,
+  },
+  {
+    signal: "Timing",
+    title: "Scope decides the clock.",
+    outcome: "A timeline shaped after diagnosis",
+    color: "#D3A24F",
+    x: 20,
+    y: 78,
+  },
+  {
+    signal: "Distance",
+    title: "Distance changes the room, not the work.",
+    outcome: "Remote collaboration from diagnosis to delivery",
+    color: "#7D9AA8",
+    x: 16,
+    y: 35,
+  },
 ] as const;
 
-const PATHS = [
-  "M90 55 C135 66 185 98 250 145",
-  "M410 50 C365 66 315 100 250 145",
-  "M452 184 C382 176 322 164 250 145",
-  "M260 246 C256 210 253 179 250 145",
-  "M48 187 C116 177 181 164 250 145",
-] as const;
+const AUTO_ADVANCE_MS = 4300;
+const MANUAL_HOLD_MS = 14000;
+const HOVER_HOLD_MS = 3200;
+const EASE = [0.22, 1, 0.36, 1] as const;
 
-const CORE_MIN_DIAMETER = 122;
-const CORE_HORIZONTAL_PADDING = 28;
-const CORE_VERTICAL_PADDING = 20;
-
-function MeasuredDecisionCore({
-  motionActive,
-  prefersReducedMotion,
-}: {
-  motionActive: boolean;
-  prefersReducedMotion: boolean;
-}) {
-  const textRef = useRef<HTMLParagraphElement>(null);
-  const [diameter, setDiameter] = useState(CORE_MIN_DIAMETER);
-
-  useEffect(() => {
-    function measure() {
-      const text = textRef.current;
-      if (!text) return;
-
-      const bounds = text.getBoundingClientRect();
-      const nextDiameter = Math.ceil(
-        Math.max(
-          CORE_MIN_DIAMETER,
-          bounds.width + CORE_HORIZONTAL_PADDING * 2,
-          bounds.height + CORE_VERTICAL_PADDING * 2,
-        ),
-      );
-      setDiameter((current) => (Math.abs(current - nextDiameter) > 1 ? nextDiameter : current));
-    }
-
-    const observedText = textRef.current;
-    if (!observedText) return;
-
-    measure();
-    window.addEventListener("resize", measure, { passive: true });
-
-    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
-    observer?.observe(observedText);
-
-    return () => {
-      window.removeEventListener("resize", measure);
-      observer?.disconnect();
-    };
-  }, []);
-
-  return (
-    <motion.div
-      className="absolute left-1/2 top-[52%] z-10 grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-sandstone/70 bg-[#171512]/88 text-center shadow-[0_0_0_12px_rgba(212,185,154,0.05),0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur-md"
-      style={{ width: diameter, height: diameter }}
-      animate={
-        motionActive
-          ? { scale: [0.97, 1.045, 0.97], opacity: [0.88, 1, 0.88] }
-          : { scale: 1, opacity: 1 }
-      }
-      transition={{
-        duration: prefersReducedMotion ? 0 : 4.4,
-        repeat: motionActive ? Infinity : 0,
-        ease: "easeInOut",
-      }}
-      role="group"
-      aria-label="Clear enough to begin"
-    >
-      <p
-        ref={textRef}
-        className="inline-block max-w-[8.5rem] px-1 font-display text-lg leading-[1.02] text-ivory sm:text-xl"
-      >
-        Clear enough to begin
-      </p>
-    </motion.div>
-  );
+function answerFor(question: string) {
+  return faqs.find((item) => item.question === question)?.answer ?? "";
 }
 
 export function HomeQuestionsScene() {
   const sectionRef = useRef<HTMLElement>(null);
+  const holdUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.22 });
+  const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
+  const [activeIndex, setActiveIndex] = useState(0);
+  const decisions = useMemo(
+    () =>
+      QUESTION_ORDER.map((question, index) => ({
+        ...DECISION_META[index],
+        question,
+        answer: answerFor(question),
+      })),
+    [],
+  );
+  const active = decisions[activeIndex] ?? decisions[0];
   const motionActive = inView && !prefersReducedMotion;
+
+  useEffect(() => {
+    if (!motionActive || decisions.length < 2) return;
+
+    const timer = window.setInterval(() => {
+      if (document.hidden || Date.now() < holdUntilRef.current) return;
+      setActiveIndex((current) => (current + 1) % decisions.length);
+    }, AUTO_ADVANCE_MS);
+
+    return () => window.clearInterval(timer);
+  }, [decisions.length, motionActive]);
+
+  useEffect(() => {
+    function onChapter(event: Event) {
+      const detail = (event as CustomEvent<{ id?: string }>).detail;
+      if (detail?.id !== "questions") return;
+      holdUntilRef.current = Date.now() + 700;
+      setActiveIndex(0);
+    }
+
+    window.addEventListener("bt:home-chapter", onChapter as EventListener);
+    return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
+  }, []);
+
+  function choose(index: number, hold = MANUAL_HOLD_MS) {
+    holdUntilRef.current = Date.now() + hold;
+    setActiveIndex(index);
+  }
 
   return (
     <section
       ref={sectionRef}
-      className="relative isolate overflow-hidden bg-soil py-20 text-ivory sm:py-28"
+      className="questions-cinematic"
       aria-labelledby="home-questions-title"
+      style={{ "--questions-accent": active.color } as CSSProperties}
+      onPointerDown={() => {
+        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+      }}
+      onFocusCapture={() => {
+        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+      }}
     >
       <span className="sr-only">The practical questions</span>
       <BackgroundVideo
@@ -123,198 +139,259 @@ export function HomeQuestionsScene() {
         poster="/images/pexels-golden-fog-sea-poster.jpg"
         parallax
       />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(108deg, rgba(20,18,16,0.96) 0%, rgba(20,18,16,0.88) 47%, rgba(20,18,16,0.74) 100%)",
-        }}
-      />
-
+      <div className="questions-cinematic__veil" aria-hidden="true" />
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-40 top-[12%] h-[28rem] w-[28rem] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(184,90,52,0.18), transparent 68%)" }}
+        className="questions-cinematic__light questions-cinematic__light--one"
         animate={
           motionActive
-            ? { x: [0, 86, 0], y: [0, 32, 0], scale: [0.96, 1.1, 0.96] }
+            ? { x: [0, 78, 0], y: [0, 26, 0], scale: [0.95, 1.08, 0.95] }
             : undefined
         }
         transition={
           motionActive
-            ? { duration: 18, repeat: Infinity, ease: "easeInOut" }
+            ? { duration: 17, repeat: Infinity, ease: "easeInOut" }
             : undefined
         }
       />
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-36 bottom-[-18%] h-[30rem] w-[30rem] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(212,185,154,0.16), transparent 70%)" }}
+        className="questions-cinematic__light questions-cinematic__light--two"
         animate={
           motionActive
-            ? { x: [0, -64, 0], y: [0, -28, 0], scale: [1.05, 0.94, 1.05] }
+            ? { x: [0, -60, 0], y: [0, -24, 0], scale: [1.04, 0.95, 1.04] }
             : undefined
         }
         transition={
           motionActive
-            ? { duration: 21, repeat: Infinity, ease: "easeInOut" }
+            ? { duration: 20, repeat: Infinity, ease: "easeInOut" }
             : undefined
         }
       />
 
-      <Container className="relative max-w-[92rem]">
-        <div className="grid min-w-0 gap-12 lg:grid-cols-[minmax(0,0.88fr)_minmax(28rem,1.12fr)] lg:items-start lg:gap-16">
-          <div className="min-w-0 lg:sticky lg:top-28">
-            <p className="text-xs font-medium uppercase tracking-[0.24em] text-sandstone">
-              Before we work together
-            </p>
-            <h2
-              id="home-questions-title"
-              className="mt-4 w-full min-w-0 max-w-full break-words font-display text-[clamp(2.3rem,11vw,3.4rem)] font-normal leading-[0.96] tracking-[-0.025em] text-ivory sm:max-w-xl sm:text-[clamp(2.6rem,5vw,5.25rem)]"
-            >
-              Five practical doubts. One calmer decision.
+      <Container className="questions-cinematic__shell max-w-[96rem]">
+        <header className="questions-cinematic__header">
+          <div>
+            <p className="questions-cinematic__eyebrow">Before we work together</p>
+            <h2 id="home-questions-title">
+              Five practical doubts. <em>One clear starting point.</em>
             </h2>
-            <p className="mt-5 w-full max-w-xl text-sm leading-7 text-ivory/68 sm:text-base sm:leading-8">
-              Scope, implementation, timing, distance, and fit should feel clear before money enters the room. The page answers each one in sequence.
+          </div>
+          <div className="questions-cinematic__intro">
+            <p>
+              Before money enters the room, scope, fit, implementation, timing, and
+              distance should stop feeling vague.
             </p>
+            <span>
+              The compass moves while you watch. Select a doubt and it waits while you read.
+            </span>
+          </div>
+        </header>
 
-            <div className="mt-9 min-w-0 overflow-hidden rounded-[1.75rem] border border-ivory/12 bg-soil/54 p-4 shadow-[0_30px_90px_rgba(0,0,0,0.24)] backdrop-blur-xl sm:p-6">
-              <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 sm:gap-4">
-                <p className="min-w-0 text-[0.6rem] font-medium uppercase tracking-[0.16em] text-ivory/42 sm:text-[0.62rem] sm:tracking-[0.18em]">
-                  Clarity field
-                </p>
-                <p className="min-w-0 text-right text-[0.56rem] uppercase tracking-[0.1em] text-sandstone/70 sm:text-[0.62rem] sm:tracking-[0.14em]">
-                  Five signals converge
-                </p>
-              </div>
+        <div className="questions-cinematic__stage">
+          <div
+            className="questions-cinematic__compass"
+            aria-label="Five practical doubts converging into a clear starting decision"
+          >
+            <div className="questions-cinematic__compass-topline">
+              <span>Clarity compass</span>
+              <strong>{String(activeIndex + 1).padStart(2, "0")} / 05</strong>
+            </div>
 
-              <div className="relative mt-3 aspect-[25/14] min-h-64 w-full min-w-0 overflow-hidden rounded-2xl border border-ivory/8 bg-black/10">
-                <svg
-                  viewBox="0 0 500 280"
-                  className="absolute inset-0 h-full w-full"
-                  role="img"
-                  aria-label="Scope, timing, implementation, distance, and fit converge into a clear starting decision"
-                >
-                  <defs>
-                    <radialGradient id="question-field-glow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="#D4B99A" stopOpacity="0.24" />
-                      <stop offset="100%" stopColor="#D4B99A" stopOpacity="0" />
-                    </radialGradient>
-                  </defs>
-                  <circle cx="250" cy="145" r="92" fill="url(#question-field-glow)" />
-                  {PATHS.map((path, index) => (
-                    <g key={path}>
-                      <path
-                        d={path}
-                        fill="none"
-                        stroke="rgba(244,239,230,0.10)"
-                        strokeWidth="1"
-                      />
-                      <motion.path
-                        d={path}
-                        fill="none"
-                        stroke={index % 2 === 0 ? "#D4B99A" : "#B85A34"}
-                        strokeWidth="1.4"
-                        strokeLinecap="round"
-                        pathLength="1"
-                        strokeDasharray="0.08 0.12"
-                        animate={
-                          motionActive
-                            ? { strokeDashoffset: [0, -1], opacity: [0.25, 0.85, 0.25] }
-                            : { opacity: 0.32 }
-                        }
-                        transition={{
-                          strokeDashoffset: {
-                            duration: 4.8 + index * 0.35,
-                            repeat: Infinity,
-                            ease: "linear",
-                          },
-                          opacity: {
-                            duration: 4.2,
-                            delay: index * 0.3,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                          },
-                        }}
-                      />
-                    </g>
-                  ))}
-                </svg>
+            <svg viewBox="0 0 500 500" aria-hidden="true">
+              <defs>
+                <radialGradient id="questions-core-field" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor={active.color} stopOpacity="0.24" />
+                  <stop offset="100%" stopColor={active.color} stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <circle cx="250" cy="250" r="138" fill="url(#questions-core-field)" />
+              <circle
+                cx="250"
+                cy="250"
+                r="178"
+                fill="none"
+                stroke="rgba(244,239,230,0.08)"
+                strokeDasharray="3 12"
+              />
+              <motion.circle
+                cx="250"
+                cy="250"
+                r="157"
+                fill="none"
+                stroke={active.color}
+                strokeWidth="1"
+                strokeDasharray="8 16"
+                animate={motionActive ? { rotate: 360, opacity: [0.22, 0.58, 0.22] } : undefined}
+                style={{ transformOrigin: "250px 250px" }}
+                transition={
+                  motionActive
+                    ? {
+                        rotate: { duration: 22, repeat: Infinity, ease: "linear" },
+                        opacity: { duration: 4.8, repeat: Infinity, ease: "easeInOut" },
+                      }
+                    : undefined
+                }
+              />
 
-                {SIGNALS.map((signal, index) => (
-                  <motion.div
-                    key={signal.label}
-                    className="absolute flex w-max max-w-[6.5rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5 text-center"
-                    style={{
-                      left: `clamp(3.4rem, ${signal.x}%, calc(100% - 3.4rem))`,
-                      top: `clamp(2rem, ${signal.y}%, calc(100% - 2rem))`,
-                    }}
-                    animate={
-                      motionActive
-                        ? { y: [0, index % 2 === 0 ? -5 : 5, 0], opacity: [0.62, 1, 0.62] }
-                        : undefined
-                    }
-                    transition={{
-                      duration: 4.6 + index * 0.55,
-                      delay: index * 0.28,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    <span
-                      className="h-2.5 w-2.5 rounded-full border border-sandstone/60 bg-soil"
-                      style={{ boxShadow: "0 0 14px rgba(212,185,154,0.45)" }}
+              {decisions.map((decision, index) => {
+                const x = (decision.x / 100) * 500;
+                const y = (decision.y / 100) * 500;
+                const selected = index === activeIndex;
+                return (
+                  <g key={decision.signal}>
+                    <line
+                      x1={x}
+                      y1={y}
+                      x2="250"
+                      y2="250"
+                      stroke="rgba(244,239,230,0.08)"
+                      strokeWidth="1"
                     />
-                    <span className="text-[0.52rem] font-medium uppercase tracking-[0.08em] text-ivory/58 sm:text-[0.55rem] sm:tracking-[0.12em]">
-                      {signal.label}
-                    </span>
-                  </motion.div>
-                ))}
+                    <motion.line
+                      x1={x}
+                      y1={y}
+                      x2="250"
+                      y2="250"
+                      stroke={decision.color}
+                      strokeWidth={selected ? 2.2 : 1}
+                      strokeLinecap="round"
+                      pathLength="1"
+                      strokeDasharray="0.08 0.12"
+                      animate={
+                        selected && motionActive
+                          ? { strokeDashoffset: [0, -1], opacity: [0.48, 1, 0.48] }
+                          : { opacity: selected ? 0.72 : 0.13 }
+                      }
+                      transition={{
+                        strokeDashoffset: { duration: 3.2, repeat: Infinity, ease: "linear" },
+                        opacity: { duration: 2.8, repeat: selected ? Infinity : 0, ease: "easeInOut" },
+                      }}
+                    />
+                  </g>
+                );
+              })}
+            </svg>
 
-                <MeasuredDecisionCore
-                  motionActive={motionActive}
-                  prefersReducedMotion={prefersReducedMotion}
-                />
-              </div>
+            {decisions.map((decision, index) => {
+              const selected = index === activeIndex;
+              return (
+                <button
+                  key={decision.signal}
+                  type="button"
+                  className={`questions-cinematic__node${selected ? " is-active" : ""}`}
+                  style={
+                    {
+                      left: `${decision.x}%`,
+                      top: `${decision.y}%`,
+                      "--decision-color": decision.color,
+                    } as CSSProperties
+                  }
+                  aria-label={`Focus ${decision.signal}: ${decision.question}`}
+                  aria-pressed={selected}
+                  onClick={() => choose(index)}
+                  onPointerEnter={() => choose(index, HOVER_HOLD_MS)}
+                  onFocus={() => choose(index)}
+                >
+                  <motion.i
+                    aria-hidden="true"
+                    animate={
+                      selected && motionActive
+                        ? { scale: [0.78, 1.24, 0.78], opacity: [0.7, 1, 0.7] }
+                        : { scale: 1, opacity: selected ? 1 : 0.58 }
+                    }
+                    transition={{ duration: 2.4, repeat: selected && motionActive ? Infinity : 0, ease: "easeInOut" }}
+                  />
+                  <span>{decision.signal}</span>
+                </button>
+              );
+            })}
 
-              <p className="mt-4 text-xs leading-relaxed text-ivory/48">
-                Each answer removes one kind of uncertainty. The first conversation begins only after the practical shape is visible.
-              </p>
-            </div>
+            <motion.div
+              className="questions-cinematic__core"
+              animate={
+                motionActive
+                  ? { scale: [0.97, 1.04, 0.97], opacity: [0.88, 1, 0.88] }
+                  : { scale: 1, opacity: 1 }
+              }
+              transition={{ duration: 4.6, repeat: motionActive ? Infinity : 0, ease: "easeInOut" }}
+            >
+              <span>Clear enough</span>
+              <strong>to begin</strong>
+            </motion.div>
           </div>
 
-          <div className="min-w-0 rounded-[2rem] border border-ivory/14 bg-[#171512]/78 p-5 shadow-[0_34px_100px_rgba(0,0,0,0.32)] backdrop-blur-xl sm:p-8 lg:p-9">
-            <div className="flex min-w-0 flex-wrap items-end justify-between gap-4 border-b border-ivory/10 pb-7">
-              <div className="min-w-0">
-                <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-sandstone">
-                  Answers in motion
-                </p>
-                <p className="mt-2 max-w-md font-display text-3xl leading-tight text-ivory sm:text-4xl">
-                  Read the question that matters now.
-                </p>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.article
+              key={active.signal}
+              id="questions-cinematic-panel"
+              role="tabpanel"
+              className="questions-cinematic__answer"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(5px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
+              aria-live="polite"
+            >
+              <div className="questions-cinematic__answer-topline">
+                <span>{active.signal}</span>
+                <strong>{String(activeIndex + 1).padStart(2, "0")} / 05</strong>
               </div>
-              <span className="text-[0.62rem] uppercase tracking-[0.14em] text-ivory/38">
-                Select to hold
-              </span>
-            </div>
-
-            <div className="mt-5 min-w-0">
-              <FAQ questions={[...QUESTIONS]} tone="dark" />
-            </div>
-
-            <p className="mt-7 text-sm">
-              <Link
-                href="/services#book"
-                className="link-underline text-ivory/62 hover:text-sandstone"
-              >
-                Bring another question to the first conversation
+              <p className="questions-cinematic__answer-label">What this doubt is really asking</p>
+              <h3>{active.title}</h3>
+              <p className="questions-cinematic__question">“{active.question}”</p>
+              <p className="questions-cinematic__answer-copy">{active.answer}</p>
+              <div className="questions-cinematic__outcome">
+                <span>What becomes clear</span>
+                <strong>{active.outcome}</strong>
+              </div>
+              <Link href="/contact" className="questions-cinematic__answer-link">
+                Bring the remaining question <span aria-hidden="true">↗</span>
               </Link>
-            </p>
+              <span className="questions-cinematic__timer" aria-hidden="true">
+                <motion.i
+                  key={`questions-timer-${active.signal}`}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : AUTO_ADVANCE_MS / 1000, ease: "linear" }}
+                />
+              </span>
+            </motion.article>
+          </AnimatePresence>
+        </div>
 
-            <div className="mt-8 min-w-0">
-              <AuditInvite tone="dark" />
-            </div>
+        <div className="questions-cinematic__tabs" role="tablist" aria-label="Choose a practical doubt">
+          {decisions.map((decision, index) => {
+            const selected = index === activeIndex;
+            return (
+              <button
+                key={decision.signal}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls="questions-cinematic-panel"
+                className={selected ? "is-active" : undefined}
+                style={{ "--decision-color": decision.color } as CSSProperties}
+                onClick={() => choose(index)}
+                onPointerEnter={() => choose(index, HOVER_HOLD_MS)}
+                onFocus={() => choose(index)}
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{decision.signal}</strong>
+                <small>{decision.question}</small>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="questions-cinematic__utility">
+          <div>
+            <span>Still deciding where to begin?</span>
+            <p>
+              The audit gives you a useful diagnosis before any conversation becomes a proposal.
+            </p>
           </div>
+          <AuditInvite tone="dark" />
         </div>
       </Container>
     </section>
