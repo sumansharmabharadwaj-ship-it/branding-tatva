@@ -4,6 +4,7 @@ import { brandDiscoveryWorkshopInsightPosts } from "@/data/brandDiscoveryWorksho
 import { brandRefreshInsightPosts } from "@/data/brandRefreshInsights";
 import { brandRecallMeasurementInsightPosts } from "@/data/brandRecallMeasurementInsights";
 import { brandVoiceInsightPosts } from "@/data/brandVoiceInsights";
+import { caseStudyInsightPosts } from "@/data/caseStudyInsights";
 import { clientProofInsightPosts } from "@/data/clientProofInsights";
 import { competitorResearchInsightPosts } from "@/data/competitorResearchInsights";
 import { consultingPositioningInsightPosts } from "@/data/consultingPositioningInsights";
@@ -18,6 +19,7 @@ import { positioningStatementInsightPosts } from "@/data/positioningStatementIns
 import { repositioningInsightPosts } from "@/data/repositioningInsights";
 import { serviceNamingInsightPosts } from "@/data/serviceNamingInsights";
 import { servicePageMessagingInsightPosts } from "@/data/servicePageMessagingInsights";
+import { testimonialEvidenceInsightPosts } from "@/data/testimonialEvidenceInsights";
 import {
   insightPosts as pillarInsightPosts,
   insightTopics,
@@ -58,9 +60,13 @@ const combinedPosts = [
   ...brandDiscoveryWorkshopInsightPosts,
   ...homepageMessagingInsightPosts,
   ...servicePageMessagingInsightPosts,
+  ...caseStudyInsightPosts,
+  ...testimonialEvidenceInsightPosts,
 ];
 
-export const insightPosts: InsightPost[] = combinedPosts.filter((post, index) => combinedPosts.findIndex((candidate) => candidate.slug === post.slug) === index);
+export const insightPosts: InsightPost[] = combinedPosts.filter(
+  (post, index) => combinedPosts.findIndex((candidate) => candidate.slug === post.slug) === index
+);
 
 const relatedRegistrations = [
   { supportingSlug: "website-messaging-hierarchy-service-businesses", pillarSlugs: ["brand-messaging-framework", "brand-positioning-strategy-service-businesses"] },
@@ -85,17 +91,30 @@ const relatedRegistrations = [
   { supportingSlug: "brand-discovery-workshop-questions", pillarSlugs: ["customer-interviews-brand-strategy", "turn-customer-interviews-into-positioning-brief", "brand-positioning-strategy-service-businesses"] },
   { supportingSlug: "homepage-messaging-service-businesses", pillarSlugs: ["website-messaging-hierarchy-service-businesses", "brand-messaging-framework", "turn-client-proof-into-positioning-advantage"] },
   { supportingSlug: "service-page-messaging-strategy", pillarSlugs: ["homepage-messaging-service-businesses", "website-messaging-hierarchy-service-businesses", "brand-positioning-strategy-service-businesses"] },
+  { supportingSlug: "case-study-structure-service-businesses", pillarSlugs: ["turn-client-proof-into-positioning-advantage", "service-page-messaging-strategy", "brand-audit-checklist-before-rebrand"] },
+  { supportingSlug: "testimonial-questions-buying-evidence", pillarSlugs: ["case-study-structure-service-businesses", "turn-client-proof-into-positioning-advantage", "service-page-messaging-strategy"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {
   for (const pillarSlug of registration.pillarSlugs) {
     const pillar = insightPosts.find((post) => post.slug === pillarSlug);
     if (pillar && !pillar.relatedSlugs.includes(registration.supportingSlug)) {
-      pillar.relatedSlugs = [registration.supportingSlug, ...pillar.relatedSlugs.filter((slug) => slug !== registration.supportingSlug)].slice(0, 3);
+      pillar.relatedSlugs = [
+        registration.supportingSlug,
+        ...pillar.relatedSlugs.filter((slug) => slug !== registration.supportingSlug),
+      ].slice(0, 3);
     }
   }
 }
 
-export function getInsightBySlug(slug: string) { return insightPosts.find((post) => post.slug === slug); }
-export function getInsightTopic(slug: string) { return insightTopics.find((topic) => topic.slug === slug); }
-export function getInsightsByTopic(topicSlug: string) { return insightPosts.filter((post) => post.topicSlug === topicSlug); }
+export function getInsightBySlug(slug: string) {
+  return insightPosts.find((post) => post.slug === slug);
+}
+
+export function getInsightTopic(slug: string) {
+  return insightTopics.find((topic) => topic.slug === slug);
+}
+
+export function getInsightsByTopic(topicSlug: string) {
+  return insightPosts.filter((post) => post.topicSlug === topicSlug);
+}
