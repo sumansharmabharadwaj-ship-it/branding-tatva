@@ -92,9 +92,9 @@ async function auditInteractiveAttention(browser) {
     const section = page.locator("#find-relevant-proof");
     const group = section.getByRole("group", { name: "Choose the brand problem you are trying to fix" });
     const stones = group.getByRole("button");
-    const outsideFocus = page.getByRole("link", { name: "Explore the evidence" });
 
     await section.scrollIntoViewIfNeeded();
+    const outsideFocus = section.getByRole("link", { name: "See the work behind this problem" });
     assert((await stones.count()) === 5, "work/capability-attention: expected five buyer-problem stones");
 
     const recognition = group.locator('[data-waystone-id="recognition"]');
