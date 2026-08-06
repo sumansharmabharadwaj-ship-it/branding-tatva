@@ -10,6 +10,7 @@ import { packages } from "@/data/services";
 import { track } from "@/lib/analytics";
 import { motionTokens } from "@/lib/motionTokens";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ArtifactPreview } from "@/sections/Services/ArtifactPreview";
 
 const DETAIL_MODES = [
@@ -20,6 +21,7 @@ const DETAIL_MODES = [
 
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const MANUAL_HOLD_MS = 12_000;
+const DESKTOP_SCROLL_PREVIEW = "(min-width: 1024px) and (hover: hover) and (pointer: fine)";
 
 type DetailMode = (typeof DETAIL_MODES)[number]["id"];
 type ServicesProgressDetail = { id?: string; progress?: number };
@@ -29,10 +31,10 @@ function poolFor(scope: ScopeGroup) {
 }
 
 // Fourteen stacked chips made the archive accurate but expensive to travel
-// through. The same real catalog now lives inside five drawers. A short native
-// scroll previews those drawers in sequence; any deliberate click, focus, or
-// keyboard choice holds the visitor's selection so automation never fights
-// inspection. No deliverable or explanatory copy is invented here.
+// through. The same real catalog now lives inside five drawers. Fine-pointer
+// desktop visitors preview those drawers through a short native scroll; touch
+// devices remain tap-led so changing drawer heights never disturb a finger
+// gesture. Any deliberate interaction holds the visitor's selection.
 export function DeliverablesExplorer() {
   const initialGroup = SCOPE_GROUPS[0];
   const initialDeliverable = poolFor(initialGroup)[0] ?? deliverables[0];
@@ -44,6 +46,7 @@ export function DeliverablesExplorer() {
   const activeGroupRef = useRef<ScopeGroup>(initialGroup);
   const holdUntilRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const scrollPreviewEnabled = useMediaQuery(DESKTOP_SCROLL_PREVIEW);
 
   const visible = poolFor(group);
   const active = deliverables.find((deliverable) => deliverable.id === activeId) ?? visible[0] ?? deliverables[0];
@@ -65,7 +68,7 @@ export function DeliverablesExplorer() {
   }
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || !scrollPreviewEnabled) return;
 
     function onSceneProgress(event: Event) {
       const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
@@ -82,7 +85,7 @@ export function DeliverablesExplorer() {
 
     window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
     return () => window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
-  }, [prefersReducedMotion]);
+  }, [prefersReducedMotion, scrollPreviewEnabled]);
 
   function pick(id: string) {
     holdManualControl();
@@ -165,7 +168,7 @@ export function DeliverablesExplorer() {
   return (
     <div
       data-deliverables-explorer="drawers"
-      data-deliverables-scroll-controlled="true"
+      data-deliverables-scroll-controlled={scrollPreviewEnabled && !prefersReducedMotion ? "true" : "false"}
       data-deliverables-active-group={group}
       data-deliverable-total={deliverables.length}
     >
@@ -176,8 +179,9 @@ export function DeliverablesExplorer() {
             What you actually leave with.
           </h2>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-ivory/85">
-            Fourteen real deliverables across five drawers. A short scroll previews the archive; select any drawer or
-            artifact and the page waits while you inspect it.
+            Fourteen real deliverables across five drawers. {scrollPreviewEnabled && !prefersReducedMotion
+              ? "A short scroll previews the archive; select any drawer or artifact and the page waits while you inspect it."
+              : "Open a scope, choose an artifact, then inspect what it is, why it matters, and how it gets used."}
           </p>
         </Reveal>
 
