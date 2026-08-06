@@ -8,7 +8,7 @@ import {
   useInView,
   useReducedMotion,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 const DISCIPLINES = [
   {
@@ -25,6 +25,7 @@ const DISCIPLINES = [
     proofLine:
       "A supplement range being read through a purely herbal lens was repositioned as a modern, supplement-first wellness brand.",
     proofHref: "/work/herbalcart",
+    accent: "#C98B63",
   },
   {
     number: "02",
@@ -40,6 +41,7 @@ const DISCIPLINES = [
     proofLine:
       "Craft and origin replaced cheap access as the story European buyers could pass on to their own customers.",
     proofHref: "/work/myshopineurope",
+    accent: "#7D9AA8",
   },
   {
     number: "03",
@@ -55,12 +57,13 @@ const DISCIPLINES = [
     proofLine:
       "A quality-first content system moved engagement from 0.71% to 2.81% while the account posted less.",
     proofHref: "/work/dr-haley-nutrition",
+    accent: "#D3A24F",
   },
 ] as const;
 
-const ROTATE_MS = 4300;
-const MANUAL_HOLD_MS = 10500;
-const HOVER_HOLD_MS = 3400;
+const ROTATE_MS = 3700;
+const MANUAL_HOLD_MS = 9000;
+const HOVER_HOLD_MS = 3000;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function StudioCinematicChapter() {
@@ -94,7 +97,7 @@ export function StudioCinematicChapter() {
     video.defaultMuted = true;
     video.playsInline = true;
     video.loop = true;
-    video.playbackRate = 1.18;
+    video.playbackRate = 1.22;
 
     if (inView && !document.hidden) {
       void video.play().catch(() => undefined);
@@ -116,8 +119,10 @@ export function StudioCinematicChapter() {
       id="studio"
       data-home-chapter="studio"
       data-home-section="studio"
+      data-studio-state={active.number}
       className="studio-cinematic home-scene"
       aria-labelledby="studio-cinematic-title"
+      style={{ "--studio-accent": active.accent } as CSSProperties}
       onPointerDown={() => {
         holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
       }}
@@ -134,12 +139,12 @@ export function StudioCinematicChapter() {
             <motion.div
               key={active.video}
               className="studio-cinematic__media-layer"
-              initial={prefersReducedMotion ? false : { opacity: 0.35, scale: 1.045 }}
-              animate={{ opacity: 1, scale: inView ? 1.08 : 1.03 }}
+              initial={prefersReducedMotion ? false : { opacity: 0.28, scale: 1.06 }}
+              animate={{ opacity: 1, scale: inView ? 1.1 : 1.04 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 1.025 }}
               transition={{
-                opacity: { duration: prefersReducedMotion ? 0 : 0.46, ease: EASE },
-                scale: { duration: prefersReducedMotion ? 0 : 9.5, ease: "linear" },
+                opacity: { duration: prefersReducedMotion ? 0 : 0.42, ease: EASE },
+                scale: { duration: prefersReducedMotion ? 0 : 8.4, ease: "linear" },
               }}
             >
               {prefersReducedMotion ? (
@@ -147,7 +152,7 @@ export function StudioCinematicChapter() {
                   src={active.poster}
                   alt=""
                   fill
-                  sizes="(min-width: 1280px) 29vw, (min-width: 768px) 42vw, 100vw"
+                  sizes="100vw"
                   className="studio-cinematic__media-image"
                 />
               ) : (
@@ -160,7 +165,8 @@ export function StudioCinematicChapter() {
                   autoPlay
                   loop
                   playsInline
-                  preload="metadata"
+                  preload={inView ? "metadata" : "none"}
+                  data-home-playback-rate="1.22"
                   aria-hidden="true"
                 />
               )}
@@ -178,7 +184,7 @@ export function StudioCinematicChapter() {
             <motion.div
               key={`caption-${active.title}`}
               className="studio-cinematic__media-caption"
-              initial={prefersReducedMotion ? false : { opacity: 0.64, y: 8 }}
+              initial={prefersReducedMotion ? false : { opacity: 0.5, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
             >
@@ -194,8 +200,7 @@ export function StudioCinematicChapter() {
             One mind. Three disciplines. <em>One accountable author.</em>
           </h2>
           <p className="studio-cinematic__lede">
-            Psychology reveals what people notice. Literature shapes what they remember.
-            Strategy turns both into decisions the business can keep using.
+            Psychology finds the tension. Literature gives it language. Strategy makes the answer usable after the room goes quiet.
           </p>
 
           <div
@@ -216,9 +221,11 @@ export function StudioCinematicChapter() {
                   onPointerEnter={() => choose(index, HOVER_HOLD_MS)}
                   onFocus={() => choose(index)}
                   className={selected ? "is-active" : undefined}
+                  style={{ "--studio-tab-accent": discipline.accent } as CSSProperties}
                 >
                   <span>{discipline.number}</span>
                   <strong>{discipline.title}</strong>
+                  <small>{discipline.eyebrow}</small>
                   <i aria-hidden="true">
                     <b
                       style={{
@@ -238,9 +245,9 @@ export function StudioCinematicChapter() {
             id="studio-cinematic-panel"
             role="tabpanel"
             className="studio-cinematic__panel"
-            initial={prefersReducedMotion ? false : { opacity: 0.72, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.34, ease: EASE }}
+            initial={prefersReducedMotion ? false : { opacity: 0.64, y: 8, filter: "blur(3px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
             aria-live="polite"
           >
             <p className="studio-cinematic__panel-copy">{active.line}</p>
@@ -287,14 +294,14 @@ export function StudioCinematicChapter() {
             transition={
               prefersReducedMotion || !inView
                 ? undefined
-                : { duration: 13, repeat: Infinity, ease: "easeInOut" }
+                : { duration: 12, repeat: Infinity, ease: "easeInOut" }
             }
           >
             <Image
               src="/images/own-portrait.jpg"
               alt="Suman Sharma, founder and strategist at Branding Tatva"
               fill
-              sizes="(min-width: 1280px) 25vw, (min-width: 768px) 100vw, 100vw"
+              sizes="(min-width: 1100px) 26vw, (min-width: 768px) 42vw, 100vw"
               className="studio-cinematic__portrait-photo"
             />
           </motion.div>
