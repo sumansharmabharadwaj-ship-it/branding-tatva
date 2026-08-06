@@ -8,6 +8,7 @@ on:
       - services-scroll-experience-v1
     paths:
       - .github/workflows/services-scroll-experience-gate.yml
+      - docs/SERVICES_SCROLL_MAP.md
       - scripts/services_scroll_gate.cjs
       - src/app/services/**
       - src/components/BackgroundVideo.tsx
