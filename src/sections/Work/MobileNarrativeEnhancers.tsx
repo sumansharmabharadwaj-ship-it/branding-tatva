@@ -142,8 +142,8 @@ function CaseStudyDeck() {
   function choose(index: number) {
     setActive(index);
 
-    const article = model.articles[index];
-    const originalButton = model.originalButtons[index];
+    const article = model?.articles[index];
+    const originalButton = model?.originalButtons[index];
     if (!article || !originalButton) return;
 
     const originalScrollIntoView = article.scrollIntoView;
