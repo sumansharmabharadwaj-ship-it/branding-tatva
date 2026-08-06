@@ -59,7 +59,10 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
 
     let hashScrollAttempts = 0;
     let hashScrollCancelled = false;
-    let hashTimer: ReturnType<typeof window.setTimeout> | null = null;
+    // window.setTimeout returns a number in the browser. Deriving the type
+    // from typeof window.setTimeout picks up Node's overload once @types/node
+    // is in scope, which broke the build.
+    let hashTimer: number | null = null;
 
     function cancelHashRecovery() {
       hashScrollCancelled = true;

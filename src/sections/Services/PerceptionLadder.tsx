@@ -136,7 +136,7 @@ export function PerceptionLadder() {
                                   "0 0 0 rgba(160,166,144,0)",
                                 ],
                               }
-                            : { borderColor: "rgba(244,239,230,0.25)", scale: 1 },
+                            : { borderColor: "rgba(244,239,230,0.25)", scale: 1 }
                       }
                       transition={{
                         duration: isActive ? 2.4 : 0.35,

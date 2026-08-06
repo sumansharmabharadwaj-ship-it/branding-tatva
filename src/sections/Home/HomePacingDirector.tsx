@@ -49,7 +49,10 @@ export function HomePacingDirector() {
       },
     );
 
-    function registerSections() {
+    // A hoisted `function` declaration loses the `if (!main) return` narrowing
+    // above, because TypeScript has to assume it could be called before that
+    // guard ran. A const arrow keeps it.
+    const registerSections = () => {
       main.querySelectorAll<HTMLElement>(SECTION_SELECTOR).forEach((section) => {
         if (observed.has(section)) return;
         observed.add(section);
@@ -63,7 +66,7 @@ export function HomePacingDirector() {
         sectionObserver?.unobserve(section);
         observed.delete(section);
       });
-    }
+    };
 
     registerSections();
     mutationObserver = new MutationObserver(registerSections);
