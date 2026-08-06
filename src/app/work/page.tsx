@@ -17,6 +17,7 @@ import { DecisionEvidenceGallery } from "@/sections/Work/DecisionEvidenceGallery
 import { CapabilityMap } from "@/sections/Work/CapabilityMap";
 import { TatvaLab } from "@/sections/Work/TatvaLab";
 import { Authorship } from "@/sections/Work/Authorship";
+import { WorkMobileNarrativeEnhancers } from "@/sections/Work/MobileNarrativeEnhancers";
 import { BrandStudies } from "@/sections/CaseStudies/BrandStudies";
 import { brandStudies } from "@/data/brandStudies";
 import { projects } from "@/data/projects";
@@ -153,6 +154,7 @@ export default function WorkPage() {
             project-story wall above prevents two long sticky narratives
             from sitting directly beside one another. */}
         {systemSignature && <SystemFlagship project={systemSignature} />}
+        <WorkMobileNarrativeEnhancers />
 
         {/* Tier three: real decisions shown at artefact scale. The
             fragments demonstrate breadth without turning every small
