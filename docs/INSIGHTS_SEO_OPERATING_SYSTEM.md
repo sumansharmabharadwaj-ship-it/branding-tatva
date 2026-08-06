@@ -1,3 +1,3 @@
 # Insights SEO operating system
 
-Status: temporary reconciliation branch, snapshot preserved
+Status: this feature ref is about to be reset to the latest parent commit
