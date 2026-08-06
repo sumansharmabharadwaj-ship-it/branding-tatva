@@ -172,7 +172,10 @@ async function auditWorkViewport(browser, viewport) {
   await page.goto(`${BASE_URL}/work`, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await waitForPrelude(page, label);
 
-  assert((await page.title()).includes("Work"), `${label}: incorrect page title`);
+  assert(
+    (await page.title()).includes("Brand Strategy Case Studies"),
+    `${label}: incorrect page title`,
+  );
   const h1 = page.getByRole("heading", { level: 1 }).first();
   await h1.waitFor({ state: "visible", timeout: 8_000 });
   assert(((await h1.textContent()) || "").includes("decisions are visible"), `${label}: Work proposition missing`);
@@ -220,7 +223,16 @@ async function auditWorkViewport(browser, viewport) {
     `${label}: generic global footer pitch duplicates the tailored Work ending`,
   );
 
-  await page.locator('#index a[href="/work/dr-haley-nutrition"]').first().click();
+  const desktopProjectLink = page.locator('#index a[href="/work/dr-haley-nutrition"]:visible').first();
+  if ((await desktopProjectLink.count()) > 0) {
+    await desktopProjectLink.click();
+  } else {
+    await page
+      .locator('#index button[aria-controls="active-work-preview"]')
+      .filter({ hasText: "Dr. Haley Nutrition" })
+      .click();
+    await page.locator('#active-work-preview a[href="/work/dr-haley-nutrition"]').click();
+  }
   await page.waitForURL("**/work/dr-haley-nutrition", { timeout: 12_000 });
   assert(
     ((await page.getByRole("heading", { level: 1 }).first().textContent()) || "").includes("Dr. Haley Nutrition"),
