@@ -5,7 +5,6 @@ import { Fragment, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
-import { Reveal } from "@/components/Reveal";
 import { brandStudies } from "@/data/brandStudies";
 
 const STUDY_ACCENTS = ["#D9C4A4", "#9AB8C7", "#C7AE68", "#9EBB9B", "#C68F78"] as const;
@@ -27,10 +26,13 @@ export function BrandStudies() {
   const prefersReducedMotion = useHydratedReducedMotion();
 
   return (
-    <section className="py-20 sm:py-28" style={{ backgroundColor: "#071A20" }}>
+    <section className="scroll-mt-28 py-16 sm:py-24" style={{ backgroundColor: "#071A20" }}>
       <Container className="max-w-6xl">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.72fr)] lg:items-end lg:gap-16">
-          <Reveal>
+        {/* This framing is factual orientation, not decorative motion.
+            Keeping it immediately visible prevents direct jumps or fast
+            scrolls from leaving a large empty deep-water panel. */}
+        <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.72fr)] lg:items-end lg:gap-16">
+          <div>
             <p className="text-sm font-medium uppercase tracking-[0.18em] text-[#9AB8C7]">Brand studies</p>
             <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory sm:text-display-md">
               Lessons from brands the whole world already knows.
@@ -39,33 +41,31 @@ export function BrandStudies() {
               Independent dissections of the public record, written as study. Each brand below earned its place in
               memory through a specific mechanism, and each study names it.
             </p>
-          </Reveal>
+          </div>
 
-          <Reveal delay={0.06}>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 sm:p-6">
-              <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em] text-[#9AB8C7]">
-                Evidence boundary
-              </p>
-              <div className="mt-4 grid grid-cols-3 gap-3">
-                {[
-                  ["05", "Public studies"],
-                  ["00", "Client claims"],
-                  ["03", "Mechanisms each"],
-                ].map(([value, label]) => (
-                  <div key={label} className="border-l border-white/10 pl-3 first:border-l-0 first:pl-0">
-                    <p className="font-display text-2xl text-ivory">{value}</p>
-                    <p className="mt-1 text-[0.5rem] uppercase tracking-[0.12em] text-ivory/45">{label}</p>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-5 border-t border-white/10 pt-4 text-xs leading-relaxed text-ivory/55">
-                Analysis, teaching, and application. No engagement, endorsement, or affiliation is implied.
-              </p>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5 sm:p-6">
+            <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em] text-[#9AB8C7]">
+              Evidence boundary
+            </p>
+            <div className="mt-4 grid grid-cols-3 gap-3">
+              {[
+                ["05", "Public studies"],
+                ["00", "Client claims"],
+                ["03", "Mechanisms each"],
+              ].map(([value, label]) => (
+                <div key={label} className="border-l border-white/10 pl-3 first:border-l-0 first:pl-0">
+                  <p className="font-display text-2xl text-ivory">{value}</p>
+                  <p className="mt-1 text-[0.5rem] uppercase leading-snug tracking-[0.12em] text-ivory/45">{label}</p>
+                </div>
+              ))}
             </div>
-          </Reveal>
+            <p className="mt-5 border-t border-white/10 pt-4 text-xs leading-relaxed text-ivory/55">
+              Analysis, teaching, and application. No engagement, endorsement, or affiliation is implied.
+            </p>
+          </div>
         </div>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-12" aria-label="Independent brand-study mechanisms">
+        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:mt-12 lg:grid-cols-12" aria-label="Independent brand-study mechanisms">
           {brandStudies.map((study, index) => {
             const isOpen = open === index;
             const panelId = `study-panel-${study.slug}`;
@@ -80,7 +80,7 @@ export function BrandStudies() {
                       onClick={() => setOpen(isOpen ? -1 : index)}
                       aria-expanded={isOpen}
                       aria-controls={panelId}
-                      className="group relative flex min-h-[17rem] w-full flex-col overflow-hidden rounded-[1.35rem] border p-5 text-left transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:p-6"
+                      className="group relative flex min-h-[15rem] w-full flex-col overflow-hidden rounded-[1.35rem] border p-5 text-left transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-[17rem] sm:p-6"
                       style={{
                         borderColor: isOpen ? accent : "rgba(255,255,255,0.12)",
                         background: `radial-gradient(circle at 88% 10%, ${accent}20, transparent 36%), linear-gradient(145deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018))`,
@@ -123,17 +123,17 @@ export function BrandStudies() {
                         {study.premise}
                       </span>
 
-                      <span className="mt-auto block pt-6">
+                      <span className="mt-auto block pt-5 sm:pt-6">
                         <span className="block text-[0.54rem] font-medium uppercase tracking-[0.15em] text-ivory/35">
                           The mechanism is visible in
                         </span>
-                        <span className="mt-3 grid gap-2 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+                        <span className="mt-3 grid grid-cols-3 gap-2">
                           {study.observations.map((observation, observationIndex) => (
-                            <span key={observation.title} className="rounded-xl border border-white/10 bg-black/10 p-3">
+                            <span key={observation.title} className="min-w-0 rounded-xl border border-white/10 bg-black/10 p-2.5 sm:p-3">
                               <span className="font-display text-xs" style={{ color: accent }} aria-hidden="true">
                                 {String(observationIndex + 1).padStart(2, "0")}
                               </span>
-                              <span className="mt-1 block text-[0.64rem] font-medium uppercase leading-snug tracking-[0.1em] text-ivory/65">
+                              <span className="mt-1 block line-clamp-3 text-[0.54rem] font-medium uppercase leading-snug tracking-[0.08em] text-ivory/65 sm:text-[0.64rem] sm:tracking-[0.1em]">
                                 {observation.title}
                               </span>
                             </span>
@@ -154,25 +154,25 @@ export function BrandStudies() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
                       transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
-                      className="overflow-hidden rounded-[1.55rem] border md:col-span-2 lg:col-span-12"
+                      className="scroll-mt-28 overflow-hidden rounded-[1.55rem] border md:col-span-2 lg:col-span-12"
                       style={{
                         borderColor: accent + "55",
                         background: `radial-gradient(circle at 12% 0%, ${accent}20, transparent 34%), #0A242B`,
                       }}
                     >
-                      <div className="grid gap-8 border-b border-white/10 p-5 sm:p-7 lg:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] lg:gap-12">
+                      <div className="grid gap-7 border-b border-white/10 p-5 sm:p-7 lg:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] lg:gap-12">
                         <div>
                           <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em]" style={{ color: accent }}>
                             Memory mechanism · {study.lens}
                           </p>
                           <p className="mt-3 font-display text-4xl font-normal text-ivory sm:text-5xl">{study.brand}</p>
-                          <p className="mt-4 max-w-md text-sm leading-relaxed text-ivory/65">{study.premise}</p>
-                          <blockquote className="mt-7 border-l-2 pl-5 font-display text-xl italic leading-relaxed text-ivory sm:text-2xl" style={{ borderColor: accent }}>
+                          <p className="mt-4 max-w-md text-sm leading-relaxed text-ivory/70">{study.premise}</p>
+                          <blockquote className="mt-6 border-l-2 pl-4 font-display text-xl italic leading-relaxed text-ivory sm:mt-7 sm:pl-5 sm:text-2xl" style={{ borderColor: accent }}>
                             {study.lesson}
                           </blockquote>
                           <Link
                             href={`/work/studies/${study.slug}`}
-                            className="mt-7 inline-flex items-center gap-2 text-sm font-medium underline decoration-current/40 underline-offset-4 transition-colors hover:text-ivory"
+                            className="mt-6 inline-flex items-center gap-2 text-sm font-medium underline decoration-current/40 underline-offset-4 transition-colors hover:text-ivory sm:mt-7"
                             style={{ color: accent }}
                           >
                             Read the full study <span aria-hidden="true">→</span>
@@ -227,7 +227,7 @@ export function BrandStudies() {
           })}
         </div>
 
-        <div className="mt-16 grid gap-5 border-t border-white/10 pt-8 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div className="mt-12 grid gap-5 border-t border-white/10 pt-7 sm:mt-16 sm:pt-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <p className="max-w-xl text-base leading-relaxed text-ivory/75">
             The same mechanisms scale down. The Services journey applies them to brands still earning their place
             in memory.
