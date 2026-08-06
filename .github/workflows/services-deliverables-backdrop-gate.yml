@@ -36,6 +36,12 @@ jobs:
           path = Path("src/app/services/page.tsx")
           page = path.read_text()
 
+          def regex_once(pattern: str, replacement: str, label: str) -> None:
+              global page
+              page, count = re.subn(pattern, replacement, page, count=1, flags=re.S | re.M)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one match, found {count}")
+
           old_import = 'import { DeliverablesExplorer } from "@/sections/Services/DeliverablesExplorer";'
           new_import = (
               'import { DeliverablesExplorer } from "@/sections/Services/DeliverablesExplorer";\n'
@@ -45,25 +51,17 @@ jobs:
               raise SystemExit(f"Deliverables import: expected one match, found {page.count(old_import)}")
           page = page.replace(old_import, new_import, 1)
 
-          old_direction = '''        {/* Mood: THE STUDY — final art direction on this chapter, per
-            direct screenshot feedback: the abstract room (lamp glows,
-            cloth light, empty dark field) broke the site's own visual
-            standard — every other chapter lives in serene nature. The
-            study now sits over the emerald river (the approved clip
-            held in the reassignment pool since Phase 1): slow green
-            water, the Pinterest register exactly, darkened by a
-            walnut-tinted overlay so the ivory documents stay the
-            brightest thing in frame. */}'''
-          new_direction = '''        {/* Mood: THE ARCHIVE. The background now belongs to the work
+          regex_once(
+              r'^[ \t]*\{/\* Mood: THE STUDY.*?brightest thing in frame\. \*/\}',
+              '''        {/* Mood: THE ARCHIVE. The background now belongs to the work
             being explained: layered paper, vellum, blind-debossed grids,
             and dark folios form one ordered material system. The live
             ArtifactPreview remains the chapter's primary interaction;
-            the environment only gives that interaction a tactile world. */}'''
-          if page.count(old_direction) != 1:
-              raise SystemExit(f"Deliverables direction note: expected one match, found {page.count(old_direction)}")
-          page = page.replace(old_direction, new_direction, 1)
+            the environment only gives that interaction a tactile world. */}''',
+              "Deliverables direction note",
+          )
 
-          media_pattern = re.compile(
+          regex_once(
               r'^[ \t]*\{/\* Fresh clip per direct instruction.*?3\.2MB MP4 / 2\.0MB WebM\. \*/\}\n'
               r'[ \t]*<BackgroundVideo\n'
               r'[ \t]+parallax\n'
@@ -72,17 +70,14 @@ jobs:
               r'[ \t]+videoWebm="/videos/pexels-dandelion-release\.webm"\n'
               r'[ \t]+poster="/images/pexels-dandelion-release-poster\.jpg"\n'
               r'[ \t]*/>',
-              re.S | re.M,
-          )
-          media_replacement = '''          {/* Original generated Deliverables archive: ivory papers,
+              '''          {/* Original generated Deliverables archive: ivory papers,
               translucent vellum, embossed grids, dark folios, and one
               stone weight make the invisible work feel tangible before
               a visitor opens an individual artifact. Its scroll-linked
               drift and edge light remain secondary to the explorer. */}
-          <DeliverablesCinematicBackdrop image="/images/generated/bt-services-deliverables-archive.png" />'''
-          page, media_count = media_pattern.subn(media_replacement, page, count=1)
-          if media_count != 1:
-              raise SystemExit(f"Deliverables media block: expected one match, found {media_count}")
+          <DeliverablesCinematicBackdrop image="/images/generated/bt-services-deliverables-archive.png" />''',
+              "Deliverables media block",
+          )
 
           old_gradient = (
               '"linear-gradient(180deg, rgba(23,32,25,0.55) 0%, '
@@ -96,13 +91,12 @@ jobs:
               raise SystemExit(f"Deliverables overlay gradient: expected one match, found {page.count(old_gradient)}")
           page = page.replace(old_gradient, new_gradient, 1)
 
-          old_handoff = '''          {/* Scene dissolve: Education's blue mist hands into the river
-              study. */}'''
-          new_handoff = '''          {/* Scene dissolve: Education's blue mist settles onto the
-              archive's charcoal and paper planes. */}'''
-          if page.count(old_handoff) != 1:
-              raise SystemExit(f"Deliverables handoff note: expected one match, found {page.count(old_handoff)}")
-          page = page.replace(old_handoff, new_handoff, 1)
+          regex_once(
+              r'^[ \t]*\{/\* Scene dissolve: Education\'s blue mist hands into the river\n[ \t]+study\. \*/\}',
+              '''          {/* Scene dissolve: Education's blue mist settles onto the
+              archive's charcoal and paper planes. */}''',
+              "Deliverables handoff note",
+          )
 
           path.write_text(page)
           PY
