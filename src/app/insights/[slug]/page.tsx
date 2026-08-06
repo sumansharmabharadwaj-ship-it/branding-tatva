@@ -25,6 +25,17 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+type InsightResearchSource = {
+  title: string;
+  publisher: string;
+  url: string;
+  note?: string;
+};
+
+type InsightPostWithSources = InsightPost & {
+  sources?: InsightResearchSource[];
+};
+
 function formatDate(date: string) {
   return new Intl.DateTimeFormat("en", {
     day: "numeric",
@@ -72,7 +83,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     publisher: site.name,
     category: getInsightTopic(post.topicSlug)?.name,
     alternates: { canonical: `/insights/${post.slug}` },
-    robots: { index: true, follow: true },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
     openGraph: {
       title: post.seoTitle,
       description: post.excerpt,
@@ -98,6 +119,7 @@ export default async function InsightArticlePage({ params }: Props) {
 
   if (!post) notFound();
 
+  const sources = (post as InsightPostWithSources).sources ?? [];
   const element = elements.find((item) => item.slug === post.element);
   const topic = getInsightTopic(post.topicSlug);
   const color = element?.color ?? "#B85A34";
@@ -140,6 +162,9 @@ export default async function InsightArticlePage({ params }: Props) {
         publisher: { "@id": `${site.url}/#organization` },
         isPartOf: { "@id": `${site.url}/insights/#page` },
         about: [post.primaryKeyword, ...post.secondaryKeywords],
+        ...(sources.length > 0
+          ? { citation: sources.map((source) => source.url) }
+          : {}),
       },
       {
         "@type": "BreadcrumbList",
@@ -293,6 +318,16 @@ export default async function InsightArticlePage({ params }: Props) {
                           Frequent questions
                         </a>
                       </li>
+                      {sources.length > 0 && (
+                        <li>
+                          <a
+                            href="#research-sources"
+                            className="text-xs leading-5 text-foreground-secondary transition hover:text-soil"
+                          >
+                            Research sources
+                          </a>
+                        </li>
+                      )}
                     </ol>
                   </nav>
                 </aside>
@@ -476,6 +511,69 @@ export default async function InsightArticlePage({ params }: Props) {
                       </div>
                     </section>
                   </Reveal>
+
+                  {sources.length > 0 && (
+                    <Reveal>
+                      <section
+                        id="research-sources"
+                        aria-labelledby="research-sources-heading"
+                        className="scroll-mt-32 pt-20"
+                      >
+                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+                          Research sources
+                        </p>
+                        <h2
+                          id="research-sources-heading"
+                          className="mt-4 font-display text-display-sm font-normal text-soil"
+                        >
+                          The evidence beneath the method.
+                        </h2>
+                        <p className="mt-5 max-w-2xl text-base leading-8 text-foreground-secondary">
+                          These sources establish the research principles used
+                          in this guide. Branding Tatva&apos;s framework is the
+                          practical application of that evidence to service
+                          businesses and founder-led brands.
+                        </p>
+                        <ol className="mt-8 grid gap-4">
+                          {sources.map((source, index) => (
+                            <li
+                              key={source.url}
+                              className="rounded-[1.25rem] border border-soil/10 bg-background-alt p-5 sm:p-6"
+                            >
+                              <div className="flex gap-4">
+                                <span
+                                  className="font-display text-2xl leading-none"
+                                  style={{ color }}
+                                  aria-hidden="true"
+                                >
+                                  {String(index + 1).padStart(2, "0")}
+                                </span>
+                                <div className="min-w-0">
+                                  <a
+                                    href={source.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="link-underline font-medium text-soil"
+                                  >
+                                    {source.title}
+                                    <span aria-hidden="true"> ↗</span>
+                                  </a>
+                                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-clay">
+                                    {source.publisher}
+                                  </p>
+                                  {source.note && (
+                                    <p className="mt-3 text-sm leading-7 text-foreground-secondary">
+                                      {source.note}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </li>
+                          ))}
+                        </ol>
+                      </section>
+                    </Reveal>
+                  )}
 
                   <Reveal>
                     <aside className="mt-16 grid gap-6 rounded-[1.5rem] border border-soil/10 bg-background-alt p-6 sm:grid-cols-[auto_1fr] sm:items-center sm:p-8">
