@@ -1,5 +1,5 @@
 name: Build and verify compact mobile Authority and corner wayfinding
-run-name: Services mobile Authority and wayfinding · ${{ github.sha }}
+run-name: Services mobile Authority and wayfinding pass 2 · ${{ github.sha }}
 
 on:
   push:
