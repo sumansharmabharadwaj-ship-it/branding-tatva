@@ -20,7 +20,7 @@ const PATHS = [
     route: ["Question", "Architect", "Signal"],
     result: "A position the business can grow from",
     href: "/services#desire",
-    tint: "#6F4E37",
+    tint: "#C98B63",
   },
   {
     number: "02",
@@ -32,7 +32,7 @@ const PATHS = [
     route: ["Decode", "Architect", "Signal"],
     result: "One recognisable idea across every touchpoint",
     href: "/services#situation",
-    tint: "#556B4A",
+    tint: "#88A77E",
   },
   {
     number: "03",
@@ -44,7 +44,7 @@ const PATHS = [
     route: ["Signal", "Influence", "Compound"],
     result: "Recognition that keeps earning after launch",
     href: "/services#offerings",
-    tint: "#8A6B3D",
+    tint: "#D3A24F",
   },
 ] as const;
 
@@ -55,9 +55,9 @@ const CURVES = [
 ] as const;
 
 const ENTRY_Y = [70, 160, 250] as const;
-const AUTO_ADVANCE_MS = 4400;
+const AUTO_ADVANCE_MS = 4000;
 const MANUAL_HOLD_MS = 10500;
-const HOVER_HOLD_MS = 3400;
+const HOVER_HOLD_MS = 3200;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function PathsCinematicChapter() {
@@ -103,6 +103,20 @@ export function PathsCinematicChapter() {
         holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
       }}
     >
+      <div className="paths-cinematic__film" aria-hidden="true">
+        <video
+          src="/videos/higgsfield-mountain-mist.mp4"
+          poster="/images/higgsfield-mountain-mist-poster.jpg"
+          muted
+          autoPlay={!prefersReducedMotion}
+          loop
+          playsInline
+          preload={inView ? "metadata" : "none"}
+          data-home-playback-rate="1.22"
+        />
+        <span />
+      </div>
+
       <div className="paths-cinematic__glow paths-cinematic__glow--left" aria-hidden="true" />
       <div className="paths-cinematic__glow paths-cinematic__glow--right" aria-hidden="true" />
 
