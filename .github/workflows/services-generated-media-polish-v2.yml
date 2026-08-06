@@ -1,0 +1,163 @@
+name: Verify final Services media polish
+
+on:
+  push:
+    branches:
+      - services-generated-media-polish-v2
+    paths:
+      - .github/workflows/services-generated-media-polish-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the focused branch
+        uses: actions/checkout@v4
+        with:
+          ref: services-generated-media-polish-v2
+          fetch-depth: 1
+
+      - name: Tighten generated-film timing without duplicating scenes
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          page_path = Path("src/app/services/page.tsx")
+          page = page_path.read_text()
+
+          def replace_once(old: str, new: str, label: str) -> None:
+              global page
+              count = page.count(old)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one match, found {count}")
+              page = page.replace(old, new, 1)
+
+          def regex_once(pattern: str, replacement: str, label: str) -> None:
+              global page
+              page, count = re.subn(pattern, replacement, page, count=1, flags=re.S | re.M)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one match, found {count}")
+
+          replace_once(
+              '          overlayGradient="linear-gradient(180deg, rgba(12,17,16,0.54) 0%, rgba(12,17,16,0.64) 58%, rgba(12,17,16,0.82) 100%)"\n        >',
+              '          overlayGradient="linear-gradient(180deg, rgba(12,17,16,0.54) 0%, rgba(12,17,16,0.64) 58%, rgba(12,17,16,0.82) 100%)"\n          playbackRate={1.15}\n        >',
+              "hero playback rate",
+          )
+
+          replace_once(
+              '              <Reveal delay={1.7}>',
+              '              <Reveal delay={0.35}>',
+              "hero copy delay",
+          )
+
+          replace_once(
+              '                <SplitReveal\n                  as="h1"\n                  splitType="chars"',
+              '                <SplitReveal\n                  as="h1"\n                  splitType="words"',
+              "hero word reveal",
+          )
+
+          replace_once(
+              '            videoMobile="/videos/generated/bt-services-strategy-topography-mobile.mp4"\n'
+              '            poster="/images/generated/bt-services-strategy-topography-poster.jpg"\n'
+              '          />',
+              '            videoMobile="/videos/generated/bt-services-strategy-topography-mobile.mp4"\n'
+              '            poster="/images/generated/bt-services-strategy-topography-poster.jpg"\n'
+              '            playbackRate={1.12}\n'
+              '          />',
+              "strategy terrain pace",
+          )
+
+          replace_once(
+              '            videoMobile="/videos/generated/bt-services-health-reflection-mobile.mp4"\n'
+              '            poster="/images/generated/bt-services-health-reflection-poster.jpg"\n'
+              '          />',
+              '            videoMobile="/videos/generated/bt-services-health-reflection-mobile.mp4"\n'
+              '            poster="/images/generated/bt-services-health-reflection-poster.jpg"\n'
+              '            playbackRate={1.1}\n'
+              '          />',
+              "health reflection pace",
+          )
+
+          hero_direction = (
+              '        {/* Curiosity opens on an original Branding Tatva film.\n'
+              '            A living root network reveals the system beneath visible\n'
+              '            brand work, so the first frame begins teaching before the\n'
+              '            headline finishes arriving. The compact 70svh masthead\n'
+              '            keeps the Services page moving quickly into diagnosis. */}\n'
+          )
+          regex_once(
+              r'^[ \t]*\{/\* Curiosity —.*?previews the four objections the rest of the page answers\. \*/\}\n',
+              hero_direction,
+              "hero direction note",
+          )
+
+          replace_once(
+              '          {/* Phase 1 hero pass. Two localized layers on top of\n'
+              '              PhotoHero\'s own base gradient: a cool tint pulling the\n'
+              '              warm trail footage toward the page\'s opening-chapter mood\n'
+              '              (the color script starts cool; gold only arrives at\n'
+              '              Desire), and a directional left-heavy scrim so the\n'
+              '              masthead column reads perfectly while the right of the\n'
+              '              frame stays open and cinematic. */}',
+              '          {/* A restrained directional scrim protects the masthead\n'
+              '              while leaving the generated root architecture readable\n'
+              '              on the right side of the frame. */}',
+              "hero scrim note",
+          )
+
+          replace_once(
+              '          {/* Phase 2, hero motion language: "typography forming." The\n'
+              '              claim assembles (CyclingStatement), and the giant page\n'
+              '              title drifts at a slower rate than the scroll around it —\n'
+              '              depth through type, no imagery involved. */}',
+              '          {/* The headline resolves by word, not character. It\n'
+              '              participates in the scene without delaying basic\n'
+              '              comprehension. */}',
+              "hero typography note",
+          )
+
+          page_path.write_text(page)
+          PY
+
+      - name: Check the focused changes
+        run: |
+          set -euo pipefail
+          git diff --check
+          git diff --stat
+          grep -n "bt-services-hero-root-system\|bt-services-strategy-topography\|bt-services-health-reflection\|playbackRate" \
+            src/app/services/page.tsx \
+            src/components/PhotoHero.tsx \
+            src/components/BackgroundVideo.tsx
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the Next.js application
+        run: pnpm build
+
+      - name: Commit the verified page changes and remove this gate
+        run: |
+          set -euo pipefail
+          rm .github/workflows/services-generated-media-polish-v2.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Refine generated Services film timing"
+          git push origin HEAD:services-generated-media-polish-v2
