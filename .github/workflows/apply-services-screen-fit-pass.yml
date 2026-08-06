@@ -1,0 +1,187 @@
+name: Apply Services screen-fit and offering-focus pass
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/apply-services-screen-fit-pass.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-services-screen-fit-pass
+  cancel-in-progress: false
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out the affected Services files
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/apply-services-screen-fit-pass.yml
+            src/app/services/page.tsx
+            src/components/ScrollCue.tsx
+            src/app/globals.css
+            scripts/services_page_gate.cjs
+
+      - name: Apply the full-viewport opening and disciplined offering focus
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path("src/app/services/page.tsx")
+          text = page.read_text()
+
+          import_anchor = 'import type { Metadata } from "next";\n'
+          import_line = 'import type { CSSProperties } from "react";\n'
+          if import_line not in text:
+              if text.count(import_anchor) != 1:
+                  raise SystemExit(f"Services import anchor count: {text.count(import_anchor)}")
+              text = text.replace(import_anchor, import_anchor + import_line, 1)
+
+          old = '''        {/* Curiosity opens on an original Branding Tatva film.
+            A living root network reveals the system beneath visible
+            brand work, so the first frame begins teaching before the
+            headline finishes arriving. The compact 70svh masthead
+            keeps the Services page moving quickly into diagnosis. */}'''
+          new = '''        {/* Curiosity opens as a complete first scene rather than a
+            compact masthead. One viewport belongs to the root-system
+            film, proposition, proof, and chapter map; the Situation
+            chapter only begins after the visitor has finished this
+            frame. The scene still advances quickly because the veil and
+            word reveal respond inside the viewport, not by shortening it. */}'''
+          if text.count(old) != 1:
+              raise SystemExit(f"Services hero comment count: {text.count(old)}")
+          text = text.replace(old, new, 1)
+
+          if text.count('          minHeight="70vh"') != 1:
+              raise SystemExit(f"70vh hero count: {text.count('          minHeight=\"70vh\"')}")
+          text = text.replace('          minHeight="70vh"', '          minHeight="100vh"', 1)
+
+          if text.count('          <ScrollCue />') != 1:
+              raise SystemExit(f"Services ScrollCue count: {text.count('          <ScrollCue />')}")
+          text = text.replace('          <ScrollCue />', '          <ScrollCue raised />', 1)
+
+          old = 'className="spotlight-card group grid gap-2 rounded-2xl border-t border-ivory/12 px-4 py-6 transition-colors duration-500 hover:bg-ivory/[0.05] sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-8"\n                      style={{ borderTopColor: "rgba(244,239,230,0.12)" }}'
+          new = 'className="spotlight-card group grid gap-2 rounded-2xl border-t border-ivory/12 px-4 py-6 sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-8"\n                      style={\n                        {\n                          borderTopColor: "rgba(244,239,230,0.12)",\n                          "--card-color": offer.color,\n                        } as CSSProperties\n                      }'
+          if text.count(old) != 1:
+              raise SystemExit(f"Offering style insertion point count: {text.count(old)}")
+          page.write_text(text.replace(old, new, 1))
+
+          cue = Path("src/components/ScrollCue.tsx")
+          text = cue.read_text()
+          old = 'export function ScrollCue() {'
+          new = 'export function ScrollCue({ raised = false }: { raised?: boolean }) {'
+          if text.count(old) != 1:
+              raise SystemExit(f"ScrollCue signature count: {text.count(old)}")
+          text = text.replace(old, new, 1)
+
+          old = '      className="pointer-events-none absolute inset-x-0 bottom-6 flex flex-col items-center gap-2"'
+          new = '''      className={`pointer-events-none absolute inset-x-0 flex flex-col items-center gap-2 ${
+        raised ? "bottom-[calc(5.75rem+env(safe-area-inset-bottom))] sm:bottom-6" : "bottom-6"
+      }`}'''
+          if text.count(old) != 1:
+              raise SystemExit(f"ScrollCue class insertion point count: {text.count(old)}")
+          cue.write_text(text.replace(old, new, 1))
+
+          css = Path("src/app/globals.css")
+          text = css.read_text()
+          old = '''.spotlight-grid:has(.spotlight-card:hover) .spotlight-card:not(:hover) {
+  opacity: 0.55;
+}
+
+.spotlight-card:hover {
+  background-color: color-mix(in srgb, var(--card-color) 22%, transparent);
+  border-color: var(--card-color);
+}'''
+          new = '''.spotlight-card {
+  transition-property: opacity, background-color, border-color;
+  transition-duration: 500ms;
+}
+
+/* The spotlight belongs to fine-pointer exploration only. Touch
+   browsers can retain :hover after a tap, which previously dimmed five
+   disciplines indefinitely. Siblings now remain readable, and each row
+   finally receives the discipline color already authored in its data. */
+@media (hover: hover) and (pointer: fine) {
+  .spotlight-grid:has(.spotlight-card:hover) .spotlight-card:not(:hover) {
+    opacity: 0.72;
+  }
+
+  .spotlight-card:hover {
+    background-color: color-mix(in srgb, var(--card-color) 22%, transparent);
+    border-color: var(--card-color);
+  }
+}'''
+          if text.count(old) != 1:
+              raise SystemExit(f"Spotlight CSS block count: {text.count(old)}")
+          css.write_text(text.replace(old, new, 1))
+
+          gate = Path("scripts/services_page_gate.cjs")
+          text = gate.read_text()
+          old = '  await assertNoOverflow(page, `${label}/opening`);\n\n  for (const id of SECTION_IDS) {'
+          new = '''  await assertNoOverflow(page, `${label}/opening`);
+  const heroBox = await hero.boundingBox();
+  assert(
+    heroBox && heroBox.height >= viewport.height - 2,
+    `${label}: opening scene is ${heroBox?.height ?? 0}px tall for a ${viewport.height}px viewport`,
+  );
+
+  for (const id of SECTION_IDS) {'''
+          if text.count(old) != 1:
+              raise SystemExit(f"Hero-height audit insertion point count: {text.count(old)}")
+          text = text.replace(old, new, 1)
+
+          old = '  await waitForCount(offerings.locator(".spotlight-card"), 6, `${label}: offerings`);\n  for (const service of ['
+          new = '''  const offeringCards = offerings.locator(".spotlight-card");
+  await waitForCount(offeringCards, 6, `${label}: offerings`);
+  const offeringColors = await offeringCards.evaluateAll((nodes) =>
+    nodes.map((node) => node.style.getPropertyValue("--card-color").trim()),
+  );
+  assert(
+    offeringColors.length === 6 && offeringColors.every(Boolean),
+    `${label}: one or more offering rows have no discipline accent ${JSON.stringify(offeringColors)}`,
+  );
+  for (const service of ['''
+          if text.count(old) != 1:
+              raise SystemExit(f"Offering-color audit insertion point count: {text.count(old)}")
+          gate.write_text(text.replace(old, new, 1))
+          PY
+
+          grep -q 'minHeight="100vh"' src/app/services/page.tsx
+          grep -q '<ScrollCue raised />' src/app/services/page.tsx
+          grep -q '"--card-color": offer.color' src/app/services/page.tsx
+          grep -q 'bottom-\[calc(5.75rem+env(safe-area-inset-bottom))\]' src/components/ScrollCue.tsx
+          grep -q '@media (hover: hover) and (pointer: fine)' src/app/globals.css
+          grep -q 'opening scene is' scripts/services_page_gate.cjs
+
+      - name: Remove the one-time patch workflow
+        run: rm .github/workflows/apply-services-screen-fit-pass.yml
+
+      - name: Commit the screen-fit pass
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/app/services/page.tsx \
+            src/components/ScrollCue.tsx \
+            src/app/globals.css \
+            scripts/services_page_gate.cjs \
+            .github/workflows/apply-services-screen-fit-pass.yml
+          git diff --cached --check
+          git commit -m "Make the Services opening a full-screen cinematic scene"
+          git pull --rebase origin homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
