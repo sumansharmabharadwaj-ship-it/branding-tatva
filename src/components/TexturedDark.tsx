@@ -69,14 +69,16 @@ export function TexturedDark({
   return (
     <section ref={sectionRef} id={id} className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
       <div ref={ref} className="absolute inset-0">
-        {/* The still renders immediately instead of waiting for lazy video
-            activation. Far-down-page chapters therefore have a complete
-            visual frame before their film begins downloading. */}
+        {/* TexturedDark is used for secondary/far-down sections rather than
+            LCP heroes. Keep the still available as the visual fallback, but
+            let the browser load it when the section approaches instead of
+            preloading it beside the opening scene. PhotoHero owns the one
+            aggressive first-paint media path. */}
         <Image
           src={image}
           alt=""
           fill
-          priority
+          loading="lazy"
           sizes="100vw"
           style={{ objectFit: "cover", objectPosition: imagePosition }}
         />
