@@ -15,7 +15,8 @@ import {
 } from "@/hooks/useHomeGuideMode";
 
 const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
-const DWELL_MS = [5200, 4900, 5200, 5900, 5200, 5400, 5900, 5400, 5100, 5000, 5800];
+const DWELL_MS = [4700, 4400, 4700, 5300, 4700, 4900, 5300, 4900, 4600, 4600, 5200];
+const GUIDE_HINT_MS = 8200;
 const CHAPTER_NAMES = [
   "opening signal",
   "recognition",
@@ -40,13 +41,13 @@ export function GuidedView() {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const [mode, setMode] = useState<GuideMode>("manual");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [hintVisible, setHintVisible] = useState(false);
   const guideRef = useRef<HTMLDivElement>(null);
   const chaptersRef = useRef<HTMLElement[]>([]);
   const guidedScrollRef = useRef(false);
   const releaseTimerRef = useRef(0);
   const progressFrameRef = useRef(0);
-  const autoStartTimerRef = useRef(0);
-  const userIntentRef = useRef(false);
+  const hintTimerRef = useRef(0);
 
   const resolveChapters = useCallback(() => {
     const chapters = Array.from(
@@ -54,6 +55,11 @@ export function GuidedView() {
     );
     chaptersRef.current = chapters;
     return chapters;
+  }, []);
+
+  const dismissHint = useCallback(() => {
+    window.clearTimeout(hintTimerRef.current);
+    setHintVisible(false);
   }, []);
 
   const scrollToChapter = useCallback(
@@ -67,7 +73,7 @@ export function GuidedView() {
 
       if (lenis) {
         lenis.scrollTo(target, {
-          duration: 0.92,
+          duration: 0.82,
           easing: (value: number) => 1 - Math.pow(1 - value, 4),
         });
       } else {
@@ -79,7 +85,7 @@ export function GuidedView() {
 
       releaseTimerRef.current = window.setTimeout(() => {
         guidedScrollRef.current = false;
-      }, 1180);
+      }, 1050);
     },
     [lenis, prefersReducedMotion, resolveChapters],
   );
@@ -131,23 +137,25 @@ export function GuidedView() {
     if (prefersReducedMotion) return;
     const eligible = window.matchMedia("(min-width: 821px) and (pointer: fine)");
 
-    function scheduleAutoStart() {
-      window.clearTimeout(autoStartTimerRef.current);
-      if (!eligible.matches || userIntentRef.current) {
-        if (!eligible.matches) setMode("manual");
+    function syncHint() {
+      window.clearTimeout(hintTimerRef.current);
+      if (!eligible.matches) {
+        setHintVisible(false);
+        setMode("manual");
         return;
       }
 
-      autoStartTimerRef.current = window.setTimeout(() => {
-        if (!userIntentRef.current && eligible.matches) setMode("guided");
-      }, 1100);
+      setHintVisible(true);
+      hintTimerRef.current = window.setTimeout(() => {
+        setHintVisible(false);
+      }, GUIDE_HINT_MS);
     }
 
-    scheduleAutoStart();
-    eligible.addEventListener("change", scheduleAutoStart);
+    syncHint();
+    eligible.addEventListener("change", syncHint);
     return () => {
-      eligible.removeEventListener("change", scheduleAutoStart);
-      window.clearTimeout(autoStartTimerRef.current);
+      eligible.removeEventListener("change", syncHint);
+      window.clearTimeout(hintTimerRef.current);
     };
   }, [prefersReducedMotion]);
 
@@ -167,7 +175,7 @@ export function GuidedView() {
       return;
     }
 
-    const duration = DWELL_MS[Math.min(activeIndex, DWELL_MS.length - 1)] ?? 5200;
+    const duration = DWELL_MS[Math.min(activeIndex, DWELL_MS.length - 1)] ?? 4700;
     const startedAt = performance.now();
 
     function tick(now: number) {
@@ -196,8 +204,7 @@ export function GuidedView() {
       const target = event.target;
       if (target instanceof Element && target.closest("[data-guided-controls]")) return;
 
-      userIntentRef.current = true;
-      window.clearTimeout(autoStartTimerRef.current);
+      dismissHint();
       setMode("manual");
     }
 
@@ -213,34 +220,39 @@ export function GuidedView() {
       window.removeEventListener("pointerdown", takeControl);
       window.removeEventListener("keydown", takeControl);
       window.clearTimeout(releaseTimerRef.current);
-      window.clearTimeout(autoStartTimerRef.current);
+      window.clearTimeout(hintTimerRef.current);
       window.cancelAnimationFrame(progressFrameRef.current);
     };
-  }, [prefersReducedMotion]);
+  }, [dismissHint, prefersReducedMotion]);
 
   if (prefersReducedMotion) return null;
 
   const count = Math.max(1, chaptersRef.current.length || CHAPTER_NAMES.length);
   const chapterName = CHAPTER_NAMES[Math.min(activeIndex, CHAPTER_NAMES.length - 1)] ?? "scene";
+  const showHint = hintVisible && mode === "manual";
   const label =
     mode === "guided"
       ? "the page is moving with you"
       : mode === "paused"
-        ? "guided view paused"
-        : "explore at your pace";
+        ? "guided journey paused"
+        : showHint
+          ? "play the journey"
+          : "explore at your pace";
+  const detail = showHint ? "eleven scenes · always user-led" : chapterName;
 
   return (
     <div
       ref={guideRef}
       data-guided-controls
       data-guide-mode={mode}
+      data-guide-hint={showHint ? "visible" : "hidden"}
       className="home-v4-guide"
       aria-label="Guided homepage controls"
     >
       <span className="home-v4-guide__signal" aria-hidden="true">
         <motion.i
           animate={
-            mode === "guided"
+            mode === "guided" || showHint
               ? { scale: [0.72, 1.5, 0.72], opacity: [0.9, 0, 0.9] }
               : { scale: 1, opacity: 0.42 }
           }
@@ -252,7 +264,7 @@ export function GuidedView() {
       <span className="home-v4-guide__copy" aria-live="polite">
         <span className="home-v4-guide__status">
           <small>{label}</small>
-          <em>{chapterName}</em>
+          <em>{detail}</em>
         </span>
         <strong>
           {String(activeIndex + 1).padStart(2, "0")}/{String(count).padStart(2, "0")}
@@ -262,13 +274,13 @@ export function GuidedView() {
       <button
         type="button"
         onClick={() => {
-          userIntentRef.current = true;
+          dismissHint();
           setMode((current) => (current === "guided" ? "paused" : "guided"));
         }}
-        aria-label={mode === "guided" ? "Pause guided view" : "Continue guided view"}
+        aria-label={mode === "guided" ? "Pause guided journey" : "Play guided journey"}
         aria-pressed={mode === "guided"}
-        data-cursor-label={mode === "guided" ? "pause" : "continue"}
-        title={mode === "guided" ? "Pause guided view" : "Continue guided view"}
+        data-cursor-label={mode === "guided" ? "pause journey" : "play journey"}
+        title={mode === "guided" ? "Pause guided journey" : "Play guided journey"}
       >
         {mode === "guided" ? <Pause size={13} /> : <Play size={13} />}
       </button>
@@ -276,7 +288,7 @@ export function GuidedView() {
       <button
         type="button"
         onClick={() => {
-          userIntentRef.current = true;
+          dismissHint();
           setMode("manual");
         }}
         aria-label="Explore the homepage manually"
