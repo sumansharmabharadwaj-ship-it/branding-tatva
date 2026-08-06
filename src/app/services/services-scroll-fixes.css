@@ -11,6 +11,16 @@
   clip-path: inset(0 round 1rem);
 }
 
+[data-services-scene="opening"] > video,
+[data-services-scene="opening"] > [data-services-hero-copy] {
+  will-change: auto !important;
+}
+
+[data-services-scene="opening"][data-services-active="true"] > video,
+[data-services-scene="opening"][data-services-active="true"] > [data-services-hero-copy] {
+  will-change: transform !important;
+}
+
 [data-services-scene="opening"] > [data-services-hero-copy] {
   transform: translate3d(0, var(--services-shift-y), 0);
 }
