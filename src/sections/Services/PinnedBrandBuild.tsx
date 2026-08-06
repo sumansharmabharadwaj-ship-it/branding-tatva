@@ -3,7 +3,6 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -11,7 +10,6 @@ import { useLenis } from "@/components/SmoothScrollProvider";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ELEMENT_HEX, MOOD } from "@/lib/sectionWash";
 import { elements } from "@/data/elements";
-import { AmbientElementShader } from "@/components/AmbientElementShader";
 
 // The Authority build, finally on the same mechanism as every other
 // pinned scene on this site: CSS position sticky plus measured scroll
@@ -136,33 +134,25 @@ export function PinnedBrandBuild() {
   return (
     <div ref={wrapRef} className="relative sm:h-[420vh]" style={{ backgroundColor: MOOD.charcoal }}>
       <div className="relative overflow-hidden sm:sticky sm:top-0 sm:flex sm:h-screen sm:flex-col sm:justify-center">
-        {/* Approved Chapter 02 footage (Pexels 38390292, standard
-            license): root network in extreme macro — hidden
-            intelligence beneath the surface. Sticky children size to
-            their own layout, so a plain inset-0 background always
-            spans the real viewport; the old 100vw translate hack is
-            gone along with the bug it papered over. Mobile carries the
-            still frame instead of the video. */}
+        {/* Original procedural Authority film: a restrained signal rises
+            through five natural material layers and widens only after
+            the full system is present. The pinned rows remain the primary
+            scroll-led demonstration; the film gives them one coherent
+            material world instead of repeating the hero's root metaphor. */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="hidden h-full w-full sm:block">
-            <BackgroundVideo
-              video="/videos/pexels-root-network.mp4"
-              videoWebm="/videos/pexels-root-network.webm"
-              poster="/images/pexels-root-network-poster.jpg"
-            />
-          </div>
-          <Image
-            src="/images/pexels-root-network-poster.jpg"
-            alt=""
-            fill
-            sizes="100vw"
-            style={{ objectFit: "cover" }}
-            className="sm:hidden"
+          <BackgroundVideo
+            video="/videos/generated/bt-services-authority-layers.mp4"
+            videoMobile="/videos/generated/bt-services-authority-layers-mobile.mp4"
+            poster="/images/generated/bt-services-authority-layers-poster.jpg"
+            playbackRate={1.04}
           />
-          <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.35)" }} />
-          <div className="hidden sm:block">
-            <AmbientElementShader opacity={0.08} />
-          </div>
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, rgba(15,17,19,0.88) 0%, rgba(15,17,19,0.62) 46%, rgba(15,17,19,0.46) 100%)",
+            }}
+          />
         </div>
 
         <div className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:py-24 sm:px-10 sm:py-0 lg:px-20">
