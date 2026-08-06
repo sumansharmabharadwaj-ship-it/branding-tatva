@@ -11,13 +11,12 @@ import { WORK } from "@/sections/Work/palette";
 
 // Work Page 2.0 signature project — the deep evidence chapter. One
 // engagement told as six beats (condition, perception, decision,
-// response, practice, verified result), a sticky media panel on the
-// left, and the color itself narrating: the project's own footage
-// holds desaturated through the ambiguity beats and regains full
-// color as the story reaches its verified result. CSS sticky with an
-// IntersectionObserver scroll spy — no pin, Lenis untouched, every
-// ancestor overflow stays visible. Reduced motion renders the full
-// sequence statically in color.
+// response, practice, verified result), a sticky visual panel on the
+// left, and the color itself narrating: the project-specific visual
+// holds desaturated through the ambiguity beats and regains full color
+// as the story reaches its verified result. CSS sticky, never a pinned
+// ScrollTrigger. Reduced motion renders a static poster in full color
+// and keeps every narrative beat visible.
 const BEATS = [
   { key: "challenge", label: "Starting condition" },
   { key: "insight", label: "What people were perceiving" },
@@ -32,31 +31,32 @@ export function SignatureProject({ project }: { project: Project }) {
   const prefersReducedMotion = useReducedMotion();
   const beatRefs = useRef<(HTMLDivElement | null)[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
-  useVideoFadeIn(videoRef, true);
+  useVideoFadeIn(videoRef, Boolean(project.cardVideo) && !prefersReducedMotion);
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            const idx = Number(entry.target.getAttribute("data-beat"));
-            if (Number.isFinite(idx)) setActiveBeat(idx);
+            const index = Number(entry.target.getAttribute("data-beat"));
+            if (Number.isFinite(index)) setActiveBeat(index);
           }
         }
       },
       { rootMargin: "-42% 0px -48% 0px" }
     );
-    beatRefs.current.forEach((el) => el && observer.observe(el));
+    beatRefs.current.forEach((element) => element && observer.observe(element));
     return () => observer.disconnect();
-  }, []);
+  }, [prefersReducedMotion]);
 
-  const beats = BEATS.map((b) => ({
-    key: b.key as string,
-    label: b.label as string,
-    text: project[b.key as keyof Project] as string | undefined,
-  })).filter((b): b is { key: string; label: string; text: string } => typeof b.text === "string");
-  // Ambiguity drains to zero as the story resolves: fully desaturated
-  // at the starting condition, full color by the verified result.
+  const beats = BEATS.map((beat) => ({
+    key: beat.key as string,
+    label: beat.label as string,
+    text: project[beat.key as keyof Project] as string | undefined,
+  })).filter((beat): beat is { key: string; label: string; text: string } => typeof beat.text === "string");
+
   const gray = prefersReducedMotion ? 0 : Math.max(0, 0.85 * (1 - activeBeat / Math.max(1, beats.length - 1)));
 
   return (
@@ -73,14 +73,12 @@ export function SignatureProject({ project }: { project: Project }) {
         </p>
 
         <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
-          {/* Sticky evidence panel — the project's own real footage,
-              color graded by narrative position. */}
           <div className="lg:sticky lg:top-24 lg:self-start">
             <div
               className="overflow-hidden rounded-2xl transition-[filter] duration-700"
               style={{ filter: `grayscale(${gray.toFixed(2)})` }}
             >
-              {project.cardVideo ? (
+              {project.cardVideo && !prefersReducedMotion ? (
                 <video
                   ref={videoRef}
                   className="block h-auto w-full opacity-0 transition-opacity duration-700"
@@ -98,36 +96,35 @@ export function SignatureProject({ project }: { project: Project }) {
               )}
             </div>
             <p className="mt-3 text-xs leading-relaxed" style={{ color: WORK.sage }}>
-              The frame holds its color back until the story earns it: full grey at the starting condition, full color
-              at the verified result.
+              {prefersReducedMotion
+                ? "The complete project frame remains visible without autoplay or scroll-controlled grading."
+                : "The frame holds its color back until the story earns it: full grey at the starting condition, full color at the verified result."}
             </p>
-            {/* Beat progress — chapter markers, clickable nowhere,
-                honest wayfinding for a long read. */}
             <ol className="mt-6 flex gap-2" aria-hidden="true">
-              {beats.map((b, i) => (
+              {beats.map((beat, index) => (
                 <li
-                  key={b.key}
+                  key={beat.key}
                   className="h-[3px] flex-1 rounded-full transition-colors duration-500"
-                  style={{ backgroundColor: i <= activeBeat ? WORK.sage : "rgba(143,174,131,0.25)" }}
+                  style={{ backgroundColor: prefersReducedMotion || index <= activeBeat ? WORK.sage : "rgba(143,174,131,0.25)" }}
                 />
               ))}
             </ol>
           </div>
 
           <div>
-            {beats.map((beat, i) => (
+            {beats.map((beat, index) => (
               <div
                 key={beat.key}
-                data-beat={i}
-                ref={(el) => {
-                  beatRefs.current[i] = el;
+                data-beat={index}
+                ref={(element) => {
+                  beatRefs.current[index] = element;
                 }}
                 className="border-l-2 py-10 pl-8 transition-colors duration-500 first:pt-2 sm:py-12"
-                style={{ borderColor: activeBeat === i ? WORK.sage : "rgba(143,174,131,0.2)" }}
+                style={{ borderColor: prefersReducedMotion || activeBeat === index ? WORK.sage : "rgba(143,174,131,0.2)" }}
               >
                 <p className="flex items-baseline gap-3">
                   <span className="font-display text-sm" style={{ color: WORK.sage }} aria-hidden="true">
-                    {String(i + 1).padStart(2, "0")}
+                    {String(index + 1).padStart(2, "0")}
                   </span>
                   <span className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: WORK.sage }}>
                     {beat.label}
@@ -135,7 +132,7 @@ export function SignatureProject({ project }: { project: Project }) {
                 </p>
                 <p
                   className="mt-3 max-w-xl text-base leading-relaxed transition-opacity duration-500"
-                  style={{ color: "rgba(242,240,232,0.92)", opacity: prefersReducedMotion || activeBeat === i ? 1 : 0.6 }}
+                  style={{ color: "rgba(242,240,232,0.92)", opacity: prefersReducedMotion || activeBeat === index ? 1 : 0.6 }}
                 >
                   {beat.text}
                 </p>
