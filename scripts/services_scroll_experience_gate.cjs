@@ -47,15 +47,54 @@ async function visible(locator) {
   return (await locator.count()) > 0 && (await locator.first().isVisible());
 }
 
-async function assertWayfinding(page, viewport, label) {
+async function assertChapterContract(page, sceneCount, label) {
+  await page.waitForFunction(
+    (expected) => Number(document.documentElement.dataset.servicesChapterCount) === expected,
+    sceneCount,
+    { timeout: 4_000 },
+  );
+
+  const chapters = await page.locator("[data-services-scroll-scene]").evaluateAll((nodes) =>
+    nodes.map((node) => ({
+      id: node.id,
+      label: node.getAttribute("data-services-chapter-label"),
+      scene: node.getAttribute("data-services-scroll-scene"),
+    })),
+  );
+
+  assert(chapters.length === sceneCount, `${label}: chapter metadata count drifted from scene count`);
+  assert(chapters.every((chapter) => chapter.id), `${label}: a directed scene has no stable ID`);
+  assert(chapters.every((chapter) => chapter.label), `${label}: a directed scene has no chapter label`);
+  assert(new Set(chapters.map((chapter) => chapter.id)).size === sceneCount, `${label}: duplicate chapter IDs detected`);
+  assert(
+    chapters.some((chapter) => chapter.id === "verified-outcome"),
+    `${label}: verified outcome is not directly addressable`,
+  );
+  assert(chapters.some((chapter) => chapter.id === "stakes"), `${label}: positioning cost is not directly addressable`);
+  assert(chapters.some((chapter) => chapter.id === "deliverables"), `${label}: archive is not directly addressable`);
+
+  return chapters;
+}
+
+async function assertWayfinding(page, viewport, label, sceneCount) {
   const rail = page.locator('[data-section-jump-nav-desktop-mode="rail"]');
   const bar = page.locator('[data-section-jump-nav-desktop-mode="bar"]');
   const mobile = page.locator('[data-section-jump-nav-mobile="true"]');
 
   if (viewport.width >= 1024) {
+    await page.waitForFunction(
+      (expected) =>
+        document.querySelectorAll('[data-section-jump-nav-desktop-mode="rail"] a[href^="#"]').length === expected,
+      sceneCount,
+      { timeout: 4_000 },
+    );
     assert(await visible(rail), `${label}: compact desktop chapter rail is not visible`);
     assert(!(await visible(bar)), `${label}: full-width bottom chapter bar is still visible`);
     assert(!(await visible(mobile)), `${label}: mobile chapter dial is visible beside the desktop rail`);
+    assert(
+      (await rail.locator('a[href^="#"]').count()) === sceneCount,
+      `${label}: desktop rail does not expose all ${sceneCount} chapters`,
+    );
 
     const geometry = await rail.first().evaluate((node) => {
       const bounds = node.getBoundingClientRect();
@@ -73,6 +112,20 @@ async function assertWayfinding(page, viewport, label) {
     assert(!(await visible(rail)), `${label}: desktop chapter rail is visible on mobile`);
     assert(!(await visible(bar)), `${label}: bottom chapter bar is visible on mobile`);
     assert(await visible(mobile), `${label}: compact mobile chapter dial is missing`);
+
+    const trigger = mobile.locator("button").last();
+    await trigger.click();
+    await page.waitForFunction(
+      (expected) =>
+        document.querySelectorAll('[data-section-jump-nav-mobile="true"] a[href^="#"]').length === expected,
+      sceneCount,
+      { timeout: 4_000 },
+    );
+    assert(
+      (await mobile.locator('a[href^="#"]').count()) === sceneCount,
+      `${label}: mobile chapter menu does not expose all ${sceneCount} chapters`,
+    );
+    await trigger.click();
   }
 }
 
@@ -102,10 +155,11 @@ async function auditViewport(browser, viewport) {
 
   const label = `services-scroll/${viewport.name}`;
   await page.waitForFunction(() => document.documentElement.dataset.servicesExperience === "active");
-  await assertWayfinding(page, viewport, label);
 
   const sceneCount = await page.locator("[data-services-scroll-scene]").count();
-  assert(sceneCount >= 13, `${label}: expected at least 13 directed scenes, found ${sceneCount}`);
+  assert(sceneCount === 13, `${label}: expected 13 directed scenes, found ${sceneCount}`);
+  const chapters = await assertChapterContract(page, sceneCount, label);
+  await assertWayfinding(page, viewport, label, sceneCount);
   assert(
     (await page.locator('[data-services-scroll-scene] > [data-services-scene-signal="true"]').count()) === sceneCount,
     `${label}: every scene must carry one continuity signal`,
@@ -116,6 +170,8 @@ async function auditViewport(browser, viewport) {
     viewportHeight: window.innerHeight,
     scrollViewports: document.documentElement.scrollHeight / window.innerHeight,
     activeChapter: document.documentElement.dataset.servicesActiveChapter || null,
+    activeChapterId: document.documentElement.dataset.servicesActiveChapterId || null,
+    chapterCount: Number(document.documentElement.dataset.servicesChapterCount || 0),
     chapterProgress: getComputedStyle(document.documentElement)
       .getPropertyValue("--services-chapter-progress")
       .trim(),
@@ -123,6 +179,8 @@ async function auditViewport(browser, viewport) {
 
   assert(metrics.scrollViewports <= 19, `${label}: ${metrics.scrollViewports.toFixed(2)} scroll viewports is still padded`);
   assert(metrics.activeChapter, `${label}: active chapter was not published`);
+  assert(metrics.activeChapterId, `${label}: active chapter ID was not published`);
+  assert(metrics.chapterCount === sceneCount, `${label}: published chapter count is ${metrics.chapterCount}`);
   assert(metrics.chapterProgress, `${label}: chapter progress was not published`);
 
   const hero = page.locator('[data-services-hero-scene="true"]');
@@ -231,6 +289,7 @@ async function auditViewport(browser, viewport) {
     viewport: viewport.name,
     ...metrics,
     sceneCount,
+    chapterIds: chapters.map((chapter) => chapter.id),
     playingVideos,
     videoLimit,
     journeyRange,
