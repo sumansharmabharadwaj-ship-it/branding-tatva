@@ -1,0 +1,176 @@
+name: Verify original Services Situation film
+
+on:
+  push:
+    branches:
+      - services-original-situation-film
+    paths:
+      - .github/workflows/services-situation-film-gate.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: services-original-situation-film
+  cancel-in-progress: true
+
+jobs:
+  integrate-and-build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+
+    steps:
+      - name: Check out focused branch
+        uses: actions/checkout@v4
+        with:
+          ref: services-original-situation-film
+          fetch-depth: 0
+
+      - name: Replace the borrowed river metaphor with the original Situation film
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("src/app/services/page.tsx")
+          page = path.read_text()
+
+          media_pattern = re.compile(
+              r'^[ \t]*\{/\* Deliberate art direction, cut this round from the archived.*?motion\. \*/\}\n'
+              r'[ \t]*<BackgroundVideo\n'
+              r'[ \t]+parallax\n'
+              r'[ \t]+video="/videos/pexels-river-dawn\.mp4"\n'
+              r'[ \t]+videoWebm="/videos/pexels-river-dawn\.webm"\n'
+              r'[ \t]+poster="/images/pexels-river-dawn-poster\.jpg"\n'
+              r'[ \t]*/>',
+              re.S | re.M,
+          )
+          media_replacement = '''          {/* Original procedural Situation film: one coherent material
+              world holds three different starting conditions. A pale
+              mineral seed begins, shifted strata wait to realign, and
+              repeating rings carry consistency forward. The chapter now
+              teaches diagnosis without borrowing the Package selector's
+              separate water-current metaphor. */}
+          <BackgroundVideo
+            parallax
+            video="/videos/generated/bt-services-situation-paths.mp4"
+            videoMobile="/videos/generated/bt-services-situation-paths-mobile.mp4"
+            poster="/images/generated/bt-services-situation-paths-poster.jpg"
+            playbackRate={1.06}
+          />'''
+          page, media_count = media_pattern.subn(media_replacement, page, count=1)
+          if media_count != 1:
+              raise SystemExit(f"Situation media block: expected one match, found {media_count}")
+
+          old_scrim_note = '''          {/* Left weighted scrim — the sticky heading rail sits on the
+              darker stops while the sunrise and river stay open on the
+              right of the frame. */}'''
+          new_scrim_note = '''          {/* A left-weighted charcoal scrim protects the diagnosis copy
+              while keeping all three material states visible across the
+              lower frame. */}'''
+          if page.count(old_scrim_note) != 1:
+              raise SystemExit(f"Situation scrim note: expected one match, found {page.count(old_scrim_note)}")
+          page = page.replace(old_scrim_note, new_scrim_note, 1)
+
+          old_gradient = (
+              '"linear-gradient(100deg, rgba(23,26,23,0.82) 0%, '
+              'rgba(23,26,23,0.6) 45%, rgba(23,26,23,0.42) 100%)"'
+          )
+          new_gradient = (
+              '"linear-gradient(100deg, rgba(16,19,20,0.9) 0%, '
+              'rgba(16,19,20,0.66) 46%, rgba(16,19,20,0.38) 100%)"'
+          )
+          if page.count(old_gradient) != 1:
+              raise SystemExit(f"Situation overlay gradient: expected one match, found {page.count(old_gradient)}")
+          page = page.replace(old_gradient, new_gradient, 1)
+
+          path.write_text(page)
+          PY
+
+      - name: Validate the responsive silent media contract
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+
+          for file in \
+            public/videos/generated/bt-services-situation-paths.mp4 \
+            public/videos/generated/bt-services-situation-paths-mobile.mp4 \
+            public/images/generated/bt-services-situation-paths-poster.jpg
+          do
+            test -s "$file"
+          done
+
+          python <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          expected = {
+              Path('public/videos/generated/bt-services-situation-paths.mp4'): (1600, 900),
+              Path('public/videos/generated/bt-services-situation-paths-mobile.mp4'): (720, 1280),
+          }
+          for path, dimensions in expected.items():
+              probe = json.loads(subprocess.check_output([
+                  'ffprobe', '-v', 'error', '-show_streams', '-show_format',
+                  '-of', 'json', str(path)
+              ]))
+              duration = float(probe['format']['duration'])
+              audio = [stream for stream in probe['streams'] if stream.get('codec_type') == 'audio']
+              video = [stream for stream in probe['streams'] if stream.get('codec_type') == 'video']
+              if not 5.8 <= duration <= 6.2:
+                  raise SystemExit(f'{path}: unexpected duration {duration}')
+              if audio:
+                  raise SystemExit(f'{path}: audio stream found')
+              if len(video) != 1:
+                  raise SystemExit(f'{path}: expected one video stream')
+              actual = (video[0]['width'], video[0]['height'])
+              if actual != dimensions:
+                  raise SystemExit(f'{path}: expected {dimensions}, found {actual}')
+              print(path, duration, actual, path.stat().st_size)
+          PY
+
+      - name: Check the focused source contract
+        run: |
+          set -euo pipefail
+          grep -q 'bt-services-situation-paths.mp4' src/app/services/page.tsx
+          grep -q 'bt-services-situation-paths-mobile.mp4' src/app/services/page.tsx
+          grep -q 'bt-services-situation-paths-poster.jpg' src/app/services/page.tsx
+          grep -q 'bt-services-situation-paths.mp4' src/app/services/generatedMediaManifest.ts
+          ! grep -q 'pexels-river-dawn' src/app/services/page.tsx
+          git diff --check
+          git diff --stat
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the Next.js application
+        run: pnpm build
+
+      - name: Commit the verified Situation film and remove one-time gates
+        run: |
+          set -euo pipefail
+          rm -f \
+            .github/workflows/import-services-situation-film.yml \
+            .github/workflows/import-services-situation-film-v2.yml \
+            .github/workflows/services-situation-film-gate.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/app/services/page.tsx \
+            .github/workflows/import-services-situation-film.yml \
+            .github/workflows/import-services-situation-film-v2.yml \
+            .github/workflows/services-situation-film-gate.yml
+          git commit -m "Replace the stock Situation river with an original material film"
+          git push origin HEAD:services-original-situation-film
