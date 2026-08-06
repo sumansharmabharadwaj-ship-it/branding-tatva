@@ -301,6 +301,27 @@ async function auditServicesViewport(browser, viewport) {
   const jumpNav = page.locator('nav[aria-label="Jump to section"]');
   assert((await visibleCount(jumpNav)) === 1, `${label}: exactly one section guide should be visible near the opening`);
 
+  if (viewport.width < 640) {
+    const mobileJumpNav = page.locator('[data-section-jump-nav-mobile="true"]');
+    const mobileJumpTrigger = mobileJumpNav.locator('[data-section-jump-nav-trigger="true"]');
+    await mobileJumpTrigger.waitFor({ state: "visible", timeout: 5_000 });
+    await assertTouchTargets(mobileJumpTrigger, 40, `${label}: mobile section guide trigger`);
+    const guideBox = await mobileJumpTrigger.boundingBox();
+    assert(
+      guideBox && guideBox.width <= 64 && guideBox.height <= 64,
+      `${label}: mobile section guide still occupies a reading-width pill ${JSON.stringify(guideBox)}`,
+    );
+    assert(
+      guideBox && guideBox.x >= viewport.width - 84,
+      `${label}: mobile section guide is not confined to the safe corner ${JSON.stringify(guideBox)}`,
+    );
+    await mobileJumpTrigger.click();
+    const mobileJumpLinks = mobileJumpNav.getByRole("link");
+    await waitForCount(mobileJumpLinks, SECTION_IDS.length, `${label}: mobile section guide destinations`);
+    await assertTouchTargets(mobileJumpLinks, 40, `${label}: mobile section guide destinations`);
+    await mobileJumpTrigger.click();
+  }
+
   if (viewport.screenshots) {
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(320);
@@ -442,18 +463,47 @@ async function auditServicesViewport(browser, viewport) {
   if (viewport.screenshots) await captureViewport(page, `services-${viewport.name}-verified-outcome.png`);
 
   const authority = page.locator("#authority");
-  await captureAt(
-    page,
-    authority,
-    `services-${viewport.name}-authority.png`,
-    `${label}/authority`,
-  ).catch((error) => {
-    if (viewport.screenshots) throw error;
-  });
+  await scrollTo(page, authority, `${label}/authority`);
   const authorityText = (await authority.textContent()) || "";
   for (const layer of ["Foundation", "Experience", "Expression", "Voice", "Presence"]) {
     assert(authorityText.includes(layer), `${label}: authority layer ${layer} is missing`);
   }
+
+  const mobileAuthorityDeck = authority.locator('[data-authority-mobile-deck="true"]');
+  const desktopAuthorityLayers = authority.locator('[data-authority-desktop-layer="true"]');
+  await waitForCount(desktopAuthorityLayers, 5, `${label}: desktop authority layers`);
+
+  if (viewport.width < 1024) {
+    assert((await visibleCount(mobileAuthorityDeck)) === 1, `${label}: compact Authority deck is not visible`);
+    assert((await visibleCount(desktopAuthorityLayers)) === 0, `${label}: five desktop Authority rows still stack on mobile`);
+    const authorityTabs = mobileAuthorityDeck
+      .getByRole("tablist", { name: "Brand authority layers" })
+      .getByRole("tab");
+    await waitForCount(authorityTabs, 5, `${label}: compact Authority layer tabs`);
+    await assertTouchTargets(authorityTabs, 40, `${label}: compact Authority layer tabs`);
+    assert((await authorityTabs.first().getAttribute("aria-selected")) === "true", `${label}: first Authority layer is not selected`);
+    const authorityPanels = mobileAuthorityDeck.locator('[data-authority-layer-panel="true"]');
+    await waitForCount(authorityPanels, 5, `${label}: compact Authority layer panels`);
+    assert((await visibleCount(authorityPanels)) === 1, `${label}: multiple Authority panels stack in the mobile scene`);
+    const voiceLayer = mobileAuthorityDeck.getByRole("tab", { name: /04 Voice/i });
+    await voiceLayer.click();
+    assert((await voiceLayer.getAttribute("aria-selected")) === "true", `${label}: Voice Authority layer did not activate`);
+    assert((await mobileAuthorityDeck.getAttribute("data-active-index")) === "3", `${label}: Authority deck index did not advance`);
+    const activeAuthorityPanel = mobileAuthorityDeck.locator('[data-authority-layer-panel="true"]:not([hidden])');
+    await waitForVisibleText(
+      activeAuthorityPanel,
+      "five channels, five personalities, zero memory",
+      `${label}: Voice Authority consequence`,
+    );
+    const authorityControls = mobileAuthorityDeck.locator('[data-authority-mobile-controls="true"]').getByRole("button");
+    await waitForCount(authorityControls, 2, `${label}: compact Authority controls`);
+    await assertTouchTargets(authorityControls, 40, `${label}: compact Authority controls`);
+  } else {
+    assert((await visibleCount(mobileAuthorityDeck)) === 0, `${label}: mobile Authority deck remains visible on desktop`);
+    assert((await visibleCount(desktopAuthorityLayers)) === 5, `${label}: desktop Authority build lost one or more layers`);
+  }
+
+  if (viewport.screenshots) await captureViewport(page, `services-${viewport.name}-authority.png`);
 
   const stakesHeading = page.getByRole("heading", { level: 2, name: /What weak branding actually costs/i }).first();
   const stakesSection = await ancestorSection(stakesHeading);
@@ -745,6 +795,9 @@ async function auditServicesViewport(browser, viewport) {
     packageChoices: 3,
     packageComparisonCards: 3,
     compactPackageComparison: true,
+    authorityLayers: 5,
+    compactAuthorityDeck: true,
+    compactSectionGuide: true,
     perceptionRungs: 4,
     deliverables: 14,
     deliverableDrawers: 5,
