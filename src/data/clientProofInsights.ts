@@ -98,8 +98,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         id: "map-claims-to-doubts",
         heading: "Map each positioning claim to the buyer doubt beneath it",
         paragraphs: [
-          "A buyer rarely disputes a claim in abstract language. They carry a practical doubt: will this work in a business like mine, can the team handle the complexity, will the founder understand us, can the process survive implementation, and is the outcome worth the disruption?
-",
+          "A buyer rarely disputes a claim in abstract language. They carry a practical doubt: will this work in a business like mine, can the team handle the complexity, will the founder understand us, can the process survive implementation, and is the outcome worth the disruption?",
           "List the central claims in the position, service pages, and sales story. Beside each one, write the question a cautious buyer would ask before believing it. The proof library should answer those questions in descending order of commercial importance.",
           "This prevents a common imbalance: abundant evidence for minor qualities and almost none for the promise carrying the price.",
         ],
