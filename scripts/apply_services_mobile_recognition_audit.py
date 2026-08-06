@@ -53,7 +53,11 @@ def main() -> None:
   const firstName = auditForm.getByLabel("First name", { exact: true });
   const email = auditForm.getByLabel("Email", { exact: true });
   const business = auditForm.getByLabel("Business name, optional", { exact: true });
-  const consent = auditForm.getByRole("checkbox");
+  // The mobile form is intentionally hidden before the visitor opens
+  // its chapter. A DOM locator verifies the consent field and required
+  // contract before visibility; the interaction checks below verify it
+  // becomes visible only after unlock.
+  const consent = auditForm.locator('input[type="checkbox"]');
   assert((await firstName.getAttribute("required")) !== null, `${label}: audit first name is not required`);
   assert((await email.getAttribute("required")) !== null, `${label}: audit email is not required`);
   assert((await consent.getAttribute("required")) !== null, `${label}: audit consent is not required`);
