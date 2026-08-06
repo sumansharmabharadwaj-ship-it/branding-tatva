@@ -41,6 +41,11 @@ export function ServicesMediaDirector() {
       return compactViewport.matches || constrained ? 1 : 2;
     }
 
+    function publishFormInteraction(active: boolean) {
+      formInteraction = active;
+      document.documentElement.dataset.servicesFormInteraction = active ? "true" : "false";
+    }
+
     function syncVideos() {
       if (syncing) return;
       syncing = true;
@@ -120,22 +125,25 @@ export function ServicesMediaDirector() {
     function onFocusIn(event: FocusEvent) {
       const target = event.target;
       if (!(target instanceof Element) || !target.matches(FORM_CONTROL_SELECTOR)) return;
-      formInteraction = true;
+      publishFormInteraction(true);
       syncVideos();
     }
 
     function onFocusOut() {
       window.setTimeout(() => {
         const active = document.activeElement;
-        formInteraction = Boolean(
-          active instanceof Element &&
-            servicesRoot.contains(active) &&
-            active.matches(FORM_CONTROL_SELECTOR),
+        publishFormInteraction(
+          Boolean(
+            active instanceof Element &&
+              servicesRoot.contains(active) &&
+              active.matches(FORM_CONTROL_SELECTOR),
+          ),
         );
         syncVideos();
       }, 0);
     }
 
+    publishFormInteraction(false);
     document.addEventListener("visibilitychange", syncVideos);
     compactViewport.addEventListener("change", syncVideos);
     servicesRoot.addEventListener("focusin", onFocusIn);
@@ -154,6 +162,7 @@ export function ServicesMediaDirector() {
       cleanups.clear();
       ratios.clear();
       videos.clear();
+      delete document.documentElement.dataset.servicesFormInteraction;
     };
   }, [prefersReducedMotion]);
 
