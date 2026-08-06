@@ -18,7 +18,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: validate-site-integration
+  group: validate-site-integration-project-room-final
   cancel-in-progress: true
 
 jobs:
