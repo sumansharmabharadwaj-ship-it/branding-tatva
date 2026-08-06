@@ -17,12 +17,14 @@ on:
       - scripts/services_anchor_gate.cjs
       - scripts/services_exploration_density_report.cjs
       - scripts/services_media_loading_gate.cjs
+      - scripts/services_hash_override_gate.cjs
       - src/app/services/**
       - src/sections/Services/**
       - src/components/SectionJumpNav.tsx
       - src/components/BackgroundVideo.tsx
       - src/components/PhotoHero.tsx
       - src/components/TexturedDark.tsx
+      - src/components/SmoothScrollProvider.tsx
       - src/components/CalendlyEmbed.tsx
       - src/components/PricingProvider.tsx
       - src/components/RegionSelector.tsx
@@ -135,6 +137,11 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/services_media_loading_gate.cjs
+
+      - name: Verify manual scroll cancels delayed hash recovery
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/services_hash_override_gate.cjs
 
       - name: Verify wheel, keyboard, anchors, history, reversal, and sticky re-entry
         env:
