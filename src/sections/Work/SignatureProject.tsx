@@ -1,13 +1,14 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
-
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { AnimatedStat } from "@/components/AnimatedStat";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import type { Project } from "@/data/projects";
 import { getWorkTaxonomy } from "@/data/workTaxonomy";
+import { registerScrollCheck } from "@/lib/scrollCheckRegistry";
 import { WORK } from "@/sections/Work/palette";
 
 // The measured-performance flagship is told as six beats: condition,
@@ -26,20 +27,54 @@ const BEATS = [
 ] as const;
 
 export function SignatureProject({ project }: { project: Project }) {
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const reduceMotion = hydrated && prefersReducedMotion;
+  const lenis = useLenis();
   const [activeBeat, setActiveBeat] = useState(0);
-  const [mounted, setMounted] = useState(false);
-  const prefersReducedMotion = useHydratedReducedMotion();
   const beatRefs = useRef<(HTMLDivElement | null)[]>([]);
   const evidencePoster = getWorkTaxonomy(project.slug).evidencePoster;
 
-  const reduceMotion = mounted && Boolean(prefersReducedMotion);
+  const beats = BEATS.map((beat) => ({
+    key: beat.key as string,
+    label: beat.label as string,
+    text: project[beat.key as keyof Project] as string | undefined,
+  })).filter((beat): beat is { key: string; label: string; text: string } => typeof beat.text === "string");
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    if (!hydrated || reduceMotion) return;
 
-  useEffect(() => {
-    if (reduceMotion) return;
+    function checkActiveBeat() {
+      const elements = beatRefs.current.filter((element): element is HTMLDivElement => Boolean(element));
+      if (elements.length === 0) return;
+
+      const firstRect = elements[0].getBoundingClientRect();
+      const lastRect = elements[elements.length - 1].getBoundingClientRect();
+
+      if (firstRect.top >= window.innerHeight) {
+        setActiveBeat(0);
+        return;
+      }
+      if (lastRect.bottom <= 0) {
+        setActiveBeat(elements.length - 1);
+        return;
+      }
+
+      const readingLine = window.innerHeight * 0.48;
+      let closestIndex = 0;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      elements.forEach((element, index) => {
+        const rect = element.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        const distance = Math.abs(center - readingLine);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      setActiveBeat(closestIndex);
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -49,23 +84,36 @@ export function SignatureProject({ project }: { project: Project }) {
           if (Number.isFinite(index)) setActiveBeat(index);
         }
       },
-      { rootMargin: "-42% 0px -48% 0px" }
+      { rootMargin: "-42% 0px -48% 0px" },
     );
 
     beatRefs.current.forEach((element) => element && observer.observe(element));
-    return () => observer.disconnect();
-  }, [reduceMotion]);
+    const frame = window.requestAnimationFrame(checkActiveBeat);
+    const fallback = window.setTimeout(checkActiveBeat, 700);
 
-  const beats = BEATS.map((beat) => ({
-    key: beat.key as string,
-    label: beat.label as string,
-    text: project[beat.key as keyof Project] as string | undefined,
-  })).filter((beat): beat is { key: string; label: string; text: string } => typeof beat.text === "string");
+    let unsubscribe: (() => void) | undefined;
+    if (lenis) {
+      unsubscribe = registerScrollCheck(lenis, checkActiveBeat);
+    } else {
+      window.addEventListener("scroll", checkActiveBeat, { passive: true });
+      unsubscribe = () => window.removeEventListener("scroll", checkActiveBeat);
+    }
+
+    window.addEventListener("pageshow", checkActiveBeat);
+
+    return () => {
+      observer.disconnect();
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(fallback);
+      unsubscribe?.();
+      window.removeEventListener("pageshow", checkActiveBeat);
+    };
+  }, [hydrated, lenis, reduceMotion]);
 
   const gray = reduceMotion ? 0 : Math.max(0, 0.85 * (1 - activeBeat / Math.max(1, beats.length - 1)));
 
   return (
-    <section className="relative py-20 sm:py-28" style={{ backgroundColor: WORK.forest }}>
+    <section className="relative scroll-mt-28 py-20 sm:py-28" style={{ backgroundColor: WORK.forest }}>
       <Container className="max-w-6xl">
         <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.sage }}>
           Signature project
