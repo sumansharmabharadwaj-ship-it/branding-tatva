@@ -2,6 +2,7 @@ name: Work page evidence gate
 run-name: Work evidence gate · ${{ github.sha }}
 
 on:
+  # Keep a manual route available for accessibility and deployment verification.
   workflow_dispatch:
   push:
     branches:
@@ -29,7 +30,7 @@ on:
       - next.config.ts
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: branding-tatva-work-evidence-gate
@@ -38,14 +39,14 @@ concurrency:
 jobs:
   audit-work:
     runs-on: ubuntu-latest
-    timeout-minutes: 24
+    timeout-minutes: 22
 
     steps:
       - name: Check out application without the media archive
         uses: actions/checkout@v4
         with:
-          ref: homepage-cinematic-recovery
-          fetch-depth: 0
+          ref: ${{ github.sha }}
+          fetch-depth: 1
           filter: blob:none
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -62,16 +63,6 @@ jobs:
         run: |
           corepack enable
           corepack prepare pnpm@10.28.0 --activate
-
-      - name: Apply pending mobile story compaction
-        id: mobile-story-patch
-        run: |
-          if [ -f scripts/apply_work_mobile_story_compaction.cjs ]; then
-            node scripts/apply_work_mobile_story_compaction.cjs
-            echo "applied=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "applied=false" >> "$GITHUB_OUTPUT"
-          fi
 
       - name: Install dependencies
         run: |
@@ -123,15 +114,3 @@ jobs:
           path: cinematic-recovery-audit/*
           if-no-files-found: error
           retention-days: 7
-
-      - name: Publish verified mobile story compaction
-        if: success() && steps.mobile-story-patch.outputs.applied == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          rm scripts/apply_work_mobile_story_compaction.cjs
-          rm .github/workflows/apply-work-mobile-story-compaction.yml 2>/dev/null || true
-          git add -A
-          git commit -m "Compress mobile Work narratives into selectable evidence boards"
-          git pull --rebase origin homepage-cinematic-recovery
-          git push origin HEAD:homepage-cinematic-recovery
