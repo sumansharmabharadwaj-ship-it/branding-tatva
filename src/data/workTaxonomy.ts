@@ -39,36 +39,44 @@ export type WorkTaxonomyRecord = {
   tier: WorkTier;
   needs: WorkNeedId[];
   evidenceLabel: string;
+  evidencePoster: string;
 };
 
-// Navigation taxonomy only. These labels are derived from each project's
-// recorded challenge, strategy, and outcome in data/projects.ts. They do
-// not introduce a new result, metric, client claim, or permission claim.
+// Navigation and presentation taxonomy only. The evidence posters are
+// editorial diagrams built from the recorded challenge, strategy,
+// execution, and verified results in data/projects.ts. They demonstrate
+// what the work decided without pretending to be client-supplied
+// photography, mockups, or documentary footage.
 export const WORK_TAXONOMY: Record<string, WorkTaxonomyRecord> = {
   "dr-haley-nutrition": {
     tier: "flagship",
     needs: ["recognition", "conversion"],
     evidenceLabel: "Measured performance",
+    evidencePoster: "/images/work-evidence-dr-haley.svg",
   },
   myshopineurope: {
     tier: "flagship",
     needs: ["clarity", "authority", "system"],
     evidenceLabel: "Strategic system",
+    evidencePoster: "/images/work-evidence-myshopineurope.svg",
   },
   "executive-springboard": {
     tier: "story",
     needs: ["conversion", "system"],
     evidenceLabel: "Conversion architecture",
+    evidencePoster: "/images/work-evidence-executive-springboard.svg",
   },
   herbalcart: {
     tier: "story",
     needs: ["clarity", "recognition"],
     evidenceLabel: "Perception reset",
+    evidencePoster: "/images/work-evidence-herbalcart.svg",
   },
   "plaxonic-content-portfolio": {
     tier: "story",
     needs: ["authority", "system"],
     evidenceLabel: "Content authority",
+    evidencePoster: "/images/work-evidence-plaxonic.svg",
   },
 };
 
@@ -76,6 +84,7 @@ const FALLBACK: WorkTaxonomyRecord = {
   tier: "story",
   needs: [],
   evidenceLabel: "Project evidence",
+  evidencePoster: "/images/work-closing.jpg",
 };
 
 export function getWorkTaxonomy(slug: string): WorkTaxonomyRecord {
