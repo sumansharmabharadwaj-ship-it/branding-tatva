@@ -1,0 +1,167 @@
+name: Verify original Services Authority film
+
+on:
+  push:
+    branches:
+      - services-original-authority-film
+    paths:
+      - .github/workflows/services-authority-film-gate.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: services-original-authority-film
+  cancel-in-progress: true
+
+jobs:
+  integrate-and-build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+
+    steps:
+      - name: Check out focused branch
+        uses: actions/checkout@v4
+        with:
+          ref: services-original-authority-film
+          fetch-depth: 0
+
+      - name: Replace the repeated root footage with the original five-layer film
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("src/sections/Services/PinnedBrandBuild.tsx")
+          source = path.read_text()
+
+          for old_import, label in [
+              ('import Image from "next/image";\n', "Next Image import"),
+              ('import { AmbientElementShader } from "@/components/AmbientElementShader";\n', "ambient shader import"),
+          ]:
+              if source.count(old_import) != 1:
+                  raise SystemExit(f"{label}: expected one match, found {source.count(old_import)}")
+              source = source.replace(old_import, "", 1)
+
+          pattern = re.compile(
+              r'^[ \t]*\{/\* Approved Chapter 02 footage.*?'
+              r'[ \t]*<div className="hidden sm:block">\n'
+              r'[ \t]*<AmbientElementShader opacity=\{0\.08\} />\n'
+              r'[ \t]*</div>\n'
+              r'[ \t]*</div>',
+              re.S | re.M,
+          )
+          replacement = '''        {/* Original procedural Authority film: a restrained signal rises
+            through five natural material layers and widens only after
+            the full system is present. The pinned rows remain the primary
+            scroll-led demonstration; the film gives them one coherent
+            material world instead of repeating the hero's root metaphor. */}
+        <div className="absolute inset-0 overflow-hidden">
+          <BackgroundVideo
+            video="/videos/generated/bt-services-authority-layers.mp4"
+            videoMobile="/videos/generated/bt-services-authority-layers-mobile.mp4"
+            poster="/images/generated/bt-services-authority-layers-poster.jpg"
+            playbackRate={1.04}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, rgba(15,17,19,0.88) 0%, rgba(15,17,19,0.62) 46%, rgba(15,17,19,0.46) 100%)",
+            }}
+          />
+        </div>'''
+          source, count = pattern.subn(replacement, source, count=1)
+          if count != 1:
+              raise SystemExit(f"Authority media block: expected one match, found {count}")
+
+          path.write_text(source)
+          PY
+
+      - name: Validate the responsive silent media contract
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+
+          for file in \
+            public/videos/generated/bt-services-authority-layers.mp4 \
+            public/videos/generated/bt-services-authority-layers-mobile.mp4 \
+            public/images/generated/bt-services-authority-layers-poster.jpg
+          do
+            test -s "$file"
+          done
+
+          python <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          expected = {
+              Path('public/videos/generated/bt-services-authority-layers.mp4'): (1600, 900),
+              Path('public/videos/generated/bt-services-authority-layers-mobile.mp4'): (720, 1280),
+          }
+          for path, dimensions in expected.items():
+              probe = json.loads(subprocess.check_output([
+                  'ffprobe', '-v', 'error', '-show_streams', '-show_format',
+                  '-of', 'json', str(path)
+              ]))
+              duration = float(probe['format']['duration'])
+              audio = [stream for stream in probe['streams'] if stream.get('codec_type') == 'audio']
+              video = [stream for stream in probe['streams'] if stream.get('codec_type') == 'video']
+              if not 5.8 <= duration <= 6.2:
+                  raise SystemExit(f'{path}: unexpected duration {duration}')
+              if audio:
+                  raise SystemExit(f'{path}: audio stream found')
+              if len(video) != 1:
+                  raise SystemExit(f'{path}: expected one video stream')
+              actual = (video[0]['width'], video[0]['height'])
+              if actual != dimensions:
+                  raise SystemExit(f'{path}: expected {dimensions}, found {actual}')
+              print(path, duration, actual, path.stat().st_size)
+          PY
+
+      - name: Check the focused source contract
+        run: |
+          set -euo pipefail
+          grep -q 'bt-services-authority-layers.mp4' src/sections/Services/PinnedBrandBuild.tsx
+          grep -q 'bt-services-authority-layers-mobile.mp4' src/sections/Services/PinnedBrandBuild.tsx
+          grep -q 'bt-services-authority-layers-poster.jpg' src/sections/Services/PinnedBrandBuild.tsx
+          grep -q 'bt-services-authority-layers.mp4' src/app/services/generatedMediaManifest.ts
+          ! grep -q 'pexels-root-network' src/sections/Services/PinnedBrandBuild.tsx
+          ! grep -q 'AmbientElementShader' src/sections/Services/PinnedBrandBuild.tsx
+          ! grep -q 'next/image' src/sections/Services/PinnedBrandBuild.tsx
+          git diff --check
+          git diff --stat
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the Next.js application
+        run: pnpm build
+
+      - name: Commit the verified Authority film and remove one-time gates
+        run: |
+          set -euo pipefail
+          rm -f \
+            .github/workflows/import-services-authority-film.yml \
+            .github/workflows/services-authority-film-gate.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/sections/Services/PinnedBrandBuild.tsx \
+            .github/workflows/import-services-authority-film.yml \
+            .github/workflows/services-authority-film-gate.yml
+          git commit -m "Replace the repeated root footage with the original Authority film"
+          git push origin HEAD:services-original-authority-film
