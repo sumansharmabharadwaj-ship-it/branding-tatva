@@ -77,7 +77,7 @@ jobs:
 
       - name: Install browser library
         run: |
-          pnpm add --save-dev playwright@1.55.0 --no-frozen-lockfile
+          pnpm add --save-dev playwright@1.55.0
           pnpm exec playwright install --with-deps chromium
 
       - name: Capture complete desktop and mobile pages
