@@ -59,7 +59,41 @@ jobs:
       - name: Build the complete application
         run: pnpm build
 
-      - name: Publish one tested commit to the Vercel release branch
+      - name: Create the one-time deployment commit
+        env:
+          RELEASE_NOTE: ${{ github.event.inputs.release_note || 'trigger-file release' }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          python <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          config_path = Path("vercel.json")
+          config = json.loads(config_path.read_text(encoding="utf-8"))
+          enabled = config.setdefault("git", {}).setdefault("deploymentEnabled", {})
+          enabled.pop("preview/cinematic-release", None)
+          config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+
+          release_dir = Path(".release")
+          release_dir.mkdir(exist_ok=True)
+          release_dir.joinpath("site-preview.txt").write_text(
+              "source-branch=staging/site-integration\n"
+              f"source-commit={os.environ['RELEASE_SHA']}\n"
+              f"release-note={os.environ['RELEASE_NOTE']}\n"
+              "deployment-enabled=true\n",
+              encoding="utf-8",
+          )
+          PY
+
+          git add vercel.json .release/site-preview.txt
+          git commit -m "Release integrated preview ${RELEASE_SHA:0:8}"
+          echo "DEPLOY_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Publish the tested deployment commit to Vercel
         run: |
           set -euo pipefail
           git fetch origin preview/cinematic-release || true
@@ -73,7 +107,7 @@ jobs:
             git push origin HEAD:refs/heads/preview/cinematic-release
           fi
 
-          echo "Released ${RELEASE_SHA} to preview/cinematic-release"
+          echo "Released ${DEPLOY_SHA} from tested source ${RELEASE_SHA}"
 
       - name: Write release summary
         run: |
@@ -81,7 +115,8 @@ jobs:
             echo "## Consolidated site preview"
             echo
             echo "- Source branch: \`staging/site-integration\`"
-            echo "- Released commit: \`${RELEASE_SHA}\`"
+            echo "- Tested source commit: \`${RELEASE_SHA}\`"
+            echo "- Deployment commit: \`${DEPLOY_SHA}\`"
             echo "- Vercel branch: \`preview/cinematic-release\`"
             echo "- Release note: ${{ github.event.inputs.release_note || 'trigger-file release' }}"
             echo
