@@ -1,5 +1,5 @@
 name: Build and verify the Services Project Room packages
-run-name: Services Project Room packages · ${{ github.sha }}
+run-name: Services Project Room packages pass 2 · ${{ github.sha }}
 
 on:
   push:
@@ -37,8 +37,11 @@ jobs:
 
       - name: Install the Project Room browser contract
         run: |
-          python -m py_compile scripts/apply_services_project_room_gate.py
+          python -m py_compile \
+            scripts/apply_services_project_room_gate.py \
+            scripts/fix_project_room_route_semantics.py
           python scripts/apply_services_project_room_gate.py
+          python scripts/fix_project_room_route_semantics.py
           git diff --check
 
       - name: Use Node 24
@@ -102,6 +105,7 @@ jobs:
       - name: Remove one-time verification tools
         run: |
           rm scripts/apply_services_project_room_gate.py
+          rm scripts/fix_project_room_route_semantics.py
           rm .github/workflows/services-project-room-packages.yml
 
       - name: Commit the verified Project Room workspace
@@ -114,6 +118,7 @@ jobs:
             src/sections/Services/ProjectRoomPackage.tsx \
             scripts/services_page_gate.cjs \
             scripts/apply_services_project_room_gate.py \
+            scripts/fix_project_room_route_semantics.py \
             .github/workflows/services-project-room-packages.yml
           git diff --cached --check
           git commit -m "Turn Services packages into visual Project Rooms"
