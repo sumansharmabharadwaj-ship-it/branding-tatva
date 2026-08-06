@@ -30,7 +30,7 @@ text = replace_once(
     const originalButton = model.originalButtons[index];''',
     '''    const article = resolvedModel.articles[index];
     const originalButton = resolvedModel.originalButtons[index];''',
-    "case-study callback model",
+    "case-study model callback",
 )
 text = replace_once(text, "{model.chapters.map((item, index) => {", "{resolvedModel.chapters.map((item, index) => {", "case-study chapter map")
 text = replace_once(text, "{String(model.chapters.length).padStart(2, \"0\")}", "{String(resolvedModel.chapters.length).padStart(2, \"0\")}", "case-study chapter count")
