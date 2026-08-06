@@ -1,0 +1,64 @@
+name: Extend Work final-scene viewport audit
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/extend-work-final-viewport-audit.yml
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: extend-work-final-viewport-audit
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the working branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Extend, validate, publish, and dispatch
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+
+            echo 'ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgpST09UID0gUGF0aCgnLicpClRBUkdFVCA9IFJPT1QgLyAnc2NyaXB0cy93b3JrX3BhZ2VfZ2F0ZV92My5janMnCldPUktGTE9XID0gUk9PVCAvICcuZ2l0aHViL3dvcmtmbG93cy9leHRlbmQtd29yay1maW5hbC12aWV3cG9ydC1hdWRpdC55bWwnCgp0ZXh0ID0gVEFSR0VULnJlYWRfdGV4dChlbmNvZGluZz0ndXRmLTgnKQpvbGQgPSAnJycgICAgY29uc3QgZmluYWxTZWN0aW9uID0gcGFnZQogICAgICAuZ2V0QnlSb2xlKCJoZWFkaW5nIiwgeyBuYW1lOiAiQnJpbmcgdGhlIHBhcnQgb2YgdGhlIGJyYW5kIHRoYXQgbm8gbG9uZ2VyIG1ha2VzIHNlbnNlLiIgfSkKICAgICAgLmxvY2F0b3IoInhwYXRoPWFuY2VzdG9yOjpzZWN0aW9uWzFdIik7CiAgICBhd2FpdCBjYXB0dXJlTG9jYXRvcihwYWdlLCBmaW5hbFNlY3Rpb24sIGB3b3JrLSR7dmlld3BvcnQubmFtZX0tZmluYWwucG5nYCk7JycnCm5ldyA9ICcnJyAgICBjb25zdCBmaW5hbEhlYWRpbmcgPSBwYWdlLmdldEJ5Um9sZSgiaGVhZGluZyIsIHsKICAgICAgbmFtZTogIkJyaW5nIHRoZSBwYXJ0IG9mIHRoZSBicmFuZCB0aGF0IG5vIGxvbmdlciBtYWtlcyBzZW5zZS4iLAogICAgfSk7CiAgICBjb25zdCBmaW5hbFNlY3Rpb24gPSBmaW5hbEhlYWRpbmcubG9jYXRvcigieHBhdGg9YW5jZXN0b3I6OnNlY3Rpb25bMV0iKTsKICAgIGF3YWl0IGNhcHR1cmVMb2NhdG9yKHBhZ2UsIGZpbmFsU2VjdGlvbiwgYHdvcmstJHt2aWV3cG9ydC5uYW1lfS1maW5hbC5wbmdgKTsKCiAgICBhd2FpdCBmaW5hbFNlY3Rpb24uZXZhbHVhdGUoKHNlY3Rpb24pID0+IHNlY3Rpb24uc2Nyb2xsSW50b1ZpZXcoeyBibG9jazogInN0YXJ0IiwgYmVoYXZpb3I6ICJpbnN0YW50IiB9KSk7CiAgICBhd2FpdCBwYWdlLndhaXRGb3JUaW1lb3V0KDUyMCk7CiAgICBjb25zdCBjb2xsaXNpb24gPSBhd2FpdCBwYWdlLmV2YWx1YXRlKCgpID0+IHsKICAgICAgY29uc3QgaGVhZGVyID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvcigiaGVhZGVyIik7CiAgICAgIGNvbnN0IGhlYWRpbmcgPSBbLi4uZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgiaDIiKV0uZmluZCgobm9kZSkgPT4KICAgICAgICBub2RlLnRleHRDb250ZW50Py5pbmNsdWRlcygiQnJpbmcgdGhlIHBhcnQgb2YgdGhlIGJyYW5kIHRoYXQgbm8gbG9uZ2VyIG1ha2VzIHNlbnNlLiIpLAogICAgICApOwogICAgICBpZiAoIWhlYWRlciB8fCAhaGVhZGluZykgcmV0dXJuIG51bGw7CiAgICAgIGNvbnN0IGhlYWRlclJlY3QgPSBoZWFkZXIuZ2V0Qm91bmRpbmdDbGllbnRSZWN0KCk7CiAgICAgIGNvbnN0IGhlYWRpbmdSZWN0ID0gaGVhZGluZy5nZXRCb3VuZGluZ0NsaWVudFJlY3QoKTsKICAgICAgY29uc3QgaG9yaXpvbnRhbE92ZXJsYXAgPQogICAgICAgIGhlYWRlclJlY3QubGVmdCA8IGhlYWRpbmdSZWN0LnJpZ2h0ICYmIGhlYWRlclJlY3QucmlnaHQgPiBoZWFkaW5nUmVjdC5sZWZ0OwogICAgICBjb25zdCB2ZXJ0aWNhbE92ZXJsYXAgPQogICAgICAgIGhlYWRlclJlY3QudG9wIDwgaGVhZGluZ1JlY3QuYm90dG9tICYmIGhlYWRlclJlY3QuYm90dG9tID4gaGVhZGluZ1JlY3QudG9wOwogICAgICByZXR1cm4gewogICAgICAgIGhvcml6b250YWxPdmVybGFwLAogICAgICAgIHZlcnRpY2FsT3ZlcmxhcCwKICAgICAgICBoZWFkZXI6IHsgdG9wOiBoZWFkZXJSZWN0LnRvcCwgYm90dG9tOiBoZWFkZXJSZWN0LmJvdHRvbSB9LAogICAgICAgIGhlYWRpbmc6IHsgdG9wOiBoZWFkaW5nUmVjdC50b3AsIGJvdHRvbTogaGVhZGluZ1JlY3QuYm90dG9tIH0sCiAgICAgIH07CiAgICB9KTsKICAgIGFzc2VydChjb2xsaXNpb24sIGAke2xhYmVsfTogZmluYWwtc2NlbmUgY29sbGlzaW9uIGdlb21ldHJ5IHdhcyB1bmF2YWlsYWJsZWApOwogICAgYXNzZXJ0KAogICAgICAhKGNvbGxpc2lvbi5ob3Jpem9udGFsT3ZlcmxhcCAmJiBjb2xsaXNpb24udmVydGljYWxPdmVybGFwKSwKICAgICAgYCR7bGFiZWx9OiBmaXhlZCBoZWFkZXIgb3ZlcmxhcHMgZmluYWwtc2NlbmUgaGVhZGluZyAke0pTT04uc3RyaW5naWZ5KGNvbGxpc2lvbil9YCwKICAgICk7CiAgICBhd2FpdCBwYWdlLnNjcmVlbnNob3QoewogICAgICBwYXRoOiBwYXRoLmpvaW4oT1VUUFVULCBgd29yay0ke3ZpZXdwb3J0Lm5hbWV9LWZpbmFsLXZpZXdwb3J0LnBuZ2ApLAogICAgICBhbmltYXRpb25zOiAiZGlzYWJsZWQiLAogICAgfSk7JycnCmNvdW50ID0gdGV4dC5jb3VudChvbGQpCmlmIGNvdW50ICE9IDE6CiAgICByYWlzZSBSdW50aW1lRXJyb3IoZidFeHBlY3RlZCBvbmUgZmluYWwgY2FwdHVyZSBibG9jaywgZm91bmQge2NvdW50fScpCnRleHQgPSB0ZXh0LnJlcGxhY2Uob2xkLCBuZXcsIDEpClRBUkdFVC53cml0ZV90ZXh0KHRleHQsIGVuY29kaW5nPSd1dGYtOCcpCldPUktGTE9XLnVubGluaygpCnByaW50KCdBZGRlZCB0cnVlIHZpZXdwb3J0IGZpbmFsLXNjZW5lIGNhcHR1cmVzIGFuZCBoZWFkZXIgY29sbGlzaW9uIGFzc2VydGlvbnMnKQo=' | base64 -d > /tmp/extend-work-final-viewport-audit.py
+            python /tmp/extend-work-final-viewport-audit.py
+            node --check scripts/work_page_gate_v3.cjs
+
+            git add scripts/work_page_gate_v3.cjs .github/workflows/extend-work-final-viewport-audit.yml
+            git commit -m "Assert the Work closing scene clears the fixed header"
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              gh workflow run work-page-gate.yml --ref homepage-cinematic-recovery
+              exit 0
+            fi
+          done
+
+          exit 1
