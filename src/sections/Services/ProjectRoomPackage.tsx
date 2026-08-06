@@ -157,7 +157,7 @@ export function ProjectRoomPackage({
         id={`${pkg.slug}-room-panel`}
         role="tabpanel"
         aria-labelledby={`${pkg.slug}-room-tab-${tab}`}
-        className="relative min-h-[22rem] px-5 py-6 sm:min-h-[21rem] sm:px-7 sm:py-7"
+        className="relative min-h-[20rem] px-5 py-6 sm:min-h-[21rem] sm:px-7 sm:py-7"
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
