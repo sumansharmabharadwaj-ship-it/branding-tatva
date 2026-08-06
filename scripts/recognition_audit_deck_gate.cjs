@@ -70,6 +70,17 @@ async function assertNoOverflow(page, label) {
   );
 }
 
+async function assertMobileHeaderClear(page, viewport, label) {
+  if (viewport.width > 760) return;
+  await page.waitForTimeout(420);
+  const banner = page.getByRole("banner").first();
+  const box = await banner.boundingBox();
+  assert(
+    !box || box.y + box.height <= 2,
+    `${label}: global header overlaps the audit at y=${box?.y ?? 0}, height=${box?.height ?? 0}`,
+  );
+}
+
 async function capture(browser, viewport) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
@@ -85,6 +96,7 @@ async function capture(browser, viewport) {
   const audit = page.locator("#audit");
   await audit.scrollIntoViewIfNeeded();
   await page.waitForTimeout(620);
+  await assertMobileHeaderClear(page, viewport, label);
 
   const deck = audit.locator('[data-recognition-audit-deck="true"]');
   assert((await deck.count()) === 1, `${label}: recognition deck is missing`);
@@ -134,6 +146,7 @@ async function capture(browser, viewport) {
   await waitForText(panel, "Buyers mention the brand unprompted", `${label}: keyboard navigation`);
   await previous.click();
   await waitForText(panel, "Colors, type, and voice", `${label}: previous control`);
+  await assertMobileHeaderClear(page, viewport, `${label}/after-interaction`);
 
   const firstName = audit.getByLabel("First name", { exact: true });
   const email = audit.getByLabel("Email", { exact: true });
