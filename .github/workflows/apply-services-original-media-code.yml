@@ -1,4 +1,4 @@
-name: Apply original Services media integration
+name: Verify original Services media integration
 
 on:
   push:
@@ -10,11 +10,15 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: services-original-media-verification
+  cancel-in-progress: true
+
 jobs:
-  integrate:
+  verify:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       - name: Check out rollout branch
@@ -23,17 +27,11 @@ jobs:
           ref: services-original-media-rollout
           fetch-depth: 0
 
-      - name: Integrate generated media into the Services experience
+      - name: Remove superseded hero direction notes
         run: |
           python <<'PY'
           from pathlib import Path
           import re
-
-          def replace_once(text: str, old: str, new: str, label: str) -> str:
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f"{label}: expected one match, found {count}")
-              return text.replace(old, new, 1)
 
           def regex_once(text: str, pattern: str, replacement: str, label: str) -> str:
               updated, count = re.subn(pattern, replacement, text, count=1, flags=re.S | re.M)
@@ -44,128 +42,91 @@ jobs:
           page_path = Path("src/app/services/page.tsx")
           page = page_path.read_text()
 
-          page = replace_once(
-              page,
-              'import { PhotoHero } from "@/components/PhotoHero";',
-              'import { ServicesCinematicHero } from "@/sections/Services/ServicesCinematicHero";',
-              "Services hero import",
-          )
-
-          page = replace_once(
-              page,
-              '  preload("/images/pexels-aspen-sunburst-poster.jpg", { as: "image", fetchPriority: "high" });',
-              '  preload("/images/services-hero-root-system-poster.jpg", { as: "image", fetchPriority: "high" });',
-              "Services hero poster preload",
-          )
-
-          hero_replacement = (
-              '        <ServicesCinematicHero\n'
-              '          video="/videos/services-hero-root-system.mp4"\n'
-              '          poster="/images/services-hero-root-system-poster.jpg"\n'
-              '          minHeight="70vh"\n'
-              '        >'
+          opening_note = (
+              '        {/* Curiosity opens on Branding Tatva\'s original root-system\n'
+              '            film. The visible work sits above an interconnected\n'
+              '            foundation, so the first scene demonstrates the page\'s\n'
+              '            central argument before the visitor reads it. The hero\n'
+              '            remains a compact secondary-page masthead, while the\n'
+              '            chapter index supplies immediate orientation and escape. */}\n'
+              '        <ServicesCinematicHero'
           )
           page = regex_once(
               page,
-              r'^[ \t]*<PhotoHero\n[ \t]+video="/videos/pexels-aspen-sunburst\.mp4"\n[ \t]+poster="/images/pexels-aspen-sunburst-poster\.jpg"\n[ \t]+minHeight="70vh"\n[ \t]*>',
-              hero_replacement,
-              "Services hero media",
+              r'^[ \t]*\{/\* Curiosity —.*?previews the four objections the rest of the page answers\. \*/\}\n[ \t]*<ServicesCinematicHero',
+              opening_note,
+              "Services opening direction note",
           )
 
-          page = replace_once(page, "        </PhotoHero>", "        </ServicesCinematicHero>", "Services hero closing tag")
-
-          hero_note = (
-              '          {/* Original Branding Tatva film: a realistic underground root\n'
-              '              network whose connected paths become visible through a\n'
-              '              restrained ivory-mineral pulse. The visual teaches the\n'
-              '              opening idea before the copy completes it: recognition\n'
-              '              breaks when the system beneath visible work disconnects. */}'
+          scrim_note = (
+              '          {/* A restrained directional scrim protects the masthead\n'
+              '              while leaving the root architecture readable on the\n'
+              '              right. The hero shell already carries the cool global\n'
+              '              contrast layer, so this remains a local composition aid. */}'
           )
           page = regex_once(
               page,
-              r'^[ \t]*\{/\* Approved awakening footage.*?page wakes into the burst\. \*/\}',
-              hero_note,
-              "Services hero source note",
+              r'^[ \t]*\{/\* Phase 1 hero pass\..*?frame stays open and cinematic\. \*/\}',
+              scrim_note,
+              "Services hero scrim note",
           )
 
-          page = replace_once(page, "              <Reveal delay={1.7}>", "              <Reveal delay={0.35}>", "Services hero copy delay")
-          page = regex_once(
-              page,
-              r'(<SplitReveal\s+as="h1"\s+)splitType="chars"',
-              r'\g<1>splitType="words"',
-              "Services hero word reveal",
-          )
-
-          strategy_media = (
-              '          <BackgroundVideo\n'
-              '            video="/videos/services-strategy-topography.mp4"\n'
-              '            poster="/images/services-strategy-topography-poster.jpg"\n'
-              '          />'
+          type_note = (
+              '          {/* The word-level headline reveal arrives quickly enough to\n'
+              '              remain readable while still participating in the opening\n'
+              '              scene. The footage supplies depth; the type supplies the\n'
+              '              first clear narrative beat. */}'
           )
           page = regex_once(
               page,
-              r'^[ \t]*<BackgroundVideo\n[ \t]+parallax\n[ \t]+video="/videos/pexels-redwood-ferns\.mp4"\n[ \t]+videoWebm="/videos/pexels-redwood-ferns\.webm"\n[ \t]+poster="/images/pexels-redwood-ferns-poster\.jpg"\n[ \t]*/>',
-              strategy_media,
-              "Services strategy media",
-          )
-
-          strategy_note = (
-              '          {/* Original Brand Strategy film: dark topographic terrain\n'
-              '              clarifies into one deliberate route. It gives the education\n'
-              '              chapter a service-specific visual argument rather than\n'
-              '              another interchangeable forest scene. */}'
-          )
-          page = regex_once(
-              page,
-              r'^[ \t]*\{/\* Approved Education footage.*?reads as shrinking\)\. \*/\}',
-              strategy_note,
-              "Services strategy source note",
-          )
-
-          health_media = (
-              '          <BackgroundVideo\n'
-              '            video="/videos/services-health-reflection.mp4"\n'
-              '            poster="/images/services-health-reflection-poster.jpg"\n'
-              '          />'
-          )
-          page = regex_once(
-              page,
-              r'^[ \t]*<BackgroundVideo\n[ \t]+parallax\n[ \t]+video="/videos/pexels-moss-stream\.mp4"\n[ \t]+videoWebm="/videos/pexels-moss-stream\.webm"\n[ \t]+poster="/images/pexels-moss-stream-poster\.jpg"\n[ \t]*/>',
-              health_media,
-              "Services health media",
-          )
-
-          health_note = (
-              '          {/* Original Brand Health film: a glass-dark reflective surface\n'
-              '              reveals quiet structural fractures beneath it, then settles.\n'
-              '              The movement behaves like diagnosis, not decorative nature\n'
-              '              footage, while preserving the page\'s calm forest register. */}'
-          )
-          page = regex_once(
-              page,
-              r'^[ \t]*\{/\* Media replaced per direct approval.*?2\.0MB MP4 / 0\.7MB WebM\. \*/\}',
-              health_note,
-              "Services health source note",
+              r'^[ \t]*\{/\* Phase 2, hero motion language:.*?depth through type, no imagery involved\. \*/\}',
+              type_note,
+              "Services hero type note",
           )
 
           page_path.write_text(page)
           PY
 
-      - name: Check the focused integration diff
+      - name: Check the focused diff
         run: |
           set -euo pipefail
           git diff --check
           git diff --stat
-          grep -R "services-hero-root-system\|services-strategy-topography\|services-health-reflection" \
-            src/app/services/page.tsx \
-            src/sections/Services/ServicesCinematicHero.tsx \
-            src/sections/Services/HeroReveal.tsx
 
-      - name: Commit the original-media integration
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Locate pnpm store
+        id: pnpm-cache
+        shell: bash
+        run: echo "store=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.store }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the Next.js application
+        run: pnpm build
+
+      - name: Commit verified direction cleanup
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/app/services/page.tsx
-          git commit -m "Integrate original generated Services films"
+          git commit -m "Align Services direction notes with original media"
           git push origin HEAD:services-original-media-rollout
