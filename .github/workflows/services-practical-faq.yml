@@ -37,7 +37,10 @@ jobs:
 
       - name: Install the FAQ chapter and browser contract
         run: |
-          python3 -m py_compile scripts/apply_services_practical_faq.py
+          python3 -m py_compile \
+            scripts/fix_work_mobile_model_narrowing.py \
+            scripts/apply_services_practical_faq.py
+          python3 scripts/fix_work_mobile_model_narrowing.py
           python3 scripts/apply_services_practical_faq.py
           git diff --check
 
@@ -102,6 +105,7 @@ jobs:
       - name: Remove one-time verification tools
         run: |
           rm scripts/apply_services_practical_faq.py
+          rm scripts/fix_work_mobile_model_narrowing.py
           rm .github/workflows/services-practical-faq.yml
           cat > vercel.json <<'JSON'
           {
@@ -126,8 +130,10 @@ jobs:
             src/app/services/page.tsx \
             src/data/servicesFaqs.ts \
             src/sections/Services/ServicesFAQ.tsx \
+            src/sections/Work/MobileNarrativeEnhancers.tsx \
             scripts/services_page_gate.cjs \
             scripts/apply_services_practical_faq.py \
+            scripts/fix_work_mobile_model_narrowing.py \
             .github/workflows/services-practical-faq.yml \
             vercel.json
           git diff --cached --check
