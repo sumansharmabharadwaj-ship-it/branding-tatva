@@ -1,3 +1,4 @@
+import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
 import { distinctiveAssetInsightPosts } from "@/data/distinctiveAssetInsights";
 import { insightPosts } from "@/data/insights";
 import { supportingInsightPosts } from "@/data/supportingInsights";
@@ -5,6 +6,7 @@ import { supportingInsightPosts } from "@/data/supportingInsights";
 for (const post of [
   ...supportingInsightPosts,
   ...distinctiveAssetInsightPosts,
+  ...customerJourneyInsightPosts,
 ]) {
   if (!insightPosts.some((existingPost) => existingPost.slug === post.slug)) {
     insightPosts.push(post);
@@ -23,6 +25,13 @@ const relatedRegistrations = [
     supportingSlug: "distinctive-brand-assets-audit",
     pillarSlugs: [
       "brand-awareness-vs-brand-recall",
+      "five-element-brand-strategy-framework",
+    ],
+  },
+  {
+    supportingSlug: "customer-journey-mapping-service-businesses",
+    pillarSlugs: [
+      "brand-audit-checklist-before-rebrand",
       "five-element-brand-strategy-framework",
     ],
   },
