@@ -36,6 +36,19 @@ async function assertNoOverflow(page, label) {
   );
 }
 
+async function waitForChangedText(page, locator, previousText, label) {
+  await page.waitForFunction(
+    ({ selector, before }) => {
+      const node = document.querySelector(selector);
+      return Boolean(node && node.textContent && node.textContent.replace(/\s+/g, " ").trim() !== before);
+    },
+    { selector: locator, before: previousText },
+    { timeout: 3_000 },
+  ).catch(() => {
+    throw new Error(`${label}: active evidence text did not change`);
+  });
+}
+
 async function auditWorkMobile(browser) {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -58,8 +71,10 @@ async function auditWorkMobile(browser) {
   await signatureDeck.waitFor({ state: "visible", timeout: 8_000 });
   const signatureButtons = signatureDeck.getByRole("group", { name: "Choose a performance case-study beat" }).getByRole("button");
   assert((await signatureButtons.count()) === 6, "work/mobile-narratives: performance deck does not expose six beats");
-  await signatureButtons.last().click();
   const signaturePanel = signatureDeck.locator("#mobile-signature-beat");
+  const signatureBefore = ((await signaturePanel.textContent()) || "").replace(/\s+/g, " ").trim();
+  await signatureButtons.last().click();
+  await waitForChangedText(page, "#mobile-signature-beat", signatureBefore, "work/mobile-narratives: performance deck");
   assert((await signaturePanel.textContent())?.includes("Verified result"), "work/mobile-narratives: performance deck did not reach the verified result");
 
   const systemBoard = page.locator('[data-mobile-system-project-board="true"]');
@@ -67,8 +82,10 @@ async function auditWorkMobile(browser) {
   assert((await page.locator("#mobile-system-step").count()) === 1, "work/mobile-narratives: system-board marker is missing or duplicated");
   const systemButtons = systemBoard.getByRole("group", { name: "Choose a system-building case-study stage" }).getByRole("button");
   assert((await systemButtons.count()) === 3, "work/mobile-narratives: system board does not expose three stages");
-  await systemButtons.nth(1).click();
   const systemPanel = systemBoard.locator("#mobile-system-project-panel");
+  const systemBefore = ((await systemPanel.textContent()) || "").replace(/\s+/g, " ").trim();
+  await systemButtons.nth(1).click();
+  await waitForChangedText(page, "#mobile-system-project-panel", systemBefore, "work/mobile-narratives: system board");
   const systemText = (await systemPanel.textContent()) || "";
   assert(systemText.includes("The strategic choice") && systemText.includes("origin"), "work/mobile-narratives: system board did not switch to ORIGIN");
 
@@ -118,10 +135,11 @@ async function auditCaseStudyMobile(browser) {
   const originalNarrative = page.locator('[data-mobile-narrative-original-case="true"]');
   assert((await visibleCount(originalNarrative)) === 0, "case/mobile-narratives: original long-form corridor remains visible");
 
-  const firstText = (await deck.locator("#mobile-case-study-deck-panel").textContent()) || "";
+  const chapterPanel = deck.locator("#mobile-case-study-deck-panel");
+  const firstText = ((await chapterPanel.textContent()) || "").replace(/\s+/g, " ").trim();
   await buttons.nth(Math.min(2, chapterCount - 1)).click();
-  await page.waitForTimeout(180);
-  const nextText = (await deck.locator("#mobile-case-study-deck-panel").textContent()) || "";
+  await waitForChangedText(page, "#mobile-case-study-deck-panel", firstText, "case/mobile-narratives: chapter deck");
+  const nextText = ((await chapterPanel.textContent()) || "").replace(/\s+/g, " ").trim();
   assert(firstText !== nextText, "case/mobile-narratives: chapter selection did not change the active evidence");
 
   await assertNoOverflow(page, "case/mobile-narratives");
