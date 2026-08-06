@@ -3,12 +3,13 @@
 import { useRef, useState, type KeyboardEvent } from "react";
 import { motion } from "framer-motion";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import type { Element } from "@/data/elements";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { track } from "@/lib/analytics";
 import { motionTokens } from "@/lib/motionTokens";
 
 export type AuthorityLayer = {
-  slug: string;
+  slug: Element["slug"];
   label: string;
   line: string;
   skipped: string;
