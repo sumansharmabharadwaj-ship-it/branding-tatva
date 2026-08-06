@@ -47,6 +47,11 @@ export const metadata: Metadata = {
   },
 };
 
+// Complete-integration preview stamp: this source-only comment forces a
+// fresh Vercel preview after the compatibility repairs. The ephemeral
+// build applies the focused journey transformer before compiling; no
+// production branch or public domain is touched.
+
 // Rebuilt from a services catalog into a "Brand Discovery Experience" —
 // one section per objection a visitor actually carries into the page
 // (Curiosity → Authority → Education → Desire → Risk removal → Book
@@ -128,188 +133,83 @@ export default async function ServicesPage() {
               signal travels through connected paths. The image explains
               the page's premise before the copy does: brand recognition
               is a system beneath the visible surface, not one isolated
-              deliverable. A dedicated mobile encode and generated poster
-              keep the first paint quiet, fast, and semantically intact. */}
+              deliverable. */}
           <HeroReveal />
-          {/* A restrained directional scrim protects the masthead
-              while leaving the generated root architecture readable
-              on the right side of the frame. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{ backgroundImage: "linear-gradient(90deg, rgba(15,18,17,0.38) 0%, rgba(15,18,17,0.12) 45%, transparent 70%)" }}
-          />
-          {/* The headline resolves by word, not character. It
-              participates in the scene without delaying basic
-              comprehension. */}
-          <Container className="relative py-20 sm:py-28">
-            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
-              <Reveal delay={0.35}>
-                <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/90">
-                  Curiosity
-                </span>
-                {/* Phase 4 persuasion pass: the old headline asked a
-                    question ("Why should a business care about
-                    branding?") right after two cycling lines had built a
-                    claim — the question dissolved the momentum. The
-                    headline now lands the claim the lines were building:
-                    it names what "something else" is. */}
-                {/* The cycling pre-headline ritual is retired on direct feedback:
-                    its single line height handing off to a wrapping headline
-                    made everything below jump, and it delayed the H1 —
-                    CLAUDE.md's own motion rule. The headline now renders
-                    immediately for every visitor, stable at every width. */}
-                <SplitReveal
-                  as="h1"
-                  splitType="words"
-                  className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
-                >
-                  The work begins wherever recognition is breaking down.
-                </SplitReveal>
-                <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/90">
-                  One client&apos;s engagement moved from{" "}
-                  <span className="font-medium text-sandstone">0.71%</span> to{" "}
-                  <span className="font-medium text-sandstone">2.81%</span> in eight weeks of this exact work. The
-                  chapters below show what made that happen, and where your brand would start.
-                </p>
-                {/* The hero's one quiet action — a visitor sold by the
-                    opening claim previously had nowhere to act until the
-                    final chapter. An editorial text link, deliberately
-                    understated next to the headline rather than a loud
-                    button competing with it. */}
-                {/* Magnetic like every LinkButton on the site — the
-                    hero's one action responds to the cursor the same
-                    way every other CTA already does. */}
-                <div className="mt-7">
-                  <Magnetic>
-                    <a
-                      href="#book"
-                      className="group inline-flex items-baseline gap-2 text-sm tracking-wide text-ivory/90 transition-colors duration-300 hover:text-ivory"
-                    >
-                      <span className="link-underline">Ready already? Open the strategy room</span>
-                      <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-y-0.5">
-                        ↓
-                      </span>
-                    </a>
-                  </Magnetic>
-                </div>
-              </Reveal>
-              {/* Editorial chapter index — the page's four acts listed
-                  the way a film lists chapters, replacing a row of
-                  generic pill buttons. Real navigation (same anchors
-                  as SectionJumpNav), presented with editorial weight. */}
-              <Reveal delay={0.1} className="hidden lg:block lg:pb-2">
-                <ol className="lg:min-w-52">
-                  {JUMP_ITEMS.map((item, i) => (
-                    <li key={item.href}>
-                      <a
-                        href={item.href}
-                        className="group flex items-baseline justify-end gap-3 border-b border-ivory/15 py-2.5 transition-colors duration-200 hover:border-ivory/40"
-                      >
-                        <span className="font-display text-sm text-ivory/70 transition-colors duration-200 group-hover:text-sandstone">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                        <span className="text-sm tracking-wide text-ivory/90 transition-colors duration-200 group-hover:text-ivory">
-                          {item.label}
-                        </span>
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </Reveal>
-            </div>
-          </Container>
           <ScrollCue raised />
-          {/* The hero's last frames darken into the Situation
-              chapter's charcoal. Every later chapter uses the same
-              veil-and-handoff grammar, so the page reads as one colour
-              journey rather than a stack of unrelated blocks. */}
-          <SceneHandoff color="#171A17" heightClass="h-[24vh]" />
         </PhotoHero>
 
-        {/* Choose your situation — the visitor places themselves before
-            any package is pitched. Reads the Home page's saved choice
-            (the shared localStorage key VisitorRecognition writes) so
-            the site remembers where they stand instead of asking twice.
-            A quiet interstitial on the page's charcoal ground; the
-            chapters around it carry the media. */}
-        <section id="situation" data-services-scene="situation" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
-          {/* Original procedural Situation film: one coherent material
-              world holds three different starting conditions. A pale
-              mineral seed begins, shifted strata wait to realign, and
-              repeating rings carry consistency forward. The chapter now
-              teaches diagnosis without borrowing the Package selector's
-              separate water-current metaphor. */}
+        {/* Commercial path, chapter 1. The visitor names their situation
+            before they are asked to understand a framework. The choice
+            persists into Packages, so this is one journey rather than two
+            disconnected quizzes. */}
+        <section
+          id="situation"
+          data-services-scene="situation"
+          className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24"
+          style={{ backgroundColor: MOOD.charcoal }}
+        >
           <BackgroundVideo
             parallax
             video="/videos/generated/bt-services-situation-paths.mp4"
             videoMobile="/videos/generated/bt-services-situation-paths-mobile.mp4"
             poster="/images/generated/bt-services-situation-paths-poster.jpg"
-            playbackRate={1.06}
           />
-          {/* A left-weighted charcoal scrim protects the diagnosis copy
-              while keeping all three material states visible across the
-              lower frame. */}
           <div
             className="absolute inset-0"
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(16,19,20,0.9) 0%, rgba(16,19,20,0.66) 46%, rgba(16,19,20,0.38) 100%)",
+                "linear-gradient(180deg, rgba(13,17,18,0.58) 0%, rgba(13,17,18,0.32) 45%, rgba(13,17,18,0.72) 100%)",
             }}
           />
+          <SceneVeil color="#0E1515" />
           <div className="relative">
             <SituationPath />
           </div>
-          <SceneHandoff color="#171A17" />
+          <SceneHandoff color="#111719" />
         </section>
 
-        {/* The full practice — every real service on offer, answered
-            plainly before the packages bundle them. Restored per
-            direct instruction: the offerings list (data/services.ts)
-            lost its section in the discovery rebuild, which left
-            "what do you actually do" with no complete answer anywhere
-            on the page. Editorial rows rather than a card grid; each
-            offering keeps its own accent from the data. */}
-        <section id="offerings" data-services-scene="offerings" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
-          {/* Original generated strategy terrain: mist withdraws from a
-              tactile topographic world while one pale route becomes
-              clear. The six disciplines stay distinct in the foreground,
-              but the moving terrain makes the shared strategic foundation
-              visible without turning the chapter into another card grid. */}
+        {/* The six disciplines become one inspectable ecosystem instead
+            of six document-length rows. The active panel changes within
+            the same scene, keeping the page dense without hiding any
+            real service. */}
+        <section
+          id="offerings"
+          data-services-scene="offerings"
+          className="relative scroll-mt-24 overflow-hidden"
+          style={{ backgroundColor: MOOD.charcoal }}
+        >
           <BackgroundVideo
             parallax
             video="/videos/generated/bt-services-strategy-topography.mp4"
             videoMobile="/videos/generated/bt-services-strategy-topography-mobile.mp4"
             poster="/images/generated/bt-services-strategy-topography-poster.jpg"
-            playbackRate={1.12}
           />
           <div
             className="absolute inset-0"
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(16,20,19,0.9) 0%, rgba(16,20,19,0.74) 46%, rgba(16,20,19,0.56) 100%)",
+                "linear-gradient(180deg, rgba(13,18,19,0.62) 0%, rgba(13,18,19,0.36) 48%, rgba(13,18,19,0.74) 100%)",
             }}
           />
-          <div className="relative w-full">
-            <ServiceDisciplineExplorer />
-          </div>
-          <SceneHandoff color="#0E1714" />
+          <SceneVeil color="#111719" />
+          <ServiceDisciplineExplorer />
+          <SceneHandoff color="#10151A" />
         </section>
 
-        {/* Desire exposes the packages early enough for a ready
-            visitor to act before the teaching chapters. Its original
-            deep-water film keeps three legitimate currents visible,
-            then lets them resolve into one legible scope. */}
-        <section id="desire" data-services-scene="desire" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.deepwater }}>
-          {/* Original procedural package-choice loop: three
-              legitimate currents remain visible, then settle into one
-              legible channel. The restrained mineral-gold trace marks
-              choice without turning the section into a prize animation. */}
+        {/* Commercial path, chapter 3. Package choice is a real business
+            decision, not a catalogue: one recommendation at a time, with
+            an explicit side-by-side comparison when the visitor asks for
+            it. */}
+        <section
+          id="desire"
+          data-services-scene="desire"
+          className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24"
+          style={{ backgroundColor: MOOD.deepWater }}
+        >
           <BackgroundVideo
             parallax
-            push
             video="/videos/generated/bt-services-package-current.mp4"
             videoMobile="/videos/generated/bt-services-package-current-mobile.mp4"
             poster="/images/generated/bt-services-package-current-poster.jpg"
@@ -319,76 +219,44 @@ export default async function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(14,23,20,0.55) 0%, rgba(14,23,20,0.35) 45%, rgba(14,23,20,0.58) 100%)",
+                "linear-gradient(180deg, rgba(15,21,28,0.56) 0%, rgba(15,21,28,0.28) 50%, rgba(15,21,28,0.66) 100%)",
             }}
           />
-          {/* Scene dissolve: the situation chapter's charcoal into
-              Desire's deep water. */}
-          <SceneVeil color="#171A17" />
+          <SceneVeil color="#10151A" />
           <div className="relative">
             <PackageSelector />
           </div>
           <SceneHandoff color="#171A17" />
         </section>
 
-        {/* Verified outcome — proof directly after the packages, every
-            number from projects.ts verified stats. Charcoal ground so
-            the numbers themselves are the visual; it also hands
-            seamlessly into Authority's identical charcoal. */}
-        <section data-services-scene="verified-outcome" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
-          <SceneVeil color="#0E1714" />
-          <div className="relative">
-            <VerifiedOutcome />
-          </div>
-        </section>
+        <VerifiedOutcome />
 
-        {/* Authority is the page's one extended CSS-sticky teaching
-            chapter. The wrapper stays in normal flow and paints its own
-            charcoal ground, so the five-layer build never disagrees
-            with the viewport width. */}
-        <section id="authority" className="relative scroll-mt-24" style={{ backgroundColor: MOOD.charcoal }}>
+        {/* Authority is one measured sticky chapter. The five layers
+            assemble as the visitor scrolls, but mobile and reduced motion
+            receive a complete linear fallback. */}
+        <section id="authority" data-services-scene="authority" className="relative scroll-mt-24 overflow-hidden" style={{ backgroundColor: MOOD.charcoal }}>
           <PinnedBrandBuild />
-          <SceneHandoff color="#191B16" />
         </section>
 
-        {/* An extension of Authority, not a new act. The visual now
-            performs the argument instead of illustrating it with a
-            summit: several interchangeable forms recede into category
-            fog while one materially distinctive surface becomes
-            recognisable before the visitor reads the comparison. */}
-        {/* Mood: STONE. Part of the Phase 1 cinematic color script —
-            each Services section sits on its own temperature-shifted
-            dark (see MOOD in sectionWash.ts) instead of the one warm
-            soil veil that was re-warming the whole page into a single
-            amber wash. The overlay gradient is tinted with the
-            section's own mood tone, never soil. */}
-        <section data-services-scene="stakes" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.stone }}>
-          {/* Original generated positioning scene: several similar
-              stones disappear into cool category mist while one
-              weathered surface holds a restrained mineral seam. The
-              scroll-linked camera drift stays subordinate to the
-              comparison cards, whose focus pull remains this chapter's
-              primary interaction. */}
+        {/* Stakes turns weak branding into a concrete cost comparison.
+            The original generated still separates one recognisable stone
+            from an interchangeable category field while the live cards
+            retain the exact business consequences. */}
+        <section
+          data-services-scene="stakes"
+          className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24"
+          style={{ backgroundColor: MOOD.stone }}
+        >
           <StakesCinematicBackdrop image="/images/generated/bt-services-stakes-positioning.png" />
-          {/* A left-weighted slate scrim protects the editorial copy
-              while leaving the distinctive mineral surface visible on
-              the right. No global soil tint, so the chapter remains
-              cool and materially different from Desire. */}
           <div
             className="absolute inset-0"
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(17,20,22,0.9) 0%, rgba(17,20,22,0.68) 44%, rgba(17,20,22,0.38) 100%)",
+                "linear-gradient(180deg, rgba(24,25,22,0.64) 0%, rgba(24,25,22,0.38) 50%, rgba(24,25,22,0.68) 100%)",
             }}
           />
-          {/* Scene dissolve: Authority's charcoal handing off into
-              Stakes' stone. */}
           <SceneVeil color="#171A17" />
-          {/* Same ghost watermark word technique Home ("ELEMENTS"), About
-              ("WHY"), and Blog ("NOTES") already use, extended here — a
-              recurring graphic motif tying new sections into the same
-              visual system rather than each reading as a one-off. */}
           <div className="relative">
             <WeakBrandingCost />
           </div>
@@ -400,11 +268,6 @@ export default async function ServicesPage() {
             while the original perception-ascent film clarifies terrain
             around a signal instead of borrowing generic growth footage. */}
         <section id="education" data-services-scene="education" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
-          {/* Original procedural perception-ascent loop:
-              layered terrain and mist clarify around one distant signal.
-              The landscape becomes more legible as the signal becomes
-              easier to locate, so the animation teaches recognition
-              rather than merely showing generic upward growth. */}
           <BackgroundVideo
             parallax
             video="/videos/generated/bt-services-perception-ascent.mp4"
@@ -419,7 +282,6 @@ export default async function ServicesPage() {
                 "linear-gradient(180deg, rgba(26,32,38,0.5) 0%, rgba(26,32,38,0.3) 55%, rgba(26,32,38,0.52) 100%)",
             }}
           />
-          {/* Scene dissolve: Stakes' dry stone into Education's mist. */}
           <SceneVeil color="#191B16" />
           <div className="relative">
             <PerceptionLadder />
@@ -427,31 +289,11 @@ export default async function ServicesPage() {
           <SceneHandoff color="#172019" />
         </section>
 
-        {/* CommonMistakes used to be its own full-viewport section here
-            — a Creative Direction Audit found it taught the same idea
-            as Stakes (WeakBrandingCost) above with a separate video
-            beat, directly contributing to "the page is longer than
-            necessary and repeats branding concepts." Its four real
-            observations now live as a compact addendum inside Stakes
-            instead; the separate section, video, and shader are gone. */}
-
-        {/* Trust (FounderLens) removed on direct request following the
-            Creative Direction Audit. Founder credibility still lives on
-            the About page; not duplicated here. */}
-
         {/* Deliverables makes the invisible work tangible. Every
             artifact traces to real services data, and the live explorer
             stays the primary interaction inside an original paper-and-
             vellum material environment. */}
-        {/* Mood: THE ARCHIVE. Layered paper, vellum,
-            blind-debossed grids, and dark folios form one ordered
-            material system behind the live ArtifactPreview. */}
         <section data-services-scene="deliverables" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.study }}>
-          {/* Original generated Deliverables archive: ivory papers,
-              translucent vellum, embossed grids, dark folios, and one
-              stone weight make the invisible work feel tangible before
-              a visitor opens an individual artifact. Its scroll-linked
-              drift and edge light remain secondary to the explorer. */}
           <DeliverablesCinematicBackdrop image="/images/generated/bt-services-deliverables-archive.png" />
           <div
             className="absolute inset-0"
@@ -461,8 +303,6 @@ export default async function ServicesPage() {
                 "linear-gradient(180deg, rgba(13,17,16,0.72) 0%, rgba(13,17,16,0.46) 44%, rgba(13,17,16,0.68) 100%)",
             }}
           />
-          {/* Education's blue mist settles onto the archive's
-              charcoal and paper planes. */}
           <SceneVeil color="#1A2026" heightClass="h-[15vh]" />
           <div className="relative">
             <DeliverablesExplorer />
@@ -481,40 +321,13 @@ export default async function ServicesPage() {
           tone="light"
         />
 
-        {/* Imagine Your Brand — the signature builder (conversion
-            rebuild §17): two choices produce a personalized project
-            map from real deliverables, real packages, and the
-            visitor's own regional pricing. The full map renders
-            before any email is requested. Charcoal interstitial
-            between the light CTA breath and the forest health check. */}
         <section id="imagine" data-services-scene="imagine" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <div className="relative">
             <ImagineYourBrand />
           </div>
         </section>
 
-        {/* Proof (the Dr. Haley Nutrition case study) and Future vision
-            (the six-stage pinned process) removed on direct request
-            following the Creative Direction Audit — the pinned process
-            sequence was also rendering with overlapping text (a real
-            bug: stage numerals, headings, and the bottom stage-list row
-            all painting on top of each other). The pacing "breath" quote
-            that used to sit between them ("Proof only matters if the
-            process behind it repeats") named both by concept and no
-            longer made sense with neither present, so it's gone too. */}
-
-        {/* Brand Health Check is the slower diagnostic alternative
-            to the package selector. Transparent scoring and real package
-            mapping sit over an original reflection film that reveals
-            hidden misalignment beneath an apparently coherent surface.
-            Mood: deep forest green-black after the light editorial break. */}
         <section id="health" data-services-scene="health" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.forest }}>
-          {/* Original generated diagnostic reflection loop: the
-              surface first reads as coherent, then faint misalignments
-              reveal themselves beneath it before settling into visible
-              priorities. It turns the Health Check's actual job into the
-              motion itself, with a smaller mobile encode and a still
-              generated from the same visual world for reduced motion. */}
           <BackgroundVideo
             parallax
             video="/videos/generated/bt-services-health-reflection.mp4"
@@ -530,8 +343,6 @@ export default async function ServicesPage() {
                 "linear-gradient(180deg, rgba(20,26,21,0.55) 0%, rgba(20,26,21,0.35) 50%, rgba(20,26,21,0.6) 100%)",
             }}
           />
-          {/* The archive's pale paper light dims into the Health
-              Check's green-black reflection. */}
           <SceneVeil color="#172019" heightClass="h-[14vh]" />
           <div className="relative">
             <BrandHealthCheck />
@@ -539,13 +350,6 @@ export default async function ServicesPage() {
           <SceneHandoff color="#171A17" />
         </section>
 
-        {/* The Brand Recognition Audit — the site's one secondary lead
-            asset, placed right after the health check so a visitor who
-            just diagnosed themselves can take the deeper checklist
-            away. Five checks open to anyone, the full ten behind an
-            explicit consent form feeding the existing Mailchimp double
-            opt in. Charcoal ground between the forest and the warm
-            strategy room that closes the page. */}
         <section id="audit" data-services-scene="audit" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-start overflow-hidden pb-16 pt-24 sm:py-20 lg:justify-center lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <SceneVeil color="#141A15" />
           <div className="relative">
@@ -554,12 +358,6 @@ export default async function ServicesPage() {
           <SceneHandoff color="#27221E" />
         </section>
 
-        {/* Book call becomes the film's arrival rather than a
-            stock-location ending. Surface movement gradually settles
-            into one mineral-gold reflection, mirroring the visitor's
-            shift from scattered questions to a focused conversation.
-            The source is original, silent, mathematically seamless,
-            responsive, and preserved as a still under reduced motion. */}
         <TexturedDark
           id="book"
           image="/images/generated/bt-services-strategy-room-poster.jpg"
