@@ -167,13 +167,13 @@ export function WorkRouteAccessibilityRuntime() {
       window.requestAnimationFrame(() => syncPhaseTabStops(section));
     }
 
-    document.addEventListener("click", handleClick);
+    document.addEventListener("click", handleClick, true);
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.cancelAnimationFrame(installationFrame);
       mutationObserver?.disconnect();
-      document.removeEventListener("click", handleClick);
+      document.removeEventListener("click", handleClick, true);
       document.removeEventListener("keydown", handleKeyDown);
       labSectionRef.current = null;
       dossierTriggerRef.current = null;
