@@ -105,6 +105,13 @@ export function HomeV4MediaDirector() {
       if (tracked.has(video)) return;
       tracked.add(video);
 
+      // VideoWarden runs sitewide and resumes any video that scrolls back into
+      // view. On this page that fights the budget below: the warden restarts a
+      // clip the director just paused, so the number playing at once drifts
+      // above the budget and varies run to run. The warden already stands down
+      // for anything claiming ownership, so claim it here.
+      video.dataset.autoplayManaged = "true";
+
       const openingVideo = Boolean(video.closest('[data-home-v4-chapter="opening"]'));
       if (!openingVideo && video.preload === "auto") video.preload = "metadata";
       if (constrainedConnection && !openingVideo) video.preload = "none";
@@ -133,6 +140,8 @@ export function HomeV4MediaDirector() {
         video.removeEventListener("play", refreshMediaState);
         observer.unobserve(video);
         visibleRatios.delete(video);
+        // Hand the video back to the sitewide warden on the way out.
+        delete video.dataset.autoplayManaged;
       });
     }
 
