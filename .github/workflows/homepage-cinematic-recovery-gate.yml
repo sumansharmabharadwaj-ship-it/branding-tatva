@@ -19,6 +19,7 @@ on:
       - scripts/evidence_scene_evidence.cjs
       - scripts/api_contract_gate.cjs
       - scripts/home_link_integrity.cjs
+      - src/app/cinematic-preview-release.ts
       - src/app/page.tsx
       - src/app/home-*.css
       - src/app/home-v4*.css
