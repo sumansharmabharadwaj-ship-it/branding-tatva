@@ -1,0 +1,79 @@
+name: Apply compact Work footer
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/apply-compact-work-footer.yml
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: apply-compact-work-footer
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out application without the media archive
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: corepack enable
+
+      - name: Apply, build, publish, and verify
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            echo "Compact Work footer attempt ${attempt}"
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+
+            echo 'ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgpST09UID0gUGF0aCgnLicpCkZPT1RFUiA9IFJPT1QgLyAnc3JjL3NlY3Rpb25zL0Zvb3Rlci9pbmRleC50c3gnCldPUktfUEFHRSA9IFJPT1QgLyAnc3JjL2FwcC93b3JrL3BhZ2UudHN4JwpHQVRFID0gUk9PVCAvICdzY3JpcHRzL3dvcmtfcGFnZV9nYXRlX3YzLmNqcycKV09SS0ZMT1cgPSBST09UIC8gJy5naXRodWIvd29ya2Zsb3dzL2FwcGx5LWNvbXBhY3Qtd29yay1mb290ZXIueW1sJwoKCmRlZiByZXBsYWNlX29uY2UodGV4dDogc3RyLCBvbGQ6IHN0ciwgbmV3OiBzdHIsIHBhdGg6IFBhdGgpIC0+IHN0cjoKICAgIGNvdW50ID0gdGV4dC5jb3VudChvbGQpCiAgICBpZiBjb3VudCAhPSAxOgogICAgICAgIHJhaXNlIFJ1bnRpbWVFcnJvcihmJ0V4cGVjdGVkIG9uZSBvY2N1cnJlbmNlIGluIHtwYXRofSwgZm91bmQge2NvdW50fToge29sZFs6MTQwXSFyfScpCiAgICByZXR1cm4gdGV4dC5yZXBsYWNlKG9sZCwgbmV3LCAxKQoKZm9vdGVyID0gRk9PVEVSLnJlYWRfdGV4dChlbmNvZGluZz0ndXRmLTgnKQpmb290ZXIgPSByZXBsYWNlX29uY2UoCiAgICBmb290ZXIsCiAgICAnZXhwb3J0IGZ1bmN0aW9uIEZvb3RlcigpIHsnLAogICAgJ3R5cGUgRm9vdGVyUHJvcHMgPSB7IGNvbXBhY3Q/OiBib29sZWFuIH07XG5cbmV4cG9ydCBmdW5jdGlvbiBGb290ZXIoeyBjb21wYWN0ID0gZmFsc2UgfTogRm9vdGVyUHJvcHMpIHsnLAogICAgRk9PVEVSLAopCmZvb3RlciA9IHJlcGxhY2Vfb25jZSgKICAgIGZvb3RlciwKICAgICcgICAgICA8VGV4dHVyZWREYXJrXG4nLAogICAgJyAgICAgIHshY29tcGFjdCAmJiAoXG4gICAgICAgIDxUZXh0dXJlZERhcmtcbicsCiAgICBGT09URVIsCikKZm9vdGVyID0gcmVwbGFjZV9vbmNlKAogICAgZm9vdGVyLAogICAgJyAgICAgIDwvVGV4dHVyZWREYXJrPlxuXG4gICAgICB7LyogV2FzIHNlY3Rpb25XYXNoJywKICAgICcgICAgICAgIDwvVGV4dHVyZWREYXJrPlxuICAgICAgKX1cblxuICAgICAgey8qIFdhcyBzZWN0aW9uV2FzaCcsCiAgICBGT09URVIsCikKRk9PVEVSLndyaXRlX3RleHQoZm9vdGVyLCBlbmNvZGluZz0ndXRmLTgnKQoKcGFnZSA9IFdPUktfUEFHRS5yZWFkX3RleHQoZW5jb2Rpbmc9J3V0Zi04JykKcGFnZSA9IHJlcGxhY2Vfb25jZShwYWdlLCAnICAgICAgPEZvb3RlciAvPicsICcgICAgICA8Rm9vdGVyIGNvbXBhY3QgLz4nLCBXT1JLX1BBR0UpCldPUktfUEFHRS53cml0ZV90ZXh0KHBhZ2UsIGVuY29kaW5nPSd1dGYtOCcpCgpnYXRlID0gR0FURS5yZWFkX3RleHQoZW5jb2Rpbmc9J3V0Zi04JykKb2xkX2Fzc2VydGlvbiA9ICcnJyAgYXNzZXJ0KAogICAgKGF3YWl0IHBhZ2UuZ2V0QnlSb2xlKCJsaW5rIiwgeyBuYW1lOiAvRGlzY3VzcyB0aGUgYnJhbmQgcHJvYmxlbS9pIH0pLmNvdW50KCkpID49IDEsCiAgICBgJHtsYWJlbH06IGZpbmFsIGNvbnZlcnNpb24gYWN0aW9uIG1pc3NpbmdgLAogICk7JycnCm5ld19hc3NlcnRpb24gPSAnJycgIGFzc2VydCgKICAgIChhd2FpdCBwYWdlLmdldEJ5Um9sZSgibGluayIsIHsgbmFtZTogL0Rpc2N1c3MgdGhlIGJyYW5kIHByb2JsZW0vaSB9KS5jb3VudCgpKSA+PSAxLAogICAgYCR7bGFiZWx9OiBmaW5hbCBjb252ZXJzaW9uIGFjdGlvbiBtaXNzaW5nYCwKICApOwogIGFzc2VydCgKICAgIChhd2FpdCBwYWdlLmdldEJ5Um9sZSgiaGVhZGluZyIsIHsgbmFtZTogIkV2ZXJ5IGJyYW5kIGlzIHZpc2libGUuIExldCdzIG1ha2UgeW91cnMgdW5mb3JnZXR0YWJsZS4iIH0pLmNvdW50KCkpID09PSAwLAogICAgYCR7bGFiZWx9OiBnZW5lcmljIGdsb2JhbCBmb290ZXIgcGl0Y2ggZHVwbGljYXRlcyB0aGUgdGFpbG9yZWQgV29yayBlbmRpbmdgLAogICk7JycnCmdhdGUgPSByZXBsYWNlX29uY2UoZ2F0ZSwgb2xkX2Fzc2VydGlvbiwgbmV3X2Fzc2VydGlvbiwgR0FURSkKR0FURS53cml0ZV90ZXh0KGdhdGUsIGVuY29kaW5nPSd1dGYtOCcpCgpXT1JLRkxPVy51bmxpbmsoKQpwcmludCgnTWFkZSB0aGUgV29yayBmb290ZXIgY29tcGFjdCBhbmQgcmVtb3ZlZCB0aGUgZHVwbGljYXRlIGdsb2JhbCBjbG9zaW5nIHBpdGNoJykK' | base64 -d > /tmp/apply-compact-work-footer.py
+            python /tmp/apply-compact-work-footer.py
+
+            pnpm install --frozen-lockfile
+            pnpm build
+
+            git add src/sections/Footer/index.tsx src/app/work/page.tsx scripts/work_page_gate_v3.cjs .github/workflows/apply-compact-work-footer.yml
+            if git diff --cached --quiet; then
+              echo "Compact Work footer is already present."
+              gh workflow run work-page-gate.yml --ref homepage-cinematic-recovery
+              exit 0
+            fi
+
+            git commit -m "Give the Work page one decisive ending"
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              gh workflow run work-page-gate.yml --ref homepage-cinematic-recovery
+              echo "Compact Work footer published and evidence gate dispatched."
+              exit 0
+            fi
+
+            echo "Branch moved during verification; replaying on the newest head."
+          done
+
+          exit 1
