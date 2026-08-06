@@ -1,0 +1,74 @@
+name: Commit the mobile Health Check source directly
+run-name: Mobile Health Check source rescue · ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - services-mobile-health-check
+    paths:
+      - .github/workflows/commit-services-mobile-health-check-source.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-services-mobile-health-check
+  cancel-in-progress: true
+
+jobs:
+  commit-source:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Clone, apply, validate, and push without marketplace actions
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone \
+            --filter=blob:none \
+            --branch services-mobile-health-check \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            repo
+          cd repo
+
+          python -m py_compile scripts/apply_services_mobile_health_check_existing.py
+          python scripts/apply_services_mobile_health_check_existing.py
+          git diff --check
+
+          grep -q 'HealthCheckMobileInstrument' src/sections/Services/BrandHealthCheck.tsx
+          grep -q 'data-health-desktop-layout="true"' src/sections/Services/BrandHealthCheck.tsx
+          grep -q 'data-health-mobile-instrument="true"' src/sections/Services/HealthCheckMobileInstrument.tsx
+          grep -q 'compactHealthInstrument: true' scripts/services_page_gate.cjs
+
+          rm -f scripts/apply_services_mobile_health_check.py
+          rm -f scripts/apply_services_mobile_health_check_existing.py
+          rm -f .github/workflows/services-mobile-health-check.yml
+          rm -f .github/workflows/commit-services-mobile-health-check-source.yml
+
+          cat > vercel.json <<'JSON'
+          {
+            "$schema": "https://openapi.vercel.sh/vercel.json",
+            "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json"
+          }
+          JSON
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/app/services/page.tsx \
+            src/sections/Services/BrandHealthCheck.tsx \
+            src/sections/Services/HealthCheckMobileInstrument.tsx \
+            scripts/services_page_gate.cjs \
+            scripts/apply_services_mobile_health_check.py \
+            scripts/apply_services_mobile_health_check_existing.py \
+            .github/workflows/services-mobile-health-check.yml \
+            .github/workflows/commit-services-mobile-health-check-source.yml \
+            vercel.json
+          git diff --cached --check
+          git commit -m "Compress the mobile Health Check into one live instrument"
+          git push origin HEAD:services-mobile-health-check
