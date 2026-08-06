@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Logo, LogoMark } from "@/components/Logo";
+import { AmbientAudioButton } from "@/components/AmbientAudio";
 import { LinkButton } from "@/components/Button";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useCurrentElement } from "@/lib/currentElement";
@@ -62,11 +63,6 @@ export function Header({ transparent = false }: HeaderProps) {
       lastScrollRef.current = current;
     }
 
-    // Lenis drives real scroll, but doesn't reliably fire the native
-    // `scroll` event alongside it — a prior attempt at this integration
-    // broke on exactly that assumption. Subscribe to Lenis's own scroll
-    // event when it's active; fall back to the native listener when it
-    // isn't (prefers-reduced-motion, or before Lenis has mounted).
     if (lenis) {
       handleScroll(lenis.scroll);
       return lenis.on("scroll", (instance) => handleScroll(instance.scroll));
@@ -93,25 +89,7 @@ export function Header({ transparent = false }: HeaderProps) {
     setOpen(false);
   }, [transparent]);
 
-  // Was a two-tone system — a plain white/cream pill once scrolled past
-  // a transparent hero, dark glass only at the very top. Direct, blunt
-  // feedback three times over: first that the pill was "boring and
-  // conventional," then that a thin gradient ring on the same white
-  // pill still read as "bland white and plain orange," then that even
-  // after going to one consistent dark-glass pill, an ivory CTA button
-  // was still "white and boring." The CTA is now tied to the current
-  // month's element color (useCurrentElement, shared with the footer's
-  // own buttons and the calendar's own accent) instead of a fixed
-  // ivory or clay — it actually changes through the year rather than
-  // defaulting to the same one or two tones everywhere.
   const isBarHidden = barHidden && !open;
-
-  // The living pill (Suman's board, item six): the bar's one gold
-  // accent shifts with the page's own world — warm earth at Home,
-  // river green through Services, paper sand across Work, book ochre
-  // in Insights, studio rose at Contact — and the active route gets
-  // named with color and a small node, per the manual's active-state
-  // requirement. One accent at a time; the charcoal glass stays put.
   const pathname = usePathname() ?? "/";
   const accent =
     pathname.startsWith("/services") ? "#8FAE83"
@@ -129,14 +107,6 @@ export function Header({ transparent = false }: HeaderProps) {
         transition={BAR_TRANSITION}
         className="fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5"
       >
-        {/* Rebuilt to the approved reference board (Aug 2026): one dark
-            glass pill, quiet hairline border, monogram + hairline
-            divider + wordmark as the identity block on the left, the
-            four content pages inline on the right, a second hairline,
-            then an outlined Warm Sand CTA and a Warm Sand menu toggle.
-            The earlier rotating five-color ring and the element-tinted
-            solid CTA are gone on purpose — the reference's whole point
-            is restraint: charcoal glass, ivory type, one gold accent. */}
         <div className="relative w-full max-w-4xl lg:max-w-5xl">
           <div
             className={`flex w-full items-center justify-between gap-4 rounded-full border border-ivory/10 px-4 py-2.5 shadow-elevation-md backdrop-blur-md transition-colors duration-500 sm:px-6 sm:py-3 ${
@@ -149,11 +119,7 @@ export function Header({ transparent = false }: HeaderProps) {
               <Logo light className="hidden origin-left min-[400px]:inline-flex" />
             </Link>
 
-            <div className="flex items-center gap-4 sm:gap-5 lg:gap-6">
-              {/* Home rides on the logo and Contact rides on the CTA, so
-                  the inline list carries only the four content pages —
-                  exactly the reference's ABOUT · SERVICES · WORK ·
-                  INSIGHTS row. The menu keeps the complete list. */}
+            <div className="flex items-center gap-3 sm:gap-4 lg:gap-5">
               <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
                 {navigation
                   .filter((item) => item.href !== "/" && item.href !== "/contact")
@@ -192,41 +158,42 @@ export function Header({ transparent = false }: HeaderProps) {
                   →
                 </span>
               </Link>
+              <AmbientAudioButton accent={accent} />
               <button
-                  className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-500"
-                  style={{ color: accent }}
-                  aria-label={open ? "Close menu" : "Open menu"}
-                  aria-expanded={open}
-                  onClick={() => setOpen((v) => !v)}
-                >
-                  <AnimatePresence initial={false}>
-                    {open ? (
-                      <motion.span
-                        key="close"
-                        variants={prefersReducedMotion ? undefined : closeIconVariants}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                        transition={ICON_TRANSITION}
-                        className="absolute flex"
-                      >
-                        <X size={20} />
-                      </motion.span>
-                    ) : (
-                      <motion.span
-                        key="menu"
-                        variants={prefersReducedMotion ? undefined : menuIconVariants}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                        transition={ICON_TRANSITION}
-                        className="absolute flex"
-                      >
-                        <Menu size={20} />
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </button>
+                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors duration-500"
+                style={{ color: accent }}
+                aria-label={open ? "Close menu" : "Open menu"}
+                aria-expanded={open}
+                onClick={() => setOpen((v) => !v)}
+              >
+                <AnimatePresence initial={false}>
+                  {open ? (
+                    <motion.span
+                      key="close"
+                      variants={prefersReducedMotion ? undefined : closeIconVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={ICON_TRANSITION}
+                      className="absolute flex"
+                    >
+                      <X size={20} />
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="menu"
+                      variants={prefersReducedMotion ? undefined : menuIconVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={ICON_TRANSITION}
+                      className="absolute flex"
+                    >
+                      <Menu size={20} />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
             </div>
           </div>
         </div>
@@ -255,10 +222,7 @@ export function Header({ transparent = false }: HeaderProps) {
                 className="w-full max-w-sm rounded-2xl border border-border bg-background-elevated p-3 shadow-elevation-lg"
                 aria-label="Primary"
               >
-                <motion.ul
-                  variants={prefersReducedMotion ? undefined : navListVariants}
-                  className="flex flex-col"
-                >
+                <motion.ul variants={prefersReducedMotion ? undefined : navListVariants} className="flex flex-col">
                   {navigation.map((item) => (
                     <motion.li
                       key={item.href}
