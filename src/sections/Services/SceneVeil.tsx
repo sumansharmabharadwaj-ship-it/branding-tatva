@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 // Scene dissolve, second generation. The first version was a static
 // gradient of the previous chapter's mood color at the top of each
@@ -14,7 +15,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 // static dissolve.
 export function SceneVeil({ color, heightClass = "h-[16vh]" }: { color: string; heightClass?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.95", "start 0.2"] });
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0.15]);
 

@@ -10,21 +10,24 @@ export const brandStages = [
 ] as const;
 
 export const contactSchema = z.object({
-  name: z.string().min(2, "Please share your name."),
-  email: z.string().email("That looks like it might have a typo, mind checking it?"),
-  phone: z.string().optional(),
-  business: z.string().min(1, "Let me know your business or brand name."),
-  website: z.string().optional(),
-  brandStage: z.enum(brandStages, {
-    errorMap: () => ({ message: "Pick the option closest to where you are." }),
-  }),
-  servicesNeeded: z.string().min(1, "A rough idea is fine, what do you think you need?"),
-  budget: z.string().optional(),
-  timeline: z.string().optional(),
-  description: z.string().min(10, "A few sentences helps me prepare before we talk."),
-  referral: z.string().optional(),
-  // honeypot — real users never fill this in
-  company_website: z.string().max(0, "").optional(),
+  name: z.string().min(2, "Please share your name.").max(120),
+  email: z
+    .string()
+    .email("That looks like it might have a typo, mind checking it?")
+    .max(254),
+  phone: z.string().max(60).optional(),
+  business: z.string().max(160).optional(),
+  website: z.string().max(500).optional(),
+  brandStage: z.enum(brandStages).optional(),
+  servicesNeeded: z.string().max(1000).optional(),
+  budget: z.string().max(120).optional(),
+  timeline: z.string().max(120).optional(),
+  description: z
+    .string()
+    .min(10, "A few sentences helps me prepare before we talk.")
+    .max(5000),
+  referral: z.string().max(200).optional(),
+  company_website: z.string().max(200).optional(),
 });
 
 export type ContactFormValues = z.infer<typeof contactSchema>;

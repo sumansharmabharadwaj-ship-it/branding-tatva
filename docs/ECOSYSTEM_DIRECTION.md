@@ -67,3 +67,176 @@ No section divisions — one continuous environment; mist/water/branches/birds c
 ## THE STORYBOARD (Aug 2, 2026 — Suman's 8-scene Services board, the master layout spec)
 S00 Hero: sun through forest + stream, chapter dots 01-08, "Scroll to begin". S01 Strategy Foundation: "beneath the surface" — the ROOTS image IS the diagram, real service concepts as labeled root-branches. S02 Brand Positioning: mountain with a LIT PATH climbing to one summit; ladder chips (Recognised/Remembered/Preferred + leadership) ride beside it. S03 Brand Experience Lab: the ONE LIGHT scene (cream/paper, sketchbook) — four chips: identity/messaging/tone/touchpoints. S04 Deliverables Studio: vine with firefly lights over deep green + horizontal card carousel of real deliverables. S05 Brand Health Check: mossy stream, the questions ARE stepping stones in the water (numbered stone buttons, ripples on answer). S06 Right Fit: wildflower meadow + butterflies + firefly trail + question cards (the live trail journey evolves toward this). S07 Process: winding path with icon nodes Discover→Evolve mapped to the six real process stages. S08 Book Call: valley sunrise, journal + coffee still-life warmth. Footer: journey timeline + dandelion + partners.
 Honesty adjustments that always apply when building this board: partner names on boards are placeholders — only the five real engagements ever ship; board copy is rewritten inside the voice standard (banned: "creates magic", "we believe", "impact", "meaningful"); the 2018-2024 journey timeline ships only with Suman's real dates and milestones, never invented ones.
+
+## Footage for the brand studies (Suman's direction, Aug 2026)
+
+The five brand studies teach brand mechanics. They never celebrate
+brands. That distinction governs every footage choice on those pages:
+if a clip leans on a recognisable product, a viewer attributes the
+impact to that brand's fame rather than to the system being explained,
+and the teaching quietly stops working. It also drags in trademark and
+licensing complexity for close to zero editorial gain.
+
+So no clip on a study page may show a real trademark, logo, protected
+trade dress, or a near lookalike of a real product. Footage evokes the
+principle instead of depicting the company.
+
+Per study, the principle to shoot for:
+
+- **Distinctive assets** — recognition before identification.
+  Condensation, curved reflections, saturated red, repetitive
+  silhouettes, familiar but unbranded forms. Something recognised
+  before it can be named.
+- **Brand architecture** — precision, modularity, hierarchy. Machined
+  materials, ordered grids, stacked systems, architectural shadows.
+- **Verbal identity** — language in motion. Editorial layouts,
+  typography being refined, annotations, printed copy, proof marks,
+  rhythm. Never generic writing footage.
+- **Codes under pressure** — materials stressed while staying
+  identifiable. Fabric in wind, paper folding, weathered surfaces,
+  repeated textures, restrained motion.
+- **Ritual** — human behaviour rather than product. Steam, pauses,
+  repeated gestures, anticipation, hands meeting ordinary objects in a
+  familiar sequence, with no brand revealed.
+
+**The mute test, applied to every clip on the site.** A clip has to be
+visually compelling with the page muted and every caption removed. It
+should carry its principle emotionally before any copy explains it
+intellectually. Footage that only makes sense once a caption tells you
+what to think has failed and gets rejected.
+
+**Approval record.** Every candidate is presented with thumbnail,
+source, licence, duration, whether it loops seamlessly, one line on why
+it reinforces the principle, one line on why it repeats no motif
+already in use, and the section it is meant for. Nothing is downloaded
+before Suman names the file.
+
+**Motifs already spent.** Roots, streams, forest, mountains, mist,
+desks, sketchbooks, hands writing, meadows, coastlines. A new clip that
+echoes one of these is rejected regardless of quality.
+
+### Every slot has a dominant visual verb
+
+Footage performs its principle rather than representing it. A viewer
+watching on mute for five seconds should feel the verb before reading
+the title. A beautiful static macro of the right subject fails; the
+same subject caught mid action passes.
+
+| Study | Principle | Visual verb |
+| --- | --- | --- |
+| Distinctive assets | Recognition before identification | **Repeat** — recurring forms, recurring light, recurring rhythm |
+| Brand architecture | Precision, modularity, hierarchy | **Assemble** — pieces align, grids emerge, hierarchy locks into place |
+| Verbal identity | Language in motion | **Refine** — type tightens, edits resolve, layouts gain clarity |
+| Codes under pressure | Material stressed, identity intact | **Persist** — materials flex, weather changes, identity remains |
+| Ritual | Human behaviour over product | **Return** — a repeated sequence that naturally loops |
+
+The study template carries its own four verbs, and they are one
+narrative rather than four unrelated labels:
+
+| Section | Verb | The move it makes |
+| --- | --- | --- |
+| Masthead | **Reveal** | Hidden becoming visible. Masks, focus shifts, unfolding, light arriving, detail emerging. |
+| Observations | **Expose** | Unnoticed becoming understood. Surfacing what was already there, never making a fresh mark on it. |
+| Applications | **Translate** | Strategy becoming execution. One system turning into another. |
+| Closing | **Compound** | Execution becoming accumulated equity. The work continuing past the edge of the page. |
+
+The closing verb matters most and is the easiest to get wrong. This
+practice argues that branding accumulates, so the final section can
+never feel like an ending coming to rest. It names the same thing the
+sixth process stage does, deliberately.
+
+### Each study owns a distinct motion language
+
+Motifs get catalogued so they stop repeating. Movement gets catalogued
+for the same reason: without it every clip drifts toward the same slow
+cinematic b-roll and the five studies stop feeling like five studies.
+
+| Study | Primary movement |
+| --- | --- |
+| Distinctive assets | Rhythmic repetition |
+| Brand architecture | Linear assembly |
+| Verbal identity | Precise micro adjustments |
+| Codes under pressure | Tension and resilience |
+| Ritual | Cyclical repetition |
+
+Two candidates that move the same way solve the same problem the same
+way, even when their subjects differ. The weaker one gets replaced.
+
+### Emotional temperature
+
+The dominant feeling a clip creates, named in a word or two:
+Controlled, Anticipatory, Resolute, Contemplative, Confident. Precision
+machining reads Controlled; condensation forming reads Anticipatory;
+fabric resisting wind reads Resolute; steam rising reads
+Contemplative; type locking into place reads Confident.
+
+This catches a duplication the other fields miss. Two clips can differ
+in subject, verb and movement and still leave a viewer with the same
+impression, which flattens a set of five into one note held too long.
+Candidates get checked on three axes before selection: motion
+language, visual verb, and temperature. A collision on any one of them
+replaces the weaker candidate.
+
+### The ten approval fields
+
+Every candidate reaches Suman with: thumbnail, source, licence,
+duration, seamless loop yes or no, principle reinforced, confirmation
+it repeats no spent motif, **visual verb**, **emotional temperature**,
+and intended section.
+
+This is the review framework for every page from here, not only the
+studies. It judges what footage teaches, how it moves, and how it
+feels, rather than whether it happens to look beautiful.
+
+### The three review passes
+
+Applied in order, every time footage is selected. The first two run
+before anything reaches Suman, so a candidate that fails them never
+takes up space on a contact sheet.
+
+**Pass 1, silent from a distance.** Two to three seconds on the
+thumbnail, no longer. One question: without reading anything, what idea
+does this communicate? Anything other than an answer close to the
+intended principle is out. A weak thumbnail never gets rescued by
+explaining what the clip supposedly does later in its runtime.
+
+**Pass 2, motion only.** Captions hidden, subject ignored entirely. One
+question: is the motion itself communicating the verb? This is the pass
+that catches a perfect subject carried by generic movement, which is
+the most common near miss.
+
+**Pass 3, ecosystem cohesion.** Every selected clip laid side by side.
+They have to read as chapters of one film. Any clip noticeably louder,
+faster, more cinematic or more saturated than its neighbours gets toned
+down in the grade or replaced.
+
+### Intensity rises and falls on purpose
+
+Making every clip equally beautiful flattens the page even when each
+one is excellent on its own. The studies carry a deliberate curve:
+
+| Study | Intensity |
+| --- | --- |
+| Distinctive assets | Immediate, rhythmic, visually striking. The loudest. |
+| Brand architecture | Calmer, precise, almost meditative. |
+| Verbal identity | Subtle micro movements that reward attention. The quietest. |
+| Codes under pressure | More tension and energy. |
+| Ritual | Slow, familiar, satisfying. |
+
+A clip that is individually excellent but pitched wrong for its slot
+gets dropped or moved to the slot it actually fits.
+
+### Candidates arrive ranked, never as equal options
+
+Twelve equally weighted choices is a worse decision than three ranked
+ones. Every slot presents exactly:
+
+- **Recommended** — the strongest candidate.
+- **Strong alternate** — a credible different answer, differing in
+  motion or temperature so it is a real alternative rather than a near
+  duplicate of the first.
+- **Reserve** — held in case licensing or technical quality rules the
+  first two out later.
+
+Each slot also carries one line on why the recommended candidate beat
+its alternate, so the reasoning survives the decision.

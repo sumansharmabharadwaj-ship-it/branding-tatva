@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
-import { useReducedMotion } from "framer-motion";
+
 import { useLenis } from "@/components/SmoothScrollProvider";
 
 const FADE_DISTANCE = 150;
@@ -18,8 +19,8 @@ const FADE_DISTANCE = 150;
 // this value changes on nearly every scroll frame while scrolling, so
 // setState here meant a full re-render every tick for what's ultimately
 // a single inline style write.
-export function ScrollCue() {
-  const prefersReducedMotion = useReducedMotion();
+export function ScrollCue({ raised = false }: { raised?: boolean }) {
+  const prefersReducedMotion = useHydratedReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
 
@@ -47,7 +48,9 @@ export function ScrollCue() {
   return (
     <div
       ref={ref}
-      className="pointer-events-none absolute inset-x-0 bottom-6 flex flex-col items-center gap-2"
+      className={`pointer-events-none absolute inset-x-0 flex flex-col items-center gap-2 ${
+        raised ? "bottom-[calc(5.75rem+env(safe-area-inset-bottom))] sm:bottom-6" : "bottom-6"
+      }`}
       style={{ opacity: 1 }}
       aria-hidden="true"
     >

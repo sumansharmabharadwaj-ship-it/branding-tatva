@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion } from "framer-motion";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { EASE_AIR } from "@/lib/motion";
 
@@ -15,13 +16,13 @@ type Slug = "earth" | "water" | "fire" | "air" | "space";
 // reduced-motion gating stays self-contained, the same pattern
 // TiltCard/FeaturedSecondaryCard already use.
 export function HoverGlyph({ slug, color }: { slug: Slug; color: string }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   return (
     <motion.span
       className="inline-flex cursor-default"
       initial={{ opacity: 0.6 }}
       whileHover={prefersReducedMotion ? undefined : { scale: 1.35, opacity: 1 }}
-      transition={{ duration: 0.3, ease: EASE_AIR }}
+      transition={{ duration: 0.35, ease: EASE_AIR }}
     >
       <ElementGlyph slug={slug} className="h-5 w-5" style={{ color }} strokeWidth={1.2} />
     </motion.span>

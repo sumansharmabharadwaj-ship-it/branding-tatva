@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useReducedMotion } from "framer-motion";
+
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { elements } from "@/data/elements";
 import { blendHex, SOIL } from "@/lib/sectionWash";
@@ -56,7 +57,7 @@ export function MeadowClosing() {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeIndexRef = useRef(0);
   const lenis = useLenis();
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
     const wrapper = wrapperRef.current;

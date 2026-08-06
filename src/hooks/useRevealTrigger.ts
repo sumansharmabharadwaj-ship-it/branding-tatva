@@ -4,26 +4,15 @@ import { registerScrollCheck } from "@/lib/scrollCheckRegistry";
 
 // Drives every scroll-triggered entrance animation on the site (Reveal,
 // ImageBreak, ClipReveal, PerspectiveReveal, ElementReveal, VideoBreak's
-// quote fade) — previously each of these used Framer Motion's own
-// whileInView/viewport prop directly, which depends entirely on
-// Framer Motion's internal IntersectionObserver firing. That's the
-// exact same failure class already found and fixed twice elsewhere on
-// this site (useLazyMount's image/video loading, AnimatedStat's
-// count-up): every one of these components starts at opacity: 0 (or
-// scaled/blurred/offset) and has nothing that guarantees it ever
-// reaches its visible end state if the observer callback doesn't fire
-// for a given element. Since literally every major text block and
-// section entrance on the site goes through one of these six
-// components, this was the most likely explanation for "a section
-// just never shows up while scrolling" reports that persisted even
-// after the load-time and pin-related fixes.
+// quote fade). A real IntersectionObserver handles the common case while
+// a position check follows both Lenis and native scroll as a redundant
+// safety net.
 //
-// Same dual-redundant mechanism as useLazyMount: a real
-// IntersectionObserver for the common case, plus a Lenis-scroll-tick
-// position check (not a raw `scroll` listener — see
-// SmoothScrollProvider's comment on why) as a fallback that doesn't
-// depend on the observer at all. Once triggered, state never resets —
-// these are one-time entrances, not repeating animations.
+// The important rule is that an element already passed by the viewport
+// must settle into its readable state too. Requiring it to still overlap
+// the viewport left headings at opacity: 0 after fast scrolls, hash jumps,
+// browser restoration, and stitched visual audits. These entrances are
+// one-time decoration, never a gate in front of content.
 export function useRevealTrigger(rootMargin = "0px 0px -80px 0px"): [RefObject<HTMLDivElement | null>, boolean] {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -36,9 +25,13 @@ export function useRevealTrigger(rootMargin = "0px 0px -80px 0px"): [RefObject<H
     function checkPosition() {
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight * 0.92 && rect.bottom > window.innerHeight * 0.08) {
-        setVisible(true);
-      }
+
+      // Reveal once the element enters the reading window OR has already
+      // been passed. The latter prevents invisible blank space after a
+      // fast scroll, direct anchor jump, browser Back restoration, or a
+      // full-section screenshot that temporarily places the heading above
+      // the viewport while the rest of its section is being captured.
+      if (rect.top < window.innerHeight * 0.92) setVisible(true);
     }
 
     const observer = new IntersectionObserver(
@@ -50,13 +43,27 @@ export function useRevealTrigger(rootMargin = "0px 0px -80px 0px"): [RefObject<H
     observer.observe(el);
 
     checkPosition();
-    const fallback = setTimeout(checkPosition, 800);
-    const unsubscribe = lenis ? registerScrollCheck(lenis, checkPosition) : undefined;
+    const frame = window.requestAnimationFrame(checkPosition);
+    const fallback = window.setTimeout(checkPosition, 800);
+
+    let unsubscribe: (() => void) | undefined;
+    if (lenis) {
+      unsubscribe = registerScrollCheck(lenis, checkPosition);
+    } else {
+      window.addEventListener("scroll", checkPosition, { passive: true });
+      unsubscribe = () => window.removeEventListener("scroll", checkPosition);
+    }
+
+    window.addEventListener("hashchange", checkPosition);
+    window.addEventListener("pageshow", checkPosition);
 
     return () => {
       observer.disconnect();
-      clearTimeout(fallback);
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(fallback);
       unsubscribe?.();
+      window.removeEventListener("hashchange", checkPosition);
+      window.removeEventListener("pageshow", checkPosition);
     };
   }, [rootMargin, lenis, visible]);
 

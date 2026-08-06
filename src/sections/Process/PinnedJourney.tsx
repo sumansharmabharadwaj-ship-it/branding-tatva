@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useReducedMotion } from "framer-motion";
+
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -66,7 +67,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
   const lenis = useLenis();
 
   const [mediaRef, shouldLoad] = useLazyMount();
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [videoReady, setVideoReady] = useState<boolean[]>(() => stages.map(() => false));
   // Tracks each stage's in-flight play() promise so a pause() landing
   // while one is still pending waits for it to settle first.

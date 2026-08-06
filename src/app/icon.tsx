@@ -1,22 +1,15 @@
 import { ImageResponse } from "next/og";
+import { monogramFont } from "@/lib/monogram-font";
 
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
-// Adapted from Logo.tsx's LogoMark — five bars in the five element
-// colors, rising and settling like a skyline. Replaces an earlier
-// five-petal design that, at a real 16x16 browser-tab size, read as a
-// radiating star rather than a brand mark.
-const bars = [
-  { color: "#B85A34", x: 14, height: 34 },
-  { color: "#24394D", x: 30, height: 48 },
-  { color: "#C28A28", x: 46, height: 64 },
-  { color: "#5C6B4A", x: 62, height: 48 },
-  { color: "#27221E", x: 78, height: 34 },
-];
-const BASELINE = 78;
-
-export default function Icon() {
+// The 2026 tab icon per Suman's brand boards: the interlocked BT
+// monogram, cream on the charcoal app icon ground. At 16 to 32 pixels
+// the sprig would smear, so the favicon carries the letters alone;
+// apple-icon.tsx adds the sprig at its larger size.
+export default async function Icon() {
+  const font = await monogramFont();
   return new ImageResponse(
     (
       <div
@@ -24,25 +17,19 @@ export default function Icon() {
           width: "100%",
           height: "100%",
           display: "flex",
-          background: "#F4EFE6",
-          borderRadius: "50%",
+          background: "#1B1B1B",
+          borderRadius: 7,
+          position: "relative",
+          fontFamily: "Cormorant",
         }}
       >
-        <svg width="32" height="32" viewBox="0 0 100 100">
-          {bars.map((b) => (
-            <rect
-              key={b.x}
-              x={b.x}
-              y={BASELINE - b.height}
-              width={10}
-              height={b.height}
-              rx={5}
-              fill={b.color}
-            />
-          ))}
-        </svg>
+        <div style={{ position: "absolute", left: 4, top: 8, fontSize: 19, color: "#F2F0E8", opacity: 0.9 }}>T</div>
+        <div style={{ position: "absolute", left: 11, top: 1, fontSize: 29, color: "#F2F0E8" }}>B</div>
       </div>
     ),
-    { ...size }
+    {
+      ...size,
+      fonts: font ? [{ name: "Cormorant", data: font, style: "normal", weight: 600 }] : undefined,
+    }
   );
 }

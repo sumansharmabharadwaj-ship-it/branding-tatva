@@ -1,8 +1,9 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+
 import { VerticalJourney } from "./VerticalJourney";
-import { PinnedJourney } from "./PinnedJourney";
+import { RootSystem } from "./RootSystem";
 import { Container } from "@/components/Container";
 import type { ProcessSectionProps } from "./types";
 
@@ -29,7 +30,7 @@ import type { ProcessSectionProps } from "./types";
 // prefers-reduced-motion only, where a pinned/scrubbed section would
 // be exactly the kind of motion that preference exists to turn off.
 export function ProcessSection({ stages, elementColor, dark }: ProcessSectionProps) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   if (prefersReducedMotion) {
     return (
@@ -39,5 +40,5 @@ export function ProcessSection({ stages, elementColor, dark }: ProcessSectionPro
     );
   }
 
-  return <PinnedJourney stages={stages} elementColor={elementColor} />;
+  return <RootSystem stages={stages} />;
 }
