@@ -5,7 +5,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
-import { Reveal } from "@/components/Reveal";
 import { decisionArtifacts } from "@/data/decisionArtifacts";
 import { projects } from "@/data/projects";
 import { track } from "@/lib/analytics";
@@ -29,9 +28,12 @@ export function DecisionEvidenceGallery() {
   }
 
   return (
-    <section className="py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
+    <section className="scroll-mt-28 py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
       <Container className="max-w-6xl">
-        <Reveal>
+        {/* The section title is evidence, not an entrance effect. Keeping
+            it static prevents fast scrolling or anchor restoration from
+            leaving an empty cream slab above the decision fragments. */}
+        <div>
           <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>
             Visual archive · decision fragments
           </p>
@@ -42,12 +44,14 @@ export function DecisionEvidenceGallery() {
             These are artefacts from real engagements, not seven inflated case studies: the question each fragment
             answered, the call made, and the reason it mattered.
           </p>
-        </Reveal>
+        </div>
 
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Decision artefacts">
+        <ul className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3" aria-label="Decision artefacts">
           {decisionArtifacts.map((artifact, index) => {
             const open = openId === artifact.id;
             const project = projects.find((item) => item.slug === artifact.projectSlug);
+            const panelId = `decision-${artifact.id}`;
+
             return (
               <motion.li
                 key={artifact.id}
@@ -67,25 +71,27 @@ export function DecisionEvidenceGallery() {
                   <button
                     type="button"
                     aria-expanded={open}
+                    aria-controls={panelId}
                     onClick={() => toggle(artifact.id)}
-                    className={`w-full p-5 text-left focus-visible:outline focus-visible:outline-2 sm:p-6 ${
-                      open ? "" : "flex min-h-[9.75rem] flex-col"
+                    className={`w-full p-4 text-left focus-visible:outline focus-visible:outline-2 sm:p-6 ${
+                      open ? "" : "flex min-h-[8.25rem] flex-col sm:min-h-[9.75rem]"
                     }`}
                     style={{ outlineColor: WORK.moss }}
                   >
                     <span className="flex items-center justify-between gap-4">
                       <span
-                        className="text-[0.6rem] font-medium uppercase tracking-[0.18em]"
+                        className="text-[0.58rem] font-medium uppercase tracking-[0.17em] sm:text-[0.6rem] sm:tracking-[0.18em]"
                         style={{ color: open ? WORK.sand : WORK.olive }}
                       >
                         {artifact.kind}
                       </span>
                       <span
                         aria-hidden="true"
-                        className="font-display text-sm"
+                        className="flex items-center gap-2 font-display text-sm"
                         style={{ color: open ? WORK.sage : WORK.wood }}
                       >
                         {String(index + 1).padStart(2, "0")}
+                        {open && <span className="font-sans text-base leading-none">×</span>}
                       </span>
                     </span>
                     <span
@@ -96,23 +102,27 @@ export function DecisionEvidenceGallery() {
                     </span>
                     {!open && (
                       <span
-                        className="mt-auto inline-flex items-center gap-1 pt-5 text-[0.68rem] font-medium"
+                        className="mt-auto inline-flex items-center gap-1 pt-3 text-[0.68rem] font-medium sm:pt-5"
                         style={{ color: WORK.wood }}
                       >
                         Inspect the decision <span aria-hidden="true">→</span>
                       </span>
                     )}
                   </button>
+
                   <AnimatePresence initial={false}>
                     {open && (
                       <motion.div
+                        id={panelId}
+                        role="region"
+                        aria-label={`${artifact.kind}: ${artifact.question}`}
                         initial={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
                         transition={{ duration: motionTokens.durationBase, ease: motionTokens.easeOrganic }}
                         className="overflow-hidden"
                       >
-                        <div className="grid gap-5 px-5 pb-6 sm:px-6 lg:grid-cols-3 lg:gap-8">
+                        <div className="grid gap-5 px-4 pb-5 sm:px-6 sm:pb-6 lg:grid-cols-3 lg:gap-8">
                           {(
                             [
                               ["The decision", artifact.decision],
@@ -121,7 +131,7 @@ export function DecisionEvidenceGallery() {
                             ] as const
                           ).map(([label, text]) => (
                             <div key={label}>
-                              <p className="text-[0.6rem] font-medium uppercase tracking-[0.18em]" style={{ color: WORK.sage }}>
+                              <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em] sm:text-[0.6rem] sm:tracking-[0.18em]" style={{ color: WORK.sage }}>
                                 {label}
                               </p>
                               <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "rgba(242,240,232,0.9)" }}>
@@ -131,7 +141,7 @@ export function DecisionEvidenceGallery() {
                           ))}
                         </div>
                         {project && (
-                          <div className="border-t px-5 pb-5 pt-4 sm:px-6" style={{ borderColor: "rgba(143,174,131,0.25)" }}>
+                          <div className="border-t px-4 pb-5 pt-4 sm:px-6" style={{ borderColor: "rgba(143,174,131,0.25)" }}>
                             <Link
                               href={`/work/${project.slug}`}
                               className="link-underline inline-flex items-center gap-2 text-sm font-medium"
