@@ -1,5 +1,5 @@
 name: Build and verify the compact mobile Health Check
-run-name: Services mobile Health Check pass 2 · ${{ github.sha }}
+run-name: Services mobile Health Check pass 3 · ${{ github.sha }}
 
 on:
   push:
@@ -37,8 +37,8 @@ jobs:
 
       - name: Install the compact Health Check and browser contract
         run: |
-          python -m py_compile scripts/apply_services_mobile_health_check.py
-          python scripts/apply_services_mobile_health_check.py
+          python -m py_compile scripts/apply_services_mobile_health_check_existing.py
+          python scripts/apply_services_mobile_health_check_existing.py
           git diff --check
 
       - name: Use Node 24
@@ -99,10 +99,17 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Remove one-time transformer and workflow
+      - name: Remove one-time preview and transformation tools
         run: |
           rm scripts/apply_services_mobile_health_check.py
+          rm scripts/apply_services_mobile_health_check_existing.py
           rm .github/workflows/services-mobile-health-check.yml
+          cat > vercel.json <<'JSON'
+          {
+            "$schema": "https://openapi.vercel.sh/vercel.json",
+            "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json"
+          }
+          JSON
 
       - name: Commit the verified mobile Health Check
         run: |
@@ -115,7 +122,9 @@ jobs:
             src/sections/Services/HealthCheckMobileInstrument.tsx \
             scripts/services_page_gate.cjs \
             scripts/apply_services_mobile_health_check.py \
-            .github/workflows/services-mobile-health-check.yml
+            scripts/apply_services_mobile_health_check_existing.py \
+            .github/workflows/services-mobile-health-check.yml \
+            vercel.json
           git diff --cached --check
           git commit -m "Compress the mobile Health Check into one live instrument"
           git push origin HEAD:services-mobile-health-check
