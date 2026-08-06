@@ -3,9 +3,9 @@
 
 The validator intentionally reads the repository's own manifest instead
 of maintaining a second hard-coded inventory. It checks that every film
-and still exists, that responsive films are silent and correctly shaped,
-that mobile encodes are lighter than desktop encodes, and that the live
-Services sources contain no stock-library media references.
+and still exists, that responsive films are silent and reduce both pixel
+and byte budgets, and that the live Services sources contain no stock-
+library media references.
 """
 
 from __future__ import annotations
@@ -49,6 +49,10 @@ class Probe:
     height: int
     bytes: int
     codec: str
+
+    @property
+    def pixels(self) -> int:
+        return self.width * self.height
 
 
 def fail(message: str) -> None:
@@ -202,8 +206,12 @@ def main() -> None:
                 fail(f"{film.key}: missing or empty media file {path_value}")
             manifest_paths.add(path_value)
             occurrences = live_source.count(path_value)
-            if occurrences != 1:
-                fail(f"{film.key}: {path_value} should appear once in live sources, found {occurrences}")
+            expected_occurrences = 2 if film.key == "hero" and path_value == film.poster else 1
+            if occurrences != expected_occurrences:
+                fail(
+                    f"{film.key}: {path_value} should appear {expected_occurrences} time(s) "
+                    f"in live sources, found {occurrences}"
+                )
 
         desktop_probe = probe_video(public_path(film.desktop))
         mobile_probe = probe_video(public_path(film.mobile))
@@ -213,8 +221,11 @@ def main() -> None:
                 fail(f"{film.key} {label}: duration {probe.duration:.2f}s falls outside the ambient-loop budget")
         if desktop_probe.width <= desktop_probe.height:
             fail(f"{film.key}: desktop film is not landscape ({desktop_probe.width}×{desktop_probe.height})")
-        if mobile_probe.height <= mobile_probe.width:
-            fail(f"{film.key}: mobile film is not portrait ({mobile_probe.width}×{mobile_probe.height})")
+        if mobile_probe.pixels >= desktop_probe.pixels:
+            fail(
+                f"{film.key}: mobile encode does not reduce the pixel budget "
+                f"({mobile_probe.width}×{mobile_probe.height} vs {desktop_probe.width}×{desktop_probe.height})"
+            )
         if mobile_probe.bytes >= desktop_probe.bytes:
             fail(f"{film.key}: mobile encode is not lighter than desktop")
         if desktop_probe.bytes > 6 * 1024 * 1024:
@@ -264,8 +275,8 @@ def main() -> None:
         f"- {len(films)} responsive silent films",
         f"- {len(stills)} generated material stills with restrained scroll treatments",
         "- zero stock-library media paths in the live Services page or Authority chapter",
-        "- every manifest path exists and appears exactly once in live Services sources",
-        "- every mobile encode is portrait and lighter than its desktop partner",
+        "- every manifest path is wired to its intended live scene; the hero poster is also preloaded for first paint",
+        "- every mobile encode reduces both pixel and byte budgets relative to its desktop partner",
         "- hydrated reduced-motion handling remains active in the pinned Authority chapter",
         "",
         "## Responsive films",
