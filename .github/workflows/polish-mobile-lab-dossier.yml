@@ -1,0 +1,115 @@
+name: Polish mobile Lab dossier handoff
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/polish-mobile-lab-dossier.yml
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: polish-mobile-lab-dossier
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out application without the media archive
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: corepack enable
+
+      - name: Apply, build, publish, and verify
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            echo "Mobile Lab handoff attempt ${attempt}"
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+
+            python <<'PY'
+          from pathlib import Path
+
+          path = Path("src/sections/Work/TatvaLab.tsx")
+          workflow = Path(".github/workflows/polish-mobile-lab-dossier.yml")
+          source = path.read_text(encoding="utf-8")
+
+          replacements = [
+              ('import { useState } from "react";', 'import { useEffect, useRef, useState } from "react";'),
+              (
+                  '  const prefersReducedMotion = useHydratedReducedMotion();\n  const openProject = conceptProjects.find((project) => project.slug === openSlug) ?? null;',
+                  '  const prefersReducedMotion = useHydratedReducedMotion();\n  const dossierRef = useRef<HTMLElement>(null);\n  const openProject = conceptProjects.find((project) => project.slug === openSlug) ?? null;',
+              ),
+              (
+                  '  function toggle(slug: string) {',
+                  '  useEffect(() => {\n    if (!openSlug || !dossierRef.current) return;\n    const frame = window.requestAnimationFrame(() => {\n      dossierRef.current?.scrollIntoView({\n        behavior: prefersReducedMotion ? "auto" : "smooth",\n        block: "start",\n      });\n    });\n    return () => window.cancelAnimationFrame(frame);\n  }, [openSlug, prefersReducedMotion]);\n\n  function toggle(slug: string) {',
+              ),
+              ('className="group relative flex min-h-[18rem] w-full', 'className="group relative flex min-h-[12rem] w-full sm:min-h-[18rem]'),
+              ('className="relative mt-auto block pt-8"', 'className="relative mt-auto block pt-5 sm:pt-8"'),
+              ('className="absolute left-[8%] right-[8%] top-[2.35rem] h-px"', 'className="absolute left-[8%] right-[8%] top-[1.65rem] h-px sm:top-[2.35rem]"'),
+              (
+                  '            <motion.article\n              id={`lab-${openProject.slug}`}',
+                  '            <motion.article\n              ref={dossierRef}\n              id={`lab-${openProject.slug}`}',
+              ),
+              ('className="mt-6 overflow-hidden rounded-[1.7rem] border"', 'className="mt-6 scroll-mt-28 overflow-hidden rounded-[1.7rem] border"'),
+              ('<ol className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">', '<ol className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">'),
+          ]
+
+          for old, new in replacements:
+              count = source.count(old)
+              if count != 1:
+                  raise RuntimeError(f"Expected one occurrence, found {count}: {old[:100]!r}")
+              source = source.replace(old, new, 1)
+
+          path.write_text(source, encoding="utf-8")
+          workflow.unlink()
+          print("Shortened mobile dossier cards and installed direct dossier handoff")
+          PY
+
+            pnpm install --frozen-lockfile
+            pnpm build
+
+            git add src/sections/Work/TatvaLab.tsx .github/workflows/polish-mobile-lab-dossier.yml
+            if git diff --cached --quiet; then
+              echo "Mobile Lab handoff is already present."
+              gh workflow run work-page-gate.yml --ref homepage-cinematic-recovery
+              exit 0
+            fi
+
+            git commit -m "Shorten the mobile Lab dossier journey"
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              gh workflow run work-page-gate.yml --ref homepage-cinematic-recovery
+              echo "Mobile Lab polish published and Work gate dispatched."
+              exit 0
+            fi
+
+            echo "Branch moved; replaying on the newest head."
+          done
+
+          exit 1
