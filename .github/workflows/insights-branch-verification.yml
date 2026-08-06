@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: insights-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,8 +20,20 @@ jobs:
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
-      - name: Check out repository
+      - name: Check out application source
         uses: actions/checkout@v4
+        with:
+          filter: blob:none
+          sparse-checkout: |
+            /src/
+            /package.json
+            /pnpm-lock.yaml
+            /next.config.ts
+            /tsconfig.json
+            /postcss.config.mjs
+            /eslint.config.mjs
+            /next-env.d.ts
+          sparse-checkout-cone-mode: false
 
       - name: Use Node.js 22
         uses: actions/setup-node@v4
