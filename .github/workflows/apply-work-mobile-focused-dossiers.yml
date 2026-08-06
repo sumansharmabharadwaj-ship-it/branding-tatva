@@ -1,0 +1,114 @@
+name: Focus expanded Work dossiers on mobile
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/apply-work-mobile-focused-dossiers.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-work-mobile-focused-dossiers
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the working branch without the media archive
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Apply, build, and publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            echo "Focused dossier attempt ${attempt}"
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+
+            python <<'PY'
+          from pathlib import Path
+
+          lab = Path("src/sections/Work/TatvaLab.tsx")
+          studies = Path("src/sections/CaseStudies/BrandStudies.tsx")
+          workflow = Path(".github/workflows/apply-work-mobile-focused-dossiers.yml")
+
+          lab_text = lab.read_text(encoding="utf-8")
+          studies_text = studies.read_text(encoding="utf-8")
+
+          lab_old = '<article key={project.slug} className={`min-w-0 ${CARD_SPANS[index] ?? "lg:col-span-6"}`}> '
+          if lab_old in lab_text:
+              lab_text = lab_text.replace(
+                  lab_old,
+                  '<article key={project.slug} className={`min-w-0 ${openSlug && !open ? "hidden md:block" : ""} ${CARD_SPANS[index] ?? "lg:col-span-6"}`}> ',
+                  1,
+              )
+          else:
+              lab_old = '<article key={project.slug} className={`min-w-0 ${CARD_SPANS[index] ?? "lg:col-span-6"}`}>\n'
+              if lab_old not in lab_text:
+                  raise RuntimeError("Could not locate the Lab article class")
+              lab_text = lab_text.replace(
+                  lab_old,
+                  '<article key={project.slug} className={`min-w-0 ${openSlug && !open ? "hidden md:block" : ""} ${CARD_SPANS[index] ?? "lg:col-span-6"}`}>\n',
+                  1,
+              )
+
+          studies_old = '<article className={`min-w-0 ${CARD_SPANS[index] ?? "lg:col-span-4"}`}> '
+          if studies_old in studies_text:
+              studies_text = studies_text.replace(
+                  studies_old,
+                  '<article className={`min-w-0 ${open >= 0 && !isOpen ? "hidden md:block" : ""} ${CARD_SPANS[index] ?? "lg:col-span-4"}`}> ',
+                  1,
+              )
+          else:
+              studies_old = '<article className={`min-w-0 ${CARD_SPANS[index] ?? "lg:col-span-4"}`}>\n'
+              if studies_old not in studies_text:
+                  raise RuntimeError("Could not locate the Brand Studies article class")
+              studies_text = studies_text.replace(
+                  studies_old,
+                  '<article className={`min-w-0 ${open >= 0 && !isOpen ? "hidden md:block" : ""} ${CARD_SPANS[index] ?? "lg:col-span-4"}`}>\n',
+                  1,
+              )
+
+          lab.write_text(lab_text, encoding="utf-8")
+          studies.write_text(studies_text, encoding="utf-8")
+          workflow.unlink()
+          PY
+
+            pnpm install --frozen-lockfile
+            pnpm build
+
+            git add src/sections/Work/TatvaLab.tsx src/sections/CaseStudies/BrandStudies.tsx .github/workflows/apply-work-mobile-focused-dossiers.yml
+            git commit -m "Focus expanded Work dossiers on mobile"
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              exit 0
+            fi
+          done
+
+          exit 1
