@@ -81,6 +81,7 @@
     align-items: stretch !important;
     justify-content: flex-start !important;
     padding-block: 0 !important;
+    overflow: clip !important;
   }
 
   [data-services-scene="stakes"] > .relative {
