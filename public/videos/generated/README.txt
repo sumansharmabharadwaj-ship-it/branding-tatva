@@ -32,6 +32,12 @@ Perception and education
 - poster: /images/generated/bt-services-perception-ascent-poster.jpg
 - role: makes the wider landscape and one recognisable signal become clearer together
 
+Deliverables / paper archive
+- still: /images/generated/bt-services-deliverables-archive.png
+- treatment: scroll-linked paper-plane drift and a restrained edge-light pass
+- role: makes the invisible system work feel tangible, ordered, and usable
+- accessibility: complete static composition under reduced motion
+
 Brand Health Check
 - bt-services-health-reflection.mp4
 - bt-services-health-reflection-mobile.mp4
