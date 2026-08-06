@@ -7,6 +7,11 @@ on:
       - staging/site-integration
     paths:
       - .github/workflows/validate-site-integration.yml
+  pull_request:
+    branches:
+      - staging/site-integration
+    paths:
+      - .github/services-integration-control
   workflow_dispatch:
 
 permissions:
