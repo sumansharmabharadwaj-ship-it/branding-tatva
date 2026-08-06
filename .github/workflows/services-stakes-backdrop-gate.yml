@@ -1,0 +1,149 @@
+name: Verify original Services Stakes backdrop
+
+on:
+  push:
+    branches:
+      - services-original-stakes-backdrop
+    paths:
+      - .github/workflows/services-stakes-backdrop-gate.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: services-original-stakes-backdrop
+  cancel-in-progress: true
+
+jobs:
+  integrate-and-build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out focused branch
+        uses: actions/checkout@v4
+        with:
+          ref: services-original-stakes-backdrop
+          fetch-depth: 0
+
+      - name: Replace the stock summit with the original positioning scene
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("src/app/services/page.tsx")
+          page = path.read_text()
+
+          old_import = 'import { SkyLife } from "@/components/SkyLife";'
+          new_import = 'import { StakesCinematicBackdrop } from "@/sections/Services/StakesCinematicBackdrop";'
+          if page.count(old_import) != 1:
+              raise SystemExit(f"SkyLife import: expected one match, found {page.count(old_import)}")
+          page = page.replace(old_import, new_import, 1)
+
+          direction_pattern = re.compile(
+              r'^[ \t]*\{/\* An extension of Authority, not a new act.*?adding\n[ \t]+a new device per section\. \*/\}\n',
+              re.S | re.M,
+          )
+          direction_replacement = (
+              '        {/* An extension of Authority, not a new act. The visual now\n'
+              '            performs the argument instead of illustrating it with a\n'
+              '            summit: several interchangeable forms recede into category\n'
+              '            fog while one materially distinctive surface becomes\n'
+              '            recognisable before the visitor reads the comparison. */}\n'
+          )
+          page, direction_count = direction_pattern.subn(direction_replacement, page, count=1)
+          if direction_count != 1:
+              raise SystemExit(f"Stakes direction note: expected one match, found {direction_count}")
+
+          media_pattern = re.compile(
+              r'^[ \t]*\{/\* Approved Positioning footage.*?<SkyLife density="rare" solitary band=\{\[6, 26\]\} color="rgba\(238,240,244,0\.72\)" />\n',
+              re.S | re.M,
+          )
+          media_replacement = (
+              '          {/* Original generated positioning scene: several similar\n'
+              '              stones disappear into cool category mist while one\n'
+              '              weathered surface holds a restrained mineral seam. The\n'
+              '              scroll-linked camera drift stays subordinate to the\n'
+              '              comparison cards, whose focus pull remains this chapter\'s\n'
+              '              primary interaction. */}\n'
+              '          <StakesCinematicBackdrop image="/images/generated/bt-services-stakes-positioning.png" />\n'
+          )
+          page, media_count = media_pattern.subn(media_replacement, page, count=1)
+          if media_count != 1:
+              raise SystemExit(f"Stakes media block: expected one match, found {media_count}")
+
+          old_overlay_note = (
+              '          {/* Overlay stays a step cooler than the stone base and a touch\n'
+              '              denser at the top where the sky sits — the summit clip is\n'
+              '              already graded slate, so this only steadies type contrast\n'
+              '              without dulling the cloud sea\'s own shadow depth. */}'
+          )
+          new_overlay_note = (
+              '          {/* A left-weighted slate scrim protects the editorial copy\n'
+              '              while leaving the distinctive mineral surface visible on\n'
+              '              the right. No global soil tint, so the chapter remains\n'
+              '              cool and materially different from Desire. */}'
+          )
+          if page.count(old_overlay_note) != 1:
+              raise SystemExit(f"Stakes overlay note: expected one match, found {page.count(old_overlay_note)}")
+          page = page.replace(old_overlay_note, new_overlay_note, 1)
+
+          old_gradient = (
+              '"linear-gradient(180deg, rgba(24,27,23,0.78) 0%, '
+              'rgba(24,27,23,0.55) 50%, rgba(24,27,23,0.75) 100%)"'
+          )
+          new_gradient = (
+              '"linear-gradient(100deg, rgba(17,20,22,0.9) 0%, '
+              'rgba(17,20,22,0.68) 44%, rgba(17,20,22,0.38) 100%)"'
+          )
+          if page.count(old_gradient) != 1:
+              raise SystemExit(f"Stakes overlay gradient: expected one match, found {page.count(old_gradient)}")
+          page = page.replace(old_gradient, new_gradient, 1)
+
+          path.write_text(page)
+          PY
+
+      - name: Check the focused source and media contract
+        run: |
+          set -euo pipefail
+          test -s public/images/generated/bt-services-stakes-positioning.png
+          grep -q 'StakesCinematicBackdrop' src/app/services/page.tsx
+          grep -q 'bt-services-stakes-positioning.png' src/app/services/page.tsx
+          grep -q 'bt-services-stakes-positioning.png' src/app/services/generatedMediaManifest.ts
+          ! grep -q 'pexels-summit-inversion' src/app/services/page.tsx
+          ! grep -q '<SkyLife' src/app/services/page.tsx
+          git diff --check
+          git diff --stat
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the Next.js application
+        run: pnpm build
+
+      - name: Commit the verified Stakes scene and remove one-time gates
+        run: |
+          set -euo pipefail
+          rm -f \
+            .github/workflows/import-services-stakes-backdrop.yml \
+            .github/workflows/services-stakes-backdrop-gate.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/app/services/page.tsx \
+            .github/workflows/import-services-stakes-backdrop.yml \
+            .github/workflows/services-stakes-backdrop-gate.yml
+          git commit -m "Replace the stock Stakes summit with an original positioning scene"
+          git push origin HEAD:services-original-stakes-backdrop
