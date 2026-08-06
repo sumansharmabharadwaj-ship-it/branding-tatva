@@ -1,12 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Container } from "@/components/Container";
 import { packages } from "@/data/services";
+import { servicesFaqs } from "@/data/servicesFaqs";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { track } from "@/lib/analytics";
 import { BrandHealthCheck as DesktopBrandHealthCheck } from "@/sections/Services/BrandHealthCheckDesktop";
 import { HealthCheckMobileInstrument } from "@/sections/Services/HealthCheckMobileInstrument";
+import { SceneHandoff } from "@/sections/Services/SceneHandoff";
+import { SceneVeil } from "@/sections/Services/SceneVeil";
+import { ServicesFAQ } from "@/sections/Services/ServicesFAQ";
 
 const QUESTIONS = [
   {
@@ -75,6 +80,19 @@ const MAX_SCORE = QUESTIONS.reduce(
   (sum, question) => sum + question.options[question.options.length - 1].points,
   0,
 );
+
+const FAQ_STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: servicesFaqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: `${faq.answer} ${faq.detail}`,
+    },
+  })),
+};
 
 function bandFor(score: number) {
   return BANDS.find((band) => score <= band.max) ?? BANDS[BANDS.length - 1];
@@ -145,6 +163,68 @@ function MobileBrandHealthCheck() {
   );
 }
 
+function ServicesFAQPortal() {
+  const [host, setHost] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const healthSection = document.getElementById("health");
+    if (!healthSection) return;
+
+    const existing = document.querySelector<HTMLElement>(
+      '[data-services-faq-portal-host="true"]',
+    );
+    if (existing) {
+      setHost(existing);
+      return;
+    }
+
+    const portalHost = document.createElement("div");
+    portalHost.dataset.servicesFaqPortalHost = "true";
+    healthSection.insertAdjacentElement("afterend", portalHost);
+    setHost(portalHost);
+
+    return () => {
+      portalHost.remove();
+    };
+  }, []);
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(FAQ_STRUCTURED_DATA).replace(/</g, "\\u003c"),
+        }}
+      />
+      {host &&
+        createPortal(
+          <section
+            id="questions"
+            data-services-scene="questions"
+            className="relative scroll-mt-24 overflow-hidden py-20 sm:py-24 lg:flex lg:min-h-[100svh] lg:items-center"
+            style={{ backgroundColor: "#171A17" }}
+          >
+            <SceneVeil color="#171A17" heightClass="h-[12vh]" />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-45"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle at 18% 16%, rgba(228,217,180,0.08), transparent 28%), linear-gradient(rgba(244,239,230,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(244,239,230,0.025) 1px, transparent 1px)",
+                backgroundSize: "auto, 42px 42px, 42px 42px",
+              }}
+            />
+            <div className="relative w-full">
+              <ServicesFAQ />
+            </div>
+            <SceneHandoff color="#171A17" />
+          </section>,
+          host,
+        )}
+    </>
+  );
+}
+
 export function BrandHealthCheck() {
   return (
     <>
@@ -163,6 +243,15 @@ export function BrandHealthCheck() {
       <div data-health-desktop-layout="true" className="hidden lg:block">
         <DesktopBrandHealthCheck />
       </div>
+      <div className="mt-8 flex justify-center px-6 lg:mt-10">
+        <a
+          href="#questions"
+          className="link-underline inline-flex min-h-11 items-center text-sm font-medium text-sandstone transition-colors hover:text-ivory"
+        >
+          Resolve the practical questions <span aria-hidden="true" className="ml-2">↓</span>
+        </a>
+      </div>
+      <ServicesFAQPortal />
     </>
   );
 }
