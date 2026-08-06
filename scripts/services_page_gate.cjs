@@ -594,12 +594,20 @@ async function auditServicesViewport(browser, viewport) {
   // The tablist is intentionally display:none from the lg breakpoint.
   // A CSS locator verifies the two-tab DOM contract in every viewport;
   // visibleCount below verifies that desktop does not expose it.
-  const auditChapterTabs = audit.locator(
-    '[role="tablist"][aria-label="Recognition Audit chapters"] [role="tab"]',
+  const auditChapterNav = audit.locator(
+    '[role="tablist"][aria-label="Recognition Audit chapters"]',
   );
+  const auditChapterTabs = auditChapterNav.locator('[role="tab"]');
   await waitForCount(auditChapterTabs, 2, `${label}: Recognition Audit chapters`);
 
   if (viewport.width < 1024) {
+    await auditChapterNav.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(120);
+    const initialAuditNavBox = await auditChapterNav.boundingBox();
+    assert(
+      initialAuditNavBox && initialAuditNavBox.y >= 72 && initialAuditNavBox.y <= 180,
+      `${label}: Recognition Audit navigation is not anchored below the fixed header ${JSON.stringify(initialAuditNavBox)}`,
+    );
     await assertTouchTargets(auditChapterTabs, 40, `${label}: Recognition Audit chapter tabs`);
     assert(
       (await auditChapterTabs.first().getAttribute("aria-selected")) === "true",
@@ -623,6 +631,21 @@ async function auditServicesViewport(browser, viewport) {
     assert((await visibleCount(checksPanel)) === 0, `${label}: public checks remain stacked above the mobile form`);
     assert((await visibleCount(unlockPanel)) === 1, `${label}: mobile unlock panel did not appear`);
     assert((await visibleCount(auditForm)) === 1, `${label}: mobile audit form did not appear`);
+    await page.waitForTimeout(120);
+    const unlockAuditNavBox = await auditChapterNav.boundingBox();
+    const unlockFormBox = await auditForm.boundingBox();
+    assert(
+      unlockAuditNavBox && unlockAuditNavBox.y >= 72 && unlockAuditNavBox.y <= 180,
+      `${label}: Recognition Audit navigation moved away after chapter swap ${JSON.stringify(unlockAuditNavBox)}`,
+    );
+    assert(
+      unlockFormBox && unlockAuditNavBox && unlockFormBox.y > unlockAuditNavBox.y + unlockAuditNavBox.height,
+      `${label}: Recognition Audit form does not begin beneath its chapter navigation`,
+    );
+    assert(
+      unlockFormBox && unlockFormBox.y < viewport.height,
+      `${label}: Recognition Audit form begins below the mobile viewport`,
+    );
     await assertTouchTargets(auditSubmit, 40, `${label}: audit submit`);
 
     const auditBack = audit.getByRole("button", { name: "Back to the five open checks", exact: true });
@@ -681,6 +704,7 @@ async function auditServicesViewport(browser, viewport) {
     publicAuditChecks: 5,
     recognitionAuditChapters: 2,
     mobileAuditDesk: true,
+    auditDeskAnchored: true,
     strategyRoomQuestions: 3,
   };
 }

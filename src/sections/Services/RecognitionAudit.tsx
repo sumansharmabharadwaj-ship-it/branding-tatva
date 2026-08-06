@@ -47,12 +47,24 @@ export function RecognitionAudit() {
   const [consent, setConsent] = useState(false);
   const [mobileChapter, setMobileChapter] = useState<MobileChapter>("checks");
   const chapterRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const mobileNavRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const unlocked = status === "done";
 
+  function openMobileChapter(nextChapter: MobileChapter) {
+    setMobileChapter(nextChapter);
+    if (typeof window === "undefined" || window.innerWidth >= 1024) return;
+    requestAnimationFrame(() => {
+      mobileNavRef.current?.scrollIntoView({
+        block: "start",
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+      });
+    });
+  }
+
   function selectChapter(index: number, focus = false) {
     const nextIndex = (index + MOBILE_CHAPTERS.length) % MOBILE_CHAPTERS.length;
-    setMobileChapter(MOBILE_CHAPTERS[nextIndex].id);
+    openMobileChapter(MOBILE_CHAPTERS[nextIndex].id);
     if (focus) requestAnimationFrame(() => chapterRefs.current[nextIndex]?.focus());
   }
 
@@ -108,7 +120,7 @@ export function RecognitionAudit() {
       // The reward is the content, not a thank-you cul-de-sac. On a
       // phone, return directly to the checks chapter so six through ten
       // replace the form inside the same frame.
-      setMobileChapter("checks");
+      openMobileChapter("checks");
     } catch {
       setError("The server was unreachable. Check your connection and try again.");
       setStatus("error");
@@ -121,9 +133,10 @@ export function RecognitionAudit() {
     <div data-recognition-audit-desk="true" data-mobile-chapter={mobileChapter}>
       <Container className="max-w-6xl">
         <div
+          ref={mobileNavRef}
           role="tablist"
           aria-label="Recognition Audit chapters"
-          className="mb-7 grid grid-cols-2 gap-2 rounded-2xl border border-ivory/12 bg-ivory/[0.025] p-1.5 lg:hidden"
+          className="scroll-mt-24 mb-7 grid grid-cols-2 gap-2 rounded-2xl border border-ivory/14 bg-[rgba(18,20,18,0.9)] p-1.5 shadow-[0_18px_50px_rgba(0,0,0,0.28)] backdrop-blur-xl lg:hidden"
         >
           {MOBILE_CHAPTERS.map((chapter, index) => {
             const selected = mobileChapter === chapter.id;
@@ -200,7 +213,7 @@ export function RecognitionAudit() {
                 </p>
                 <button
                   type="button"
-                  onClick={() => setMobileChapter("unlock")}
+                  onClick={() => openMobileChapter("unlock")}
                   className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full border border-sandstone/45 px-5 py-2.5 text-sm text-sandstone transition-colors hover:border-sandstone hover:bg-sandstone/10 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone lg:hidden"
                 >
                   Continue to unlock all ten
@@ -225,7 +238,7 @@ export function RecognitionAudit() {
           >
             <button
               type="button"
-              onClick={() => setMobileChapter("checks")}
+              onClick={() => openMobileChapter("checks")}
               className="mb-4 inline-flex min-h-11 items-center gap-2 rounded-full px-1 text-sm text-ivory/65 transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone lg:hidden"
             >
               <span aria-hidden="true">←</span>
@@ -248,7 +261,7 @@ export function RecognitionAudit() {
                   </p>
                   <button
                     type="button"
-                    onClick={() => setMobileChapter("checks")}
+                    onClick={() => openMobileChapter("checks")}
                     className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full border border-sandstone/45 px-5 py-2.5 text-sm text-sandstone transition-colors hover:bg-sandstone/10 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone lg:hidden"
                   >
                     View all ten checks
