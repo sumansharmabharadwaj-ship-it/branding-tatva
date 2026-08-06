@@ -108,14 +108,15 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                       onMouseEnter={() => setActive(index)}
                       onClick={() => track("case_study_opened", { project: project.slug, source: "filtered_work_index" })}
                       onFocus={() => setActive(index)}
-                      className="group grid grid-cols-[2.5rem_1fr] gap-4 py-6 transition-all duration-500 focus-visible:outline focus-visible:outline-2 sm:grid-cols-[3rem_1fr_auto] sm:gap-6 sm:py-7"
+                      className={`group grid grid-cols-[2.5rem_1fr] gap-4 py-6 transition-all duration-500 focus-visible:outline focus-visible:outline-2 sm:grid-cols-[3rem_1fr_auto] sm:gap-6 sm:py-7 ${
+                        isActive ? "opacity-100" : "opacity-100 lg:opacity-[0.82]"
+                      }`}
                       style={{
-                        opacity: prefersReducedMotion || isActive ? 1 : 0.58,
                         transform: !prefersReducedMotion && isActive ? "translateX(8px)" : "translateX(0)",
                         outlineColor: WORK.moss,
                       }}
                     >
-                      <span className="pt-1 font-display text-base" style={{ color: isActive ? WORK.olive : WORK.stone }} aria-hidden="true">
+                      <span className="pt-1 font-display text-base" style={{ color: isActive ? WORK.olive : WORK.wood }} aria-hidden="true">
                         {String(index + 1).padStart(2, "0")}
                       </span>
 
@@ -167,7 +168,7 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
 
                       <span
                         className="hidden items-center gap-2 self-center text-sm transition-transform duration-300 group-hover:translate-x-1 sm:flex"
-                        style={{ color: isActive ? WORK.forest : WORK.stone }}
+                        style={{ color: isActive ? WORK.forest : WORK.moss }}
                       >
                         {record.tier === "flagship" ? "View case study" : "View project story"} <span aria-hidden="true">→</span>
                       </span>
