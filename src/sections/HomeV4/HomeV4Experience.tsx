@@ -22,6 +22,7 @@ import { GuidedView, LivingCursor, SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
 import { HomeV4ProcessTempo } from "./HomeV4ProcessTempo";
+import { HomeV4RecognitionTempo } from "./HomeV4RecognitionTempo";
 import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
 
 export function HomeV4Experience() {
@@ -35,6 +36,7 @@ export function HomeV4Experience() {
       <HomeV4PreludeBridge />
       <HomeV4MediaDirector />
       <HomeV4HeaderDirector />
+      <HomeV4RecognitionTempo />
       <HomeV4ProcessTempo />
       <LivingCursor />
       <GuidedView />
