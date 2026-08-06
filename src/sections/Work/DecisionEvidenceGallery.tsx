@@ -15,8 +15,8 @@ import { motionTokens } from "@/lib/motionTokens";
 // than pretending every fragment is a separate transformation story.
 // Seven real decisions from the five recorded engagements each carry
 // the question, the decision, why it mattered, and where it appeared.
-// One tile opens at a time; keyboard, pointer, touch, and reduced-motion
-// visitors receive the same information.
+// On phones, opening one temporarily removes the unrelated fragments so
+// inspection becomes a focused scene rather than another seven-card scroll.
 export function DecisionEvidenceGallery() {
   const [openId, setOpenId] = useState<string | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -57,7 +57,7 @@ export function DecisionEvidenceGallery() {
                 key={artifact.id}
                 layout={prefersReducedMotion ? false : "position"}
                 transition={{ duration: motionTokens.durationBase, ease: motionTokens.easeOrganic }}
-                className={open ? "sm:col-span-2 lg:col-span-3" : ""}
+                className={`${openId && !open ? "hidden sm:block" : ""} ${open ? "sm:col-span-2 lg:col-span-3" : ""}`}
               >
                 <div
                   className={`h-full rounded-2xl border transition-colors duration-300 ${
