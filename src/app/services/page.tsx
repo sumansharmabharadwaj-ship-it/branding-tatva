@@ -6,7 +6,7 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { ScrollCue } from "@/components/ScrollCue";
-import { PhotoHero } from "@/components/PhotoHero";
+import { ServicesCinematicHero } from "@/sections/Services/ServicesCinematicHero";
 import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { SituationPath } from "@/sections/Services/SituationPath";
@@ -98,7 +98,7 @@ export default async function ServicesPage() {
   const region = isRegion(savedRegion) ? savedRegion : regionFromCountry(hdrs.get("x-vercel-ip-country"));
   // The hero poster is the page's first paint — a high priority preload
   // hint so the awakening scene arrives before the veil starts lifting.
-  preload("/images/pexels-aspen-sunburst-poster.jpg", { as: "image", fetchPriority: "high" });
+  preload("/images/services-hero-root-system-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
@@ -141,20 +141,16 @@ export default async function ServicesPage() {
             other. The aside reuses this exact page's own SectionJumpNav
             items — real wayfinding, not decoration — so the hero itself
             previews the four objections the rest of the page answers. */}
-        <PhotoHero
-          video="/videos/pexels-aspen-sunburst.mp4"
-          poster="/images/pexels-aspen-sunburst-poster.jpg"
+        <ServicesCinematicHero
+          video="/videos/services-hero-root-system.mp4"
+          poster="/images/services-hero-root-system-poster.jpg"
           minHeight="70vh"
         >
-          {/* Approved awakening footage (Pexels 31883946, Joshua
-              Woroniecki, free license): a sun star breaking through
-              backlit trembling aspens, birch trunks in bokeh depth —
-              the first candidate to pass all five hero questions
-              (clear visual event, revealing light, layered depth,
-              scroll-stopping, stronger than its predecessor). Full 20s
-              slowed to 24s, 2s forward dissolve, no reverse motion.
-              The reveal veil below lifts the forest darkness so the
-              page wakes into the burst. */}
+          {/* Original Branding Tatva film: a realistic underground root
+              network whose connected paths become visible through a
+              restrained ivory-mineral pulse. The visual teaches the
+              opening idea before the copy completes it: recognition
+              breaks when the system beneath visible work disconnects. */}
           <HeroReveal />
           {/* Phase 1 hero pass. Two localized layers on top of
               PhotoHero's own base gradient: a cool tint pulling the
@@ -174,7 +170,7 @@ export default async function ServicesPage() {
               depth through type, no imagery involved. */}
           <Container className="relative py-20 sm:py-28">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
-              <Reveal delay={1.7}>
+              <Reveal delay={0.35}>
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/90">
                   Curiosity
                 </span>
@@ -191,7 +187,7 @@ export default async function ServicesPage() {
                     immediately for every visitor, stable at every width. */}
                 <SplitReveal
                   as="h1"
-                  splitType="chars"
+                  splitType="words"
                   className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
                 >
                   The work begins wherever recognition is breaking down.
@@ -258,7 +254,7 @@ export default async function ServicesPage() {
               PREVIOUS chapter's mood color dissolving into its own —
               one continuous color journey instead of stacked blocks. */}
           <SceneHandoff color="#171A17" heightClass="h-[24vh]" />
-        </PhotoHero>
+        </ServicesCinematicHero>
 
         {/* Choose your situation — the visitor places themselves before
             any package is pitched. Reads the Home page's saved choice
@@ -480,19 +476,13 @@ export default async function ServicesPage() {
         {/* Mood: MIST — blue-grey, the coolest chapter so far, directly
             after Stakes' dry stone. See MOOD in sectionWash.ts. */}
         <section id="education" className="relative scroll-mt-24 overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
-          {/* Approved Education footage (Pexels 8522207, David Roberts,
-              free license): seedlings rising out of dark soil in
-              timelapse — the climb performed by nature itself, growth
-              stages upward from unknown ground, no human needed. Also
-              the film's best cut: Authority ends underground in roots;
-              this chapter opens with what those roots push above the
-              surface. Crossfade loop (never ping-pong — reversed growth
-              reads as shrinking). */}
+          {/* Original Brand Strategy film: dark topographic terrain
+              clarifies into one deliberate route. It gives the education
+              chapter a service-specific visual argument rather than
+              another interchangeable forest scene. */}
           <BackgroundVideo
-            parallax
-            video="/videos/pexels-redwood-ferns.mp4"
-            videoWebm="/videos/pexels-redwood-ferns.webm"
-            poster="/images/pexels-redwood-ferns-poster.jpg"
+            video="/videos/services-strategy-topography.mp4"
+            poster="/images/services-strategy-topography-poster.jpg"
           />
           <div
             className="absolute inset-0"
@@ -617,20 +607,13 @@ export default async function ServicesPage() {
             break; the stream clip's mossy greens finally read as green
             instead of being re-warmed to amber by a soil overlay. */}
         <section id="health" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.forest }}>
-          {/* Media replaced per direct approval (Pexels id 38507614,
-              standard license): near-black still water carrying green
-              foliage reflections — the chapter's own question made
-              visual, a self assessment as looking into still water,
-              replacing the generic forest stream. Trimmed to the
-              strongest 8s, slowed 0.85x, graded a step darker and
-              quieter into the forest mood, built into the same
-              seamless ping-pong loop as the other Pexels assets.
-              2.0MB MP4 / 0.7MB WebM. */}
+          {/* Original Brand Health film: a glass-dark reflective surface
+              reveals quiet structural fractures beneath it, then settles.
+              The movement behaves like diagnosis, not decorative nature
+              footage, while preserving the page's calm forest register. */}
           <BackgroundVideo
-            parallax
-            video="/videos/pexels-moss-stream.mp4"
-            videoWebm="/videos/pexels-moss-stream.webm"
-            poster="/images/pexels-moss-stream-poster.jpg"
+            video="/videos/services-health-reflection.mp4"
+            poster="/images/services-health-reflection-poster.jpg"
           />
           <div
             className="absolute inset-0"
