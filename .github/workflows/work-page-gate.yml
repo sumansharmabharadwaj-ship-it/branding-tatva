@@ -2,11 +2,10 @@ name: Work page evidence gate
 run-name: Work evidence gate · ${{ github.sha }}
 
 on:
-  # Keep a manual route available for accessibility and deployment verification.
   workflow_dispatch:
   push:
     branches:
-      - homepage-cinematic-recovery
+      - preview/work-mobile-narrative-final
     paths:
       - .github/workflows/work-page-gate.yml
       - scripts/work_page_gate_v2.cjs
@@ -34,7 +33,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: branding-tatva-work-evidence-gate
+  group: branding-tatva-work-final-preview
   cancel-in-progress: true
 
 jobs:
