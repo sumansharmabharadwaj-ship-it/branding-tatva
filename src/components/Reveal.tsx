@@ -6,8 +6,10 @@ import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 
 // Scroll-triggered entrance for a section. Fires once, settles quickly, and
 // never blocks reading (content is present in the DOM immediately, this
-// only animates opacity/position). Renders statically under
-// prefers-reduced-motion, consistent with the rest of the motion system.
+// only animates opacity/position). The rendered element stays identical
+// between the server and first client render; reduced-motion preference
+// changes animation values rather than swapping motion.div for div, which
+// prevents hydration mismatches when that media query is already active.
 //
 // Driven by useRevealTrigger rather than Framer Motion's own whileInView/
 // viewport prop — see that hook's comment for why relying on its internal
@@ -31,18 +33,23 @@ export function Reveal({
 }) {
   const prefersReducedMotion = useReducedMotion();
   const [ref, visible] = useRevealTrigger("0px 0px -80px 0px");
-
-  if (prefersReducedMotion) {
-    return <div className={className}>{children}</div>;
-  }
+  const staticMode = prefersReducedMotion === true;
 
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y: 20 }}
-      animate={visible ? { opacity: 1, y: 0 } : undefined}
-      transition={{ duration, ease: EASE_AIR, delay }}
+      initial={staticMode ? false : { opacity: 0, y: 20 }}
+      animate={
+        staticMode || visible
+          ? { opacity: 1, y: 0 }
+          : undefined
+      }
+      transition={
+        staticMode
+          ? { duration: 0 }
+          : { duration, ease: EASE_AIR, delay }
+      }
     >
       {children}
     </motion.div>
