@@ -14,21 +14,13 @@ import { brandStudies } from "@/data/brandStudies";
 // codes, ritual). CRITICAL FRAMING: these are independent analyses of
 // the public record and must never read as client work — the framing
 // line under the heading carries that in visitor facing copy, and the
-// section sits visually distinct from the real client grid above it
+// section sits visually distinct from the real client sequence above it
 // (numbered editorial rows, no project card chrome, no outcome stats).
-// Copy follows the sitewide standard throughout.
-//
-// Was five full dissections stacked open at once: the longest static
-// block on the site, roughly five screens of unbroken reading with one
-// hover state between them. Suman's direction is that each brand should
-// feel carefully opened, examined and decoded layer by layer, so the
-// section now does that literally. One study opens at a time, and its
-// observations, its lesson, and its own approved footage (an empty slot
-// until a clip is approved per file) arrive together. Brand, region,
-// lens and premise all stay visible while closed, so nothing a study
-// claims is hidden behind an interaction.
+// One study opens at a time only after the visitor asks for depth. Brand,
+// region, lens and premise all stay visible while closed, so nothing a
+// study claims is hidden behind an interaction.
 export function BrandStudies() {
-  const [open, setOpen] = useState(0);
+  const [open, setOpen] = useState(-1);
   const prefersReducedMotion = useReducedMotion();
 
   return (
