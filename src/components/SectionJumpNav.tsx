@@ -10,6 +10,10 @@ import { usePathname } from "next/navigation";
 // visitor asks for it, so reading, forms, and calls to action keep their space.
 type JumpItem = { href: string; label: string };
 
+type ServicesChapterEventDetail = {
+  chapters?: Array<{ href?: string; label?: string }>;
+};
+
 type SectionJumpNavProps = {
   items: JumpItem[];
   // Conversion chapters such as a booking room need the viewport back.
@@ -21,25 +25,84 @@ type SectionJumpNavProps = {
   desktopMode?: "bar" | "rail";
 };
 
+const SERVICES_CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
+
+function validChapterItems(chapters: ServicesChapterEventDetail["chapters"]): JumpItem[] {
+  if (!Array.isArray(chapters)) return [];
+  return chapters.flatMap((chapter) =>
+    typeof chapter.href === "string" &&
+    chapter.href.startsWith("#") &&
+    typeof chapter.label === "string" &&
+    chapter.label.trim()
+      ? [{ href: chapter.href, label: chapter.label }]
+      : [],
+  );
+}
+
 export function SectionJumpNav({
   items,
   hideOnLast = false,
   desktopMode,
 }: SectionJumpNavProps) {
   const pathname = usePathname();
-  const resolvedDesktopMode = desktopMode ?? (pathname === "/services" ? "rail" : "bar");
+  const isServicesRoute = pathname === "/services";
+  const resolvedDesktopMode = desktopMode ?? (isServicesRoute ? "rail" : "bar");
+  const [servicesItems, setServicesItems] = useState<JumpItem[] | null>(null);
+  const navigationItems = isServicesRoute && servicesItems?.length ? servicesItems : items;
   const [activeHref, setActiveHref] = useState(items[0]?.href ?? "");
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Services contains more directed scenes than the page's short editorial
+  // hero index. The runtime publishes every real scene after it has assigned
+  // stable IDs. This lets the fixed route guide represent the complete film
+  // without duplicating scene metadata in the server page.
   useEffect(() => {
-    const sections = items
+    if (!isServicesRoute) {
+      setServicesItems(null);
+      return;
+    }
+
+    function syncFromDom() {
+      const discovered = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-services-scroll-scene][id]"),
+      ).flatMap((scene) => {
+        const label = scene.dataset.servicesChapterLabel;
+        return scene.id && label ? [{ href: `#${scene.id}`, label }] : [];
+      });
+      if (discovered.length > 0) setServicesItems(discovered);
+    }
+
+    function onChaptersReady(event: Event) {
+      const detail = (event as CustomEvent<ServicesChapterEventDetail>).detail;
+      const next = validChapterItems(detail?.chapters);
+      if (next.length > 0) setServicesItems(next);
+    }
+
+    window.addEventListener(SERVICES_CHAPTERS_READY_EVENT, onChaptersReady as EventListener);
+    // Effects across the page and route layout can mount in either order.
+    // Two animation frames give the runtime one paint cycle to assign scene
+    // anchors when its ready event fired before this listener attached.
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(syncFromDom);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+      window.removeEventListener(SERVICES_CHAPTERS_READY_EVENT, onChaptersReady as EventListener);
+    };
+  }, [isServicesRoute]);
+
+  useEffect(() => {
+    const sections = navigationItems
       .map((item) => document.querySelector(item.href))
       .filter((element): element is Element => element !== null);
 
     if (sections.length === 0) return;
 
     const initialHash = window.location.hash;
-    if (items.some((item) => item.href === initialHash)) {
+    if (navigationItems.some((item) => item.href === initialHash)) {
       setActiveHref(initialHash);
     }
 
@@ -81,13 +144,13 @@ export function SectionJumpNav({
 
     sections.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
-  }, [items]);
+  }, [navigationItems]);
 
-  const activeIndex = Math.max(0, items.findIndex((item) => item.href === activeHref));
-  const activeItem = items[activeIndex] ?? items[0];
-  const finalHref = items[items.length - 1]?.href;
+  const activeIndex = Math.max(0, navigationItems.findIndex((item) => item.href === activeHref));
+  const activeItem = navigationItems[activeIndex] ?? navigationItems[0];
+  const finalHref = navigationItems[navigationItems.length - 1]?.href;
   const hiddenForFinalScene = hideOnLast && Boolean(finalHref) && activeHref === finalHref;
-  const progress = items.length > 0 ? ((activeIndex + 1) / items.length) * 100 : 0;
+  const progress = navigationItems.length > 0 ? ((activeIndex + 1) / navigationItems.length) * 100 : 0;
 
   useEffect(() => {
     if (hiddenForFinalScene) setMobileOpen(false);
@@ -116,7 +179,7 @@ export function SectionJumpNav({
       >
         {mobileOpen && (
           <div className="absolute bottom-[calc(100%+0.5rem)] right-0 grid w-[min(19rem,calc(100vw-1.5rem))] grid-cols-2 gap-1.5 rounded-2xl border border-ivory/12 bg-soil/95 p-2 shadow-elevation-lg backdrop-blur-md">
-            {items.map((item, index) => {
+            {navigationItems.map((item, index) => {
               const active = activeHref === item.href;
               return (
                 <a
@@ -142,7 +205,7 @@ export function SectionJumpNav({
           type="button"
           data-section-jump-nav-trigger="true"
           aria-expanded={mobileOpen}
-          aria-label={`${mobileOpen ? "Close" : "Open"} section navigation. Current chapter ${activeIndex + 1} of ${items.length}: ${activeItem?.label ?? "Sections"}`}
+          aria-label={`${mobileOpen ? "Close" : "Open"} section navigation. Current chapter ${activeIndex + 1} of ${navigationItems.length}: ${activeItem?.label ?? "Sections"}`}
           onClick={() => setMobileOpen((open) => !open)}
           className="relative flex h-14 w-14 items-center justify-center rounded-full border border-ivory/16 bg-soil/92 shadow-elevation-lg backdrop-blur-md transition-[opacity,transform] duration-300 hover:scale-[1.03] hover:bg-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
         >
@@ -151,7 +214,7 @@ export function SectionJumpNav({
               {String(activeIndex + 1).padStart(2, "0")}
             </span>
             <span className="mt-0.5 text-[0.48rem] font-medium uppercase tracking-[0.12em] text-ivory/48">
-              / {String(items.length).padStart(2, "0")}
+              / {String(navigationItems.length).padStart(2, "0")}
             </span>
           </span>
           <span
@@ -174,7 +237,7 @@ export function SectionJumpNav({
               {String(activeIndex + 1).padStart(2, "0")}
             </span>
             <span className="mt-1 text-[0.42rem] font-medium uppercase tracking-[0.12em] text-ivory/40" aria-hidden="true">
-              / {String(items.length).padStart(2, "0")}
+              / {String(navigationItems.length).padStart(2, "0")}
             </span>
 
             <div className="relative mt-3">
@@ -188,7 +251,7 @@ export function SectionJumpNav({
                 />
               </span>
               <ol className="relative flex flex-col items-center gap-0.5">
-                {items.map((item, index) => {
+                {navigationItems.map((item, index) => {
                   const active = activeHref === item.href;
                   return (
                     <li key={item.href}>
@@ -231,7 +294,7 @@ export function SectionJumpNav({
           className="fixed inset-x-0 bottom-0 z-30 hidden border-t border-ivory/10 bg-soil/95 backdrop-blur-xs sm:block"
         >
           <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 overflow-x-auto px-6 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {items.map((item) => {
+            {navigationItems.map((item) => {
               const active = activeHref === item.href;
               return (
                 <a
