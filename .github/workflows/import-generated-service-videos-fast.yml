@@ -1,0 +1,84 @@
+name: Import generated Services videos fast
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/import-generated-service-videos-fast.yml
+
+permissions:
+  contents: write
+
+jobs:
+  import-generated-media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out only the importer and destination
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/import-generated-service-videos.yml
+            .github/workflows/import-generated-service-videos-fast.yml
+            public/videos/generated
+
+      - name: Read the temporary generated-media sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' >> "$GITHUB_ENV"
+          import re
+          from pathlib import Path
+
+          source = Path('.github/workflows/import-generated-service-videos.yml').read_text()
+          for key in ('HERO_URL', 'STRATEGY_URL', 'HEALTH_URL'):
+              match = re.search(rf'^\s*{key}:\s*"([^"]+)"\s*$', source, re.MULTILINE)
+              if not match:
+                  raise SystemExit(f'Missing {key} in source importer')
+              print(f'{key}={match.group(1)}')
+          PY
+
+      - name: Download and verify the three silent 1080p loops
+        shell: bash
+        run: |
+          set -euo pipefail
+          output_dir="public/videos/generated"
+          mkdir -p "$output_dir"
+
+          curl --location --fail --show-error --silent --retry 3 --retry-delay 2 \
+            "$HERO_URL" --output "$output_dir/bt-services-hero-root-system.mp4"
+          curl --location --fail --show-error --silent --retry 3 --retry-delay 2 \
+            "$STRATEGY_URL" --output "$output_dir/bt-services-strategy-topography.mp4"
+          curl --location --fail --show-error --silent --retry 3 --retry-delay 2 \
+            "$HEALTH_URL" --output "$output_dir/bt-services-health-reflection.mp4"
+
+          for video in "$output_dir"/*.mp4; do
+            test -s "$video"
+            file "$video" | grep -Eqi 'mp4|iso media'
+          done
+
+          sha256sum "$output_dir"/*.mp4 > "$output_dir/SHA256SUMS.txt"
+          ls -lh "$output_dir"
+
+      - name: Commit the generated media
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/videos/generated
+
+          if git diff --cached --quiet; then
+            echo "Generated media already exists; nothing to commit."
+            exit 0
+          fi
+
+          git commit -m "feat: add original generated Services banner loops"
+          git pull --rebase origin homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
