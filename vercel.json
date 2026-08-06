@@ -1,4 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json"
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json",
+  "git": {
+    "deploymentEnabled": {
+      "services-project-room-packages": false
+    }
+  }
 }
