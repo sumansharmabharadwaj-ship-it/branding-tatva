@@ -10,6 +10,7 @@ on:
       - .github/workflows/work-page-gate.yml
       - scripts/work_page_gate_v2.cjs
       - scripts/work_page_gate_v3.cjs
+      - public/images/work-evidence-*.svg
       - src/app/work/**
       - src/sections/Work/**
       - src/sections/CaseStudies/BrandStudies.tsx
