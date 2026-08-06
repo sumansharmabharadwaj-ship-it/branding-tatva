@@ -1,0 +1,57 @@
+/* Cross-browser fallbacks for scroll-linked geometry. The director supplies
+   lengths and percentages directly; no CSS multiplication is required. */
+
+[data-services-scene="opening"] > [data-services-scroll-signal]::before,
+[data-services-scene="stakes"] > [data-services-scroll-signal]::before,
+[data-services-scene="imagine"] > [data-services-scroll-signal]::before {
+  clip-path: inset(0 round 50%);
+}
+
+[data-services-scene="imagine"] > [data-services-scroll-signal]::before {
+  clip-path: inset(0 round 1rem);
+}
+
+[data-services-scene="opening"] > [data-services-hero-copy] {
+  transform: translate3d(0, var(--services-shift-y), 0);
+}
+
+[data-services-scene="desire"] > [data-services-scroll-signal]::before {
+  transform: translate3d(var(--services-shift-x), var(--services-shift-y), 0)
+    scale(var(--services-scene-scale));
+}
+
+[data-services-scene="desire"] > [data-services-scroll-signal]::after {
+  transform: translate3d(var(--services-shift-y), var(--services-shift-x), 0)
+    scale(var(--services-scene-scale));
+}
+
+[data-services-scene="authority"] > [data-services-scroll-signal]::after {
+  transform: translate3d(var(--services-shift-x), var(--services-shift-y), 0)
+    rotate(12deg);
+}
+
+[data-services-scene="deliverables"] > [data-services-scroll-signal]::before {
+  transform: translate3d(var(--services-shift-x), var(--services-shift-y), 0)
+    rotate(-5deg);
+}
+
+[data-services-scene="deliverables"] > [data-services-scroll-signal]::after {
+  transform: translate3d(var(--services-shift-y), var(--services-shift-x), 0)
+    rotate(5deg);
+}
+
+[data-services-scene="health"] > [data-services-scroll-signal]::after {
+  right: auto;
+  width: var(--services-line);
+  transform: none;
+  transform-origin: left top;
+}
+
+[data-services-scene="audit"] > [data-services-scroll-signal]::before {
+  opacity: 0.86;
+}
+
+[data-services-scene="audit"] > [data-services-scroll-signal]::after {
+  transform: translate3d(var(--services-shift-x), var(--services-shift-y), 0)
+    rotate(8deg);
+}
