@@ -55,7 +55,7 @@ export function BrandStudies() {
               ].map(([value, label]) => (
                 <div key={label} className="border-l border-white/10 pl-3 first:border-l-0 first:pl-0">
                   <p className="font-display text-2xl text-ivory">{value}</p>
-                  <p className="mt-1 text-[0.5rem] uppercase leading-snug tracking-[0.12em] text-ivory/45">{label}</p>
+                  <p className="mt-1 text-[0.58rem] uppercase leading-snug tracking-[0.1em] text-ivory/50">{label}</p>
                 </div>
               ))}
             </div>
@@ -124,7 +124,7 @@ export function BrandStudies() {
                       </span>
 
                       <span className="mt-auto block pt-5 sm:pt-6">
-                        <span className="block text-[0.54rem] font-medium uppercase tracking-[0.15em] text-ivory/35">
+                        <span className="block text-[0.6rem] font-medium uppercase tracking-[0.13em] text-ivory/45">
                           The mechanism is visible in
                         </span>
                         <span className="mt-3 grid grid-cols-3 gap-2">
@@ -133,7 +133,7 @@ export function BrandStudies() {
                               <span className="font-display text-xs" style={{ color: accent }} aria-hidden="true">
                                 {String(observationIndex + 1).padStart(2, "0")}
                               </span>
-                              <span className="mt-1 block line-clamp-3 text-[0.54rem] font-medium uppercase leading-snug tracking-[0.08em] text-ivory/65 sm:text-[0.64rem] sm:tracking-[0.1em]">
+                              <span className="mt-1 block line-clamp-3 text-[0.62rem] font-medium uppercase leading-snug tracking-[0.04em] text-ivory/72 sm:text-[0.66rem] sm:tracking-[0.08em]">
                                 {observation.title}
                               </span>
                             </span>
@@ -206,7 +206,7 @@ export function BrandStudies() {
                               Three applications for a growing brand.
                             </p>
                           </div>
-                          <p className="text-[0.54rem] uppercase tracking-[0.14em] text-ivory/35">Teaching, never client proof</p>
+                          <p className="text-[0.6rem] uppercase tracking-[0.12em] text-ivory/45">Teaching, never client proof</p>
                         </div>
                         <ol className="mt-5 grid gap-3 lg:grid-cols-3">
                           {study.applications.map((application, applicationIndex) => (

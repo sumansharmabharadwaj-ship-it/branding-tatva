@@ -108,7 +108,7 @@ export function TatvaLab() {
                   <p className="font-display text-2xl font-normal" style={{ color: WORK.charcoal }}>
                     {value}
                   </p>
-                  <p className="mt-1 text-[0.55rem] font-medium uppercase tracking-[0.13em]" style={{ color: WORK.wood }}>
+                  <p className="mt-1 text-[0.58rem] font-medium uppercase leading-snug tracking-[0.11em]" style={{ color: WORK.wood }}>
                     {label}
                   </p>
                 </div>
@@ -126,7 +126,7 @@ export function TatvaLab() {
                   aria-expanded={open}
                   aria-controls={`lab-${project.slug}`}
                   onClick={() => toggle(project.slug)}
-                  className="group relative flex min-h-[11rem] w-full flex-col overflow-hidden rounded-[1.4rem] border p-4 text-left sm:min-h-[18rem] sm:p-6 transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:p-6"
+                  className="group relative flex min-h-[11rem] w-full flex-col overflow-hidden rounded-[1.4rem] border p-4 text-left transition-[transform,border-color,box-shadow] sm:min-h-[18rem] sm:p-6 duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:p-6"
                   style={{
                     borderColor: open ? project.accent : WORK.stone + "66",
                     background: `radial-gradient(circle at 88% 12%, ${project.accent}24 0%, transparent 35%), linear-gradient(145deg, rgba(255,255,255,0.76), ${project.accent}0D)`,
