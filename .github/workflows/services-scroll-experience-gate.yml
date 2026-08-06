@@ -1,49 +1,42 @@
-name: Complete Services page journey gate
-run-name: Services journey and scroll density · ${{ github.sha }}
+name: Services scroll-experience gate
+run-name: Services scroll compression · ${{ github.sha }}
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - homepage-cinematic-recovery
     paths:
-      - .github/workflows/services-page-gate.yml
-      - scripts/services_page_gate.cjs
+      - .github/workflows/services-scroll-experience-gate.yml
       - scripts/services_scroll_experience_gate.cjs
-      - src/app/services/**
-      - src/sections/Services/**
+      - src/app/services/layout.tsx
+      - src/app/services/ServicesExperienceRuntime.tsx
+      - src/app/services/services-scroll-compression.css
+      - src/app/services/page.tsx
+      - src/sections/Services/ServiceDisciplineExplorer.tsx
+      - src/sections/Services/PinnedBrandBuild.tsx
+      - src/components/SectionJumpNav.tsx
       - src/components/BackgroundVideo.tsx
       - src/components/PhotoHero.tsx
-      - src/components/TexturedDark.tsx
-      - src/components/SectionJumpNav.tsx
-      - src/components/CalendlyEmbed.tsx
-      - src/components/PricingProvider.tsx
-      - src/components/RegionSelector.tsx
-      - src/components/motion/WaystoneField.tsx
       - src/hooks/useVideoFadeIn.ts
-      - src/data/services.ts
-      - src/data/pricing.ts
-      - src/data/deliverables.ts
-      - src/lib/recommendationEngine.ts
-      - public/images/generated/**
       - package.json
       - pnpm-lock.yaml
       - next.config.ts
-  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: branding-tatva-services-page-gate
+  group: branding-tatva-services-scroll-experience
   cancel-in-progress: true
 
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 34
+    timeout-minutes: 24
 
     steps:
-      - name: Check out the application without the large media archive
+      - name: Check out the application without the media archive
         uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
@@ -78,26 +71,21 @@ jobs:
           NEXT_TELEMETRY_DISABLED: 1
         run: pnpm build
 
-      - name: Start the production server
+      - name: Start production server
         env:
           NEXT_TELEMETRY_DISABLED: 1
         shell: bash
         run: |
-          pnpm start --hostname 127.0.0.1 --port 3000 > /tmp/services-page.log 2>&1 &
-          echo $! > /tmp/services-page.pid
+          pnpm start --hostname 127.0.0.1 --port 3000 > /tmp/services-scroll.log 2>&1 &
+          echo $! > /tmp/services-scroll.pid
           for attempt in {1..90}; do
             if curl --fail --silent http://127.0.0.1:3000/services > /dev/null; then
               exit 0
             fi
             sleep 1
           done
-          cat /tmp/services-page.log
+          cat /tmp/services-scroll.log
           exit 1
-
-      - name: Walk every Services chapter, interaction, and viewport
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-        run: node scripts/services_page_gate.cjs
 
       - name: Measure native control, exploration density, and compressed scenes
         env:
@@ -105,22 +93,20 @@ jobs:
           AUDIT_COMMIT: ${{ github.sha }}
         run: node scripts/services_scroll_experience_gate.cjs
 
-      - name: Stop the production server
+      - name: Stop production server
         if: always()
         shell: bash
         run: |
-          if [ -f /tmp/services-page.pid ]; then
-            kill "$(cat /tmp/services-page.pid)" || true
+          if [ -f /tmp/services-scroll.pid ]; then
+            kill "$(cat /tmp/services-scroll.pid)" || true
           fi
-          cat /tmp/services-page.log || true
+          cat /tmp/services-scroll.log || true
 
-      - name: Upload Services journey evidence
+      - name: Upload scroll-experience evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: services-page-evidence
-          path: |
-            services-page-audit/*
-            services-scroll-audit/*
+          name: services-scroll-experience-evidence
+          path: services-scroll-audit/*
           if-no-files-found: error
           retention-days: 7

@@ -7,6 +7,134 @@ html[data-services-experience="active"] {
   --services-chapter-angle: 0deg;
 }
 
+/* Opening scene: no pin and no input interception. The visitor's first short
+   gesture resolves the film, settles the chapter index, then opens a quiet
+   aperture into the next world. One dominant camera move is supported by the
+   title and three editorial fragments, rather than a cloud of unrelated FX. */
+[data-services-hero-scene="true"] {
+  --services-hero-scale: 1.075;
+  --services-hero-media-y: 0%;
+  --services-hero-copy-y: 0px;
+  --services-hero-copy-opacity: 1;
+  --services-hero-index-x: 18px;
+  --services-hero-index-opacity: 0.28;
+  --services-hero-aperture-scale: 0.58;
+  --services-hero-aperture-opacity: 0.08;
+  perspective: 1000px;
+}
+
+[data-services-hero-media="true"] {
+  transform: translate3d(0, var(--services-hero-media-y), 0) scale(var(--services-hero-scale));
+  transform-origin: 50% 48%;
+  will-change: transform;
+}
+
+[data-services-hero-heading="true"] {
+  opacity: var(--services-hero-copy-opacity);
+  transform: translate3d(0, var(--services-hero-copy-y), 0);
+  transform-origin: left center;
+  will-change: transform, opacity;
+}
+
+[data-services-hero-index="true"] {
+  opacity: var(--services-hero-index-opacity);
+  transform: translate3d(var(--services-hero-index-x), 0, 0);
+  will-change: transform, opacity;
+}
+
+[data-services-hero-fragments="true"] {
+  position: absolute;
+  z-index: 8;
+  top: 14%;
+  right: clamp(1rem, 4vw, 4.5rem);
+  width: clamp(7rem, 13vw, 12rem);
+  height: 42%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0.52;
+  transition:
+    opacity 480ms ease,
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-services-hero-fragment] {
+  position: absolute;
+  right: 0;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(212, 185, 154, 0.7), rgba(244, 239, 230, 0.2));
+  box-shadow: 0 0 18px rgba(212, 185, 154, 0.12);
+  transition:
+    width 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    translate 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    rotate 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 420ms ease;
+}
+
+[data-services-hero-fragment="1"] {
+  top: 20%;
+  width: 72%;
+  translate: 2.6rem -0.4rem;
+  rotate: -9deg;
+}
+
+[data-services-hero-fragment="2"] {
+  top: 50%;
+  width: 100%;
+  translate: 1.1rem 0;
+  rotate: 4deg;
+}
+
+[data-services-hero-fragment="3"] {
+  top: 80%;
+  width: 58%;
+  translate: 3.4rem 0.5rem;
+  rotate: -4deg;
+}
+
+[data-services-hero-phase="resolved"] [data-services-hero-fragment],
+[data-services-hero-phase="handoff"] [data-services-hero-fragment] {
+  translate: 0 0;
+  rotate: 0deg;
+}
+
+[data-services-hero-phase="resolved"] [data-services-hero-fragment="1"] {
+  width: 62%;
+}
+
+[data-services-hero-phase="resolved"] [data-services-hero-fragment="2"] {
+  width: 86%;
+}
+
+[data-services-hero-phase="resolved"] [data-services-hero-fragment="3"] {
+  width: 46%;
+}
+
+[data-services-hero-phase="handoff"] [data-services-hero-fragments="true"] {
+  opacity: 0.14;
+  transform: translate3d(0, -1rem, 0);
+}
+
+[data-services-hero-aperture="true"] {
+  position: absolute;
+  z-index: 7;
+  left: 50%;
+  bottom: clamp(-14rem, -15vw, -8rem);
+  width: clamp(18rem, 30vw, 34rem);
+  aspect-ratio: 1;
+  border: 1px solid rgba(212, 185, 154, 0.38);
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 48%, rgba(212, 185, 154, 0.06) 50%, rgba(125, 155, 175, 0.08) 61%, transparent 72%);
+  box-shadow:
+    0 0 0 1px rgba(244, 239, 230, 0.03) inset,
+    0 0 70px rgba(212, 185, 154, 0.08);
+  opacity: var(--services-hero-aperture-opacity);
+  pointer-events: none;
+  transform: translate3d(-50%, 0, 0) scale(var(--services-hero-aperture-scale));
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
 /* Authority previously consumed 420vh for five states. That made each layer
    require almost a full viewport of physical travel and contradicted the
    page's small-input / large-discovery direction. The same sticky composition
@@ -90,7 +218,18 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
     conic-gradient(#d4b99a 0deg var(--services-chapter-angle), rgba(244, 239, 230, 0.12) var(--services-chapter-angle) 360deg);
 }
 
+@media (max-width: 1023px) {
+  [data-services-hero-fragments="true"] {
+    display: none;
+  }
+}
+
 @media (max-width: 767px) {
+  [data-services-hero-aperture="true"] {
+    bottom: -10rem;
+    width: 22rem;
+  }
+
   [data-services-scroll-scene] > [data-services-scene-signal="true"] {
     height: 2.7rem;
     opacity: calc(0.08 + var(--services-scene-presence, 0) * 0.2);
@@ -102,6 +241,19 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  [data-services-hero-media="true"],
+  [data-services-hero-heading="true"],
+  [data-services-hero-index="true"] {
+    transform: none !important;
+    opacity: 1 !important;
+    will-change: auto;
+  }
+
+  [data-services-hero-fragments="true"],
+  [data-services-hero-aperture="true"] {
+    display: none;
+  }
+
   #authority > div:first-child {
     height: auto !important;
   }
