@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -euxo pipefail
 
-command -v ffmpeg >/dev/null
-command -v ffprobe >/dev/null
+ffmpeg -version | head -n 1
+ffprobe -version | head -n 1
 mkdir -p public/images/generated
+ls -lh public/videos/generated
 
 stems=(
   bt-services-hero-root-system
