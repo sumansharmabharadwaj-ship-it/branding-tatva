@@ -15,6 +15,23 @@
   transform: translate3d(0, var(--services-shift-y), 0);
 }
 
+[data-services-scene="opening"] [data-services-hero-copy] h1::after {
+  content: "";
+  display: block;
+  width: var(--services-line);
+  max-width: 16rem;
+  height: 1px;
+  margin-top: 1.1rem;
+  background: linear-gradient(90deg, #d4b99a, rgba(125, 155, 175, 0.48), transparent);
+  box-shadow: 0 0 1.2rem rgba(212, 185, 154, 0.2);
+  transform-origin: left;
+}
+
+[data-services-scene="opening"] [data-services-hero-copy] ol {
+  opacity: var(--services-progress);
+  transform: translate3d(var(--services-shift-x), 0, 0);
+}
+
 [data-services-scene="desire"] > [data-services-scroll-signal]::before {
   transform: translate3d(var(--services-shift-x), var(--services-shift-y), 0)
     scale(var(--services-scene-scale));
@@ -68,6 +85,27 @@
   transition:
     opacity 240ms ease,
     transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Opening signal: 112svh is enough for atmosphere, proposition, proof, and
+   route discovery. The copy frame stays in place while the film drifts, the
+   root aperture opens, the underline grows, and the chapter index resolves.
+   Short viewports remain in ordinary flow so no CTA or index can be cropped. */
+@media (min-width: 900px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
+  [data-services-scene="opening"] {
+    min-height: 112svh !important;
+    align-items: stretch !important;
+    overflow: clip !important;
+  }
+
+  [data-services-scene="opening"] > [data-services-hero-copy] {
+    position: sticky;
+    top: 0;
+    display: flex;
+    min-height: 100svh;
+    width: 100%;
+    align-items: center;
+  }
 }
 
 /* Positioning cost is a two-state argument with four causal beats. It needs a
