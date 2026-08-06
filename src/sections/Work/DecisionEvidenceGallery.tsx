@@ -11,13 +11,12 @@ import { track } from "@/lib/analytics";
 import { WORK } from "@/sections/Work/palette";
 import { motionTokens } from "@/lib/motionTokens";
 
-// The decision evidence gallery (conversion rebuild §9) — judgment
-// shown at tile size. Seven real decisions from the five recorded
-// engagements, each tile carrying its question; expanding reveals the
-// decision, why it mattered, and where it appeared, with the link
-// back to the full narrative. One tile open at a time, the expanded
-// tile spanning the grid; keyboard identical to pointer; reduced
-// motion expands instantly; mobile stacks to one column.
+// The tier-three visual archive: judgment shown at artefact scale rather
+// than pretending every fragment is a separate transformation story.
+// Seven real decisions from the five recorded engagements each carry
+// the question, the decision, why it mattered, and where it appeared.
+// One tile opens at a time; keyboard, pointer, touch, and reduced-motion
+// visitors receive the same information.
 export function DecisionEvidenceGallery() {
   const [openId, setOpenId] = useState<string | null>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -33,21 +32,21 @@ export function DecisionEvidenceGallery() {
       <Container className="max-w-6xl">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>
-            Decision evidence
+            Visual archive · decision fragments
           </p>
           <h2 className="mt-2 max-w-2xl font-display text-display-sm font-normal" style={{ color: WORK.charcoal }}>
             Seven decisions, kept small enough to inspect.
           </h2>
           <p className="mt-4 max-w-xl text-base leading-relaxed" style={{ color: WORK.wood }}>
-            Each artefact is a real call from a recorded engagement: the question it answered, the decision made, and
-            why it mattered.
+            These are artefacts from real engagements, not seven inflated case studies: the question each fragment
+            answered, the call made, and the reason it mattered.
           </p>
         </Reveal>
 
         <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Decision artefacts">
           {decisionArtifacts.map((artifact) => {
             const open = openId === artifact.id;
-            const project = projects.find((p) => p.slug === artifact.projectSlug);
+            const project = projects.find((item) => item.slug === artifact.projectSlug);
             return (
               <motion.li
                 key={artifact.id}
