@@ -58,8 +58,41 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     window.__lenisInstance = instance;
 
     let hashScrollAttempts = 0;
+    let hashScrollCancelled = false;
+    let hashTimer: ReturnType<typeof window.setTimeout> | null = null;
+
+    function cancelHashRecovery() {
+      hashScrollCancelled = true;
+      if (hashTimer !== null) {
+        window.clearTimeout(hashTimer);
+        hashTimer = null;
+      }
+    }
+
+    function onManualKey(event: KeyboardEvent) {
+      if (
+        event.key === "PageDown" ||
+        event.key === "PageUp" ||
+        event.key === "Home" ||
+        event.key === "End" ||
+        event.key === " " ||
+        event.key === "ArrowDown" ||
+        event.key === "ArrowUp"
+      ) {
+        cancelHashRecovery();
+      }
+    }
+
+    // Hash recovery exists only to repair initial browser alignment after
+    // fonts/layout hydrate. The moment the visitor wheels, touches, or uses a
+    // scrolling key, that explicit input wins and no delayed timeout may pull
+    // the page back to the original anchor.
+    window.addEventListener("wheel", cancelHashRecovery, { passive: true });
+    window.addEventListener("touchstart", cancelHashRecovery, { passive: true });
+    window.addEventListener("keydown", onManualKey);
+
     function scrollToHash() {
-      if (!window.location.hash || hashScrollAttempts >= 6) return;
+      if (hashScrollCancelled || !window.location.hash || hashScrollAttempts >= 6) return;
 
       let target: HTMLElement | null = null;
       try {
@@ -74,7 +107,12 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       hashScrollAttempts += 1;
       instance.resize();
       instance.scrollTo(target, { immediate: true });
-      if (hashScrollAttempts < 6) window.setTimeout(scrollToHash, 350);
+      if (hashScrollAttempts < 6 && !hashScrollCancelled) {
+        hashTimer = window.setTimeout(() => {
+          hashTimer = null;
+          scrollToHash();
+        }, 350);
+      }
     }
 
     function refresh() {
@@ -94,6 +132,10 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
+      if (hashTimer !== null) window.clearTimeout(hashTimer);
+      window.removeEventListener("wheel", cancelHashRecovery);
+      window.removeEventListener("touchstart", cancelHashRecovery);
+      window.removeEventListener("keydown", onManualKey);
       gsap.ticker.remove(ticker);
       instance.destroy();
       setLenis(null);
