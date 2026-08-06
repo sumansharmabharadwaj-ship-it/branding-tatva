@@ -19,9 +19,10 @@ The current authority layer is deliberately focused:
 7. distinctive brand assets and asset auditing
 8. customer journey mapping for service businesses
 9. how to position a consulting business
-10. how to measure brand recall with a limited research budget
+10. measuring brand recall with a limited research budget
+11. value proposition versus positioning versus tagline
 
-The first five pages form the pillar layer. The supporting guides connect those foundations with website decisions, recognisable assets, customer experience, consulting positioning, and practical brand research.
+The first five pages form the pillar layer. The six supporting guides connect those foundations with website decisions, recognisable assets, service journeys, consulting positioning, practical research, and message hierarchy.
 
 ## Page contract
 
@@ -92,12 +93,12 @@ Next supporting articles:
 Current pillar:
 - Brand messaging framework
 
-Published supporting article:
+Published supporting articles:
 - Website messaging hierarchy for service businesses
+- Value proposition versus positioning versus tagline
 
 Next supporting articles:
 - Brand voice guidelines that teams can actually use
-- Value proposition versus positioning versus tagline
 - How to write service page copy from a positioning strategy
 - Content pillars that strengthen brand memory
 
@@ -107,7 +108,7 @@ Current pillar:
 - Five element brand strategy framework
 
 Published supporting article:
-- How to measure brand recall with a limited research budget
+- Measuring brand recall without a large research budget
 
 Next supporting articles:
 - How brand consistency creates recognition over time
@@ -124,7 +125,7 @@ Publish supporting articles in interleaved clusters rather than completing one t
 3. Customer journey mapping for service businesses — complete
 4. How to position a consulting business — complete
 5. Measuring brand recall without a large research budget — complete
-6. Value proposition versus positioning versus tagline
+6. Value proposition versus positioning versus tagline — complete
 7. Brand consistency checklist across website, sales, and delivery
 8. Why a beautiful identity can still be forgettable
 9. How to find a real differentiator in a crowded service market
@@ -146,7 +147,7 @@ Anchor text should describe the destination. Avoid repeated generic anchors such
 
 Whenever a new article is published, update at least two older articles with contextual links to it. This keeps the library connected and gives the new page established crawl paths.
 
-The first five supporting guides are registered in their topic hubs, sitemap, RSS feed, AI-readable index, and the related-reading paths of the relevant pillar articles.
+The first six supporting guides are registered in their topic hubs, sitemap, RSS feed, AI-readable index, and the related-reading paths of the relevant pillar articles.
 
 ## Evidence and citation rules
 
