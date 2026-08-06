@@ -18,7 +18,7 @@ permissions:
 
 concurrency:
   group: release-site-preview
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   release:
