@@ -58,7 +58,7 @@ export function HomeV4Experience() {
       <div
         data-home-v4-chapter="paths"
         data-home-section="paths"
-        data-cursor-world="light"
+        data-cursor-world="dark"
         className="home-v4-chapter home-v4-chapter--paths"
       >
         <PathsCinematicChapter />
