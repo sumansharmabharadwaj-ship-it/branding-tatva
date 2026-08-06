@@ -1,0 +1,15 @@
+/* Services chapter anchors are partly server-authored and partly assigned by
+   ServicesExperienceRuntime after hydration. Treat them identically once the
+   runtime marks the scene, so direct links never tuck a heading beneath the
+   transparent site header. This affects native anchor alignment only; it does
+   not add snapping, scroll interception, or a custom scroll container. */
+
+[data-services-scroll-scene] {
+  scroll-margin-top: clamp(4.75rem, 9vh, 6.5rem);
+}
+
+@media (max-width: 767px) {
+  [data-services-scroll-scene] {
+    scroll-margin-top: max(4.25rem, env(safe-area-inset-top));
+  }
+}
