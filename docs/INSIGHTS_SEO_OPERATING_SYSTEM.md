@@ -1,4 +1,3 @@
 # Insights SEO operating system
 
-Status: branch reconciliation captured in snapshot
-Owner: Suman Sharma
+Status: reset will restore the parent branch document
