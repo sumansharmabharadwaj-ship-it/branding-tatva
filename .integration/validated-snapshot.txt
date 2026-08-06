@@ -1,4 +1,4 @@
-site-base=b64b849442781e3b71e9f38656c48ad2b9d87e88
+site-base=f7c2cfab8cc3f2405574da8f893516cb006dfe7f
 insights-snapshot=4576f787ca3f4bf1480b3c3b61f89477409ddeaa
-integration-candidate=b26644dd9b6cc404bd4eb91d151a8cacf3728e60
-purpose=trigger the final build-only validation without a Vercel deployment
+integration-candidate=6fdbd0d7d99ae11f8db3e285768c85b705d6b78a
+purpose=trigger final Linux and macOS build-only validation without a Vercel deployment
