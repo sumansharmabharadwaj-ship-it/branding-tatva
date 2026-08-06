@@ -42,11 +42,10 @@ const CARD_SPANS = [
 
 const ROUTE_LABELS = ["Category", "Audience", "Position", "System"] as const;
 
-// Branding Tatva Lab is a transparent capability layer: four independent,
-// speculative studies with zero implied clients and zero claimed outcomes.
-// The closed state proves range through compact decision routes. Opening a
-// dossier reveals one phase at a time, so strategy can be inspected without
-// turning the page into an uninterrupted manuscript.
+// The Lab proves method without borrowing credibility from client work.
+// On phones, opening one dossier temporarily removes the other covers so
+// the selected study hands directly into its evidence instead of making
+// the visitor carry the entire archive through the expanded state.
 export function TatvaLab() {
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [activePhase, setActivePhase] = useState(0);
@@ -74,11 +73,11 @@ export function TatvaLab() {
   }
 
   return (
-    <section className="scroll-mt-28 py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
+    <section className="scroll-mt-32 py-14 sm:py-24" style={{ backgroundColor: WORK.cream }}>
       <Container className="max-w-6xl">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.72fr)] lg:items-end lg:gap-16">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.72fr)] lg:items-end lg:gap-16">
           <div>
-<p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>
+            <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>
               Branding Tatva Lab
             </p>
             <h2 className="mt-2 max-w-2xl font-display text-display-sm font-normal" style={{ color: WORK.charcoal }}>
@@ -88,45 +87,48 @@ export function TatvaLab() {
               Independent, speculative brand work. Zero clients are implied and zero outcomes are claimed; each study
               exists to show how the decisions get made.
             </p>
-</div>
+          </div>
 
           <div
-              className="grid grid-cols-3 overflow-hidden rounded-2xl border bg-white/40"
-              style={{ borderColor: WORK.stone + "66" }}
-              aria-label="Lab evidence boundary"
-            >
-              {[
-                ["04", "Concept studies"],
-                ["00", "Clients implied"],
-                ["00", "Outcomes claimed"],
-              ].map(([value, label], index) => (
-                <div
-                  key={label}
-                  className={`px-3 py-4 text-center sm:px-4 ${index ? "border-l" : ""}`}
-                  style={{ borderColor: WORK.stone + "55" }}
-                >
-                  <p className="font-display text-2xl font-normal" style={{ color: WORK.charcoal }}>
-                    {value}
-                  </p>
-                  <p className="mt-1 text-[0.58rem] font-medium uppercase leading-snug tracking-[0.11em]" style={{ color: WORK.wood }}>
-                    {label}
-                  </p>
-                </div>
-              ))}
-            </div>
+            className="grid grid-cols-3 overflow-hidden rounded-2xl border bg-white/40"
+            style={{ borderColor: WORK.stone + "66" }}
+            aria-label="Lab evidence boundary"
+          >
+            {[
+              ["04", "Concept studies"],
+              ["00", "Clients implied"],
+              ["00", "Outcomes claimed"],
+            ].map(([value, label], index) => (
+              <div
+                key={label}
+                className={`px-2.5 py-3.5 text-center sm:px-4 sm:py-4 ${index ? "border-l" : ""}`}
+                style={{ borderColor: WORK.stone + "55" }}
+              >
+                <p className="font-display text-2xl font-normal" style={{ color: WORK.charcoal }}>
+                  {value}
+                </p>
+                <p className="mt-1 text-[0.58rem] font-medium uppercase leading-snug tracking-[0.09em]" style={{ color: WORK.wood }}>
+                  {label}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-12" aria-label="Concept study dossiers">
+        <div className="mt-8 grid gap-3 sm:mt-10 sm:gap-4 md:grid-cols-2 lg:grid-cols-12" aria-label="Concept study dossiers">
           {conceptProjects.map((project, index) => {
             const open = openSlug === project.slug;
             return (
-              <article key={project.slug} className={`min-w-0 ${CARD_SPANS[index] ?? "lg:col-span-6"}`}>
+              <article
+                key={project.slug}
+                className={`min-w-0 ${openSlug && !open ? "hidden md:block" : ""} ${CARD_SPANS[index] ?? "lg:col-span-6"}`}
+              >
                 <button
                   type="button"
                   aria-expanded={open}
                   aria-controls={`lab-${project.slug}`}
                   onClick={() => toggle(project.slug)}
-                  className="group relative flex min-h-[11rem] w-full flex-col overflow-hidden rounded-[1.4rem] border p-4 text-left transition-[transform,border-color,box-shadow] sm:min-h-[18rem] sm:p-6 duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:p-6"
+                  className="group relative flex min-h-[9.75rem] w-full flex-col overflow-hidden rounded-[1.4rem] border p-4 text-left transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-[18rem] sm:p-6"
                   style={{
                     borderColor: open ? project.accent : WORK.stone + "66",
                     background: `radial-gradient(circle at 88% 12%, ${project.accent}24 0%, transparent 35%), linear-gradient(145deg, rgba(255,255,255,0.76), ${project.accent}0D)`,
@@ -134,15 +136,15 @@ export function TatvaLab() {
                     outlineColor: project.accent,
                   }}
                 >
-                  <span className="flex items-start justify-between gap-5">
-                    <span>
-                      <span className="text-[0.58rem] font-medium uppercase tracking-[0.17em]" style={{ color: project.accent }}>
+                  <span className="flex items-start justify-between gap-4 sm:gap-5">
+                    <span className="min-w-0">
+                      <span className="text-[0.56rem] font-medium uppercase tracking-[0.15em] sm:text-[0.58rem] sm:tracking-[0.17em]" style={{ color: project.accent }}>
                         Dossier {String(index + 1).padStart(2, "0")} · Concept work
                       </span>
-                      <span className="mt-3 block font-display text-3xl font-normal leading-none sm:text-4xl" style={{ color: WORK.charcoal }}>
+                      <span className="mt-2 block font-display text-[2rem] font-normal leading-none sm:mt-3 sm:text-4xl" style={{ color: WORK.charcoal }}>
                         {project.conceptName}
                       </span>
-                      <span className="mt-2 block text-sm leading-relaxed" style={{ color: WORK.wood }}>
+                      <span className="mt-1.5 block text-[0.9rem] leading-relaxed sm:mt-2 sm:text-sm" style={{ color: WORK.wood }}>
                         {project.title}
                       </span>
                     </span>
@@ -159,17 +161,17 @@ export function TatvaLab() {
                     </span>
                   </span>
 
-                  <span className="mt-3 block text-[0.6rem] font-medium uppercase tracking-[0.15em] sm:mt-4" style={{ color: WORK.stone }}>
+                  <span className="mt-2 block text-[0.58rem] font-medium uppercase tracking-[0.13em] sm:mt-4 sm:text-[0.6rem] sm:tracking-[0.15em]" style={{ color: WORK.stone }}>
                     {project.sector}
                   </span>
 
-                  <span className="relative mt-auto block pt-4 sm:pt-8">
+                  <span className="relative mt-auto block pt-3 sm:pt-8">
                     <span
                       aria-hidden="true"
-                      className="absolute left-[8%] right-[8%] top-[1.35rem] h-px sm:top-[2.35rem]"
+                      className="absolute left-[8%] right-[8%] top-[1.12rem] h-px sm:top-[2.35rem]"
                       style={{ backgroundColor: project.accent + "44" }}
                     />
-                    <span className="relative grid grid-cols-4 gap-2">
+                    <span className="relative grid grid-cols-4 gap-1.5 sm:gap-2">
                       {ROUTE_LABELS.map((label, routeIndex) => (
                         <span key={label} className="text-center">
                           <span
@@ -178,7 +180,7 @@ export function TatvaLab() {
                           >
                             <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: project.accent }} />
                           </span>
-                          <span className="mt-2 block text-[0.56rem] uppercase tracking-[0.08em] sm:text-[0.52rem] sm:tracking-[0.1em]" style={{ color: WORK.wood }}>
+                          <span className="mt-1.5 block text-[0.6rem] uppercase tracking-[0.04em] sm:mt-2 sm:text-[0.52rem] sm:tracking-[0.1em]" style={{ color: WORK.wood }}>
                             {label}
                           </span>
                           <span className="sr-only">Step {routeIndex + 1}</span>
@@ -202,18 +204,18 @@ export function TatvaLab() {
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -motionTokens.distanceMicro }}
               transition={{ duration: motionTokens.durationBase, ease: motionTokens.easeOrganic }}
-              className="mt-6 scroll-mt-32 overflow-hidden rounded-[1.7rem] border"
+              className="mt-4 scroll-mt-32 overflow-hidden rounded-[1.7rem] border sm:mt-6"
               style={{ borderColor: openProject.accent + "66", backgroundColor: "rgba(255,255,255,0.58)" }}
             >
               <div
-                className="grid gap-8 border-b p-5 sm:p-7 lg:grid-cols-[1fr_auto] lg:items-end"
+                className="grid gap-5 border-b p-4 sm:gap-8 sm:p-7 lg:grid-cols-[1fr_auto] lg:items-end"
                 style={{
                   borderColor: openProject.accent + "44",
                   background: `radial-gradient(circle at 86% 0%, ${openProject.accent}24, transparent 38%)`,
                 }}
               >
                 <div>
-                  <p className="text-[0.6rem] font-medium uppercase tracking-[0.17em]" style={{ color: openProject.accent }}>
+                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.15em] sm:text-[0.6rem] sm:tracking-[0.17em]" style={{ color: openProject.accent }}>
                     Open concept dossier · independent speculative study
                   </p>
                   <h3 className="mt-2 font-display text-3xl font-normal sm:text-5xl" style={{ color: WORK.charcoal }}>
@@ -233,7 +235,7 @@ export function TatvaLab() {
                 </button>
               </div>
 
-              <div className="p-5 sm:p-7">
+              <div className="p-4 sm:p-7">
                 <div
                   role="tablist"
                   aria-label={`${openProject.conceptName} strategy phases`}
@@ -251,15 +253,15 @@ export function TatvaLab() {
                         aria-selected={selected}
                         aria-controls={`lab-${openProject.slug}-panel-${item.id}`}
                         onClick={() => setActivePhase(phaseIndex)}
-                        className={`relative min-h-24 border-l px-3 py-4 text-left first:border-l-0 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 sm:px-5 ${
+                        className={`relative min-h-20 border-l px-3 py-3.5 text-left first:border-l-0 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 sm:min-h-24 sm:px-5 sm:py-4 ${
                           selected ? "bg-white/70" : "bg-transparent hover:bg-white/35"
                         }`}
                         style={{ borderColor: WORK.stone + "55", outlineColor: openProject.accent }}
                       >
-                        <span className="block font-display text-lg" style={{ color: selected ? openProject.accent : WORK.stone }}>
+                        <span className="block font-display text-base sm:text-lg" style={{ color: selected ? openProject.accent : WORK.stone }}>
                           {item.number}
                         </span>
-                        <span className="mt-1 block font-display text-lg leading-none sm:text-2xl" style={{ color: WORK.charcoal }}>
+                        <span className="mt-1 block font-display text-base leading-none sm:text-2xl" style={{ color: WORK.charcoal }}>
                           {item.label}
                         </span>
                         <span className="mt-2 hidden text-xs leading-relaxed sm:block" style={{ color: WORK.wood }}>
@@ -288,25 +290,25 @@ export function TatvaLab() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={prefersReducedMotion ? undefined : { opacity: 0, x: -motionTokens.distanceSmall }}
                     transition={{ duration: motionTokens.durationBase, ease: motionTokens.easeOrganic }}
-                    className="mt-7 grid gap-7 lg:grid-cols-[minmax(14rem,0.64fr)_minmax(0,1.36fr)] lg:gap-10"
+                    className="mt-5 grid gap-5 sm:mt-7 sm:gap-7 lg:grid-cols-[minmax(14rem,0.64fr)_minmax(0,1.36fr)] lg:gap-10"
                   >
                     <aside
-                      className="rounded-2xl border p-5 sm:p-6"
+                      className="rounded-2xl border p-4 sm:p-6"
                       style={{
                         borderColor: openProject.accent + "55",
                         background: `linear-gradient(145deg, ${openProject.accent}18, rgba(255,255,255,0.55))`,
                       }}
                     >
-                      <p className="font-display text-5xl font-normal" style={{ color: openProject.accent }}>
+                      <p className="font-display text-4xl font-normal sm:text-5xl" style={{ color: openProject.accent }}>
                         {phase.number}
                       </p>
-                      <p className="mt-3 font-display text-3xl font-normal" style={{ color: WORK.charcoal }}>
+                      <p className="mt-2 font-display text-2xl font-normal sm:mt-3 sm:text-3xl" style={{ color: WORK.charcoal }}>
                         {phase.label}
                       </p>
-                      <p className="mt-3 text-sm leading-relaxed" style={{ color: WORK.wood }}>
+                      <p className="mt-2 text-sm leading-relaxed sm:mt-3" style={{ color: WORK.wood }}>
                         {phase.line}
                       </p>
-                      <div className="mt-6 border-t pt-5" style={{ borderColor: openProject.accent + "44" }}>
+                      <div className="mt-5 border-t pt-4 sm:mt-6 sm:pt-5" style={{ borderColor: openProject.accent + "44" }}>
                         <p className="text-[0.56rem] font-medium uppercase tracking-[0.15em]" style={{ color: WORK.stone }}>
                           Capability demonstrated
                         </p>
@@ -324,14 +326,14 @@ export function TatvaLab() {
                       </div>
                     </aside>
 
-                    <div className="grid gap-4">
+                    <div className="grid gap-3 sm:gap-4">
                       {phase.chapterIndexes.map((chapterIndex) => {
                         const chapter = openProject.chapters[chapterIndex];
                         if (!chapter) return null;
                         return (
                           <section
                             key={chapter.label}
-                            className="rounded-2xl border bg-white/55 p-5 sm:p-6"
+                            className="rounded-2xl border bg-white/55 p-4 sm:p-6"
                             style={{ borderColor: WORK.stone + "66" }}
                           >
                             <p className="flex items-baseline gap-3">
@@ -347,7 +349,7 @@ export function TatvaLab() {
                             </p>
                             {chapter.samples && (
                               <div
-                                className="mt-5 rounded-2xl border p-4 sm:p-5"
+                                className="mt-4 rounded-2xl border p-4 sm:mt-5 sm:p-5"
                                 style={{ borderColor: openProject.accent + "55", backgroundColor: openProject.accent + "0D" }}
                               >
                                 <p className="text-[0.55rem] font-medium uppercase tracking-[0.16em]" style={{ color: openProject.accent }}>
@@ -370,7 +372,7 @@ export function TatvaLab() {
                 </AnimatePresence>
 
                 <div
-                  className="mt-7 rounded-2xl border p-5 sm:p-6"
+                  className="mt-5 rounded-2xl border p-4 sm:mt-7 sm:p-6"
                   style={{ borderColor: openProject.accent + "66", backgroundColor: WORK.charcoal }}
                 >
                   <div className="flex flex-wrap items-end justify-between gap-4">
@@ -384,9 +386,9 @@ export function TatvaLab() {
                       A plan for measuring, never a claimed result
                     </p>
                   </div>
-                  <ol className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                  <ol className="mt-4 grid grid-cols-2 gap-2.5 sm:mt-5 sm:gap-3 lg:grid-cols-4">
                     {openProject.measurementPlan.map((item, index) => (
-                      <li key={item} className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
+                      <li key={item} className="rounded-xl border border-white/10 bg-white/[0.04] p-3.5 sm:p-4">
                         <span className="font-display text-sm" style={{ color: openProject.accent }} aria-hidden="true">
                           {String(index + 1).padStart(2, "0")}
                         </span>
