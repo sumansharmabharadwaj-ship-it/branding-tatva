@@ -68,15 +68,15 @@ export function ProjectStoryWall({ projects }: { projects: Project[] }) {
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={project.cardImage ?? "/images/work-closing.jpg"}
-                        alt={`${project.title} project material`}
+                        src={record.evidencePoster}
+                        alt={`${project.title} evidence diagram`}
                         loading="lazy"
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.018]"
                       />
                       <div
                         aria-hidden="true"
                         className="absolute inset-0"
-                        style={{ background: "linear-gradient(180deg, rgba(27,27,27,0.04) 42%, rgba(27,27,27,0.78) 100%)" }}
+                        style={{ background: "linear-gradient(180deg, rgba(8,12,10,0.01) 48%, rgba(8,12,10,0.86) 100%)" }}
                       />
 
                       <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-4 p-4 sm:p-5">
