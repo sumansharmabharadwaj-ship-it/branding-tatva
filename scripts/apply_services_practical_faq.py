@@ -116,13 +116,14 @@ def update_gate() -> None:
         "Services FAQ section ID",
     )
 
-    anchor = '''  if (viewport.screenshots) await captureViewport(page, `services-${viewport.name}-health-check.png`);
+    # Insert immediately before the Audit contract rather than matching
+    # the preceding Health Check screenshot line. The compact Health
+    # Check wraps that screenshot inside a desktop branch, while the
+    # original diagnostic kept it at top level. The Audit comment is the
+    # stable commercial boundary shared by both source generations.
+    anchor = '''  // Audit: desktop keeps the useful checks and consent form together.'''
 
-  // Audit: desktop keeps the useful checks and consent form together.'''
-
-    faq_audit = '''  if (viewport.screenshots) await captureViewport(page, `services-${viewport.name}-health-check.png`);
-
-  // Practical FAQ: desktop uses a sticky category index and one compact
+    faq_audit = '''  // Practical FAQ: desktop uses a sticky category index and one compact
   // category panel. Mobile removes that extra navigation layer and keeps
   // all nine questions in one linear accordion. Only one answer is open
   // at a time, the direct answer appears first, and deeper scope detail
