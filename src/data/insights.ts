@@ -34,6 +34,7 @@ export type {
   InsightTopic,
 };
 
+// Canonical registry consumed by every Insights discovery surface.
 const combinedPosts = [
   ...pillarInsightPosts,
   ...supportingInsightPosts,
