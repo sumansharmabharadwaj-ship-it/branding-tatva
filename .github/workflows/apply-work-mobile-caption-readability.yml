@@ -1,0 +1,115 @@
+name: Apply Work mobile caption readability
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/apply-work-mobile-caption-readability.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-work-mobile-caption-readability
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out application without the media archive
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: corepack enable
+
+      - name: Apply, build, and publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+
+            python <<'PY'
+          from pathlib import Path
+
+          studies = Path("src/sections/CaseStudies/BrandStudies.tsx")
+          lab = Path("src/sections/Work/TatvaLab.tsx")
+          workflow = Path(".github/workflows/apply-work-mobile-caption-readability.yml")
+
+          studies_text = studies.read_text(encoding="utf-8")
+          study_replacements = {
+              'text-[0.5rem] uppercase leading-snug tracking-[0.12em] text-ivory/45':
+                  'text-[0.58rem] uppercase leading-snug tracking-[0.1em] text-ivory/50',
+              'block text-[0.54rem] font-medium uppercase tracking-[0.15em] text-ivory/35':
+                  'block text-[0.6rem] font-medium uppercase tracking-[0.13em] text-ivory/45',
+              'line-clamp-3 text-[0.54rem] font-medium uppercase leading-snug tracking-[0.08em] text-ivory/65 sm:text-[0.64rem] sm:tracking-[0.1em]':
+                  'line-clamp-3 text-[0.62rem] font-medium uppercase leading-snug tracking-[0.04em] text-ivory/72 sm:text-[0.66rem] sm:tracking-[0.08em]',
+              'text-[0.54rem] uppercase tracking-[0.14em] text-ivory/35':
+                  'text-[0.6rem] uppercase tracking-[0.12em] text-ivory/45',
+          }
+          for old, new in study_replacements.items():
+              if old in studies_text:
+                  studies_text = studies_text.replace(old, new, 1)
+
+          if 'text-[0.62rem] font-medium uppercase leading-snug' not in studies_text:
+              raise RuntimeError("Public-study mechanism labels were not enlarged")
+          studies.write_text(studies_text, encoding="utf-8")
+
+          lab_text = lab.read_text(encoding="utf-8")
+          lab_text = lab_text.replace(
+              'p-4 text-left sm:min-h-[18rem] sm:p-6 transition-[transform,border-color,box-shadow]',
+              'p-4 text-left transition-[transform,border-color,box-shadow] sm:min-h-[18rem] sm:p-6',
+              1,
+          )
+          lab_text = lab_text.replace(
+              'sm:p-6 transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:p-6',
+              'sm:p-6 transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4',
+              1,
+          )
+          lab_text = lab_text.replace(
+              'text-[0.55rem] font-medium uppercase tracking-[0.13em]',
+              'text-[0.58rem] font-medium uppercase leading-snug tracking-[0.11em]',
+              1,
+          )
+          lab.write_text(lab_text, encoding="utf-8")
+
+          workflow.unlink()
+          print("Raised mobile public-study captions and cleaned the Lab card class list")
+          PY
+
+            pnpm install --frozen-lockfile
+            pnpm build
+
+            git add src/sections/CaseStudies/BrandStudies.tsx src/sections/Work/TatvaLab.tsx .github/workflows/apply-work-mobile-caption-readability.yml
+            if git diff --cached --quiet; then
+              echo "Mobile caption readability is already installed."
+              exit 0
+            fi
+
+            git commit -m "Raise mobile Work caption readability"
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              exit 0
+            fi
+          done
+
+          exit 1
