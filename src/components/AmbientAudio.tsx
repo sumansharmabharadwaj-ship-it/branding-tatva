@@ -81,25 +81,20 @@ export function AmbientAudio() {
 
   return (
     <>
-      <audio
-        ref={audioRef}
-        src="/audio/ambient-zen-moment.mp3"
-        loop
-        preload="none"
-      />
+      <audio ref={audioRef} src="/audio/ambient-zen-moment.mp3" loop preload="none" />
       <button
         type="button"
         data-ambient-audio-toggle
         onClick={toggle}
         aria-label={enabled ? "Mute ambient sound" : "Play ambient sound"}
         aria-pressed={enabled}
-        className="fixed bottom-5 right-0 z-40 flex h-10 w-9 items-center justify-center rounded-l-full border border-r-0 border-ivory/18 bg-soil/78 text-ivory/72 shadow-elevation-sm backdrop-blur-md transition-[opacity,background-color,border-color,transform] duration-300 hover:border-ivory/36 hover:bg-soil hover:text-ivory"
+        className="fixed z-40 flex h-11 w-11 items-center justify-center rounded-full border border-ivory/20 bg-[#0B1814]/82 text-ivory/78 shadow-[0_12px_34px_rgba(0,0,0,0.26)] backdrop-blur-md transition-[background-color,border-color,transform,color] duration-300 hover:-translate-y-0.5 hover:border-ivory/38 hover:bg-[#10231D] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#AFC19F]"
+        style={{
+          right: "max(0.9rem, env(safe-area-inset-right))",
+          bottom: "max(0.9rem, env(safe-area-inset-bottom))",
+        }}
       >
-        {enabled ? (
-          <Volume2 size={16} strokeWidth={1.7} />
-        ) : (
-          <VolumeX size={16} strokeWidth={1.7} />
-        )}
+        {enabled ? <Volume2 size={17} strokeWidth={1.7} /> : <VolumeX size={17} strokeWidth={1.7} />}
       </button>
     </>
   );
