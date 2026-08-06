@@ -6,3 +6,19 @@ for (const post of supportingInsightPosts) {
     insightPosts.push(post);
   }
 }
+
+const supportingSlug = "website-messaging-hierarchy-service-businesses";
+
+for (const pillarSlug of [
+  "brand-messaging-framework",
+  "brand-positioning-strategy-service-businesses",
+]) {
+  const pillar = insightPosts.find((post) => post.slug === pillarSlug);
+
+  if (pillar && !pillar.relatedSlugs.includes(supportingSlug)) {
+    pillar.relatedSlugs = [
+      supportingSlug,
+      ...pillar.relatedSlugs.filter((slug) => slug !== supportingSlug),
+    ].slice(0, 3);
+  }
+}
