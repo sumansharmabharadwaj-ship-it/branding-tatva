@@ -5,6 +5,8 @@ import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
 import { differentiationInsightPosts } from "@/data/differentiationInsights";
 import { distinctiveAssetInsightPosts } from "@/data/distinctiveAssetInsights";
 import { forgettableIdentityInsightPosts } from "@/data/forgettableIdentityInsights";
+import { positioningStatementInsightPosts } from "@/data/positioningStatementInsights";
+import { repositioningInsightPosts } from "@/data/repositioningInsights";
 import {
   insightPosts as pillarInsightPosts,
   insightTopics,
@@ -39,6 +41,8 @@ const combinedPosts = [
   ...brandConsistencyInsightPosts,
   ...forgettableIdentityInsightPosts,
   ...differentiationInsightPosts,
+  ...positioningStatementInsightPosts,
+  ...repositioningInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
@@ -112,6 +116,23 @@ const relatedRegistrations = [
       "brand-positioning-strategy-service-businesses",
       "how-to-position-a-consulting-business",
       "value-proposition-vs-positioning-vs-tagline",
+    ],
+  },
+  {
+    supportingSlug: "brand-positioning-statement-examples-why-generic",
+    pillarSlugs: [
+      "brand-positioning-strategy-service-businesses",
+      "find-real-differentiator-crowded-service-market",
+      "value-proposition-vs-positioning-vs-tagline",
+    ],
+  },
+  {
+    supportingSlug:
+      "reposition-established-service-business-without-losing-recognition",
+    pillarSlugs: [
+      "brand-audit-checklist-before-rebrand",
+      "distinctive-brand-assets-audit",
+      "brand-positioning-strategy-service-businesses",
     ],
   },
 ] as const;
