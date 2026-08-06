@@ -69,7 +69,7 @@ export function PackageSelector() {
   }, []);
 
   return (
-    <Container className="max-w-5xl text-center">
+    <Container className="flex min-h-[calc(100svh-8rem)] max-w-5xl flex-col justify-start text-center lg:block lg:min-h-0">
       <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Desire</p>
       <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
         Where does your brand actually stand?
