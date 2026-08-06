@@ -1,12 +1,14 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import type { Project } from "@/data/projects";
 import { getWorkTaxonomy } from "@/data/workTaxonomy";
+import { registerScrollCheck } from "@/lib/scrollCheckRegistry";
 import { WORK, EASE_ORGANIC } from "@/sections/Work/palette";
 
 const VISUAL_STATES = [
@@ -43,7 +45,9 @@ const SYSTEM_CARDS = [
 ] as const;
 
 export function SystemFlagship({ project }: { project: Project }) {
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const animateTransitions = hydrated && !prefersReducedMotion;
+  const lenis = useLenis();
   const [active, setActive] = useState(0);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
   const evidencePoster = getWorkTaxonomy(project.slug).evidencePoster;
@@ -67,7 +71,41 @@ export function SystemFlagship({ project }: { project: Project }) {
   ];
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    if (!hydrated || prefersReducedMotion) return;
+
+    function checkActiveStep() {
+      const elements = stepRefs.current.filter((element): element is HTMLDivElement => Boolean(element));
+      if (elements.length === 0) return;
+
+      const firstRect = elements[0].getBoundingClientRect();
+      const lastRect = elements[elements.length - 1].getBoundingClientRect();
+
+      if (firstRect.top >= window.innerHeight) {
+        setActive(0);
+        return;
+      }
+      if (lastRect.bottom <= 0) {
+        setActive(elements.length - 1);
+        return;
+      }
+
+      const readingLine = window.innerHeight * 0.48;
+      let closestIndex = 0;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      elements.forEach((element, index) => {
+        const rect = element.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        const distance = Math.abs(center - readingLine);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      setActive(closestIndex);
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -76,17 +114,48 @@ export function SystemFlagship({ project }: { project: Project }) {
           if (Number.isFinite(index)) setActive(index);
         }
       },
-      { rootMargin: "-38% 0px -48% 0px" }
+      { rootMargin: "-38% 0px -48% 0px" },
     );
 
     stepRefs.current.forEach((element) => element && observer.observe(element));
-    return () => observer.disconnect();
-  }, [prefersReducedMotion]);
+    const frame = window.requestAnimationFrame(checkActiveStep);
+    const fallback = window.setTimeout(checkActiveStep, 700);
+
+    let unsubscribe: (() => void) | undefined;
+    if (lenis) {
+      unsubscribe = registerScrollCheck(lenis, checkActiveStep);
+    } else {
+      window.addEventListener("scroll", checkActiveStep, { passive: true });
+      unsubscribe = () => window.removeEventListener("scroll", checkActiveStep);
+    }
+
+    window.addEventListener("pageshow", checkActiveStep);
+
+    return () => {
+      observer.disconnect();
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(fallback);
+      unsubscribe?.();
+      window.removeEventListener("pageshow", checkActiveStep);
+    };
+  }, [hydrated, lenis, prefersReducedMotion]);
 
   const state = VISUAL_STATES[active] ?? VISUAL_STATES[0];
 
+  function goToStep(index: number) {
+    setActive(index);
+    const element = stepRefs.current[index];
+    if (!element) return;
+
+    if (lenis) {
+      lenis.scrollTo(element, { offset: -Math.round(window.innerHeight * 0.32) });
+    } else {
+      element.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "center" });
+    }
+  }
+
   return (
-    <section className="relative overflow-hidden py-20 sm:py-28" style={{ backgroundColor: "#10151A" }}>
+    <section className="relative scroll-mt-28 overflow-hidden py-20 sm:py-28" style={{ backgroundColor: "#10151A" }}>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -left-[12%] top-[12%] h-[34rem] w-[34rem] rounded-full opacity-50 blur-3xl"
@@ -138,24 +207,27 @@ export function SystemFlagship({ project }: { project: Project }) {
                 />
 
                 <div className="absolute inset-0 flex flex-col justify-between p-5 sm:p-7">
-                  <motion.div
-                    key={`${state.word}-heading`}
-                    initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.45, ease: EASE_ORGANIC }}
-                  >
-                    <p className="text-[0.6rem] font-medium uppercase tracking-[0.18em]" style={{ color: WORK.sand }}>
-                      {state.eyebrow}
-                    </p>
-                    <p className="mt-1 font-display text-[clamp(3.2rem,8vw,6.7rem)] font-normal leading-none tracking-[-0.04em] text-white">
-                      {state.word}
-                    </p>
-                    <p className="mt-2 max-w-md text-sm leading-relaxed text-white/75 sm:text-base">{state.line}</p>
-                  </motion.div>
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={`${state.word}-heading`}
+                      initial={animateTransitions ? { opacity: 0, y: 10 } : false}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={animateTransitions ? { opacity: 0, y: -6 } : undefined}
+                      transition={{ duration: animateTransitions ? 0.45 : 0, ease: EASE_ORGANIC }}
+                    >
+                      <p className="text-[0.6rem] font-medium uppercase tracking-[0.18em]" style={{ color: WORK.sand }}>
+                        {state.eyebrow}
+                      </p>
+                      <p className="mt-1 font-display text-[clamp(3.2rem,8vw,6.7rem)] font-normal leading-none tracking-[-0.04em] text-white">
+                        {state.word}
+                      </p>
+                      <p className="mt-2 max-w-md text-sm leading-relaxed text-white/75 sm:text-base">{state.line}</p>
+                    </motion.div>
+                  </AnimatePresence>
 
                   <div className="relative h-[12rem] sm:h-[13.5rem]" aria-label="System components">
                     {SYSTEM_CARDS.map((card, index) => {
-                      const settled = active >= 2;
+                      const settled = prefersReducedMotion || active >= 2;
                       const considered = active >= 1;
                       const x = settled ? 0 : considered ? index * 13 : (index - 1) * 34;
                       const y = settled ? index * 66 : considered ? index * 38 : index * 25;
@@ -166,12 +238,12 @@ export function SystemFlagship({ project }: { project: Project }) {
                           key={card.label}
                           className="absolute inset-x-0 rounded-2xl border p-4 backdrop-blur-md"
                           animate={{
-                            x: prefersReducedMotion ? 0 : x,
-                            y: prefersReducedMotion ? index * 66 : y,
-                            rotate: prefersReducedMotion ? 0 : rotate,
-                            opacity: active === 0 ? 0.68 + index * 0.1 : 1,
+                            x: animateTransitions ? x : 0,
+                            y: prefersReducedMotion ? index * 66 : animateTransitions ? y : index * 42,
+                            rotate: animateTransitions ? rotate : 0,
+                            opacity: prefersReducedMotion || active > 0 ? 1 : 0.7 + index * 0.1,
                           }}
-                          transition={{ duration: prefersReducedMotion ? 0 : 0.62, ease: EASE_ORGANIC }}
+                          transition={{ duration: animateTransitions ? 0.62 : 0, ease: EASE_ORGANIC }}
                           style={{
                             borderColor: settled ? "rgba(198,169,122,0.44)" : "rgba(242,240,232,0.2)",
                             backgroundColor: settled ? "rgba(31,58,40,0.9)" : "rgba(16,21,26,0.8)",
@@ -194,11 +266,9 @@ export function SystemFlagship({ project }: { project: Project }) {
                 <li key={step.label}>
                   <button
                     type="button"
-                    onClick={() => {
-                      setActive(index);
-                      stepRefs.current[index]?.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "center" });
-                    }}
+                    onClick={() => goToStep(index)}
                     aria-current={active === index ? "step" : undefined}
+                    aria-label={`${String(index + 1).padStart(2, "0")}: ${step.label}`}
                     className="min-h-10 w-full rounded-full border px-3 py-2 text-[0.58rem] font-medium uppercase tracking-[0.13em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     style={{
                       borderColor: active === index ? WORK.sand : "rgba(198,169,122,0.22)",
@@ -222,7 +292,7 @@ export function SystemFlagship({ project }: { project: Project }) {
                 ref={(element) => {
                   stepRefs.current[index] = element;
                 }}
-                className="flex min-h-[52vh] items-center border-l-2 py-12 pl-7 transition-colors duration-500 first:pt-2 last:min-h-[46vh] sm:pl-9 lg:min-h-[62vh]"
+                className="flex min-h-[44vh] items-center border-l-2 py-10 pl-7 transition-colors duration-500 first:pt-2 last:min-h-[40vh] sm:min-h-[50vh] sm:py-12 sm:pl-9 lg:min-h-[62vh] lg:last:min-h-[46vh]"
                 style={{ borderColor: active === index ? WORK.sand : "rgba(198,169,122,0.16)" }}
               >
                 <div>
