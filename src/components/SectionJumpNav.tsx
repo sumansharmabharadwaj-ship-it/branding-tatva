@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 // Long-page wayfinding uses different densities according to the route.
 // Most pages retain the quiet technical index along the bottom edge. A
@@ -15,16 +16,18 @@ type SectionJumpNavProps = {
   // Opting in removes the fixed guide once the final indexed section is
   // active, while every existing call site keeps the persistent default.
   hideOnLast?: boolean;
-  // The compact rail is intentionally opt in. Existing routes keep the
-  // established bottom bar unless they explicitly request the cinematic rail.
+  // The compact rail is intentionally opt in. Services uses it by default;
+  // other routes retain the established bottom bar unless they request it.
   desktopMode?: "bar" | "rail";
 };
 
 export function SectionJumpNav({
   items,
   hideOnLast = false,
-  desktopMode = "bar",
+  desktopMode,
 }: SectionJumpNavProps) {
+  const pathname = usePathname();
+  const resolvedDesktopMode = desktopMode ?? (pathname === "/services" ? "rail" : "bar");
   const [activeHref, setActiveHref] = useState(items[0]?.href ?? "");
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -70,7 +73,7 @@ export function SectionJumpNav({
   // invisible fixed layer above the booking interface.
   if (hiddenForFinalScene) return null;
 
-  const mobileBreakpoint = desktopMode === "rail" ? "lg:hidden" : "sm:hidden";
+  const mobileBreakpoint = resolvedDesktopMode === "rail" ? "lg:hidden" : "sm:hidden";
 
   return (
     <>
@@ -130,7 +133,7 @@ export function SectionJumpNav({
         </button>
       </nav>
 
-      {desktopMode === "rail" ? (
+      {resolvedDesktopMode === "rail" ? (
         <nav
           aria-label="Jump to section"
           data-section-jump-nav-desktop-mode="rail"
