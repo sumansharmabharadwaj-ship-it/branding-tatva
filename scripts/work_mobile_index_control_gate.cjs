@@ -95,15 +95,18 @@ async function assertNoOverflow(page) {
 
     const beforeText = ((await preview.textContent()) || "").replace(/\s+/g, " ").trim();
     await buttons.last().click();
-    await page.waitForFunction(
-      ({ selector, before }) => {
-        const node = document.querySelector(selector);
-        const next = node?.textContent?.replace(/\s+/g, " ").trim() || "";
-        return Boolean(next && next !== before);
-      },
-      { selector: "#active-work-preview", before: beforeText },
-      { timeout: 4_000 },
-    );
+    const previewDeadline = Date.now() + 4_000;
+    while (Date.now() < previewDeadline) {
+      const next = ((await index.locator("#active-work-preview").last().textContent()) || "")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (next && next !== beforeText) break;
+      await page.waitForTimeout(50);
+    }
+    const afterText = ((await index.locator("#active-work-preview").last().textContent()) || "")
+      .replace(/\s+/g, " ")
+      .trim();
+    assert(afterText !== beforeText, "work/mobile-index: active evidence did not change after selection");
 
     assert(
       (await buttons.last().getAttribute("aria-pressed")) === "true",

@@ -86,15 +86,11 @@ async function inViewport(locator) {
     });
 
     await panel.getByRole("button", { name: "Close study" }).click();
-    await page.waitForFunction(
-      () => {
-        const buttons = document.querySelectorAll('[aria-label="Independent brand-study mechanisms"] button[aria-expanded]');
-        const last = buttons[buttons.length - 1];
-        return last?.dataset.contextScrollCalls === "1";
-      },
-      undefined,
-      { timeout: 3_000 },
-    );
+    const closeDeadline = Date.now() + 3_000;
+    while (Date.now() < closeDeadline && (await cover.getAttribute("data-context-scroll-calls")) !== "1") {
+      await page.waitForTimeout(50);
+    }
+    assert((await cover.getAttribute("data-context-scroll-calls")) === "1", "work/study-context: close context restoration did not run");
 
     assert((await visibleCount(covers)) === 5, "work/study-context: study covers did not return after closing");
     assert((await cover.getAttribute("aria-expanded")) === "false", "work/study-context: fifth study did not close");
