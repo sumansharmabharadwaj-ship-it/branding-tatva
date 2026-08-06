@@ -1,0 +1,34 @@
+export const GENERATED_SERVICES_MEDIA = {
+  hero: {
+    desktop: "/videos/generated/bt-services-hero-root-system.mp4",
+    mobile: "/videos/generated/bt-services-hero-root-system-mobile.mp4",
+    poster: "/images/generated/bt-services-hero-root-system-poster.jpg",
+    purpose: "Reveal the interconnected system beneath the visible brand surface.",
+  },
+  strategy: {
+    desktop: "/videos/generated/bt-services-strategy-topography.mp4",
+    mobile: "/videos/generated/bt-services-strategy-topography-mobile.mp4",
+    poster: "/images/generated/bt-services-strategy-topography-poster.jpg",
+    purpose: "Turn scattered possibilities into one legible strategic route.",
+  },
+  packages: {
+    desktop: "/videos/generated/bt-services-package-current.mp4",
+    mobile: "/videos/generated/bt-services-package-current-mobile.mp4",
+    poster: "/images/generated/bt-services-package-current-poster.jpg",
+    purpose: "Let several legitimate paths settle into one clear scope.",
+  },
+  perception: {
+    desktop: "/videos/generated/bt-services-perception-ascent.mp4",
+    mobile: "/videos/generated/bt-services-perception-ascent-mobile.mp4",
+    poster: "/images/generated/bt-services-perception-ascent-poster.jpg",
+    purpose: "Make the landscape and its recognisable signal become clearer together.",
+  },
+  health: {
+    desktop: "/videos/generated/bt-services-health-reflection.mp4",
+    mobile: "/videos/generated/bt-services-health-reflection-mobile.mp4",
+    poster: "/images/generated/bt-services-health-reflection-poster.jpg",
+    purpose: "Reveal hidden misalignment beneath an apparently coherent surface.",
+  },
+} as const;
+
+export type GeneratedServicesMediaKey = keyof typeof GENERATED_SERVICES_MEDIA;
