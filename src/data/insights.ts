@@ -3,6 +3,7 @@ import { brandRecallMeasurementInsightPosts } from "@/data/brandRecallMeasuremen
 import { consultingPositioningInsightPosts } from "@/data/consultingPositioningInsights";
 import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
 import { distinctiveAssetInsightPosts } from "@/data/distinctiveAssetInsights";
+import { forgettableIdentityInsightPosts } from "@/data/forgettableIdentityInsights";
 import {
   insightPosts as pillarInsightPosts,
   insightTopics,
@@ -35,6 +36,7 @@ const combinedPosts = [
   ...brandRecallMeasurementInsightPosts,
   ...valuePropositionInsightPosts,
   ...brandConsistencyInsightPosts,
+  ...forgettableIdentityInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
@@ -92,6 +94,14 @@ const relatedRegistrations = [
       "brand-audit-checklist-before-rebrand",
       "customer-journey-mapping-service-businesses",
       "five-element-brand-strategy-framework",
+    ],
+  },
+  {
+    supportingSlug: "why-beautiful-brand-identity-can-be-forgettable",
+    pillarSlugs: [
+      "brand-awareness-vs-brand-recall",
+      "distinctive-brand-assets-audit",
+      "measure-brand-recall-limited-budget",
     ],
   },
 ] as const;
