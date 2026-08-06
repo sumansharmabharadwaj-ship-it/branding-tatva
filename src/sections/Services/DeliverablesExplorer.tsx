@@ -60,7 +60,7 @@ export function DeliverablesExplorer() {
               type="button"
               aria-pressed={isActive}
               onClick={() => pickGroup(g)}
-              className={`rounded-full border px-3.5 py-1.5 text-xs uppercase tracking-[0.12em] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone ${
+              className={`min-h-11 rounded-full border px-3.5 py-1.5 text-xs uppercase tracking-[0.12em] transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone ${
                 isActive
                   ? "border-sandstone/70 bg-sandstone/15 text-ivory"
                   : "border-ivory/20 text-ivory/65 hover:border-ivory/40 hover:text-ivory"

@@ -317,7 +317,9 @@ async function auditServicesViewport(browser, viewport) {
   // state, then prove the side-by-side comparison is functional.
   const desire = page.locator("#desire");
   await scrollTo(page, desire, `${label}/desire`);
-  const packageCards = desire.locator("button").filter({ has: desire.locator("span.font-display") }).filter({ hasText: /Starting with an idea|Feeling unclear or inconsistent|Needing ongoing consistency/ });
+  const packageCards = desire
+    .locator("button")
+    .filter({ hasText: /Starting with an idea|Feeling unclear or inconsistent|Needing ongoing consistency/ });
   await waitForCount(packageCards, 3, `${label}: package cards`);
   await assertTouchTargets(packageCards, 40, `${label}: package cards`);
   const unclearChoice = desire.locator("button").filter({ hasText: "Feeling unclear or inconsistent" }).first();

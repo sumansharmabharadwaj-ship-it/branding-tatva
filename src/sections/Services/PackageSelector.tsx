@@ -69,6 +69,7 @@ export function PackageSelector() {
             <motion.button
               key={choice.slug}
               type="button"
+              aria-pressed={isActive}
               onClick={() => {
                 setActive(choice.slug);
                 track("package_viewed", { package: choice.slug });
