@@ -1,0 +1,80 @@
+name: Restore Services Stakes content under reduced motion
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/fix-services-stakes-reduced-motion.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-fix-services-stakes-reduced-motion
+  cancel-in-progress: false
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out the Stakes component
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/fix-services-stakes-reduced-motion.yml
+            src/sections/Services/WeakBrandingCost.tsx
+
+      - name: Make reduced-motion content explicitly visible
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          component = Path("src/sections/Services/WeakBrandingCost.tsx")
+          text = component.read_text()
+
+          old = '                initial={prefersReducedMotion ? undefined : { opacity: 0, x: 14, filter: "blur(3px)" }}\n                whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0, filter: "blur(0px)" }}\n                viewport={{ once: true, margin: "0px 0px -10% 0px" }}\n                transition={{ duration: 0.72, delay: 0.3 + i * 0.16, ease: [0.16, 1, 0.3, 1] }}'
+          new = '                initial={prefersReducedMotion ? false : { opacity: 0, x: 14, filter: "blur(3px)" }}\n                animate={prefersReducedMotion ? { opacity: 1, x: 0, filter: "blur(0px)" } : undefined}\n                whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0, filter: "blur(0px)" }}\n                viewport={{ once: true, margin: "0px 0px -10% 0px" }}\n                transition={\n                  prefersReducedMotion\n                    ? { duration: 0 }\n                    : { duration: 0.72, delay: 0.3 + i * 0.16, ease: [0.16, 1, 0.3, 1] }\n                }'
+          if text.count(old) != 1:
+              raise SystemExit(f"Origin-list motion insertion point count: {text.count(old)}")
+          text = text.replace(old, new, 1)
+
+          old = '                    initial={prefersReducedMotion ? undefined : { opacity: 0, filter: "blur(4px)" }}\n                    whileInView={prefersReducedMotion ? undefined : { opacity: 1, filter: "blur(0px)" }}\n                    viewport={{ once: true, margin: "0px 0px -12% 0px" }}\n                    transition={{ duration: 0.72, delay: 0.35 + wi * 0.14 }}'
+          new = '                    initial={prefersReducedMotion ? false : { opacity: 0, filter: "blur(4px)" }}\n                    animate={prefersReducedMotion ? { opacity: 1, filter: "blur(0px)" } : undefined}\n                    whileInView={prefersReducedMotion ? undefined : { opacity: 1, filter: "blur(0px)" }}\n                    viewport={{ once: true, margin: "0px 0px -12% 0px" }}\n                    transition={\n                      prefersReducedMotion\n                        ? { duration: 0 }\n                        : { duration: 0.72, delay: 0.35 + wi * 0.14 }\n                    }'
+          if text.count(old) != 1:
+              raise SystemExit(f"Generic-cost motion insertion point count: {text.count(old)}")
+          text = text.replace(old, new, 1)
+
+          old = '<ul className="mt-5 space-y-3.5">\n                {WEAK.map'
+          new = '<ul data-stakes-list="generic" className="mt-5 space-y-3.5">\n                {WEAK.map'
+          if text.count(old) != 1:
+              raise SystemExit(f"Generic-list marker insertion point count: {text.count(old)}")
+          component.write_text(text.replace(old, new, 1))
+          PY
+
+          grep -q 'data-stakes-list="generic"' src/sections/Services/WeakBrandingCost.tsx
+          grep -q 'animate={prefersReducedMotion ? { opacity: 1, filter: "blur(0px)" } : undefined}' src/sections/Services/WeakBrandingCost.tsx
+
+      - name: Remove the one-time patch workflow
+        run: rm .github/workflows/fix-services-stakes-reduced-motion.yml
+
+      - name: Commit the reduced-motion repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/sections/Services/WeakBrandingCost.tsx \
+            .github/workflows/fix-services-stakes-reduced-motion.yml
+          git diff --cached --check
+          git commit -m "Keep the weak-branding costs visible under reduced motion"
+          git pull --rebase origin homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
