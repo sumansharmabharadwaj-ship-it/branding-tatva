@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Container } from "@/components/Container";
 import type { Project } from "@/data/projects";
+import { getWorkTaxonomy } from "@/data/workTaxonomy";
 import { WORK, EASE_ORGANIC } from "@/sections/Work/palette";
 
 const VISUAL_STATES = [
@@ -44,6 +45,7 @@ export function SystemFlagship({ project }: { project: Project }) {
   const prefersReducedMotion = useReducedMotion();
   const [active, setActive] = useState(0);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const evidencePoster = getWorkTaxonomy(project.slug).evidencePoster;
 
   const steps = [
     {
@@ -124,14 +126,14 @@ export function SystemFlagship({ project }: { project: Project }) {
               <div className="relative aspect-[4/3] overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={project.cardImage ?? "/images/work-closing.jpg"}
-                  alt={`${project.title} project material`}
+                  src={evidencePoster}
+                  alt={`${project.title} brand-system evidence diagram`}
                   className="absolute inset-0 h-full w-full object-cover opacity-55"
                 />
                 <div
                   aria-hidden="true"
                   className="absolute inset-0"
-                  style={{ background: "linear-gradient(135deg, rgba(16,21,26,0.28), rgba(16,21,26,0.94) 72%)" }}
+                  style={{ background: "linear-gradient(135deg, rgba(16,21,26,0.18), rgba(16,21,26,0.92) 76%)" }}
                 />
 
                 <div className="absolute inset-0 flex flex-col justify-between p-5 sm:p-7">
@@ -166,12 +168,12 @@ export function SystemFlagship({ project }: { project: Project }) {
                             x: prefersReducedMotion ? 0 : x,
                             y: prefersReducedMotion ? index * 66 : y,
                             rotate: prefersReducedMotion ? 0 : rotate,
-                            opacity: active === 0 ? 0.62 + index * 0.12 : 1,
+                            opacity: active === 0 ? 0.68 + index * 0.1 : 1,
                           }}
                           transition={{ duration: prefersReducedMotion ? 0 : 0.62, ease: EASE_ORGANIC }}
                           style={{
                             borderColor: settled ? "rgba(198,169,122,0.44)" : "rgba(242,240,232,0.2)",
-                            backgroundColor: settled ? "rgba(31,58,40,0.84)" : "rgba(16,21,26,0.72)",
+                            backgroundColor: settled ? "rgba(31,58,40,0.9)" : "rgba(16,21,26,0.8)",
                           }}
                         >
                           <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: WORK.sand }}>
@@ -196,11 +198,11 @@ export function SystemFlagship({ project }: { project: Project }) {
                       stepRefs.current[index]?.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "center" });
                     }}
                     aria-current={active === index ? "step" : undefined}
-                    className="w-full rounded-full border px-3 py-2 text-[0.58rem] font-medium uppercase tracking-[0.13em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    className="min-h-10 w-full rounded-full border px-3 py-2 text-[0.58rem] font-medium uppercase tracking-[0.13em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     style={{
                       borderColor: active === index ? WORK.sand : "rgba(198,169,122,0.22)",
                       backgroundColor: active === index ? "rgba(198,169,122,0.12)" : "transparent",
-                      color: active === index ? WORK.sand : "rgba(242,240,232,0.52)",
+                      color: active === index ? WORK.sand : "rgba(242,240,232,0.58)",
                       outlineColor: WORK.sand,
                     }}
                   >
@@ -234,7 +236,7 @@ export function SystemFlagship({ project }: { project: Project }) {
                   </h3>
                   <p
                     className="mt-5 max-w-xl text-base leading-relaxed transition-opacity duration-500"
-                    style={{ color: "rgba(242,240,232,0.78)", opacity: prefersReducedMotion || active === index ? 1 : 0.58 }}
+                    style={{ color: "rgba(242,240,232,0.78)", opacity: prefersReducedMotion || active === index ? 1 : 0.62 }}
                   >
                     {step.body}
                   </p>
