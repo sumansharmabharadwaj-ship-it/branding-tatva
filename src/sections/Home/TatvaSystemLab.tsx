@@ -61,7 +61,7 @@ const NODE_POSITIONS = [
   { x: 74, y: 172 },
 ] as const;
 
-const AUTO_ADVANCE_MS = 4600;
+const AUTO_ADVANCE_MS = 4100;
 const MANUAL_HOLD_MS = 16000;
 
 export function TatvaSystemLab() {
@@ -105,8 +105,8 @@ export function TatvaSystemLab() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden border-t border-soil/10 py-16 sm:py-24"
-      style={{ backgroundColor: "#E9E4D9" }}
+      className="tatva-pressure-lab relative overflow-hidden border-t py-20 sm:py-28"
+      style={{ backgroundColor: "#111A18", borderColor: "rgba(244,239,230,0.08)" }}
       aria-labelledby="tatva-system-lab-title"
       onPointerDown={() => {
         pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
@@ -121,31 +121,31 @@ export function TatvaSystemLab() {
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute -left-40 top-[-20%] h-[30rem] w-[30rem] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(199,119,82,0.13), transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(199,119,82,0.22), transparent 70%)" }}
         animate={motionActive ? { x: [0, 72, 0], y: [0, 24, 0], scale: [0.96, 1.08, 0.96] } : undefined}
         transition={motionActive ? { duration: 18, repeat: Infinity, ease: "easeInOut" } : undefined}
       />
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute -right-36 bottom-[-32%] h-[34rem] w-[34rem] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(82,117,111,0.14), transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(82,117,111,0.24), transparent 70%)" }}
         animate={motionActive ? { x: [0, -64, 0], y: [0, -32, 0], scale: [1.05, 0.94, 1.05] } : undefined}
         transition={motionActive ? { duration: 21, repeat: Infinity, ease: "easeInOut" } : undefined}
       />
 
       <Container className="relative max-w-[94rem]">
         <div className="grid gap-10 lg:grid-cols-[minmax(22rem,0.86fr)_minmax(34rem,1.14fr)] lg:items-center lg:gap-16">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.22em] text-[#556B4A]">
+          <div className="tatva-pressure-lab__copy">
+            <p className="text-xs font-medium uppercase tracking-[0.22em] text-[#D4B99A]">
               The system under pressure
             </p>
             <h2
               id="tatva-system-lab-title"
-              className="mt-3 max-w-xl font-display text-[clamp(2.35rem,4.5vw,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em] text-soil"
+              className="mt-3 max-w-xl font-display text-[clamp(2.35rem,4.5vw,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em]"
             >
               Remove one force. Watch recognition lose its shape.
             </h2>
-            <p className="mt-5 max-w-xl text-sm leading-7 text-foreground-secondary sm:text-base sm:leading-8">
+            <p className="mt-5 max-w-xl text-sm leading-7 sm:text-base sm:leading-8">
               This is an illustrative coherence model, rather than a performance score. Select a Tatva to see the strategic burden the remaining four are forced to carry.
             </p>
 
@@ -158,10 +158,11 @@ export function TatvaSystemLab() {
                     type="button"
                     aria-pressed={missing}
                     onClick={() => choose(index)}
-                    className="group flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 text-left transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                    className="tatva-pressure-lab__force group flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 text-left transition-[border-color,background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                     style={{
-                      borderColor: missing ? `${force.color}88` : "rgba(39,34,30,0.10)",
-                      backgroundColor: missing ? `${force.color}12` : "rgba(255,255,255,0.32)",
+                      borderColor: missing ? `${force.color}99` : "rgba(244,239,230,0.12)",
+                      backgroundColor: missing ? `${force.color}1A` : "rgba(244,239,230,0.035)",
+                      boxShadow: missing ? `0 16px 44px ${force.color}13` : "none",
                     }}
                   >
                     <span className="flex items-center gap-3">
@@ -170,19 +171,19 @@ export function TatvaSystemLab() {
                         style={{
                           backgroundColor: missing ? "transparent" : force.color,
                           border: `1px solid ${force.color}`,
-                          boxShadow: missing ? "none" : `0 0 12px ${force.color}66`,
+                          boxShadow: missing ? "none" : `0 0 12px ${force.color}88`,
                         }}
                       />
                       <span>
-                        <span className="block font-display text-lg leading-none text-soil">{force.name}</span>
-                        <span className="mt-1 block text-[0.58rem] font-medium uppercase tracking-[0.14em] text-foreground-secondary/70">
+                        <span className="block font-display text-lg leading-none">{force.name}</span>
+                        <span className="mt-1 block text-[0.58rem] font-medium uppercase tracking-[0.14em]">
                           {force.role}
                         </span>
                       </span>
                     </span>
                     <span
                       className="text-[0.55rem] font-medium uppercase tracking-[0.14em]"
-                      style={{ color: missing ? force.color : "rgba(39,34,30,0.42)" }}
+                      style={{ color: missing ? force.color : "rgba(244,239,230,0.42)" }}
                     >
                       {missing ? "Missing" : "Present"}
                     </span>
@@ -194,23 +195,23 @@ export function TatvaSystemLab() {
             <button
               type="button"
               onClick={() => choose(null)}
-              className="mt-4 text-xs font-medium uppercase tracking-[0.16em] text-[#556B4A] underline decoration-[#556B4A]/35 underline-offset-4 transition-colors hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
+              className="tatva-pressure-lab__restore mt-4 text-xs font-medium uppercase tracking-[0.16em] underline underline-offset-4 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
             >
               Restore all five forces
             </button>
           </div>
 
-          <div className="overflow-hidden rounded-[2rem] border border-soil/10 bg-white/42 p-4 shadow-[0_32px_90px_rgba(39,34,30,0.09)] backdrop-blur-xl sm:p-7">
-            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-soil/10 pb-5">
+          <div className="tatva-pressure-lab__board overflow-hidden rounded-[2rem] border p-4 backdrop-blur-xl sm:p-7">
+            <div className="tatva-pressure-lab__board-top flex flex-wrap items-end justify-between gap-4 border-b pb-5">
               <div>
-                <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-foreground-secondary/65">
+                <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em]">
                   Illustrative system coherence
                 </p>
                 <div className="mt-1 flex items-end gap-2">
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.span
                       key={score}
-                      className="font-display text-5xl leading-none text-soil sm:text-6xl"
+                      className="font-display text-5xl leading-none sm:text-6xl"
                       initial={prefersReducedMotion ? false : { opacity: 0, y: 10, filter: "blur(5px)" }}
                       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                       exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
@@ -219,16 +220,16 @@ export function TatvaSystemLab() {
                       {score}
                     </motion.span>
                   </AnimatePresence>
-                  <span className="pb-1 text-sm text-foreground-secondary">/ 100</span>
+                  <span className="pb-1 text-sm">/ 100</span>
                 </div>
               </div>
-              <span className="rounded-full border border-soil/10 bg-white/45 px-3 py-2 text-[0.56rem] font-medium uppercase tracking-[0.14em] text-foreground-secondary">
+              <span className="tatva-pressure-lab__status rounded-full border px-3 py-2 text-[0.56rem] font-medium uppercase tracking-[0.14em]">
                 {omitted ? `${omitted.name} omitted` : "Complete system"}
               </span>
             </div>
 
             <div className="grid gap-6 pt-5 md:grid-cols-[minmax(17rem,1fr)_minmax(13rem,0.72fr)] md:items-center">
-              <div className="relative mx-auto aspect-[5/4] w-full max-w-[36rem]">
+              <div className="tatva-pressure-lab__diagram relative mx-auto aspect-[5/4] w-full max-w-[36rem]">
                 <svg
                   viewBox="0 0 500 420"
                   className="absolute inset-0 h-full w-full overflow-visible"
@@ -237,8 +238,8 @@ export function TatvaSystemLab() {
                 >
                   <motion.path
                     d="M250 54 L426 172 L360 364 L140 364 L74 172 Z"
-                    fill="rgba(244,239,230,0.25)"
-                    stroke="rgba(39,34,30,0.12)"
+                    fill="rgba(244,239,230,0.035)"
+                    stroke="rgba(244,239,230,0.13)"
                     strokeWidth="1.2"
                     animate={motionActive ? { pathLength: [0.72, 1, 0.72], opacity: [0.45, 0.8, 0.45] } : undefined}
                     transition={motionActive ? { duration: 8, repeat: Infinity, ease: "easeInOut" } : undefined}
@@ -283,8 +284,8 @@ export function TatvaSystemLab() {
                     cx="250"
                     cy="222"
                     r="56"
-                    fill="rgba(244,239,230,0.88)"
-                    stroke={omitted?.color ?? "#556B4A"}
+                    fill="rgba(10,20,18,0.94)"
+                    stroke={omitted?.color ?? "#8FA283"}
                     strokeWidth="1.5"
                     animate={
                       motionActive
@@ -298,11 +299,11 @@ export function TatvaSystemLab() {
                   />
                 </svg>
 
-                <div className="absolute left-1/2 top-[52.8%] w-28 -translate-x-1/2 -translate-y-1/2 text-center">
-                  <span className="block text-[0.52rem] font-medium uppercase tracking-[0.15em] text-foreground-secondary/60">
+                <div className="tatva-pressure-lab__core-copy absolute left-1/2 top-[52.8%] w-28 -translate-x-1/2 -translate-y-1/2 text-center">
+                  <span className="block text-[0.52rem] font-medium uppercase tracking-[0.15em]">
                     Market
                   </span>
-                  <span className="mt-1 block font-display text-xl leading-none text-soil">Recognition</span>
+                  <span className="mt-1 block font-display text-xl leading-none">Recognition</span>
                 </div>
 
                 {FORCES.map((force, index) => {
@@ -315,19 +316,20 @@ export function TatvaSystemLab() {
                       aria-label={`${missing ? "Restore" : "Remove"} ${force.name}`}
                       aria-pressed={missing}
                       onClick={() => choose(index)}
-                      className="absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-xl px-2 py-2 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                      className="tatva-pressure-lab__node absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-xl px-2 py-2 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                       style={{ left: `${(node.x / 500) * 100}%`, top: `${(node.y / 420) * 100}%` }}
                       animate={{ opacity: missing ? 0.3 : 1, scale: missing ? 0.84 : 1 }}
                       transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
                     >
                       <span
-                        className="h-4 w-4 rounded-full border-2 bg-[#E9E4D9]"
+                        className="h-4 w-4 rounded-full border-2"
                         style={{
+                          backgroundColor: "#111A18",
                           borderColor: force.color,
-                          boxShadow: missing ? "none" : `0 0 16px ${force.color}77`,
+                          boxShadow: missing ? "none" : `0 0 16px ${force.color}88`,
                         }}
                       />
-                      <span className="mt-1.5 font-display text-sm leading-none text-soil">{force.name}</span>
+                      <span className="mt-1.5 font-display text-sm leading-none">{force.name}</span>
                     </motion.button>
                   );
                 })}
@@ -336,10 +338,12 @@ export function TatvaSystemLab() {
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={omitted?.name ?? "complete"}
-                  className="rounded-2xl border p-5"
+                  className="tatva-pressure-lab__reading rounded-2xl border p-5"
                   style={{
-                    borderColor: omitted ? `${omitted.color}55` : "rgba(85,107,74,0.25)",
-                    backgroundColor: omitted ? `${omitted.color}0E` : "rgba(85,107,74,0.055)",
+                    borderColor: omitted ? `${omitted.color}77` : "rgba(143,162,131,0.32)",
+                    background: omitted
+                      ? `radial-gradient(circle at 88% 4%, ${omitted.color}20, transparent 44%), rgba(244,239,230,0.035)`
+                      : "radial-gradient(circle at 88% 4%, rgba(143,162,131,0.16), transparent 44%), rgba(244,239,230,0.035)",
                   }}
                   initial={prefersReducedMotion ? false : { opacity: 0, y: 10, filter: "blur(5px)" }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -349,21 +353,22 @@ export function TatvaSystemLab() {
                 >
                   <p
                     className="text-[0.58rem] font-medium uppercase tracking-[0.16em]"
-                    style={{ color: omitted?.color ?? "#556B4A" }}
+                    style={{ color: omitted?.color ?? "#8FA283" }}
                   >
                     {omitted ? `What breaks without ${omitted.name}` : "When all five are present"}
                   </p>
-                  <p className="mt-3 font-display text-2xl leading-tight text-soil">
+                  <p className="mt-3 font-display text-2xl leading-tight">
                     {omitted
                       ? omitted.consequence
                       : "Each force keeps its own job, so no single layer has to rescue the rest of the brand."}
                   </p>
-                  <p className="mt-4 text-xs leading-relaxed text-foreground-secondary/75">
+                  <p className="mt-4 text-xs leading-relaxed">
                     Select the missing force again to restore it, or let the model continue demonstrating the system automatically.
                   </p>
                   <Link
                     href="#elements"
-                    className="link-underline mt-5 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] text-[#556B4A]"
+                    className="link-underline mt-5 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em]"
+                    style={{ color: "#D4B99A" }}
                   >
                     Examine every Tatva in depth <span aria-hidden="true">→</span>
                   </Link>
