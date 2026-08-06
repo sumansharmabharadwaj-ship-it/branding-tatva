@@ -60,6 +60,14 @@ export default async function CaseStudyPage({ params }: Props) {
     cardImage: taxonomy.evidencePoster,
     heroPoster: taxonomy.evidencePoster,
   };
+  const previousEvidence = {
+    ...previous,
+    cardImage: getWorkTaxonomy(previous.slug).evidencePoster,
+  };
+  const nextEvidence = {
+    ...next,
+    cardImage: getWorkTaxonomy(next.slug).evidencePoster,
+  };
 
   const caseStudyStructuredData = {
     "@context": "https://schema.org",
@@ -101,8 +109,8 @@ export default async function CaseStudyPage({ params }: Props) {
           presentation={presentation}
           tierLabel={taxonomy.tier === "flagship" ? "Flagship case study" : "Project story"}
           evidenceLabel={taxonomy.evidenceLabel}
-          previous={previous}
-          next={next}
+          previous={previousEvidence}
+          next={nextEvidence}
         />
       </main>
       <Footer />
