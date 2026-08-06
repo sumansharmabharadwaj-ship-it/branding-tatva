@@ -1,8 +1,8 @@
 "use client";
 
 import type { CSSProperties, PointerEvent } from "react";
-import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -10,20 +10,42 @@ import { offerings } from "@/data/services";
 import { track } from "@/lib/analytics";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+const AUTO_ADVANCE_MS = 3800;
+const MANUAL_HOLD_MS = 12000;
+const HOVER_HOLD_MS = 4200;
 
 // Six stacked description rows made the complete Services list read like
 // a catalogue and consumed almost two screens before the visitor reached
 // the package decision. This explorer keeps all six disciplines visible
 // in one scene: the names form the index, and one substantial explanation
-// changes beside them on hover, focus, or tap. Nothing is hidden behind a
-// carousel and no new service claims are invented; every line still comes
-// from data/services.ts.
+// changes beside them on hover, focus, tap, or a calm in-view sequence.
+// Nothing is hidden behind a carousel and no new service claims are
+// invented; every line still comes from data/services.ts.
 export function ServiceDisciplineExplorer() {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const holdUntilRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const inView = useInView(stageRef, { amount: 0.3, margin: "8% 0px -10% 0px" });
   const active = offerings[activeIndex];
 
-  function activate(index: number, source: "hover" | "focus" | "click") {
+  useEffect(() => {
+    if (!inView || prefersReducedMotion || offerings.length < 2) return;
+
+    const timer = window.setInterval(() => {
+      if (document.hidden || Date.now() < holdUntilRef.current) return;
+      setActiveIndex((current) => (current + 1) % offerings.length);
+    }, AUTO_ADVANCE_MS);
+
+    return () => window.clearInterval(timer);
+  }, [inView, prefersReducedMotion]);
+
+  function activate(
+    index: number,
+    source: "hover" | "focus" | "click",
+    holdMs = MANUAL_HOLD_MS,
+  ) {
+    holdUntilRef.current = Date.now() + holdMs;
     if (index === activeIndex) return;
     setActiveIndex(index);
     track("capability_selected", {
@@ -37,13 +59,22 @@ export function ServiceDisciplineExplorer() {
     // Touch browsers can retain a synthetic hover state after a tap.
     // Only a real fine-pointer hover previews; touch remains click-led.
     if (event.pointerType === "mouse" || event.pointerType === "pen") {
-      activate(index, "hover");
+      activate(index, "hover", HOVER_HOLD_MS);
     }
   }
 
   return (
     <Container className="relative max-w-7xl">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-12 xl:grid-cols-[minmax(0,18rem)_minmax(18rem,0.82fr)_minmax(0,1.18fr)] xl:gap-14">
+      <div
+        ref={stageRef}
+        className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-12 xl:grid-cols-[minmax(0,18rem)_minmax(18rem,0.82fr)_minmax(0,1.18fr)] xl:gap-14"
+        onPointerDown={() => {
+          holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+        }}
+        onFocusCapture={() => {
+          holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+        }}
+      >
         <Reveal className="lg:col-span-2 xl:col-span-1">
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The full practice</p>
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
@@ -54,7 +85,7 @@ export function ServiceDisciplineExplorer() {
             this scene.
           </p>
           <p className="mt-6 max-w-xs text-xs uppercase tracking-[0.16em] text-ivory/50">
-            Hover, focus, or tap a discipline
+            The index advances while you watch. Hover, focus, or tap and it waits.
           </p>
         </Reveal>
 
@@ -114,6 +145,17 @@ export function ServiceDisciplineExplorer() {
                   }`}
                   style={{ backgroundColor: offer.color }}
                 />
+                {isActive && inView && !prefersReducedMotion && Date.now() >= holdUntilRef.current && (
+                  <motion.span
+                    key={`discipline-progress-${activeIndex}`}
+                    aria-hidden="true"
+                    className="absolute inset-x-3 bottom-0 h-px origin-left sm:inset-x-4"
+                    style={{ backgroundColor: offer.color }}
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: AUTO_ADVANCE_MS / 1000, ease: "linear" }}
+                  />
+                )}
               </button>
             );
           })}
