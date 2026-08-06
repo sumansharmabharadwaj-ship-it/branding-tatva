@@ -8,6 +8,10 @@ for (const post of [
   ...distinctiveAssetInsightPosts,
   ...customerJourneyInsightPosts,
 ]) {
+  if (post.slug === "customer-journey-mapping-service-businesses") {
+    post.framework.title = "The five-stage service journey";
+  }
+
   if (!insightPosts.some((existingPost) => existingPost.slug === post.slug)) {
     insightPosts.push(post);
   }
