@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { PackageComparisonDeck } from "@/sections/Services/PackageComparisonDeck";
 import { packages } from "@/data/services";
 import { projects } from "@/data/projects";
 import { blendHex } from "@/lib/sectionWash";
@@ -176,39 +177,8 @@ export function PackageSelector() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={transition}
-              className="grid gap-4 lg:grid-cols-3"
             >
-              {packages.map((pkg) => (
-                <div
-                  key={pkg.slug}
-                  className="flex flex-col rounded-2xl border-t-2 p-6 backdrop-blur-md"
-                  style={{ borderColor: pkg.color, backgroundColor: blendHex(pkg.color, "#0F151C", 12) }}
-                >
-                  <p className="font-display text-lg font-normal text-ivory">{pkg.name}</p>
-                  <div className="mt-1 flex items-baseline gap-1.5">
-                    <span className="text-xs text-ivory/70">{pkg.billing === "monthly" ? "from" : "begins at"}</span>
-                    <span className="font-display text-xl font-normal text-ivory">
-                      {formatPrice(region, pkg.slug as PackageSlug)}
-                    </span>
-                    {pkg.billing === "monthly" && <span className="text-xs text-ivory/70">/mo</span>}
-                  </div>
-                  <p className="mt-3 text-xs leading-relaxed text-ivory/75">{pkg.forWho}</p>
-                  <ul className="mt-4 flex-1 space-y-1.5 border-t border-ivory/10 pt-4">
-                    {pkg.includes.map((item) => (
-                      <li key={item} className="text-xs leading-relaxed text-ivory/85 before:mr-2 before:content-['•']">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                  <LinkButton
-                    href="/contact"
-                    className="mt-5 self-start"
-                    style={{ backgroundColor: pkg.color }}
-                  >
-                    Start with {pkg.name}
-                  </LinkButton>
-                </div>
-              ))}
+              <PackageComparisonDeck region={region} />
             </motion.div>
           ) : activePackage ? (
             <motion.div
