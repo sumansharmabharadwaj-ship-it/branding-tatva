@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
@@ -23,23 +23,37 @@ import {
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
 
-// The visitor chooses a real business situation rather than a tier.
-// That choice opens a project workspace built from the package registry,
-// localized price book, and verified project evidence. Comparison stays
-// available as a separate decision mode.
+// A package is never selected merely because it drifted through the
+// viewport. The Services scene director may preview the three paths, but
+// only a carried diagnosis or explicit click becomes a held recommendation.
+// The held choice opens a Project Room built from the real package registry,
+// regional price book, and verified Work evidence.
 const CHOICES = [
   { slug: "brand-beginning", label: "Starting with an idea", element: "earth" },
   { slug: "brand-clarity", label: "Feeling unclear or inconsistent", element: "water" },
   { slug: "brand-partnership", label: "Needing ongoing consistency", element: "space" },
 ] as const;
 
+const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+const MANUAL_HOLD_MS = 16000;
+
+type SelectionSource = "situation" | "manual" | "scroll" | null;
+type ServicesProgressDetail = {
+  id?: string;
+  progress?: number;
+};
+
 export function PackageSelector() {
   const [active, setActive] = useState<PackageSlug | null>(null);
+  const [selectionSource, setSelectionSource] = useState<SelectionSource>(null);
   const [compare, setCompare] = useState(false);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
+  const manualUntilRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
   const activePackage = packages.find((pkg) => pkg.slug === active);
-  const proof = activePackage?.proofSlug ? projects.find((project) => project.slug === activePackage.proofSlug) : undefined;
+  const proof = activePackage?.proofSlug
+    ? projects.find((project) => project.slug === activePackage.proofSlug)
+    : undefined;
   const { region } = usePricing();
 
   const transition = prefersReducedMotion
@@ -49,6 +63,7 @@ export function PackageSelector() {
   useEffect(() => {
     function applySituation(situation: ServicesSituationId) {
       setActive(SITUATION_TO_PACKAGE[situation]);
+      setSelectionSource("situation");
       setCompare(false);
       setCarriedSituation(situation);
     }
@@ -67,6 +82,40 @@ export function PackageSelector() {
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation);
     return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
   }, []);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    function onSceneProgress(event: Event) {
+      const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
+      if (detail?.id !== "desire" || typeof detail.progress !== "number") return;
+      if (compare || selectionSource === "situation" || selectionSource === "manual") return;
+      if (Date.now() < manualUntilRef.current) return;
+
+      const index = Math.min(
+        CHOICES.length - 1,
+        Math.max(0, Math.floor(detail.progress * CHOICES.length)),
+      );
+      const choice = CHOICES[index] ?? CHOICES[0];
+      setActive((current) => (current === choice.slug ? current : choice.slug));
+      setSelectionSource("scroll");
+      setCarriedSituation(null);
+    }
+
+    window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    return () => {
+      window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    };
+  }, [compare, prefersReducedMotion, selectionSource]);
+
+  function choosePackage(slug: PackageSlug) {
+    manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+    setActive(slug);
+    setSelectionSource("manual");
+    setCompare(false);
+    setCarriedSituation(null);
+    track("package_viewed", { package: slug, source: "manual_choice" });
+  }
 
   return (
     <Container className="flex min-h-[calc(100svh-8rem)] max-w-5xl flex-col justify-start text-center lg:block lg:min-h-0">
@@ -92,6 +141,19 @@ export function PackageSelector() {
             can still choose a different path below.
           </motion.p>
         )}
+        {selectionSource === "scroll" && activePackage && !compare && (
+          <motion.p
+            key="scroll-package-preview"
+            data-scroll-package-preview="true"
+            initial={{ opacity: 0, y: 7 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={transition}
+            className="mx-auto mt-5 max-w-xl text-xs font-medium uppercase tracking-[0.15em] text-sandstone/80"
+          >
+            Previewing the project paths · select a card to hold your choice
+          </motion.p>
+        )}
       </AnimatePresence>
 
       <div className="mx-auto mt-9 grid max-w-3xl gap-3 sm:grid-cols-3 sm:gap-4">
@@ -102,13 +164,9 @@ export function PackageSelector() {
             <motion.button
               key={choice.slug}
               type="button"
-              aria-pressed={isActive}
-              onClick={() => {
-                setActive(choice.slug);
-                setCompare(false);
-                setCarriedSituation(null);
-                track("package_viewed", { package: choice.slug, source: "situation_choice" });
-              }}
+              aria-pressed={isActive && selectionSource !== "scroll"}
+              data-package-preview={isActive && selectionSource === "scroll" ? "true" : undefined}
+              onClick={() => choosePackage(choice.slug)}
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 22 }}
               whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "0px 0px -12% 0px" }}
@@ -141,12 +199,13 @@ export function PackageSelector() {
           type="button"
           aria-label="Compare all three side by side"
           aria-pressed={compare}
-          onClick={() =>
+          onClick={() => {
+            manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
             setCompare((current) => {
               if (!current) track("packages_compared");
               return !current;
-            })
-          }
+            });
+          }}
           className="link-underline inline-flex min-h-11 items-center rounded-full px-3 py-2.5 text-sm text-ivory/70 transition-colors duration-300 hover:bg-ivory/[0.05] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
         >
           {compare ? "Back to one project room" : "Compare all three side by side"}
@@ -183,7 +242,7 @@ export function PackageSelector() {
               className="flex min-h-[20rem] items-center justify-center rounded-[1.75rem] border border-dashed border-ivory/14 bg-ivory/[0.018] px-6 text-center"
             >
               <p className="max-w-md text-sm leading-relaxed text-ivory/62">
-                Pick the one closest to true. Its project room will open here with the real scope and localized starting investment.
+                Scroll through the three project paths, or select the one closest to true. The chosen Project Room will open here with its real scope and localized starting investment.
               </p>
             </motion.div>
           )}
