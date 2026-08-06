@@ -155,10 +155,10 @@ export function WorkOpening() {
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.img
                       key={current.slug}
-                      src={current.cardImage ?? "/images/work-closing.jpg"}
-                      alt={`${current.title} project preview`}
+                      src={record.evidencePoster}
+                      alt={`${current.title} evidence diagram`}
                       className="absolute inset-0 h-full w-full object-cover"
-                      initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.035 }}
+                      initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.025 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE_ORGANIC }}
@@ -168,7 +168,7 @@ export function WorkOpening() {
                   <div
                     aria-hidden="true"
                     className="absolute inset-0"
-                    style={{ background: "linear-gradient(180deg, rgba(27,27,27,0.08) 34%, rgba(27,27,27,0.82) 100%)" }}
+                    style={{ background: "linear-gradient(180deg, rgba(8,12,10,0.02) 32%, rgba(8,12,10,0.9) 100%)" }}
                   />
 
                   <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4 sm:p-5">
