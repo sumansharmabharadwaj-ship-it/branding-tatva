@@ -1,0 +1,3 @@
+source=feat/home-v4-screen-fit
+commit=3fa7c725848abcb09b434ab3de2531ef8a81112f
+purpose=build-only validation of homepage viewport and scroll-density CSS
