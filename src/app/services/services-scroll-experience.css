@@ -1,0 +1,633 @@
+/* -------------------------------------------------------------------------- */
+/* Branding Tatva Services · native-first cinematic scroll foundation          */
+/* -------------------------------------------------------------------------- */
+
+[data-services-scroll-root] {
+  position: relative;
+  isolation: isolate;
+  background: #171a17;
+}
+
+/* The original full-width bottom index occupied the entire reading edge.
+   Services now owns a quieter route-specific guide that collapses against the
+   right edge and disappears entirely inside the final strategy room. */
+[data-services-scroll-root] > nav[aria-label="Jump to section"] {
+  display: none !important;
+}
+
+[data-services-scroll-root] main {
+  overflow-x: clip;
+}
+
+[data-services-scene] {
+  --services-progress: 0;
+  --services-line: 0%;
+  --services-shift-x: 0px;
+  --services-shift-y: 0px;
+  --services-scene-scale: 1;
+  position: relative;
+  isolation: isolate;
+  scroll-margin-top: clamp(4.5rem, 8vh, 7rem);
+}
+
+[data-services-scene] > .relative {
+  z-index: 3;
+}
+
+[data-services-scroll-signal] {
+  position: absolute;
+  z-index: 2;
+  right: clamp(0.75rem, 3vw, 3rem);
+  top: 50%;
+  width: clamp(5rem, 10vw, 9rem);
+  height: clamp(5rem, 10vw, 9rem);
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(var(--services-shift-x), var(--services-shift-y), 0)
+    scale(var(--services-scene-scale));
+  transition: opacity 420ms ease;
+}
+
+[data-services-scroll-signal]::before,
+[data-services-scroll-signal]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+[data-services-active="true"] > [data-services-scroll-signal] {
+  opacity: 0.78;
+}
+
+/* Opening: one signal aperture clarifies while the visitor enters. */
+[data-services-scene="opening"] > [data-services-scroll-signal] {
+  right: clamp(1rem, 7vw, 7rem);
+  width: clamp(9rem, 22vw, 21rem);
+  height: clamp(9rem, 22vw, 21rem);
+}
+
+[data-services-scene="opening"] > [data-services-scroll-signal]::before {
+  border: 1px solid rgba(212, 185, 154, 0.35);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1.5rem rgba(212, 185, 154, 0.025),
+    0 0 5rem rgba(125, 155, 175, 0.1);
+  clip-path: inset(calc((1 - var(--services-progress)) * 46%) round 50%);
+}
+
+[data-services-scene="opening"] > [data-services-scroll-signal]::after {
+  inset: 50% auto auto 50%;
+  width: var(--services-line);
+  max-width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(212, 185, 154, 0.8), transparent);
+  transform: translate(-50%, -50%);
+  transform-origin: left;
+}
+
+[data-services-scene="opening"] > video {
+  transform: translate3d(0, var(--services-shift-y), 0) scale(var(--services-scene-scale));
+  transform-origin: center;
+  will-change: transform;
+}
+
+[data-services-scene="opening"] > [data-services-hero-copy] {
+  transform: translate3d(0, calc(var(--services-shift-y) * -0.42), 0);
+  will-change: transform;
+}
+
+/* Situation: three possible states orbit the same diagnosis. */
+[data-services-scene="situation"] > [data-services-scroll-signal]::before {
+  border: 1px solid rgba(199, 119, 82, 0.34);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1.15rem rgba(125, 155, 175, 0.08),
+    0 0 0 2.4rem rgba(143, 162, 131, 0.04);
+}
+
+[data-services-scene="situation"] > [data-services-scroll-signal]::after {
+  inset: 50%;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: #d4b99a;
+  box-shadow: 0 0 1.3rem rgba(212, 185, 154, 0.65);
+  transform: translate(-50%, -50%);
+}
+
+/* Offerings: the vertical gesture becomes a compressed lateral route through
+   six disciplines. The content itself stays sticky; only its semantic state
+   changes, so the browser remains completely in control. */
+[data-services-scene="offerings"] > [data-services-scroll-signal] {
+  inset: auto clamp(1rem, 4vw, 4rem) clamp(1rem, 6vh, 3.5rem);
+  width: auto;
+  height: 1.2rem;
+}
+
+[data-services-scene="offerings"] > [data-services-scroll-signal]::before {
+  top: 50%;
+  bottom: auto;
+  height: 1px;
+  background: rgba(244, 239, 230, 0.12);
+}
+
+[data-services-scene="offerings"] > [data-services-scroll-signal]::after {
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  width: var(--services-line);
+  height: 1px;
+  background: linear-gradient(90deg, #c77752, #52756f, #d8a251, #7d8565, #c08a7b);
+  box-shadow: 0 0 1.2rem rgba(212, 185, 154, 0.24);
+}
+
+/* Desire: the choice scene settles as concentric water rings. */
+[data-services-scene="desire"] > [data-services-scroll-signal]::before,
+[data-services-scene="desire"] > [data-services-scroll-signal]::after {
+  border: 1px solid rgba(125, 155, 175, 0.32);
+  border-radius: 50%;
+}
+
+[data-services-scene="desire"] > [data-services-scroll-signal]::before {
+  transform: scale(calc(0.72 + var(--services-progress) * 0.28));
+}
+
+[data-services-scene="desire"] > [data-services-scroll-signal]::after {
+  inset: 22%;
+  border-color: rgba(212, 185, 154, 0.38);
+  transform: scale(calc(0.86 + var(--services-progress) * 0.14));
+}
+
+/* Proof: four restrained bars resolve instead of another decorative circle. */
+[data-services-scene="verified-outcome"] > [data-services-scroll-signal]::before {
+  inset: auto 0 0;
+  height: 100%;
+  background:
+    linear-gradient(to top, rgba(212, 185, 154, 0.54) 0 var(--services-line), transparent var(--services-line)) 0 100% / 12% 100% no-repeat,
+    linear-gradient(to top, rgba(143, 162, 131, 0.48) 0 var(--services-line), transparent var(--services-line)) 30% 100% / 12% 76% no-repeat,
+    linear-gradient(to top, rgba(125, 155, 175, 0.46) 0 var(--services-line), transparent var(--services-line)) 60% 100% / 12% 58% no-repeat,
+    linear-gradient(to top, rgba(199, 119, 82, 0.42) 0 var(--services-line), transparent var(--services-line)) 90% 100% / 12% 88% no-repeat;
+}
+
+/* Foundation: a root-like branch grows from one shared origin. */
+[data-services-scene="authority"] > [data-services-scroll-signal]::before {
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(212, 185, 154, 0.75) 0 var(--services-line), transparent var(--services-line));
+}
+
+[data-services-scene="authority"] > [data-services-scroll-signal]::after {
+  inset: 24% 9% auto;
+  height: 52%;
+  border-top: 1px solid rgba(199, 119, 82, 0.42);
+  border-right: 1px solid rgba(143, 162, 131, 0.36);
+  border-bottom: 1px solid rgba(125, 155, 175, 0.34);
+  border-radius: 50%;
+  transform: rotate(calc(-24deg + var(--services-progress) * 48deg));
+}
+
+/* Stakes: a narrow aperture sharpens into one distinct position. */
+[data-services-scene="stakes"] > [data-services-scroll-signal]::before {
+  border: 1px solid rgba(244, 239, 230, 0.18);
+  border-radius: 50%;
+  clip-path: inset(0 calc((1 - var(--services-progress)) * 46%) round 50%);
+}
+
+[data-services-scene="stakes"] > [data-services-scroll-signal]::after {
+  inset: 43%;
+  border-radius: 50%;
+  background: #d4b99a;
+  box-shadow: 0 0 1.6rem rgba(212, 185, 154, 0.5);
+}
+
+/* Education: the signal climbs a measured ladder rather than drifting. */
+[data-services-scene="education"] > [data-services-scroll-signal]::before {
+  left: 50%;
+  width: 1px;
+  background: rgba(244, 239, 230, 0.14);
+}
+
+[data-services-scene="education"] > [data-services-scroll-signal]::after {
+  left: 22%;
+  right: 22%;
+  bottom: 0;
+  height: var(--services-line);
+  border-top: 1px solid #a0a690;
+  border-bottom: 1px solid rgba(160, 166, 144, 0.32);
+  background: repeating-linear-gradient(
+    to top,
+    transparent 0 1.1rem,
+    rgba(160, 166, 144, 0.32) 1.1rem calc(1.1rem + 1px)
+  );
+}
+
+/* Archive: one document plane opens into several organised layers. */
+[data-services-scene="deliverables"] > [data-services-scroll-signal]::before,
+[data-services-scene="deliverables"] > [data-services-scroll-signal]::after {
+  inset: 10% 16%;
+  border: 1px solid rgba(244, 239, 230, 0.2);
+  border-radius: 0.35rem;
+  background: rgba(244, 239, 230, 0.025);
+}
+
+[data-services-scene="deliverables"] > [data-services-scroll-signal]::before {
+  transform: translate3d(calc(var(--services-progress) * -1rem), calc(var(--services-progress) * 0.7rem), 0) rotate(-5deg);
+}
+
+[data-services-scene="deliverables"] > [data-services-scroll-signal]::after {
+  transform: translate3d(calc(var(--services-progress) * 1rem), calc(var(--services-progress) * -0.7rem), 0) rotate(5deg);
+}
+
+/* Project map: the frame expands as the visitor makes the project legible. */
+[data-services-scene="imagine"] > [data-services-scroll-signal]::before {
+  border: 1px solid rgba(143, 162, 131, 0.42);
+  border-radius: 1rem;
+  clip-path: inset(calc((1 - var(--services-progress)) * 46%) round 1rem);
+}
+
+[data-services-scene="imagine"] > [data-services-scroll-signal]::after {
+  inset: 48%;
+  border-radius: 50%;
+  background: #8fa283;
+  box-shadow: 0 0 1.4rem rgba(143, 162, 131, 0.44);
+}
+
+/* Health check: a reflection line separates surface from underlying signal. */
+[data-services-scene="health"] > [data-services-scroll-signal]::before {
+  top: 50%;
+  bottom: auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(244, 239, 230, 0.56), transparent);
+}
+
+[data-services-scene="health"] > [data-services-scroll-signal]::after {
+  inset: 51% 8% auto;
+  height: 30%;
+  border-top: 1px solid rgba(82, 117, 111, 0.52);
+  border-radius: 50%;
+  transform: scaleX(calc(0.45 + var(--services-progress) * 0.55));
+  transform-origin: center top;
+}
+
+/* Audit: five checks become a constellation rather than another boxed form. */
+[data-services-scene="audit"] > [data-services-scroll-signal]::before {
+  background:
+    radial-gradient(circle at 12% 58%, #d4b99a 0 2px, transparent 3px),
+    radial-gradient(circle at 36% 18%, #8fa283 0 2px, transparent 3px),
+    radial-gradient(circle at 57% 72%, #7d9baf 0 2px, transparent 3px),
+    radial-gradient(circle at 76% 34%, #c77752 0 2px, transparent 3px),
+    radial-gradient(circle at 92% 62%, #c08a7b 0 2px, transparent 3px);
+  opacity: calc(0.3 + var(--services-progress) * 0.7);
+}
+
+[data-services-scene="audit"] > [data-services-scroll-signal]::after {
+  inset: 18% 8%;
+  border-top: 1px solid rgba(212, 185, 154, 0.28);
+  border-bottom: 1px solid rgba(125, 155, 175, 0.24);
+  transform: rotate(calc(-8deg + var(--services-progress) * 16deg));
+}
+
+/* Arrival: the last halo settles and the progress UI leaves the viewport. */
+[data-services-scene="book"] > [data-services-scroll-signal]::before,
+[data-services-scene="book"] > [data-services-scroll-signal]::after {
+  border: 1px solid rgba(212, 185, 154, 0.34);
+  border-radius: 50%;
+}
+
+[data-services-scene="book"] > [data-services-scroll-signal]::after {
+  inset: 28%;
+  border-color: rgba(244, 239, 230, 0.25);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Scroll compression                                                          */
+/* -------------------------------------------------------------------------- */
+
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  [data-services-scene="opening"] {
+    min-height: 112svh !important;
+  }
+
+  #offerings {
+    min-height: 165svh !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    padding-block: 0 !important;
+    overflow: clip !important;
+  }
+
+  #offerings > [data-services-sticky-stage],
+  #offerings > .relative.w-full {
+    position: sticky;
+    top: 0;
+    display: flex;
+    min-height: 100svh;
+    width: 100%;
+    align-items: center;
+    padding-block: clamp(5.25rem, 9vh, 7.5rem);
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Chapter progress                                                            */
+/* -------------------------------------------------------------------------- */
+
+.services-progress {
+  position: fixed;
+  z-index: 42;
+  color: #f4efe6;
+}
+
+.services-progress--desktop {
+  top: 50%;
+  right: max(0.65rem, env(safe-area-inset-right));
+  display: none;
+  width: 2.65rem;
+  overflow: hidden;
+  border: 1px solid rgba(244, 239, 230, 0.11);
+  border-radius: 1.1rem;
+  background: rgba(12, 17, 16, 0.78);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(16px);
+  transform: translateY(-50%);
+  transition:
+    width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 280ms ease,
+    background-color 280ms ease;
+}
+
+.services-progress--desktop:hover,
+.services-progress--desktop:focus-within {
+  width: min(13.5rem, calc(100vw - 2rem));
+  border-color: rgba(212, 185, 154, 0.28);
+  background: rgba(12, 17, 16, 0.92);
+}
+
+.services-progress__current {
+  display: grid;
+  min-width: 11.75rem;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 0.65rem 0.5rem;
+  border-bottom: 1px solid rgba(244, 239, 230, 0.08);
+}
+
+.services-progress__current small {
+  color: #d4b99a;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.92rem;
+}
+
+.services-progress__current span {
+  overflow: hidden;
+  color: rgba(244, 239, 230, 0.72);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.services-progress--desktop ol {
+  display: grid;
+  padding: 0.35rem;
+}
+
+.services-progress--desktop li,
+.services-progress--desktop button {
+  min-width: 0;
+}
+
+.services-progress--desktop button {
+  display: grid;
+  width: 100%;
+  min-height: 1.72rem;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.72rem;
+  color: rgba(244, 239, 230, 0.48);
+  text-align: left;
+  transition:
+    color 240ms ease,
+    background-color 240ms ease;
+}
+
+.services-progress--desktop button:hover,
+.services-progress--desktop button:focus-visible,
+.services-progress--desktop button[aria-current="step"] {
+  background: rgba(244, 239, 230, 0.055);
+  color: #f4efe6;
+  outline: none;
+}
+
+.services-progress--desktop button i {
+  justify-self: center;
+  width: 0.3rem;
+  height: 0.3rem;
+  border: 1px solid rgba(244, 239, 230, 0.32);
+  border-radius: 999px;
+  transition:
+    width 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 260ms ease,
+    border-color 260ms ease,
+    box-shadow 260ms ease;
+}
+
+.services-progress--desktop button[aria-current="step"] i {
+  width: 0.72rem;
+  border-color: #d4b99a;
+  background: #d4b99a;
+  box-shadow: 0 0 0.9rem rgba(212, 185, 154, 0.45);
+}
+
+.services-progress--desktop button span {
+  overflow: hidden;
+  font-size: 0.59rem;
+  font-weight: 600;
+  letter-spacing: 0.105em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.services-progress--mobile {
+  right: max(0.75rem, env(safe-area-inset-right));
+  bottom: calc(0.75rem + env(safe-area-inset-bottom));
+}
+
+.services-progress__mobile-trigger {
+  display: flex;
+  min-width: 4.4rem;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 1px solid rgba(244, 239, 230, 0.13);
+  border-radius: 999px;
+  background: rgba(12, 17, 16, 0.88);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.26);
+  color: #f4efe6;
+  backdrop-filter: blur(14px);
+}
+
+.services-progress__mobile-trigger > span {
+  color: #d4b99a;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1rem;
+}
+
+.services-progress__mobile-trigger small {
+  color: rgba(244, 239, 230, 0.44);
+  font-size: 0.52rem;
+  letter-spacing: 0.08em;
+}
+
+.services-progress__mobile-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.55rem);
+  width: min(21rem, calc(100vw - 1.5rem));
+  max-height: min(68svh, 36rem);
+  overflow: auto;
+  border: 1px solid rgba(244, 239, 230, 0.13);
+  border-radius: 1.35rem;
+  background: rgba(12, 17, 16, 0.96);
+  box-shadow: 0 24px 78px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(18px);
+}
+
+.services-progress__mobile-menu > div {
+  display: flex;
+  min-height: 3.25rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid rgba(244, 239, 230, 0.08);
+}
+
+.services-progress__mobile-menu > div p {
+  color: rgba(244, 239, 230, 0.7);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.services-progress__mobile-menu > div button {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(244, 239, 230, 0.055);
+}
+
+.services-progress__mobile-menu ol {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+  padding: 0.55rem;
+}
+
+.services-progress__mobile-menu li,
+.services-progress__mobile-menu button {
+  min-width: 0;
+}
+
+.services-progress__mobile-menu li > button {
+  display: grid;
+  width: 100%;
+  min-height: 3.25rem;
+  grid-template-columns: 1.4rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.85rem;
+  color: rgba(244, 239, 230, 0.58);
+  text-align: left;
+}
+
+.services-progress__mobile-menu li > button[aria-current="step"] {
+  background: rgba(212, 185, 154, 0.1);
+  color: #f4efe6;
+}
+
+.services-progress__mobile-menu small {
+  color: #d4b99a;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.8rem;
+}
+
+.services-progress__mobile-menu li span {
+  overflow-wrap: anywhere;
+  font-size: 0.59rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+@media (min-width: 900px) and (pointer: fine) {
+  .services-progress--desktop {
+    display: block;
+  }
+
+  .services-progress--mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  [data-services-scroll-signal] {
+    right: 0.75rem;
+    width: 4.75rem;
+    height: 4.75rem;
+    opacity: 0.38;
+  }
+
+  [data-services-scene="opening"] > [data-services-scroll-signal] {
+    right: -1.25rem;
+    width: 9rem;
+    height: 9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-services-scroll-signal] {
+    opacity: 0.28;
+    transform: none;
+    transition: none;
+  }
+
+  [data-services-scene="opening"] > video,
+  [data-services-scene="opening"] > [data-services-hero-copy] {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  #offerings {
+    min-height: auto !important;
+    padding-block: 4rem !important;
+  }
+
+  #offerings > [data-services-sticky-stage],
+  #offerings > .relative.w-full {
+    position: relative !important;
+    top: auto !important;
+    min-height: auto !important;
+    padding-block: 0 !important;
+  }
+
+  .services-progress,
+  .services-progress * {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition-duration: 0.001ms !important;
+  }
+}
