@@ -1,0 +1,155 @@
+name: Run the complete Services integration gate
+run-name: Services integration control plane · ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/run-services-complete-integration.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-services-integration-control-plane
+  cancel-in-progress: false
+
+jobs:
+  integrate-build-audit-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out the Services integration branch without the large media archive
+        uses: actions/checkout@v4
+        with:
+          ref: services-complete-journey-integration
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Assemble the complete Services decision journey
+        shell: bash
+        run: |
+          python3 -m py_compile \
+            scripts/apply_services_complete_journey.py \
+            scripts/fix_work_mobile_model_narrowing.py \
+            scripts/apply_services_mobile_health_check_v2.py \
+            scripts/apply_services_project_room_gate.py \
+            scripts/fix_project_room_route_semantics.py \
+            scripts/apply_services_recognition_ladder_gate.py \
+            scripts/apply_services_practical_faq.py \
+            scripts/apply_services_strategy_room_gate.py
+          python3 scripts/apply_services_complete_journey.py
+          git diff --check
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install dependencies and Chromium
+        shell: bash
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm add --save-dev --lockfile=false playwright@1.54.2
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Build the production application
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+        run: pnpm build
+
+      - name: Start the production server
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+        shell: bash
+        run: |
+          pnpm start --hostname 127.0.0.1 --port 3000 > /tmp/services-complete-integration.log 2>&1 &
+          echo $! > /tmp/services-complete-integration.pid
+          for attempt in {1..120}; do
+            if curl --fail --silent http://127.0.0.1:3000/services > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/services-complete-integration.log
+          exit 1
+
+      - name: Walk every Services chapter and interaction at three viewports
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/services_page_gate.cjs
+
+      - name: Measure the integrated scroll density
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+          AUDIT_COMMIT: ${{ github.sha }}
+        run: node scripts/services_scroll_experience_gate.cjs
+
+      - name: Stop the production server
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/services-complete-integration.pid ]; then
+            kill "$(cat /tmp/services-complete-integration.pid)" || true
+          fi
+          cat /tmp/services-complete-integration.log || true
+
+      - name: Upload the complete Services evidence set
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: services-complete-integration-evidence
+          path: |
+            services-page-audit/*
+            services-scroll-audit/*
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Remove focused integration machinery from the feature branch
+        shell: bash
+        run: |
+          rm scripts/apply_services_complete_journey.py
+          rm scripts/fix_work_mobile_model_narrowing.py
+          rm scripts/apply_services_mobile_health_check_v2.py
+          rm scripts/apply_services_project_room_gate.py
+          rm scripts/fix_project_room_route_semantics.py
+          rm scripts/apply_services_recognition_ladder_gate.py
+          rm scripts/apply_services_practical_faq.py
+          rm scripts/apply_services_strategy_room_gate.py
+          rm .github/workflows/services-complete-journey-integration.yml
+          rm .github/workflows/services-complete-journey-gate.yml
+          rm .github/workflows/services-complete-integration-execute.yml
+          cat > vercel.json <<'JSON'
+          {
+            "$schema": "https://openapi.vercel.sh/vercel.json",
+            "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json",
+            "git": {
+              "deploymentEnabled": false
+            }
+          }
+          JSON
+
+      - name: Commit the verified complete Services journey to its integration branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "Integrate the complete Services decision journey"
+          git push origin HEAD:services-complete-journey-integration
