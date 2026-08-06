@@ -58,17 +58,14 @@ def update_component() -> None:
         "mobile audit navigation surface",
     )
 
-    replacements = {
-        '      setMobileChapter("checks");': '      openMobileChapter("checks");',
-        '                  onClick={() => setMobileChapter("unlock")}': '                  onClick={() => openMobileChapter("unlock")}',
-        '              onClick={() => setMobileChapter("checks")}': '              onClick={() => openMobileChapter("checks")}',
-        '                    onClick={() => setMobileChapter("checks")}': '                    onClick={() => openMobileChapter("checks")}',
-    }
-    for old, new in replacements.items():
-        count = text.count(old)
-        if count < 1:
-            raise SystemExit(f"chapter transition {old!r}: expected at least one match, found {count}")
-        text = text.replace(old, new)
+    checks_calls = text.count('setMobileChapter("checks")')
+    unlock_calls = text.count('setMobileChapter("unlock")')
+    if checks_calls != 3:
+        raise SystemExit(f"checks chapter transitions: expected 3, found {checks_calls}")
+    if unlock_calls != 1:
+        raise SystemExit(f"unlock chapter transitions: expected 1, found {unlock_calls}")
+    text = text.replace('setMobileChapter("checks")', 'openMobileChapter("checks")')
+    text = text.replace('setMobileChapter("unlock")', 'openMobileChapter("unlock")')
 
     path.write_text(text)
 
