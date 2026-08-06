@@ -290,6 +290,54 @@ async function auditWorkViewport(browser, viewport) {
       path: path.join(OUTPUT, `work-${viewport.name}-final-viewport.png`),
       animations: "disabled",
     });
+
+    const labHeading = page.getByRole("heading", {
+      name: "Concept studies: the method, demonstrated in the open.",
+    });
+    const labSection = labHeading.locator("xpath=ancestor::section[1]");
+    const labButtons = labSection.locator('button[aria-expanded]');
+    await waitForCount(page, labButtons, 4, `${label}: Lab dossiers`);
+    await assertTouchTargets(labButtons, 40, `${label}: Lab dossier controls`);
+    const labText = (await labSection.textContent()) || "";
+    assert(labText.includes("Zero clients are implied"), `${label}: Lab honesty framing is missing`);
+    await captureLocator(page, labSection, `work-${viewport.name}-lab-closed.png`);
+    await labButtons.first().click();
+    await page.waitForTimeout(260);
+    assert((await labButtons.first().getAttribute("aria-expanded")) === "true", `${label}: Lab dossier did not open`);
+    await captureLocator(page, labSection, `work-${viewport.name}-lab-open.png`);
+
+    const studiesHeading = page.getByRole("heading", {
+      name: "Lessons from brands the whole world already knows.",
+    });
+    const studiesSection = studiesHeading.locator("xpath=ancestor::section[1]");
+    const studyButtons = studiesSection.locator('button[aria-expanded]');
+    await waitForCount(page, studyButtons, 5, `${label}: independent brand studies`);
+    await assertTouchTargets(studyButtons, 40, `${label}: brand-study controls`);
+    const studiesText = (await studiesSection.textContent()) || "";
+    assert(
+      studiesText.includes("Independent dissections of the public record"),
+      `${label}: independent-analysis framing is missing`,
+    );
+    await captureLocator(page, studiesSection, `work-${viewport.name}-studies-closed.png`);
+    await studyButtons.first().click();
+    await page.waitForTimeout(260);
+    assert((await studyButtons.first().getAttribute("aria-expanded")) === "true", `${label}: brand study did not open`);
+    await captureLocator(page, studiesSection, `work-${viewport.name}-studies-open.png`);
+
+    const authorshipHeading = page.getByRole("heading", {
+      name: "One practice. One point of view. Every decision led directly.",
+    });
+    const authorshipSection = authorshipHeading.locator("xpath=ancestor::section[1]");
+    assert((await authorshipSection.locator('img[alt="Suman Sharma"]').count()) === 1, `${label}: founder portrait is missing`);
+    await captureLocator(page, authorshipSection, `work-${viewport.name}-authorship.png`);
+  }
+
+  if (viewport.name === "mobile-360x800") {
+    const header = page.locator("header");
+    const soundControl = header.locator("[data-ambient-audio-toggle]");
+    await waitForCount(page, soundControl, 1, `${label}: header sound control`);
+    await assertTouchTargets(soundControl, 36, `${label}: header sound control`);
+    await captureLocator(page, header, "work-mobile-360x800-header.png");
   }
 
   assertDiagnosticsClean(diagnostics, label);
