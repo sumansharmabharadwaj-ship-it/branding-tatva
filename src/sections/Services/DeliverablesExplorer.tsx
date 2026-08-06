@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
@@ -18,7 +18,14 @@ const DETAIL_MODES = [
   { id: "use", label: "How it gets used" },
 ] as const;
 
+const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+const MANUAL_HOLD_MS = 14000;
+
 type DetailMode = (typeof DETAIL_MODES)[number]["id"];
+type ServicesProgressDetail = {
+  id?: string;
+  progress?: number;
+};
 
 // Fourteen stacked chips made the archive accurate but expensive to
 // travel through, particularly on a phone. The same real catalog now
@@ -33,6 +40,7 @@ export function DeliverablesExplorer() {
   const [detailMode, setDetailMode] = useState<DetailMode>("what");
   const groupRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const detailRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const manualUntilRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
 
   const visible = deliverables.filter((deliverable) => deliverable.group === group);
@@ -41,17 +49,52 @@ export function DeliverablesExplorer() {
   const groupCount = (scope: ScopeGroup) => deliverables.filter((deliverable) => deliverable.group === scope).length;
   const detailText = detailMode === "what" ? active.what : detailMode === "why" ? active.why : active.use;
 
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    function onSceneProgress(event: Event) {
+      const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
+      if (detail?.id !== "deliverables" || typeof detail.progress !== "number") return;
+      if (Date.now() < manualUntilRef.current) return;
+
+      const index = Math.min(
+        SCOPE_GROUPS.length - 1,
+        Math.max(0, Math.floor(detail.progress * SCOPE_GROUPS.length)),
+      );
+      const nextGroup = SCOPE_GROUPS[index] ?? SCOPE_GROUPS[0];
+      if (nextGroup === group) return;
+
+      setGroup(nextGroup);
+      const pool = deliverables.filter((deliverable) => deliverable.group === nextGroup);
+      const nextDeliverable = pool[0];
+      if (nextDeliverable) setActiveId(nextDeliverable.id);
+      setDetailMode("what");
+    }
+
+    window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    return () => {
+      window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    };
+  }, [group, prefersReducedMotion]);
+
+  function holdManualControl() {
+    manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+  }
+
   function pick(id: string) {
+    holdManualControl();
     setActiveId(id);
     setDetailMode("what");
     track("deliverable_inspected", { deliverable: id });
   }
 
   function pickGroup(nextGroup: ScopeGroup) {
+    holdManualControl();
     setGroup(nextGroup);
     const pool = deliverables.filter((deliverable) => deliverable.group === nextGroup);
     if (pool.length && !pool.some((deliverable) => deliverable.id === activeId)) {
-      setActiveId(pool[0].id);
+      const firstDeliverable = pool[0];
+      if (firstDeliverable) setActiveId(firstDeliverable.id);
       setDetailMode("what");
     }
     track("capability_selected", {
@@ -63,7 +106,8 @@ export function DeliverablesExplorer() {
 
   function selectGroup(index: number, focus = false) {
     const nextIndex = (index + SCOPE_GROUPS.length) % SCOPE_GROUPS.length;
-    pickGroup(SCOPE_GROUPS[nextIndex]);
+    const nextGroup = SCOPE_GROUPS[nextIndex] ?? SCOPE_GROUPS[0];
+    pickGroup(nextGroup);
     if (focus) requestAnimationFrame(() => groupRefs.current[nextIndex]?.focus());
   }
 
@@ -92,8 +136,10 @@ export function DeliverablesExplorer() {
   }
 
   function selectDetail(index: number, focus = false) {
+    holdManualControl();
     const nextIndex = (index + DETAIL_MODES.length) % DETAIL_MODES.length;
-    setDetailMode(DETAIL_MODES[nextIndex].id);
+    const nextMode = DETAIL_MODES[nextIndex] ?? DETAIL_MODES[0];
+    setDetailMode(nextMode.id);
     if (focus) requestAnimationFrame(() => detailRefs.current[nextIndex]?.focus());
   }
 
@@ -122,7 +168,11 @@ export function DeliverablesExplorer() {
   }
 
   return (
-    <div data-deliverables-explorer="drawers" data-deliverable-total={deliverables.length}>
+    <div
+      data-deliverables-explorer="drawers"
+      data-deliverables-scroll-controlled="true"
+      data-deliverable-total={deliverables.length}
+    >
       <Container className="max-w-6xl">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Deliverables</p>
@@ -130,8 +180,8 @@ export function DeliverablesExplorer() {
             What you actually leave with.
           </h2>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-ivory/85">
-            Fourteen real deliverables across five drawers. Open a scope, choose an artifact, then inspect what it is,
-            why it matters, and how it gets used without leaving the scene.
+            Fourteen real deliverables across five drawers. A short scroll opens the archive; select any drawer or
+            artifact to hold it while you inspect what it is, why it matters, and how it gets used.
           </p>
         </Reveal>
 
