@@ -117,11 +117,9 @@ jobs:
             }
 
             await page.waitForTimeout(900);
-            await page.evaluate(() => window.scrollTo(0, 0));
-            await page.waitForTimeout(350);
           }
 
-          async function capture(pathname, output, viewport) {
+          async function capture(pathname, output, footerOutput, viewport) {
             const context = await browser.newContext({
               viewport,
               colorScheme: "light",
@@ -151,26 +149,44 @@ jobs:
               throw new Error(`${pathname} browser errors: ${browserErrors.join(" | ")}`);
             }
 
+            const footer = page.locator("footer");
+            if ((await footer.count()) !== 1) {
+              throw new Error(`${pathname} is missing its single footer`);
+            }
+            const footerText = await footer.innerText();
+            if (!footerText.includes("Every brand is visible")) {
+              throw new Error(`${pathname} footer content did not render`);
+            }
+            await footer.screenshot({ path: footerOutput });
+
+            await page.evaluate(() => window.scrollTo(0, 0));
+            await page.waitForTimeout(350);
             await page.screenshot({ path: output, fullPage: true });
             await context.close();
           }
 
-          await capture("/insights", "qa-artifacts/insights-desktop.png", {
-            width: 1440,
-            height: 1100,
-          });
-          await capture("/insights", "qa-artifacts/insights-mobile.png", {
-            width: 390,
-            height: 844,
-          });
+          await capture(
+            "/insights",
+            "qa-artifacts/insights-desktop.png",
+            "qa-artifacts/insights-desktop-footer.png",
+            { width: 1440, height: 1100 }
+          );
+          await capture(
+            "/insights",
+            "qa-artifacts/insights-mobile.png",
+            "qa-artifacts/insights-mobile-footer.png",
+            { width: 390, height: 844 }
+          );
           await capture(
             "/insights/brand-positioning-strategy-service-businesses",
             "qa-artifacts/article-desktop.png",
+            "qa-artifacts/article-desktop-footer.png",
             { width: 1440, height: 1100 }
           );
           await capture(
             "/insights/brand-positioning-strategy-service-businesses",
             "qa-artifacts/article-mobile.png",
+            "qa-artifacts/article-mobile-footer.png",
             { width: 390, height: 844 }
           );
 
