@@ -16,8 +16,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${site.url}/insights`, lastModified: SITE_LAST_UPDATED, changeFrequency: "weekly", priority: 0.9 },
     { url: `${site.url}/glossary`, lastModified: SITE_LAST_UPDATED, changeFrequency: "monthly", priority: 0.6 },
     { url: `${site.url}/contact`, lastModified: SITE_LAST_UPDATED, changeFrequency: "yearly", priority: 0.8 },
-    { url: `${site.url}/privacy`, lastModified: SITE_LAST_UPDATED, changeFrequency: "yearly", priority: 0.2 },
-    { url: `${site.url}/terms`, lastModified: SITE_LAST_UPDATED, changeFrequency: "yearly", priority: 0.2 },
   ];
 
   const workRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
