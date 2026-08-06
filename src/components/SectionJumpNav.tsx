@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-// Long-page wayfinding uses two deliberately different densities. Wide
-// screens retain the quiet technical index along the bottom edge. On
-// mobile, wayfinding becomes one small corner dial. The complete index
-// occupies the viewport only after the visitor explicitly opens it, so
-// reading, forms, and calls to action keep their full width.
+// Long-page wayfinding uses different densities according to the route.
+// Most pages retain the quiet technical index along the bottom edge. A
+// cinematic route can opt into a narrow desktop rail instead, while mobile
+// keeps one small corner dial. The complete index only expands after the
+// visitor asks for it, so reading, forms, and calls to action keep their space.
 type JumpItem = { href: string; label: string };
 
 type SectionJumpNavProps = {
@@ -15,9 +15,16 @@ type SectionJumpNavProps = {
   // Opting in removes the fixed guide once the final indexed section is
   // active, while every existing call site keeps the persistent default.
   hideOnLast?: boolean;
+  // The compact rail is intentionally opt in. Existing routes keep the
+  // established bottom bar unless they explicitly request the cinematic rail.
+  desktopMode?: "bar" | "rail";
 };
 
-export function SectionJumpNav({ items, hideOnLast = false }: SectionJumpNavProps) {
+export function SectionJumpNav({
+  items,
+  hideOnLast = false,
+  desktopMode = "bar",
+}: SectionJumpNavProps) {
   const [activeHref, setActiveHref] = useState(items[0]?.href ?? "");
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -30,14 +37,13 @@ export function SectionJumpNav({ items, hideOnLast = false }: SectionJumpNavProp
 
     const observer = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveHref(`#${entry.target.id}`);
-            break;
-          }
-        }
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visible) setActiveHref(`#${visible.target.id}`);
       },
-      { rootMargin: "-20% 0px -55% 0px" }
+      { rootMargin: "-20% 0px -55% 0px", threshold: [0, 0.12, 0.3, 0.55] },
     );
 
     sections.forEach((element) => observer.observe(element));
@@ -48,6 +54,7 @@ export function SectionJumpNav({ items, hideOnLast = false }: SectionJumpNavProp
   const activeItem = items[activeIndex] ?? items[0];
   const finalHref = items[items.length - 1]?.href;
   const hiddenForFinalScene = hideOnLast && Boolean(finalHref) && activeHref === finalHref;
+  const progress = items.length > 0 ? ((activeIndex + 1) / items.length) * 100 : 0;
 
   useEffect(() => {
     if (hiddenForFinalScene) setMobileOpen(false);
@@ -58,18 +65,21 @@ export function SectionJumpNav({ items, hideOnLast = false }: SectionJumpNavProp
     setMobileOpen(false);
   }
 
-  // The final section can now become a true arrival scene. Returning
-  // null also removes every hidden link from keyboard order instead of
-  // leaving an invisible fixed layer above the booking interface.
+  // The final section can become a true arrival scene. Returning null also
+  // removes every hidden link from keyboard order instead of leaving an
+  // invisible fixed layer above the booking interface.
   if (hiddenForFinalScene) return null;
+
+  const mobileBreakpoint = desktopMode === "rail" ? "lg:hidden" : "sm:hidden";
 
   return (
     <>
-      {/* Mobile: one compact guide rather than a bar across the copy. */}
+      {/* Compact touch and small-screen guide. Cinematic routes keep this
+          through tablet widths because the desktop rail begins at lg. */}
       <nav
         aria-label="Jump to section"
         data-section-jump-nav-mobile="true"
-        className="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-[calc(0.75rem+env(safe-area-inset-right))] z-30 sm:hidden"
+        className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-[calc(0.75rem+env(safe-area-inset-right))] z-30 ${mobileBreakpoint}`}
       >
         {mobileOpen && (
           <div className="absolute bottom-[calc(100%+0.5rem)] right-0 grid w-[min(19rem,calc(100vw-1.5rem))] grid-cols-2 gap-1.5 rounded-2xl border border-ivory/12 bg-soil/95 p-2 shadow-elevation-lg backdrop-blur-md">
@@ -120,30 +130,93 @@ export function SectionJumpNav({ items, hideOnLast = false }: SectionJumpNavProp
         </button>
       </nav>
 
-      {/* Tablet and desktop: the full technical index remains useful. */}
-      <nav
-        aria-label="Jump to section"
-        className="fixed inset-x-0 bottom-0 z-30 hidden border-t border-ivory/10 bg-soil/95 backdrop-blur-xs sm:block"
-      >
-        <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 overflow-x-auto px-6 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {items.map((item) => {
-            const active = activeHref === item.href;
-            return (
-              <a
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "location" : undefined}
-                onClick={() => choose(item.href)}
-                className={`whitespace-nowrap text-[0.65rem] uppercase tracking-[0.2em] transition-colors duration-300 ${
-                  active ? "text-terracotta" : "text-ivory/55 hover:text-ivory"
-                }`}
+      {desktopMode === "rail" ? (
+        <nav
+          aria-label="Jump to section"
+          data-section-jump-nav-desktop-mode="rail"
+          className="fixed right-[calc(0.75rem+env(safe-area-inset-right))] top-1/2 z-30 hidden -translate-y-1/2 lg:block"
+        >
+          <div className="relative flex w-12 flex-col items-center rounded-[1.65rem] border border-ivory/12 bg-soil/88 px-1.5 py-3 shadow-elevation-lg backdrop-blur-md">
+            <span className="font-display text-[0.68rem] leading-none text-terracotta" aria-hidden="true">
+              {String(activeIndex + 1).padStart(2, "0")}
+            </span>
+            <span className="mt-1 text-[0.42rem] font-medium uppercase tracking-[0.12em] text-ivory/40" aria-hidden="true">
+              / {String(items.length).padStart(2, "0")}
+            </span>
+
+            <div className="relative mt-3">
+              <span
+                aria-hidden="true"
+                className="absolute bottom-2 left-1/2 top-2 w-px -translate-x-1/2 overflow-hidden bg-ivory/10"
               >
-                {item.label}
-              </a>
-            );
-          })}
-        </div>
-      </nav>
+                <span
+                  className="block w-full bg-sandstone transition-[height] duration-500 ease-out"
+                  style={{ height: `${progress}%` }}
+                />
+              </span>
+              <ol className="relative flex flex-col items-center gap-0.5">
+                {items.map((item, index) => {
+                  const active = activeHref === item.href;
+                  return (
+                    <li key={item.href}>
+                      <a
+                        href={item.href}
+                        aria-current={active ? "location" : undefined}
+                        aria-label={`Chapter ${index + 1}: ${item.label}`}
+                        onClick={() => choose(item.href)}
+                        className="group relative flex h-7 w-7 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                      >
+                        <span
+                          className={`absolute right-[calc(100%+0.55rem)] whitespace-nowrap rounded-full border px-3 py-1.5 text-[0.58rem] font-medium uppercase tracking-[0.14em] shadow-elevation-lg backdrop-blur-md transition-[opacity,transform] duration-200 ${
+                            active
+                              ? "border-sandstone/35 bg-soil/96 text-sandstone opacity-100"
+                              : "pointer-events-none translate-x-1 border-ivory/12 bg-soil/94 text-ivory/75 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
+                          }`}
+                        >
+                          {item.label}
+                        </span>
+                        <span
+                          aria-hidden="true"
+                          className={`relative z-10 rounded-full transition-all duration-300 ${
+                            active
+                              ? "h-2.5 w-2.5 bg-sandstone shadow-[0_0_14px_rgba(212,185,154,0.42)]"
+                              : "h-1.5 w-1.5 bg-ivory/35 group-hover:h-2 group-hover:w-2 group-hover:bg-ivory/75"
+                          }`}
+                        />
+                      </a>
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+          </div>
+        </nav>
+      ) : (
+        <nav
+          aria-label="Jump to section"
+          data-section-jump-nav-desktop-mode="bar"
+          className="fixed inset-x-0 bottom-0 z-30 hidden border-t border-ivory/10 bg-soil/95 backdrop-blur-xs sm:block"
+        >
+          <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 overflow-x-auto px-6 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {items.map((item) => {
+              const active = activeHref === item.href;
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  aria-current={active ? "location" : undefined}
+                  onClick={() => choose(item.href)}
+                  className={`whitespace-nowrap text-[0.65rem] uppercase tracking-[0.2em] transition-colors duration-300 ${
+                    active ? "text-terracotta" : "text-ivory/55 hover:text-ivory"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </>
   );
 }
