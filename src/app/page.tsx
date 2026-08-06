@@ -18,14 +18,13 @@ import "./home-v4-tatva-mobile-fix.css";
 import "./home-v4-studio-depth.css";
 import "./home-v4-studio-portrait-fix.css";
 import "./home-v4-decision-depth.css";
+import "./home-v4-evidence-depth.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
 import { site } from "@/data/site";
 import { faqs } from "@/data/faqs";
 
-// Preview marker: the cinematic homepage passed recovery gate 158 before this
-// source-only deployment trigger. The rendered experience is unchanged.
 export const metadata: Metadata = {
   title: `${site.name}: Brand Strategy by ${site.founder}`,
   description: site.description,
