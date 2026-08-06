@@ -27,11 +27,7 @@ jobs:
         run: |
           python <<'PY'
           from pathlib import Path
-          from textwrap import dedent
           import re
-
-          def block(value: str) -> str:
-              return dedent(value).strip("\n")
 
           def replace_once(text: str, old: str, new: str, label: str) -> str:
               count = text.count(old)
@@ -40,7 +36,7 @@ jobs:
               return text.replace(old, new, 1)
 
           def regex_once(text: str, pattern: str, replacement: str, label: str) -> str:
-              updated, count = re.subn(pattern, replacement, text, count=1, flags=re.S)
+              updated, count = re.subn(pattern, replacement, text, count=1, flags=re.S | re.M)
               if count != 1:
                   raise SystemExit(f"{label}: expected one match, found {count}")
               return updated
@@ -62,22 +58,14 @@ jobs:
               "Services hero poster preload",
           )
 
-          page = replace_once(
+          page = regex_once(
               page,
-              block('''
-                <PhotoHero
-                  video="/videos/pexels-aspen-sunburst.mp4"
-                  poster="/images/pexels-aspen-sunburst-poster.jpg"
-                  minHeight="70vh"
-                >
-              '''),
-              block('''
-                <ServicesCinematicHero
-                  video="/videos/services-hero-root-system.mp4"
-                  poster="/images/services-hero-root-system-poster.jpg"
-                  minHeight="70vh"
-                >
-              '''),
+              r'''^[ \t]*<PhotoHero\n[ \t]+video="/videos/pexels-aspen-sunburst\.mp4"\n[ \t]+poster="/images/pexels-aspen-sunburst-poster\.jpg"\n[ \t]+minHeight="70vh"\n[ \t]*>''',
+              '''        <ServicesCinematicHero
+          video="/videos/services-hero-root-system.mp4"
+          poster="/images/services-hero-root-system-poster.jpg"
+          minHeight="70vh"
+        >''',
               "Services hero media",
           )
 
@@ -85,93 +73,61 @@ jobs:
 
           page = regex_once(
               page,
-              r'''          /\*\{ Approved awakening footage.*?page wakes into the burst\. \*/\}'''.replace("/*{", "{/*"),
-              block('''
-                {/* Original Branding Tatva film: a realistic underground root
-                    network whose connected paths become visible through a
-                    restrained ivory-mineral pulse. The visual teaches the
-                    opening idea before the copy completes it: recognition
-                    breaks when the system beneath visible work disconnects. */}
-              '''),
+              r'''^[ \t]*\{/\* Approved awakening footage.*?page wakes into the burst\. \*/\}''',
+              '''          {/* Original Branding Tatva film: a realistic underground root
+              network whose connected paths become visible through a
+              restrained ivory-mineral pulse. The visual teaches the
+              opening idea before the copy completes it: recognition
+              breaks when the system beneath visible work disconnects. */}''',
               "Services hero source note",
           )
 
           page = replace_once(page, "              <Reveal delay={1.7}>", "              <Reveal delay={0.35}>", "Services hero copy delay")
 
-          page = replace_once(
+          page = regex_once(
               page,
-              block('''
-                <SplitReveal
-                  as="h1"
-                  splitType="chars"
-              '''),
-              block('''
-                <SplitReveal
-                  as="h1"
-                  splitType="words"
-              '''),
+              r'''(<SplitReveal\s+as="h1"\s+)splitType="chars"''',
+              r'''\1splitType="words"''',
               "Services hero word reveal",
           )
 
-          page = replace_once(
+          page = regex_once(
               page,
-              block('''
-                <BackgroundVideo
-                  parallax
-                  video="/videos/pexels-redwood-ferns.mp4"
-                  videoWebm="/videos/pexels-redwood-ferns.webm"
-                  poster="/images/pexels-redwood-ferns-poster.jpg"
-                />
-              '''),
-              block('''
-                <BackgroundVideo
-                  video="/videos/services-strategy-topography.mp4"
-                  poster="/images/services-strategy-topography-poster.jpg"
-                />
-              '''),
+              r'''^[ \t]*<BackgroundVideo\n[ \t]+parallax\n[ \t]+video="/videos/pexels-redwood-ferns\.mp4"\n[ \t]+videoWebm="/videos/pexels-redwood-ferns\.webm"\n[ \t]+poster="/images/pexels-redwood-ferns-poster\.jpg"\n[ \t]*/>''',
+              '''          <BackgroundVideo
+            video="/videos/services-strategy-topography.mp4"
+            poster="/images/services-strategy-topography-poster.jpg"
+          />''',
               "Services strategy media",
           )
 
           page = regex_once(
               page,
-              r'''          \{\/\* Approved Education footage.*?reads as shrinking\)\. \*\/\}''',
-              block('''
-                {/* Original Brand Strategy film: dark topographic terrain
-                    clarifies into one deliberate route. It gives the education
-                    chapter a service-specific visual argument rather than
-                    another interchangeable forest scene. */}
-              '''),
+              r'''^[ \t]*\{/\* Approved Education footage.*?reads as shrinking\)\. \*/\}''',
+              '''          {/* Original Brand Strategy film: dark topographic terrain
+              clarifies into one deliberate route. It gives the education
+              chapter a service-specific visual argument rather than
+              another interchangeable forest scene. */}''',
               "Services strategy source note",
           )
 
-          page = replace_once(
+          page = regex_once(
               page,
-              block('''
-                <BackgroundVideo
-                  parallax
-                  video="/videos/pexels-moss-stream.mp4"
-                  videoWebm="/videos/pexels-moss-stream.webm"
-                  poster="/images/pexels-moss-stream-poster.jpg"
-                />
-              '''),
-              block('''
-                <BackgroundVideo
-                  video="/videos/services-health-reflection.mp4"
-                  poster="/images/services-health-reflection-poster.jpg"
-                />
-              '''),
+              r'''^[ \t]*<BackgroundVideo\n[ \t]+parallax\n[ \t]+video="/videos/pexels-moss-stream\.mp4"\n[ \t]+videoWebm="/videos/pexels-moss-stream\.webm"\n[ \t]+poster="/images/pexels-moss-stream-poster\.jpg"\n[ \t]*/>''',
+              '''          <BackgroundVideo
+            video="/videos/services-health-reflection.mp4"
+            poster="/images/services-health-reflection-poster.jpg"
+          />''',
               "Services health media",
           )
 
           page = regex_once(
               page,
-              r'''          \{\/\* Media replaced per direct approval.*?2\.0MB MP4 / 0\.7MB WebM\. \*\/\}''',
-              block('''
-                {/* Original Brand Health film: a glass-dark reflective surface
-                    reveals quiet structural fractures beneath it, then settles.
-                    The movement behaves like diagnosis, not decorative nature
-                    footage, while preserving the page's calm forest register. */}
-              '''),
+              r'''^[ \t]*\{/\* Media replaced per direct approval.*?2\.0MB MP4 / 0\.7MB WebM\. \*/\}''',
+              '''          {/* Original Brand Health film: a glass-dark reflective surface
+              reveals quiet structural fractures beneath it, then settles.
+              The movement behaves like diagnosis, not decorative nature
+              footage, while preserving the page's calm forest register. */}''',
               "Services health source note",
           )
 
