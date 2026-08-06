@@ -3,7 +3,9 @@
 // instead of re-declaring them inline. These sit inside the site's
 // codified earth-first design language (CLAUDE.md, Aug 2026): cream as
 // the primary light ground, forest as the deep editorial dark, warm
-// sand reserved for authorship accents and rare highlights.
+// sand reserved for authorship accents and rare highlights. Individual
+// projects may introduce their own evidence accents without mutating
+// this shared navigation, archive, and conversion palette.
 export const WORK = {
   forest: "#1F3A28",
   moss: "#556B4A",
