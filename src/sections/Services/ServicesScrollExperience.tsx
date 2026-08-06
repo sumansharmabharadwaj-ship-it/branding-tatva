@@ -125,8 +125,9 @@ export function ServicesScrollExperience() {
 
   useEffect(() => {
     const marker = markerRef.current;
-    const root = marker?.closest<HTMLElement>("[data-services-scroll-root]");
-    if (!root) return;
+    const maybeRoot = marker?.closest<HTMLElement>("[data-services-scroll-root]");
+    if (!maybeRoot) return;
+    const root: HTMLElement = maybeRoot;
 
     assignSceneIdentity(root);
     let scenes = collectScenes(root);
@@ -162,7 +163,10 @@ export function ServicesScrollExperience() {
     const chapterObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          ratios.set(entry.target as HTMLElement, entry.isIntersecting ? entry.intersectionRatio : 0);
+          ratios.set(
+            entry.target as HTMLElement,
+            entry.isIntersecting ? entry.intersectionRatio : 0,
+          );
         });
 
         let best = activeScene;
@@ -205,7 +209,10 @@ export function ServicesScrollExperience() {
         if (Math.abs(progress - scene.progress) < 0.002) return;
         scene.progress = progress;
         scene.element.style.setProperty("--services-progress", progress.toFixed(4));
-        scene.element.style.setProperty("--services-line", `${(progress * 100).toFixed(2)}%`);
+        scene.element.style.setProperty(
+          "--services-line",
+          `${(progress * 100).toFixed(2)}%`,
+        );
         scene.element.style.setProperty(
           "--services-shift-x",
           `${((progress - 0.5) * 22).toFixed(2)}px`,
@@ -219,7 +226,10 @@ export function ServicesScrollExperience() {
           (1 + progress * 0.018).toFixed(4),
         );
 
-        if (bounds.bottom >= -viewportHeight * 0.2 && bounds.top <= viewportHeight * 1.2) {
+        if (
+          bounds.bottom >= -viewportHeight * 0.2 &&
+          bounds.top <= viewportHeight * 1.2
+        ) {
           window.dispatchEvent(
             new CustomEvent(SCENE_PROGRESS_EVENT, {
               detail: {
@@ -249,7 +259,8 @@ export function ServicesScrollExperience() {
       navigatorHints.connection?.effectiveType === "2g" ||
       navigatorHints.connection?.effectiveType === "slow-2g";
     const lowMemory =
-      typeof navigatorHints.deviceMemory === "number" && navigatorHints.deviceMemory <= 4;
+      typeof navigatorHints.deviceMemory === "number" &&
+      navigatorHints.deviceMemory <= 4;
 
     function videoBudget() {
       return viewportProfile.matches || constrainedConnection || lowMemory ? 1 : 2;
@@ -324,7 +335,10 @@ export function ServicesScrollExperience() {
           if (!(node instanceof Element)) return;
           if (node instanceof HTMLVideoElement) trackVideo(node);
           node.querySelectorAll<HTMLVideoElement>("video").forEach(trackVideo);
-          if (node.matches?.("[data-services-scene]") || node.querySelector?.("[data-services-scene]")) {
+          if (
+            node.matches?.("[data-services-scene]") ||
+            node.querySelector?.("[data-services-scene]")
+          ) {
             refreshScenes = true;
           }
         });
@@ -342,7 +356,8 @@ export function ServicesScrollExperience() {
 
     function onFocusIn(event: FocusEvent) {
       const target = event.target;
-      if (!(target instanceof Element) || !target.matches(FORM_CONTROL_SELECTOR)) return;
+      if (!(target instanceof Element) || !target.matches(FORM_CONTROL_SELECTOR))
+        return;
       formInteraction = true;
       root.dataset.servicesFormInteraction = "true";
       syncVideos();
@@ -352,7 +367,9 @@ export function ServicesScrollExperience() {
       window.setTimeout(() => {
         const active = document.activeElement;
         formInteraction = Boolean(
-          active instanceof Element && root.contains(active) && active.matches(FORM_CONTROL_SELECTOR),
+          active instanceof Element &&
+            root.contains(active) &&
+            active.matches(FORM_CONTROL_SELECTOR),
         );
         root.dataset.servicesFormInteraction = formInteraction ? "true" : "false";
         syncVideos();
@@ -391,7 +408,10 @@ export function ServicesScrollExperience() {
     };
   }, [prefersReducedMotion]);
 
-  const activeIndex = Math.max(0, CHAPTERS.findIndex((chapter) => chapter.id === activeId));
+  const activeIndex = Math.max(
+    0,
+    CHAPTERS.findIndex((chapter) => chapter.id === activeId),
+  );
   const active = CHAPTERS[activeIndex] ?? CHAPTERS[0];
   const hiddenForArrival = active.id === "book";
 
