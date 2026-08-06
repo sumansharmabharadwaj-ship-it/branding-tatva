@@ -26,19 +26,28 @@ html[data-services-experience="active"] {
 [data-services-hero-media="true"] {
   transform: translate3d(0, var(--services-hero-media-y), 0) scale(var(--services-hero-scale));
   transform-origin: 50% 48%;
-  will-change: transform;
 }
 
 [data-services-hero-heading="true"] {
   opacity: var(--services-hero-copy-opacity);
   transform: translate3d(0, var(--services-hero-copy-y), 0);
   transform-origin: left center;
-  will-change: transform, opacity;
 }
 
 [data-services-hero-index="true"] {
   opacity: var(--services-hero-index-opacity);
   transform: translate3d(var(--services-hero-index-x), 0, 0);
+}
+
+/* Compositor promotion is reserved only while the opening is the active
+   chapter. Once the visitor leaves, the browser can reclaim those layers. */
+[data-services-hero-scene="true"][data-services-active="true"] [data-services-hero-media="true"] {
+  will-change: transform;
+}
+
+[data-services-hero-scene="true"][data-services-active="true"] [data-services-hero-heading="true"],
+[data-services-hero-scene="true"][data-services-active="true"] [data-services-hero-index="true"],
+[data-services-hero-scene="true"][data-services-active="true"] [data-services-hero-aperture="true"] {
   will-change: transform, opacity;
 }
 
@@ -132,7 +141,6 @@ html[data-services-experience="active"] {
   pointer-events: none;
   transform: translate3d(-50%, 0, 0) scale(var(--services-hero-aperture-scale));
   transform-origin: 50% 50%;
-  will-change: transform, opacity;
 }
 
 /* Authority previously consumed 420vh for five states. That made each layer
@@ -168,6 +176,7 @@ html[data-services-experience="active"] {
   left: 0;
   height: clamp(2.5rem, 7vh, 5rem);
   overflow: hidden;
+  contain: paint;
   pointer-events: none;
   opacity: calc(0.12 + var(--services-scene-presence, 0) * 0.28);
 }
@@ -192,8 +201,7 @@ html[data-services-experience="active"] {
   width: min(24rem, 34vw);
   height: 5.4rem;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(212, 185, 154, 0.16), rgba(125, 155, 175, 0.06) 42%, transparent 72%);
-  filter: blur(9px);
+  background: radial-gradient(ellipse, rgba(212, 185, 154, 0.15) 0%, rgba(125, 155, 175, 0.07) 38%, rgba(125, 155, 175, 0.025) 58%, transparent 76%);
   transform: translateX(-50%);
 }
 
