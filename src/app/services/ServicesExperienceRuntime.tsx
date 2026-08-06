@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 const ACTIVE_ROOT_MARGIN = "-18% 0px -50% 0px";
 const SCENE_SELECTOR = "[data-services-scene], #authority, #book";
+const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 
 function clamp(value: number, minimum = 0, maximum = 1) {
   return Math.min(maximum, Math.max(minimum, value));
@@ -190,6 +191,20 @@ export function ServicesExperienceRuntime() {
               ? "leaving"
               : "present";
         scene.dataset.servicesPhase = phase;
+
+        if (bounds.bottom >= -viewportHeight * 0.2 && bounds.top <= viewportHeight * 1.2) {
+          window.dispatchEvent(
+            new CustomEvent(SCENE_PROGRESS_EVENT, {
+              detail: {
+                id: scene.id || scene.dataset.servicesScene || scene.dataset.servicesScrollScene,
+                scene: scene.dataset.servicesScrollScene,
+                progress,
+                presence: centred,
+                phase,
+              },
+            }),
+          );
+        }
       });
     }
 
