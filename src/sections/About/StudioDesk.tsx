@@ -51,7 +51,7 @@ const DRAWERS: Drawer[] = [
       "M.A. Clinical Psychology, Amity University, 2023. B.A. (Hons) English Literature, University of Delhi, 2021.",
       "One studies how people notice, associate, remember, and choose. The other studies how language carries meaning. Brand strategy is the discipline where both apply at once, which is the whole argument of this practice.",
     ],
-    href: "/insights/how-psychology-informs-brand-strategy",
+    href: "/insights/five-element-brand-strategy-framework",
     linkLabel: "Read how the psychology actually applies",
   },
   {
@@ -62,7 +62,7 @@ const DRAWERS: Drawer[] = [
       "Decisions get written down the day they land: the choice, the reasons as they actually were, the alternatives that lost, and the condition that would reopen the question.",
       "A brand drifts when the reasons live only in someone's memory. Records are how consistency survives new hands.",
     ],
-    href: "/insights/how-to-document-brand-decisions",
+    href: "/insights/brand-consistency-checklist-service-businesses",
     linkLabel: "See the record template",
   },
   {
@@ -73,7 +73,7 @@ const DRAWERS: Drawer[] = [
       "This site runs on its own documented voice: a vocabulary it reaches for, words it refuses, a rhythm, and claims it will stake. Every sentence here passes that standard before it ships.",
       "A voice you can break silently is a voice you never had, which is why the rules exist in writing rather than in taste.",
     ],
-    href: "/insights/verbal-identity-beyond-tone-of-voice",
+    href: "/insights/brand-messaging-framework",
     linkLabel: "Read the voice worksheet",
   },
   {

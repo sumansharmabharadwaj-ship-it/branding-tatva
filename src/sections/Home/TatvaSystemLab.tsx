@@ -362,7 +362,7 @@ export function TatvaSystemLab() {
                     Select the missing force again to restore it, or let the model continue demonstrating the system automatically.
                   </p>
                   <Link
-                    href="#elements"
+                    href="#tatva"
                     className="link-underline mt-5 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em]"
                     style={{ color: "#D4B99A" }}
                   >

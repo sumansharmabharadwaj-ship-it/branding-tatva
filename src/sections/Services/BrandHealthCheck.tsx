@@ -199,7 +199,7 @@ function ServicesFAQPortal() {
       {host &&
         createPortal(
           <section
-            id="questions"
+            id="services-questions"
             data-services-scene="questions"
             className="relative scroll-mt-24 overflow-hidden py-20 sm:py-24 lg:flex lg:min-h-[100svh] lg:items-center"
             style={{ backgroundColor: "#171A17" }}
@@ -251,6 +251,7 @@ export function BrandHealthCheck() {
           Resolve the practical questions <span aria-hidden="true" className="ml-2">↓</span>
         </a>
       </div>
+      <span id="questions" className="block scroll-mt-24" aria-hidden="true" />
       <ServicesFAQPortal />
     </>
   );
