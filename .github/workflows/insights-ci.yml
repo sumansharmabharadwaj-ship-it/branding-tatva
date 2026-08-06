@@ -10,6 +10,7 @@ on:
       - "src/components/InsightCard.tsx"
       - "src/components/InsightsExplorer.tsx"
       - "src/data/*Insights.ts"
+      - "src/data/repositioning/**"
       - "src/data/insights.ts"
       - "src/data/pillarInsights.ts"
       - "src/app/sitemap.ts"
