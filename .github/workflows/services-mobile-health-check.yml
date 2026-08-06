@@ -1,4 +1,5 @@
 name: Build and verify the compact mobile Health Check
+run-name: Services mobile Health Check pass 2 · ${{ github.sha }}
 
 on:
   push:
@@ -18,7 +19,7 @@ concurrency:
 jobs:
   build-audit-commit:
     if: github.actor != 'github-actions[bot]'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 35
 
     steps:
