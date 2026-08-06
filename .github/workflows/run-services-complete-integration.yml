@@ -1,4 +1,5 @@
 name: Run the complete Services integration gate
+# Review-merge execution refresh: 2026-08-07
 run-name: Services integration control plane · ${{ github.sha }}
 
 on:
