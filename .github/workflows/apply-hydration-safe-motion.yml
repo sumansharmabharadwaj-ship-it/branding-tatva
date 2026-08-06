@@ -102,7 +102,6 @@ jobs:
             if not raw_call.search(text):
               continue
 
-            original = text
             text, import_count = import_pattern.subn(rewrite_framer_import, text, count=1)
             if import_count != 1:
               raise RuntimeError(f"Could not isolate the Framer Motion import in {path}")
@@ -176,11 +175,13 @@ jobs:
             'import { useHydratedMotionPreference, useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";',
             path,
           )
-          text = replace_once(
-            text,
-            "const prefersReducedMotion = useHydratedReducedMotion();",
+          call = "const prefersReducedMotion = useHydratedReducedMotion();"
+          if text.count(call) != 2:
+            raise RuntimeError(f"Expected the managed video and page narrative calls in {path}")
+          text = text.replace(
+            call,
             "const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();",
-            path,
+            1,
           )
           text = replace_once(text, "if (!video || prefersReducedMotion) return;", "if (!hydrated || !video || prefersReducedMotion) return;", path)
           text = replace_once(text, "}, [prefersReducedMotion]);", "}, [hydrated, prefersReducedMotion]);", path)
