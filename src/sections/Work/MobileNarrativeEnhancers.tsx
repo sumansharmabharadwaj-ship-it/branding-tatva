@@ -90,8 +90,10 @@ function extractNarrative(element: HTMLElement): NarrativeChapter {
   const contentRoot = narrativeContentRoot(element);
   const paragraphs = directParagraphs(contentRoot);
   const finalParagraph = paragraphs.length > 0 ? paragraphs[paragraphs.length - 1] : undefined;
+  const labelSpans = paragraphs[0] ? Array.from(paragraphs[0].querySelectorAll(":scope > span")) : [];
   const label =
-    text(contentRoot.querySelector(":scope > p span:last-child")) || text(paragraphs[0]).replace(/^\d+\s*/, "");
+    (labelSpans.length > 1 ? text(labelSpans[labelSpans.length - 1]) : "") ||
+    text(paragraphs[0]).replace(/^\d+\s*/, "");
   const title = text(contentRoot.querySelector(":scope > h2, :scope > h3"));
   const body = text(paragraphs[1] ?? finalParagraph);
   return { label, title, body, stats: extractStats(contentRoot) };
