@@ -4,7 +4,7 @@ import { insightPosts, insightTopics } from "@/data/insightLibrary";
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 
-const SITE_LAST_UPDATED = new Date("2026-08-06");
+const SITE_LAST_UPDATED = new Date("2026-08-07");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
