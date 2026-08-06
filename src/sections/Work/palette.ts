@@ -5,7 +5,7 @@
 // the primary light ground, forest as the deep editorial dark, warm
 // sand reserved for authorship accents and rare highlights. Individual
 // projects may introduce their own evidence accents without mutating
-// this shared navigation, archive, and conversion palette.
+// this shared navigation, archive, conversion, or mobile-deck palette.
 export const WORK = {
   forest: "#1F3A28",
   moss: "#556B4A",
