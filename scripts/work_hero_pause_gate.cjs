@@ -23,27 +23,36 @@ async function selectedIndex(tabs) {
 }
 
 async function waitForSelectionChange(page, tabs, previous, label) {
-  await page
-    .waitForFunction(
-      ({ selector, before }) => {
-        const nodes = Array.from(document.querySelectorAll(selector));
-        const next = nodes.findIndex((node) => node.getAttribute("aria-selected") === "true");
-        return next >= 0 && next !== before;
-      },
-      { selector: '[data-work-preview-stage="true"] [role="tab"]', before: previous },
-      { timeout: ROTATION_WINDOW_MS + 1_500 },
-    )
-    .catch(() => {
-      throw new Error(`${label}: automatic preview did not resume after all pause channels cleared`);
-    });
-
-  return selectedIndex(tabs);
+  const deadline = Date.now() + ROTATION_WINDOW_MS + 1_500;
+  while (Date.now() < deadline) {
+    const next = await selectedIndex(tabs);
+    if (next >= 0 && next !== previous) return next;
+    await page.waitForTimeout(100);
+  }
+  throw new Error(`${label}: automatic preview did not resume after all pause channels cleared`);
 }
 
 async function assertStableSelection(page, tabs, expected, label) {
   await page.waitForTimeout(ROTATION_WINDOW_MS);
   const actual = await selectedIndex(tabs);
   assert(actual === expected, `${label}: preview rotated from ${expected} to ${actual}`);
+}
+
+async function waitForPauseChannelsToClear(page, label) {
+  const stage = page.locator('[data-work-preview-stage="true"]');
+  const deadline = Date.now() + 2_000;
+  let lastState = null;
+  while (Date.now() < deadline) {
+    const state = await stage.evaluate((node) => ({
+      pointer: node.getAttribute("data-pointer-paused"),
+      focus: node.getAttribute("data-focus-paused"),
+      inView: node.getAttribute("data-preview-in-view"),
+    }));
+    lastState = state;
+    if (state.pointer === "false" && state.focus === "false" && state.inView === "true") return;
+    await page.waitForTimeout(50);
+  }
+  throw new Error(`${label}: pause channels did not clear ${JSON.stringify(lastState)}`);
 }
 
 async function movePointerInside(page, stage) {
@@ -107,6 +116,7 @@ async function auditInteractivePause(browser) {
     await assertStableSelection(page, tabs, hovered, "work/hero-pause: hover pause after focus leaves");
 
     await movePointerOutside(page);
+    await waitForPauseChannelsToClear(page, "work/hero-pause");
     await waitForSelectionChange(page, tabs, hovered, "work/hero-pause");
 
     await toggle.click();
@@ -123,6 +133,7 @@ async function auditInteractivePause(browser) {
     await outsideFocus.focus();
     await page.waitForTimeout(120);
     assert((await toggle.getAttribute("aria-pressed")) === "false", "work/hero-pause: manual resume did not clear aria-pressed");
+    await waitForPauseChannelsToClear(page, "work/hero-pause: manual resume");
     const resumedAfterManual = await waitForSelectionChange(page, tabs, manuallyPaused, "work/hero-pause: manual resume");
 
     await tabs.nth(resumedAfterManual).focus();
