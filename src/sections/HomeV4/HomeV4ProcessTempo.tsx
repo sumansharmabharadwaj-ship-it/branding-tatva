@@ -6,8 +6,12 @@ import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
 
 const PROCESS_SELECTOR = '[data-project-journey="true"]';
 const TAB_SELECTOR = '.project-journey__rail [role="tab"]';
-const FIRST_ADVANCE_MS = 2400;
-const AUTO_ADVANCE_MS = 4200;
+// The former 2.4s first wait and 4.2s steady interval made this chapter lag
+// behind the faster V4 guide. The first meaningful change now arrives inside
+// one reading beat, then the process continues roughly 30% faster. Manual
+// interaction still receives the full 12-second reading hold.
+const FIRST_ADVANCE_MS = 1500;
+const AUTO_ADVANCE_MS = 2900;
 const USER_HOLD_MS = 12000;
 const PAUSE_PULSE_MS = 4200;
 
@@ -108,7 +112,7 @@ export function HomeV4ProcessTempo() {
     }
 
     // Continue should feel immediate. Reset the local hold and return to the
-    // short opening beat before the longer steady rhythm resumes.
+    // short opening beat before the steady rhythm resumes.
     holdUntilRef.current = 0;
     firstAdvanceRef.current = true;
     setRevision((value) => value + 1);
