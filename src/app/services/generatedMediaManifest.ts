@@ -2,6 +2,7 @@ export const GENERATED_SERVICES_MEDIA_REVISION = {
   installed: "2026-08-06",
   desktopLoops: 6,
   mobileLoops: 6,
+  stillScenes: 1,
   silent: true,
   posters: true,
   auditHarness: "strict-csp-compatible",
@@ -46,4 +47,13 @@ export const GENERATED_SERVICES_MEDIA = {
   },
 } as const;
 
+export const GENERATED_SERVICES_STILLS = {
+  stakes: {
+    image: "/images/generated/bt-services-stakes-positioning.png",
+    purpose: "Separate one recognisable position from an interchangeable category field.",
+    motion: "Scroll-linked camera drift with a restrained mineral-light catch.",
+  },
+} as const;
+
 export type GeneratedServicesMediaKey = keyof typeof GENERATED_SERVICES_MEDIA;
+export type GeneratedServicesStillKey = keyof typeof GENERATED_SERVICES_STILLS;
