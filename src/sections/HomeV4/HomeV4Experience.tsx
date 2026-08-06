@@ -100,7 +100,7 @@ export function HomeV4Experience() {
         data-home-v4-chapter="tatva"
         data-home-chapter="tatva"
         data-home-section="tatva"
-        data-cursor-world="light"
+        data-cursor-world="dark"
         className="home-v4-chapter home-v4-chapter--tatva"
         aria-label="The five Tatvas as one operating system"
       >
