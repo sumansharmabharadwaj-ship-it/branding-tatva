@@ -268,6 +268,11 @@ async function auditServicesViewport(browser, viewport) {
   const heroText = (await hero.textContent()) || "";
   assert(heroText.includes("0.71%") && heroText.includes("2.81%"), `${label}: proof is missing from the opening scene`);
   await assertNoOverflow(page, `${label}/opening`);
+  const heroBox = await hero.boundingBox();
+  assert(
+    heroBox && heroBox.height >= viewport.height - 2,
+    `${label}: opening scene is ${heroBox?.height ?? 0}px tall for a ${viewport.height}px viewport`,
+  );
 
   for (const id of SECTION_IDS) {
     assert((await page.locator(`#${id}`).count()) === 1, `${label}: #${id} is missing or duplicated`);
@@ -300,7 +305,15 @@ async function auditServicesViewport(browser, viewport) {
   // terrain film has a complete reduced-motion frame.
   const offerings = page.locator("#offerings");
   await scrollTo(page, offerings, `${label}/offerings`);
-  await waitForCount(offerings.locator(".spotlight-card"), 6, `${label}: offerings`);
+  const offeringCards = offerings.locator(".spotlight-card");
+  await waitForCount(offeringCards, 6, `${label}: offerings`);
+  const offeringColors = await offeringCards.evaluateAll((nodes) =>
+    nodes.map((node) => node.style.getPropertyValue("--card-color").trim()),
+  );
+  assert(
+    offeringColors.length === 6 && offeringColors.every(Boolean),
+    `${label}: one or more offering rows have no discipline accent ${JSON.stringify(offeringColors)}`,
+  );
   for (const service of [
     "Brand Strategy & Identity",
     "Content Strategy",

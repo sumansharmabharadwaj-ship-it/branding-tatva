@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { cookies, headers } from "next/headers";
 import { preload } from "react-dom";
 import { Header } from "@/layouts/Header";
@@ -109,16 +110,17 @@ export default async function ServicesPage() {
           surface. */}
       <main id="main-content" style={{ backgroundColor: MOOD.charcoal }}>
         <PricingProvider initialRegion={region}>
-        {/* Curiosity opens on an original Branding Tatva film.
-            A living root network reveals the system beneath visible
-            brand work, so the first frame begins teaching before the
-            headline finishes arriving. The compact 70svh masthead
-            keeps the Services page moving quickly into diagnosis. */}
+        {/* Curiosity opens as a complete first scene rather than a
+            compact masthead. One viewport belongs to the root-system
+            film, proposition, proof, and chapter map; the Situation
+            chapter only begins after the visitor has finished this
+            frame. The scene still advances quickly because the veil and
+            word reveal respond inside the viewport, not by shortening it. */}
         <PhotoHero
           video="/videos/generated/bt-services-hero-root-system.mp4"
           videoMobile="/videos/generated/bt-services-hero-root-system-mobile.mp4"
           poster="/images/generated/bt-services-hero-root-system-poster.jpg"
-          minHeight="70vh"
+          minHeight="100vh"
           overlayGradient="linear-gradient(180deg, rgba(12,17,16,0.54) 0%, rgba(12,17,16,0.64) 58%, rgba(12,17,16,0.82) 100%)"
           playbackRate={1.15}
         >
@@ -218,7 +220,7 @@ export default async function ServicesPage() {
               </Reveal>
             </div>
           </Container>
-          <ScrollCue />
+          <ScrollCue raised />
           {/* The hero's last frames darken into the Situation
               chapter's charcoal. Every later chapter uses the same
               veil-and-handoff grammar, so the page reads as one colour
@@ -311,8 +313,13 @@ export default async function ServicesPage() {
                 {offerings.map((offer, i) => (
                   <Reveal key={offer.name} delay={i * 0.05}>
                     <div
-                      className="spotlight-card group grid gap-2 rounded-2xl border-t border-ivory/12 px-4 py-6 transition-colors duration-500 hover:bg-ivory/[0.05] sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-8"
-                      style={{ borderTopColor: "rgba(244,239,230,0.12)" }}
+                      className="spotlight-card group grid gap-2 rounded-2xl border-t border-ivory/12 px-4 py-6 sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-8"
+                      style={
+                        {
+                          borderTopColor: "rgba(244,239,230,0.12)",
+                          "--card-color": offer.color,
+                        } as CSSProperties
+                      }
                     >
                       <p className="flex items-center gap-3 font-display text-xl font-normal text-ivory">
                         <span

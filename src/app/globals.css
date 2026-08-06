@@ -485,13 +485,24 @@
    cards sitting at identical, static weight. Pure CSS (:has), no JS
    state — every card already knows its own color via the inline
    --card-color custom property. */
-.spotlight-grid:has(.spotlight-card:hover) .spotlight-card:not(:hover) {
-  opacity: 0.55;
+.spotlight-card {
+  transition-property: opacity, background-color, border-color;
+  transition-duration: 500ms;
 }
 
-.spotlight-card:hover {
-  background-color: color-mix(in srgb, var(--card-color) 22%, transparent);
-  border-color: var(--card-color);
+/* The spotlight belongs to fine-pointer exploration only. Touch
+   browsers can retain :hover after a tap, which previously dimmed five
+   disciplines indefinitely. Siblings now remain readable, and each row
+   finally receives the discipline color already authored in its data. */
+@media (hover: hover) and (pointer: fine) {
+  .spotlight-grid:has(.spotlight-card:hover) .spotlight-card:not(:hover) {
+    opacity: 0.72;
+  }
+
+  .spotlight-card:hover {
+    background-color: color-mix(in srgb, var(--card-color) 22%, transparent);
+    border-color: var(--card-color);
+  }
 }
 
 /* Underline draws in on hover instead of sitting there static — a small
