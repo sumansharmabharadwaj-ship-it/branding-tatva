@@ -5,15 +5,30 @@ import { Volume2, VolumeX } from "lucide-react";
 
 const STORAGE_KEY = "ambient-audio-enabled";
 
+type AmbientStateEvent = CustomEvent<{ enabled?: boolean }>;
+
+function readStoredPreference() {
+  try {
+    return window.localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredPreference(enabled: boolean) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, String(enabled));
+  } catch {
+    // The audio choice still applies for the current visit when storage is unavailable.
+  }
+}
+
 export function AmbientAudio() {
-  const [enabled, setEnabled] = useState(false);
-  const [ready, setReady] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const enabledRef = useRef(false);
 
   const publishState = useCallback((next: boolean) => {
     enabledRef.current = next;
-    setEnabled(next);
     window.dispatchEvent(
       new CustomEvent("bt:ambient-audio-state", {
         detail: { enabled: next },
@@ -27,14 +42,14 @@ export function AmbientAudio() {
 
     if (!audio.paused) {
       audio.pause();
-      window.localStorage.setItem(STORAGE_KEY, "false");
+      writeStoredPreference(false);
       publishState(false);
       return;
     }
 
     void audio.play().then(
       () => {
-        window.localStorage.setItem(STORAGE_KEY, "true");
+        writeStoredPreference(true);
         publishState(true);
       },
       () => publishState(false),
@@ -42,8 +57,7 @@ export function AmbientAudio() {
   }, [publishState]);
 
   useEffect(() => {
-    setReady(true);
-    const stored = window.localStorage.getItem(STORAGE_KEY);
+    const stored = readStoredPreference();
     const audio = audioRef.current;
 
     if (stored === "true" && audio) {
@@ -77,25 +91,38 @@ export function AmbientAudio() {
     };
   }, [toggle]);
 
-  if (!ready) return null;
+  return <audio ref={audioRef} src="/audio/ambient-zen-moment.mp3" loop preload="none" />;
+}
+
+export function AmbientAudioButton({ accent }: { accent?: string }) {
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    function onState(event: Event) {
+      setEnabled(Boolean((event as AmbientStateEvent).detail?.enabled));
+    }
+
+    window.addEventListener("bt:ambient-audio-state", onState);
+    window.dispatchEvent(new CustomEvent("bt:ambient-audio-query"));
+    return () => window.removeEventListener("bt:ambient-audio-state", onState);
+  }, []);
+
+  function toggle() {
+    window.dispatchEvent(new CustomEvent("bt:ambient-audio-toggle"));
+  }
 
   return (
-    <>
-      <audio ref={audioRef} src="/audio/ambient-zen-moment.mp3" loop preload="none" />
-      <button
-        type="button"
-        data-ambient-audio-toggle
-        onClick={toggle}
-        aria-label={enabled ? "Mute ambient sound" : "Play ambient sound"}
-        aria-pressed={enabled}
-        className="fixed z-40 flex h-11 w-11 items-center justify-center rounded-full border border-ivory/20 bg-[#0B1814]/82 text-ivory/78 shadow-[0_12px_34px_rgba(0,0,0,0.26)] backdrop-blur-md transition-[background-color,border-color,transform,color] duration-300 hover:-translate-y-0.5 hover:border-ivory/38 hover:bg-[#10231D] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#AFC19F]"
-        style={{
-          right: "max(0.9rem, env(safe-area-inset-right))",
-          bottom: "max(0.9rem, env(safe-area-inset-bottom))",
-        }}
-      >
-        {enabled ? <Volume2 size={17} strokeWidth={1.7} /> : <VolumeX size={17} strokeWidth={1.7} />}
-      </button>
-    </>
+    <button
+      type="button"
+      data-ambient-audio-toggle
+      onClick={toggle}
+      aria-label={enabled ? "Mute ambient sound" : "Play ambient sound"}
+      aria-pressed={enabled}
+      title={enabled ? "Mute ambient sound" : "Play ambient sound"}
+      className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ivory/12 text-ivory/75 transition-[background-color,border-color,transform,color] duration-300 hover:-translate-y-0.5 hover:border-ivory/30 hover:bg-ivory/[0.06] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+      style={{ color: accent, outlineColor: accent }}
+    >
+      {enabled ? <Volume2 size={17} strokeWidth={1.7} /> : <VolumeX size={17} strokeWidth={1.7} />}
+    </button>
   );
 }
