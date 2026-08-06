@@ -1,0 +1,66 @@
+name: Merge verified mobile Recognition Audit
+
+on:
+  push:
+    branches:
+      - services-mobile-recognition-audit
+    paths:
+      - .github/workflows/merge-services-mobile-recognition-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: merge-services-mobile-recognition-audit
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Locate and merge the verified pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          pr_number="$(
+            gh pr list \
+              --repo "$GH_REPO" \
+              --head services-mobile-recognition-audit \
+              --base homepage-cinematic-recovery \
+              --state open \
+              --json number \
+              --jq '.[0].number // empty'
+          )"
+
+          if [ -z "$pr_number" ]; then
+            echo "No open Recognition Audit pull request was found."
+            exit 1
+          fi
+
+          # The main cinematic branch is active. Refresh this focused PR
+          # once before merging so unrelated later work is preserved.
+          gh pr update-branch "$pr_number" --repo "$GH_REPO" --rebase || true
+
+          for attempt in 1 2 3 4 5; do
+            merge_state="$(gh pr view "$pr_number" --repo "$GH_REPO" --json mergeStateStatus --jq '.mergeStateStatus')"
+            echo "Merge attempt ${attempt}/5, state: ${merge_state}"
+
+            if gh pr merge "$pr_number" --repo "$GH_REPO" --merge; then
+              echo "Recognition Audit merged."
+              exit 0
+            fi
+
+            gh pr update-branch "$pr_number" --repo "$GH_REPO" --rebase || true
+            sleep $((attempt * 3))
+          done
+
+          exit 1
