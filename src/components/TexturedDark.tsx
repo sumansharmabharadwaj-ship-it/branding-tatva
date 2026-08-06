@@ -15,11 +15,12 @@ import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 // shared default, so no two sections can silently end up on the same
 // fallback photo.
 //
-// Optional `video` mirrors PhotoHero's own video/poster pattern — a
-// still photo reads as a frozen frame for the site's actual closing
-// moment (the Footer), where a full-bleed ambient loop matches how
-// video-forward every other page break already is. `image` still
-// covers reduced-motion and acts as the poster/fallback either way.
+// Optional video sources mirror PhotoHero's video/poster pattern. The
+// still image remains the immediate fallback and the reduced-motion
+// experience; a dedicated mobile MP4 can be supplied without changing
+// existing desktop-only call sites. `overlayGradient` is intentionally
+// local rather than global so one warm closing scene does not re-grade
+// every TexturedDark section into the same brown wash.
 
 export function TexturedDark({
   children,
@@ -27,8 +28,10 @@ export function TexturedDark({
   id,
   image,
   video,
+  videoMobile,
   videoWebm,
   imagePosition = "center",
+  overlayGradient,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -37,48 +40,37 @@ export function TexturedDark({
   id?: string;
   image: string;
   video?: string;
-  // Optional WebM sibling, tried first via a real <source> list (was a
-  // single `src` string). The first WebM asset on this site (the
-  // Services CTA's sunlight-on-wood clip) established this pattern —
-  // VP9/WebM compresses meaningfully smaller than H.264 at the same
-  // visual quality, the browser picks whichever <source> it can
-  // decode, and `video` alone still works exactly as before for every
-  // existing MP4-only call site (the Footer), so this is additive, not
-  // a breaking change to the prop contract.
+  // Optional lower-bandwidth MP4 selected by the browser on phones.
+  videoMobile?: string;
+  // Optional WebM sibling, tried before the desktop MP4 when supported.
+  // `video` alone keeps working exactly as before for existing callers.
   videoWebm?: string;
   imagePosition?: string;
+  // A section-specific grade. Omit it to retain the established soil
+  // overlay; provide it when the source film has its own color script.
+  overlayGradient?: string;
 }) {
   const [ref, shouldLoad] = useLazyMount();
   const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  // Only wired for the video variant (the Footer's closing scene) —
-  // TexturedDark's other caller (the Services CTA) has no video and
-  // already reads as a calm, static panel that doesn't need a cursor
-  // response competing with the CTA button.
   const spotlightRef = useSpotlight(sectionRef, Boolean(prefersReducedMotion) || !video);
-  // useVideoFadeIn now handles both the fade-in and the explicit
-  // play() call (autoplay attribute alone isn't reliable — see the
-  // hook's own comment) — this used to be a separate effect here.
+  // useVideoFadeIn handles both the fade-in and the explicit play() call
+  // (autoplay alone is not reliable across browsers and power modes).
   useVideoFadeIn(videoRef, shouldLoad && Boolean(video) && !prefersReducedMotion);
+
+  const resolvedOverlayGradient =
+    overlayGradient ??
+    (video
+      ? "linear-gradient(180deg, rgba(39,34,30,0.6) 0%, rgba(39,34,30,0.7) 55%, rgba(39,34,30,0.85) 100%)"
+      : "linear-gradient(rgba(39,34,30,0.88), rgba(39,34,30,0.93))");
 
   return (
     <section ref={sectionRef} id={id} className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
       <div ref={ref} className="absolute inset-0">
-        {/* image renders immediately, unconditionally — not gated behind
-            shouldLoad. This wrapper is almost always far down the page
-            (the Footer, every page's closing CTA), so before this fix
-            the entire background was a flat bg-soil rectangle until
-            shouldLoad fired *and* the video itself finished a full
-            network round-trip (preload="metadata" only fetches
-            metadata; actual frame data only starts downloading once
-            play() is called in the effect above) — two sequential
-            delays stacked on mobile, read as "the footer takes forever
-            to load." The real photo now shows the instant it's
-            rendered (same reasoning as ElementRowBackground's solid
-            fallback fill); the video, once shouldLoad fires and it's
-            actually playable, fades in on top instead of being the
-            only thing standing between a blank rectangle and content. */}
+        {/* The still renders immediately instead of waiting for lazy video
+            activation. Far-down-page chapters therefore have a complete
+            visual frame before their film begins downloading. */}
         <Image
           src={image}
           alt=""
@@ -97,35 +89,13 @@ export function TexturedDark({
             playsInline
             preload="metadata"
           >
+            {videoMobile && <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />}
             {videoWebm && <source src={videoWebm} type="video/webm" />}
             <source src={video} type="video/mp4" />
           </video>
         )}
       </div>
-      {/* Was a near-opaque 0.88-0.93 flat overlay — with a video behind
-          it (the Footer's closing scene) that crushed the motion to
-          almost nothing, reading as a static dark image rather than a
-          video loop, the same "technically there but invisible"
-          problem the Five Elements rows and Process background had
-          before switching to BREAK_OVERLAY_GRADIENT's ~0.6 peak. Same
-          fix here: bring the darkest point down to what the rest of
-          the site's video sections already use, so the footage
-          actually reads as moving. The original 0.45 top stop still let
-          own-jagged-peaks.mp4's own bright sky/cloud frame read as a
-          near-white band right where it meets the section above —
-          direct, repeated feedback pointed at exactly this band as a
-          leftover "divider." imagePosition (below, biased toward the
-          mountains on the Footer's own call site) does the real work;
-          raising the stops here just keeps any residual sky a shade
-          darker regardless of crop. */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: video
-            ? "linear-gradient(180deg, rgba(39,34,30,0.6) 0%, rgba(39,34,30,0.7) 55%, rgba(39,34,30,0.85) 100%)"
-            : "linear-gradient(rgba(39,34,30,0.88), rgba(39,34,30,0.93))",
-        }}
-      />
+      <div className="absolute inset-0" style={{ backgroundImage: resolvedOverlayGradient }} />
       <div className="aurora-glow" aria-hidden="true" />
       <div className="light-rays" aria-hidden="true" />
       {video && !prefersReducedMotion && (
@@ -136,24 +106,16 @@ export function TexturedDark({
         />
       )}
       <div className="relative">
-        {/* Audit found the video variant's overlay (above) sits below
-            the site's normalized bg-soil/80 text-contrast floor —
-            deliberately, per the comment above: raising it site-wide
-            already caused a real regression once (crushed the Footer's
-            video to a static-looking image). Rather than re-fighting
-            that trade-off with one shared value, a second, local scrim
-            sized to exactly this block's own content bounds (not the
-            whole section) sits only behind the text/CTA, so contrast
-            improves where it's actually read without darkening the
-            video everywhere else it's visible. No-op for the no-video
-            variant, which is already at 0.88-0.93. */}
+        {/* The film grade stays light enough to remain visible. This local
+            radial scrim protects only the content block, preserving the
+            surrounding motion instead of darkening the whole frame. */}
         {video && (
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -inset-x-6 -inset-y-4 -z-10 rounded-2xl sm:-inset-x-10"
             style={{
               background:
-                "radial-gradient(ellipse at center, rgba(39,34,30,0.55) 0%, rgba(39,34,30,0.3) 65%, transparent 100%)",
+                "radial-gradient(ellipse at center, rgba(22,20,18,0.58) 0%, rgba(22,20,18,0.32) 65%, transparent 100%)",
             }}
           />
         )}
