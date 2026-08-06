@@ -1,3 +1,5 @@
+import "@/data/registerSupportingInsights";
+
 // Central site configuration. Edit this file to change copy that appears
 // in multiple places (nav, footer, metadata) without hunting through pages.
 //
@@ -30,7 +32,7 @@ export const navigation = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Work", href: "/work" },
-  { label: "Blog", href: "/blog" },
+  { label: "Insights", href: "/insights" },
   { label: "Contact", href: "/contact" },
 ] as const;
 
