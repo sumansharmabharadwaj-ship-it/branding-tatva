@@ -6,6 +6,8 @@
 // sand reserved for authorship accents and rare highlights. Individual
 // projects may introduce their own evidence accents without mutating
 // this shared navigation, archive, conversion, or mobile-deck palette.
+// Changes in this boundary deliberately pass through the complete Work
+// evidence gate because the same tokens govern every verified viewport.
 export const WORK = {
   forest: "#1F3A28",
   moss: "#556B4A",
