@@ -60,9 +60,14 @@ export function HomeV4ProcessTempo() {
       setRevision((value) => value + 1);
     }
 
+    function resumeAfterVisibilityChange() {
+      setRevision((value) => value + 1);
+    }
+
     section.addEventListener("pointerdown", holdForReading, { passive: true });
     section.addEventListener("touchstart", holdForReading, { passive: true });
     section.addEventListener("focusin", holdForReading);
+    document.addEventListener("visibilitychange", resumeAfterVisibilityChange);
 
     return () => {
       observer.disconnect();
@@ -70,6 +75,7 @@ export function HomeV4ProcessTempo() {
       section.removeEventListener("pointerdown", holdForReading);
       section.removeEventListener("touchstart", holdForReading);
       section.removeEventListener("focusin", holdForReading);
+      document.removeEventListener("visibilitychange", resumeAfterVisibilityChange);
       delete section.dataset.processTempoManaged;
       sectionRef.current = null;
       window.clearTimeout(timerRef.current);
