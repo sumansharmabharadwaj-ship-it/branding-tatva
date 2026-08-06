@@ -2,6 +2,7 @@ name: Work page evidence gate
 run-name: Work evidence gate · ${{ github.sha }}
 
 on:
+  # Keep a manual route available for accessibility and deployment verification.
   workflow_dispatch:
   push:
     branches:
