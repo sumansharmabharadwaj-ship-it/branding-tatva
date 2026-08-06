@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 
@@ -81,24 +80,21 @@ def update_page() -> None:
         "Strategy Room screen fit",
     )
 
-    offering_pattern = re.compile(
-        r'(        <section id="offerings".*?'
-        r'<div\n            className="absolute inset-0".*?</div>\n)'
-        r'(          <Container className="relative max-w-6xl">.*?          </Container>)'
-        r'(\n          <SceneHandoff color="#0E1714" />)',
-        re.S,
-    )
-    match = offering_pattern.search(text)
-    if not match:
-        raise SystemExit("offering explorer block: expected one match, found 0")
+    offering_section = text.find('<section id="offerings" data-services-scene="offerings"')
+    if offering_section < 0:
+        raise SystemExit("offering explorer section marker is missing")
+    offering_content = text.find('          <Container className="relative max-w-6xl">', offering_section)
+    if offering_content < 0:
+        raise SystemExit("offering explorer content start is missing")
+    offering_handoff = text.find('          <SceneHandoff color="#0E1714" />', offering_content)
+    if offering_handoff < 0:
+        raise SystemExit("offering explorer handoff marker is missing")
     replacement = (
-        match.group(1)
-        + '          <div className="relative w-full">\n'
-        + '            <ServiceDisciplineExplorer />\n'
-        + '          </div>'
-        + match.group(3)
+        '          <div className="relative w-full">\n'
+        '            <ServiceDisciplineExplorer />\n'
+        '          </div>\n'
     )
-    text = text[: match.start()] + replacement + text[match.end() :]
+    text = text[:offering_content] + replacement + text[offering_handoff:]
 
     path.write_text(text)
 
