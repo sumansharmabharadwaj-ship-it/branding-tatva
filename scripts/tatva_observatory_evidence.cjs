@@ -18,9 +18,10 @@ function assert(condition, message) {
 async function waitForPrelude(page) {
   const loader = page.locator("[data-page-load-veil]");
   if ((await loader.count()) > 0) {
-    await loader.waitFor({ state: "detached", timeout: 9_000 });
+    await loader.waitFor({ state: "detached", timeout: 9_000 }).catch(() => {});
   }
-  await page.waitForTimeout(240);
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(320);
 }
 
 async function capture(browser, viewport) {
@@ -38,12 +39,8 @@ async function capture(browser, viewport) {
 
   const page = await context.newPage();
   await page.goto(BASE_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
-  await page.evaluate(() => document.fonts.ready);
   await waitForPrelude(page);
 
-  // Evidence captures inspect the scene itself. The guided controller is
-  // deliberately hidden here because it is absent on coarse pointers and can
-  // otherwise make a Playwright click wait forever for an invisible button.
   const guide = page.locator("[data-guided-controls]");
   if ((await guide.count()) > 0) {
     await guide.evaluateAll((nodes) => {
@@ -53,33 +50,47 @@ async function capture(browser, viewport) {
     });
   }
 
-  const framework = page.locator('[aria-labelledby="tatva-framework-title"]').first();
-  const pressureLab = page.locator('[aria-labelledby="tatva-system-lab-title"]').first();
+  const tatvaChapter = page.locator('[data-home-v4-chapter="tatva"]');
+  const pressureLab = tatvaChapter.locator('[aria-labelledby="tatva-system-lab-title"]').first();
 
-  assert((await framework.count()) === 1, `${viewport.name}: Tatva framework missing`);
+  assert((await tatvaChapter.count()) === 1, `${viewport.name}: Tatva chapter missing`);
   assert((await pressureLab.count()) === 1, `${viewport.name}: Tatva pressure lab missing`);
-
-  await framework.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(900);
-  const frameworkCopy = (await framework.textContent()) || "";
   assert(
-    frameworkCopy.includes("Five forces. One recognisable brand."),
-    `${viewport.name}: Tatva framework proposition missing`,
+    (await tatvaChapter.locator('[aria-labelledby="tatva-framework-title"]').count()) === 0,
+    `${viewport.name}: removed Tatva observatory has returned`,
   );
-  await framework.screenshot({
-    path: path.join(OUTPUT, `${viewport.name}-tatva-framework.png`),
-  });
+  assert(
+    (await tatvaChapter.locator('[data-elements-carousel="true"]').count()) === 0,
+    `${viewport.name}: removed full-screen element carousel has returned`,
+  );
 
   await pressureLab.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(900);
+  await page.waitForTimeout(650);
   const pressureCopy = (await pressureLab.textContent()) || "";
   assert(
     pressureCopy.includes("Remove one force. Watch recognition lose its shape."),
     `${viewport.name}: Tatva pressure proposition missing`,
   );
   await pressureLab.screenshot({
-    path: path.join(OUTPUT, `${viewport.name}-tatva-pressure.png`),
+    path: path.join(OUTPUT, `${viewport.name}-tatva-pressure-complete.png`),
+    animations: "disabled",
   });
+
+  if (viewport.width >= 821) {
+    await page.waitForTimeout(1_500);
+    await pressureLab.screenshot({
+      path: path.join(OUTPUT, `${viewport.name}-tatva-pressure-omitted.png`),
+      animations: "disabled",
+    });
+  } else {
+    const force = pressureLab.locator('.tatva-pressure-lab__copy .tatva-pressure-lab__force').nth(1);
+    await force.tap();
+    await page.waitForTimeout(220);
+    await pressureLab.screenshot({
+      path: path.join(OUTPUT, `${viewport.name}-tatva-pressure-tapped.png`),
+      animations: "disabled",
+    });
+  }
 
   await context.close();
 }
@@ -94,7 +105,7 @@ async function capture(browser, viewport) {
     await browser.close();
   }
 
-  process.stdout.write("Tatva observatory evidence captured.\n");
+  process.stdout.write("Compressed Tatva pressure-lab evidence captured.\n");
 })().catch((error) => {
   console.error(error);
   process.exitCode = 1;
