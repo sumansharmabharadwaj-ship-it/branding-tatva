@@ -376,11 +376,16 @@ export default async function ServicesPage() {
             neighbours. The full art direction history for this chapter
             lives in git on the pre move block. */}
         <section id="desire" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.deepwater }}>
-          <BackgroundVideo parallax
+          {/* Original procedural package-choice loop: three
+              legitimate currents remain visible, then settle into one
+              legible channel. The restrained mineral-gold trace marks
+              choice without turning the section into a prize animation. */}
+          <BackgroundVideo
+            parallax
             push
-            video="/videos/pexels-forest-floor-fungi.mp4"
-            videoWebm="/videos/pexels-forest-floor-fungi.webm"
-            poster="/images/pexels-forest-floor-fungi-poster.jpg"
+            video="/videos/generated/bt-services-package-current.mp4"
+            videoMobile="/videos/generated/bt-services-package-current-mobile.mp4"
+            poster="/images/generated/bt-services-package-current-poster.jpg"
           />
           <div
             className="absolute inset-0"
@@ -507,11 +512,16 @@ export default async function ServicesPage() {
               this chapter opens with what those roots push above the
               surface. Crossfade loop (never ping-pong — reversed growth
               reads as shrinking). */}
+          {/* Original procedural perception-ascent loop:
+              layered terrain and mist clarify around one distant signal.
+              The landscape becomes more legible as the signal becomes
+              easier to locate, so the animation teaches recognition
+              rather than merely showing generic upward growth. */}
           <BackgroundVideo
             parallax
-            video="/videos/pexels-redwood-ferns.mp4"
-            videoWebm="/videos/pexels-redwood-ferns.webm"
-            poster="/images/pexels-redwood-ferns-poster.jpg"
+            video="/videos/generated/bt-services-perception-ascent.mp4"
+            videoMobile="/videos/generated/bt-services-perception-ascent-mobile.mp4"
+            poster="/images/generated/bt-services-perception-ascent-poster.jpg"
           />
           <div
             className="absolute inset-0"
