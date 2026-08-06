@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
-const LAB_HEADING = "Concept studies: the method, demonstrated in the open.";
 const LAB_DOSSIERS_LABEL = "Concept study dossiers";
 const LAB_PHASES_SUFFIX = "strategy phases";
 
@@ -12,10 +11,11 @@ function normaliseText(value: string | null | undefined) {
 }
 
 function findLabSection() {
-  const heading = Array.from(document.querySelectorAll<HTMLHeadingElement>("h2")).find(
-    (node) => normaliseText(node.textContent) === LAB_HEADING,
+  return (
+    document
+      .querySelector<HTMLElement>(`[aria-label="${LAB_DOSSIERS_LABEL}"]`)
+      ?.closest<HTMLElement>("section") ?? null
   );
-  return heading?.closest<HTMLElement>("section") ?? null;
 }
 
 function phaseTablistFor(element: Element) {
