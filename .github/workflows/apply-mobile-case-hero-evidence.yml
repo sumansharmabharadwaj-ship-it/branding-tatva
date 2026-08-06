@@ -1,0 +1,162 @@
+name: Apply mobile case-study evidence frame
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/apply-mobile-case-hero-evidence.yml
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: mobile-case-hero-evidence-patch
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the working branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: corepack enable
+
+      - name: Apply, build, publish, and verify
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            echo "Mobile case-study evidence patch attempt ${attempt}"
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+            git clean -fd
+
+            python <<'PY'
+          from pathlib import Path
+
+          ROOT = Path(".")
+          TARGET = ROOT / "src/sections/Work/CaseStudyExperience.tsx"
+          WORKFLOW = ROOT / ".github/workflows/apply-mobile-case-hero-evidence.yml"
+
+          def replace_once(text: str, old: str, new: str) -> str:
+            count = text.count(old)
+            if count != 1:
+              raise RuntimeError(f"Expected one occurrence, found {count}: {old[:120]!r}")
+            return text.replace(old, new, 1)
+
+          text = TARGET.read_text(encoding="utf-8")
+
+          old_background = '''        <div className="absolute inset-0">
+          <ManagedVideo
+            src={project.heroVideo}
+            poster={project.heroPoster ?? project.cardImage}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${palette.ink}66 0%, ${palette.ink}B8 60%, ${palette.ink}F5 100%)` }} />
+          <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 78% 22%, ${palette.accent}33, transparent 38%)` }} />
+          <div aria-hidden="true" className="absolute inset-0 bg-black/30 sm:hidden" />
+        </div>'''
+
+          new_background = '''        <div className="absolute inset-0">
+          <div className="absolute inset-0 hidden sm:block">
+            <ManagedVideo
+              src={project.heroVideo}
+              poster={project.heroPoster ?? project.cardImage}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 sm:hidden"
+            style={{
+              background: `radial-gradient(circle at 82% 16%, ${palette.accent}2E, transparent 34%), linear-gradient(180deg, ${palette.ink} 0%, ${palette.surface} 100%)`,
+            }}
+          />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${palette.ink}66 0%, ${palette.ink}B8 60%, ${palette.ink}F5 100%)` }} />
+          <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 78% 22%, ${palette.accent}33, transparent 38%)` }} />
+        </div>'''
+
+          text = replace_once(text, old_background, new_background)
+
+          insertion_point = '''            </Reveal>
+          </div>
+
+          <a href="#result" className="mt-10 inline-flex w-fit items-center gap-2 text-sm text-white/65 transition-colors hover:text-white">'''
+
+          replacement = '''            </Reveal>
+          </div>
+
+          {(project.heroPoster ?? project.cardImage) && (
+            <figure
+              className="mt-8 overflow-hidden rounded-[1.4rem] border sm:hidden"
+              style={{ borderColor: `${palette.accent}55`, backgroundColor: palette.surface }}
+            >
+              <div className="relative aspect-[4/3] overflow-hidden bg-black/20">
+                <img
+                  src={project.heroPoster ?? project.cardImage}
+                  alt={`${project.title} project evidence`}
+                  className="h-full w-full object-cover"
+                />
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-x-0 bottom-0 h-16"
+                  style={{ background: `linear-gradient(180deg, transparent, ${palette.surface}CC)` }}
+                />
+              </div>
+              <figcaption
+                className="flex items-center justify-between gap-4 border-t px-4 py-3 text-[0.58rem] font-medium uppercase tracking-[0.15em]"
+                style={{ borderColor: `${palette.accent}44`, color: palette.secondary }}
+              >
+                <span>Project evidence</span>
+                <span>{evidenceLabel}</span>
+              </figcaption>
+            </figure>
+          )}
+
+          <a href="#result" className="mt-10 inline-flex w-fit items-center gap-2 text-sm text-white/65 transition-colors hover:text-white">'''
+
+          text = replace_once(text, insertion_point, replacement)
+          TARGET.write_text(text, encoding="utf-8")
+          WORKFLOW.unlink()
+          print("Separated mobile case-study evidence from the live hero copy")
+          PY
+
+            pnpm install --frozen-lockfile
+            pnpm build
+
+            git add src/sections/Work/CaseStudyExperience.tsx .github/workflows/apply-mobile-case-hero-evidence.yml
+            if git diff --cached --quiet; then
+              echo "Mobile evidence frame is already present."
+              gh workflow run work-page-gate.yml --ref homepage-cinematic-recovery
+              exit 0
+            fi
+
+            git commit -m "Separate mobile case evidence from hero copy"
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              gh workflow run work-page-gate.yml --ref homepage-cinematic-recovery
+              echo "Mobile evidence frame published and Work gate dispatched."
+              exit 0
+            fi
+
+            echo "Branch moved during verification; replaying on the newest head."
+          done
+
+          echo "Could not publish after three conflict-safe attempts."
+          exit 1
