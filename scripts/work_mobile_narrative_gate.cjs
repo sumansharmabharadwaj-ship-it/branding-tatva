@@ -37,18 +37,17 @@ async function assertNoOverflow(page, label) {
 }
 
 async function waitForChangedText(page, selector, previousText, label) {
-  await page
-    .waitForFunction(
-      ({ selector: query, before }) => {
-        const node = document.querySelector(query);
-        return Boolean(node && node.textContent && node.textContent.replace(/\s+/g, " ").trim() !== before);
-      },
-      { selector, before: previousText },
-      { timeout: 3_000 },
-    )
-    .catch(() => {
-      throw new Error(`${label}: active evidence text did not change`);
-    });
+  const deadline = Date.now() + 3_000;
+  const nodes = page.locator(selector);
+  while (Date.now() < deadline) {
+    const count = await nodes.count();
+    if (count > 0) {
+      const current = ((await nodes.last().textContent()) || "").replace(/\s+/g, " ").trim();
+      if (current && current !== previousText) return;
+    }
+    await page.waitForTimeout(50);
+  }
+  throw new Error(`${label}: active evidence text did not change`);
 }
 
 async function narrativePanelContent(panel) {
