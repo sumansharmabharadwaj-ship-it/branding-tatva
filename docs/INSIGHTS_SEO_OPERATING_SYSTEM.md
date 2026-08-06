@@ -134,6 +134,8 @@ Anchor text should describe the destination. Avoid repeated generic anchors such
 
 Whenever a new article is published, update at least two older articles with contextual links to it. This keeps the library connected and gives the new page established crawl paths.
 
+The first supporting guide is registered in the Messaging hub, sitemap, RSS feed, AI-readable index, and the related-reading paths of the positioning and messaging pillars.
+
 ## Evidence and citation rules
 
 Use first-party evidence wherever possible:
