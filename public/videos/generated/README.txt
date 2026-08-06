@@ -1,6 +1,6 @@
-BRANDING TATVA — ORIGINAL SERVICES MEDIA
+BRANDING TATVA - ORIGINAL SERVICES MEDIA
 
-This directory contains the first original generated cinematic media set for the Services page.
+This directory contains the original generated and procedural cinematic media set for the Services page.
 
 Hero
 - bt-services-hero-root-system.mp4
@@ -14,6 +14,18 @@ Service ecosystem / strategy
 - poster: /images/generated/bt-services-strategy-topography-poster.jpg
 - role: turns scattered possibilities into one legible strategic route
 
+Package choice
+- bt-services-package-current.mp4
+- bt-services-package-current-mobile.mp4
+- poster: /images/generated/bt-services-package-current-poster.jpg
+- role: keeps several legitimate paths visible before they settle into one clear scope
+
+Perception and education
+- bt-services-perception-ascent.mp4
+- bt-services-perception-ascent-mobile.mp4
+- poster: /images/generated/bt-services-perception-ascent-poster.jpg
+- role: makes the wider landscape and one recognisable signal become clearer together
+
 Brand Health Check
 - bt-services-health-reflection.mp4
 - bt-services-health-reflection-mobile.mp4
@@ -25,6 +37,7 @@ Implementation rules
 - generated poster fallback for reduced motion and slow connections
 - separate lightweight mobile MP4 source
 - only visible section media should play
-- all footage is designed as a semantic moving metaphor, not decorative stock ambience
+- every film acts as a semantic moving metaphor rather than decorative stock ambience
+- procedural films remain reproducible through scripts/generate_services_procedural_media.py
 
-Installed on the homepage-cinematic-recovery branch after media validation and responsive encoding.
+Installed on the homepage-cinematic-recovery branch after duration, audio-state, responsive-encoding, and source-reference validation.
