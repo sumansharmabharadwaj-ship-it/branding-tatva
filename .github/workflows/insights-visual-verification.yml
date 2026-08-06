@@ -75,16 +75,78 @@ jobs:
           curl --silent --fail http://127.0.0.1:3000/insights/feed.xml | grep --quiet "Branding Tatva Insights"
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3000/blog/visible-versus-remembered)" = "308"
 
-      - name: Install browser
-        run: pnpm dlx playwright@1.55.0 install --with-deps chromium
-
-      - name: Capture desktop and mobile pages
+      - name: Install browser library
         run: |
-          mkdir -p qa-artifacts
-          pnpm dlx playwright@1.55.0 screenshot --full-page --wait-for-timeout 5000 --viewport-size "1440,1100" http://127.0.0.1:3000/insights qa-artifacts/insights-desktop.png
-          pnpm dlx playwright@1.55.0 screenshot --full-page --wait-for-timeout 5000 --viewport-size "390,844" http://127.0.0.1:3000/insights qa-artifacts/insights-mobile.png
-          pnpm dlx playwright@1.55.0 screenshot --full-page --wait-for-timeout 5000 --viewport-size "1440,1100" http://127.0.0.1:3000/insights/brand-positioning-strategy-service-businesses qa-artifacts/article-desktop.png
-          pnpm dlx playwright@1.55.0 screenshot --full-page --wait-for-timeout 5000 --viewport-size "390,844" http://127.0.0.1:3000/insights/brand-positioning-strategy-service-businesses qa-artifacts/article-mobile.png
+          pnpm add --save-dev playwright@1.55.0 --no-frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Capture complete desktop and mobile pages
+        run: |
+          cat > qa-visual.mjs <<'EOF'
+          import { chromium } from "playwright";
+          import fs from "node:fs/promises";
+
+          const browser = await chromium.launch({ headless: true });
+          await fs.mkdir("qa-artifacts", { recursive: true });
+
+          async function capture(pathname, output, viewport) {
+            const context = await browser.newContext({
+              viewport,
+              reducedMotion: "reduce",
+              colorScheme: "light",
+            });
+            const page = await context.newPage();
+            const browserErrors = [];
+
+            page.on("pageerror", (error) => browserErrors.push(error.message));
+            await page.goto(`http://127.0.0.1:3000${pathname}`, {
+              waitUntil: "networkidle",
+            });
+            await page.emulateMedia({ reducedMotion: "reduce" });
+            await page.evaluate(() => document.fonts.ready);
+            await page.waitForTimeout(1500);
+
+            const dimensions = await page.evaluate(() => ({
+              clientWidth: document.documentElement.clientWidth,
+              scrollWidth: document.documentElement.scrollWidth,
+            }));
+
+            if (dimensions.scrollWidth > dimensions.clientWidth + 1) {
+              throw new Error(
+                `${pathname} overflows horizontally: ${dimensions.scrollWidth}px > ${dimensions.clientWidth}px`
+              );
+            }
+
+            if (browserErrors.length > 0) {
+              throw new Error(`${pathname} browser errors: ${browserErrors.join(" | ")}`);
+            }
+
+            await page.screenshot({ path: output, fullPage: true });
+            await context.close();
+          }
+
+          await capture("/insights", "qa-artifacts/insights-desktop.png", {
+            width: 1440,
+            height: 1100,
+          });
+          await capture("/insights", "qa-artifacts/insights-mobile.png", {
+            width: 390,
+            height: 844,
+          });
+          await capture(
+            "/insights/brand-positioning-strategy-service-businesses",
+            "qa-artifacts/article-desktop.png",
+            { width: 1440, height: 1100 }
+          );
+          await capture(
+            "/insights/brand-positioning-strategy-service-businesses",
+            "qa-artifacts/article-mobile.png",
+            { width: 390, height: 844 }
+          );
+
+          await browser.close();
+          EOF
+          node qa-visual.mjs
 
       - name: Upload visual QA
         uses: actions/upload-artifact@v4
