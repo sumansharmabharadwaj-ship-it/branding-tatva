@@ -9,6 +9,7 @@ on:
     paths:
       - .github/workflows/homepage-cinematic-recovery-gate.yml
       - scripts/homepage_cinematic_gate.cjs
+      - scripts/homepage_process_tempo_gate.cjs
       - scripts/tatva_observatory_evidence.cjs
       - scripts/studio_scene_evidence.cjs
       - scripts/decision_scene_evidence.cjs
@@ -121,6 +122,12 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:3000
           AUDIT_COMMIT: ${{ github.sha }}
         run: node scripts/homepage_cinematic_gate.cjs
+
+      - name: Verify the faster, user-controlled working-method tempo
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+          AUDIT_COMMIT: ${{ github.sha }}
+        run: node scripts/homepage_process_tempo_gate.cjs
 
       - name: Capture compressed Foundation excavation states
         env:
