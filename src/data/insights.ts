@@ -2,6 +2,7 @@ import { brandConsistencyInsightPosts } from "@/data/brandConsistencyInsights";
 import { brandRecallMeasurementInsightPosts } from "@/data/brandRecallMeasurementInsights";
 import { consultingPositioningInsightPosts } from "@/data/consultingPositioningInsights";
 import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
+import { differentiationInsightPosts } from "@/data/differentiationInsights";
 import { distinctiveAssetInsightPosts } from "@/data/distinctiveAssetInsights";
 import { forgettableIdentityInsightPosts } from "@/data/forgettableIdentityInsights";
 import {
@@ -37,6 +38,7 @@ const combinedPosts = [
   ...valuePropositionInsightPosts,
   ...brandConsistencyInsightPosts,
   ...forgettableIdentityInsightPosts,
+  ...differentiationInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
@@ -102,6 +104,14 @@ const relatedRegistrations = [
       "brand-awareness-vs-brand-recall",
       "distinctive-brand-assets-audit",
       "measure-brand-recall-limited-budget",
+    ],
+  },
+  {
+    supportingSlug: "find-real-differentiator-crowded-service-market",
+    pillarSlugs: [
+      "brand-positioning-strategy-service-businesses",
+      "how-to-position-a-consulting-business",
+      "value-proposition-vs-positioning-vs-tagline",
     ],
   },
 ] as const;
