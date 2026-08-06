@@ -29,6 +29,8 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
 
   if (!current) return null;
 
+  const currentRecord = getWorkTaxonomy(current.slug);
+
   function chooseFilter(next: WorkFilterId) {
     setFilter(next);
     setActive(0);
@@ -158,8 +160,8 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                         <span className="mt-4 block overflow-hidden rounded-2xl lg:hidden">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={project.cardImage ?? "/images/work-closing.jpg"}
-                            alt=""
+                            src={record.evidencePoster}
+                            alt={`${project.title} evidence diagram`}
                             className="block h-40 w-full object-cover"
                             loading="lazy"
                           />
@@ -186,10 +188,10 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.img
                     key={current.slug}
-                    src={current.cardImage ?? "/images/work-closing.jpg"}
-                    alt={`${current.title} preview`}
+                    src={currentRecord.evidencePoster}
+                    alt={`${current.title} evidence diagram`}
                     className="absolute inset-0 h-full w-full object-cover"
-                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.025 }}
+                    initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 1.02 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: EASE_ORGANIC }}
@@ -198,16 +200,16 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                 <div
                   aria-hidden="true"
                   className="absolute inset-0"
-                  style={{ background: "linear-gradient(180deg, transparent 48%, rgba(27,27,27,0.56) 100%)" }}
+                  style={{ background: "linear-gradient(180deg, transparent 58%, rgba(10,14,12,0.48) 100%)" }}
                 />
                 <p className="absolute bottom-4 left-4 rounded-full bg-black/30 px-3 py-1 text-[0.58rem] font-medium uppercase tracking-[0.14em] text-white backdrop-blur-sm">
-                  {getWorkTaxonomy(current.slug).tier === "flagship" ? "Flagship case study" : "Project story"}
+                  {currentRecord.tier === "flagship" ? "Flagship case study" : "Project story"}
                 </p>
               </div>
               <div className="flex items-baseline justify-between gap-4 px-5 py-4" style={{ backgroundColor: WORK.forest }}>
                 <p className="font-display text-lg font-normal text-white">{current.title}</p>
                 <p className="text-right text-[0.58rem] uppercase tracking-[0.14em]" style={{ color: WORK.sage }}>
-                  {getWorkTaxonomy(current.slug).evidenceLabel}
+                  {currentRecord.evidenceLabel}
                 </p>
               </div>
             </div>
