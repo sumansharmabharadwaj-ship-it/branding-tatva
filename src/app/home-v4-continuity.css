@@ -2,20 +2,20 @@
 /* Homepage V4 continuity pass                                                 */
 /* -------------------------------------------------------------------------- */
 
-/* The Earth excavation previously held for 320vh. The governing brief asks
-   for roughly 25–35% less dead time and keeps important held chapters inside
-   a 120–220svh range. 220svh preserves the four-layer reveal while making the
-   scene respond much sooner to ordinary wheel and trackpad movement. */
+/* The Earth excavation now resolves four strategic layers inside 190svh.
+   The tighter range raises discovery density without turning the held scene
+   into a scroll cage. Keep this source of truth aligned with the component so
+   a legacy continuity rule cannot silently stretch the chapter again. */
 @media (min-width: 768px) {
   .home-v4-chapter--foundation > section {
-    height: 220svh !important;
+    height: 190svh !important;
   }
 }
 
 @supports not (height: 1svh) {
   @media (min-width: 768px) {
     .home-v4-chapter--foundation > section {
-      height: 220vh !important;
+      height: 190vh !important;
     }
   }
 }
