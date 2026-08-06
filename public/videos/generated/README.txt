@@ -8,6 +8,13 @@ Hero
 - poster: /images/generated/bt-services-hero-root-system-poster.jpg
 - role: reveals branding as an interconnected system beneath the visible surface
 
+Situation / three starting points
+- bt-services-situation-paths.mp4
+- bt-services-situation-paths-mobile.mp4
+- poster: /images/generated/bt-services-situation-paths-poster.jpg
+- role: represents beginning, repositioning, and ongoing consistency as three distinct material states in one coherent world
+- renderer: scripts/generate_services_situation_film.py
+
 Service ecosystem / strategy
 - bt-services-strategy-topography.mp4
 - bt-services-strategy-topography-mobile.mp4
@@ -57,6 +64,6 @@ Implementation rules
 - only visible section media should play
 - every film or still acts as a semantic moving metaphor rather than decorative stock ambience
 - scroll motion stays transform/opacity only and resolves to a complete static image under reduced motion
-- procedural films remain reproducible through scripts/generate_services_procedural_media.py
+- procedural films remain reproducible through scripts/generate_services_procedural_media.py and scripts/generate_services_situation_film.py
 
 Installed on the homepage-cinematic-recovery branch after duration, audio-state, responsive-encoding, source-reference, and reduced-motion validation.
