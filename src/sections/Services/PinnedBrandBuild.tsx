@@ -108,8 +108,18 @@ export function PinnedBrandBuild() {
   }, [animate, lenis]);
 
   return (
-    <div ref={wrapRef} className="relative lg:h-[220svh]" style={{ backgroundColor: MOOD.charcoal }}>
-      <div className="relative overflow-hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center">
+    <div
+      ref={wrapRef}
+      data-authority-scroll-mode={animate ? "compressed-sticky" : "static"}
+      className={`relative ${animate ? "lg:h-[220svh]" : "lg:h-auto"}`}
+      style={{ backgroundColor: MOOD.charcoal }}
+    >
+      <div
+        className={[
+          "relative overflow-hidden lg:flex lg:flex-col lg:justify-center",
+          animate ? "lg:sticky lg:top-0 lg:h-screen" : "lg:min-h-screen",
+        ].join(" ")}
+      >
         <div className="absolute inset-0 overflow-hidden">
           <BackgroundVideo
             video="/videos/generated/bt-services-authority-layers.mp4"
