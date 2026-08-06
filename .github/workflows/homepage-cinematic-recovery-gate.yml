@@ -10,6 +10,7 @@ on:
       - .github/workflows/homepage-cinematic-recovery-gate.yml
       - scripts/homepage_cinematic_gate.cjs
       - scripts/homepage_process_tempo_gate.cjs
+      - scripts/home_v4_pacing_gate.cjs
       - scripts/prelude_handoff_evidence.cjs
       - scripts/tatva_observatory_evidence.cjs
       - scripts/studio_scene_evidence.cjs
@@ -57,7 +58,7 @@ concurrency:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 27
 
     steps:
       - name: Check out application without the media archive
@@ -126,6 +127,12 @@ jobs:
           AUDIT_COMMIT: ${{ github.sha }}
         run: node scripts/homepage_cinematic_gate.cjs
 
+      - name: Verify live guided-view speed, interruption, and film pacing
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+          AUDIT_COMMIT: ${{ github.sha }}
+        run: node scripts/home_v4_pacing_gate.cjs
+
       - name: Verify the loader-to-opening signal handoff
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
@@ -180,6 +187,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: branding-tatva-cinematic-recovery
-          path: cinematic-recovery-audit/*
+          path: |
+            cinematic-recovery-audit/*
+            homepage-v4-audit/*
           if-no-files-found: error
           retention-days: 7
