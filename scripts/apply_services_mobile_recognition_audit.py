@@ -60,9 +60,12 @@ def main() -> None:
   assert((await business.getAttribute("required")) === null, `${label}: optional business name became required`);
   const auditSubmit = auditForm.getByRole("button", { name: "Open the full audit", exact: true });
 
-  const auditChapterTabs = audit
-    .getByRole("tablist", { name: "Recognition Audit chapters" })
-    .getByRole("tab");
+  // The tablist is intentionally display:none from the lg breakpoint.
+  // A CSS locator verifies the two-tab DOM contract in every viewport;
+  // visibleCount below verifies that desktop does not expose it.
+  const auditChapterTabs = audit.locator(
+    '[role="tablist"][aria-label="Recognition Audit chapters"] [role="tab"]',
+  );
   await waitForCount(auditChapterTabs, 2, `${label}: Recognition Audit chapters`);
 
   if (viewport.width < 1024) {
