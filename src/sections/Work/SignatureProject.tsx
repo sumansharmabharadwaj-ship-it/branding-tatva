@@ -15,8 +15,10 @@ import { WORK } from "@/sections/Work/palette";
 // left, and the color itself narrating: the project-specific visual
 // holds desaturated through the ambiguity beats and regains full color
 // as the story reaches its verified result. CSS sticky, never a pinned
-// ScrollTrigger. Reduced motion renders a static poster in full color
-// and keeps every narrative beat visible.
+// ScrollTrigger. The server and first client render always use the same
+// poster tree; video is added only after hydration when motion is
+// allowed. Reduced motion therefore avoids both autoplay and hydration
+// mismatch while retaining every narrative beat.
 const BEATS = [
   { key: "challenge", label: "Starting condition" },
   { key: "insight", label: "What people were perceiving" },
@@ -28,13 +30,21 @@ const BEATS = [
 
 export function SignatureProject({ project }: { project: Project }) {
   const [activeBeat, setActiveBeat] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const beatRefs = useRef<(HTMLDivElement | null)[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
-  useVideoFadeIn(videoRef, Boolean(project.cardVideo) && !prefersReducedMotion);
+
+  const reduceMotion = mounted && Boolean(prefersReducedMotion);
+  const allowVideo = mounted && Boolean(project.cardVideo) && !reduceMotion;
+  useVideoFadeIn(videoRef, allowVideo);
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -49,7 +59,7 @@ export function SignatureProject({ project }: { project: Project }) {
     );
     beatRefs.current.forEach((element) => element && observer.observe(element));
     return () => observer.disconnect();
-  }, [prefersReducedMotion]);
+  }, [reduceMotion]);
 
   const beats = BEATS.map((beat) => ({
     key: beat.key as string,
@@ -57,7 +67,7 @@ export function SignatureProject({ project }: { project: Project }) {
     text: project[beat.key as keyof Project] as string | undefined,
   })).filter((beat): beat is { key: string; label: string; text: string } => typeof beat.text === "string");
 
-  const gray = prefersReducedMotion ? 0 : Math.max(0, 0.85 * (1 - activeBeat / Math.max(1, beats.length - 1)));
+  const gray = reduceMotion ? 0 : Math.max(0, 0.85 * (1 - activeBeat / Math.max(1, beats.length - 1)));
 
   return (
     <section className="relative py-20 sm:py-28" style={{ backgroundColor: WORK.forest }}>
@@ -75,13 +85,15 @@ export function SignatureProject({ project }: { project: Project }) {
         <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
           <div className="lg:sticky lg:top-24 lg:self-start">
             <div
-              className="overflow-hidden rounded-2xl transition-[filter] duration-700"
+              className="relative overflow-hidden rounded-2xl transition-[filter] duration-700"
               style={{ filter: `grayscale(${gray.toFixed(2)})` }}
             >
-              {project.cardVideo && !prefersReducedMotion ? (
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={project.cardImage} alt="" className="block h-auto w-full" />
+              {allowVideo && project.cardVideo && (
                 <video
                   ref={videoRef}
-                  className="block h-auto w-full opacity-0 transition-opacity duration-700"
+                  className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
                   src={project.cardVideo}
                   poster={project.cardImage}
                   muted
@@ -90,13 +102,10 @@ export function SignatureProject({ project }: { project: Project }) {
                   autoPlay
                   aria-hidden="true"
                 />
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={project.cardImage} alt="" className="block h-auto w-full" />
               )}
             </div>
             <p className="mt-3 text-xs leading-relaxed" style={{ color: WORK.sage }}>
-              {prefersReducedMotion
+              {reduceMotion
                 ? "The complete project frame remains visible without autoplay or scroll-controlled grading."
                 : "The frame holds its color back until the story earns it: full grey at the starting condition, full color at the verified result."}
             </p>
@@ -105,7 +114,7 @@ export function SignatureProject({ project }: { project: Project }) {
                 <li
                   key={beat.key}
                   className="h-[3px] flex-1 rounded-full transition-colors duration-500"
-                  style={{ backgroundColor: prefersReducedMotion || index <= activeBeat ? WORK.sage : "rgba(143,174,131,0.25)" }}
+                  style={{ backgroundColor: reduceMotion || index <= activeBeat ? WORK.sage : "rgba(143,174,131,0.25)" }}
                 />
               ))}
             </ol>
@@ -120,7 +129,7 @@ export function SignatureProject({ project }: { project: Project }) {
                   beatRefs.current[index] = element;
                 }}
                 className="border-l-2 py-10 pl-8 transition-colors duration-500 first:pt-2 sm:py-12"
-                style={{ borderColor: prefersReducedMotion || activeBeat === index ? WORK.sage : "rgba(143,174,131,0.2)" }}
+                style={{ borderColor: reduceMotion || activeBeat === index ? WORK.sage : "rgba(143,174,131,0.2)" }}
               >
                 <p className="flex items-baseline gap-3">
                   <span className="font-display text-sm" style={{ color: WORK.sage }} aria-hidden="true">
@@ -132,7 +141,7 @@ export function SignatureProject({ project }: { project: Project }) {
                 </p>
                 <p
                   className="mt-3 max-w-xl text-base leading-relaxed transition-opacity duration-500"
-                  style={{ color: "rgba(242,240,232,0.92)", opacity: prefersReducedMotion || activeBeat === index ? 1 : 0.6 }}
+                  style={{ color: "rgba(242,240,232,0.92)", opacity: reduceMotion || activeBeat === index ? 1 : 0.6 }}
                 >
                   {beat.text}
                 </p>
