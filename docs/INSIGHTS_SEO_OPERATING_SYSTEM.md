@@ -21,8 +21,9 @@ The current authority layer is deliberately focused:
 9. how to position a consulting business
 10. measuring brand recall with a limited research budget
 11. value proposition versus positioning versus tagline
+12. brand consistency checklist for service businesses
 
-The first five pages form the pillar layer. The six supporting guides connect those foundations with website decisions, recognisable assets, service journeys, consulting positioning, practical research, and message hierarchy.
+The first five pages form the pillar layer. The seven supporting guides connect those foundations with website decisions, recognisable assets, service journeys, consulting positioning, practical research, message hierarchy, and customer-experience consistency.
 
 ## Page contract
 
@@ -65,11 +66,11 @@ Next supporting articles:
 Current pillar:
 - Brand audit checklist before a rebrand
 
-Published supporting article:
+Published supporting articles:
 - Customer journey mapping for service businesses
+- Brand consistency checklist across website, sales, onboarding, delivery, and follow-up
 
 Next supporting articles:
-- Brand consistency checklist across website, sales, and delivery
 - Why onboarding is part of the brand
 - How to audit customer touchpoints before redesigning a website
 - Brand promise versus customer experience
@@ -126,7 +127,7 @@ Publish supporting articles in interleaved clusters rather than completing one t
 4. How to position a consulting business — complete
 5. Measuring brand recall without a large research budget — complete
 6. Value proposition versus positioning versus tagline — complete
-7. Brand consistency checklist across website, sales, and delivery
+7. Brand consistency checklist across website, sales, and delivery — complete
 8. Why a beautiful identity can still be forgettable
 9. How to find a real differentiator in a crowded service market
 10. How brand consistency creates recognition over time
@@ -147,7 +148,7 @@ Anchor text should describe the destination. Avoid repeated generic anchors such
 
 Whenever a new article is published, update at least two older articles with contextual links to it. This keeps the library connected and gives the new page established crawl paths.
 
-The first six supporting guides are registered in their topic hubs, sitemap, RSS feed, AI-readable index, and the related-reading paths of the relevant pillar articles.
+The first seven supporting guides are registered in their topic hubs, sitemap, RSS feed, AI-readable index, and the related-reading paths of the relevant pillar articles.
 
 ## Evidence and citation rules
 
