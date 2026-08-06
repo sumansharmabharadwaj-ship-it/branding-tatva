@@ -1,7 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "python3 scripts/apply_services_complete_journey.py && pnpm build",
   "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json",
   "git": {
-    "deploymentEnabled": false
+    "deploymentEnabled": true
   }
 }
