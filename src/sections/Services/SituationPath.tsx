@@ -7,63 +7,84 @@ import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { packages } from "@/data/services";
 import { SITUATION_KEY } from "@/sections/Home/VisitorRecognition";
+import {
+  HOME_TO_SERVICES_SITUATION,
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  SITUATION_TO_PACKAGE,
+  isServicesSituation,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 import { track } from "@/lib/analytics";
 
 // Conversion architecture, Services chapter two: the visitor places
 // themselves before any package is pitched. If they already chose in the
 // Home page Clarity Lab, the same condition arrives preselected, so the
 // site remembers the diagnosis instead of asking the same question again.
-const OPTIONS = [
+const OPTIONS: ReadonlyArray<{
+  id: ServicesSituationId;
+  label: string;
+  reason: string;
+}> = [
   {
     id: "idea",
     label: "I am beginning with an idea",
-    slug: "brand-beginning",
     reason: "Positioning gets decided before anything is designed, so every later choice inherits one direction.",
   },
   {
     id: "reposition",
     label: "My existing brand needs repositioning",
-    slug: "brand-clarity",
     reason: "An audit finds where recognition is leaking, then one position replaces the several currently competing.",
   },
   {
     id: "ongoing",
     label: "I need ongoing consistency",
-    slug: "brand-partnership",
     reason: "Recognition compounds when one person keeps the system coherent as more goes out into the world.",
   },
-] as const;
-
-// The current Home Clarity Lab stores idea, inconsistent, or outgrown.
-// In that refined diagnosis, outgrown means growth is outrunning the
-// system, so it should carry into ongoing consistency rather than force
-// another repositioning choice on the Services page.
-const HOME_ID_MAP: Record<string, string> = {
-  idea: "idea",
-  inconsistent: "reposition",
-  outgrown: "ongoing",
-};
+];
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+function publishSituation(id: ServicesSituationId) {
+  try {
+    window.localStorage.setItem(SERVICES_SITUATION_STORAGE_KEY, id);
+    const detail: ServicesSituationDetail = {
+      situation: id,
+      packageSlug: SITUATION_TO_PACKAGE[id],
+    };
+    window.dispatchEvent(new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, { detail }));
+  } catch {}
+}
+
 export function SituationPath() {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<ServicesSituationId | null>(null);
   const [carried, setCarried] = useState(false);
   const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem(SITUATION_KEY);
-      const mapped = saved ? HOME_ID_MAP[saved] : undefined;
+      const savedServicesChoice = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+      if (isServicesSituation(savedServicesChoice)) {
+        setSelected(savedServicesChoice);
+        setCarried(true);
+        publishSituation(savedServicesChoice);
+        return;
+      }
+
+      const savedHomeChoice = window.localStorage.getItem(SITUATION_KEY);
+      const mapped = savedHomeChoice ? HOME_TO_SERVICES_SITUATION[savedHomeChoice] : undefined;
       if (mapped) {
         setSelected(mapped);
         setCarried(true);
+        publishSituation(mapped);
       }
     } catch {}
   }, []);
 
-  function pick(id: string) {
+  function pick(id: ServicesSituationId) {
     setSelected((previous) => (previous === id ? previous : id));
+    publishSituation(id);
     track("visitor_situation_selected", { situation: id, page: "services" });
     setCarried(false);
   }
@@ -87,7 +108,7 @@ export function SituationPath() {
                 exit={{ opacity: 0 }}
                 className="mt-5 inline-flex items-center gap-2 rounded-full border border-sandstone/40 px-3.5 py-1.5 text-xs text-sandstone"
               >
-                <span aria-hidden="true">↺</span> Carried over from your Home page diagnosis.
+                <span aria-hidden="true">↺</span> Carried forward from your earlier diagnosis.
               </motion.p>
             )}
           </AnimatePresence>
@@ -96,7 +117,7 @@ export function SituationPath() {
         <div>
           {OPTIONS.map((option, index) => {
             const isActive = selected === option.id;
-            const pkg = packages.find((entry) => entry.slug === option.slug);
+            const pkg = packages.find((entry) => entry.slug === SITUATION_TO_PACKAGE[option.id]);
             return (
               <div key={option.id} className="relative">
                 <div className="h-px bg-ivory/12" aria-hidden="true" />

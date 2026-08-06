@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
 import { cookies, headers } from "next/headers";
 import { preload } from "react-dom";
 import { Header } from "@/layouts/Header";
@@ -11,6 +10,7 @@ import { PhotoHero } from "@/components/PhotoHero";
 import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { SituationPath } from "@/sections/Services/SituationPath";
+import { ServiceDisciplineExplorer } from "@/sections/Services/ServiceDisciplineExplorer";
 import { RecognitionAudit } from "@/sections/Services/RecognitionAudit";
 import { PricingProvider } from "@/components/PricingProvider";
 import { REGION_COOKIE, isRegion, regionFromCountry } from "@/data/pricing";
@@ -33,7 +33,6 @@ import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { Magnetic } from "@/components/Magnetic";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { MOOD } from "@/lib/sectionWash";
-import { offerings } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -234,7 +233,7 @@ export default async function ServicesPage() {
             the site remembers where they stand instead of asking twice.
             A quiet interstitial on the page's charcoal ground; the
             chapters around it carry the media. */}
-        <section id="situation" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section id="situation" data-services-scene="situation" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           {/* Original procedural Situation film: one coherent material
               world holds three different starting conditions. A pale
               mineral seed begins, shifted strata wait to realign, and
@@ -272,7 +271,7 @@ export default async function ServicesPage() {
             "what do you actually do" with no complete answer anywhere
             on the page. Editorial rows rather than a card grid; each
             offering keeps its own accent from the data. */}
-        <section id="offerings" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section id="offerings" data-services-scene="offerings" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           {/* Original generated strategy terrain: mist withdraws from a
               tactile topographic world while one pale route becomes
               clear. The six disciplines stay distinct in the foreground,
@@ -293,50 +292,9 @@ export default async function ServicesPage() {
                 "linear-gradient(100deg, rgba(16,20,19,0.9) 0%, rgba(16,20,19,0.74) 46%, rgba(16,20,19,0.56) 100%)",
             }}
           />
-          <Container className="relative max-w-6xl">
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-20">
-              <Reveal className="lg:sticky lg:top-28 lg:self-start">
-                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The full practice</p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Six kinds of work, one discipline underneath.
-                </h2>
-                <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/70">
-                  Every service below shows up inside the packages further down; this is the complete list, stated
-                  plainly.
-                </p>
-              </Reveal>
-              {/* Every neighbouring chapter carries footage and a real
-                  interaction; this one was six static rows. spotlight-grid
-                  is pure CSS, so resting on one discipline dims the other
-                  five and the row takes its own accent. */}
-              <div className="spotlight-grid">
-                {offerings.map((offer, i) => (
-                  <Reveal key={offer.name} delay={i * 0.05}>
-                    <div
-                      className="spotlight-card group grid gap-2 rounded-2xl border-t border-ivory/12 px-4 py-6 sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-8"
-                      style={
-                        {
-                          borderTopColor: "rgba(244,239,230,0.12)",
-                          "--card-color": offer.color,
-                        } as CSSProperties
-                      }
-                    >
-                      <p className="flex items-center gap-3 font-display text-xl font-normal text-ivory">
-                        <span
-                          aria-hidden="true"
-                          className="h-2 w-2 shrink-0 rounded-full transition-transform duration-500 group-hover:scale-[2.2]"
-                          style={{ backgroundColor: offer.color }}
-                        />
-                        {offer.name}
-                      </p>
-                      <p className="text-sm leading-relaxed text-ivory/85 sm:pt-1">{offer.detail}</p>
-                    </div>
-                  </Reveal>
-                ))}
-                <div className="h-px bg-ivory/12" aria-hidden="true" />
-              </div>
-            </div>
-          </Container>
+          <div className="relative w-full">
+            <ServiceDisciplineExplorer />
+          </div>
           <SceneHandoff color="#0E1714" />
         </section>
 
@@ -344,7 +302,7 @@ export default async function ServicesPage() {
             visitor to act before the teaching chapters. Its original
             deep-water film keeps three legitimate currents visible,
             then lets them resolve into one legible scope. */}
-        <section id="desire" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.deepwater }}>
+        <section id="desire" data-services-scene="desire" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.deepwater }}>
           {/* Original procedural package-choice loop: three
               legitimate currents remain visible, then settle into one
               legible channel. The restrained mineral-gold trace marks
@@ -377,7 +335,7 @@ export default async function ServicesPage() {
             number from projects.ts verified stats. Charcoal ground so
             the numbers themselves are the visual; it also hands
             seamlessly into Authority's identical charcoal. */}
-        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section data-services-scene="verified-outcome" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <SceneVeil color="#0E1714" />
           <div className="relative">
             <VerifiedOutcome />
@@ -404,7 +362,7 @@ export default async function ServicesPage() {
             soil veil that was re-warming the whole page into a single
             amber wash. The overlay gradient is tinted with the
             section's own mood tone, never soil. */}
-        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.stone }}>
+        <section data-services-scene="stakes" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.stone }}>
           {/* Original generated positioning scene: several similar
               stones disappear into cool category mist while one
               weathered surface holds a restrained mineral seam. The
@@ -441,7 +399,7 @@ export default async function ServicesPage() {
             PerceptionLadder keeps the page's one scoped Three.js accent,
             while the original perception-ascent film clarifies terrain
             around a signal instead of borrowing generic growth footage. */}
-        <section id="education" className="relative scroll-mt-24 overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
+        <section id="education" data-services-scene="education" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
           {/* Original procedural perception-ascent loop:
               layered terrain and mist clarify around one distant signal.
               The landscape becomes more legible as the signal becomes
@@ -488,7 +446,7 @@ export default async function ServicesPage() {
         {/* Mood: THE ARCHIVE. Layered paper, vellum,
             blind-debossed grids, and dark folios form one ordered
             material system behind the live ArtifactPreview. */}
-        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
+        <section data-services-scene="deliverables" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.study }}>
           {/* Original generated Deliverables archive: ivory papers,
               translucent vellum, embossed grids, dark folios, and one
               stone weight make the invisible work feel tangible before
@@ -529,7 +487,7 @@ export default async function ServicesPage() {
             visitor's own regional pricing. The full map renders
             before any email is requested. Charcoal interstitial
             between the light CTA breath and the forest health check. */}
-        <section id="imagine" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section id="imagine" data-services-scene="imagine" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <div className="relative">
             <ImagineYourBrand />
           </div>
@@ -550,7 +508,7 @@ export default async function ServicesPage() {
             mapping sit over an original reflection film that reveals
             hidden misalignment beneath an apparently coherent surface.
             Mood: deep forest green-black after the light editorial break. */}
-        <section id="health" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.forest }}>
+        <section id="health" data-services-scene="health" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.forest }}>
           {/* Original generated diagnostic reflection loop: the
               surface first reads as coherent, then faint misalignments
               reveal themselves beneath it before settling into visible
@@ -588,7 +546,7 @@ export default async function ServicesPage() {
             explicit consent form feeding the existing Mailchimp double
             opt in. Charcoal ground between the forest and the warm
             strategy room that closes the page. */}
-        <section id="audit" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section id="audit" data-services-scene="audit" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <SceneVeil color="#141A15" />
           <div className="relative">
             <RecognitionAudit />
@@ -608,7 +566,7 @@ export default async function ServicesPage() {
           video="/videos/generated/bt-services-strategy-room.mp4"
           videoMobile="/videos/generated/bt-services-strategy-room-mobile.mp4"
           overlayGradient="linear-gradient(180deg, rgba(10,15,16,0.42) 0%, rgba(14,18,18,0.52) 52%, rgba(20,17,14,0.74) 100%)"
-          className="scroll-mt-24 pb-16 pt-24 sm:pb-20 sm:pt-32"
+          className="flex min-h-[100svh] scroll-mt-24 flex-col justify-center pb-16 pt-24 sm:pb-20 sm:pt-32"
         >
           <StrategyRoomCTA />
         </TexturedDark>

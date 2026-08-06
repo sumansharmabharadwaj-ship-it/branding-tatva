@@ -278,6 +278,26 @@ async function auditServicesViewport(browser, viewport) {
     assert((await page.locator(`#${id}`).count()) === 1, `${label}: #${id} is missing or duplicated`);
   }
 
+  const screenFitScenes = page.locator("[data-services-scene]");
+  await waitForCount(screenFitScenes, 10, `${label}: screen-fit Services scenes`);
+  const sceneFloors = await screenFitScenes.evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const rect = node.getBoundingClientRect();
+      return { name: node.getAttribute("data-services-scene") || "unnamed", height: rect.height };
+    }),
+  );
+  for (const scene of sceneFloors) {
+    assert(
+      scene.height >= viewport.height - 2,
+      `${label}: ${scene.name} scene is ${scene.height.toFixed(1)}px tall for a ${viewport.height}px viewport`,
+    );
+  }
+  const bookBox = await page.locator("#book").boundingBox();
+  assert(
+    bookBox && bookBox.height >= viewport.height - 2,
+    `${label}: Strategy Room is ${bookBox?.height ?? 0}px tall for a ${viewport.height}px viewport`,
+  );
+
   const jumpNav = page.locator('nav[aria-label="Jump to section"]');
   assert((await visibleCount(jumpNav)) === 1, `${label}: exactly one section guide should be visible near the opening`);
 
@@ -301,19 +321,20 @@ async function auditServicesViewport(browser, viewport) {
   assert((await situation.getByRole("link", { name: /See the full package/i }).count()) === 1, `${label}: situation-to-package path is missing`);
   if (viewport.screenshots) await captureViewport(page, `services-${viewport.name}-situation.png`);
 
-  // Offerings: all six disciplines remain visible and the original
-  // terrain film has a complete reduced-motion frame.
+  // Offerings: all six disciplines stay visible inside one compact
+  // explorer, and changing a tab replaces the explanation without adding
+  // six document-length rows to the journey.
   const offerings = page.locator("#offerings");
   await scrollTo(page, offerings, `${label}/offerings`);
-  const offeringCards = offerings.locator(".spotlight-card");
-  await waitForCount(offeringCards, 6, `${label}: offerings`);
-  const offeringColors = await offeringCards.evaluateAll((nodes) =>
-    nodes.map((node) => node.style.getPropertyValue("--card-color").trim()),
-  );
-  assert(
-    offeringColors.length === 6 && offeringColors.every(Boolean),
-    `${label}: one or more offering rows have no discipline accent ${JSON.stringify(offeringColors)}`,
-  );
+  const disciplineTabs = offerings.getByRole("tab");
+  await waitForCount(disciplineTabs, 6, `${label}: service-discipline tabs`);
+  await assertTouchTargets(disciplineTabs, 40, `${label}: service-discipline tabs`);
+  assert((await disciplineTabs.first().getAttribute("aria-selected")) === "true", `${label}: first discipline is not selected`);
+  const websiteTab = offerings.getByRole("tab", { name: "Website Development", exact: true });
+  await websiteTab.click();
+  assert((await websiteTab.getAttribute("aria-selected")) === "true", `${label}: Website Development tab did not activate`);
+  const disciplinePanel = offerings.getByRole("tabpanel");
+  await waitForVisibleText(disciplinePanel, "The most visited stop on a customer's whole journey", `${label}: service-discipline panel`);
   for (const service of [
     "Brand Strategy & Identity",
     "Content Strategy",
@@ -330,6 +351,13 @@ async function auditServicesViewport(browser, viewport) {
   // state, then prove the side-by-side comparison is functional.
   const desire = page.locator("#desire");
   await scrollTo(page, desire, `${label}/desire`);
+  const carriedPackage = desire.locator('[data-carried-package="true"]');
+  await waitForVisibleText(carriedPackage, "Your earlier choice points to", `${label}: carried package recommendation`);
+  const foundationChoice = desire.locator("button").filter({ hasText: "Starting with an idea" }).first();
+  assert(
+    (await foundationChoice.getAttribute("aria-pressed")) === "true",
+    `${label}: Situation choice did not carry into Foundation`,
+  );
   const packageCards = desire
     .locator("button")
     .filter({ hasText: /Starting with an idea|Feeling unclear or inconsistent|Needing ongoing consistency/ });
@@ -337,6 +365,8 @@ async function auditServicesViewport(browser, viewport) {
   await assertTouchTargets(packageCards, 40, `${label}: package cards`);
   const unclearChoice = desire.locator("button").filter({ hasText: "Feeling unclear or inconsistent" }).first();
   await unclearChoice.click();
+  await page.waitForTimeout(120);
+  assert(!(await carriedPackage.isVisible().catch(() => false)), `${label}: carried recommendation did not clear after a manual package choice`);
   assert(
     (await unclearChoice.getAttribute("aria-pressed")) === "true",
     `${label}: package cards do not expose their selected state with aria-pressed`,
@@ -489,6 +519,8 @@ async function auditServicesViewport(browser, viewport) {
     viewport: viewport.name,
     indexedSections: SECTION_IDS.length,
     offerings: 6,
+    screenFitScenes: 10,
+    carriedRecommendation: true,
     packageChoices: 3,
     perceptionRungs: 4,
     deliverables: 14,
