@@ -53,12 +53,18 @@ async function inspect(browser, profile) {
       viewportHeight: window.innerHeight,
       viewportWidth: window.innerWidth,
       documentWidth,
-      visibleLayers: Array.from(section.querySelectorAll("[data-authority-desktop-layer]"))
+      visibleDesktopLayers: Array.from(section.querySelectorAll("[data-authority-desktop-layer]"))
         .filter((node) => {
           const bounds = node.getBoundingClientRect();
           const style = getComputedStyle(node);
           return bounds.width > 0 && bounds.height > 0 && style.display !== "none";
         }).length,
+      mobileDeckVisible: Array.from(section.querySelectorAll("[data-authority-mobile-deck]"))
+        .some((node) => {
+          const bounds = node.getBoundingClientRect();
+          const style = getComputedStyle(node);
+          return bounds.width > 0 && bounds.height > 0 && style.display !== "none";
+        }),
     };
   });
 
@@ -72,11 +78,22 @@ async function inspect(browser, profile) {
     assert(metrics.mode === "compressed-sticky", `${profile.name}: expected compressed-sticky, received ${metrics.mode}`);
     assert(range >= 2.05 && range <= 2.35, `${profile.name}: Authority range is ${range.toFixed(2)} viewports`);
     assert(metrics.stagePosition === "sticky", `${profile.name}: Authority stage is not sticky`);
-    assert(metrics.visibleLayers === 5, `${profile.name}: expected five visible Authority layers`);
+    assert(metrics.visibleDesktopLayers === 5, `${profile.name}: expected five visible Authority layers`);
   } else {
     assert(metrics.mode === "static", `${profile.name}: expected static mode, received ${metrics.mode}`);
     assert(metrics.stagePosition !== "sticky", `${profile.name}: static Authority stage is still sticky`);
-    assert(range <= 2, `${profile.name}: static Authority scene still consumes ${range.toFixed(2)} viewports`);
+    if (typeof profile.maxRangeViewports === "number") {
+      assert(
+        range <= profile.maxRangeViewports,
+        `${profile.name}: static Authority scene consumes ${range.toFixed(2)} viewports`,
+      );
+    }
+    if (profile.expectDesktopLayers) {
+      assert(
+        metrics.visibleDesktopLayers === 5,
+        `${profile.name}: complete desktop Authority system is not visible at rest`,
+      );
+    }
   }
 
   await authority.screenshot({
@@ -90,7 +107,8 @@ async function inspect(browser, profile) {
     mode: metrics.mode,
     rangeViewports: Number(range.toFixed(2)),
     stagePosition: metrics.stagePosition,
-    visibleLayers: metrics.visibleLayers,
+    visibleDesktopLayers: metrics.visibleDesktopLayers,
+    mobileDeckVisible: metrics.mobileDeckVisible,
   };
 }
 
@@ -115,6 +133,8 @@ async function inspect(browser, profile) {
         height: 900,
         reducedMotion: "reduce",
         expectedMode: "static",
+        maxRangeViewports: 2,
+        expectDesktopLayers: true,
       }),
     );
     results.push(
