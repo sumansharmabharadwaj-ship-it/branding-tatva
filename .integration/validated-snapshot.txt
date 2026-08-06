@@ -1,4 +1,4 @@
 site-base=b64b849442781e3b71e9f38656c48ad2b9d87e88
 insights-snapshot=4576f787ca3f4bf1480b3c3b61f89477409ddeaa
-integration-parent=3ca832e3cd5ebd5d008532aecb43b44d4b25ad94
-purpose=pin the final build-only candidate without a Vercel deployment
+integration-candidate=b26644dd9b6cc404bd4eb91d151a8cacf3728e60
+purpose=trigger the final build-only validation without a Vercel deployment
