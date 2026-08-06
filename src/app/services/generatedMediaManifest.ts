@@ -2,7 +2,7 @@ export const GENERATED_SERVICES_MEDIA_REVISION = {
   installed: "2026-08-06",
   desktopLoops: 6,
   mobileLoops: 6,
-  stillScenes: 1,
+  stillScenes: 2,
   silent: true,
   posters: true,
   auditHarness: "strict-csp-compatible",
@@ -52,6 +52,11 @@ export const GENERATED_SERVICES_STILLS = {
     image: "/images/generated/bt-services-stakes-positioning.png",
     purpose: "Separate one recognisable position from an interchangeable category field.",
     motion: "Scroll-linked camera drift with a restrained mineral-light catch.",
+  },
+  deliverables: {
+    image: "/images/generated/bt-services-deliverables-archive.png",
+    purpose: "Make the invisible brand-system work feel tangible, ordered, and usable.",
+    motion: "Scroll-linked paper-plane drift with a restrained edge-light pass.",
   },
 } as const;
 

@@ -24,6 +24,7 @@ import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
 import { WeakBrandingCost } from "@/sections/Services/WeakBrandingCost";
 import { DeliverablesExplorer } from "@/sections/Services/DeliverablesExplorer";
+import { DeliverablesCinematicBackdrop } from "@/sections/Services/DeliverablesCinematicBackdrop";
 import { ContextualCTA } from "@/components/conversion/ContextualCTA";
 import { ImagineYourBrand } from "@/sections/Services/ImagineYourBrand";
 import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
@@ -509,41 +510,28 @@ export default async function ServicesPage() {
             Desire's own objection. Same shader treatment as the
             sections around it — see WeakBrandingCost's comment above
             for why. */}
-        {/* Mood: THE STUDY — final art direction on this chapter, per
-            direct screenshot feedback: the abstract room (lamp glows,
-            cloth light, empty dark field) broke the site's own visual
-            standard — every other chapter lives in serene nature. The
-            study now sits over the emerald river (the approved clip
-            held in the reassignment pool since Phase 1): slow green
-            water, the Pinterest register exactly, darkened by a
-            walnut-tinted overlay so the ivory documents stay the
-            brightest thing in frame. */}
+        {/* Mood: THE ARCHIVE. The background now belongs to the work
+  being explained: layered paper, vellum, blind-debossed grids,
+  and dark folios form one ordered material system. The live
+  ArtifactPreview remains the chapter's primary interaction;
+  the environment only gives that interaction a tactile world. */}
         <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
-          {/* Fresh clip per direct instruction and the glassmorphism
-              references (Pexels id 27065369, standard free license):
-              mist drifting over a calm lake at dawn, tree silhouette
-              framing — the serene register of the Home and About
-              backdrops. The overlay is deliberately light: the scene
-              is meant to SHOW, the frosted glass cards carry their own
-              readability. Strongest 8s, slowed 0.9x, near native
-              grade, seamless ping-pong loop. 3.2MB MP4 / 2.0MB WebM. */}
-          <BackgroundVideo
-            parallax
-            push
-            video="/videos/pexels-dandelion-release.mp4"
-            videoWebm="/videos/pexels-dandelion-release.webm"
-            poster="/images/pexels-dandelion-release-poster.jpg"
-          />
+          {/* Original generated Deliverables archive: ivory papers,
+    translucent vellum, embossed grids, dark folios, and one
+    stone weight make the invisible work feel tangible before
+    a visitor opens an individual artifact. Its scroll-linked
+    drift and edge light remain secondary to the explorer. */}
+<DeliverablesCinematicBackdrop image="/images/generated/bt-services-deliverables-archive.png" />
           <div
             className="absolute inset-0"
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(23,32,25,0.55) 0%, rgba(23,32,25,0.28) 45%, rgba(23,32,25,0.6) 100%)",
+                "linear-gradient(180deg, rgba(13,17,16,0.72) 0%, rgba(13,17,16,0.46) 44%, rgba(13,17,16,0.68) 100%)",
             }}
           />
-          {/* Scene dissolve: Education's blue mist hands into the river
-              study. */}
+          {/* Scene dissolve: Education's blue mist settles onto the
+    archive's charcoal and paper planes. */}
           <SceneVeil color="#1A2026" heightClass="h-[15vh]" />
           <div className="relative">
             <DeliverablesExplorer />
