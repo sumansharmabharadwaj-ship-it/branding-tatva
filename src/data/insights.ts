@@ -2,7 +2,9 @@ import { brandArchitectureInsightPosts } from "@/data/brandArchitectureInsights"
 import { brandConsistencyInsightPosts } from "@/data/brandConsistencyInsights";
 import { brandRefreshInsightPosts } from "@/data/brandRefreshInsights";
 import { brandRecallMeasurementInsightPosts } from "@/data/brandRecallMeasurementInsights";
+import { brandVoiceInsightPosts } from "@/data/brandVoiceInsights";
 import { clientProofInsightPosts } from "@/data/clientProofInsights";
+import { competitorResearchInsightPosts } from "@/data/competitorResearchInsights";
 import { consultingPositioningInsightPosts } from "@/data/consultingPositioningInsights";
 import { customerInterviewInsightPosts } from "@/data/customerInterviewInsights";
 import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
@@ -48,6 +50,8 @@ const combinedPosts = [
   ...customerInterviewInsightPosts,
   ...interviewSynthesisInsightPosts,
   ...serviceNamingInsightPosts,
+  ...competitorResearchInsightPosts,
+  ...brandVoiceInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter((post, index) => combinedPosts.findIndex((candidate) => candidate.slug === post.slug) === index);
@@ -70,6 +74,8 @@ const relatedRegistrations = [
   { supportingSlug: "customer-interviews-brand-strategy", pillarSlugs: ["brand-positioning-strategy-service-businesses", "customer-journey-mapping-service-businesses", "turn-client-proof-into-positioning-advantage"] },
   { supportingSlug: "turn-customer-interviews-into-positioning-brief", pillarSlugs: ["customer-interviews-brand-strategy", "brand-positioning-strategy-service-businesses", "brand-positioning-statement-examples-why-generic"] },
   { supportingSlug: "service-line-naming-strategy", pillarSlugs: ["brand-architecture-service-businesses", "website-messaging-hierarchy-service-businesses", "brand-consistency-checklist-service-businesses"] },
+  { supportingSlug: "competitor-research-brand-strategy-without-copying-category", pillarSlugs: ["find-real-differentiator-crowded-service-market", "brand-positioning-strategy-service-businesses", "distinctive-brand-assets-audit"] },
+  { supportingSlug: "brand-voice-guidelines-writers-can-use", pillarSlugs: ["brand-messaging-framework", "website-messaging-hierarchy-service-businesses", "service-line-naming-strategy"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {
