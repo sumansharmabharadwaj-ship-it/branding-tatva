@@ -1,0 +1,65 @@
+name: Apply Work mobile story compaction
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/apply-work-mobile-story-compaction.yml
+      - scripts/apply_work_mobile_story_compaction.cjs
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-work-mobile-story-compaction
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Check out the working branch without the media archive
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Apply source patch
+        run: node scripts/apply_work_mobile_story_compaction.cjs
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the production application
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+        run: pnpm build
+
+      - name: Publish the verified source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm scripts/apply_work_mobile_story_compaction.cjs
+          rm .github/workflows/apply-work-mobile-story-compaction.yml
+          git add -A
+          git commit -m "Compress mobile Work narratives into selectable evidence boards"
+          git pull --rebase origin homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
