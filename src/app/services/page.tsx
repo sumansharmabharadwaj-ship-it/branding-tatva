@@ -14,7 +14,7 @@ import { RecognitionAudit } from "@/sections/Services/RecognitionAudit";
 import { PricingProvider } from "@/components/PricingProvider";
 import { REGION_COOKIE, isRegion, regionFromCountry } from "@/data/pricing";
 import { VerifiedOutcome } from "@/sections/Services/VerifiedOutcome";
-import { SkyLife } from "@/components/SkyLife";
+import { StakesCinematicBackdrop } from "@/sections/Services/StakesCinematicBackdrop";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { SceneHandoff } from "@/sections/Services/SceneHandoff";
 import { SplitReveal } from "@/components/SplitReveal";
@@ -403,20 +403,11 @@ export default async function ServicesPage() {
           <SceneHandoff color="#191B16" />
         </section>
 
-        {/* An extension of Authority, not a new act — shows the real
-            stakes behind "marketing amplifies whatever is already
-            there" before Education explains the recognition ladder.
-            Grounded in established branding theory (mental
-            availability, distinctive assets), described as a general
-            pattern rather than a specific company's story — the
-            honest version of the requested comparison, since no real
-            two-business case study exists yet to build a factual one
-            from. Same ambient shader as Authority/Education/Desire —
-            direct feedback that stacking several new flat bg-soil
-            sections back to back recreated the exact "dead zone"
-            problem already fixed once on Desire; the fix is the same
-            each time, continuing one visual system rather than adding
-            a new device per section. */}
+        {/* An extension of Authority, not a new act. The visual now
+            performs the argument instead of illustrating it with a
+            summit: several interchangeable forms recede into category
+            fog while one materially distinctive surface becomes
+            recognisable before the visitor reads the comparison. */}
         {/* Mood: STONE. Part of the Phase 1 cinematic color script —
             each Services section sits on its own temperature-shifted
             dark (see MOOD in sectionWash.ts) instead of the one warm
@@ -424,41 +415,23 @@ export default async function ServicesPage() {
             amber wash. The overlay gradient is tinted with the
             section's own mood tone, never soil. */}
         <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.stone }}>
-          {/* Approved Positioning footage (Pexels 6134369, standard
-              license). This is the arrival shot — one dominant summit
-              above the cloud inversion, stillness and hierarchy — so it
-              lives on THIS chapter (positioned generically vs
-              distinctly), per the direction that Positioning means
-              standing above the market while Education means climbing
-              toward it. Cool grade per the same direction: warmth pulled
-              across shadows and mids, depth carried by contrast and the
-              sun's own luminance rather than color, so the peak stays
-              unmistakably above everything without the golden postcard. */}
-          <BackgroundVideo
-            parallax
-            video="/videos/pexels-summit-inversion.mp4"
-            videoWebm="/videos/pexels-summit-inversion.webm"
-            poster="/images/pexels-summit-inversion-poster.jpg"
-          />
-          {/* Tertiary life, story-first: a single distant bird crossing
-              above the cloud sea at long, irregular intervals — the one
-              thing moving higher than the summit's own stillness,
-              underlining elevation without disturbing it.
-              This comment promised the bird for months while the
-              component sat unmounted anywhere on the site. It is real
-              now. Pale silhouette because the cloud sea is bright, and
-              a high band so it never crosses the summit itself. */}
-          <SkyLife density="rare" solitary band={[6, 26]} color="rgba(238,240,244,0.72)" />
-          {/* Overlay stays a step cooler than the stone base and a touch
-              denser at the top where the sky sits — the summit clip is
-              already graded slate, so this only steadies type contrast
-              without dulling the cloud sea's own shadow depth. */}
+          {/* Original generated positioning scene: several similar
+              stones disappear into cool category mist while one
+              weathered surface holds a restrained mineral seam. The
+              scroll-linked camera drift stays subordinate to the
+              comparison cards, whose focus pull remains this chapter's
+              primary interaction. */}
+          <StakesCinematicBackdrop image="/images/generated/bt-services-stakes-positioning.png" />
+          {/* A left-weighted slate scrim protects the editorial copy
+              while leaving the distinctive mineral surface visible on
+              the right. No global soil tint, so the chapter remains
+              cool and materially different from Desire. */}
           <div
             className="absolute inset-0"
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(24,27,23,0.78) 0%, rgba(24,27,23,0.55) 50%, rgba(24,27,23,0.75) 100%)",
+                "linear-gradient(100deg, rgba(17,20,22,0.9) 0%, rgba(17,20,22,0.68) 44%, rgba(17,20,22,0.38) 100%)",
             }}
           />
           {/* Scene dissolve: Authority's charcoal handing off into
