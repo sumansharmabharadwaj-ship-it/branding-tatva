@@ -1,3 +1,4 @@
+import { brandArchitectureInsightPosts } from "@/data/brandArchitectureInsights";
 import { brandConsistencyInsightPosts } from "@/data/brandConsistencyInsights";
 import { brandRefreshInsightPosts } from "@/data/brandRefreshInsights";
 import { brandRecallMeasurementInsightPosts } from "@/data/brandRecallMeasurementInsights";
@@ -47,6 +48,7 @@ const combinedPosts = [
   ...repositioningInsightPosts,
   ...brandRefreshInsightPosts,
   ...clientProofInsightPosts,
+  ...brandArchitectureInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
@@ -153,6 +155,14 @@ const relatedRegistrations = [
       "find-real-differentiator-crowded-service-market",
       "brand-positioning-strategy-service-businesses",
       "website-messaging-hierarchy-service-businesses",
+    ],
+  },
+  {
+    supportingSlug: "brand-architecture-service-businesses",
+    pillarSlugs: [
+      "brand-positioning-strategy-service-businesses",
+      "reposition-established-service-business-without-losing-recognition",
+      "brand-refresh-vs-rebrand-how-much-change",
     ],
   },
 ] as const;
