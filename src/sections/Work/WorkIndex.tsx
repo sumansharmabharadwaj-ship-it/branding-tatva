@@ -39,6 +39,10 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
     track("work_filter_selected", { filter: next });
   }
 
+  function openProject(project: Project, source: string) {
+    track("case_study_opened", { project: project.slug, source });
+  }
+
   return (
     <section id="index" className="scroll-mt-24 py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
       <Container className="max-w-6xl">
@@ -89,7 +93,68 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
           </p>
         </Reveal>
 
-        <div className="mt-10 grid gap-12 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
+        <div className="mt-8 lg:hidden" aria-live="polite" aria-atomic="true">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.article
+              id="mobile-work-preview"
+              key={current.slug}
+              data-mobile-work-preview
+              initial={animateTransitions ? { opacity: 0, y: 10 } : false}
+              animate={{ opacity: 1, y: 0 }}
+              exit={animateTransitions ? { opacity: 0, y: -8 } : undefined}
+              transition={{ duration: animateTransitions ? 0.38 : 0, ease: EASE_ORGANIC }}
+              className="overflow-hidden rounded-[1.4rem] border shadow-[0_18px_55px_rgba(31,58,40,0.1)]"
+              style={{ borderColor: WORK.stone + "88", backgroundColor: WORK.forest }}
+            >
+              <Link
+                href={`/work/${current.slug}`}
+                onClick={() => openProject(current, "mobile_active_work_preview")}
+                className="group block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
+                style={{ outlineColor: WORK.moss }}
+              >
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={currentRecord.evidencePoster}
+                    alt={`${current.title} evidence diagram`}
+                    className="absolute inset-0 h-full w-full object-contain"
+                    loading="eager"
+                    decoding="async"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-x-0 bottom-0 h-16"
+                    style={{ background: "linear-gradient(180deg, transparent, rgba(8,12,10,0.28))" }}
+                  />
+                </div>
+
+                <div className="border-t p-5" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: WORK.sand }}>
+                        {currentRecord.evidenceLabel} · {current.industry}
+                      </p>
+                      <h3 className="mt-1 font-display text-3xl font-normal leading-tight text-white">{current.title}</h3>
+                    </div>
+                    <span
+                      className="shrink-0 rounded-full border px-2.5 py-1 text-[0.54rem] font-medium uppercase tracking-[0.11em]"
+                      style={{ borderColor: "rgba(255,255,255,0.22)", color: WORK.sage }}
+                    >
+                      {currentRecord.tier === "flagship" ? "Flagship" : "Project story"}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-white/78">{decisiveLine(current)}</p>
+                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-white">
+                    {currentRecord.tier === "flagship" ? "Open the case study" : "Open the project story"}
+                    <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  </span>
+                </div>
+              </Link>
+            </motion.article>
+          </AnimatePresence>
+        </div>
+
+        <div className="mt-4 grid gap-12 lg:mt-10 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
           <div role="list" aria-label="Filtered projects">
             <AnimatePresence mode="popLayout" initial={false}>
               {filtered.map((project, index) => {
@@ -106,14 +171,49 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                     transition={{ duration: animateTransitions ? 0.36 : 0, ease: EASE_ORGANIC }}
                     className="relative"
                   >
-                    <div className="h-px" style={{ backgroundColor: WORK.stone + "66" }} aria-hidden="true" />
+                    <button
+                      type="button"
+                      aria-pressed={isActive}
+                      aria-controls="mobile-work-preview"
+                      onClick={() => setActive(index)}
+                      className="grid min-h-[4.75rem] w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-3 border-t px-1 py-3 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 lg:hidden"
+                      style={{
+                        borderColor: WORK.stone + "66",
+                        backgroundColor: isActive ? "rgba(85,107,74,0.08)" : "transparent",
+                        outlineColor: WORK.moss,
+                      }}
+                    >
+                      <span className="font-display text-sm" style={{ color: isActive ? WORK.olive : WORK.stone }} aria-hidden="true">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block truncate font-display text-lg leading-tight" style={{ color: WORK.charcoal }}>
+                          {project.title}
+                        </span>
+                        <span className="mt-1 block truncate text-[0.56rem] font-medium uppercase tracking-[0.13em]" style={{ color: WORK.olive }}>
+                          {record.evidenceLabel}
+                        </span>
+                      </span>
+                      <span
+                        className="flex h-8 w-8 items-center justify-center rounded-full border font-display text-sm"
+                        style={{
+                          borderColor: isActive ? WORK.moss : WORK.stone,
+                          color: isActive ? WORK.forest : WORK.wood,
+                        }}
+                        aria-hidden="true"
+                      >
+                        {isActive ? "•" : "+"}
+                      </span>
+                    </button>
+
+                    <div className="hidden h-px lg:block" style={{ backgroundColor: WORK.stone + "66" }} aria-hidden="true" />
                     <Link
                       href={`/work/${project.slug}`}
                       onMouseEnter={() => setActive(index)}
-                      onClick={() => track("case_study_opened", { project: project.slug, source: "filtered_work_index" })}
+                      onClick={() => openProject(project, "desktop_filtered_work_index")}
                       onFocus={() => setActive(index)}
-                      className={`group grid grid-cols-[2.5rem_1fr] gap-4 py-6 transition-all duration-500 focus-visible:outline focus-visible:outline-2 sm:grid-cols-[3rem_1fr_auto] sm:gap-6 sm:py-7 ${
-                        isActive ? "opacity-100" : "opacity-100 lg:opacity-[0.82]"
+                      className={`group hidden gap-4 py-6 transition-all duration-500 focus-visible:outline focus-visible:outline-2 sm:grid-cols-[3rem_1fr_auto] sm:gap-6 sm:py-7 lg:grid ${
+                        isActive ? "opacity-100" : "opacity-[0.82]"
                       }`}
                       style={{
                         transform: animateTransitions && isActive ? "translateX(8px)" : "translateX(0)",
@@ -158,33 +258,10 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                             ) : null;
                           })}
                         </span>
-
-                        <span
-                          className="mt-4 block overflow-hidden rounded-2xl border lg:hidden"
-                          style={{ borderColor: WORK.stone + "88", backgroundColor: WORK.forest }}
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={record.evidencePoster}
-                            alt={`${project.title} evidence diagram`}
-                            className="block aspect-[4/3] w-full object-contain"
-                            loading="lazy"
-                            decoding="async"
-                            data-work-index-poster
-                          />
-                        </span>
-
-                        <span
-                          className="mt-3 inline-flex items-center gap-2 text-sm font-medium sm:hidden"
-                          style={{ color: WORK.forest }}
-                        >
-                          {record.tier === "flagship" ? "Open the case study" : "Open the project story"}
-                          <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-                        </span>
                       </span>
 
                       <span
-                        className="hidden items-center gap-2 self-center text-sm transition-transform duration-300 group-hover:translate-x-1 sm:flex"
+                        className="flex items-center gap-2 self-center text-sm transition-transform duration-300 group-hover:translate-x-1"
                         style={{ color: isActive ? WORK.forest : WORK.moss }}
                       >
                         {record.tier === "flagship" ? "View case study" : "View project story"} <span aria-hidden="true">→</span>
