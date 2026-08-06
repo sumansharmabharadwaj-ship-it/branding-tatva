@@ -5,7 +5,8 @@
     "deploymentEnabled": {
       "homepage-cinematic-recovery": false,
       "feat/insights-authority-hub": false,
-      "staging/site-integration": false
+      "staging/site-integration": false,
+      "services-project-room-packages-v2": true
     }
   }
 }
