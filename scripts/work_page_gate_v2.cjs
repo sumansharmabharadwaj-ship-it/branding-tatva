@@ -182,7 +182,10 @@ async function auditWorkViewport(browser, viewport) {
   await assertTouchTargets(heroTabs, 40, `${label}: hero project tabs`);
 
   await page.getByRole("tab", { name: /MyShopInEurope/i }).click();
-  await page.waitForFunction(() => document.getElementById("hero-project-preview")?.textContent?.includes("MyShopInEurope"));
+  await page.locator("#hero-project-preview", { hasText: "MyShopInEurope" }).waitFor({
+  state: "visible",
+  timeout: 8_000,
+});
   assert(
     ((await page.locator("#hero-project-preview").textContent()) || "").includes("Strategic system"),
     `${label}: active hero metadata did not change`,
