@@ -55,3 +55,21 @@
   transform: translate3d(var(--services-shift-x), var(--services-shift-y), 0)
     rotate(8deg);
 }
+
+@supports not (height: 1svh) {
+  @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+    [data-services-scene="opening"] {
+      min-height: 112vh !important;
+    }
+
+    #offerings {
+      min-height: 165vh !important;
+    }
+  }
+
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    #authority > div {
+      height: 220vh !important;
+    }
+  }
+}
