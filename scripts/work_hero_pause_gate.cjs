@@ -107,7 +107,7 @@ async function auditInteractivePause(browser) {
     await assertStableSelection(page, tabs, hovered, "work/hero-pause: hover pause after focus leaves");
 
     await movePointerOutside(page);
-    const resumed = await waitForSelectionChange(page, tabs, hovered, "work/hero-pause");
+    await waitForSelectionChange(page, tabs, hovered, "work/hero-pause");
 
     await toggle.click();
     await movePointerOutside(page);
@@ -123,11 +123,11 @@ async function auditInteractivePause(browser) {
     await outsideFocus.focus();
     await page.waitForTimeout(120);
     assert((await toggle.getAttribute("aria-pressed")) === "false", "work/hero-pause: manual resume did not clear aria-pressed");
-    await waitForSelectionChange(page, tabs, manuallyPaused, "work/hero-pause: manual resume");
+    const resumedAfterManual = await waitForSelectionChange(page, tabs, manuallyPaused, "work/hero-pause: manual resume");
 
-    await tabs.nth(resumed).focus();
-    await tabs.nth(resumed).press("ArrowRight");
-    const arrowSelected = (resumed + 1) % 5;
+    await tabs.nth(resumedAfterManual).focus();
+    await tabs.nth(resumedAfterManual).press("ArrowRight");
+    const arrowSelected = (resumedAfterManual + 1) % 5;
     assert((await selectedIndex(tabs)) === arrowSelected, "work/hero-pause: ArrowRight did not select the next project");
     assert(
       await tabs.nth(arrowSelected).evaluate((node) => document.activeElement === node),
