@@ -27,6 +27,13 @@ Package choice
 - poster: /images/generated/bt-services-package-current-poster.jpg
 - role: keeps several legitimate paths visible before they settle into one clear scope
 
+Authority / five-layer amplification
+- bt-services-authority-layers.mp4
+- bt-services-authority-layers-mobile.mp4
+- poster: /images/generated/bt-services-authority-layers-poster.jpg
+- role: carries one restrained signal through five material layers and widens only after the system is complete
+- renderer: scripts/generate_services_authority_film.py
+
 Stakes / distinctive positioning
 - still: /images/generated/bt-services-stakes-positioning.png
 - treatment: scroll-linked camera drift and a restrained mineral-light catch
@@ -64,6 +71,6 @@ Implementation rules
 - only visible section media should play
 - every film or still acts as a semantic moving metaphor rather than decorative stock ambience
 - scroll motion stays transform/opacity only and resolves to a complete static image under reduced motion
-- procedural films remain reproducible through scripts/generate_services_procedural_media.py and scripts/generate_services_situation_film.py
+- procedural films remain reproducible through scripts/generate_services_procedural_media.py, scripts/generate_services_situation_film.py, and scripts/generate_services_authority_film.py
 
 Installed on the homepage-cinematic-recovery branch after duration, audio-state, responsive-encoding, source-reference, and reduced-motion validation.
