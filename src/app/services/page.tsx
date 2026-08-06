@@ -117,36 +117,18 @@ export default async function ServicesPage() {
           paints its own bg-background-alt deliberately. */}
       <main id="main-content" style={{ backgroundColor: MOOD.charcoal }}>
         <PricingProvider initialRegion={region}>
-        {/* Curiosity — the opening objection: why care about branding at
-            all. Two short opinionated lines build the claim (Framer
-            Motion AnimatePresence, CyclingStatement.tsx) before handing
-            off to the same char-level SplitText reveal every other
-            headline moment already uses — visitors experience a claim
-            forming rather than reading a static question. Height stays
-            Tier 3 (70vh), the documented mid-page tier in PhotoHero's
-            own comment — this page's ambition shows in what follows the
-            hero, not in breaking the site's hero-height hierarchy. A
-            newly-sourced "ink dispersing in dark water" clip was tried
-            here and reverted immediately on direct feedback — a black-
-            background studio abstraction breaks the site's own
-            established warm, sunlit, natural register (documented in
-            CLAUDE.md's own video-sourcing standard), regardless of how
-            cinematically it reads on its own. Back to the calm misty
-            pine trail already proven here.
-            Redesigned from the centered pill-badge-plus-headline
-            template (identical to what Work/Contact used to share)
-            into the same asymmetric masthead already proven on those
-            pages and on the case-study/blog-post templates: a large
-            offset headline in one column, a real-data aside in the
-            other. The aside reuses this exact page's own SectionJumpNav
-            items — real wayfinding, not decoration — so the hero itself
-            previews the four objections the rest of the page answers. */}
+        {/* Curiosity opens on an original Branding Tatva film.
+            A living root network reveals the system beneath visible
+            brand work, so the first frame begins teaching before the
+            headline finishes arriving. The compact 70svh masthead
+            keeps the Services page moving quickly into diagnosis. */}
         <PhotoHero
           video="/videos/generated/bt-services-hero-root-system.mp4"
           videoMobile="/videos/generated/bt-services-hero-root-system-mobile.mp4"
           poster="/images/generated/bt-services-hero-root-system-poster.jpg"
           minHeight="70vh"
           overlayGradient="linear-gradient(180deg, rgba(12,17,16,0.54) 0%, rgba(12,17,16,0.64) 58%, rgba(12,17,16,0.82) 100%)"
+          playbackRate={1.15}
         >
           {/* Original generated hero loop: a living underground root
               network becomes legible as a restrained mineral-ivory
@@ -156,25 +138,20 @@ export default async function ServicesPage() {
               deliverable. A dedicated mobile encode and generated poster
               keep the first paint quiet, fast, and semantically intact. */}
           <HeroReveal />
-          {/* Phase 1 hero pass. Two localized layers on top of
-              PhotoHero's own base gradient: a cool tint pulling the
-              warm trail footage toward the page's opening-chapter mood
-              (the color script starts cool; gold only arrives at
-              Desire), and a directional left-heavy scrim so the
-              masthead column reads perfectly while the right of the
-              frame stays open and cinematic. */}
+          {/* A restrained directional scrim protects the masthead
+              while leaving the generated root architecture readable
+              on the right side of the frame. */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
             style={{ backgroundImage: "linear-gradient(90deg, rgba(15,18,17,0.38) 0%, rgba(15,18,17,0.12) 45%, transparent 70%)" }}
           />
-          {/* Phase 2, hero motion language: "typography forming." The
-              claim assembles (CyclingStatement), and the giant page
-              title drifts at a slower rate than the scroll around it —
-              depth through type, no imagery involved. */}
+          {/* The headline now resolves by word, not character. It
+              participates in the scene without making the visitor wait
+              for basic comprehension. */}
           <Container className="relative py-20 sm:py-28">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
-              <Reveal delay={1.7}>
+              <Reveal delay={0.35}>
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/90">
                   Curiosity
                 </span>
@@ -191,7 +168,7 @@ export default async function ServicesPage() {
                     immediately for every visitor, stable at every width. */}
                 <SplitReveal
                   as="h1"
-                  splitType="chars"
+                  splitType="words"
                   className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
                 >
                   The work begins wherever recognition is breaking down.
@@ -491,27 +468,22 @@ export default async function ServicesPage() {
           <SceneHandoff color="#1A2026" />
         </section>
 
-        {/* Education — the one Three.js moment (inside PerceptionLadder,
-            via AmbientElementShader), scoped and ambient. Chapter identity
-            per direct creative direction: the CLIMB — movement upward,
-            evolving perspective, rising through layers. Its footage slot
-            is reserved for an approved ascending shot. */}
+        {/* Education visualises strategic clarity rather than generic
+            growth. A generated topographic world moves from obscured
+            terrain to one deliberate route while PerceptionLadder
+            explains the commercial shift above it. */}
         {/* Mood: MIST — blue-grey, the coolest chapter so far, directly
             after Stakes' dry stone. See MOOD in sectionWash.ts. */}
         <section id="education" className="relative scroll-mt-24 overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
-          {/* Approved Education footage (Pexels 8522207, David Roberts,
-              free license): seedlings rising out of dark soil in
-              timelapse — the climb performed by nature itself, growth
-              stages upward from unknown ground, no human needed. Also
-              the film's best cut: Authority ends underground in roots;
-              this chapter opens with what those roots push above the
-              surface. Crossfade loop (never ping-pong — reversed growth
-              reads as shrinking). */}
+          {/* Original generated strategy loop: dark topographic terrain
+              becomes legible and one restrained route resolves through
+              it. The motion now demonstrates strategic choice instead
+              of borrowing an interchangeable forest-growth metaphor. */}
           <BackgroundVideo
-            parallax
-            video="/videos/pexels-redwood-ferns.mp4"
-            videoWebm="/videos/pexels-redwood-ferns.webm"
-            poster="/images/pexels-redwood-ferns-poster.jpg"
+            video="/videos/generated/bt-services-strategy-topography.mp4"
+            videoMobile="/videos/generated/bt-services-strategy-topography-mobile.mp4"
+            poster="/images/generated/bt-services-strategy-topography-poster.jpg"
+            playbackRate={1.12}
           />
           <div
             className="absolute inset-0"
@@ -647,6 +619,7 @@ export default async function ServicesPage() {
             video="/videos/generated/bt-services-health-reflection.mp4"
             videoMobile="/videos/generated/bt-services-health-reflection-mobile.mp4"
             poster="/images/generated/bt-services-health-reflection-poster.jpg"
+            playbackRate={1.1}
           />
           <div
             className="absolute inset-0"
