@@ -2,8 +2,11 @@ import { brandConsistencyInsightPosts } from "@/data/brandConsistencyInsights";
 import { brandRecallMeasurementInsightPosts } from "@/data/brandRecallMeasurementInsights";
 import { consultingPositioningInsightPosts } from "@/data/consultingPositioningInsights";
 import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
+import { differentiationInsightPosts } from "@/data/differentiationInsights";
 import { distinctiveAssetInsightPosts } from "@/data/distinctiveAssetInsights";
 import { forgettableIdentityInsightPosts } from "@/data/forgettableIdentityInsights";
+import { positioningStatementInsightPosts } from "@/data/positioningStatementInsights";
+import { repositioningInsightPosts } from "@/data/repositioningInsights";
 import {
   insightPosts as pillarInsightPosts,
   insightTopics,
@@ -37,6 +40,9 @@ const combinedPosts = [
   ...valuePropositionInsightPosts,
   ...brandConsistencyInsightPosts,
   ...forgettableIdentityInsightPosts,
+  ...differentiationInsightPosts,
+  ...positioningStatementInsightPosts,
+  ...repositioningInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter(
@@ -102,6 +108,31 @@ const relatedRegistrations = [
       "brand-awareness-vs-brand-recall",
       "distinctive-brand-assets-audit",
       "measure-brand-recall-limited-budget",
+    ],
+  },
+  {
+    supportingSlug: "find-real-differentiator-crowded-service-market",
+    pillarSlugs: [
+      "brand-positioning-strategy-service-businesses",
+      "how-to-position-a-consulting-business",
+      "value-proposition-vs-positioning-vs-tagline",
+    ],
+  },
+  {
+    supportingSlug: "brand-positioning-statement-examples-why-generic",
+    pillarSlugs: [
+      "brand-positioning-strategy-service-businesses",
+      "find-real-differentiator-crowded-service-market",
+      "value-proposition-vs-positioning-vs-tagline",
+    ],
+  },
+  {
+    supportingSlug:
+      "reposition-established-service-business-without-losing-recognition",
+    pillarSlugs: [
+      "brand-audit-checklist-before-rebrand",
+      "distinctive-brand-assets-audit",
+      "brand-positioning-strategy-service-businesses",
     ],
   },
 ] as const;
