@@ -92,10 +92,12 @@ export function HomeV4ProcessTempo() {
 
     if (guideMode === "paused") {
       const pulse = () => {
+        // Focus-in activates the scene's existing manual-reading hold without
+        // bubbling a pointer gesture to GuidedView's manual takeover listener.
         section.dispatchEvent(
-          new PointerEvent("pointerdown", {
+          new FocusEvent("focusin", {
             bubbles: true,
-            pointerType: "mouse",
+            relatedTarget: null,
           }),
         );
       };
