@@ -14,6 +14,7 @@ async function waitForPrelude(page) {
   if ((await loader.count()) > 0) await loader.waitFor({ state: "detached", timeout: 9_000 });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(400);
+  assert((await loader.count()) === 0, "work/study-context: page-load veil did not clear");
 }
 
 async function visibleCount(locator) {
