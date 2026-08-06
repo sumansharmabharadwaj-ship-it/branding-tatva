@@ -124,6 +124,7 @@ export function ServicesScrollExperience() {
     root.dataset.servicesScrollReady = "true";
     root.dataset.servicesDirection = "down";
     root.dataset.servicesActiveScene = scenes[0].id;
+    root.dataset.servicesFormInteraction = "false";
     scenes[0].element.dataset.servicesActive = "true";
 
     let activeScene = scenes[0];
@@ -297,6 +298,8 @@ export function ServicesScrollExperience() {
       const target = event.target;
       if (!(target instanceof Element) || !target.matches(FORM_CONTROL_SELECTOR)) return;
       formInteraction = true;
+      root.dataset.servicesFormInteraction = "true";
+      setMobileOpen(false);
       syncVideos();
     }
 
@@ -306,6 +309,7 @@ export function ServicesScrollExperience() {
         formInteraction = Boolean(
           active instanceof Element && root.contains(active) && active.matches(FORM_CONTROL_SELECTOR),
         );
+        root.dataset.servicesFormInteraction = formInteraction ? "true" : "false";
         syncVideos();
       }, 0);
     }
@@ -335,6 +339,7 @@ export function ServicesScrollExperience() {
       delete root.dataset.servicesScrollReady;
       delete root.dataset.servicesActiveScene;
       delete root.dataset.servicesDirection;
+      delete root.dataset.servicesFormInteraction;
     };
   }, [prefersReducedMotion]);
 
