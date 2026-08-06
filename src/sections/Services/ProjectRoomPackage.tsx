@@ -26,6 +26,10 @@ const PROJECT_ROUTE = ["Discover", "Define", "Design", "Develop", "Deliver", "Ev
 
 const SEPARATE_ADDITIONS = ["Production", "Media", "Printing", "Development", "Travel", "Licensing"] as const;
 
+// The package is treated as a working room rather than a retail plan.
+// Four chapters keep business situation, decision, process, handover,
+// localized investment, and quotation policy inspectable without
+// pouring the whole proposal into one very tall card.
 export function ProjectRoomPackage({
   pkg,
   region,
