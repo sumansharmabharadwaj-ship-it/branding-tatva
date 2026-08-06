@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - homepage-cinematic-recovery
+      - services-recognition-audit-deck
     paths:
       - .github/workflows/services-page-gate.yml
       - scripts/services_page_gate.cjs
