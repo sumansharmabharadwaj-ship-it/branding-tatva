@@ -1,4 +1,6 @@
 site-base=f7c2cfab8cc3f2405574da8f893516cb006dfe7f
 insights-snapshot=4576f787ca3f4bf1480b3c3b61f89477409ddeaa
-integration-candidate=6fdbd0d7d99ae11f8db3e285768c85b705d6b78a
+project-rooms-snapshot=f15af626e99f62c9cc97a15c23e2a9f226295066
+health-check-snapshot=b9284a940c3a07091e67881c36d335ac674415a8
+integration-candidate=7e7927b9fdafe60864094f8718363c83eec4d994
 purpose=trigger final Linux and macOS build-only validation without a Vercel deployment
