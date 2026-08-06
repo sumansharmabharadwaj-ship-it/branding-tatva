@@ -113,6 +113,35 @@ async function scrollMotionTrack(page, selector, progress) {
     animations: "disabled",
   });
 
+  const stakes = page.locator("#stakes");
+  const stakesStory = stakes.locator('[data-stakes-scroll-story="true"]');
+  assert((await stakesStory.count()) === 1, "Scroll-led positioning cost story is missing");
+
+  await scrollServicesScene(page, "#stakes", 0.05);
+  const earlyStakesFocus = await stakesStory.getAttribute("data-stakes-focus");
+  const earlyStakesStep = await stakesStory.getAttribute("data-stakes-step");
+  const earlyStakesActive = await stakes
+    .locator('[data-stakes-card-active="true"]')
+    .getAttribute("data-stakes-desktop-card");
+
+  await scrollServicesScene(page, "#stakes", 0.95);
+  const lateStakesFocus = await stakesStory.getAttribute("data-stakes-focus");
+  const lateStakesStep = await stakesStory.getAttribute("data-stakes-step");
+  const lateStakesActive = await stakes
+    .locator('[data-stakes-card-active="true"]')
+    .getAttribute("data-stakes-desktop-card");
+
+  assert(earlyStakesFocus === "generic", `Stakes began in ${earlyStakesFocus}, expected generic`);
+  assert(lateStakesFocus === "distinct", `Stakes ended in ${lateStakesFocus}, expected distinct`);
+  assert(earlyStakesActive === "generic", `Generic Stakes card was not active first: ${earlyStakesActive}`);
+  assert(lateStakesActive === "distinct", `Distinct Stakes card was not active last: ${lateStakesActive}`);
+  assert(earlyStakesStep !== lateStakesStep, "Positioning cost did not advance its causal beat");
+
+  await stakes.screenshot({
+    path: path.join(OUTPUT, "desktop-1440x900-stakes-distinct.png"),
+    animations: "disabled",
+  });
+
   const education = page.locator("#education");
   const track = education.locator('[data-perception-desktop-track="true"]');
   const proof = education.locator('[data-perception-desktop-proof="true"]');
@@ -176,6 +205,12 @@ async function scrollMotionTrack(page, selector, progress) {
       {
         generatedAt: new Date().toISOString(),
         situation: { earlyPreview, latePreview, committed },
+        stakes: {
+          earlyFocus: earlyStakesFocus,
+          lateFocus: lateStakesFocus,
+          earlyStep: earlyStakesStep,
+          lateStep: lateStakesStep,
+        },
         perception: { earlyState, lateState },
         deliverables: { earlyDrawer, lateDrawer },
       },
