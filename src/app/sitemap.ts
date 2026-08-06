@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { brandStudies } from "@/data/brandStudies";
-import { insightPosts, insightTopics } from "@/data/insights";
+import { insightPosts, insightTopics } from "@/data/insightLibrary";
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 
