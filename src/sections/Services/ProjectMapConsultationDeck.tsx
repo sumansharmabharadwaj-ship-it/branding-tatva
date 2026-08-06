@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Deliverable } from "@/data/deliverables";
 import {
@@ -39,8 +39,39 @@ export function ProjectMapConsultationDeck({
   packageColor: string;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
   const diagnostic = DIAGNOSTICS[situation];
+
+  function selectTab(index: number, focus = false) {
+    const nextIndex = (index + INSIGHTS.length) % INSIGHTS.length;
+    setActiveIndex(nextIndex);
+    if (focus) requestAnimationFrame(() => tabRefs.current[nextIndex]?.focus());
+  }
+
+  function handleTabKey(event: React.KeyboardEvent<HTMLButtonElement>, index: number) {
+    let nextIndex: number | null = null;
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        nextIndex = index + 1;
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        nextIndex = index - 1;
+        break;
+      case "Home":
+        nextIndex = 0;
+        break;
+      case "End":
+        nextIndex = INSIGHTS.length - 1;
+        break;
+      default:
+        return;
+    }
+    event.preventDefault();
+    selectTab(nextIndex, true);
+  }
 
   function renderInsight(index: number) {
     switch (index) {
@@ -133,6 +164,7 @@ export function ProjectMapConsultationDeck({
       <div
         role="tablist"
         aria-label="Project map consultation chapters"
+        aria-orientation="vertical"
         className="grid grid-cols-2 gap-2 xl:block xl:space-y-1"
       >
         {INSIGHTS.map((label, index) => {
@@ -140,13 +172,18 @@ export function ProjectMapConsultationDeck({
           return (
             <button
               key={label}
+              ref={(node) => {
+                tabRefs.current[index] = node;
+              }}
               id={`project-map-insight-tab-${index}`}
               type="button"
               role="tab"
+              aria-label={label}
               aria-selected={selected}
               aria-controls="project-map-insight-panel"
               tabIndex={selected ? 0 : -1}
-              onClick={() => setActiveIndex(index)}
+              onClick={() => selectTab(index)}
+              onKeyDown={(event) => handleTabKey(event, index)}
               className={`group relative flex min-h-12 w-full items-center gap-2.5 overflow-hidden rounded-xl border px-3 py-2.5 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone xl:min-h-11 ${
                 selected
                   ? "border-sandstone/55 bg-sandstone/10 text-ivory"
@@ -161,7 +198,9 @@ export function ProjectMapConsultationDeck({
                   transition={prefersReducedMotion ? { duration: 0 } : { duration: motionTokens.durationFast }}
                 />
               )}
-              <span className="relative font-display text-xs text-sandstone/70">{String(index + 1).padStart(2, "0")}</span>
+              <span aria-hidden="true" className="relative font-display text-xs text-sandstone/70">
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <span className="relative text-[0.68rem] leading-tight sm:text-xs">{label}</span>
             </button>
           );
@@ -181,11 +220,12 @@ export function ProjectMapConsultationDeck({
             id="project-map-insight-panel"
             role="tabpanel"
             aria-labelledby={`project-map-insight-tab-${activeIndex}`}
+            tabIndex={0}
             initial={prefersReducedMotion ? undefined : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={prefersReducedMotion ? undefined : { opacity: 0, y: -7 }}
             transition={{ duration: prefersReducedMotion ? 0 : motionTokens.durationBase, ease: motionTokens.easeOrganic }}
-            className="relative"
+            className="relative focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
           >
             <div className="flex items-baseline justify-between gap-4 border-b border-ivory/10 pb-4">
               <div>
