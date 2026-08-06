@@ -62,10 +62,8 @@ jobs:
 
           gate = Path("scripts/services_page_gate.cjs")
           text = gate.read_text()
-          old = '''  const packageCards = desire.locator("button").filter({ has: desire.locator("span.font-display") }).filter({ hasText: /Starting with an idea|Feeling unclear or inconsistent|Needing ongoing consistency/ });'''
-          new = '''  const packageCards = desire
-    .locator("button")
-    .filter({ hasText: /Starting with an idea|Feeling unclear or inconsistent|Needing ongoing consistency/ });'''
+          old = '  const packageCards = desire.locator("button").filter({ has: desire.locator("span.font-display") }).filter({ hasText: /Starting with an idea|Feeling unclear or inconsistent|Needing ongoing consistency/ });'
+          new = '  const packageCards = desire\n    .locator("button")\n    .filter({ hasText: /Starting with an idea|Feeling unclear or inconsistent|Needing ongoing consistency/ });'
           if text.count(old) != 1:
               raise SystemExit(f"Package-card audit selector count: {text.count(old)}")
           gate.write_text(text.replace(old, new, 1))
