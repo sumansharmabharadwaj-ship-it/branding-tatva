@@ -17,6 +17,7 @@ import { interviewSynthesisInsightPosts } from "@/data/interviewSynthesisInsight
 import { positioningStatementInsightPosts } from "@/data/positioningStatementInsights";
 import { repositioningInsightPosts } from "@/data/repositioningInsights";
 import { serviceNamingInsightPosts } from "@/data/serviceNamingInsights";
+import { servicePageMessagingInsightPosts } from "@/data/servicePageMessagingInsights";
 import {
   insightPosts as pillarInsightPosts,
   insightTopics,
@@ -56,6 +57,7 @@ const combinedPosts = [
   ...brandVoiceInsightPosts,
   ...brandDiscoveryWorkshopInsightPosts,
   ...homepageMessagingInsightPosts,
+  ...servicePageMessagingInsightPosts,
 ];
 
 export const insightPosts: InsightPost[] = combinedPosts.filter((post, index) => combinedPosts.findIndex((candidate) => candidate.slug === post.slug) === index);
@@ -82,6 +84,7 @@ const relatedRegistrations = [
   { supportingSlug: "brand-voice-guidelines-writers-can-use", pillarSlugs: ["brand-messaging-framework", "website-messaging-hierarchy-service-businesses", "service-line-naming-strategy"] },
   { supportingSlug: "brand-discovery-workshop-questions", pillarSlugs: ["customer-interviews-brand-strategy", "turn-customer-interviews-into-positioning-brief", "brand-positioning-strategy-service-businesses"] },
   { supportingSlug: "homepage-messaging-service-businesses", pillarSlugs: ["website-messaging-hierarchy-service-businesses", "brand-messaging-framework", "turn-client-proof-into-positioning-advantage"] },
+  { supportingSlug: "service-page-messaging-strategy", pillarSlugs: ["homepage-messaging-service-businesses", "website-messaging-hierarchy-service-businesses", "brand-positioning-strategy-service-businesses"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {
