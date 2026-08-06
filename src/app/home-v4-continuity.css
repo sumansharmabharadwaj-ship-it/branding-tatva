@@ -2,20 +2,20 @@
 /* Homepage V4 continuity pass                                                 */
 /* -------------------------------------------------------------------------- */
 
-/* The Earth excavation now resolves four strategic layers inside 190svh.
+/* The Earth excavation now resolves four strategic layers inside 180svh.
    The tighter range raises discovery density without turning the held scene
    into a scroll cage. Keep this source of truth aligned with the component so
    a legacy continuity rule cannot silently stretch the chapter again. */
 @media (min-width: 768px) {
   .home-v4-chapter--foundation > section {
-    height: 190svh !important;
+    height: 180svh !important;
   }
 }
 
 @supports not (height: 1svh) {
   @media (min-width: 768px) {
     .home-v4-chapter--foundation > section {
-      height: 190vh !important;
+      height: 180vh !important;
     }
   }
 }
