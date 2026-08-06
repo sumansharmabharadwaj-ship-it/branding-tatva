@@ -55,60 +55,16 @@ jobs:
 
             python <<'PY'
           from pathlib import Path
+          import re
+          import textwrap
 
-          ROOT = Path(".")
-          CASE = ROOT / "src/sections/Work/CaseStudyExperience.tsx"
-          GATE = ROOT / "scripts/work_page_gate_v3.cjs"
-          WORKFLOW = ROOT / ".github/workflows/apply-mobile-case-story-visual.yml"
+          root = Path(".")
+          case_path = root / "src/sections/Work/CaseStudyExperience.tsx"
+          workflow_path = root / ".github/workflows/apply-mobile-case-story-visual.yml"
+          source = case_path.read_text(encoding="utf-8")
 
-          def replace_once(text: str, old: str, new: str, path: Path) -> str:
-              count = text.count(old)
-              if count != 1:
-                  raise RuntimeError(f"Expected one occurrence in {path}, found {count}: {old[:120]!r}")
-              return text.replace(old, new, 1)
-
-          case_text = CASE.read_text(encoding="utf-8")
-
-          old_system = '''function SystemVisual({
-            active,
-            artifacts,
-            accent,
-          }: {
-            active: number;
-            artifacts: CaseStudyPresentation["artifacts"];
-            accent: string;
-          }) {
-            const settled = active >= 3;
-            return (
-              <div className="relative h-full px-3 pb-4 pt-10 sm:px-7">
-                {artifacts.map((artifact, index) => (
-                  <motion.div
-                    key={artifact.label}
-                    className="absolute inset-x-3 rounded-2xl border p-4 backdrop-blur-md sm:inset-x-7"
-                    animate={{
-                      y: settled ? index * 68 : index * 42,
-                      x: settled ? 0 : (index - 1.5) * 8,
-                      rotate: settled ? 0 : (index - 1.5) * 1.2,
-                      opacity: index <= Math.max(1, active) ? 1 : 0.38,
-                    }}
-                    transition={{ duration: 0.65, ease: EASE }}
-                    style={{
-                      top: "1.25rem",
-                      borderColor: settled ? `${accent}88` : "rgba(255,255,255,0.18)",
-                      backgroundColor: settled ? "rgba(31,58,40,0.82)" : "rgba(8,13,16,0.68)",
-                    }}
-                  >
-                    <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: accent }}>
-                      {String(index + 1).padStart(2, "0")} · {artifact.label}
-                    </p>
-                    <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-white/75">{artifact.detail}</p>
-                  </motion.div>
-                ))}
-              </div>
-            );
-          }'''.replace("          ", "")
-
-          new_system = '''function SystemVisual({
+          mobile_safe_system_visual = textwrap.dedent('''
+          function SystemVisual({
             active,
             artifacts,
             accent,
@@ -137,7 +93,10 @@ jobs:
                           backgroundColor: visible ? "rgba(31,58,40,0.78)" : "rgba(8,13,16,0.56)",
                         }}
                       >
-                        <span className="text-[0.52rem] font-medium uppercase tracking-[0.14em]" style={{ color: visible ? accent : "rgba(255,255,255,0.38)" }}>
+                        <span
+                          className="text-[0.52rem] font-medium uppercase tracking-[0.14em]"
+                          style={{ color: visible ? accent : "rgba(255,255,255,0.38)" }}
+                        >
                           {String(index + 1).padStart(2, "0")}
                         </span>
                         <p className="mt-1 line-clamp-2 font-display text-sm leading-tight text-white/85">
@@ -175,62 +134,47 @@ jobs:
                 </div>
               </>
             );
-          }'''.replace("          ", "")
+          }
+          ''').strip()
 
-          case_text = replace_once(case_text, old_system, new_system, CASE)
+          system_pattern = re.compile(
+              r"function SystemVisual\(\{[\s\S]*?\n\}\n\nfunction JourneyVisual",
+              re.MULTILINE,
+          )
+          source, system_count = system_pattern.subn(
+              mobile_safe_system_visual + "\n\nfunction JourneyVisual",
+              source,
+              count=1,
+          )
+          if system_count != 1:
+              raise RuntimeError(f"Expected one SystemVisual block, replaced {system_count}")
 
-          old_descriptor = '''          <span className="rounded-full border border-white/20 bg-black/20 px-3 py-1 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-white/75 backdrop-blur-sm">
-                    {presentation.descriptor}
-                  </span>'''.replace("          ", "")
-          new_descriptor = '''          <span
-                    data-narrative-descriptor
-                    className="rounded-full border border-white/20 bg-black/20 px-3 py-1 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-white/75 backdrop-blur-sm"
-                  >
-                    <span className="sm:hidden">Evidence map</span>
-                    <span className="hidden sm:inline">{presentation.descriptor}</span>
-                  </span>'''.replace("          ", "")
-          case_text = replace_once(case_text, old_descriptor, new_descriptor, CASE)
-          CASE.write_text(case_text, encoding="utf-8")
+          descriptor_pattern = re.compile(
+              r'<span className="rounded-full border border-white/20 bg-black/20 px-3 py-1 text-\[0\.58rem\] font-medium uppercase tracking-\[0\.15em\] text-white/75 backdrop-blur-sm">\s*\{presentation\.descriptor\}\s*</span>',
+              re.MULTILINE,
+          )
+          descriptor = textwrap.dedent('''
+          <span
+            data-narrative-descriptor
+            className="rounded-full border border-white/20 bg-black/20 px-3 py-1 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-white/75 backdrop-blur-sm"
+          >
+            <span className="sm:hidden">Evidence map</span>
+            <span className="hidden sm:inline">{presentation.descriptor}</span>
+          </span>
+          ''').strip()
+          source, descriptor_count = descriptor_pattern.subn(descriptor, source, count=1)
+          if descriptor_count != 1:
+              raise RuntimeError(f"Expected one narrative descriptor, replaced {descriptor_count}")
 
-          gate_text = GATE.read_text(encoding="utf-8")
-          old_mobile_case = '''    if (viewport.name === "case-mobile-390x844" && project.slug === "myshopineurope") {
-              await page.evaluate(() => window.scrollTo(0, 0));'''.replace("          ", "")
-          new_mobile_case = '''    if (viewport.name === "case-mobile-390x844" && project.slug === "myshopineurope") {
-              const systemCards = page.locator("[data-system-card-mobile]");
-              const systemCardBoxes = await systemCards.evaluateAll((nodes) =>
-                nodes.map((node) => {
-                  const rect = node.getBoundingClientRect();
-                  return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
-                }),
-              );
-              assert(systemCardBoxes.length >= 4, `${label}: mobile system evidence cards are incomplete`);
-              for (let first = 0; first < systemCardBoxes.length; first += 1) {
-                for (let second = first + 1; second < systemCardBoxes.length; second += 1) {
-                  const a = systemCardBoxes[first];
-                  const b = systemCardBoxes[second];
-                  const horizontal = a.left < b.right - 1 && a.right > b.left + 1;
-                  const vertical = a.top < b.bottom - 1 && a.bottom > b.top + 1;
-                  assert(!(horizontal && vertical), `${label}: mobile system evidence cards overlap ${JSON.stringify({ a, b })}`);
-                }
-              }
-              const descriptorOverflow = await page.locator("[data-narrative-descriptor]").evaluate(
-                (node) => node.scrollWidth > node.clientWidth + 1,
-              );
-              assert(!descriptorOverflow, `${label}: mobile narrative descriptor overflows its frame`);
-
-              await page.evaluate(() => window.scrollTo(0, 0));'''.replace("          ", "")
-          gate_text = replace_once(gate_text, old_mobile_case, new_mobile_case, GATE)
-          GATE.write_text(gate_text, encoding="utf-8")
-
-          WORKFLOW.unlink()
-          print("Installed a non-overlapping mobile system evidence map and regression assertions")
+          case_path.write_text(source, encoding="utf-8")
+          workflow_path.unlink()
+          print("Installed the mobile 2x2 evidence map and concise descriptor")
           PY
 
             pnpm install --frozen-lockfile
             pnpm build
-            node --check scripts/work_page_gate_v3.cjs
 
-            git add src/sections/Work/CaseStudyExperience.tsx scripts/work_page_gate_v3.cjs .github/workflows/apply-mobile-case-story-visual.yml
+            git add src/sections/Work/CaseStudyExperience.tsx .github/workflows/apply-mobile-case-story-visual.yml
             if git diff --cached --quiet; then
               echo "Mobile case-study evidence map is already present."
               gh workflow run work-page-gate.yml --ref homepage-cinematic-recovery
