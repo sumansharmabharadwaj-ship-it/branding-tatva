@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { DustMotes } from "@/components/DustMotes";
 import { VideoBreak } from "@/components/VideoBreak";
-import { ElementsSection } from "@/sections/Elements";
 import { ProcessSection } from "@/sections/Process";
 import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
@@ -12,9 +11,7 @@ import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
-import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
-import { elements } from "@/data/elements";
 import { process as processStages } from "@/data/process";
 import { elementColor } from "@/lib/elementColor";
 import { HomeV4HeaderDirector } from "./HomeV4HeaderDirector";
@@ -101,6 +98,12 @@ export function HomeV4Experience() {
 
       <SceneHandoff motif="constellation" />
 
+      {/* The homepage used to stack three complete five-element experiences
+          inside this single guided chapter: the observatory, pressure lab, and
+          a full-screen element carousel. The pressure lab is the clearest
+          operating-system demonstration, so it now owns the chapter alone.
+          Detailed element exploration stays elsewhere instead of adding two
+          more viewports before Studio. */}
       <section
         id="tatva"
         data-home-v4-chapter="tatva"
@@ -110,9 +113,7 @@ export function HomeV4Experience() {
         className="home-v4-chapter home-v4-chapter--tatva"
         aria-label="The five Tatvas as one operating system"
       >
-        <TatvaStrip />
         <TatvaSystemLab />
-        <ElementsSection elements={elements} />
       </section>
 
       <SceneHandoff motif="river" />
