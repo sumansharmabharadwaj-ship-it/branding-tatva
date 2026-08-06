@@ -8,7 +8,7 @@ Canonical editorial path: `/insights`
 
 The Insights library should earn qualified discovery around brand strategy questions asked by founders and service businesses, then move the reader naturally toward a useful next decision. Rankings are an outcome of relevance, quality, authority, technical accessibility, and sustained maintenance. They are never treated as guaranteed inventory.
 
-The first commercial wedge is deliberately narrow:
+The current authority layer is deliberately focused:
 
 1. brand positioning strategy for service businesses
 2. brand audit checklist before a rebrand
@@ -16,8 +16,10 @@ The first commercial wedge is deliberately narrow:
 4. brand messaging framework
 5. brand strategy framework
 6. website messaging hierarchy for service businesses
+7. distinctive brand assets and asset auditing
+8. customer journey mapping for service businesses
 
-The first five pages form the initial pillar layer. The website messaging hierarchy guide begins the supporting layer and connects positioning directly with homepage and service-page decisions.
+The first five pages form the pillar layer. The three supporting guides connect those foundations with website decisions, recognisable assets, and the real service journey.
 
 ## Page contract
 
@@ -58,8 +60,10 @@ Next supporting articles:
 Current pillar:
 - Brand audit checklist before a rebrand
 
-Next supporting articles:
+Published supporting article:
 - Customer journey mapping for service businesses
+
+Next supporting articles:
 - Brand consistency checklist across website, sales, and delivery
 - Why onboarding is part of the brand
 - How to audit customer touchpoints before redesigning a website
@@ -70,8 +74,10 @@ Next supporting articles:
 Current pillar:
 - Brand awareness versus brand recall
 
-Next supporting articles:
+Published supporting article:
 - Distinctive brand assets: how to choose and audit them
+
+Next supporting articles:
 - Brand salience explained for founder-led businesses
 - Why a beautiful identity can still be forgettable
 - Visual consistency versus visual sameness
@@ -108,8 +114,8 @@ Next supporting articles:
 Publish supporting articles in interleaved clusters rather than completing one topic in isolation. The recommended first ten are:
 
 1. Website messaging hierarchy for service businesses — complete
-2. Distinctive brand assets: how to choose and audit them
-3. Customer journey mapping for service businesses
+2. Distinctive brand assets: how to choose and audit them — complete
+3. Customer journey mapping for service businesses — complete
 4. How to position a consulting business
 5. Measuring brand recall without a large research budget
 6. Value proposition versus positioning versus tagline
@@ -134,7 +140,7 @@ Anchor text should describe the destination. Avoid repeated generic anchors such
 
 Whenever a new article is published, update at least two older articles with contextual links to it. This keeps the library connected and gives the new page established crawl paths.
 
-The first supporting guide is registered in the Messaging hub, sitemap, RSS feed, AI-readable index, and the related-reading paths of the positioning and messaging pillars.
+The first three supporting guides are registered in their topic hubs, sitemap, RSS feed, AI-readable index, and the related-reading paths of the relevant pillar articles.
 
 ## Evidence and citation rules
 
