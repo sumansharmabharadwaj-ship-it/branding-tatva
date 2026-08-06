@@ -1,0 +1,116 @@
+name: Apply Work Lab mobile density pass
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/apply-work-lab-density-pass.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-work-lab-density-pass
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the working branch without the media archive
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Apply, build, and publish
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin homepage-cinematic-recovery
+          git reset --hard origin/homepage-cinematic-recovery
+
+          python <<'PY'
+          from pathlib import Path
+
+          path = Path("src/sections/Work/TatvaLab.tsx")
+          workflow = Path(".github/workflows/apply-work-lab-density-pass.yml")
+          text = path.read_text(encoding="utf-8")
+
+          replacements = [
+              (
+                  'className="scroll-mt-28 py-16 sm:py-24"',
+                  'className="scroll-mt-32 py-14 sm:py-24"',
+              ),
+              (
+                  'className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-12"',
+                  'className="mt-8 grid gap-3 sm:mt-10 sm:gap-4 md:grid-cols-2 lg:grid-cols-12"',
+              ),
+              (
+                  'className="group relative flex min-h-[11rem] w-full flex-col overflow-hidden rounded-[1.4rem] border p-4 text-left transition-[transform,border-color,box-shadow] sm:min-h-[18rem] sm:p-6 duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:p-6"',
+                  'className="group relative flex min-h-[9.75rem] w-full flex-col overflow-hidden rounded-[1.4rem] border p-4 text-left transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-[18rem] sm:p-6"',
+              ),
+              (
+                  'className="mt-3 block font-display text-3xl font-normal leading-none sm:text-4xl"',
+                  'className="mt-2 block font-display text-[2rem] font-normal leading-none sm:mt-3 sm:text-4xl"',
+              ),
+              (
+                  'className="mt-2 block text-sm leading-relaxed"',
+                  'className="mt-1.5 block text-[0.9rem] leading-relaxed sm:mt-2 sm:text-sm"',
+              ),
+              (
+                  'className="mt-3 block text-[0.6rem] font-medium uppercase tracking-[0.15em] sm:mt-4"',
+                  'className="mt-2 block text-[0.58rem] font-medium uppercase tracking-[0.13em] sm:mt-4 sm:text-[0.6rem] sm:tracking-[0.15em]"',
+              ),
+              (
+                  'className="relative mt-auto block pt-4 sm:pt-8"',
+                  'className="relative mt-auto block pt-3 sm:pt-8"',
+              ),
+              (
+                  'className="absolute left-[8%] right-[8%] top-[1.35rem] h-px sm:top-[2.35rem]"',
+                  'className="absolute left-[8%] right-[8%] top-[1.12rem] h-px sm:top-[2.35rem]"',
+              ),
+              (
+                  'className="mt-2 block text-[0.56rem] uppercase tracking-[0.08em] sm:text-[0.52rem] sm:tracking-[0.1em]"',
+                  'className="mt-1.5 block text-[0.6rem] uppercase tracking-[0.04em] sm:mt-2 sm:text-[0.52rem] sm:tracking-[0.1em]"',
+              ),
+          ]
+
+          for old, new in replacements:
+              count = text.count(old)
+              if count != 1:
+                  raise RuntimeError(f"Expected one occurrence, found {count}: {old}")
+              text = text.replace(old, new, 1)
+
+          path.write_text(text, encoding="utf-8")
+          workflow.unlink()
+          PY
+
+          pnpm install --frozen-lockfile
+          pnpm build
+
+          git add src/sections/Work/TatvaLab.tsx .github/workflows/apply-work-lab-density-pass.yml
+          git commit -m "Compress the mobile Work Lab before dossier selection"
+          git push origin HEAD:homepage-cinematic-recovery
