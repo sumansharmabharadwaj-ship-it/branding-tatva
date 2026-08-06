@@ -1,0 +1,317 @@
+name: Integrate generated Services videos
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/integrate-generated-service-videos.yml
+
+permissions:
+  contents: write
+
+jobs:
+  integrate-generated-media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out only the media and files being edited
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/import-generated-service-videos.yml
+            .github/workflows/import-generated-service-videos-fast.yml
+            .github/workflows/integrate-generated-service-videos.yml
+            public/videos/generated
+            public/images/generated
+            src/app/services/page.tsx
+            src/components/BackgroundVideo.tsx
+            src/components/PhotoHero.tsx
+
+      - name: Optimise desktop loops and create mobile variants and posters
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v ffmpeg >/dev/null
+          command -v ffprobe >/dev/null
+          mkdir -p public/images/generated
+
+          for stem in \
+            bt-services-hero-root-system \
+            bt-services-strategy-topography \
+            bt-services-health-reflection
+          do
+            input="public/videos/generated/${stem}.mp4"
+            desktop_tmp="public/videos/generated/${stem}-desktop.tmp.mp4"
+            mobile="public/videos/generated/${stem}-mobile.mp4"
+            poster="public/images/generated/${stem}-poster.jpg"
+
+            test -s "$input"
+
+            ffmpeg -hide_banner -loglevel error -y \
+              -i "$input" \
+              -an \
+              -vf "fps=24,scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2" \
+              -c:v libx264 -preset medium -crf 22 -profile:v high -level 4.1 \
+              -pix_fmt yuv420p -g 48 -keyint_min 48 -sc_threshold 0 \
+              -movflags +faststart \
+              "$desktop_tmp"
+            mv "$desktop_tmp" "$input"
+
+            ffmpeg -hide_banner -loglevel error -y \
+              -i "$input" \
+              -an \
+              -vf "fps=24,scale=960:540:force_original_aspect_ratio=decrease,pad=960:540:(ow-iw)/2:(oh-ih)/2" \
+              -c:v libx264 -preset medium -crf 25 -profile:v main -level 3.1 \
+              -pix_fmt yuv420p -g 48 -keyint_min 48 -sc_threshold 0 \
+              -movflags +faststart \
+              "$mobile"
+
+            ffmpeg -hide_banner -loglevel error -y \
+              -ss 1 -i "$input" -frames:v 1 -q:v 2 "$poster"
+
+            duration="$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$input")"
+            python - "$duration" <<'PY'
+          import sys
+          duration = float(sys.argv[1])
+          if not 4.0 <= duration <= 7.0:
+              raise SystemExit(f'Unexpected loop duration: {duration:.3f}s')
+          PY
+          done
+
+          sha256sum public/videos/generated/*.mp4 > public/videos/generated/SHA256SUMS.txt
+          ls -lh public/videos/generated public/images/generated
+
+      - name: Wire the generated media into Services and add responsive sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_once(text: str, old: str, new: str, label: str) -> str:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected exactly one match, found {count}')
+              return text.replace(old, new, 1)
+
+          photo_path = Path('src/components/PhotoHero.tsx')
+          photo = photo_path.read_text()
+          photo = replace_once(
+              photo,
+              '  video,\n  poster,',
+              '  video,\n  videoMobile,\n  poster,',
+              'PhotoHero destructuring',
+          )
+          photo = replace_once(
+              photo,
+              '  video?: string;\n  poster?: string;',
+              '  video?: string;\n  videoMobile?: string;\n  poster?: string;',
+              'PhotoHero prop type',
+          )
+          photo = replace_once(
+              photo,
+              '  accentColor,\n}: {',
+              '  accentColor,\n  overlayGradient = gradient,\n}: {',
+              'PhotoHero overlay destructuring',
+          )
+          photo = replace_once(
+              photo,
+              '  accentColor?: string;\n}) {',
+              '  accentColor?: string;\n  overlayGradient?: string;\n}) {',
+              'PhotoHero overlay type',
+          )
+          old_video = '''          <video
+            ref={videoRef}
+            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
+            style={{ objectPosition: imagePosition }}
+            src={video}
+            autoPlay
+            muted
+            loop
+            playsInline
+          />'''
+          new_video = '''          <video
+            ref={videoRef}
+            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
+            style={{ objectPosition: imagePosition }}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+          >
+            {videoMobile && <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />}
+            <source src={video} type="video/mp4" />
+          </video>'''
+          photo = replace_once(photo, old_video, new_video, 'PhotoHero video element')
+          photo = photo.replace('style={{ backgroundImage: gradient }}', 'style={{ backgroundImage: overlayGradient }}')
+          if photo.count('style={{ backgroundImage: overlayGradient }}') != 2:
+              raise SystemExit('PhotoHero overlay gradient replacement did not reach both branches')
+          photo_path.write_text(photo)
+
+          background_path = Path('src/components/BackgroundVideo.tsx')
+          background = background_path.read_text()
+          background = replace_once(
+              background,
+              '  video,\n  videoWebm,',
+              '  video,\n  videoMobile,\n  videoWebm,',
+              'BackgroundVideo destructuring',
+          )
+          background = replace_once(
+              background,
+              '  video: string;\n  // Optional WebM sibling,',
+              '  video: string;\n  // Optional lower-bandwidth MP4 selected by the browser on phones.\n  videoMobile?: string;\n  // Optional WebM sibling,',
+              'BackgroundVideo prop type',
+          )
+          background = replace_once(
+              background,
+              '          {videoWebm && <source src={videoWebm} type="video/webm" />}\n          <source src={video} type="video/mp4" />',
+              '          {videoMobile && <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />}\n          {videoWebm && <source src={videoWebm} type="video/webm" />}\n          <source src={video} type="video/mp4" />',
+              'BackgroundVideo source list',
+          )
+          background_path.write_text(background)
+
+          page_path = Path('src/app/services/page.tsx')
+          page = page_path.read_text()
+          page = replace_once(
+              page,
+              'preload("/images/pexels-aspen-sunburst-poster.jpg", { as: "image", fetchPriority: "high" });',
+              'preload("/images/generated/bt-services-hero-root-system-poster.jpg", { as: "image", fetchPriority: "high" });',
+              'Services hero preload',
+          )
+          page = replace_once(
+              page,
+              '''        <PhotoHero
+          video="/videos/pexels-aspen-sunburst.mp4"
+          poster="/images/pexels-aspen-sunburst-poster.jpg"
+          minHeight="70vh"
+        >''',
+              '''        <PhotoHero
+          video="/videos/generated/bt-services-hero-root-system.mp4"
+          videoMobile="/videos/generated/bt-services-hero-root-system-mobile.mp4"
+          poster="/images/generated/bt-services-hero-root-system-poster.jpg"
+          minHeight="70vh"
+          overlayGradient="linear-gradient(180deg, rgba(12,17,16,0.54) 0%, rgba(12,17,16,0.64) 58%, rgba(12,17,16,0.82) 100%)"
+        >''',
+              'Services hero media props',
+          )
+
+          hero_comment_pattern = re.compile(
+              r'          \{/\* Approved awakening footage \(Pexels 31883946, Joshua.*?page wakes into the burst\. \*/\}\n',
+              re.DOTALL,
+          )
+          page, hero_comment_count = hero_comment_pattern.subn(
+              '''          {/* Original generated hero loop: a living underground root
+              network becomes legible as a restrained mineral-ivory
+              signal travels through connected paths. The image explains
+              the page's premise before the copy does: brand recognition
+              is a system beneath the visible surface, not one isolated
+              deliverable. A dedicated mobile encode and generated poster
+              keep the first paint quiet, fast, and semantically intact. */}
+''',
+              page,
+              count=1,
+          )
+          if hero_comment_count != 1:
+              raise SystemExit(f'Hero comment: expected one match, found {hero_comment_count}')
+
+          offerings_open = '''        <section id="offerings" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          <Container className="relative max-w-6xl">'''
+          offerings_new = '''        <section id="offerings" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          {/* Original generated strategy terrain: mist withdraws from a
+              tactile topographic world while one pale route becomes
+              clear. The six disciplines stay distinct in the foreground,
+              but the moving terrain makes the shared strategic foundation
+              visible without turning the chapter into another card grid. */}
+          <BackgroundVideo
+            parallax
+            video="/videos/generated/bt-services-strategy-topography.mp4"
+            videoMobile="/videos/generated/bt-services-strategy-topography-mobile.mp4"
+            poster="/images/generated/bt-services-strategy-topography-poster.jpg"
+          />
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, rgba(16,20,19,0.9) 0%, rgba(16,20,19,0.74) 46%, rgba(16,20,19,0.56) 100%)",
+            }}
+          />
+          <Container className="relative max-w-6xl">'''
+          page = replace_once(page, offerings_open, offerings_new, 'Offerings generated media')
+
+          old_health = '''          <BackgroundVideo
+            parallax
+            video="/videos/pexels-moss-stream.mp4"
+            videoWebm="/videos/pexels-moss-stream.webm"
+            poster="/images/pexels-moss-stream-poster.jpg"
+          />'''
+          new_health = '''          <BackgroundVideo
+            parallax
+            video="/videos/generated/bt-services-health-reflection.mp4"
+            videoMobile="/videos/generated/bt-services-health-reflection-mobile.mp4"
+            poster="/images/generated/bt-services-health-reflection-poster.jpg"
+          />'''
+          page = replace_once(page, old_health, new_health, 'Health Check generated media')
+
+          health_comment_pattern = re.compile(
+              r'          \{/\* Media replaced per direct approval \(Pexels id 38507614,.*?2\.0MB MP4 / 0\.7MB WebM\. \*/\}\n',
+              re.DOTALL,
+          )
+          page, health_comment_count = health_comment_pattern.subn(
+              '''          {/* Original generated diagnostic reflection loop: the
+              surface first reads as coherent, then faint misalignments
+              reveal themselves beneath it before settling into visible
+              priorities. It turns the Health Check's actual job into the
+              motion itself, with a smaller mobile encode and a still
+              generated from the same visual world for reduced motion. */}
+''',
+              page,
+              count=1,
+          )
+          if health_comment_count != 1:
+              raise SystemExit(f'Health comment: expected one match, found {health_comment_count}')
+
+          for required in (
+              '/videos/generated/bt-services-hero-root-system.mp4',
+              '/videos/generated/bt-services-strategy-topography.mp4',
+              '/videos/generated/bt-services-health-reflection.mp4',
+          ):
+              if required not in page:
+                  raise SystemExit(f'Missing final Services reference: {required}')
+
+          page_path.write_text(page)
+          PY
+
+      - name: Remove temporary import machinery
+        shell: bash
+        run: |
+          rm -f \
+            .github/workflows/import-generated-service-videos.yml \
+            .github/workflows/import-generated-service-videos-fast.yml \
+            .github/workflows/integrate-generated-service-videos.yml
+
+      - name: Commit the finished integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            .github/workflows \
+            public/videos/generated \
+            public/images/generated \
+            src/app/services/page.tsx \
+            src/components/BackgroundVideo.tsx \
+            src/components/PhotoHero.tsx
+          git diff --cached --check
+          git commit -m "feat: install original generated Services media"
+          git pull --rebase origin homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
