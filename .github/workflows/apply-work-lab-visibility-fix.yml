@@ -55,128 +55,61 @@ jobs:
 
             python <<'PY'
           from pathlib import Path
+          import re
 
           path = Path("src/sections/Work/TatvaLab.tsx")
           workflow = Path(".github/workflows/apply-work-lab-visibility-fix.yml")
           text = path.read_text(encoding="utf-8")
 
-          def replace_once(old: str, new: str) -> None:
-              global text
-              count = text.count(old)
-              if count != 1:
-                  raise RuntimeError(f"Expected one occurrence, found {count}: {old[:120]!r}")
-              text = text.replace(old, new, 1)
-
-          replace_once(
-              'import { Reveal } from "@/components/Reveal";\n',
-              '',
-          )
-          replace_once(
+          text = text.replace('import { Reveal } from "@/components/Reveal";\n', '')
+          text = text.replace(
               '<section className="py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>',
               '<section className="scroll-mt-28 py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>',
+              1,
           )
-          replace_once(
-              '''          <Reveal>
-            <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>
-              Branding Tatva Lab
-            </p>
-            <h2 className="mt-2 max-w-2xl font-display text-display-sm font-normal" style={{ color: WORK.charcoal }}>
-              Concept studies: the method, demonstrated in the open.
-            </h2>
-            <p className="mt-4 max-w-xl text-base leading-relaxed" style={{ color: WORK.wood }}>
-              Independent, speculative brand work. Zero clients are implied and zero outcomes are claimed; each study
-              exists to show how the decisions get made.
-            </p>
-          </Reveal>''',
-              '''          <div>
-            <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>
-              Branding Tatva Lab
-            </p>
-            <h2 className="mt-2 max-w-2xl font-display text-display-sm font-normal" style={{ color: WORK.charcoal }}>
-              Concept studies: the method, demonstrated in the open.
-            </h2>
-            <p className="mt-4 max-w-xl text-base leading-relaxed" style={{ color: WORK.wood }}>
-              Independent, speculative brand work. Zero clients are implied and zero outcomes are claimed; each study
-              exists to show how the decisions get made.
-            </p>
-          </div>''',
+
+          heading_pattern = re.compile(
+              r'<Reveal>\s*(<p[^>]*>\s*Branding Tatva Lab\s*</p>[\s\S]*?<h2[^>]*>\s*Concept studies: the method, demonstrated in the open\.\s*</h2>[\s\S]*?<p[^>]*>\s*Independent, speculative brand work\.[\s\S]*?decisions get made\.\s*</p>)\s*</Reveal>',
+              re.MULTILINE,
           )
-          replace_once(
-              '''          <Reveal delay={0.06}>
-            <div
-              className="grid grid-cols-3 overflow-hidden rounded-2xl border bg-white/40"
-              style={{ borderColor: WORK.stone + "66" }}
-              aria-label="Lab evidence boundary"
-            >
-              {[
-                ["04", "Concept studies"],
-                ["00", "Clients implied"],
-                ["00", "Outcomes claimed"],
-              ].map(([value, label], index) => (
-                <div
-                  key={label}
-                  className={`px-3 py-4 text-center sm:px-4 ${index ? "border-l" : ""}`}
-                  style={{ borderColor: WORK.stone + "55" }}
-                >
-                  <p className="font-display text-2xl font-normal" style={{ color: WORK.charcoal }}>
-                    {value}
-                  </p>
-                  <p className="mt-1 text-[0.55rem] font-medium uppercase tracking-[0.13em]" style={{ color: WORK.wood }}>
-                    {label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </Reveal>''',
-              '''          <div
-            className="grid grid-cols-3 overflow-hidden rounded-2xl border bg-white/40"
-            style={{ borderColor: WORK.stone + "66" }}
-            aria-label="Lab evidence boundary"
-          >
-            {[
-              ["04", "Concept studies"],
-              ["00", "Clients implied"],
-              ["00", "Outcomes claimed"],
-            ].map(([value, label], index) => (
-              <div
-                key={label}
-                className={`px-3 py-4 text-center sm:px-4 ${index ? "border-l" : ""}`}
-                style={{ borderColor: WORK.stone + "55" }}
-              >
-                <p className="font-display text-2xl font-normal" style={{ color: WORK.charcoal }}>
-                  {value}
-                </p>
-                <p className="mt-1 text-[0.55rem] font-medium uppercase leading-snug tracking-[0.13em]" style={{ color: WORK.wood }}>
-                  {label}
-                </p>
-              </div>
-            ))}
-          </div>''',
+          text, heading_count = heading_pattern.subn(r'<div>\n\1\n</div>', text, count=1)
+          if heading_count not in (0, 1):
+              raise RuntimeError(f"Unexpected Lab heading match count: {heading_count}")
+          if heading_count == 0 and '<Reveal>' in text and 'Branding Tatva Lab' in text:
+              raise RuntimeError("Lab heading still appears Reveal-wrapped")
+
+          boundary_pattern = re.compile(
+              r'<Reveal delay=\{0\.06\}>\s*([\s\S]*?aria-label="Lab evidence boundary"[\s\S]*?)\s*</Reveal>',
+              re.MULTILINE,
           )
-          replace_once(
-              'className="group relative flex min-h-[12rem] w-full sm:min-h-[18rem] flex-col overflow-hidden rounded-[1.4rem] border p-5 text-left',
-              'className="group relative flex min-h-[11rem] w-full flex-col overflow-hidden rounded-[1.4rem] border p-4 text-left sm:min-h-[18rem] sm:p-6',
-          )
-          replace_once(
-              'className="mt-4 block text-[0.6rem] font-medium uppercase tracking-[0.15em]"',
-              'className="mt-3 block text-[0.6rem] font-medium uppercase tracking-[0.15em] sm:mt-4"',
-          )
-          replace_once(
-              'className="relative mt-auto block pt-5 sm:pt-8"',
-              'className="relative mt-auto block pt-4 sm:pt-8"',
-          )
-          replace_once(
-              'className="absolute left-[8%] right-[8%] top-[1.65rem] h-px sm:top-[2.35rem]"',
-              'className="absolute left-[8%] right-[8%] top-[1.35rem] h-px sm:top-[2.35rem]"',
-          )
-          replace_once(
-              'className="mt-2 block text-[0.52rem] uppercase tracking-[0.1em]"',
-              'className="mt-2 block text-[0.56rem] uppercase tracking-[0.08em] sm:text-[0.52rem] sm:tracking-[0.1em]"',
-          )
-          replace_once(
-              'className="mt-6 scroll-mt-28 overflow-hidden rounded-[1.7rem] border"',
-              'className="mt-6 scroll-mt-32 overflow-hidden rounded-[1.7rem] border"',
-          )
+          text, boundary_count = boundary_pattern.subn(r'\1', text, count=1)
+          if boundary_count not in (0, 1):
+              raise RuntimeError(f"Unexpected Lab boundary match count: {boundary_count}")
+          if boundary_count == 0 and 'Reveal delay={0.06}' in text and 'Lab evidence boundary' in text:
+              raise RuntimeError("Lab evidence boundary still appears Reveal-wrapped")
+
+          replacements = {
+              'className="group relative flex min-h-[12rem] w-full sm:min-h-[18rem] flex-col overflow-hidden rounded-[1.4rem] border p-5 text-left':
+                  'className="group relative flex min-h-[11rem] w-full flex-col overflow-hidden rounded-[1.4rem] border p-4 text-left sm:min-h-[18rem] sm:p-6',
+              'className="mt-4 block text-[0.6rem] font-medium uppercase tracking-[0.15em]"':
+                  'className="mt-3 block text-[0.6rem] font-medium uppercase tracking-[0.15em] sm:mt-4"',
+              'className="relative mt-auto block pt-5 sm:pt-8"':
+                  'className="relative mt-auto block pt-4 sm:pt-8"',
+              'className="absolute left-[8%] right-[8%] top-[1.65rem] h-px sm:top-[2.35rem]"':
+                  'className="absolute left-[8%] right-[8%] top-[1.35rem] h-px sm:top-[2.35rem]"',
+              'className="mt-2 block text-[0.52rem] uppercase tracking-[0.1em]"':
+                  'className="mt-2 block text-[0.56rem] uppercase tracking-[0.08em] sm:text-[0.52rem] sm:tracking-[0.1em]"',
+              'className="mt-6 scroll-mt-28 overflow-hidden rounded-[1.7rem] border"':
+                  'className="mt-6 scroll-mt-32 overflow-hidden rounded-[1.7rem] border"',
+          }
+          for old, new in replacements.items():
+              if old in text:
+                  text = text.replace(old, new, 1)
+
+          if 'Branding Tatva Lab' not in text or 'Lab evidence boundary' not in text:
+              raise RuntimeError("Lab framing disappeared during the repair")
+          if 'min-h-[11rem]' not in text or 'scroll-mt-32' not in text:
+              raise RuntimeError("Mobile Lab density or anchor repair was not installed")
 
           path.write_text(text, encoding="utf-8")
           workflow.unlink()
