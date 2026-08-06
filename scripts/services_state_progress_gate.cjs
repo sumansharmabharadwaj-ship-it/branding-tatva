@@ -142,6 +142,31 @@ async function scrollMotionTrack(page, selector, progress) {
     animations: "disabled",
   });
 
+  const deliverables = page.locator("#deliverables");
+  const explorer = deliverables.locator('[data-deliverables-scroll-controlled="true"]');
+  assert((await explorer.count()) === 1, "Scroll-controlled deliverables archive is missing");
+
+  await scrollServicesScene(page, "#deliverables", 0.03);
+  const earlyDrawer = await deliverables
+    .locator('[role="tab"][aria-selected="true"]')
+    .first()
+    .textContent();
+
+  await scrollServicesScene(page, "#deliverables", 0.97);
+  const lateDrawer = await deliverables
+    .locator('[role="tab"][aria-selected="true"]')
+    .first()
+    .textContent();
+
+  assert(/Foundation/i.test(earlyDrawer || ""), `Deliverables archive began at ${earlyDrawer}`);
+  assert(/Continuity/i.test(lateDrawer || ""), `Deliverables archive ended at ${lateDrawer}`);
+  assert(earlyDrawer !== lateDrawer, "A short scroll did not change the deliverables drawer");
+
+  await deliverables.screenshot({
+    path: path.join(OUTPUT, "desktop-1440x900-deliverables-continuity.png"),
+    animations: "disabled",
+  });
+
   await context.close();
   await browser.close();
 
@@ -152,6 +177,7 @@ async function scrollMotionTrack(page, selector, progress) {
         generatedAt: new Date().toISOString(),
         situation: { earlyPreview, latePreview, committed },
         perception: { earlyState, lateState },
+        deliverables: { earlyDrawer, lateDrawer },
       },
       null,
       2,
