@@ -21,7 +21,12 @@ async function waitForServices(page) {
     undefined,
     { timeout: 12_000 },
   );
-  await page.waitForTimeout(220);
+  await page.waitForFunction(
+    () => Number(document.documentElement.dataset.servicesChapterCount || 0) === 13,
+    undefined,
+    { timeout: 4_000 },
+  );
+  await page.waitForTimeout(260);
 }
 
 async function scrollY(page) {
@@ -30,6 +35,31 @@ async function scrollY(page) {
 
 async function maxScroll(page) {
   return page.evaluate(() => Math.max(0, document.documentElement.scrollHeight - innerHeight));
+}
+
+async function assertDirectAnchor(page, id, tolerance = 190) {
+  await page.goto(`${BASE_URL}/services#${id}`, {
+    waitUntil: "domcontentloaded",
+    timeout: 90_000,
+  });
+  await page.evaluate(() => document.fonts.ready);
+  await waitForServices(page);
+  await page.waitForTimeout(420);
+
+  const target = page.locator(`#${id}`);
+  assert((await target.count()) === 1, `Direct #${id} anchor target is missing`);
+  const offset = await target.evaluate((node) => node.getBoundingClientRect().top);
+  assert(Math.abs(offset) < tolerance, `Direct #${id} anchor landed ${offset}px from the intended scene`);
+
+  await page.waitForFunction(
+    (href) => Boolean(document.querySelector(`nav[aria-label="Jump to section"] a[aria-current="location"][href="${href}"]`)),
+    `#${id}`,
+    { timeout: 4_000 },
+  );
+  const activeId = await page.evaluate(() => document.documentElement.dataset.servicesActiveChapterId || null);
+  assert(activeId === id, `Runtime active chapter is ${activeId}, expected ${id}`);
+
+  return offset;
 }
 
 (async () => {
@@ -105,17 +135,30 @@ async function maxScroll(page) {
   );
   assert(Boolean(midpointChapter), "Active chapter did not update after direct scroll positioning");
 
-  await page.goto(`${BASE_URL}/services#education`, {
-    waitUntil: "domcontentloaded",
-    timeout: 90_000,
-  });
-  await page.evaluate(() => document.fonts.ready);
+  const educationOffset = await assertDirectAnchor(page, "education");
+  const stakesOffset = await assertDirectAnchor(page, "stakes");
+  const deliverablesOffset = await assertDirectAnchor(page, "deliverables");
+
+  // The last two direct navigations created adjacent history entries. Native
+  // back/forward must restore both scroll position and the route guide, rather
+  // than leaving a stale chapter selected from the previous page state.
+  await page.goBack({ waitUntil: "domcontentloaded", timeout: 90_000 });
   await waitForServices(page);
-  const educationOffset = await page.locator("#education").evaluate((node) => node.getBoundingClientRect().top);
-  assert(
-    Math.abs(educationOffset) < 180,
-    `Direct #education anchor landed ${educationOffset}px from the intended scene`,
-  );
+  await page.waitForTimeout(420);
+  assert(page.url().endsWith("/services#stakes"), `Back restored unexpected URL ${page.url()}`);
+  const backOffset = await page.locator("#stakes").evaluate((node) => node.getBoundingClientRect().top);
+  assert(Math.abs(backOffset) < 190, `Back restored #stakes at ${backOffset}px`);
+  const backActive = await page.evaluate(() => document.documentElement.dataset.servicesActiveChapterId || null);
+  assert(backActive === "stakes", `Back left active chapter at ${backActive}`);
+
+  await page.goForward({ waitUntil: "domcontentloaded", timeout: 90_000 });
+  await waitForServices(page);
+  await page.waitForTimeout(420);
+  assert(page.url().endsWith("/services#deliverables"), `Forward restored unexpected URL ${page.url()}`);
+  const forwardOffset = await page.locator("#deliverables").evaluate((node) => node.getBoundingClientRect().top);
+  assert(Math.abs(forwardOffset) < 190, `Forward restored #deliverables at ${forwardOffset}px`);
+  const forwardActive = await page.evaluate(() => document.documentElement.dataset.servicesActiveChapterId || null);
+  assert(forwardActive === "deliverables", `Forward left active chapter at ${forwardActive}`);
 
   await page.goto(`${BASE_URL}/services#authority`, {
     waitUntil: "domcontentloaded",
@@ -153,6 +196,12 @@ async function maxScroll(page) {
     afterScrollbarPosition,
     midpointChapter,
     educationOffset,
+    stakesOffset,
+    deliverablesOffset,
+    backOffset,
+    backActive,
+    forwardOffset,
+    forwardActive,
     authorityOffset,
   };
   fs.writeFileSync(
