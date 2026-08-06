@@ -250,10 +250,42 @@ async function auditWorkViewport(browser, viewport) {
       .locator("xpath=ancestor::section[1]");
     await captureLocator(page, decisionsSection, `work-${viewport.name}-decisions.png`);
 
-    const finalSection = page
-      .getByRole("heading", { name: "Bring the part of the brand that no longer makes sense." })
-      .locator("xpath=ancestor::section[1]");
+    const finalHeading = page.getByRole("heading", {
+      name: "Bring the part of the brand that no longer makes sense.",
+    });
+    const finalSection = finalHeading.locator("xpath=ancestor::section[1]");
     await captureLocator(page, finalSection, `work-${viewport.name}-final.png`);
+
+    await finalSection.evaluate((section) => section.scrollIntoView({ block: "start", behavior: "instant" }));
+    await page.waitForTimeout(520);
+    const collision = await page.evaluate(() => {
+      const header = document.querySelector("header");
+      const heading = [...document.querySelectorAll("h2")].find((node) =>
+        node.textContent?.includes("Bring the part of the brand that no longer makes sense."),
+      );
+      if (!header || !heading) return null;
+      const headerRect = header.getBoundingClientRect();
+      const headingRect = heading.getBoundingClientRect();
+      const horizontalOverlap =
+        headerRect.left < headingRect.right && headerRect.right > headingRect.left;
+      const verticalOverlap =
+        headerRect.top < headingRect.bottom && headerRect.bottom > headingRect.top;
+      return {
+        horizontalOverlap,
+        verticalOverlap,
+        header: { top: headerRect.top, bottom: headerRect.bottom },
+        heading: { top: headingRect.top, bottom: headingRect.bottom },
+      };
+    });
+    assert(collision, `${label}: final-scene collision geometry was unavailable`);
+    assert(
+      !(collision.horizontalOverlap && collision.verticalOverlap),
+      `${label}: fixed header overlaps final-scene heading ${JSON.stringify(collision)}`,
+    );
+    await page.screenshot({
+      path: path.join(OUTPUT, `work-${viewport.name}-final-viewport.png`),
+      animations: "disabled",
+    });
   }
 
   assertDiagnosticsClean(diagnostics, label);
