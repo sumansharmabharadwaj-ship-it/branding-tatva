@@ -124,16 +124,14 @@ async function assertSelectedAndFocused(page, tabs, index, label) {
     });
 
     await closeButton.click();
-    await page.waitForFunction(
-      ({ controlledId }) => {
-        const active = document.activeElement;
-        return Boolean(active && active.getAttribute("aria-controls") === controlledId);
-      },
-      { controlledId: originControl },
-      { timeout: 4_000 },
-    ).catch(() => {
-      throw new Error("work/lab-a11y: closing the dossier did not restore focus to its originating cover");
-    });
+    const focusDeadline = Date.now() + 4_000;
+    let focusRestored = false;
+    while (Date.now() < focusDeadline) {
+      focusRestored = await originCover.evaluate((node) => document.activeElement === node);
+      if (focusRestored) break;
+      await page.waitForTimeout(50);
+    }
+    assert(focusRestored, "work/lab-a11y: closing the dossier did not restore focus to its originating cover");
 
     assert((await visibleCount(covers)) === 4, "work/lab-a11y: dossier covers did not return after closing");
     await assertNoOverflow(page);
