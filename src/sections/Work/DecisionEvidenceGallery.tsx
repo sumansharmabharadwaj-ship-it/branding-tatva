@@ -46,7 +46,7 @@ export function DecisionEvidenceGallery() {
           </p>
         </div>
 
-        <ul className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3" aria-label="Decision artefacts">
+        <ul className="mt-8 grid gap-2.5 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3" aria-label="Decision artefacts">
           {decisionArtifacts.map((artifact, index) => {
             const open = openId === artifact.id;
             const project = projects.find((item) => item.slug === artifact.projectSlug);
@@ -72,37 +72,47 @@ export function DecisionEvidenceGallery() {
                     type="button"
                     aria-expanded={open}
                     aria-controls={panelId}
+                    aria-label={`${open ? "Close" : "Inspect"} ${artifact.kind}: ${artifact.question}`}
                     onClick={() => toggle(artifact.id)}
-                    className={`w-full p-4 text-left focus-visible:outline focus-visible:outline-2 sm:p-6 ${
-                      open ? "" : "flex min-h-[8.25rem] flex-col sm:min-h-[9.75rem]"
+                    className={`w-full text-left focus-visible:outline focus-visible:outline-2 ${
+                      open
+                        ? "p-4 sm:p-6"
+                        : "flex min-h-[5.4rem] flex-col justify-center p-4 sm:min-h-[9.75rem] sm:justify-start sm:p-6"
                     }`}
                     style={{ outlineColor: WORK.moss }}
                   >
                     <span className="flex items-center justify-between gap-4">
                       <span
-                        className="text-[0.58rem] font-medium uppercase tracking-[0.17em] sm:text-[0.6rem] sm:tracking-[0.18em]"
+                        className="text-[0.56rem] font-medium uppercase tracking-[0.15em] sm:text-[0.6rem] sm:tracking-[0.18em]"
                         style={{ color: open ? WORK.sand : WORK.olive }}
                       >
                         {artifact.kind}
                       </span>
                       <span
                         aria-hidden="true"
-                        className="flex items-center gap-2 font-display text-sm"
+                        className="flex shrink-0 items-center gap-2 font-display text-sm"
                         style={{ color: open ? WORK.sage : WORK.wood }}
                       >
                         {String(index + 1).padStart(2, "0")}
-                        {open && <span className="font-sans text-base leading-none">×</span>}
+                        <span
+                          className="flex h-6 w-6 items-center justify-center rounded-full border font-sans text-sm leading-none sm:h-auto sm:w-auto sm:border-0"
+                          style={{ borderColor: open ? "rgba(143,174,131,0.35)" : WORK.stone }}
+                        >
+                          {open ? "×" : "+"}
+                        </span>
                       </span>
                     </span>
                     <span
-                      className="mt-1.5 block font-display text-xl font-normal leading-snug"
+                      className={`block font-display font-normal leading-snug ${
+                        open ? "mt-1.5 text-xl" : "mt-1 text-[1.08rem] sm:mt-1.5 sm:text-xl"
+                      }`}
                       style={{ color: open ? WORK.cream : WORK.charcoal }}
                     >
                       {artifact.question}
                     </span>
                     {!open && (
                       <span
-                        className="mt-auto inline-flex items-center gap-1 pt-3 text-[0.68rem] font-medium sm:pt-5"
+                        className="mt-auto hidden items-center gap-1 pt-5 text-[0.68rem] font-medium sm:inline-flex"
                         style={{ color: WORK.wood }}
                       >
                         Inspect the decision <span aria-hidden="true">→</span>
