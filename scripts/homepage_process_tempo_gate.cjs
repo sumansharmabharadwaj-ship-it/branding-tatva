@@ -11,8 +11,10 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-async function selectedStage(process) {
-  return process.locator('.project-journey__rail [role="tab"][aria-selected="true"]').getAttribute("id");
+async function selectedStage(processScene) {
+  return processScene
+    .locator('.project-journey__rail [role="tab"][aria-selected="true"]')
+    .getAttribute("id");
 }
 
 (async () => {
@@ -37,27 +39,29 @@ async function selectedStage(process) {
     await loader.waitFor({ state: "detached", timeout: 9_000 });
   }
 
-  const process = page.locator('[data-home-v4-chapter="process"]').first();
-  assert((await process.count()) === 1, "working-method chapter missing");
-  await process.scrollIntoViewIfNeeded();
+  const processScene = page.locator('[data-home-v4-chapter="process"]').first();
+  assert((await processScene.count()) === 1, "working-method chapter missing");
+  await processScene.scrollIntoViewIfNeeded();
   await page.waitForTimeout(520);
 
-  const managed = await process.locator('[data-project-journey="true"]').getAttribute("data-process-tempo-managed");
+  const managed = await processScene
+    .locator('[data-project-journey="true"]')
+    .getAttribute("data-process-tempo-managed");
   assert(managed === "true", "working-method tempo director did not attach");
 
-  const initial = await selectedStage(process);
+  const initial = await selectedStage(processScene);
   await page.waitForTimeout(3_050);
-  const firstAdvance = await selectedStage(process);
+  const firstAdvance = await selectedStage(processScene);
   assert(firstAdvance && firstAdvance !== initial, "working-method scene did not advance within the first reading beat");
 
-  await process.dispatchEvent("pointerdown", {
+  await processScene.dispatchEvent("pointerdown", {
     bubbles: true,
     pointerType: "mouse",
   });
-  const heldStage = await selectedStage(process);
+  const heldStage = await selectedStage(processScene);
   await page.waitForTimeout(4_800);
   assert(
-    (await selectedStage(process)) === heldStage,
+    (await selectedStage(processScene)) === heldStage,
     "manual interaction did not hold the working-method scene",
   );
 
@@ -79,21 +83,21 @@ async function selectedStage(process) {
     "guided pause state was not published",
   );
 
-  const pausedStage = await selectedStage(process);
+  const pausedStage = await selectedStage(processScene);
   await page.waitForTimeout(6_200);
   assert(
-    (await selectedStage(process)) === pausedStage,
+    (await selectedStage(processScene)) === pausedStage,
     "guided pause did not freeze the working-method sequence",
   );
 
   await guideToggle.click();
   await page.waitForTimeout(3_050);
   assert(
-    (await selectedStage(process)) !== pausedStage,
+    (await selectedStage(processScene)) !== pausedStage,
     "working-method sequence did not resume after Continue",
   );
 
-  await process.screenshot({
+  await processScene.screenshot({
     path: path.join(OUTPUT, "desktop-1280x800-process-tempo.png"),
   });
 
