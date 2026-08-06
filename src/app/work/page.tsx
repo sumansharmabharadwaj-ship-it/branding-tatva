@@ -11,6 +11,7 @@ import { WorkOpening } from "@/sections/Work/WorkOpening";
 import { WorkProofStrip } from "@/sections/Work/WorkProofStrip";
 import { WorkIndex } from "@/sections/Work/WorkIndex";
 import { SignatureProject } from "@/sections/Work/SignatureProject";
+import { SystemFlagship } from "@/sections/Work/SystemFlagship";
 import { DecisionEvidenceGallery } from "@/sections/Work/DecisionEvidenceGallery";
 import { WorkArchive } from "@/sections/Work/WorkArchive";
 import { CapabilityMap } from "@/sections/Work/CapabilityMap";
@@ -54,7 +55,8 @@ export const metadata: Metadata = {
 };
 
 export default function WorkPage() {
-  const signature = projects.find((project) => project.slug === "dr-haley-nutrition");
+  const performanceSignature = projects.find((project) => project.slug === "dr-haley-nutrition");
+  const systemSignature = projects.find((project) => project.slug === "myshopineurope");
 
   return (
     <>
@@ -69,17 +71,22 @@ export default function WorkPage() {
             page asks for a long read. */}
         <WorkIndex projects={projects} />
 
-        {/* Immersion: the strongest numbers-backed engagement remains
-            the first deep chapter. */}
-        {signature && <SignatureProject project={signature} />}
+        {/* Immersion one: measured performance. The project's own frame
+            regains colour as the evidence resolves. */}
+        {performanceSignature && <SignatureProject project={performanceSignature} />}
         <ContextualCTA
           eyebrow="A similar pattern"
           heading="Posting more, but earning less attention?"
           href="/contact"
           label="Discuss the pattern"
           event="contextual_cta_clicked"
-          eventProps={{ source: "work_signature_project" }}
+          eventProps={{ source: "work_performance_signature" }}
         />
+
+        {/* Immersion two: system building. A different scroll language
+            assembles foundation, content architecture, and rollout
+            instead of repeating the first flagship's treatment. */}
+        {systemSignature && <SystemFlagship project={systemSignature} />}
 
         {/* Judgment: real decisions shown at inspectable scale. The
             earlier DecisionMap and MarketingEcosystem remain in the
@@ -109,7 +116,7 @@ export default function WorkPage() {
               <h2 className="mx-auto mt-3 max-w-3xl font-display text-display-md font-normal text-ivory">
                 Bring the part of the brand that no longer makes sense.
               </h2>
-              <p className="mx-auto mt-5 max-w-2xl text-ivory/82">
+              <p className="mx-auto mt-5 max-w-2xl text-ivory/80">
                 The first conversation identifies the decision underneath the deliverable, whether the problem is clarity, recognition, conversion, or a system that has stopped holding together.
               </p>
 
@@ -120,7 +127,7 @@ export default function WorkPage() {
                 </Link>
               </div>
 
-              <div className="mx-auto mt-9 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 border-t border-ivory/20 pt-5 text-[0.64rem] uppercase tracking-[0.16em] text-ivory/65">
+              <div className="mx-auto mt-9 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 border-t border-ivory/20 pt-5 text-[0.64rem] uppercase tracking-[0.16em] text-ivory/60">
                 <span>Founder-led</span>
                 <span>Direct collaboration</span>
                 <span>Strategy before output</span>
