@@ -54,10 +54,10 @@ export function DeliverablesExplorer() {
       setActiveId(pool[0].id);
       setDetailMode("what");
     }
-    track("filter_used", {
+    track("capability_selected", {
       page: "services",
-      filter_name: "deliverable_scope",
-      filter_value: nextGroup,
+      capability: `Deliverables: ${nextGroup}`,
+      source: "scope_drawer",
     });
   }
 
