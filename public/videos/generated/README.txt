@@ -20,6 +20,12 @@ Package choice
 - poster: /images/generated/bt-services-package-current-poster.jpg
 - role: keeps several legitimate paths visible before they settle into one clear scope
 
+Stakes / distinctive positioning
+- still: /images/generated/bt-services-stakes-positioning.png
+- treatment: scroll-linked camera drift and a restrained mineral-light catch
+- role: separates one recognisable position from an interchangeable category field
+- accessibility: complete static composition under reduced motion
+
 Perception and education
 - bt-services-perception-ascent.mp4
 - bt-services-perception-ascent-mobile.mp4
@@ -39,11 +45,12 @@ Strategy Room / booking
 - role: lets surface noise settle into one calm reflection before a focused conversation begins
 
 Implementation rules
-- silent, muted, autoplay, loop, playsInline
+- silent, muted, autoplay, loop, playsInline for moving media
 - generated poster fallback for reduced motion and slow connections
-- separate lightweight mobile MP4 source
+- separate lightweight mobile MP4 source for moving media
 - only visible section media should play
-- every film acts as a semantic moving metaphor rather than decorative stock ambience
+- every film or still acts as a semantic moving metaphor rather than decorative stock ambience
+- scroll motion stays transform/opacity only and resolves to a complete static image under reduced motion
 - procedural films remain reproducible through scripts/generate_services_procedural_media.py
 
-Installed on the homepage-cinematic-recovery branch after duration, audio-state, responsive-encoding, and source-reference validation.
+Installed on the homepage-cinematic-recovery branch after duration, audio-state, responsive-encoding, source-reference, and reduced-motion validation.
