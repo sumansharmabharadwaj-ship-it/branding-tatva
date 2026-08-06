@@ -33,8 +33,34 @@ export function ServicesExperienceRuntime() {
     document.documentElement.dataset.servicesExperience = "active";
     const ratios = new Map<HTMLElement, number>();
     const signalLayers = new Map<HTMLElement, HTMLSpanElement>();
+    const hero = scenes[0];
+    const heroMedia = Array.from(
+      hero.querySelectorAll<HTMLElement>(":scope > img, :scope > video"),
+    );
+    const heroHeading = hero.querySelector<HTMLElement>("h1");
+    const heroIndex = hero.querySelector<HTMLElement>("ol");
+    const heroAperture = document.createElement("span");
+    const heroFragments = document.createElement("span");
     let activeIndex = 0;
     let frame = 0;
+
+    hero.dataset.servicesHeroScene = "true";
+    heroMedia.forEach((media) => {
+      media.dataset.servicesHeroMedia = "true";
+    });
+    if (heroHeading) heroHeading.dataset.servicesHeroHeading = "true";
+    if (heroIndex) heroIndex.dataset.servicesHeroIndex = "true";
+
+    heroAperture.dataset.servicesHeroAperture = "true";
+    heroAperture.setAttribute("aria-hidden", "true");
+    heroFragments.dataset.servicesHeroFragments = "true";
+    heroFragments.setAttribute("aria-hidden", "true");
+    for (let index = 0; index < 3; index += 1) {
+      const fragment = document.createElement("i");
+      fragment.dataset.servicesHeroFragment = String(index + 1);
+      heroFragments.appendChild(fragment);
+    }
+    hero.append(heroFragments, heroAperture);
 
     scenes.forEach((scene, index) => {
       scene.dataset.servicesScrollScene =
@@ -96,9 +122,57 @@ export function ServicesExperienceRuntime() {
 
     scenes.forEach((scene) => observer.observe(scene));
 
+    function updateHeroProgress(viewportHeight: number) {
+      const bounds = hero.getBoundingClientRect();
+      const exitProgress = clamp(-bounds.top / Math.max(1, viewportHeight * 0.78));
+      const resolveProgress = clamp((window.scrollY + 24) / Math.max(1, viewportHeight * 0.34));
+      const copyExit = clamp((exitProgress - 0.48) / 0.52);
+      const apertureProgress = clamp((exitProgress - 0.22) / 0.78);
+
+      hero.style.setProperty(
+        "--services-hero-scale",
+        (1.075 - resolveProgress * 0.055 + exitProgress * 0.035).toFixed(4),
+      );
+      hero.style.setProperty(
+        "--services-hero-media-y",
+        `${(-3.4 * exitProgress).toFixed(3)}%`,
+      );
+      hero.style.setProperty(
+        "--services-hero-copy-y",
+        `${(-20 * copyExit).toFixed(2)}px`,
+      );
+      hero.style.setProperty(
+        "--services-hero-copy-opacity",
+        (1 - copyExit * 0.76).toFixed(4),
+      );
+      hero.style.setProperty(
+        "--services-hero-index-x",
+        `${(18 * (1 - resolveProgress)).toFixed(2)}px`,
+      );
+      hero.style.setProperty(
+        "--services-hero-index-opacity",
+        (0.28 + resolveProgress * 0.72 - copyExit * 0.52).toFixed(4),
+      );
+      hero.style.setProperty(
+        "--services-hero-aperture-scale",
+        (0.58 + apertureProgress * 2.72).toFixed(4),
+      );
+      hero.style.setProperty(
+        "--services-hero-aperture-opacity",
+        (0.08 + apertureProgress * 0.72).toFixed(4),
+      );
+      hero.style.setProperty(
+        "--services-hero-fragment-shift",
+        `${(1 - resolveProgress).toFixed(4)}`,
+      );
+      hero.dataset.servicesHeroPhase =
+        exitProgress > 0.72 ? "handoff" : resolveProgress >= 0.85 ? "resolved" : "assembling";
+    }
+
     function updateSceneProgress() {
       frame = 0;
       const viewportHeight = Math.max(1, window.innerHeight);
+      updateHeroProgress(viewportHeight);
 
       scenes.forEach((scene) => {
         const bounds = scene.getBoundingClientRect();
@@ -141,6 +215,27 @@ export function ServicesExperienceRuntime() {
       delete document.documentElement.dataset.servicesActiveChapter;
       document.documentElement.style.removeProperty("--services-chapter-progress");
       document.documentElement.style.removeProperty("--services-chapter-angle");
+
+      heroAperture.remove();
+      heroFragments.remove();
+      delete hero.dataset.servicesHeroScene;
+      delete hero.dataset.servicesHeroPhase;
+      heroMedia.forEach((media) => {
+        delete media.dataset.servicesHeroMedia;
+      });
+      if (heroHeading) delete heroHeading.dataset.servicesHeroHeading;
+      if (heroIndex) delete heroIndex.dataset.servicesHeroIndex;
+      [
+        "--services-hero-scale",
+        "--services-hero-media-y",
+        "--services-hero-copy-y",
+        "--services-hero-copy-opacity",
+        "--services-hero-index-x",
+        "--services-hero-index-opacity",
+        "--services-hero-aperture-scale",
+        "--services-hero-aperture-opacity",
+        "--services-hero-fragment-shift",
+      ].forEach((property) => hero.style.removeProperty(property));
 
       scenes.forEach((scene) => {
         signalLayers.get(scene)?.remove();
