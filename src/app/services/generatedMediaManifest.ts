@@ -6,6 +6,7 @@ export const GENERATED_SERVICES_MEDIA_REVISION = {
   silent: true,
   posters: true,
   auditHarness: "strict-csp-compatible",
+  coreMediaRevision: "clean-procedural-v2",
 } as const;
 
 export const GENERATED_SERVICES_MEDIA = {
