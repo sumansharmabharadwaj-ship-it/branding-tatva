@@ -13,6 +13,7 @@ on:
       - scripts/studio_scene_evidence.cjs
       - scripts/decision_scene_evidence.cjs
       - scripts/foundation_scene_evidence.cjs
+      - scripts/evidence_scene_evidence.cjs
       - scripts/api_contract_gate.cjs
       - scripts/home_link_integrity.cjs
       - src/app/page.tsx
@@ -32,6 +33,7 @@ on:
       - src/data/elements.ts
       - src/data/faqs.ts
       - src/data/process.ts
+      - src/data/projects.ts
       - src/data/site.ts
       - src/hooks/useHomeGuideMode.ts
       - src/layouts/Header/**
@@ -51,7 +53,7 @@ concurrency:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 24
+    timeout-minutes: 25
 
     steps:
       - name: Check out application without the media archive
@@ -124,6 +126,11 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/foundation_scene_evidence.cjs
+
+      - name: Capture moving proof-room states
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/evidence_scene_evidence.cjs
 
       - name: Capture Tatva observatory and pressure-chamber evidence
         env:
