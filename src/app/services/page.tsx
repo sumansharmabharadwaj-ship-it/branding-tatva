@@ -245,30 +245,28 @@ export default async function ServicesPage() {
             A quiet interstitial on the page's charcoal ground; the
             chapters around it carry the media. */}
         <section id="situation" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
-          {/* Deliberate art direction, cut this round from the archived
-              4K master (Pexels 32795404, standard license): sunrise
-              breaking over a misted river valley, water branching into
-              several channels, white birds moving through the wetland —
-              the day starting over three possible paths, which is
-              exactly this chapter's question. Graded bright and warm
-              (lifted shadows, gentle vibrance, cool shadow balance) at
-              2560 wide, 10.5s forward crossfade loop, no reverse
-              motion. */}
-          <BackgroundVideo
-            parallax
-            video="/videos/pexels-river-dawn.mp4"
-            videoWebm="/videos/pexels-river-dawn.webm"
-            poster="/images/pexels-river-dawn-poster.jpg"
-          />
-          {/* Left weighted scrim — the sticky heading rail sits on the
-              darker stops while the sunrise and river stay open on the
-              right of the frame. */}
+          {/* Original procedural Situation film: one coherent material
+    world holds three different starting conditions. A pale
+    mineral seed begins, shifted strata wait to realign, and
+    repeating rings carry consistency forward. The chapter now
+    teaches diagnosis without borrowing the Package selector's
+    separate water-current metaphor. */}
+<BackgroundVideo
+  parallax
+  video="/videos/generated/bt-services-situation-paths.mp4"
+  videoMobile="/videos/generated/bt-services-situation-paths-mobile.mp4"
+  poster="/images/generated/bt-services-situation-paths-poster.jpg"
+  playbackRate={1.06}
+/>
+          {/* A left-weighted charcoal scrim protects the diagnosis copy
+    while keeping all three material states visible across the
+    lower frame. */}
           <div
             className="absolute inset-0"
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(23,26,23,0.82) 0%, rgba(23,26,23,0.6) 45%, rgba(23,26,23,0.42) 100%)",
+                "linear-gradient(100deg, rgba(16,19,20,0.9) 0%, rgba(16,19,20,0.66) 46%, rgba(16,19,20,0.38) 100%)",
             }}
           />
           <div className="relative">
