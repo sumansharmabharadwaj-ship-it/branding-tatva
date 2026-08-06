@@ -1,0 +1,183 @@
+name: Verify the complete Services decision journey
+run-name: Complete Services clean-base rebuild · ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - services-complete-journey-integration
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-services-complete-clean-rebuild
+  cancel-in-progress: false
+
+jobs:
+  rebuild-audit-commit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out the clean integration branch without the large media archive
+        uses: actions/checkout@v4
+        with:
+          ref: services-complete-journey-integration
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Recover the verified focused Services work from the frozen backup
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin \
+            services-complete-journey-integration-backup-20260807:refs/remotes/origin/services-complete-journey-integration-backup-20260807 \
+            --depth=1
+
+          git checkout origin/services-complete-journey-integration-backup-20260807 -- \
+            scripts/apply_services_complete_journey.py \
+            scripts/apply_services_mobile_health_check_v2.py \
+            scripts/apply_services_practical_faq.py \
+            scripts/apply_services_project_room_gate.py \
+            scripts/apply_services_recognition_ladder_gate.py \
+            scripts/apply_services_strategy_room_gate.py \
+            scripts/fix_project_room_route_semantics.py \
+            scripts/fix_work_mobile_model_narrowing.py \
+            src/app/services/ServicesExperienceRuntime.tsx \
+            src/data/servicesFaqs.ts \
+            src/sections/Services/HealthCheckMobileInstrument.tsx \
+            src/sections/Services/MobilePerceptionClimb.tsx \
+            src/sections/Services/PackageSelector.tsx \
+            src/sections/Services/PerceptionLadder.tsx \
+            src/sections/Services/ProjectRoomPackage.tsx \
+            src/sections/Services/ServicesFAQ.tsx \
+            src/sections/Services/StrategyRoomCTA.tsx
+
+          git diff --check
+
+      - name: Assemble the complete decision journey against the latest page
+        shell: bash
+        run: |
+          python3 -m py_compile \
+            scripts/apply_services_complete_journey.py \
+            scripts/fix_work_mobile_model_narrowing.py \
+            scripts/apply_services_mobile_health_check_v2.py \
+            scripts/apply_services_project_room_gate.py \
+            scripts/fix_project_room_route_semantics.py \
+            scripts/apply_services_recognition_ladder_gate.py \
+            scripts/apply_services_practical_faq.py \
+            scripts/apply_services_strategy_room_gate.py
+          python3 scripts/apply_services_complete_journey.py
+          git diff --check
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Activate pnpm
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+
+      - name: Install dependencies and Chromium
+        shell: bash
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm add --save-dev --lockfile=false playwright@1.54.2
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Build the production application
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+        run: pnpm build
+
+      - name: Start the production server
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+        shell: bash
+        run: |
+          pnpm start --hostname 127.0.0.1 --port 3000 > /tmp/services-complete-rebuild.log 2>&1 &
+          echo $! > /tmp/services-complete-rebuild.pid
+          for attempt in {1..120}; do
+            if curl --fail --silent http://127.0.0.1:3000/services > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/services-complete-rebuild.log
+          exit 1
+
+      - name: Walk every Services chapter and interaction at three viewports
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+        run: node scripts/services_page_gate.cjs
+
+      - name: Measure native scroll, chapter density, and media budgets
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+          AUDIT_COMMIT: ${{ github.sha }}
+        run: node scripts/services_scroll_experience_gate.cjs
+
+      - name: Stop the production server
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/services-complete-rebuild.pid ]; then
+            kill "$(cat /tmp/services-complete-rebuild.pid)" || true
+          fi
+          cat /tmp/services-complete-rebuild.log || true
+
+      - name: Upload complete Services browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: services-complete-clean-rebuild-evidence
+          path: |
+            services-page-audit/*
+            services-scroll-audit/*
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Remove one-time rebuild machinery and keep the branch preview-safe
+        shell: bash
+        run: |
+          rm scripts/apply_services_complete_journey.py
+          rm scripts/fix_work_mobile_model_narrowing.py
+          rm scripts/apply_services_mobile_health_check_v2.py
+          rm scripts/apply_services_project_room_gate.py
+          rm scripts/fix_project_room_route_semantics.py
+          rm scripts/apply_services_recognition_ladder_gate.py
+          rm scripts/apply_services_practical_faq.py
+          rm scripts/apply_services_strategy_room_gate.py
+          rm .github/workflows/services-complete-journey-gate.yml
+          rm .github/workflows/services-complete-journey-rebuild.yml
+          rm -f docs/services-complete-rebuild-trigger.md
+          cat > vercel.json <<'JSON'
+          {
+            "$schema": "https://openapi.vercel.sh/vercel.json",
+            "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json",
+            "git": {
+              "deploymentEnabled": false
+            }
+          }
+          JSON
+
+      - name: Commit the verified journey to the clean integration branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "Integrate the complete Services decision journey on the latest cinematic base"
+          git push origin HEAD:services-complete-journey-integration
