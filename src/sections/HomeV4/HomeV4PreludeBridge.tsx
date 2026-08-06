@@ -9,11 +9,17 @@ export function HomeV4PreludeBridge() {
   useEffect(() => {
     const root = document.documentElement;
     let readyFrame = 0;
+    let publishedState: boolean | null = null;
+    let observer: MutationObserver | null = null;
 
     function setReady(ready: boolean) {
+      if (publishedState === ready) return;
+      publishedState = ready;
       root.setAttribute(READY_ATTRIBUTE, ready ? "true" : "false");
+
       if (ready) {
         window.dispatchEvent(new CustomEvent("bt:home-prelude-ready"));
+        observer?.disconnect();
       }
     }
 
@@ -30,7 +36,7 @@ export function HomeV4PreludeBridge() {
     }
 
     sync();
-    const observer = new MutationObserver(sync);
+    observer = new MutationObserver(sync);
     observer.observe(document.body, {
       childList: true,
       subtree: true,
@@ -39,7 +45,7 @@ export function HomeV4PreludeBridge() {
     });
 
     return () => {
-      observer.disconnect();
+      observer?.disconnect();
       window.cancelAnimationFrame(readyFrame);
       root.removeAttribute(READY_ATTRIBUTE);
     };
