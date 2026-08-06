@@ -55,11 +55,9 @@ export const metadata: Metadata = {
 // process) were removed after a Creative Direction Audit — the pinned
 // process sequence was also rendering with overlapping text, a real
 // bug, not just a pacing call. See the plan doc (Phase 14) for the
-// full original reasoning, including why GSAP ScrollTrigger.pin
-// appears exactly once (PinnedBrandBuild) and Three.js exactly once
-// (inside PerceptionLadder, via AmbientElementShader) rather than
-// throughout — every other pinned moment on this page and site runs on
-// the same sticky mechanism already proven everywhere else.
+// original reasoning. PinnedBrandBuild now uses the same CSS-sticky
+// mechanism proven elsewhere on the site; Three.js remains scoped once
+// inside PerceptionLadder rather than becoming a page-wide effect.
 
 // Conversion order (Phase 2 of the redesign brief): the commercial
 // path — situation, packages, proof — comes before the teaching
@@ -85,8 +83,9 @@ const JUMP_ITEMS = [
 // "one motion language"): this page stacked twenty five atmosphere
 // layers — six shaders, particle fields, and the veil/handoff seams —
 // so every chapter competed with its own background. The seams stay as
-// the site's one transition grammar; the shader repeats and particle
-// fields are gone, leaving the filmed footage to carry atmosphere.
+// the site's one transition grammar; repeated shaders and particle
+// fields are gone, leaving original films and material stills to carry
+// atmosphere without competing with the chapter interaction.
 export default async function ServicesPage() {
   // Market aware pricing (governing bible §10): the visitor's explicit
   // region cookie always wins; otherwise Vercel's country header picks
@@ -103,19 +102,11 @@ export default async function ServicesPage() {
   return (
     <>
       <Header transparent />
-      {/* Charcoal ground for the whole experience — the permanent fix
-          for the "white space at left and right" class of bug. The
-          site's body ground is cream; on this page every full-bleed
-          scene paints its own dark background, and the one section
-          whose paint is delegated to a GSAP-pinned child
-          (PinnedBrandBuild) can transiently narrow when the pin's
-          cached width measurement goes stale — the documented pin
-          artifact class — exposing cream at both edges. With the page
-          ground itself charcoal (and the #authority wrapper painting
-          charcoal below), no measurement artifact anywhere on this
-          page can ever expose a light edge again: worst case is
-          charcoal on charcoal, invisible. The parchment chapter still
-          paints its own bg-background-alt deliberately. */}
+      {/* Charcoal is the page-level ground beneath every full-bleed
+          chapter and scene handoff. It prevents the cream body colour
+          from flashing at a sticky or transformed boundary, while the
+          deliberately light contextual CTA continues to paint its own
+          surface. */}
       <main id="main-content" style={{ backgroundColor: MOOD.charcoal }}>
         <PricingProvider initialRegion={region}>
         {/* Curiosity opens on an original Branding Tatva film.
@@ -228,13 +219,10 @@ export default async function ServicesPage() {
             </div>
           </Container>
           <ScrollCue />
-          {/* Scene dissolve system, boundary 1 of 7: the hero's last
-              frames darken into Authority's charcoal, so the cut into
-              the pinned build reads as the same shot getting darker
-              rather than a new page section starting. Every following
-              chapter opens with the same device — a veil of the
-              PREVIOUS chapter's mood color dissolving into its own —
-              one continuous color journey instead of stacked blocks. */}
+          {/* The hero's last frames darken into the Situation
+              chapter's charcoal. Every later chapter uses the same
+              veil-and-handoff grammar, so the page reads as one colour
+              journey rather than a stack of unrelated blocks. */}
           <SceneHandoff color="#171A17" heightClass="h-[24vh]" />
         </PhotoHero>
 
@@ -246,21 +234,21 @@ export default async function ServicesPage() {
             chapters around it carry the media. */}
         <section id="situation" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           {/* Original procedural Situation film: one coherent material
-    world holds three different starting conditions. A pale
-    mineral seed begins, shifted strata wait to realign, and
-    repeating rings carry consistency forward. The chapter now
-    teaches diagnosis without borrowing the Package selector's
-    separate water-current metaphor. */}
-<BackgroundVideo
-  parallax
-  video="/videos/generated/bt-services-situation-paths.mp4"
-  videoMobile="/videos/generated/bt-services-situation-paths-mobile.mp4"
-  poster="/images/generated/bt-services-situation-paths-poster.jpg"
-  playbackRate={1.06}
-/>
+              world holds three different starting conditions. A pale
+              mineral seed begins, shifted strata wait to realign, and
+              repeating rings carry consistency forward. The chapter now
+              teaches diagnosis without borrowing the Package selector's
+              separate water-current metaphor. */}
+          <BackgroundVideo
+            parallax
+            video="/videos/generated/bt-services-situation-paths.mp4"
+            videoMobile="/videos/generated/bt-services-situation-paths-mobile.mp4"
+            poster="/images/generated/bt-services-situation-paths-poster.jpg"
+            playbackRate={1.06}
+          />
           {/* A left-weighted charcoal scrim protects the diagnosis copy
-    while keeping all three material states visible across the
-    lower frame. */}
+              while keeping all three material states visible across the
+              lower frame. */}
           <div
             className="absolute inset-0"
             aria-hidden="true"
@@ -345,13 +333,10 @@ export default async function ServicesPage() {
           <SceneHandoff color="#0E1714" />
         </section>
 
-        {/* Desire — the real package selector, moved to chapter three
-            per the conversion redesign: packages exposed inside the
-            first two scrolls instead of after the teaching chapters.
-            Mood: DEEP WATER — same fungi clip and overlay as before the
-            move; only the dissolve colors changed with the new
-            neighbours. The full art direction history for this chapter
-            lives in git on the pre move block. */}
+        {/* Desire exposes the packages early enough for a ready
+            visitor to act before the teaching chapters. Its original
+            deep-water film keeps three legitimate currents visible,
+            then lets them resolve into one legible scope. */}
         <section id="desire" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.deepwater }}>
           {/* Original procedural package-choice loop: three
               legitimate currents remain visible, then settle into one
@@ -392,11 +377,10 @@ export default async function ServicesPage() {
           </div>
         </section>
 
-        {/* Authority — the one deliberate ScrollTrigger.pin section. */}
-        {/* The wrapper paints charcoal itself — it sits in normal flow,
-            is never transformed by GSAP, and therefore always spans the
-            full viewport regardless of what the pin does to its child.
-            See the main-level comment above for the full root cause. */}
+        {/* Authority is the page's one extended CSS-sticky teaching
+            chapter. The wrapper stays in normal flow and paints its own
+            charcoal ground, so the five-layer build never disagrees
+            with the viewport width. */}
         <section id="authority" className="relative scroll-mt-24" style={{ backgroundColor: MOOD.charcoal }}>
           <PinnedBrandBuild />
           <SceneHandoff color="#191B16" />
@@ -446,22 +430,11 @@ export default async function ServicesPage() {
           <SceneHandoff color="#1A2026" />
         </section>
 
-        {/* Education — the one Three.js moment (inside PerceptionLadder,
-            via AmbientElementShader), scoped and ambient. Chapter identity
-            per direct creative direction: the CLIMB — movement upward,
-            evolving perspective, rising through layers. Its footage slot
-            is reserved for an approved ascending shot. */}
-        {/* Mood: MIST — blue-grey, the coolest chapter so far, directly
-            after Stakes' dry stone. See MOOD in sectionWash.ts. */}
+        {/* Education turns recognition into a changing point of view.
+            PerceptionLadder keeps the page's one scoped Three.js accent,
+            while the original perception-ascent film clarifies terrain
+            around a signal instead of borrowing generic growth footage. */}
         <section id="education" className="relative scroll-mt-24 overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
-          {/* Approved Education footage (Pexels 8522207, David Roberts,
-              free license): seedlings rising out of dark soil in
-              timelapse — the climb performed by nature itself, growth
-              stages upward from unknown ground, no human needed. Also
-              the film's best cut: Authority ends underground in roots;
-              this chapter opens with what those roots push above the
-              surface. Crossfade loop (never ping-pong — reversed growth
-              reads as shrinking). */}
           {/* Original procedural perception-ascent loop:
               layered terrain and mist clarify around one distant signal.
               The landscape becomes more legible as the signal becomes
@@ -501,25 +474,20 @@ export default async function ServicesPage() {
             Creative Direction Audit. Founder credibility still lives on
             the About page; not duplicated here. */}
 
-        {/* Deliverables — direct feedback wanted these to feel
-            tangible rather than left as bullet points inside a card. Every
-            item traces to real services.ts data (see the component's
-            own comment). No id/jump-nav entry — a supporting beat within
-            Desire's own objection. Same shader treatment as the
-            sections around it — see WeakBrandingCost's comment above
-            for why. */}
-        {/* Mood: THE ARCHIVE. The background now belongs to the work
-  being explained: layered paper, vellum, blind-debossed grids,
-  and dark folios form one ordered material system. The live
-  ArtifactPreview remains the chapter's primary interaction;
-  the environment only gives that interaction a tactile world. */}
+        {/* Deliverables makes the invisible work tangible. Every
+            artifact traces to real services data, and the live explorer
+            stays the primary interaction inside an original paper-and-
+            vellum material environment. */}
+        {/* Mood: THE ARCHIVE. Layered paper, vellum,
+            blind-debossed grids, and dark folios form one ordered
+            material system behind the live ArtifactPreview. */}
         <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
           {/* Original generated Deliverables archive: ivory papers,
-    translucent vellum, embossed grids, dark folios, and one
-    stone weight make the invisible work feel tangible before
-    a visitor opens an individual artifact. Its scroll-linked
-    drift and edge light remain secondary to the explorer. */}
-<DeliverablesCinematicBackdrop image="/images/generated/bt-services-deliverables-archive.png" />
+              translucent vellum, embossed grids, dark folios, and one
+              stone weight make the invisible work feel tangible before
+              a visitor opens an individual artifact. Its scroll-linked
+              drift and edge light remain secondary to the explorer. */}
+          <DeliverablesCinematicBackdrop image="/images/generated/bt-services-deliverables-archive.png" />
           <div
             className="absolute inset-0"
             aria-hidden="true"
@@ -528,8 +496,8 @@ export default async function ServicesPage() {
                 "linear-gradient(180deg, rgba(13,17,16,0.72) 0%, rgba(13,17,16,0.46) 44%, rgba(13,17,16,0.68) 100%)",
             }}
           />
-          {/* Scene dissolve: Education's blue mist settles onto the
-    archive's charcoal and paper planes. */}
+          {/* Education's blue mist settles onto the archive's
+              charcoal and paper planes. */}
           <SceneVeil color="#1A2026" heightClass="h-[15vh]" />
           <div className="relative">
             <DeliverablesExplorer />
@@ -570,18 +538,11 @@ export default async function ServicesPage() {
             process behind it repeats") named both by concept and no
             longer made sense with neither present, so it's gone too. */}
 
-        {/* A slower alternative to Desire's one-click pick, for a visitor
-            who wants to think it through before Risk removal and the
-            booking CTA — direct feedback wanted the visitor to feel
-            invested before the calendar appears. Transparent scoring,
-            real package mapping, see the component's own comment for
-            why it's a distinct mechanism from PackageSelector rather
-            than a duplicate of it. Same shader treatment as the
-            sections around it — see WeakBrandingCost's comment above
-            for why. */}
-        {/* Mood: FOREST — deep green-black after the light editorial
-            break; the stream clip's mossy greens finally read as green
-            instead of being re-warmed to amber by a soil overlay. */}
+        {/* Brand Health Check is the slower diagnostic alternative
+            to the package selector. Transparent scoring and real package
+            mapping sit over an original reflection film that reveals
+            hidden misalignment beneath an apparently coherent surface.
+            Mood: deep forest green-black after the light editorial break. */}
         <section id="health" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.forest }}>
           {/* Original generated diagnostic reflection loop: the
               surface first reads as coherent, then faint misalignments
@@ -604,11 +565,8 @@ export default async function ServicesPage() {
                 "linear-gradient(180deg, rgba(20,26,21,0.55) 0%, rgba(20,26,21,0.35) 50%, rgba(20,26,21,0.6) 100%)",
             }}
           />
-          {/* Scene dissolve: the dossier's parchment light spills into
-              the top of the forest — light traveling downward into the
-              next scene. */}
-          {/* Scene dissolve: the study's warm dark hands into the
-              forest — lamplight dimming into green-black. */}
+          {/* The archive's pale paper light dims into the Health
+              Check's green-black reflection. */}
           <SceneVeil color="#172019" heightClass="h-[14vh]" />
           <div className="relative">
             <BrandHealthCheck />
