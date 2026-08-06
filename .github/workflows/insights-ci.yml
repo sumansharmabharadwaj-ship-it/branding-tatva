@@ -74,5 +74,7 @@ jobs:
           curl --silent --fail http://127.0.0.1:3000/insights/value-proposition-vs-positioning-vs-tagline | grep --quiet "The meaning ladder"
           curl --silent --fail http://127.0.0.1:3000/insights/brand-positioning-statement-examples-why-generic | grep --quiet "The specificity ladder"
           curl --silent --fail http://127.0.0.1:3000/insights/reposition-established-service-business-without-losing-recognition | grep --quiet "The recognition bridge"
+          curl --silent --fail http://127.0.0.1:3000/insights/brand-refresh-vs-rebrand-how-much-change | grep --quiet "The change-depth ladder"
+          curl --silent --fail http://127.0.0.1:3000/insights/turn-client-proof-into-positioning-advantage | grep --quiet "The proof architecture"
           curl --silent --fail http://127.0.0.1:3000/insights/feed.xml | grep --quiet "Branding Tatva Insights"
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3000/blog/visible-versus-remembered)" = "308"
