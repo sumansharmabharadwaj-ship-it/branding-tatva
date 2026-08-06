@@ -14,13 +14,42 @@ This document records the implemented Services-page choreography. It is an imple
 | 04 | Package paths | 3 package previews | natural section, at least one viewport | normalized scene progress previews the three real packages | click is required for commitment; carried diagnosis overrides passive preview | tap-led package choice remains available | direct package states, no required scrub |
 | 05 | Verified outcome | 3 proof beats | natural section, at least one viewport | decision → behavioural shift → one foregrounded verified result | links to the complete case-study decision trail remain normal links | same readable three-beat evidence stack | final result is foregrounded while all three evidence rows stay visible |
 | 06 | Brand foundation | 5 layers | maximum `220svh` desktop | short sticky foundation assembly | content remains readable independent of scroll speed | authored non-caged explanation | sticky range removed and the complete system is visible |
-| 07 | Positioning cost | 4 causal beats × 2 focus modes | natural section; no multi-viewport cage required | cause progression changes the consequence and shifts focus Generic → Distinct | visitor may explicitly hold Generic or Distinct | compact `MobileStakesDeck`, touch-led | both paths remain readable without scrub |
+| 07 | Positioning cost | 4 causal beats | natural section; no multi-viewport cage required | cause progression changes the consequence and shifts focus Generic → Distinct | visitor may explicitly hold Generic or Distinct | compact `MobileStakesDeck`, touch-led | both paths remain readable without scrub |
 | 08 | Perception | 4 rungs | natural section, at least one viewport | ladder progresses Unknown → Recognized → Remembered → Preferred | each rung can be opened directly | `MobilePerceptionClimb` replaces desktop ladder choreography | complete ladder and proof remain available statically |
 | 09 | The archive | 5 scope drawers / 14 real artifacts | natural section, at least one viewport | fine-pointer desktop scroll previews Foundation → Expression → Experience → Activation → Continuity | drawer, artifact, explanation-tab focus/click/keyboard receives a 12-second manual hold | scroll preview is disabled; archive is fully tap-led so drawer-height changes never fight a finger gesture | manual/static archive with every artifact accessible |
 | 10 | Project map | 2 decisions + personalized result | natural section | progressive interactive project mapping | visitor choices create the result from real package/deliverable data | direct touch controls | complete form and result remain functional |
 | 11 | Health check | 4 questions + result | natural section | measured self-assessment with progressive diagnostic feedback | visitor answers, back/reset, and result actions remain explicit | touch-first controls | no required motion; full diagnostic remains usable |
-| 12 | Recognition audit | interactive checks / audit result | natural section | progressive recognition audit rather than a pinned scroll cage | form controls own the experience | normal stacked/touch controls | all checks remain usable |
+| 12 | Recognition audit | 2 useful states | natural section | five open checks → full ten after explicit consent, without a pinned scroll cage | form controls own the experience | mobile separates open checks and unlock into two explicit chapters | all checks remain usable |
 | 13 | Strategy room | 1 arrival state | natural final scene | cinematic settling and one clear next action | booking/contact controls remain primary | same quiet arrival | stable final composition |
+
+## Semantic state budget
+
+Only meaningful narrative or decision states count toward exploration density. Ambient parallax, hover polish, progress lines, and decorative transitions do **not** count.
+
+| Chapter | Count |
+| --- | ---: |
+| Opening signal | 3 |
+| Your situation | 3 |
+| Six disciplines | 6 |
+| Package paths | 3 |
+| Verified outcome | 3 |
+| Brand foundation | 5 |
+| Positioning cost | 4 |
+| Perception | 4 |
+| The archive | 5 |
+| Project map | 3 |
+| Health check | 5 |
+| Recognition audit | 2 |
+| Strategy room | 1 |
+| **Total** | **47** |
+
+The release evidence reports:
+
+```text
+Exploration Density = 47 meaningful semantic states ÷ measured scroll viewports
+```
+
+It also records physical pixels per semantic state and viewport fractions per semantic state at desktop, tablet, and mobile sizes. The density script records evidence rather than inventing an arbitrary universal threshold; comprehension and mobile simplification still matter more than maximizing one number.
 
 ## Stable chapter anchors
 
@@ -42,6 +71,8 @@ The Services runtime assigns and publishes one stable anchor per directed scene.
 
 Client-assigned anchors such as `#stakes`, `#verified-outcome`, and `#deliverables` are restored once after hydration when they are the initial URL hash. Normal anchor clicks after hydration remain browser-controlled.
 
+Every runtime-directed chapter also receives the same route-level scroll margin. Direct anchors therefore land below the transparent site header instead of merely existing in the DOM while their heading is hidden behind navigation.
+
 ## Global scroll rules now enforced
 
 - Ordinary wheel, trackpad, scrollbar, keyboard, and touch scrolling remain native browser input.
@@ -62,6 +93,7 @@ Client-assigned anchors such as `#stakes`, `#verified-outcome`, and `#deliverabl
 - Authority is capped at approximately `220svh` on desktop instead of the earlier multi-hundred-viewport-style scroll cage.
 - Touch devices do not inherit desktop archive auto-progression.
 - Passive situation/package previews never silently commit a user choice.
+- Project map, Health check, Recognition audit, and Strategy room remain interaction-led instead of being forced into additional pinned scroll sequences.
 
 ## Browser release contracts
 
@@ -89,6 +121,16 @@ Profiles `1440×900`, `1024×768`, and `390×844` plus reduced motion. It verifi
 - zero fixed route guides inside the final Strategy room;
 - reduced-motion scenes are unpinned/non-caged and videos are stopped.
 
+### `services_exploration_density_report.cjs`
+
+Records the 47-state semantic budget against actual rendered page height for desktop, tablet, and mobile. It writes:
+
+- total scroll height;
+- total scroll viewports;
+- exploration density;
+- pixels per meaningful state;
+- viewport fractions per meaningful state.
+
 ### `services_semantic_progress_gate.cjs`
 
 Verifies that scroll produces meaningful states rather than decoration:
@@ -109,6 +151,16 @@ Separately verifies the archive input split:
 - a deliberate manual drawer selection is held against later scroll;
 - mobile touch scrolling does not auto-change drawers;
 - mobile tapping still selects a drawer directly.
+
+### `services_anchor_gate.cjs`
+
+Verifies that the three client-assigned content anchors land with readable header clearance on desktop and mobile:
+
+- `#verified-outcome`;
+- `#stakes`;
+- `#deliverables`.
+
+It also requires the runtime active chapter ID to match the destination after entry.
 
 ### `services_native_input_gate.cjs`
 
