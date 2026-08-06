@@ -156,6 +156,10 @@ export function GuidedView() {
   }, [prefersReducedMotion]);
 
   useEffect(() => {
+    if (activeIndex > 0) dismissHint();
+  }, [activeIndex, dismissHint]);
+
+  useEffect(() => {
     window.cancelAnimationFrame(progressFrameRef.current);
     const guide = guideRef.current;
 
@@ -224,17 +228,23 @@ export function GuidedView() {
   if (prefersReducedMotion) return null;
 
   const count = Math.max(1, chaptersRef.current.length || CHAPTER_NAMES.length);
+  const atFinalChapter = activeIndex >= count - 1;
   const chapterName = CHAPTER_NAMES[Math.min(activeIndex, CHAPTER_NAMES.length - 1)] ?? "scene";
-  const showHint = hintVisible && mode === "manual";
-  const label =
-    mode === "guided"
+  const showHint = hintVisible && mode === "manual" && activeIndex === 0;
+  const label = atFinalChapter
+    ? "journey complete"
+    : mode === "guided"
       ? "the page is moving with you"
       : mode === "paused"
         ? "guided journey paused"
         : showHint
           ? "play the journey"
           : "explore at your pace";
-  const detail = showHint ? "eleven scenes · always user-led" : chapterName;
+  const detail = atFinalChapter
+    ? "the invitation"
+    : showHint
+      ? "eleven scenes · always user-led"
+      : chapterName;
 
   return (
     <div
@@ -242,6 +252,7 @@ export function GuidedView() {
       data-guided-controls
       data-guide-mode={mode}
       data-guide-hint={showHint ? "visible" : "hidden"}
+      data-guide-final={atFinalChapter ? "true" : "false"}
       className="home-v4-guide"
       aria-label="Guided homepage controls"
     >
