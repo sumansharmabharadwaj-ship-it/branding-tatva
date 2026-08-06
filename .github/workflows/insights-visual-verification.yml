@@ -89,10 +89,41 @@ jobs:
           const browser = await chromium.launch({ headless: true });
           await fs.mkdir("qa-artifacts", { recursive: true });
 
+          async function revealWholePage(page, viewportHeight) {
+            await page.addStyleTag({
+              content: "html { scroll-behavior: auto !important; }",
+            });
+
+            let lastPosition = -1;
+            for (let pass = 0; pass < 160; pass += 1) {
+              const state = await page.evaluate(() => ({
+                position: window.scrollY,
+                viewport: window.innerHeight,
+                height: document.documentElement.scrollHeight,
+              }));
+
+              if (state.position + state.viewport >= state.height - 4) break;
+
+              const nextPosition = Math.min(
+                state.position + Math.max(280, viewportHeight * 0.72),
+                state.height - state.viewport
+              );
+              await page.evaluate((top) => window.scrollTo(0, top), nextPosition);
+              await page.waitForTimeout(140);
+
+              const currentPosition = await page.evaluate(() => window.scrollY);
+              if (currentPosition === lastPosition) break;
+              lastPosition = currentPosition;
+            }
+
+            await page.waitForTimeout(900);
+            await page.evaluate(() => window.scrollTo(0, 0));
+            await page.waitForTimeout(350);
+          }
+
           async function capture(pathname, output, viewport) {
             const context = await browser.newContext({
               viewport,
-              reducedMotion: "reduce",
               colorScheme: "light",
             });
             const page = await context.newPage();
@@ -102,9 +133,8 @@ jobs:
             await page.goto(`http://127.0.0.1:3000${pathname}`, {
               waitUntil: "networkidle",
             });
-            await page.emulateMedia({ reducedMotion: "reduce" });
             await page.evaluate(() => document.fonts.ready);
-            await page.waitForTimeout(1500);
+            await revealWholePage(page, viewport.height);
 
             const dimensions = await page.evaluate(() => ({
               clientWidth: document.documentElement.clientWidth,
