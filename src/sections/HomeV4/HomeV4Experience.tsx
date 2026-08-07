@@ -106,16 +106,27 @@ export function HomeV4Experience() {
           operating-system demonstration, so it now owns the chapter alone.
           Detailed element exploration stays elsewhere instead of adding two
           more viewports before Studio. */}
+      {/* The first Home chapter built as a held scene. Its content already
+          fits inside one screen, at roughly 0.9 of a viewport, so the runway
+          underneath buys a genuine pause rather than a token one: the frame
+          stays still while the page keeps moving, and the pressure lab has a
+          moment to be read instead of passing by.
+
+          Chosen for that reason. The taller chapters need their own layouts
+          to fit a screen before a frame can hold them, which is a change to
+          each chapter rather than a wrapper around it. */}
       <section
         id="tatva"
         data-home-v4-chapter="tatva"
         data-home-chapter="tatva"
         data-home-section="tatva"
         data-cursor-world="dark"
-        className="home-v4-chapter home-v4-chapter--tatva"
+        className="home-v4-chapter home-v4-chapter--tatva bt-scene bt-scene--unfold-short"
         aria-label="The five Tatvas as one operating system"
       >
-        <TatvaSystemLab />
+        <div className="bt-scene__sticky">
+          <TatvaSystemLab />
+        </div>
       </section>
 
       <SceneHandoff motif="river" />
