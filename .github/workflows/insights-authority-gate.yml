@@ -89,7 +89,7 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
           AUDIT_COMMIT: ${{ github.sha }}
-          INSIGHTS_EXPECTED_MIN: 22
+          INSIGHTS_EXPECTED_MIN: 29
         run: node scripts/insights_authority_gate.cjs
 
       - name: Stop production server
