@@ -40,11 +40,11 @@ jobs:
               'call or WhatsApp directly, or send a written enquiry.'
           )
           contact_count = contact.count(old_contact)
-          if contact_count != 2:
+          if contact_count != 3:
               raise SystemExit(
-                  f"Expected exactly two Contact description strings, found {contact_count}."
+                  f"Expected two metadata strings and one visible hero line, found {contact_count}."
               )
-          contact_path.write_text(contact.replace(old_contact, new_contact))
+          contact_path.write_text(contact.replace(old_contact, new_contact, 2))
 
           reposition_path = Path("src/data/repositioningInsights.ts")
           reposition = reposition_path.read_text()
