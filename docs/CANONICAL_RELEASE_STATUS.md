@@ -16,9 +16,31 @@ The preview exposes two uncached machine-readable endpoints:
 - `/api/release` for the public release identifier and flat Vercel runtime fingerprint.
 - `/api/verification` for the canonical branch, permanent alias, backlog, phone, consultation duration, required routes, and nested Vercel runtime fingerprint.
 
-`Permanent preview source gate` waits for the permanent alias to report the exact current canonical branch commit before accepting the deployment. It then checks Home, Services, Work, Insights, About, and Contact.
+The source gate now resolves the latest **deployable application commit**, using the same path boundary as `vercel.json`'s ignored-build command. Workflow-only documentation and verifier commits therefore no longer create an impossible wait for a Vercel deployment that should correctly be skipped.
 
-## Automated verification now attached to the canonical branch
+The gate also understands Vercel Deployment Protection. It uses `VERCEL_AUTOMATION_BYPASS_SECRET` when configured and fails immediately with an explicit authentication diagnosis when the secret is absent or rejected, rather than polling a protected 401 response for twelve minutes.
+
+## Current certified application source
+
+- Deployable commit: `79ede2c19d3825df2d6dca2e3d41ccc34c5f7bef`
+- Commit purpose: repair the client-proof Insight's missing poster and video pair.
+- READY deployment: `dpl_AGKbgVhHmrtPjDHPNZVvCxZs97UF`
+- Immutable preview: `https://branding-tatva-oue6ecbln-suman22.vercel.app/`
+- Runtime branch: `homepage-cinematic-recovery`
+- Runtime environment: `preview`
+
+The immutable deployment's `/api/release` endpoint reports this exact commit, branch, environment, permanent-review alias contract, and canonical backlog.
+
+## Permanent-alias boundary
+
+The permanent review alias still resolves to older CLI deployment `dpl_HcKYrrLjAWoGBq9uVJXoUknn5wXv`, sourced from commit `a717c871427f08c0b50f7607c608ed8887bf0c04`. Reassignment is intentionally not faked in source. It requires external Vercel configuration:
+
+- `VERCEL_TOKEN` with permission to assign the alias to the certified deployment.
+- `VERCEL_AUTOMATION_BYPASS_SECRET` so GitHub Actions can inspect the protected alias without disabling preview protection.
+
+Until both are configured and the alias is reassigned, the permanent source gate must remain red even though the correct immutable deployment is READY.
+
+## Automated verification attached to the canonical branch
 
 ### Whole-site
 
@@ -42,19 +64,26 @@ The preview exposes two uncached machine-readable endpoints:
 
 - Anchor, archive, exploration-density, hash-override, media-loading, native-input, page, scroll-experience, and semantic-progress gates.
 - Contact duration and direct-call contract prevents obsolete twenty-minute wording.
+- Responsive video source listeners are released during unmount, preventing the previously measured Services page-tree retention through Blink MediaQueryList roots.
 
 ### Work
 
-- Brand-study context, capability attention, decision context, hero pause, Lab accessibility, mobile index, mobile narrative, and three generations of Work page gates.
-- Idempotent repair transform protects pointer-pause verification and mobile narrative label extraction without overwriting newer source.
+- Full eight-contract matrix: page hierarchy and viewports, hero pause, capability attention, mobile narrative, mobile index, Lab accessibility, decision context, and public-brand-study context.
+- Exact unchanged Work source passed run `31166850299`.
+- The verifier respects the production Content Security Policy rather than weakening it with `unsafe-eval`.
 
 ### Insights
 
-- Canonical 22-plus-guide registry requirement.
-- Archive search and topic-cluster checks.
-- Static article route, metadata, BlogPosting or Article schema, dates, breadcrumbs, citations, related reading, sitemap, robots, and `llms.txt` checks.
-- RSS feed at `/insights/rss.xml`.
+- One canonical registry containing 29 published guides across five topic hubs.
+- Archive search, topic filters, related reading, sourced and unsourced article behavior, keyboard operation, mobile rendering, and reduced motion.
+- Static article routes, metadata, BlogPosting schema, dates, breadcrumbs, FAQ schema, citations, sitemap, robots, Googlebot preview directives, and `llms.txt`.
+- Both feeds: `/insights/feed.xml` and `/insights/rss.xml`.
 - Legacy `/blog` and `/blog/[slug]` redirects to canonical Insights URLs.
+- Missing `cinematic-waterlight` media references replaced with the valid approved water-element poster and video pair.
+- Final green evidence:
+  - Authority run `31183444009`.
+  - Responsive browser run `31183533137`.
+  - Discovery run `31183610142`.
 
 ### Contact and APIs
 
@@ -67,6 +96,7 @@ The preview exposes two uncached machine-readable endpoints:
 
 These must not be marked complete from source or headless-browser evidence alone:
 
+- Reassigning and authenticating the permanent protected Vercel alias.
 - A real Calendly booking completed on a physical mobile device.
 - A real phone tap and WhatsApp handoff on iOS and Android.
 - Contact email delivery using the configured preview Resend credentials.
@@ -78,4 +108,4 @@ These must not be marked complete from source or headless-browser evidence alone
 
 ## Release rule
 
-A green source gate proves that the permanent alias and GitHub source are the same. Green browser gates prove that the automated routes and states passed. Neither replaces Suman's visual approval or the real-device and real-delivery checks above.
+A green source gate proves that the permanent alias and the latest deployable GitHub source are the same. Green browser gates prove that the automated routes and states passed. Neither replaces Suman's visual approval or the real-device and real-delivery checks above.
