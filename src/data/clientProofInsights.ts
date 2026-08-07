@@ -36,8 +36,8 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "15 min read",
-    heroImage: "/images/cinematic-waterlight-poster.jpg",
-    heroVideo: "/videos/cinematic-waterlight.mp4",
+    heroImage: "/images/higgsfield-element-water.jpg",
+    heroVideo: "/videos/higgsfield-element-water.mp4",
     heroImageAlt:
       "Light moving across water and revealing a clear path, representing evidence that makes an invisible service easier to trust",
     keyTakeaways: [
