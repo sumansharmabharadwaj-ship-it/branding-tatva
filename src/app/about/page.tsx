@@ -76,8 +76,17 @@ export default function AboutPage() {
             claims, each tied to a real engagement. Sits directly after
             the authority hero so the practice's stance arrives before
             its story. */}
-        <section className="bg-soil py-16 sm:py-24">
-          <PointOfView />
+        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+          <BackgroundVideo
+            video="/videos/generated/bt-about-point-view-three-stones.mp4"
+            poster="/images/generated/bt-about-point-view-three-stones-poster.jpg"
+            parallax
+            playbackRate={0.84}
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-soil/80" />
+          <div className="relative">
+            <PointOfView />
+          </div>
         </section>
 
         {/* Was own-alpenglow-peak.mp4 under an 80%-opaque Sandstone tint —

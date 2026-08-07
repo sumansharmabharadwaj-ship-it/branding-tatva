@@ -123,8 +123,15 @@ export default function ContactPage() {
             and every door is visible before any form field appears.
             Plain anchor cards, zero novelty — this page's job is to
             get out of the way. */}
-        <section className="border-b border-soil/10 py-10" style={{ backgroundColor: "#E8DED0" }}>
-          <Container className="grid gap-4 md:grid-cols-3">
+        <section className="relative overflow-hidden border-b border-soil/10 py-10" style={{ backgroundColor: "#E8DED0" }}>
+          <BackgroundVideo
+            video="/videos/generated/bt-contact-three-paths-waterpaper.mp4"
+            poster="/images/generated/bt-contact-three-paths-waterpaper-poster.jpg"
+            parallax
+            playbackRate={0.86}
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-[#E8DED0]/84" />
+          <Container className="relative grid gap-4 md:grid-cols-3">
             <a
               href="#call"
               className="group rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm transition-transform duration-300 hover:translate-y-[-2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"

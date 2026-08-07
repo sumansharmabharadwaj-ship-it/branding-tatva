@@ -176,8 +176,15 @@ export default async function InsightTopicPage({ params }: Props) {
           </Container>
         </header>
 
-        <section className="bg-ivory py-20 sm:py-28">
-          <Container>
+        <section className="relative overflow-hidden bg-ivory py-20 sm:py-28">
+          <BackgroundVideo
+            video="/videos/generated/bt-insights-topic-system-beneath.mp4"
+            poster="/images/generated/bt-insights-topic-system-beneath-poster.jpg"
+            parallax
+            playbackRate={0.84}
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-[#F4EFE6]/87" />
+          <Container className="relative">
             <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
               <Reveal>
                 <div>
@@ -230,8 +237,15 @@ export default async function InsightTopicPage({ params }: Props) {
           </Container>
         </section>
 
-        <section className="bg-background-alt py-20 sm:py-28">
-          <Container>
+        <section className="relative overflow-hidden bg-background-alt py-20 sm:py-28">
+          <BackgroundVideo
+            video="/videos/generated/bt-insights-topic-reading-current.mp4"
+            poster="/images/generated/bt-insights-topic-reading-current-poster.jpg"
+            parallax
+            playbackRate={0.82}
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-[#EAE6DD]/88" />
+          <Container className="relative">
             <Reveal>
               <div className="grid gap-6 lg:grid-cols-[0.7fr_1.3fr] lg:items-end">
                 <div>
@@ -263,8 +277,15 @@ export default async function InsightTopicPage({ params }: Props) {
           </Container>
         </section>
 
-        <section className="bg-soil py-20 text-ivory sm:py-28">
-          <Container>
+        <section className="relative overflow-hidden bg-soil py-20 text-ivory sm:py-28">
+          <BackgroundVideo
+            video="/videos/generated/bt-insights-topic-across-system.mp4"
+            poster="/images/generated/bt-insights-topic-across-system-poster.jpg"
+            parallax
+            playbackRate={0.84}
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-soil/81" />
+          <Container className="relative">
             <Reveal>
               <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
                 <div>
