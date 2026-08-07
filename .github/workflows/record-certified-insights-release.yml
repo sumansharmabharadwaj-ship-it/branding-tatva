@@ -1,0 +1,121 @@
+name: Record the hosted-certified Insights release
+
+on:
+  workflow_run:
+    workflows:
+      - Finalize the exact 29-guide Insights release
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-record-certified-insights-release
+  cancel-in-progress: false
+
+jobs:
+  record:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'homepage-cinematic-recovery'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out the canonical branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+
+      - name: Write the durable release report once
+        id: report
+        shell: bash
+        env:
+          CERTIFIED_SHA: ${{ github.event.workflow_run.head_sha }}
+          CERTIFICATION_RUN: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          git fetch origin homepage-cinematic-recovery
+          git reset --hard origin/homepage-cinematic-recovery
+
+          report='docs/INSIGHTS_FINAL_HOSTED_CERTIFICATION_2026-08-07.md'
+          if [ -f "$report" ] && grep -q 'Final hosted certification recorded' "$report"; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          cat > "$report" <<MD
+          # Branding Tatva Insights · Final Hosted Certification
+
+          **Final hosted certification recorded:** 7 August 2026  
+          **Permanent review alias:** https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/  
+          **Initial hosted-certified source:** \`${CERTIFIED_SHA}\`  
+          **GitHub Actions run:** \`${CERTIFICATION_RUN}\`
+
+          ## Certified contract
+
+          - One canonical registry containing 29 published guides.
+          - Five canonical topic hubs.
+          - Valid \`/images/cinematic-waterlight-poster.jpg\` payload stored as a deployable Git blob.
+          - Successful production build and Next Image response for the restored poster.
+          - Successful authority inventory, article-route, metadata, schema, and responsive-viewport gate.
+          - Successful archive search, topic filtering, representative sourced and unsourced article, keyboard, and reduced-motion gate.
+          - Successful sitemap, robots, RSS, feed, citation, topic, canonical URL, and AI-discovery gate.
+          - The same contracts repeated against the permanent Vercel review alias after exact-source identity was confirmed.
+
+          ## Release boundary
+
+          This certifies the Insights application source on the permanent **preview** alias. It does not promote or modify the production deployment. Production remains held for Suman's explicit visual approval.
+MD
+
+          python <<'PY'
+          from pathlib import Path
+
+          board = Path('docs/MASTER_PENDING_WORK.md')
+          content = board.read_text()
+          replacements = {
+              '- [ ] Deploy the exact latest `homepage-cinematic-recovery` commit to the permanent review alias.':
+                  '- [x] Deploy the exact latest `homepage-cinematic-recovery` application source to the permanent review alias. Insights exact-source certification is recorded in `docs/INSIGHTS_FINAL_HOSTED_CERTIFICATION_2026-08-07.md`.',
+              '- [ ] Verify `/api/release` reports the same commit SHA, branch, and preview environment as GitHub.':
+                  '- [x] Verify `/api/release` reports the same deployable source SHA, branch, and preview environment used by the hosted Insights certification.',
+              '- [ ] Browser-interact archive search, topic filtering, and related-reading journeys at desktop and mobile sizes.':
+                  '- [x] Browser-interact archive search, topic filtering, and related-reading journeys at desktop and mobile sizes.',
+              '- [ ] Verify Open Graph, Twitter, breadcrumb, FAQ, author/publisher schema, source-link reachability, external-link labels, and Googlebot preview directives on representative guides.':
+                  '- [x] Verify Open Graph, Twitter, breadcrumb, FAQ, author/publisher schema, source-link reachability, external-link labels, and Googlebot preview directives on representative guides.',
+              '- [ ] Run responsive browser checks on at least one sourced and one unsourced article, including keyboard navigation and reduced motion.':
+                  '- [x] Run responsive browser checks on at least one sourced and one unsourced article, including keyboard navigation and reduced motion.',
+          }
+          for old, new in replacements.items():
+              if old in content:
+                  content = content.replace(old, new)
+          board.write_text(content)
+
+          marker = Path('src/app/insights/authority-poster-repair-2026-08-07.ts')
+          marker_content = marker.read_text()
+          if 'releaseReport: "published"' not in marker_content:
+              marker_content = marker_content.replace(
+                  '  verification: "authority-browser-discovery",',
+                  '  verification: "authority-browser-discovery",\n  releaseReport: "published",',
+              )
+          marker.write_text(marker_content)
+          PY
+
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+      - name: Commit the report and one final deployable marker
+        if: steps.report.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            docs/INSIGHTS_FINAL_HOSTED_CERTIFICATION_2026-08-07.md \
+            docs/MASTER_PENDING_WORK.md \
+            src/app/insights/authority-poster-repair-2026-08-07.ts
+          git commit -m "Record the hosted-certified Insights release"
+          git fetch origin homepage-cinematic-recovery
+          git rebase origin/homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
