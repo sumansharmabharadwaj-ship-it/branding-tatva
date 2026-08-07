@@ -237,7 +237,10 @@ async function articleAudit(browser, article, viewport) {
         const style = getComputedStyle(element);
         return rect.width > 0 && rect.height > 0 && style.display !== "none" && style.visibility !== "hidden" && style.opacity !== "0";
       };
-      const robots = document.querySelector('meta[name="robots"]')?.getAttribute("content") || "";
+      const robots = [
+        document.querySelector('meta[name="robots"]')?.getAttribute("content") || "",
+        document.querySelector('meta[name="googlebot"]')?.getAttribute("content") || "",
+      ].filter(Boolean).join(", ");
 
       return {
         route,
