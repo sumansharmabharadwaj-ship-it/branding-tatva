@@ -1,0 +1,138 @@
+name: Record the hosted-certified Contact release
+
+on:
+  workflow_run:
+    workflows:
+      - Contact hosted exact-source certification
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-record-certified-contact-release
+  cancel-in-progress: false
+
+jobs:
+  record:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'homepage-cinematic-recovery'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out the canonical branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+
+      - name: Write the durable Contact certification report once
+        id: report
+        shell: bash
+        env:
+          CERTIFICATION_RUN: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          git fetch origin homepage-cinematic-recovery
+          git reset --hard origin/homepage-cinematic-recovery
+
+          report='docs/CONTACT_FINAL_HOSTED_CERTIFICATION_2026-08-07.md'
+          if [ -f "$report" ] && grep -q 'Hosted Contact certification recorded' "$report"; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          deployable_sha="$(git log -1 --format=%H -- \
+            src public package.json pnpm-lock.yaml next.config.ts \
+            postcss.config.mjs tsconfig.json vercel.json)"
+
+          cat > "$report" <<MD
+          # Branding Tatva Contact · Hosted Certification
+
+          **Hosted Contact certification recorded:** 7 August 2026  
+          **Permanent review alias:** https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/contact  
+          **Hosted-certified deployable source:** \`${deployable_sha}\`  
+          **GitHub Actions run:** \`${CERTIFICATION_RUN}\`
+
+          ## Certified without creating external records
+
+          - Desktop, mobile, and reduced-motion Contact layouts render without horizontal overflow.
+          - The public consultation duration is 30 minutes and no stale 20-minute copy is present.
+          - The visible phone number, \`tel:\` action, and WhatsApp action all resolve to +91 84477 25381.
+          - Email fallback, scheduling target, Calendly/fallback surface, and timezone guidance are present.
+          - Contact form email, message, and submit controls are present; invalid email is rejected with browser or accessible error signalling.
+          - The Contact API rejects unsupported methods, wrong content types, empty payloads, invalid fields, and oversized requests without returning fake success.
+          - The Newsletter API rejects an invalid email without returning fake success.
+          - No contact email, newsletter subscription, or Calendly booking was created by the audit.
+
+          ## Deliberately still manual
+
+          - A real Calendly appointment, confirmation screen, calendar invitation, cancellation/reschedule path, and timezone conversion must be tested with Suman's approval because doing so creates an external booking.
+          - A real mobile-device pass remains separate from browser emulation.
+          - Delivery-provider timeout behaviour, production-grade distributed rate limiting, and actual message receipt require environment credentials and controlled test recipients.
+
+          ## Release boundary
+
+          This certifies the non-destructive Contact and booking-entry experience on the permanent **preview** alias. It does not modify production or create real external records.
+MD
+
+          mkdir -p src/app/contact
+          cat > src/app/contact/hosted-certification-2026-08-07.ts <<'TS'
+          // Deployable marker published only after non-destructive Contact,
+          // scheduling-entry, mobile, validation, and API rejection checks pass
+          // on the permanent Vercel preview alias.
+          export const contactHostedCertification20260807 = {
+            viewports: ["1440x900", "390x844", "390x844-reduced"],
+            consultationMinutes: 30,
+            phone: "+918447725381",
+            externalRecordsCreated: false,
+            hostedAlias: "branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/contact",
+            status: "published",
+          } as const;
+          TS
+
+          python <<'PY'
+          from pathlib import Path
+
+          board = Path('docs/MASTER_PENDING_WORK.md')
+          content = board.read_text()
+          anchor = '- [ ] Test phone, WhatsApp, schedule, and form paths on a real mobile browser.\n'
+          note = (
+              '\nHosted non-destructive Contact evidence is complete on the permanent preview alias for desktop, mobile emulation, reduced motion, phone/WhatsApp/email links, scheduling entry, invalid-form handling, and safe API rejection paths. '
+              'Evidence: `docs/CONTACT_FINAL_HOSTED_CERTIFICATION_2026-08-07.md`. Real booking, confirmation, message receipt, and physical-device checks remain intentionally open.\n'
+          )
+          if 'Hosted non-destructive Contact evidence is complete' not in content and anchor in content:
+              content = content.replace(anchor, anchor + note)
+          board.write_text(content)
+
+          release = Path('src/app/release-markers/canonical-verification-suite-2026-08-07.ts')
+          release_content = release.read_text()
+          if 'contactHostedCertification: "published"' not in release_content:
+              release_content = release_content.replace(
+                  'contactContract: "30-minute-canonical",',
+                  'contactContract: "30-minute-canonical",\n  contactHostedCertification: "published",',
+              )
+          release.write_text(release_content)
+          PY
+
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+      - name: Commit the Contact report and one final deployable marker
+        if: steps.report.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            docs/CONTACT_FINAL_HOSTED_CERTIFICATION_2026-08-07.md \
+            docs/MASTER_PENDING_WORK.md \
+            src/app/contact/hosted-certification-2026-08-07.ts \
+            src/app/release-markers/canonical-verification-suite-2026-08-07.ts
+          git commit -m "Record the hosted-certified Contact release"
+          git fetch origin homepage-cinematic-recovery
+          git rebase origin/homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
