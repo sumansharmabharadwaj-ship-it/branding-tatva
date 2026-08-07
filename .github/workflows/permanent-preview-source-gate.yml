@@ -6,6 +6,8 @@ on:
     branches:
       - homepage-cinematic-recovery
     paths:
+      - ".github/workflows/permanent-preview-source-gate.yml"
+      - "scripts/permanent_preview_source_gate.cjs"
       - "src/**"
       - "public/**"
       - "package.json"
@@ -27,17 +29,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 18
     steps:
-      - name: Check out repository
+      - name: Check out complete canonical history
         uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
 
-      - name: Set up Node.js
+      - name: Set up Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
-      - name: Wait for the permanent alias and verify exact source
+      - name: Wait for the permanent alias and verify the latest deployable source
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           PREVIEW_URL: https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app
           CANONICAL_BRANCH: homepage-cinematic-recovery
           GATE_TIMEOUT_MS: "720000"
