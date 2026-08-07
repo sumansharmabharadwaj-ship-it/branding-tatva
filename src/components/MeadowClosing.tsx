@@ -1,6 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
@@ -58,6 +59,8 @@ export function MeadowClosing() {
   const activeIndexRef = useRef(0);
   const lenis = useLenis();
   const prefersReducedMotion = useHydratedReducedMotion();
+
+  useVideoFadeIn(videoRef, !prefersReducedMotion);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
