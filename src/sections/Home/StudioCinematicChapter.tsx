@@ -1,6 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
@@ -57,16 +58,13 @@ const DISCIPLINES = [
   },
 ] as const;
 
-const ROTATE_MS = 3700;
-const MANUAL_HOLD_MS = 9000;
-const HOVER_HOLD_MS = 3000;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function StudioCinematicChapter() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const holdUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const lenis = useLenis();
   const inView = useInView(sectionRef, {
     amount: 0.18,
     margin: "8% 0px -12% 0px",
@@ -74,16 +72,57 @@ export function StudioCinematicChapter() {
   const [activeIndex, setActiveIndex] = useState(0);
   const active = DISCIPLINES[activeIndex];
 
+  // Scroll advances the disciplines now, rather than a timer.
+  //
+  // This chapter was 2.18 viewports of scrolling past a panel that changed
+  // itself every 3.7 seconds, which is an auto advancing carousel, the one
+  // pattern CLAUDE.md rules out. Reading at your own pace meant racing it.
+  //
+  // The section is a held scene instead: the frame stays still while the
+  // runway underneath it scrolls, and position within that runway chooses
+  // the discipline. Scrolling forward moves forward, scrolling back moves
+  // back, and stopping holds. Sticky does the holding, measured rect maths
+  // does the progress, matching every other held section here.
   useEffect(() => {
-    if (!inView || prefersReducedMotion) return;
+    const section = sectionRef.current;
+    if (!section || prefersReducedMotion) return;
+    // Below the runway breakpoint the frame is a normal block, so there is
+    // no progress to read and the discipline list stays a plain chooser.
+    if (!window.matchMedia("(min-width: 768px)").matches) return;
 
-    const timer = window.setInterval(() => {
-      if (document.hidden || Date.now() < holdUntilRef.current) return;
-      setActiveIndex((current) => (current + 1) % DISCIPLINES.length);
-    }, ROTATE_MS);
+    let frame = 0;
+    function read() {
+      frame = 0;
+      const el = sectionRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const travel = rect.height - window.innerHeight;
+      if (travel <= 0) return;
+      const progress = Math.min(1, Math.max(0, -rect.top / travel));
+      // Sit each discipline in an equal band, biased slightly late so the
+      // first one holds through the entrance rather than flicking past.
+      const next = Math.min(
+        DISCIPLINES.length - 1,
+        Math.floor(progress * DISCIPLINES.length * 0.98),
+      );
+      setActiveIndex((current) => (current === next ? current : next));
+    }
+    function schedule() {
+      if (frame) return;
+      frame = window.requestAnimationFrame(read);
+    }
 
-    return () => window.clearInterval(timer);
-  }, [inView, prefersReducedMotion]);
+    read();
+    const unsubscribe = lenis?.on("scroll", schedule);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      unsubscribe?.();
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [prefersReducedMotion, lenis]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -104,8 +143,28 @@ export function StudioCinematicChapter() {
     return () => video.pause();
   }, [activeIndex, inView, prefersReducedMotion]);
 
-  function choose(index: number, hold = MANUAL_HOLD_MS) {
-    holdUntilRef.current = Date.now() + hold;
+  // With scroll choosing the discipline, setting state on click alone gets
+  // overwritten by the next scroll frame, which left the chooser looking
+  // broken. Clicking scrolls to that discipline's band instead, so the two
+  // agree rather than fight, and the buttons become real navigation.
+  function choose(index: number) {
+    const section = sectionRef.current;
+    const driving =
+      section && !prefersReducedMotion && window.matchMedia("(min-width: 768px)").matches;
+
+    if (driving) {
+      const rect = section.getBoundingClientRect();
+      const travel = rect.height - window.innerHeight;
+      if (travel > 0) {
+        const band = travel / DISCIPLINES.length;
+        // Land mid band so a rounding wobble cannot drop into a neighbour.
+        const target = rect.top + window.scrollY + band * index + band * 0.5;
+        if (lenis) lenis.scrollTo(target, { duration: 0.8 });
+        else window.scrollTo({ top: target, behavior: "smooth" });
+        return;
+      }
+    }
+
     setActiveIndex(index);
   }
 
@@ -119,12 +178,6 @@ export function StudioCinematicChapter() {
       className="studio-cinematic home-scene"
       aria-labelledby="studio-cinematic-title"
       style={{ "--studio-accent": active.accent } as CSSProperties}
-      onPointerDown={() => {
-        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
-      onFocusCapture={() => {
-        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
     >
       <div className="studio-cinematic__aurora studio-cinematic__aurora--clay" aria-hidden="true" />
       <div className="studio-cinematic__aurora studio-cinematic__aurora--sage" aria-hidden="true" />
@@ -214,7 +267,6 @@ export function StudioCinematicChapter() {
                   aria-selected={selected}
                   aria-controls="studio-cinematic-panel"
                   onClick={() => choose(index)}
-                  onPointerEnter={() => choose(index, HOVER_HOLD_MS)}
                   onFocus={() => choose(index)}
                   className={selected ? "is-active" : undefined}
                   style={{ "--studio-tab-accent": discipline.accent } as CSSProperties}
@@ -225,9 +277,13 @@ export function StudioCinematicChapter() {
                   <i aria-hidden="true">
                     <b
                       style={{
-                        animationDuration: `${ROTATE_MS}ms`,
-                        animationPlayState:
-                          selected && inView && !prefersReducedMotion ? "running" : "paused",
+                        // Fills for whichever discipline is showing. It used
+                        // to animate on the rotation timer, which would now
+                        // be a countdown to nothing.
+                        animation: "none",
+                        transform: selected ? "scaleX(1)" : "scaleX(0)",
+                        transformOrigin: "left",
+                        transition: prefersReducedMotion ? "none" : "transform 420ms cubic-bezier(0.22,1,0.36,1)",
                       }}
                     />
                   </i>
