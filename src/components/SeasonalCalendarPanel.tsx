@@ -236,7 +236,7 @@ export function SeasonalCalendarPanel() {
           className="text-xs text-ivory/85 sm:text-sm"
           style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
         >
-          Twenty minutes, just a real conversation.
+          Thirty minutes, just a real conversation.
         </span>
         <motion.button
           type="button"

@@ -103,7 +103,7 @@ export function StrategyRoomCTA() {
           Open the strategy room.
         </h2>
         <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-ivory/90">
-          A few quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way. You
+          A few quick questions, then a real time on the calendar. Thirty minutes, honest feedback either way. You
           talk directly with the person who does the work, from first question to final file.
         </p>
       </motion.div>

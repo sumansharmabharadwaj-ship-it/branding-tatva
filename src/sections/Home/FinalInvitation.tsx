@@ -24,7 +24,7 @@ const INVITATIONS: Record<Situation, Invitation> = {
     eyebrow: "The next clear decision",
     headline: "Let’s find the idea your business should be remembered for.",
     body:
-      "Twenty minutes to name the tension, choose the direction, and see what the brand needs next.",
+      "Thirty minutes to name the tension, choose the direction, and see what the brand needs next.",
     action: "Enter the strategy room",
     trail: ["Name the tension", "Choose the position", "Build the system"],
     proofHref: "/work",
@@ -218,7 +218,7 @@ export function FinalInvitation() {
                 className="final-invitation__details mt-7 flex flex-wrap gap-2"
                 aria-label="First conversation details"
               >
-                {["20 minutes", "honest diagnosis", "zero pitch deck"].map((detail) => (
+                {["30 minutes", "honest diagnosis", "zero pitch deck"].map((detail) => (
                   <span
                     key={detail}
                     className="rounded-full border border-ivory/12 bg-ivory/[0.035] px-3 py-2 text-[0.58rem] font-medium uppercase tracking-[0.14em] text-ivory/48"

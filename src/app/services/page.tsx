@@ -576,7 +576,7 @@ export default async function ServicesPage() {
         <ContextualCTA
           eyebrow="Medium step"
           heading="Unsure which scope fits?"
-          body="Twenty minutes settles it, with honest feedback either way."
+          body="Thirty minutes settles it, with honest feedback either way."
           href="#book"
           label="Discuss the right scope"
           event="contextual_cta_clicked"
