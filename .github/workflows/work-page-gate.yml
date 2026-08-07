@@ -3,7 +3,7 @@ run-name: Work evidence gate · ${{ github.sha }}
 
 on:
   # Keep a manual route available for accessibility and deployment verification.
-  # Every focused contract now runs under the same production CSP before reporting.
+  # Final exact-head run after the single-writer hero pointer-state repair.
   workflow_dispatch:
   push:
     branches:
