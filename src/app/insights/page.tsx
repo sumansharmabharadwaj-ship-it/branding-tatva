@@ -5,6 +5,7 @@ import { ElementGlyph } from "@/components/ElementGlyph";
 import { InsightCard, type InsightCardPost } from "@/components/InsightCard";
 import { InsightsExplorer } from "@/components/InsightsExplorer";
 import { LinkButton } from "@/components/Button";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { PhotoHero } from "@/components/PhotoHero";
 import { Reveal } from "@/components/Reveal";
@@ -195,7 +196,20 @@ export default function InsightsPage() {
         </section>
 
         <section className="relative overflow-hidden bg-soil py-20 text-ivory sm:py-28">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(184,90,52,0.18),transparent_28%),radial-gradient(circle_at_82%_82%,rgba(92,107,74,0.16),transparent_30%)]" />
+          <BackgroundVideo
+            video="/videos/generated/bt-insights-reading-currents.mp4"
+            poster="/images/generated/bt-insights-reading-currents-poster.jpg"
+            parallax
+            playbackRate={0.92}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(105deg, rgba(12,18,20,0.9) 0%, rgba(12,18,20,0.7) 48%, rgba(12,18,20,0.55) 100%), radial-gradient(circle at 82% 82%, rgba(92,107,74,0.14), transparent 32%)",
+            }}
+          />
           <Container className="relative">
             <Reveal>
               <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">

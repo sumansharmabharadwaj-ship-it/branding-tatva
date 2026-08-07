@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import type { Project } from "@/data/projects";
 import { getWorkTaxonomy } from "@/data/workTaxonomy";
@@ -156,6 +157,20 @@ export function SystemFlagship({ project }: { project: Project }) {
 
   return (
     <section className="relative scroll-mt-28 overflow-hidden py-20 sm:py-28" style={{ backgroundColor: "#10151A" }}>
+      <BackgroundVideo
+        video="/videos/generated/bt-work-system-roots.mp4"
+        poster="/images/generated/bt-work-system-roots-poster.jpg"
+        parallax
+        playbackRate={0.9}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(105deg, rgba(7,12,13,0.95) 0%, rgba(10,16,18,0.82) 46%, rgba(10,16,18,0.58) 100%)",
+        }}
+      />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -left-[12%] top-[12%] h-[34rem] w-[34rem] rounded-full opacity-50 blur-3xl"

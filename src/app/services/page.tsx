@@ -425,6 +425,20 @@ export default async function ServicesPage() {
             the numbers themselves are the visual; it also hands
             seamlessly into Authority's identical charcoal. */}
         <section data-services-scene="verified-outcome" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          <BackgroundVideo
+            video="/videos/generated/bt-services-verified-rings.mp4"
+            poster="/images/generated/bt-services-verified-rings-poster.jpg"
+            parallax
+            playbackRate={0.94}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, rgba(13,18,18,0.92) 0%, rgba(13,18,18,0.72) 48%, rgba(13,18,18,0.5) 100%)",
+            }}
+          />
           <SceneVeil color="#0E1714" />
           <div className="relative">
             <VerifiedOutcome />
