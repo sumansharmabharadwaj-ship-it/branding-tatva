@@ -43,19 +43,18 @@ async function assertNoOverflow(page) {
 }
 
 async function assertSelectedAndFocused(page, tabs, index, label) {
-  await page.waitForFunction(
-    ({ tabIndex }) => {
-      const tablist = Array.from(document.querySelectorAll('[role="tablist"]')).find((node) =>
-        (node.getAttribute("aria-label") || "").endsWith("strategy phases"),
-      );
-      const tab = tablist?.querySelectorAll('[role="tab"]')[tabIndex];
-      return Boolean(tab && tab.getAttribute("aria-selected") === "true" && document.activeElement === tab);
-    },
-    { tabIndex: index },
-    { timeout: 3_000 },
-  ).catch(() => {
+  const deadline = Date.now() + 3_000;
+  let ready = false;
+  while (Date.now() < deadline) {
+    ready = await tabs.nth(index).evaluate((node) =>
+      node.getAttribute("aria-selected") === "true" && document.activeElement === node,
+    );
+    if (ready) break;
+    await page.waitForTimeout(70);
+  }
+  if (!ready) {
     throw new Error(`work/lab-a11y: ${label} did not select and focus tab ${index + 1}`);
-  });
+  }
 
   const tabStops = await tabs.evaluateAll((nodes) => nodes.map((node) => node.tabIndex));
   assert(
@@ -124,16 +123,20 @@ async function assertSelectedAndFocused(page, tabs, index, label) {
     });
 
     await closeButton.click();
-    await page.waitForFunction(
-      ({ controlledId }) => {
-        const active = document.activeElement;
-        return Boolean(active && active.getAttribute("aria-controls") === controlledId);
-      },
-      { controlledId: originControl },
-      { timeout: 4_000 },
-    ).catch(() => {
+    const focusDeadline = Date.now() + 4_000;
+    let focusRestored = false;
+    while (Date.now() < focusDeadline) {
+      focusRestored = await originCover.evaluate(
+        (node, controlledId) =>
+          document.activeElement === node && node.getAttribute("aria-controls") === controlledId,
+        originControl,
+      );
+      if (focusRestored) break;
+      await page.waitForTimeout(70);
+    }
+    if (!focusRestored) {
       throw new Error("work/lab-a11y: closing the dossier did not restore focus to its originating cover");
-    });
+    }
 
     assert((await visibleCount(covers)) === 4, "work/lab-a11y: dossier covers did not return after closing");
     await assertNoOverflow(page);
