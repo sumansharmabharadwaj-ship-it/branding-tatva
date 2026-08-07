@@ -11,6 +11,7 @@ import { TiltCard } from "@/components/TiltCard";
 import { ScrollCue } from "@/components/ScrollCue";
 import { Fireflies } from "@/components/Fireflies";
 import { useRevealTrigger } from "@/hooks/useRevealTrigger";
+import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
 // Full-bleed nature backdrop with a single framed photo/video card
 // floating centered on it, the headline carried directly on the card
@@ -52,9 +53,14 @@ export function AboutSplitHero({
   bgPoster: string;
 }) {
   const ref = useRef<HTMLElement>(null);
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+  const portraitVideoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const [cardRef, cardVisible] = useRevealTrigger();
+
+  useVideoFadeIn(backgroundVideoRef, !prefersReducedMotion);
+  useVideoFadeIn(portraitVideoRef, !prefersReducedMotion);
 
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const cardY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
@@ -67,6 +73,7 @@ export function AboutSplitHero({
       ) : (
         <motion.div className="absolute inset-0 top-[-10%] h-[120%] w-full" style={{ y: bgY }}>
           <video
+            ref={backgroundVideoRef}
             className="h-full w-full object-cover"
             src={bgVideo}
             poster={bgPoster}
@@ -137,6 +144,7 @@ export function AboutSplitHero({
                     <Image src={poster} alt="" fill sizes="320px" className="object-cover" />
                   ) : (
                     <video
+                      ref={portraitVideoRef}
                       className="absolute inset-0 h-full w-full object-cover"
                       src={video}
                       poster={poster}
