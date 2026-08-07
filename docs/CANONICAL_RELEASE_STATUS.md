@@ -16,20 +16,19 @@ The preview exposes two uncached machine-readable endpoints:
 - `/api/release` for the public release identifier and flat Vercel runtime fingerprint.
 - `/api/verification` for the canonical branch, permanent alias, backlog, phone, consultation duration, required routes, and nested Vercel runtime fingerprint.
 
-The source gate now resolves the latest **deployable application commit**, using the same path boundary as `vercel.json`'s ignored-build command. Workflow-only documentation and verifier commits therefore no longer create an impossible wait for a Vercel deployment that should correctly be skipped.
+The source gate now resolves the latest **deployable application commit**, using the same path boundary as `vercel.json`'s ignored-build command. GitHub workflow changes are now included so verification changes receive a required preview build, while documentation-only changes remain skipped.
 
 The gate also understands Vercel Deployment Protection. It uses `VERCEL_AUTOMATION_BYPASS_SECRET` when configured and fails immediately with an explicit authentication diagnosis when the secret is absent or rejected, rather than polling a protected 401 response for twelve minutes.
 
 ## Current certified application source
 
-- Deployable commit: `79ede2c19d3825df2d6dca2e3d41ccc34c5f7bef`
-- Commit purpose: repair the client-proof Insight's missing poster and video pair.
-- READY deployment: `dpl_AGKbgVhHmrtPjDHPNZVvCxZs97UF`
-- Immutable preview: `https://branding-tatva-oue6ecbln-suman22.vercel.app/`
+- Deployable commit: `1c9cec3f8fd4228192381e668af0533896471f0e`
+- Commit purpose: ensure verification-workflow changes receive a preview build.
+- READY deployment: `dpl_E2XYXcQyrBAzbRYtZRw7q5tbWmpc`
 - Runtime branch: `homepage-cinematic-recovery`
 - Runtime environment: `preview`
 
-The immutable deployment's `/api/release` endpoint reports this exact commit, branch, environment, permanent-review alias contract, and canonical backlog.
+The certified deployment's `/api/release` endpoint reports this exact commit, branch, environment, permanent-review alias contract, and canonical backlog.
 
 ## Permanent-alias boundary
 
