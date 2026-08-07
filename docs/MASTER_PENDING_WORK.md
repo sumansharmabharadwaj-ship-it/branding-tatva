@@ -18,16 +18,16 @@ This file is the single source of truth for unfinished website work. It consolid
 ## P0 · Release and deployment blockers
 
 - [x] Build and deploy the latest canonical review source, commit `1c9cec3f8fd4228192381e668af0533896471f0e`, as READY deployment `dpl_E2XYXcQyrBAzbRYtZRw7q5tbWmpc`.
-- [ ] Move the permanent review alias from stale CLI deployment `a717c871427f08c0b50f7607c608ed8887bf0c04` to the certified `79ede2c…` deployment.
+- [ ] Move the permanent review alias from stale CLI deployment `a717c871427f08c0b50f7607c608ed8887bf0c04` to the latest certified canonical deployment.
 - [ ] Configure `VERCEL_TOKEN` for alias management and `VERCEL_AUTOMATION_BYPASS_SECRET` for protected-preview CI, without weakening preview protection.
-- [ ] Verify `/api/release` and `/api/verification` on the permanent alias report commit `79ede2c…`, branch `homepage-cinematic-recovery`, and preview environment.
+- [ ] Verify `/api/release` and `/api/verification` on the permanent alias report the certified canonical commit, branch `homepage-cinematic-recovery`, and preview environment.
 - [x] Make the permanent source gate compare the latest deployable application commit rather than workflow-only branch commits, and fail immediately when preview authentication is unavailable.
 - [ ] Complete the latest full cinematic GitHub gate without cancellation or stale-source drift.
 - [ ] Run the integrated browser matrix on the deployed artifact, not only the local production build.
 - [ ] Record Vercel Speed Insights and field Core Web Vitals where available: LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1.
 - [ ] Keep a rollback commit and do not promote production until Suman approves desktop and mobile screenshots.
 
-Current release evidence: the immutable preview `https://branding-tatva-b4xzxbhbb-suman22.vercel.app/` is READY from canonical commit `1c9cec3f8fd4228192381e668af0533896471f0e`; Vercel completed the production build successfully and current runtime-error aggregation is empty. The earlier cancellations were caused by the Vercel Ignored Build Step excluding workflow-only verification changes; the canonical `vercel.json` now watches `.github` as well as application sources. The permanent alias is still externally pinned to stale commit `a717c871427f08c0b50f7607c608ed8887bf0c04`; it requires alias reassignment through an authenticated Vercel management token, while preview protection remains intentionally enabled.
+Current release evidence: the latest immutable deployment is READY from canonical commit `1c9cec3f8fd4228192381e668af0533896471f0e`; Vercel completed the production build successfully and current runtime-error aggregation is empty. The earlier cancellations were caused by the Vercel Ignored Build Step excluding workflow-only verification changes; the canonical `vercel.json` now watches `.github` as well as application sources. The permanent alias is still externally pinned to stale commit `a717c871427f08c0b50f7607c608ed8887bf0c04`; it requires alias reassignment through an authenticated Vercel management token, while preview protection remains intentionally enabled.
 
 ## P0 · Homepage V4
 
