@@ -5,6 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
+const CONTRACT_VERSION = 2;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -116,6 +117,7 @@ if (!process.exitCode) {
     JSON.stringify(
       {
         result: "passed",
+        contractVersion: CONTRACT_VERSION,
         phoneE164: EXPECTED_PHONE_E164,
         phoneDisplay: EXPECTED_PHONE_DISPLAY,
         consultationMinutes: EXPECTED_DURATION,
