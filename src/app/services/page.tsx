@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
 import { preload } from "react-dom";
+import { site } from "@/data/site";
+import { offerings, packages } from "@/data/services";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -33,6 +35,91 @@ import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
 import { Magnetic } from "@/components/Magnetic";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { MOOD } from "@/lib/sectionWash";
+
+const SERVICES_URL = `${site.url}/services`;
+const PERSON_ID = `${site.url}/#person`;
+const ORGANIZATION_ID = `${site.url}/#organization`;
+
+/*
+ * Structured data for this page. It carried only the sitewide Person and
+ * ProfessionalService before, so the actual service lines and engagement
+ * formats were invisible to search and answer engines even though they are
+ * the whole point of the page.
+ *
+ * Prices are deliberately absent. data/services.ts states plainly that its
+ * figures are a first draft and should be read as agreed pricing by nobody.
+ * Schema.org is machine readable and can surface as firm pricing in a search
+ * result, which would turn a working draft into a public quote. Names,
+ * descriptions and audiences are all real copy already on the page, so they
+ * go in; the numbers wait until they are confirmed.
+ */
+const servicesJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${SERVICES_URL}#page`,
+  url: SERVICES_URL,
+  name: "Brand Strategy Services | Branding Tatva",
+  description:
+    "Brand strategy, verbal identity, content systems and positioning, led directly by Suman Sharma.",
+  author: { "@id": PERSON_ID },
+  publisher: { "@id": ORGANIZATION_ID },
+  breadcrumb: {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+      { "@type": "ListItem", position: 2, name: "Services", item: SERVICES_URL },
+    ],
+  },
+  mainEntity: { "@id": `${SERVICES_URL}#catalog` },
+};
+
+// The six service lines: what the practice actually does.
+const serviceCatalogJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "OfferCatalog",
+  "@id": `${SERVICES_URL}#catalog`,
+  name: "Brand strategy service lines",
+  url: SERVICES_URL,
+  provider: { "@id": ORGANIZATION_ID },
+  itemListElement: offerings.map((offering, index) => ({
+    "@type": "Offer",
+    position: index + 1,
+    itemOffered: {
+      "@type": "Service",
+      "@id": `${SERVICES_URL}#service-${index + 1}`,
+      name: offering.name,
+      description: offering.detail,
+      serviceType: offering.name,
+      provider: { "@id": ORGANIZATION_ID },
+      brand: { "@id": ORGANIZATION_ID },
+    },
+  })),
+};
+
+// The three engagement formats: how a project is shaped. Each carries the
+// audience it is written for, which is the part an answer engine can use to
+// match a real question ("who is this for") to a real answer.
+const engagementsJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "OfferCatalog",
+  "@id": `${SERVICES_URL}#engagements`,
+  name: "Engagement formats",
+  url: SERVICES_URL,
+  provider: { "@id": ORGANIZATION_ID },
+  itemListElement: packages.map((pkg, index) => ({
+    "@type": "Offer",
+    position: index + 1,
+    itemOffered: {
+      "@type": "Service",
+      "@id": `${SERVICES_URL}#${pkg.slug}`,
+      name: pkg.name,
+      description: pkg.description,
+      provider: { "@id": ORGANIZATION_ID },
+      audience: { "@type": "Audience", audienceType: pkg.forWho },
+      serviceOutput: pkg.includes.map((item) => ({ "@type": "Thing", name: item })),
+    },
+  })),
+};
 
 export const metadata: Metadata = {
   title: "Services",
@@ -108,6 +195,9 @@ export default async function ServicesPage() {
           deliberately light contextual CTA continues to paint its own
           surface. */}
       <main id="main-content" style={{ backgroundColor: MOOD.charcoal }}>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceCatalogJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(engagementsJsonLd) }} />
         <PricingProvider initialRegion={region}>
         {/* Curiosity opens as a complete first scene rather than a
             compact masthead. One viewport belongs to the root-system
