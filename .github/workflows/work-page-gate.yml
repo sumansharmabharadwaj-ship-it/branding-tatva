@@ -3,7 +3,7 @@ run-name: Work evidence gate · ${{ github.sha }}
 
 on:
   # Keep a manual route available for accessibility and deployment verification.
-  # Final exact-source verification trigger refreshed 2026-08-07.
+  # Exact-source verification refreshed after the visible responsive-route repair.
   workflow_dispatch:
   push:
     branches:
