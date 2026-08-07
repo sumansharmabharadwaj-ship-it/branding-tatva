@@ -1,0 +1,71 @@
+from pathlib import Path
+
+board_path = Path("docs/MASTER_PENDING_WORK.md")
+board = board_path.read_text()
+
+release_anchor = "- [ ] Keep a rollback commit and do not promote production until Suman approves desktop and mobile screenshots.\n"
+release_note = (
+    release_anchor
+    + "\nVerification evidence already completed on exact source commit `c2db51bb7e642e6b39d71e511dcab7ab7c33971a`: "
+    + "integrated production smoke run `31150192765` and Insights discovery run `31150191575`. "
+    + "The permanent Vercel alias remains the release blocker.\n"
+)
+if board.count(release_anchor) != 1:
+    raise SystemExit("Release anchor was not found exactly once.")
+board = board.replace(release_anchor, release_note)
+
+old_insights = """## P0 · Insights and SEO authority
+
+- [ ] Decide and document the canonical Insights source. Do not keep competing 22-guide, 29-intent, and alternate registries live simultaneously.
+- [ ] Bring the complete canonical authority hub into the permanent integrated preview.
+- [ ] Verify archive search, topic hubs, related reading, RSS, sitemap, canonical URLs, static generation, and legacy `/blog` redirects.
+- [ ] Verify sourced guides display Research Sources and expose `BlogPosting.citation` without changing unsourced guides.
+- [ ] Verify title, description, canonical, robots, Open Graph, Twitter, breadcrumb, Article/BlogPosting, FAQ, and author/publisher schema.
+- [ ] Verify source links, external-link labels, Googlebot preview directives, and AI-readable discovery files.
+- [ ] Prevent duplicate search intent and competing URLs, especially refresh-vs-rebrand and brand-recall guides.
+- [ ] Run responsive browser checks on representative sourced and unsourced articles.
+- [ ] Record indexability/noindex decisions for draft legal or preview-only routes.
+"""
+new_insights = """## P0 · Insights and SEO authority
+
+- [x] Establish and document one canonical Insights source: 29 published guides in the integrated authority registry. Evidence: `docs/INSIGHTS_AUTHORITY_RELEASE_2026-08-07.md`.
+- [x] Integrate the complete authority hub, five topic hubs, and article renderer into `homepage-cinematic-recovery`. Permanent-alias reassignment remains a release blocker above.
+- [x] Verify both feeds, topic routes, sitemap inclusion, canonical URLs, static generation, and permanent redirects from `/blog` and superseded Insight slugs.
+- [ ] Browser-interact archive search, topic filtering, and related-reading journeys at desktop and mobile sizes.
+- [x] Verify sourced guides display Research sources and expose `BlogPosting.citation`; verify unsourced guides expose neither.
+- [x] Verify unique title, description, canonical, robots discovery, Article/BlogPosting schema, and publication date across all 29 rendered guides.
+- [ ] Verify Open Graph, Twitter, breadcrumb, FAQ, author/publisher schema, source-link reachability, external-link labels, and Googlebot preview directives on representative guides.
+- [x] Publish and verify AI-readable discovery through `llms.txt`, `/insights/feed.xml`, and `/insights/rss.xml`.
+- [x] Prevent duplicate search intent and competing URLs through the single registry and explicit legacy redirects, including refresh-vs-rebrand and brand-recall routes.
+- [ ] Run responsive browser checks on at least one sourced and one unsourced article, including keyboard navigation and reduced motion.
+- [ ] Record indexability/noindex decisions for draft legal or preview-only routes.
+"""
+if board.count(old_insights) != 1:
+    raise SystemExit("The former Insights section was not found exactly once.")
+board = board.replace(old_insights, new_insights)
+
+old_contact = """## P0 · Contact and booking
+
+- [ ] Integrate the three-path Contact hierarchy into the canonical preview: schedule, call/WhatsApp, or write.
+- [ ] Centralize public contact data: `+91 84477 25381`, readable display format, `tel:` link, WhatsApp URL, email, and 30-minute consultation duration.
+- [ ] Remove every contradictory twenty-minute reference.
+- [ ] Verify one scheduling anchor, one form anchor, accessible call/WhatsApp actions near the top, and repeated direct contact near the enquiry decision.
+- [ ] Verify Calendly loading, timezone explanation, fallback link, confirmation state, and real booking flow.
+- [ ] Verify form validation, linked errors, live announcements, honeypot, request-size/content-type guard, rate limiting, delivery timeouts, no fake success, and email fallback.
+- [ ] Test phone, WhatsApp, schedule, and form paths on a real mobile browser.
+"""
+new_contact = """## P0 · Contact and booking
+
+- [x] Integrate the three-path Contact hierarchy: schedule, call/WhatsApp, or write.
+- [x] Centralize public contact data: `+91 84477 25381`, readable display format, `tel:` link, WhatsApp URL, email, and 30-minute consultation duration.
+- [x] Remove contradictory twenty-minute references and guard the public route against their return in release CI.
+- [x] Verify the scheduling anchor, form anchor, direct call/WhatsApp actions, visible phone number, and repeated contact paths at 1440×900 and 390×844.
+- [ ] Verify Calendly loading, timezone explanation, fallback link, confirmation state, and real booking flow.
+- [ ] Verify form validation, linked errors, live announcements, honeypot, request-size/content-type guard, rate limiting, delivery timeouts, no fake success, and email fallback.
+- [ ] Test phone, WhatsApp, schedule, and form paths on a real mobile browser.
+"""
+if board.count(old_contact) != 1:
+    raise SystemExit("The former Contact section was not found exactly once.")
+board = board.replace(old_contact, new_contact)
+
+board_path.write_text(board)
