@@ -8,6 +8,9 @@ const SRC = path.join(ROOT, "src");
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
+const DURATION_CONTEXT_RADIUS = 180;
+const CONSULTATION_CONTEXT =
+  /\b(?:call|consultation|consult|book|booking|schedule|calendar|calendly|strategy room|pitch deck|discovery|scope|diagnosis|conversation|talk directly|meeting)\b/i;
 
 function walk(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -33,19 +36,36 @@ function durationPhrasePattern(number, word, flags = "i") {
   );
 }
 
+function contextAround(content, index, length) {
+  const start = Math.max(0, index - DURATION_CONTEXT_RADIUS);
+  const end = Math.min(content.length, index + length + DURATION_CONTEXT_RADIUS);
+  return content.slice(start, end).replace(/\s+/g, " ").trim();
+}
+
 const sourceFiles = walk(SRC).filter((file) => /\.(?:ts|tsx|js|jsx|json|md|css)$/.test(file));
 const source = new Map(
   sourceFiles.map((file) => [relative(file), fs.readFileSync(file, "utf8")]),
 );
 
-const obsoleteDurationPattern = durationPhrasePattern(20, "twenty", "gi");
+const ignoredNonConsultationDurations = [];
 
 for (const [file, content] of source) {
-  const matches = [...content.matchAll(obsoleteDurationPattern)];
-  if (matches.length) {
+  const matches = [...content.matchAll(durationPhrasePattern(20, "twenty", "gi"))];
+  const staleConsultationMatches = [];
+
+  for (const match of matches) {
+    const excerpt = contextAround(content, match.index ?? 0, match[0].length);
+    if (CONSULTATION_CONTEXT.test(excerpt)) {
+      staleConsultationMatches.push({ wording: match[0], excerpt });
+    } else {
+      ignoredNonConsultationDurations.push({ file, wording: match[0] });
+    }
+  }
+
+  if (staleConsultationMatches.length) {
     fail(
-      `${file} contains obsolete consultation wording: ${matches
-        .map((match) => match[0])
+      `${file} contains obsolete consultation wording: ${staleConsultationMatches
+        .map((match) => match.wording)
         .join(", ")}`,
     );
   }
@@ -103,6 +123,7 @@ if (!process.exitCode) {
         consultationMinutes: EXPECTED_DURATION,
         durationEvidence,
         sourceFilesChecked: source.size,
+        ignoredNonConsultationDurationReferences: ignoredNonConsultationDurations.length,
       },
       null,
       2,
