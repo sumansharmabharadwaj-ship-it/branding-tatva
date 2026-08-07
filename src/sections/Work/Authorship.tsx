@@ -5,7 +5,8 @@ import { WORK } from "@/sections/Work/palette";
 
 // Work-page authorship: the founder-led advantage stated plainly beside
 // a real portrait. The content remains intentionally static while a quiet
-// root-light film adds depth behind it. By this point
+// root-light film adds depth behind it. Its poster preserves the same
+// composition for reduced-motion visitors. By this point
 // the visitor has already moved through several interactive proof modes;
 // authority should be readable immediately rather than entering through
 // another repeated fade-up sequence.
