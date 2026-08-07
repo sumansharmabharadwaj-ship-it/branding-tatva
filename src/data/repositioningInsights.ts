@@ -20,7 +20,7 @@ export const repositioningInsightPosts: SourcedInsightPost[] = [
     title: "How to reposition an established service business without losing recognition",
     seoTitle: "How to reposition a service business without losing recognition",
     excerpt:
-      "A recognition-safe repositioning method for established service businesses: change the meaning that limits growth while preserving the names, cues, proof, and customer confidence already earning memory.",
+      "Reposition an established service business without erasing recognition: change limiting market meaning while preserving familiar cues, proof, and customer confidence.",
     directAnswer:
       "Reposition an established service business by changing the market meaning before changing every visible asset. Audit what customers currently recognise, which associations help or hinder growth, and which names, phrases, colours, symbols, service rituals, and proof already carry memory. Define the new customer situation and strategic choice, preserve useful recognition cues, build a clear bridge from the old meaning to the new one, phase the rollout across touchpoints, and measure both understanding and recognition after launch.",
     element: "space",
