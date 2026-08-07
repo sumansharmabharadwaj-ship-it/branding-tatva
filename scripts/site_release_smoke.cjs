@@ -74,6 +74,15 @@ async function auditRoute(browser, viewport, route) {
             return rect.width > 0 && rect.height > 0 && style.display !== "none" && style.visibility !== "hidden";
           }).length
       : 0;
+    const mainText = (main?.textContent || "").replace(/\s+/g, " ").trim();
+    const hashLinks = main
+      ? Array.from(main.querySelectorAll('a[href^="#"]')).map((node) => node.getAttribute("href") || "")
+      : [];
+    const brokenHashLinks = hashLinks.filter((href) => {
+      if (!href || href === "#") return true;
+      return !document.getElementById(href.slice(1));
+    });
+
     return {
       route: currentRoute,
       viewportWidth: window.innerWidth,
@@ -85,9 +94,17 @@ async function auditRoute(browser, viewport, route) {
       description,
       skipLink: Boolean(document.querySelector('a[href="#main-content"]')),
       focusables,
+      brokenHashLinks,
       contactForm: Boolean(document.querySelector('form[action], main form, #main-content form')),
       workLinks: new Set(Array.from(document.querySelectorAll('a[href^="/work/"]')).map((node) => node.getAttribute("href"))).size,
       insightLinks: new Set(Array.from(document.querySelectorAll('a[href^="/insights/"]')).map((node) => node.getAttribute("href"))).size,
+      telephoneLinks: document.querySelectorAll('a[href="tel:+918447725381"]').length,
+      whatsappLinks: document.querySelectorAll('a[href^="https://wa.me/918447725381"]').length,
+      contactSchedulePath: Boolean(document.querySelector('a[href="#call"]') && document.getElementById("call")),
+      contactWritePath: Boolean(document.querySelector('a[href="#write"]') && document.getElementById("write")),
+      currentPhoneVisible: mainText.includes("+91 84477 25381"),
+      currentDurationVisible: /\b(?:30|thirty)[ -]minutes?\b/i.test(mainText),
+      staleDurationVisible: /\b(?:20|twenty)[ -]minutes?\b/i.test(mainText),
     };
   }, route);
 
@@ -99,10 +116,21 @@ async function auditRoute(browser, viewport, route) {
   assert(result.description.length >= 50, `${viewport.name}${route}: meta description is too short`);
   assert(result.skipLink, `${viewport.name}${route}: skip link missing`);
   assert(result.focusables >= 2, `${viewport.name}${route}: too few focusable destinations`);
+  assert(result.brokenHashLinks.length === 0,
+    `${viewport.name}${route}: broken in-page destinations ${result.brokenHashLinks.join(", ")}`);
   if (route !== "/") {
     assert(result.canonical.includes(route), `${viewport.name}${route}: canonical mismatch (${result.canonical})`);
   }
-  if (route === "/contact") assert(result.contactForm, `${viewport.name}/contact: contact form missing`);
+  if (route === "/contact") {
+    assert(result.contactForm, `${viewport.name}/contact: contact form missing`);
+    assert(result.telephoneLinks >= 1, `${viewport.name}/contact: direct telephone link missing`);
+    assert(result.whatsappLinks >= 1, `${viewport.name}/contact: direct WhatsApp link missing`);
+    assert(result.contactSchedulePath, `${viewport.name}/contact: schedule path does not reach #call`);
+    assert(result.contactWritePath, `${viewport.name}/contact: written-enquiry path does not reach #write`);
+    assert(result.currentPhoneVisible, `${viewport.name}/contact: public phone number is not visible`);
+    assert(result.currentDurationVisible, `${viewport.name}/contact: 30-minute duration is not visible`);
+    assert(!result.staleDurationVisible, `${viewport.name}/contact: stale 20-minute duration is still visible`);
+  }
   if (route === "/work") assert(result.workLinks >= 1, `${viewport.name}/work: no case-study routes found`);
   if (route === "/insights") assert(result.insightLinks >= 1, `${viewport.name}/insights: no article routes found`);
   assert(errors.length === 0, `${viewport.name}${route}: browser errors:\n${errors.join("\n")}`);
