@@ -1,0 +1,41 @@
+name: Contact contract gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - "src/app/contact/**"
+      - "src/components/CalendlyEmbed.tsx"
+      - "src/components/ContactForm.tsx"
+      - "src/data/site.ts"
+      - "scripts/contact_contract_gate.cjs"
+      - ".github/workflows/contact-contract-gate.yml"
+  pull_request:
+    paths:
+      - "src/app/contact/**"
+      - "src/components/CalendlyEmbed.tsx"
+      - "src/components/ContactForm.tsx"
+      - "src/data/site.ts"
+      - "scripts/contact_contract_gate.cjs"
+      - ".github/workflows/contact-contract-gate.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  contact-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify phone, booking duration, and contact paths
+        run: node scripts/contact_contract_gate.cjs
