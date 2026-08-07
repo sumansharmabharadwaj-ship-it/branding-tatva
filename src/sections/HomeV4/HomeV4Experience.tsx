@@ -164,6 +164,13 @@ export function HomeV4Experience() {
         className="home-v4-chapter home-v4-chapter--invitation invitation-cinematic"
         aria-label="Begin a conversation with Branding Tatva"
       >
+        {/* Measured as a held scene and reverted. Its content runs to 1.17
+            viewports, so the frame is taller than the screen and cannot stay
+            at the top through the whole runway: it held at three of five
+            sampled positions rather than five. A frame can only hold cleanly
+            when its content fits inside one viewport, which is the rule this
+            chapter fails and Tatva passes. Holding it needs its own layout to
+            come under a screen first. */}
         <VideoBreak
           src="/videos/higgsfield-silver-tide.mp4"
           poster="/images/higgsfield-silver-tide-poster.jpg"
