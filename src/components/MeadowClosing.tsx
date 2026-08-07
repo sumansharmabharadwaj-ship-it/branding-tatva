@@ -200,7 +200,11 @@ export function MeadowClosing() {
               <p
                 ref={closingRef}
                 className="mt-10 max-w-md font-display text-[clamp(1.05rem,2.1vw,1.3rem)] font-normal text-ivory/85"
-                style={{ opacity: 0 }}
+                /* Scroll reveals this line, so it starts hidden. Under
+                   reduced motion that reveal never runs and the closing
+                   sentence of the whole page stayed invisible, so it opens
+                   already visible there instead. */
+                style={{ opacity: prefersReducedMotion ? 1 : 0 }}
               >
                 {CLOSING_LINE}
               </p>

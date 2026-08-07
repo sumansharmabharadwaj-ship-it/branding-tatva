@@ -52,6 +52,18 @@ function QuoteText({
     );
   }
 
+  // Under reduced motion the reveal trigger never fires, so a quote that
+  // starts at opacity 0 waiting for it stays invisible for good. Reduced
+  // motion asks for less movement, never for less content, so it gets the
+  // finished state directly.
+  if (prefersReducedMotion) {
+    return (
+      <p className={className} style={style}>
+        {quote}
+      </p>
+    );
+  }
+
   return (
     <motion.p
       ref={revealRef}
