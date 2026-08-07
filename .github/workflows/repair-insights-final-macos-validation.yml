@@ -1,0 +1,94 @@
+name: Repair macOS poster validation in final Insights certification
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - ".github/workflows/repair-insights-final-macos-validation.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-insights-final-macos-validation-repair
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out the canonical branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+
+      - name: Make poster validation native to the macOS certification runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          python <<'PY'
+          from pathlib import Path
+
+          workflow = Path('.github/workflows/insights-final-certification.yml')
+          content = workflow.read_text()
+          old = '''      - name: Validate the restored waterlight poster
+        run: |
+          test -s public/images/cinematic-waterlight-poster.jpg
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height \\
+            -of csv=s=x:p=0 public/images/cinematic-waterlight-poster.jpg \\
+            | grep -Eq '^[0-9]+x[0-9]+$'
+'''
+          new = '''      - name: Validate the restored waterlight poster
+        run: |
+          test -s public/images/cinematic-waterlight-poster.jpg
+          file public/images/cinematic-waterlight-poster.jpg | grep -Eqi 'JPEG|image data'
+          width="$(sips -g pixelWidth public/images/cinematic-waterlight-poster.jpg | awk '/pixelWidth/ {print $2}')"
+          height="$(sips -g pixelHeight public/images/cinematic-waterlight-poster.jpg | awk '/pixelHeight/ {print $2}')"
+          test "${width:-0}" -gt 0
+          test "${height:-0}" -gt 0
+'''
+          if old not in content:
+              if 'sips -g pixelWidth public/images/cinematic-waterlight-poster.jpg' in content:
+                  raise SystemExit(0)
+              raise SystemExit('Expected macOS poster validation block was not found')
+          workflow.write_text(content.replace(old, new))
+          PY
+
+          marker="src/app/insights/authority-poster-repair-2026-08-07.ts"
+          if [ ! -f "$marker" ]; then
+            echo "The post-poster verification marker has not landed yet." >&2
+            exit 1
+          fi
+          python <<'PY'
+          from pathlib import Path
+          marker = Path('src/app/insights/authority-poster-repair-2026-08-07.ts')
+          content = marker.read_text()
+          if 'runnerValidation: "macos-native"' not in content:
+              content = content.replace(
+                  'verification: "authority-browser-discovery",',
+                  'verification: "authority-browser-discovery",\n  runnerValidation: "macos-native",',
+              )
+              marker.write_text(content)
+          PY
+
+      - name: Commit the corrected certification and exact-head marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/insights-final-certification.yml \
+            src/app/insights/authority-poster-repair-2026-08-07.ts
+          if git diff --cached --quiet; then
+            echo "macOS validation is already current."
+            exit 0
+          fi
+          git commit -m "Use native macOS validation for the Insights poster"
+          git fetch origin homepage-cinematic-recovery
+          git rebase origin/homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
