@@ -43,44 +43,46 @@ jobs:
 
           gate_path = Path("scripts/insights_discovery_gate.cjs")
           gate = gate_path.read_text()
-          old_loop = '''  for (let index = 0; index < guideLinks.length; index += 5) {
-            const batch = guideLinks.slice(index, index + 5);
-            RUN_STATE.articleResults.push(...(await Promise.all(batch.map(auditArticle))));
-          }
-'''
-          new_loop = '''  RUN_STATE.articleFailures = [];
-          for (let index = 0; index < guideLinks.length; index += 5) {
-            const batch = guideLinks.slice(index, index + 5);
-            const auditedBatch = await Promise.all(
-              batch.map(async (href) => {
-                try {
-                  return { article: await auditArticle(href) };
-                } catch (error) {
-                  return {
-                    failure: {
-                      href,
-                      message: error instanceof Error ? error.message : String(error),
-                    },
-                  };
-                }
-              }),
-            );
-
-            for (const result of auditedBatch) {
-              if (result.article) RUN_STATE.articleResults.push(result.article);
-              if (result.failure) RUN_STATE.articleFailures.push(result.failure);
-            }
-          }
-
-          if (RUN_STATE.articleFailures.length > 0) {
-            const details = RUN_STATE.articleFailures
-              .map((failure) => `${failure.href}: ${failure.message}`)
-              .join("\\n");
-            throw new Error(
-              `Article discovery failures (${RUN_STATE.articleFailures.length}):\\n${details}`,
-            );
-          }
-'''
+          old_loop = (
+              "  for (let index = 0; index < guideLinks.length; index += 5) {\n"
+              "    const batch = guideLinks.slice(index, index + 5);\n"
+              "    RUN_STATE.articleResults.push(...(await Promise.all(batch.map(auditArticle))));\n"
+              "  }\n"
+          )
+          new_loop = (
+              "  RUN_STATE.articleFailures = [];\n"
+              "  for (let index = 0; index < guideLinks.length; index += 5) {\n"
+              "    const batch = guideLinks.slice(index, index + 5);\n"
+              "    const auditedBatch = await Promise.all(\n"
+              "      batch.map(async (href) => {\n"
+              "        try {\n"
+              "          return { article: await auditArticle(href) };\n"
+              "        } catch (error) {\n"
+              "          return {\n"
+              "            failure: {\n"
+              "              href,\n"
+              "              message: error instanceof Error ? error.message : String(error),\n"
+              "            },\n"
+              "          };\n"
+              "        }\n"
+              "      }),\n"
+              "    );\n"
+              "\n"
+              "    for (const result of auditedBatch) {\n"
+              "      if (result.article) RUN_STATE.articleResults.push(result.article);\n"
+              "      if (result.failure) RUN_STATE.articleFailures.push(result.failure);\n"
+              "    }\n"
+              "  }\n"
+              "\n"
+              "  if (RUN_STATE.articleFailures.length > 0) {\n"
+              "    const details = RUN_STATE.articleFailures\n"
+              "      .map((failure) => `${failure.href}: ${failure.message}`)\n"
+              "      .join(\"\\n\");\n"
+              "    throw new Error(\n"
+              "      `Article discovery failures (${RUN_STATE.articleFailures.length}):\\n${details}`,\n"
+              "    );\n"
+              "  }\n"
+          )
           if gate.count(old_loop) != 1:
               raise SystemExit("The expected Insights audit loop was not found exactly once.")
           gate_path.write_text(gate.replace(old_loop, new_loop))
