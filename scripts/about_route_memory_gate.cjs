@@ -41,13 +41,26 @@ async function waitForPrelude(page, label) {
   assert((await loader.count()) === 0, `${label}: page-load veil did not clear`);
 }
 
+async function waitForPathname(page, pathname, timeout = 15_000) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    if (new URL(page.url()).pathname === pathname) return;
+    await page.waitForTimeout(100);
+  }
+  throw new Error(`about/memory: route did not reach ${pathname}; current=${page.url()}`);
+}
+
 async function clickRoute(page, pathname) {
   const routeLink = page.locator(`a[href="${pathname}"]:visible`).first();
   await routeLink.waitFor({ state: "visible", timeout: 8_000 });
-  await Promise.all([
-    page.waitForURL((url) => url.pathname === pathname, { timeout: 15_000 }),
-    routeLink.click(),
-  ]);
+
+  // Next's client router changes location without a document load. Playwright's
+  // waitForURL waits for the load state by default and can therefore time out
+  // after an otherwise successful SPA transition. Direct URL polling also
+  // avoids waitForFunction, which the production CSP correctly blocks.
+  await routeLink.click();
+  await waitForPathname(page, pathname);
+
   await page.locator("main#main-content").waitFor({ state: "visible", timeout: 10_000 });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(450);
