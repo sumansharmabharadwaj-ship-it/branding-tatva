@@ -1,0 +1,138 @@
+name: Pin the Insights poster as a deployable Git blob
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/pin-insights-poster-as-git-blob.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-pin-insights-poster-git-blob
+  cancel-in-progress: false
+
+jobs:
+  pin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+
+    steps:
+      - name: Check out the newest canonical branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          lfs: true
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Wait for and validate the repaired poster
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin homepage-cinematic-recovery
+          git reset --hard origin/homepage-cinematic-recovery
+          git lfs pull --include="public/images/cinematic-waterlight-poster.jpg" --exclude="" || true
+
+          if ! command -v ffprobe >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+
+          for attempt in {1..36}; do
+            if [ -s public/images/cinematic-waterlight-poster.jpg ] && \
+              ! head -n 1 public/images/cinematic-waterlight-poster.jpg | grep -q 'version https://git-lfs.github.com/spec' && \
+              ffprobe -v error -select_streams v:0 -show_entries stream=width,height \
+                -of csv=s=x:p=0 public/images/cinematic-waterlight-poster.jpg | grep -Eq '^[0-9]+x[0-9]+$'; then
+              exit 0
+            fi
+
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+            git lfs pull --include="public/images/cinematic-waterlight-poster.jpg" --exclude="" || true
+            echo "Poster content not ready, attempt ${attempt}/36"
+            sleep 10
+          done
+
+          echo "The repaired poster never became a valid image payload." >&2
+          exit 1
+
+      - name: Exempt the poster from LFS and preserve the finalizer contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          attr='public/images/cinematic-waterlight-poster.jpg -filter -diff -merge -text'
+          touch .gitattributes
+          grep -Fxq "$attr" .gitattributes || printf '\n%s\n' "$attr" >> .gitattributes
+
+          python <<'PY'
+          from pathlib import Path
+
+          for workflow_name in (
+              '.github/workflows/finalize-insights-exact-release.yml',
+              '.github/workflows/cleanup-insights-release-temporaries.yml',
+          ):
+              workflow = Path(workflow_name)
+              if not workflow.exists():
+                  continue
+              content = workflow.read_text()
+              target = '            posterState: "valid",\n'
+              replacement = target + '            posterStorage: "git-blob",\n'
+              if 'posterStorage: "git-blob"' not in content and target in content:
+                  workflow.write_text(content.replace(target, replacement))
+          PY
+
+          marker="src/app/insights/authority-poster-repair-2026-08-07.ts"
+          if [ -f "$marker" ]; then
+            python <<'PY'
+          from pathlib import Path
+          path = Path('src/app/insights/authority-poster-repair-2026-08-07.ts')
+          content = path.read_text()
+          if 'posterStorage: "git-blob"' not in content:
+              content = content.replace(
+                  '  posterState: "valid",',
+                  '  posterState: "valid",\n  posterStorage: "git-blob",',
+              )
+          path.write_text(content)
+          PY
+          fi
+
+          rm -f .github/workflows/pin-insights-poster-as-git-blob.yml
+
+      - name: Re-add and prove that the committed object is the image, not an LFS pointer
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm --cached --ignore-unmatch public/images/cinematic-waterlight-poster.jpg
+          git add .gitattributes public/images/cinematic-waterlight-poster.jpg
+          git add -A .github/workflows src/app/insights/authority-poster-repair-2026-08-07.ts 2>/dev/null || true
+
+          staged="$(mktemp)"
+          git show :public/images/cinematic-waterlight-poster.jpg > "$staged"
+          test "$(wc -c < "$staged")" -gt 10000
+          ! head -n 1 "$staged" | grep -q 'version https://git-lfs.github.com/spec'
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height \
+            -of csv=s=x:p=0 "$staged" | grep -Eq '^[0-9]+x[0-9]+$'
+
+      - name: Commit the deployable poster payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then
+            echo "The poster is already stored as a deployable Git blob."
+            exit 0
+          fi
+          git commit -m "Store the Insights waterlight poster as a deployable Git blob"
+          git fetch origin homepage-cinematic-recovery
+          git rebase origin/homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
