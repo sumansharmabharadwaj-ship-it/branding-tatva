@@ -35,7 +35,7 @@ const projectsJsonLd = {
   "@type": "CollectionPage",
   "@id": `${WORK_URL}#collection`,
   url: WORK_URL,
-  name: "Brand Strategy Case Studies and Portfolio | Branding Tatva",
+  name: "Work: Brand Strategy Case Studies and Portfolio | Branding Tatva",
   description: WORK_DESCRIPTION,
   author: { "@id": PERSON_ID },
   publisher: { "@id": ORGANIZATION_ID },
@@ -99,18 +99,18 @@ const studiesJsonLd = {
 };
 
 export const metadata: Metadata = {
-  title: "Brand Strategy Case Studies & Portfolio",
+  title: "Work: Brand Strategy Case Studies & Portfolio",
   description: WORK_DESCRIPTION,
   alternates: { canonical: "/work" },
   openGraph: {
-    title: "Brand Strategy Case Studies & Portfolio | Branding Tatva",
+    title: "Work: Brand Strategy Case Studies & Portfolio | Branding Tatva",
     description: WORK_DESCRIPTION,
     url: "/work",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Brand Strategy Case Studies & Portfolio | Branding Tatva",
+    title: "Work: Brand Strategy Case Studies & Portfolio | Branding Tatva",
     description: WORK_DESCRIPTION,
   },
 };
