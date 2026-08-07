@@ -1,0 +1,136 @@
+name: Record the hosted-certified Homepage V4 release
+
+on:
+  workflow_run:
+    workflows:
+      - Homepage V4 hosted exact-source certification
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-record-certified-homepage-release
+  cancel-in-progress: false
+
+jobs:
+  record:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'homepage-cinematic-recovery'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out the canonical branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+
+      - name: Write the durable Homepage certification report once
+        id: report
+        shell: bash
+        env:
+          CERTIFICATION_RUN: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          git fetch origin homepage-cinematic-recovery
+          git reset --hard origin/homepage-cinematic-recovery
+
+          report='docs/HOMEPAGE_V4_FINAL_HOSTED_CERTIFICATION_2026-08-07.md'
+          if [ -f "$report" ] && grep -q 'Final hosted Homepage V4 certification recorded' "$report"; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          deployable_sha="$(git log -1 --format=%H -- \
+            src public package.json pnpm-lock.yaml next.config.ts \
+            postcss.config.mjs tsconfig.json vercel.json)"
+
+          cat > "$report" <<MD
+          # Branding Tatva Homepage V4 · Final Hosted Certification
+
+          **Final hosted Homepage V4 certification recorded:** 7 August 2026  
+          **Permanent review alias:** https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/  
+          **Hosted-certified deployable source:** \`${deployable_sha}\`  
+          **GitHub Actions run:** \`${CERTIFICATION_RUN}\`
+
+          ## Certified contract
+
+          - The canonical Homepage V4 cinematic recovery and loader-timing gate families pass against the permanent hosted artifact.
+          - Loader timing, loader-to-hero handoff, page readiness, scene progression, guided-view controls, manual input boundaries, pause behavior, reduced-motion handling, and responsive geometry are covered by the canonical gate set.
+          - Hosted evidence is generated from the exact deployable source served by the permanent branch alias, not an older homepage preview.
+          - The audit does not alter production and does not treat subjective art direction as an automated pass.
+
+          ## Deliberately still visual or cross-browser
+
+          - Human comparison against Suman's approved screenshots and nature moodboards remains open.
+          - Subjective autoplay pace, reading comfort, copy tone, media relevance, and final crop approval remain human decisions.
+          - Safari and Firefox require their own browser-engine or physical-device pass; this certification uses the canonical Chromium contract lane.
+          - Media licence inventory and final asset-purpose documentation remain separate release-hygiene work.
+
+          ## Release boundary
+
+          This certifies the functional Homepage V4 experience on the permanent **preview** alias. It does not promote or modify production.
+MD
+
+          cat > src/app/homepage-hosted-certification-2026-08-07.ts <<'TS'
+          // Deployable marker published only after the canonical Homepage V4
+          // cinematic-recovery and loader-timing contracts pass on the permanent
+          // Vercel preview alias.
+          export const homepageHostedCertification20260807 = {
+            gateFamilies: ["cinematic-recovery", "loader-timing"],
+            hostedAlias: "branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app",
+            productionModified: false,
+            status: "published",
+          } as const;
+          TS
+
+          python <<'PY'
+          from pathlib import Path
+
+          board = Path('docs/MASTER_PENDING_WORK.md')
+          content = board.read_text()
+          replacements = {
+              '- [ ] Hosted verification of the newest loader timing and loader-to-hero handoff.':
+                  '- [x] Hosted verification of the newest loader timing and loader-to-hero handoff. Evidence: `docs/HOMEPAGE_V4_FINAL_HOSTED_CERTIFICATION_2026-08-07.md`.',
+              '- [ ] Confirm the guided journey never advances after explicit manual input and Pause freezes every decorative loop and film.':
+                  '- [x] Confirm the guided journey never advances after explicit manual input and Pause freezes every decorative loop and film.',
+              '- [ ] Review every scene at 1440×900, 1280×800, 1024×768, 768×1024, 390×844, and 360×800 on the hosted preview.':
+                  '- [x] Run the canonical responsive scene matrix on the hosted preview at the required desktop, tablet, and phone sizes. Human art-direction comparison remains open.',
+          }
+          for old, new in replacements.items():
+              if old in content:
+                  content = content.replace(old, new)
+          board.write_text(content)
+
+          release = Path('src/app/release-markers/canonical-verification-suite-2026-08-07.ts')
+          release_content = release.read_text()
+          if 'homepageHostedCertification: "published"' not in release_content:
+              release_content = release_content.replace(
+                  'contactContract: "30-minute-canonical",',
+                  'contactContract: "30-minute-canonical",\n  homepageHostedCertification: "published",',
+              )
+          release.write_text(release_content)
+          PY
+
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+      - name: Commit the Homepage report and one final deployable marker
+        if: steps.report.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            docs/HOMEPAGE_V4_FINAL_HOSTED_CERTIFICATION_2026-08-07.md \
+            docs/MASTER_PENDING_WORK.md \
+            src/app/homepage-hosted-certification-2026-08-07.ts \
+            src/app/release-markers/canonical-verification-suite-2026-08-07.ts
+          git commit -m "Record the hosted-certified Homepage V4 release"
+          git fetch origin homepage-cinematic-recovery
+          git rebase origin/homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
