@@ -169,6 +169,8 @@ export default function InsightsPage() {
           </Container>
         </PhotoHero>
 
+        {/* A restrained folio current replaces the old flat ivory chapter;
+            the dense wash keeps the foundation essay visually primary. */}
         <section className="relative overflow-hidden bg-ivory py-20 sm:py-28">
           <BackgroundVideo
             video="/videos/generated/bt-insights-foundation-folio.mp4"
