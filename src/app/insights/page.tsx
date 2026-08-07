@@ -292,14 +292,12 @@ export default function InsightsPage() {
           <Container>
             <div className="grid overflow-hidden rounded-[2rem] border border-soil/10 bg-background-elevated shadow-elevation-md lg:grid-cols-[0.9fr_1.1fr]">
               <div className="relative min-h-80 bg-soil">
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{
-                    backgroundImage:
-                      "url('/images/pixabay-stream-mist-rays-poster.jpg')",
-                  }}
-                  role="img"
-                  aria-label="Light moving through mist above a forest stream"
+                <BackgroundVideo
+                  video="/videos/generated/bt-insights-audit-seam.mp4"
+                  poster="/images/generated/bt-insights-audit-seam-poster.jpg"
+                  imagePosition="center"
+                  push
+                  playbackRate={0.86}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-soil/85 via-soil/20 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-7 text-ivory sm:p-9">
