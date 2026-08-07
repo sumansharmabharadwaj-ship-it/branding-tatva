@@ -1,19 +1,45 @@
 #!/usr/bin/env node
 
+const { execFileSync } = require("node:child_process");
+
 const PREVIEW_URL = (
   process.env.PREVIEW_URL ||
   "https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app"
 ).replace(/\/$/, "");
-const REPOSITORY = process.env.GITHUB_REPOSITORY ||
+const REPOSITORY =
+  process.env.GITHUB_REPOSITORY ||
   "sumansharmabharadwaj-ship-it/branding-tatva";
 const BRANCH = process.env.CANONICAL_BRANCH || "homepage-cinematic-recovery";
 const TIMEOUT_MS = Number(process.env.GATE_TIMEOUT_MS || 12 * 60 * 1000);
 const POLL_MS = Number(process.env.GATE_POLL_MS || 15 * 1000);
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 20 * 1000);
 const token = process.env.GITHUB_TOKEN;
+const bypassSecret = (process.env.VERCEL_AUTOMATION_BYPASS_SECRET || "").trim();
+const explicitDeployableSha = (process.env.EXPECTED_DEPLOYABLE_SHA || "").trim();
+
+// This mirrors vercel.json's ignoreCommand. Workflow-only commits must never
+// make the source gate wait for a deployment Vercel was correctly told to skip.
+const DEPLOYABLE_PATHS = [
+  "src",
+  "public",
+  "package.json",
+  "pnpm-lock.yaml",
+  "next.config.ts",
+  "postcss.config.mjs",
+  "tsconfig.json",
+  "vercel.json",
+];
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function protectionHeaders() {
+  if (!bypassSecret) return {};
+  return {
+    "x-vercel-protection-bypass": bypassSecret,
+    "x-vercel-set-bypass-cookie": "true",
+  };
 }
 
 async function requestJson(url, options = {}) {
@@ -38,24 +64,70 @@ async function requestJson(url, options = {}) {
     } catch {
       body = { raw: text.slice(0, 500) };
     }
-    return { ok: response.ok, status: response.status, body };
+    return {
+      ok: response.ok,
+      status: response.status,
+      finalUrl: response.url,
+      body,
+    };
   } finally {
     clearTimeout(timer);
   }
 }
 
-async function currentBranchHead() {
+function localDeployableHead() {
+  try {
+    const sha = execFileSync(
+      "git",
+      ["log", "-1", "--format=%H", "--", ...DEPLOYABLE_PATHS],
+      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
+    ).trim();
+    return sha || null;
+  } catch {
+    return null;
+  }
+}
+
+async function githubDeployableHead() {
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  const result = await requestJson(
-    `https://api.github.com/repos/${REPOSITORY}/branches/${encodeURIComponent(BRANCH)}`,
-    { headers },
-  );
-  if (!result.ok || !result.body?.commit?.sha) {
+  const candidates = [];
+
+  for (const deployablePath of DEPLOYABLE_PATHS) {
+    const query = new URLSearchParams({
+      sha: BRANCH,
+      path: deployablePath,
+      per_page: "1",
+    });
+    const result = await requestJson(
+      `https://api.github.com/repos/${REPOSITORY}/commits?${query}`,
+      { headers },
+    );
+    const commit = Array.isArray(result.body) ? result.body[0] : null;
+    if (!result.ok || !commit?.sha) continue;
+    const date =
+      commit.commit?.committer?.date ||
+      commit.commit?.author?.date ||
+      "1970-01-01T00:00:00.000Z";
+    candidates.push({ sha: commit.sha, date, path: deployablePath });
+  }
+
+  candidates.sort((left, right) => Date.parse(right.date) - Date.parse(left.date));
+  if (!candidates[0]?.sha) {
     throw new Error(
-      `Unable to resolve ${REPOSITORY}#${BRANCH}: HTTP ${result.status}`,
+      `Unable to resolve the latest deployable commit for ${REPOSITORY}#${BRANCH}.`,
     );
   }
-  return result.body.commit.sha;
+  return { sha: candidates[0].sha, source: "github-path-history" };
+}
+
+async function currentDeployableHead() {
+  if (explicitDeployableSha) {
+    return { sha: explicitDeployableSha, source: "environment" };
+  }
+
+  const local = localDeployableHead();
+  if (local) return { sha: local, source: "local-git-history" };
+  return githubDeployableHead();
 }
 
 async function routeStatus(pathname) {
@@ -66,13 +138,21 @@ async function routeStatus(pathname) {
       cache: "no-store",
       redirect: "follow",
       signal: controller.signal,
-      headers: { "User-Agent": "branding-tatva-release-gate" },
+      headers: {
+        "User-Agent": "branding-tatva-release-gate",
+        ...protectionHeaders(),
+      },
     });
+    const authRedirected = response.url.includes("vercel.com/sso-api");
     return {
       pathname,
       status: response.status,
-      ok: response.status >= 200 && response.status < 400,
+      ok:
+        response.status >= 200 &&
+        response.status < 400 &&
+        !authRedirected,
       finalUrl: response.url,
+      authRedirected,
     };
   } finally {
     clearTimeout(timer);
@@ -80,11 +160,17 @@ async function routeStatus(pathname) {
 }
 
 async function inspect() {
-  const expectedHead = await currentBranchHead();
-  const verification = await requestJson(`${PREVIEW_URL}/api/verification`);
-  const release = await requestJson(`${PREVIEW_URL}/api/release`);
+  const expected = await currentDeployableHead();
+  const previewHeaders = protectionHeaders();
+  const verification = await requestJson(`${PREVIEW_URL}/api/verification`, {
+    headers: previewHeaders,
+  });
+  const release = await requestJson(`${PREVIEW_URL}/api/release`, {
+    headers: previewHeaders,
+  });
 
-  const deployedHead = verification.body?.runtime?.commit || release.body?.commit || null;
+  const deployedHead =
+    verification.body?.runtime?.commit || release.body?.commit || null;
   const deployedBranch =
     verification.body?.runtime?.branch || release.body?.branch || null;
   const alias =
@@ -92,12 +178,21 @@ async function inspect() {
     release.body?.permanentReviewAlias ||
     null;
   const backlog =
-    verification.body?.canonicalBacklog || release.body?.canonicalBacklog || null;
+    verification.body?.canonicalBacklog ||
+    release.body?.canonicalBacklog ||
+    null;
+  const accessBlocked = [verification.status, release.status].some((status) =>
+    [401, 403].includes(status),
+  );
+  const authRedirected = [verification.finalUrl, release.finalUrl].some((url) =>
+    String(url || "").includes("vercel.com/sso-api"),
+  );
 
   const sourceMatches =
     verification.ok &&
     release.ok &&
-    deployedHead === expectedHead &&
+    !authRedirected &&
+    deployedHead === expected.sha &&
     deployedBranch === BRANCH &&
     alias === `${PREVIEW_URL}/` &&
     backlog === "docs/MASTER_PENDING_WORK.md";
@@ -107,15 +202,34 @@ async function inspect() {
     previewUrl: PREVIEW_URL,
     repository: REPOSITORY,
     canonicalBranch: BRANCH,
-    expectedHead,
+    expectedHead: expected.sha,
+    expectedHeadSource: expected.source,
     deployedHead,
     deployedBranch,
     alias,
     backlog,
     verificationStatus: verification.status,
     releaseStatus: release.status,
+    bypassConfigured: Boolean(bypassSecret),
+    accessBlocked,
+    authRedirected,
     sourceMatches,
   };
+}
+
+function terminalAccessReason(result) {
+  if (!result?.accessBlocked && !result?.authRedirected) return null;
+  if (!result.bypassConfigured) {
+    return (
+      "The permanent preview is protected, but the " +
+      "VERCEL_AUTOMATION_BYPASS_SECRET repository secret is not configured. " +
+      "Source verification cannot authenticate and will not waste twelve minutes polling."
+    );
+  }
+  return (
+    "The permanent preview rejected the configured Vercel automation bypass. " +
+    "Rotate or re-authorize VERCEL_AUTOMATION_BYPASS_SECRET before rerunning the gate."
+  );
 }
 
 async function main() {
@@ -129,6 +243,12 @@ async function main() {
       lastError = null;
       process.stdout.write(`${JSON.stringify(last)}\n`);
       if (last.sourceMatches) break;
+
+      const accessReason = terminalAccessReason(last);
+      if (accessReason) {
+        lastError = accessReason;
+        break;
+      }
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
       process.stderr.write(`[preview-source-gate] ${lastError}\n`);
@@ -141,7 +261,9 @@ async function main() {
       `${JSON.stringify(
         {
           result: "failed",
-          reason: lastError || "Permanent alias did not converge to the canonical branch head before timeout.",
+          reason:
+            lastError ||
+            "Permanent alias did not converge to the canonical deployable source before timeout.",
           last,
         },
         null,
