@@ -54,6 +54,36 @@ export function WorkOpening() {
   }, []);
 
   useEffect(() => {
+    function trackPointer(event: PointerEvent) {
+      // Hover is a mouse and pen concept. Touch selection already pauses
+      // through the explicit project controls and should never inherit a
+      // stranded hover state from a swipe.
+      if (event.pointerType && event.pointerType !== "mouse" && event.pointerType !== "pen") return;
+
+      const stage = stageRef.current;
+      if (!stage) return;
+      const bounds = stage.getBoundingClientRect();
+      const inside =
+        event.clientX >= bounds.left &&
+        event.clientX <= bounds.right &&
+        event.clientY >= bounds.top &&
+        event.clientY <= bounds.bottom;
+      setPointerPaused((current) => (current === inside ? current : inside));
+    }
+
+    function clearPointerPause() {
+      setPointerPaused(false);
+    }
+
+    window.addEventListener("pointermove", trackPointer, { passive: true });
+    window.addEventListener("blur", clearPointerPause);
+    return () => {
+      window.removeEventListener("pointermove", trackPointer);
+      window.removeEventListener("blur", clearPointerPause);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!rotationEnabled) return;
 
     // A restartable timeout gives every cleared pause channel one complete
@@ -168,8 +198,6 @@ export function WorkOpening() {
             data-preview-hydrated={hydrated ? "true" : "false"}
             data-preview-reduced={prefersReducedMotion ? "true" : "false"}
             data-rotation-enabled={rotationEnabled ? "true" : "false"}
-            onPointerEnter={() => setPointerPaused(true)}
-            onPointerLeave={() => setPointerPaused(false)}
             onFocusCapture={() => setFocusPaused(true)}
             onBlurCapture={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
