@@ -130,10 +130,11 @@ export function HomeQuestionsScene() {
     >
       <span className="sr-only">The practical questions</span>
       <BackgroundVideo
-        video="/videos/pexels-golden-fog-sea.mp4"
-        videoWebm="/videos/pexels-golden-fog-sea.webm"
-        poster="/images/pexels-golden-fog-sea-poster.jpg"
+        video="/videos/generated/bt-home-decision-waterlight.mp4"
+        poster="/images/generated/bt-home-decision-waterlight-poster.jpg"
         parallax
+        push
+        playbackRate={0.92}
       />
       <div className="questions-cinematic__veil" aria-hidden="true" />
       <motion.div

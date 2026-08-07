@@ -27,7 +27,6 @@ import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
 import { WeakBrandingCost } from "@/sections/Services/WeakBrandingCost";
 import { DeliverablesExplorer } from "@/sections/Services/DeliverablesExplorer";
-import { DeliverablesCinematicBackdrop } from "@/sections/Services/DeliverablesCinematicBackdrop";
 import { ContextualCTA } from "@/components/conversion/ContextualCTA";
 import { ImagineYourBrand } from "@/sections/Services/ImagineYourBrand";
 import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
@@ -555,7 +554,13 @@ export default async function ServicesPage() {
               stone weight make the invisible work feel tangible before
               a visitor opens an individual artifact. Its scroll-linked
               drift and edge light remain secondary to the explorer. */}
-          <DeliverablesCinematicBackdrop image="/images/generated/bt-services-deliverables-archive.png" />
+          <BackgroundVideo
+            video="/videos/generated/bt-services-deliverables-paperlight.mp4"
+            poster="/images/generated/bt-services-deliverables-paperlight-poster.jpg"
+            parallax
+            push
+            playbackRate={0.9}
+          />
           <div
             className="absolute inset-0"
             aria-hidden="true"
