@@ -56,9 +56,11 @@ async function clickRoute(page, pathname) {
 
   // Next's client router changes location without a document load. Playwright's
   // waitForURL waits for the load state by default and can therefore time out
-  // after an otherwise successful SPA transition. Direct URL polling also
-  // avoids waitForFunction, which the production CSP correctly blocks.
-  await routeLink.click();
+  // after an otherwise successful SPA transition. Dispatching the anchor's
+  // native click from inside the page preserves Next's client-router event
+  // while avoiding Playwright's viewport actionability check after the probe
+  // intentionally scrolls the long About page to its final chapter.
+  await routeLink.evaluate((node) => node.click());
   await waitForPathname(page, pathname);
 
   await page.locator("main#main-content").waitFor({ state: "visible", timeout: 10_000 });
