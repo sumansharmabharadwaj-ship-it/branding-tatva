@@ -399,30 +399,43 @@ export default async function ServicesPage() {
             PerceptionLadder keeps the page's one scoped Three.js accent,
             while the original perception-ascent film clarifies terrain
             around a signal instead of borrowing generic growth footage. */}
-        <section id="education" data-services-scene="education" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
-          {/* Original procedural perception-ascent loop:
-              layered terrain and mist clarify around one distant signal.
-              The landscape becomes more legible as the signal becomes
-              easier to locate, so the animation teaches recognition
-              rather than merely showing generic upward growth. */}
-          <BackgroundVideo
-            parallax
-            video="/videos/generated/bt-services-perception-ascent.mp4"
-            videoMobile="/videos/generated/bt-services-perception-ascent-mobile.mp4"
-            poster="/images/generated/bt-services-perception-ascent-poster.jpg"
-          />
-          <div
-            className="absolute inset-0"
-            aria-hidden="true"
-            style={{
-              backgroundImage:
-                "linear-gradient(180deg, rgba(26,32,38,0.5) 0%, rgba(26,32,38,0.3) 55%, rgba(26,32,38,0.52) 100%)",
-            }}
-          />
-          {/* Scene dissolve: Stakes' dry stone into Education's mist. */}
-          <SceneVeil color="#191B16" />
-          <div className="relative">
-            <PerceptionLadder />
+        {/* First chapter converted to the shared scene system. The section
+            was already a screen-fit chapter; what it lacked was runway. The
+            frame now holds still for roughly a screen of extra scroll while
+            the perception ladder climbs inside it, which is the difference
+            between reading a section and watching one unfold.
+
+            Held by CSS sticky rather than a ScrollTrigger pin, per
+            bt-scene.css. overflow-hidden moved off the section and onto the
+            sticky frame, because an overflow ancestor is exactly what stops
+            sticky from sticking. */}
+        <section id="education" data-services-scene="education" className="bt-scene bt-scene--unfold scroll-mt-24" style={{ backgroundColor: MOOD.mist }}>
+          <div className="bt-scene__sticky">
+            {/* Original procedural perception-ascent loop:
+                layered terrain and mist clarify around one distant signal.
+                The landscape becomes more legible as the signal becomes
+                easier to locate, so the animation teaches recognition
+                rather than merely showing generic upward growth. */}
+            {/* Parallax dropped here on purpose: a held frame's own rect
+                barely moves, so the drift would read as static anyway. */}
+            <BackgroundVideo
+              video="/videos/generated/bt-services-perception-ascent.mp4"
+              videoMobile="/videos/generated/bt-services-perception-ascent-mobile.mp4"
+              poster="/images/generated/bt-services-perception-ascent-poster.jpg"
+            />
+            <div
+              className="absolute inset-0"
+              aria-hidden="true"
+              style={{
+                backgroundImage:
+                  "linear-gradient(180deg, rgba(26,32,38,0.5) 0%, rgba(26,32,38,0.3) 55%, rgba(26,32,38,0.52) 100%)",
+              }}
+            />
+            {/* Scene dissolve: Stakes' dry stone into Education's mist. */}
+            <SceneVeil color="#191B16" />
+            <div className="relative z-[2]">
+              <PerceptionLadder />
+            </div>
           </div>
           <SceneHandoff color="#172019" />
         </section>
