@@ -2,8 +2,8 @@ name: Insights authority and discovery gate
 run-name: Insights authority · ${{ github.sha }}
 
 on:
-  # Exact-head run after network failures became URL-aware and archive links
-  # were narrowed to published article routes.
+  # Exact-head rerun after repairing the client-proof guide's missing image
+  # and video pair. Both data-file casings are watched to prevent silent drift.
   workflow_dispatch:
   push:
     branches:
@@ -15,6 +15,7 @@ on:
       - src/app/sitemap.ts
       - src/app/robots.ts
       - src/data/**insight**
+      - src/data/**Insight**
       - src/data/**article**
       - src/components/**Insight**
       - src/components/**Article**
