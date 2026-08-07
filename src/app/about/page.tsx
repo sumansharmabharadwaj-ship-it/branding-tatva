@@ -166,8 +166,17 @@ export default function AboutPage() {
         {/* The terms of working directly together — the brief's five
             real commitments, stated as things a client can hold the
             practice to. */}
-        <section className="bg-soil py-16 sm:py-24">
-          <WorkingDirectly />
+        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
+          <BackgroundVideo
+            video="/videos/generated/bt-about-working-directly-woodlight.mp4"
+            poster="/images/generated/bt-about-working-directly-woodlight-poster.jpg"
+            parallax
+            playbackRate={0.9}
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-soil/78" />
+          <div className="relative">
+            <WorkingDirectly />
+          </div>
         </section>
 
         {/* Bold solid Soil, not the Phase-5 space tint — matches the
@@ -229,8 +238,17 @@ export default function AboutPage() {
         </section>
 
         {/* Behaviours instead of values. */}
-        <section className="bg-soil pb-16 sm:pb-24">
-          <Behaviours />
+        <section className="relative overflow-hidden bg-soil pb-16 sm:pb-24">
+          <BackgroundVideo
+            video="/videos/generated/bt-about-behaviours-mossbreath.mp4"
+            poster="/images/generated/bt-about-behaviours-mossbreath-poster.jpg"
+            parallax
+            playbackRate={0.92}
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-soil/82" />
+          <div className="relative">
+            <Behaviours />
+          </div>
         </section>
 
         {/* Where the five elements themselves come from, sitting right

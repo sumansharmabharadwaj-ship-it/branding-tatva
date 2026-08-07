@@ -610,6 +610,20 @@ export default async function ServicesPage() {
             before any email is requested. Charcoal interstitial
             between the light CTA breath and the forest health check. */}
         <section id="imagine" data-services-scene="imagine" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          <BackgroundVideo
+            video="/videos/generated/bt-services-imagine-confluence.mp4"
+            poster="/images/generated/bt-services-imagine-confluence-poster.jpg"
+            parallax
+            playbackRate={0.92}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, rgba(11,17,18,0.92) 0%, rgba(11,17,18,0.7) 48%, rgba(11,17,18,0.5) 100%)",
+            }}
+          />
           <div className="relative">
             <ImagineYourBrand />
           </div>
@@ -669,6 +683,20 @@ export default async function ServicesPage() {
             opt in. Charcoal ground between the forest and the warm
             strategy room that closes the page. */}
         <section id="audit" data-services-scene="audit" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-start overflow-hidden pb-16 pt-24 sm:py-20 lg:justify-center lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          <BackgroundVideo
+            video="/videos/generated/bt-services-recognition-audit-leaf.mp4"
+            poster="/images/generated/bt-services-recognition-audit-leaf-poster.jpg"
+            parallax
+            playbackRate={0.9}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, rgba(13,18,17,0.94) 0%, rgba(13,18,17,0.74) 50%, rgba(13,18,17,0.54) 100%)",
+            }}
+          />
           <SceneVeil color="#141A15" />
           <div className="relative">
             <RecognitionAudit />
