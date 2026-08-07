@@ -15,7 +15,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
   {
     slug: "turn-client-proof-into-positioning-advantage",
     title: "How to turn client proof into a positioning advantage",
-    seoTitle: "Case study strategy for service businesses: turn proof into positioning",
+    seoTitle: "Client proof strategy for service-business positioning",
     excerpt:
       "Build case studies, testimonials, metrics, and demonstrations around the position you want buyers to believe, rather than storing client praise in a decorative carousel.",
     directAnswer:

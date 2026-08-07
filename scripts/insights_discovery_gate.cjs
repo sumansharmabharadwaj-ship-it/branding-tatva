@@ -209,9 +209,37 @@ async function auditArticle(href) {
   assert(/30-minute consultation/i.test(llms.text),
     "llms.txt is missing the current 30-minute consultation duration");
 
+  RUN_STATE.articleFailures = [];
   for (let index = 0; index < guideLinks.length; index += 5) {
     const batch = guideLinks.slice(index, index + 5);
-    RUN_STATE.articleResults.push(...(await Promise.all(batch.map(auditArticle))));
+    const auditedBatch = await Promise.all(
+      batch.map(async (href) => {
+        try {
+          return { article: await auditArticle(href) };
+        } catch (error) {
+          return {
+            failure: {
+              href,
+              message: error instanceof Error ? error.message : String(error),
+            },
+          };
+        }
+      }),
+    );
+
+    for (const result of auditedBatch) {
+      if (result.article) RUN_STATE.articleResults.push(result.article);
+      if (result.failure) RUN_STATE.articleFailures.push(result.failure);
+    }
+  }
+
+  if (RUN_STATE.articleFailures.length > 0) {
+    const details = RUN_STATE.articleFailures
+      .map((failure) => `${failure.href}: ${failure.message}`)
+      .join("\n");
+    throw new Error(
+      `Article discovery failures (${RUN_STATE.articleFailures.length}):\n${details}`,
+    );
   }
 
   const uniqueTitles = new Set(RUN_STATE.articleResults.map((article) => article.title));
