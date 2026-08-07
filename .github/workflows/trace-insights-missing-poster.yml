@@ -1,0 +1,63 @@
+name: Trace missing Insights poster
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/trace-insights-missing-poster.yml
+
+permissions:
+  contents: read
+
+jobs:
+  trace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out the canonical branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Search tracked source and assets
+        shell: bash
+        run: |
+          echo "## Exact waterlight references"
+          git grep -n -I -E 'cinematic-waterlight|waterlight' -- . ':!public/videos' ':!public/audio' || true
+          echo
+          echo "## Insights image declarations"
+          git grep -n -I -E 'heroImage:|poster=' -- src/app/insights src/components src/data || true
+          echo
+          echo "## Similar cinematic poster assets"
+          find public/images -maxdepth 2 -type f \( -iname '*cinematic*' -o -iname '*water*' -o -iname '*light*' \) -print | sort
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Build only when the tracked search cannot explain the request
+        shell: bash
+        run: |
+          if git grep -q -I -E 'cinematic-waterlight|waterlight' -- . ':!public/videos' ':!public/audio'; then
+            echo "Tracked source contains the request; compiled search is unnecessary."
+            exit 0
+          fi
+          corepack enable
+          corepack prepare pnpm@10.28.0 --activate
+          pnpm install --frozen-lockfile
+          NEXT_TELEMETRY_DISABLED=1 pnpm build
+          echo "## Compiled references"
+          grep -Rsn --binary-files=without-match 'cinematic-waterlight-poster.jpg' .next || true
+          echo "## Compiled waterlight references"
+          grep -Rsn --binary-files=without-match 'waterlight' .next || true
