@@ -8,6 +8,7 @@ import { ElementAccentButton } from "@/components/ElementAccentButton";
 import { site, footerLinks } from "@/data/site";
 import { socialLinks } from "./constants";
 import { MotionToggle } from "@/components/MotionPreference";
+import { ConsentPreferencesLink } from "@/components/ConsentPreferencesLink";
 
 // Rebuilt as a compact "widget bar" — direct feedback that the previous
 // full-screen closing scene (headline, five glyphs, giant logo, a
@@ -158,6 +159,9 @@ export function Footer({ compact = false }: FooterProps) {
           {/* The sitewide Full/Reduced motion control (80 page manual
               p23) — quiet, but present on every page via the footer. */}
           <MotionToggle />
+          {/* Withdrawing has to be as easy as agreeing was, so the door back
+              to the consent panel sits on every page. */}
+          <ConsentPreferencesLink />
           {footerLinks.map((item) => (
             <Link key={item.href} href={item.href} className="text-xs text-ivory/60 hover:text-ivory">
               {item.label}

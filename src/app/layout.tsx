@@ -7,7 +7,7 @@ import "./bt-scene.css";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
-import { Analytics } from "@vercel/analytics/next";
+import { ConsentManager } from "@/components/ConsentManager";
 import { VideoWarden } from "@/components/VideoWarden";
 import { MotionPreferenceProvider } from "@/components/MotionPreference";
 import { site } from "@/data/site";
@@ -145,7 +145,9 @@ export default function RootLayout({
         <PageLoadVeil />
         <AmbientAudio />
         <VideoWarden />
-        <Analytics />
+        {/* Measurement lives behind consent now. It used to mount here
+            directly, which counted every visitor before anyone was asked. */}
+        <ConsentManager />
 
         <script
           type="application/ld+json"

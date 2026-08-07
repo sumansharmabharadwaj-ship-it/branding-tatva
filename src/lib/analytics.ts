@@ -1,6 +1,7 @@
 "use client";
 
 import { track as vercelTrack } from "@vercel/analytics";
+import { readConsent } from "@/lib/consent";
 
 // One measurement door for the whole site — the conversion events the
 // redesign brief names, nothing else. Wraps Vercel Analytics so every
@@ -30,6 +31,12 @@ export type AnalyticsEvent =
   | "booking_completed";
 
 export function track(event: AnalyticsEvent, props?: Record<string, string | number | boolean>) {
+  // Gating the <Analytics /> component alone is half a gate: this call can
+  // load the measurement script by itself, so a visitor who declined would
+  // still be counted the first time they clicked anything. The consent
+  // record is checked on every event rather than cached, so withdrawing
+  // takes effect on the very next interaction.
+  if (!readConsent().analytics) return;
   try {
     vercelTrack(event, props);
   } catch {}

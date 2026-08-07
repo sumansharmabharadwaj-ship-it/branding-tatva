@@ -47,8 +47,25 @@ export default function PrivacyPage() {
                 consent.
               </p>
               <p>
-                This site currently avoids tracking cookies and third party
-                advertising scripts.
+                Measurement stays off until you allow it. On a first visit the
+                banner offers three equal doors: allow everything, keep only
+                what the site needs to work, or open the categories and decide
+                one at a time.
+              </p>
+              <p>
+                Analytics, once you allow it, counts which pages hold
+                attention through Vercel Analytics. It records page views
+                rather than personal profiles, and it reaches no advertiser.
+              </p>
+              <p>
+                Advertising and audience trackers run nowhere on this site
+                today. That category stays in the panel so it remains your
+                choice rather than an assumption.
+              </p>
+              <p>
+                Your decision lives in this browser alone and travels to no
+                server. Change it whenever you like through Measurement
+                preferences, in the footer of every page.
               </p>
               <p>
                 To request that your information be deleted, email{" "}
