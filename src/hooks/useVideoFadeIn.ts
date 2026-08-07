@@ -63,6 +63,28 @@ export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: 
     return () => {
       el.removeEventListener("loadeddata", onLoadedData);
       observer.disconnect();
+
+      // Release the media element itself, which React removing the node does
+      // not do. A <source media="..."> registers a MediaQueryList listener,
+      // and those are held by a Blink GC root ("Pending activities"). Traced
+      // from a heap snapshot: that root held the listener, which held the
+      // <source>, which held its parent <video>, which held the whole
+      // section's DOM. Every visit to a page with responsive video sources
+      // stranded another copy, around 3,150 nodes a round trip on Services,
+      // growing without limit.
+      //
+      // Dropping the sources and calling load() resets the element and lets
+      // the listeners go. Order matters: pause first so no fetch is in
+      // flight, and clear src last so load() has nothing left to resolve.
+      try {
+        el.pause();
+        while (el.firstChild) el.removeChild(el.firstChild);
+        el.removeAttribute("src");
+        el.load();
+      } catch {
+        // Releasing is best effort. A browser that objects to any step here
+        // leaves the element as it was rather than breaking the unmount.
+      }
     };
   }, [ref, active]);
 }
