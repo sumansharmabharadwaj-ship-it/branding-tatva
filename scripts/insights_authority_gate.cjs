@@ -18,8 +18,29 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+function pathnameFor(value) {
+  try {
+    return new URL(value, BASE_URL).pathname;
+  } catch {
+    return value;
+  }
+}
+
+function expectedNetworkFailure(url, detail = "") {
+  const pathname = pathnameFor(url);
+  return (
+    /^\/(?:videos|audio)\//i.test(pathname) ||
+    /\/_vercel\/(?:insights|speed-insights)(?:\/|$)/i.test(pathname) ||
+    /(?:va\.vercel-scripts\.com|vitals\.vercel-insights\.com)/i.test(url) ||
+    /net::ERR_ABORTED/i.test(detail)
+  );
+}
+
 function actionableConsoleError(text) {
-  return !/Failed to load resource.*(mp4|webm|mp3|png|jpg|jpeg|svg|woff2?)/i.test(text) &&
+  // Chromium's generic resource error omits the URL. Response and request
+  // listeners below retain the URL and decide whether the failure is an
+  // intentionally omitted media file or a real route, script, image, or CSS bug.
+  return !/^Failed to load resource:/i.test(text) &&
     !/_vercel\/(insights|speed-insights)/i.test(text) &&
     !/net::ERR_ABORTED/i.test(text);
 }
@@ -47,7 +68,21 @@ async function auditIndex(browser, viewport) {
       errors.push(message.text());
     }
   });
-  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
+  page.on("response", (response) => {
+    if (response.status() < 400) return;
+    const url = response.url();
+    if (!expectedNetworkFailure(url)) {
+      errors.push(`response: ${response.status()} ${url}`);
+    }
+  });
+  page.on("requestfailed", (request) => {
+    const detail = request.failure()?.errorText || "request failed";
+    const url = request.url();
+    if (!expectedNetworkFailure(url, detail)) {
+      errors.push(`request: ${detail} ${url}`);
+    }
+  });
 
   const response = await page.goto(`${BASE_URL}/insights`, {
     waitUntil: "domcontentloaded",
@@ -65,7 +100,12 @@ async function auditIndex(browser, viewport) {
     });
     const links = Array.from(document.querySelectorAll('a[href^="/insights/"]'))
       .map((node) => node.getAttribute("href"))
-      .filter(Boolean);
+      .filter(
+        (href) =>
+          typeof href === "string" &&
+          /^\/insights\/[^/]+$/.test(href) &&
+          !href.endsWith(".xml"),
+      );
     const canonical = document.querySelector('link[rel="canonical"]')?.getAttribute("href") || "";
     const jsonLd = Array.from(document.querySelectorAll('script[type="application/ld+json"]'))
       .map((node) => node.textContent || "");
