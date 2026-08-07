@@ -22,9 +22,29 @@ async function selectedIndex(tabs) {
   return tabs.evaluateAll((nodes) => nodes.findIndex((node) => node.getAttribute("aria-selected") === "true"));
 }
 
-async function waitForSelectionChange(page, tabs, previous, label) {
-  await page
-    .waitForFunction(
+async function previewState(stage) {
+  return stage.evaluate((node) => ({
+    pointerPaused: node.dataset.pointerPaused,
+    focusPaused: node.dataset.focusPaused,
+    manualPaused: node.dataset.manualPaused,
+    inView: node.dataset.previewInView,
+    hydrated: node.dataset.previewHydrated,
+    reduced: node.dataset.previewReduced,
+    rotationEnabled: node.dataset.rotationEnabled,
+    active: Array.from(node.querySelectorAll('[role="tab"]')).findIndex(
+      (tab) => tab.getAttribute("aria-selected") === "true",
+    ),
+  }));
+}
+
+async function waitForSelectionChange(page, tabs, stage, previous, label) {
+  try {
+    await page.waitForFunction(
+      (selector) => document.querySelector(selector)?.dataset.rotationEnabled === "true",
+      '[data-work-preview-stage="true"]',
+      { timeout: 2_500 },
+    );
+    await page.waitForFunction(
       ({ selector, before }) => {
         const nodes = Array.from(document.querySelectorAll(selector));
         const next = nodes.findIndex((node) => node.getAttribute("aria-selected") === "true");
@@ -32,10 +52,11 @@ async function waitForSelectionChange(page, tabs, previous, label) {
       },
       { selector: '[data-work-preview-stage="true"] [role="tab"]', before: previous },
       { timeout: ROTATION_WINDOW_MS + 1_500 },
-    )
-    .catch(() => {
-      throw new Error(`${label}: automatic preview did not resume after all pause channels cleared`);
-    });
+    );
+  } catch {
+    const state = await previewState(stage);
+    throw new Error(`${label}: automatic preview did not resume; state=${JSON.stringify(state)}`);
+  }
 
   return selectedIndex(tabs);
 }
@@ -107,7 +128,7 @@ async function auditInteractivePause(browser) {
     await assertStableSelection(page, tabs, hovered, "work/hero-pause: hover pause after focus leaves");
 
     await movePointerOutside(page);
-    await waitForSelectionChange(page, tabs, hovered, "work/hero-pause");
+    await waitForSelectionChange(page, tabs, stage, hovered, "work/hero-pause");
 
     await toggle.click();
     await movePointerOutside(page);
@@ -123,7 +144,13 @@ async function auditInteractivePause(browser) {
     await outsideFocus.focus();
     await page.waitForTimeout(120);
     assert((await toggle.getAttribute("aria-pressed")) === "false", "work/hero-pause: manual resume did not clear aria-pressed");
-    const resumedAfterManual = await waitForSelectionChange(page, tabs, manuallyPaused, "work/hero-pause: manual resume");
+    const resumedAfterManual = await waitForSelectionChange(
+      page,
+      tabs,
+      stage,
+      manuallyPaused,
+      "work/hero-pause: manual resume",
+    );
 
     await tabs.nth(resumedAfterManual).focus();
     await tabs.nth(resumedAfterManual).press("ArrowRight");

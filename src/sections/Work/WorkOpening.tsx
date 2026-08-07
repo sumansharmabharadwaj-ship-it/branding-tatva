@@ -32,6 +32,13 @@ export function WorkOpening() {
   const [manualPaused, setManualPaused] = useState(false);
   const [inView, setInView] = useState(true);
   const interactionPaused = pointerPaused || focusPaused;
+  const rotationEnabled =
+    hydrated &&
+    !prefersReducedMotion &&
+    inView &&
+    !interactionPaused &&
+    !manualPaused &&
+    projects.length > 1;
   const current = projects[active] ?? projects[0];
 
   useEffect(() => {
@@ -47,39 +54,17 @@ export function WorkOpening() {
   }, []);
 
   useEffect(() => {
-    function trackPointer(event: PointerEvent) {
-      const stage = stageRef.current;
-      if (!stage) return;
-      const bounds = stage.getBoundingClientRect();
-      const inside =
-        event.clientX >= bounds.left &&
-        event.clientX <= bounds.right &&
-        event.clientY >= bounds.top &&
-        event.clientY <= bounds.bottom;
-      setPointerPaused(inside);
-    }
+    if (!rotationEnabled) return;
 
-    window.addEventListener("pointermove", trackPointer, { passive: true });
-    return () => window.removeEventListener("pointermove", trackPointer);
-  }, []);
-
-  useEffect(() => {
-    const canRotate =
-      hydrated &&
-      !prefersReducedMotion &&
-      inView &&
-      !interactionPaused &&
-      !manualPaused &&
-      projects.length > 1;
-
-    if (!canRotate) return;
-
-    const interval = window.setInterval(() => {
+    // A restartable timeout gives every cleared pause channel one complete
+    // reading interval. It cannot inherit an almost-expired interval from
+    // before the visitor hovered, focused, or paused the preview.
+    const timeout = window.setTimeout(() => {
       setActive((index) => (index + 1) % projects.length);
     }, ROTATION_MS);
 
-    return () => window.clearInterval(interval);
-  }, [hydrated, inView, interactionPaused, manualPaused, prefersReducedMotion]);
+    return () => window.clearTimeout(timeout);
+  }, [active, rotationEnabled]);
 
   if (!current) return null;
 
@@ -178,7 +163,11 @@ export function WorkOpening() {
             data-work-preview-stage="true"
             data-pointer-paused={pointerPaused ? "true" : "false"}
             data-focus-paused={focusPaused ? "true" : "false"}
+            data-manual-paused={manualPaused ? "true" : "false"}
             data-preview-in-view={inView ? "true" : "false"}
+            data-preview-hydrated={hydrated ? "true" : "false"}
+            data-preview-reduced={prefersReducedMotion ? "true" : "false"}
+            data-rotation-enabled={rotationEnabled ? "true" : "false"}
             onPointerEnter={() => setPointerPaused(true)}
             onPointerLeave={() => setPointerPaused(false)}
             onFocusCapture={() => setFocusPaused(true)}
