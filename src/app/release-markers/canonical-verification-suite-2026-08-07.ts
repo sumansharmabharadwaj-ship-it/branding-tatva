@@ -4,7 +4,8 @@
 // API, and fully certified Work experience rather than a workflow-only head.
 export const canonicalVerificationSuite20260807 = {
   contactContract: "30-minute-canonical",
-  insightsAuthority: "27-guide-library",
+  insightsAuthority: "29-guide-library",
+  insightsTopics: 5,
   apiGate: "production-server",
   workEvidence: "eight-contract-matrix-green",
   workViewports: 7,
