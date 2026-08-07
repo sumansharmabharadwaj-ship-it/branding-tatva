@@ -101,3 +101,5 @@ jobs:
           path: insights-discovery-audit/*
           if-no-files-found: warn
           retention-days: 7
+
+# Retriggered after the verified Contact and Insight metadata repair.
