@@ -10,12 +10,13 @@ Suman combines clinical psychology, English literature, brand strategy, writing,
 - [Services](https://brandingtatva.com/services): situation-led project routes, package scope, verified outcomes, the recognition ladder, deliverables, brand health check, practical questions, and booking
 - [Work](https://brandingtatva.com/work): real engagements first, followed by clearly labelled independent analysis and Branding Tatva Lab concept studies
 - [About](https://brandingtatva.com/about): Suman Sharma's background, point of view, direct working method, evidence, and authorship
-- [Insights](https://brandingtatva.com/insights): the editorial authority library covering brand positioning, recognition, verbal identity, brand psychology, architecture, documentation, pricing, and health reviews
-- [Insights RSS](https://brandingtatva.com/insights/rss.xml): the machine-readable feed for every published Branding Tatva guide
+- [Insights](https://brandingtatva.com/insights): the canonical editorial authority library covering brand positioning, recognition, verbal identity, brand psychology, architecture, customer research, documentation, proof, and messaging
+- [Insights feed](https://brandingtatva.com/insights/feed.xml): the canonical machine-readable feed for every published Branding Tatva guide
+- [Insights RSS alias](https://brandingtatva.com/insights/rss.xml): a compatibility feed carrying the same published guide library
 - [Glossary](https://brandingtatva.com/glossary): definitions of the strategic language used across the practice
 - [Contact](https://brandingtatva.com/contact): schedule a 30-minute consultation, call or WhatsApp Suman directly, or send a written enquiry
 
-Legacy `/blog` URLs permanently redirect to the corresponding `/insights` routes.
+Legacy `/blog` URLs and superseded Insight slugs permanently redirect to their closest current guide, Work evidence, or service path.
 
 ## Contact
 
@@ -29,5 +30,6 @@ Legacy `/blog` URLs permanently redirect to the corresponding `/insights` routes
 - Suman Sharma is the sole practitioner behind Branding Tatva and works directly on each engagement.
 - Client work, independent public-record analysis, and concept work are deliberately separated. Independent studies are not presented as client engagements, and concept work is labelled.
 - Published metrics should be read with their displayed project scope, attribution boundary, baseline, and timeframe.
+- Guides with a visible Research sources chapter also expose those source URLs through `BlogPosting.citation` structured data. Unsourced guides remain visually unchanged rather than receiving invented references.
 - Earth, Water, Fire, Air, and Space are Branding Tatva's own organising language for five connected areas of brand work, not a claim that these labels are an industry standard.
 - The canonical editorial library is `/insights`, not `/blog`.

@@ -1,4 +1,4 @@
-import { blogPosts } from "@/data/blog";
+import { insightPosts } from "@/data/insights";
 import { site } from "@/data/site";
 
 export const dynamic = "force-static";
@@ -17,13 +17,13 @@ function absoluteUrl(pathname: string) {
 }
 
 export function GET() {
-  const posts = [...blogPosts].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+  const posts = [...insightPosts].sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
   );
   const feedUrl = absoluteUrl("/insights/rss.xml");
   const insightsUrl = absoluteUrl("/insights");
-  const latestDate = posts[0]?.publishedAt
-    ? new Date(posts[0].publishedAt).toUTCString()
+  const latestDate = posts[0]?.updatedAt
+    ? new Date(`${posts[0].updatedAt}T00:00:00Z`).toUTCString()
     : new Date().toUTCString();
 
   const items = posts
@@ -34,9 +34,9 @@ export function GET() {
         `<title>${escapeXml(post.title)}</title>`,
         `<link>${escapeXml(articleUrl)}</link>`,
         `<guid isPermaLink="true">${escapeXml(articleUrl)}</guid>`,
-        `<pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>`,
+        `<pubDate>${new Date(`${post.publishedAt}T00:00:00Z`).toUTCString()}</pubDate>`,
         `<description>${escapeXml(post.excerpt)}</description>`,
-        `<category>${escapeXml(post.element)}</category>`,
+        `<category>${escapeXml(post.topicSlug)}</category>`,
         `<author>${escapeXml(`${site.email} (${site.founder})`)}</author>`,
         "</item>",
       ].join("");

@@ -1,233 +1,349 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Container } from "@/components/Container";
+import { ElementGlyph } from "@/components/ElementGlyph";
+import { InsightCard, type InsightCardPost } from "@/components/InsightCard";
+import { InsightsExplorer } from "@/components/InsightsExplorer";
+import { LinkButton } from "@/components/Button";
+import { NewsletterForm } from "@/components/NewsletterForm";
+import { PhotoHero } from "@/components/PhotoHero";
+import { Reveal } from "@/components/Reveal";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { SplitReveal } from "@/components/SplitReveal";
+import { TexturedDark } from "@/components/TexturedDark";
+import { elements } from "@/data/elements";
+import { insightPosts, insightTopics } from "@/data/insights";
+import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
-import { Container } from "@/components/Container";
-import { Reveal } from "@/components/Reveal";
-import { SplitReveal } from "@/components/SplitReveal";
-import { PhotoHero } from "@/components/PhotoHero";
-import { ClipReveal } from "@/components/ClipReveal";
-import { TexturedDark } from "@/components/TexturedDark";
-import { LinkButton } from "@/components/Button";
-import { ElementGlyph } from "@/components/ElementGlyph";
-import { TopicClusters } from "@/sections/Insights/TopicClusters";
-import { ArticleSearch } from "@/sections/Insights/ArticleSearch";
-import { RecognitionAudit } from "@/sections/Services/RecognitionAudit";
-import { blogPosts } from "@/data/blog";
-import { elements } from "@/data/elements";
-import { credentials } from "@/data/about";
-import { site } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "Insights",
+  title: "Insights on brand strategy, positioning, and messaging",
   description:
-    "Writing on brand positioning, recognition, verbal identity, and the psychology underneath them, plus the Branding Tatva glossary.",
-  alternates: { canonical: "/insights" },
+    "Practical essays and frameworks on brand positioning, brand audits, messaging, customer experience, distinctiveness, recognition, and memory.",
+  keywords: [
+    "brand strategy insights",
+    "brand positioning",
+    "brand audit",
+    "brand messaging",
+    "brand recall",
+    "distinctive brand assets",
+  ],
+  alternates: {
+    canonical: "/insights",
+    types: {
+      "application/rss+xml": `${site.url}/insights/feed.xml`,
+    },
+  },
   openGraph: {
-    title: "Insights | Branding Tatva",
+    title: "Brand strategy insights | Branding Tatva",
     description:
-      "Writing on brand positioning, recognition, verbal identity, and the psychology underneath them, plus the Branding Tatva glossary.",
+      "Practical essays and frameworks on positioning, messaging, customer experience, distinctiveness, recognition, and memory.",
     type: "website",
+    url: `${site.url}/insights`,
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
 };
 
-// The Insights rebuild per the governing bible's architecture:
-// editorial hero → featured pillar article → question led articles →
-// topic clusters with the glossary inside them → author block → the
-// audit lead magnet. Reading stays primary; every article is framed
-// by the genuine question it answers.
-const QUESTION_FOR: Record<string, string> = {
-  "five-elements-working-as-one": "Why does brand strategy need five elements working together?",
-  "visible-versus-remembered": "What separates being seen from being remembered?",
-  "what-a-brand-audit-actually-finds": "What actually happens in a brand audit?",
-  "what-brand-positioning-actually-decides": "What does positioning actually decide?",
-  "why-visible-brands-stay-forgettable": "Why does visibility fail to create memory?",
-  "verbal-identity-beyond-tone-of-voice": "What belongs in a voice beyond tone?",
-  "when-a-growing-business-needs-repositioning": "When does a position stop fitting?",
-  "distinctive-assets-and-mental-availability": "What makes a brand come to mind at all?",
-  "brand-architecture-for-multiple-offers": "Does the new offer earn its own name?",
-  "how-psychology-informs-brand-strategy": "What machinery does a buyer actually run on?",
-  "how-to-evaluate-a-branding-proposal": "How should a branding proposal be judged?",
-  "category-reframing-a-concept-case-study": "What if the category itself is the problem?",
-  "pricing-brand-strategy-across-markets": "Why does the same work carry different prices?",
-  "how-to-document-brand-decisions": "Who remembers why the brand decided this?",
-  "the-annual-brand-health-review": "How far has the brand drifted this year?",
-};
-
-function elementColor(slug: string) {
-  return elements.find((e) => e.slug === slug)?.color ?? "#27221E";
+function elementColor(elementSlug: string) {
+  return elements.find((element) => element.slug === elementSlug)?.color ?? "#B85A34";
 }
 
 export default function InsightsPage() {
-  const sorted = [...blogPosts].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  const sortedPosts = [...insightPosts].sort(
+    (a, b) =>
+      new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
-  const [featured, ...rest] = sorted;
-  const degrees = credentials.filter((c) => c.featured);
+  const featured = sortedPosts.find((post) => post.featured) ?? sortedPosts[0];
+  const explorerPosts: InsightCardPost[] = sortedPosts.map((post) => ({
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    element: post.element,
+    topicSlug: post.topicSlug,
+    updatedAt: post.updatedAt,
+    readingTime: post.readingTime,
+    heroImage: post.heroImage,
+    heroImageAlt: post.heroImageAlt,
+    keyTakeaways: post.keyTakeaways,
+    primaryKeyword: post.primaryKeyword,
+    secondaryKeywords: post.secondaryKeywords,
+  }));
+  const explorerTopics = insightTopics.map(({ slug, name, element }) => ({
+    slug,
+    name,
+    element,
+  }));
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${site.url}/insights/#page`,
+        url: `${site.url}/insights`,
+        name: "Brand strategy insights",
+        description:
+          "Essays and practical frameworks on positioning, customer experience, distinctiveness, messaging, recognition, and brand memory.",
+        isPartOf: { "@id": `${site.url}/#website` },
+        about: [
+          "Brand positioning",
+          "Brand audits",
+          "Brand messaging",
+          "Customer experience",
+          "Brand recall",
+        ],
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: sortedPosts.length,
+          itemListElement: sortedPosts.map((post, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            url: `${site.url}/insights/${post.slug}`,
+            name: post.title,
+          })),
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: site.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Insights",
+            item: `${site.url}/insights`,
+          },
+        ],
+      },
+    ],
+  };
 
   return (
     <>
       <Header transparent />
+      <ScrollProgress />
       <main id="main-content">
         <PhotoHero
-          video="/videos/pexels-himalayan-dawn.mp4"
-          poster="/images/pexels-himalayan-dawn-poster.jpg"
-          minHeight="60vh"
+          video="/videos/pixabay-sea-of-fog-sunrise.mp4"
+          poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg"
+          minHeight="60svh"
         >
-          <Container className="relative py-20 sm:py-28">
-            <Reveal>
-              <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                Insights
-              </span>
-              <SplitReveal
-                as="h1"
-                className="mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory"
-              >
-                Writing that answers real brand questions.
-              </SplitReveal>
-              <p className="mt-4 max-w-xl text-ivory/80">
-                Positioning, recognition, verbal identity, and the psychology underneath them. Every piece starts from
-                a question a real project actually raised.
-              </p>
-            </Reveal>
+          <Container className="relative py-24 sm:py-28">
+            <div className="grid gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">
+              <div>
+                <Reveal>
+                  <span className="inline-flex items-center rounded-full border border-ivory/30 bg-soil/15 px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-ivory backdrop-blur-xl">
+                    Insights
+                  </span>
+                </Reveal>
+                <SplitReveal
+                  as="h1"
+                  className="mt-6 max-w-4xl font-display text-[clamp(2.8rem,7vw,6.2rem)] font-normal leading-[0.95] text-ivory"
+                >
+                  Brand strategy, explained from the roots upward.
+                </SplitReveal>
+              </div>
+              <Reveal delay={0.12} className="lg:pb-2">
+                <div className="rounded-[1.5rem] border border-ivory/15 bg-soil/30 p-6 text-ivory shadow-elevation-md backdrop-blur-2xl">
+                  <p className="text-base leading-7 text-ivory/85">
+                    Essays, field notes, and working frameworks on positioning,
+                    messaging, recognition, and the choices that make a
+                    business easier to understand.
+                  </p>
+                  <Link
+                    href="#insights-library"
+                    className="mt-6 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-ivory"
+                  >
+                    Search the library <span aria-hidden="true">↓</span>
+                  </Link>
+                </div>
+              </Reveal>
+            </div>
           </Container>
         </PhotoHero>
 
-        {/* Featured pillar — the strongest piece carried as a full
-            editorial block rather than the largest tile in a grid. */}
-        {featured && (
-          <section className="bg-background-alt py-16 sm:py-24">
-            <Container className="max-w-5xl">
-              <Reveal>
-                <p className="text-sm font-medium uppercase tracking-wide" style={{ color: elementColor(featured.element) }}>
-                  Featured
-                </p>
-                <Link href={`/insights/${featured.slug}`} className="group mt-3 block">
-                  <p className="max-w-2xl font-display text-[clamp(1.8rem,4vw,3rem)] font-normal leading-tight text-soil transition-colors duration-300 group-hover:text-clay">
-                    {featured.title}
-                  </p>
-                  <p className="mt-4 max-w-2xl text-base leading-relaxed text-foreground-secondary">
-                    {featured.excerpt}
-                  </p>
-                  <p className="mt-5 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-wide text-action-primary-hover">
-                    Read the article <span aria-hidden="true">→</span>
-                  </p>
-                </Link>
-              </Reveal>
-            </Container>
-          </section>
-        )}
-
-        {/* Search over the archive (manual guide p82) — twelve pieces
-            earn a faster path in; the full list below stays primary. */}
-        <section className="bg-background-alt pb-10">
-          <Container className="max-w-5xl">
+        <section className="bg-ivory py-20 sm:py-28">
+          <Container>
             <Reveal>
-              <ArticleSearch
-                posts={sorted.map((p) => ({
-                  slug: p.slug,
-                  title: p.title,
-                  excerpt: p.excerpt,
-                  question: QUESTION_FOR[p.slug] ?? "",
-                }))}
-              />
-            </Reveal>
-          </Container>
-        </section>
-
-        {/* Question led articles — each remaining piece introduced by
-            the genuine question it answers, per the bible's answer
-            format direction. */}
-        <section className="bg-background-alt pb-16 sm:pb-24">
-          <Container className="max-w-5xl">
-            {rest.map((post, i) => (
-              <Reveal key={post.slug} delay={i * 0.06}>
-                <Link
-                  href={`/insights/${post.slug}`}
-                  className="group grid gap-2 border-t border-soil/15 py-7 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-8"
-                >
-                  <span>
-                    <span className="flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.15em]" style={{ color: elementColor(post.element) }}>
-                      <ElementGlyph slug={post.element} className="h-4 w-4" strokeWidth={1.3} />
-                      {QUESTION_FOR[post.slug] ?? "A question from a real project"}
-                    </span>
-                    <span className="mt-2 block font-display text-2xl font-normal text-soil transition-transform duration-300 group-hover:translate-x-1">
-                      {post.title}
-                    </span>
-                    <span className="mt-2 block max-w-xl text-sm leading-relaxed text-foreground-secondary">
-                      {post.excerpt}
-                    </span>
-                  </span>
-                  <span className="text-sm text-foreground-secondary/70">{post.readingTime}</span>
-                </Link>
-              </Reveal>
-            ))}
-            <div className="h-px bg-soil/15" aria-hidden="true" />
-          </Container>
-        </section>
-
-        {/* Topic clusters + glossary — the practice's vocabulary made
-            explorable. Dark chapter, matching the site's editorial
-            rhythm of light reading over dark teaching. */}
-        <section className="bg-soil py-16 sm:py-24">
-          <TopicClusters />
-        </section>
-
-        {/* Author block — every insight on this site has the same
-            author; her real credentials say why that matters. */}
-        <section className="bg-soil pb-16 sm:pb-24">
-          <Container className="max-w-5xl">
-            <Reveal>
-              <div className="grid items-center gap-8 rounded-2xl border border-ivory/12 p-6 sm:p-10 lg:grid-cols-[minmax(0,14rem)_1fr]" style={{ backgroundColor: "rgba(244,239,230,0.04)" }}>
-                <div className="mx-auto max-w-[14rem] overflow-hidden rounded-2xl lg:mx-0">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/work-portrait.jpg" alt={site.founder} className="block h-auto w-full" loading="lazy" />
-                </div>
+              <div className="mb-10 grid gap-6 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">Written by</p>
-                  <p className="mt-1 font-display text-2xl font-normal text-ivory">{site.founder}</p>
-                  <p className="mt-3 max-w-lg text-sm leading-relaxed text-ivory/85">
-                    Every piece here is written by the person who does the client work. {degrees.map((d) => d.label).join(" and ")}:
-                    one for how people notice and decide, the other for how language carries meaning.
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
+                    Start here
                   </p>
-                  <Link href="/about" className="link-underline mt-4 inline-block text-sm text-sandstone transition-colors duration-300 hover:text-ivory">
-                    The mind behind the practice
-                  </Link>
+                  <h2 className="mt-4 font-display text-display-md font-normal text-soil">
+                    One foundation essay. Five decisions.
+                  </h2>
                 </div>
+                <p className="max-w-2xl text-base leading-7 text-foreground-secondary lg:justify-self-end">
+                  Positioning is the soil beneath offer design, messaging,
+                  visual direction, sales language, and content. This guide
+                  turns the subject into a decision system a service business
+                  can actually use.
+                </p>
               </div>
             </Reveal>
+            <Reveal delay={0.08}>
+              <InsightCard post={featured} featured />
+            </Reveal>
           </Container>
         </section>
 
-        {/* The audit lead magnet, in its pillar context — the bible
-            places it inside Insights as well as after the Services
-            health check. Same component, same honest preview rule. */}
-        <section className="bg-soil pb-20 sm:pb-28">
-          <RecognitionAudit />
+        <section className="relative overflow-hidden bg-soil py-20 text-ivory sm:py-28">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(184,90,52,0.18),transparent_28%),radial-gradient(circle_at_82%_82%,rgba(92,107,74,0.16),transparent_30%)]" />
+          <Container className="relative">
+            <Reveal>
+              <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sandstone">
+                    Five reading paths
+                  </p>
+                  <h2 className="mt-4 max-w-xl font-display text-display-md font-normal">
+                    Follow the part of the brand that feels hardest to hold.
+                  </h2>
+                </div>
+                <p className="max-w-2xl text-base leading-7 text-ivory/70 lg:justify-self-end">
+                  The elements organise real brand decisions into five paths.
+                  Each topic page gathers related essays, so learning builds
+                  laterally rather than ending at one article.
+                </p>
+              </div>
+            </Reveal>
+
+            <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+              {insightTopics.map((topic, index) => {
+                const color = elementColor(topic.element);
+                const count = insightPosts.filter(
+                  (post) => post.topicSlug === topic.slug
+                ).length;
+
+                return (
+                  <Reveal key={topic.slug} delay={index * 0.05} className="h-full">
+                    <Link
+                      href={`/insights/topic/${topic.slug}`}
+                      className="group flex h-full min-h-72 flex-col rounded-[1.5rem] border border-ivory/10 bg-ivory/[0.06] p-6 backdrop-blur-xl transition duration-500 hover:-translate-y-1 hover:bg-ivory/[0.1]"
+                    >
+                      <div className="flex items-center justify-between">
+                        <ElementGlyph
+                          slug={topic.element}
+                          className="h-7 w-7"
+                          strokeWidth={1.25}
+                          style={{ color }}
+                        />
+                        <span className="font-display text-2xl text-ivory/25">
+                          0{index + 1}
+                        </span>
+                      </div>
+                      <p
+                        className="mt-10 text-[0.65rem] font-semibold uppercase tracking-[0.2em]"
+                        style={{ color }}
+                      >
+                        {topic.eyebrow}
+                      </p>
+                      <h3 className="mt-3 font-display text-3xl font-normal">
+                        {topic.name}
+                      </h3>
+                      <p className="mt-4 flex-1 text-sm leading-6 text-ivory/65">
+                        {topic.description}
+                      </p>
+                      <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-ivory/80 transition-transform duration-300 group-hover:translate-x-1">
+                        {count} {count === 1 ? "essay" : "essays"}{" "}
+                        <span aria-hidden="true">→</span>
+                      </p>
+                    </Link>
+                  </Reveal>
+                );
+              })}
+            </div>
+          </Container>
+        </section>
+
+        <InsightsExplorer posts={explorerPosts} topics={explorerTopics} />
+
+        <section className="bg-ivory py-20 sm:py-28">
+          <Container>
+            <div className="grid overflow-hidden rounded-[2rem] border border-soil/10 bg-background-elevated shadow-elevation-md lg:grid-cols-[0.9fr_1.1fr]">
+              <div className="relative min-h-80 bg-soil">
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{
+                    backgroundImage:
+                      "url('/images/pixabay-stream-mist-rays-poster.jpg')",
+                  }}
+                  role="img"
+                  aria-label="Light moving through mist above a forest stream"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-soil/85 via-soil/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-7 text-ivory sm:p-9">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sandstone">
+                    A practical next read
+                  </p>
+                  <p className="mt-3 max-w-md font-display text-3xl leading-tight">
+                    Find the seam before paying to redesign the surface.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+                  Brand audit checklist
+                </p>
+                <h2 className="mt-4 max-w-xl font-display text-display-sm font-normal text-soil">
+                  Review the foundation, message, identity, experience, and
+                  memory in one sequence.
+                </h2>
+                <p className="mt-5 max-w-xl text-base leading-7 text-foreground-secondary">
+                  The checklist helps separate high consequence brand breaks
+                  from surface inconsistencies, then turns the findings into a
+                  clear rebrand brief.
+                </p>
+                <div className="mt-8">
+                  <LinkButton href="/insights/brand-audit-checklist-before-rebrand">
+                    Open the audit
+                  </LinkButton>
+                </div>
+              </div>
+            </div>
+          </Container>
         </section>
 
         <TexturedDark
-          image="/images/higgsfield-stream-clarity-poster.jpg"
-          video="/videos/higgsfield-stream-clarity.mp4"
-          className="py-20 sm:py-28 text-center sm:pb-28"
+          image="/images/pixabay-golden-reeds-wind-poster.jpg"
+          video="/videos/pixabay-golden-reeds-wind.mp4"
+          className="py-24 sm:py-28"
         >
-          <ClipReveal>
-            <Container>
-              <h2 className="text-display-md font-display font-normal text-ivory">
-                Want writing like this, applied to your own brand?
-              </h2>
-              <p className="mx-auto mt-4 max-w-md text-ivory/80">
-                Everything here started as a real question from a real project. Tell me yours, and I&apos;ll start
-                there too.
-              </p>
-              <div className="mt-8">
-                <LinkButton href="/contact">Start a Brand Conversation</LinkButton>
-              </div>
-            </Container>
-          </ClipReveal>
+          <Container>
+            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+              <Reveal>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sandstone">
+                  Notes worth keeping
+                </p>
+                <h2 className="mt-4 max-w-2xl font-display text-display-md font-normal text-ivory">
+                  One clear brand question, delivered when there is something
+                  worth saying.
+                </h2>
+                <p className="mt-5 max-w-xl text-base leading-7 text-ivory/75">
+                  New essays, frameworks, and close readings of the choices
+                  that shape perception and memory.
+                </p>
+              </Reveal>
+              <Reveal delay={0.08} className="lg:min-w-96">
+                <NewsletterForm />
+              </Reveal>
+            </div>
+          </Container>
         </TexturedDark>
       </main>
       <Footer />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
     </>
   );
 }

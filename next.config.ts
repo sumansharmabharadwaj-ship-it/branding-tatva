@@ -1,16 +1,8 @@
 import type { NextConfig } from "next";
 
-// The only third-party browser-side resources this site actually loads
-// are Calendly's widget script and its iframe (confirmed by grepping
-// every https:// literal in src/ — everything else is either a plain
-// <a> link, a server-side-only fetch in an API route, or same-origin).
-// 'unsafe-inline' stays on script-src/style-src rather than a nonce
-// setup: this site's JSON-LD blocks (dangerouslySetInnerHTML, several
-// pages) and its heavy use of Framer Motion/GSAP/Tailwind arbitrary
-// inline styles would both need a much larger retrofit to run under a
-// strict nonce-based policy, and getting that wrong silently breaks
-// pages rather than failing loudly — a scoped allowlist is the safer
-// tradeoff for this codebase today.
+// Calendly is the only third-party browser-side runtime. JSON-LD,
+// Framer Motion, and the current utility system still require inline
+// script/style allowances; the remaining policy is deliberately narrow.
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://assets.calendly.com",
@@ -26,16 +18,89 @@ const CSP = [
   "frame-ancestors 'self'",
 ].join("; ");
 
+const LEGACY_INSIGHT_REDIRECTS = [
+  {
+    slug: "five-elements-working-as-one",
+    destination: "/insights/five-element-brand-strategy-framework",
+  },
+  {
+    slug: "visible-versus-remembered",
+    destination: "/insights/brand-awareness-vs-brand-recall",
+  },
+  {
+    slug: "what-a-brand-audit-actually-finds",
+    destination: "/insights/brand-audit-checklist-before-rebrand",
+  },
+  {
+    slug: "what-brand-positioning-actually-decides",
+    destination: "/insights/brand-positioning-strategy-service-businesses",
+  },
+  {
+    slug: "why-visible-brands-stay-forgettable",
+    destination: "/insights/why-beautiful-brand-identity-can-be-forgettable",
+  },
+  {
+    slug: "verbal-identity-beyond-tone-of-voice",
+    destination: "/insights/brand-voice-guidelines-writers-can-use",
+  },
+  {
+    slug: "when-a-growing-business-needs-repositioning",
+    destination: "/insights/reposition-established-service-business-without-losing-recognition",
+  },
+  {
+    slug: "distinctive-assets-and-mental-availability",
+    destination: "/insights/distinctive-brand-assets-audit",
+  },
+  {
+    slug: "brand-architecture-for-multiple-offers",
+    destination: "/insights/brand-architecture-service-businesses",
+  },
+  {
+    slug: "how-psychology-informs-brand-strategy",
+    destination: "/insights/five-element-brand-strategy-framework",
+  },
+  {
+    slug: "how-to-evaluate-a-branding-proposal",
+    destination: "/services",
+  },
+  {
+    slug: "category-reframing-a-concept-case-study",
+    destination: "/work",
+  },
+  {
+    slug: "pricing-brand-strategy-across-markets",
+    destination: "/services",
+  },
+  {
+    slug: "how-to-document-brand-decisions",
+    destination: "/insights/brand-consistency-checklist-service-businesses",
+  },
+  {
+    slug: "the-annual-brand-health-review",
+    destination: "/insights/brand-audit-checklist-before-rebrand",
+  },
+] as const;
+
 const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
   reactStrictMode: true,
   poweredByHeader: false,
-  // The blog became Insights (governing bible's site structure) —
-  // permanent redirects preserve every previously indexed URL.
   async redirects() {
     return [
+      ...LEGACY_INSIGHT_REDIRECTS.flatMap(({ slug, destination }) => [
+        {
+          source: `/blog/${slug}`,
+          destination,
+          permanent: true,
+        },
+        {
+          source: `/insights/${slug}`,
+          destination,
+          permanent: true,
+        },
+      ]),
       { source: "/blog", destination: "/insights", permanent: true },
       { source: "/blog/:slug", destination: "/insights/:slug", permanent: true },
     ];

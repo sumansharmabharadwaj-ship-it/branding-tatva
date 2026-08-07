@@ -1,107 +1,203 @@
 import type { Metadata } from "next";
-import { Fragment } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { Container } from "@/components/Container";
+import { ElementGlyph } from "@/components/ElementGlyph";
+import { InsightCard } from "@/components/InsightCard";
+import { LinkButton } from "@/components/Button";
+import { Reveal } from "@/components/Reveal";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { TexturedDark } from "@/components/TexturedDark";
+import { elements } from "@/data/elements";
+import {
+  getInsightBySlug,
+  getInsightTopic,
+  insightPosts,
+  type InsightPost,
+} from "@/data/insights";
+import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
-import { Container } from "@/components/Container";
-import { Reveal } from "@/components/Reveal";
-import { ElementGlyph } from "@/components/ElementGlyph";
-import { PullQuote } from "@/components/PullQuote";
-import { AuditInvite } from "@/components/AuditInvite";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { blogPosts } from "@/data/blog";
-import { elements } from "@/data/elements";
-import { credentials } from "@/data/about";
-import { site } from "@/data/site";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+};
+
+type InsightResearchSource = {
+  title: string;
+  publisher: string;
+  url: string;
+  note?: string;
+};
+
+type InsightPostWithSources = InsightPost & {
+  sources?: InsightResearchSource[];
+};
+
+function formatDate(date: string) {
+  return new Intl.DateTimeFormat("en", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${date}T00:00:00Z`));
+}
+
+function countWords(post: InsightPost) {
+  const content = [
+    post.title,
+    post.directAnswer,
+    ...post.keyTakeaways,
+    post.framework.introduction,
+    ...post.framework.steps.flatMap((step) => [step.title, step.description]),
+    ...post.sections.flatMap((section) => [
+      section.heading,
+      ...section.paragraphs,
+      ...(section.bullets ?? []),
+      section.callout?.text ?? "",
+    ]),
+    ...post.faq.flatMap((item) => [item.question, item.answer]),
+  ].join(" ");
+
+  return content.trim().split(/\s+/).length;
+}
 
 export function generateStaticParams() {
-  return blogPosts.map((p) => ({ slug: p.slug }));
+  return insightPosts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = getInsightBySlug(slug);
+
   if (!post) return {};
+
   return {
-    title: post.title,
+    title: post.seoTitle,
     description: post.excerpt,
+    keywords: [post.primaryKeyword, ...post.secondaryKeywords],
+    authors: [{ name: site.founder, url: `${site.url}/about` }],
+    creator: site.founder,
+    publisher: site.name,
+    category: getInsightTopic(post.topicSlug)?.name,
     alternates: { canonical: `/insights/${post.slug}` },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
     openGraph: {
-      title: post.title,
+      title: post.seoTitle,
       description: post.excerpt,
       type: "article",
+      url: `${site.url}/insights/${post.slug}`,
       publishedTime: post.publishedAt,
-      images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
+      modifiedTime: post.updatedAt,
+      authors: [site.founder],
+      images: [{ url: post.heroImage, alt: post.heroImageAlt }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.seoTitle,
+      description: post.excerpt,
+      images: [post.heroImage],
     },
   };
 }
 
-export default async function BlogPostPage({ params }: Props) {
+export default async function InsightArticlePage({ params }: Props) {
   const { slug } = await params;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = getInsightBySlug(slug);
+
   if (!post) notFound();
 
-  const element = elements.find((e) => e.slug === post.element);
-  // Lands after the actual midpoint, but never on the lede (index 0) or
-  // the closing paragraph, so it doesn't sit awkwardly against the
-  // prev/next nav that immediately follows the body.
-  const pullQuoteAfter = post.pullQuote
-    ? Math.min(Math.max(1, Math.floor(post.body.length / 2) - 1), post.body.length - 2)
-    : -1;
-  // "## " body entries are section headings (see BlogPost's own
-  // comment) — they render as anchored h2s and feed the table of
-  // contents. Manual guide p83: reading progress, TOC, summary.
-  const headingId = (text: string) =>
-    text
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, "")
-      .trim()
-      .replace(/\s+/g, "-");
-  const headings = post.body.filter((b) => b.startsWith("## ")).map((b) => b.slice(3));
-  const sorted = [...blogPosts].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-  );
-  const next = sorted.find((p) => p.slug !== post.slug);
-  // Related reading: nearest by shared element first, most recent
-  // otherwise, always excluding the piece being read.
-  const others = sorted.filter((p) => p.slug !== post.slug);
-  const related = [
-    ...others.filter((p) => p.element === post.element),
-    ...others.filter((p) => p.element !== post.element),
-  ].slice(0, 2);
+  const sources = (post as InsightPostWithSources).sources ?? [];
+  const element = elements.find((item) => item.slug === post.element);
+  const topic = getInsightTopic(post.topicSlug);
+  const color = element?.color ?? "#B85A34";
+  const related = post.relatedSlugs
+    .map((relatedSlug) => getInsightBySlug(relatedSlug))
+    .filter((item): item is InsightPost => Boolean(item))
+    .slice(0, 3);
 
-  // Verified facts only, per the site's own structured-data rule
-  // (see layout.tsx) — publish/author info, no invented engagement
-  // numbers or aggregateRating.
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.excerpt,
-    // No per-post photography exists yet — the site's own OG image is a
-    // defensible fallback rather than fabricating a claim about a
-    // specific image. No separate edit-tracking exists either, so
-    // dateModified mirrors datePublished (accurate for an unedited post,
-    // not an invented "last updated" claim).
-    image: `${site.url}/opengraph-image`,
-    datePublished: post.publishedAt,
-    dateModified: post.publishedAt,
-    author: { "@id": `${site.url}/#person` },
-    publisher: { "@id": `${site.url}/#organization` },
-    mainEntityOfPage: `${site.url}/insights/${post.slug}`,
-  };
-
-  // Route hierarchy for crawlers (manual guide p91 / bible §14).
-  const breadcrumbData = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Insights", item: `${site.url}/insights` },
-      { "@type": "ListItem", position: 2, name: post.title, item: `${site.url}/insights/${post.slug}` },
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        "@id": `${site.url}/insights/${post.slug}/#article`,
+        url: `${site.url}/insights/${post.slug}`,
+        headline: post.title,
+        description: post.excerpt,
+        image: {
+          "@type": "ImageObject",
+          url: `${site.url}${post.heroImage}`,
+          caption: post.heroImageAlt,
+        },
+        datePublished: post.publishedAt,
+        dateModified: post.updatedAt,
+        inLanguage: "en",
+        articleSection: topic?.name,
+        keywords: [post.primaryKeyword, ...post.secondaryKeywords].join(", "),
+        wordCount: countWords(post),
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": `${site.url}/insights/${post.slug}`,
+        },
+        author: {
+          "@type": "Person",
+          "@id": `${site.url}/#person`,
+          name: site.founder,
+          url: `${site.url}/about`,
+          sameAs: [site.social.linkedin],
+        },
+        publisher: { "@id": `${site.url}/#organization` },
+        isPartOf: { "@id": `${site.url}/insights/#page` },
+        about: [post.primaryKeyword, ...post.secondaryKeywords],
+        ...(sources.length > 0
+          ? { citation: sources.map((source) => source.url) }
+          : {}),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Insights",
+            item: `${site.url}/insights`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: topic?.name ?? "Topic",
+            item: `${site.url}/insights/topic/${post.topicSlug}`,
+          },
+          {
+            "@type": "ListItem",
+            position: 4,
+            name: post.title,
+            item: `${site.url}/insights/${post.slug}`,
+          },
+        ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: post.faq.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
+      },
     ],
   };
 
@@ -110,276 +206,505 @@ export default async function BlogPostPage({ params }: Props) {
       <Header transparent />
       <ScrollProgress />
       <main id="main-content">
-        {/* Asymmetric masthead, not a centered stack — the headline runs
-            large and left in its own column, the meta block sits apart
-            in its own right-hand column instead of stacking directly
-            underneath, and a giant faint element-name watermark sits
-            behind the whole thing (the same ghost-numeral technique
-            already used on case studies and About, extended to a word
-            here). This is the one page on the site that was still a
-            plain centered template — every other page already got this
-            kind of editorial variety across earlier rounds. Audit found
-            this section had no video at all, the one remaining "blank
-            section" bug class site-wide — this post's own already-tagged
-            element (post.element) has a real video/poster pair in
-            data/elements.ts, so the masthead now shows the same footage
-            already used for that element elsewhere, not an arbitrary
-            new choice. Overlay at bg-soil/80, the site's normalized
-            standard. */}
-        <section className="relative overflow-hidden bg-soil pt-32 pb-16 sm:pt-40 sm:pb-24">
-          {element?.video && (
-            <>
-              <BackgroundVideo video={element.video} poster={element.image} />
-              <div className="absolute inset-0 bg-soil/80" />
-            </>
-          )}
-          <Container className="relative">
-            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
-              <Reveal>
-                <span className="inline-flex items-center gap-2 rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                  <ElementGlyph
-                    slug={post.element}
-                    className="h-3.5 w-3.5"
-                    strokeWidth={1.6}
-                    style={{ color: element?.color }}
-                  />
-                  {element?.name ?? post.element}
-                </span>
-                <h1 className="mt-6 max-w-3xl font-display text-[clamp(2.1rem,6vw,4.25rem)] font-normal leading-[1.05] text-ivory">
-                  {post.title}
-                </h1>
-              </Reveal>
-              <Reveal delay={0.1} className="lg:pb-2 lg:text-right">
-                <p className="text-sm text-ivory/70">
-                  {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </p>
-                <p className="mt-1 text-sm text-ivory/70">{post.readingTime}</p>
-                <p className="mt-1 text-sm text-ivory/70">{site.founder}</p>
-              </Reveal>
-            </div>
-          </Container>
-        </section>
+        <article>
+          <header className="relative flex min-h-[78svh] items-end overflow-hidden bg-soil pb-14 pt-36 sm:pb-20 sm:pt-44">
+            {post.heroVideo ? (
+              <BackgroundVideo video={post.heroVideo} poster={post.heroImage} />
+            ) : (
+              <Image
+                src={post.heroImage}
+                alt=""
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+              />
+            )}
+            <div className="absolute inset-0 bg-soil/45" />
+            <div className="absolute inset-0 bg-gradient-to-t from-soil via-soil/35 to-soil/10" />
 
-        {/* Sticky side rail alongside the article, not another centered
-            column — the element glyph and a "back to all posts" link
-            stay in view as the piece scrolls, so the page reads as an
-            article inside a considered layout rather than a lone text
-            block. The reading column itself stays a narrow, single
-            measure (no asymmetry inside the prose) since long-form
-            legibility shouldn't be traded away for a layout flourish. */}
-        <section className="py-16 sm:py-24">
-          <Container>
-            <div className="lg:grid lg:grid-cols-[140px_1fr] lg:gap-12">
-              <div className="hidden lg:block">
-                <div className="sticky top-32 flex flex-col items-start gap-6">
-                  <ElementGlyph
-                    slug={post.element}
-                    className="h-9 w-9"
-                    strokeWidth={1.2}
-                    style={{ color: element?.color }}
-                  />
-                  <div className="h-16 w-px" style={{ backgroundColor: `${element?.color ?? "#B85A34"}40` }} />
-                  <Link href="/insights" className="link-underline text-xs font-medium uppercase tracking-wide text-foreground-secondary">
-                    &larr; All posts
-                  </Link>
-                  {/* Audit found every post ends with only two options,
-                      back to the index or the next post, no path toward
-                      the actual business goal. The case study template's
-                      sidebar already carries a "Start a similar project"
-                      link the same way; this mirrors it rather than a
-                      full LinkButton, since the rail is only 140px wide. */}
-                  <Link href="/contact" className="link-underline text-xs font-medium uppercase tracking-wide" style={{ color: element?.color }}>
-                    Start a project &rarr;
-                  </Link>
-                </div>
-              </div>
+            <Container className="relative">
+              <nav
+                aria-label="Breadcrumb"
+                className="mb-8 flex flex-wrap items-center gap-2 text-xs text-ivory/65"
+              >
+                <Link href="/" className="transition hover:text-ivory">
+                  Home
+                </Link>
+                <span aria-hidden="true">/</span>
+                <Link href="/insights" className="transition hover:text-ivory">
+                  Insights
+                </Link>
+                <span aria-hidden="true">/</span>
+                <Link
+                  href={`/insights/topic/${post.topicSlug}`}
+                  className="transition hover:text-ivory"
+                >
+                  {topic?.name}
+                </Link>
+              </nav>
 
-              <div className="max-w-2xl">
-                {/* Answer first (manual p83): the piece's key takeaways
-                    before the argument, for readers and answer engines
-                    alike. */}
-                {post.summary && (
-                  <Reveal>
-                    <aside className="mb-8 rounded-2xl border border-border p-6" style={{ backgroundColor: "rgba(39,34,30,0.03)" }}>
-                      <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: element?.color }}>
-                        In brief
-                      </p>
-                      <ul className="mt-3 space-y-2">
-                        {post.summary.map((line) => (
-                          <li key={line} className="text-sm leading-relaxed text-foreground-secondary before:mr-2 before:content-['·']">
-                            {line}
-                          </li>
-                        ))}
-                      </ul>
-                    </aside>
-                  </Reveal>
-                )}
-                {headings.length > 0 && (
-                  <Reveal>
-                    <nav aria-label="In this article" className="mb-10 border-l-2 pl-5" style={{ borderColor: `${element?.color ?? "#B85A34"}66` }}>
-                      <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
-                        In this article
-                      </p>
-                      <ul className="mt-3 space-y-1.5">
-                        {headings.map((h) => (
-                          <li key={h}>
-                            <a href={`#${headingId(h)}`} className="link-underline text-sm text-foreground-secondary hover:text-soil">
-                              {h}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </nav>
-                  </Reveal>
-                )}
-                <div className="space-y-6 text-foreground-secondary">
-                  {/* Each paragraph gets its own Reveal instead of one
-                      blanket fade around the whole article — on a
-                      long-form reading page, a single flat entrance means
-                      everything already below the fold pops in at once
-                      the moment the article top scrolls into view. Per-
-                      paragraph triggers (each with its own
-                      useRevealTrigger/IntersectionObserver) fire naturally
-                      as the reader actually scrolls to each one instead,
-                      no artificial index-based delay needed. */}
-                  {post.body.map((paragraph, i) => (
-                    <Fragment key={i}>
-                      <Reveal>
-                        {paragraph.startsWith("## ") ? (
-                          <h2
-                            id={headingId(paragraph.slice(3))}
-                            className="scroll-mt-28 pt-4 font-display text-2xl font-normal text-soil sm:text-3xl"
-                          >
-                            {paragraph.slice(3)}
-                          </h2>
-                        ) : (
-                          <p className={i === 0 ? "blog-lede text-lg text-soil" : undefined}>{paragraph}</p>
-                        )}
-                      </Reveal>
-                      {i === pullQuoteAfter && post.pullQuote && (
-                        <Reveal>
-                          <PullQuote quote={post.pullQuote} color={element?.color ?? "#B85A34"} />
-                        </Reveal>
-                      )}
-                    </Fragment>
-                  ))}
-                </div>
-
-                {/* The article's ungated working asset (bible §15) —
-                    the full checklist in the open, value before any
-                    email is asked for. */}
-                {post.checklist && (
-                  <Reveal>
-                    <aside className="mt-12 rounded-2xl border p-6 sm:p-8" style={{ borderColor: `${element?.color ?? "#B85A34"}55`, backgroundColor: "rgba(39,34,30,0.03)" }}>
-                      <p className="font-display text-xl font-normal text-soil sm:text-2xl">{post.checklist.title}</p>
-                      <ol className="mt-4 space-y-3">
-                        {post.checklist.items.map((item, n) => (
-                          <li key={item} className="flex gap-4 text-sm leading-relaxed text-foreground-secondary">
-                            <span className="font-display text-base" style={{ color: element?.color }}>
-                              {String(n + 1).padStart(2, "0")}
-                            </span>
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ol>
-                    </aside>
-                  </Reveal>
-                )}
-
-                {/* Lead magnet placement inside pillar articles
-                    (bible §11) — signpost only; the audit lives on
-                    Services. */}
+              <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-end">
                 <Reveal>
-                  <div className="mt-10">
-                    <AuditInvite tone="light" />
+                  <div className="inline-flex items-center gap-2 rounded-full border border-ivory/20 bg-soil/25 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-ivory backdrop-blur-xl">
+                    <ElementGlyph
+                      slug={post.element}
+                      className="h-4 w-4"
+                      strokeWidth={1.5}
+                      style={{ color }}
+                    />
+                    {topic?.name}
                   </div>
+                  <h1 className="mt-6 max-w-5xl font-display text-[clamp(2.6rem,6vw,5.8rem)] font-normal leading-[0.96] text-ivory">
+                    {post.title}
+                  </h1>
                 </Reveal>
 
-                {/* Author box (manual guide p83, AEO entity strategy):
-                    the real person behind every piece, credentials from
-                    the same data the About page renders. */}
-                <Reveal>
-                  <div className="mt-10 flex flex-col gap-1 rounded-2xl border border-border p-6" style={{ backgroundColor: "rgba(39,34,30,0.03)" }}>
-                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
-                      Written by
+                <Reveal delay={0.1}>
+                  <div className="rounded-[1.5rem] border border-ivory/15 bg-soil/30 p-6 text-ivory shadow-elevation-md backdrop-blur-2xl">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sandstone">
+                      The direct answer
                     </p>
-                    <p className="mt-1 font-display text-xl font-normal text-soil">{site.founder}</p>
-                    <p className="text-sm leading-relaxed text-foreground-secondary">
-                      {credentials
-                        .filter((c) => c.featured)
-                        .map((c) => c.label)
-                        .join(" · ")}
-                      {" · "}Brand strategist and the one pair of hands on every engagement here.
+                    <p className="mt-4 text-sm leading-7 text-ivory/85">
+                      {post.directAnswer}
                     </p>
-                    <Link href="/about" className="link-underline mt-2 inline-flex items-center gap-2 text-sm font-medium text-clay">
-                      The thinking behind the practice <span aria-hidden="true">→</span>
-                    </Link>
-                  </div>
-                </Reveal>
-
-                {/* Related reading (manual guide p83): the two nearest
-                    pieces by element, most recent otherwise. */}
-                {related.length > 0 && (
-                  <Reveal>
-                    <div className="mt-10 border-t border-border pt-8">
-                      <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
-                        Related reading
-                      </p>
-                      <ul className="mt-3 space-y-3">
-                        {related.map((r) => (
-                          <li key={r.slug}>
-                            <Link href={`/insights/${r.slug}`} className="group block">
-                              <span className="font-display text-lg text-soil transition-colors duration-300 group-hover:text-clay">
-                                {r.title}
-                              </span>
-                              <span className="mt-0.5 block text-sm text-foreground-secondary">{r.excerpt}</span>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
+                    <div className="mt-6 grid gap-2 border-t border-ivory/15 pt-5 text-xs text-ivory/60">
+                      <span>By {site.founder}</span>
+                      <span>Published {formatDate(post.publishedAt)}</span>
+                      <span>Updated {formatDate(post.updatedAt)}</span>
+                      <span>{post.readingTime}</span>
                     </div>
-                  </Reveal>
-                )}
+                  </div>
+                </Reveal>
+              </div>
+            </Container>
+          </header>
 
-                <div className="mt-16 flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-                    <Link href="/insights" className="link-underline text-sm font-medium text-soil lg:hidden">
-                      &larr; All posts
-                    </Link>
-                    {/* Mirrors the sticky sidebar's CTA for mobile, where
-                        that rail is hidden below lg. */}
-                    <Link href="/contact" className="link-underline text-sm font-medium text-soil">
-                      Start a project &rarr;
+          <section className="bg-ivory py-16 sm:py-20">
+            <Container>
+              <div className="grid gap-12 xl:grid-cols-[13rem_minmax(0,48rem)_14rem] xl:items-start xl:justify-between">
+                <aside className="hidden xl:block">
+                  <nav
+                    aria-label="In this article"
+                    className="sticky top-28 rounded-[1.25rem] border border-border bg-background-elevated p-5"
+                  >
+                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-clay">
+                      In this article
+                    </p>
+                    <ol className="mt-4 space-y-3">
+                      <li>
+                        <a
+                          href="#working-framework"
+                          className="text-xs leading-5 text-foreground-secondary transition hover:text-soil"
+                        >
+                          {post.framework.title}
+                        </a>
+                      </li>
+                      {post.sections.map((section) => (
+                        <li key={section.id}>
+                          <a
+                            href={`#${section.id}`}
+                            className="text-xs leading-5 text-foreground-secondary transition hover:text-soil"
+                          >
+                            {section.heading}
+                          </a>
+                        </li>
+                      ))}
+                      <li>
+                        <a
+                          href="#frequent-questions"
+                          className="text-xs leading-5 text-foreground-secondary transition hover:text-soil"
+                        >
+                          Frequent questions
+                        </a>
+                      </li>
+                      {sources.length > 0 && (
+                        <li>
+                          <a
+                            href="#research-sources"
+                            className="text-xs leading-5 text-foreground-secondary transition hover:text-soil"
+                          >
+                            Research sources
+                          </a>
+                        </li>
+                      )}
+                    </ol>
+                  </nav>
+                </aside>
+
+                <div className="min-w-0">
+                  <Reveal>
+                    <section
+                      aria-labelledby="takeaways-heading"
+                      className="rounded-[1.5rem] border border-soil/10 bg-background-elevated p-6 shadow-elevation-sm sm:p-8"
+                    >
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+                        Key takeaways
+                      </p>
+                      <h2
+                        id="takeaways-heading"
+                        className="mt-3 font-display text-3xl font-normal text-soil"
+                      >
+                        The argument in five lines.
+                      </h2>
+                      <ul className="mt-6 grid gap-4">
+                        {post.keyTakeaways.map((takeaway) => (
+                          <li key={takeaway} className="flex gap-4 text-sm leading-7 text-soil/80">
+                            <span
+                              className="mt-2.5 h-2 w-2 shrink-0 rounded-full"
+                              style={{ backgroundColor: color }}
+                              aria-hidden="true"
+                            />
+                            {takeaway}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  </Reveal>
+
+                  <Reveal>
+                    <section
+                      id="working-framework"
+                      className="scroll-mt-32 pt-20"
+                      aria-labelledby="framework-heading"
+                    >
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+                        Working framework
+                      </p>
+                      <h2
+                        id="framework-heading"
+                        className="mt-4 font-display text-display-sm font-normal text-soil"
+                      >
+                        {post.framework.title}
+                      </h2>
+                      <p className="mt-5 max-w-2xl text-base leading-8 text-foreground-secondary">
+                        {post.framework.introduction}
+                      </p>
+                      <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                        {post.framework.steps.map((step, index) => (
+                          <div
+                            key={step.title}
+                            className="rounded-[1.25rem] border border-soil/10 bg-background-alt p-5"
+                          >
+                            <div className="flex items-center justify-between gap-4">
+                              <span
+                                className="font-display text-3xl"
+                                style={{ color }}
+                              >
+                                0{index + 1}
+                              </span>
+                              <span className="h-px flex-1 bg-border" aria-hidden="true" />
+                            </div>
+                            <h3 className="mt-5 font-display text-2xl font-normal text-soil">
+                              {step.title}
+                            </h3>
+                            <p className="mt-3 text-sm leading-6 text-foreground-secondary">
+                              {step.description}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  </Reveal>
+
+                  <div className="pt-4">
+                    {post.sections.map((section, sectionIndex) => (
+                      <Reveal key={section.id}>
+                        <section id={section.id} className="scroll-mt-32 pt-16">
+                          <h2 className="font-display text-[clamp(2rem,4vw,3.2rem)] font-normal leading-tight text-soil">
+                            {section.heading}
+                          </h2>
+                          <div className="mt-6 space-y-6 text-base leading-8 text-foreground-secondary">
+                            {section.paragraphs.map((paragraph) => (
+                              <p key={paragraph}>{paragraph}</p>
+                            ))}
+                          </div>
+
+                          {section.bullets && (
+                            <ul className="mt-8 grid gap-3 rounded-[1.25rem] border border-border bg-background-alt p-6">
+                              {section.bullets.map((bullet) => (
+                                <li key={bullet} className="flex gap-3 text-sm leading-7 text-soil/80">
+                                  <span
+                                    className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full"
+                                    style={{ backgroundColor: color }}
+                                    aria-hidden="true"
+                                  />
+                                  {bullet}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+
+                          {section.callout && (
+                            <blockquote
+                              className="mt-8 rounded-[1.5rem] border-l-4 bg-soil px-6 py-7 text-ivory sm:px-8"
+                              style={{ borderLeftColor: color }}
+                            >
+                              <p
+                                className="text-[0.65rem] font-semibold uppercase tracking-[0.2em]"
+                                style={{ color }}
+                              >
+                                {section.callout.label}
+                              </p>
+                              <p className="mt-3 font-display text-2xl leading-snug">
+                                {section.callout.text}
+                              </p>
+                            </blockquote>
+                          )}
+
+                          {sectionIndex === Math.floor(post.sections.length / 2) && (
+                            <figure className="mt-12 overflow-hidden rounded-[1.5rem] border border-soil/10 bg-soil">
+                              <div className="relative aspect-[16/9]">
+                                <Image
+                                  src={post.heroImage}
+                                  alt={post.heroImageAlt}
+                                  fill
+                                  sizes="(min-width: 1280px) 48rem, 100vw"
+                                  className="object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-soil/70 via-transparent to-transparent" />
+                              </div>
+                              <figcaption className="px-5 py-4 text-xs leading-5 text-ivory/65">
+                                The framework works as a connected landscape.
+                                Each decision changes the terrain around the next one.
+                              </figcaption>
+                            </figure>
+                          )}
+                        </section>
+                      </Reveal>
+                    ))}
+                  </div>
+
+                  <Reveal>
+                    <section
+                      id="frequent-questions"
+                      aria-labelledby="faq-heading"
+                      className="scroll-mt-32 pt-20"
+                    >
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+                        Frequent questions
+                      </p>
+                      <h2
+                        id="faq-heading"
+                        className="mt-4 font-display text-display-sm font-normal text-soil"
+                      >
+                        The questions that usually follow.
+                      </h2>
+                      <div className="mt-8 divide-y divide-border border-y border-border">
+                        {post.faq.map((item) => (
+                          <details key={item.question} className="group py-5">
+                            <summary className="flex cursor-pointer list-none items-start justify-between gap-6 font-medium text-soil">
+                              <span>{item.question}</span>
+                              <span
+                                aria-hidden="true"
+                                className="text-xl leading-none transition group-open:rotate-45"
+                                style={{ color }}
+                              >
+                                +
+                              </span>
+                            </summary>
+                            <p className="max-w-2xl pt-4 text-sm leading-7 text-foreground-secondary">
+                              {item.answer}
+                            </p>
+                          </details>
+                        ))}
+                      </div>
+                    </section>
+                  </Reveal>
+
+                  {sources.length > 0 && (
+                    <Reveal>
+                      <section
+                        id="research-sources"
+                        aria-labelledby="research-sources-heading"
+                        className="scroll-mt-32 pt-20"
+                      >
+                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+                          Research sources
+                        </p>
+                        <h2
+                          id="research-sources-heading"
+                          className="mt-4 font-display text-display-sm font-normal text-soil"
+                        >
+                          The evidence beneath the method.
+                        </h2>
+                        <p className="mt-5 max-w-2xl text-base leading-8 text-foreground-secondary">
+                          These sources establish the research principles used
+                          in this guide. Branding Tatva&apos;s framework is the
+                          practical application of that evidence to service
+                          businesses and founder-led brands.
+                        </p>
+                        <ol className="mt-8 grid gap-4">
+                          {sources.map((source, index) => (
+                            <li
+                              key={source.url}
+                              className="rounded-[1.25rem] border border-soil/10 bg-background-alt p-5 sm:p-6"
+                            >
+                              <div className="flex gap-4">
+                                <span
+                                  className="font-display text-2xl leading-none"
+                                  style={{ color }}
+                                  aria-hidden="true"
+                                >
+                                  {String(index + 1).padStart(2, "0")}
+                                </span>
+                                <div className="min-w-0">
+                                  <a
+                                    href={source.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="link-underline font-medium text-soil"
+                                  >
+                                    {source.title}
+                                    <span aria-hidden="true"> ↗</span>
+                                  </a>
+                                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-clay">
+                                    {source.publisher}
+                                  </p>
+                                  {source.note && (
+                                    <p className="mt-3 text-sm leading-7 text-foreground-secondary">
+                                      {source.note}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </li>
+                          ))}
+                        </ol>
+                      </section>
+                    </Reveal>
+                  )}
+
+                  <Reveal>
+                    <aside className="mt-16 grid gap-6 rounded-[1.5rem] border border-soil/10 bg-background-alt p-6 sm:grid-cols-[auto_1fr] sm:items-center sm:p-8">
+                      <div
+                        className="flex h-16 w-16 items-center justify-center rounded-full"
+                        style={{ backgroundColor: `${color}16` }}
+                      >
+                        <ElementGlyph
+                          slug={post.element}
+                          className="h-8 w-8"
+                          strokeWidth={1.2}
+                          style={{ color }}
+                        />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+                          Written by {site.founder}
+                        </p>
+                        <p className="mt-3 text-sm leading-7 text-foreground-secondary">
+                          Suman studies how attention, language, perception,
+                          and memory shape the way people understand a
+                          business, then turns those observations into brand
+                          decisions a founder can use.
+                        </p>
+                        <Link
+                          href="/about"
+                          className="link-underline mt-4 inline-block text-sm font-medium text-soil"
+                        >
+                          Read the background <span aria-hidden="true">→</span>
+                        </Link>
+                      </div>
+                    </aside>
+                  </Reveal>
+                </div>
+
+                <aside className="hidden xl:block">
+                  <div className="sticky top-28 space-y-6">
+                    <div className="rounded-[1.25rem] border border-border bg-background-elevated p-5">
+                      <ElementGlyph
+                        slug={post.element}
+                        className="h-8 w-8"
+                        strokeWidth={1.2}
+                        style={{ color }}
+                      />
+                      <p className="mt-5 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-foreground-secondary">
+                        Reading path
+                      </p>
+                      <Link
+                        href={`/insights/topic/${post.topicSlug}`}
+                        className="mt-2 block font-display text-2xl text-soil"
+                      >
+                        {topic?.name}
+                      </Link>
+                      <p className="mt-3 text-xs leading-5 text-foreground-secondary">
+                        {topic?.promise}
+                      </p>
+                    </div>
+                    <Link
+                      href="/contact"
+                      className="link-underline block text-xs font-semibold uppercase tracking-[0.14em]"
+                      style={{ color }}
+                    >
+                      Bring this question to your brand
                     </Link>
                   </div>
-                  {next && (
-                    <Link
-                      href={`/insights/${next.slug}`}
-                      className="link-underline text-sm font-medium text-soil sm:ml-auto"
-                    >
-                      Next: {next.title} &rarr;
-                    </Link>
-                  )}
-                </div>
+                </aside>
               </div>
-            </div>
+            </Container>
+          </section>
+        </article>
+
+        {related.length > 0 && (
+          <section className="bg-background-alt py-20 sm:py-28">
+            <Container>
+              <Reveal>
+                <div className="grid gap-6 lg:grid-cols-[0.7fr_1.3fr] lg:items-end">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+                      Continue the thread
+                    </p>
+                    <h2 className="mt-4 font-display text-display-md font-normal text-soil">
+                      The next useful questions.
+                    </h2>
+                  </div>
+                  <p className="max-w-2xl text-base leading-7 text-foreground-secondary lg:justify-self-end">
+                    Brand decisions rarely live alone. These essays connect the
+                    current question with the foundation, language, experience,
+                    or memory around it.
+                  </p>
+                </div>
+              </Reveal>
+              <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {related.map((relatedPost, index) => (
+                  <Reveal key={relatedPost.slug} delay={index * 0.05}>
+                    <InsightCard post={relatedPost} />
+                  </Reveal>
+                ))}
+              </div>
+            </Container>
+          </section>
+        )}
+
+        <TexturedDark
+          image={post.heroImage}
+          video={post.heroVideo}
+          className="py-24 text-center sm:py-28"
+        >
+          <Container>
+            <Reveal>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sandstone">
+                Apply the thinking
+              </p>
+              <h2 className="mx-auto mt-4 max-w-3xl font-display text-display-md font-normal text-ivory">
+                A clear diagnosis makes the next brand decision smaller.
+              </h2>
+              <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-ivory/75">
+                Bring the question, the current materials, and the part that
+                keeps refusing to hold together.
+              </p>
+              <div className="mt-8">
+                <LinkButton href="/contact">Start a brand conversation</LinkButton>
+              </div>
+            </Reveal>
           </Container>
-        </section>
+        </TexturedDark>
       </main>
       <Footer />
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
     </>
   );
