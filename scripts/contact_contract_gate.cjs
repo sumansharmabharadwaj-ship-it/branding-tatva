@@ -26,28 +26,35 @@ function fail(message) {
   process.exitCode = 1;
 }
 
+function durationPhrasePattern(number, word, flags = "i") {
+  return new RegExp(
+    `\\b(?:${number}|${word})(?:\\s*-\\s*|\\s+)?(?:minute|min)s?\\b`,
+    flags,
+  );
+}
+
 const sourceFiles = walk(SRC).filter((file) => /\.(?:ts|tsx|js|jsx|json|md|css)$/.test(file));
 const source = new Map(
   sourceFiles.map((file) => [relative(file), fs.readFileSync(file, "utf8")]),
 );
 
-const contradictoryDuration = [
-  /\b20[ -]?minute\b/gi,
-  /\btwenty[ -]?minute\b/gi,
-];
+const obsoleteDurationPattern = durationPhrasePattern(20, "twenty", "gi");
 
 for (const [file, content] of source) {
-  for (const pattern of contradictoryDuration) {
-    const matches = [...content.matchAll(pattern)];
-    if (matches.length) {
-      fail(`${file} contains obsolete consultation wording: ${matches.map((match) => match[0]).join(", ")}`);
-    }
+  const matches = [...content.matchAll(obsoleteDurationPattern)];
+  if (matches.length) {
+    fail(
+      `${file} contains obsolete consultation wording: ${matches
+        .map((match) => match[0])
+        .join(", ")}`,
+    );
   }
 }
 
 const siteFile = source.get("src/data/site.ts") || "";
 const contactPage = source.get("src/app/contact/page.tsx") || "";
 const calendly = source.get("src/components/CalendlyEmbed.tsx") || "";
+const contactExperience = `${contactPage}\n${calendly}`;
 
 if (!siteFile.includes(EXPECTED_PHONE_E164)) {
   fail(`src/data/site.ts must contain the canonical E.164 phone ${EXPECTED_PHONE_E164}`);
@@ -64,8 +71,20 @@ if (!/tel:\$?\{?[^\n]*(?:phone|contact)/i.test(contactPage) && !contactPage.incl
 if (!/whatsapp|wa\.me/i.test(contactPage)) {
   fail("Contact page must expose a WhatsApp path.");
 }
-if (!/30\s*(?:minute|min)/i.test(contactPage + calendly)) {
-  fail("The contact or booking experience must state the 30-minute duration.");
+
+const literalDurationPattern = durationPhrasePattern(EXPECTED_DURATION, "thirty");
+const centralizedDurationPattern =
+  /\{?\s*(?:site\.)?consultationMinutes\s*\}?\s*(?:-\s*|\s+)?(?:minute|min)s?\b/i;
+const durationEvidence = literalDurationPattern.test(contactExperience)
+  ? "literal"
+  : centralizedDurationPattern.test(contactExperience)
+    ? "centralized"
+    : null;
+
+if (!durationEvidence) {
+  fail(
+    "The contact or booking experience must state the 30-minute duration, either literally or through site.consultationMinutes.",
+  );
 }
 if (!/CalendlyEmbed/.test(contactPage)) {
   fail("Contact page must retain the Calendly booking path.");
@@ -82,6 +101,7 @@ if (!process.exitCode) {
         phoneE164: EXPECTED_PHONE_E164,
         phoneDisplay: EXPECTED_PHONE_DISPLAY,
         consultationMinutes: EXPECTED_DURATION,
+        durationEvidence,
         sourceFilesChecked: source.size,
       },
       null,
