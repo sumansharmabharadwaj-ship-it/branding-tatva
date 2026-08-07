@@ -646,8 +646,17 @@ export default async function InsightArticlePage({ params }: Props) {
         </article>
 
         {related.length > 0 && (
-          <section className="bg-background-alt py-20 sm:py-28">
-            <Container>
+          <section className="relative overflow-hidden bg-background-alt py-20 sm:py-28">
+            <BackgroundVideo
+              video="/videos/generated/bt-insights-related-tributaries.mp4"
+              poster="/images/generated/bt-insights-related-tributaries-poster.jpg"
+              imagePosition="center"
+              parallax
+              playbackRate={0.9}
+            />
+            <div className="absolute inset-0 bg-ivory/85" />
+            <div className="absolute inset-0 bg-gradient-to-r from-ivory/95 via-ivory/75 to-ivory/55" />
+            <Container className="relative">
               <Reveal>
                 <div className="grid gap-6 lg:grid-cols-[0.7fr_1.3fr] lg:items-end">
                   <div>

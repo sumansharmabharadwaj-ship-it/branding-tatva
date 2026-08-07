@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { allTerms, findTerm } from "@/data/glossary";
@@ -65,7 +66,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
 
   return (
     <>
-      <Header />
+      <Header transparent />
       <main id="main-content">
         {/* Was one flat cream section carrying breadcrumb, definition,
             practice note, questions and related pills all at one visual
@@ -73,8 +74,18 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
             page inherits the light to dark chapter grammar the rest of
             the site reads by, and the definition lands as a statement
             rather than as the third paragraph in a stack. */}
-        <section className="bg-soil pb-16 pt-36 sm:pt-44">
-          <Container className="max-w-2xl">
+        <section className="relative overflow-hidden bg-soil pb-16 pt-36 sm:pt-44">
+          <BackgroundVideo
+            video="/videos/generated/bt-glossary-living-language.mp4"
+            poster="/images/generated/bt-glossary-living-language-poster.jpg"
+            imagePosition="center"
+            parallax
+            playbackRate={0.9}
+          />
+          <div className="absolute inset-0 bg-soil/55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-soil via-soil/70 to-soil/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-soil/80 via-transparent to-soil/25" />
+          <Container className="relative max-w-2xl">
             <Reveal>
               <nav aria-label="Breadcrumb" className="text-xs uppercase tracking-[0.15em] text-ivory/60">
                 <Link href="/insights" className="link-underline">

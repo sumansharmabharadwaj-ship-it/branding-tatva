@@ -7,6 +7,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { AnimatedStat } from "@/components/AnimatedStat";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Reveal } from "@/components/Reveal";
 import type { Project } from "@/data/projects";
 import type { CaseStudyPresentation } from "@/data/caseStudyPresentation";
@@ -847,14 +848,23 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
         </Container>
       </section>
 
-      <section className="py-20 sm:py-28" style={{ backgroundColor: palette.paper }}>
-        <Container className="max-w-5xl text-center">
+      <section className="relative overflow-hidden py-20 sm:py-28" style={{ backgroundColor: palette.ink }}>
+        <BackgroundVideo
+          video="/videos/generated/bt-work-decision-trace.mp4"
+          poster="/images/generated/bt-work-decision-trace-poster.jpg"
+          imagePosition="center"
+          parallax
+          playbackRate={0.9}
+        />
+        <div className="absolute inset-0 bg-black/45" />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(90deg, ${palette.ink}E8, ${palette.ink}A8 52%, ${palette.ink}D6)` }} />
+        <Container className="relative max-w-5xl text-center">
           <Reveal>
-            <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: palette.accent }}>A similar condition</p>
-            <h2 className="mx-auto mt-3 max-w-3xl font-display text-4xl font-normal leading-tight sm:text-5xl" style={{ color: palette.ink }}>
+            <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: palette.secondary }}>A similar condition</p>
+            <h2 className="mx-auto mt-3 max-w-3xl font-display text-4xl font-normal leading-tight text-white sm:text-5xl">
               {presentation.ctaHeading}
             </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed" style={{ color: palette.ink }}>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/75">
               {presentation.ctaBody}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-5">
@@ -866,7 +876,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
               >
                 Discuss this brand problem
               </Link>
-              <Link href={presentation.serviceHref} className="link-underline text-sm font-medium" style={{ color: palette.ink }}>
+              <Link href={presentation.serviceHref} className="link-underline text-sm font-medium text-white">
                 Explore {presentation.serviceLabel} <span aria-hidden="true">→</span>
               </Link>
             </div>

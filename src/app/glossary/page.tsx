@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { pillars } from "@/data/glossary";
@@ -30,8 +31,18 @@ export default function GlossaryPage() {
             cream with no masthead at all. It now takes the same dark
             chapter opening every other section of the site uses, and the
             headline arrives word by word like every other page h1. */}
-        <section className="bg-soil pb-16 pt-36 sm:pt-44">
-          <Container className="max-w-3xl">
+        <section className="relative overflow-hidden bg-soil pb-20 pt-36 sm:pb-24 sm:pt-44">
+          <BackgroundVideo
+            video="/videos/generated/bt-glossary-living-language.mp4"
+            poster="/images/generated/bt-glossary-living-language-poster.jpg"
+            imagePosition="center"
+            parallax
+            playbackRate={0.9}
+          />
+          <div className="absolute inset-0 bg-soil/55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-soil via-soil/70 to-soil/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-soil/85 via-transparent to-soil/25" />
+          <Container className="relative max-w-3xl">
             <Reveal>
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Glossary</p>
             </Reveal>
@@ -45,8 +56,12 @@ export default function GlossaryPage() {
                 practice applies it.
               </p>
             </Reveal>
+          </Container>
+        </section>
 
-            <div className="mt-12 space-y-12">
+        <section className="bg-ivory py-16 sm:py-20">
+          <Container className="max-w-3xl">
+            <div className="space-y-12">
               {pillars.map((pillar) => (
                 <Reveal key={pillar.id}>
                   <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
