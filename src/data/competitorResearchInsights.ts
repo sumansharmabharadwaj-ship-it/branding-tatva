@@ -4,7 +4,7 @@ export const competitorResearchInsightPosts: InsightPost[] = [
   {
     slug: "competitor-research-brand-strategy-without-copying-category",
     title: "How to use competitor research without copying the category",
-    seoTitle: "Competitor research for brand strategy without copying competitors",
+    seoTitle: "Competitor research without copying the category",
     excerpt: "A practical competitor-research method for finding category conventions, whitespace, proof gaps, and buying alternatives without turning your brand into a remix of everyone else.",
     directAnswer: "Use competitor research to understand the customer's comparison set, repeated category conventions, common claims, proof patterns, experience gaps, and neglected buying situations. Separate what customers need for category recognition from what competitors merely repeat by habit. Then choose which conventions to keep, which to challenge, and which distinctive choices your business can credibly prove. The goal is a better competitive decision, rather than visual or verbal imitation.",
     element: "earth",
