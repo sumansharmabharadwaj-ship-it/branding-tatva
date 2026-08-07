@@ -3,7 +3,7 @@ run-name: Work evidence gate · ${{ github.sha }}
 
 on:
   # Keep a manual route available for accessibility and deployment verification.
-  # Every focused contract now runs before the job reports its combined result.
+  # Every focused contract now runs under the same production CSP before reporting.
   workflow_dispatch:
   push:
     branches:
