@@ -1,0 +1,155 @@
+name: Repair missing Insights waterlight poster
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - ".github/workflows/repair-insights-waterlight-poster.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-insights-waterlight-poster-repair
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Check out the canonical branch without the media archive
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Restore the intended poster from the matching film or a verified Insights still
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          target="public/images/cinematic-waterlight-poster.jpg"
+          mkdir -p "$(dirname "$target")"
+
+          valid_image() {
+            local file="$1"
+            [ -s "$file" ] && ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$file" | grep -Eq '^[0-9]+x[0-9]+$'
+          }
+
+          materialize_blob() {
+            local source_path="$1"
+            local destination="$2"
+            git show "HEAD:${source_path}" > "$destination"
+            if head -n 1 "$destination" | grep -q 'version https://git-lfs.github.com/spec'; then
+              rm -f "$destination"
+              git lfs install --local
+              git lfs pull --include="$source_path" --exclude=""
+              cp "$source_path" "$destination"
+            fi
+          }
+
+          render_source() {
+            local source_path="$1"
+            local temporary="/tmp/waterlight-source.${source_path##*.}"
+            rm -f "$temporary" "$target"
+            materialize_blob "$source_path" "$temporary"
+
+            case "${source_path,,}" in
+              *.mp4|*.webm|*.mov|*.m4v)
+                ffmpeg -hide_banner -loglevel error -y -ss 1 -i "$temporary" \
+                  -frames:v 1 -vf "scale='min(1600,iw)':-2:flags=lanczos" -q:v 3 "$target" \
+                  || ffmpeg -hide_banner -loglevel error -y -i "$temporary" \
+                    -frames:v 1 -vf "scale='min(1600,iw)':-2:flags=lanczos" -q:v 3 "$target"
+                ;;
+              *.jpg|*.jpeg|*.png|*.webp|*.avif)
+                ffmpeg -hide_banner -loglevel error -y -i "$temporary" \
+                  -frames:v 1 -vf "scale='min(1600,iw)':-2:flags=lanczos" -q:v 3 "$target"
+                ;;
+              *)
+                return 1
+                ;;
+            esac
+
+            valid_image "$target"
+          }
+
+          mapfile -t matching_sources < <(
+            git ls-tree -r --name-only HEAD \
+              | grep -Ei '^public/(videos|images)/.*cinematic[-_ ]*water[-_ ]*light.*\.(mp4|webm|mov|m4v|jpe?g|png|webp|avif)$' \
+              | grep -v '^public/images/cinematic-waterlight-poster\.jpg$' \
+              || true
+          )
+
+          restored_from=""
+          for source_path in "${matching_sources[@]}"; do
+            if render_source "$source_path"; then
+              restored_from="$source_path"
+              break
+            fi
+          done
+
+          if [ -z "$restored_from" ]; then
+            mapfile -t broader_sources < <(
+              git ls-tree -r --name-only HEAD \
+                | grep -Ei '^public/(videos|images)/.*(water.*light|light.*water).*\.(mp4|webm|mov|m4v|jpe?g|png|webp|avif)$' \
+                | grep -v '^public/images/cinematic-waterlight-poster\.jpg$' \
+                || true
+            )
+            for source_path in "${broader_sources[@]}"; do
+              if render_source "$source_path"; then
+                restored_from="$source_path"
+                break
+              fi
+            done
+          fi
+
+          if [ -z "$restored_from" ]; then
+            mapfile -t insights_stills < <(
+              grep -hoE '/images/[A-Za-z0-9._/-]+\.(jpg|jpeg|png|webp|avif)' \
+                src/app/insights/page.tsx src/app/insights/'[slug]'/page.tsx 2>/dev/null \
+                | sort -u \
+                | sed 's#^/#public/#' \
+                || true
+            )
+            for source_path in "${insights_stills[@]}"; do
+              if git cat-file -e "HEAD:${source_path}" 2>/dev/null && render_source "$source_path"; then
+                restored_from="$source_path"
+                break
+              fi
+            done
+          fi
+
+          if [ -z "$restored_from" ] || ! valid_image "$target"; then
+            echo "Could not restore a valid poster for /images/cinematic-waterlight-poster.jpg" >&2
+            exit 1
+          fi
+
+          dimensions="$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$target")"
+          bytes="$(wc -c < "$target" | tr -d ' ')"
+          echo "Restored $target from $restored_from (${dimensions}, ${bytes} bytes)"
+
+      - name: Commit the restored poster
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/images/cinematic-waterlight-poster.jpg
+          if git diff --cached --quiet; then
+            echo "The poster already exists and is valid."
+            exit 0
+          fi
+          git commit -m "Restore the missing Insights waterlight poster"
+          git fetch origin homepage-cinematic-recovery
+          git rebase origin/homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
