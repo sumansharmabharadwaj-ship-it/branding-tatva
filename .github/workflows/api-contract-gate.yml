@@ -1,0 +1,55 @@
+name: API contract gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - "src/app/api/contact/**"
+      - "src/app/api/newsletter/**"
+      - "src/lib/api-protection.ts"
+      - "src/lib/contact-schema.ts"
+      - "src/lib/newsletter-schema.ts"
+      - "scripts/api_contract_gate.cjs"
+      - ".github/workflows/api-contract-gate.yml"
+  pull_request:
+    paths:
+      - "src/app/api/contact/**"
+      - "src/app/api/newsletter/**"
+      - "src/lib/api-protection.ts"
+      - "src/lib/contact-schema.ts"
+      - "src/lib/newsletter-schema.ts"
+      - "scripts/api_contract_gate.cjs"
+      - ".github/workflows/api-contract-gate.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  api-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify API protection and form contracts
+        run: node scripts/api_contract_gate.cjs
+
+      - name: Verify TypeScript
+        run: pnpm exec tsc --noEmit
