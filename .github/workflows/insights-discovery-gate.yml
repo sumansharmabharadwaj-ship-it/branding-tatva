@@ -2,6 +2,8 @@ name: Insights sitemap, RSS, metadata, and AI discovery gate
 run-name: Insights discovery · ${{ github.sha }}
 
 on:
+  # Exact-head rerun after repairing the client-proof guide's media contract.
+  # Both Insight data-file casings are watched so discovery cannot drift silently.
   workflow_dispatch:
   push:
     branches:
@@ -13,6 +15,7 @@ on:
       - src/app/sitemap.ts
       - src/app/robots.ts
       - src/data/**insight**
+      - src/data/**Insight**
       - src/data/**article**
       - public/llms.txt
       - package.json
