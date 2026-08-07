@@ -19,16 +19,17 @@ npx eslint <changed files>
 pnpm build
 git add <specific files>          # never blind -A — review what's staged
 git commit -m "..."               # explain why
-git push
-vercel --prod --yes --force
-curl -sI https://branding-tatva.vercel.app/ | grep -i age:   # age: 0 = fresh
+git push origin homepage-cinematic-recovery
+curl -s https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/api/release
 ```
+
+The permanent review alias above is the only Vercel URL to share. Keep production untouched until Suman explicitly approves promotion. Confirm that `/api/release` reports the exact branch commit before describing a preview as current.
 
 Run typecheck + lint after each meaningful edit, not just once at the end of a large change — catching a mistake immediately is cheaper than untangling it three edits later.
 
 ## Known sandbox limitation — read before "fixing" a phantom bug
 
-This dev environment's Browser pane has a recurring, documented flakiness: `document.visibilityState`/`document.hasFocus()` can report `hidden`/`false` even when nothing is actually wrong on the site, which stalls IntersectionObserver-gated mounts, `<video>` play/pause state, and rAF-driven timers (a loading-veil animation can appear stuck indefinitely). When a screenshot looks wrong or a video reads `paused: true`, first check `document.visibilityState` — if it's `hidden`, the read is unreliable. Trust direct DOM/computed-style JS extraction over screenshots, and cross-check against the actual production deploy before concluding something is broken.
+This dev environment's Browser pane has a recurring, documented flakiness: `document.visibilityState`/`document.hasFocus()` can report `hidden`/`false` even when nothing is actually wrong on the site, which stalls IntersectionObserver-gated mounts, `<video>` play/pause state, and rAF-driven timers (a loading-veil animation can appear stuck indefinitely). When a screenshot looks wrong or a video reads `paused: true`, first check `document.visibilityState` — if it's `hidden`, the read is unreliable. Trust direct DOM/computed-style JS extraction over screenshots, and cross-check against the actual preview deploy before concluding something is broken.
 
 ## Established, working patterns — reuse rather than reinvent
 
