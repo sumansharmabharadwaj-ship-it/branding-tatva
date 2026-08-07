@@ -3,6 +3,17 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { site } from "@/data/site";
+import { pageSchema, PERSON_ID, ORGANIZATION_ID } from "@/lib/pageSchema";
+
+
+const pageJsonLd = pageSchema({
+  type: "WebPage",
+  path: "/privacy",
+  name: "Privacy Policy | Branding Tatva",
+  description:
+    "How Branding Tatva collects, uses, and protects your information.",
+  trail: [{ name: "Privacy Policy", path: "/privacy" }],
+});
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -15,6 +26,7 @@ export default function PrivacyPage() {
     <>
       <Header />
       <main id="main-content">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
         <section className="pb-20 pt-32 sm:pt-36">
           <Container className="prose-content max-w-2xl">
             <h1 className="text-display-md font-display font-normal text-soil">Privacy Policy</h1>

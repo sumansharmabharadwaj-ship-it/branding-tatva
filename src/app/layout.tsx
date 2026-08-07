@@ -68,6 +68,7 @@ export const viewport: Viewport = {
 
 const PERSON_ID = `${site.url}/#person`;
 const ORG_ID = `${site.url}/#organization`;
+const WEBSITE_ID = `${site.url}/#website`;
 const SOCIAL_LINKS = [
   site.social.linkedin,
   site.social.instagram,
@@ -77,6 +78,17 @@ const SOCIAL_LINKS = [
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
+    {
+      // The site itself, so every page node has something real to declare
+      // itself part of rather than floating loose in the graph.
+      "@type": "WebSite",
+      "@id": WEBSITE_ID,
+      url: site.url,
+      name: site.name,
+      description: site.description,
+      publisher: { "@id": ORG_ID },
+      inLanguage: "en",
+    },
     {
       "@type": "Person",
       "@id": PERSON_ID,

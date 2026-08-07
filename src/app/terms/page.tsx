@@ -3,6 +3,17 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { site } from "@/data/site";
+import { pageSchema, PERSON_ID, ORGANIZATION_ID } from "@/lib/pageSchema";
+
+
+const pageJsonLd = pageSchema({
+  type: "WebPage",
+  path: "/terms",
+  name: "Terms of Use | Branding Tatva",
+  description:
+    "The terms that govern using the Branding Tatva website and working with Suman Sharma.",
+  trail: [{ name: "Terms of Use", path: "/terms" }],
+});
 
 export const metadata: Metadata = {
   title: "Terms of Use",
@@ -15,6 +26,7 @@ export default function TermsPage() {
     <>
       <Header />
       <main id="main-content">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
         <section className="pb-20 pt-32 sm:pt-36">
           <Container className="max-w-2xl">
             <h1 className="text-display-md font-display font-normal text-soil">Terms of Use</h1>

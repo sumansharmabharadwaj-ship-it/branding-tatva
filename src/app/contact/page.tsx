@@ -19,6 +19,18 @@ import { site } from "@/data/site";
 import { credentials } from "@/data/about";
 import { projects } from "@/data/projects";
 import { SANDSTONE, ELEMENT_HEX } from "@/lib/sectionWash";
+import { pageSchema, PERSON_ID, ORGANIZATION_ID } from "@/lib/pageSchema";
+
+
+const pageJsonLd = pageSchema({
+  type: "ContactPage",
+  path: "/contact",
+  name: "Contact | Branding Tatva",
+  description:
+    "Schedule a brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
+  trail: [{ name: "Contact", path: "/contact" }],
+  mainEntity: ORGANIZATION_ID,
+});
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -39,6 +51,7 @@ export default function ContactPage() {
     <>
       <Header transparent />
       <main id="main-content">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
         {/* Every other page on the site opens on a real video/photo
             hero; this page used to open directly on a flat color
             section instead, the one structural outlier in an otherwise

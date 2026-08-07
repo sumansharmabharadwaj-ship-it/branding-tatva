@@ -27,6 +27,18 @@ import { philosophy } from "@/data/philosophy";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { site } from "@/data/site";
 import { SANDSTONE } from "@/lib/sectionWash";
+import { pageSchema, PERSON_ID, ORGANIZATION_ID } from "@/lib/pageSchema";
+
+
+const pageJsonLd = pageSchema({
+  type: "AboutPage",
+  path: "/about",
+  name: "About Suman Sharma | Branding Tatva",
+  description:
+    "The thinking behind Branding Tatva: brand strategy grounded in psychology and language.",
+  trail: [{ name: "About", path: "/about" }],
+  mainEntity: PERSON_ID,
+});
 
 export const metadata: Metadata = {
   title: "About Suman Sharma",
@@ -45,6 +57,7 @@ export default function AboutPage() {
       <Header transparent />
       <ScrollProgress />
       <main id="main-content">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
         <AboutSplitHero
           eyebrow="About"
           headline={aboutIntro.opening}
