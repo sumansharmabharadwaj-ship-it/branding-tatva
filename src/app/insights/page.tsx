@@ -169,8 +169,15 @@ export default function InsightsPage() {
           </Container>
         </PhotoHero>
 
-        <section className="bg-ivory py-20 sm:py-28">
-          <Container>
+        <section className="relative overflow-hidden bg-ivory py-20 sm:py-28">
+          <BackgroundVideo
+            video="/videos/generated/bt-insights-foundation-folio.mp4"
+            poster="/images/generated/bt-insights-foundation-folio-poster.jpg"
+            parallax
+            playbackRate={0.86}
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-[#F4EFE6]/86" />
+          <Container className="relative">
             <Reveal>
               <div className="mb-10 grid gap-6 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
                 <div>

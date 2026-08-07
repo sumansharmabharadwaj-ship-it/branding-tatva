@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import {
   InsightCard,
   type InsightCardPost,
@@ -51,8 +52,15 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
   }, [posts, query, topicSlug]);
 
   return (
-    <section id="insights-library" className="bg-background-alt py-20 sm:py-28">
-      <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
+    <section id="insights-library" className="relative overflow-hidden bg-background-alt py-20 sm:py-28">
+      <BackgroundVideo
+        video="/videos/generated/bt-insights-library-leafcurrent.mp4"
+        poster="/images/generated/bt-insights-library-leafcurrent-poster.jpg"
+        parallax
+        playbackRate={0.84}
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-[#EAE6DD]/88" />
+      <div className="relative mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
         <div className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
