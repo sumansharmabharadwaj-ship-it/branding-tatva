@@ -38,27 +38,28 @@ async function previewState(stage) {
 }
 
 async function waitForSelectionChange(page, tabs, stage, previous, label) {
-  try {
-    await page.waitForFunction(
-      (selector) => document.querySelector(selector)?.dataset.rotationEnabled === "true",
-      '[data-work-preview-stage="true"]',
-      { timeout: 2_500 },
-    );
-    await page.waitForFunction(
-      ({ selector, before }) => {
-        const nodes = Array.from(document.querySelectorAll(selector));
-        const next = nodes.findIndex((node) => node.getAttribute("aria-selected") === "true");
-        return next >= 0 && next !== before;
-      },
-      { selector: '[data-work-preview-stage="true"] [role="tab"]', before: previous },
-      { timeout: ROTATION_WINDOW_MS + 1_500 },
-    );
-  } catch {
-    const state = await previewState(stage);
-    throw new Error(`${label}: automatic preview did not resume; state=${JSON.stringify(state)}`);
+  const enableDeadline = Date.now() + 2_500;
+  let enabled = false;
+  while (Date.now() < enableDeadline) {
+    enabled = (await stage.getAttribute("data-rotation-enabled")) === "true";
+    if (enabled) break;
+    await page.waitForTimeout(70);
   }
 
-  return selectedIndex(tabs);
+  if (!enabled) {
+    const state = await previewState(stage);
+    throw new Error(`${label}: automatic preview never became eligible; state=${JSON.stringify(state)}`);
+  }
+
+  const changeDeadline = Date.now() + ROTATION_WINDOW_MS + 1_500;
+  while (Date.now() < changeDeadline) {
+    const next = await selectedIndex(tabs);
+    if (next >= 0 && next !== previous) return next;
+    await page.waitForTimeout(70);
+  }
+
+  const state = await previewState(stage);
+  throw new Error(`${label}: automatic preview did not resume; state=${JSON.stringify(state)}`);
 }
 
 async function assertStableSelection(page, tabs, expected, label) {
