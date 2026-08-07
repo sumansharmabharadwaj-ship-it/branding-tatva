@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/Container";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Reveal } from "@/components/Reveal";
 import type { Project } from "@/data/projects";
 import { getWorkTaxonomy, WORK_NEEDS } from "@/data/workTaxonomy";
@@ -23,8 +24,15 @@ export function ProjectStoryWall({ projects }: { projects: Project[] }) {
   if (stories.length === 0) return null;
 
   return (
-    <section className="overflow-hidden py-20 sm:py-28" style={{ backgroundColor: WORK.mist }}>
-      <Container className="max-w-6xl">
+    <section className="relative overflow-hidden py-20 sm:py-28" style={{ backgroundColor: WORK.mist }}>
+      <BackgroundVideo
+        video="/videos/generated/bt-work-story-paperlight.mp4"
+        poster="/images/generated/bt-work-story-paperlight-poster.jpg"
+        parallax
+        playbackRate={0.9}
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-[#F2F0E8]/84" />
+      <Container className="relative max-w-6xl">
         <Reveal>
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>

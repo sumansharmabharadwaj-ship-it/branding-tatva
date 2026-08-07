@@ -1,9 +1,11 @@
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { WORK } from "@/sections/Work/palette";
 
 // Work-page authorship: the founder-led advantage stated plainly beside
-// a real portrait. This chapter is intentionally static. By this point
+// a real portrait. The content remains intentionally static while a quiet
+// root-light film adds depth behind it. By this point
 // the visitor has already moved through several interactive proof modes;
 // authority should be readable immediately rather than entering through
 // another repeated fade-up sequence.
@@ -16,8 +18,15 @@ const COMMITMENTS = [
 
 export function Authorship() {
   return (
-    <section className="scroll-mt-28 py-14 sm:py-24" style={{ backgroundColor: WORK.forest }}>
-      <Container className="max-w-6xl">
+    <section className="relative scroll-mt-28 overflow-hidden py-14 sm:py-24" style={{ backgroundColor: WORK.forest }}>
+      <BackgroundVideo
+        video="/videos/generated/bt-work-authorship-rootlight.mp4"
+        poster="/images/generated/bt-work-authorship-rootlight-poster.jpg"
+        parallax
+        playbackRate={0.9}
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-[#1F3A28]/82" />
+      <Container className="relative max-w-6xl">
         <div className="grid items-center gap-8 sm:gap-10 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-16 xl:gap-20">
           <figure className="relative mx-auto aspect-[4/3] w-full max-w-sm overflow-hidden rounded-[1.4rem] border border-white/10 sm:aspect-[4/5] lg:mx-0">
             {/* Display crop only. On phones, a tighter landscape frame

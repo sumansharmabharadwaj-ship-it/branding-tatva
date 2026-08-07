@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { CAPABILITIES, NEED_PATHS } from "@/data/capabilities";
 import { projects } from "@/data/projects";
 import { track } from "@/lib/analytics";
@@ -41,8 +42,15 @@ export function CapabilityMap() {
   }
 
   return (
-    <section id="find-relevant-proof" className="scroll-mt-24 py-14 sm:py-24" style={{ backgroundColor: WORK.mist }}>
-      <Container className="max-w-6xl">
+    <section id="find-relevant-proof" className="relative scroll-mt-24 overflow-hidden py-14 sm:py-24" style={{ backgroundColor: WORK.mist }}>
+      <BackgroundVideo
+        video="/videos/generated/bt-work-capability-rootmist.mp4"
+        poster="/images/generated/bt-work-capability-rootmist-poster.jpg"
+        parallax
+        playbackRate={0.92}
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-[#DDE2DC]/82" />
+      <Container className="relative max-w-6xl">
         <div>
           <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.moss }}>
             Find relevant proof
