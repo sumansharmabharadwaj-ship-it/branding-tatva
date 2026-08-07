@@ -1,0 +1,201 @@
+name: Rescue the certified permanent Vercel preview
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - ".github/workflows/rescue-certified-vercel-preview.yml"
+      - "docs/INSIGHTS_RELEASE_CERTIFICATE_2026-08-07.md"
+      - "vercel.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-certified-vercel-preview-rescue
+  cancel-in-progress: false
+
+jobs:
+  rescue-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PREVIEW_URL: https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app
+      PREVIEW_ALIAS: branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app
+      CANONICAL_BRANCH: homepage-cinematic-recovery
+      VERCEL_PROJECT_ID: prj_oqWzTWCHURqzPAdpjXv3b7cubJwJ
+      VERCEL_TEAM_ID: team_Y7dQ5jNk61chQvy2A92AEyTt
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - name: Check out the canonical branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Wait for the certified source to exist
+        run: |
+          set -euo pipefail
+          ready=false
+          for attempt in $(seq 1 120); do
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+            if [ -s docs/INSIGHTS_RELEASE_CERTIFICATE_2026-08-07.md ]; then
+              ready=true
+              break
+            fi
+            echo "Waiting for the exact-head Insights certificate (${attempt}/120)"
+            sleep 5
+          done
+          if [ "$ready" != true ]; then
+            echo "The certified source did not become ready in time."
+            exit 1
+          fi
+          git rev-parse HEAD | tee /tmp/certified-preview-head
+
+      - name: Give the repaired Git deployment lane its first chance
+        id: natural_gate
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GATE_TIMEOUT_MS: "300000"
+          GATE_POLL_MS: "15000"
+        run: node scripts/permanent_preview_source_gate.cjs
+
+      - name: Request one preview-only Git deployment when the alias still lags
+        if: steps.natural_gate.outcome != 'success'
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo "VERCEL_TOKEN is not configured in GitHub; the Git integration remains the only deployment lane."
+            exit 1
+          fi
+
+          source_sha="$(cat /tmp/certified-preview-head)"
+          SOURCE_SHA="$source_sha" node <<'NODE' > /tmp/vercel-deployment-request.json
+          const payload = {
+            name: 'branding-tatva',
+            project: process.env.VERCEL_PROJECT_ID,
+            target: null,
+            gitSource: {
+              type: 'github',
+              org: 'sumansharmabharadwaj-ship-it',
+              repo: 'branding-tatva',
+              ref: 'homepage-cinematic-recovery',
+              sha: process.env.SOURCE_SHA,
+            },
+            meta: {
+              rescueLane: 'certified-preview-only',
+              certifiedSource: process.env.SOURCE_SHA,
+            },
+          };
+          process.stdout.write(JSON.stringify(payload));
+          NODE
+
+          curl --fail --silent --show-error \
+            --request POST \
+            --url "https://api.vercel.com/v13/deployments?teamId=${VERCEL_TEAM_ID}" \
+            --header "Authorization: Bearer ${VERCEL_TOKEN}" \
+            --header "Content-Type: application/json" \
+            --data-binary @/tmp/vercel-deployment-request.json \
+            > /tmp/vercel-deployment-response.json
+
+          node <<'NODE'
+          const fs = require('node:fs');
+          const response = JSON.parse(fs.readFileSync('/tmp/vercel-deployment-response.json', 'utf8'));
+          if (!response.id) throw new Error(`Vercel did not return a deployment id: ${JSON.stringify(response)}`);
+          fs.writeFileSync('/tmp/vercel-deployment-id', `${response.id}\n`);
+          fs.writeFileSync('/tmp/vercel-deployment-url', `${response.url || ''}\n`);
+          NODE
+
+          deployment_id="$(cat /tmp/vercel-deployment-id)"
+          ready=false
+          for attempt in $(seq 1 100); do
+            curl --fail --silent --show-error \
+              --url "https://api.vercel.com/v13/deployments/${deployment_id}?teamId=${VERCEL_TEAM_ID}" \
+              --header "Authorization: Bearer ${VERCEL_TOKEN}" \
+              > /tmp/vercel-deployment-status.json
+
+            state="$(node -e "const x=require('/tmp/vercel-deployment-status.json'); process.stdout.write(x.readyState || x.state || '')")"
+            echo "Vercel deployment ${deployment_id}: ${state:-unknown}"
+            if [ "$state" = "READY" ]; then
+              ready=true
+              break
+            fi
+            if [ "$state" = "ERROR" ] || [ "$state" = "CANCELED" ]; then
+              cat /tmp/vercel-deployment-status.json
+              exit 1
+            fi
+            sleep 6
+          done
+
+          if [ "$ready" != true ]; then
+            echo "The preview-only rescue deployment did not become ready in time."
+            exit 1
+          fi
+
+          printf '{"alias":"%s"}\n' "$PREVIEW_ALIAS" > /tmp/vercel-alias-request.json
+          curl --fail --silent --show-error \
+            --request POST \
+            --url "https://api.vercel.com/v2/deployments/${deployment_id}/aliases?teamId=${VERCEL_TEAM_ID}" \
+            --header "Authorization: Bearer ${VERCEL_TOKEN}" \
+            --header "Content-Type: application/json" \
+            --data-binary @/tmp/vercel-alias-request.json \
+            > /tmp/vercel-alias-response.json
+
+      - name: Verify the permanent alias after the natural or rescue lane
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GATE_TIMEOUT_MS: "600000"
+          GATE_POLL_MS: "15000"
+        run: node scripts/permanent_preview_source_gate.cjs
+
+      - name: Record and clean the preview-only rescue lane
+        run: |
+          set -euo pipefail
+          release_payload="$(curl --fail --silent --show-error "${PREVIEW_URL}/api/release")"
+          RELEASE_PAYLOAD="$release_payload" node <<'NODE'
+          const fs = require('node:fs');
+          const payload = JSON.parse(process.env.RELEASE_PAYLOAD || '{}');
+          fs.writeFileSync('/tmp/release-payload.json', `${JSON.stringify(payload, null, 2)}\n`);
+          NODE
+
+          {
+            echo '# Permanent preview rescue certificate'
+            echo
+            echo '- Verified: 7 August 2026'
+            echo "- Alias: \`${PREVIEW_URL}/\`"
+            echo "- Canonical branch: \`${CANONICAL_BRANCH}\`"
+            echo "- Branch head observed by the rescue lane: \`$(cat /tmp/certified-preview-head)\`"
+            echo '- Exact deployable-source gate: `passed`'
+            echo '- Deployment target: `preview only`'
+            echo '- Production deployment: `not performed`'
+            echo
+            echo '## Release payload'
+            echo
+            echo '```json'
+            cat /tmp/release-payload.json
+            echo '```'
+          } > docs/PERMANENT_PREVIEW_RESCUE_CERTIFICATE_2026-08-07.md
+
+          git rm -f --ignore-unmatch .github/workflows/rescue-certified-vercel-preview.yml
+          git diff --check
+
+      - name: Commit preview evidence only
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Record the certified permanent preview"
+          git fetch origin homepage-cinematic-recovery
+          git rebase origin/homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
