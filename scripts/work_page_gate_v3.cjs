@@ -220,7 +220,9 @@ async function auditWorkViewport(browser, viewport) {
     `${label}: generic global footer pitch duplicates the tailored Work ending`,
   );
 
-  await page.locator('#index a[href="/work/dr-haley-nutrition"]').first().click();
+  const projectRoute = page.locator('#index a[href="/work/dr-haley-nutrition"]:visible').first();
+  await projectRoute.waitFor({ state: "visible", timeout: 8_000 });
+  await projectRoute.click();
   await page.waitForURL("**/work/dr-haley-nutrition", { timeout: 12_000 });
   assert(
     ((await page.getByRole("heading", { level: 1 }).first().textContent()) || "").includes("Dr. Haley Nutrition"),
