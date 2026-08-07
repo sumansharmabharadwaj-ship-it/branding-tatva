@@ -1,0 +1,76 @@
+name: Repair current metadata blockers
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/repair-current-metadata.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-current-metadata-repair
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    if: github.event.head_commit.message == 'Trigger the current metadata repair'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out the exact triggering commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Replace only the two verified metadata blockers
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          contact_path = Path("src/app/contact/page.tsx")
+          contact = contact_path.read_text()
+          old_contact = 'Tell me what your brand is becoming.'
+          new_contact = (
+              'Schedule a 30-minute brand strategy consultation with Suman Sharma, '
+              'call or WhatsApp directly, or send a written enquiry.'
+          )
+          contact_count = contact.count(old_contact)
+          if contact_count != 2:
+              raise SystemExit(
+                  f"Expected exactly two Contact description strings, found {contact_count}."
+              )
+          contact_path.write_text(contact.replace(old_contact, new_contact))
+
+          reposition_path = Path("src/data/repositioningInsights.ts")
+          reposition = reposition_path.read_text()
+          old_reposition = (
+              'A recognition-safe repositioning method for established service businesses: '
+              'change the meaning that limits growth while preserving the names, cues, proof, '
+              'and customer confidence already earning memory.'
+          )
+          new_reposition = (
+              'Reposition an established service business without erasing recognition: change '
+              'limiting market meaning while preserving familiar cues, proof, and customer confidence.'
+          )
+          reposition_count = reposition.count(old_reposition)
+          if reposition_count != 1:
+              raise SystemExit(
+                  f"Expected exactly one repositioning excerpt, found {reposition_count}."
+              )
+          reposition_path.write_text(reposition.replace(old_reposition, new_reposition))
+          PY
+
+      - name: Remove this one-use repair workflow and commit the source fix
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/repair-current-metadata.yml
+          git config user.name "Branding Tatva release repair"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/app/contact/page.tsx src/data/repositioningInsights.ts .github/workflows/repair-current-metadata.yml
+          git commit -m "Strengthen Contact and repositioning metadata"
+          git push origin HEAD:homepage-cinematic-recovery
