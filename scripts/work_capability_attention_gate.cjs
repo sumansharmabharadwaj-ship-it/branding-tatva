@@ -40,28 +40,33 @@ async function detailIsOpen(button) {
 }
 
 async function waitForRoute(page, route) {
-  await page.waitForFunction(
-    ({ id, project, slug, capabilities, packageName }) => {
-      const selected = document.querySelector(`[data-waystone-id="${id}"]`);
-      const proof = document.querySelector("[data-recommended-proof]");
-      const mobileMap = document.querySelector("[data-mobile-capability-map]");
-      const projectLink = proof?.querySelector(`a[href="/work/${slug}"]`);
-      const serviceLink = proof?.querySelector('a[href="/services#desire"]');
-      const proofText = proof?.textContent?.replace(/\s+/g, " ") || "";
+  const deadline = Date.now() + 4_000;
+  while (Date.now() < deadline) {
+    const ready = await page.evaluate(
+      ({ id, project, slug, capabilities, packageName }) => {
+        const selected = document.querySelector(`[data-waystone-id="${id}"]`);
+        const proof = document.querySelector("[data-recommended-proof]");
+        const mobileMap = document.querySelector("[data-mobile-capability-map]");
+        const projectLink = proof?.querySelector(`a[href="/work/${slug}"]`);
+        const serviceLink = proof?.querySelector('a[href="/services#desire"]');
+        const proofText = proof?.textContent?.replace(/\s+/g, " ") || "";
 
-      return Boolean(
-        selected?.getAttribute("aria-pressed") === "true" &&
-          proofText.includes(project) &&
-          proofText.includes(`${capabilities} capabilities`) &&
-          proofText.includes(packageName) &&
-          projectLink &&
-          serviceLink &&
-          mobileMap?.getAttribute("data-active-capability-count") === String(capabilities),
-      );
-    },
-    route,
-    { timeout: 4_000 },
-  );
+        return Boolean(
+          selected?.getAttribute("aria-pressed") === "true" &&
+            proofText.includes(project) &&
+            proofText.includes(`${capabilities} capabilities`) &&
+            proofText.includes(packageName) &&
+            projectLink &&
+            serviceLink &&
+            mobileMap?.getAttribute("data-active-capability-count") === String(capabilities),
+        );
+      },
+      route,
+    );
+    if (ready) return;
+    await page.waitForTimeout(80);
+  }
+  throw new Error(`work/capability-attention: route ${route.id} did not settle`);
 }
 
 async function assertNoOverflow(page, label) {

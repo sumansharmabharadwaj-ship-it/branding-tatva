@@ -27,6 +27,15 @@ async function visibleCount(locator) {
   );
 }
 
+async function waitForAttribute(locator, name, expected, label, timeout = 3_000) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    if ((await locator.getAttribute(name)) === expected) return;
+    await locator.page().waitForTimeout(70);
+  }
+  throw new Error(`work/study-context: ${label} did not reach ${name}=${expected}`);
+}
+
 async function inViewport(locator) {
   return locator.evaluate((node) => {
     const rect = node.getBoundingClientRect();
@@ -86,15 +95,7 @@ async function inViewport(locator) {
     });
 
     await panel.getByRole("button", { name: "Close study" }).click();
-    await page.waitForFunction(
-      () => {
-        const buttons = document.querySelectorAll('[aria-label="Independent brand-study mechanisms"] button[aria-expanded]');
-        const last = buttons[buttons.length - 1];
-        return last?.dataset.contextScrollCalls === "1";
-      },
-      undefined,
-      { timeout: 3_000 },
-    );
+    await waitForAttribute(cover, "data-context-scroll-calls", "1", "close context restoration");
 
     assert((await visibleCount(covers)) === 5, "work/study-context: study covers did not return after closing");
     assert((await cover.getAttribute("aria-expanded")) === "false", "work/study-context: fifth study did not close");

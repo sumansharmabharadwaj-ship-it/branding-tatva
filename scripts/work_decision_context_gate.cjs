@@ -41,6 +41,15 @@ async function assertTriggerInView(trigger, label) {
   );
 }
 
+async function waitForAttribute(locator, name, expected, label, timeout = 3_000) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    if ((await locator.getAttribute(name)) === expected) return;
+    await locator.page().waitForTimeout(70);
+  }
+  throw new Error(`work/decision-context: ${label} did not reach ${name}=${expected}`);
+}
+
 async function assertNoOverflow(page) {
   const dimensions = await page.evaluate(() => ({
     viewport: window.innerWidth,
@@ -88,20 +97,8 @@ async function assertNoOverflow(page) {
     });
 
     await trigger.click();
-    await page.waitForFunction(
-      ({ panelId }) => Boolean(document.getElementById(panelId)),
-      { panelId: controlledId },
-      { timeout: 3_000 },
-    );
-    await page.waitForFunction(
-      () => {
-        const buttons = document.querySelectorAll('ul[aria-label="Decision artefacts"] button[aria-expanded]');
-        const last = buttons[buttons.length - 1];
-        return last?.dataset.contextScrollCalls === "1";
-      },
-      undefined,
-      { timeout: 3_000 },
-    );
+    await page.locator(`#${controlledId}`).waitFor({ state: "attached", timeout: 3_000 });
+    await waitForAttribute(trigger, "data-context-scroll-calls", "1", "open context restoration");
 
     assert((await visibleCount(triggers)) === 1, "work/decision-context: unrelated decisions remain visible after opening the seventh");
     assert((await trigger.getAttribute("aria-expanded")) === "true", "work/decision-context: seventh decision did not open");
@@ -125,15 +122,7 @@ async function assertNoOverflow(page) {
     });
 
     await trigger.click();
-    await page.waitForFunction(
-      () => {
-        const buttons = document.querySelectorAll('ul[aria-label="Decision artefacts"] button[aria-expanded]');
-        const last = buttons[buttons.length - 1];
-        return last?.dataset.contextScrollCalls === "2";
-      },
-      undefined,
-      { timeout: 3_000 },
-    );
+    await waitForAttribute(trigger, "data-context-scroll-calls", "2", "close context restoration");
 
     assert((await visibleCount(triggers)) === 7, "work/decision-context: archive did not restore after closing the seventh decision");
     assert((await trigger.getAttribute("aria-expanded")) === "false", "work/decision-context: seventh decision did not close");
