@@ -1,11 +1,13 @@
 name: Normalize consultation duration copy once
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - homepage-cinematic-recovery
     paths:
       - ".github/workflows/normalize-consultation-duration-copy.yml"
+      - "scripts/contact_contract_gate.cjs"
 
 permissions:
   contents: write
