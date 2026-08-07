@@ -5,6 +5,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { brandStudies } from "@/data/brandStudies";
 
 const STUDY_ACCENTS = ["#D9C4A4", "#9AB8C7", "#C7AE68", "#9EBB9B", "#C68F78"] as const;
@@ -44,8 +45,15 @@ export function BrandStudies() {
   }
 
   return (
-    <section className="scroll-mt-32 py-14 sm:py-24" style={{ backgroundColor: "#071A20" }}>
-      <Container className="max-w-6xl">
+    <section className="relative scroll-mt-32 overflow-hidden py-14 sm:py-24" style={{ backgroundColor: "#071A20" }}>
+      <BackgroundVideo
+        video="/videos/generated/bt-work-studies-memorywater.mp4"
+        poster="/images/generated/bt-work-studies-memorywater-poster.jpg"
+        parallax
+        playbackRate={0.84}
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-[#071A20]/82" />
+      <Container className="relative max-w-6xl">
         {/* This framing is factual orientation, not decorative motion.
             Keeping it immediately visible prevents direct jumps or fast
             scrolls from leaving a large empty deep-water panel. */}

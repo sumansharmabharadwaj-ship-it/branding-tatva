@@ -4,6 +4,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { conceptProjects } from "@/data/conceptProjects";
 import { track } from "@/lib/analytics";
 import { WORK } from "@/sections/Work/palette";
@@ -73,8 +74,15 @@ export function TatvaLab() {
   }
 
   return (
-    <section className="scroll-mt-32 py-14 sm:py-24" style={{ backgroundColor: WORK.cream }}>
-      <Container className="max-w-6xl">
+    <section className="relative scroll-mt-32 overflow-hidden py-14 sm:py-24" style={{ backgroundColor: WORK.cream }}>
+      <BackgroundVideo
+        video="/videos/generated/bt-work-lab-mineralfield.mp4"
+        poster="/images/generated/bt-work-lab-mineralfield-poster.jpg"
+        parallax
+        playbackRate={0.88}
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-[#F2F0E8]/85" />
+      <Container className="relative max-w-6xl">
         <div className="grid gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.72fr)] lg:items-end lg:gap-16">
           <div>
             <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.olive }}>

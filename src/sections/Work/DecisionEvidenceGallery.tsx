@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { decisionArtifacts } from "@/data/decisionArtifacts";
 import { projects } from "@/data/projects";
 import { track } from "@/lib/analytics";
@@ -49,8 +50,15 @@ export function DecisionEvidenceGallery() {
   }
 
   return (
-    <section className="scroll-mt-28 py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
-      <Container className="max-w-6xl">
+    <section className="relative scroll-mt-28 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
+      <BackgroundVideo
+        video="/videos/generated/bt-work-decision-waterarchive.mp4"
+        poster="/images/generated/bt-work-decision-waterarchive-poster.jpg"
+        parallax
+        playbackRate={0.86}
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-[#F2F0E8]/84" />
+      <Container className="relative max-w-6xl">
         {/* The section title is evidence, not an entrance effect. Keeping
             it static prevents fast scrolling or anchor restoration from
             leaving an empty cream slab above the decision fragments. */}

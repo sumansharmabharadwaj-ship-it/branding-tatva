@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Reveal } from "@/components/Reveal";
 import type { Project } from "@/data/projects";
 import { getWorkTaxonomy, WORK_NEEDS, type WorkFilterId } from "@/data/workTaxonomy";
@@ -44,8 +45,15 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
   }
 
   return (
-    <section id="index" className="scroll-mt-24 py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
-      <Container className="max-w-6xl">
+    <section id="index" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
+      <BackgroundVideo
+        video="/videos/generated/bt-work-index-vellumroots.mp4"
+        poster="/images/generated/bt-work-index-vellumroots-poster.jpg"
+        parallax
+        playbackRate={0.88}
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-[#F2F0E8]/86" />
+      <Container className="relative max-w-6xl">
         <Reveal>
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
