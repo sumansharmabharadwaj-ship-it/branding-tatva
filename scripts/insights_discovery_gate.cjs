@@ -39,7 +39,7 @@ function collectLinks(html, prefix) {
 async function request(pathname) {
   const response = await fetch(`${BASE_URL}${pathname}`, {
     redirect: "manual",
-    headers: { "user-agent": "Branding-Tatva-Insights-Discovery-Gate/1.0" },
+    headers: { "user-agent": "Branding-Tatva-Insights-Discovery-Gate/1.1" },
   });
   const text = await response.text();
   return { response, text };
@@ -112,6 +112,32 @@ async function auditArticle(href) {
   assert(!/disallow:\s*\/insights(?:\s|$)/i.test(robots.text),
     "robots.txt disallows the Insights library");
 
+  const feed = await request("/insights/rss.xml");
+  assert(feed.response.status >= 200 && feed.response.status < 400,
+    `/insights/rss.xml returned ${feed.response.status}`);
+  const feedType = feed.response.headers.get("content-type") || "";
+  assert(/(?:application\/rss\+xml|application\/xml|text\/xml)/i.test(feedType),
+    `/insights/rss.xml returned an unexpected content type: ${feedType}`);
+  assert(/<rss\b/i.test(feed.text) && /<channel>/i.test(feed.text),
+    "Insights RSS is missing its RSS channel structure");
+  assert(/<atom:link[^>]+rel=["']self["'][^>]+type=["']application\/rss\+xml["']/i.test(feed.text),
+    "Insights RSS is missing its self-discovery link");
+  for (const href of guideLinks) {
+    assert(feed.text.includes(href), `Insights RSS is missing ${href}`);
+  }
+
+  const llms = await request("/llms.txt");
+  assert(llms.response.status >= 200 && llms.response.status < 400,
+    `/llms.txt returned ${llms.response.status}`);
+  assert(/https:\/\/brandingtatva\.com\/insights(?:\)|\s|$)/i.test(llms.text),
+    "llms.txt does not identify /insights as the canonical editorial library");
+  assert(/https:\/\/brandingtatva\.com\/insights\/rss\.xml/i.test(llms.text),
+    "llms.txt is missing the Insights RSS feed");
+  assert(!/\[Blog\]\(https:\/\/brandingtatva\.com\/blog\)/i.test(llms.text),
+    "llms.txt still presents /blog as the canonical editorial route");
+  assert(/30-minute consultation/i.test(llms.text),
+    "llms.txt is missing the current 30-minute consultation duration");
+
   const articleResults = [];
   for (let index = 0; index < guideLinks.length; index += 5) {
     const batch = guideLinks.slice(index, index + 5);
@@ -134,6 +160,9 @@ async function auditArticle(href) {
     guideCount: guideLinks.length,
     sitemapStatus: sitemap.response.status,
     robotsStatus: robots.response.status,
+    rssStatus: feed.response.status,
+    rssContentType: feedType,
+    llmsStatus: llms.response.status,
     articleResults,
   };
   fs.writeFileSync(path.join(OUTPUT, "report.json"), JSON.stringify(report, null, 2));
@@ -141,7 +170,9 @@ async function auditArticle(href) {
     path.join(OUTPUT, "guide-routes.txt"),
     guideLinks.join("\n") + "\n",
   );
-  console.log(`Insights discovery gate passed for ${guideLinks.length} guides.`);
+  fs.writeFileSync(path.join(OUTPUT, "rss.xml"), feed.text);
+  fs.writeFileSync(path.join(OUTPUT, "llms.txt"), llms.text);
+  console.log(`Insights discovery gate passed for ${guideLinks.length} guides, RSS, and llms.txt.`);
 })().catch((error) => {
   console.error(error);
   process.exit(1);
