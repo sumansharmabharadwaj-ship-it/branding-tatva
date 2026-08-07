@@ -17,14 +17,17 @@ This file is the single source of truth for unfinished website work. It consolid
 
 ## P0 · Release and deployment blockers
 
-- [ ] Deploy the exact latest `homepage-cinematic-recovery` commit to the permanent review alias.
-- [ ] Verify `/api/release` reports the same commit SHA, branch, and preview environment as GitHub.
+- [x] Build and deploy the latest deployable application source, commit `79ede2c19d3825df2d6dca2e3d41ccc34c5f7bef`, as READY deployment `dpl_AGKbgVhHmrtPjDHPNZVvCxZs97UF`.
+- [ ] Move the permanent review alias from stale CLI deployment `a717c871427f08c0b50f7607c608ed8887bf0c04` to the certified `79ede2c…` deployment.
+- [ ] Configure `VERCEL_TOKEN` for alias management and `VERCEL_AUTOMATION_BYPASS_SECRET` for protected-preview CI, without weakening preview protection.
+- [ ] Verify `/api/release` and `/api/verification` on the permanent alias report commit `79ede2c…`, branch `homepage-cinematic-recovery`, and preview environment.
+- [x] Make the permanent source gate compare the latest deployable application commit rather than workflow-only branch commits, and fail immediately when preview authentication is unavailable.
 - [ ] Complete the latest full cinematic GitHub gate without cancellation or stale-source drift.
 - [ ] Run the integrated browser matrix on the deployed artifact, not only the local production build.
 - [ ] Record Vercel Speed Insights and field Core Web Vitals where available: LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1.
 - [ ] Keep a rollback commit and do not promote production until Suman approves desktop and mobile screenshots.
 
-Verification evidence already completed on exact source commit `c2db51bb7e642e6b39d71e511dcab7ab7c33971a`: integrated production smoke run `31150192765` and Insights discovery run `31150191575`. The permanent Vercel alias remains the release blocker.
+Current release evidence: the immutable preview `https://branding-tatva-oue6ecbln-suman22.vercel.app/` is READY and its `/api/release` endpoint reports the exact repaired source commit, canonical branch, and preview environment. The sole remaining alias blocker is external configuration: the repository currently has neither the Vercel management token needed to reassign the alias nor the automation bypass needed to inspect the protected alias from GitHub Actions.
 
 ## P0 · Homepage V4
 
@@ -58,34 +61,40 @@ Intended order: Hero → Situation → Project Rooms → verified outcome → Au
 - [ ] Confirm the five recognition states are Unknown, Noticed, Recognized, Remembered, and Preferred; keep engagement proof separate from recall proof.
 - [ ] Verify compact mobile Health Check, all four questions, three outcome bands, reset/back/package/booking paths, and neutral state before enough answers exist.
 - [ ] Verify the nine-question FAQ, desktop category index, mobile linear order, direct answers, scope notes, and FAQPage schema.
-- [ ] Remove every old twenty-minute reference; the public consultation duration is 30 minutes.
+- [x] Remove every old twenty-minute reference; the public consultation duration is 30 minutes.
 - [ ] Verify the Strategy Room brief, copy action, privacy boundary, email alternative, Calendly path, timezone language, and booking confirmation.
 - [ ] Real-device Calendly booking-path verification remains required.
 
 ## P0 · Work
 
-- [ ] Obtain hosted evidence for the exact current Work source, including all seven Work browser gates.
-- [ ] Verify hero hover/focus/manual-pause/autoplay-resume/offscreen/reduced-motion behavior.
-- [ ] Verify mobile selector placement, active evidence proximity, and semantic narrative labels.
-- [ ] Verify all five case-study routes on desktop and mobile, including project navigation.
-- [ ] Verify Tatva Lab keyboard navigation and focus restoration.
-- [ ] Verify Decision Archive and Brand Study close actions restore viewport context.
-- [ ] Keep verified client work, smaller engagements, independent studies, and concepts clearly separated.
+- [ ] Obtain hosted evidence for the exact current Work source, including the complete eight-contract Work browser matrix.
+- [x] Verify hero hover, focus, manual pause, autoplay resume, keyboard selection, and reduced-motion behavior in the production-server browser gate.
+- [ ] Verify hero offscreen and background-tab restoration on the hosted preview.
+- [x] Verify mobile selector placement, active evidence proximity, and semantic narrative labels.
+- [x] Verify all five case-study routes on desktop and mobile, including project navigation.
+- [x] Verify Tatva Lab keyboard navigation and focus restoration.
+- [x] Verify Decision Archive and Brand Study close actions restore viewport context.
+- [x] Keep verified client work, smaller engagements, independent studies, and concepts clearly separated in source and rendered labels.
 - [ ] Recheck every metric, attribution boundary, baseline, timeframe, image crop, and alt description.
 - [ ] Finish the documentary-detail media pass without turning every project into the same sticky sequence.
+
+Exact unchanged Work source passed the full matrix in run `31166850299`: hierarchy and seven viewports, hero pause contract, capability attention, mobile narratives, mobile index, Lab accessibility, seventh-decision context, and fifth-study context.
 
 ## P0 · Insights and SEO authority
 
 - [x] Establish and document one canonical Insights source: 29 published guides in the integrated authority registry. Evidence: `docs/INSIGHTS_AUTHORITY_RELEASE_2026-08-07.md`.
 - [x] Integrate the complete authority hub, five topic hubs, and article renderer into `homepage-cinematic-recovery`. Permanent-alias reassignment remains a release blocker above.
 - [x] Verify both feeds, topic routes, sitemap inclusion, canonical URLs, static generation, and permanent redirects from `/blog` and superseded Insight slugs.
-- [ ] Browser-interact archive search, topic filtering, and related-reading journeys at desktop and mobile sizes.
+- [x] Browser-interact archive search, topic filtering, and related-reading journeys at desktop and mobile sizes.
 - [x] Verify sourced guides display Research sources and expose `BlogPosting.citation`; verify unsourced guides expose neither.
 - [x] Verify unique title, description, canonical, robots discovery, Article/BlogPosting schema, and publication date across all 29 rendered guides.
-- [ ] Verify Open Graph, Twitter, breadcrumb, FAQ, author/publisher schema, source-link reachability, external-link labels, and Googlebot preview directives on representative guides.
+- [x] Verify Open Graph, Twitter, breadcrumb, FAQ, author/publisher schema, secure external-link labels, and Googlebot preview directives on representative guides.
+- [ ] Periodically recheck that external research-source destinations remain reachable and still support the attributed claims.
 - [x] Publish and verify AI-readable discovery through `llms.txt`, `/insights/feed.xml`, and `/insights/rss.xml`.
 - [x] Prevent duplicate search intent and competing URLs through the single registry and explicit legacy redirects, including refresh-vs-rebrand and brand-recall routes.
-- [ ] Run responsive browser checks on at least one sourced and one unsourced article, including keyboard navigation and reduced motion.
+- [x] Run responsive browser checks on sourced and unsourced articles, including keyboard navigation and reduced motion.
+- [x] Replace the missing client-proof `cinematic-waterlight` poster/video references with the valid approved water-element media pair.
+- [x] Pass the repaired 29-guide authority, responsive-browser, and discovery suites: runs `31183444009`, `31183533137`, and `31183610142`.
 - [ ] Record indexability/noindex decisions for draft legal or preview-only routes.
 
 ## P0 · Contact and booking
@@ -105,6 +114,7 @@ Intended order: Hero → Situation → Project Rooms → verified outcome → Au
 - [ ] Verify biography, dates, partner/client claims, and journey milestones; do not invent missing dates or engagements.
 - [ ] Improve mobile portrait crop, narrative order, and pacing where needed.
 - [ ] Ensure About leads naturally to Work or Services rather than ending in biography.
+- [ ] Trace and remove the remaining About-route detached-DOM retention, measured at roughly 2,540 nodes per round trip after the responsive-video listener fix.
 
 ## P1 · Shared frontend systems
 
@@ -112,7 +122,8 @@ Intended order: Hero → Situation → Project Rooms → verified outcome → Au
 - [ ] Mobile menu opens quickly, traps focus, closes with Escape, prevents background scroll, preserves booking action, and maintains 48px item height.
 - [ ] Every interaction works by keyboard and touch; no essential information exists only on hover, colour, or motion.
 - [ ] Every diagram keeps text inside geometry with correct radius, padding, stroke, line origins, node spacing, and optical centring.
-- [ ] Remove duplicated animation loops, listeners, observers, ScrollTriggers, media directors, and stale hidden components.
+- [x] Release responsive video `<source>` listeners during unmount so repeated Services navigation no longer retains entire page trees through Blink MediaQueryList roots.
+- [ ] Remove remaining duplicated animation loops, listeners, observers, ScrollTriggers, media directors, and stale hidden components.
 - [ ] Reserve media dimensions to prevent CLS; use Next Image where appropriate.
 - [ ] Verify loading, empty, error, failed-video, and failed-form states.
 - [ ] Review focus indicators, skip links, landmarks, heading hierarchy, contrast over moving media, and 44px minimum controls.
@@ -147,16 +158,17 @@ Intended order: Hero → Situation → Project Rooms → verified outcome → Au
 
 ## Current verification PRs to resolve
 
-- PR #98 · exact current Work verification repairs.
+- PR #99 · current `homepage-cinematic-recovery` integration and verification head.
+- PR #98 · earlier exact Work verification repairs.
 - PR #96 · Contact call/WhatsApp/30-minute conversion journey.
-- PR #91 · 22-guide Insights verification snapshot.
-- PR #84 · repaired current Work hosted verification.
+- PR #91 · obsolete 22-guide Insights verification snapshot; preserve evidence but do not treat it as the authority source.
+- PR #84 · repaired earlier Work hosted verification.
 - PR #79 · complete Services journey preview.
 - PR #78 · integrated site preview candidate.
 - PR #77 · research sources in Insights renderer.
 - PR #76 · integrated release candidate.
 
-These are evidence sources, not automatically canonical merge targets. Compare them to the latest `homepage-cinematic-recovery` head before integrating or retiring anything.
+These are evidence sources, not automatically canonical merge targets. Compare them to the latest deployable `homepage-cinematic-recovery` source before integrating or retiring anything.
 
 ## Definition of done
 
