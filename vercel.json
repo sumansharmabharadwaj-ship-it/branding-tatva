@@ -3,7 +3,7 @@
   "alias": [
     "branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app"
   ],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json .github",
   "git": {
     "deploymentEnabled": true
   },
