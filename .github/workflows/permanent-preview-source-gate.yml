@@ -1,0 +1,45 @@
+name: Permanent preview source gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - "src/**"
+      - "public/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "next.config.ts"
+      - "postcss.config.mjs"
+      - "tsconfig.json"
+      - "vercel.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: permanent-preview-source-gate
+  cancel-in-progress: true
+
+jobs:
+  verify-canonical-alias:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Wait for the permanent alias and verify exact source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PREVIEW_URL: https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app
+          CANONICAL_BRANCH: homepage-cinematic-recovery
+          GATE_TIMEOUT_MS: "720000"
+          GATE_POLL_MS: "15000"
+        run: node scripts/permanent_preview_source_gate.cjs
