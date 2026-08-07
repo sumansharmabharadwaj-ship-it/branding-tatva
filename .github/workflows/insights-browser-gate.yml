@@ -2,8 +2,8 @@ name: Insights responsive browser gate
 run-name: Insights browser · ${{ github.sha }}
 
 on:
-  # Exact-head rerun after teaching the verifier to read the standard
-  # Googlebot meta tag alongside the general robots tag.
+  # Exact-head rerun after replacing the client-proof guide's missing media
+  # pair. Both Insight data-file casings now remain inside the browser gate.
   workflow_dispatch:
   push:
     branches:
@@ -16,7 +16,8 @@ on:
       - src/components/InsightsExplorer.tsx
       - src/components/Reveal.tsx
       - src/components/ScrollProgress.tsx
-      - src/data/**Insights.ts
+      - src/data/**Insight**
+      - src/data/**insight**
       - src/data/insightLibrary.ts
       - src/data/insights.ts
       - src/data/pillarInsights.ts
