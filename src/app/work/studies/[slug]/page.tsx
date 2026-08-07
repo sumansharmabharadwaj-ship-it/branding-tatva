@@ -74,13 +74,14 @@ export default async function BrandStudyPage({ params }: Props) {
 
   return (
     <>
-      <Header />
+      <Header transparent />
       <main id="main-content" style={{ backgroundColor: MOOD.charcoal }}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-        {/* Four media slots run down this template, one per section.
-            They stay empty until footage is approved per file, so the
-            page reads as designed either way. */}
+        {/* Four shared original films carry the reader from cultural
+            memory to observation, application, and action. The media
+            remains data-driven so a study-specific film can replace any
+            slot later without changing this template. */}
         <section className="relative overflow-hidden py-20 sm:py-28">
           <MediaSlot fill={study.media?.masthead} scrim={0.8} />
           <Container className="relative max-w-4xl">

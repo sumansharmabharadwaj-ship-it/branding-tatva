@@ -17,6 +17,8 @@ export type SlotFill = {
   poster: string;
   /** Where the footage sits in frame, e.g. "center 60%". */
   position?: string;
+  /** Slight pace adjustment for deliberately slow ambient loops. */
+  playbackRate?: number;
   /** Kept with the asset so provenance survives the handoff. */
   credit?: string;
 };
@@ -40,6 +42,7 @@ export function MediaSlot({
         poster={fill.poster}
         imagePosition={fill.position ?? "center"}
         parallax={parallax}
+        playbackRate={fill.playbackRate ?? 1}
       />
       <div aria-hidden="true" className="absolute inset-0" style={{ backgroundColor: `rgba(20,18,16,${scrim})` }} />
     </>

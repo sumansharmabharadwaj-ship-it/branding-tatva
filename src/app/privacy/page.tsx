@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { Reveal } from "@/components/Reveal";
+import { SplitReveal } from "@/components/SplitReveal";
 import { site } from "@/data/site";
-import { pageSchema, PERSON_ID, ORGANIZATION_ID } from "@/lib/pageSchema";
-
+import { pageSchema } from "@/lib/pageSchema";
 
 const pageJsonLd = pageSchema({
   type: "WebPage",
@@ -24,14 +26,34 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <>
-      <Header />
+      <Header transparent />
       <main id="main-content">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
-        <section className="pb-20 pt-32 sm:pt-36">
-          <Container className="prose-content max-w-2xl">
-            <h1 className="text-display-md font-display font-normal text-soil">Privacy Policy</h1>
-            <p className="mt-4 text-sm text-foreground-secondary">Last updated: draft, pending your review</p>
+        <section className="relative overflow-hidden bg-soil pb-16 pt-36 sm:pb-20 sm:pt-44">
+          <BackgroundVideo
+            video="/videos/generated/bt-legal-archive-seal.mp4"
+            poster="/images/generated/bt-legal-archive-seal-poster.jpg"
+            imagePosition="center"
+            parallax
+            playbackRate={0.9}
+          />
+          <div className="absolute inset-0 bg-soil/50" />
+          <div className="absolute inset-0 bg-gradient-to-r from-soil via-soil/80 to-soil/20" />
+          <Container className="relative max-w-2xl">
+            <Reveal>
+              <p className="text-sm font-medium uppercase tracking-[0.18em] text-sandstone">Your information</p>
+            </Reveal>
+            <SplitReveal as="h1" className="mt-2 text-display-md font-display font-normal text-ivory">
+              Privacy Policy
+            </SplitReveal>
+            <Reveal delay={0.08}>
+              <p className="mt-5 text-sm text-ivory/65">Last updated: draft, pending your review</p>
+            </Reveal>
+          </Container>
+        </section>
 
+        <section className="bg-ivory py-16 sm:py-20">
+          <Container className="prose-content max-w-2xl">
             <div className="mt-8 space-y-6 text-foreground-secondary">
               <p>
                 {site.name} ({site.founder}) collects only the information you
