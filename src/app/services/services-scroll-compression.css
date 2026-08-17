@@ -245,6 +245,25 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
 }
 
 @media (max-width: 767px) {
+  /* The phone journey is authored as a sequence of complete chapters, but
+     the information-heavy scenes must not inherit desktop-sized breathing
+     room on top of their natural content height. Forty-eight pixels keeps
+     controls comfortably separated while removing the empty runway that
+     pushed a full traversal beyond nineteen screens. Min-height still owns
+     the quieter chapters, so no content is clipped or squeezed. */
+  #situation,
+  #offerings,
+  #desire,
+  #verified-outcome,
+  #stakes,
+  #deliverables,
+  #imagine,
+  #health,
+  #audit,
+  #book {
+    padding-block: 3rem !important;
+  }
+
   [data-services-hero-aperture="true"] {
     bottom: -10rem;
     width: 22rem;

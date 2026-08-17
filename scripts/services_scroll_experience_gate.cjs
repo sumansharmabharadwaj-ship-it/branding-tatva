@@ -218,6 +218,15 @@ async function auditViewport(browser, viewport) {
       .trim(),
   }));
 
+  const density = await page.locator("main > *, body > footer").evaluateAll((nodes) =>
+    nodes.map((node) => ({
+      id: node.id || node.tagName.toLowerCase(),
+      scene: node.getAttribute("data-services-scroll-scene") || null,
+      height: Math.round(node.getBoundingClientRect().height),
+    })),
+  );
+  console.log(`${label}: density ${JSON.stringify(density)}`);
+
   assert(metrics.scrollViewports <= 19, `${label}: ${metrics.scrollViewports.toFixed(2)} scroll viewports is still padded`);
   assert(metrics.activeChapter, `${label}: active chapter was not published`);
   assert(metrics.activeChapterId, `${label}: active chapter ID was not published`);
