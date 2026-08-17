@@ -83,6 +83,28 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
         event.key === "ArrowUp"
       ) {
         cancelHashRecovery();
+
+        const target = event.target;
+        const editing =
+          target instanceof HTMLElement &&
+          (target.isContentEditable ||
+            target.matches("input, textarea, select") ||
+            (event.key === " " &&
+              target.matches(
+                "button, a, [role='button'], [role='checkbox'], [role='tab']",
+              )));
+        if (editing) return;
+
+        // Lenis owns wheel/touch input, but Page Down, Space, Home, End, and
+        // arrow keys move the native document directly. Without reconciling
+        // that new native position, Lenis can pull the visitor back toward
+        // its previous wheel target on the next frame (or toward a stale
+        // same-route hash target). Let the browser perform the key's native
+        // action, then adopt the resulting position immediately. This keeps
+        // browser keyboard semantics primary while preventing snap-back.
+        window.requestAnimationFrame(() => {
+          instance.scrollTo(window.scrollY, { immediate: true });
+        });
       }
     }
 
