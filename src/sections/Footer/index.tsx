@@ -17,9 +17,9 @@ import { ConsentPreferencesLink } from "@/components/ConsentPreferencesLink";
 // This keeps the same close-every-page-consistently job (Footer already
 // renders on all 12 pages) but gets to the booking widget immediately,
 // side by side with a brand/CTA card and a contact card — like a taskbar,
-// not another full scene. The jagged peaks backdrop (restored on
-// direct request) sits behind a much shorter passage now that there's
-// far less content sitting on top of it.
+// not another full scene. A dedicated nineteen-second peaks-to-valley
+// film keeps the requested mountain register while giving the closing
+// passage a forward cinematic arc instead of a ten-second loop.
 
 const WIDGET_CLASS =
   "rounded-2xl border border-white/15 bg-black/20 backdrop-blur-md p-5 sm:p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-black/25";
@@ -41,14 +41,13 @@ export function Footer({ compact = false }: FooterProps) {
           way every other section-to-section boundary on the site
           already works. */}
 
-      {/* Backdrop restored to the original jagged peaks on direct
-          request; the dandelion release now lives in the Deliverables
-          chapter on Services instead. imagePosition biased down keeps
-          the pale sky band out of the section's top edge. */}
+      {/* The jagged-peaks opening now resolves into a Himalayan valley
+          over nineteen seconds. imagePosition biased down keeps the pale
+          sky band out of the section's top edge. */}
       {!compact && (
         <TexturedDark
-        image="/images/own-jagged-peaks.jpg"
-        video="/videos/own-jagged-peaks.mp4"
+        image="/images/site-footer-peaks-film-v2-poster.jpg"
+        video="/videos/site-footer-peaks-film-v2.mp4"
         imagePosition="center 85%"
         className="py-12 sm:py-14"
       >
