@@ -20,8 +20,7 @@ const TOUCH_HOLD_REFRESH_MS = 3400;
  *
  * Fine-pointer desktop demonstrates the pressure model quickly enough that the
  * 3.4s guided chapter reveals more than a static board. Touch stays manual by
- * repeatedly invoking the lab's no-op "restore all" action, which renews the
- * component's own auto-rotation hold without changing the visitor's state.
+ * renewing the lab's pointer hold without invoking any state-changing action.
  */
 export function HomeV4TatvaTempo() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
@@ -107,11 +106,18 @@ export function HomeV4TatvaTempo() {
     if (forces.length < 2 || !restore) return;
 
     if (!finePointer) {
-      // `restore.click()` is a semantic no-op when the full system is already
-      // restored, and after a visitor selects a force their real pointer event
-      // activates the external hold before this interval can run again.
+      // Bubble a pointer signal from the chapter shell so TatvaSystemLab renews
+      // its own pause without clicking a force or the restore control. Targeting
+      // the shell also keeps this director's control listener from treating the
+      // synthetic refresh as a new visitor choice.
       const refreshLabHold = () => {
-        if (Date.now() >= holdUntilRef.current) restore.click();
+        section.dispatchEvent(
+          new PointerEvent("pointerdown", {
+            bubbles: true,
+            pointerType: "touch",
+            isPrimary: true,
+          }),
+        );
       };
       refreshLabHold();
       touchRefreshRef.current = window.setInterval(refreshLabHold, TOUCH_HOLD_REFRESH_MS);
