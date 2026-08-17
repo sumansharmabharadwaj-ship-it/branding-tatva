@@ -264,6 +264,14 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
     padding-block: 3rem !important;
   }
 
+  /* The Recognition Audit's two-tab chapter control is the first focusable
+     landmark after an anchor jump. Keep its top edge clear of the fixed
+     mobile header while retaining the tighter lower handoff. */
+  #audit {
+    padding-top: 5rem !important;
+    padding-bottom: 3rem !important;
+  }
+
   [data-services-hero-aperture="true"] {
     bottom: -10rem;
     width: 22rem;
