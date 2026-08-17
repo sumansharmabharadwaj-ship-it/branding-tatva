@@ -160,31 +160,31 @@ export function HomeV4Experience() {
         data-home-v4-chapter="invitation"
         data-home-chapter="invitation"
         data-home-section="invitation"
+        data-invitation-held-scene
         data-cursor-world="dark"
-        className="home-v4-chapter home-v4-chapter--invitation invitation-cinematic"
+        className="home-v4-chapter home-v4-chapter--invitation invitation-cinematic bt-scene bt-scene--unfold-short"
         aria-label="Begin a conversation with Branding Tatva"
       >
-        {/* Measured as a held scene and reverted. Its content runs to 1.17
-            viewports, so the frame is taller than the screen and cannot stay
-            at the top through the whole runway: it held at three of five
-            sampled positions rather than five. A frame can only hold cleanly
-            when its content fits inside one viewport, which is the rule this
-            chapter fails and Tatva passes. Holding it needs its own layout to
-            come under a screen first. */}
-        <VideoBreak
-          src="/videos/higgsfield-silver-tide.mp4"
-          poster="/images/higgsfield-silver-tide-poster.jpg"
-          quote="Some things only become visible once everything else goes quiet."
-          height="auto"
-          imagePosition="50% 18%"
-          quoteVariant="statement"
-          cameraPush
-          wordFade
-          overlayGradient="linear-gradient(180deg, rgba(16,20,24,0.36) 0%, rgba(16,20,24,0.12) 25%, rgba(16,20,24,0.28) 55%, rgba(17,20,23,0.96) 100%)"
-        >
-          <DustMotes />
-          <FinalInvitation />
-        </VideoBreak>
+        {/* The closing material was 1.17 viewports tall, so a sticky wrapper
+            could only hold at three of five measured positions. The final
+            screen-fit layer now composes the quote and decision card inside
+            one viewport; this runway is therefore earned rather than empty. */}
+        <div className="bt-scene__sticky home-v4-invitation__sticky">
+          <VideoBreak
+            src="/videos/higgsfield-silver-tide.mp4"
+            poster="/images/higgsfield-silver-tide-poster.jpg"
+            quote="Some things only become visible once everything else goes quiet."
+            height="auto"
+            imagePosition="50% 18%"
+            quoteVariant="statement"
+            cameraPush
+            wordFade
+            overlayGradient="linear-gradient(180deg, rgba(16,20,24,0.36) 0%, rgba(16,20,24,0.12) 25%, rgba(16,20,24,0.28) 55%, rgba(17,20,23,0.96) 100%)"
+          >
+            <DustMotes />
+            <FinalInvitation />
+          </VideoBreak>
+        </div>
       </section>
 
       <HomePacingDirector />

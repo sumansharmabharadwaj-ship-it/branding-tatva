@@ -43,6 +43,70 @@
     height: 175svh;
     min-height: 72rem;
   }
+
+  /* The closing chapter used to measure 1.17 viewports because its quote,
+     generous outer padding and full-size decision map were stacked without a
+     height budget. Keep every decision and both actions, but compose them as
+     one closing frame so the shared sticky runway can actually hold. */
+  .home-v4-chapter--invitation.bt-scene--unfold-short {
+    min-height: 160svh;
+  }
+
+  .home-v4-chapter--invitation > .home-v4-invitation__sticky,
+  .home-v4-invitation__sticky > [data-cursor-media] {
+    height: 100svh !important;
+    min-height: 100svh;
+  }
+
+  .home-v4-invitation__sticky > [data-cursor-media] > div.relative.flex.flex-1 {
+    height: 100svh;
+    min-height: 0;
+    gap: clamp(0.75rem, 1.7svh, 1.25rem);
+    overflow: hidden;
+    padding:
+      clamp(4.75rem, 8.5svh, 5.75rem)
+      clamp(1.25rem, 4vw, 3rem)
+      clamp(1rem, 2.2svh, 1.5rem);
+  }
+
+  .home-v4-invitation__sticky [data-cursor-media] p[role="text"] {
+    max-width: min(49rem, 78vw);
+    font-size: clamp(2rem, min(3.6vw, 5svh), 3.75rem);
+    line-height: 0.96;
+  }
+
+  .home-v4-invitation__sticky .final-invitation__card {
+    max-height: 66svh;
+  }
+
+  .home-v4-invitation__sticky .final-invitation__copy {
+    min-height: 0;
+    padding: clamp(1.25rem, 2.3vw, 2rem) !important;
+  }
+
+  .home-v4-invitation__sticky .final-invitation__headline {
+    margin-top: clamp(0.65rem, 1.3svh, 1rem);
+    font-size: clamp(2rem, min(3.2vw, 5svh), 3.4rem) !important;
+  }
+
+  .home-v4-invitation__sticky .final-invitation__body {
+    margin-top: clamp(0.7rem, 1.5svh, 1rem);
+    line-height: 1.55 !important;
+  }
+
+  .home-v4-invitation__sticky .final-invitation__actions,
+  .home-v4-invitation__sticky .final-invitation__details {
+    margin-top: clamp(0.8rem, 1.7svh, 1.25rem);
+  }
+
+  .home-v4-invitation__sticky .final-invitation__map {
+    padding: clamp(0.9rem, 1.8vw, 1.35rem) !important;
+  }
+
+  .home-v4-invitation__sticky .final-invitation__map-canvas {
+    width: min(100%, 34svh);
+    margin-top: clamp(0.45rem, 1svh, 0.75rem);
+  }
 }
 
 /* Short laptops are where a cinematic layout most easily turns into cropped

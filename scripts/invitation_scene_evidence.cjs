@@ -129,6 +129,55 @@ async function capture(browser, testCase) {
       (await invitation.locator(".final-invitation__node").count()) === 3,
       `${testCase.name}: desktop next-move map is incomplete`,
     );
+
+    const sceneGeometry = await chapter.evaluate((node) => {
+      const sticky = node.querySelector(".home-v4-invitation__sticky");
+      const frame = sticky?.querySelector("[data-cursor-media]");
+      const content = frame?.querySelector(":scope > div.relative.flex.flex-1");
+      if (!(sticky instanceof HTMLElement) || !(frame instanceof HTMLElement) || !(content instanceof HTMLElement)) {
+        return null;
+      }
+      const viewport = window.innerHeight;
+      return {
+        chapterHeight: node.getBoundingClientRect().height,
+        stickyPosition: window.getComputedStyle(sticky).position,
+        stickyHeight: sticky.getBoundingClientRect().height,
+        frameHeight: frame.getBoundingClientRect().height,
+        contentScrollHeight: content.scrollHeight,
+        viewport,
+      };
+    });
+
+    assert(sceneGeometry, `${testCase.name}: held-scene geometry missing`);
+    assert(
+      sceneGeometry.chapterHeight >= sceneGeometry.viewport * 1.55,
+      `${testCase.name}: closing runway is shorter than the 160svh contract`,
+    );
+    assert(sceneGeometry.stickyPosition === "sticky", `${testCase.name}: closing frame is not sticky`);
+    assert(
+      sceneGeometry.stickyHeight <= sceneGeometry.viewport + 2 &&
+        sceneGeometry.frameHeight <= sceneGeometry.viewport + 2 &&
+        sceneGeometry.contentScrollHeight <= sceneGeometry.viewport + 2,
+      `${testCase.name}: closing content exceeds one viewport (${JSON.stringify(sceneGeometry)})`,
+    );
+
+    const holdSamples = await chapter.evaluate(async (node) => {
+      const sticky = node.querySelector(".home-v4-invitation__sticky");
+      if (!(sticky instanceof HTMLElement)) return [];
+      const chapterTop = node.getBoundingClientRect().top + window.scrollY;
+      const runway = node.getBoundingClientRect().height - window.innerHeight;
+      const results = [];
+      for (const progress of [0.08, 0.5, 0.92]) {
+        window.scrollTo({ top: chapterTop + runway * progress, behavior: "instant" });
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        results.push(Math.abs(sticky.getBoundingClientRect().top));
+      }
+      return results;
+    });
+    assert(
+      holdSamples.length === 3 && holdSamples.every((top) => top <= 2),
+      `${testCase.name}: closing frame failed its held-scene samples (${holdSamples.join(", ")})`,
+    );
   }
 
   await assertNoOverflow(page, testCase.name);
