@@ -315,7 +315,8 @@
   }
 
   .project-journey__explanation,
-  .project-journey__decision-block {
+  .project-journey__decision-block,
+  .project-journey__output-block {
     display: none;
   }
 
