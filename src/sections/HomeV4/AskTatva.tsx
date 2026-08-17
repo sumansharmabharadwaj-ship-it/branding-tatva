@@ -22,7 +22,8 @@ const PROMPTS = {
 } as const;
 
 function includesAny(value: string, terms: readonly string[]) {
-  return terms.some((term) => value.includes(term));
+  const normalized = ` ${value.replace(/[^a-z0-9]+/g, " ").trim()} `;
+  return terms.some((term) => normalized.includes(` ${term} `));
 }
 
 function answerFor(input: string): Reply {
@@ -31,8 +32,11 @@ function answerFor(input: string): Reply {
   if (
     includesAny(value, [
       "position",
+      "positioning",
       "different",
-      "clar",
+      "clarity",
+      "clarify",
+      "clear",
       "misunderstand",
       "audience",
       "choose",
@@ -87,6 +91,8 @@ function answerFor(input: string): Reply {
   if (
     includesAny(value, [
       "fragment",
+      "fragmented",
+      "fragmentation",
       "inconsistent",
       "scattered",
       "messy",

@@ -340,6 +340,19 @@ async function auditViewport(browser, viewport) {
       `${viewport.name}: Ask Tatva did not continue with a relevant prompt`,
     );
 
+    const askInput = askPanel.getByLabel("Ask about your brand");
+    await askInput.fill("The business has outgrown the brand");
+    await askInput.press("Enter");
+    assert(
+      ((await askPanel.textContent()) || "").includes("Reposition fits a business that has changed"),
+      `${viewport.name}: Ask Tatva confused an outgrown brand with a positioning keyword`,
+    );
+    assert(
+      (await askPanel.getByRole("link", { name: "Compare the paths" }).getAttribute("href")) ===
+        "/services",
+      `${viewport.name}: Ask Tatva did not connect a changed business to the service paths`,
+    );
+
     await page.keyboard.press("Escape");
     await page.waitForTimeout(40);
     assert(
