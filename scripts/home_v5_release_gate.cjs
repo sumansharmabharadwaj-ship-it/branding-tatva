@@ -23,19 +23,23 @@ async function inspectViewport(browser, viewport, label) {
   assert((await openingFilm.count()) === 1, `${label} is missing its opening film`);
   assert(!(await openingFilm.evaluate((video) => video.paused)), `${label} opening film remained paused after the prelude`);
 
-  // Large media archives can make metadata arrive after networkidle on a
-  // cold runner. Wait for the seven chapter headers instead of treating a
-  // transient NaN duration as a short film.
-  let metadataReady = false;
-  for (let attempt = 0; attempt < 80; attempt += 1) {
-    metadataReady = await page.evaluate(() => {
-      const films = [...document.querySelectorAll("[data-home-v5-chapter] video")];
-      return films.length === 7 && films.every((video) => Number.isFinite(video.duration));
-    });
-    if (metadataReady) break;
-    await page.waitForTimeout(250);
+  // The media director intentionally defers offscreen files. Prime each film
+  // by visiting its chapter, then poll through ordinary DOM evaluation so the
+  // production CSP stays intact and a cold runner does not misclassify an
+  // unloaded duration as a short loop.
+  const chapterFilms = page.locator("[data-home-v5-chapter] video");
+  assert((await chapterFilms.count()) === 7, `${label} expected seven film chapters`);
+  for (let index = 0; index < 7; index += 1) {
+    const film = chapterFilms.nth(index);
+    await film.scrollIntoViewIfNeeded();
+    let metadataReady = false;
+    for (let attempt = 0; attempt < 40; attempt += 1) {
+      metadataReady = await film.evaluate((video) => Number.isFinite(video.duration));
+      if (metadataReady) break;
+      await page.waitForTimeout(250);
+    }
+    assert(metadataReady, `${label} film ${index + 1} did not load its header within 10 seconds`);
   }
-  assert(metadataReady, `${label} did not load all seven film headers within 20 seconds`);
 
   const report = await page.evaluate((expected) => {
     const chapters = [...document.querySelectorAll("[data-home-v5-chapter]")];
