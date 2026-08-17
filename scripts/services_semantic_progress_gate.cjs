@@ -130,9 +130,10 @@ async function reloadClean(page) {
   await lateSituationButton.click();
   await page.waitForTimeout(220);
   const committedSituation = await page.evaluate((key) => localStorage.getItem(key), SERVICES_SITUATION_KEY);
+  const committedSituationButton = situation.locator('button[aria-pressed="true"]').first();
   assert(committedSituation === "ongoing", `Committed Situation is ${committedSituation}, expected ongoing`);
   assert(
-    (await lateSituationButton.getAttribute("aria-pressed")) === "true",
+    (await committedSituationButton.getAttribute("aria-pressed")) === "true",
     "Committed Situation is not marked pressed",
   );
 
@@ -164,12 +165,13 @@ async function reloadClean(page) {
 
   await latePackageButton.click();
   await page.waitForTimeout(220);
+  const committedPackageButton = desire.locator('button[aria-pressed="true"]').first();
   assert(
-    (await latePackageButton.getAttribute("aria-pressed")) === "true",
+    (await committedPackageButton.getAttribute("aria-pressed")) === "true",
     "Explicit package choice is not marked pressed",
   );
   assert(
-    (await latePackageButton.getAttribute("data-package-preview")) === null,
+    (await committedPackageButton.getAttribute("data-package-preview")) === null,
     "Explicit package choice is still marked as a passive preview",
   );
 
