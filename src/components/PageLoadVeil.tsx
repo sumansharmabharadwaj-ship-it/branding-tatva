@@ -10,7 +10,7 @@ const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 const SESSION_KEY = "branding-tatva-v4-prelude-seen";
-const FIRST_VISIT_MS = 900;
+const FIRST_VISIT_MS = 800;
 const REPEAT_VISIT_MS = 700;
 const EXIT_MS = 220;
 const EXIT_SECONDS = EXIT_MS / 1000;
