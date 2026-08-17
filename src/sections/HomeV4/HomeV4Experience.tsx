@@ -22,6 +22,8 @@ import { HomeV4ProcessTempo } from "./HomeV4ProcessTempo";
 import { HomeV4RecognitionTempo } from "./HomeV4RecognitionTempo";
 import { HomeV4TatvaTempo } from "./HomeV4TatvaTempo";
 import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
+import { AskTatva } from "./AskTatva";
+import { HomeV4ChapterRail } from "./HomeV4ChapterRail";
 
 export function HomeV4Experience() {
   useEffect(() => {
@@ -39,6 +41,8 @@ export function HomeV4Experience() {
       <HomeV4TatvaTempo />
       <LivingCursor />
       <GuidedView />
+      <HomeV4ChapterRail />
+      <AskTatva />
 
       <V4OpeningScene />
       <SceneHandoff motif="mist" />
@@ -63,6 +67,7 @@ export function HomeV4Experience() {
       <SceneHandoff motif="aperture" />
 
       <div
+        id="paths"
         data-home-v4-chapter="paths"
         data-home-section="paths"
         data-cursor-world="dark"
@@ -132,6 +137,7 @@ export function HomeV4Experience() {
       <SceneHandoff motif="river" />
 
       <div
+        id="studio"
         data-home-v4-chapter="studio"
         data-home-section="studio"
         data-cursor-world="dark"

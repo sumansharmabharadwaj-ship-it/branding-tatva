@@ -90,100 +90,21 @@ export function V4OpeningScene() {
     >
       <div className="home-v4-opening__media" aria-hidden="true">
         <video
-          src="/videos/hero-forest-sanctuary.mp4"
-          poster="/images/hero-forest-sanctuary-poster.jpg"
+          src="/videos/higgsfield-mountain-mist.mp4"
+          poster="/images/higgsfield-mountain-mist-poster.jpg"
           muted
           autoPlay
           loop
           playsInline
           preload="auto"
         />
-        <motion.span
-          className="home-v4-opening__camera"
-          animate={
-            prefersReducedMotion || !inView
-              ? undefined
-              : { scale: [1.03, 1.105, 1.03], x: [0, -10, 0], y: [0, -4, 0] }
-          }
-          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-        />
         <span className="home-v4-opening__wash" />
-      </div>
-
-      <motion.span
-        aria-hidden="true"
-        className="home-v4-opening__light home-v4-opening__light--one"
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: ["-18%", "28%", "-18%"], opacity: [0.18, 0.56, 0.18] }
-        }
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.span
-        aria-hidden="true"
-        className="home-v4-opening__light home-v4-opening__light--two"
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: ["12%", "-24%", "12%"], opacity: [0.1, 0.42, 0.1] }
-        }
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      <div className="home-v4-opening__signal" aria-hidden="true">
-        <svg viewBox="0 0 520 520">
-          <motion.path
-            d="M40 314 C120 252 168 350 244 282 C316 218 340 132 482 90"
-            fill="none"
-            stroke="rgba(212,185,154,.75)"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            pathLength="1"
-            animate={
-              prefersReducedMotion
-                ? { pathLength: 1, opacity: 0.6 }
-                : { pathLength: [0.12, 1, 0.12], opacity: [0.24, 0.9, 0.24] }
-            }
-            transition={{ duration: 6.8, repeat: Infinity, ease: "easeInOut" }}
-          />
-          {[
-            [72, 294],
-            [176, 322],
-            [257, 267],
-            [344, 156],
-            [470, 96],
-          ].map(([cx, cy], index) => (
-            <motion.circle
-              key={`${cx}-${cy}`}
-              cx={cx}
-              cy={cy}
-              r="4"
-              fill={index === 4 ? "#F4EFE6" : "#D4B99A"}
-              animate={
-                prefersReducedMotion
-                  ? undefined
-                  : { scale: [0.7, 1.45, 0.7], opacity: [0.35, 1, 0.35] }
-              }
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-              transition={{
-                duration: 3.2 + index * 0.35,
-                delay: index * 0.24,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-          ))}
-        </svg>
-        <span>signal</span>
-        <span>pattern</span>
-        <span>recognition</span>
       </div>
 
       <div className="home-v4-opening__shell">
         <div className="home-v4-opening__topline">
-          <span>Brand strategy · direct authorship</span>
-          <span>The page is alive before you touch it</span>
+          <span>Independent brand strategy studio</span>
+          <span>Position · identity · language · digital experience</span>
         </div>
 
         <div className="home-v4-opening__copy">
@@ -193,7 +114,7 @@ export function V4OpeningScene() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.62, delay: 0.12, ease: EASE }}
           >
-            Psychology reads the tension. Language gives it form.
+            Before the logo. Before the campaign. Before the first word.
           </motion.p>
 
           <h1 id="home-v4-opening-title">
@@ -202,14 +123,14 @@ export function V4OpeningScene() {
               animate={{ opacity: 1, y: 0, rotateX: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.86, delay: 0.18, ease: EASE }}
             >
-              Your audience has already formed an opinion.
+              Before your brand is seen,
             </motion.span>
             <motion.em
               initial={prefersReducedMotion ? false : { opacity: 0, x: -34 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.82, delay: 0.34, ease: EASE }}
             >
-              Did you design it?
+              it is already being felt.
             </motion.em>
           </h1>
 
@@ -219,7 +140,7 @@ export function V4OpeningScene() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.48, ease: EASE }}
           >
-            Branding Tatva decides the pattern people should recognise, then carries that decision through position, identity, language, website, and market behaviour.
+            Branding Tatva finds the truth your business can own, then carries it through every place your audience learns what to expect from you.
           </motion.p>
 
           <motion.div
@@ -234,7 +155,7 @@ export function V4OpeningScene() {
               data-magnetic
               data-cursor-label="inspect"
             >
-              See what your brand is signalling <ArrowDownRight size={15} />
+              Enter the brand theatre <ArrowDownRight size={15} />
             </Link>
             <Link
               href="#evidence"
@@ -253,14 +174,14 @@ export function V4OpeningScene() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: prefersReducedMotion ? 0 : 0.72, delay: 0.52, ease: EASE }}
         >
-          <span>Recorded outcome</span>
-          <strong>0.71 → 2.81%</strong>
-          <p>engagement rate in eight weeks, while the account posted less</p>
+          <span>One clear decision</span>
+          <strong>Strategy before styling.</strong>
+          <p>So position, identity, language, website, and behaviour teach the same expectation.</p>
           <i aria-hidden="true" />
         </motion.aside>
 
         <a href="#recognition" className="home-v4-opening__scroll" aria-label="Continue to visitor recognition">
-          <span>Follow the signal</span>
+          <span>Scroll to the next scene</span>
           <i aria-hidden="true" />
         </a>
       </div>
