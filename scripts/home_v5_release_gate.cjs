@@ -82,6 +82,11 @@ async function inspectViewport(browser, viewport, label) {
     for (let index = 0; index < count; index += 1) {
       await tabs.nth(index).click();
       assert((await tabs.nth(index).getAttribute("aria-selected")) === "true", `${label} ${id} choice ${index + 1} did not activate`);
+      if (id === "foundation") {
+        const expectedHref = ["/services#education", "/services#offerings", "/services#health"][index];
+        const actualHref = await chapter.locator(".home-v5-focus-card > a").getAttribute("href");
+        assert(actualHref === expectedHref, `${label} foundation choice ${index + 1} links to ${actualHref} instead of ${expectedHref}`);
+      }
     }
   }
 
