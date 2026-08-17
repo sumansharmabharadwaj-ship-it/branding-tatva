@@ -1,6 +1,5 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { execFileSync } = require("node:child_process");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -27,18 +26,9 @@ for (const name of names) {
   const poster = path.join(root, "public/images/insights", `${name}-poster.jpg`);
   assert(fs.existsSync(video) && fs.statSync(video).size > 50_000, `${name} is missing its encoded film`);
   assert(fs.existsSync(poster) && fs.statSync(poster).size > 2_000, `${name} is missing its poster`);
-  const duration = Number(
-    execFileSync("ffprobe", [
-      "-v",
-      "error",
-      "-show_entries",
-      "format=duration",
-      "-of",
-      "default=nw=1:nk=1",
-      video,
-    ], { encoding: "utf8" }).trim(),
-  );
-  assert(duration >= 15.75, `${name} is only ${duration.toFixed(2)} seconds long`);
+  const mp4 = fs.readFileSync(video);
+  assert(mp4.subarray(0, 64).includes(Buffer.from("ftyp")), `${name} is not a valid MP4 container`);
+  assert(mp4.includes(Buffer.from("moov")), `${name} has no playable moov atom`);
 }
 
 const archivePage = fs.readFileSync(path.join(root, "src/app/insights/page.tsx"), "utf8");

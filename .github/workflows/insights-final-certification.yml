@@ -74,9 +74,8 @@ jobs:
       - name: Validate the restored waterlight poster
         run: |
           test -s public/images/cinematic-waterlight-poster.jpg
-          ffprobe -v error -select_streams v:0 -show_entries stream=width,height \
-            -of csv=s=x:p=0 public/images/cinematic-waterlight-poster.jpg \
-            | grep -Eq '^[0-9]+x[0-9]+$'
+          sips -g pixelWidth -g pixelHeight public/images/cinematic-waterlight-poster.jpg \
+            | grep -Eq 'pixel(Width|Height): [1-9][0-9]+'
 
       - name: Build the production application
         env:
