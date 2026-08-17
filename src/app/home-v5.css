@@ -345,6 +345,14 @@
   grid-template-columns: 1fr;
 }
 
+.home-v5-diagnosis__stage > .home-v5-tabs {
+  grid-template-columns: 1fr;
+}
+
+.home-v5-diagnosis__stage > .home-v5-tabs button {
+  min-height: 0;
+}
+
 .home-v5-tabs--vertical button {
   display: grid;
   grid-template-columns: 2.4rem 1fr;
@@ -483,6 +491,10 @@
 
 .home-v5-paths .home-v5-focus-card small {
   color: rgba(39, 35, 31, 0.5);
+}
+
+.home-v5-paths .home-v5-focus-card > div strong {
+  color: #6f4434;
 }
 
 .home-v5-method__grid {
@@ -972,6 +984,10 @@
   .home-v5-tabs {
     grid-template-columns: 1fr 1fr 1fr;
     gap: 0.45rem;
+  }
+
+  .home-v5-diagnosis__stage > .home-v5-tabs {
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
   .home-v5-tabs button {

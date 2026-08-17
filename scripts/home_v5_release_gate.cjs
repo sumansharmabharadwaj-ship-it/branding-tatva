@@ -17,6 +17,11 @@ async function inspectViewport(browser, viewport, label) {
   const page = await context.newPage();
   await page.goto(BASE_URL, { waitUntil: "networkidle", timeout: 90_000 });
   await page.waitForSelector("[data-home-v5]", { timeout: 15_000 });
+  await page.waitForTimeout(1_350);
+
+  const openingFilm = page.locator("#opening video");
+  assert((await openingFilm.count()) === 1, `${label} is missing its opening film`);
+  assert(!(await openingFilm.evaluate((video) => video.paused)), `${label} opening film remained paused after the prelude`);
 
   const report = await page.evaluate((expected) => {
     const chapters = [...document.querySelectorAll("[data-home-v5-chapter]")];

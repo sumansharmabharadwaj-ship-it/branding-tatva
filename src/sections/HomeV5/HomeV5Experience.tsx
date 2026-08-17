@@ -221,6 +221,33 @@ export function HomeV5Experience() {
   const [question, setQuestion] = useState(0);
   const reduced = Boolean(useHydratedReducedMotion());
 
+  useEffect(() => {
+    if (reduced) return;
+
+    function resumeOpeningFilm() {
+      if (document.hidden) return;
+      const video = document.querySelector<HTMLVideoElement>("#opening video");
+      if (!video) return;
+      const rect = video.getBoundingClientRect();
+      if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
+      void video.play().catch(() => undefined);
+    }
+
+    // The opening film mounts behind the short first-visit veil. Chromium can
+    // occasionally resolve the neighbouring preloaded film first and leave
+    // this already-visible video paused until the first scroll crossing.
+    // Resume once the veil has cleared, and again when a restored tab returns.
+    const timer = window.setTimeout(resumeOpeningFilm, 1_150);
+    window.addEventListener("pageshow", resumeOpeningFilm);
+    document.addEventListener("visibilitychange", resumeOpeningFilm);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("pageshow", resumeOpeningFilm);
+      document.removeEventListener("visibilitychange", resumeOpeningFilm);
+    };
+  }, [reduced]);
+
   return (
     <div className="home-v5" data-home-v5>
       <ChapterRail />
