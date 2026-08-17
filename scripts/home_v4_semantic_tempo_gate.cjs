@@ -21,7 +21,7 @@ async function waitForHome(page) {
 
 async function activeRecognition(page) {
   return page
-    .locator('[data-home-v4-chapter="recognition"] .home-v4-recognition__diagram button[aria-pressed="true"]')
+    .locator('[data-home-v4-chapter="recognition"] .home-v4-recognition__choices button[aria-pressed="true"]')
     .textContent();
 }
 
@@ -50,7 +50,7 @@ async function desktopAudit(browser) {
   assert(Boolean(recognitionBefore) && Boolean(recognitionAfter), "Recognition active-state copy is missing");
   assert(recognitionBefore !== recognitionAfter, `Recognition did not change inside the first semantic beat: ${recognitionBefore}`);
 
-  const recognitionButtons = recognition.locator('.home-v4-recognition__diagram button');
+  const recognitionButtons = recognition.locator('.home-v4-recognition__choices button');
   const manualRecognition = recognitionButtons.nth(2);
   await manualRecognition.click();
   const manualRecognitionLabel = await activeRecognition(page);

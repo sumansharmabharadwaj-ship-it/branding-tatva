@@ -291,6 +291,20 @@ export function V4RecognitionScene() {
               </motion.div>
             </AnimatePresence>
 
+            <div className="home-v4-recognition__choices" aria-label="Choose a brand condition">
+              {RECOGNITION_STATES.map((state, index) => (
+                <button
+                  key={state.number}
+                  type="button"
+                  aria-pressed={index === activeIndex}
+                  onClick={() => choose(index)}
+                >
+                  <span>{state.number}</span>
+                  <strong>{state.label}</strong>
+                </button>
+              ))}
+            </div>
+
             <Link href="#cost" className="home-v4-text-link" data-magnetic data-cursor-label="follow">
               See what the drift quietly costs <span aria-hidden="true">↘</span>
             </Link>
