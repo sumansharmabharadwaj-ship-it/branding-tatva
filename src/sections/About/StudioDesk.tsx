@@ -103,18 +103,22 @@ export function StudioDesk() {
 
   return (
     <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
-      <BackgroundVideo video="/videos/pexels-studio-morning-light.mp4" videoWebm="/videos/pexels-studio-morning-light.webm" poster="/images/pexels-studio-morning-light-poster.jpg" />
+      <BackgroundVideo
+        video="/videos/about-studio-practice-film-v1.mp4"
+        poster="/images/about-studio-practice-film-v1-poster.jpg"
+        playbackRate={0.88}
+      />
       <div className="absolute inset-0 bg-soil/85" />
       <Container className="relative max-w-6xl">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,17rem)_1fr] lg:gap-16">
           <Reveal>
             <div>
               <Image
-                src="/images/own-portrait.jpg"
-                alt="Suman Sharma"
+                src="/images/about-studio-desk-detail-v1.jpg"
+                alt="An open strategy notebook, material swatches, pencil, and clay cup on the studio desk"
                 width={480}
                 height={480}
-                className="aspect-square w-32 rounded-full object-cover sm:w-40"
+                className="aspect-square w-32 rounded-2xl object-cover shadow-elevation-md sm:w-40"
               />
               <p className="mt-5 text-sm font-medium uppercase tracking-[0.2em] text-sandstone">The studio</p>
               <h2 className="mt-2 font-display text-display-sm font-normal leading-[1.1] text-ivory">

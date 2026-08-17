@@ -239,12 +239,17 @@ export default function AboutPage() {
         </section>
 
         {/* Evidence — ambiguity, decision, observed result for three
-            selected cases, all from recorded project data. */}
-        {/* Three flat soil sections ran back to back here with no
-            footage between them. The evidence chapter now sits in a
-            room of its own. */}
+            selected cases, all from recorded project data. The dedicated
+            forward edit moves from an analogue editing room into live
+            flame: raw material becoming a visible signal, without
+            repeating the forest footage used earlier on this page. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
-          <BackgroundVideo video="/videos/pixabay-forest-sunbeams.mp4" poster="/images/pixabay-forest-sunbeams-poster.jpg" parallax />
+          <BackgroundVideo
+            video="/videos/about-evidence-craft-film-v1.mp4"
+            poster="/images/about-evidence-craft-film-v1-poster.jpg"
+            parallax
+            playbackRate={0.86}
+          />
           <div aria-hidden="true" className="absolute inset-0 bg-soil/85" />
           <div className="relative">
             <Evidence />
@@ -271,12 +276,11 @@ export default function AboutPage() {
             typefaces, the palette; this one covers the actual idea
             underneath all of it, which none of those four items touch.
             Direct feedback: this section needs a real backdrop and real
-            scroll motion, not flat bg-soil. pixabay-misty-ridge-drift.mp4
-            — a slow aerial drift over a mist-wrapped ridge — reads as old
-            and elemental rather than staged, matching "something older
-            than a marketing framework" instead of fighting it, and is
-            distinct in mood from higgsfield-golden-peaks.mp4 right below
-            (cool/misty here, warm/gold there). The scroll drift itself is
+            scroll motion, not flat bg-soil. Its dedicated 17-second film
+            travels forward from blue Himalayan first light into a forested
+            alpenglow valley, giving the origin story a complete visual arc
+            without repeating the misty ridge used in Point of View. The
+            scroll drift itself is
             ParallaxVideoBackdrop, the same useScroll/useTransform
             technique VideoBreak's own `parallax` prop already uses
             elsewhere on this page — reused standalone since this
@@ -288,8 +292,8 @@ export default function AboutPage() {
             gives the cinematic feel without stalling the read. */}
         <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
           <ParallaxVideoBackdrop
-            video="/videos/pixabay-misty-ridge-drift.mp4"
-            poster="/images/pixabay-misty-ridge-drift-poster.jpg"
+            video="/videos/about-elements-origin-film-v1.mp4"
+            poster="/images/about-elements-origin-film-v1-poster.jpg"
           />
           <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
