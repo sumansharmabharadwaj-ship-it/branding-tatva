@@ -22,6 +22,15 @@ async function selectedIndex(tabs) {
   return tabs.evaluateAll((nodes) => nodes.findIndex((node) => node.getAttribute("aria-selected") === "true"));
 }
 
+async function waitForFocus(page, locator, message) {
+  const deadline = Date.now() + 2_000;
+  while (Date.now() < deadline) {
+    if (await locator.evaluate((node) => document.activeElement === node)) return;
+    await page.waitForTimeout(25);
+  }
+  throw new Error(message);
+}
+
 async function previewState(stage) {
   return stage.evaluate((node) => ({
     pointerPaused: node.dataset.pointerPaused,
@@ -157,8 +166,9 @@ async function auditInteractivePause(browser) {
     await tabs.nth(resumedAfterManual).press("ArrowRight");
     const arrowSelected = (resumedAfterManual + 1) % 5;
     assert((await selectedIndex(tabs)) === arrowSelected, "work/hero-pause: ArrowRight did not select the next project");
-    assert(
-      await tabs.nth(arrowSelected).evaluate((node) => document.activeElement === node),
+    await waitForFocus(
+      page,
+      tabs.nth(arrowSelected),
       "work/hero-pause: ArrowRight did not move focus to the selected project",
     );
     assert((await toggle.getAttribute("aria-pressed")) === "true", "work/hero-pause: keyboard selection did not pause automatic rotation");
