@@ -11,6 +11,15 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+async function waitForAttribute(page, locator, name, value, timeoutMs = 2_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() <= deadline) {
+    if ((await locator.getAttribute(name)) === value) return;
+    await page.waitForTimeout(25);
+  }
+  throw new Error(`Timed out waiting for ${name}=${value}`);
+}
+
 async function openingVisibility(page) {
   return page.locator('[data-home-v4-chapter="opening"]').evaluate((opening) => {
     const headline = opening.querySelector("h1");
@@ -57,11 +66,7 @@ async function firstVisit(browser) {
   });
 
   await loader.waitFor({ state: "detached", timeout: 5_000 });
-  await page.waitForFunction(
-    () => document.documentElement.dataset.homePreludeReady === "true",
-    undefined,
-    { timeout: 2_000 },
-  );
+  await waitForAttribute(page, page.locator("html"), "data-home-prelude-ready", "true");
   await page.waitForTimeout(760);
 
   const revealed = await openingVisibility(page);
@@ -102,11 +107,7 @@ async function repeatVisit(browser) {
   }
   const elapsed = Date.now() - startedAt;
   assert(elapsed < 2_600, `repeat visit: prelude held for ${elapsed}ms`);
-  await page.waitForFunction(
-    () => document.documentElement.dataset.homePreludeReady === "true",
-    undefined,
-    { timeout: 2_000 },
-  );
+  await waitForAttribute(page, page.locator("html"), "data-home-prelude-ready", "true");
   await context.close();
 }
 
@@ -122,11 +123,7 @@ async function reducedMotion(browser) {
   const loader = page.locator("[data-page-load-veil]");
   const loaderVisible = (await loader.count()) > 0 && (await loader.isVisible());
   assert(!loaderVisible, "reduced motion: prelude should not be visible");
-  await page.waitForFunction(
-    () => document.documentElement.dataset.homePreludeReady === "true",
-    undefined,
-    { timeout: 2_000 },
-  );
+  await waitForAttribute(page, page.locator("html"), "data-home-prelude-ready", "true");
   const revealed = await openingVisibility(page);
   assert(revealed.headlineOpacity >= 0.92, "reduced motion: opening headline is hidden");
   await context.close();
