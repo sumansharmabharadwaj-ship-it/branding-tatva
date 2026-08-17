@@ -102,8 +102,8 @@ export function SeasonalCalendarPanel() {
           tuning left to get wrong. */}
       <div className="relative h-28 w-full shrink-0 overflow-hidden sm:h-32">
         <BackgroundVideo
-          video="/videos/pixabay-campfire-conversation.mp4"
-          poster="/images/pixabay-campfire-conversation-poster.jpg"
+          video="/videos/site-seasonal-conversation-film-v2.mp4"
+          poster="/images/site-seasonal-conversation-film-v2-poster.jpg"
         />
       </div>
 

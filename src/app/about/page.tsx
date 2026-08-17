@@ -65,10 +65,10 @@ export default function AboutPage() {
           ctaLabel="Book a Brand Strategy Session"
           secondaryCtaHref="/work"
           secondaryCtaLabel="Explore the Work"
-          video="/videos/own-companions-split.mp4"
-          poster="/images/own-companions-split-poster.jpg"
-          bgVideo="/videos/about-hero-bg-meadow.mp4"
-          bgPoster="/images/about-hero-bg-meadow-poster.jpg"
+          video="/videos/about-companions-film-v2.mp4"
+          poster="/images/about-companions-film-v2-poster.jpg"
+          bgVideo="/videos/about-hero-field-film-v2.mp4"
+          bgPoster="/images/about-hero-field-film-v2-poster.jpg"
         />
 
         {/* Point of view — the redesign brief's chapter two: three
@@ -77,8 +77,8 @@ export default function AboutPage() {
             its story. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
           <BackgroundVideo
-            video="/videos/pixabay-misty-ridge-drift.mp4"
-            poster="/images/pixabay-misty-ridge-drift-poster.jpg"
+            video="/videos/about-point-of-view-film-v2.mp4"
+            poster="/images/about-point-of-view-film-v2-poster.jpg"
             parallax
             playbackRate={0.84}
           />
@@ -104,7 +104,11 @@ export default function AboutPage() {
             grade is a legitimate free-tool fix for "looks flat," not a
             content problem an AI regeneration would actually solve. */}
         <section className="relative overflow-hidden pb-20 pt-20 sm:pb-28 sm:pt-28">
-          <BackgroundVideo video="/videos/pixabay-forest-sunbeams.mp4" poster="/images/pixabay-forest-sunbeams-poster.jpg" />
+          <BackgroundVideo
+            video="/videos/about-reflection-film-v2.mp4"
+            poster="/images/about-reflection-film-v2-poster.jpg"
+            playbackRate={0.88}
+          />
           <div className="absolute inset-0" style={{ backgroundColor: `${SANDSTONE}40` }} />
           <Container className="relative">
             <div className="max-w-xl space-y-5 rounded-2xl border border-border/50 bg-background-elevated/85 px-6 py-8 text-foreground-secondary shadow-elevation-md backdrop-blur-sm sm:px-10 sm:py-10">
@@ -182,8 +186,8 @@ export default function AboutPage() {
             practice to. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
           <BackgroundVideo
-            video="/videos/pexels-studio-morning-light.mp4"
-            poster="/images/pexels-studio-morning-light-poster.jpg"
+            video="/videos/about-direct-collaboration-film-v2.mp4"
+            poster="/images/about-direct-collaboration-film-v2-poster.jpg"
             parallax
             playbackRate={0.9}
           />
@@ -204,7 +208,11 @@ export default function AboutPage() {
             card-grid Selected-work section, a bright active clip
             because that section has fewer, larger elements). */}
         <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
-          <BackgroundVideo video="/videos/own-moonlit-sea.mp4" poster="/images/own-moonlit-sea-poster.jpg" />
+          <BackgroundVideo
+            video="/videos/about-credentials-film-v2.mp4"
+            poster="/images/about-credentials-film-v2-poster.jpg"
+            playbackRate={0.88}
+          />
           <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
             <div className="grid gap-8 md:grid-cols-[220px_1fr] md:gap-12">
@@ -259,8 +267,8 @@ export default function AboutPage() {
         {/* Behaviours instead of values. */}
         <section className="relative overflow-hidden bg-soil pb-16 sm:pb-24">
           <BackgroundVideo
-            video="/videos/pexels-forest-floor-fungi.mp4"
-            poster="/images/pexels-forest-floor-fungi-poster.jpg"
+            video="/videos/about-behaviours-film-v2.mp4"
+            poster="/images/about-behaviours-film-v2-poster.jpg"
             parallax
             playbackRate={0.92}
           />
@@ -372,8 +380,8 @@ export default function AboutPage() {
             of ending the page on flat color. */}
         <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
           <ParallaxVideoBackdrop
-            video="/videos/higgsfield-golden-peaks.mp4"
-            poster="/images/higgsfield-golden-peaks-poster.jpg"
+            video="/videos/about-design-system-film-v2.mp4"
+            poster="/images/about-design-system-film-v2-poster.jpg"
           />
           <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">

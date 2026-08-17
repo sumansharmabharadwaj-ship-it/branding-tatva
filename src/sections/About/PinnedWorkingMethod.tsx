@@ -26,7 +26,11 @@ function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
     <section
       className={`relative flex overflow-hidden bg-soil ${pinned ? "min-h-screen items-center" : "py-20 sm:py-28"}`}
     >
-      <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
+      <BackgroundVideo
+        video="/videos/about-working-method-film-v2.mp4"
+        poster="/images/about-working-method-film-v2-poster.jpg"
+        playbackRate={0.88}
+      />
       <div className="absolute inset-0 bg-soil/80" />
       <ClipReveal className="w-full">
         <Container className="relative grid gap-12 md:grid-cols-[auto_1fr]">
