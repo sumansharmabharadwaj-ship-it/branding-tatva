@@ -14,10 +14,16 @@ function assert(condition, message) {
 async function waitForServices(page) {
   const veil = page.locator("[data-page-load-veil]");
   if ((await veil.count()) > 0) await veil.waitFor({ state: "detached", timeout: 9_000 }).catch(() => {});
-  await page.waitForFunction(
-    (expected) => Number(document.documentElement.dataset.servicesChapterCount || 0) === expected,
-    13,
-    { timeout: 12_000 },
+  const chapterDeadline = Date.now() + 12_000;
+  while (
+    Date.now() < chapterDeadline &&
+    (await page.locator("html").getAttribute("data-services-chapter-count")) !== "13"
+  ) {
+    await page.waitForTimeout(40);
+  }
+  assert(
+    (await page.locator("html").getAttribute("data-services-chapter-count")) === "13",
+    "Services chapter runtime did not activate",
   );
   await page.waitForTimeout(300);
 }
@@ -46,10 +52,10 @@ async function desktopAudit(browser) {
 
   const explorer = page.locator('#deliverables [data-deliverables-explorer="drawers"]');
   assert((await explorer.count()) === 1, "Desktop archive explorer is missing");
-  await page.waitForFunction(
-    (selector) => Boolean(document.querySelector(selector)),
-    '[data-deliverables-scroll-controlled="true"]',
-  );
+  await page.locator('[data-deliverables-scroll-controlled="true"]').waitFor({
+    state: "attached",
+    timeout: 12_000,
+  });
 
   await scrollScene(page, 0.03);
   const early = await selectedGroup(page);

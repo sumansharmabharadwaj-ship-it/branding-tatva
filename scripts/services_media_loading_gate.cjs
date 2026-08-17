@@ -17,10 +17,16 @@ function assert(condition, message) {
 async function waitForServices(page) {
   const veil = page.locator("[data-page-load-veil]");
   if ((await veil.count()) > 0) await veil.waitFor({ state: "detached", timeout: 9_000 }).catch(() => {});
-  await page.waitForFunction(
-    (expected) => Number(document.documentElement.dataset.servicesChapterCount || 0) === expected,
-    13,
-    { timeout: 12_000 },
+  const chapterDeadline = Date.now() + 12_000;
+  while (
+    Date.now() < chapterDeadline &&
+    (await page.locator("html").getAttribute("data-services-chapter-count")) !== "13"
+  ) {
+    await page.waitForTimeout(40);
+  }
+  assert(
+    (await page.locator("html").getAttribute("data-services-chapter-count")) === "13",
+    "Services chapter runtime did not activate",
   );
   await page.waitForTimeout(900);
 }

@@ -18,16 +18,17 @@ async function waitForPrelude(page) {
   if ((await loader.count()) > 0) {
     await loader.waitFor({ state: "detached", timeout: 9_000 }).catch(() => {});
   }
-  await page.waitForFunction(
-    (expected) => document.documentElement.dataset.servicesExperience === expected,
-    "active",
-    { timeout: 12_000 },
-  );
-  await page.waitForFunction(
-    (expected) => Number(document.documentElement.dataset.servicesChapterCount || 0) === expected,
-    13,
-    { timeout: 4_000 },
-  );
+  const experienceDeadline = Date.now() + 12_000;
+  while (Date.now() < experienceDeadline) {
+    const html = page.locator("html");
+    const experience = await html.getAttribute("data-services-experience");
+    const chapterCount = await html.getAttribute("data-services-chapter-count");
+    if (experience === "active" && chapterCount === "13") break;
+    await page.waitForTimeout(40);
+  }
+  const html = page.locator("html");
+  assert((await html.getAttribute("data-services-experience")) === "active", "Services experience did not activate");
+  assert((await html.getAttribute("data-services-chapter-count")) === "13", "Services chapter runtime did not activate");
   await page.waitForTimeout(260);
 }
 
