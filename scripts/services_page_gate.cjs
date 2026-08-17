@@ -113,6 +113,19 @@ async function waitForPrelude(page, label) {
   assert((await veil.count()) === 0, `${label}: page-load veil did not clear`);
 }
 
+async function settleConsent(page, label) {
+  const banner = page.getByRole("dialog", { name: "Your choice about measurement" });
+  if ((await banner.count()) === 0) return;
+
+  const essentialOnly = banner.getByRole("button", { name: "Essential only" });
+  assert(
+    (await essentialOnly.count()) === 1,
+    `${label}: consent banner did not expose the essential-only choice`,
+  );
+  await essentialOnly.click();
+  await banner.waitFor({ state: "detached", timeout: 2_500 });
+}
+
 async function waitForCount(locator, expected, label, timeoutMs = 6_000) {
   const deadline = Date.now() + timeoutMs;
   let actual = await locator.count();
@@ -256,6 +269,7 @@ async function auditServicesViewport(browser, viewport) {
 
   await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await waitForPrelude(page, label);
+  await settleConsent(page, label);
 
   assert((await page.title()).includes("Services"), `${label}: incorrect page title`);
   const h1 = page.getByRole("heading", { level: 1 }).first();
