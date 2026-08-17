@@ -4,9 +4,9 @@ const { chromium } = require("playwright");
 
 const BASE_URL = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const OUTPUT = path.join(process.cwd(), "services-scroll-experience-audit");
-const STRATEGY_ROOM_POSTER = "services-booking-room-film-v2-poster";
-const STRATEGY_ROOM_VIDEO = "services-booking-room-film-v2";
-const HERO_VIDEO = "services-opening-film-v2";
+const STRATEGY_ROOM_POSTER = "services-booking-room-film-v2-poster.jpg";
+const STRATEGY_ROOM_VIDEO = "services-booking-room-film-v2.mp4";
+const HERO_VIDEO = "services-opening-film-v2.mp4";
 
 fs.mkdirSync(OUTPUT, { recursive: true });
 
