@@ -1,6 +1,6 @@
 # Branding Tatva · Canonical Pending-Work Board
 
-Last reconstructed: 7 August 2026
+Last reconstructed: 18 August 2026
 
 This file is the single source of truth for unfinished website work. It consolidates Suman's chat instructions, the full-site audit manuals, the current `homepage-cinematic-recovery` branch, open verification PRs, and the preview/deployment boundary.
 
@@ -17,8 +17,8 @@ This file is the single source of truth for unfinished website work. It consolid
 
 ## P0 · Release and deployment blockers
 
-- [x] Build and deploy the latest canonical review source, commit `1c9cec3f8fd4228192381e668af0533896471f0e`, as READY deployment `dpl_E2XYXcQyrBAzbRYtZRw7q5tbWmpc`.
-- [ ] Move the permanent review alias from stale CLI deployment `a717c871427f08c0b50f7607c608ed8887bf0c04` to the latest certified canonical deployment.
+- [x] Build and deploy the latest application source, commit `e4af60c9ea898452a2832684147fb8606043cf7d`, as READY deployment `dpl_HJUQJvxrkfTfFJ8yznjsvwfeuT1D`.
+- [x] Keep the permanent review alias attached to the `homepage-cinematic-recovery` branch; it now resolves to the latest READY application deployment.
 - [ ] Configure `VERCEL_TOKEN` for alias management and `VERCEL_AUTOMATION_BYPASS_SECRET` for protected-preview CI, without weakening preview protection.
 - [ ] Verify `/api/release` and `/api/verification` on the permanent alias report the certified canonical commit, branch `homepage-cinematic-recovery`, and preview environment.
 - [x] Make the permanent source gate compare the latest deployable application commit rather than workflow-only branch commits, and fail immediately when preview authentication is unavailable.
@@ -27,26 +27,26 @@ This file is the single source of truth for unfinished website work. It consolid
 - [ ] Record Vercel Speed Insights and field Core Web Vitals where available: LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1.
 - [ ] Keep a rollback commit and do not promote production until Suman approves desktop and mobile screenshots.
 
-Current release evidence: the latest immutable deployment is READY from canonical commit `1c9cec3f8fd4228192381e668af0533896471f0e`; Vercel completed the production build successfully and current runtime-error aggregation is empty. The earlier cancellations were caused by the Vercel Ignored Build Step excluding workflow-only verification changes; the canonical `vercel.json` now watches `.github` as well as application sources. The permanent alias is still externally pinned to stale commit `a717c871427f08c0b50f7607c608ed8887bf0c04`; it requires alias reassignment through an authenticated Vercel management token, while preview protection remains intentionally enabled.
+Current release evidence: the latest immutable application deployment is READY from commit `e4af60c9ea898452a2832684147fb8606043cf7d`. The branch head may move through workflow-only certification commits that Vercel intentionally ignores; the source gate is designed to compare the latest deployable application commit. Protected-preview CI still needs `VERCEL_AUTOMATION_BYPASS_SECRET`; cloud-browser verification against the protected preview is complete for Home, Work, Insights, and the new About media pass.
 
-## P0 · Homepage V4
+## P0 · Homepage V5
 
 ### Established
 
-- Cinematic 11-chapter architecture.
-- Signal-network loader, sun/moon cursor, guided-view controls, manual override, nature-led media, screen-fit fixes, media budget, and reduced-motion handling.
-- Recognition, hidden-cost, foundation, Three Paths, process, evidence, Tatva, studio, decision, and invitation scenes.
+- Eight one-screen desktop chapters: Opening, Recognition, Foundation, Process, Evidence, Studio, Decision, and Invitation.
+- Seven dedicated forward-play films, two original editorial stills, native scrolling, chapter navigation, reduced-motion fallbacks, and a persistent Ask Tatva guide.
+- Every Home film is unique and at least 16 seconds; the release gate rejects repeated or GIF-length footage.
 
 ### Pending
 
-- [ ] Hosted verification of the newest loader timing and loader-to-hero handoff.
+- [x] Hosted verification of the newest loader timing and loader-to-hero handoff.
 - [ ] Confirm the guided journey never advances after explicit manual input and Pause freezes every decorative loop and film.
 - [ ] Review every scene at 1440×900, 1280×800, 1024×768, 768×1024, 390×844, and 360×800 on the hosted preview.
-- [ ] Recheck all reported clipping zones: Studio headline/footer, Three Paths title/map, invitation quote/card, decision-core geometry, and Tatva phone labels.
+- [x] Recheck all eight V5 chapters for screen fit: at 1365×936 every desktop chapter is exactly 936px high with no horizontal overflow.
 - [ ] Compare the current result against the approved screenshots and nature moodboards, not an older homepage branch.
 - [ ] Confirm autoplay feels clearly faster without making reading hurried; validate film speed, semantic rotation speed, touch holds, and offscreen pausing.
 - [ ] Inspect Safari, Chrome, and Firefox; mouse wheel, trackpad, touch, keyboard, resize, back navigation, background-tab restoration, and slow-network behavior.
-- [ ] Finish copy audit for generic AI phrasing, repeated philosophy, overlong paragraphs, and duplicate CTAs.
+- [x] Replace the crowded eleven-scene copy stack with eight focused chapters and one clear next action per scene.
 - [ ] Record media licences, route purpose, crops, file sizes, WebM/MP4/poster coverage, and mobile crops.
 
 ## P0 · Services
@@ -67,6 +67,8 @@ Intended order: Hero → Situation → Project Rooms → verified outcome → Au
 
 ## P0 · Work
 
+- [x] Restore the roots-led opening with a dedicated 21-second forward film and make it visibly present behind the evidence interface.
+- [x] Remove exact film reuse across the Work chapters.
 - [ ] Obtain hosted evidence for the exact current Work source, including the complete eight-contract Work browser matrix.
 - [x] Verify hero hover, focus, manual pause, autoplay resume, keyboard selection, and reduced-motion behavior in the production-server browser gate.
 - [ ] Verify hero offscreen and background-tab restoration on the hosted preview.
@@ -82,6 +84,8 @@ Exact unchanged Work source passed the full matrix in run `31166850299`: hierarc
 
 ## P0 · Insights and SEO authority
 
+- [x] Give all 29 guides a dedicated film and poster, plus six archive films and fifteen element-specific topic films.
+- [x] Pass the portable media-uniqueness gate for all 50 Insights films.
 - [x] Establish and document one canonical Insights source: 29 published guides in the integrated authority registry. Evidence: `docs/INSIGHTS_AUTHORITY_RELEASE_2026-08-07.md`.
 - [x] Integrate the complete authority hub, five topic hubs, and article renderer into `homepage-cinematic-recovery`. Permanent-alias reassignment remains a release blocker above.
 - [x] Verify both feeds, topic routes, sitemap inclusion, canonical URLs, static generation, and permanent redirects from `/blog` and superseded Insight slugs.
@@ -109,6 +113,8 @@ Exact unchanged Work source passed the full matrix in run `31166850299`: hierarc
 
 ## P1 · About
 
+- [x] Replace every exact About-route media repeat, including the duplicated portrait treatment.
+- [x] Replace all 4–13 second About loops with sixteen unique forward films of at least 16 seconds and add a release gate against regression.
 - [ ] Recheck About against the approved direction: reflection, language, field notes, portrait, and direct authorship.
 - [ ] Express psychology, literature, and strategy as applied disciplines rather than credential decoration.
 - [ ] Verify biography, dates, partner/client claims, and journey milestones; do not invent missing dates or engagements.
