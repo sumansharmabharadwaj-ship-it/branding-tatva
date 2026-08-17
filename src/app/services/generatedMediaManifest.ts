@@ -1,13 +1,13 @@
 // Media contract: continuous live-action masters only—never ping-pong, boomerang, or still-derived loops.
 export const GENERATED_SERVICES_MEDIA_REVISION = {
   installed: "2026-08-18",
-  desktopLoops: 8,
-  mobileLoops: 8,
+  desktopLoops: 9,
+  mobileLoops: 9,
   stillScenes: 2,
   silent: true,
   posters: true,
   auditHarness: "strict-csp-compatible",
-  coreMediaRevision: "continuous-live-action-v2",
+  coreMediaRevision: "continuous-live-action-v3",
 } as const;
 
 export const GENERATED_SERVICES_MEDIA = {
@@ -34,6 +34,12 @@ export const GENERATED_SERVICES_MEDIA = {
     mobile: "/videos/pexels-golden-fog-sea.mp4",
     poster: "/images/pexels-golden-fog-sea-poster.jpg",
     purpose: "Let several legitimate paths settle into one clear scope.",
+  },
+  outcome: {
+    desktop: "/videos/hero-workhorizon.mp4",
+    mobile: "/videos/hero-workhorizon.mp4",
+    poster: "/images/hero-workhorizon-poster.jpg",
+    purpose: "Carry verified evidence across one continuous aerial ridge move into the Work case-study world.",
   },
   authority: {
     desktop: "/videos/hero-forest-sanctuary.mp4",

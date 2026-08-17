@@ -416,22 +416,23 @@ export default async function ServicesPage() {
         </section>
 
         {/* Verified outcome — proof directly after the packages, every
-            number from projects.ts verified stats. Charcoal ground so
-            the numbers themselves are the visual; it also hands
-            seamlessly into Authority's identical charcoal. */}
+            number from projects.ts verified stats. One continuous aerial
+            ridge move carries that evidence into the Work case-study world
+            and hands cleanly into Authority's charcoal chapter. */}
         <section id="verified-outcome" data-services-scene="verified-outcome" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <BackgroundVideo
-            video="/videos/pixabay-golden-forest-glow.mp4"
-            poster="/images/pixabay-golden-forest-glow-poster.jpg"
+            video="/videos/hero-workhorizon.mp4"
+            videoMobile="/videos/hero-workhorizon.mp4"
+            poster="/images/hero-workhorizon-poster.jpg"
             parallax
-            playbackRate={0.94}
+            playbackRate={0.82}
           />
           <div
             aria-hidden="true"
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(13,18,18,0.92) 0%, rgba(13,18,18,0.72) 48%, rgba(13,18,18,0.5) 100%)",
+                "linear-gradient(100deg, rgba(13,18,18,0.64) 0%, rgba(13,18,18,0.42) 48%, rgba(13,18,18,0.22) 100%)",
             }}
           />
           <SceneVeil color="#0E1714" />
