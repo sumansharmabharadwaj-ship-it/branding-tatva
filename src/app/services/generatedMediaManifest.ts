@@ -12,9 +12,9 @@ export const GENERATED_SERVICES_MEDIA_REVISION = {
 
 export const GENERATED_SERVICES_MEDIA = {
   hero: {
-    desktop: "/videos/higgsfield-forest-light.mp4",
-    mobile: "/videos/higgsfield-forest-light.mp4",
-    poster: "/images/higgsfield-forest-light-poster.jpg",
+    desktop: "/videos/services-opening-film-v2.mp4",
+    mobile: "/videos/services-opening-film-v2.mp4",
+    poster: "/images/services-opening-film-v2-poster.jpg",
     purpose: "Move continuously from a closed forest into an open valley as recognition becomes legible.",
   },
   situation: {
@@ -24,57 +24,57 @@ export const GENERATED_SERVICES_MEDIA = {
     purpose: "Express three different starting conditions inside one coherent material world.",
   },
   strategy: {
-    desktop: "/videos/pexels-fog-sunrise.mp4",
-    mobile: "/videos/pexels-fog-sunrise.mp4",
-    poster: "/images/pexels-fog-sunrise-poster.jpg",
+    desktop: "/videos/services-offerings-film-v2.mp4",
+    mobile: "/videos/services-offerings-film-v2.mp4",
+    poster: "/images/services-offerings-film-v2-poster.jpg",
     purpose: "Turn scattered possibilities into one legible strategic route.",
   },
   packages: {
-    desktop: "/videos/pexels-golden-fog-sea.mp4",
-    mobile: "/videos/pexels-golden-fog-sea.mp4",
-    poster: "/images/pexels-golden-fog-sea-poster.jpg",
+    desktop: "/videos/services-desire-film-v2.mp4",
+    mobile: "/videos/services-desire-film-v2.mp4",
+    poster: "/images/services-desire-film-v2-poster.jpg",
     purpose: "Let several legitimate paths settle into one clear scope.",
   },
   outcome: {
-    desktop: "/videos/hero-workhorizon.mp4",
-    mobile: "/videos/hero-workhorizon.mp4",
-    poster: "/images/hero-workhorizon-poster.jpg",
+    desktop: "/videos/services-outcome-film-v2.mp4",
+    mobile: "/videos/services-outcome-film-v2.mp4",
+    poster: "/images/services-outcome-film-v2-poster.jpg",
     purpose: "Carry verified evidence across one continuous aerial ridge move into the Work case-study world.",
   },
   authority: {
-    desktop: "/videos/hero-forest-sanctuary.mp4",
-    mobile: "/videos/hero-forest-sanctuary.mp4",
-    poster: "/images/hero-forest-sanctuary-poster.jpg",
+    desktop: "/videos/services-authority-film-v2.mp4",
+    mobile: "/videos/services-authority-film-v2.mp4",
+    poster: "/images/services-authority-film-v2-poster.jpg",
     purpose: "Let a signal travel through five brand layers and widen only after the system is complete.",
   },
   perception: {
-    desktop: "/videos/pexels-summit-inversion.mp4",
-    mobile: "/videos/pexels-summit-inversion.mp4",
-    poster: "/images/pexels-summit-inversion-poster.jpg",
+    desktop: "/videos/services-education-film-v2.mp4",
+    mobile: "/videos/services-education-film-v2.mp4",
+    poster: "/images/services-education-film-v2-poster.jpg",
     purpose: "Make the landscape and its recognisable signal become clearer together.",
   },
   strategyRoom: {
-    desktop: "/videos/pexels-studio-morning-light.mp4",
-    mobile: "/videos/pexels-studio-morning-light.mp4",
-    poster: "/images/pexels-studio-morning-light-poster.jpg",
+    desktop: "/videos/services-booking-room-film-v2.mp4",
+    mobile: "/videos/services-booking-room-film-v2.mp4",
+    poster: "/images/services-booking-room-film-v2-poster.jpg",
     purpose: "Let surface noise settle into one calm, legible reflection before the conversation begins.",
   },
   health: {
-    desktop: "/videos/pexels-river-dawn.mp4",
-    mobile: "/videos/pexels-river-dawn.mp4",
-    poster: "/images/pexels-river-dawn-poster.jpg",
+    desktop: "/videos/services-health-film-v2.mp4",
+    mobile: "/videos/services-health-film-v2.mp4",
+    poster: "/images/services-health-film-v2-poster.jpg",
     purpose: "Reveal hidden misalignment beneath an apparently coherent surface.",
   },
 } as const;
 
 export const GENERATED_SERVICES_STILLS = {
   stakes: {
-    image: "/images/pixabay-golden-forest-glow-poster.jpg",
+    image: "/images/services-stakes-film-v2-poster.jpg",
     purpose: "Separate one recognisable position from an interchangeable category field.",
     motion: "Continuous live-action wind with a photographic reduced-motion fallback.",
   },
   deliverables: {
-    image: "/images/pexels-studio-morning-light-poster.jpg",
+    image: "/images/services-deliverables-film-v2-poster.jpg",
     purpose: "Make the invisible brand-system work feel tangible, ordered, and usable.",
     motion: "Continuous live-action daylight with a photographic reduced-motion fallback.",
   },

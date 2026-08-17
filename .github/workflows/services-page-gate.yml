@@ -17,6 +17,7 @@ on:
       - scripts/services_anchor_gate.cjs
       - scripts/services_exploration_density_report.cjs
       - scripts/services_media_loading_gate.cjs
+      - scripts/services_media_release_gate.cjs
       - scripts/services_hash_override_gate.cjs
       - src/app/services/**
       - src/sections/Services/**
@@ -26,6 +27,7 @@ on:
       - src/components/TexturedDark.tsx
       - src/components/SmoothScrollProvider.tsx
       - src/components/CalendlyEmbed.tsx
+      - src/components/SeasonalCalendarPanel.tsx
       - src/components/PricingProvider.tsx
       - src/components/RegionSelector.tsx
       - src/data/services.ts
@@ -36,6 +38,9 @@ on:
       - package.json
       - pnpm-lock.yaml
       - next.config.ts
+      - public/images/services-*-film-v2-poster.jpg
+      - public/videos/services-*-film-v2.mp4
+      - public/videos/site-seasonal-conversation-film-v2.mp4
 
 permissions:
   contents: read
@@ -61,6 +66,10 @@ jobs:
             /*
             !/public/videos/*
             !/public/audio/*
+            /public/videos/services-*-film-v2.mp4
+            /public/videos/pexels-valley-first-light.mp4
+            /public/videos/pexels-aspen-sunburst.mp4
+            /public/videos/site-seasonal-conversation-film-v2.mp4
 
       - name: Use Node 24
         uses: actions/setup-node@v4
@@ -72,6 +81,9 @@ jobs:
         run: |
           corepack enable
           corepack prepare pnpm@10.28.0 --activate
+
+      - name: Verify distinct long-form Services films
+        run: node scripts/services_media_release_gate.cjs
 
       - name: Install dependencies and Chromium
         shell: bash
