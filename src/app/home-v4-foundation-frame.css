@@ -23,3 +23,17 @@
     transform: none !important;
   }
 }
+
+/* LinkButton's magnetic wrapper is the direct flex child. Size both wrapper
+   and anchor so every personalized closing label keeps a WCAG-sized target. */
+.final-invitation__actions > div:first-child,
+.final-invitation__actions > div:first-child > a {
+  min-height: 3.25rem;
+}
+
+@media (max-width: 767px) {
+  .final-invitation__actions > div:first-child,
+  .final-invitation__actions > div:first-child > a {
+    width: 100%;
+  }
+}
