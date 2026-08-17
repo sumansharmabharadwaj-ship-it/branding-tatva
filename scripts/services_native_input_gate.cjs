@@ -17,13 +17,13 @@ async function waitForServices(page) {
     await loader.waitFor({ state: "detached", timeout: 9_000 }).catch(() => {});
   }
   await page.waitForFunction(
-    () => document.documentElement.dataset.servicesExperience === "active",
-    undefined,
+    (expected) => document.documentElement.dataset.servicesExperience === expected,
+    "active",
     { timeout: 12_000 },
   );
   await page.waitForFunction(
-    () => Number(document.documentElement.dataset.servicesChapterCount || 0) === 13,
-    undefined,
+    (expected) => Number(document.documentElement.dataset.servicesChapterCount || 0) === expected,
+    13,
     { timeout: 4_000 },
   );
   await page.waitForTimeout(260);

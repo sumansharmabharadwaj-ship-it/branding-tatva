@@ -14,7 +14,11 @@ function assert(condition, message) {
 async function waitForServices(page) {
   const veil = page.locator("[data-page-load-veil]");
   if ((await veil.count()) > 0) await veil.waitFor({ state: "detached", timeout: 9_000 }).catch(() => {});
-  await page.waitForFunction(() => Number(document.documentElement.dataset.servicesChapterCount || 0) === 13, undefined, { timeout: 12_000 });
+  await page.waitForFunction(
+    (expected) => Number(document.documentElement.dataset.servicesChapterCount || 0) === expected,
+    13,
+    { timeout: 12_000 },
+  );
   await page.waitForTimeout(300);
 }
 
@@ -42,7 +46,10 @@ async function desktopAudit(browser) {
 
   const explorer = page.locator('#deliverables [data-deliverables-explorer="drawers"]');
   assert((await explorer.count()) === 1, "Desktop archive explorer is missing");
-  await page.waitForFunction(() => document.querySelector('[data-deliverables-scroll-controlled="true"]'));
+  await page.waitForFunction(
+    (selector) => Boolean(document.querySelector(selector)),
+    '[data-deliverables-scroll-controlled="true"]',
+  );
 
   await scrollScene(page, 0.03);
   const early = await selectedGroup(page);

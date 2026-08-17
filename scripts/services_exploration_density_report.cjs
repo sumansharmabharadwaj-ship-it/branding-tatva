@@ -46,7 +46,11 @@ async function inspect(browser, viewport) {
   await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded", timeout: 90_000 });
   const veil = page.locator("[data-page-load-veil]");
   if ((await veil.count()) > 0) await veil.waitFor({ state: "detached", timeout: 9_000 }).catch(() => {});
-  await page.waitForFunction(() => Number(document.documentElement.dataset.servicesChapterCount || 0) === 13, undefined, { timeout: 12_000 });
+  await page.waitForFunction(
+    (expected) => Number(document.documentElement.dataset.servicesChapterCount || 0) === expected,
+    13,
+    { timeout: 12_000 },
+  );
   await page.waitForTimeout(420);
 
   const chapterIds = await page.locator("[data-services-scroll-scene]").evaluateAll((nodes) => nodes.map((node) => node.id));

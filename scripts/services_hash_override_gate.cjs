@@ -24,7 +24,11 @@ function assert(condition, message) {
   await page.goto(`${BASE_URL}/services#stakes`, { waitUntil: "domcontentloaded", timeout: 90_000 });
   const veil = page.locator("[data-page-load-veil]");
   if ((await veil.count()) > 0) await veil.waitFor({ state: "detached", timeout: 9_000 }).catch(() => {});
-  await page.waitForFunction(() => Number(document.documentElement.dataset.servicesChapterCount || 0) === 13, undefined, { timeout: 12_000 });
+  await page.waitForFunction(
+    (expected) => Number(document.documentElement.dataset.servicesChapterCount || 0) === expected,
+    13,
+    { timeout: 12_000 },
+  );
   await page.waitForTimeout(80);
 
   const anchorY = await page.evaluate(() => scrollY);

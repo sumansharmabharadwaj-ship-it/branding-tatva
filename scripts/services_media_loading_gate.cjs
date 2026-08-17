@@ -17,7 +17,11 @@ function assert(condition, message) {
 async function waitForServices(page) {
   const veil = page.locator("[data-page-load-veil]");
   if ((await veil.count()) > 0) await veil.waitFor({ state: "detached", timeout: 9_000 }).catch(() => {});
-  await page.waitForFunction(() => Number(document.documentElement.dataset.servicesChapterCount || 0) === 13, undefined, { timeout: 12_000 });
+  await page.waitForFunction(
+    (expected) => Number(document.documentElement.dataset.servicesChapterCount || 0) === expected,
+    13,
+    { timeout: 12_000 },
+  );
   await page.waitForTimeout(900);
 }
 
