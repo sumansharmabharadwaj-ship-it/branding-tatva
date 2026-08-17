@@ -21,6 +21,33 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+async function waitForAttribute(locator, name, value, message) {
+  try {
+    await locator.waitFor({ state: "attached", timeout: 5_000 });
+    await locator.evaluate(
+      (node, expected) =>
+        new Promise((resolve, reject) => {
+          const deadline = window.setTimeout(() => {
+            observer.disconnect();
+            reject(new Error(`Timed out waiting for ${expected.name}=${expected.value}`));
+          }, 4_500);
+          const settle = () => {
+            if (node.getAttribute(expected.name) !== expected.value) return;
+            window.clearTimeout(deadline);
+            observer.disconnect();
+            resolve(true);
+          };
+          const observer = new MutationObserver(settle);
+          observer.observe(node, { attributes: true, attributeFilter: [expected.name] });
+          settle();
+        }),
+      { name, value },
+    );
+  } catch {
+    throw new Error(message);
+  }
+}
+
 function durationSeconds(buffer, label) {
   const marker = buffer.indexOf(Buffer.from("mvhd"));
   assert(marker >= 0, `${label} has no movie header`);
@@ -113,7 +140,12 @@ async function inspectViewport(browser, viewport, label) {
     assert(count >= 3, `${label} ${id} exposes only ${count} choices`);
     for (let index = 0; index < count; index += 1) {
       await tabs.nth(index).click();
-      assert((await tabs.nth(index).getAttribute("aria-selected")) === "true", `${label} ${id} choice ${index + 1} did not activate`);
+      await waitForAttribute(
+        tabs.nth(index),
+        "aria-selected",
+        "true",
+        `${label} ${id} choice ${index + 1} did not activate`,
+      );
       if (id === "foundation") {
         const expectedHref = ["/services#education", "/services#offerings", "/services#health"][index];
         const actualHref = await chapter.locator(".home-v5-focus-card > a").getAttribute("href");

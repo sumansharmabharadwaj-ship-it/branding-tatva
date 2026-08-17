@@ -23,6 +23,11 @@ const SECTION_IDS = [
   "book",
 ];
 
+// ServicesExperienceRuntime publishes every real scroll scene into the
+// persistent route guide. The nine IDs above remain the concise editorial
+// index; the runtime guide is intentionally more complete.
+const SERVICES_RUNTIME_CHAPTER_COUNT = 13;
+
 const GENERATED_POSTERS = [
   { section: "hero", fragment: "services-opening-film-v2-poster" },
   { section: "offerings", fragment: "services-offerings-film-v2-poster" },
@@ -344,7 +349,14 @@ async function auditServicesViewport(browser, viewport) {
     );
     await mobileJumpTrigger.click();
     const mobileJumpLinks = mobileJumpNav.getByRole("link");
-    await waitForCount(mobileJumpLinks, SECTION_IDS.length, `${label}: mobile section guide destinations`);
+    const publishedChapterCount = Number(
+      await page.locator("html").getAttribute("data-services-chapter-count"),
+    );
+    assert(
+      publishedChapterCount === SERVICES_RUNTIME_CHAPTER_COUNT,
+      `${label}: runtime published ${publishedChapterCount} service chapters instead of ${SERVICES_RUNTIME_CHAPTER_COUNT}`,
+    );
+    await waitForCount(mobileJumpLinks, publishedChapterCount, `${label}: mobile section guide destinations`);
     await assertTouchTargets(mobileJumpLinks, 40, `${label}: mobile section guide destinations`);
     await mobileJumpTrigger.click();
   }
