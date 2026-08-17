@@ -11,6 +11,17 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+async function waitForAttribute(page, locator, name, expected, timeoutMs = 2_500) {
+  const deadline = Date.now() + timeoutMs;
+  let actual = null;
+  while (Date.now() < deadline) {
+    actual = await locator.getAttribute(name);
+    if (actual === expected) return;
+    await page.waitForTimeout(60);
+  }
+  throw new Error(`${name} resolved to ${actual}, expected ${expected}`);
+}
+
 async function selectedStage(processScene) {
   return processScene
     .locator('.project-journey__rail [role="tab"][aria-selected="true"]')
@@ -27,6 +38,15 @@ async function selectedStage(processScene) {
   await context.addInitScript(() => {
     try {
       window.sessionStorage.setItem("branding-tatva-v4-prelude-seen", "true");
+      window.localStorage.setItem(
+        "bt-consent",
+        JSON.stringify({
+          analytics: false,
+          marketing: false,
+          decidedAt: "2026-08-17T00:00:00.000Z",
+          version: 1,
+        }),
+      );
     } catch {}
   });
 
@@ -76,18 +96,10 @@ async function selectedStage(processScene) {
   const guideToggle = guide.locator("button").first();
 
   await guideToggle.click({ force: true });
-  await page.waitForTimeout(100);
-  assert(
-    (await guideToggle.getAttribute("aria-pressed")) === "true",
-    "guided journey did not start from the process scene",
-  );
+  await waitForAttribute(page, guideToggle, "aria-pressed", "true");
 
   await guideToggle.click({ force: true });
-  await page.waitForTimeout(180);
-  assert(
-    (await page.locator("html").getAttribute("data-home-guide-mode")) === "paused",
-    "guided pause state was not published",
-  );
+  await waitForAttribute(page, page.locator("html"), "data-home-guide-mode", "paused");
 
   const pausedStage = await selectedStage(processScene);
   await page.waitForTimeout(6_200);
@@ -97,6 +109,7 @@ async function selectedStage(processScene) {
   );
 
   await guideToggle.click({ force: true });
+  await waitForAttribute(page, page.locator("html"), "data-home-guide-mode", "guided");
   await page.waitForTimeout(3_050);
   assert(
     (await selectedStage(processScene)) !== pausedStage,
