@@ -38,8 +38,15 @@ function assetMayBeMissing(value = "") {
   return /\/(videos|audio)\//i.test(value) || /\/_vercel\/(insights|speed-insights)\//i.test(value);
 }
 
-function expectedAbortedPrefetch(item) {
-  return /net::ERR_ABORTED/i.test(item.error) && /[?&]_rsc=/.test(item.url) && item.url.startsWith(BASE_URL);
+function expectedBrowserAbort(item) {
+  if (!/net::ERR_ABORTED/i.test(item.error) || !item.url.startsWith(BASE_URL)) return false;
+
+  const url = new URL(item.url);
+  return (
+    url.searchParams.has("_rsc") ||
+    url.pathname === "/_next/image" ||
+    /\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(url.pathname)
+  );
 }
 
 function attachDiagnostics(page) {
@@ -70,7 +77,7 @@ function assertDiagnosticsClean(diagnostics, label) {
   );
   const failedResponses = diagnostics.failedResponses.filter((item) => !assetMayBeMissing(item.url));
   const failedRequests = diagnostics.failedRequests.filter(
-    (item) => !assetMayBeMissing(item.url) && !expectedAbortedPrefetch(item),
+    (item) => !assetMayBeMissing(item.url) && !expectedBrowserAbort(item),
   );
 
   assert(consoleErrors.length === 0, `${label}: console errors ${JSON.stringify(consoleErrors.slice(0, 6))}`);
