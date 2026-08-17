@@ -310,7 +310,15 @@ async function auditViewport(browser, viewport) {
     });
     await page.waitForTimeout(520);
   } else {
-    await page.waitForTimeout(4_200);
+    // AUTO_ADVANCE_MS starts only after Framer's in-view observer has
+    // committed. A fixed 4.2s sleep left barely 400ms for that observer and
+    // intermittently sampled the original tab on the slower phone profile.
+    // Poll the authored state change, with room for one complete 3.8s cycle
+    // after visibility settles.
+    const advanceDeadline = Date.now() + 7_000;
+    while (Date.now() < advanceDeadline && (await selectedTabIndex(tabs)) === firstSelected) {
+      await page.waitForTimeout(80);
+    }
   }
 
   const advancedSelected = await selectedTabIndex(tabs);
