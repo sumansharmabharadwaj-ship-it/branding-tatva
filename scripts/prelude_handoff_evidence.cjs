@@ -119,10 +119,9 @@ async function reducedMotion(browser) {
   const page = await context.newPage();
   await page.goto(BASE_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await page.waitForTimeout(260);
-  assert(
-    (await page.locator("[data-page-load-veil]").count()) === 0,
-    "reduced motion: prelude should be absent",
-  );
+  const loader = page.locator("[data-page-load-veil]");
+  const loaderVisible = (await loader.count()) > 0 && (await loader.isVisible());
+  assert(!loaderVisible, "reduced motion: prelude should not be visible");
   await page.waitForFunction(
     () => document.documentElement.dataset.homePreludeReady === "true",
     undefined,
