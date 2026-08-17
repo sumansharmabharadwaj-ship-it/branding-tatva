@@ -124,10 +124,10 @@ async function waitForTextPrefix(page, locator, prefix, timeoutMs = 2_500) {
   assert(playingWhilePaused === 0, `${playingWhilePaused} homepage videos remained active while the guided view was paused`);
 
   await clickAnimatedControl(freshGuide.getByRole("button", { name: "Explore the homepage manually" }));
-  const process = page.locator('[data-home-v4-chapter="process"]');
-  await process.scrollIntoViewIfNeeded();
+  const processChapter = page.locator('[data-home-v4-chapter="process"]');
+  await processChapter.scrollIntoViewIfNeeded();
   await page.waitForTimeout(550);
-  const processJourney = process.locator('[data-project-journey="true"]');
+  const processJourney = processChapter.locator('[data-project-journey="true"]');
   assert((await processJourney.count()) === 1, "Process journey is missing from its Home chapter");
   assert(
     (await processJourney.getAttribute("data-process-tempo-managed")) === "true",
