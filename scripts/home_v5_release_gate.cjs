@@ -26,14 +26,16 @@ async function inspectViewport(browser, viewport, label) {
   // Large media archives can make metadata arrive after networkidle on a
   // cold runner. Wait for the seven chapter headers instead of treating a
   // transient NaN duration as a short film.
-  await page.waitForFunction(
-    () => {
+  let metadataReady = false;
+  for (let attempt = 0; attempt < 80; attempt += 1) {
+    metadataReady = await page.evaluate(() => {
       const films = [...document.querySelectorAll("[data-home-v5-chapter] video")];
       return films.length === 7 && films.every((video) => Number.isFinite(video.duration));
-    },
-    undefined,
-    { timeout: 20_000 },
-  );
+    });
+    if (metadataReady) break;
+    await page.waitForTimeout(250);
+  }
+  assert(metadataReady, `${label} did not load all seven film headers within 20 seconds`);
 
   const report = await page.evaluate((expected) => {
     const chapters = [...document.querySelectorAll("[data-home-v5-chapter]")];
