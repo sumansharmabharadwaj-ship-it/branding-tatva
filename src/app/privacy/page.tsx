@@ -31,8 +31,8 @@ export default function PrivacyPage() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
         <section className="relative overflow-hidden bg-soil pb-16 pt-36 sm:pb-20 sm:pt-44">
           <BackgroundVideo
-            video="/videos/generated/bt-legal-archive-seal.mp4"
-            poster="/images/generated/bt-legal-archive-seal-poster.jpg"
+            video="/videos/pexels-studio-morning-light.mp4"
+            poster="/images/pexels-studio-morning-light-poster.jpg"
             imagePosition="center"
             parallax
             playbackRate={0.9}

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Audit the Services page's original generated media contract.
+"""Audit the Services page's continuous live-action media contract.
 
 The validator intentionally reads the repository's own manifest instead
 of maintaining a second hard-coded inventory. It checks that every film
-and still exists, that responsive films are silent and reduce both pixel
-and byte budgets, and that the live Services sources contain no stock-
-library media references.
+and fallback exists, that every background film is silent, and that the
+live Services sources no longer reference the still-derived generated-loop
+library rejected during the cinematic review.
 """
 
 from __future__ import annotations
@@ -179,18 +179,17 @@ def main() -> None:
         fail(f"Manifest still count declares {declared_stills}, parsed {len(stills)}")
 
     forbidden = [
-        "pexels-",
-        "/videos/pexels",
-        "/images/pexels",
+        "/videos/generated/",
+        "/images/generated/bt-services-",
     ]
     for token in forbidden:
         if token.lower() in live_source.lower():
-            fail(f"Stock-media token remains in live Services sources: {token}")
+            fail(f"Still-derived generated media remains in live Services sources: {token}")
 
     media_literals = re.findall(r'"(/(?:videos|images)/[^"]+)"', live_source)
-    non_generated = [path for path in media_literals if not path.startswith(("/videos/generated/", "/images/generated/"))]
-    if non_generated:
-        fail("Non-generated media remains in live Services sources: " + ", ".join(sorted(set(non_generated))))
+    generated = [path for path in media_literals if path.startswith(("/videos/generated/", "/images/generated/"))]
+    if generated:
+        fail("Generated-loop media remains in live Services sources: " + ", ".join(sorted(set(generated))))
 
     if "useHydratedReducedMotion" not in authority_text:
         fail("Authority lost its hydrated reduced-motion guard")
@@ -199,38 +198,35 @@ def main() -> None:
     manifest_paths: set[str] = set()
     for film in films:
         for path_value in (film.desktop, film.mobile, film.poster):
-            if not path_value.startswith(("/videos/generated/", "/images/generated/")):
-                fail(f"{film.key}: path escapes generated media namespace: {path_value}")
             path = public_path(path_value)
             if not path.is_file() or path.stat().st_size == 0:
                 fail(f"{film.key}: missing or empty media file {path_value}")
             manifest_paths.add(path_value)
             occurrences = live_source.count(path_value)
-            expected_occurrences = 2 if film.key == "hero" and path_value == film.poster else 1
-            if occurrences != expected_occurrences:
+            if occurrences < 1:
                 fail(
-                    f"{film.key}: {path_value} should appear {expected_occurrences} time(s) "
-                    f"in live sources, found {occurrences}"
+                    f"{film.key}: {path_value} should appear in live sources"
                 )
 
         desktop_probe = probe_video(public_path(film.desktop))
         mobile_probe = probe_video(public_path(film.mobile))
 
         for label, probe in (("desktop", desktop_probe), ("mobile", mobile_probe)):
-            if not 4.5 <= probe.duration <= 12.5:
-                fail(f"{film.key} {label}: duration {probe.duration:.2f}s falls outside the ambient-loop budget")
+            if not 4.5 <= probe.duration <= 30:
+                fail(f"{film.key} {label}: duration {probe.duration:.2f}s falls outside the continuous-shot budget")
         if desktop_probe.width <= desktop_probe.height:
             fail(f"{film.key}: desktop film is not landscape ({desktop_probe.width}×{desktop_probe.height})")
-        if mobile_probe.pixels >= desktop_probe.pixels:
+        same_asset = film.mobile == film.desktop
+        if not same_asset and mobile_probe.pixels >= desktop_probe.pixels:
             fail(
                 f"{film.key}: mobile encode does not reduce the pixel budget "
                 f"({mobile_probe.width}×{mobile_probe.height} vs {desktop_probe.width}×{desktop_probe.height})"
             )
-        if mobile_probe.bytes >= desktop_probe.bytes:
+        if not same_asset and mobile_probe.bytes >= desktop_probe.bytes:
             fail(f"{film.key}: mobile encode is not lighter than desktop")
         if desktop_probe.bytes > 6 * 1024 * 1024:
             fail(f"{film.key}: desktop film exceeds 6 MB")
-        if mobile_probe.bytes > 3 * 1024 * 1024:
+        if not same_asset and mobile_probe.bytes > 3 * 1024 * 1024:
             fail(f"{film.key}: mobile film exceeds 3 MB")
 
         film_rows.append(
@@ -245,38 +241,27 @@ def main() -> None:
 
     still_rows: list[tuple[Still, int, str]] = []
     for still in stills:
-        if not still.image.startswith("/images/generated/"):
-            fail(f"{still.key}: still escapes generated image namespace: {still.image}")
         path = public_path(still.image)
         if not path.is_file() or path.stat().st_size == 0:
             fail(f"{still.key}: missing or empty still {still.image}")
         manifest_paths.add(still.image)
         occurrences = live_source.count(still.image)
-        if occurrences != 1:
-            fail(f"{still.key}: {still.image} should appear once in live sources, found {occurrences}")
+        if occurrences < 1:
+            fail(f"{still.key}: {still.image} should appear in live sources")
         still_rows.append((still, path.stat().st_size, sha256(path)))
 
-    generated_candidates = {
-        "/" + str(path.relative_to(ROOT / "public"))
-        for directory in (ROOT / "public/videos/generated", ROOT / "public/images/generated")
-        if directory.exists()
-        for path in directory.glob("bt-services-*")
-        if path.is_file()
-    }
-    orphan_assets = sorted(generated_candidates - manifest_paths)
-
     report_lines = [
-        "# Services Original Media Audit",
+        "# Services Live-Action Media Audit",
         "",
         "Generated automatically from `src/app/services/generatedMediaManifest.ts`.",
         "",
         "## Result",
         "",
         f"- {len(films)} responsive silent films",
-        f"- {len(stills)} generated material stills with restrained scroll treatments",
-        "- zero stock-library media paths in the live Services page or Authority chapter",
-        "- every manifest path is wired to its intended live scene; the hero poster is also preloaded for first paint",
-        "- every mobile encode reduces both pixel and byte budgets relative to its desktop partner",
+        f"- {len(stills)} photographic reduced-motion fallbacks",
+        "- zero still-derived generated-loop paths in the live Services page or Authority chapter",
+        "- every manifest path is wired to at least one intended live scene",
+        "- responsive entries use either a lighter mobile encode or the same continuous master",
         "- hydrated reduced-motion handling remains active in the pinned Authority chapter",
         "",
         "## Responsive films",
@@ -293,7 +278,7 @@ def main() -> None:
     report_lines.extend(
         [
             "",
-            "## Generated still scenes",
+            "## Photographic fallback scenes",
             "",
             "| Scene | File size | Motion | Purpose |",
             "|---|---:|---|---|",
@@ -308,12 +293,6 @@ def main() -> None:
         report_lines.append(f"- `{film.key}` mobile SHA-256: `{mobile_hash}`")
     for still, _, digest in still_rows:
         report_lines.append(f"- `{still.key}` still SHA-256: `{digest}`")
-
-    report_lines.extend(["", "## Unreferenced generated assets", ""])
-    if orphan_assets:
-        report_lines.extend(f"- `{path}`" for path in orphan_assets)
-    else:
-        report_lines.append("None.")
 
     report = "\n".join(report_lines) + "\n"
     if args.write_report:

@@ -648,8 +648,8 @@ export default async function InsightArticlePage({ params }: Props) {
         {related.length > 0 && (
           <section className="relative overflow-hidden bg-background-alt py-20 sm:py-28">
             <BackgroundVideo
-              video="/videos/generated/bt-insights-related-tributaries.mp4"
-              poster="/images/generated/bt-insights-related-tributaries-poster.jpg"
+              video="/videos/pexels-valley-first-light.mp4"
+              poster="/images/pexels-valley-first-light-poster.jpg"
               imagePosition="center"
               parallax
               playbackRate={0.9}

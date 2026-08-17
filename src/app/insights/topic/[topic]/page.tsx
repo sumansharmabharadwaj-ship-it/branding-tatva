@@ -178,8 +178,8 @@ export default async function InsightTopicPage({ params }: Props) {
 
         <section className="relative overflow-hidden bg-ivory py-20 sm:py-28">
           <BackgroundVideo
-            video="/videos/generated/bt-insights-topic-system-beneath.mp4"
-            poster="/images/generated/bt-insights-topic-system-beneath-poster.jpg"
+            video="/videos/pixabay-roots-stream.mp4"
+            poster="/images/pixabay-roots-stream-poster.jpg"
             parallax
             playbackRate={0.84}
           />
@@ -239,8 +239,8 @@ export default async function InsightTopicPage({ params }: Props) {
 
         <section className="relative overflow-hidden bg-background-alt py-20 sm:py-28">
           <BackgroundVideo
-            video="/videos/generated/bt-insights-topic-reading-current.mp4"
-            poster="/images/generated/bt-insights-topic-reading-current-poster.jpg"
+            video="/videos/pexels-moss-stream.mp4"
+            poster="/images/pexels-moss-stream-poster.jpg"
             parallax
             playbackRate={0.82}
           />
@@ -279,8 +279,8 @@ export default async function InsightTopicPage({ params }: Props) {
 
         <section className="relative overflow-hidden bg-soil py-20 text-ivory sm:py-28">
           <BackgroundVideo
-            video="/videos/generated/bt-insights-topic-across-system.mp4"
-            poster="/images/generated/bt-insights-topic-across-system-poster.jpg"
+            video="/videos/pexels-aspen-sunburst.mp4"
+            poster="/images/pexels-aspen-sunburst-poster.jpg"
             parallax
             playbackRate={0.84}
           />

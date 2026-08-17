@@ -21,8 +21,8 @@ export function Authorship() {
   return (
     <section className="relative scroll-mt-28 overflow-hidden py-14 sm:py-24" style={{ backgroundColor: WORK.forest }}>
       <BackgroundVideo
-        video="/videos/generated/bt-work-authorship-rootlight.mp4"
-        poster="/images/generated/bt-work-authorship-rootlight-poster.jpg"
+        video="/videos/pexels-aspen-sunburst.mp4"
+        poster="/images/pexels-aspen-sunburst-poster.jpg"
         parallax
         playbackRate={0.9}
       />

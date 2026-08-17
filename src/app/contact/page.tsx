@@ -125,8 +125,8 @@ export default function ContactPage() {
             get out of the way. */}
         <section className="relative overflow-hidden border-b border-soil/10 py-10" style={{ backgroundColor: "#E8DED0" }}>
           <BackgroundVideo
-            video="/videos/generated/bt-contact-three-paths-waterpaper.mp4"
-            poster="/images/generated/bt-contact-three-paths-waterpaper-poster.jpg"
+            video="/videos/pexels-river-dawn.mp4"
+            poster="/images/pexels-river-dawn-poster.jpg"
             parallax
             playbackRate={0.86}
           />

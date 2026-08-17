@@ -142,8 +142,8 @@ export default function WorkPage() {
           label="Discuss the pattern"
           event="contextual_cta_clicked"
           eventProps={{ source: "work_performance_signature" }}
-          video="/videos/generated/bt-work-encounter-network.mp4"
-          poster="/images/generated/bt-work-encounter-network-poster.jpg"
+          video="/videos/pexels-root-network.mp4"
+          poster="/images/pexels-root-network-poster.jpg"
           imagePosition="center 58%"
         />
 

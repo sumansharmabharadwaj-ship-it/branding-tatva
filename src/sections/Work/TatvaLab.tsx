@@ -76,8 +76,8 @@ export function TatvaLab() {
   return (
     <section className="relative scroll-mt-32 overflow-hidden py-14 sm:py-24" style={{ backgroundColor: WORK.cream }}>
       <BackgroundVideo
-        video="/videos/generated/bt-work-lab-mineralfield.mp4"
-        poster="/images/generated/bt-work-lab-mineralfield-poster.jpg"
+        video="/videos/pexels-forest-floor-fungi.mp4"
+        poster="/images/pexels-forest-floor-fungi-poster.jpg"
         parallax
         playbackRate={0.88}
       />

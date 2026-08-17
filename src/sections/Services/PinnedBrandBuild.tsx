@@ -142,9 +142,9 @@ export function PinnedBrandBuild() {
             material world instead of repeating the hero's root metaphor. */}
         <div className="absolute inset-0 overflow-hidden">
           <BackgroundVideo
-            video="/videos/generated/bt-services-authority-layers.mp4"
-            videoMobile="/videos/generated/bt-services-authority-layers-mobile.mp4"
-            poster="/images/generated/bt-services-authority-layers-poster.jpg"
+            video="/videos/hero-forest-sanctuary.mp4"
+            videoMobile="/videos/hero-forest-sanctuary.mp4"
+            poster="/images/hero-forest-sanctuary-poster.jpg"
             playbackRate={1.04}
           />
           <div

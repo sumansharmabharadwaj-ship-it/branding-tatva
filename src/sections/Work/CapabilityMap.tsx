@@ -44,8 +44,8 @@ export function CapabilityMap() {
   return (
     <section id="find-relevant-proof" className="relative scroll-mt-24 overflow-hidden py-14 sm:py-24" style={{ backgroundColor: WORK.mist }}>
       <BackgroundVideo
-        video="/videos/generated/bt-work-capability-rootmist.mp4"
-        poster="/images/generated/bt-work-capability-rootmist-poster.jpg"
+        video="/videos/pixabay-stream-mist-rays.mp4"
+        poster="/images/pixabay-stream-mist-rays-poster.jpg"
         parallax
         playbackRate={0.92}
       />

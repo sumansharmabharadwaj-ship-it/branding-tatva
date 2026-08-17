@@ -850,8 +850,8 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
 
       <section className="relative overflow-hidden py-20 sm:py-28" style={{ backgroundColor: palette.ink }}>
         <BackgroundVideo
-          video="/videos/generated/bt-work-decision-trace.mp4"
-          poster="/images/generated/bt-work-decision-trace-poster.jpg"
+          video="/videos/pexels-river-dawn.mp4"
+          poster="/images/pexels-river-dawn-poster.jpg"
           imagePosition="center"
           parallax
           playbackRate={0.9}

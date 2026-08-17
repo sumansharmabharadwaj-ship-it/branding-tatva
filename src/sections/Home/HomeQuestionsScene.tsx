@@ -130,8 +130,8 @@ export function HomeQuestionsScene() {
     >
       <span className="sr-only">The practical questions</span>
       <BackgroundVideo
-        video="/videos/generated/bt-home-decision-waterlight.mp4"
-        poster="/images/generated/bt-home-decision-waterlight-poster.jpg"
+        video="/videos/pexels-river-dawn.mp4"
+        poster="/images/pexels-river-dawn-poster.jpg"
         parallax
         push
         playbackRate={0.92}

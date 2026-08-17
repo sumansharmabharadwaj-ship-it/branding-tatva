@@ -173,8 +173,8 @@ export default function InsightsPage() {
             the dense wash keeps the foundation essay visually primary. */}
         <section className="relative overflow-hidden bg-ivory py-20 sm:py-28">
           <BackgroundVideo
-            video="/videos/generated/bt-insights-foundation-folio.mp4"
-            poster="/images/generated/bt-insights-foundation-folio-poster.jpg"
+            video="/videos/pexels-studio-morning-light.mp4"
+            poster="/images/pexels-studio-morning-light-poster.jpg"
             parallax
             playbackRate={0.86}
           />
@@ -206,8 +206,8 @@ export default function InsightsPage() {
 
         <section className="relative overflow-hidden bg-soil py-20 text-ivory sm:py-28">
           <BackgroundVideo
-            video="/videos/generated/bt-insights-reading-currents.mp4"
-            poster="/images/generated/bt-insights-reading-currents-poster.jpg"
+            video="/videos/pexels-river-dawn.mp4"
+            poster="/images/pexels-river-dawn-poster.jpg"
             parallax
             playbackRate={0.92}
           />
@@ -293,8 +293,8 @@ export default function InsightsPage() {
             <div className="grid overflow-hidden rounded-[2rem] border border-soil/10 bg-background-elevated shadow-elevation-md lg:grid-cols-[0.9fr_1.1fr]">
               <div className="relative min-h-80 bg-soil">
                 <BackgroundVideo
-                  video="/videos/generated/bt-insights-audit-seam.mp4"
-                  poster="/images/generated/bt-insights-audit-seam-poster.jpg"
+                  video="/videos/pexels-root-network.mp4"
+                  poster="/images/pexels-root-network-poster.jpg"
                   imagePosition="center"
                   push
                   playbackRate={0.86}

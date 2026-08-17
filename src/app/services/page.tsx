@@ -184,7 +184,7 @@ export default async function ServicesPage() {
   const region = isRegion(savedRegion) ? savedRegion : regionFromCountry(hdrs.get("x-vercel-ip-country"));
   // The hero poster is the page's first paint — a high priority preload
   // hint so the awakening scene arrives before the veil starts lifting.
-  preload("/images/generated/bt-services-hero-root-system-poster.jpg", { as: "image", fetchPriority: "high" });
+  preload("/images/pexels-root-network-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
@@ -205,9 +205,9 @@ export default async function ServicesPage() {
             frame. The scene still advances quickly because the veil and
             word reveal respond inside the viewport, not by shortening it. */}
         <PhotoHero
-          video="/videos/generated/bt-services-hero-root-system.mp4"
-          videoMobile="/videos/generated/bt-services-hero-root-system-mobile.mp4"
-          poster="/images/generated/bt-services-hero-root-system-poster.jpg"
+          video="/videos/pexels-root-network.mp4"
+          videoMobile="/videos/pexels-root-network.mp4"
+          poster="/images/pexels-root-network-poster.jpg"
           minHeight="100vh"
           overlayGradient="linear-gradient(180deg, rgba(12,17,16,0.54) 0%, rgba(12,17,16,0.64) 58%, rgba(12,17,16,0.82) 100%)"
           playbackRate={1.15}
@@ -331,9 +331,9 @@ export default async function ServicesPage() {
               separate water-current metaphor. */}
           <BackgroundVideo
             parallax
-            video="/videos/generated/bt-services-situation-paths.mp4"
-            videoMobile="/videos/generated/bt-services-situation-paths-mobile.mp4"
-            poster="/images/generated/bt-services-situation-paths-poster.jpg"
+            video="/videos/pexels-valley-first-light.mp4"
+            videoMobile="/videos/pexels-valley-first-light.mp4"
+            poster="/images/pexels-valley-first-light-poster.jpg"
             playbackRate={1.06}
           />
           {/* A left-weighted charcoal scrim protects the diagnosis copy
@@ -368,9 +368,9 @@ export default async function ServicesPage() {
               visible without turning the chapter into another card grid. */}
           <BackgroundVideo
             parallax
-            video="/videos/generated/bt-services-strategy-topography.mp4"
-            videoMobile="/videos/generated/bt-services-strategy-topography-mobile.mp4"
-            poster="/images/generated/bt-services-strategy-topography-poster.jpg"
+            video="/videos/pexels-fog-sunrise.mp4"
+            videoMobile="/videos/pexels-fog-sunrise.mp4"
+            poster="/images/pexels-fog-sunrise-poster.jpg"
             playbackRate={1.12}
           />
           <div
@@ -399,9 +399,9 @@ export default async function ServicesPage() {
           <BackgroundVideo
             parallax
             push
-            video="/videos/generated/bt-services-package-current.mp4"
-            videoMobile="/videos/generated/bt-services-package-current-mobile.mp4"
-            poster="/images/generated/bt-services-package-current-poster.jpg"
+            video="/videos/pexels-golden-fog-sea.mp4"
+            videoMobile="/videos/pexels-golden-fog-sea.mp4"
+            poster="/images/pexels-golden-fog-sea-poster.jpg"
           />
           <div
             className="absolute inset-0"
@@ -426,8 +426,8 @@ export default async function ServicesPage() {
             seamlessly into Authority's identical charcoal. */}
         <section data-services-scene="verified-outcome" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <BackgroundVideo
-            video="/videos/generated/bt-services-verified-rings.mp4"
-            poster="/images/generated/bt-services-verified-rings-poster.jpg"
+            video="/videos/pixabay-golden-forest-glow.mp4"
+            poster="/images/pixabay-golden-forest-glow-poster.jpg"
             parallax
             playbackRate={0.94}
           />
@@ -472,7 +472,10 @@ export default async function ServicesPage() {
               scroll-linked camera drift stays subordinate to the
               comparison cards, whose focus pull remains this chapter's
               primary interaction. */}
-          <StakesCinematicBackdrop image="/images/generated/bt-services-stakes-positioning.png" />
+          <StakesCinematicBackdrop
+            video="/videos/pixabay-golden-forest-glow.mp4"
+            poster="/images/pixabay-golden-forest-glow-poster.jpg"
+          />
           {/* A left-weighted slate scrim protects the editorial copy
               while leaving the distinctive mineral surface visible on
               the right. No global soil tint, so the chapter remains
@@ -522,9 +525,9 @@ export default async function ServicesPage() {
             {/* Parallax dropped here on purpose: a held frame's own rect
                 barely moves, so the drift would read as static anyway. */}
             <BackgroundVideo
-              video="/videos/generated/bt-services-perception-ascent.mp4"
-              videoMobile="/videos/generated/bt-services-perception-ascent-mobile.mp4"
-              poster="/images/generated/bt-services-perception-ascent-poster.jpg"
+              video="/videos/pexels-summit-inversion.mp4"
+              videoMobile="/videos/pexels-summit-inversion.mp4"
+              poster="/images/pexels-summit-inversion-poster.jpg"
             />
             <div
               className="absolute inset-0"
@@ -569,8 +572,8 @@ export default async function ServicesPage() {
               a visitor opens an individual artifact. Its scroll-linked
               drift and edge light remain secondary to the explorer. */}
           <BackgroundVideo
-            video="/videos/generated/bt-services-deliverables-paperlight.mp4"
-            poster="/images/generated/bt-services-deliverables-paperlight-poster.jpg"
+            video="/videos/pexels-studio-morning-light.mp4"
+            poster="/images/pexels-studio-morning-light-poster.jpg"
             parallax
             push
             playbackRate={0.9}
@@ -611,8 +614,8 @@ export default async function ServicesPage() {
             between the light CTA breath and the forest health check. */}
         <section id="imagine" data-services-scene="imagine" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <BackgroundVideo
-            video="/videos/generated/bt-services-imagine-confluence.mp4"
-            poster="/images/generated/bt-services-imagine-confluence-poster.jpg"
+            video="/videos/higgsfield-stream-clarity.mp4"
+            poster="/images/higgsfield-stream-clarity-poster.jpg"
             parallax
             playbackRate={0.92}
           />
@@ -653,9 +656,9 @@ export default async function ServicesPage() {
               generated from the same visual world for reduced motion. */}
           <BackgroundVideo
             parallax
-            video="/videos/generated/bt-services-health-reflection.mp4"
-            videoMobile="/videos/generated/bt-services-health-reflection-mobile.mp4"
-            poster="/images/generated/bt-services-health-reflection-poster.jpg"
+            video="/videos/pexels-river-dawn.mp4"
+            videoMobile="/videos/pexels-river-dawn.mp4"
+            poster="/images/pexels-river-dawn-poster.jpg"
             playbackRate={1.1}
           />
           <div
@@ -684,8 +687,8 @@ export default async function ServicesPage() {
             strategy room that closes the page. */}
         <section id="audit" data-services-scene="audit" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-start overflow-hidden pb-16 pt-24 sm:py-20 lg:justify-center lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <BackgroundVideo
-            video="/videos/generated/bt-services-recognition-audit-leaf.mp4"
-            poster="/images/generated/bt-services-recognition-audit-leaf-poster.jpg"
+            video="/videos/pexels-aspen-sunburst.mp4"
+            poster="/images/pexels-aspen-sunburst-poster.jpg"
             parallax
             playbackRate={0.9}
           />
@@ -712,9 +715,9 @@ export default async function ServicesPage() {
             responsive, and preserved as a still under reduced motion. */}
         <TexturedDark
           id="book"
-          image="/images/generated/bt-services-strategy-room-poster.jpg"
-          video="/videos/generated/bt-services-strategy-room.mp4"
-          videoMobile="/videos/generated/bt-services-strategy-room-mobile.mp4"
+          image="/images/pexels-studio-morning-light-poster.jpg"
+          video="/videos/pexels-studio-morning-light.mp4"
+          videoMobile="/videos/pexels-studio-morning-light.mp4"
           overlayGradient="linear-gradient(180deg, rgba(10,15,16,0.42) 0%, rgba(14,18,18,0.52) 52%, rgba(20,17,14,0.74) 100%)"
           className="flex min-h-[100svh] scroll-mt-24 flex-col justify-center pb-16 pt-24 sm:pb-20 sm:pt-32"
         >

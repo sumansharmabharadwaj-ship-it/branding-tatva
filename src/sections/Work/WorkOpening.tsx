@@ -134,8 +134,8 @@ export function WorkOpening() {
     <section className="relative overflow-hidden" style={{ backgroundColor: WORK.cream }}>
       <div aria-hidden="true" className="absolute inset-0 opacity-[0.64]">
         <BackgroundVideo
-          video="/videos/generated/bt-work-archive-light.mp4"
-          poster="/images/generated/bt-work-archive-light-poster.jpg"
+          video="/videos/pexels-studio-morning-light.mp4"
+          poster="/images/pexels-studio-morning-light-poster.jpg"
           imagePosition="center"
           push
         />

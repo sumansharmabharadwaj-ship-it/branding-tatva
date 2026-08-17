@@ -76,8 +76,8 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
             rather than as the third paragraph in a stack. */}
         <section className="relative overflow-hidden bg-soil pb-16 pt-36 sm:pt-44">
           <BackgroundVideo
-            video="/videos/generated/bt-glossary-living-language.mp4"
-            poster="/images/generated/bt-glossary-living-language-poster.jpg"
+            video="/videos/pexels-dandelion-release.mp4"
+            poster="/images/pexels-dandelion-release-poster.jpg"
             imagePosition="center"
             parallax
             playbackRate={0.9}

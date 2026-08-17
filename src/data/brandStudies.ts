@@ -42,29 +42,29 @@ export type BrandStudy = {
 
 const sharedStudyMedia: StudyMedia = {
   masthead: {
-    video: "/videos/generated/bt-studies-cultural-memory.mp4",
-    poster: "/images/generated/bt-studies-cultural-memory-poster.jpg",
+    video: "/videos/pixabay-golden-reeds-wind.mp4",
+    poster: "/images/pixabay-golden-reeds-wind-poster.jpg",
     position: "center",
     playbackRate: 0.9,
     credit: "Original Branding Tatva atmospheric study film",
   },
   observations: {
-    video: "/videos/generated/bt-studies-observation-field.mp4",
-    poster: "/images/generated/bt-studies-observation-field-poster.jpg",
+    video: "/videos/pixabay-alpine-wildflowers.mp4",
+    poster: "/images/pixabay-alpine-wildflowers-poster.jpg",
     position: "center",
     playbackRate: 0.9,
     credit: "Original Branding Tatva atmospheric study film",
   },
   applications: {
-    video: "/videos/generated/bt-studies-founder-roots.mp4",
-    poster: "/images/generated/bt-studies-founder-roots-poster.jpg",
+    video: "/videos/pexels-root-network.mp4",
+    poster: "/images/pexels-root-network-poster.jpg",
     position: "center",
     playbackRate: 0.9,
     credit: "Original Branding Tatva atmospheric study film",
   },
   closing: {
-    video: "/videos/generated/bt-studies-path-of-light.mp4",
-    poster: "/images/generated/bt-studies-path-of-light-poster.jpg",
+    video: "/videos/pixabay-forest-sunbeams.mp4",
+    poster: "/images/pixabay-forest-sunbeams-poster.jpg",
     position: "center",
     playbackRate: 0.9,
     credit: "Original Branding Tatva atmospheric study film",

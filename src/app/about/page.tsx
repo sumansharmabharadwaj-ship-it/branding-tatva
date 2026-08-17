@@ -78,8 +78,8 @@ export default function AboutPage() {
             its story. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
           <BackgroundVideo
-            video="/videos/generated/bt-about-point-view-three-stones.mp4"
-            poster="/images/generated/bt-about-point-view-three-stones-poster.jpg"
+            video="/videos/pixabay-misty-ridge-drift.mp4"
+            poster="/images/pixabay-misty-ridge-drift-poster.jpg"
             parallax
             playbackRate={0.84}
           />
@@ -177,8 +177,8 @@ export default function AboutPage() {
             practice to. */}
         <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
           <BackgroundVideo
-            video="/videos/generated/bt-about-working-directly-woodlight.mp4"
-            poster="/images/generated/bt-about-working-directly-woodlight-poster.jpg"
+            video="/videos/pexels-studio-morning-light.mp4"
+            poster="/images/pexels-studio-morning-light-poster.jpg"
             parallax
             playbackRate={0.9}
           />
@@ -249,8 +249,8 @@ export default function AboutPage() {
         {/* Behaviours instead of values. */}
         <section className="relative overflow-hidden bg-soil pb-16 sm:pb-24">
           <BackgroundVideo
-            video="/videos/generated/bt-about-behaviours-mossbreath.mp4"
-            poster="/images/generated/bt-about-behaviours-mossbreath-poster.jpg"
+            video="/videos/pexels-forest-floor-fungi.mp4"
+            poster="/images/pexels-forest-floor-fungi-poster.jpg"
             parallax
             playbackRate={0.92}
           />
