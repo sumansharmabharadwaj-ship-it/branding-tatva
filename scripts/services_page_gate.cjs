@@ -24,12 +24,12 @@ const SECTION_IDS = [
 ];
 
 const GENERATED_POSTERS = [
-  { section: "hero", fragment: "bt-services-hero-root-system-poster" },
-  { section: "offerings", fragment: "bt-services-strategy-topography-poster" },
-  { section: "desire", fragment: "bt-services-package-current-poster" },
-  { section: "education", fragment: "bt-services-perception-ascent-poster" },
-  { section: "health", fragment: "bt-services-health-reflection-poster" },
-  { section: "book", fragment: "bt-services-strategy-room-poster" },
+  { section: "hero", fragment: "services-opening-film-v2-poster" },
+  { section: "offerings", fragment: "services-offerings-film-v2-poster" },
+  { section: "desire", fragment: "services-desire-film-v2-poster" },
+  { section: "education", fragment: "services-education-film-v2-poster" },
+  { section: "health", fragment: "services-health-film-v2-poster" },
+  { section: "book", fragment: "services-booking-room-film-v2-poster" },
 ];
 
 fs.mkdirSync(OUTPUT, { recursive: true });
