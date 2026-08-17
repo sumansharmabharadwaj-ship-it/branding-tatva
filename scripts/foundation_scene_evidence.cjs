@@ -8,8 +8,6 @@ const VIEWPORTS = [
   { name: "desktop-1440x900", width: 1440, height: 900 },
   { name: "mobile-390x844", width: 390, height: 844, touch: true },
 ];
-const EASE_WAIT_MS = 520;
-
 fs.mkdirSync(OUTPUT, { recursive: true });
 
 function assert(condition, message) {
@@ -48,25 +46,6 @@ async function assertNoOverflow(page, label) {
   );
 }
 
-async function setFoundationProgress(page, wrapper, progress) {
-  const metrics = await wrapper.evaluate((node) => {
-    const rect = node.getBoundingClientRect();
-    const top = window.scrollY + rect.top;
-    return {
-      top,
-      range: Math.max(1, node.offsetHeight - window.innerHeight),
-    };
-  });
-
-  await page.evaluate(
-    ({ top, range, progress }) => {
-      window.scrollTo({ top: top + range * progress, behavior: "instant" });
-    },
-    { ...metrics, progress },
-  );
-  await page.waitForTimeout(EASE_WAIT_MS);
-}
-
 async function capture(browser, viewport) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
@@ -99,36 +78,44 @@ async function capture(browser, viewport) {
   await assertNoOverflow(page, `${viewport.name}/foundation`);
 
   if (viewport.name.startsWith("desktop")) {
-    const height = await wrapper.evaluate((node) => node.offsetHeight);
+    const geometry = await wrapper.evaluate((node) => {
+      const rect = node.getBoundingClientRect();
+      const cards = Array.from(node.querySelectorAll("[data-foundation-layer]"));
+      const finalCopy = node.querySelector("[data-final-copy]");
+      return {
+        height: rect.height,
+        top: rect.top,
+        bottom: rect.bottom,
+        viewport: window.innerHeight,
+        visibleCards: cards.filter((card) => {
+          const cardRect = card.getBoundingClientRect();
+          return Number(getComputedStyle(card).opacity) > 0.5 && cardRect.height > 40;
+        }).length,
+        finalOpacity: finalCopy ? Number(getComputedStyle(finalCopy).opacity) : 0,
+      };
+    });
+
     assert(
-      height <= viewport.height * 1.92 && height >= viewport.height * 1.86,
-      `${viewport.name}: Foundation height ${height}px is outside the 190svh target`,
+      geometry.height <= geometry.viewport * 1.02 && geometry.height >= geometry.viewport * 0.98,
+      `${viewport.name}: Foundation height ${geometry.height}px is outside the one-screen target`,
+    );
+    assert(
+      geometry.top >= -2 && geometry.bottom <= geometry.viewport + 2,
+      `${viewport.name}: Foundation frame escapes the viewport (${JSON.stringify(geometry)})`,
+    );
+    assert(
+      geometry.visibleCards === 4,
+      `${viewport.name}: only ${geometry.visibleCards} Foundation layers are visible in the film frame`,
+    );
+    assert(
+      geometry.finalOpacity > 0.55,
+      `${viewport.name}: Foundation conclusion remained hidden in the film frame`,
     );
 
-    const states = [
-      { name: "opening", progress: 0.04 },
-      { name: "layers", progress: 0.52 },
-      { name: "complete", progress: 0.97 },
-    ];
-
-    for (const state of states) {
-      await setFoundationProgress(page, wrapper, state.progress);
-      await chapter.screenshot({
-        path: path.join(OUTPUT, `${viewport.name}-foundation-${state.name}.png`),
-        animations: "disabled",
-      });
-    }
-
-    await setFoundationProgress(page, wrapper, 0.97);
-    const finalOpacity = Number(
-      await finalCopy.evaluate((node) => getComputedStyle(node).opacity),
-    );
-    assert(finalOpacity > 0.55, `${viewport.name}: Foundation conclusion remained hidden`);
-
-    const visibleCards = await cards.evaluateAll((nodes) =>
-      nodes.filter((node) => Number(getComputedStyle(node).opacity) > 0.5).length,
-    );
-    assert(visibleCards === 4, `${viewport.name}: only ${visibleCards} Foundation layers are visible at completion`);
+    await chapter.screenshot({
+      path: path.join(OUTPUT, `${viewport.name}-foundation-one-screen.png`),
+      animations: "disabled",
+    });
   } else {
     await wrapper.screenshot({
       path: path.join(OUTPUT, `${viewport.name}-foundation-static.png`),
