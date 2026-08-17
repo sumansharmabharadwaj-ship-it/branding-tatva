@@ -47,8 +47,8 @@ export function BrandStudies() {
   return (
     <section className="relative scroll-mt-32 overflow-hidden py-14 sm:py-24" style={{ backgroundColor: "#071A20" }}>
       <BackgroundVideo
-        video="/videos/own-moonlit-sea.mp4"
-        poster="/images/own-moonlit-sea-poster.jpg"
+        video="/videos/work-studies-film-v2.mp4"
+        poster="/images/work-studies-film-v2-poster.jpg"
         parallax
         playbackRate={0.84}
       />

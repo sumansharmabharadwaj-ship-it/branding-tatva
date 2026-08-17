@@ -158,8 +158,8 @@ export function SystemFlagship({ project }: { project: Project }) {
   return (
     <section className="relative scroll-mt-28 overflow-hidden py-20 sm:py-28" style={{ backgroundColor: "#10151A" }}>
       <BackgroundVideo
-        video="/videos/pexels-moss-stream.mp4"
-        poster="/images/pexels-moss-stream-poster.jpg"
+        video="/videos/work-system-film-v2.mp4"
+        poster="/images/work-system-film-v2-poster.jpg"
         parallax
         playbackRate={0.9}
       />

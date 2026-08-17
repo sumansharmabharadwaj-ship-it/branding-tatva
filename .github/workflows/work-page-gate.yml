@@ -19,9 +19,15 @@ on:
       - scripts/work_brand_study_context_gate.cjs
       - scripts/work_hero_pause_gate.cjs
       - scripts/work_capability_attention_gate.cjs
+      - scripts/work_media_release_gate.cjs
       - public/images/work-evidence-*.svg
       - public/images/work-roots-opening-film-poster.jpg
       - public/videos/work-roots-opening-film.mp4
+      - public/images/work-*-film-v2-poster.jpg
+      - public/videos/work-*-film-v2.mp4
+      - public/videos/pexels-aspen-sunburst.mp4
+      - public/videos/site-footer-peaks-film-v2.mp4
+      - public/videos/site-seasonal-conversation-film-v2.mp4
       - src/app/work/**
       - src/sections/Work/**
       - src/sections/CaseStudies/BrandStudies.tsx
@@ -64,11 +70,19 @@ jobs:
             /*
             !/public/videos/*
             !/public/audio/*
+            /public/videos/work-roots-opening-film.mp4
+            /public/videos/work-*-film-v2.mp4
+            /public/videos/pexels-aspen-sunburst.mp4
+            /public/videos/site-footer-peaks-film-v2.mp4
+            /public/videos/site-seasonal-conversation-film-v2.mp4
 
       - name: Use Node 24
         uses: actions/setup-node@v4
         with:
           node-version: 24
+
+      - name: Verify distinct long-form Work films
+        run: node scripts/work_media_release_gate.cjs
 
       - name: Activate pnpm
         run: |

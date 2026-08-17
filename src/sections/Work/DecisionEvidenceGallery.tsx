@@ -52,8 +52,8 @@ export function DecisionEvidenceGallery() {
   return (
     <section className="relative scroll-mt-28 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
       <BackgroundVideo
-        video="/videos/pixabay-cascade-rocks.mp4"
-        poster="/images/pixabay-cascade-rocks-poster.jpg"
+        video="/videos/work-decisions-film-v2.mp4"
+        poster="/images/work-decisions-film-v2-poster.jpg"
         parallax
         playbackRate={0.86}
       />

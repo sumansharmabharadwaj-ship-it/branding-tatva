@@ -47,8 +47,8 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
   return (
     <section id="index" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: WORK.cream }}>
       <BackgroundVideo
-        video="/videos/pexels-redwood-ferns.mp4"
-        poster="/images/pexels-redwood-ferns-poster.jpg"
+        video="/videos/work-index-film-v2.mp4"
+        poster="/images/work-index-film-v2-poster.jpg"
         parallax
         playbackRate={0.88}
       />

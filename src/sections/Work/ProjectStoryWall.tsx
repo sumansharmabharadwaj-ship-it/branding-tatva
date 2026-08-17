@@ -26,8 +26,8 @@ export function ProjectStoryWall({ projects }: { projects: Project[] }) {
   return (
     <section className="relative overflow-hidden py-20 sm:py-28" style={{ backgroundColor: WORK.mist }}>
       <BackgroundVideo
-        video="/videos/pexels-dandelion-release.mp4"
-        poster="/images/pexels-dandelion-release-poster.jpg"
+        video="/videos/work-project-stories-film-v2.mp4"
+        poster="/images/work-project-stories-film-v2-poster.jpg"
         parallax
         playbackRate={0.9}
       />
