@@ -15,6 +15,7 @@ import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { TexturedDark } from "@/components/TexturedDark";
+import { CinematicScene } from "@/components/CinematicScene";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { site } from "@/data/site";
 import { elements } from "@/data/elements";
@@ -144,6 +145,7 @@ not repeated here. */}
           image="/images/higgsfield-idea-sketch.jpg"
           video="/videos/higgsfield-idea-sketch.mp4"
           imagePosition="center"
+          scene
           className="py-16 sm:py-20"
         >
           <Container className="text-center">
@@ -338,7 +340,7 @@ not repeated here. */}
             with a real "mode-shift" boundary to mark (the card itself
             wiping into view), while the ambient backdrop video is
             always present underneath it. */}
-        <section className="relative overflow-hidden py-20 sm:py-28">
+        <CinematicScene className="relative overflow-hidden py-20 sm:py-28">
           {/* Light chapter giving way from the dark Selected-work grid
               above — the same real mode-shift ClipReveal already marks
               on Services and Work, just running the other direction
@@ -363,7 +365,7 @@ not repeated here. */}
               </Reveal>
             </Container>
           </ClipReveal>
-        </section>
+        </CinematicScene>
 
         {/* Closing chapter — the contemplative statement and the final CTA
             used to be two separate sections (a video break, then a flat
