@@ -128,8 +128,17 @@ async function capture(browser, viewport) {
   );
 
   const tabs = scene.getByRole("tab");
-  assert((await tabs.count()) === 5, `${viewport.name}: expected five project files`);
-  await assertTouchTargets(tabs, 40, `${viewport.name}: Evidence project tabs`);
+  const tabCount = await tabs.count();
+  if (viewport.name.startsWith("desktop")) {
+    assert(tabCount === 0, `${viewport.name}: retired project index re-entered the film frame`);
+    const indexDisplay = await scene
+      .locator(".evidence-cinematic__index")
+      .evaluate((node) => getComputedStyle(node).display);
+    assert(indexDisplay === "none", `${viewport.name}: project index still consumes film-frame space`);
+  } else {
+    assert(tabCount === 5, `${viewport.name}: expected five project files`);
+    await assertTouchTargets(tabs, 40, `${viewport.name}: Evidence project tabs`);
+  }
   await assertNoOverflow(page, `${viewport.name}/evidence`);
 
   const dossier = scene.locator(".evidence-cinematic__dossier");
@@ -150,21 +159,21 @@ async function capture(browser, viewport) {
     animations: "disabled",
   });
 
-  const myShopTab = scene.getByRole("tab", { name: /MyShopInEurope/i });
-  await myShopTab.click();
-  await waitForText(
-    media,
-    "Craft over price",
-    `${viewport.name}: MyShopInEurope media state did not update`,
-  );
-  await waitForText(
-    dossier,
-    "Indian craft, origin, and wellness heritage",
-    `${viewport.name}: MyShopInEurope decision trail did not update`,
-  );
-  await assertHeaderOutOfFrame(page, `${viewport.name}/evidence/after-project-change`);
+  if (!viewport.name.startsWith("desktop")) {
+    const myShopTab = scene.getByRole("tab", { name: /MyShopInEurope/i });
+    await myShopTab.click();
+    await waitForText(
+      media,
+      "Craft over price",
+      `${viewport.name}: MyShopInEurope media state did not update`,
+    );
+    await waitForText(
+      dossier,
+      "Indian craft, origin, and wellness heritage",
+      `${viewport.name}: MyShopInEurope decision trail did not update`,
+    );
+    await assertHeaderOutOfFrame(page, `${viewport.name}/evidence/after-project-change`);
 
-  if (viewport.name.startsWith("desktop")) {
     await scene.screenshot({
       path: path.join(OUTPUT, `${viewport.name}-evidence-myshop.png`),
       animations: "disabled",
