@@ -225,11 +225,11 @@ async function auditViewport(browser, viewport) {
   const opening = page.locator('[data-home-v4-chapter="opening"]').first();
   const openingText = (await opening.textContent()) || "";
   assert(
-    openingText.includes("Your audience has already formed an opinion"),
+    openingText.includes("Before your brand is seen"),
     `${viewport.name}: V4 opening proposition missing`,
   );
   assert(
-    openingText.includes("0.71 → 2.81%"),
+    openingText.includes("Strategy before styling"),
     `${viewport.name}: opening proof is missing`,
   );
 
@@ -419,7 +419,7 @@ async function auditReducedMotion(browser) {
   );
 
   const copy = (await page.locator("body").textContent()) || "";
-  assert(copy.includes("Your audience has already formed an opinion"), "reduced motion: opening copy missing");
+  assert(copy.includes("Before your brand is seen"), "reduced motion: opening copy missing");
   assert(copy.includes("Build the foundation"), "reduced motion: paths content missing");
 
   await context.close();
