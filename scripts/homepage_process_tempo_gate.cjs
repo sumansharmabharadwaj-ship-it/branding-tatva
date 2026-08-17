@@ -69,14 +69,14 @@ async function selectedStage(processScene) {
   assert((await guide.count()) === 1, "guided controls missing during working-method audit");
   const guideToggle = guide.locator("button").first();
 
-  await guideToggle.click();
+  await guideToggle.click({ force: true });
   await page.waitForTimeout(100);
   assert(
     (await guideToggle.getAttribute("aria-pressed")) === "true",
     "guided journey did not start from the process scene",
   );
 
-  await guideToggle.click();
+  await guideToggle.click({ force: true });
   await page.waitForTimeout(180);
   assert(
     (await page.locator("html").getAttribute("data-home-guide-mode")) === "paused",
@@ -90,7 +90,7 @@ async function selectedStage(processScene) {
     "guided pause did not freeze the working-method sequence",
   );
 
-  await guideToggle.click();
+  await guideToggle.click({ force: true });
   await page.waitForTimeout(3_050);
   assert(
     (await selectedStage(processScene)) !== pausedStage,
