@@ -33,6 +33,28 @@ async function clickAnimatedControl(locator) {
   await locator.click({ force: true });
 }
 
+async function waitForAttribute(page, locator, name, expected, timeoutMs = 2_500) {
+  const deadline = Date.now() + timeoutMs;
+  let actual = null;
+  while (Date.now() < deadline) {
+    actual = await locator.getAttribute(name);
+    if (actual === expected) return;
+    await page.waitForTimeout(60);
+  }
+  throw new Error(`${name} resolved to ${actual}, expected ${expected}`);
+}
+
+async function waitForTextPrefix(page, locator, prefix, timeoutMs = 2_500) {
+  const deadline = Date.now() + timeoutMs;
+  let actual = "";
+  while (Date.now() < deadline) {
+    actual = (await locator.textContent()) || "";
+    if (actual.startsWith(prefix)) return;
+    await page.waitForTimeout(60);
+  }
+  throw new Error(`text resolved to ${JSON.stringify(actual)}, expected prefix ${JSON.stringify(prefix)}`);
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
@@ -70,12 +92,8 @@ async function clickAnimatedControl(locator) {
   const play = guide.getByRole("button", { name: "Play guided journey" });
   const guidedStartedAt = Date.now();
   await clickAnimatedControl(play);
-  await page.waitForFunction(() => document.querySelector("[data-guided-controls]")?.getAttribute("data-guide-mode") === "guided");
-  await page.waitForFunction(
-    () => (document.querySelector("[data-guided-controls] strong")?.textContent || "").startsWith("02/"),
-    undefined,
-    { timeout: 4_800 },
-  );
+  await waitForAttribute(page, guide, "data-guide-mode", "guided");
+  await waitForTextPrefix(page, guide.locator("strong"), "02/", 4_800);
   const firstAdvanceMs = Date.now() - guidedStartedAt;
   assert(firstAdvanceMs >= 2_800 && firstAdvanceMs <= 4_800, `First guided chapter advance took ${firstAdvanceMs}ms`);
 
@@ -88,7 +106,7 @@ async function clickAnimatedControl(locator) {
   await page.waitForTimeout(3_380);
   const beforeManual = await page.evaluate(() => scrollY);
   await page.mouse.wheel(0, 520);
-  await page.waitForFunction(() => document.querySelector("[data-guided-controls]")?.getAttribute("data-guide-mode") === "manual", undefined, { timeout: 450 });
+  await waitForAttribute(page, freshGuide, "data-guide-mode", "manual", 450);
   await page.waitForTimeout(180);
   const afterManual = await page.evaluate(() => scrollY);
   assert(afterManual > beforeManual + 35, `Manual wheel moved only ${afterManual - beforeManual}px while interrupting guided mode`);
@@ -98,7 +116,7 @@ async function clickAnimatedControl(locator) {
   // Pause is a real comfort state: ambient video must stop, not merely freeze
   // the progress ring while media keeps decoding behind it.
   await clickAnimatedControl(freshGuide.getByRole("button", { name: "Play guided journey" }));
-  await page.waitForFunction(() => document.querySelector("[data-guided-controls]")?.getAttribute("data-guide-mode") === "guided");
+  await waitForAttribute(page, freshGuide, "data-guide-mode", "guided");
   await clickAnimatedControl(freshGuide.getByRole("button", { name: "Pause guided journey" }));
   await page.waitForTimeout(320);
   assert((await freshGuide.getAttribute("data-guide-mode")) === "paused", "Pause control did not publish paused mode");
