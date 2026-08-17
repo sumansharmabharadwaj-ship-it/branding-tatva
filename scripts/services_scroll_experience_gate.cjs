@@ -25,6 +25,19 @@ async function waitForPrelude(page) {
   await page.waitForTimeout(420);
 }
 
+async function settleConsent(page, label) {
+  const banner = page.getByRole("dialog", { name: "Your choice about measurement" });
+  if ((await banner.count()) === 0) return;
+
+  const essentialOnly = banner.getByRole("button", { name: "Essential only" });
+  assert(
+    (await essentialOnly.count()) === 1,
+    `${label}: consent banner did not expose the essential-only choice`,
+  );
+  await essentialOnly.click();
+  await banner.waitFor({ state: "detached", timeout: 2_500 });
+}
+
 async function noHorizontalOverflow(page, label) {
   const widths = await page.evaluate(() => ({
     viewport: window.innerWidth,
@@ -171,6 +184,7 @@ async function auditViewport(browser, viewport) {
   await waitForPrelude(page);
 
   const label = `services-scroll/${viewport.name}`;
+  await settleConsent(page, label);
   const experienceDeadline = Date.now() + 5_000;
   while (
     Date.now() < experienceDeadline &&

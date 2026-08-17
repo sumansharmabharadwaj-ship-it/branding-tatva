@@ -14,10 +14,13 @@ on:
       - "src/app/terms/page.tsx"
       - "src/app/glossary/page.tsx"
       - "src/app/glossary/[term]/page.tsx"
+      - "src/components/BackgroundVideo.tsx"
       - "public/images/privacy-boundary-film-v2-poster.jpg"
       - "public/images/terms-agreement-film-v2-poster.jpg"
       - "public/images/glossary-language-roots-film-v2-poster.jpg"
       - "public/images/glossary-clarity-film-v2-poster.jpg"
+      - "public/images/higgsfield-element-earth-poster.jpg"
+      - "public/images/higgsfield-element-fire-poster.jpg"
       - "public/videos/privacy-boundary-film-v2.mp4"
       - "public/videos/terms-agreement-film-v2.mp4"
       - "public/videos/glossary-language-roots-film-v2.mp4"
@@ -30,10 +33,13 @@ on:
       - "src/app/terms/page.tsx"
       - "src/app/glossary/page.tsx"
       - "src/app/glossary/[term]/page.tsx"
+      - "src/components/BackgroundVideo.tsx"
       - "public/images/privacy-boundary-film-v2-poster.jpg"
       - "public/images/terms-agreement-film-v2-poster.jpg"
       - "public/images/glossary-language-roots-film-v2-poster.jpg"
       - "public/images/glossary-clarity-film-v2-poster.jpg"
+      - "public/images/higgsfield-element-earth-poster.jpg"
+      - "public/images/higgsfield-element-fire-poster.jpg"
       - "public/videos/privacy-boundary-film-v2.mp4"
       - "public/videos/terms-agreement-film-v2.mp4"
       - "public/videos/glossary-language-roots-film-v2.mp4"
@@ -62,6 +68,15 @@ jobs:
             /public/videos/terms-agreement-film-v2.mp4
             /public/videos/glossary-language-roots-film-v2.mp4
             /public/videos/glossary-clarity-film-v2.mp4
+            /public/videos/higgsfield-golden-peaks.mp4
+            /public/videos/higgsfield-element-earth.mp4
+            /public/videos/higgsfield-element-fire.mp4
+            /public/videos/pixabay-misty-ridge-drift.mp4
+            /public/videos/own-alpenglow-peak.mp4
+            /public/videos/home-v5-invitation-film.mp4
+            /public/videos/own-moonlit-sea.mp4
+            /public/videos/higgsfield-golden-ridge.mp4
+            /public/videos/higgsfield-verdant-hills.mp4
 
       - name: Use Node 24
         uses: actions/setup-node@v4

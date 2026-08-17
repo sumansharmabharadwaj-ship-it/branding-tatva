@@ -11,6 +11,59 @@ import { allTerms, findTerm } from "@/data/glossary";
 import { blogPosts } from "@/data/blog";
 import { site } from "@/data/site";
 
+const TERM_MEDIA: Record<string, { video: string; poster: string; rate: number; position?: string }> = {
+  positioning: {
+    video: "/videos/higgsfield-golden-peaks.mp4",
+    poster: "/images/higgsfield-golden-peaks-poster.jpg",
+    rate: 0.58,
+  },
+  "category-design": {
+    video: "/videos/higgsfield-element-earth.mp4",
+    poster: "/images/higgsfield-element-earth-poster.jpg",
+    rate: 0.58,
+  },
+  "distinctive-assets": {
+    video: "/videos/higgsfield-element-fire.mp4",
+    poster: "/images/higgsfield-element-fire-poster.jpg",
+    rate: 0.58,
+  },
+  "mental-availability": {
+    video: "/videos/pixabay-misty-ridge-drift.mp4",
+    poster: "/images/pixabay-misty-ridge-drift-poster.jpg",
+    rate: 0.58,
+  },
+  "brand-salience": {
+    video: "/videos/own-alpenglow-peak.mp4",
+    poster: "/images/own-alpenglow-peak-poster.jpg",
+    rate: 0.58,
+  },
+  recognition: {
+    video: "/videos/glossary-clarity-film-v2.mp4",
+    poster: "/images/glossary-clarity-film-v2-poster.jpg",
+    rate: 0.86,
+  },
+  "verbal-identity": {
+    video: "/videos/home-v5-invitation-film.mp4",
+    poster: "/images/home-v5-invitation-film-poster.jpg",
+    rate: 0.8,
+  },
+  "tone-of-voice": {
+    video: "/videos/own-moonlit-sea.mp4",
+    poster: "/images/own-moonlit-sea-poster.jpg",
+    rate: 0.48,
+  },
+  "brand-architecture": {
+    video: "/videos/higgsfield-golden-ridge.mp4",
+    poster: "/images/higgsfield-golden-ridge-poster.jpg",
+    rate: 0.58,
+  },
+  semiotics: {
+    video: "/videos/higgsfield-verdant-hills.mp4",
+    poster: "/images/higgsfield-verdant-hills-poster.jpg",
+    rate: 0.48,
+  },
+};
+
 // One glossary term per route (bible §13: "glossary pages that link
 // concepts to service and work examples"). Answer first — the short
 // definition opens the page as a direct answer, the longer read
@@ -37,6 +90,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
   const { term } = await params;
   const entry = findTerm(term);
   if (!entry) notFound();
+  const media = TERM_MEDIA[entry.slug];
 
   const siblings = entry.pillar.terms.filter((t) => t.slug !== entry.slug);
   const article = entry.pillar.articleSlug
@@ -76,11 +130,11 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
             rather than as the third paragraph in a stack. */}
         <section className="relative overflow-hidden bg-soil pb-16 pt-36 sm:pt-44">
           <BackgroundVideo
-            video="/videos/glossary-clarity-film-v2.mp4"
-            poster="/images/glossary-clarity-film-v2-poster.jpg"
-            imagePosition="center"
+            video={media.video}
+            poster={media.poster}
+            imagePosition={media.position ?? "center"}
             parallax
-            playbackRate={0.86}
+            playbackRate={media.rate}
           />
           <div className="absolute inset-0 bg-soil/55" />
           <div className="absolute inset-0 bg-gradient-to-r from-soil via-soil/70 to-soil/20" />

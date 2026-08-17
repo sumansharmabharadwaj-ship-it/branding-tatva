@@ -70,7 +70,10 @@ export function BackgroundVideo({
   useEffect(() => {
     const element = videoRef.current;
     if (!element) return;
-    const safePlaybackRate = Math.min(1.5, Math.max(0.75, playbackRate));
+    // Documentary source clips can opt into a slower 0.45x floor so a
+    // genuinely forward camera move holds for a full reading interval
+    // without reversing, boomeranging, or duplicating frames in a new file.
+    const safePlaybackRate = Math.min(1.5, Math.max(0.45, playbackRate));
     element.defaultPlaybackRate = safePlaybackRate;
     element.playbackRate = safePlaybackRate;
   }, [playbackRate, video]);
