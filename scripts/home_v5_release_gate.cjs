@@ -23,6 +23,18 @@ async function inspectViewport(browser, viewport, label) {
   assert((await openingFilm.count()) === 1, `${label} is missing its opening film`);
   assert(!(await openingFilm.evaluate((video) => video.paused)), `${label} opening film remained paused after the prelude`);
 
+  // Large media archives can make metadata arrive after networkidle on a
+  // cold runner. Wait for the seven chapter headers instead of treating a
+  // transient NaN duration as a short film.
+  await page.waitForFunction(
+    () => {
+      const films = [...document.querySelectorAll("[data-home-v5-chapter] video")];
+      return films.length === 7 && films.every((video) => Number.isFinite(video.duration));
+    },
+    undefined,
+    { timeout: 20_000 },
+  );
+
   const report = await page.evaluate((expected) => {
     const chapters = [...document.querySelectorAll("[data-home-v5-chapter]")];
     return {
