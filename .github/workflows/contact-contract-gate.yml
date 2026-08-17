@@ -11,6 +11,10 @@ on:
       - "src/components/ContactForm.tsx"
       - "src/data/site.ts"
       - "scripts/contact_contract_gate.cjs"
+      - "scripts/contact_media_release_gate.cjs"
+      - "public/images/contact-*-film-v2-poster.jpg"
+      - "public/videos/contact-*-film-v2.mp4"
+      - "public/videos/site-seasonal-conversation-film-v2.mp4"
       - ".github/workflows/contact-contract-gate.yml"
   pull_request:
     paths:
@@ -19,6 +23,10 @@ on:
       - "src/components/ContactForm.tsx"
       - "src/data/site.ts"
       - "scripts/contact_contract_gate.cjs"
+      - "scripts/contact_media_release_gate.cjs"
+      - "public/images/contact-*-film-v2-poster.jpg"
+      - "public/videos/contact-*-film-v2.mp4"
+      - "public/videos/site-seasonal-conversation-film-v2.mp4"
       - ".github/workflows/contact-contract-gate.yml"
 
 permissions:
@@ -31,6 +39,17 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+            /public/videos/contact-*-film-v2.mp4
+            /public/videos/site-seasonal-conversation-film-v2.mp4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -39,3 +58,6 @@ jobs:
 
       - name: Verify phone, booking duration, and contact paths
         run: node scripts/contact_contract_gate.cjs
+
+      - name: Verify distinct long-form Contact films
+        run: node scripts/contact_media_release_gate.cjs

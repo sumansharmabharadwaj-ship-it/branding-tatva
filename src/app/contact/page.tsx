@@ -46,7 +46,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   // The hero poster is this page's LCP element — a high priority
   // preload so first paint stops waiting behind the video request.
-  preload("/images/pexels-studio-morning-light-poster.jpg", { as: "image", fetchPriority: "high" });
+  preload("/images/contact-opening-film-v2-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
@@ -76,8 +76,8 @@ export default function ContactPage() {
             same two-jobs-one-fact pattern a masthead and a byline
             already play on any real publication. */}
         <PhotoHero
-          video="/videos/pexels-studio-morning-light.mp4"
-          poster="/images/pexels-studio-morning-light-poster.jpg"
+          video="/videos/contact-opening-film-v2.mp4"
+          poster="/images/contact-opening-film-v2-poster.jpg"
           minHeight="70vh"
         >
           {/* Every other atmospheric hero on the site (About's forest
@@ -125,8 +125,8 @@ export default function ContactPage() {
             get out of the way. */}
         <section className="relative overflow-hidden border-b border-soil/10 py-10" style={{ backgroundColor: "#E8DED0" }}>
           <BackgroundVideo
-            video="/videos/pexels-river-dawn.mp4"
-            poster="/images/pexels-river-dawn-poster.jpg"
+            video="/videos/contact-paths-film-v2.mp4"
+            poster="/images/contact-paths-film-v2-poster.jpg"
             parallax
             playbackRate={0.86}
           />
@@ -270,13 +270,13 @@ export default function ContactPage() {
           </Container>
         </section>
 
-        {/* own-leaves-cabin.mp4 replaced with higgsfield-verdant-hills.mp4
-            (morning mist parting over green hills, originally generated
-            for Home's closing CTA) per direct feedback moving this clip
-            here instead. */}
+        {/* A dedicated two-part clarity film replaces the inherited Home
+            clip: mist opens across the hills, then resolves into a wider
+            horizon. The forward edit gives this pause a beginning and an
+            arrival instead of a short-loop or boomerang rhythm. */}
         <VideoBreak
-          src="/videos/higgsfield-verdant-hills.mp4"
-          poster="/images/higgsfield-verdant-hills-poster.jpg"
+          src="/videos/contact-clarity-film-v2.mp4"
+          poster="/images/contact-clarity-film-v2-poster.jpg"
           quote="A brand conversation is just the first clear view through the noise."
           height="60vh"
           cameraPush
@@ -303,9 +303,10 @@ export default function ContactPage() {
             (or its own Footer), fitting "grab a time / stay in touch."
             Overlay at bg-soil/80, the site's normalized standard. */}
         <section id="call" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
-          {/* Restored to the warm meadow per Suman's design: the green
-              backlit grasses read harsh behind this cream panel. */}
-          <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
+          {/* A dedicated dusk-to-tide film now carries the final decision:
+              warm reeds settle into moonlit water over seventeen seconds,
+              giving the booking room a real cinematic arc. */}
+          <BackgroundVideo video="/videos/contact-booking-film-v2.mp4" poster="/images/contact-booking-film-v2-poster.jpg" />
           <div
             className="absolute inset-0"
             aria-hidden="true"
