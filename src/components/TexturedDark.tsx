@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
@@ -29,6 +29,7 @@ export function TexturedDark({
   video,
   videoWebm,
   imagePosition = "center",
+  scene = false,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -47,11 +48,16 @@ export function TexturedDark({
   // a breaking change to the prop contract.
   videoWebm?: string;
   imagePosition?: string;
+  // Opt-in full-screen chapter treatment. This deliberately does not pin:
+  // ordinary reading sections should unfold gracefully, not trap scrolling.
+  scene?: boolean;
 }) {
   const [ref, shouldLoad] = useLazyMount();
   const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const mediaY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
   // Only wired for the video variant (the Footer's closing scene) —
   // TexturedDark's other caller (the Services CTA) has no video and
   // already reads as a calm, static panel that doesn't need a cursor
@@ -63,8 +69,12 @@ export function TexturedDark({
   useVideoFadeIn(videoRef, shouldLoad && Boolean(video) && !prefersReducedMotion);
 
   return (
-    <section ref={sectionRef} id={id} className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
-      <div ref={ref} className="absolute inset-0">
+    <section ref={sectionRef} id={id} className={`relative overflow-hidden bg-soil ${scene ? "flex min-h-[100svh] items-center" : ""} ${className ?? ""}`}>
+      <motion.div
+        ref={ref}
+        className={`absolute inset-0 ${scene ? "scale-[1.08]" : ""}`}
+        style={scene && !prefersReducedMotion ? { y: mediaY } : undefined}
+      >
         {/* image renders immediately, unconditionally — not gated behind
             shouldLoad. This wrapper is almost always far down the page
             (the Footer, every page's closing CTA), so before this fix
@@ -101,7 +111,7 @@ export function TexturedDark({
             <source src={video} type="video/mp4" />
           </video>
         )}
-      </div>
+      </motion.div>
       {/* Was a near-opaque 0.88-0.93 flat overlay — with a video behind
           it (the Footer's closing scene) that crushed the motion to
           almost nothing, reading as a static dark image rather than a
@@ -135,7 +145,7 @@ export function TexturedDark({
           className="cursor-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500"
         />
       )}
-      <div className="relative">
+      <div className="relative w-full">
         {/* Audit found the video variant's overlay (above) sits below
             the site's normalized bg-soil/80 text-contrast floor —
             deliberately, per the comment above: raising it site-wide
