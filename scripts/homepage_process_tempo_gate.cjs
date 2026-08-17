@@ -127,5 +127,5 @@ async function selectedStage(processScene) {
   process.stdout.write("Working-method tempo gate passed.\n");
 })().catch((error) => {
   console.error(error);
-  process.exitCode = 1;
+  process.exit(1);
 });
