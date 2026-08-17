@@ -691,10 +691,12 @@
   display: grid;
   width: min(25rem, calc(100vw - 1.5rem));
   max-height: min(39rem, calc(100svh - 7rem));
-  padding: 1rem;
+  padding: 1.1rem;
   border: 1px solid rgba(222, 237, 240, 0.18);
-  border-radius: 0.45rem;
-  background: rgba(5, 14, 20, 0.92);
+  border-radius: 1.2rem;
+  background:
+    linear-gradient(145deg, rgba(20, 39, 37, 0.34), transparent 42%),
+    rgba(5, 14, 20, 0.94);
   box-shadow: 0 34px 100px rgba(0, 0, 0, 0.5);
   opacity: 0;
   overflow: auto;
@@ -747,29 +749,62 @@
   color: inherit;
 }
 
+.ask-tatva__panel button:focus-visible,
+.ask-tatva__panel a:focus-visible,
+.ask-tatva__trigger:focus-visible {
+  outline: 1px solid rgba(215, 231, 232, 0.92);
+  outline-offset: 3px;
+}
+
 .ask-tatva__conversation {
   display: grid;
   gap: 0.55rem;
   margin-top: 1rem;
 }
 
-.ask-tatva__conversation p {
+.ask-tatva__message {
   max-width: 92%;
-  margin: 0;
   padding: 0.78rem 0.85rem;
   border: 1px solid rgba(224, 237, 239, 0.1);
   border-radius: 0.85rem 0.85rem 0.85rem 0.2rem;
   background: rgba(224, 237, 239, 0.06);
+}
+
+.ask-tatva__message p {
+  margin: 0;
   color: rgba(239, 243, 242, 0.78);
   font-size: 0.75rem;
   line-height: 1.55;
 }
 
-.ask-tatva__conversation p[data-role="visitor"] {
+.ask-tatva__message[data-role="visitor"] {
   justify-self: end;
   border-radius: 0.85rem 0.85rem 0.2rem 0.85rem;
   background: rgba(159, 194, 200, 0.14);
+}
+
+.ask-tatva__message[data-role="visitor"] p {
   color: #f2f4f2;
+}
+
+.ask-tatva__message > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.65rem;
+  min-height: 1.8rem;
+  color: #c9dde0;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.ask-tatva__message > a:hover,
+.ask-tatva__message > a:focus-visible {
+  color: #f2f4f2;
+  outline: none;
 }
 
 .ask-tatva__starters {
@@ -807,7 +842,7 @@
   grid-template-columns: 1fr auto;
   align-items: center;
   border: 1px solid rgba(226, 237, 239, 0.18);
-  border-radius: 0.35rem;
+  border-radius: 0.8rem;
   background: rgba(3, 9, 12, 0.58);
 }
 

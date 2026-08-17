@@ -318,6 +318,36 @@ async function auditViewport(browser, viewport) {
     );
   }
 
+  if (viewport.name === "desktop-1440x900") {
+    const askTrigger = page.getByRole("button", { name: "Ask Tatva" });
+    await askTrigger.click();
+
+    const askPanel = page.getByRole("dialog", {
+      name: "Ask Tatva private strategy guide",
+    });
+    await askPanel.waitFor({ state: "visible", timeout: 2_500 });
+    await askPanel.getByRole("button", { name: "People misunderstand us" }).click();
+
+    const strategyReply = askPanel.getByText(/The brand needs one defensible position/);
+    await strategyReply.waitFor({ state: "visible", timeout: 2_500 });
+    assert(
+      (await askPanel.getByRole("link", { name: "Explore Foundation" }).getAttribute("href")) ===
+        "#foundation",
+      `${viewport.name}: Ask Tatva did not connect its diagnosis to Foundation`,
+    );
+    assert(
+      (await askPanel.getByRole("button", { name: "What can the brand own?" }).count()) === 1,
+      `${viewport.name}: Ask Tatva did not continue with a relevant prompt`,
+    );
+
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(40);
+    assert(
+      (await askTrigger.getAttribute("aria-expanded")) === "false",
+      `${viewport.name}: Ask Tatva did not close with Escape`,
+    );
+  }
+
   const clearDiagram = page.locator("#decision").first();
   const geometry = await clearDiagram.evaluate((element) => {
     const label = Array.from(element.querySelectorAll("p")).find((node) =>
