@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
-import { AuditInvite } from "@/components/AuditInvite";
 import { Reveal } from "@/components/Reveal";
 import { TiltCard } from "@/components/TiltCard";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -118,19 +117,25 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        {/* The interdisciplinary convergence — psychology and language
-            traveling toward each other through measured scroll progress
-            and meeting as brand strategy. Typographic, sticky, zero
-            WebGL; reduced motion gets the resolved state statically. */}
-        <section className="bg-soil">
+        {/* Psychology and language now resolve in one complete screen.
+            The 21-second film is a true forward edit of two live-action
+            water passages: no reverse, bounce, or short GIF cadence. The
+            visible confluence makes the interdisciplinary idea legible,
+            while keeping the documented decision and audit in-frame. */}
+        <section className="relative overflow-hidden bg-soil">
+          <BackgroundVideo
+            video="/videos/about-convergence-water.mp4"
+            videoMobile="/videos/about-convergence-water-mobile.mp4"
+            poster="/images/about-convergence-water-poster.jpg"
+            playbackRate={0.88}
+            push
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-soil/65" />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(31,27,24,0.34),rgba(31,27,24,0.08)_48%,rgba(31,27,24,0.4))]"
+          />
           <Convergence />
-          {/* Lead magnet placement (bible §11): the audit signpost
-              directly after the interdisciplinary section, inside the
-              same soil passage so it lands as a takeaway, never a
-              seam. */}
-          <Container className="max-w-3xl pb-16 pt-4">
-            <AuditInvite />
-          </Container>
         </section>
 
         {/* Direct feedback flagged this quote break (higgsfield-stream-
