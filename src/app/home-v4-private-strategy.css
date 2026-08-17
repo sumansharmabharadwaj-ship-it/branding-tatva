@@ -120,7 +120,7 @@
     min-height: 0;
     max-height: 59svh;
     padding: clamp(1.3rem, 2.3vw, 2.1rem);
-    overflow: auto;
+    overflow: hidden;
   }
 
   .home-v4-recognition__copy h3 {
@@ -250,7 +250,7 @@
     min-height: 0;
     max-height: 48svh;
     padding: clamp(1.25rem, 2.2vw, 2rem);
-    overflow: auto;
+    overflow: hidden;
   }
 
   .paths-cinematic__choices {
@@ -275,7 +275,7 @@
 
   /* The process scene shows its chapter rail and one active decision. */
   .project-journey__shell {
-    position: absolute;
+    position: absolute !important;
     inset: 0;
     height: 100svh !important;
     padding: clamp(6.7rem, 12svh, 7.5rem) clamp(1.5rem, 4vw, 4rem) clamp(2rem, 4svh, 3rem);
@@ -288,21 +288,34 @@
   .project-journey__rail {
     height: auto;
     min-height: 0;
-    margin-top: clamp(1rem, 2.3svh, 1.7rem);
+    margin-top: clamp(1rem, 2.3svh, 1.7rem) !important;
   }
 
   .project-journey__board {
+    position: absolute;
+    right: clamp(1.5rem, 4vw, 4rem);
+    bottom: clamp(2rem, 4svh, 3rem);
+    width: min(54vw, 49rem);
     height: auto;
     min-height: 0;
-    margin-top: 0.8rem;
+    margin-top: 0;
   }
 
   .project-journey__focus-card {
-    width: min(100%, 52rem);
+    width: 100%;
     min-height: 0;
-    max-height: 41svh;
+    max-height: 34svh;
     padding: clamp(1.2rem, 2.2vw, 2rem);
-    overflow: auto;
+    overflow: hidden;
+  }
+
+  .home-v4-chapter--process .project-journey {
+    padding-block: 0 !important;
+  }
+
+  .project-journey__explanation,
+  .project-journey__decision-block {
+    display: none;
   }
 
   .project-journey__signal-card,
@@ -355,8 +368,17 @@
     display: none;
   }
 
+  .tatva-pressure-lab__board {
+    color: #f1eee7;
+  }
+
+  .tatva-pressure-lab__board-top {
+    display: none !important;
+  }
+
   .tatva-pressure-lab__board > div:last-child {
-    grid-template-columns: minmax(0, 1fr);
+    display: block !important;
+    padding-top: 0 !important;
   }
 
   .tatva-pressure-lab__reading {
@@ -401,8 +423,17 @@
     width: 100%;
     min-height: 0;
     max-height: 58svh;
-    padding: clamp(1.3rem, 2.3vw, 2.1rem);
+    padding: clamp(1.1rem, 1.8vw, 1.6rem);
     overflow: auto;
+    scrollbar-width: none;
+  }
+
+  .questions-cinematic__answer::-webkit-scrollbar {
+    display: none;
+  }
+
+  .questions-cinematic__answer h3 {
+    font-size: clamp(2.35rem, min(3.2vw, 5svh), 3.15rem);
   }
 
   .questions-cinematic__tabs {
@@ -426,6 +457,26 @@
   .home-v4-invitation__sticky .final-invitation__map {
     display: none;
   }
+
+  .studio-cinematic__panel {
+    display: none;
+  }
+}
+
+/* Keep every breakpoint rooted in real footage and written strategy. These
+   legacy diagrams are intentionally removed instead of shrinking into mobile
+   illustrations that would reintroduce the GIF/graphic character. */
+.home-v4-recognition__diagram,
+.home-v4-cost__diagram,
+.paths-cinematic__map,
+.project-journey__map-card,
+.project-journey__orbit,
+.project-journey__grid,
+.tatva-pressure-lab__diagram,
+.questions-cinematic__compass,
+.questions-cinematic__map,
+.final-invitation__map {
+  display: none !important;
 }
 
 /* Selected blue-hour opening frame. */
