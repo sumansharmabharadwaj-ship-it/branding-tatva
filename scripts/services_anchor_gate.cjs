@@ -61,6 +61,36 @@ async function inspect(browser, viewport) {
     results.push({ id, ...geometry });
   }
 
+  // The package selector expands in response to scroll progress. A same-page
+  // jump from the final chapter back to Verified outcome must remain aligned
+  // after that preceding layout update, rather than landing correctly for one
+  // frame and then being pushed down by the newly mounted package detail.
+  await page.goto(`${BASE_URL}/services#book`, { waitUntil: "domcontentloaded", timeout: 90_000 });
+  await waitForServices(page);
+  await page.evaluate(() => {
+    window.location.hash = "#verified-outcome";
+  });
+  await page.waitForTimeout(320);
+  const samePageGeometry = await page.locator("#verified-outcome").evaluate((node) => {
+    const bounds = node.getBoundingClientRect();
+    return {
+      top: bounds.top,
+      scrollMarginTop: getComputedStyle(node).scrollMarginTop,
+      activeId: document.documentElement.dataset.servicesActiveChapterId || null,
+    };
+  });
+  const samePageMinimum = viewport.width < 768 ? 50 : 60;
+  const samePageMaximum = viewport.width < 768 ? 125 : 145;
+  assert(
+    samePageGeometry.top >= samePageMinimum && samePageGeometry.top <= samePageMaximum,
+    `${viewport.name}: same-page #verified-outcome landed at ${samePageGeometry.top.toFixed(1)}px; expected readable header clearance ${samePageMinimum}-${samePageMaximum}px`,
+  );
+  assert(
+    samePageGeometry.activeId === "verified-outcome",
+    `${viewport.name}: same-page #verified-outcome landed with active chapter ${samePageGeometry.activeId}`,
+  );
+  results.push({ id: "verified-outcome", route: "same-page-from-book", ...samePageGeometry });
+
   await context.close();
   return { viewport: viewport.name, results };
 }

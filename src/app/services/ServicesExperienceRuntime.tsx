@@ -123,17 +123,29 @@ export function ServicesExperienceRuntime() {
       }),
     );
 
-    // Some chapters receive their stable IDs during this client runtime. On a
-    // fresh URL such as /services#stakes the browser performs its native hash
-    // lookup before those IDs exist, so it has nothing to scroll to. Re-run
-    // that one native alignment after IDs are assigned. Ordinary anchor clicks
-    // after hydration remain completely browser controlled.
-    const requestedHash = window.location.hash.slice(1);
-    if (requestedHash && scenes.some((scene) => scene.id === requestedHash)) {
+    // A package preview can expand immediately after a chapter jump because
+    // the new scroll position publishes a different journey beat. That layout
+    // commit used to push the following Verified outcome scene hundreds of
+    // pixels below its anchor after the browser had already aligned it. Give
+    // React two paints to settle, then perform one final native alignment.
+    // The retry stays inside three animation frames, so it cannot fight a
+    // visitor who starts scrolling after the chapter has arrived.
+    function restoreRequestedHash() {
+      window.cancelAnimationFrame(hashRestoreFrame);
+      const requestedHash = window.location.hash.slice(1);
+      if (!requestedHash || !scenes.some((scene) => scene.id === requestedHash)) return;
+
       hashRestoreFrame = window.requestAnimationFrame(() => {
-        document.getElementById(requestedHash)?.scrollIntoView({ behavior: "auto", block: "start" });
+        hashRestoreFrame = window.requestAnimationFrame(() => {
+          hashRestoreFrame = window.requestAnimationFrame(() => {
+            document.getElementById(requestedHash)?.scrollIntoView({ behavior: "auto", block: "start" });
+          });
+        });
       });
     }
+
+    restoreRequestedHash();
+    window.addEventListener("hashchange", restoreRequestedHash);
 
     function publishChapter(index: number) {
       if (index === activeIndex && document.documentElement.dataset.servicesActiveChapter) return;
@@ -286,6 +298,7 @@ export function ServicesExperienceRuntime() {
       window.removeEventListener("scroll", scheduleProgress);
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);
+      window.removeEventListener("hashchange", restoreRequestedHash);
       delete document.documentElement.dataset.servicesExperience;
       delete document.documentElement.dataset.servicesActiveChapter;
       delete document.documentElement.dataset.servicesActiveChapterId;

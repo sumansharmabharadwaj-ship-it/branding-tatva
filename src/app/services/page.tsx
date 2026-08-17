@@ -419,7 +419,7 @@ export default async function ServicesPage() {
             number from projects.ts verified stats. Charcoal ground so
             the numbers themselves are the visual; it also hands
             seamlessly into Authority's identical charcoal. */}
-        <section data-services-scene="verified-outcome" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section id="verified-outcome" data-services-scene="verified-outcome" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <BackgroundVideo
             video="/videos/pixabay-golden-forest-glow.mp4"
             poster="/images/pixabay-golden-forest-glow-poster.jpg"
@@ -460,7 +460,7 @@ export default async function ServicesPage() {
             soil veil that was re-warming the whole page into a single
             amber wash. The overlay gradient is tinted with the
             section's own mood tone, never soil. */}
-        <section data-services-scene="stakes" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.stone }}>
+        <section id="stakes" data-services-scene="stakes" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.stone }}>
           {/* Original generated positioning scene: several similar
               stones disappear into cool category mist while one
               weathered surface holds a restrained mineral seam. The
@@ -560,7 +560,7 @@ export default async function ServicesPage() {
         {/* Mood: THE ARCHIVE. Layered paper, vellum,
             blind-debossed grids, and dark folios form one ordered
             material system behind the live ArtifactPreview. */}
-        <section data-services-scene="deliverables" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.study }}>
+        <section id="deliverables" data-services-scene="deliverables" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.study }}>
           {/* Original generated Deliverables archive: ivory papers,
               translucent vellum, embossed grids, dark folios, and one
               stone weight make the invisible work feel tangible before
