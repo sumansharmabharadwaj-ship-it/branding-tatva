@@ -49,15 +49,15 @@
 .paths-cinematic__film video {
   object-fit: cover;
   object-position: 50% 42%;
-  opacity: 0.62;
-  filter: saturate(0.68) contrast(1.08) brightness(0.58);
+  opacity: 0.82;
+  filter: saturate(0.76) contrast(1.08) brightness(0.74);
   transform: scale(1.055);
 }
 
 .paths-cinematic__film > span {
   background:
-    linear-gradient(180deg, rgba(7, 13, 12, 0.72) 0%, rgba(7, 13, 12, 0.2) 34%, rgba(7, 13, 12, 0.72) 100%),
-    linear-gradient(92deg, rgba(7, 13, 12, 0.88) 0%, rgba(7, 13, 12, 0.42) 55%, rgba(7, 13, 12, 0.64) 100%);
+    linear-gradient(180deg, rgba(7, 13, 12, 0.62) 0%, rgba(7, 13, 12, 0.12) 34%, rgba(7, 13, 12, 0.66) 100%),
+    linear-gradient(92deg, rgba(7, 13, 12, 0.82) 0%, rgba(7, 13, 12, 0.22) 55%, rgba(7, 13, 12, 0.44) 100%);
 }
 
 .paths-cinematic__glow {

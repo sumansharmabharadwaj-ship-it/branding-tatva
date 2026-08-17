@@ -32,6 +32,7 @@
 
 - Passed. The opening and internal cinematic scenes use real live-action video/poster assets with filmic crops, dark grading, and continuous motion.
 - The final media pass replaces the remaining 4–5 second hero, pathway, evidence, and studio loops with 8–27 second forward-moving footage and slows the shared media direction to 0.86×, removing the short-repeat/GIF impression.
+- The Paths grade was opened by roughly one stop so the valley film reads immediately as footage instead of a dark solid field, while the copy side keeps its contrast veil.
 - Legacy constellation, compass, map, orbit, and diagram treatments are removed across breakpoints; no GIF-style or boomerang-style graphic is used as the visual subject.
 
 ### Copy and content
