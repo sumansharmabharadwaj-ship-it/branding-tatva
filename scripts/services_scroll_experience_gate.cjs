@@ -202,7 +202,12 @@ async function auditViewport(browser, viewport) {
 
   const hero = page.locator('[data-services-hero-scene="true"]');
   assert((await hero.count()) === 1, `${label}: Services hero director is missing`);
-  assert((await hero.locator('[data-services-hero-heading="true"]').count()) === 1, `${label}: hero heading is not directed`);
+  const directedHeading = hero.locator('[data-services-hero-heading="true"]');
+  const headingDeadline = Date.now() + 2_000;
+  while (Date.now() < headingDeadline && (await directedHeading.count()) !== 1) {
+    await page.waitForTimeout(40);
+  }
+  assert((await directedHeading.count()) === 1, `${label}: hero heading is not directed`);
   assert((await hero.locator('[data-services-hero-aperture="true"]').count()) === 1, `${label}: hero aperture is missing`);
   const heroStart = await hero.evaluate((node) => ({
     phase: node.getAttribute("data-services-hero-phase"),
