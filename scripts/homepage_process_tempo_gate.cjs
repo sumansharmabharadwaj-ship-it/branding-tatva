@@ -31,8 +31,14 @@ async function selectedStage(processScene) {
   });
 
   const page = await context.newPage();
+  page.setDefaultTimeout(7_000);
   await page.goto(BASE_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
-  await page.evaluate(() => document.fonts.ready);
+  await page.evaluate(() =>
+    Promise.race([
+      document.fonts.ready,
+      new Promise((resolve) => window.setTimeout(resolve, 2_000)),
+    ]),
+  );
 
   const loader = page.locator("[data-page-load-veil]");
   if ((await loader.count()) > 0) {
