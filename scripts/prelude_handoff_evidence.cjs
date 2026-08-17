@@ -23,7 +23,7 @@ async function waitForAttribute(page, locator, name, value, timeoutMs = 2_000) {
 async function openingVisibility(page) {
   return page.locator('[data-home-v4-chapter="opening"]').evaluate((opening) => {
     const headline = opening.querySelector("h1");
-    const signal = opening.querySelector(".home-v4-opening__signal");
+    const signal = opening.querySelector(".home-v4-opening__proof");
     const headlineStyle = headline ? window.getComputedStyle(headline) : null;
     const signalStyle = signal ? window.getComputedStyle(signal) : null;
     return {
@@ -57,7 +57,7 @@ async function firstVisit(browser) {
   assert(covered.ready !== "true", "first visit: opening reported ready while prelude was present");
   assert(
     covered.signalOpacity <= 0.08,
-    `first visit: opening signal was visible behind prelude (${covered.signalOpacity})`,
+    `first visit: opening proof was visible behind prelude (${covered.signalOpacity})`,
   );
 
   await page.screenshot({
@@ -77,7 +77,7 @@ async function firstVisit(browser) {
   );
   assert(
     revealed.signalOpacity >= 0.65,
-    `first visit: opening signal did not resolve (${revealed.signalOpacity})`,
+    `first visit: opening proof did not resolve (${revealed.signalOpacity})`,
   );
 
   await page.locator('[data-home-v4-chapter="opening"]').screenshot({
