@@ -85,6 +85,19 @@ async function waitForPrelude(page, viewportName) {
   );
 }
 
+async function settleConsent(page, viewportName) {
+  const banner = page.getByRole("dialog", { name: "Your choice about measurement" });
+  if ((await banner.count()) === 0) return;
+
+  const essentialOnly = banner.getByRole("button", { name: "Essential only" });
+  assert(
+    (await essentialOnly.count()) === 1,
+    `${viewportName}: consent banner did not expose the essential-only choice`,
+  );
+  await essentialOnly.click();
+  await banner.waitFor({ state: "detached", timeout: 2_500 });
+}
+
 async function auditViewport(browser, viewport) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
@@ -115,6 +128,7 @@ async function auditViewport(browser, viewport) {
   await page.goto(BASE_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await page.evaluate(() => document.fonts.ready);
   await waitForPrelude(page, viewport.name);
+  await settleConsent(page, viewport.name);
 
   const chapterIds = await page
     .locator("[data-home-v4-chapter]")
