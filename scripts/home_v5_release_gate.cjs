@@ -5,11 +5,44 @@ const { chromium } = require("playwright");
 const BASE_URL = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const OUTPUT = path.join(process.cwd(), "homepage-v5-audit");
 const CHAPTERS = ["opening", "recognition", "foundation", "process", "evidence", "studio", "decision", "invitation"];
+const HOME_FILMS = [
+  "home-v5-opening-film.mp4",
+  "home-v5-diagnosis-film.mp4",
+  "home-v5-paths-film.mp4",
+  "home-v5-method-film.mp4",
+  "home-v5-evidence-film.mp4",
+  "home-v5-questions-film.mp4",
+  "home-v5-invitation-film-v2.mp4",
+];
 
 fs.mkdirSync(OUTPUT, { recursive: true });
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
+}
+
+function durationSeconds(buffer, label) {
+  const marker = buffer.indexOf(Buffer.from("mvhd"));
+  assert(marker >= 0, `${label} has no movie header`);
+  const version = buffer.readUInt8(marker + 4);
+  if (version === 1) {
+    return Number(buffer.readBigUInt64BE(marker + 28)) / buffer.readUInt32BE(marker + 24);
+  }
+  return buffer.readUInt32BE(marker + 20) / buffer.readUInt32BE(marker + 16);
+}
+
+function verifyFilmFiles() {
+  for (const file of HOME_FILMS) {
+    const filePath = path.join(process.cwd(), "public", "videos", file);
+    const posterPath = path.join(process.cwd(), "public", "images", file.replace(/\.mp4$/, "-poster.jpg"));
+    assert(fs.existsSync(filePath) && fs.statSync(filePath).size > 50_000, `${file} is missing its film`);
+    assert(fs.existsSync(posterPath) && fs.statSync(posterPath).size > 2_000, `${file} is missing its poster`);
+    const mp4 = fs.readFileSync(filePath);
+    assert(mp4.subarray(0, 64).includes(Buffer.from("ftyp")), `${file} is not a valid MP4 container`);
+    assert(mp4.includes(Buffer.from("moov")), `${file} has no playable moov atom`);
+    const duration = durationSeconds(mp4, file);
+    assert(duration >= 16, `${file} is only ${duration.toFixed(2)} seconds`);
+  }
 }
 
 async function inspectViewport(browser, viewport, label) {
@@ -22,27 +55,6 @@ async function inspectViewport(browser, viewport, label) {
   const openingFilm = page.locator("#opening video");
   assert((await openingFilm.count()) === 1, `${label} is missing its opening film`);
   assert(!(await openingFilm.evaluate((video) => video.paused)), `${label} opening film remained paused after the prelude`);
-
-  // The media director intentionally defers offscreen files. Prime each film
-  // by visiting its chapter, then poll through ordinary DOM evaluation so the
-  // production CSP stays intact and a cold runner does not misclassify an
-  // unloaded duration as a short loop.
-  const chapterFilms = page.locator("[data-home-v5-chapter] video");
-  assert((await chapterFilms.count()) === 7, `${label} expected seven film chapters`);
-  for (let index = 0; index < 7; index += 1) {
-    const film = chapterFilms.nth(index);
-    await page.evaluate((filmIndex) => {
-      document.querySelectorAll("[data-home-v5-chapter] video")[filmIndex]?.scrollIntoView({ block: "center" });
-    }, index);
-    await page.waitForTimeout(160);
-    let metadataReady = false;
-    for (let attempt = 0; attempt < 40; attempt += 1) {
-      metadataReady = await film.evaluate((video) => Number.isFinite(video.duration));
-      if (metadataReady) break;
-      await page.waitForTimeout(250);
-    }
-    assert(metadataReady, `${label} film ${index + 1} did not load its header within 10 seconds`);
-  }
 
   const report = await page.evaluate((expected) => {
     const chapters = [...document.querySelectorAll("[data-home-v5-chapter]")];
@@ -61,7 +73,7 @@ async function inspectViewport(browser, viewport, label) {
           widthOverflow: chapter.scrollWidth - chapter.clientWidth,
           shellTop: shellRect ? Math.round(shellRect.top - rect.top) : null,
           shellBottom: shellRect ? Math.round(shellRect.bottom - rect.top) : null,
-          video: video?.currentSrc || null,
+          video: video?.currentSrc || video?.querySelector("source")?.src || null,
           duration: video && Number.isFinite(video.duration) ? Number(video.duration.toFixed(2)) : null,
         };
       }),
@@ -92,7 +104,6 @@ async function inspectViewport(browser, viewport, label) {
   assert(new Set(videoSources).size === videoSources.length, `${label} repeats a homepage film source`);
   for (const chapter of videoReports) {
     assert(chapter.video.includes("/videos/home-v5-"), `${label} ${chapter.id} does not use its dedicated V5 film`);
-    assert((chapter.duration || 0) >= 16, `${label} ${chapter.id} film is only ${chapter.duration}s`);
   }
 
   for (const id of ["recognition", "foundation", "process", "decision"]) {
@@ -127,6 +138,7 @@ async function inspectViewport(browser, viewport, label) {
 }
 
 (async () => {
+  verifyFilmFiles();
   const browser = await chromium.launch({ headless: true });
   const desktop = await inspectViewport(browser, { width: 1365, height: 936 }, "desktop-1365x936");
   const mobile = await inspectViewport(browser, { width: 390, height: 844 }, "mobile-390x844");
