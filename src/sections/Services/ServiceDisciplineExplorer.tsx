@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, PointerEvent } from "react";
+import type { CSSProperties, FocusEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
@@ -19,7 +19,6 @@ import { track } from "@/lib/analytics";
 const EASE = [0.16, 1, 0.3, 1] as const;
 const AUTO_ADVANCE_MS = 3800;
 const MANUAL_HOLD_MS = 12000;
-const HOVER_HOLD_MS = 4200;
 
 function clamp(value: number, minimum = 0, maximum = 1) {
   return Math.min(maximum, Math.max(minimum, value));
@@ -111,12 +110,12 @@ export function ServiceDisciplineExplorer() {
     });
   }
 
-  function handlePointerEnter(index: number, event: PointerEvent<HTMLButtonElement>) {
-    // Touch browsers can retain a synthetic hover state after a tap.
-    // Only a real fine-pointer hover previews; touch remains click-led.
-    if (event.pointerType === "mouse" || event.pointerType === "pen") {
-      activate(index, "hover", HOVER_HOLD_MS);
-    }
+  function handleFocus(index: number, event: FocusEvent<HTMLButtonElement>) {
+    // Mouse focus lands before click. Activating at that point moves the
+    // horizontal rail underneath the pointer, so the release can land on a
+    // neighbouring discipline. Keyboard focus remains an intentional manual
+    // activation; pointer users activate on the completed click below.
+    if (event.currentTarget.matches(":focus-visible")) activate(index, "focus");
   }
 
   return (
@@ -192,8 +191,7 @@ export function ServiceDisciplineExplorer() {
                         aria-selected={isActive}
                         aria-controls="service-discipline-panel"
                         tabIndex={isActive ? 0 : -1}
-                        onPointerEnter={(event) => handlePointerEnter(index, event)}
-                        onFocus={() => activate(index, "focus")}
+                        onFocus={(event) => handleFocus(index, event)}
                         onClick={() => activate(index, "click")}
                         className="group relative flex min-h-14 min-w-0 items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:px-4 lg:w-[13.5rem] lg:flex-none"
                         style={{ "--discipline-color": offer.color } as CSSProperties}

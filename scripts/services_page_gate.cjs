@@ -152,6 +152,19 @@ async function waitForVisibleText(locator, text, label, timeoutMs = 8_000) {
   throw new Error(`${label}: expected visible text ${JSON.stringify(text)}, received ${JSON.stringify(current.slice(0, 240))}`);
 }
 
+async function waitForAttribute(locator, name, expected, label, timeoutMs = 4_000) {
+  const deadline = Date.now() + timeoutMs;
+  let actual = null;
+
+  while (Date.now() < deadline) {
+    actual = await locator.getAttribute(name).catch(() => null);
+    if (actual === expected) return;
+    await new Promise((resolve) => setTimeout(resolve, 90));
+  }
+
+  throw new Error(`${label}: ${name} was ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`);
+}
+
 async function assertNoOverflow(page, label) {
   const dimensions = await page.evaluate(() => ({
     viewport: window.innerWidth,
@@ -351,7 +364,7 @@ async function auditServicesViewport(browser, viewport) {
   await assertTouchTargets(situationButtons, 40, `${label}: situation choices`);
   const ideaChoice = situation.getByRole("button", { name: /I am beginning with an idea/i }).first();
   await ideaChoice.click();
-  assert((await ideaChoice.getAttribute("aria-pressed")) === "true", `${label}: situation choice did not become pressed`);
+  await waitForAttribute(ideaChoice, "aria-pressed", "true", `${label}: situation choice did not become pressed`);
   await waitForVisibleText(situation, "Foundation", `${label}: situation recommendation`);
   assert((await situation.getByRole("link", { name: /See the full package/i }).count()) === 1, `${label}: situation-to-package path is missing`);
   if (viewport.screenshots) await captureViewport(page, `services-${viewport.name}-situation.png`);
@@ -367,7 +380,7 @@ async function auditServicesViewport(browser, viewport) {
   assert((await disciplineTabs.first().getAttribute("aria-selected")) === "true", `${label}: first discipline is not selected`);
   const websiteTab = offerings.getByRole("tab", { name: "Website Development", exact: true });
   await websiteTab.click();
-  assert((await websiteTab.getAttribute("aria-selected")) === "true", `${label}: Website Development tab did not activate`);
+  await waitForAttribute(websiteTab, "aria-selected", "true", `${label}: Website Development tab did not activate`);
   const disciplinePanel = offerings.getByRole("tabpanel");
   await waitForVisibleText(disciplinePanel, "The most visited stop on a customer's whole journey", `${label}: service-discipline panel`);
   for (const service of [
@@ -400,7 +413,7 @@ async function auditServicesViewport(browser, viewport) {
   await assertTouchTargets(packageCards, 40, `${label}: package cards`);
   const unclearChoice = desire.locator("button").filter({ hasText: "Feeling unclear or inconsistent" }).first();
   await unclearChoice.click();
-  await page.waitForTimeout(120);
+  await waitForAttribute(unclearChoice, "aria-pressed", "true", `${label}: manual package choice`);
   assert(!(await carriedPackage.isVisible().catch(() => false)), `${label}: carried recommendation did not clear after a manual package choice`);
   assert(
     (await unclearChoice.getAttribute("aria-pressed")) === "true",
@@ -412,7 +425,7 @@ async function auditServicesViewport(browser, viewport) {
 
   const compareButton = desire.getByRole("button", { name: "Compare all three side by side", exact: true });
   await compareButton.click();
-  assert((await compareButton.getAttribute("aria-pressed")) === "true", `${label}: comparison did not expose its pressed state`);
+  await waitForAttribute(compareButton, "aria-pressed", "true", `${label}: comparison did not expose its pressed state`);
 
   const comparisonDeck = desire.locator('[data-package-comparison-deck="true"]');
   await comparisonDeck.waitFor({ state: "visible", timeout: 8_000 });
@@ -447,10 +460,7 @@ async function auditServicesViewport(browser, viewport) {
       `${label}: compact package comparison is not horizontally scrollable`,
     );
     await comparisonControls.getByRole("button", { name: "Next package", exact: true }).click();
-    assert(
-      (await comparisonDeck.getAttribute("data-active-index")) === "1",
-      `${label}: package comparison did not advance to the second card`,
-    );
+    await waitForAttribute(comparisonDeck, "data-active-index", "1", `${label}: package comparison did not advance to the second card`);
   } else {
     assert((await visibleCount(comparisonControls)) === 0, `${label}: mobile comparison controls remain visible on desktop`);
     const cardBoxes = await comparisonCards.evaluateAll((nodes) =>
@@ -501,8 +511,8 @@ async function auditServicesViewport(browser, viewport) {
     assert((await visibleCount(authorityPanels)) === 1, `${label}: multiple Authority panels stack in the mobile scene`);
     const voiceLayer = mobileAuthorityDeck.getByRole("tab", { name: /04 Voice/i });
     await voiceLayer.click();
-    assert((await voiceLayer.getAttribute("aria-selected")) === "true", `${label}: Voice Authority layer did not activate`);
-    assert((await mobileAuthorityDeck.getAttribute("data-active-index")) === "3", `${label}: Authority deck index did not advance`);
+    await waitForAttribute(voiceLayer, "aria-selected", "true", `${label}: Voice Authority layer did not activate`);
+    await waitForAttribute(mobileAuthorityDeck, "data-active-index", "3", `${label}: Authority deck index did not advance`);
     const activeAuthorityPanel = mobileAuthorityDeck.locator('[data-authority-layer-panel="true"]:not([hidden])');
     await waitForVisibleText(
       activeAuthorityPanel,
@@ -563,11 +573,8 @@ async function auditServicesViewport(browser, viewport) {
 
     const distinctTab = mobileStakesDeck.getByRole("tab", { name: "Distinct future", exact: true });
     await distinctTab.click();
-    assert((await distinctTab.getAttribute("aria-selected")) === "true", `${label}: distinct Stakes path did not activate`);
-    assert(
-      (await mobileStakesDeck.getAttribute("data-active-stakes-path")) === "distinct",
-      `${label}: compact Stakes deck did not record the distinct path`,
-    );
+    await waitForAttribute(distinctTab, "aria-selected", "true", `${label}: distinct Stakes path did not activate`);
+    await waitForAttribute(mobileStakesDeck, "data-active-stakes-path", "distinct", `${label}: compact Stakes deck did not record the distinct path`);
     assert((await visibleCount(stakesPanels)) === 1, `${label}: Stakes panels stack after the path changes`);
     await waitForVisibleText(
       mobileStakesDeck.locator('[data-stakes-path="distinct"]'),
@@ -639,11 +646,8 @@ async function auditServicesViewport(browser, viewport) {
 
     const rememberedTab = mobilePerceptionDeck.getByRole("tab", { name: /03 Remembered/i });
     await rememberedTab.click();
-    assert((await rememberedTab.getAttribute("aria-selected")) === "true", `${label}: Remembered rung did not activate`);
-    assert(
-      (await mobilePerceptionDeck.getAttribute("data-active-perception-index")) === "2",
-      `${label}: compact perception climb did not reach Remembered`,
-    );
+    await waitForAttribute(rememberedTab, "aria-selected", "true", `${label}: Remembered rung did not activate`);
+    await waitForAttribute(mobilePerceptionDeck, "data-active-perception-index", "2", `${label}: compact perception climb did not reach Remembered`);
     await waitForVisibleText(
       mobilePerceptionDeck.locator('[data-perception-rung="remembered"]'),
       "The brand comes to mind unprompted",
@@ -653,10 +657,7 @@ async function auditServicesViewport(browser, viewport) {
     const nextRung = mobilePerceptionDeck.locator('[data-perception-next="true"]');
     await assertTouchTargets(nextRung, 40, `${label}: perception next-rung control`);
     await nextRung.click();
-    assert(
-      (await mobilePerceptionDeck.getAttribute("data-active-perception-index")) === "3",
-      `${label}: perception next-rung control did not advance`,
-    );
+    await waitForAttribute(mobilePerceptionDeck, "data-active-perception-index", "3", `${label}: perception next-rung control did not advance`);
     await waitForVisibleText(
       mobilePerceptionDeck.locator('[data-perception-rung="preferred"]'),
       "Comparison ends before it begins",
@@ -671,7 +672,7 @@ async function auditServicesViewport(browser, viewport) {
     await assertTouchTargets(rungButtons, 40, `${label}: desktop perception rungs`);
     const remembered = desktopPerceptionLadder.locator("button").filter({ hasText: "Remembered" }).first();
     await remembered.click();
-    assert((await remembered.getAttribute("aria-expanded")) === "true", `${label}: desktop perception rung did not expand`);
+    await waitForAttribute(remembered, "aria-expanded", "true", `${label}: desktop perception rung did not expand`);
     await waitForVisibleText(
       desktopPerceptionLadder,
       "The brand comes to mind unprompted",
@@ -723,17 +724,14 @@ async function auditServicesViewport(browser, viewport) {
 
   const activationDrawer = deliverablesExplorer.getByRole("tab", { name: /Activation drawer/i }).first();
   await activationDrawer.click();
-  assert(
-    (await activationDrawer.getAttribute("aria-selected")) === "true",
-    `${label}: Activation drawer did not open`,
-  );
+  await waitForAttribute(activationDrawer, "aria-selected", "true", `${label}: Activation drawer did not open`);
   const activationButtons = deliverablesExplorer.locator('ul[aria-label="Activation deliverables"] button');
   await waitForCount(activationButtons, 3, `${label}: Activation deliverables`);
   await assertTouchTargets(activationButtons, 40, `${label}: Activation deliverables`);
 
   const voiceDeliverable = deliverablesExplorer.getByRole("button", { name: "Voice & messaging alignment", exact: true });
   await voiceDeliverable.click();
-  assert((await voiceDeliverable.getAttribute("aria-pressed")) === "true", `${label}: deliverable did not become selected`);
+  await waitForAttribute(voiceDeliverable, "aria-pressed", "true", `${label}: deliverable did not become selected`);
 
   const deliverableDetail = deliverablesExplorer.locator('[data-deliverable-detail="true"]');
   const explanationTabs = deliverableDetail
@@ -885,11 +883,8 @@ async function auditServicesViewport(browser, viewport) {
 
     const unlockTab = audit.getByRole("tab", { name: "Unlock all ten", exact: true });
     await unlockTab.click();
-    assert((await unlockTab.getAttribute("aria-selected")) === "true", `${label}: unlock chapter did not become selected`);
-    assert(
-      (await auditDesk.getAttribute("data-mobile-chapter")) === "unlock",
-      `${label}: audit desk did not switch to the unlock chapter`,
-    );
+    await waitForAttribute(unlockTab, "aria-selected", "true", `${label}: unlock chapter did not become selected`);
+    await waitForAttribute(auditDesk, "data-mobile-chapter", "unlock", `${label}: audit desk did not switch to the unlock chapter`);
     assert((await visibleCount(checksPanel)) === 0, `${label}: public checks remain stacked above the mobile form`);
     assert((await visibleCount(unlockPanel)) === 1, `${label}: mobile unlock panel did not appear`);
     assert((await visibleCount(auditForm)) === 1, `${label}: mobile audit form did not appear`);
@@ -913,10 +908,7 @@ async function auditServicesViewport(browser, viewport) {
     const auditBack = audit.getByRole("button", { name: "Back to the five open checks", exact: true });
     await assertTouchTargets(auditBack, 40, `${label}: Recognition Audit back control`);
     await auditBack.click();
-    assert(
-      (await auditDesk.getAttribute("data-mobile-chapter")) === "checks",
-      `${label}: Recognition Audit cannot return to the public checks`,
-    );
+    await waitForAttribute(auditDesk, "data-mobile-chapter", "checks", `${label}: Recognition Audit cannot return to the public checks`);
     assert((await visibleCount(checksPanel)) === 1, `${label}: public checks did not return after Back`);
     assert((await visibleCount(auditForm)) === 0, `${label}: audit form remained stacked after Back`);
 

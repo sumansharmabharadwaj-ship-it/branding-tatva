@@ -31,7 +31,10 @@ async function inspectViewport(browser, viewport, label) {
   assert((await chapterFilms.count()) === 7, `${label} expected seven film chapters`);
   for (let index = 0; index < 7; index += 1) {
     const film = chapterFilms.nth(index);
-    await film.scrollIntoViewIfNeeded();
+    await page.evaluate((filmIndex) => {
+      document.querySelectorAll("[data-home-v5-chapter] video")[filmIndex]?.scrollIntoView({ block: "center" });
+    }, index);
+    await page.waitForTimeout(160);
     let metadataReady = false;
     for (let attempt = 0; attempt < 40; attempt += 1) {
       metadataReady = await film.evaluate((video) => Number.isFinite(video.duration));
