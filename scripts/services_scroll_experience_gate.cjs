@@ -96,6 +96,21 @@ async function assertWayfinding(page, viewport, label, sceneCount) {
       `${label}: desktop rail does not expose all ${sceneCount} chapters`,
     );
 
+    // The route enters with a page-level transform. A taller 13-chapter rail
+    // can briefly cross the viewport edge while that transform is resolving,
+    // even though its settled fixed geometry is comfortably bounded. Measure
+    // the usable state visitors receive, not an intermediate animation frame.
+    await page.waitForFunction(
+      () => {
+        const node = document.querySelector('[data-section-jump-nav-desktop-mode="rail"]');
+        if (!node) return false;
+        const bounds = node.getBoundingClientRect();
+        return bounds.top >= -2 && bounds.bottom <= window.innerHeight + 2;
+      },
+      undefined,
+      { timeout: 2_500 },
+    );
+
     const geometry = await rail.first().evaluate((node) => {
       const bounds = node.getBoundingClientRect();
       return {

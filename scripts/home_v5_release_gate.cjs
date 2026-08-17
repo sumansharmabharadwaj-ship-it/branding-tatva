@@ -21,31 +21,13 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-async function waitForAttribute(locator, name, value, message) {
-  try {
-    await locator.waitFor({ state: "attached", timeout: 5_000 });
-    await locator.evaluate(
-      (node, expected) =>
-        new Promise((resolve, reject) => {
-          const deadline = window.setTimeout(() => {
-            observer.disconnect();
-            reject(new Error(`Timed out waiting for ${expected.name}=${expected.value}`));
-          }, 4_500);
-          const settle = () => {
-            if (node.getAttribute(expected.name) !== expected.value) return;
-            window.clearTimeout(deadline);
-            observer.disconnect();
-            resolve(true);
-          };
-          const observer = new MutationObserver(settle);
-          observer.observe(node, { attributes: true, attributeFilter: [expected.name] });
-          settle();
-        }),
-      { name, value },
-    );
-  } catch {
-    throw new Error(message);
+async function waitForAttribute(page, locator, name, value, message) {
+  const deadline = Date.now() + 5_000;
+  while (Date.now() < deadline) {
+    if ((await locator.getAttribute(name)) === value) return;
+    await page.waitForTimeout(25);
   }
+  throw new Error(message);
 }
 
 function durationSeconds(buffer, label) {
@@ -141,6 +123,7 @@ async function inspectViewport(browser, viewport, label) {
     for (let index = 0; index < count; index += 1) {
       await tabs.nth(index).click();
       await waitForAttribute(
+        page,
         tabs.nth(index),
         "aria-selected",
         "true",
@@ -148,8 +131,14 @@ async function inspectViewport(browser, viewport, label) {
       );
       if (id === "foundation") {
         const expectedHref = ["/services#education", "/services#offerings", "/services#health"][index];
-        const actualHref = await chapter.locator(".home-v5-focus-card > a").getAttribute("href");
-        assert(actualHref === expectedHref, `${label} foundation choice ${index + 1} links to ${actualHref} instead of ${expectedHref}`);
+        const pathLink = chapter.locator(".home-v5-focus-card > a");
+        await waitForAttribute(
+          page,
+          pathLink,
+          "href",
+          expectedHref,
+          `${label} foundation choice ${index + 1} did not reveal ${expectedHref}`,
+        );
       }
     }
   }
