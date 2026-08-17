@@ -114,20 +114,18 @@ export function TatvaSystemLab() {
         pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
       }}
     >
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 top-[-20%] h-[30rem] w-[30rem] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(199,119,82,0.22), transparent 70%)" }}
-        animate={motionActive ? { x: [0, 72, 0], y: [0, 24, 0], scale: [0.96, 1.08, 0.96] } : undefined}
-        transition={motionActive ? { duration: 18, repeat: Infinity, ease: "easeInOut" } : undefined}
-      />
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-36 bottom-[-32%] h-[34rem] w-[34rem] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(82,117,111,0.24), transparent 70%)" }}
-        animate={motionActive ? { x: [0, -64, 0], y: [0, -32, 0], scale: [1.05, 0.94, 1.05] } : undefined}
-        transition={motionActive ? { duration: 21, repeat: Infinity, ease: "easeInOut" } : undefined}
-      />
+      <div className="tatva-pressure-lab__media" aria-hidden="true">
+        <video
+          muted
+          autoPlay
+          loop
+          playsInline
+          preload="metadata"
+          poster="/images/pixabay-roots-stream-poster.jpg"
+          src="/videos/pixabay-roots-stream.mp4"
+        />
+        <span />
+      </div>
 
       <Container className="relative max-w-[94rem]">
         <div className="grid gap-10 lg:grid-cols-[minmax(22rem,0.86fr)_minmax(34rem,1.14fr)] lg:items-center lg:gap-16">

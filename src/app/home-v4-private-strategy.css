@@ -78,6 +78,304 @@
   .questions-cinematic__answer {
     width: min(100%, 46rem);
   }
+
+  /* Recognition is a split film frame: the premise sits left while the live
+     condition occupies a readable glass plate on the right. */
+  .home-v4-recognition__shell {
+    height: 100svh;
+    min-height: 100svh;
+    padding: clamp(6.75rem, 13svh, 8rem) clamp(1.25rem, 4.5vw, 4.5rem) clamp(2rem, 5svh, 3.5rem);
+  }
+
+  .home-v4-recognition__header {
+    display: block;
+    width: min(52vw, 43rem);
+  }
+
+  .home-v4-recognition__header > span {
+    display: none;
+  }
+
+  .home-v4-recognition__header h2 {
+    max-width: 10ch;
+    font-size: clamp(3.2rem, min(5.4vw, 8.2svh), 5.9rem);
+    line-height: 0.92;
+  }
+
+  .home-v4-recognition__stage {
+    position: absolute;
+    right: clamp(1.25rem, 4.5vw, 4.5rem);
+    bottom: clamp(2rem, 5svh, 3.5rem);
+    width: min(43vw, 39rem);
+    height: auto !important;
+    margin: 0;
+  }
+
+  .home-v4-recognition__copy {
+    width: 100%;
+    min-height: 0;
+    max-height: 59svh;
+    padding: clamp(1.3rem, 2.3vw, 2.1rem);
+    overflow: auto;
+  }
+
+  .home-v4-recognition__copy h3 {
+    font-size: clamp(2rem, min(3.1vw, 5.2svh), 3.4rem);
+  }
+
+  .home-v4-recognition__answer {
+    margin-top: clamp(0.9rem, 2svh, 1.4rem);
+    padding-top: clamp(0.9rem, 2svh, 1.35rem);
+  }
+
+  .home-v4-recognition__copy .home-v4-text-link {
+    margin-top: clamp(0.8rem, 2svh, 1.35rem);
+  }
+
+  /* Hidden cost keeps the film visible and turns the current cost state into
+     one complete right-hand plate instead of a card cut off below the fold. */
+  .home-v4-cost__shell {
+    height: 100svh;
+    padding: clamp(6.75rem, 13svh, 8rem) clamp(1.25rem, 4.5vw, 4.5rem) clamp(2rem, 5svh, 3.5rem);
+  }
+
+  .home-v4-cost__shell > header {
+    width: min(52vw, 44rem);
+  }
+
+  .home-v4-cost__shell > header h2 {
+    max-width: 11ch;
+    font-size: clamp(3.1rem, min(5.2vw, 8svh), 5.7rem);
+    line-height: 0.92;
+  }
+
+  .home-v4-cost__stage {
+    position: absolute;
+    right: clamp(1.25rem, 4.5vw, 4.5rem);
+    bottom: clamp(2rem, 5svh, 3.5rem);
+    width: min(43vw, 39rem);
+    margin: 0;
+  }
+
+  .home-v4-cost__stage > article {
+    width: 100%;
+    min-height: 0;
+    max-height: 61svh;
+    padding: clamp(1.3rem, 2.3vw, 2.1rem);
+    overflow: auto;
+  }
+
+  .home-v4-cost__stage > article h3 {
+    font-size: clamp(2.1rem, min(3.2vw, 5.4svh), 3.5rem);
+  }
+
+  .home-v4-cost__footer {
+    position: absolute;
+    left: clamp(1.25rem, 4.5vw, 4.5rem);
+    bottom: clamp(2rem, 5svh, 3.5rem);
+    display: grid;
+    width: min(45vw, 40rem);
+    justify-items: start;
+    gap: 1rem;
+    margin: 0;
+  }
+
+  /* Path choices stay visible as the right-hand decision rail. */
+  .paths-cinematic__shell {
+    padding: clamp(6.7rem, 12svh, 7.6rem) clamp(1.5rem, 4vw, 4rem) clamp(2rem, 4svh, 3rem);
+  }
+
+  .paths-cinematic__header h2 {
+    font-size: clamp(3.1rem, min(5.3vw, 8.1svh), 5.8rem);
+  }
+
+  .paths-cinematic__stage {
+    width: min(55vw, 46rem);
+    height: auto;
+    margin-top: clamp(1.2rem, 2.5svh, 2rem);
+  }
+
+  .paths-cinematic__focus {
+    width: 100%;
+    min-height: 0;
+    max-height: 48svh;
+    padding: clamp(1.25rem, 2.2vw, 2rem);
+    overflow: auto;
+  }
+
+  .paths-cinematic__choices {
+    position: absolute;
+    right: clamp(1.5rem, 4vw, 4rem);
+    bottom: clamp(2rem, 4svh, 3rem);
+    display: grid;
+    width: min(38vw, 34rem);
+    gap: 0.55rem;
+    margin: 0;
+  }
+
+  .paths-cinematic__choices button {
+    min-height: 3.4rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .paths-cinematic__choices button > p,
+  .paths-cinematic__footer {
+    display: none;
+  }
+
+  /* The process scene shows its chapter rail and one active decision. */
+  .project-journey__shell {
+    position: absolute;
+    inset: 0;
+    height: 100svh !important;
+    padding: clamp(6.7rem, 12svh, 7.5rem) clamp(1.5rem, 4vw, 4rem) clamp(2rem, 4svh, 3rem);
+  }
+
+  .project-journey__header h2 {
+    font-size: clamp(3.1rem, min(5.1vw, 7.8svh), 5.6rem);
+  }
+
+  .project-journey__rail {
+    height: auto;
+    min-height: 0;
+    margin-top: clamp(1rem, 2.3svh, 1.7rem);
+  }
+
+  .project-journey__board {
+    height: auto;
+    min-height: 0;
+    margin-top: 0.8rem;
+  }
+
+  .project-journey__focus-card {
+    width: min(100%, 52rem);
+    min-height: 0;
+    max-height: 41svh;
+    padding: clamp(1.2rem, 2.2vw, 2rem);
+    overflow: auto;
+  }
+
+  .project-journey__signal-card,
+  .project-journey__footer {
+    display: none;
+  }
+
+  /* Evidence was vertically centred as a 1.3-screen composition. Give the
+     header and proof cards explicit rows inside the viewport. */
+  .evidence-cinematic__shell {
+    height: 100svh;
+    min-height: 100svh;
+    padding: clamp(6.6rem, 11.5svh, 7.4rem) clamp(1.5rem, 3vw, 3rem) clamp(1.5rem, 3svh, 2.25rem);
+  }
+
+  .evidence-cinematic__header {
+    height: auto;
+    min-height: 0;
+  }
+
+  .evidence-cinematic__header h2 {
+    font-size: clamp(2.8rem, min(4.6vw, 7svh), 5rem);
+  }
+
+  .evidence-cinematic__stage {
+    height: min(65svh, 40rem);
+    min-height: 0;
+    margin-top: clamp(1rem, 2.3svh, 1.7rem);
+  }
+
+  .evidence-cinematic__media,
+  .evidence-cinematic__dossier {
+    min-height: 0;
+  }
+
+  .evidence-cinematic__index {
+    display: none;
+  }
+
+  /* Tatva remains interactive, but the live root film replaces the animated
+     constellation as the visual subject. */
+  .tatva-pressure-lab {
+    height: 100svh;
+    padding-top: clamp(6.7rem, 12svh, 7.5rem) !important;
+    padding-bottom: clamp(2rem, 4svh, 3rem) !important;
+    background-color: #0c1514 !important;
+  }
+
+  .tatva-pressure-lab__diagram {
+    display: none;
+  }
+
+  .tatva-pressure-lab__board > div:last-child {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tatva-pressure-lab__reading {
+    max-width: none;
+  }
+
+  /* Decision becomes a written two-part scene; no compass graphic remains. */
+  .questions-cinematic__shell {
+    height: 100svh;
+    min-height: 100svh;
+    padding: clamp(6.7rem, 12svh, 7.5rem) clamp(1.5rem, 4vw, 4rem) clamp(2rem, 4svh, 3rem);
+  }
+
+  .questions-cinematic__header {
+    display: block;
+    width: min(50vw, 42rem);
+  }
+
+  .questions-cinematic__header h2 {
+    max-width: 10ch;
+    font-size: clamp(3.1rem, min(5.1vw, 7.8svh), 5.6rem);
+  }
+
+  .questions-cinematic__header .questions-cinematic__intro {
+    display: none;
+  }
+
+  .questions-cinematic__stage {
+    position: absolute;
+    right: clamp(1.5rem, 4vw, 4rem);
+    bottom: clamp(7rem, 13svh, 8.5rem);
+    width: min(44vw, 40rem);
+    height: auto;
+    margin: 0;
+  }
+
+  .questions-cinematic__compass {
+    display: none;
+  }
+
+  .questions-cinematic__answer {
+    width: 100%;
+    min-height: 0;
+    max-height: 58svh;
+    padding: clamp(1.3rem, 2.3vw, 2.1rem);
+    overflow: auto;
+  }
+
+  .questions-cinematic__tabs {
+    position: absolute;
+    left: clamp(1.5rem, 4vw, 4rem);
+    bottom: clamp(2rem, 4svh, 3rem);
+    width: min(46vw, 42rem);
+    margin: 0;
+  }
+
+  .questions-cinematic__utility {
+    display: none;
+  }
+
+  /* The final scene closes on the invitation, not another diagram. */
+  .home-v4-invitation__sticky .final-invitation__card {
+    width: min(100%, 60rem);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-v4-invitation__sticky .final-invitation__map {
+    display: none;
+  }
 }
 
 /* Selected blue-hour opening frame. */
@@ -146,6 +444,36 @@
   display: none;
 }
 
+.tatva-pressure-lab__media,
+.tatva-pressure-lab__media video,
+.tatva-pressure-lab__media span {
+  position: absolute;
+  inset: 0;
+}
+
+.tatva-pressure-lab__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 52%;
+  opacity: 0.52;
+  filter: saturate(0.72) contrast(1.12) brightness(0.72);
+}
+
+.tatva-pressure-lab__media span {
+  background:
+    linear-gradient(90deg, rgba(7, 16, 14, 0.9) 0%, rgba(7, 16, 14, 0.6) 48%, rgba(7, 16, 14, 0.76) 100%),
+    linear-gradient(180deg, rgba(7, 16, 14, 0.38), rgba(7, 16, 14, 0.82));
+}
+
+.tatva-pressure-lab > .container-page {
+  z-index: 1;
+}
+
+.tatva-pressure-lab__board {
+  background: rgba(7, 16, 14, 0.7) !important;
+}
+
 /* Cinematic chapter index. */
 .home-v4-chapter-rail {
   position: fixed;
@@ -176,11 +504,14 @@
 }
 
 .home-v4-chapter-rail a:hover,
-.home-v4-chapter-rail a:focus-visible,
-.home-v4-chapter-rail a[aria-current="step"] {
+.home-v4-chapter-rail a:focus-visible {
   width: 9.5rem;
   color: rgba(244, 239, 230, 0.94);
   outline: none;
+}
+
+.home-v4-chapter-rail a[aria-current="step"] {
+  color: rgba(244, 239, 230, 0.94);
 }
 
 .home-v4-chapter-rail a span {
