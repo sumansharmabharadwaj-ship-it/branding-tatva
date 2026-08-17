@@ -1,3 +1,4 @@
+// Media contract: continuous live-action masters only—never ping-pong, boomerang, or still-derived loops.
 export const GENERATED_SERVICES_MEDIA_REVISION = {
   installed: "2026-08-17",
   desktopLoops: 8,
