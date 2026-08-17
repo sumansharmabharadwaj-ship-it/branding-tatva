@@ -101,14 +101,14 @@ export function PathsCinematicChapter() {
     >
       <div className="paths-cinematic__film" aria-hidden="true">
         <video
-          src="/videos/higgsfield-mountain-mist.mp4"
-          poster="/images/higgsfield-mountain-mist-poster.jpg"
+          src="/videos/pexels-valley-first-light.mp4"
+          poster="/images/pexels-valley-first-light-poster.jpg"
           muted
           autoPlay={!prefersReducedMotion}
           loop
           playsInline
           preload={inView ? "metadata" : "none"}
-          data-home-playback-rate="1.22"
+          data-home-playback-rate="0.78"
         />
         <span />
       </div>

@@ -94,6 +94,8 @@ export function EvidenceWall() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
   const activeProject = projects[activeIndex] ?? projects[0];
+  const activeFilm = activeProject.heroVideo ?? activeProject.cardVideo;
+  const activePoster = activeProject.heroPoster ?? activeProject.cardImage;
   const activeTrail = trailFor(activeProject);
   const activeMetric = metricFor(activeProject);
 
@@ -244,19 +246,19 @@ export function EvidenceWall() {
                   />
                 )}
 
-                {!prefersReducedMotion && activeProject.cardVideo && (
+                {!prefersReducedMotion && activeFilm && (
                   <motion.video
                     ref={activeVideoRef}
-                    key={activeProject.cardVideo}
+                    key={activeFilm}
                     className="evidence-cinematic__media-video"
-                    src={activeProject.cardVideo}
-                    poster={activeProject.cardImage}
+                    src={activeFilm}
+                    poster={activePoster}
                     muted
                     loop
                     autoPlay
                     playsInline
                     preload={inView ? "metadata" : "none"}
-                    data-home-playback-rate="1.2"
+                    data-home-playback-rate="0.88"
                     aria-hidden="true"
                     initial={{ opacity: 0, scale: 1.035 }}
                     animate={{ opacity: 1, scale: inView ? 1.1 : 1.04 }}

@@ -90,8 +90,8 @@ export function V4OpeningScene() {
     >
       <div className="home-v4-opening__media" aria-hidden="true">
         <video
-          src="/videos/higgsfield-mountain-mist.mp4"
-          poster="/images/higgsfield-mountain-mist-poster.jpg"
+          src="/videos/pexels-redwood-ferns.mp4"
+          poster="/images/pexels-redwood-ferns-poster.jpg"
           muted
           autoPlay
           loop

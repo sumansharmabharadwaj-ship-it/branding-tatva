@@ -15,8 +15,8 @@ const DISCIPLINES = [
     line:
       "Audience behaviour is treated as evidence, not a demographic label. The work finds the friction people feel before they can explain it.",
     result: "Audience tension + perception map",
-    video: "/videos/higgsfield-process-listen.mp4",
-    poster: "/images/higgsfield-process-listen-poster.jpg",
+    video: "/videos/pexels-studio-morning-light.mp4",
+    poster: "/images/pexels-studio-morning-light-poster.jpg",
     diagram: ["Notice", "Interpret", "Choose"],
     proofLabel: "Applied in HerbalCart",
     proofLine:
@@ -47,8 +47,8 @@ const DISCIPLINES = [
     line:
       "Positioning, identity, website, content, and campaigns are built as one connected system, so the business can keep using the idea after launch.",
     result: "A brand system that can keep moving",
-    video: "/videos/higgsfield-process-shape.mp4",
-    poster: "/images/higgsfield-process-shape-poster.jpg",
+    video: "/videos/higgsfield-executive-office.mp4",
+    poster: "/images/higgsfield-executive-office-poster.jpg",
     diagram: ["Decision", "System", "Recognition"],
     proofLabel: "Applied in Dr. Haley Nutrition",
     proofLine:
@@ -215,7 +215,7 @@ export function StudioCinematicChapter() {
                   loop
                   playsInline
                   preload={inView ? "metadata" : "none"}
-                  data-home-playback-rate="1.22"
+                  data-home-playback-rate="0.84"
                   aria-hidden="true"
                 />
               )}

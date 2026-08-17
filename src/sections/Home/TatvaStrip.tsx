@@ -131,7 +131,7 @@ export function TatvaStrip() {
           loop
           playsInline
           preload={inView ? "metadata" : "none"}
-          data-home-playback-rate="1.2"
+          data-home-playback-rate="0.82"
         />
         <span />
       </div>

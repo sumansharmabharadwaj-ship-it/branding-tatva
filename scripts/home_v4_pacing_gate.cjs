@@ -87,7 +87,7 @@ async function waitForTextPrefix(page, locator, prefix, timeoutMs = 2_500) {
   await openingVideo.waitFor({ state: "attached", timeout: 5_000 });
   await page.waitForTimeout(450);
   const openingRate = await openingVideo.evaluate((video) => video.playbackRate);
-  assert(openingRate >= 1.29 && openingRate <= 1.31, `Opening video playback rate is ${openingRate}, expected about 1.30x`);
+  assert(openingRate >= 0.85 && openingRate <= 0.87, `Opening video playback rate is ${openingRate}, expected about 0.86x`);
 
   const play = guide.getByRole("button", { name: "Play guided journey" });
   const guidedStartedAt = Date.now();

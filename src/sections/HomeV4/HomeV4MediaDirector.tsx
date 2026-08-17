@@ -5,11 +5,11 @@ import { useEffect } from "react";
 
 import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
 
-// The former V4 default was 1.22x. The homepage brief asks for a noticeable
-// increase without turning atmospheric footage frantic. 1.30x shortens visual
-// dead time while preserving calm motion; individual films can still request a
-// lower or higher rate through data-home-playback-rate within the safe clamp.
-const DEFAULT_PLAYBACK_RATE = 1.3;
+// Keep the films below real-time by default. The homepage is meant to read as
+// held, dramatic footage; speeding short clips up made their loops feel like
+// animated GIFs. Individual chapters can still request a slightly different
+// pace through data-home-playback-rate within this deliberately calm clamp.
+const DEFAULT_PLAYBACK_RATE = 0.86;
 const FORM_CONTROL_SELECTOR =
   "input, textarea, select, [contenteditable='true'], [role='textbox']";
 
@@ -21,7 +21,7 @@ type NavigatorWithHints = Navigator & {
 function requestedPlaybackRate(video: HTMLVideoElement) {
   const requested = Number(video.dataset.homePlaybackRate ?? DEFAULT_PLAYBACK_RATE);
   if (!Number.isFinite(requested)) return DEFAULT_PLAYBACK_RATE;
-  return Math.min(1.55, Math.max(0.75, requested));
+  return Math.min(1.05, Math.max(0.7, requested));
 }
 
 function applyPlaybackRate(video: HTMLVideoElement) {
