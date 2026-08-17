@@ -58,23 +58,6 @@ async function scrollSceneToProgress(page, selector, progress) {
   await page.waitForTimeout(680);
 }
 
-async function scrollMotionTrack(page, selector, progress) {
-  await page.evaluate(
-    ({ selector, progress }) => {
-      const track = document.querySelector(selector);
-      if (!(track instanceof HTMLElement)) return;
-      const viewport = window.innerHeight;
-      const bounds = track.getBoundingClientRect();
-      const absoluteTop = bounds.top + window.scrollY;
-      const start = absoluteTop - viewport * 0.76;
-      const end = absoluteTop + track.offsetHeight - viewport * 0.38;
-      window.scrollTo({ top: Math.max(0, start + (end - start) * progress), behavior: "auto" });
-    },
-    { selector, progress },
-  );
-  await page.waitForTimeout(680);
-}
-
 async function reloadClean(page) {
   await clearSelections(page);
   await page.reload({ waitUntil: "domcontentloaded", timeout: 90_000 });
@@ -226,12 +209,15 @@ async function reloadClean(page) {
   assert((await perceptionTrack.count()) === 1, "Perception track is missing");
   assert((await perceptionProof.count()) === 1, "Perception proof companion is missing");
 
-  await scrollMotionTrack(page, '[data-perception-desktop-track="true"]', 0.02);
+  // The ladder lives inside Education's sticky frame. Measure its real outer
+  // scene travel: the inner track's bounding box is intentionally pinned, so
+  // using that rect as a document coordinate only samples the middle rungs.
+  await scrollSceneToProgress(page, "#education", 0.02);
   const earlyPerception = await perceptionProof
     .locator("[data-perception-proof-state]")
     .getAttribute("data-perception-proof-state");
 
-  await scrollMotionTrack(page, '[data-perception-desktop-track="true"]', 0.99);
+  await scrollSceneToProgress(page, "#education", 0.99);
   const latePerception = await perceptionProof
     .locator("[data-perception-proof-state]")
     .getAttribute("data-perception-proof-state");
