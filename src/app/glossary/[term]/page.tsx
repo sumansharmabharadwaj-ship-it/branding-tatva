@@ -76,11 +76,11 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
             rather than as the third paragraph in a stack. */}
         <section className="relative overflow-hidden bg-soil pb-16 pt-36 sm:pt-44">
           <BackgroundVideo
-            video="/videos/pexels-dandelion-release.mp4"
-            poster="/images/pexels-dandelion-release-poster.jpg"
+            video="/videos/glossary-clarity-film-v2.mp4"
+            poster="/images/glossary-clarity-film-v2-poster.jpg"
             imagePosition="center"
             parallax
-            playbackRate={0.9}
+            playbackRate={0.86}
           />
           <div className="absolute inset-0 bg-soil/55" />
           <div className="absolute inset-0 bg-gradient-to-r from-soil via-soil/70 to-soil/20" />

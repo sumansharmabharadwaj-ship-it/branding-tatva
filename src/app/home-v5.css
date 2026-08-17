@@ -1027,10 +1027,23 @@
   }
 
   .home-v5-method__steps {
-    overflow-x: auto;
-    grid-template-columns: repeat(5, 5.7rem);
-    padding-bottom: 0.35rem;
-    scrollbar-width: none;
+    width: 100%;
+    min-width: 0;
+    overflow: visible;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding-bottom: 0;
+  }
+
+  .home-v5-method__copy {
+    min-width: 0;
+  }
+
+  .home-v5-method__steps button {
+    min-width: 0;
+    padding-right: 0.35rem;
+    padding-left: 0.35rem;
+    font-size: 0.58rem;
+    text-align: center;
   }
 
   .home-v5-editorial-card {

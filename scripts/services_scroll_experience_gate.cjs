@@ -100,16 +100,15 @@ async function assertWayfinding(page, viewport, label, sceneCount) {
     // can briefly cross the viewport edge while that transform is resolving,
     // even though its settled fixed geometry is comfortably bounded. Measure
     // the usable state visitors receive, not an intermediate animation frame.
-    await page.waitForFunction(
-      () => {
-        const node = document.querySelector('[data-section-jump-nav-desktop-mode="rail"]');
-        if (!node) return false;
+    const settleDeadline = Date.now() + 2_500;
+    while (Date.now() < settleDeadline) {
+      const settled = await rail.first().evaluate((node) => {
         const bounds = node.getBoundingClientRect();
         return bounds.top >= -2 && bounds.bottom <= window.innerHeight + 2;
-      },
-      undefined,
-      { timeout: 2_500 },
-    );
+      });
+      if (settled) break;
+      await page.waitForTimeout(40);
+    }
 
     const geometry = await rail.first().evaluate((node) => {
       const bounds = node.getBoundingClientRect();

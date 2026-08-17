@@ -1,0 +1,70 @@
+name: Utility media release gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - ".github/workflows/utility-media-release-gate.yml"
+      - "scripts/utility_media_release_gate.cjs"
+      - "src/app/privacy/page.tsx"
+      - "src/app/terms/page.tsx"
+      - "src/app/glossary/page.tsx"
+      - "src/app/glossary/[term]/page.tsx"
+      - "public/images/privacy-boundary-film-v2-poster.jpg"
+      - "public/images/terms-agreement-film-v2-poster.jpg"
+      - "public/images/glossary-language-roots-film-v2-poster.jpg"
+      - "public/images/glossary-clarity-film-v2-poster.jpg"
+      - "public/videos/privacy-boundary-film-v2.mp4"
+      - "public/videos/terms-agreement-film-v2.mp4"
+      - "public/videos/glossary-language-roots-film-v2.mp4"
+      - "public/videos/glossary-clarity-film-v2.mp4"
+  pull_request:
+    paths:
+      - ".github/workflows/utility-media-release-gate.yml"
+      - "scripts/utility_media_release_gate.cjs"
+      - "src/app/privacy/page.tsx"
+      - "src/app/terms/page.tsx"
+      - "src/app/glossary/page.tsx"
+      - "src/app/glossary/[term]/page.tsx"
+      - "public/images/privacy-boundary-film-v2-poster.jpg"
+      - "public/images/terms-agreement-film-v2-poster.jpg"
+      - "public/images/glossary-language-roots-film-v2-poster.jpg"
+      - "public/images/glossary-clarity-film-v2-poster.jpg"
+      - "public/videos/privacy-boundary-film-v2.mp4"
+      - "public/videos/terms-agreement-film-v2.mp4"
+      - "public/videos/glossary-language-roots-film-v2.mp4"
+      - "public/videos/glossary-clarity-film-v2.mp4"
+
+permissions:
+  contents: read
+
+jobs:
+  utility-media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out only the utility release media
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+            /public/videos/privacy-boundary-film-v2.mp4
+            /public/videos/terms-agreement-film-v2.mp4
+            /public/videos/glossary-language-roots-film-v2.mp4
+            /public/videos/glossary-clarity-film-v2.mp4
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Reject repeated or short-loop utility media
+        run: node scripts/utility_media_release_gate.cjs

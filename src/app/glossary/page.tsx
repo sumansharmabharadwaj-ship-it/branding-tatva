@@ -33,11 +33,11 @@ export default function GlossaryPage() {
             headline arrives word by word like every other page h1. */}
         <section className="relative overflow-hidden bg-soil pb-20 pt-36 sm:pb-24 sm:pt-44">
           <BackgroundVideo
-            video="/videos/pexels-dandelion-release.mp4"
-            poster="/images/pexels-dandelion-release-poster.jpg"
+            video="/videos/glossary-language-roots-film-v2.mp4"
+            poster="/images/glossary-language-roots-film-v2-poster.jpg"
             imagePosition="center"
             parallax
-            playbackRate={0.9}
+            playbackRate={0.86}
           />
           <div className="absolute inset-0 bg-soil/55" />
           <div className="absolute inset-0 bg-gradient-to-r from-soil via-soil/70 to-soil/20" />

@@ -31,11 +31,11 @@ export default function TermsPage() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
         <section className="relative overflow-hidden bg-soil pb-16 pt-36 sm:pb-20 sm:pt-44">
           <BackgroundVideo
-            video="/videos/pexels-studio-morning-light.mp4"
-            poster="/images/pexels-studio-morning-light-poster.jpg"
+            video="/videos/terms-agreement-film-v2.mp4"
+            poster="/images/terms-agreement-film-v2-poster.jpg"
             imagePosition="center"
             parallax
-            playbackRate={0.9}
+            playbackRate={0.88}
           />
           <div className="absolute inset-0 bg-soil/50" />
           <div className="absolute inset-0 bg-gradient-to-r from-soil via-soil/80 to-soil/20" />

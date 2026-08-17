@@ -1,0 +1,51 @@
+name: Assemble utility film payload
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - ".media-parts/**"
+      - ".github/workflows/publish-utility-media.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+      - name: Reassemble and verify exact MP4 payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          films=(
+            glossary-clarity-film-v2
+            glossary-language-roots-film-v2
+            privacy-boundary-film-v2
+            terms-agreement-film-v2
+          )
+          mkdir -p public/videos
+          for film in "${films[@]}"; do
+            cat .media-parts/"$film".part.* | base64 --decode > public/videos/"$film".mp4
+          done
+          echo "29e41d2b03f171dfc8ee9dadaf710391ef956c23879d0f31b278be6548e5bf96  public/videos/glossary-clarity-film-v2.mp4" > /tmp/utility-media.sha256
+          echo "482667298193d09c4f04ceed0a7017c1d195c2eb1827f25a0b3a0c2b47bdc9cd  public/videos/glossary-language-roots-film-v2.mp4" >> /tmp/utility-media.sha256
+          echo "1d80cd57dcc13509727f3f1db0eee5ed3dc87cd231c95414ec458256af87b4ff  public/videos/privacy-boundary-film-v2.mp4" >> /tmp/utility-media.sha256
+          echo "dbcba9ea12f27cc808d0aac65fcacc9bc63380004d7041c0c9632467c3a45521  public/videos/terms-agreement-film-v2.mp4" >> /tmp/utility-media.sha256
+          sha256sum --check /tmp/utility-media.sha256
+      - name: Commit the verified films and remove transport parts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "branding-tatva-release-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/videos
+          git rm -r .media-parts .github/workflows/publish-utility-media.yml
+          git commit -m "Assemble verified utility films"
+          git push origin HEAD:homepage-cinematic-recovery
