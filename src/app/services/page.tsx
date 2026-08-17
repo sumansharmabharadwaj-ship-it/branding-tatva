@@ -357,24 +357,23 @@ export default async function ServicesPage() {
             on the page. Editorial rows rather than a card grid; each
             offering keeps its own accent from the data. */}
         <section id="offerings" data-services-scene="offerings" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
-          {/* Original generated strategy terrain: mist withdraws from a
-              tactile topographic world while one pale route becomes
-              clear. The six disciplines stay distinct in the foreground,
-              but the moving terrain makes the shared strategic foundation
-              visible without turning the chapter into another card grid. */}
+          {/* Continuous sunrise footage gives the discipline system a
+              photographic horizon. The slower pace keeps the fog moving
+              naturally, while the lighter local grade lets the live scene
+              remain visible around the interactive service explorer. */}
           <BackgroundVideo
             parallax
             video="/videos/pexels-fog-sunrise.mp4"
             videoMobile="/videos/pexels-fog-sunrise.mp4"
             poster="/images/pexels-fog-sunrise-poster.jpg"
-            playbackRate={1.12}
+            playbackRate={0.88}
           />
           <div
             className="absolute inset-0"
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(16,20,19,0.9) 0%, rgba(16,20,19,0.74) 46%, rgba(16,20,19,0.56) 100%)",
+                "linear-gradient(100deg, rgba(16,20,19,0.62) 0%, rgba(16,20,19,0.32) 46%, rgba(16,20,19,0.16) 100%)",
             }}
           />
           <div className="relative w-full">
