@@ -14,6 +14,7 @@ html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .h
   opacity: 0 !important;
   filter: blur(7px) !important;
   pointer-events: none !important;
+  transition: none !important;
 }
 
 html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__topline,
