@@ -4,8 +4,8 @@ const { chromium } = require("playwright");
 
 const BASE_URL = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const OUTPUT = path.join(process.cwd(), "services-scroll-experience-audit");
-const SERVICES_SITUATION_KEY = "branding-tatva-services-situation";
-const HOME_SITUATION_KEY = "branding-tatva-visitor-situation";
+const SERVICES_SITUATION_KEY = "branding-tatva:services-situation";
+const HOME_SITUATION_KEY = "bt-situation";
 
 fs.mkdirSync(OUTPUT, { recursive: true });
 
@@ -92,8 +92,8 @@ async function reloadClean(page) {
   await context.addInitScript(() => {
     try {
       sessionStorage.setItem("branding-tatva-v4-prelude-seen", "true");
-      localStorage.removeItem("branding-tatva-services-situation");
-      localStorage.removeItem("branding-tatva-visitor-situation");
+      localStorage.removeItem("branding-tatva:services-situation");
+      localStorage.removeItem("bt-situation");
     } catch {}
   });
 
