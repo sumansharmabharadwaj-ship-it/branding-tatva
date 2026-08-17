@@ -127,7 +127,12 @@ async function waitForTextPrefix(page, locator, prefix, timeoutMs = 2_500) {
   const process = page.locator('[data-home-v4-chapter="process"]');
   await process.scrollIntoViewIfNeeded();
   await page.waitForTimeout(550);
-  assert((await process.getAttribute("data-process-tempo-managed")) === "true", "Process tempo director is not mounted");
+  const processJourney = process.locator('[data-project-journey="true"]');
+  assert((await processJourney.count()) === 1, "Process journey is missing from its Home chapter");
+  assert(
+    (await processJourney.getAttribute("data-process-tempo-managed")) === "true",
+    "Process tempo director is not mounted",
+  );
   const processBefore = await selectedProcessTab(page);
   await page.waitForTimeout(1_950);
   const processAfter = await selectedProcessTab(page);
