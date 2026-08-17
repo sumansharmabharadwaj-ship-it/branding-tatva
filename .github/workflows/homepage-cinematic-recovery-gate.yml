@@ -27,6 +27,9 @@ on:
       - src/app/page.tsx
       - src/app/home-*.css
       - src/app/home-v4*.css
+      - src/components/MotionPreference.tsx
+      - src/components/PageLoadVeil.tsx
+      - src/hooks/useHydratedReducedMotion.ts
       - src/sections/Home/**
       - src/sections/HomeV4/**
       - src/sections/Elements/**
