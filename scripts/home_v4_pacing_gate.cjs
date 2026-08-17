@@ -23,12 +23,31 @@ async function selectedProcessTab(page) {
   return page.locator('.project-journey__rail [role="tab"][aria-selected="true"]').textContent();
 }
 
+async function clickAnimatedControl(locator) {
+  await locator.waitFor({ state: "visible", timeout: 5_000 });
+  // The play affordance intentionally pulses with a perpetual scale animation
+  // while its discovery hint is visible. Playwright's normal click waits for
+  // geometric stability that this control is designed never to reach; a real
+  // pointer can still activate it, so use the same hit target without that
+  // inapplicable stability precondition.
+  await locator.click({ force: true });
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   await context.addInitScript(() => {
     try {
       sessionStorage.setItem("branding-tatva-v4-prelude-seen", "true");
+      localStorage.setItem(
+        "bt-consent",
+        JSON.stringify({
+          analytics: false,
+          marketing: false,
+          decidedAt: "2026-08-17T00:00:00.000Z",
+          version: 1,
+        }),
+      );
     } catch {}
   });
   const page = await context.newPage();
@@ -50,7 +69,7 @@ async function selectedProcessTab(page) {
 
   const play = guide.getByRole("button", { name: "Play guided journey" });
   const guidedStartedAt = Date.now();
-  await play.click();
+  await clickAnimatedControl(play);
   await page.waitForFunction(() => document.querySelector("[data-guided-controls]")?.getAttribute("data-guide-mode") === "guided");
   await page.waitForFunction(
     () => (document.querySelector("[data-guided-controls] strong")?.textContent || "").startsWith("02/"),
@@ -65,7 +84,7 @@ async function selectedProcessTab(page) {
   await page.goto(BASE_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await waitForHome(page);
   const freshGuide = page.locator("[data-guided-controls]");
-  await freshGuide.getByRole("button", { name: "Play guided journey" }).click();
+  await clickAnimatedControl(freshGuide.getByRole("button", { name: "Play guided journey" }));
   await page.waitForTimeout(3_380);
   const beforeManual = await page.evaluate(() => scrollY);
   await page.mouse.wheel(0, 520);
@@ -78,15 +97,15 @@ async function selectedProcessTab(page) {
 
   // Pause is a real comfort state: ambient video must stop, not merely freeze
   // the progress ring while media keeps decoding behind it.
-  await freshGuide.getByRole("button", { name: "Play guided journey" }).click();
+  await clickAnimatedControl(freshGuide.getByRole("button", { name: "Play guided journey" }));
   await page.waitForFunction(() => document.querySelector("[data-guided-controls]")?.getAttribute("data-guide-mode") === "guided");
-  await freshGuide.getByRole("button", { name: "Pause guided journey" }).click();
+  await clickAnimatedControl(freshGuide.getByRole("button", { name: "Pause guided journey" }));
   await page.waitForTimeout(320);
   assert((await freshGuide.getAttribute("data-guide-mode")) === "paused", "Pause control did not publish paused mode");
   const playingWhilePaused = await page.locator("[data-home-v4] video").evaluateAll((videos) => videos.filter((video) => !video.paused && !video.ended).length);
   assert(playingWhilePaused === 0, `${playingWhilePaused} homepage videos remained active while the guided view was paused`);
 
-  await freshGuide.getByRole("button", { name: "Explore the homepage manually" }).click();
+  await clickAnimatedControl(freshGuide.getByRole("button", { name: "Explore the homepage manually" }));
   const process = page.locator('[data-home-v4-chapter="process"]');
   await process.scrollIntoViewIfNeeded();
   await page.waitForTimeout(550);
