@@ -52,11 +52,9 @@ async function assertDirectAnchor(page, id, tolerance = 190) {
   const offset = await target.evaluate((node) => node.getBoundingClientRect().top);
   assert(Math.abs(offset) < tolerance, `Direct #${id} anchor landed ${offset}px from the intended scene`);
 
-  await page.waitForFunction(
-    (href) => Boolean(document.querySelector(`nav[aria-label="Jump to section"] a[aria-current="location"][href="${href}"]`)),
-    `#${id}`,
-    { timeout: 4_000 },
-  );
+  await page
+    .locator(`nav[aria-label="Jump to section"] a[aria-current="location"][href="#${id}"]`)
+    .waitFor({ state: "attached", timeout: 4_000 });
   const activeId = await page.evaluate(() => document.documentElement.dataset.servicesActiveChapterId || null);
   assert(activeId === id, `Runtime active chapter is ${activeId}, expected ${id}`);
 

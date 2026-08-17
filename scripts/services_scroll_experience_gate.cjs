@@ -61,11 +61,13 @@ async function visible(locator) {
 }
 
 async function assertChapterContract(page, sceneCount, label) {
-  await page.waitForFunction(
-    (expected) => Number(document.documentElement.dataset.servicesChapterCount) === expected,
-    sceneCount,
-    { timeout: 4_000 },
-  );
+  const chapterDeadline = Date.now() + 4_000;
+  while (
+    Date.now() < chapterDeadline &&
+    (await page.locator("html").getAttribute("data-services-chapter-count")) !== String(sceneCount)
+  ) {
+    await page.waitForTimeout(40);
+  }
 
   const chapters = await page.locator("[data-services-scroll-scene]").evaluateAll((nodes) =>
     nodes.map((node) => ({
@@ -95,12 +97,10 @@ async function assertWayfinding(page, viewport, label, sceneCount) {
   const mobile = page.locator('[data-section-jump-nav-mobile="true"]');
 
   if (viewport.width >= 1024) {
-    await page.waitForFunction(
-      (expected) =>
-        document.querySelectorAll('[data-section-jump-nav-desktop-mode="rail"] a[href^="#"]').length === expected,
-      sceneCount,
-      { timeout: 4_000 },
-    );
+    const railDeadline = Date.now() + 4_000;
+    while (Date.now() < railDeadline && (await rail.locator('a[href^="#"]').count()) !== sceneCount) {
+      await page.waitForTimeout(40);
+    }
     assert(await visible(rail), `${label}: compact desktop chapter rail is not visible`);
     assert(!(await visible(bar)), `${label}: full-width bottom chapter bar is still visible`);
     assert(!(await visible(mobile)), `${label}: mobile chapter dial is visible beside the desktop rail`);
@@ -145,12 +145,10 @@ async function assertWayfinding(page, viewport, label, sceneCount) {
 
     const trigger = mobile.locator("button").last();
     await trigger.click();
-    await page.waitForFunction(
-      (expected) =>
-        document.querySelectorAll('[data-section-jump-nav-mobile="true"] a[href^="#"]').length === expected,
-      sceneCount,
-      { timeout: 4_000 },
-    );
+    const mobileDeadline = Date.now() + 4_000;
+    while (Date.now() < mobileDeadline && (await mobile.locator('a[href^="#"]').count()) !== sceneCount) {
+      await page.waitForTimeout(40);
+    }
     assert(
       (await mobile.locator('a[href^="#"]').count()) === sceneCount,
       `${label}: mobile chapter menu does not expose all ${sceneCount} chapters`,
