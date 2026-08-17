@@ -204,7 +204,17 @@ export function GuidedView() {
 
     function takeControl(event: Event) {
       const target = event.target;
-      if (target instanceof Element && target.closest("[data-guided-controls]")) return;
+      // A button press inside the guide belongs to the guide. Wheel/trackpad
+      // input does not: a visitor can naturally leave the pointer resting on
+      // the fixed control and scroll the page from there. Treat that wheel as
+      // manual intent instead of allowing the guided journey to keep moving.
+      if (
+        event.type !== "wheel" &&
+        target instanceof Element &&
+        target.closest("[data-guided-controls]")
+      ) {
+        return;
+      }
 
       // Real wheel/touch/pointer/key input always wins, even while the guide's
       // short Lenis transition is still settling. Auto-scrolling itself does
