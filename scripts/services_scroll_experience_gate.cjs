@@ -60,6 +60,35 @@ async function visible(locator) {
   return (await locator.count()) > 0 && (await locator.first().isVisible());
 }
 
+async function assertNativeScrollResponds(page, label) {
+  const before = await page.evaluate(() => window.scrollY);
+
+  // Exercise the same input path as a physical wheel/trackpad. Calling
+  // window.scrollBy() races Lenis's eased state: the browser can apply the
+  // jump and Lenis can reconcile it back to its previous animation frame
+  // before Playwright samples scrollY. That produced a false mobile failure
+  // even though the deployed page accepted real input normally.
+  await page.mouse.wheel(0, 320);
+
+  const responseDeadline = Date.now() + 400;
+  let current = before;
+  while (Date.now() < responseDeadline && current <= before + 12) {
+    await page.waitForTimeout(20);
+    current = await page.evaluate(() => window.scrollY);
+  }
+  assert(current > before + 12, `${label}: native scroll did not begin promptly`);
+
+  // The non-Home routes intentionally use a soft 0.1 Lenis lerp. Confirm the
+  // gesture is allowed to settle instead of pretending its full 320px travel
+  // should complete inside a single 160ms sample window.
+  const settleDeadline = Date.now() + 1_600;
+  while (Date.now() < settleDeadline && current <= before + 250) {
+    await page.waitForTimeout(30);
+    current = await page.evaluate(() => window.scrollY);
+  }
+  assert(current > before + 250, `${label}: native scroll did not complete its expected travel`);
+}
+
 async function assertChapterContract(page, sceneCount, label) {
   const chapterDeadline = Date.now() + 4_000;
   while (
@@ -245,11 +274,7 @@ async function auditViewport(browser, viewport) {
     scale: getComputedStyle(node).getPropertyValue("--services-hero-scale").trim(),
   }));
 
-  const beforeScroll = await page.evaluate(() => window.scrollY);
-  await page.evaluate(() => window.scrollBy({ top: 320, behavior: "instant" }));
-  await page.waitForTimeout(160);
-  const afterScroll = await page.evaluate(() => window.scrollY);
-  assert(afterScroll > beforeScroll + 250, `${label}: native scroll did not respond immediately`);
+  await assertNativeScrollResponds(page, label);
   const heroAfter = await hero.evaluate((node) => ({
     phase: node.getAttribute("data-services-hero-phase"),
     scale: getComputedStyle(node).getPropertyValue("--services-hero-scale").trim(),
