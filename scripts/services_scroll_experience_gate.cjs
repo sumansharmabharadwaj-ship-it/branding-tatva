@@ -60,6 +60,14 @@ async function visible(locator) {
   return (await locator.count()) > 0 && (await locator.first().isVisible());
 }
 
+async function alignToScene(locator) {
+  await locator.evaluate((node) => {
+    const lenis = window.__lenisInstance;
+    if (lenis) lenis.scrollTo(node, { immediate: true });
+    else node.scrollIntoView({ behavior: "auto", block: "start" });
+  });
+}
+
 async function assertNativeScrollResponds(page, label) {
   const before = await page.evaluate(() => window.scrollY);
 
@@ -187,7 +195,7 @@ async function assertWayfinding(page, viewport, label, sceneCount) {
 }
 
 async function assertFinalArrivalOwnsViewport(page, label) {
-  await page.locator("#book").scrollIntoViewIfNeeded();
+  await alignToScene(page.locator("#book"));
   await page.waitForTimeout(700);
   const visibleGuides = await page.locator('nav[aria-label="Jump to section"]').evaluateAll((nodes) =>
     nodes.filter((node) => {
@@ -285,7 +293,7 @@ async function auditViewport(browser, viewport) {
   );
 
   const offerings = page.locator("#offerings");
-  await offerings.scrollIntoViewIfNeeded();
+  await alignToScene(offerings);
   await page.waitForTimeout(650);
   const tabs = offerings.getByRole("tab");
   assert((await tabs.count()) === 6, `${label}: the service explorer should expose six disciplines`);
@@ -334,7 +342,7 @@ async function auditViewport(browser, viewport) {
   );
 
   const authority = page.locator("#authority");
-  await authority.scrollIntoViewIfNeeded();
+  await alignToScene(authority);
   await page.waitForTimeout(350);
   if (viewport.width >= 1024) {
     const authorityRange = await authority.locator(":scope > div").first().evaluate((node) => {
@@ -348,7 +356,7 @@ async function auditViewport(browser, viewport) {
   }
 
   const education = page.locator("#education");
-  await education.scrollIntoViewIfNeeded();
+  await alignToScene(education);
   await page.waitForTimeout(350);
   const laterProgress = await page.evaluate(() =>
     getComputedStyle(document.documentElement).getPropertyValue("--services-chapter-progress").trim(),
