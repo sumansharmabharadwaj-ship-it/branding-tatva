@@ -103,15 +103,16 @@ export function HomeV4TatvaTempo() {
 
     const forces = Array.from(section.querySelectorAll<HTMLButtonElement>(FORCE_SELECTOR));
     const restore = section.querySelector<HTMLButtonElement>(RESTORE_SELECTOR);
-    if (forces.length < 2 || !restore) return;
+    const lab = section.querySelector<HTMLElement>(".tatva-pressure-lab");
+    if (forces.length < 2 || !restore || !lab) return;
 
     if (!finePointer) {
-      // Bubble a pointer signal from the chapter shell so TatvaSystemLab renews
+      // Bubble a pointer signal from the lab shell so TatvaSystemLab renews
       // its own pause without clicking a force or the restore control. Targeting
       // the shell also keeps this director's control listener from treating the
       // synthetic refresh as a new visitor choice.
       const refreshLabHold = () => {
-        section.dispatchEvent(
+        lab.dispatchEvent(
           new PointerEvent("pointerdown", {
             bubbles: true,
             pointerType: "touch",
