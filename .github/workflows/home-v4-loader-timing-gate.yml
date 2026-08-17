@@ -1,4 +1,4 @@
-name: Homepage V4 prelude timing gate
+name: Homepage V5 prelude timing gate
 run-name: Homepage prelude clock · ${{ github.sha }}
 
 on:
@@ -10,10 +10,9 @@ on:
       - .github/workflows/home-v4-loader-timing-gate.yml
       - scripts/home_v4_loader_timing_gate.cjs
       - src/components/PageLoadVeil.tsx
-      - src/sections/HomeV4/HomeV4PreludeBridge.tsx
-      - src/sections/HomeV4/HomeV4Scenes.tsx
+      - src/sections/HomeV5/HomeV5Experience.tsx
       - src/app/page.tsx
-      - src/app/home-v4*.css
+      - src/app/home-v5.css
       - package.json
       - pnpm-lock.yaml
       - next.config.ts

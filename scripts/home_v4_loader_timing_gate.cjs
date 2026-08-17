@@ -21,7 +21,7 @@ async function measureVeil(page, label) {
     await veil.waitFor({ state: "detached", timeout: 5_000 });
   }
 
-  await page.waitForSelector("[data-home-v4]", { timeout: 12_000 });
+  await page.waitForSelector("[data-home-v5]", { timeout: 12_000 });
   const wallClockMs = Date.now() - startedAt;
   const performanceMs = await page.evaluate(() => performance.now());
   return { label, present, wallClockMs, performanceMs: Number(performanceMs.toFixed(1)) };

@@ -101,7 +101,7 @@ function answerFor(input: string): Reply {
   ) {
     return {
       text: "Fragmentation means the brand is teaching several expectations at once. Define one positioning idea, then align identity, language, website, and behaviour around it.",
-      action: { href: "#tatva", label: "See the whole system" },
+      action: { href: "#process", label: "See the whole method" },
       prompts: PROMPTS.system,
     };
   }

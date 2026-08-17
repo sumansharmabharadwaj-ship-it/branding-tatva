@@ -1,32 +1,9 @@
 import type { Metadata } from "next";
-import "./home-v4.css";
-import "./home-v4-geometry.css";
-import "./home-v4-controls.css";
-import "./home-v4-controls-final.css";
-import "./home-studio-cinematic.css";
-import "./home-paths-cinematic.css";
-import "./home-cinematic-finish.css";
-import "./home-final-polish.css";
-import "./home-v4-continuity.css";
-import "./home-v4-guided-motion.css";
-import "./home-v4-recognition-depth.css";
-import "./home-v4-living-type.css";
-import "./home-v4-paths-depth.css";
-import "./home-v4-mobile-polish.css";
-import "./home-v4-tatva-depth.css";
-import "./home-v4-tatva-mobile-fix.css";
-import "./home-v4-studio-depth.css";
-import "./home-v4-studio-portrait-fix.css";
-import "./home-v4-decision-depth.css";
-import "./home-v4-evidence-depth.css";
-import "./home-v4-invitation-depth.css";
-import "./home-v4-prelude-bridge.css";
-import "./home-v4-screen-fit.css";
 import "./home-v4-private-strategy.css";
-import "./home-v4-foundation-frame.css";
+import "./home-v5.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
-import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
+import { HomeV5Experience } from "@/sections/HomeV5/HomeV5Experience";
 import { site } from "@/data/site";
 import { faqs } from "@/data/faqs";
 
@@ -57,7 +34,7 @@ export default function Home() {
     <>
       <Header transparent />
       <main id="main-content">
-        <HomeV4Experience />
+        <HomeV5Experience />
       </main>
       <Footer />
       <script

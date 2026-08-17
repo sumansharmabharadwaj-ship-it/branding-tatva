@@ -18,12 +18,9 @@ const ROUTES = [
 const REQUIRED_HOME_CHAPTERS = [
   "opening",
   "recognition",
-  "cost",
   "foundation",
-  "paths",
   "process",
   "evidence",
-  "tatva",
   "studio",
   "decision",
   "invitation",
@@ -43,8 +40,8 @@ const REQUIRED_HOME_CHAPTERS = [
 
   for (const id of REQUIRED_HOME_CHAPTERS) {
     assert(
-      html.includes(`data-home-v4-chapter="${id}"`),
-      `V4 homepage is missing chapter ${id}`,
+      html.includes(`data-home-v5-chapter="${id}"`),
+      `V5 homepage is missing chapter ${id}`,
     );
   }
 
@@ -53,17 +50,18 @@ const REQUIRED_HOME_CHAPTERS = [
     'href="/work"',
     'href="/about"',
     'href="#recognition"',
-    'href="#cost"',
     'href="#foundation"',
     'href="#evidence"',
-    'href="/services#desire"',
+    'href="/services#education"',
+    'href="/services#offerings"',
+    'href="/services#health"',
   ];
 
   for (const link of serverRenderedLinks) {
-    assert(html.includes(link), `V4 homepage is missing ${link}`);
+    assert(html.includes(link), `V5 homepage is missing ${link}`);
   }
 
-  console.log("V4 homepage route and server-rendered link gate passed.");
+  console.log("V5 homepage route and server-rendered link gate passed.");
 })().catch((error) => {
   console.error(error);
   process.exit(1);
