@@ -1,21 +1,21 @@
 // Media contract: continuous live-action masters only—never ping-pong, boomerang, or still-derived loops.
 export const GENERATED_SERVICES_MEDIA_REVISION = {
-  installed: "2026-08-17",
+  installed: "2026-08-18",
   desktopLoops: 8,
   mobileLoops: 8,
   stillScenes: 2,
   silent: true,
   posters: true,
   auditHarness: "strict-csp-compatible",
-  coreMediaRevision: "continuous-live-action-v1",
+  coreMediaRevision: "continuous-live-action-v2",
 } as const;
 
 export const GENERATED_SERVICES_MEDIA = {
   hero: {
-    desktop: "/videos/pexels-root-network.mp4",
-    mobile: "/videos/pexels-root-network.mp4",
-    poster: "/images/pexels-root-network-poster.jpg",
-    purpose: "Reveal the interconnected system beneath the visible brand surface.",
+    desktop: "/videos/higgsfield-forest-light.mp4",
+    mobile: "/videos/higgsfield-forest-light.mp4",
+    poster: "/images/higgsfield-forest-light-poster.jpg",
+    purpose: "Move continuously from a closed forest into an open valley as recognition becomes legible.",
   },
   situation: {
     desktop: "/videos/pexels-valley-first-light.mp4",

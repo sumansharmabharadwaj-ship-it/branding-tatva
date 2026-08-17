@@ -183,8 +183,8 @@ export default async function ServicesPage() {
   const savedRegion = cookieStore.get(REGION_COOKIE)?.value;
   const region = isRegion(savedRegion) ? savedRegion : regionFromCountry(hdrs.get("x-vercel-ip-country"));
   // The hero poster is the page's first paint — a high priority preload
-  // hint so the awakening scene arrives before the veil starts lifting.
-  preload("/images/pexels-root-network-poster.jpg", { as: "image", fetchPriority: "high" });
+  // hint so the forest-to-valley camera move arrives before the veil lifts.
+  preload("/images/higgsfield-forest-light-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
@@ -199,34 +199,30 @@ export default async function ServicesPage() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(engagementsJsonLd) }} />
         <PricingProvider initialRegion={region}>
         {/* Curiosity opens as a complete first scene rather than a
-            compact masthead. One viewport belongs to the root-system
+            compact masthead. One viewport belongs to the forest-to-valley
             film, proposition, proof, and chapter map; the Situation
             chapter only begins after the visitor has finished this
             frame. The scene still advances quickly because the veil and
             word reveal respond inside the viewport, not by shortening it. */}
         <PhotoHero
-          video="/videos/pexels-root-network.mp4"
-          videoMobile="/videos/pexels-root-network.mp4"
-          poster="/images/pexels-root-network-poster.jpg"
+          video="/videos/higgsfield-forest-light.mp4"
+          videoMobile="/videos/higgsfield-forest-light.mp4"
+          poster="/images/higgsfield-forest-light-poster.jpg"
           minHeight="100vh"
-          overlayGradient="linear-gradient(180deg, rgba(12,17,16,0.54) 0%, rgba(12,17,16,0.64) 58%, rgba(12,17,16,0.82) 100%)"
-          playbackRate={1.15}
+          overlayGradient="linear-gradient(180deg, rgba(12,17,16,0.16) 0%, rgba(12,17,16,0.22) 58%, rgba(12,17,16,0.4) 100%)"
+          playbackRate={0.82}
         >
-          {/* Original generated hero loop: a living underground root
-              network becomes legible as a restrained mineral-ivory
-              signal travels through connected paths. The image explains
-              the page's premise before the copy does: brand recognition
-              is a system beneath the visible surface, not one isolated
-              deliverable. A dedicated mobile encode and generated poster
-              keep the first paint quiet, fast, and semantically intact. */}
+          {/* A continuous live-action camera move begins inside the trees
+              and opens onto a sunlit valley. It gives the proposition a
+              literal visual journey from obscurity to recognition without
+              reverse motion, still-derived animation, or a graphic loop. */}
           <HeroReveal />
           {/* A restrained directional scrim protects the masthead
-              while leaving the generated root architecture readable
-              on the right side of the frame. */}
+              while leaving the widening landscape readable on the right. */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
-            style={{ backgroundImage: "linear-gradient(90deg, rgba(15,18,17,0.38) 0%, rgba(15,18,17,0.12) 45%, transparent 70%)" }}
+            style={{ backgroundImage: "linear-gradient(90deg, rgba(15,18,17,0.4) 0%, rgba(15,18,17,0.16) 45%, transparent 70%)" }}
           />
           {/* The headline resolves by word, not character. It
               participates in the scene without delaying basic
