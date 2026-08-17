@@ -518,7 +518,7 @@ export function HomeV5Experience() {
       </section>
 
       <section id="invitation" className="home-v5-scene home-v5-invitation" data-home-v5-chapter="invitation">
-        <Film src="/videos/home-v5-invitation-film.mp4" poster="/images/home-v5-invitation-film-poster.jpg" rate={0.8} />
+        <Film src="/videos/home-v5-invitation-film-v2.mp4" poster="/images/home-v5-invitation-film-v2-poster.jpg" rate={0.8} />
         <div className="home-v5-shell home-v5-invitation__grid">
           <SceneCopy className="home-v5-invitation__copy">
             <p className="home-v5-kicker">The next clear decision</p>

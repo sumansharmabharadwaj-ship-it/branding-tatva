@@ -71,7 +71,7 @@ async function inspectViewport(browser, viewport, label) {
   assert(new Set(videoSources).size === videoSources.length, `${label} repeats a homepage film source`);
   for (const chapter of videoReports) {
     assert(chapter.video.includes("/videos/home-v5-"), `${label} ${chapter.id} does not use its dedicated V5 film`);
-    assert((chapter.duration || 0) >= 14.5, `${label} ${chapter.id} film is only ${chapter.duration}s`);
+    assert((chapter.duration || 0) >= 16, `${label} ${chapter.id} film is only ${chapter.duration}s`);
   }
 
   for (const id of ["recognition", "foundation", "process", "decision"]) {
