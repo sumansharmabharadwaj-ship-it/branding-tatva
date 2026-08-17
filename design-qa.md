@@ -4,7 +4,7 @@
 
 - Source visual truth: `/workspace/scratch/2af10d827d8a/generated_images/exec-20f8d6be-2bd7-48d7-aa5f-3287bc53373b.png`
 - Source frame: 1487 × 1058
-- Implementation: `https://branding-tatva-mfdhoiyhm-suman22.vercel.app/`
+- Implementation: `https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/`
 - Implementation frame: 1363 × 936 CSS pixels at device scale factor 1
 - State: desktop opening after the prelude; consent dismissed for an unobstructed comparison
 - Full-view comparison: the source and deployed opening were placed in the same comparison input during cloud-browser QA.
