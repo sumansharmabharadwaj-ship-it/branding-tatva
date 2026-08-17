@@ -247,6 +247,7 @@ export default async function ServicesPage() {
                 <SplitReveal
                   as="h1"
                   splitType="words"
+                  data-services-hero-heading="true"
                   className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
                 >
                   The work begins wherever recognition is breaking down.

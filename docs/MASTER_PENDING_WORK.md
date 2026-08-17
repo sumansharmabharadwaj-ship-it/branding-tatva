@@ -17,17 +17,18 @@ This file is the single source of truth for unfinished website work. It consolid
 
 ## P0 · Release and deployment blockers
 
-- [x] Build and deploy the latest application source, commit `e4af60c9ea898452a2832684147fb8606043cf7d`, as READY deployment `dpl_HJUQJvxrkfTfFJ8yznjsvwfeuT1D`.
-- [x] Keep the permanent review alias attached to the `homepage-cinematic-recovery` branch; it now resolves to the latest READY application deployment.
+- [x] Publish the complete cinematic application source to `homepage-cinematic-recovery`; current source head is `5b92e1ac734ac8638964ba88858a7d70acaf6de6`.
+- [x] Keep the permanent review alias attached only to the `homepage-cinematic-recovery` preview environment; production remains untouched.
 - [ ] Configure `VERCEL_TOKEN` for alias management and `VERCEL_AUTOMATION_BYPASS_SECRET` for protected-preview CI, without weakening preview protection.
 - [ ] Verify `/api/release` and `/api/verification` on the permanent alias report the certified canonical commit, branch `homepage-cinematic-recovery`, and preview environment.
 - [x] Make the permanent source gate compare the latest deployable application commit rather than workflow-only branch commits, and fail immediately when preview authentication is unavailable.
-- [ ] Complete the latest full cinematic GitHub gate without cancellation or stale-source drift.
+- [ ] Deploy the complete source head after Vercel's Hobby-plan deployment limit resets. The clean commit is currently rejected with `api-deployments-free-per-day` / retry in 24 hours.
+- [ ] Complete the final Services browser matrix; Home, Work, Contact, shared media, and utility media are green on the current source line.
 - [ ] Run the integrated browser matrix on the deployed artifact, not only the local production build.
 - [ ] Record Vercel Speed Insights and field Core Web Vitals where available: LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1.
 - [ ] Keep a rollback commit and do not promote production until Suman approves desktop and mobile screenshots.
 
-Current release evidence: the latest immutable application deployment is READY from commit `e4af60c9ea898452a2832684147fb8606043cf7d`. The branch head may move through workflow-only certification commits that Vercel intentionally ignores; the source gate is designed to compare the latest deployable application commit. Protected-preview CI still needs `VERCEL_AUTOMATION_BYPASS_SECRET`; cloud-browser verification against the protected preview is complete for Home, Work, Insights, and the new About media pass.
+Current release evidence: the permanent alias currently resolves to READY deployment `dpl_FCTrUGDsvz65fuucQeTMoc66Jq5w` from intermediate commit `90de2b6f0f1474d47213d1a4383d1255fd42fbe8`. That artifact contains the latest Home, Work, Services, Contact, About, Insights, and shared-footer application changes plus the new utility posters, but it predates assembly of the four utility MP4 payloads; those four utility mastheads therefore retain their poster fallback until the clean source can deploy. The last complete main-route immutable deployment is `dpl_JDM8gLziegH2Q7A9Rzv8TRXCHs5G` from Work commit `429bcf7eb23adca407d24485647fa5bcbf13fdde`. Protected-preview CI still needs `VERCEL_AUTOMATION_BYPASS_SECRET`.
 
 ## P0 · Homepage V5
 
@@ -43,6 +44,8 @@ Current release evidence: the latest immutable application deployment is READY f
 - [ ] Confirm the guided journey never advances after explicit manual input and Pause freezes every decorative loop and film.
 - [ ] Review every scene at 1440×900, 1280×800, 1024×768, 768×1024, 390×844, and 360×800 on the hosted preview.
 - [x] Recheck all eight V5 chapters for screen fit: at 1365×936 every desktop chapter is exactly 936px high with no horizontal overflow.
+- [x] Remove the 49px mobile Process overflow and keep all five method choices inside a 390px viewport.
+- [x] Pass the exact-source Home V5 release workflow, run `32075701590`.
 - [ ] Compare the current result against the approved screenshots and nature moodboards, not an older homepage branch.
 - [ ] Confirm autoplay feels clearly faster without making reading hurried; validate film speed, semantic rotation speed, touch holds, and offscreen pausing.
 - [ ] Inspect Safari, Chrome, and Firefox; mouse wheel, trackpad, touch, keyboard, resize, back navigation, background-tab restoration, and slow-network behavior.
@@ -53,7 +56,10 @@ Current release evidence: the latest immutable application deployment is READY f
 
 Intended order: Hero → Situation → Project Rooms → verified outcome → Authority → Stakes → five-stage recognition ladder → Deliverables → Imagine Your Brand → Health Check → practical FAQ → call preview → booking.
 
-- [ ] Verify the fully integrated Services source on the permanent review alias rather than an older Services-only preview.
+- [x] Replace all fourteen Services chapter backgrounds with distinct 16–26 second forward films and reject short/repeated media in CI.
+- [x] Prevent pointer hover/focus movement from changing the discipline rail before a visitor's click commits.
+- [x] Publish all thirteen real cinematic chapters in compact desktop and mobile wayfinding.
+- [ ] Verify the fully integrated Services source on the permanent review alias after the final assembled source can deploy.
 - [ ] Complete a hosted traversal at desktop, tablet, and phone sizes.
 - [ ] Verify native wheel/trackpad/touch/keyboard behavior, direction reversal, anchors, refresh inside sticky scenes, and no snap-back.
 - [ ] Confirm Situation selection persists into Project Rooms and can be changed deliberately.
@@ -68,8 +74,9 @@ Intended order: Hero → Situation → Project Rooms → verified outcome → Au
 ## P0 · Work
 
 - [x] Restore the roots-led opening with a dedicated 21-second forward film and make it visibly present behind the evidence interface.
-- [x] Remove exact film reuse across the Work chapters.
-- [ ] Obtain hosted evidence for the exact current Work source, including the complete eight-contract Work browser matrix.
+- [x] Remove exact film reuse and replace every later 8–14 second Work loop with a distinct 16–19 second forward film.
+- [x] Pass the complete eight-contract Work browser matrix on the long-film source, run `32073781671`.
+- [ ] Obtain hosted evidence for the exact current Work source after the final assembled source can deploy.
 - [x] Verify hero hover, focus, manual pause, autoplay resume, keyboard selection, and reduced-motion behavior in the production-server browser gate.
 - [ ] Verify hero offscreen and background-tab restoration on the hosted preview.
 - [x] Verify mobile selector placement, active evidence proximity, and semantic narrative labels.
@@ -80,7 +87,7 @@ Intended order: Hero → Situation → Project Rooms → verified outcome → Au
 - [ ] Recheck every metric, attribution boundary, baseline, timeframe, image crop, and alt description.
 - [ ] Finish the documentary-detail media pass without turning every project into the same sticky sequence.
 
-Exact unchanged Work source passed the full matrix in run `31166850299`: hierarchy and seven viewports, hero pause contract, capability attention, mobile narratives, mobile index, Lab accessibility, seventh-decision context, and fifth-study context.
+The current Work source passed the full matrix in run `32073781671`: media uniqueness/duration, hierarchy and seven viewports, hero pause contract, capability attention, mobile narratives, mobile index, Lab accessibility, seventh-decision context, and fifth-study context.
 
 ## P0 · Insights and SEO authority
 
@@ -103,6 +110,7 @@ Exact unchanged Work source passed the full matrix in run `31166850299`: hierarc
 
 ## P0 · Contact and booking
 
+- [x] Replace all four Contact backgrounds with distinct 16–19 second forward films and pass the dedicated route media gate.
 - [x] Integrate the three-path Contact hierarchy: schedule, call/WhatsApp, or write.
 - [x] Centralize public contact data: `+91 84477 25381`, readable display format, `tel:` link, WhatsApp URL, email, and 30-minute consultation duration.
 - [x] Remove contradictory twenty-minute references and guard the public route against their return in release CI.
@@ -129,6 +137,8 @@ Exact unchanged Work source passed the full matrix in run `31166850299`: hierarc
 - [ ] Every interaction works by keyboard and touch; no essential information exists only on hover, colour, or motion.
 - [ ] Every diagram keeps text inside geometry with correct radius, padding, stroke, line origins, node spacing, and optical centring.
 - [x] Release responsive video `<source>` listeners during unmount so repeated Services navigation no longer retains entire page trees through Blink MediaQueryList roots.
+- [x] Replace the repeated 10-second global footer loop with one dedicated 19-second forward film and pass the shared-media gate.
+- [x] Give Privacy, Terms, the Glossary index, and glossary-term mastheads four distinct 16–20 second forward films with original posters; utility-media run `32075288106` is green.
 - [ ] Remove remaining duplicated animation loops, listeners, observers, ScrollTriggers, media directors, and stale hidden components.
 - [ ] Reserve media dimensions to prevent CLS; use Next Image where appropriate.
 - [ ] Verify loading, empty, error, failed-video, and failed-form states.

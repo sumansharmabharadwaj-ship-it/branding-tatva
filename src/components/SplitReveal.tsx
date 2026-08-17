@@ -21,12 +21,13 @@ export function SplitReveal({
   className,
   as: Tag = "h2",
   splitType = "words",
+  ...headingProps
 }: {
   children: React.ReactNode;
   className?: string;
   as?: "h1" | "h2";
   splitType?: "words" | "chars";
-}) {
+} & Omit<React.HTMLAttributes<HTMLHeadingElement>, "children" | "className">) {
   const ref = useRef<HTMLHeadingElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
 
@@ -39,7 +40,7 @@ export function SplitReveal({
   }, [prefersReducedMotion, splitType]);
 
   return (
-    <Tag ref={ref} className={className}>
+    <Tag ref={ref} className={className} {...headingProps}>
       {children}
     </Tag>
   );
