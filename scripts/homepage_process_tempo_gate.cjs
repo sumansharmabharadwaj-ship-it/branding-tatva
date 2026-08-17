@@ -60,7 +60,7 @@ async function selectedStage(processScene) {
   const firstAdvance = await selectedStage(processScene);
   assert(firstAdvance && firstAdvance !== initial, "working-method scene did not advance within the first reading beat");
 
-  await processScene.dispatchEvent("pointerdown", {
+  await processScene.locator('[data-project-journey="true"]').dispatchEvent("pointerdown", {
     bubbles: true,
     pointerType: "mouse",
   });
