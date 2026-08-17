@@ -30,6 +30,19 @@ async function waitForAttribute(page, locator, name, value, message) {
   throw new Error(message);
 }
 
+async function settleConsent(page, label) {
+  const banner = page.getByRole("dialog", { name: "Your choice about measurement" });
+  if ((await banner.count()) === 0) return;
+
+  const essentialOnly = banner.getByRole("button", { name: "Essential only" });
+  assert(
+    (await essentialOnly.count()) === 1,
+    `${label}: consent banner did not expose the essential-only choice`,
+  );
+  await essentialOnly.click();
+  await banner.waitFor({ state: "detached", timeout: 2_500 });
+}
+
 function durationSeconds(buffer, label) {
   const marker = buffer.indexOf(Buffer.from("mvhd"));
   assert(marker >= 0, `${label} has no movie header`);
@@ -60,6 +73,7 @@ async function inspectViewport(browser, viewport, label) {
   await page.goto(BASE_URL, { waitUntil: "networkidle", timeout: 90_000 });
   await page.waitForSelector("[data-home-v5]", { timeout: 15_000 });
   await page.waitForTimeout(1_350);
+  await settleConsent(page, label);
 
   const openingFilm = page.locator("#opening video");
   assert((await openingFilm.count()) === 1, `${label} is missing its opening film`);
