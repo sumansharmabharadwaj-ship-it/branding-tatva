@@ -142,6 +142,9 @@ export default function WorkPage() {
           label="Discuss the pattern"
           event="contextual_cta_clicked"
           eventProps={{ source: "work_performance_signature" }}
+          video="/videos/generated/bt-work-encounter-network.mp4"
+          poster="/images/generated/bt-work-encounter-network-poster.jpg"
+          imagePosition="center 58%"
         />
 
         {/* A faster middle tier resets the viewing mode before the next

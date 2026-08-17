@@ -1,4 +1,5 @@
 import { LinkButton } from "@/components/Button";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
 import type { AnalyticsEvent } from "@/lib/analytics";
 
@@ -20,6 +21,9 @@ export function ContextualCTA({
   event,
   eventProps,
   tone = "dark",
+  video,
+  poster,
+  imagePosition = "center",
 }: {
   eyebrow?: string;
   heading: string;
@@ -29,11 +33,28 @@ export function ContextualCTA({
   event: AnalyticsEvent;
   eventProps?: Record<string, string | number | boolean>;
   tone?: "dark" | "light";
+  video?: string;
+  poster?: string;
+  imagePosition?: string;
 }) {
   const dark = tone === "dark";
   return (
-    <section className="py-14 sm:py-20" style={{ backgroundColor: dark ? "#171A17" : "#F2F0E8" }}>
-      <Container className="max-w-3xl text-center">
+    <section className="relative overflow-hidden py-14 sm:py-20" style={{ backgroundColor: dark ? "#171A17" : "#F2F0E8" }}>
+      {video && poster && (
+        <>
+          <BackgroundVideo video={video} poster={poster} imagePosition={imagePosition} push />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              background: dark
+                ? "linear-gradient(110deg, rgba(12,18,14,0.94), rgba(16,26,20,0.78) 50%, rgba(10,15,12,0.91))"
+                : "linear-gradient(110deg, rgba(242,240,232,0.96), rgba(242,240,232,0.82) 50%, rgba(242,240,232,0.94))",
+            }}
+          />
+        </>
+      )}
+      <Container className="relative max-w-3xl text-center">
         {eyebrow && (
           <p
             className="text-xs font-medium uppercase tracking-[0.2em]"

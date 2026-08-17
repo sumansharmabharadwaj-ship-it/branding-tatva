@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Pause, Play } from "lucide-react";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { projects } from "@/data/projects";
@@ -131,6 +132,22 @@ export function WorkOpening() {
 
   return (
     <section className="relative overflow-hidden" style={{ backgroundColor: WORK.cream }}>
+      <div aria-hidden="true" className="absolute inset-0 opacity-[0.64]">
+        <BackgroundVideo
+          video="/videos/generated/bt-work-archive-light.mp4"
+          poster="/images/generated/bt-work-archive-light-poster.jpg"
+          imagePosition="center"
+          push
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(242,240,232,0.97) 0%, rgba(242,240,232,0.91) 43%, rgba(242,240,232,0.7) 72%, rgba(242,240,232,0.54) 100%), linear-gradient(180deg, rgba(242,240,232,0.48) 0%, rgba(242,240,232,0.12) 58%, rgba(242,240,232,0.88) 100%)",
+        }}
+      />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -right-[18%] -top-[24%] h-[72%] w-[70%] rounded-full opacity-80"

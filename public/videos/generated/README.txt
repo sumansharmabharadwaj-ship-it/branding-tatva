@@ -79,3 +79,13 @@ Implementation rules
 - procedural films remain reproducible through scripts/generate_services_procedural_media.py, scripts/generate_services_situation_film.py, and scripts/generate_services_authority_film.py
 
 Installed on the homepage-cinematic-recovery branch after duration, audio-state, responsive-encoding, source-reference, and reduced-motion validation.
+
+Work opening / archival evidence
+- bt-work-archive-light.mp4
+- poster: /images/generated/bt-work-archive-light-poster.jpg
+- role: turns the opening field into a living archive of folios, water marks, leaves, and mineral evidence
+
+Work performance CTA / encounter network
+- bt-work-encounter-network.mp4
+- poster: /images/generated/bt-work-encounter-network-poster.jpg
+- role: frames repeated encounters as a branching, reconnecting living distribution network
