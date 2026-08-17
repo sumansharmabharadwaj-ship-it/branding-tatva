@@ -90,7 +90,7 @@ export function PageLoadVeil() {
       data-page-load-veil
       data-page-load-state={visible ? "present" : "leaving"}
       aria-hidden="true"
-      className="fixed inset-0 z-100 overflow-hidden bg-[#111518]"
+      className="fixed inset-0 z-100 overflow-hidden bg-[#111518] motion-reduce:hidden"
       initial={false}
       animate={
         visible
