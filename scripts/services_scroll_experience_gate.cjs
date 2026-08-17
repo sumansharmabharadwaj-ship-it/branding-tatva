@@ -171,7 +171,17 @@ async function auditViewport(browser, viewport) {
   await waitForPrelude(page);
 
   const label = `services-scroll/${viewport.name}`;
-  await page.waitForFunction(() => document.documentElement.dataset.servicesExperience === "active");
+  const experienceDeadline = Date.now() + 5_000;
+  while (
+    Date.now() < experienceDeadline &&
+    (await page.locator("html").getAttribute("data-services-experience")) !== "active"
+  ) {
+    await page.waitForTimeout(40);
+  }
+  assert(
+    (await page.locator("html").getAttribute("data-services-experience")) === "active",
+    `${label}: Services experience did not activate`,
+  );
 
   const sceneCount = await page.locator("[data-services-scroll-scene]").count();
   assert(sceneCount === 13, `${label}: expected 13 directed scenes, found ${sceneCount}`);
