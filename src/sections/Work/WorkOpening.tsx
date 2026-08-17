@@ -132,12 +132,13 @@ export function WorkOpening() {
 
   return (
     <section className="relative overflow-hidden" style={{ backgroundColor: WORK.cream }}>
-      <div aria-hidden="true" className="absolute inset-0 opacity-[0.64]">
+      <div aria-hidden="true" className="absolute inset-0 opacity-[0.82]">
         <BackgroundVideo
-          video="/videos/pexels-studio-morning-light.mp4"
-          poster="/images/pexels-studio-morning-light-poster.jpg"
+          video="/videos/work-roots-opening-film.mp4"
+          poster="/images/work-roots-opening-film-poster.jpg"
           imagePosition="center"
           push
+          playbackRate={0.86}
         />
       </div>
       <div
@@ -145,7 +146,7 @@ export function WorkOpening() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "linear-gradient(90deg, rgba(242,240,232,0.97) 0%, rgba(242,240,232,0.91) 43%, rgba(242,240,232,0.7) 72%, rgba(242,240,232,0.54) 100%), linear-gradient(180deg, rgba(242,240,232,0.48) 0%, rgba(242,240,232,0.12) 58%, rgba(242,240,232,0.88) 100%)",
+            "linear-gradient(90deg, rgba(242,240,232,0.97) 0%, rgba(242,240,232,0.9) 43%, rgba(242,240,232,0.62) 72%, rgba(242,240,232,0.34) 100%), linear-gradient(180deg, rgba(242,240,232,0.42) 0%, rgba(242,240,232,0.08) 58%, rgba(242,240,232,0.84) 100%)",
         }}
       />
       <div

@@ -142,8 +142,8 @@ export default function WorkPage() {
           label="Discuss the pattern"
           event="contextual_cta_clicked"
           eventProps={{ source: "work_performance_signature" }}
-          video="/videos/pexels-root-network.mp4"
-          poster="/images/pexels-root-network-poster.jpg"
+          video="/videos/higgsfield-golden-ridge.mp4"
+          poster="/images/higgsfield-golden-ridge-poster.jpg"
           imagePosition="center 58%"
         />
 

@@ -20,6 +20,8 @@ on:
       - scripts/work_hero_pause_gate.cjs
       - scripts/work_capability_attention_gate.cjs
       - public/images/work-evidence-*.svg
+      - public/images/work-roots-opening-film-poster.jpg
+      - public/videos/work-roots-opening-film.mp4
       - src/app/work/**
       - src/sections/Work/**
       - src/sections/CaseStudies/BrandStudies.tsx
