@@ -46,7 +46,11 @@ export function PageLoadVeil() {
   const [phase, setPhase] = useState(0);
 
   useIsomorphicLayoutEffect(() => {
-    if (pathname !== "/" || prefersReducedMotion) {
+    const systemReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (pathname !== "/" || prefersReducedMotion || systemReducedMotion) {
       setVisible(false);
       setRemoved(true);
       return;
