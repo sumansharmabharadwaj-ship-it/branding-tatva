@@ -1,0 +1,4 @@
+Services compressed-journey browser preview.
+Base commit: 61695327c000ad01efa78118275e5da42d468a3d
+Created: 2026-08-06
+Includes the screen-led Services chapters, discipline explorer, carried package recommendation, and latest Work mobile proof-selector repair.
