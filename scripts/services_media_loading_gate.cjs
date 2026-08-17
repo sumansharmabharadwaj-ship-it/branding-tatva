@@ -4,9 +4,9 @@ const { chromium } = require("playwright");
 
 const BASE_URL = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const OUTPUT = path.join(process.cwd(), "services-scroll-experience-audit");
-const STRATEGY_ROOM_POSTER = "bt-services-strategy-room-poster";
-const STRATEGY_ROOM_VIDEO = "bt-services-strategy-room";
-const HERO_VIDEO = "bt-services-hero-root-system";
+const STRATEGY_ROOM_POSTER = "services-booking-room-film-v2-poster";
+const STRATEGY_ROOM_VIDEO = "services-booking-room-film-v2";
+const HERO_VIDEO = "services-opening-film-v2";
 
 fs.mkdirSync(OUTPUT, { recursive: true });
 
@@ -35,6 +35,14 @@ function matching(requests, needle) {
   return requests.filter((url) => decodeURIComponent(url).includes(needle));
 }
 
+async function alignToBook(page) {
+  await page.locator("#book").evaluate((node) => {
+    const lenis = window.__lenisInstance;
+    if (lenis) lenis.scrollTo(node, { immediate: true });
+    else node.scrollIntoView({ behavior: "auto", block: "start" });
+  });
+}
+
 async function standardMotion(browser) {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   await context.addInitScript(() => {
@@ -56,7 +64,7 @@ async function standardMotion(browser) {
   assert(initialPosterRequests.length === 0, "Strategy-room poster entered the initial request waterfall");
   assert(initialClosingVideoRequests.length === 0, "Strategy-room video entered the initial request waterfall");
 
-  await page.locator("#book").scrollIntoViewIfNeeded();
+  await alignToBook(page);
   await page.waitForTimeout(1_400);
 
   const afterPosterRequests = matching(requests, STRATEGY_ROOM_POSTER);
@@ -90,7 +98,7 @@ async function reducedMotion(browser) {
 
   await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await waitForServices(page);
-  await page.locator("#book").scrollIntoViewIfNeeded();
+  await alignToBook(page);
   await page.waitForTimeout(1_100);
 
   const closingVideoRequests = matching(requests, STRATEGY_ROOM_VIDEO);
