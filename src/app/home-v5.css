@@ -1026,6 +1026,8 @@
     font-size: clamp(2rem, 9vw, 2.8rem);
   }
 
+  /* Keep all five method choices inside the mobile scene. The previous
+     fixed-width rail enlarged the grid item and leaked 49px past 390px. */
   .home-v5-method__steps {
     width: 100%;
     min-width: 0;

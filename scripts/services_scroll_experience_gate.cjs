@@ -121,7 +121,10 @@ async function assertWayfinding(page, viewport, label, sceneCount) {
     });
     assert(geometry.width <= 80, `${label}: chapter rail is ${geometry.width.toFixed(1)}px wide`);
     assert(geometry.rightGap <= 28, `${label}: chapter rail drifted ${geometry.rightGap.toFixed(1)}px from the edge`);
-    assert(geometry.top >= -2 && geometry.bottom <= viewport.height + 2, `${label}: chapter rail exceeds the viewport`);
+    assert(
+      geometry.top >= -2 && geometry.bottom <= viewport.height + 2,
+      `${label}: chapter rail exceeds the viewport ${JSON.stringify(geometry)}`,
+    );
   } else {
     assert(!(await visible(rail)), `${label}: desktop chapter rail is visible on mobile`);
     assert(!(await visible(bar)), `${label}: bottom chapter bar is visible on mobile`);

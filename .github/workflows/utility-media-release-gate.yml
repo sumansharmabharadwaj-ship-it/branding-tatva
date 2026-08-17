@@ -1,3 +1,5 @@
+# Runs again after the checksum-verified MP4 assembly commit so certification
+# always describes the complete branch tree visitors will receive.
 name: Utility media release gate
 
 on:
