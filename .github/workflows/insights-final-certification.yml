@@ -20,6 +20,9 @@ on:
       - scripts/insights_authority_gate.cjs
       - scripts/insights_browser_gate.cjs
       - scripts/insights_discovery_gate.cjs
+      - scripts/insights_media_uniqueness_gate.cjs
+      - public/images/insights/**
+      - public/videos/insights/**
       - public/images/cinematic-waterlight-poster.jpg
       - public/llms.txt
       - package.json
@@ -50,6 +53,7 @@ jobs:
             /*
             !/public/videos/*
             !/public/audio/*
+            /public/videos/insights/*
 
       - name: Use Node 24
         uses: actions/setup-node@v4
@@ -78,6 +82,9 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: 1
         run: pnpm build
+
+      - name: Validate unique forward films for guides, archive, and topic hubs
+        run: node scripts/insights_media_uniqueness_gate.cjs
 
       - name: Start the production server
         env:

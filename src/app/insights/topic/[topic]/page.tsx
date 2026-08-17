@@ -69,6 +69,13 @@ export default async function InsightTopicPage({ params }: Props) {
     .filter((post) => post.topicSlug !== topic.slug)
     .slice(0, 3);
   const color = element?.color ?? "#B85A34";
+  const topicFilm = (chapter: "intro" | "library" | "next") => ({
+    video: `/videos/insights/topic-${topic.element}-${chapter}.mp4`,
+    poster: `/images/insights/topic-${topic.element}-${chapter}-poster.jpg`,
+  });
+  const introFilm = topicFilm("intro");
+  const libraryFilm = topicFilm("library");
+  const nextFilm = topicFilm("next");
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -178,8 +185,8 @@ export default async function InsightTopicPage({ params }: Props) {
 
         <section className="relative overflow-hidden bg-ivory py-20 sm:py-28">
           <BackgroundVideo
-            video="/videos/pixabay-roots-stream.mp4"
-            poster="/images/pixabay-roots-stream-poster.jpg"
+            video={introFilm.video}
+            poster={introFilm.poster}
             parallax
             playbackRate={0.84}
           />
@@ -239,8 +246,8 @@ export default async function InsightTopicPage({ params }: Props) {
 
         <section className="relative overflow-hidden bg-background-alt py-20 sm:py-28">
           <BackgroundVideo
-            video="/videos/pexels-moss-stream.mp4"
-            poster="/images/pexels-moss-stream-poster.jpg"
+            video={libraryFilm.video}
+            poster={libraryFilm.poster}
             parallax
             playbackRate={0.82}
           />
@@ -279,8 +286,8 @@ export default async function InsightTopicPage({ params }: Props) {
 
         <section className="relative overflow-hidden bg-soil py-20 text-ivory sm:py-28">
           <BackgroundVideo
-            video="/videos/pexels-aspen-sunburst.mp4"
-            poster="/images/pexels-aspen-sunburst-poster.jpg"
+            video={nextFilm.video}
+            poster={nextFilm.poster}
             parallax
             playbackRate={0.84}
           />

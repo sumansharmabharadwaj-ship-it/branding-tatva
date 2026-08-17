@@ -56,8 +56,8 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
   return (
     <section id="insights-library" className="relative overflow-hidden bg-background-alt py-20 sm:py-28">
       <BackgroundVideo
-        video="/videos/pexels-aspen-sunburst.mp4"
-        poster="/images/pexels-aspen-sunburst-poster.jpg"
+        video="/videos/insights/archive-library.mp4"
+        poster="/images/insights/archive-library-poster.jpg"
         parallax
         playbackRate={0.84}
       />
