@@ -94,12 +94,17 @@ async function selectedStage(processScene) {
   const guide = page.locator("[data-guided-controls]");
   assert((await guide.count()) === 1, "guided controls missing during working-method audit");
   const guideToggle = guide.locator("button").first();
+  const guideStep = (await guide.locator("strong").textContent()) || "";
+  assert(
+    guideStep.startsWith("06/"),
+    `guided controls did not recognize the working-method scene: ${guideStep}`,
+  );
 
-  await guideToggle.click({ force: true });
-  await waitForAttribute(page, guideToggle, "aria-pressed", "true");
+  await guideToggle.dispatchEvent("click");
+  await waitForAttribute(page, guide, "data-guide-mode", "guided");
 
-  await guideToggle.click({ force: true });
-  await waitForAttribute(page, page.locator("html"), "data-home-guide-mode", "paused");
+  await guideToggle.dispatchEvent("click");
+  await waitForAttribute(page, guide, "data-guide-mode", "paused");
 
   const pausedStage = await selectedStage(processScene);
   await page.waitForTimeout(6_200);
@@ -108,8 +113,8 @@ async function selectedStage(processScene) {
     "guided pause did not freeze the working-method sequence",
   );
 
-  await guideToggle.click({ force: true });
-  await waitForAttribute(page, page.locator("html"), "data-home-guide-mode", "guided");
+  await guideToggle.dispatchEvent("click");
+  await waitForAttribute(page, guide, "data-guide-mode", "guided");
   await page.waitForTimeout(3_050);
   assert(
     (await selectedStage(processScene)) !== pausedStage,
