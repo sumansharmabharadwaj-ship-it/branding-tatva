@@ -2,6 +2,10 @@
 /* Private Strategy Film — selected homepage direction                        */
 /* -------------------------------------------------------------------------- */
 
+.home-v4-recognition__choices {
+  display: none;
+}
+
 /* One deliberate wheel movement, one complete chapter. Native snap remains
    proximity-based so visitors never feel trapped and touch stays untouched. */
 @media (min-width: 821px) and (pointer: fine) {
@@ -130,6 +134,52 @@
 
   .home-v4-recognition__copy .home-v4-text-link {
     margin-top: clamp(0.8rem, 2svh, 1.35rem);
+  }
+
+  .home-v4-recognition__choices {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+    margin-top: clamp(0.8rem, 1.8svh, 1.2rem);
+  }
+
+  .home-v4-recognition__choices button {
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0.58rem 0.65rem;
+    border: 1px solid rgba(244, 239, 230, 0.12);
+    border-radius: 0.35rem;
+    background: rgba(244, 239, 230, 0.035);
+    color: rgba(244, 239, 230, 0.6);
+    text-align: left;
+  }
+
+  .home-v4-recognition__choices button[aria-pressed="true"],
+  .home-v4-recognition__choices button:hover,
+  .home-v4-recognition__choices button:focus-visible {
+    border-color: color-mix(in srgb, var(--recognition-accent) 64%, transparent);
+    background: rgba(244, 239, 230, 0.09);
+    color: #f4efe6;
+    outline: none;
+  }
+
+  .home-v4-recognition__choices span,
+  .home-v4-recognition__choices strong {
+    display: block;
+  }
+
+  .home-v4-recognition__choices span {
+    color: var(--recognition-accent);
+    font-size: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  .home-v4-recognition__choices strong {
+    margin-top: 0.25rem;
+    font-size: 0.58rem;
+    font-weight: 650;
+    line-height: 1.25;
   }
 
   /* Hidden cost keeps the film visible and turns the current cost state into
