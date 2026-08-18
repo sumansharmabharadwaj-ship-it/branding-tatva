@@ -60,7 +60,7 @@ function postChunked(path, body, ip) {
   {
     const oversized = JSON.stringify({ message: "x".repeat(32_100) });
     const response = await postChunked("/api/contact", oversized, "203.0.113.15");
-    assert(response.status === 413, `contact consumed-size guard: expected 413, got ${response.status}`);
+    assert(response.statusCode === 413, `contact consumed-size guard: expected 413, got ${response.statusCode}`);
   }
 
   {
