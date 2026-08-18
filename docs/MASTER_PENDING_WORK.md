@@ -17,18 +17,19 @@ This file is the single source of truth for unfinished website work. It consolid
 
 ## P0 · Release and deployment blockers
 
-- [x] Publish the complete cinematic application source to `homepage-cinematic-recovery`; current source head is `5b92e1ac734ac8638964ba88858a7d70acaf6de6`.
+- [x] Publish the complete cinematic application source to `homepage-cinematic-recovery`; current deployable application head is `0936edc5ae93ea856b59adc710df17f716fd0d67`.
 - [x] Keep the permanent review alias attached only to the `homepage-cinematic-recovery` preview environment; production remains untouched.
-- [ ] Configure `VERCEL_TOKEN` for alias management and `VERCEL_AUTOMATION_BYPASS_SECRET` for protected-preview CI, without weakening preview protection.
-- [ ] Verify `/api/release` and `/api/verification` on the permanent alias report the certified canonical commit, branch `homepage-cinematic-recovery`, and preview environment.
+- [ ] Configure `VERCEL_AUTOMATION_BYPASS_SECRET` for protected-preview CI, without weakening preview protection. Git integration already owns preview deployment and permanent branch-alias attachment; a `VERCEL_TOKEN` is needed only if CLI alias management is restored.
+- [x] Verify `/api/release` on the permanent alias reports commit `130ceb11f07715681f1765c5efefc372689eefd9`, branch `homepage-cinematic-recovery`, and preview environment.
+- [ ] Verify `/api/verification` from protected-preview CI. The endpoint currently redirects to Vercel authentication without an automation-bypass secret.
 - [x] Make the permanent source gate compare the latest deployable application commit rather than workflow-only branch commits, and fail immediately when preview authentication is unavailable.
-- [ ] Deploy the complete source head after Vercel's Hobby-plan deployment limit resets. The clean commit is currently rejected with `api-deployments-free-per-day` / retry in 24 hours.
-- [ ] Complete the final Services browser matrix; Home, Work, Contact, shared media, and utility media are green on the current source line.
+- [ ] Deploy application commit `0936edc5ae93ea856b59adc710df17f716fd0d67` after Vercel's build-rate limit resets. Its GitHub Vercel status links to `upgradeToPro=build-rate-limit`; no production target was touched.
+- [x] Complete the final Services browser matrix. Run `32082394534` passed all seventeen release steps on the exact application commit `0936edc5ae93ea856b59adc710df17f716fd0d67`.
 - [ ] Run the integrated browser matrix on the deployed artifact, not only the local production build.
 - [ ] Record Vercel Speed Insights and field Core Web Vitals where available: LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1.
 - [ ] Keep a rollback commit and do not promote production until Suman approves desktop and mobile screenshots.
 
-Current release evidence: the permanent alias currently resolves to READY deployment `dpl_FCTrUGDsvz65fuucQeTMoc66Jq5w` from intermediate commit `90de2b6f0f1474d47213d1a4383d1255fd42fbe8`. That artifact contains the latest Home, Work, Services, Contact, About, Insights, and shared-footer application changes plus the new utility posters, but it predates assembly of the four utility MP4 payloads; those four utility mastheads therefore retain their poster fallback until the clean source can deploy. The last complete main-route immutable deployment is `dpl_JDM8gLziegH2Q7A9Rzv8TRXCHs5G` from Work commit `429bcf7eb23adca407d24485647fa5bcbf13fdde`. Protected-preview CI still needs `VERCEL_AUTOMATION_BYPASS_SECRET`.
+Current release evidence: the permanent alias resolves to READY preview deployment `dpl_B7UjnP498wvdjEkntnEHE58yKQHr` (`branding-tatva-dtgkbejfg-suman22.vercel.app`) from application commit `130ceb11f07715681f1765c5efefc372689eefd9`. That artifact contains the assembled utility films, ten unique glossary-term films, compact Services mobile chapters, the complete cinematic Home/Work/Insights/About/Contact/shared-media passes, and the verified Home guide. `/api/release` reports that exact commit. The only newer application change is the native-keyboard/Lenis reconciliation at `0936edc5ae93ea856b59adc710df17f716fd0d67`; it is fully green in Services run `32082394534` but is awaiting a new READY preview because Vercel rejected the build at its account rate limit. `/api/verification` remains protected by Vercel authentication until `VERCEL_AUTOMATION_BYPASS_SECRET` is supplied.
 
 ## P0 · Homepage V5
 
@@ -61,10 +62,10 @@ Intended order: Hero → Situation → Project Rooms → verified outcome → Au
 - [x] Publish all thirteen real cinematic chapters in compact desktop and mobile wayfinding.
 - [ ] Verify the fully integrated Services source on the permanent review alias after the final assembled source can deploy.
 - [ ] Complete a hosted traversal at desktop, tablet, and phone sizes.
-- [ ] Verify native wheel/trackpad/touch/keyboard behavior, direction reversal, anchors, refresh inside sticky scenes, and no snap-back.
-- [ ] Confirm Situation selection persists into Project Rooms and can be changed deliberately.
+- [x] Verify native wheel/trackpad/touch/keyboard behavior, direction reversal, anchors, refresh inside sticky scenes, and no snap-back in the exact-source production-browser matrix, run `32082394534`.
+- [x] Confirm Situation selection persists into Project Rooms and can be changed deliberately; the canonical storage and explicit-commit contracts passed in run `32082394534`.
 - [ ] Confirm all Project Rooms use the real package registry, deliverables, quotation policy, localized investment, optional additions, and verified proof.
-- [ ] Confirm the five recognition states are Unknown, Noticed, Recognized, Remembered, and Preferred; keep engagement proof separate from recall proof.
+- [x] Confirm the five recognition states are Unknown, Noticed, Recognized, Remembered, and Preferred; semantic progression through Preferred passed in run `32082394534`, with engagement proof separate from recall proof.
 - [ ] Verify compact mobile Health Check, all four questions, three outcome bands, reset/back/package/booking paths, and neutral state before enough answers exist.
 - [ ] Verify the nine-question FAQ, desktop category index, mobile linear order, direct answers, scope notes, and FAQPage schema.
 - [x] Remove every old twenty-minute reference; the public consultation duration is 30 minutes.
@@ -138,7 +139,7 @@ The current Work source passed the full matrix in run `32073781671`: media uniqu
 - [ ] Every diagram keeps text inside geometry with correct radius, padding, stroke, line origins, node spacing, and optical centring.
 - [x] Release responsive video `<source>` listeners during unmount so repeated Services navigation no longer retains entire page trees through Blink MediaQueryList roots.
 - [x] Replace the repeated 10-second global footer loop with one dedicated 19-second forward film and pass the shared-media gate.
-- [x] Give Privacy, Terms, the Glossary index, and glossary-term mastheads four distinct 16–20 second forward films with original posters; utility-media run `32075288106` is green.
+- [x] Give Privacy, Terms, the Glossary index, and all ten glossary-term mastheads thirteen distinct long/effective forward films with original posters; utility-media run `32076818414` is green.
 - [ ] Remove remaining duplicated animation loops, listeners, observers, ScrollTriggers, media directors, and stale hidden components.
 - [ ] Reserve media dimensions to prevent CLS; use Next Image where appropriate.
 - [ ] Verify loading, empty, error, failed-video, and failed-form states.
