@@ -2,20 +2,15 @@ import { NextRequest } from "next/server";
 import { newsletterSchema } from "@/lib/newsletter-schema";
 import {
   fetchWithTimeout,
-  guardJsonRequest,
+  readGuardedJsonRequest,
   jsonNoStore,
 } from "@/lib/api-protection";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
-  const guarded = guardJsonRequest(request, { scope: "newsletter", limit: 8 });
+  const { response: guarded, body } = await readGuardedJsonRequest(request, { scope: "newsletter", limit: 8 });
   if (guarded) return guarded;
-
-  const body = await request.json().catch(() => null);
-  if (!body) {
-    return jsonNoStore({ error: "Invalid submission." }, { status: 400 });
-  }
 
   const parsed = newsletterSchema.safeParse(body);
   if (!parsed.success) {

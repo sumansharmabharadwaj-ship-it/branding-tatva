@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { contactSchema } from "@/lib/contact-schema";
 import {
   fetchWithTimeout,
-  guardJsonRequest,
+  readGuardedJsonRequest,
   jsonNoStore,
   singleLine,
 } from "@/lib/api-protection";
@@ -10,13 +10,8 @@ import {
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
-  const guarded = guardJsonRequest(request, { scope: "contact", limit: 5 });
+  const { response: guarded, body } = await readGuardedJsonRequest(request, { scope: "contact", limit: 5 });
   if (guarded) return guarded;
-
-  const body = await request.json().catch(() => null);
-  if (!body) {
-    return jsonNoStore({ error: "Invalid submission." }, { status: 400 });
-  }
 
   const parsed = contactSchema.safeParse(body);
   if (!parsed.success) {

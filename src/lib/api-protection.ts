@@ -32,7 +32,7 @@ export function jsonNoStore(
   return NextResponse.json(body, { ...init, headers });
 }
 
-export function guardJsonRequest(
+export async function readGuardedJsonRequest(
   request: NextRequest,
   options: {
     scope: string;
@@ -43,19 +43,25 @@ export function guardJsonRequest(
 ) {
   const contentType = request.headers.get("content-type")?.toLowerCase() || "";
   if (!contentType.includes("application/json")) {
-    return jsonNoStore(
-      { error: "Please submit the form from the website." },
-      { status: 415 },
-    );
+    return {
+      response: jsonNoStore(
+        { error: "Please submit the form from the website." },
+        { status: 415 },
+      ),
+      body: null,
+    };
   }
 
   const contentLength = Number(request.headers.get("content-length") || "0");
   const maxBytes = options.maxBytes ?? DEFAULT_MAX_BYTES;
   if (Number.isFinite(contentLength) && contentLength > maxBytes) {
-    return jsonNoStore(
-      { error: "That submission is too large. Please shorten the message and try again." },
-      { status: 413 },
-    );
+    return {
+      response: jsonNoStore(
+        { error: "That submission is too large. Please shorten the message and try again." },
+        { status: 413 },
+      ),
+      body: null,
+    };
   }
 
   const now = Date.now();
@@ -68,20 +74,57 @@ export function guardJsonRequest(
 
   if (!current || current.resetAt <= now) {
     buckets.set(key, { count: 1, resetAt: now + windowMs });
-    return null;
-  }
-
-  if (current.count >= limit) {
+    // Continue below: the declared length is only a fast rejection. Clients
+    // using chunked transfer encoding can omit it, so the consumed body must
+    // also be measured before JSON parsing.
+  } else if (current.count >= limit) {
     const retryAfter = Math.max(1, Math.ceil((current.resetAt - now) / 1000));
-    return jsonNoStore(
-      { error: "Too many attempts. Please wait a little before trying again." },
-      { status: 429, headers: { "Retry-After": String(retryAfter) } },
-    );
+    return {
+      response: jsonNoStore(
+        { error: "Too many attempts. Please wait a little before trying again." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(retryAfter),
+            "X-RateLimit-Limit": String(limit),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": String(Math.ceil(current.resetAt / 1000)),
+          },
+        },
+      ),
+      body: null,
+    };
+  } else {
+    current.count += 1;
+    buckets.set(key, current);
   }
 
-  current.count += 1;
-  buckets.set(key, current);
-  return null;
+  const rawBody = await request.text().catch(() => null);
+  if (rawBody === null) {
+    return {
+      response: jsonNoStore({ error: "Invalid submission." }, { status: 400 }),
+      body: null,
+    };
+  }
+
+  if (new TextEncoder().encode(rawBody).byteLength > maxBytes) {
+    return {
+      response: jsonNoStore(
+        { error: "That submission is too large. Please shorten the message and try again." },
+        { status: 413 },
+      ),
+      body: null,
+    };
+  }
+
+  try {
+    return { response: null, body: JSON.parse(rawBody) as unknown };
+  } catch {
+    return {
+      response: jsonNoStore({ error: "Invalid submission." }, { status: 400 }),
+      body: null,
+    };
+  }
 }
 
 export async function fetchWithTimeout(

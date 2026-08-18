@@ -1,4 +1,6 @@
 const BASE_URL = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
+const http = require("node:http");
+const https = require("node:https");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -18,6 +20,28 @@ async function post(path, body, options = {}) {
   return { response, data };
 }
 
+function postChunked(path, body, ip) {
+  return new Promise((resolve, reject) => {
+    const url = new URL(path, BASE_URL);
+    const transport = url.protocol === "https:" ? https : http;
+    const request = transport.request(url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "transfer-encoding": "chunked",
+        "x-forwarded-for": ip,
+      },
+    }, (response) => {
+      response.resume();
+      response.on("end", () => resolve(response));
+    });
+    request.on("error", reject);
+    request.write(body.slice(0, 12_000));
+    request.write(body.slice(12_000));
+    request.end();
+  });
+}
+
 (async () => {
   {
     const response = await fetch(`${BASE_URL}/api/contact`, {
@@ -31,6 +55,12 @@ async function post(path, body, options = {}) {
   {
     const { response } = await post("/api/contact", "{", { ip: "203.0.113.11" });
     assert(response.status === 400, `contact malformed JSON: expected 400, got ${response.status}`);
+  }
+
+  {
+    const oversized = JSON.stringify({ message: "x".repeat(32_100) });
+    const response = await postChunked("/api/contact", oversized, "203.0.113.15");
+    assert(response.status === 413, `contact consumed-size guard: expected 413, got ${response.status}`);
   }
 
   {

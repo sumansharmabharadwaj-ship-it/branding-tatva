@@ -23,13 +23,13 @@ This file is the single source of truth for unfinished website work. It consolid
 - [x] Verify `/api/release` on the permanent alias reports commit `130ceb11f07715681f1765c5efefc372689eefd9`, branch `homepage-cinematic-recovery`, and preview environment.
 - [ ] Verify `/api/verification` from protected-preview CI. The endpoint currently redirects to Vercel authentication without an automation-bypass secret.
 - [x] Make the permanent source gate compare the latest deployable application commit rather than workflow-only branch commits, and fail immediately when preview authentication is unavailable.
-- [ ] Deploy application commit `0936edc5ae93ea856b59adc710df17f716fd0d67` after Vercel's build-rate limit resets. Its GitHub Vercel status links to `upgradeToPro=build-rate-limit`; no production target was touched.
+- [x] Recover preview deployment after Vercel's build-rate limit reset. Application commit `57b03ea559c0ff0a4ad369b4b72efa2bbf4dccca` is READY at deployment `dpl_3npzym1DwrxwZyMDja4VpQq7ZLSx`; no production target was touched.
 - [x] Complete the final Services browser matrix. Run `32082394534` passed all seventeen release steps on the exact application commit `0936edc5ae93ea856b59adc710df17f716fd0d67`.
 - [ ] Run the integrated browser matrix on the deployed artifact, not only the local production build.
 - [ ] Record Vercel Speed Insights and field Core Web Vitals where available: LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1.
 - [ ] Keep a rollback commit and do not promote production until Suman approves desktop and mobile screenshots.
 
-Current release evidence: the permanent alias resolves to READY preview deployment `dpl_B7UjnP498wvdjEkntnEHE58yKQHr` (`branding-tatva-dtgkbejfg-suman22.vercel.app`) from application commit `130ceb11f07715681f1765c5efefc372689eefd9`. That artifact contains the assembled utility films, ten unique glossary-term films, compact Services mobile chapters, the complete cinematic Home/Work/Insights/About/Contact/shared-media passes, and the verified Home guide. `/api/release` reports that exact commit. The only newer application change is the native-keyboard/Lenis reconciliation at `0936edc5ae93ea856b59adc710df17f716fd0d67`; it is fully green in Services run `32082394534` but is awaiting a new READY preview because Vercel rejected the build at its account rate limit. `/api/verification` remains protected by Vercel authentication until `VERCEL_AUTOMATION_BYPASS_SECRET` is supplied.
+Current release evidence: the permanent alias resolves to READY preview deployment `dpl_3npzym1DwrxwZyMDja4VpQq7ZLSx` (`branding-tatva-1tnvyvqh3-suman22.vercel.app`) from application commit `57b03ea559c0ff0a4ad369b4b72efa2bbf4dccca`. That artifact contains the assembled utility films, ten unique glossary-term films, compact Services mobile chapters, the complete cinematic Home/Work/Insights/About/Contact/shared-media passes, the verified Home guide, native-keyboard/Lenis reconciliation, and the completed shared navigation contract. Hosted keyboard verification confirms a 44×44 trigger, body-scroll lock, initial focus on the active Home link, focus containment, Escape close, focus restoration, and active-route semantics. `/api/verification` remains protected by Vercel authentication until `VERCEL_AUTOMATION_BYPASS_SECRET` is supplied.
 
 ## P0 · Homepage V5
 
@@ -117,7 +117,8 @@ The current Work source passed the full matrix in run `32073781671`: media uniqu
 - [x] Remove contradictory twenty-minute references and guard the public route against their return in release CI.
 - [x] Verify the scheduling anchor, form anchor, direct call/WhatsApp actions, visible phone number, and repeated contact paths at 1440×900 and 390×844.
 - [ ] Verify Calendly loading, timezone explanation, fallback link, confirmation state, and real booking flow.
-- [ ] Verify form validation, linked errors, live announcements, honeypot, request-size/content-type guard, rate limiting, delivery timeouts, no fake success, and email fallback.
+- [x] Verify form validation, linked errors, live announcements, honeypot, declared and chunked request-size guards, content-type guard, delivery timeouts, no fake success, and email fallback in the API contract gate.
+- [ ] Verify durable cross-instance rate limiting after a shared serverless store or platform rule is connected.
 - [ ] Test phone, WhatsApp, schedule, and form paths on a real mobile browser.
 
 ## P1 · About
@@ -133,8 +134,8 @@ The current Work source passed the full matrix in run `32073781671`: media uniqu
 
 ## P1 · Shared frontend systems
 
-- [ ] Navigation compresses after scrolling, returns immediately on upward movement, adapts contrast, exposes active route state, and never covers reading zones.
-- [ ] Mobile menu opens quickly, traps focus, closes with Escape, prevents background scroll, preserves booking action, and maintains 48px item height.
+- [x] Navigation compresses after scrolling, returns immediately on upward movement, adapts contrast, exposes active route state, and never covers reading zones.
+- [x] Mobile menu opens quickly, traps focus, closes with Escape, prevents background scroll, preserves booking action, and maintains 48px item height.
 - [ ] Every interaction works by keyboard and touch; no essential information exists only on hover, colour, or motion.
 - [ ] Every diagram keeps text inside geometry with correct radius, padding, stroke, line origins, node spacing, and optical centring.
 - [x] Release responsive video `<source>` listeners during unmount so repeated Services navigation no longer retains entire page trees through Blink MediaQueryList roots.
