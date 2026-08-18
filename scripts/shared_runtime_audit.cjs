@@ -142,6 +142,16 @@ async function auditMobileMenu(browser) {
     const afterExpanded = await trigger.getAttribute("aria-expanded");
     const menuLabels = await visibleLinkLabels(page, "header a[href], nav a[href]");
     const bodyOverflow = await page.locator("body").evaluate((body) => window.getComputedStyle(body).overflow);
+    const triggerBox = await trigger.boundingBox();
+    const openState = await page.evaluate(() => {
+      const active = document.activeElement;
+      const current = document.querySelector('nav a[aria-current="page"]');
+      return {
+        activeLabel: active?.getAttribute("aria-label") || active?.textContent?.replace(/\s+/g, " ").trim() || "",
+        activeInsideMenu: Boolean(active?.closest("nav")),
+        currentHref: current?.getAttribute("href") || "",
+      };
+    });
 
     if (beforeExpanded === "true") {
       failures.push(failure("mobile menu", "menu starts expanded"));
@@ -155,12 +165,40 @@ async function auditMobileMenu(browser) {
     if (!menuLabels.some((label) => /work/i.test(label)) || !menuLabels.some((label) => /services/i.test(label))) {
       failures.push(failure("mobile menu", "primary route links are not visible while open"));
     }
+    if (bodyOverflow !== "hidden") {
+      failures.push(failure("mobile menu", `background scroll is not locked; body overflow is ${bodyOverflow}`));
+    }
+    if (!triggerBox || triggerBox.width < 44 || triggerBox.height < 44) {
+      failures.push(failure("mobile menu", `menu trigger is smaller than 44px: ${JSON.stringify(triggerBox)}`));
+    }
+    if (!openState.activeInsideMenu) {
+      failures.push(failure("mobile menu", `focus did not enter the menu; active=${openState.activeLabel || "unknown"}`));
+    }
+    if (openState.currentHref !== "/") {
+      failures.push(failure("mobile menu", `active route semantics are missing; current=${openState.currentHref || "none"}`));
+    }
+
+    await page.keyboard.press("Shift+Tab");
+    const wrappedBackward = await page.evaluate(() => Boolean(document.activeElement?.closest("nav")));
+    if (!wrappedBackward) {
+      failures.push(failure("mobile menu", "Shift+Tab escaped the menu focus trap"));
+    }
 
     await page.keyboard.press("Escape");
     await page.waitForTimeout(250);
     const closedExpanded = await trigger.getAttribute("aria-expanded");
+    const closedState = await page.evaluate(() => ({
+      activeLabel: document.activeElement?.getAttribute("aria-label") || "",
+      bodyOverflow: window.getComputedStyle(document.body).overflow,
+    }));
     if (closedExpanded === "true") {
       failures.push(failure("mobile menu", "Escape does not close the menu"));
+    }
+    if (!/open menu/i.test(closedState.activeLabel)) {
+      failures.push(failure("mobile menu", `focus did not return to the trigger; active=${closedState.activeLabel || "unknown"}`));
+    }
+    if (closedState.bodyOverflow === "hidden") {
+      failures.push(failure("mobile menu", "background scroll stayed locked after closing"));
     }
 
     return {
@@ -168,6 +206,10 @@ async function auditMobileMenu(browser) {
       afterExpanded,
       closedExpanded,
       bodyOverflow,
+      triggerBox,
+      openState,
+      closedState,
+      wrappedBackward,
       visibleLabels: unique(menuLabels),
       failures,
       passed: failures.length === 0,

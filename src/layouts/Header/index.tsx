@@ -43,9 +43,12 @@ export function Header({ transparent = false }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [barHidden, setBarHidden] = useState(false);
   const lastScrollRef = useRef(0);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
   const element = useCurrentElement();
+  const pathname = usePathname() ?? "/";
 
   useEffect(() => {
     function handleScroll(current: number) {
@@ -78,19 +81,58 @@ export function Header({ transparent = false }: HeaderProps) {
 
   useEffect(() => {
     if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    lenis?.stop();
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      menuRef.current
+        ?.querySelector<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+        ?.focus({ preventScroll: true });
+    });
+
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setOpen(false);
+        return;
+      }
+
+      if (e.key !== "Tab" || !menuRef.current) return;
+      const focusable = Array.from(
+        menuRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((node) => !node.hasAttribute("hidden"));
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
+
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+      lenis?.start();
+      menuButtonRef.current?.focus({ preventScroll: true });
+    };
+  }, [lenis, open]);
 
   useEffect(() => {
     setOpen(false);
-  }, [transparent]);
+  }, [pathname, transparent]);
 
   const isBarHidden = barHidden && !open;
-  const pathname = usePathname() ?? "/";
   const accent =
     pathname.startsWith("/services") ? "#8FAE83"
     : pathname.startsWith("/work") ? "#D4B99A"
@@ -166,7 +208,8 @@ export function Header({ transparent = false }: HeaderProps) {
               </Link>
               <AmbientAudioButton accent={accent} />
               <button
-                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors duration-500"
+                ref={menuButtonRef}
+                className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors duration-500"
                 style={{ color: accent }}
                 aria-label={open ? "Close menu" : "Open menu"}
                 aria-expanded={open}
@@ -220,6 +263,7 @@ export function Header({ transparent = false }: HeaderProps) {
             />
             <div className="fixed inset-x-0 top-20 z-40 flex justify-center px-4 sm:top-24">
               <motion.nav
+                ref={menuRef}
                 variants={prefersReducedMotion ? undefined : mobileNavVariants}
                 initial="initial"
                 animate="animate"
@@ -238,7 +282,9 @@ export function Header({ transparent = false }: HeaderProps) {
                       <Link
                         href={item.href}
                         onClick={() => setOpen(false)}
-                        className="block rounded-2xl px-4 py-3 text-center font-display text-xl text-soil transition-colors hover:bg-soil/5 hover:text-clay"
+                        aria-current={isActive(item.href) ? "page" : undefined}
+                        className="flex min-h-12 items-center justify-center rounded-2xl px-4 py-3 text-center font-display text-xl text-soil transition-colors hover:bg-soil/5 hover:text-clay"
+                        style={isActive(item.href) ? { color: accent, backgroundColor: `${accent}12` } : undefined}
                       >
                         {item.label}
                       </Link>
