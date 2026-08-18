@@ -87,11 +87,11 @@ export function Header({ transparent = false }: HeaderProps) {
     document.body.style.overflow = "hidden";
     lenis?.stop();
 
-    const focusFrame = window.requestAnimationFrame(() => {
+    const focusTimer = window.setTimeout(() => {
       menuRef.current
         ?.querySelector<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
         ?.focus({ preventScroll: true });
-    });
+    }, prefersReducedMotion ? 0 : 120);
 
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -121,13 +121,13 @@ export function Header({ transparent = false }: HeaderProps) {
 
     window.addEventListener("keydown", onKey);
     return () => {
-      window.cancelAnimationFrame(focusFrame);
+      window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = previousOverflow;
       lenis?.start();
       menuButton?.focus({ preventScroll: true });
     };
-  }, [lenis, open]);
+  }, [lenis, open, prefersReducedMotion]);
 
   useEffect(() => {
     setOpen(false);
