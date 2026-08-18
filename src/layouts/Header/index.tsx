@@ -83,6 +83,7 @@ export function Header({ transparent = false }: HeaderProps) {
     if (!open) return;
 
     const previousOverflow = document.body.style.overflow;
+    const menuButton = menuButtonRef.current;
     document.body.style.overflow = "hidden";
     lenis?.stop();
 
@@ -124,7 +125,7 @@ export function Header({ transparent = false }: HeaderProps) {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = previousOverflow;
       lenis?.start();
-      menuButtonRef.current?.focus({ preventScroll: true });
+      menuButton?.focus({ preventScroll: true });
     };
   }, [lenis, open]);
 
