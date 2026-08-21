@@ -10,9 +10,9 @@ const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 const SESSION_KEY = "branding-tatva-v4-prelude-seen";
-const FIRST_VISIT_MS = 1550;
-const REPEAT_VISIT_MS = 950;
-const EXIT_MS = 360;
+const FIRST_VISIT_MS = 220;
+const REPEAT_VISIT_MS = 0;
+const EXIT_MS = 180;
 const EXIT_SECONDS = EXIT_MS / 1000;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -86,7 +86,7 @@ export function PageLoadVeil() {
       data-page-load-veil
       data-page-load-state={visible ? "present" : "leaving"}
       aria-hidden="true"
-      className="fixed inset-0 z-100 overflow-hidden bg-[#111518]"
+      className="pointer-events-none fixed inset-0 z-100 overflow-hidden bg-[#111518]"
       initial={false}
       animate={
         visible
