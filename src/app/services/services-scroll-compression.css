@@ -143,20 +143,27 @@ html[data-services-experience="active"] {
   transform-origin: 50% 50%;
 }
 
-/* Authority previously consumed 420vh for five states. That made each layer
-   require almost a full viewport of physical travel and contradicted the
-   page's small-input / large-discovery direction. The same sticky composition
-   now completes inside the documented 220svh ceiling. */
+/* Authority previously consumed 420vh, then 220svh, for five concise states.
+   The same assembly now completes inside 175svh: enough travel to distinguish
+   each layer while keeping the next business decision within reach. */
 @media (min-width: 1024px) {
   #authority > div:first-child {
-    height: 220svh !important;
+    height: 175svh !important;
+  }
+
+  [data-services-scene="education"].bt-scene {
+    min-height: 150svh;
   }
 }
 
 @supports not (height: 1svh) {
   @media (min-width: 1024px) {
     #authority > div:first-child {
-      height: 220vh !important;
+      height: 175vh !important;
+    }
+
+    [data-services-scene="education"].bt-scene {
+      min-height: 150vh;
     }
   }
 }

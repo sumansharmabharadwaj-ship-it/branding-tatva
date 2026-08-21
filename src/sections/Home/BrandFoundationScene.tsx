@@ -192,13 +192,13 @@ export function BrandFoundationScene() {
   return (
     <section
       ref={wrapperRef}
-      className="relative h-auto md:h-[190svh]"
+      className="relative h-auto md:h-[145svh]"
       style={{ backgroundColor: "#121713" }}
       aria-labelledby="brand-foundation-title"
     >
       <div
         ref={sceneRef}
-        className="relative min-h-svh overflow-hidden md:sticky md:top-0 md:h-svh md:min-h-[700px]"
+        className="relative min-h-svh overflow-hidden md:sticky md:top-0 md:h-svh"
       >
         <div
           data-landscape

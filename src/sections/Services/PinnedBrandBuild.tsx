@@ -133,7 +133,7 @@ export function PinnedBrandBuild() {
   }, [animate, lenis]);
 
   return (
-    <div ref={wrapRef} className="relative lg:h-[420vh]" style={{ backgroundColor: MOOD.charcoal }}>
+    <div ref={wrapRef} className="relative lg:h-[175svh]" style={{ backgroundColor: MOOD.charcoal }}>
       <div className="relative overflow-hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center">
         {/* Original procedural Authority film: a restrained signal rises
             through five natural material layers and widens only after

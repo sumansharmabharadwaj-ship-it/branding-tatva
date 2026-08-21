@@ -977,15 +977,13 @@
 
 .home-v4-cost {
   position: relative;
-  height: 195svh;
-  min-height: 82rem;
+  min-height: 100svh;
   background: #10181e;
   color: #f4efe6;
 }
 
 .home-v4-cost__sticky {
-  position: sticky;
-  top: 0;
+  position: relative;
   min-height: 100svh;
   overflow: hidden;
 }
@@ -1708,11 +1706,29 @@
   position: relative;
   min-width: 0;
   min-height: 8.2rem;
-  padding: 0.9rem;
+  padding: 0;
   border: 1px solid rgba(244, 239, 230, 0.1);
   border-radius: 1rem;
   background: rgba(244, 239, 230, 0.035);
   transform-origin: 50% 100%;
+}
+
+.home-v4-cost__causal li > button {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0.9rem;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.home-v4-cost__causal li > button:focus-visible {
+  outline: 2px solid #d69a72;
+  outline-offset: 3px;
 }
 
 .home-v4-cost__causal li.is-reached {
@@ -1727,14 +1743,14 @@
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.2);
 }
 
-.home-v4-cost__causal li > span {
+.home-v4-cost__causal li > button > span {
   color: rgba(244, 239, 230, 0.42);
   font-size: 0.54rem;
   font-weight: 650;
   letter-spacing: 0.16em;
 }
 
-.home-v4-cost__causal li > strong {
+.home-v4-cost__causal li > button > strong {
   display: block;
   margin-top: 1.25rem;
   color: #f4efe6;
@@ -1744,7 +1760,7 @@
   line-height: 1.06;
 }
 
-.home-v4-cost__causal li > p {
+.home-v4-cost__causal li > button > p {
   margin: 0.7rem 0 0;
   color: rgba(244, 239, 230, 0.52);
   font-size: 0.61rem;
@@ -1837,6 +1853,9 @@
 
   .home-v4-cost__causal li {
     min-height: 7.6rem;
+  }
+
+  .home-v4-cost__causal li > button {
     padding: 0.78rem;
   }
 

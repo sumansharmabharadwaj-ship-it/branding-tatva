@@ -307,7 +307,7 @@ export function SystemFlagship({ project }: { project: Project }) {
                 ref={(element) => {
                   stepRefs.current[index] = element;
                 }}
-                className="flex min-h-[44vh] items-center border-l-2 py-10 pl-7 transition-colors duration-500 first:pt-2 last:min-h-[40vh] sm:min-h-[50vh] sm:py-12 sm:pl-9 lg:min-h-[62vh] lg:last:min-h-[46vh]"
+                className="flex min-h-[38vh] items-center border-l-2 py-8 pl-7 transition-colors duration-500 first:pt-2 last:min-h-[34vh] sm:min-h-[42vh] sm:py-10 sm:pl-9 lg:min-h-[46vh] lg:last:min-h-[34vh]"
                 style={{ borderColor: active === index ? WORK.sand : "rgba(198,169,122,0.16)" }}
               >
                 <div>

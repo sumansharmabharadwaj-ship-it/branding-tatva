@@ -2,9 +2,10 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -395,21 +396,27 @@ export function V4RecognitionScene() {
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
+  const guideMode = useHomeGuideMode();
+  const inView = useInView(sectionRef, { amount: 0.52 });
   const [activeIndex, setActiveIndex] = useState(0);
-  const mediaScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.14]);
-  const mediaY = useTransform(scrollYProgress, [0, 1], [0, -26]);
-  const copyY = useTransform(scrollYProgress, [0, 1], [18, -18]);
   const active = COST_STAGES[activeIndex];
 
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    const next = Math.min(COST_STAGES.length - 1, Math.floor(progress * COST_STAGES.length));
-    setActiveIndex((current) => (current === next ? current : next));
-  });
-
+  // This scene used to spread four states across a 175svh sticky runway.
+  // Guided view then crossed that runway in one short scroll, flashing through
+  // the states while the over-height composition was clipped. The frame now
+  // fits one viewport: visitors choose a state directly, while guided mode
+  // previews all four decisions inside the chapter's existing dwell time.
+  useEffect(() => {
+    if (prefersReducedMotion || guideMode !== "guided" || !inView) return;
+    setActiveIndex(0);
+    let nextIndex = 0;
+    const timer = window.setInterval(() => {
+      nextIndex = Math.min(COST_STAGES.length - 1, nextIndex + 1);
+      setActiveIndex(nextIndex);
+      if (nextIndex >= COST_STAGES.length - 1) window.clearInterval(timer);
+    }, 740);
+    return () => window.clearInterval(timer);
+  }, [guideMode, inView, prefersReducedMotion]);
 
   return (
     <section
@@ -426,7 +433,8 @@ export function V4HiddenCostScene() {
         <motion.div
           className="home-v4-cost__media"
           data-media-id="BT-HOME-HIDDEN-COST-RIVER-DAWN"
-          style={prefersReducedMotion ? undefined : { scale: mediaScale, y: mediaY }}
+          animate={prefersReducedMotion ? undefined : { scale: 1.02 + activeIndex * 0.012, y: activeIndex * -4 }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.72, ease: EASE }}
           aria-hidden="true"
         >
           <video
@@ -445,12 +453,12 @@ export function V4HiddenCostScene() {
         </motion.div>
 
         <div className="home-v4-cost__shell">
-          <motion.header style={prefersReducedMotion ? undefined : { y: copyY }}>
+          <header>
             <p>02 · The hidden cost</p>
             <h2 id="home-v4-cost-title">
               Marketing becomes expensive when the brand underneath it <em>keeps changing shape.</em>
             </h2>
-          </motion.header>
+          </header>
 
           <div className="home-v4-cost__stage">
             <AnimatePresence mode="wait" initial={false}>
@@ -506,9 +514,17 @@ export function V4HiddenCostScene() {
                       }}
                       transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
                     >
-                      <span>{stage.number}</span>
-                      <strong>{stage.cause}</strong>
-                      <p>{stage.signal}</p>
+                      <button
+                        type="button"
+                        aria-pressed={activeStage}
+                        aria-label={`${stage.number}: ${stage.cause}`}
+                        data-cursor-label={stage.number}
+                        onClick={() => setActiveIndex(index)}
+                      >
+                        <span>{stage.number}</span>
+                        <strong>{stage.cause}</strong>
+                        <p>{stage.signal}</p>
+                      </button>
                     </motion.li>
                   );
                 })}

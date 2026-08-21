@@ -89,7 +89,7 @@ Canonical route: `/work`; redirect `/services` to `/work`.
 
 - [ ] Art-direct founder hero with approved portrait or static editorial alternative.
 - [ ] Build verified growth-ring timeline. **Blocked: real dates and turning points required.**
-- [ ] Build psychology-to-brand method visualizer with ethical boundaries and sources.
+- [x] Build psychology-to-brand method visualizer with ethical boundaries and sources.
 - [ ] Build philosophy prism, principles and founder-led comparison.
 - [ ] Build evidence ledger.
 - [ ] Publish partner strip only with five verified engagements. **Blocked: source required.**
@@ -229,3 +229,30 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 - [x] The guided homepage index now counts and names all thirteen chapters.
 - [ ] Verify the Pexels source URL before media launch approval.
 - [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
+## Current checkpoint — cross-page scene fit and autoplay stability
+
+Screenshot evidence received at 1202×626 showed Home Hidden Cost midway through
+guided playback with its heading and closing copy outside the frame. The cause
+was architectural: four states were bound to a 175svh sticky runway while the
+guide treated the whole runway as one short chapter.
+
+| Route family | Oversized owner found | Correction in this checkpoint | Remaining evidence |
+| --- | --- | --- | --- |
+| Home | Hidden Cost 175svh sticky runway | One 100svh frame; direct four-state controls; guided states sequence inside the existing dwell | Render 1366×768, 1440×900, 390×844 and 430×932 |
+| Home | Foundation 700px hard floor + 180svh runway | Hard floor removed; runway 145svh; short-laptop type, cards and close compressed | Confirm all four active states and final copy stay visible |
+| Home | Studio 52rem hard floor | Short-laptop floor released to 100svh; title, tabs and portrait compressed | Confirm portrait crop and authorship label |
+| Home | Five Tatvas 160svh hold | Hold reduced to 130svh; full mechanism remains inside the fixed frame | Confirm guide dwell and manual controls |
+| About | Psychology/Language convergence 220vh runway | Rebuilt as one responsive, visitor-led method frame with ethical boundary and sources | Confirm tab focus and mobile stacking |
+| Brand Strategy & Systems | Six-discipline 170svh scroll controller | Rebuilt as one direct-selection frame across pointer, touch and keyboard | Confirm all six panels at target viewports |
+| Brand Strategy & Systems | Authority 220svh assembly | Reduced to 175svh while retaining five-layer normalized progress | Confirm every layer reaches its complete state |
+| Brand Strategy & Systems | Education 190svh hold | Reduced to 150svh | Confirm perception ladder completes before handoff |
+| Work | Flagship steps at 62vh each | Reduced desktop steps to 46vh and close to 34vh | Confirm sticky evidence frame and case links |
+| Insights | 68–78svh article/topic openings | Within the one-frame budget; no artificial multi-screen runway found | Render article and topic templates |
+| Contact | 70vh opening | Within the one-frame budget; no artificial multi-screen runway found | Render form states and scheduling handoff |
+
+- [x] TypeScript, focused ESLint and whitespace checks pass for this source checkpoint.
+- [x] Touch-led and reduced-motion behavior preserved in every rebuilt controller.
+- [x] Production build passes for all 78 routes on the exact source checkpoint.
+- [ ] Hosted-preview verification on the exact commit.
+- [ ] Browser viewport matrix remains launch evidence, never inferred from source checks.

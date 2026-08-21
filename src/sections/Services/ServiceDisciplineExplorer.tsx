@@ -1,13 +1,10 @@
 "use client";
 
-import type { CSSProperties, PointerEvent } from "react";
+import type { CSSProperties, KeyboardEvent, PointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
   motion,
-  useInView,
-  useMotionValueEvent,
-  useScroll,
 } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
@@ -17,54 +14,20 @@ import { offerings } from "@/data/services";
 import { track } from "@/lib/analytics";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-const AUTO_ADVANCE_MS = 3800;
-const MANUAL_HOLD_MS = 12000;
-const HOVER_HOLD_MS = 4200;
-
-function clamp(value: number, minimum = 0, maximum = 1) {
-  return Math.min(maximum, Math.max(minimum, value));
-}
 
 // Six stacked description rows made the complete Services list read like
 // a catalogue and consumed almost two screens before the visitor reached
-// the package decision. Desktop now compresses all six into one 170svh
-// journey: a modest vertical gesture advances a lateral discipline rail and
-// replaces one explanatory panel inside a stable frame. Mobile keeps every
-// discipline in a tap-first vertical index and advances calmly while visible.
+// the package decision. All six now resolve inside one responsive frame:
+// the visitor chooses a discipline from the index and one explanatory panel
+// changes in place. This removes another scroll runway and gives touch,
+// keyboard and pointer visitors the same predictable control.
 export function ServiceDisciplineExplorer() {
-  const journeyRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
   const railViewportRef = useRef<HTMLDivElement>(null);
-  const holdUntilRef = useRef(0);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useHydratedReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const inView = useInView(stageRef, { amount: 0.3, margin: "8% 0px -10% 0px" });
-  const { scrollYProgress } = useScroll({
-    target: journeyRef,
-    offset: ["start start", "end end"],
-  });
   const active = offerings[activeIndex];
-
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    if (!isDesktop || prefersReducedMotion || Date.now() < holdUntilRef.current) return;
-    const nextIndex = Math.min(
-      offerings.length - 1,
-      Math.floor(clamp(progress) * offerings.length),
-    );
-    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-  });
-
-  useEffect(() => {
-    if (isDesktop || !inView || prefersReducedMotion || offerings.length < 2) return;
-
-    const timer = window.setInterval(() => {
-      if (document.hidden || Date.now() < holdUntilRef.current) return;
-      setActiveIndex((current) => (current + 1) % offerings.length);
-    }, AUTO_ADVANCE_MS);
-
-    return () => window.clearInterval(timer);
-  }, [inView, isDesktop, prefersReducedMotion]);
 
   useEffect(() => {
     if (!isDesktop) return;
@@ -81,27 +44,7 @@ export function ServiceDisciplineExplorer() {
     });
   }, [activeIndex, isDesktop, prefersReducedMotion]);
 
-  function alignJourney(index: number) {
-    const journey = journeyRef.current;
-    if (!isDesktop || !journey) return;
-
-    const rect = journey.getBoundingClientRect();
-    const top = window.scrollY + rect.top;
-    const travel = Math.max(0, journey.offsetHeight - window.innerHeight);
-    const progress = offerings.length > 1 ? index / (offerings.length - 1) : 0;
-    window.scrollTo({
-      top: top + travel * progress,
-      behavior: prefersReducedMotion ? "auto" : "smooth",
-    });
-  }
-
-  function activate(
-    index: number,
-    source: "hover" | "focus" | "click",
-    holdMs = MANUAL_HOLD_MS,
-  ) {
-    holdUntilRef.current = Date.now() + holdMs;
-    if (source === "click") alignJourney(index);
+  function activate(index: number, source: "hover" | "focus" | "click") {
     if (index === activeIndex) return;
     setActiveIndex(index);
     track("capability_selected", {
@@ -115,27 +58,28 @@ export function ServiceDisciplineExplorer() {
     // Touch browsers can retain a synthetic hover state after a tap.
     // Only a real fine-pointer hover previews; touch remains click-led.
     if (event.pointerType === "mouse" || event.pointerType === "pen") {
-      activate(index, "hover", HOVER_HOLD_MS);
+      activate(index, "hover");
     }
   }
 
+  function handleTabKey(index: number, event: KeyboardEvent<HTMLButtonElement>) {
+    let nextIndex: number | undefined;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % offerings.length;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + offerings.length) % offerings.length;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = offerings.length - 1;
+    if (nextIndex === undefined) return;
+    event.preventDefault();
+    activate(nextIndex, "focus");
+    tabRefs.current[nextIndex]?.focus();
+  }
+
   return (
-    <div
-      ref={journeyRef}
-      data-services-discipline-journey="true"
-      className="relative lg:h-[170svh]"
-    >
-      <div className="relative lg:sticky lg:top-0 lg:flex lg:min-h-svh lg:items-center lg:overflow-hidden">
+    <div data-services-discipline-journey="true" className="relative min-h-svh">
+      <div className="relative lg:flex lg:min-h-svh lg:items-center lg:overflow-hidden">
         <Container className="relative max-w-7xl py-2 lg:py-12">
           <div
-            ref={stageRef}
             className="grid gap-10 lg:grid-cols-[minmax(15rem,0.58fr)_minmax(0,1.42fr)] lg:items-center lg:gap-12 xl:grid-cols-[minmax(16rem,0.52fr)_minmax(0,1.48fr)] xl:gap-16"
-            onPointerDown={() => {
-              holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-            }}
-            onFocusCapture={() => {
-              holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-            }}
           >
             <Reveal className="lg:self-center">
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The full practice</p>
@@ -147,9 +91,7 @@ export function ServiceDisciplineExplorer() {
                 this scene.
               </p>
               <p className="mt-6 max-w-xs text-xs uppercase tracking-[0.16em] text-ivory/50">
-                {isDesktop
-                  ? "Scroll a little to travel across the practice. Select one and the journey waits."
-                  : "The index advances while you watch. Tap one and it waits."}
+                {isDesktop ? "Choose a discipline to change the working view." : "Tap a discipline to change the working view."}
               </p>
 
               <div className="mt-7 flex items-center gap-4" aria-hidden="true">
@@ -185,6 +127,9 @@ export function ServiceDisciplineExplorer() {
                     return (
                       <button
                         key={offer.name}
+                        ref={(node) => {
+                          tabRefs.current[index] = node;
+                        }}
                         id={`service-discipline-tab-${index}`}
                         data-service-discipline-index={index}
                         type="button"
@@ -195,6 +140,7 @@ export function ServiceDisciplineExplorer() {
                         onPointerEnter={(event) => handlePointerEnter(index, event)}
                         onFocus={() => activate(index, "focus")}
                         onClick={() => activate(index, "click")}
+                        onKeyDown={(event) => handleTabKey(index, event)}
                         className="group relative flex min-h-14 min-w-0 items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:px-4 lg:w-[13.5rem] lg:flex-none"
                         style={{ "--discipline-color": offer.color } as CSSProperties}
                       >
@@ -232,17 +178,6 @@ export function ServiceDisciplineExplorer() {
                           }`}
                           style={{ backgroundColor: offer.color }}
                         />
-                        {isActive && inView && !prefersReducedMotion && !isDesktop && (
-                          <motion.span
-                            key={`discipline-progress-${activeIndex}`}
-                            aria-hidden="true"
-                            className="absolute inset-x-3 bottom-0 h-px origin-left sm:inset-x-4"
-                            style={{ backgroundColor: offer.color }}
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: 1 }}
-                            transition={{ duration: AUTO_ADVANCE_MS / 1000, ease: "linear" }}
-                          />
-                        )}
                       </button>
                     );
                   })}
