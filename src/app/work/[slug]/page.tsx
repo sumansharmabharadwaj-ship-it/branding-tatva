@@ -82,7 +82,7 @@ export default async function CaseStudyPage({ params }: Props) {
   if (!project) notFound();
 
   // Case-study pages carry rich structured content (industry, challenge,
-  // outcome, verified stats) but had zero JSON-LD — a real, confirmed gap
+  // outcome, bounded stats) but had zero JSON-LD — a real, confirmed gap
   // for both SEO and AEO. CreativeWork fits a portfolio/case-study
   // writeup better than Service schema, which typically expects
   // offers/pricing fields this site deliberately doesn't publish.
@@ -228,6 +228,9 @@ export default async function CaseStudyPage({ params }: Props) {
                 <Block id="outcome" title="Outcome" eyebrow="What actually happened" accent={project.accent}>
                   {project.outcome}
                 </Block>
+              </Reveal>
+              <Reveal delay={0.44}>
+                <Block title="Evidence boundary">{project.evidenceNote}</Block>
               </Reveal>
               {project.reflection && (
                 <Reveal delay={0.48}><Block title="Reflection">{project.reflection}</Block></Reveal>

@@ -61,15 +61,12 @@ export function WeakBrandingCost() {
       </Reveal>
       <div className="mt-10 grid gap-6 sm:grid-cols-2">
         <Reveal delay={0.06}>
-          {/* Metaphor, not decoration: this card starts very slightly
-              soft-focused and only fully sharpens on hover — a literal
-              visual echo of "blends into whichever category it happens
-              to sit in," the last line in its own list. The distinct
-              card (below) never blurs; it's already in focus, matching
-              "gets recognized before it gets explained." */}
+          {/* The generic side stays fully legible. Its quieter contrast
+              lifts on hover, expressing weak distinction without ever
+              blurring text or hiding meaning behind pointer access. */}
           <TiltCard glowColor={ELEMENT_HEX.earth} className="group">
             <div
-              className="h-full rounded-lg border-t-2 p-6 transition-[filter] duration-500 [filter:blur(1.5px)_saturate(0.85)] group-hover:[filter:blur(0)_saturate(1)]"
+              className="h-full rounded-lg border-t-2 p-6 opacity-85 transition-opacity duration-300 group-hover:opacity-100"
               style={{ borderColor: ELEMENT_HEX.earth, backgroundColor: `${ELEMENT_HEX.earth}0F` }}
             >
               <p className="text-xs font-medium uppercase tracking-wide text-ivory/50">Positioned generically</p>

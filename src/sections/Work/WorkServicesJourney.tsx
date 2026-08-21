@@ -12,6 +12,7 @@ import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
 import { RiskRemovalFAQ } from "@/sections/Services/RiskRemovalFAQ";
 import { StrategySessionPreview } from "@/sections/Services/StrategySessionPreview";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
+import { WorkEngagementMap } from "@/sections/Work/WorkEngagementMap";
 
 export function WorkServicesJourney() {
   return (
@@ -58,6 +59,7 @@ export function WorkServicesJourney() {
         <div className="paper-grain" aria-hidden="true" />
         <div className="relative">
           <DeliverablesReveal dark={false} />
+          <WorkEngagementMap />
         </div>
       </section>
 

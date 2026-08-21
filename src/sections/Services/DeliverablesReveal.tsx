@@ -6,7 +6,7 @@ import { packages } from "@/data/services";
 
 // Direct feedback asked for a section that makes the deliverables feel
 // tangible rather than abstract. Every item here is computed straight
-// from the same three real packages PackageSelector shows above, not a
+// from the same three starting paths PackageSelector shows above, not a
 // separately-maintained list that could drift out of sync or invent a
 // deliverable that doesn't actually exist. "Everything in Foundation"
 // is a cross-reference line inside services.ts, not a deliverable of
@@ -24,7 +24,7 @@ export function DeliverablesReveal({ dark = true }: { dark?: boolean }) {
           What you actually leave with.
         </h2>
         <p className={`mt-4 max-w-xl ${dark ? "text-ivory/85" : "text-foreground-secondary"}`}>
-          Every item below is pulled directly from the three packages above. Nothing generic, nothing invented.
+          Every item below is pulled directly from the three starting paths above. Final scope is confirmed after the audit.
         </p>
       </Reveal>
       <ul className="mt-10 grid gap-x-8 gap-y-1 sm:grid-cols-2">

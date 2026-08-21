@@ -157,7 +157,7 @@ export const elements: Element[] = [
       "Growth communication",
     ],
     proof:
-      "Sustained, measured social management for Dr. Haley Nutrition, with verified follower and engagement growth over two consecutive months.",
+      "A sustained content-management engagement built around a lighter publishing rhythm, clearer channel roles, and ongoing review.",
     // Was pixabay-hazy-twilight-mountains.mp4 — direct feedback that it
     // wasn't playing; turned out the clip itself has almost no visible
     // motion across its whole 10s (frame-sampled start to end, they're
