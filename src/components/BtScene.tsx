@@ -1,21 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCinematicScene } from "@/hooks/useCinematicScene";
-
-/*
- * One chapter of the site, in the shape every chapter shares.
- *
- * The point of a single component here is discipline rather than reuse: when
- * each section invents its own scroll trick the result reads as a pile of
- * effects, and when they share one structure it reads as a film. Sections
- * differ in what they say and which layers they mark, not in how they behave.
- *
- * Composition, top to bottom inside the sticky frame:
- *   media    the ground, real footage or photography, drifts slowly
- *   overlay  a scrim carrying legibility for the type above it
- *   content  semantic HTML, never baked into the artwork
- */
+import { motionTokens } from "@/lib/motionTokens";
 
 type Runway = "none" | "short" | "default" | "long";
 
@@ -29,23 +17,22 @@ const RUNWAY_CLASS: Record<Runway, string> = {
 export type BtSceneProps = {
   id?: string;
   children: ReactNode;
-  /** Scroll distance the scene unfolds across. "none" is a single screen. */
   runway?: Runway;
-  /** Chooses the scrim recipe. Dark ground carries ivory type, light carries soil. */
   theme?: "dark" | "light";
   video?: string;
+  videoMobile?: string;
+  videoWebm?: string;
   poster?: string;
   image?: string;
-  /** Describe the footage only when it carries meaning; decoration stays silent. */
+  mediaId?: string;
   mediaAlt?: string;
-  /** The hero, and only the hero, loads its media eagerly. */
   priority?: boolean;
   overlay?: boolean;
   className?: string;
   contentClassName?: string;
-  /** Where the headline enters from. */
   from?: "below" | "left" | "right";
   scrub?: number;
+  playbackRate?: number;
 };
 
 export function BtScene({
@@ -54,18 +41,37 @@ export function BtScene({
   runway = "none",
   theme = "dark",
   video,
+  videoMobile,
+  videoWebm,
   poster,
   image,
+  mediaId,
   mediaAlt = "",
   priority = false,
   overlay = true,
   className = "",
   contentClassName = "",
   from = "below",
-  scrub = 0.8,
+  scrub = motionTokens.scrubCatchUp,
+  playbackRate = motionTokens.ambientPlaybackRate,
 }: BtSceneProps) {
   const sceneRef = useCinematicScene<HTMLElement>({ from, scrub });
-  const hasMedia = Boolean(video || image);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const fallbackImage = poster || image;
+  const hasMedia = Boolean((video && !videoFailed) || fallbackImage);
+
+  useEffect(() => {
+    setVideoFailed(false);
+  }, [video]);
+
+  useEffect(() => {
+    const element = videoRef.current;
+    if (!element) return;
+    const safeRate = Math.min(1.15, Math.max(1, playbackRate));
+    element.defaultPlaybackRate = safeRate;
+    element.playbackRate = safeRate;
+  }, [playbackRate, video]);
 
   return (
     <section
@@ -76,31 +82,35 @@ export function BtScene({
     >
       <div className="bt-scene__sticky">
         {hasMedia && (
-          <div className="bt-scene__media" data-scene-media>
-            {video ? (
+          <div className="bt-scene__media" data-scene-media data-media-id={mediaId}>
+            {video && !videoFailed ? (
               <video
-                // Ambient footage: silent, looping, and inline so iOS keeps it
-                // in the page instead of taking over the screen. VideoWarden
-                // decides which clips may actually decode at any moment.
+                ref={videoRef}
                 playsInline
                 muted
                 loop
-                preload={priority ? "auto" : "metadata"}
+                preload="metadata"
                 poster={poster}
                 aria-hidden={mediaAlt ? undefined : true}
+                aria-label={mediaAlt || undefined}
+                onError={() => setVideoFailed(true)}
               >
+                {videoMobile && (
+                  <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />
+                )}
+                {videoWebm && <source src={videoWebm} type="video/webm" />}
                 <source src={video} type="video/mp4" />
               </video>
-            ) : (
+            ) : fallbackImage ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
-                src={image}
+                src={fallbackImage}
                 alt={mediaAlt}
                 loading={priority ? "eager" : "lazy"}
                 decoding={priority ? "sync" : "async"}
                 fetchPriority={priority ? "high" : "auto"}
               />
-            )}
+            ) : null}
           </div>
         )}
 
@@ -111,9 +121,6 @@ export function BtScene({
     </section>
   );
 }
-
-/* The reveal slots, so a section marks its layers by meaning rather than by
- * remembering the right data attribute. */
 
 export function SceneEyebrow({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
@@ -128,7 +135,6 @@ export function SceneTitle({
   as: Tag = "h2",
   className = "",
 }: {
-  /** Each line reveals in turn, so the headline arrives as a thought. */
   lines: string[];
   as?: "h1" | "h2";
   className?: string;
