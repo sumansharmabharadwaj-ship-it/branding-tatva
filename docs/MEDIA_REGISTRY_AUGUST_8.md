@@ -290,3 +290,11 @@ Generated from the exact august-8-isolated repository tree. This is the M1 inven
 | BT-HOME-FIVE-TATVAS-MASTER-V1 | public/images/generated/bt-home-five-tatvas-master-v1.webp | Five Tatvas supporting motion plate and video-production keyframe | Home | OpenAI ImageGen, generated 2026-08-21; original asset |
 
 | BT-HOME-HIDDEN-COST-RIVER-DAWN | public/videos/pexels-river-dawn.webm + public/videos/pexels-river-dawn.mp4 | Hidden Cost supporting film | Home | Pexels — source URL verification required |
+
+## Semantic motion systems
+
+| Media ID | Repository path | Role | Route | Provenance |
+|---|---|---|---|---|
+| BT-HOME-FOUNDATION-ROOT-NETWORK | public/videos/pexels-root-network.webm + public/videos/pexels-root-network.mp4 | Foundation supporting film at shared 1.10× pace | Home | Pexels — source URL verification required |
+| BT-HOME-SERVICES-MATERIAL-ASSEMBLY | src/sections/Home/PathsCinematicChapter.tsx + src/app/home-v4-paths-depth.css | Unique 12-second stone, paper, water and root system assembly | Home | Original semantic DOM, SVG and CSS motion authored 2026-08-21 |
+

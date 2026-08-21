@@ -43,7 +43,7 @@ const FOUNDATION_LAYERS: FoundationLayer[] = [
     description:
       "The frame that tells people what you are, what they should compare you with, and why the category has room for you.",
     produces: ["Category frame", "Competitor codes", "Market boundaries"],
-    x: "8%",
+    x: "12%",
     y: "70%",
   },
   {
@@ -54,7 +54,7 @@ const FOUNDATION_LAYERS: FoundationLayer[] = [
     description:
       "The behaviours, tensions, and associations that decide how the right people read the business before they ever speak to it.",
     produces: ["Audience tensions", "Decision behaviour", "Perception map"],
-    x: "27%",
+    x: "31%",
     y: "60%",
   },
   {
@@ -65,18 +65,18 @@ const FOUNDATION_LAYERS: FoundationLayer[] = [
     description:
       "The central truth that identity, language, experience, and every campaign afterwards keep reinforcing.",
     produces: ["Brand truth", "Association system", "Message territory"],
-    x: "46%",
+    x: "50%",
     y: "70%",
   },
   {
     id: "position",
     number: "04",
     label: "Position",
-    title: "The space competitors struggle to occupy.",
+    title: "The reason this business is chosen.",
     description:
-      "A clear, defensible reason to choose this business ahead of the most familiar alternative in the category.",
+      "A clear, defensible reason to choose this business, expressed through a position every later decision can reinforce.",
     produces: ["Positioning statement", "Value proposition", "Decision filters"],
-    x: "65%",
+    x: "69%",
     y: "58%",
   },
 ];
@@ -200,7 +200,11 @@ export function BrandFoundationScene() {
         ref={sceneRef}
         className="relative min-h-svh overflow-hidden md:sticky md:top-0 md:h-svh md:min-h-[700px]"
       >
-        <div data-landscape className="absolute inset-0 will-change-transform">
+        <div
+          data-landscape
+          data-media-id="BT-HOME-FOUNDATION-ROOT-NETWORK"
+          className="absolute inset-0 will-change-transform"
+        >
           <video
             ref={videoRef}
             muted
@@ -208,6 +212,7 @@ export function BrandFoundationScene() {
             autoPlay={Boolean(sceneInView && !prefersReducedMotion)}
             playsInline
             preload={sceneInView ? "metadata" : "none"}
+            data-home-playback-rate="1.1"
             poster="/images/pexels-root-network-poster.jpg"
             aria-hidden="true"
             className="h-full w-full object-cover object-[center_52%]"
@@ -251,10 +256,10 @@ export function BrandFoundationScene() {
               className="max-w-lg font-display text-[clamp(2.4rem,6vw,6.2rem)] font-normal leading-[0.94] tracking-[-0.03em]"
               style={{ color: "#f1eadc" }}
             >
-              The decisions people never see.
+              The decisions beneath every visible brand.
             </h2>
             <p className="mt-7 max-w-md text-base leading-8 sm:text-lg" style={{ color: "rgba(225,218,205,0.82)" }}>
-              Every remembered brand stands on a foundation its customers may never consciously notice.
+              A remembered brand begins with four strategic decisions that give every visible expression one direction.
             </p>
           </div>
 
@@ -430,7 +435,7 @@ function FinalCopy({ staticAll }: { staticAll: boolean }) {
         className="mt-3 font-display text-[clamp(1.4rem,2.1vw,2.1rem)] font-normal leading-tight"
         style={{ color: "#f1eadc" }}
       >
-        The logo is visible. The reason it means something begins underneath.
+        When category, audience, belief, and position agree, identity and expression have one direction to carry.
       </p>
       <Link
         href="/services#desire"

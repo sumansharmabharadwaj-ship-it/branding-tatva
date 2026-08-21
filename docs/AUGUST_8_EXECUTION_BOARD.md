@@ -64,7 +64,7 @@ Master register coverage: 1,858 requirements — 1,504 sitewide, 246 motion/inte
 - [ ] Five Tatvas: one mechanism per state with mobile panels.
 - [x] Why branding matters: qualitative causal signal visualizer with sourced annotations and zero invented percentages.
 - [ ] Selected work: verified cases only, evidence index and unique media.
-- [ ] Brand Strategy & Systems preview: three clear starting paths paired with proof.
+- [x] Brand Strategy & Systems preview: three clear starting paths paired with verified project proof.
 - [ ] Founder proof: verified portrait, direct-access evidence and credential link.
 - [ ] Brand Health Check: ungated value, transparent scoring and calm water response.
 - [ ] Insights preview: one original insight plus two supporting field notes.
@@ -121,7 +121,7 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 - [ ] V01 Home hero — misty forest trail, slow forward reveal, 14–18s.
 - [ ] V02 Home recognition — unique mist film and original keyframe integrated; custom 10–14s master remains in production.
 - [ ] V03 Five Tatvas — original directed master keyframe and semantic pressure lab integrated; responsive loop exports remain in production.
-- [ ] V04 Home services — stone/paper/water/root system assembly, 10–14s.
+- [ ] V04 Home services — live 12s stone/paper/water/root system assembly integrated; responsive encoded loop remains in production.
 - [ ] V05 Home health — clear stream and five measurement stones, 12–18s.
 - [ ] V06 Home booking — one sunlight sweep over clean warm wood, 10–16s.
 - [ ] V07 About founder — restrained documentary portrait, 8–12s.
@@ -169,3 +169,16 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 - [x] Touch stays visitor-led and reduced motion stays static.
 - [x] Five Tatvas uses affirmative contribution language and an original supporting motion plate.
 - [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
+## Current deployed checkpoint — Brand Strategy & Systems paths
+
+- [x] Foundation language explains category, audience, belief and position as one decision system.
+- [x] Three starting paths pair situation, intervention, practical outcome and a verified case file.
+- [x] MyShopInEurope, HerbalCart and Dr. Haley Nutrition proof copy comes directly from the project evidence source.
+- [x] Generic mountain mist footage removed from this chapter.
+- [x] A unique 12-second stone, paper, water and root assembly now supplies the chapter motion.
+- [x] Desktop may demonstrate; touch stays visitor-led; manual choice holds for reading.
+- [x] Keyboard arrow, Home and End controls switch the three path tabs.
+- [x] Reduced motion resolves to a complete static material composition.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
