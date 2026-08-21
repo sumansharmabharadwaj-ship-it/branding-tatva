@@ -12,7 +12,8 @@
     "audit:work": "node scripts/work-bible-gate.cjs",
     "audit:insights": "node scripts/insights-bible-gate.cjs",
     "audit:contact": "node scripts/contact-bible-gate.cjs",
-    "audit:api": "node scripts/api-contract-gate.cjs"
+    "audit:api": "node scripts/api-contract-gate.cjs",
+    "audit:release": "node scripts/release-gate.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

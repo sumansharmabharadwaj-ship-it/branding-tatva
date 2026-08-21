@@ -100,7 +100,7 @@ export function WorkServicesJourney() {
         </Container>
       </section>
 
-      <TexturedDark image="/images/own-golden-branches.jpg" video="/videos/own-golden-branches.mp4" className="py-20 sm:py-28">
+      <TexturedDark image="/images/own-golden-branches-poster.jpg" video="/videos/own-golden-branches.mp4" className="py-20 sm:py-28">
         <StrategyRoomCTA />
       </TexturedDark>
     </>
