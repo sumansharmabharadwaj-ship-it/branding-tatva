@@ -5,6 +5,7 @@ import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
+import { LinkButton } from "@/components/Button";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { FeaturedWorkHero } from "@/components/FeaturedWorkHero";
 import { FeaturedSecondaryCard } from "@/components/FeaturedSecondaryCard";
@@ -120,6 +121,7 @@ function SelectedWorkPinnedDesktop({ featured }: { featured: Project[] }) {
           video="/videos/pixabay-alpine-waterfall.mp4"
           poster="/images/pixabay-alpine-waterfall-poster.jpg"
         />
+        <SelectedWorkIntro />
         <div
           ref={(node) => {
             stageRefs.current[0] = node;
@@ -173,6 +175,9 @@ function SelectedWorkFallback({ featured }: { featured: Project[] }) {
         poster="/images/pixabay-alpine-waterfall-poster.jpg"
       />
       <div className="absolute inset-0 bg-soil/80" />
+      <div className="relative mb-10">
+        <SelectedWorkIntro compact />
+      </div>
       {hero && (
         <Reveal>
           <div className="relative">
@@ -196,6 +201,43 @@ function SelectedWorkFallback({ featured }: { featured: Project[] }) {
               <FeaturedSecondaryCard project={project} />
             </Reveal>
           ))}
+        </div>
+      </Container>
+    </div>
+  );
+}
+
+function SelectedWorkIntro({ compact = false }: { compact?: boolean }) {
+  return (
+    <div
+      className={
+        compact
+          ? "relative z-20"
+          : "pointer-events-none absolute inset-x-0 top-0 z-20 bg-gradient-to-b from-soil/90 via-soil/45 to-transparent pb-24 pt-24 sm:pt-28"
+      }
+    >
+      <Container>
+        <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+          <Reveal>
+            <div>
+              <p className="text-[0.65rem] font-medium uppercase tracking-[0.28em] text-sandstone">
+                Proof in motion
+              </p>
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">Selected work</h2>
+              <p className="mt-2 max-w-xl text-sm italic text-ivory/75">
+                Real projects, real numbers, verified after launch. Everything below actually happened.
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={0.1} className="pointer-events-auto">
+            <LinkButton
+              href="/work"
+              variant="secondary"
+              className="border-ivory/30 text-ivory hover:bg-ivory/10"
+            >
+              View all work
+            </LinkButton>
+          </Reveal>
         </div>
       </Container>
     </div>
