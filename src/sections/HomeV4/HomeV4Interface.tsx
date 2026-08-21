@@ -14,7 +14,7 @@ const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
 // The live V4 guide previously held each chapter for 4.4–5.3 seconds. These
 // chapter dwell times are about 30% shorter, while complex chapters still get
 // a little more room than simple recognition or decision beats.
-const DWELL_MS = [3300, 3100, 3300, 3700, 3300, 3400, 3700, 3400, 3200, 3200, 3600];
+const DWELL_MS = [3300, 3100, 3300, 3700, 3300, 3400, 3700, 3400, 3200, 3300, 3200, 3600];
 const GUIDE_HINT_MS = 6200;
 const CHAPTER_NAMES = [
   "opening signal",
@@ -26,6 +26,7 @@ const CHAPTER_NAMES = [
   "evidence",
   "tatva system",
   "studio",
+  "health check",
   "decision",
   "invitation",
 ] as const;
@@ -256,7 +257,7 @@ export function GuidedView() {
   const detail = atFinalChapter
     ? "the invitation"
     : showHint
-      ? "eleven scenes · always user-led"
+      ? "twelve scenes · always user-led"
       : chapterName;
 
   return (

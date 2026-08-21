@@ -8,6 +8,7 @@ import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
+import { HomeBrandHealthCheck } from "@/sections/Home/HomeBrandHealthCheck";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
@@ -138,6 +139,20 @@ export function HomeV4Experience() {
       >
         <StudioCinematicChapter />
       </div>
+
+      <SceneHandoff motif="river" />
+
+      <section
+        id="health"
+        data-home-v4-chapter="health"
+        data-home-chapter="health"
+        data-home-section="health"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--health"
+        aria-label="A transparent five-measure Brand Health Check"
+      >
+        <HomeBrandHealthCheck />
+      </section>
 
       <SceneHandoff motif="mist" />
 

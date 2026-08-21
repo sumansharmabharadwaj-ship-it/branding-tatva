@@ -5,8 +5,14 @@ import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { LinkButton } from "@/components/Button";
+import {
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  isServicesSituation,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 
-type Situation = "idea" | "inconsistent" | "outgrown" | "default";
+type Situation = ServicesSituationId | "default";
 
 type Invitation = {
   eyebrow: string;
@@ -42,7 +48,7 @@ const INVITATIONS: Record<Situation, Invitation> = {
     proofLabel: "See a foundation take shape",
     accent: "#C77752",
   },
-  inconsistent: {
+  reposition: {
     eyebrow: "Your diagnosis · the brand has drifted",
     headline: "Bring the scattered pieces back to one recognisable idea.",
     body:
@@ -53,7 +59,7 @@ const INVITATIONS: Record<Situation, Invitation> = {
     proofLabel: "See perception repositioned",
     accent: "#7D8565",
   },
-  outgrown: {
+  ongoing: {
     eyebrow: "Your diagnosis · growth is outrunning consistency",
     headline: "Give growth a system strong enough to hold it.",
     body:
@@ -74,10 +80,13 @@ const NODE_POSITIONS = [
 
 function readSituation(): Situation {
   try {
-    const saved = window.localStorage.getItem("bt-situation");
-    if (saved === "idea" || saved === "inconsistent" || saved === "outgrown") {
-      return saved;
-    }
+    const savedServicesChoice = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+    if (isServicesSituation(savedServicesChoice)) return savedServicesChoice;
+
+    const savedLegacyChoice = window.localStorage.getItem("bt-situation");
+    if (savedLegacyChoice === "idea") return "idea";
+    if (savedLegacyChoice === "inconsistent") return "reposition";
+    if (savedLegacyChoice === "outgrown") return "ongoing";
   } catch {}
   return "default";
 }
@@ -104,10 +113,12 @@ export function FinalInvitation() {
     }
 
     window.addEventListener("storage", sync);
+    window.addEventListener(SERVICES_SITUATION_EVENT, sync as EventListener);
     window.addEventListener("bt:situation", sync as EventListener);
     window.addEventListener("bt:home-chapter", onChapter as EventListener);
     return () => {
       window.removeEventListener("storage", sync);
+      window.removeEventListener(SERVICES_SITUATION_EVENT, sync as EventListener);
       window.removeEventListener("bt:situation", sync as EventListener);
       window.removeEventListener("bt:home-chapter", onChapter as EventListener);
     };

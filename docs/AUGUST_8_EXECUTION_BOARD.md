@@ -66,7 +66,7 @@ Master register coverage: 1,858 requirements — 1,504 sitewide, 246 motion/inte
 - [ ] Selected work: verified cases only, evidence index and unique media.
 - [x] Brand Strategy & Systems preview: three clear starting paths paired with verified project proof.
 - [ ] Founder proof: verified portrait, direct-access evidence and credential link.
-- [ ] Brand Health Check: ungated value, transparent scoring and calm water response.
+- [x] Brand Health Check: five ungated measures, transparent 0–10 scoring and a calm water response.
 - [ ] Insights preview: one original insight plus two supporting field notes.
 - [ ] Session expectation scene and sunlit booking close.
 - [ ] Full desktop/mobile/reduced-motion/performance evidence.
@@ -122,7 +122,7 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 - [ ] V02 Home recognition — unique mist film and original keyframe integrated; custom 10–14s master remains in production.
 - [ ] V03 Five Tatvas — original directed master keyframe and semantic pressure lab integrated; responsive loop exports remain in production.
 - [ ] V04 Home services — live 12s stone/paper/water/root system assembly integrated; responsive encoded loop remains in production.
-- [ ] V05 Home health — clear stream and five measurement stones, 12–18s.
+- [ ] V05 Home health — live 15s clear-stream and five measurement-stone system integrated; responsive encoded loop remains in production.
 - [ ] V06 Home booking — one sunlight sweep over clean warm wood, 10–16s.
 - [ ] V07 About founder — restrained documentary portrait, 8–12s.
 - [ ] V08 About method — contour map becoming decision system, 10–14s.
@@ -180,5 +180,17 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 - [x] Desktop may demonstrate; touch stays visitor-led; manual choice holds for reading.
 - [x] Keyboard arrow, Home and End controls switch the three path tabs.
 - [x] Reduced motion resolves to a complete static material composition.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
+## Current deployed checkpoint — Home Brand Health Check
+
+- [x] Five visible measures cover position, recognition, consistency, expression and preference.
+- [x] Every answer exposes its exact 0, 1 or 2 point value.
+- [x] The result shows the 0–10 total, strongest signal and clearest opportunity.
+- [x] Results remain ungated and link to the matching service path.
+- [x] A unique 15-second clear-stream and five-stone semantic motion system carries the response.
+- [x] Touch, mouse and keyboard use the same visitor-led question sequence.
+- [x] Reduced motion resolves to a complete static stream composition.
+- [x] Path and health choices now carry into the final booking invitation.
 - [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
 
