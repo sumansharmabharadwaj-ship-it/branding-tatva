@@ -246,17 +246,21 @@ export function V4RecognitionScene() {
         holdUntilRef.current = Date.now() + 11000;
       }}
     >
-      <div className="home-v4-recognition__media" aria-hidden="true">
+      <div
+        className="home-v4-recognition__media"
+        aria-hidden="true"
+        data-media-id="BT-HOME-RECOGNITION-MISTY-RIDGE"
+      >
         <video
           muted
           autoPlay
           loop
           playsInline
           preload="metadata"
-          poster="/images/pexels-fog-sunrise-poster.jpg"
+          poster="/images/pixabay-misty-ridge-drift-poster.jpg"
+          data-home-playback-rate="1.1"
         >
-          <source src="/videos/pexels-fog-sunrise.webm" type="video/webm" />
-          <source src="/videos/pexels-fog-sunrise.mp4" type="video/mp4" />
+          <source src="/videos/pixabay-misty-ridge-drift.mp4" type="video/mp4" />
         </video>
         <span />
       </div>
