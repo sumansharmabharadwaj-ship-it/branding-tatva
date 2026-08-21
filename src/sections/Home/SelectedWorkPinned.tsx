@@ -136,9 +136,8 @@ function SelectedWorkPinnedDesktop({ featured }: { featured: Project[] }) {
             video={hero.cardVideo}
             industry={hero.industry}
             title={hero.title}
-            hook={hero.hook}
-            outcome={hero.outcome}
-            stats={hero.stats}
+            hook="A delivered project file, shown with its scope and evidence boundary."
+            outcome={hero.strategy ?? hero.challenge}
             accent={hero.accent}
           />
         </div>
@@ -187,8 +186,8 @@ function SelectedWorkFallback({ featured }: { featured: Project[] }) {
               video={hero.cardVideo}
               industry={hero.industry}
               title={hero.title}
-              outcome={hero.outcome}
-              stats={hero.stats}
+              hook="A delivered project file, shown with its scope and evidence boundary."
+              outcome={hero.strategy ?? hero.challenge}
               accent={hero.accent}
             />
           </div>
@@ -225,7 +224,7 @@ function SelectedWorkIntro({ compact = false }: { compact?: boolean }) {
               </p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">Selected work</h2>
               <p className="mt-2 max-w-xl text-sm italic text-ivory/75">
-                Real projects, real numbers, verified after launch. Everything below actually happened.
+                Delivered project files and clearly bounded outcomes. Open each file for the role, scope, and evidence currently available.
               </p>
             </div>
           </Reveal>

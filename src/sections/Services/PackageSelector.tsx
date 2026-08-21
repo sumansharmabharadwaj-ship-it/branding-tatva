@@ -24,7 +24,17 @@ const CHOICES = [
   { slug: "brand-partnership", label: "Needing ongoing consistency", element: "space" },
 ] as const;
 
-export function PackageSelector() {
+type PackageSelectorProps = {
+  eyebrow?: string;
+  heading?: string;
+  description?: string;
+};
+
+export function PackageSelector({
+  eyebrow = "Desire",
+  heading = "Where does your brand actually stand?",
+  description,
+}: PackageSelectorProps = {}) {
   const [active, setActive] = useState<string | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const activePackage = packages.find((p) => p.slug === active);
@@ -34,10 +44,11 @@ export function PackageSelector() {
 
   return (
     <Container className="max-w-2xl text-center">
-      <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Desire</p>
+      <p className="text-sm font-medium uppercase tracking-wide text-sandstone">{eyebrow}</p>
       <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-        Where does your brand actually stand?
+        {heading}
       </h2>
+      {description && <p className="mx-auto mt-4 max-w-xl text-ivory/78">{description}</p>}
       <div className="mx-auto mt-8 grid max-w-xl gap-3 sm:grid-cols-3">
         {CHOICES.map((choice) => {
           const pkg = packages.find((p) => p.slug === choice.slug);

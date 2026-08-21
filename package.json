@@ -6,7 +6,8 @@
     "dev": "node scripts/next-dev-preview.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "audit:home": "node scripts/home-bible-gate.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

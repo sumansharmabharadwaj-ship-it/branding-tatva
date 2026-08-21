@@ -83,7 +83,7 @@ function bandFor(score: number) {
 
 const MAX_SCORE = QUESTIONS.reduce((sum, q) => sum + q.options[q.options.length - 1].points, 0);
 
-export function BrandHealthCheck() {
+export function BrandHealthCheck({ resultHref = "#services" }: { resultHref?: string }) {
   const [step, setStep] = useState(0);
   // Points per answered question, not a running total — storing each
   // answer separately (instead of just a summed score) is what makes
@@ -230,7 +230,7 @@ export function BrandHealthCheck() {
                 </p>
               )}
               <div className="mt-6 flex flex-wrap gap-3">
-                <LinkButton href="#desire">See that package</LinkButton>
+                <LinkButton href={resultHref}>See that path</LinkButton>
                 <button
                   type="button"
                   onClick={reset}

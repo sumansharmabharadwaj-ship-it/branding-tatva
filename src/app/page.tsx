@@ -11,6 +11,9 @@ import { ClipReveal } from "@/components/ClipReveal";
 import { ElementsSection } from "@/sections/Elements";
 import { SelectedWorkPinned } from "@/sections/Home/SelectedWorkPinned";
 import { RecognitionMirror } from "@/sections/Home/RecognitionMirror";
+import { HomeServicesPreview } from "@/sections/Home/HomeServicesPreview";
+import { HomeHealthCheck } from "@/sections/Home/HomeHealthCheck";
+import { HomeInsightsPreview } from "@/sections/Home/HomeInsightsPreview";
 import { CinematicHero } from "@/sections/Hero";
 import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { ProcessSection } from "@/sections/Process";
@@ -85,15 +88,6 @@ export default function Home() {
           >
             Explore the work
           </LinkButton>
-          {/* w-full forces this onto its own line within CinematicHero's
-              flex wrap CTA row instead of crowding the two buttons. It
-              stays inside the hero's own scrim, so there is no seam
-              risk against whatever section follows. Real, verified
-              number (Dr. Haley Nutrition, already live on /work), never
-              invented social proof. */}
-          <p className="w-full text-xs text-ivory/50 sm:text-sm">
-            The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks.
-          </p>
         </CinematicHero>
 
         <RecognitionMirror />
@@ -156,11 +150,11 @@ not repeated here. */}
                 Clinical psychology and English literature. One studies how people notice and decide. The other studies how language carries meaning.
               </p>
               <div className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs uppercase tracking-[0.15em] text-ivory/50 sm:text-sm">
-                <span>M.A. Clinical Psychology</span>
+                <span>Psychology-led diagnosis</span>
                 <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ivory/30" />
-                <span>B.A. (Hons) English Literature</span>
+                <span>Language-led strategy</span>
                 <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ivory/30" />
-                <span>5 real client engagements</span>
+                <span>Founder-led from diagnosis to delivery</span>
               </div>
             </Reveal>
 
@@ -224,6 +218,12 @@ not repeated here. */}
             dark
           />
         </section>
+
+        <HomeServicesPreview />
+
+        <HomeHealthCheck />
+
+        <HomeInsightsPreview />
 
         {/* Threshold ("every brand starts at one of two thresholds") used
             to sit here — direct feedback called it out as useless along
