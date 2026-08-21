@@ -296,5 +296,6 @@ Generated from the exact august-8-isolated repository tree. This is the M1 inven
 | Media ID | Repository path | Role | Route | Provenance |
 |---|---|---|---|---|
 | BT-HOME-FOUNDATION-ROOT-NETWORK | public/videos/pexels-root-network.webm + public/videos/pexels-root-network.mp4 | Foundation supporting film at shared 1.10× pace | Home | Pexels — source URL verification required |
+| BT-HOME-FIVE-TATVAS-MASTER-V2 | src/sections/Home/TatvaMechanism.tsx + src/sections/Home/TatvaSystemLab.tsx + src/app/home-v4-tatva-depth.css | Five unique semantic mechanisms: strata, current, spark, voice wave and memory field | Home | Original semantic SVG, DOM and CSS motion authored 2026-08-21 |
 | BT-HOME-SERVICES-MATERIAL-ASSEMBLY | src/sections/Home/PathsCinematicChapter.tsx + src/app/home-v4-paths-depth.css | Unique 12-second stone, paper, water and root system assembly | Home | Original semantic DOM, SVG and CSS motion authored 2026-08-21 |
 | BT-HOME-HEALTH-FIVE-STONES | src/sections/Home/HomeBrandHealthCheck.tsx + src/app/home-v4-health.css | Unique 15-second clear-stream and five measurement-stone Brand Health Check response | Home | Original semantic DOM, SVG and CSS motion authored 2026-08-21 |

@@ -61,7 +61,7 @@ Master register coverage: 1,858 requirements — 1,504 sitewide, 246 motion/inte
 - [x] Replace competing infinite hero effects with one forward camera move.
 - [x] Reduce identity veil to 220ms and remove pointer blocking.
 - [x] Recognition mirror: one state controller, user reading hold, mobile manual behavior and unique fog film.
-- [ ] Five Tatvas: one mechanism per state with mobile panels.
+- [x] Five Tatvas: one mechanism per state with mobile panels.
 - [x] Why branding matters: qualitative causal signal visualizer with sourced annotations and zero invented percentages.
 - [ ] Selected work: verified cases only, evidence index and unique media.
 - [x] Brand Strategy & Systems preview: three clear starting paths paired with verified project proof.
@@ -120,7 +120,7 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 
 - [ ] V01 Home hero — misty forest trail, slow forward reveal, 14–18s.
 - [ ] V02 Home recognition — unique mist film and original keyframe integrated; custom 10–14s master remains in production.
-- [ ] V03 Five Tatvas — original directed master keyframe and semantic pressure lab integrated; responsive loop exports remain in production.
+- [ ] V03 Five Tatvas — original directed master keyframe plus five semantic mechanisms integrated; responsive loop exports remain in production.
 - [ ] V04 Home services — live 12s stone/paper/water/root system assembly integrated; responsive encoded loop remains in production.
 - [ ] V05 Home health — live 15s clear-stream and five measurement-stone system integrated; responsive encoded loop remains in production.
 - [ ] V06 Home booking — one sunlight sweep over clean warm wood, 10–16s.
@@ -194,3 +194,14 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 - [x] Path and health choices now carry into the final booking invitation.
 - [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
 
+## Current checkpoint — Five Tatvas mechanisms
+
+- [x] Prithvi resolves as layered category, audience, belief and position strata.
+- [x] Jal resolves as a continuous five-touchpoint experience current.
+- [x] Agni resolves as one strategic difference releasing distinctive cues.
+- [x] Vayu resolves as a repeatable verbal rhythm travelling toward recall.
+- [x] Akash resolves as repeated assets compounding into a memory field.
+- [x] The illustrative 0–100 score is removed; every reading is qualitative and traceable.
+- [x] Mobile uses a swipeable control rail and a dedicated mechanism panel.
+- [x] Reduced motion presents every mechanism in a complete static state.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.

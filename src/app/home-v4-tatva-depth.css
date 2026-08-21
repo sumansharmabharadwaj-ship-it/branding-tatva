@@ -208,6 +208,51 @@
   filter: drop-shadow(0 24px 58px rgba(0, 0, 0, 0.24));
 }
 
+.tatva-pressure-lab__mechanism {
+  isolation: isolate;
+  min-height: 20rem;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(244, 239, 230, 0.045), transparent 46%),
+    linear-gradient(155deg, rgba(244, 239, 230, 0.025), rgba(3, 10, 9, 0.16));
+}
+
+.tatva-pressure-lab__mechanism::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  border: 1px solid rgba(244, 239, 230, 0.07);
+  background-image:
+    linear-gradient(rgba(244, 239, 230, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 239, 230, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at center, black 8%, transparent 78%);
+}
+
+.tatva-pressure-lab__mechanism svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.tatva-pressure-lab__svg-kicker,
+.tatva-pressure-lab__svg-layer {
+  fill: rgba(244, 239, 230, 0.58);
+  font-family: var(--font-sans), sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.tatva-pressure-lab__svg-title {
+  fill: #f4efe6;
+  font-family: var(--font-display), serif;
+  font-size: 22px;
+}
+
 .tatva-pressure-lab__core-copy > span:last-child,
 .tatva-pressure-lab__node > span:last-child {
   color: #f4efe6;

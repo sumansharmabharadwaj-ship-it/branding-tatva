@@ -16,7 +16,7 @@ const USER_HOLD_MS = 16000;
 const TOUCH_HOLD_REFRESH_MS = 3400;
 
 /**
- * TatvaSystemLab remains the sole owner of the actual omitted-force state.
+ * TatvaSystemLab remains the sole owner of the active mechanism state.
  * This director only coordinates its existing controls with the compressed V4
  * homepage rhythm.
  *
