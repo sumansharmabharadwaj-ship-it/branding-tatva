@@ -36,7 +36,37 @@ const nextConfig: NextConfig = {
     return [
       { source: "/services", destination: "/work", permanent: true },
       { source: "/blog", destination: "/insights", permanent: true },
+      {
+        source: "/blog/five-elements-working-as-one",
+        destination: "/insights/five-element-brand-strategy-framework",
+        permanent: true,
+      },
+      {
+        source: "/blog/visible-versus-remembered",
+        destination: "/insights/brand-awareness-vs-brand-recall",
+        permanent: true,
+      },
+      {
+        source: "/blog/what-a-brand-audit-actually-finds",
+        destination: "/insights/brand-audit-checklist-before-rebrand",
+        permanent: true,
+      },
       { source: "/blog/:slug", destination: "/insights/:slug", permanent: true },
+      {
+        source: "/insights/five-elements-working-as-one",
+        destination: "/insights/five-element-brand-strategy-framework",
+        permanent: true,
+      },
+      {
+        source: "/insights/visible-versus-remembered",
+        destination: "/insights/brand-awareness-vs-brand-recall",
+        permanent: true,
+      },
+      {
+        source: "/insights/what-a-brand-audit-actually-finds",
+        destination: "/insights/brand-audit-checklist-before-rebrand",
+        permanent: true,
+      },
     ];
   },
   async headers() {
