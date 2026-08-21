@@ -88,102 +88,38 @@ export function V4OpeningScene() {
       className="home-v4-opening"
       aria-labelledby="home-v4-opening-title"
     >
-      <div className="home-v4-opening__media" aria-hidden="true">
+      <div
+        className="home-v4-opening__media"
+        aria-hidden="true"
+        data-media-id="BT-HOME-HERO-FOREST-SANCTUARY"
+      >
         <video
           src="/videos/hero-forest-sanctuary.mp4"
           poster="/images/hero-forest-sanctuary-poster.jpg"
+          data-home-playback-rate="1.1"
           muted
           autoPlay
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
         />
         <motion.span
           className="home-v4-opening__camera"
+          initial={false}
           animate={
             prefersReducedMotion || !inView
-              ? undefined
-              : { scale: [1.03, 1.105, 1.03], x: [0, -10, 0], y: [0, -4, 0] }
+              ? { scale: 1.03, x: 0, y: 0 }
+              : { scale: 1.075, x: -8, y: -5 }
           }
-          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: prefersReducedMotion ? 0 : 8, ease: "easeOut" }}
         />
         <span className="home-v4-opening__wash" />
       </div>
 
-      <motion.span
-        aria-hidden="true"
-        className="home-v4-opening__light home-v4-opening__light--one"
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: ["-18%", "28%", "-18%"], opacity: [0.18, 0.56, 0.18] }
-        }
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.span
-        aria-hidden="true"
-        className="home-v4-opening__light home-v4-opening__light--two"
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: ["12%", "-24%", "12%"], opacity: [0.1, 0.42, 0.1] }
-        }
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      <div className="home-v4-opening__signal" aria-hidden="true">
-        <svg viewBox="0 0 520 520">
-          <motion.path
-            d="M40 314 C120 252 168 350 244 282 C316 218 340 132 482 90"
-            fill="none"
-            stroke="rgba(212,185,154,.75)"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            pathLength="1"
-            animate={
-              prefersReducedMotion
-                ? { pathLength: 1, opacity: 0.6 }
-                : { pathLength: [0.12, 1, 0.12], opacity: [0.24, 0.9, 0.24] }
-            }
-            transition={{ duration: 6.8, repeat: Infinity, ease: "easeInOut" }}
-          />
-          {[
-            [72, 294],
-            [176, 322],
-            [257, 267],
-            [344, 156],
-            [470, 96],
-          ].map(([cx, cy], index) => (
-            <motion.circle
-              key={`${cx}-${cy}`}
-              cx={cx}
-              cy={cy}
-              r="4"
-              fill={index === 4 ? "#F4EFE6" : "#D4B99A"}
-              animate={
-                prefersReducedMotion
-                  ? undefined
-                  : { scale: [0.7, 1.45, 0.7], opacity: [0.35, 1, 0.35] }
-              }
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-              transition={{
-                duration: 3.2 + index * 0.35,
-                delay: index * 0.24,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-          ))}
-        </svg>
-        <span>signal</span>
-        <span>pattern</span>
-        <span>recognition</span>
-      </div>
-
       <div className="home-v4-opening__shell">
         <div className="home-v4-opening__topline">
-          <span>Brand strategy · direct authorship</span>
-          <span>The page is alive before you touch it</span>
+          <span>Brand strategy &amp; systems</span>
+          <span>Founder-led · direct authorship</span>
         </div>
 
         <div className="home-v4-opening__copy">
@@ -191,76 +127,76 @@ export function V4OpeningScene() {
             className="home-v4-opening__eyebrow"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.62, delay: 0.12, ease: EASE }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.58, delay: 0.08, ease: EASE }}
           >
-            Psychology reads the tension. Language gives it form.
+            Strategy directed by Suman Sharma
           </motion.p>
 
           <h1 id="home-v4-opening-title">
             <motion.span
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 44, rotateX: -10 }}
-              animate={{ opacity: 1, y: 0, rotateX: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.86, delay: 0.18, ease: EASE }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.12, ease: EASE }}
             >
-              Your audience has already formed an opinion.
+              Turn a growing business into a brand people
             </motion.span>
             <motion.em
-              initial={prefersReducedMotion ? false : { opacity: 0, x: -34 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.82, delay: 0.34, ease: EASE }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.66, delay: 0.24, ease: EASE }}
             >
-              Did you design it?
+              recognise, trust, and choose.
             </motion.em>
           </h1>
 
           <motion.p
             className="home-v4-opening__lede"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.48, ease: EASE }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.58, delay: 0.32, ease: EASE }}
           >
-            Branding Tatva decides the pattern people should recognise, then carries that decision through position, identity, language, website, and market behaviour.
+            Branding Tatva shapes positioning, language, identity, and market expression into one coherent system your business can carry forward.
           </motion.p>
 
           <motion.div
             className="home-v4-opening__actions"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.66, delay: 0.6, ease: EASE }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.56, delay: 0.4, ease: EASE }}
           >
             <Link
-              href="#recognition"
+              href="/contact"
               className="home-v4-button home-v4-button--primary"
               data-magnetic
-              data-cursor-label="inspect"
+              data-cursor-label="begin"
             >
-              See what your brand is signalling <ArrowDownRight size={15} />
+              Open the strategy room <ArrowUpRight size={15} />
             </Link>
             <Link
-              href="#evidence"
+              href="/work"
               className="home-v4-button home-v4-button--quiet"
               data-magnetic
               data-cursor-label="proof"
             >
-              Open the evidence <ArrowUpRight size={15} />
+              See the work <ArrowDownRight size={15} />
             </Link>
           </motion.div>
         </div>
 
         <motion.aside
           className="home-v4-opening__proof"
-          initial={prefersReducedMotion ? false : { opacity: 0, x: 26 }}
+          initial={prefersReducedMotion ? false : { opacity: 0, x: 18 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.72, delay: 0.52, ease: EASE }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.6, delay: 0.42, ease: EASE }}
         >
-          <span>Recorded outcome</span>
-          <strong>0.71 → 2.81%</strong>
-          <p>engagement rate in eight weeks, while the account posted less</p>
+          <span>How the engagement feels</span>
+          <strong>One strategist. One connected system.</strong>
+          <p>Direct access from the first diagnosis through the decisions that shape the final brand.</p>
           <i aria-hidden="true" />
         </motion.aside>
 
         <a href="#recognition" className="home-v4-opening__scroll" aria-label="Continue to visitor recognition">
-          <span>Follow the signal</span>
+          <span>Find your starting point</span>
           <i aria-hidden="true" />
         </a>
       </div>
