@@ -9,6 +9,7 @@ import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
 import { HomeBrandHealthCheck } from "@/sections/Home/HomeBrandHealthCheck";
+import { HomeInsightsPreview } from "@/sections/Home/HomeInsightsPreview";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
@@ -152,6 +153,20 @@ export function HomeV4Experience() {
         aria-label="A transparent five-measure Brand Health Check"
       >
         <HomeBrandHealthCheck />
+      </section>
+
+      <SceneHandoff motif="constellation" />
+
+      <section
+        id="insights-preview"
+        data-home-v4-chapter="insights"
+        data-home-chapter="insights"
+        data-home-section="insights"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--insights"
+        aria-label="Featured Branding Tatva Insight and two supporting field notes"
+      >
+        <HomeInsightsPreview />
       </section>
 
       <SceneHandoff motif="mist" />

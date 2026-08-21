@@ -10,6 +10,7 @@ Generated from the exact august-8-isolated repository tree. This is the M1 inven
 | ID | Asset | Bytes | Git blob | Route | Section / purpose | Provenance |
 |---|---|---:|---|---|---|---|
 | BT-HOME-SELECTED-WORK-ARCHIVE-V1 | `src/sections/Home/EvidenceWall.tsx` + `src/app/home-v4-evidence-depth.css` | — | — | / | Home Selected Work — semantic archive current, evidence trail and case selector | Original DOM/CSS motion system; no external media source |
+| BT-HOME-INSIGHTS-ARGUMENT-CURRENT-V1 | `src/sections/Home/HomeInsightsPreview.tsx` + `src/app/home-v4-insights-depth.css` | — | — | / | Home Insights — five-decision argument path for the featured guide and two field notes | Original DOM/CSS motion system; no external media source |
 | IMAGES-ABOUT-HERO-BG-MEADOW-POSTER | public/images/about-hero-bg-meadow-poster.jpg | 90998 | c1997f8a561e | /about | Needs mapping | Repository asset — provenance verification required |
 | IMAGES-CARD-DR-HALEY-NUTRITION-POSTER | public/images/card-dr-haley-nutrition-poster.jpg | 46711 | 6313c5bb26ec | / | Home Selected Work — Dr. Haley Nutrition poster and reduced-motion fallback | Repository asset — provenance verification required |
 | IMAGES-CARD-EXECUTIVE-SPRINGBOARD-POSTER | public/images/card-executive-springboard-poster.jpg | 52887 | f10f03832a0e | / | Home Selected Work — Executive Springboard poster and reduced-motion fallback | Repository asset — provenance verification required |
@@ -124,7 +125,7 @@ Generated from the exact august-8-isolated repository tree. This is the M1 inven
 | IMAGES-OWN-PORTRAIT | public/images/own-portrait.jpg | 1367458 | 1b8dd35c5dfd | Unmapped | Needs mapping | Owned — usage confirmation required |
 | IMAGES-OWN-WATERFALL-VEIL | public/images/own-waterfall-veil.jpg | 454643 | 4fb723338d21 | Unmapped | Needs mapping | Owned — usage confirmation required |
 | IMAGES-PEXELS-ASPEN-SUNBURST-POSTER | public/images/pexels-aspen-sunburst-poster.jpg | 113003 | e8c67721c7b9 | Unmapped | Needs mapping | Pexels — source URL verification required |
-| IMAGES-PEXELS-DANDELION-RELEASE-POSTER | public/images/pexels-dandelion-release-poster.jpg | 122179 | bc0ee1c0e83c | Unmapped | Needs mapping | Pexels — source URL verification required |
+| IMAGES-PEXELS-DANDELION-RELEASE-POSTER | public/images/pexels-dandelion-release-poster.jpg | 122179 | bc0ee1c0e83c | / | Home Insights — `BT-HOME-INSIGHTS-DANDELION-RELEASE-V1` poster and reduced-motion fallback | Pexels — source URL verification required |
 | IMAGES-PEXELS-FOG-SUNRISE-POSTER | public/images/pexels-fog-sunrise-poster.jpg | 44029 | aa52d25d6f7a | Unmapped | Needs mapping | Pexels — source URL verification required |
 | IMAGES-PEXELS-FOREST-FLOOR-FUNGI-POSTER | public/images/pexels-forest-floor-fungi-poster.jpg | 138854 | 5abfc779c2b8 | Unmapped | Needs mapping | Pexels — source URL verification required |
 | IMAGES-PEXELS-FOREST-PATH | public/images/pexels-forest-path.jpg | 292234 | e93b73232b05 | Unmapped | Needs mapping | Pexels — source URL verification required |
@@ -245,8 +246,8 @@ Generated from the exact august-8-isolated repository tree. This is the M1 inven
 | VIDEOS-OWN-MOONLIT-SEA | public/videos/own-moonlit-sea.mp4 | 12632773 | a0039115e00b | Unmapped | Needs mapping | Owned — usage confirmation required |
 | VIDEOS-PEXELS-ASPEN-SUNBURST | public/videos/pexels-aspen-sunburst.mp4 | 6187320 | f92df4687087 | Unmapped | Needs mapping | Pexels — source URL verification required |
 | VIDEOS-PEXELS-ASPEN-SUNBURST | public/videos/pexels-aspen-sunburst.webm | 4449957 | a1cc034453ae | Unmapped | Needs mapping | Pexels — source URL verification required |
-| VIDEOS-PEXELS-DANDELION-RELEASE | public/videos/pexels-dandelion-release.mp4 | 2476215 | 769922e82c0f | Unmapped | Needs mapping | Pexels — source URL verification required |
-| VIDEOS-PEXELS-DANDELION-RELEASE | public/videos/pexels-dandelion-release.webm | 832302 | ed4561fea539 | Unmapped | Needs mapping | Pexels — source URL verification required |
+| VIDEOS-PEXELS-DANDELION-RELEASE | public/videos/pexels-dandelion-release.mp4 | 2476215 | 769922e82c0f | / | Home Insights — `BT-HOME-INSIGHTS-DANDELION-RELEASE-V1` MP4 ambient film | Pexels — source URL verification required |
+| VIDEOS-PEXELS-DANDELION-RELEASE | public/videos/pexels-dandelion-release.webm | 832302 | ed4561fea539 | / | Home Insights — `BT-HOME-INSIGHTS-DANDELION-RELEASE-V1` WebM ambient film | Pexels — source URL verification required |
 | VIDEOS-PEXELS-FOG-SUNRISE | public/videos/pexels-fog-sunrise.mp4 | 2987639 | cf52e2628a99 | Unmapped | Needs mapping | Pexels — source URL verification required |
 | VIDEOS-PEXELS-FOG-SUNRISE | public/videos/pexels-fog-sunrise.webm | 456151 | 7bfa1bba9d09 | Unmapped | Needs mapping | Pexels — source URL verification required |
 | VIDEOS-PEXELS-FOREST-FLOOR-FUNGI | public/videos/pexels-forest-floor-fungi.mp4 | 2916074 | 01d961f97bd7 | Unmapped | Needs mapping | Pexels — source URL verification required |

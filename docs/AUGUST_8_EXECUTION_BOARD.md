@@ -67,7 +67,7 @@ Master register coverage: 1,858 requirements — 1,504 sitewide, 246 motion/inte
 - [x] Brand Strategy & Systems preview: three clear starting paths paired with verified project proof.
 - [ ] Founder proof: verified portrait, direct-access evidence and credential link.
 - [x] Brand Health Check: five ungated measures, transparent 0–10 scoring and a calm water response.
-- [ ] Insights preview: one original insight plus two supporting field notes.
+- [x] Insights preview: one original insight plus two supporting field notes.
 - [ ] Session expectation scene and sunlit booking close.
 - [ ] Full desktop/mobile/reduced-motion/performance evidence.
 
@@ -216,4 +216,16 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 - [x] Arrow, Home and End keys move through the case index; the project dialog traps focus, supports Escape and returns focus.
 - [x] Short-laptop layouts compress the evidence trail and mobile uses a horizontal snap rail.
 - [x] Reduced motion keeps the complete poster-led record visible.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
+## Current checkpoint — Home Insights argument current
+
+- [x] The canonical featured positioning guide leads the chapter without duplicating the full Insights library.
+- [x] Homepage hierarchy and client-proof articles appear as two supporting field notes.
+- [x] Each reading resolves into its own five-decision argument path and links to the exact published article route.
+- [x] The chapter uses one previously unused dandelion-release film and one dominant argument-line motion.
+- [x] Selection stays visitor-led across pointer and touch; Arrow, Home and End keys move through the reading tabs.
+- [x] Mobile uses a horizontal snap rail and a vertical argument path; reduced motion resolves to the poster and complete path.
+- [x] The guided homepage index now counts and names all thirteen chapters.
+- [ ] Verify the Pexels source URL before media launch approval.
 - [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
