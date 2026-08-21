@@ -63,7 +63,7 @@ Master register coverage: 1,858 requirements — 1,504 sitewide, 246 motion/inte
 - [x] Recognition mirror: one state controller, user reading hold, mobile manual behavior and unique fog film.
 - [x] Five Tatvas: one mechanism per state with mobile panels.
 - [x] Why branding matters: qualitative causal signal visualizer with sourced annotations and zero invented percentages.
-- [ ] Selected work: verified cases only, evidence index and unique media.
+- [x] Selected work: verified cases only, evidence index and unique media.
 - [x] Brand Strategy & Systems preview: three clear starting paths paired with verified project proof.
 - [ ] Founder proof: verified portrait, direct-access evidence and credential link.
 - [x] Brand Health Check: five ungated measures, transparent 0–10 scoring and a calm water response.
@@ -204,4 +204,16 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 - [x] The illustrative 0–100 score is removed; every reading is qualitative and traceable.
 - [x] Mobile uses a swipeable control rail and a dedicated mechanism panel.
 - [x] Reduced motion presents every mechanism in a complete static state.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
+## Current checkpoint — Home Selected Work evidence archive
+
+- [x] Home presents the three featured case files only; the full five-case archive remains available at `/work`.
+- [x] Dr. Haley Nutrition, MyShopInEurope and Executive Springboard each use their own repository video and poster pair.
+- [x] Every selected file states its evidence type and source basis without adding client claims, metrics or dates.
+- [x] The archive uses one restrained semantic current instead of a generic shared background film.
+- [x] Fine-pointer desktop may demonstrate the archive; touch stays visitor-led and every manual choice holds for reading.
+- [x] Arrow, Home and End keys move through the case index; the project dialog traps focus, supports Escape and returns focus.
+- [x] Short-laptop layouts compress the evidence trail and mobile uses a horizontal snap rail.
+- [x] Reduced motion keeps the complete poster-led record visible.
 - [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.

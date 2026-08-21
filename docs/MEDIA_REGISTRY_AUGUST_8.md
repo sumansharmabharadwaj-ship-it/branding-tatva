@@ -9,11 +9,12 @@ Generated from the exact august-8-isolated repository tree. This is the M1 inven
 
 | ID | Asset | Bytes | Git blob | Route | Section / purpose | Provenance |
 |---|---|---:|---|---|---|---|
+| BT-HOME-SELECTED-WORK-ARCHIVE-V1 | `src/sections/Home/EvidenceWall.tsx` + `src/app/home-v4-evidence-depth.css` | — | — | / | Home Selected Work — semantic archive current, evidence trail and case selector | Original DOM/CSS motion system; no external media source |
 | IMAGES-ABOUT-HERO-BG-MEADOW-POSTER | public/images/about-hero-bg-meadow-poster.jpg | 90998 | c1997f8a561e | /about | Needs mapping | Repository asset — provenance verification required |
-| IMAGES-CARD-DR-HALEY-NUTRITION-POSTER | public/images/card-dr-haley-nutrition-poster.jpg | 46711 | 6313c5bb26ec | Unmapped | Needs mapping | Repository asset — provenance verification required |
-| IMAGES-CARD-EXECUTIVE-SPRINGBOARD-POSTER | public/images/card-executive-springboard-poster.jpg | 52887 | f10f03832a0e | Unmapped | Needs mapping | Repository asset — provenance verification required |
+| IMAGES-CARD-DR-HALEY-NUTRITION-POSTER | public/images/card-dr-haley-nutrition-poster.jpg | 46711 | 6313c5bb26ec | / | Home Selected Work — Dr. Haley Nutrition poster and reduced-motion fallback | Repository asset — provenance verification required |
+| IMAGES-CARD-EXECUTIVE-SPRINGBOARD-POSTER | public/images/card-executive-springboard-poster.jpg | 52887 | f10f03832a0e | / | Home Selected Work — Executive Springboard poster and reduced-motion fallback | Repository asset — provenance verification required |
 | IMAGES-CARD-HERBALCART-POSTER | public/images/card-herbalcart-poster.jpg | 44637 | aa617853aada | Unmapped | Needs mapping | Repository asset — provenance verification required |
-| IMAGES-CARD-MYSHOPINEUROPE-POSTER | public/images/card-myshopineurope-poster.jpg | 35445 | 9baaedc927fc | Unmapped | Needs mapping | Repository asset — provenance verification required |
+| IMAGES-CARD-MYSHOPINEUROPE-POSTER | public/images/card-myshopineurope-poster.jpg | 35445 | 9baaedc927fc | / | Home Selected Work — MyShopInEurope poster and reduced-motion fallback | Repository asset — provenance verification required |
 | IMAGES-CARD-PLAXONIC-POSTER | public/images/card-plaxonic-poster.jpg | 37005 | 3d1a73a9aea0 | Unmapped | Needs mapping | Repository asset — provenance verification required |
 | IMAGES-CINEMATIC-RIDGE-POSTER | public/images/cinematic-ridge-poster.jpg | 23557 | 77d0ecb85ff3 | Unmapped | Needs mapping | Repository asset — provenance verification required |
 | IMAGES-CINEMATIC-WATERLIGHT-POSTER | public/images/cinematic-waterlight-poster.jpg | 23557 | 77d0ecb85ff3 | Unmapped | Needs mapping | Repository asset — provenance verification required |
@@ -156,10 +157,10 @@ Generated from the exact august-8-isolated repository tree. This is the M1 inven
 | IMAGES-WORK-EVIDENCE-PLAXONIC | public/images/work-evidence-plaxonic.svg | 4577 | 251684fc984a | /work | Needs mapping | Repository asset — provenance verification required |
 | IMAGES-WORK-PORTRAIT | public/images/work-portrait.jpg | 1507887 | bec2422e92e4 | /work | Needs mapping | Repository asset — provenance verification required |
 | VIDEOS-ABOUT-HERO-BG-MEADOW | public/videos/about-hero-bg-meadow.mp4 | 3429315 | 86ff59a520c5 | /about | Needs mapping | Repository asset — provenance verification required |
-| VIDEOS-CARD-DR-HALEY-NUTRITION | public/videos/card-dr-haley-nutrition.mp4 | 337078 | 10a25b282f33 | Unmapped | Needs mapping | Repository asset — provenance verification required |
-| VIDEOS-CARD-EXECUTIVE-SPRINGBOARD | public/videos/card-executive-springboard.mp4 | 640688 | cf41a433a93a | Unmapped | Needs mapping | Repository asset — provenance verification required |
+| VIDEOS-CARD-DR-HALEY-NUTRITION | public/videos/card-dr-haley-nutrition.mp4 | 337078 | 10a25b282f33 | / | Home Selected Work — Dr. Haley Nutrition active case film | Repository asset — provenance verification required |
+| VIDEOS-CARD-EXECUTIVE-SPRINGBOARD | public/videos/card-executive-springboard.mp4 | 640688 | cf41a433a93a | / | Home Selected Work — Executive Springboard active case film | Repository asset — provenance verification required |
 | VIDEOS-CARD-HERBALCART | public/videos/card-herbalcart.mp4 | 483377 | 9d7ae5c8fd97 | Unmapped | Needs mapping | Repository asset — provenance verification required |
-| VIDEOS-CARD-MYSHOPINEUROPE | public/videos/card-myshopineurope.mp4 | 555743 | d5d926954bb9 | Unmapped | Needs mapping | Repository asset — provenance verification required |
+| VIDEOS-CARD-MYSHOPINEUROPE | public/videos/card-myshopineurope.mp4 | 555743 | d5d926954bb9 | / | Home Selected Work — MyShopInEurope active case film | Repository asset — provenance verification required |
 | VIDEOS-CARD-PLAXONIC | public/videos/card-plaxonic.mp4 | 481393 | 02e26f3cb9c7 | Unmapped | Needs mapping | Repository asset — provenance verification required |
 | VIDEOS-GENERATED-BT-ABOUT-BEHAVIOURS-MOSSBREATH | public/videos/generated/bt-about-behaviours-mossbreath.mp4 | 155017 | 90f0a5717db0 | /about | Needs mapping | Generated — prompt/provenance record required |
 | VIDEOS-GENERATED-BT-ABOUT-POINT-VIEW-THREE-STONES | public/videos/generated/bt-about-point-view-three-stones.mp4 | 114585 | 83ed84322694 | /about | Needs mapping | Generated — prompt/provenance record required |
