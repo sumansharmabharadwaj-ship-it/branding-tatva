@@ -18,42 +18,47 @@ export function SparkCursor() {
     const label = labelRef.current;
     if (!sun || !label) return;
 
+    const cursorSun: HTMLDivElement = sun;
+    const cursorLabel: HTMLDivElement = label;
     let active = false;
 
     function sync() {
       active = finePointer.matches && !osReduced.matches && pref !== "reduced";
       document.documentElement.classList.toggle("sun-cursor-active", active);
       if (!active) {
-        sun.style.opacity = "0";
-        label.style.opacity = "0";
+        cursorSun.style.opacity = "0";
+        cursorLabel.style.opacity = "0";
+      } else {
+        cursorSun.style.removeProperty("opacity");
+        cursorLabel.style.removeProperty("opacity");
       }
     }
 
     function move(event: PointerEvent) {
       if (!active) return;
-      sun.style.opacity = "1";
-      sun.style.transform =
+      cursorSun.style.opacity = "1";
+      cursorSun.style.transform =
         `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
-      label.style.transform =
+      cursorLabel.style.transform =
         `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, 24px)`;
     }
 
     function over(event: PointerEvent) {
       if (!active || !(event.target instanceof Element)) return;
       const target = event.target.closest<HTMLElement>(INTERACTIVE_SELECTOR);
-      sun.classList.toggle("spark-cursor-core--hover", Boolean(target));
+      cursorSun.classList.toggle("spark-cursor-core--hover", Boolean(target));
       const copy =
         target?.dataset.cursorLabel ||
         target?.getAttribute("aria-label") ||
         "";
-      label.textContent = copy.slice(0, 24);
-      label.classList.toggle("spark-cursor-label--visible", Boolean(copy));
+      cursorLabel.textContent = copy.slice(0, 24);
+      cursorLabel.classList.toggle("spark-cursor-label--visible", Boolean(copy));
     }
 
     function out(event: PointerEvent) {
       if (!(event.relatedTarget instanceof Element)) {
-        sun.style.opacity = "0";
-        label.classList.remove("spark-cursor-label--visible");
+        cursorSun.style.opacity = "0";
+        cursorLabel.classList.remove("spark-cursor-label--visible");
       }
     }
 
