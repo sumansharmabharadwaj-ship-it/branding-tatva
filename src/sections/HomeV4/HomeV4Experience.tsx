@@ -15,7 +15,7 @@ import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
 import { process as processStages } from "@/data/process";
 import { elementColor } from "@/lib/elementColor";
 import { HomeV4HeaderDirector } from "./HomeV4HeaderDirector";
-import { GuidedView, LivingCursor, SceneHandoff } from "./HomeV4Interface";
+import { GuidedView, SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
 import { HomeV4ProcessTempo } from "./HomeV4ProcessTempo";
@@ -37,7 +37,6 @@ export function HomeV4Experience() {
       <HomeV4RecognitionTempo />
       <HomeV4ProcessTempo />
       <HomeV4TatvaTempo />
-      <LivingCursor />
       <GuidedView />
 
       <V4OpeningScene />
