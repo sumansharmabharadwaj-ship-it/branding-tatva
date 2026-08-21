@@ -5,12 +5,14 @@ import "./globals.css";
 // the whole point is that every page speaks the same interaction language.
 import "./bt-scene.css";
 import "./visualizer.css";
+import "./sun-cursor.css";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { ConsentManager } from "@/components/ConsentManager";
 import { VideoWarden } from "@/components/VideoWarden";
 import { MotionPreferenceProvider } from "@/components/MotionPreference";
+import { SparkCursor } from "@/components/SparkCursor";
 import { site } from "@/data/site";
 
 const displayFont = Cormorant_Garamond({
@@ -142,7 +144,10 @@ export default function RootLayout({
         <div className="paper-grain" aria-hidden="true" />
 
         <SmoothScrollProvider>
-          <MotionPreferenceProvider>{children}</MotionPreferenceProvider>
+          <MotionPreferenceProvider>
+            {children}
+            <SparkCursor />
+          </MotionPreferenceProvider>
         </SmoothScrollProvider>
 
         <PageLoadVeil />
