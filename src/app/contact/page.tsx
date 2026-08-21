@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -32,6 +33,12 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
+  const enquiryDeliveryReady = Boolean(
+    process.env.RESEND_API_KEY?.trim() &&
+      process.env.CONTACT_TO_EMAIL?.trim() &&
+      process.env.CONTACT_FROM_EMAIL?.trim(),
+  );
+
   return (
     <>
       <Header transparent />
@@ -96,8 +103,8 @@ export default function ContactPage() {
                   Tell me what your brand is becoming.
                 </SplitReveal>
                 <p className="mt-4 max-w-lg text-ivory/80">
-                  Fill in as much or as little as you know right now.
-                  I&apos;ll ask a few more questions where it helps.
+                  Begin with the decision that brought you here. Share only
+                  the context that will make the first reply useful.
                 </p>
               </Reveal>
               <Reveal delay={0.1} className="lg:pb-2 lg:text-right">
@@ -171,10 +178,84 @@ export default function ContactPage() {
                   ))}
                 <span>{projects.length} real client engagements</span>
               </div>
+
+              <div className="mt-8 border-l border-clay/35 pl-5">
+                <p className="font-display text-xl font-normal text-soil">Direct, private, pressure-free.</p>
+                <p className="mt-2 text-sm leading-6 text-foreground-secondary">
+                  Suman reads each enquiry. Context is used to understand the work, and a first reply does not commit either side to a project.
+                </p>
+                <Link href="/work" className="mt-3 inline-flex text-sm font-medium text-action-primary-hover link-underline">
+                  Review the documented work
+                </Link>
+              </div>
             </Reveal>
 
             <Reveal delay={0.1} className="lg:col-span-3">
-              <ContactForm />
+              <ContactForm deliveryEnabled={enquiryDeliveryReady} />
+            </Reveal>
+          </Container>
+
+          <Container className="relative mt-16 grid gap-8 border-t border-soil/10 pt-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
+            <Reveal>
+              <p className="text-sm font-medium uppercase tracking-[0.16em] text-action-secondary">
+                What happens next
+              </p>
+              <h2 className="mt-3 max-w-xl font-display text-display-sm font-normal text-soil">
+                A clear sequence before a calendar enters the picture.
+              </h2>
+              <div className="mt-8 grid gap-6 sm:grid-cols-3">
+                {[
+                  {
+                    number: "01",
+                    title: "Suman reads the context",
+                    body: "The enquiry goes directly to the founder-led practice, not a sales queue.",
+                  },
+                  {
+                    number: "02",
+                    title: "The decision is clarified",
+                    body: "The first reply addresses the situation and asks only for missing context that matters.",
+                  },
+                  {
+                    number: "03",
+                    title: "A next step is agreed",
+                    body: "If there is a useful fit, scope, cadence and the first decision are aligned before scheduling.",
+                  },
+                ].map((step) => (
+                  <article key={step.number} className="border-t border-soil/20 pt-4">
+                    <p className="text-xs font-semibold tracking-[0.18em] text-clay">{step.number}</p>
+                    <h3 className="mt-3 font-display text-xl font-normal text-soil">{step.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-foreground-secondary">{step.body}</p>
+                  </article>
+                ))}
+              </div>
+              <p className="mt-7 text-sm leading-6 text-foreground-secondary">
+                No presentation is required. Share the business context, what changed, the decision that is waiting and any real timing constraint.
+              </p>
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <div className="rounded-2xl border border-soil/10 bg-parchment/75 p-6 sm:p-8">
+                <p className="text-sm font-medium uppercase tracking-[0.16em] text-action-secondary">
+                  A useful starting fit
+                </p>
+                <h2 className="mt-3 font-display text-2xl font-normal text-soil">
+                  The work begins where an important brand choice is unresolved.
+                </h2>
+                <ul className="mt-6 space-y-4 text-sm leading-6 text-foreground-secondary">
+                  {[
+                    "A business is launching, repositioning or making an existing brand easier to recognise.",
+                    "Leadership needs clarity across positioning, message, identity, architecture or customer experience.",
+                    "The team wants a founder-led strategic partner and can bring honest context into the room.",
+                  ].map((item) => (
+                    <li key={item} className="border-l border-clay/35 pl-4">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-6 text-sm leading-6 text-foreground-secondary">
+                  If the need is still difficult to name, describe the tension rather than choosing a service prematurely.
+                </p>
+              </div>
             </Reveal>
           </Container>
         </section>
