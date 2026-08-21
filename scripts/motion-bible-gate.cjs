@@ -52,7 +52,10 @@ for (const [name, source] of [
   ["knowledge atlas", knowledgeAtlas],
   ["contact decision sequence", contactSequence],
 ]) {
-  assert(source.includes("useReducedMotion"), `${name} lacks a reduced-motion state.`);
+  assert(
+    source.includes("useReducedMotion") || source.includes("useHydratedReducedMotion"),
+    `${name} lacks a reduced-motion state.`
+  );
   assert(source.includes('role="tab"'), `${name} lacks keyboard-readable tab semantics.`);
 }
 

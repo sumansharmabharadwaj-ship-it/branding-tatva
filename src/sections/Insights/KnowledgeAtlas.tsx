@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useId, useState } from "react";
 import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import type { InsightElement } from "@/data/insights";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { EASE_AIR, MOTION_DISTANCE, MOTION_DURATION } from "@/lib/motion";
 
 type AtlasTopic = {
@@ -16,11 +17,27 @@ type AtlasTopic = {
   description: string;
   count: number;
   color: string;
+  promise: string;
+  guide: {
+    slug: string;
+    title: string;
+    readingTime: string;
+  };
+  proof: {
+    slug: string;
+    title: string;
+    hook: string;
+  };
+  engagement: {
+    slug: string;
+    name: string;
+    forWho: string;
+  };
 };
 
 export function KnowledgeAtlas({ topics }: { topics: AtlasTopic[] }) {
   const [activeSlug, setActiveSlug] = useState(topics[0]?.slug ?? "");
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const titleId = useId();
   const active = topics.find((topic) => topic.slug === activeSlug) ?? topics[0];
 
@@ -49,6 +66,7 @@ export function KnowledgeAtlas({ topics }: { topics: AtlasTopic[] }) {
                 return (
                   <button
                     key={topic.slug}
+                    id={`${titleId}-tab-${topic.slug}`}
                     type="button"
                     role="tab"
                     aria-selected={selected}
@@ -75,15 +93,20 @@ export function KnowledgeAtlas({ topics }: { topics: AtlasTopic[] }) {
             </div>
           </div>
 
-          <div id={`${titleId}-panel`} role="tabpanel" className="relative min-h-[30rem] p-6 sm:p-9 lg:p-12">
+          <div
+            id={`${titleId}-panel`}
+            role="tabpanel"
+            aria-labelledby={`${titleId}-tab-${active.slug}`}
+            className="relative min-h-[38rem] p-6 sm:p-9 lg:p-12"
+          >
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={active.slug}
-                initial={prefersReducedMotion ? undefined : { opacity: 0, y: MOTION_DISTANCE.content }}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: MOTION_DISTANCE.content }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -MOTION_DISTANCE.near }}
+                exit={prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -MOTION_DISTANCE.near }}
                 transition={{ duration: prefersReducedMotion ? 0 : MOTION_DURATION.reveal, ease: EASE_AIR }}
-                className="flex min-h-[24rem] flex-col"
+                className="flex min-h-[31rem] flex-col"
               >
                 <div className="flex items-center justify-between">
                   <p className="text-xs font-semibold uppercase tracking-[0.22em]" style={{ color: active.color }}>
@@ -95,15 +118,57 @@ export function KnowledgeAtlas({ topics }: { topics: AtlasTopic[] }) {
                   {active.name}
                 </h3>
                 <p className="mt-7 max-w-xl text-base leading-7 text-ivory/68">{active.description}</p>
-                <div className="mt-auto flex flex-wrap items-end justify-between gap-6 border-t border-ivory/12 pt-6">
-                  <p className="text-sm text-ivory/52">
-                    {active.count} {active.count === 1 ? "essay" : "essays"} in this route
-                  </p>
-                  <Link
-                    href={`/insights/topic/${active.slug}`}
-                    className="inline-flex min-h-11 items-center rounded-full border border-ivory/25 px-5 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-ivory transition hover:border-ivory/50 hover:bg-ivory/[0.08] focus-ring-halo"
-                  >
-                    Enter this path <span className="ml-2" aria-hidden="true">→</span>
+                <p className="mt-4 max-w-xl font-display text-xl leading-7 text-ivory/92">{active.promise}</p>
+
+                <div className="mt-9 grid gap-3 sm:grid-cols-3" aria-label={`${active.name} decision route`}>
+                  {[
+                    {
+                      label: "Read",
+                      title: active.guide.title,
+                      detail: active.guide.readingTime,
+                      href: `/insights/${active.guide.slug}`,
+                    },
+                    {
+                      label: "See the decision",
+                      title: active.proof.title,
+                      detail: active.proof.hook,
+                      href: `/work/${active.proof.slug}`,
+                    },
+                    {
+                      label: "Choose the path",
+                      title: active.engagement.name,
+                      detail: active.engagement.forWho,
+                      href: `/work#service-${active.engagement.slug}`,
+                    },
+                  ].map((route, index) => (
+                    <motion.div
+                      key={route.label}
+                      initial={prefersReducedMotion ? false : { opacity: 0, y: MOTION_DISTANCE.near }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: prefersReducedMotion ? 0 : MOTION_DURATION.focus,
+                        delay: prefersReducedMotion ? 0 : 0.12 + index * 0.07,
+                        ease: EASE_AIR,
+                      }}
+                    >
+                      <Link
+                        href={route.href}
+                        className="group flex h-full min-h-44 flex-col rounded-2xl border border-ivory/12 bg-ivory/[0.045] p-4 transition-[border-color,background-color,transform] duration-200 hover:-translate-y-0.5 hover:border-ivory/28 hover:bg-ivory/[0.08] focus-ring-halo sm:p-5"
+                      >
+                        <span className="text-[0.62rem] font-semibold uppercase tracking-[0.18em]" style={{ color: active.color }}>
+                          0{index + 1} · {route.label}
+                        </span>
+                        <span className="mt-3 font-display text-xl leading-6 text-ivory">{route.title}</span>
+                        <span className="mt-auto pt-5 text-xs leading-5 text-ivory/52">{route.detail}</span>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <div className="mt-auto flex flex-wrap items-center justify-between gap-5 border-t border-ivory/12 pt-6">
+                  <p className="text-sm text-ivory/52">{active.count} {active.count === 1 ? "essay" : "essays"} in this route</p>
+                  <Link href={`/insights/topic/${active.slug}`} className="text-xs font-semibold uppercase tracking-[0.16em] text-ivory underline decoration-ivory/25 underline-offset-8 transition hover:decoration-ivory/70 focus-ring-halo">
+                    View the full reading path
                   </Link>
                 </div>
               </motion.div>

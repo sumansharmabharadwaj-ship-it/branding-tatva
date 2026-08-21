@@ -12,6 +12,8 @@ import { SplitReveal } from "@/components/SplitReveal";
 import { TexturedDark } from "@/components/TexturedDark";
 import { elements } from "@/data/elements";
 import { insightPosts, insightTopics } from "@/data/insights";
+import { projects } from "@/data/projects";
+import { packages } from "@/data/services";
 import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
@@ -79,11 +81,42 @@ export default function InsightsPage() {
     name,
     element,
   }));
-  const atlasTopics = insightTopics.map((topic) => ({
-    ...topic,
-    count: insightPosts.filter((post) => post.topicSlug === topic.slug).length,
-    color: elementColor(topic.element),
-  }));
+  const atlasConnections = {
+    positioning: { projectSlug: "myshopineurope", packageSlug: "brand-beginning" },
+    "customer-experience": { projectSlug: "executive-springboard", packageSlug: "brand-clarity" },
+    "distinctive-brand": { projectSlug: "herbalcart", packageSlug: "brand-clarity" },
+    "brand-messaging": { projectSlug: "plaxonic-content-portfolio", packageSlug: "brand-clarity" },
+    "brand-memory": { projectSlug: "dr-haley-nutrition", packageSlug: "brand-partnership" },
+  } as const;
+  const atlasTopics = insightTopics.map((topic) => {
+    const connection = atlasConnections[topic.slug as keyof typeof atlasConnections];
+    const guide =
+      sortedPosts.find((post) => post.topicSlug === topic.slug && post.featured) ??
+      sortedPosts.find((post) => post.topicSlug === topic.slug)!;
+    const proofProject = projects.find((project) => project.slug === connection.projectSlug)!;
+    const engagementPackage = packages.find((item) => item.slug === connection.packageSlug)!;
+
+    return {
+      ...topic,
+      count: insightPosts.filter((post) => post.topicSlug === topic.slug).length,
+      color: elementColor(topic.element),
+      guide: {
+        slug: guide.slug,
+        title: guide.title,
+        readingTime: guide.readingTime,
+      },
+      proof: {
+        slug: proofProject.slug,
+        title: proofProject.title,
+        hook: proofProject.hook ?? proofProject.challenge,
+      },
+      engagement: {
+        slug: engagementPackage.slug,
+        name: engagementPackage.name,
+        forWho: engagementPackage.forWho,
+      },
+    };
+  });
 
   const structuredData = {
     "@context": "https://schema.org",
