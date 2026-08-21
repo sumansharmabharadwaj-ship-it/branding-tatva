@@ -122,8 +122,7 @@ export function ContactForm() {
         >
           <p className="mt-4 font-display text-xl font-normal text-soil">Thank you, that&apos;s in.</p>
           <p className="mt-2 text-sm text-foreground-secondary">
-            I read every enquiry personally and reply within a few days. If it&apos;s
-            urgent, feel free to email directly too.
+            I read every enquiry personally and reply within a few days.
           </p>
         </motion.div>
       </motion.div>

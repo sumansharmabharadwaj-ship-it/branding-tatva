@@ -10,6 +10,7 @@ import { KineticMarquee } from "@/components/KineticMarquee";
 import { ClipReveal } from "@/components/ClipReveal";
 import { ElementsSection } from "@/sections/Elements";
 import { SelectedWorkPinned } from "@/sections/Home/SelectedWorkPinned";
+import { RecognitionMirror } from "@/sections/Home/RecognitionMirror";
 import { CinematicHero } from "@/sections/Hero";
 import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { ProcessSection } from "@/sections/Process";
@@ -94,6 +95,8 @@ export default function Home() {
             The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks.
           </p>
         </CinematicHero>
+
+        <RecognitionMirror />
 
         {/* Direct feedback that this section, ElementsIntro, the two
             atmospheric quote breaks below, and Threshold all read as

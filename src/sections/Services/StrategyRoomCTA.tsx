@@ -52,7 +52,7 @@ export function StrategyRoomCTA() {
         Open the strategy room.
       </h2>
       <p className="mx-auto mt-4 max-w-md text-ivory/80">
-        A few quick questions, then a real time on the calendar. Honest feedback either way.
+        A few quick questions, then send the context directly. Honest feedback either way.
       </p>
 
       {/* Audit found this fixed height could overflow on narrow
@@ -120,10 +120,23 @@ export function StrategyRoomCTA() {
 
           {step === 3 && (
             <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
-              <p className="text-sm text-ivory/80">Good. Grab a time that works.</p>
-              <div className="mt-2">
-                <CalendlyEmbed url={site.calendlyUrl} />
-              </div>
+              {site.calendlyUrl ? (
+                <>
+                  <p className="text-sm text-ivory/80">Good. Grab a time that works.</p>
+                  <div className="mt-2">
+                    <CalendlyEmbed url={site.calendlyUrl} />
+                  </div>
+                </>
+              ) : (
+                <div className="mx-auto max-w-md rounded-2xl border border-ivory/20 bg-soil/60 p-6">
+                  <p className="text-sm leading-relaxed text-ivory/80">
+                    Good. Add those answers to the project enquiry so the first reply can begin with the real question.
+                  </p>
+                  <div className="mt-5">
+                    <LinkButton href="/contact">Send the project context</LinkButton>
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -141,7 +154,7 @@ export function StrategyRoomCTA() {
 function SkipLink({ onSkip }: { onSkip: () => void }) {
   return (
     <button type="button" onClick={onSkip} className="link-underline text-xs text-ivory/85 hover:text-ivory">
-      Go straight to the calendar
+      Go straight to the enquiry
     </button>
   );
 }

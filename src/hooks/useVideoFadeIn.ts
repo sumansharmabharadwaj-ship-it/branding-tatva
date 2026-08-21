@@ -25,16 +25,57 @@ import { useEffect, type RefObject } from "react";
 export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: boolean) {
   useEffect(() => {
     const el = ref.current;
-    if (!el || !active) return;
-    el.play().catch(() => {});
-    if (el.readyState >= 2) {
-      el.style.opacity = "1";
+    if (!el) return;
+    const video = el;
+    if (!active) {
+      video.pause();
       return;
     }
-    function onLoadedData() {
-      if (el) el.style.opacity = "1";
+
+    let inView = false;
+
+    function syncPlayback() {
+      if (inView) {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
     }
-    el.addEventListener("loadeddata", onLoadedData);
-    return () => el.removeEventListener("loadeddata", onLoadedData);
+
+    // Keep offscreen background footage from occupying a decoder. Long
+    // cinematic pages can contain many video-backed chapters, while the
+    // visitor can only see one or two boundaries at a time. Intersection
+    // state is tied to the actual viewport and avoids relying on document
+    // visibility, which is unreliable in the cloud review pane.
+    const observer =
+      typeof IntersectionObserver === "undefined"
+        ? null
+        : new IntersectionObserver(
+            ([entry]) => {
+              inView = Boolean(entry?.isIntersecting);
+              syncPlayback();
+            },
+            { threshold: 0.04 }
+          );
+
+    if (observer) {
+      observer.observe(video);
+    } else {
+      inView = true;
+      syncPlayback();
+    }
+
+    if (video.readyState >= 2) {
+      video.style.opacity = "1";
+    }
+    function onLoadedData() {
+      video.style.opacity = "1";
+    }
+    video.addEventListener("loadeddata", onLoadedData);
+    return () => {
+      observer?.disconnect();
+      video.removeEventListener("loadeddata", onLoadedData);
+      video.pause();
+    };
   }, [ref, active]);
 }

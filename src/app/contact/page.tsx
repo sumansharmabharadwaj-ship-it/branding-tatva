@@ -8,13 +8,13 @@ import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
-import { NewsletterForm } from "@/components/NewsletterForm";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { Fireflies } from "@/components/Fireflies";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { LinkButton } from "@/components/Button";
 import { site } from "@/data/site";
 import { credentials } from "@/data/about";
 import { projects } from "@/data/projects";
@@ -124,7 +124,7 @@ export default function ContactPage() {
             color and light only, no 3D objects) gives it quiet
             atmosphere instead of a flat fill, at the same low opacity
             Services already uses on comparable light sections. */}
-        <section className="relative overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
+        <section id="project-enquiry" className="relative scroll-mt-24 overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
           <AmbientElementShader opacity={0.14} />
           <Container className="relative grid gap-12 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
@@ -132,12 +132,16 @@ export default function ContactPage() {
                 Reach me directly
               </p>
               <div className="mt-3 space-y-2 text-sm text-foreground-secondary">
-                <p>
-                  Prefer email?{" "}
-                  <a href={`mailto:${site.email}`} className="text-action-primary-hover link-underline">
-                    {site.email}
-                  </a>
-                </p>
+                {site.email ? (
+                  <p>
+                    Prefer email?{" "}
+                    <a href={`mailto:${site.email}`} className="text-action-primary-hover link-underline">
+                      {site.email}
+                    </a>
+                  </p>
+                ) : (
+                  <p>Use the enquiry form. Every message is reviewed directly by Suman.</p>
+                )}
                 <p>
                   <a
                     href={site.social.linkedin}
@@ -227,29 +231,49 @@ export default function ContactPage() {
                 style={{ borderColor: `${ELEMENT_HEX.water}40`, backgroundColor: `${ELEMENT_HEX.water}14` }}
               >
                 <ElementGlyph slug="water" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
-                <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
-                  Or skip the form
-                </p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Just grab a time that works for you.
-                </h2>
-                <p className="mt-3 text-ivory/85">
-                  Times shown automatically adjust to your local timezone,
-                  wherever you are.
-                </p>
-                <CalendlyEmbed url={site.calendlyUrl} />
-                <p className="mt-3 text-xs text-ivory/75">
-                  Having trouble with the embed?{" "}
-                  <a
-                    href={site.calendlyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sandstone link-underline"
-                  >
-                    Open it directly instead
-                  </a>
-                  .
-                </p>
+                {site.calendlyUrl ? (
+                  <>
+                    <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
+                      Or skip the form
+                    </p>
+                    <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                      Just grab a time that works for you.
+                    </h2>
+                    <p className="mt-3 text-ivory/85">
+                      Times shown automatically adjust to your local timezone, wherever you are.
+                    </p>
+                    <CalendlyEmbed url={site.calendlyUrl} />
+                    <p className="mt-3 text-xs text-ivory/75">
+                      Having trouble with the embed?{" "}
+                      <a
+                        href={site.calendlyUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sandstone link-underline"
+                      >
+                        Open it directly instead
+                      </a>
+                      .
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
+                      Direct first step
+                    </p>
+                    <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                      Begin with enough context to make the first reply useful.
+                    </h2>
+                    <p className="mt-3 text-ivory/85">
+                      Share what is changing, where the brand feels unclear and what decision is waiting.
+                    </p>
+                    <div className="mt-6">
+                      <LinkButton href="#project-enquiry" className="bg-sandstone text-soil hover:bg-parchment">
+                        Return to the project enquiry
+                      </LinkButton>
+                    </div>
+                  </>
+                )}
               </div>
             </Reveal>
 
@@ -263,13 +287,16 @@ export default function ContactPage() {
                   Still deciding?
                 </p>
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Get occasional notes on brand clarity.
+                  Read the thinking before beginning a conversation.
                 </h2>
                 <p className="mt-3 text-ivory/85">
-                  A few honest thoughts a month, short and specific. Zero pitch,
-                  unsubscribe whenever.
+                  The field notes explain recognition, positioning and the brand decisions that compound over time.
                 </p>
-                <NewsletterForm />
+                <div className="mt-6">
+                  <LinkButton href="/insights" className="bg-sandstone text-soil hover:bg-parchment">
+                    Explore the field notes
+                  </LinkButton>
+                </div>
               </div>
             </Reveal>
           </Container>

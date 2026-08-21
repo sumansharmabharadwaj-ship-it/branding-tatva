@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { contactSchema } from "@/lib/contact-schema";
 
 // This route validates and emails contact form submissions via Resend.
-// If RESEND_API_KEY or CONTACT_TO_EMAIL is missing (e.g. a fresh clone
-// without .env.local), it falls back to logging server-side instead of
-// failing the submission outright.
+// If delivery is unavailable, the route fails honestly. A successful
+// response must mean the visitor's message reached the configured
+// delivery provider, never that it was merely printed to a server log.
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
@@ -30,10 +30,9 @@ export async function POST(req: NextRequest) {
   const toEmail = process.env.CONTACT_TO_EMAIL;
 
   if (!apiKey || !toEmail) {
-    console.log("Contact form submission (email delivery still pending setup):", parsed.data);
     return NextResponse.json(
-      { ok: true, note: "Received. Email delivery setup is still pending." },
-      { status: 200 }
+      { error: "Enquiry delivery is temporarily unavailable. Please try again later." },
+      { status: 503 }
     );
   }
 

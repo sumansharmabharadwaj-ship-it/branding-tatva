@@ -94,12 +94,18 @@ export function Footer() {
             <div className={`${WIDGET_CLASS} flex flex-col justify-center gap-5 sm:w-[220px] sm:shrink-0`}>
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-ivory/50">Get in touch</p>
-                <a
-                  href={`mailto:${site.email}`}
-                  className="mt-2 block break-all text-sm text-ivory/80 transition-colors hover:text-ivory"
-                >
-                  {site.email}
-                </a>
+                {site.email ? (
+                  <a
+                    href={`mailto:${site.email}`}
+                    className="mt-2 block break-all text-sm text-ivory/80 transition-colors hover:text-ivory"
+                  >
+                    {site.email}
+                  </a>
+                ) : (
+                  <Link href="/contact" className="mt-2 block text-sm text-ivory/80 transition-colors hover:text-ivory">
+                    Use the project enquiry
+                  </Link>
+                )}
               </div>
               <div className="h-px w-8 bg-ivory/20" aria-hidden="true" />
               <div>

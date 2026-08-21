@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { newsletterSchema } from "@/lib/newsletter-schema";
 
 // Mirrors /api/contact's own shape: validate, honeypot-check, then call
-// the third-party API — falling back to a server-side log (not a hard
-// failure) if the Mailchimp env vars aren't configured yet, same
-// reasoning as CONTACT_TO_EMAIL/RESEND_API_KEY there.
+// the third-party API. Missing configuration is a real failure because
+// no confirmation email or subscription exists without Mailchimp.
 //
 // Subscribes with status "pending" rather than "subscribed" — per
 // Mailchimp's own API docs, addresses added directly via the API
@@ -48,10 +47,9 @@ export async function POST(req: NextRequest) {
   const serverPrefix = process.env.MAILCHIMP_SERVER_PREFIX?.trim();
 
   if (!apiKey || !audienceId || !serverPrefix) {
-    console.log("Newsletter signup (Mailchimp setup still pending):", parsed.data.email);
     return NextResponse.json(
-      { ok: true, note: "Received. Delivery setup is still pending." },
-      { status: 200 }
+      { error: "Newsletter signup is temporarily unavailable. Please try again later." },
+      { status: 503 }
     );
   }
 

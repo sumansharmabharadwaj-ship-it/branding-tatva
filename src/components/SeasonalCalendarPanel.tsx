@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CalendlyEmbed } from "./CalendlyEmbed";
 import { BackgroundVideo } from "./BackgroundVideo";
@@ -237,27 +238,37 @@ export function SeasonalCalendarPanel() {
         >
           A real conversation, with honest feedback either way.
         </span>
-        <motion.button
-          type="button"
-          onClick={() => setExpanded(true)}
-          whileHover={prefersReducedMotion ? undefined : { scale: 1.04 }}
-          whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-          style={{ backgroundColor: element.color }}
-          // tabIndex/aria-hidden tied to the same `expanded` condition as
-          // the opacity/pointer-events classes below — a real bug found
-          // in audit: the button stayed keyboard-focusable while
-          // invisible, so Tab could land on an unseen control.
-          tabIndex={expanded ? -1 : 0}
-          aria-hidden={expanded}
-          className={`shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-ivory transition-opacity duration-300 ${expanded ? "pointer-events-none opacity-0" : ""}`}
-        >
-          + Book a call
-        </motion.button>
+        {site.calendlyUrl ? (
+          <motion.button
+            type="button"
+            onClick={() => setExpanded(true)}
+            whileHover={prefersReducedMotion ? undefined : { scale: 1.04 }}
+            whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+            style={{ backgroundColor: element.color }}
+            // tabIndex/aria-hidden tied to the same `expanded` condition as
+            // the opacity/pointer-events classes below — a real bug found
+            // in audit: the button stayed keyboard-focusable while
+            // invisible, so Tab could land on an unseen control.
+            tabIndex={expanded ? -1 : 0}
+            aria-hidden={expanded}
+            className={`shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-ivory transition-opacity duration-300 ${expanded ? "pointer-events-none opacity-0" : ""}`}
+          >
+            + Book a call
+          </motion.button>
+        ) : (
+          <Link
+            href="/contact"
+            className="shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-ivory transition-transform duration-300 hover:-translate-y-0.5"
+            style={{ backgroundColor: element.color }}
+          >
+            Begin the conversation
+          </Link>
+        )}
       </div>
       </div>
 
       <AnimatePresence>
-        {expanded && (
+        {expanded && site.calendlyUrl && (
           <motion.div
             initial={prefersReducedMotion ? undefined : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
