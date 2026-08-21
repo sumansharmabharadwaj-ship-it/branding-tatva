@@ -4,6 +4,7 @@ import "./globals.css";
 // The shared scene system. Registered globally rather than per page, because
 // the whole point is that every page speaks the same interaction language.
 import "./bt-scene.css";
+import "./visualizer.css";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
@@ -26,6 +27,8 @@ const bodyFont = Manrope({
   display: "swap",
 });
 
+const isPreview = process.env.VERCEL_ENV !== "production";
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
@@ -35,11 +38,11 @@ export const metadata: Metadata = {
   description: site.description,
   alternates: { canonical: "/" },
   robots: {
-    index: true,
-    follow: true,
+    index: !isPreview,
+    follow: !isPreview,
     googleBot: {
-      index: true,
-      follow: true,
+      index: !isPreview,
+      follow: !isPreview,
       "max-image-preview": "large",
     },
   },
@@ -61,7 +64,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#27221E",
+  themeColor: "#161719",
   width: "device-width",
   initialScale: 1,
 };
