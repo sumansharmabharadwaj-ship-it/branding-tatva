@@ -11,6 +11,7 @@ import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { MeadowClosing } from "@/components/MeadowClosing";
 import { DesignRationaleGrid } from "@/components/DesignRationaleGrid";
 import { PinnedWorkingMethod } from "@/sections/About/PinnedWorkingMethod";
+import { AboutPracticeField } from "@/sections/About/AboutPracticeField";
 import { aboutIntro, credentials } from "@/data/about";
 import { elements } from "@/data/elements";
 import { philosophy } from "@/data/philosophy";
@@ -109,6 +110,7 @@ export default function AboutPage() {
             comment for why this section's own overflow-hidden (kept
             for the redwood-canopy video) is safe to wrap this way. */}
         <PinnedWorkingMethod />
+        <AboutPracticeField />
 
         {/* Bold solid Soil, not the Phase-5 space tint — matches the
             grid-of-cards=soil rule now applied to every other card-grid
