@@ -30,7 +30,7 @@ export const interviewSynthesisInsightPosts: InsightPost[] = [
       "Light revealing layers in a forest stream, representing patterns becoming visible during research synthesis",
     keyTakeaways: [
       "Interview quotes are evidence fragments; strategy begins when patterns are compared and choices are made.",
-      "Separate observation, interpretation, implication, and decision so attractive language does not outrun the evidence.",
+      "Separate observation, interpretation, implication, and decision so attractive language stays within the evidence.",
       "Weight patterns by commercial relevance, recurrence, specificity, and evidence quality rather than frequency alone.",
       "Keep contradictions visible because different buying situations may require segmentation rather than one averaged story.",
       "A useful positioning brief records confidence and unanswered questions alongside the final decisions.",
@@ -50,7 +50,7 @@ export const interviewSynthesisInsightPosts: InsightPost[] = [
     sections: [
       {
         id: "quotes-are-not-strategy",
-        heading: "Customer quotes are evidence, not the positioning strategy",
+        heading: "Customer quotes provide evidence while leadership owns the position",
         paragraphs: [
           "A memorable sentence can dominate a workshop because it sounds true. That makes qualitative research vulnerable to anecdote bias. One articulate customer may describe the problem beautifully while representing a rare buying situation.",
           "Preserve verbatim language, but place it beside context: who said it, what triggered the purchase, which alternatives were considered, what mattered during evaluation, and what happened after the decision. The strategic question is less about which quote sounds best and more about which pattern deserves investment.",
@@ -84,7 +84,7 @@ export const interviewSynthesisInsightPosts: InsightPost[] = [
         heading: "Build a pattern matrix before writing conclusions",
         paragraphs: [
           "Create a matrix with candidate patterns on one axis and participants or segments on the other. Mark where the pattern appears, how specific the evidence is, and whether the participant's behaviour supports the stated opinion.",
-          "Frequency matters, but it is not the only signal. A pattern mentioned by fewer customers may still be strategically important if it describes the highest-value buying situation or exposes a distinctive capability competitors rarely provide.",
+          "Frequency matters alongside value and strategic consequence. A pattern mentioned by fewer customers may still be strategically important if it describes the highest-value buying situation or exposes a distinctive capability competitors rarely provide.",
           "Look for co-occurrence. A trigger may repeatedly appear with one alternative and one proof requirement. Those combinations often reveal a stronger positioning opportunity than isolated themes such as trust or quality.",
         ],
         bullets: [
@@ -125,7 +125,7 @@ export const interviewSynthesisInsightPosts: InsightPost[] = [
         heading: "Score candidate positions before choosing one",
         paragraphs: [
           "Generate a small number of candidate positions from the evidence, then score them against relevance, distinctiveness, credibility, commercial value, operational fit, and memory potential.",
-          "A candidate can be strongly supported by customer language and still be a poor strategic choice if the business does not want to build around that demand. Research informs strategy; it does not outsource leadership decisions to the sample.",
+          "A candidate can be strongly supported by customer language and still be a poor strategic choice when the business prefers another demand. Research informs strategy while leadership keeps ownership of the decision.",
           "Document the tradeoff behind the chosen position. Naming what the business is deprioritising makes the decision more durable when new opportunities appear.",
         ],
       },

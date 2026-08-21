@@ -126,7 +126,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         heading: "For most service businesses, begin with one master brand",
         paragraphs: [
           "A growing service business usually has less recognition than it believes. Splitting that recognition across several names makes the memory problem harder. One master brand allows every case study, referral, article, search result, event, and sales conversation to strengthen the same source.",
-          "This is why a simple structure often creates more commercial leverage: Company name → service category → specific engagement or package. The service can still have a distinctive proposition and experience without pretending to be an independent brand.",
+          "This is why a simple structure often creates more commercial advantage: Company name → service category → specific engagement or package. The service can still have a distinctive proposition and experience without pretending to be an independent brand.",
           "Descriptive names also improve navigation. Strategy Sprint, Brand Audit, Executive Workshop, and Retained Advisory tell a buyer what they are entering. Invented programme names may become useful later, once the method has enough demand and recognition to carry them.",
           "The masterbrand default should be treated as a discipline rather than a restriction. Separation remains available when the business can demonstrate a customer or strategic reason strong enough to clear the architecture threshold.",
         ],
@@ -151,7 +151,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         id: "promise-test",
         heading: "2. Test the promise the new offer needs to own",
         paragraphs: [
-          "Architecture becomes strained when two offers need contradictory meanings. A premium strategic advisory brand may struggle to lend the same name to a high-volume commodity service if buyers rely on exclusivity, senior access, or bespoke depth as evidence of value.",
+          "Architecture becomes strained when two offers need contradictory meanings. A premium strategic advisory brand may struggle to lend the same name to a high-volume commodity service if buyers rely on exclusivity, senior access, or specialised depth as evidence of value.",
           "The opposite also happens. Teams create separate brands even though every offer reinforces the same promise. In that case the separation throws away the very equity that could make cross-selling and referrals easier.",
           "Write the position of the master brand and the proposed offer side by side. Compare category, customer tension, promise, point of view, proof, personality, and price logic. The more those dimensions overlap, the weaker the case for independence.",
         ],
@@ -160,7 +160,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         id: "journey-test",
         heading: "3. Test whether the customer journey needs separation",
         paragraphs: [
-          "A separate offer can share the brand while using a different page, funnel, sales sequence, onboarding process, and delivery system. Operational difference alone does not automatically require brand separation.",
+          "A separate offer can share the brand while using a different page, funnel, sales sequence, onboarding process, and delivery system. Operational difference alone rarely requires brand separation.",
           "Greater independence becomes useful when discovery channels, buyer expectations, purchasing mechanics, service environment, and ongoing relationship all diverge. The architecture can then help signal that the customer is entering a different kind of experience.",
           "Map the journey before naming the solution. If the proposed sub-brand still sends people back to the same website, same founder, same proof, same sales call, and same delivery team, the customer may experience the separate identity as theatre rather than useful navigation.",
         ],

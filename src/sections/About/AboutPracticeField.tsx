@@ -48,7 +48,7 @@ export function AboutPracticeField() {
           <Reveal>
             <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">How the practice took shape</p>
             <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-soil">
-              Not a mythology. A sequence of disciplines that learned to work together.
+              A sequence of disciplines, each changing how the work is done.
             </h2>
           </Reveal>
           <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-border bg-border lg:grid-cols-3">
@@ -106,7 +106,7 @@ export function AboutPracticeField() {
               </ul>
             </Reveal>
             <Reveal delay={0.08}>
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-ivory/55">Probably not yet when</p>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-ivory/55">A better fit later when</p>
               <ul className="mt-5 space-y-3">
                 {FIT.notYet.map((item) => (
                   <li key={item} className="border-l-2 border-ivory/20 pl-4 text-sm text-ivory/70">{item}</li>

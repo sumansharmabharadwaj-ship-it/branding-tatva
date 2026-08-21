@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/Container";
-import { ElementGlyph } from "@/components/ElementGlyph";
 import { InsightCard, type InsightCardPost } from "@/components/InsightCard";
 import { InsightsExplorer } from "@/components/InsightsExplorer";
 import { LinkButton } from "@/components/Button";
@@ -16,9 +15,10 @@ import { insightPosts, insightTopics } from "@/data/insights";
 import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
+import { KnowledgeAtlas } from "@/sections/Insights/KnowledgeAtlas";
 
 export const metadata: Metadata = {
-  title: "Insights on brand strategy, positioning, and messaging",
+  title: "Brand Strategy Insights & Field Notes",
   description:
     "Practical essays and frameworks on brand positioning, brand audits, messaging, customer experience, distinctiveness, recognition, and memory.",
   keywords: [
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Brand strategy insights | Branding Tatva",
+    title: "Brand Strategy Insights & Field Notes | Branding Tatva",
     description:
       "Practical essays and frameworks on positioning, messaging, customer experience, distinctiveness, recognition, and memory.",
     type: "website",
@@ -78,6 +78,11 @@ export default function InsightsPage() {
     slug,
     name,
     element,
+  }));
+  const atlasTopics = insightTopics.map((topic) => ({
+    ...topic,
+    count: insightPosts.filter((post) => post.topicSlug === topic.slug).length,
+    color: elementColor(topic.element),
   }));
 
   const structuredData = {
@@ -199,74 +204,7 @@ export default function InsightsPage() {
           </Container>
         </section>
 
-        <section className="relative overflow-hidden bg-soil py-20 text-ivory sm:py-28">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(184,90,52,0.18),transparent_28%),radial-gradient(circle_at_82%_82%,rgba(92,107,74,0.16),transparent_30%)]" />
-          <Container className="relative">
-            <Reveal>
-              <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sandstone">
-                    Five reading paths
-                  </p>
-                  <h2 className="mt-4 max-w-xl font-display text-display-md font-normal">
-                    Follow the part of the brand that feels hardest to hold.
-                  </h2>
-                </div>
-                <p className="max-w-2xl text-base leading-7 text-ivory/70 lg:justify-self-end">
-                  The elements organise real brand decisions into five paths.
-                  Each topic page gathers related essays, so learning builds
-                  laterally rather than ending at one article.
-                </p>
-              </div>
-            </Reveal>
-
-            <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-              {insightTopics.map((topic, index) => {
-                const color = elementColor(topic.element);
-                const count = insightPosts.filter(
-                  (post) => post.topicSlug === topic.slug
-                ).length;
-
-                return (
-                  <Reveal key={topic.slug} delay={index * 0.05} className="h-full">
-                    <Link
-                      href={`/insights/topic/${topic.slug}`}
-                      className="group flex h-full min-h-72 flex-col rounded-[1.5rem] border border-ivory/10 bg-ivory/[0.06] p-6 backdrop-blur-xl transition duration-500 hover:-translate-y-1 hover:bg-ivory/[0.1]"
-                    >
-                      <div className="flex items-center justify-between">
-                        <ElementGlyph
-                          slug={topic.element}
-                          className="h-7 w-7"
-                          strokeWidth={1.25}
-                          style={{ color }}
-                        />
-                        <span className="font-display text-2xl text-ivory/25">
-                          0{index + 1}
-                        </span>
-                      </div>
-                      <p
-                        className="mt-10 text-[0.65rem] font-semibold uppercase tracking-[0.2em]"
-                        style={{ color }}
-                      >
-                        {topic.eyebrow}
-                      </p>
-                      <h3 className="mt-3 font-display text-3xl font-normal">
-                        {topic.name}
-                      </h3>
-                      <p className="mt-4 flex-1 text-sm leading-6 text-ivory/65">
-                        {topic.description}
-                      </p>
-                      <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-ivory/80 transition-transform duration-300 group-hover:translate-x-1">
-                        {count} {count === 1 ? "essay" : "essays"}{" "}
-                        <span aria-hidden="true">→</span>
-                      </p>
-                    </Link>
-                  </Reveal>
-                );
-              })}
-            </div>
-          </Container>
-        </section>
+        <KnowledgeAtlas topics={atlasTopics} />
 
         <InsightsExplorer posts={explorerPosts} topics={explorerTopics} />
 
@@ -342,7 +280,7 @@ export default function InsightsPage() {
                 ) : (
                   <div className="rounded-2xl border border-ivory/20 bg-soil/45 p-6">
                     <p className="text-sm leading-7 text-ivory/80">
-                      Subscription delivery is not connected yet. The complete library remains open without an email gate.
+                      Subscription delivery awaits its connection. The complete library remains open and email-free.
                     </p>
                     <div className="mt-5">
                       <LinkButton href="#insights-library">Return to the library</LinkButton>

@@ -27,6 +27,7 @@ export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: 
     const el = ref.current;
     if (!el) return;
     const video = el;
+    video.playbackRate = 1.1;
     if (!active) {
       video.pause();
       return;

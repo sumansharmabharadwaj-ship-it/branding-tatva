@@ -60,7 +60,18 @@ assert(
   "Exact 22-guide Insights gate is missing.",
 );
 
-for (const script of ["audit:home", "audit:about", "audit:work", "audit:insights", "audit:contact", "audit:api"]) {
+for (const script of [
+  "audit:home",
+  "audit:about",
+  "audit:work",
+  "audit:insights",
+  "audit:contact",
+  "audit:api",
+  "audit:copy",
+  "audit:motion",
+  "audit:seo",
+  "audit:rendered",
+]) {
   assert(packageJson.scripts?.[script], `Required release script ${script} is missing.`);
 }
 

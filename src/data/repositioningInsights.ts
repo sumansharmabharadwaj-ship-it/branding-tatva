@@ -45,7 +45,7 @@ export const repositioningInsightPosts: SourcedInsightPost[] = [
       "Morning light revealing a familiar landscape through mist, representing a new position emerging without erasing recognition",
     keyTakeaways: [
       "Repositioning changes what the business should mean; rebranding changes how that meaning is expressed.",
-      "Recognition is an asset to audit before the design process, not a constraint to discover after launch.",
+      "Recognition is an asset to audit before the design process rather than a constraint discovered after launch.",
       "Preserve familiar cues that are unique, known, and still compatible with the new direction.",
       "A transition message should connect the business customers knew with the reason it is changing now.",
       "Measure recognition, understanding, lead quality, and buying-situation association separately after launch.",

@@ -81,7 +81,7 @@ export function ContactForm({ deliveryEnabled }: { deliveryEnabled: boolean }) {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        setServerError(data.error ?? "The enquiry could not be delivered. Please try again.");
+        setServerError(data.error ?? "The enquiry delivery failed. Please try again.");
         setStatus("error");
         return;
       }
@@ -135,7 +135,7 @@ export function ContactForm({ deliveryEnabled }: { deliveryEnabled: boolean }) {
           Suman will review the context and reply directly to the work email you shared. If it is useful to continue, the reply will clarify the next decision before any conversation is scheduled.
         </p>
         <Link href="/work" className="mt-5 inline-flex text-sm font-medium text-action-primary-hover link-underline">
-          Return to Work + Services
+          Return to Brand Strategy & Systems
         </Link>
       </motion.div>
     );

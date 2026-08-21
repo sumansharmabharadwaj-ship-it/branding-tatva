@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Logo } from "@/components/Logo";
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
-const COUNTER_DURATION_MS = 1780;
+const SEEN_KEY = "branding-tatva-identity-seen";
 
 export function PageLoadVeil() {
   const prefersReducedMotion = useReducedMotion();
@@ -15,7 +15,6 @@ export function PageLoadVeil() {
   const [captionVisible, setCaptionVisible] = useState(false);
   const [visible, setVisible] = useState(!prefersReducedMotion);
   const [removed, setRemoved] = useState(prefersReducedMotion);
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const approvalPreview =
@@ -26,32 +25,29 @@ export function PageLoadVeil() {
       setMarkVisible(true);
       setWordmarkVisible(true);
       setCaptionVisible(true);
-      setProgress(74);
       return;
     }
 
     if (prefersReducedMotion) return;
-    const timers = [
-      setTimeout(() => setMarkVisible(true), 120),
-      setTimeout(() => setWordmarkVisible(true), 620),
-      setTimeout(() => setCaptionVisible(true), 900),
-      setTimeout(() => setVisible(false), 1850),
-      setTimeout(() => setRemoved(true), 2550),
-    ];
-
-    const start = performance.now();
-    let frame: number;
-    function tick(now: number) {
-      const elapsed = now - start;
-      const pct = Math.min(100, Math.round((elapsed / COUNTER_DURATION_MS) * 100));
-      setProgress(pct);
-      if (pct < 100) frame = requestAnimationFrame(tick);
+    if (window.sessionStorage.getItem(SEEN_KEY)) {
+      setVisible(false);
+      setRemoved(true);
+      return;
     }
-    frame = requestAnimationFrame(tick);
+
+    const timers = [
+      setTimeout(() => setMarkVisible(true), 80),
+      setTimeout(() => setWordmarkVisible(true), 360),
+      setTimeout(() => setCaptionVisible(true), 520),
+      setTimeout(() => setVisible(false), 900),
+      setTimeout(() => {
+        window.sessionStorage.setItem(SEEN_KEY, "1");
+        setRemoved(true);
+      }, 1180),
+    ];
 
     return () => {
       timers.forEach(clearTimeout);
-      cancelAnimationFrame(frame);
     };
   }, [prefersReducedMotion]);
 
@@ -63,7 +59,7 @@ export function PageLoadVeil() {
         <motion.div
           initial={{ clipPath: "inset(0% 0 0% 0)" }}
           exit={{ clipPath: "inset(0% 0 100% 0)" }}
-          transition={{ duration: 0.7, ease: EASE }}
+          transition={{ duration: 0.24, ease: EASE }}
           className="pointer-events-none fixed inset-0 z-100 overflow-hidden bg-[#071117]"
           aria-hidden="true"
         >
@@ -71,7 +67,7 @@ export function PageLoadVeil() {
             className="absolute inset-0"
             initial={{ opacity: 0.76, scale: 1.035 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.8, ease: EASE }}
+            transition={{ duration: 0.9, ease: EASE }}
           >
             <Image
               src="/images/own-dusk-ridge.jpg"
@@ -99,7 +95,7 @@ export function PageLoadVeil() {
                   className="absolute inset-0"
                   initial={{ opacity: 0.22, x: trail === 0 ? 34 : -30, y: trail === 0 ? -18 : 24, rotate: trail === 0 ? 7 : -6 }}
                   animate={markVisible ? { opacity: 0, x: 0, y: 0, rotate: 0 } : undefined}
-                  transition={{ duration: 0.72, delay: trail * 0.08, ease: EASE }}
+                  transition={{ duration: 0.58, delay: trail * 0.05, ease: EASE }}
                 >
                   <Image
                     src="/images/branding-tatva-tatva-mark.png"
@@ -115,7 +111,7 @@ export function PageLoadVeil() {
                 className="absolute inset-0"
                 initial={{ opacity: 0, scale: 0.72, rotate: -9, filter: "blur(8px)" }}
                 animate={markVisible ? { opacity: 1, scale: 1, rotate: 0, filter: "blur(0px)" } : undefined}
-                transition={{ duration: 0.82, ease: EASE }}
+                transition={{ duration: 0.64, ease: EASE }}
               >
                 <Image
                   src="/images/branding-tatva-tatva-mark.png"
@@ -131,7 +127,7 @@ export function PageLoadVeil() {
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={wordmarkVisible ? { opacity: 1, y: 0 } : undefined}
-              transition={{ duration: 0.5, ease: EASE }}
+              transition={{ duration: 0.38, ease: EASE }}
               className="mt-5 origin-center scale-[1.5] sm:scale-[2.05]"
             >
               <Logo light />
@@ -140,20 +136,20 @@ export function PageLoadVeil() {
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={captionVisible ? { opacity: 1, y: 0 } : undefined}
-              transition={{ duration: 0.42, ease: EASE }}
-              className="mt-20 flex flex-col items-center sm:mt-24"
+              transition={{ duration: 0.3, ease: EASE }}
+              className="mt-16 flex flex-col items-center sm:mt-20"
             >
               <span className="font-body text-[0.6rem] font-medium uppercase tracking-[0.46em] text-ivory/60 sm:text-[0.7rem]">
-                Finding the essential
+                Strategy before styling
               </span>
               <motion.span
                 className="mt-4 block h-px bg-ivory/35"
                 initial={{ width: 0 }}
-                animate={{ width: `${Math.max(8, progress * 0.64)}px` }}
-                transition={{ duration: 0.08, ease: "linear" }}
+                animate={{ width: 64 }}
+                transition={{ duration: 0.42, ease: EASE }}
               />
-              <span className="mt-3 font-body text-[0.68rem] tabular-nums tracking-[0.24em] text-ivory/80">
-                {String(progress).padStart(2, "0")}
+              <span className="mt-3 font-body text-[0.64rem] uppercase tracking-[0.18em] text-ivory/75">
+                Five elements · one decision system
               </span>
             </motion.div>
           </div>
@@ -162,7 +158,7 @@ export function PageLoadVeil() {
             className="absolute bottom-7 right-7 h-9 w-9 sm:bottom-9 sm:right-9"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={captionVisible ? { opacity: 0.7, scale: 1 } : undefined}
-            transition={{ duration: 0.4, ease: EASE }}
+            transition={{ duration: 0.28, ease: EASE }}
           >
             <Image
               src="/images/branding-tatva-tatva-mark.png"

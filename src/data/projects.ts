@@ -55,7 +55,7 @@ export const projects: Project[] = [
       "Evidence shown: delivered strategy and management scope. Performance figures are withheld until the original report and publication permission are archived.",
     hook: "Proof that posting less can outperform posting more, once what remains actually earns attention.",
     reflection:
-      "The strategic lesson was to judge the system by relevance and response quality, not publishing volume alone. That is the difference between reach and trust.",
+      "The strategic lesson was to judge the system by relevance and response quality, with publishing volume treated as a secondary signal. That is the difference between reach and trust.",
     closingQuote:
       "Fewer posts, each one earning its place. That's the difference between being seen and being remembered.",
     cardImage: "/images/card-dr-haley-nutrition-poster.jpg",

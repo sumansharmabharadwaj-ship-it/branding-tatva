@@ -88,7 +88,7 @@ export const valuePropositionInsightPosts: InsightPost[] = [
         callout: {
           label: "Strategic distinction",
           text:
-            "Positioning explains why this business should occupy a particular place in the market. It does not need to sound like advertising.",
+            "Positioning explains why this business should occupy a particular place in the market. Advertising language is optional; strategic clarity is essential.",
         },
       },
       {

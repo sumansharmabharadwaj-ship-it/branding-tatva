@@ -124,7 +124,7 @@ export default function BlogPage() {
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">The research field.</h2>
               </div>
               <p className="max-w-2xl text-ivory/75">
-                Each territory begins with a buyer problem, develops a clear argument, and ends with a practical decision—not a content-calendar filler topic.
+                Each territory begins with a buyer problem, develops a clear argument, and ends with a practical decision beyond content-calendar filler.
               </p>
             </Reveal>
             <div>
@@ -270,7 +270,7 @@ export default function BlogPage() {
                   Every idea should connect to a mechanism, a piece of evidence, and a clearer decision. Explore the work—or bring one live question to the strategy room.
                 </p>
                 <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                  <LinkButton href="/work">Explore Work + Services</LinkButton>
+                  <LinkButton href="/work">Explore Brand Strategy & Systems</LinkButton>
                   <LinkButton href="/contact" variant="secondary">
                     Bring a question to the strategy room
                   </LinkButton>

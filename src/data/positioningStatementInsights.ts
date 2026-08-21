@@ -17,7 +17,7 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
     title: "Brand positioning statement examples, and why most sound generic",
     seoTitle: "Brand positioning statement examples that avoid generic claims",
     excerpt:
-      "Use positioning statement examples as diagnostic tools, not copy templates. This guide shows why most statements blur together and how to write one that changes real business decisions.",
+      "Use positioning statement examples as diagnostic tools rather than copy templates. This guide shows why most statements blur together and how to write one that changes real business decisions.",
     directAnswer:
       "A useful brand positioning statement identifies a specific customer, the buying situation or alternative being compared, the distinctive value created by the business, and the proof that makes the claim believable. Most positioning statements sound generic because they fill a familiar template with category-level promises such as quality, innovation, personal service, or better results. The sentence improves only after the underlying strategic choices become more specific.",
     element: "earth",
@@ -100,7 +100,7 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "Many examples begin with a template and end with a collection of respectable claims. The audience is broad, the category is obvious, the benefit is desirable, and the proof is an adjective. The result reads smoothly because nothing in it creates friction.",
           "The same ease creates the weakness. If a competitor can replace the brand name and keep the rest of the sentence unchanged, the statement describes the category rather than the choice inside it.",
-          "Words such as innovative, trusted, tailored, high-quality, strategic, collaborative, and results-driven are not automatically wrong. They become generic when the business cannot show a distinctive mechanism, tradeoff, or consequence behind them.",
+          "Words that signal quality, trust and partnership become generic when the business lacks a distinctive mechanism, tradeoff, or consequence behind them. Their value depends on the proof they carry.",
         ],
         bullets: [
           "The customer is described as everyone who could possibly buy.",
@@ -112,7 +112,7 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
       },
       {
         id: "template-is-not-strategy",
-        heading: "A template is not a positioning process",
+        heading: "A template comes after the positioning process",
         paragraphs: [
           "A familiar formula can help organise thinking: For a target customer, the brand is a category that delivers a benefit because of a reason to believe. The formula becomes dangerous when each blank is filled from intuition without comparing alternatives or examining evidence.",
           "Positioning practitioner April Dunford argues that the components depend on one another. A capability is differentiated only relative to an alternative, and its value depends on the customer who cares about the resulting consequence.",
@@ -121,17 +121,17 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
         callout: {
           label: "Sequence rule",
           text:
-            "Do not ask the template to discover the strategy. Use the strategy to decide what deserves a place in the template.",
+            "Let strategy decide what deserves a place in the template; discovery belongs earlier in the process.",
         },
       },
       {
         id: "generic-and-specific-example",
         heading: "Generic and specific positioning statement example",
         paragraphs: [
-          "Consider a brand consultancy. A generic statement might read: For ambitious businesses, Northstar is a strategic branding agency that delivers tailored brand solutions through a collaborative and insight-led process.",
+          "Consider a brand consultancy. A weak statement may lead with ambition, quality and process while leaving the customer situation, operating choice and consequence unnamed.",
           "The sentence sounds competent, yet every serious branding agency could claim the same audience, benefit, and method. The adjectives reassure the buyer without helping them compare.",
           "A more useful working statement might read: For founder-led service businesses whose referrals have outgrown their story, Northstar is a brand strategy partner that turns scattered founder knowledge into one usable market position before identity or content production begins, supported by direct senior facilitation and a decision-led diagnostic process.",
-          "The second version is not better because it is longer. It identifies a buying situation, narrows the customer, names a process choice, creates a consequence, and makes proof easier to request.",
+          "The second version earns its strength through specificity rather than length. It identifies a buying situation, narrows the customer, names a process choice, creates a consequence, and makes proof easier to request.",
         ],
         bullets: [
           "Customer: founder-led service businesses",
@@ -145,7 +145,7 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
         id: "service-business-examples",
         heading: "Five service-business positioning statement examples",
         paragraphs: [
-          "The following examples are deliberately written as internal working statements. They are not slogans to copy. Each one shows the type of specificity that makes a statement useful.",
+          "The following examples are deliberately written as internal working statements rather than slogans to copy. Each one shows the type of specificity that makes a statement useful.",
           "A good example reveals the choices behind the sentence. Change the audience, situation, alternative, process, or proof and the position should change with it.",
         ],
         bullets: [
@@ -161,7 +161,7 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
         heading: "The anatomy of a strong positioning statement",
         paragraphs: [
           "A strong statement creates a clear comparison frame. The reader should understand what kind of help is being offered, when it becomes relevant, and why this business approaches the situation differently.",
-          "Specificity should appear in the logic, not merely in the nouns. Naming an industry can narrow the audience while leaving the value generic. Naming a buying situation, operating constraint, or tradeoff often creates more useful precision.",
+          "Specificity should appear in the logic as well as the nouns. Naming an industry can narrow the audience while leaving the value generic. Naming a buying situation, operating constraint, or tradeoff often creates more useful precision.",
           "The statement also needs a believable reason to exist. A claim about speed should connect with a process that removes delay. A claim about depth should reveal what receives more examination. A claim about consistency should show how decisions travel across touchpoints.",
         ],
         bullets: [
@@ -177,8 +177,8 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
         id: "replacement-test",
         heading: "Use the replacement test to find generic language",
         paragraphs: [
-          "Replace the brand name with the name of a close competitor. If the statement still feels accurate, underline every transferable phrase. Those phrases are not necessarily useless, but they cannot carry the position alone.",
-          "Next, replace the category. A statement promising tailored solutions, trusted expertise, and exceptional results may work for an agency, accountant, architect, consultant, or software company. That flexibility shows the sentence has not reached the operating reality of the business.",
+          "Replace the brand name with the name of a close competitor. If the statement still feels accurate, underline every transferable phrase. Those phrases may still help, yet they cannot carry the position alone.",
+          "Next, replace the category. A statement built from broad promises may work for an agency, accountant, architect, consultant, or software company. That flexibility shows the sentence remains distant from the operating reality of the business.",
           "Finally, ask what would need to change inside the service for the statement to become false. When the answer is nothing, the sentence is communication decoration rather than strategic direction.",
         ],
         callout: {
@@ -191,8 +191,8 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
         id: "avoid-false-specificity",
         heading: "Avoid false specificity",
         paragraphs: [
-          "Numbers, niche labels, and invented process names can make a statement appear specific without making it more useful. A narrow audience is weak when the service was not designed around that audience's situation. A five-step method is weak when the steps mirror the standard category process.",
-          "Proof should reduce doubt, not decorate the sentence. Years of experience, client counts, credentials, and proprietary frameworks matter only when they support the claimed consequence.",
+          "Numbers, niche labels, and invented process names can make a statement appear specific without making it more useful. A narrow audience is weak when the service ignores that audience's situation. A five-step method is weak when the steps mirror the standard category process.",
+          "Proof should reduce doubt rather than decorate the sentence. Years of experience, client counts, credentials, and proprietary frameworks matter only when they support the claimed consequence.",
           "False specificity also appears when the business promises a result it cannot isolate or verify. Prefer an observable change in the customer's decision, process, confidence, speed, or consistency over a theatrical claim about transformation.",
         ],
       },
@@ -202,11 +202,11 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "A finished statement should make later choices easier. The service menu should foreground the offer most connected with the position. Case studies should prove the central consequence. The homepage should lead with the buying situation and comparison that matter most.",
           "Sales language should diagnose fit rather than recite the sentence. Content should repeatedly teach the problem, mechanism, and point of view that support the position. Visual expression should make the business recognisable while the words build meaning.",
-          "When every channel requires a different explanation, the statement is either too abstract or the business has not accepted the tradeoffs it contains.",
+          "When every channel requires a different explanation, the statement is either too abstract or the business still needs to accept the tradeoffs it contains.",
         ],
         bullets: [
           "Which service now leads the menu?",
-          "Which enquiry is a strong fit, and which is not?",
+          "Which enquiry is a strong fit, and which enquiry belongs elsewhere?",
           "Which proof belongs closest to the main claim?",
           "Which three content themes reinforce the position?",
           "Which familiar phrase should sales, proposals, and the website repeat?",
@@ -218,7 +218,7 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
         heading: "A practical positioning statement workshop",
         paragraphs: [
           "Gather the people who understand sales, delivery, customer experience, and business direction. Begin with evidence rather than a blank sentence. List recent wins, losses, objections, repeat engagements, customer language, unusual process choices, and moments when the business was selected over an alternative.",
-          "Draft several positions using different customer situations and comparison frames. Do not force consensus too early. The contrast between drafts reveals which choices create relevance and which merely preserve internal comfort.",
+          "Draft several positions using different customer situations and comparison frames. Let contrast develop before consensus. The difference between drafts reveals which choices create relevance and which merely preserve internal comfort.",
           "Score each draft for clarity, relevance, distinction, credibility, and operational usefulness. Then write the internal statement, a shorter memory line, and the proof hierarchy that will carry the position into the market.",
         ],
         bullets: [
@@ -234,9 +234,9 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
         id: "when-to-rewrite",
         heading: "When to rewrite a positioning statement",
         paragraphs: [
-          "Rewrite the statement when the audience, category, offer, evidence, buying situation, or competitive frame has materially changed. Do not rewrite it merely because the team is bored with the language.",
+          "Rewrite the statement when the audience, category, offer, evidence, buying situation, or competitive frame has materially changed. Team boredom alone is a weak reason for revision.",
           "A statement can also fail because the business never operationalised it. Before replacing the position, check whether the offer, website, proof, sales process, and customer experience ever repeated the same choice long enough to create learning.",
-          "The goal is not a permanently frozen sentence. The goal is a stable strategic centre that can absorb better evidence and clearer language without becoming a new business every quarter.",
+          "The goal is a stable strategic centre that can absorb better evidence and clearer language without becoming a new business every quarter; permanent rigidity would weaken that purpose.",
         ],
       },
     ],
@@ -269,7 +269,7 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
       {
         question: "Can I copy a positioning statement template?",
         answer:
-          "Use a template to organise validated choices, not to invent them. Copying the structure is harmless; copying another brand's strategic logic usually produces a sentence that sounds specific while remaining disconnected from your service.",
+          "Use a template to organise validated choices while keeping invention inside the strategy process. Copying the structure is harmless; copying another brand's strategic logic usually produces a sentence that sounds specific while remaining disconnected from your service.",
       },
     ],
     relatedSlugs: [
@@ -283,7 +283,7 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
         publisher: "April Dunford",
         url: "https://www.aprildunford.com/post/my-positioning-book-obviously-awesome-launches-today",
         note:
-          "Dunford explains why a fill-in-the-blank statement is not a positioning process and identifies competitive alternatives, unique capabilities, differentiated value, target customers, and market category as connected components.",
+          "Dunford separates fill-in-the-blank statements from a complete positioning process and identifies competitive alternatives, unique capabilities, differentiated value, target customers, and market category as connected components.",
       },
       {
         title: "Positioning for B2B Tech Companies",

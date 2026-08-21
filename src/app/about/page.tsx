@@ -12,6 +12,7 @@ import { MeadowClosing } from "@/components/MeadowClosing";
 import { DesignRationaleGrid } from "@/components/DesignRationaleGrid";
 import { PinnedWorkingMethod } from "@/sections/About/PinnedWorkingMethod";
 import { AboutPracticeField } from "@/sections/About/AboutPracticeField";
+import { CredentialStrategyMap } from "@/sections/About/CredentialStrategyMap";
 import { aboutIntro, credentials } from "@/data/about";
 import { elements } from "@/data/elements";
 import { philosophy } from "@/data/philosophy";
@@ -21,14 +22,65 @@ import { site } from "@/data/site";
 import { SANDSTONE } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
-  title: "About Suman Sharma",
-  description: `The thinking behind ${site.name}: brand strategy grounded in psychology and language.`,
+  title: "Suman Sharma, Founder & Brand Strategist",
+  description: `Meet ${site.founder} and the psychology, language, observation, and decision method behind ${site.name}.`,
   alternates: { canonical: "/about" },
   openGraph: {
-    title: `About ${site.founder} | ${site.name}`,
-    description: `The thinking behind ${site.name}: brand strategy grounded in psychology and language.`,
+    title: `${site.founder}, Founder & Brand Strategist | ${site.name}`,
+    description: `Meet ${site.founder} and the psychology, language, observation, and decision method behind ${site.name}.`,
     type: "profile",
   },
+};
+
+const aboutStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["AboutPage", "ProfilePage"],
+      "@id": `${site.url}/about/#page`,
+      url: `${site.url}/about`,
+      name: "Suman Sharma, Founder & Brand Strategist",
+      description: `The psychology, language, observation, and decision method behind ${site.name}.`,
+      isPartOf: { "@id": `${site.url}/#website` },
+      mainEntity: { "@id": `${site.url}/about/#person` },
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: `${site.url}/images/own-portrait.jpg`,
+      },
+    },
+    {
+      "@type": "Person",
+      "@id": `${site.url}/about/#person`,
+      name: site.founder,
+      url: `${site.url}/about`,
+      image: `${site.url}/images/own-portrait.jpg`,
+      jobTitle: "Founder & Brand Strategist",
+      description: aboutIntro.opening,
+      worksFor: { "@id": `${site.url}/#organization` },
+      sameAs: [site.social.linkedin, site.social.instagram, site.social.facebook],
+      knowsAbout: [
+        "Brand strategy",
+        "Brand positioning",
+        "Audience perception",
+        "Verbal identity",
+        "Narrative architecture",
+      ],
+      hasCredential: credentials
+        .filter((credential) => credential.featured)
+        .map((credential) => ({
+          "@type": "EducationalOccupationalCredential",
+          name: credential.label,
+          description: credential.detail,
+        })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+        { "@type": "ListItem", position: 2, name: "About", item: `${site.url}/about` },
+      ],
+    },
+  ],
 };
 
 export default function AboutPage() {
@@ -109,6 +161,7 @@ export default function AboutPage() {
             it fits PinnedHold directly. See PinnedWorkingMethod's own
             comment for why this section's own overflow-hidden (kept
             for the redwood-canopy video) is safe to wrap this way. */}
+        <CredentialStrategyMap />
         <PinnedWorkingMethod />
         <AboutPracticeField />
 
@@ -320,6 +373,11 @@ export default function AboutPage() {
         <MeadowClosing />
       </main>
       <Footer />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutStructuredData) }}
+      />
     </>
   );
 }

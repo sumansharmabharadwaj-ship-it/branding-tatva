@@ -71,7 +71,7 @@ export default async function BlogPostPage({ params }: Props) {
     image: `${site.url}/opengraph-image`,
     datePublished: post.publishedAt,
     dateModified: post.publishedAt,
-    author: { "@id": `${site.url}/#person` },
+    author: { "@id": `${site.url}/about/#person` },
     publisher: { "@id": `${site.url}/#organization` },
     mainEntityOfPage: `${site.url}/insights/${post.slug}`,
   };

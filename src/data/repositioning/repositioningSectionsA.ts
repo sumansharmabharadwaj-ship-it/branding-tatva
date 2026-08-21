@@ -3,7 +3,7 @@ import type { InsightSection } from "@/data/pillarInsights";
 export const repositioningSectionsA: InsightSection[] = [
   {
     id: "repositioning-vs-rebranding",
-    heading: "Repositioning is not the same as rebranding",
+    heading: "Repositioning and rebranding solve different problems",
     paragraphs: [
       "Repositioning changes how the business should be understood relative to customers, buying situations, and alternatives. Rebranding changes the identity and communication system used to express that meaning.",
       "An established service business may need repositioning because its current reputation is too narrow, too broad, too dated, too dependent on the founder, or attached to work the business no longer wants to lead with. A new logo cannot resolve those strategic tensions by itself.",
@@ -21,7 +21,7 @@ export const repositioningSectionsA: InsightSection[] = [
     paragraphs: [
       "A new business has little memory to lose. An established business may already own a name, colour, founder association, phrase, referral shorthand, service ritual, or reputation that helps customers recognise and trust it.",
       "Those assets can feel ordinary inside the company because the team sees them every day. Customers encounter them far less often. What feels tired internally may still be the cue that lets a buyer locate the brand in a crowded comparison.",
-      "Research on service rebranding has found that customer evaluation can fall after a brand-name change, with the relationship between the new brand and the service influencing the size of the decline. The lesson is not to avoid change entirely. The lesson is to understand what the customer must relearn.",
+      "Research on service rebranding has found that customer evaluation can fall after a brand-name change, with the relationship between the new brand and the service influencing the size of the decline. The lesson is to understand what the customer must relearn and design the change around that burden.",
     ],
     callout: {
       label: "Recognition cost",
@@ -68,7 +68,7 @@ export const repositioningSectionsA: InsightSection[] = [
     paragraphs: [
       "Write the movement as an old-to-new decision. For example: from a generalist creative supplier to the brand systems partner for established service businesses entering a more complex growth stage.",
       "The sentence should identify the customer situation, the new comparison, the distinctive choice, and the evidence that makes the move believable. Avoid describing the shift only through tone, aesthetics, or ambition.",
-      "A strong core shift preserves truth from the existing business while changing the emphasis. It should feel like a sharpened interpretation of accumulated capability, not a costume placed over the same offer.",
+      "A strong core shift preserves truth from the existing business while changing the emphasis. It should feel like a sharpened interpretation of accumulated capability rather than a costume placed over the same offer.",
     ],
     callout: {
       label: "Continuity clue",

@@ -12,12 +12,16 @@ function assert(condition, message) {
 }
 
 const page = read("src/app/contact/page.tsx");
+const sequence = read("src/sections/Contact/ContactDecisionSequence.tsx");
 const form = read("src/components/ContactForm.tsx");
 const schema = read("src/lib/contact-schema.ts");
 const route = read("src/app/api/contact/route.ts");
 
-assert(page.includes("What happens next"), "Contact page is missing the follow-up sequence.");
-assert(page.includes("Suman reads the context"), "Contact page does not say who reads the enquiry.");
+assert(page.includes("<ContactDecisionSequence"), "Contact page is missing the follow-up sequence.");
+assert(sequence.includes("What happens next"), "Contact follow-up sequence is missing its visible heading.");
+assert(sequence.includes("The enquiry reaches Suman directly"), "Contact sequence does not say who reads the enquiry.");
+assert(sequence.includes('role="tab"'), "Contact decision sequence lacks accessible interaction semantics.");
+assert(sequence.includes("useReducedMotion"), "Contact decision sequence lacks a reduced-motion state.");
 assert(page.includes("A useful starting fit"), "Contact page is missing fit guidance.");
 assert(page.includes("Direct, private, pressure-free"), "Contact page is missing the trust summary.");
 assert(page.includes("enquiryDeliveryReady"), "Contact form is not gated by verified delivery configuration.");

@@ -88,14 +88,46 @@ export default async function CaseStudyPage({ params }: Props) {
   // offers/pricing fields this site deliberately doesn't publish.
   const caseStudyStructuredData = {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    name: project.title,
-    about: project.industry,
-    description: project.challenge,
-    author: { "@id": `${site.url}/#person` },
-    creator: { "@id": `${site.url}/#organization` },
-    keywords: project.services.join(", "),
-    url: `${site.url}/work/${project.slug}`,
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${site.url}/work/${project.slug}/#page`,
+        url: `${site.url}/work/${project.slug}`,
+        name: project.title,
+        description: project.challenge,
+        isPartOf: { "@id": `${site.url}/#website` },
+        mainEntity: { "@id": `${site.url}/work/${project.slug}/#work` },
+        primaryImageOfPage: project.heroPoster
+          ? { "@type": "ImageObject", url: `${site.url}${project.heroPoster}` }
+          : undefined,
+      },
+      {
+        "@type": "CreativeWork",
+        "@id": `${site.url}/work/${project.slug}/#work`,
+        name: project.title,
+        about: project.industry,
+        description: project.challenge,
+        author: { "@id": `${site.url}/about/#person` },
+        creator: { "@id": `${site.url}/#organization` },
+        keywords: project.services.join(", "),
+        url: `${site.url}/work/${project.slug}`,
+        mainEntityOfPage: { "@id": `${site.url}/work/${project.slug}/#page` },
+        image: project.heroPoster ? `${site.url}${project.heroPoster}` : undefined,
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+          { "@type": "ListItem", position: 2, name: "Brand Strategy & Systems", item: `${site.url}/work` },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: project.title,
+            item: `${site.url}/work/${project.slug}`,
+          },
+        ],
+      },
+    ],
   };
 
   // Audit found this always picked the first `featured` project that

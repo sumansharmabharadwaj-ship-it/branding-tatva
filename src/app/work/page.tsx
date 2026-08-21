@@ -17,14 +17,16 @@ import { AnimatedStat } from "@/components/AnimatedStat";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { projects } from "@/data/projects";
 import { elements } from "@/data/elements";
+import { packages } from "@/data/services";
+import { site } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "Work + Services",
-  description: "Proof-led brand strategy services, selected work, deliverables, and a practical brand health check.",
+  title: "Brand Strategy, Identity & Brand Systems",
+  description: "Brand strategy, connected delivery systems, selected work, decision-led engagements, and a practical brand health check.",
   alternates: { canonical: "/work" },
   openGraph: {
-    title: "Work + Services | Branding Tatva",
-    description: "Proof-led brand strategy services, selected work, deliverables, and a practical brand health check.",
+    title: "Brand Strategy, Identity & Brand Systems | Branding Tatva",
+    description: "Brand strategy, connected delivery systems, selected work, decision-led engagements, and a practical brand health check.",
     type: "website",
   },
 };
@@ -38,6 +40,61 @@ export default function WorkPage() {
   const elementsCovered = elements
     .map((e) => e.slug)
     .filter((slug) => projects.some((p) => p.services.some((s) => s.toLowerCase().startsWith(slug))));
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${site.url}/work/#page`,
+        url: `${site.url}/work`,
+        name: "Brand Strategy, Identity & Brand Systems",
+        description:
+          "Brand strategy, connected delivery systems, selected work, decision-led engagements, and a practical brand health check.",
+        isPartOf: { "@id": `${site.url}/#website` },
+        about: { "@id": `${site.url}/#organization` },
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: projects.length,
+          itemListElement: projects.map((project, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: project.title,
+            url: `${site.url}/work/${project.slug}`,
+          })),
+        },
+        hasPart: [
+          ...packages.map((item) => ({ "@id": `${site.url}/work/#service-${item.slug}` })),
+          ...projects.map((project) => ({ "@id": `${site.url}/work/${project.slug}/#work` })),
+        ],
+      },
+      ...packages.map((item) => ({
+        "@type": "Service",
+        "@id": `${site.url}/work/#service-${item.slug}`,
+        name: item.name,
+        serviceType: item.name,
+        description: item.description,
+        provider: { "@id": `${site.url}/#organization` },
+        audience: {
+          "@type": "Audience",
+          description: item.forWho,
+        },
+        isPartOf: { "@id": `${site.url}/work/#page` },
+      })),
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Brand Strategy & Systems",
+            item: `${site.url}/work`,
+          },
+        ],
+      },
+    ],
+  };
 
   return (
     <>
@@ -70,16 +127,16 @@ export default function WorkPage() {
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal>
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                  Work + Services
+                  Brand Strategy & Systems
                 </span>
                 <SplitReveal
                   as="h1"
                   className="mt-6 max-w-2xl font-display text-[clamp(2.4rem,6.5vw,4.5rem)] font-normal leading-[1.05] text-ivory"
                 >
-                  Proof first. Then the path that fits.
+                  See the decision behind the work. Choose what your brand needs next.
                 </SplitReveal>
                 <p className="mt-4 max-w-lg text-ivory/80">
-                  See the work, understand the mechanism, and choose a starting point without guessing.
+                  Each case names the tension, the strategic choice, the delivered system and the available evidence before an engagement enters the conversation.
                 </p>
               </Reveal>
               <Reveal delay={0.1} className="flex flex-row flex-wrap gap-2 lg:max-w-56 lg:flex-col lg:items-end lg:pb-2">
@@ -233,10 +290,15 @@ export default function WorkPage() {
         items={[
           { href: "#proof", label: "Proof" },
           { href: "#mechanism", label: "Mechanism" },
-          { href: "#services", label: "Services" },
+          { href: "#services", label: "Engagements" },
           { href: "#health-check", label: "Health" },
           { href: "#questions", label: "FAQ" },
         ]}
+      />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
     </>
   );

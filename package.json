@@ -13,7 +13,11 @@
     "audit:insights": "node scripts/insights-bible-gate.cjs",
     "audit:contact": "node scripts/contact-bible-gate.cjs",
     "audit:api": "node scripts/api-contract-gate.cjs",
-    "audit:release": "node scripts/release-gate.cjs"
+    "audit:release": "node scripts/release-gate.cjs",
+    "audit:copy": "node scripts/copy-language-gate.cjs",
+    "audit:motion": "node scripts/motion-bible-gate.cjs",
+    "audit:seo": "node scripts/seo-schema-gate.cjs",
+    "audit:rendered": "node scripts/rendered-route-gate.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

@@ -86,7 +86,7 @@ export const differentiationInsightPosts: InsightPost[] = [
         id: "why-crowded-markets-sound-the-same",
         heading: "Why crowded service markets sound the same",
         paragraphs: [
-          "Service businesses often compete through reassuring claims: experienced, tailored, strategic, collaborative, results-driven, and customer-first. These qualities matter, yet they rarely create separation because credible competitors need them too.",
+          "Service businesses often compete through reassuring adjectives and broad quality promises. These qualities matter, yet they rarely create separation because credible competitors need them too.",
           "Sameness also grows from copying category language. Businesses study the leading firms, borrow their vocabulary, then adjust the tone. The words become polished while the comparison frame stays unchanged.",
           "The market feels crowded partly because many businesses describe the category rather than the choice they make inside it.",
         ],
@@ -202,7 +202,7 @@ export const differentiationInsightPosts: InsightPost[] = [
       {
         question: "Can process be a brand differentiator?",
         answer:
-          "Yes. A process can differentiate when its sequence, depth, participation, or tradeoffs create a consequence the customer values and competitors do not commonly provide.",
+          "Yes. A process can differentiate when its sequence, depth, participation, or tradeoffs create a consequence the customer values and competitors rarely provide.",
       },
       {
         question: "How do I know whether a differentiator is unique?",

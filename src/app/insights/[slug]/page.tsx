@@ -154,7 +154,7 @@ export default async function InsightArticlePage({ params }: Props) {
         },
         author: {
           "@type": "Person",
-          "@id": `${site.url}/#person`,
+          "@id": `${site.url}/about/#person`,
           name: site.founder,
           url: `${site.url}/about`,
           sameAs: [site.social.linkedin],
@@ -189,14 +189,6 @@ export default async function InsightArticlePage({ params }: Props) {
             item: `${site.url}/insights/${post.slug}`,
           },
         ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: post.faq.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: { "@type": "Answer", text: item.answer },
-        })),
       },
     ],
   };

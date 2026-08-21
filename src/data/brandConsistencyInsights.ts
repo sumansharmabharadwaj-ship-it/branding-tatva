@@ -73,7 +73,7 @@ export const brandConsistencyInsightPosts: InsightPost[] = [
         heading: "What brand consistency actually means",
         paragraphs: [
           "Brand consistency means that separate interactions teach the customer one coherent understanding of the business. The language, visual identity, process, and experience can adapt to context while preserving the same central meaning.",
-          "A proposal should feel more detailed than an Instagram post. Onboarding should feel more operational than the homepage. Delivery documents should prioritise usefulness over theatrical presentation. Consistency does not require these touchpoints to look or sound identical.",
+          "A proposal should feel more detailed than an Instagram post. Onboarding should feel more operational than the homepage. Delivery documents should prioritise usefulness over theatrical presentation. Consistency gives each touchpoint room to match its job.",
           "The test is whether the customer keeps meeting the same category, promise, point of view, level of care, and recognisable cues as the relationship develops.",
         ],
         callout: {
@@ -158,7 +158,7 @@ export const brandConsistencyInsightPosts: InsightPost[] = [
         heading: "Delivery consistency checklist",
         paragraphs: [
           "Delivery carries the greatest weight because it turns the promise into lived evidence. Review the project rhythm, decision process, updates, meetings, documents, and final outputs.",
-          "Consistency does not mean performing the same ritual for every client. The method can adapt while the underlying principles remain visible. A brand built around clarity should keep decisions understandable. A brand built around depth should make the reasoning inspectable.",
+          "Consistency keeps the underlying principles visible while the ritual adapts to each client. A brand built around clarity should keep decisions understandable. A brand built around depth should make the reasoning inspectable.",
           "Look for places where operational pressure has stripped away the brand promise. Late updates, unexplained changes, inconsistent file naming, or abrupt handoffs can weaken trust even when the final work is strong.",
         ],
         bullets: [

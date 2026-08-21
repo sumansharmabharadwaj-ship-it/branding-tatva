@@ -41,7 +41,7 @@ export const repositioningSectionsC: InsightSection[] = [
     heading: "Common repositioning failures",
     paragraphs: [
       "The first failure is changing every visible cue before the strategic shift is clear. The second is preserving every legacy offer, which forces the new position to share the stage with the old one. The third is announcing a new promise before the service experience can support it.",
-      "Another failure is treating existing customers as an obstacle to future growth. Their language, memory, and trust reveal which equity deserves protection. The goal is not to let the past veto the future, but to use real recognition as raw material.",
+      "Another failure is treating existing customers as an obstacle to future growth. Their language, memory, and trust reveal which equity deserves protection. Use real recognition as raw material while keeping the future in charge.",
       "Finally, businesses often stop after launch. A new association requires repetition. Without a sustained content, proof, sales, and experience plan, the market remembers the reveal more easily than the reason for the change.",
     ],
     bullets: [

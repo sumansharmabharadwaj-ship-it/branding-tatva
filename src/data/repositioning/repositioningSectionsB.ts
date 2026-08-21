@@ -14,14 +14,14 @@ export const repositioningSectionsB: InsightSection[] = [
       "Evolve: recognised but visually or verbally needs controlled adaptation.",
       "Bridge: tied to the old meaning but useful during transition.",
       "Retire: harmful, confusing, legally constrained, or incompatible with the future.",
-      "Build: strategically valuable but not yet recognised.",
+      "Build: strategically valuable with recognition still forming.",
     ],
   },
   {
     id: "preserve-familiarity",
     heading: "Preserve familiarity without preserving the old limitation",
     paragraphs: [
-      "Continuity does not require freezing the identity. It requires choosing which familiar anchors will help customers identify the business while the meaning changes.",
+      "Continuity comes from choosing familiar anchors that help customers identify the business while the meaning changes, rather than freezing the identity.",
       "A name can remain while the category descriptor changes. A colour can remain while the visual system gains more range. A founder association can remain as proof while the service model becomes less founder-dependent. A legacy phrase can become a transition cue before a new memory line takes over.",
       "Logo research suggests that familiarity and perceived appropriateness influence response to change. This supports an evolutionary principle: the new identity should feel recognisably related to the brand and suitable for the position it is being asked to carry.",
     ],
@@ -69,12 +69,12 @@ export const repositioningSectionsB: InsightSection[] = [
     paragraphs: [
       "A phased rollout gives the market repeated opportunities to connect old and new. Begin with high-context touchpoints where the shift can be explained: customer conversations, proposals, the website, email, presentations, and owned content.",
       "Use dual cues during the bridge period. A familiar name, colour, symbol, founder signature, or phrase can anchor a new descriptor and message. Over time, the new association receives more prominence while temporary explanation recedes.",
-      "Coordinate the sequence so customers do not encounter several contradictory versions. Prepare redirects, profiles, directories, sales collateral, email signatures, contracts, invoices, social channels, referral partners, and search listings before the public announcement.",
+      "Coordinate the sequence so customers encounter one coherent version. Prepare redirects, profiles, directories, sales collateral, email signatures, contracts, invoices, social channels, referral partners, and search listings before the public announcement.",
     ],
     callout: {
       label: "Rollout principle",
       text:
-        "A repositioning is not one reveal. It is a period of structured repetition in which the old cue teaches the new association.",
+        "A repositioning extends beyond one reveal. It is a period of structured repetition in which the old cue teaches the new association.",
     },
   },
 ];

@@ -86,7 +86,7 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "A brand refresh improves how an existing strategy is expressed. The business still serves substantially the same customer, competes in the same frame, and wants to preserve the meaning already attached to its name. The work may refine the logo, colour system, typography, imagery, voice, website, or templates.",
           "A rebrand changes the strategic foundation or the market interpretation built on top of it. The business may need to be understood by a different customer, in a different category, for a different problem, or at a different level of value. The offer, proof, customer experience, name, architecture, and identity may all need to move.",
-          "The visible amount of design change does not reliably reveal which project occurred. A subtle identity can accompany a deep repositioning, while a dramatic visual system can still be a refresh if the business meaning remains stable.",
+          "The visible amount of design change rarely reveals the strategic depth. A subtle identity can accompany a deep repositioning, while a dramatic visual system can still be a refresh if the business meaning remains stable.",
         ],
         callout: {
           label: "Useful distinction",
@@ -98,7 +98,7 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
         id: "why-binary-choice-fails",
         heading: "Why the binary choice fails most service businesses",
         paragraphs: [
-          "Many service businesses have not cleanly outgrown every part of the old brand. They may have a recognised name and trusted delivery history, yet an outdated message hierarchy, an offer menu built through accumulation, and an identity that cannot support current digital use.",
+          "Many service businesses outgrow some parts of the old brand while retaining value in others. They may have a recognised name and trusted delivery history, yet an outdated message hierarchy, an offer menu built through accumulation, and an identity that fails under current digital use.",
           "Calling that situation a refresh can hide strategic work inside a design brief. Calling it a full rebrand can encourage unnecessary replacement. Both mistakes increase cost: the first preserves confusion, while the second discards useful memory.",
           "A better diagnosis separates the layers. Strategy, positioning, offer architecture, identity, messaging, experience, proof, and implementation can require different levels of intervention. The project scope should be assembled from those findings rather than selected from two pre-labelled packages.",
         ],
@@ -107,7 +107,7 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
         id: "diagnose-five-layers",
         heading: "Diagnose five layers before choosing the scope",
         paragraphs: [
-          "Begin with the business, not the logo. Ask what has materially changed in the organisation, market, customer, offer, and reputation. Aesthetic dissatisfaction is evidence of discomfort, not yet evidence of the correct solution.",
+          "Begin with the business before examining the logo. Ask what has materially changed in the organisation, market, customer, offer, and reputation. Aesthetic dissatisfaction signals discomfort while the correct solution still requires diagnosis.",
           "Score each layer as sound, strained, or broken. A cluster of expression problems points toward repair or refresh. A cluster of strategic and operational problems points toward repositioning or rebuilding.",
         ],
         bullets: [
@@ -122,8 +122,8 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
         id: "level-one-repair",
         heading: "Level one: repair the operating system",
         paragraphs: [
-          "Choose repair when the underlying identity still fits but execution has fragmented. Different logo files circulate, colours fail accessibility requirements, templates disagree, social crops break, motion feels unrelated, or teams improvise because the guidelines do not solve real use cases.",
-          "Repair is not glamorous, which is precisely why businesses skip it. Yet a well-built operating system can make the same identity feel more deliberate without asking customers to relearn anything.",
+          "Choose repair when the underlying identity still fits but execution has fragmented. Different logo files circulate, colours fail accessibility requirements, templates disagree, social crops break, motion feels unrelated, or teams improvise because the guidelines leave real use cases unresolved.",
+          "Repair rarely earns a dramatic reveal, which is precisely why businesses skip it. Yet a well-built operating system can make the same identity feel more deliberate without asking customers to relearn anything.",
           "A repair project should leave the strategic meaning intact and produce practical files, responsive rules, content templates, asset governance, and ownership for future decisions.",
         ],
       },
@@ -131,7 +131,7 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
         id: "level-two-refresh",
         heading: "Level two: refresh the expression",
         paragraphs: [
-          "Choose a refresh when the current position remains relevant and credible, but the expression has lost clarity, flexibility, distinction, or contemporary usefulness. The goal is not to become a different business. It is to make the existing business easier to recognise and understand now.",
+          "Choose a refresh when the current position remains relevant and credible, but the expression has lost clarity, flexibility, distinction, or contemporary usefulness. The goal is to make the existing business easier to recognise and understand now while preserving its central meaning.",
           "A refresh may refine the mark, widen the colour palette, replace an impractical typeface, introduce a stronger imagery system, tighten the voice, and rebuild high-value touchpoints. It should deliberately preserve useful cues rather than preserving every historical design decision.",
           "Research into corporate visual identity change indicates that stakeholder responses vary by organisation and audience, and that communication about the change influences appreciation. The rollout story therefore belongs inside the refresh plan, even when the visual change appears modest.",
         ],
@@ -156,7 +156,7 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "Choose repositioning when the current market association restricts future growth. The business may be known for an entry-level service, one legacy sector, one geography, one founder, or one delivery model that is no longer central.",
           "Repositioning changes the comparison. It clarifies the customer situation, alternative, distinctive choice, consequence, and proof that should now lead. The offer architecture and customer experience must change with the language, otherwise the new position remains an announcement rather than a fact.",
-          "The existing name and some recognition assets may survive. Repositioning is deep because the meaning changes, not because every familiar cue disappears.",
+          "The existing name and some recognition assets may survive. Repositioning is deep because the meaning changes, independent of how many familiar cues disappear.",
         ],
       },
       {
@@ -204,10 +204,10 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
       },
       {
         id: "do-not-use-budget-as-diagnosis",
-        heading: "Do not use budget or timeline as the diagnosis",
+        heading: "Keep budget and timeline separate from the diagnosis",
         paragraphs: [
-          "Cost and time determine what can be implemented, but they do not reveal what is broken. A business that needs repositioning does not become a refresh because the budget is smaller. It becomes an underfunded repositioning project with hidden compromises.",
-          "Separate the required strategic scope from the rollout sequence. The business may make the full set of decisions now and phase lower-priority touchpoints later. Conversely, a large budget does not justify changing assets that are already working.",
+          "Cost and time determine what can be implemented, while diagnosis reveals what is broken. A smaller budget leaves a repositioning need unchanged; it creates an underfunded repositioning project with hidden compromises.",
+          "Separate the required strategic scope from the rollout sequence. The business may make the full set of decisions now and phase lower-priority touchpoints later. Conversely, a large budget gives little reason to change assets that are already working.",
           "Ask for the minimum viable change that resolves the problem and the complete roadmap required to finish the transition. This turns budget pressure into sequencing rather than strategic denial.",
         ],
       },
@@ -215,9 +215,9 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
         id: "test-before-approval",
         heading: "Test the scope before approving the identity",
         paragraphs: [
-          "Test concepts with employees, customers, prospects, partners, and people with lighter familiarity. Do not begin by asking which design they prefer. Ask what business they believe they are seeing, who it appears to serve, what feels familiar, and what seems to have changed.",
+          "Test concepts with employees, customers, prospects, partners, and people with lighter familiarity. Begin with interpretation before preference: ask what business they believe they are seeing, who it appears to serve, what feels familiar, and what seems to have changed.",
           "Logo-change research has found that familiarity, attachment, congruence, and surprise influence responses. A concept can be visually preferred while creating more recognition loss or strategic confusion.",
-          "Prototype real touchpoints: the homepage, proposal, social profile, service overview, onboarding email, and one proof story. A brand system should be judged where customers make sense of it, not only on a presentation slide.",
+          "Prototype real touchpoints: the homepage, proposal, social profile, service overview, onboarding email, and one proof story. Judge the brand system where customers make sense of it, with presentation slides treated as supporting material.",
         ],
       },
       {
@@ -226,7 +226,7 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "During week one, inventory the existing identity, messaging, service architecture, touchpoints, analytics, customer language, and recognition cues. During week two, interview customers, prospects, lost opportunities, partners, and the people responsible for delivery.",
           "During week three, define the future business direction and score each brand layer as sound, strained, or broken. During week four, compare the five change levels, document the equity to preserve, and build a phased brief with evidence for every proposed change.",
-          "The output should not be a moodboard. It should be a decision: what must change, what must remain, what can wait, and how the market will understand the movement.",
+          "The output is a decision rather than a moodboard: what must change, what must remain, what can wait, and how the market will understand the movement.",
         ],
       },
     ],
@@ -239,7 +239,7 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
       {
         question: "Can a brand refresh include a new logo?",
         answer:
-          "Yes. The logo can be refined or substantially redesigned inside a refresh if the underlying strategy and market meaning remain stable. The depth of design change does not determine the strategic category by itself.",
+          "Yes. The logo can be refined or substantially redesigned inside a refresh if the underlying strategy and market meaning remain stable. Strategic category follows the business meaning rather than the depth of design change alone.",
       },
       {
         question: "When should a service business fully rebrand?",

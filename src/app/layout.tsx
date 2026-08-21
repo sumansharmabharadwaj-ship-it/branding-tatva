@@ -31,9 +31,13 @@ export const metadata: Metadata = {
   description: site.description,
   alternates: { canonical: "/" },
   robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    index: process.env.VERCEL_ENV !== "preview",
+    follow: process.env.VERCEL_ENV !== "preview",
+    googleBot: {
+      index: process.env.VERCEL_ENV !== "preview",
+      follow: process.env.VERCEL_ENV !== "preview",
+      "max-image-preview": "large",
+    },
   },
   openGraph: {
     title: site.name,
@@ -64,35 +68,38 @@ export const viewport: Viewport = {
 
 // Structured data — verified facts only. No aggregateRating/review markup
 // since no real testimonials exist yet (per brief: never fake reviews).
-// Both nodes carry an @id so other pages' schema (BlogPosting's
-// author/publisher, case-study Service schema) can reference them
-// directly instead of duplicating the same facts inline everywhere.
-const PERSON_ID = `${site.url}/#person`;
+// Stable entity IDs let every page reference one organization, website,
+// and founder profile without duplicating or weakening the fact pattern.
+const PERSON_ID = `${site.url}/about/#person`;
 const ORG_ID = `${site.url}/#organization`;
+const WEBSITE_ID = `${site.url}/#website`;
 const SOCIAL_LINKS = [site.social.linkedin, site.social.instagram, site.social.facebook].filter(Boolean);
 
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "Person",
-      "@id": PERSON_ID,
-      name: site.founder,
+      "@type": "Organization",
+      "@id": ORG_ID,
+      name: site.name,
       url: site.url,
-      jobTitle: "Brand Strategist",
+      description: site.description,
+      founder: { "@id": PERSON_ID },
+      logo: {
+        "@type": "ImageObject",
+        url: `${site.url}/images/branding-tatva-tatva-mark.png`,
+        width: 1254,
+        height: 1254,
+      },
       sameAs: SOCIAL_LINKS,
     },
     {
-      "@type": "ProfessionalService",
-      "@id": ORG_ID,
+      "@type": "WebSite",
+      "@id": WEBSITE_ID,
       name: site.name,
-      founder: { "@id": PERSON_ID },
       url: site.url,
-      description: site.description,
-      areaServed: "Remote / Worldwide",
-      image: `${site.url}/opengraph-image`,
-      logo: `${site.url}/opengraph-image`,
-      sameAs: SOCIAL_LINKS,
+      publisher: { "@id": ORG_ID },
+      inLanguage: "en",
     },
   ],
 };

@@ -95,7 +95,7 @@ export const consultingPositioningInsightPosts: InsightPost[] = [
         id: "choose-the-situation",
         heading: "1. Choose the customer situation",
         paragraphs: [
-          "Industry is one way to narrow a consultancy, but it is not the only one. A customer situation can create sharper relevance across several industries.",
+          "Industry is one way to narrow a consultancy. A customer situation can create sharper relevance across several industries as another path.",
           "A consultancy may become relevant when a founder-led business is preparing to scale, when a professional-services firm has outgrown referral-only growth, when a new leadership team needs alignment, or when several offers have accumulated without a clear market story.",
           "The situation should be observable and commercially meaningful. It needs to describe a moment when the cost of remaining unchanged becomes visible enough to support a buying decision.",
         ],
@@ -136,7 +136,7 @@ export const consultingPositioningInsightPosts: InsightPost[] = [
         paragraphs: [
           "Consulting buyers are purchasing judgement under uncertainty. Credentials and experience can establish baseline competence, while stronger proof shows how the consultant thinks and what that thinking changes.",
           "Case studies should reveal the initial assumption, the diagnostic finding, the decision made, and the consequence. Process notes can show how ambiguity becomes a sequence. Frameworks can demonstrate the distinctions used during the work.",
-          "The proof should match the position. A consultancy positioned around complex transitions needs evidence of navigating transitions, not a general collection of polished deliverables.",
+          "The proof should match the position. A consultancy positioned around complex transitions needs evidence of navigating transitions ahead of a general collection of polished deliverables.",
         ],
         bullets: [
           "Show the question behind the assignment.",
@@ -181,7 +181,7 @@ export const consultingPositioningInsightPosts: InsightPost[] = [
           "The second is listing a broad audience followed by an even broader capability set. The combination creates reach in theory and weak recognition in practice.",
           "The third is using a provocative point of view that has no effect on the method. The language sounds differentiated while the experience remains conventional.",
           "The fourth is hiding breadth instead of organising it. Clients may still need several capabilities. The position should explain why they belong together.",
-          "The fifth is changing the position after a few weeks because every enquiry does not match immediately. Recognition needs repetition and evidence before it becomes dependable.",
+          "The fifth is changing the position after a few weeks because some enquiries sit outside the intended fit. Recognition needs repetition and evidence before it becomes dependable.",
         ],
       },
     ],

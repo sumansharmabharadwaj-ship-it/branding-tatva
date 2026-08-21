@@ -146,7 +146,7 @@ export const forgettableIdentityInsightPosts: InsightPost[] = [
       },
       {
         id: "the-identity-does-not-survive-real-use",
-        heading: "The identity does not survive real use",
+        heading: "The identity breaks under real use",
         paragraphs: [
           "An identity can feel distinctive inside a controlled presentation and weaken when handed to a growing team. Complex compositions become simplified. Image direction becomes generic. Motion disappears. Templates preserve spacing while losing the idea.",
           "Test the system inside the formats the business actually produces: mobile screens, proposals, social posts, case studies, email, video, documents, and sales material.",

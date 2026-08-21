@@ -118,7 +118,7 @@ export const serviceNamingInsightPosts: InsightPost[] = [
         paragraphs: [
           "Place candidate names inside the navigation menu, a referral sentence, a proposal, a search result, and a sales conversation. Ask people what they think the offer is, who it is for, and how it differs from neighbouring options.",
           "Test recall after a delay. A name that seems clever during a workshop may become difficult to retrieve without its explanation. Also test pronunciation and spelling if referrals or spoken sales conversations matter.",
-          "The strongest candidate is the one that improves the decision system, not the one that wins an isolated preference vote.",
+          "The strongest candidate improves the decision system; an isolated preference vote carries less weight.",
         ],
         bullets: [
           "Can a new visitor infer the category?",

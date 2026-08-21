@@ -20,14 +20,15 @@ import { site } from "@/data/site";
 import { credentials } from "@/data/about";
 import { projects } from "@/data/projects";
 import { SANDSTONE, ELEMENT_HEX } from "@/lib/sectionWash";
+import { ContactDecisionSequence } from "@/sections/Contact/ContactDecisionSequence";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Tell me what your brand is becoming.",
+  title: "Book a Brand Strategy Session",
+  description: "Bring one unresolved brand question to Suman Sharma and begin a private, pressure-free strategy conversation.",
   alternates: { canonical: "/contact" },
   openGraph: {
-    title: `Contact | ${site.name}`,
-    description: "Tell me what your brand is becoming.",
+    title: `Book a Brand Strategy Session | ${site.name}`,
+    description: "Bring one unresolved brand question to Suman Sharma and begin a private, pressure-free strategy conversation.",
     type: "website",
   },
 };
@@ -38,6 +39,30 @@ export default function ContactPage() {
       process.env.CONTACT_TO_EMAIL?.trim() &&
       process.env.CONTACT_FROM_EMAIL?.trim(),
   );
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ContactPage",
+        "@id": `${site.url}/contact/#page`,
+        url: `${site.url}/contact`,
+        name: "Book a Brand Strategy Session",
+        description:
+          "Bring one unresolved brand question to Suman Sharma and begin a private, pressure-free strategy conversation.",
+        isPartOf: { "@id": `${site.url}/#website` },
+        about: { "@id": `${site.url}/#organization` },
+        mainEntity: { "@id": `${site.url}/about/#person` },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+          { "@type": "ListItem", position: 2, name: "Contact", item: `${site.url}/contact` },
+        ],
+      },
+    ],
+  };
 
   return (
     <>
@@ -182,7 +207,7 @@ export default function ContactPage() {
               <div className="mt-8 border-l border-clay/35 pl-5">
                 <p className="font-display text-xl font-normal text-soil">Direct, private, pressure-free.</p>
                 <p className="mt-2 text-sm leading-6 text-foreground-secondary">
-                  Suman reads each enquiry. Context is used to understand the work, and a first reply does not commit either side to a project.
+                  Suman reads each enquiry. Context is used to understand the work, and the first reply leaves both sides free to decide whether a project makes sense.
                 </p>
                 <Link href="/work" className="mt-3 inline-flex text-sm font-medium text-action-primary-hover link-underline">
                   Review the documented work
@@ -197,40 +222,7 @@ export default function ContactPage() {
 
           <Container className="relative mt-16 grid gap-8 border-t border-soil/10 pt-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-[0.16em] text-action-secondary">
-                What happens next
-              </p>
-              <h2 className="mt-3 max-w-xl font-display text-display-sm font-normal text-soil">
-                A clear sequence before a calendar enters the picture.
-              </h2>
-              <div className="mt-8 grid gap-6 sm:grid-cols-3">
-                {[
-                  {
-                    number: "01",
-                    title: "Suman reads the context",
-                    body: "The enquiry goes directly to the founder-led practice, not a sales queue.",
-                  },
-                  {
-                    number: "02",
-                    title: "The decision is clarified",
-                    body: "The first reply addresses the situation and asks only for missing context that matters.",
-                  },
-                  {
-                    number: "03",
-                    title: "A next step is agreed",
-                    body: "If there is a useful fit, scope, cadence and the first decision are aligned before scheduling.",
-                  },
-                ].map((step) => (
-                  <article key={step.number} className="border-t border-soil/20 pt-4">
-                    <p className="text-xs font-semibold tracking-[0.18em] text-clay">{step.number}</p>
-                    <h3 className="mt-3 font-display text-xl font-normal text-soil">{step.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-foreground-secondary">{step.body}</p>
-                  </article>
-                ))}
-              </div>
-              <p className="mt-7 text-sm leading-6 text-foreground-secondary">
-                No presentation is required. Share the business context, what changed, the decision that is waiting and any real timing constraint.
-              </p>
+              <ContactDecisionSequence />
             </Reveal>
 
             <Reveal delay={0.08}>
@@ -384,6 +376,11 @@ export default function ContactPage() {
         </section>
       </main>
       <Footer />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
     </>
   );
 }

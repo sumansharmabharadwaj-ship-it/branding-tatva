@@ -181,7 +181,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
         callout: {
           label: "Language rule",
           text:
-            "Do not improve the customer's sentence while taking notes. Awkward language can contain the exact tension polished brand language erased.",
+            "Preserve the customer's sentence while taking notes. Awkward language can contain the exact tension polished brand language erased.",
         },
       },
       {
@@ -204,7 +204,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
       },
       {
         id: "analyse-evidence",
-        heading: "Analyse evidence by decision pattern, not quote popularity",
+        heading: "Analyse evidence by decision pattern before quote popularity",
         paragraphs: [
           "After each interview, summarise the context, trigger, alternatives, doubts, confidence signals, language, outcome, and memory while the conversation is fresh. Then code recurring patterns across interviews.",
           "Look for repeated buying situations, shared alternatives, common proof needs, surprising language, and meaningful exceptions. A vivid quote from one customer can inspire a hypothesis, yet repetition across several relevant interviews gives the pattern more strategic weight.",
@@ -224,7 +224,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
         id: "from-interviews-to-strategy",
         heading: "Turn interviews into hypotheses, then validate the important ones",
         paragraphs: [
-          "Qualitative research reveals mechanisms, meanings, language, and patterns. It does not automatically tell the business how common each pattern is in the wider market.",
+          "Qualitative research reveals mechanisms, meanings, language, and patterns. Prevalence across the wider market requires a separate quantitative design.",
           "Use interview findings to create strategic hypotheses: a buying situation that may deserve priority, an alternative customers compare, a proof gap, a message customers already repeat, or a segment with a different decision process.",
           "Then validate high-consequence hypotheses with other evidence where available: CRM patterns, win-loss data, search behaviour, sales-call notes, analytics, surveys, proposal progression, and observed customer behaviour. Strategy becomes stronger when different evidence sources converge.",
         ],
@@ -240,7 +240,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
         callout: {
           label: "Research discipline",
           text:
-            "The goal is not to make customers write the strategy. The goal is to understand the decision reality well enough to make a sharper strategic choice.",
+            "The goal is to understand the decision reality well enough to make a sharper strategic choice; customers provide evidence while leadership owns the strategy.",
         },
       },
     ],

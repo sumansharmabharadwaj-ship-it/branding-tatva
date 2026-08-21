@@ -186,7 +186,7 @@ export const supportingInsightPosts: InsightPost[] = [
           "The first error is leading with the founder's philosophy before establishing category and relevance. Philosophy becomes more valuable once the reader understands what decision it changes.",
           "The second is placing all services at the top. A long capability list creates choice before context, making comparison harder rather than easier.",
           "The third is separating every proof point into one distant block. Claims feel unsupported during the exact moment doubt appears.",
-          "The fourth is using visual scale to decorate rather than prioritise. Large type should signal strategic importance, not simply create drama.",
+          "The fourth is using visual scale to decorate rather than prioritise. Large type should signal strategic importance beyond simply creating drama.",
           "The fifth is making every call to action equally loud. Actions should reflect different levels of visitor readiness.",
         ],
       },
