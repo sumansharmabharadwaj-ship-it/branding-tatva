@@ -1,225 +1,199 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useCallback, useEffect, useRef, useState } from "react";
-
+import { useEffect, useRef, useState } from "react";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import { ElementRowBackground } from "@/components/ElementRowBackground";
-import { ElementSignature } from "@/sections/Elements/ElementSignature";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import type { Element } from "@/data/elements";
 
-const AUTO_ADVANCE_MS = 5000;
-const MANUAL_HOLD_MS = 14000;
+// A true pinned slide sequence — one element fills the viewport at a
+// time, cross-fading as you scroll, instead of scrolling past five
+// stacked rows. This used to be driven by a GSAP ScrollTrigger `pin`
+// (a separate trigger/pin-target pair, a cached start/end scroll
+// range, anticipatePin, a visibilitychange refresh) — the same
+// category of feature the Process section's old horizontal pin used
+// and lost to real, repeated bugs (pin desync on tab backgrounding,
+// stale trigger positions, a pin-target/wrapper mismatch that left
+// dead scroll space after unpinning). Rebuilt on plain CSS
+// `position: sticky` instead: the browser's own layout engine keeps
+// the slide viewport in place for exactly as long as the wrapper
+// below it is in the document, recomputed from live geometry on every
+// scroll tick rather than a value cached once up front — there's no
+// separate trigger/pin-target pairing left to fall out of sync, and
+// no scenario where "sticky" and "the wrapper's actual height" can
+// disagree, because sticky positioning IS the wrapper's own layout,
+// not a second system tracking it.
+// Direct, repeated feedback that the slider felt "too fast," with no
+// stage ever reading as settled — the original crossfade math
+// (opacity = 1 - |progress - i|) only hits full opacity at one exact
+// scroll pixel per stage, then immediately starts fading into the
+// neighbor. There was never a real "hold": every scroll frame was
+// mid-transition. STAGE_SPEED slows the whole sequence (more real
+// scroll distance per stage-to-stage transition) and HOLD carves out a
+// plateau around each stage's own center where it stays fully opaque
+// before the crossfade into the next one begins. Pushed further after
+// a first pass (1.3/0.35) still read as rushed. The wrapper's own
+// height below has to scale with STAGE_SPEED too, not just the JS
+// scrollDistance — a first attempt at this bumped STAGE_SPEED without
+// touching the wrapper height, so the actual available pin-scroll room
+// fell short of what the math needed and progress never quite reached
+// the last stage's hold before sticky released.
+// A subsequent pass pushed STAGE_SPEED to 1.8 with a +200vh tail
+// buffer on every pinned section site-wide — a real regression, not a
+// fix: on this 5-slide slider that's (5-1)*100*1.8+200 = 920vh for one
+// section alone, and the same multiplier applied across five separate
+// pinned components on the same page compounded into a document
+// roughly 40 screens tall. Immediate, direct feedback ("scrolling
+// experience is 0/10") followed. The actual fix for "no settle point"
+// was always HOLD's plateau above — that's a fraction of whatever
+// distance is available, independent of STAGE_SPEED — so a large
+// STAGE_SPEED was never buying real settle time, only inflating total
+// scroll distance. Pulled back to a small, sane multiplier and a
+// 1-screen tail buffer (was 2).
+const STAGE_SPEED = 1.15;
+const HOLD = 0.4;
 
 export function PinnedSlider({ elements }: { elements: Element[] }) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const holdUntilRef = useRef(0);
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-
-  const showIndex = useCallback(
-    (index: number, hold = 0) => {
-      if (!elements.length) return;
-      const next = ((index % elements.length) + elements.length) % elements.length;
-      if (hold) holdUntilRef.current = Date.now() + hold;
-      setActiveIndex(next);
-    },
-    [elements.length],
-  );
+  // Mirrors activeIndex without triggering a re-render on read — lets
+  // the scroll handler (fires on effectively every frame while
+  // scrolling) skip the setState call entirely on the vast majority of
+  // frames where the rounded index hasn't actually changed, instead of
+  // re-rendering the whole slider every frame for the entire scroll
+  // range.
+  const activeIndexRef = useRef(0);
+  const lenis = useLenis();
 
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(Boolean(entry?.isIntersecting && entry.intersectionRatio >= 0.22));
-      },
-      { rootMargin: "10% 0px -10% 0px", threshold: [0, 0.22, 0.48, 0.72] },
-    );
-
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    function onChapter(event: Event) {
-      const detail = (event as CustomEvent<{ id?: string }>).detail;
-      if (detail?.id !== "elements") return;
-      showIndex(0, 900);
+    function update() {
+      if (!wrapper) return;
+      const rect = wrapper.getBoundingClientRect();
+      // Fixed distance, not rect.height - innerHeight — the wrapper is
+      // deliberately taller than this (see the (elements.length + 1) * 100vh
+      // below) so there's a dedicated buffer after the last slide becomes
+      // fully active. Tying progress to the wrapper's own full height meant
+      // progress=1 and the moment CSS sticky has to start releasing
+      // (remaining wrapper height drops to exactly one viewport) landed on
+      // the exact same scroll position — the last slide never got a stable
+      // instant on screen, it started sliding away the moment it appeared.
+      const scrollDistance = (elements.length - 1) * window.innerHeight * STAGE_SPEED;
+      const raw = scrollDistance > 0 ? -rect.top / scrollDistance : 0;
+      const clamped = Math.min(1, Math.max(0, raw));
+      const progress = clamped * (elements.length - 1);
+      const idx = Math.min(elements.length - 1, Math.round(progress));
+      if (idx !== activeIndexRef.current) {
+        activeIndexRef.current = idx;
+        setActiveIndex(idx);
+      }
+      slideRefs.current.forEach((slide, i) => {
+        if (!slide) return;
+        const d = Math.abs(progress - i);
+        const opacity = d <= HOLD ? 1 : d <= 1 - HOLD ? 1 - (d - HOLD) / (1 - 2 * HOLD) : 0;
+        slide.style.opacity = String(opacity);
+      });
     }
 
-    window.addEventListener("bt:home-chapter", onChapter as EventListener);
-    return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
-  }, [showIndex]);
-
-  useEffect(() => {
-    if (!isVisible || prefersReducedMotion || elements.length < 2) return;
-
-    const timer = window.setInterval(() => {
-      if (document.hidden || Date.now() < holdUntilRef.current) return;
-      setActiveIndex((current) => (current + 1) % elements.length);
-    }, AUTO_ADVANCE_MS);
-
-    return () => window.clearInterval(timer);
-  }, [elements.length, isVisible, prefersReducedMotion]);
-
-  const active = elements[activeIndex];
+    update();
+    const unsubscribe = lenis?.on("scroll", update);
+    window.addEventListener("resize", update);
+    return () => {
+      unsubscribe?.();
+      window.removeEventListener("resize", update);
+    };
+  }, [elements.length, lenis]);
 
   return (
-    <section
-      ref={sectionRef}
-      data-elements-carousel="true"
-      className="relative h-[100svh] min-h-[44rem] max-h-[60rem] w-full overflow-hidden bg-soil"
-      onWheel={() => {
-        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
-      onTouchStart={() => {
-        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
-      onPointerDown={() => {
-        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
-      onFocusCapture={() => {
-        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
-      aria-label="The five Tatvas in practice"
+    // +1 slide-height of buffer beyond what the crossfade math needs —
+    // see update()'s own comment for why sticky needs dedicated room to
+    // release in, separate from the last slide's own on-screen moment.
+    // Audit found this was still +200 (two screens) despite the file's
+    // own top comment describing the fix as "a 1-screen tail buffer
+    // (was 2)" — a stale mismatch between the comment and the code that
+    // left this the longest, most disproportionate pinned hold on the
+    // site (660vh vs. its 5-6 stage siblings' 540-575vh). Corrected to
+    // match what was actually intended.
+    <div
+      ref={wrapperRef}
+      className="relative"
+      style={{ height: `${(elements.length - 1) * 100 * STAGE_SPEED + 100}vh` }}
     >
-      {elements.map((element, index) => {
-        const selected = index === activeIndex;
-        return (
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
+        {elements.map((el, i) => (
           <div
-            key={element.slug}
-            className="absolute inset-0 transition-[opacity,filter,transform] duration-700 ease-out"
-            style={{
-              opacity: selected ? 1 : 0,
-              filter: selected ? "blur(0px)" : "blur(5px)",
-              transform: selected ? "scale(1)" : "scale(1.018)",
-              pointerEvents: selected ? "auto" : "none",
+            key={el.slug}
+            ref={(node) => {
+              slideRefs.current[i] = node;
             }}
-            aria-hidden={!selected}
+            className="absolute inset-0"
+            style={{ opacity: i === 0 ? 1 : 0, pointerEvents: i === activeIndex ? "auto" : "none" }}
+            aria-hidden={i !== activeIndex}
           >
             <ElementRowBackground
-              image={element.image}
-              video={element.video}
-              color={element.color}
-              imagePosition={element.imagePosition}
-              active={selected && isVisible}
+              image={el.image}
+              video={el.video}
+              color={el.color}
+              imagePosition={el.imagePosition}
+              active={i === activeIndex}
             />
-
-            {selected && <ElementSignature slug={element.slug} color={element.color} />}
-
-            <div className="relative flex h-full items-center px-6 pb-24 pt-24 sm:px-12 sm:pb-28 sm:pt-28 lg:px-16">
+            <div className="relative flex h-full items-center px-6 sm:px-16">
               <div className="max-w-xl">
                 <div className="flex items-center gap-4">
                   <span
-                    className="font-display text-[clamp(3.4rem,8vw,6rem)] font-normal leading-none"
-                    style={{
-                      color: element.color,
-                      textShadow: "0 2px 16px rgba(0,0,0,0.55)",
-                    }}
+                    className="font-display text-[clamp(3.5rem,9vw,6.5rem)] font-normal leading-none"
+                    style={{ color: el.color, textShadow: "0 2px 16px rgba(0,0,0,0.55)" }}
                   >
-                    {String(index + 1).padStart(2, "0")}
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-                  <ElementGlyph
-                    slug={element.slug}
-                    className="h-10 w-10 opacity-90"
-                    style={{ color: element.color }}
-                  />
+                  <ElementGlyph slug={el.slug} className="h-10 w-10 opacity-90" style={{ color: el.color }} />
                 </div>
-
-                <p className="mt-4 font-display text-3xl font-normal text-ivory sm:text-4xl">
-                  {element.name}
-                </p>
-
+                <p className="mt-4 font-display text-3xl font-normal text-ivory sm:text-4xl">{el.name}</p>
+                {/* space-y here matters more than it looks — Tailwind's
+                    preflight zeroes default <p> margins, so consecutive
+                    manifesto lines/concepts stacked with no gap utility
+                    read as visually cramped, especially at this italic
+                    display size where the type itself already looks
+                    spacious. Confirmed via computed-style extraction on
+                    the live page before adding these. */}
                 <div className="mt-4 space-y-1.5 font-display text-xl italic text-ivory/85 sm:text-2xl">
-                  {element.manifesto.map((line, lineIndex) => (
-                    <p key={lineIndex}>{line}</p>
+                  {el.manifesto.map((line, li) => (
+                    <p key={li}>{line}</p>
                   ))}
                 </div>
-
-                <div className="mt-5 grid max-w-lg grid-cols-1 gap-x-7 gap-y-2 sm:grid-cols-2">
-                  {element.concepts.map((concept, conceptIndex) => (
-                    <p
-                      key={conceptIndex}
-                      className="border-l border-ivory/16 pl-3 text-sm text-ivory/72 sm:text-base"
-                    >
-                      {concept}
+                <div className="mt-5 max-w-md space-y-2">
+                  {el.concepts.map((c, ci) => (
+                    <p key={ci} className="text-sm text-ivory/75 sm:text-base">
+                      {c}
                     </p>
                   ))}
                 </div>
               </div>
             </div>
           </div>
-        );
-      })}
+        ))}
 
-      <div className="pointer-events-none absolute inset-x-5 top-6 z-30 flex items-center justify-between gap-4 sm:inset-x-10 sm:top-9 lg:inset-x-16">
-        <div>
-          <p className="text-[0.58rem] font-medium uppercase tracking-[0.2em] text-ivory/45">
-            The five-element chapter
-          </p>
-          <p className="mt-1 font-display text-xl text-ivory sm:text-2xl">
-            {active?.name}
-          </p>
-        </div>
-        <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em] text-ivory/48">
-          Autoplaying · choose to hold
-        </p>
-      </div>
-
-      <nav
-        aria-label="Choose a Tatva"
-        className="absolute bottom-7 left-1/2 z-30 flex max-w-[calc(100%-2rem)] -translate-x-1/2 gap-1 overflow-x-auto rounded-full border border-ivory/14 bg-soil/64 p-1.5 shadow-[0_18px_55px_rgba(0,0,0,0.24)] backdrop-blur-xl sm:bottom-9 sm:gap-2"
-      >
-        {elements.map((element, index) => {
-          const selected = index === activeIndex;
-          return (
-            <button
-              key={element.slug}
-              type="button"
-              aria-pressed={selected}
-              onClick={() => showIndex(index, MANUAL_HOLD_MS)}
-              className="group relative flex min-h-10 shrink-0 items-center gap-2 overflow-hidden rounded-full px-3 text-[0.6rem] uppercase tracking-[0.13em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
-              style={{
-                color: selected ? "#F4EFE6" : "rgba(244,239,230,0.5)",
-                backgroundColor: selected
-                  ? "rgba(244,239,230,0.1)"
-                  : "transparent",
-              }}
-            >
+        {/* Numbered index — same idea as the reference site's own
+            "1. Timber / 2. Heat" list, tracking scroll progress within
+            this pinned range instead of an IntersectionObserver (there's
+            nothing to observe — every slide occupies the same viewport
+            rect at once, only opacity differs). */}
+        <div className="pointer-events-none absolute bottom-10 left-6 z-10 flex gap-6 sm:left-16">
+          {elements.map((el, i) => (
+            <div key={el.slug} className="flex items-center gap-2">
               <span
-                aria-hidden="true"
-                className="h-1.5 w-1.5 rounded-full transition-transform group-hover:scale-125"
-                style={{ backgroundColor: element.color }}
-              />
-              {String(index + 1).padStart(2, "0")} {element.name.split(" ")[0]}
-              {selected && !prefersReducedMotion && (
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-x-2 bottom-0 h-px origin-left animate-[tatva-carousel-progress_5s_linear_forwards]"
-                  style={{ backgroundColor: element.color }}
-                />
-              )}
-            </button>
-          );
-        })}
-      </nav>
-
-      <style>{`
-        @keyframes tatva-carousel-progress {
-          from { transform: scaleX(0); }
-          to { transform: scaleX(1); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          [data-elements-carousel] * {
-            animation-duration: 0.001ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.001ms !important;
-          }
-        }
-      `}</style>
-    </section>
+                className="font-body text-[0.7rem] uppercase tracking-[0.2em] transition-colors duration-500"
+                style={{ color: i === activeIndex ? "#F4EFE6" : "rgba(244,239,230,0.4)" }}
+              >
+                {String(i + 1).padStart(2, "0")} {el.name.split(" ")[0]}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

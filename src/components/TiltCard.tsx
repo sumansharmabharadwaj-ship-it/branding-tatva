@@ -1,8 +1,7 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTilt } from "@/hooks/useTilt";
 import { EASE_AIR as EASE } from "@/lib/motion";
 
@@ -26,7 +25,7 @@ export function TiltCard({
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const { rotateX, rotateY } = useTilt(ref, maxDegrees, Boolean(prefersReducedMotion));
 
   return (

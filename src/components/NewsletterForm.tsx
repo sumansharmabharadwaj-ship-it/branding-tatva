@@ -1,10 +1,9 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { newsletterSchema, type NewsletterFormValues } from "@/lib/newsletter-schema";
 import { Magnetic } from "@/components/Magnetic";
 import { EASE_AIR } from "@/lib/motion";
@@ -19,7 +18,7 @@ type Status = "idle" | "submitting" | "success" | "already" | "error";
 export function NewsletterForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
 
   const {
     register,

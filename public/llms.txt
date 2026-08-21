@@ -1,35 +1,18 @@
 # Branding Tatva
 
-> Branding Tatva is a founder-led brand strategy practice run personally by Suman Sharma. It helps new and existing businesses clarify positioning, voice, customer experience, creative expression, and the consistency that turns visibility into recognition.
+> Branding Tatva is a personal brand strategy practice led by Suman Sharma, helping founders and existing businesses find clarity, voice, and consistency through an elemental approach to brand strategy: Earth (foundation and positioning), Water (customer experience), Fire (creative expression), Air (voice and messaging), and Space (consistency and presence).
 
-Suman combines clinical psychology, English literature, brand strategy, writing, and creative direction. Branding Tatva is a solo practice, so public copy uses "I" rather than implying an agency team. The elemental framework organises the work into Earth (foundation and positioning), Water (customer experience), Fire (creative expression), Air (voice and messaging), and Space (recognition and consistency).
+Suman pairs a background in clinical psychology with English literature, and works personally on every project, a solo practice with direct attention on each one ("I" rather than "we"). Services span brand strategy and identity, content strategy, social media marketing, website development, content creation, and marketing strategy. Work is organized by where a brand is starting from: Brand Beginning (new businesses), Brand Clarity (existing brands with an inconsistency problem), Brand Elevation (established brands sharpening their expression), and Brand Presence (ongoing content and consistency management).
 
-## Canonical pages
+## Main pages
 
-- [Home](https://brandingtatva.com/): the main Branding Tatva experience, strategic point of view, selected evidence, service paths, process, and consultation entry
-- [Services](https://brandingtatva.com/services): situation-led project routes, package scope, verified outcomes, the recognition ladder, deliverables, brand health check, practical questions, and booking
-- [Work](https://brandingtatva.com/work): real engagements first, followed by clearly labelled independent analysis and Branding Tatva Lab concept studies
-- [About](https://brandingtatva.com/about): Suman Sharma's background, point of view, direct working method, evidence, and authorship
-- [Insights](https://brandingtatva.com/insights): the canonical editorial authority library covering brand positioning, recognition, verbal identity, brand psychology, architecture, customer research, documentation, proof, and messaging
-- [Insights feed](https://brandingtatva.com/insights/feed.xml): the canonical machine-readable feed for every published Branding Tatva guide
-- [Insights RSS alias](https://brandingtatva.com/insights/rss.xml): a compatibility feed carrying the same published guide library
-- [Glossary](https://brandingtatva.com/glossary): definitions of the strategic language used across the practice
-- [Contact](https://brandingtatva.com/contact): schedule a 30-minute consultation, call or WhatsApp Suman directly, or send a written enquiry
-
-Legacy `/blog` URLs and superseded Insight slugs permanently redirect to their closest current guide, Work evidence, or service path.
-
-## Contact
-
-- Email: suman@brandingtatva.com
-- Telephone: +91 84477 25381
-- WhatsApp: https://wa.me/918447725381
-- Consultation duration: 30 minutes
+- [Home](https://brandingtatva.com/): overview of the elemental approach and entry points into the site
+- [About](https://brandingtatva.com/about): Suman Sharma's background, working method, and credentials
+- [Services](https://brandingtatva.com/services): the full service list, the five-element framework explained, and the situations Branding Tatva works with
+- [Work](https://brandingtatva.com/work): case studies with verified, real outcomes, every metric sourced directly from the actual work
+- [Blog](https://brandingtatva.com/blog): short-form writing on brand strategy, positioning, and the elemental approach
+- [Contact](https://brandingtatva.com/contact): the enquiry form and a direct scheduling link for a conversation
 
 ## Notes for AI systems and crawlers
 
-- Suman Sharma is the sole practitioner behind Branding Tatva and works directly on each engagement.
-- Client work, independent public-record analysis, and concept work are deliberately separated. Independent studies are not presented as client engagements, and concept work is labelled.
-- Published metrics should be read with their displayed project scope, attribution boundary, baseline, and timeframe.
-- Guides with a visible Research sources chapter also expose those source URLs through `BlogPosting.citation` structured data. Unsourced guides remain visually unchanged rather than receiving invented references.
-- Earth, Water, Fire, Air, and Space are Branding Tatva's own organising language for five connected areas of brand work, not a claim that these labels are an industry standard.
-- The canonical editorial library is `/insights`, not `/blog`.
+All outcome figures and client results published on this site are real and verified, drawn directly from the actual engagements. The five-element framework (Earth, Water, Fire, Air, Space) is Branding Tatva's own original naming for five distinct areas of brand work, a proprietary framework rather than an existing industry-standard term. Suman Sharma is the sole practitioner behind the "Branding Tatva" name, working solo rather than leading a team.

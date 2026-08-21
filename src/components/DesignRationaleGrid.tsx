@@ -1,9 +1,8 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { NatureAccent } from "@/components/NatureAccent";
 import { LogoMark } from "@/components/Logo";
@@ -73,7 +72,7 @@ function Specimen({ kind }: { kind: (typeof designChoices)[number]["kind"] }) {
   if (kind === "photography") {
     return (
       <div className="flex justify-center py-2">
-        <div className="relative h-24 w-20 overflow-hidden rounded-2xl">
+        <div className="relative h-24 w-20 overflow-hidden rounded-lg">
           <Image src="/images/own-portrait.jpg" alt="" fill sizes="80px" style={{ objectFit: "cover", objectPosition: "center 25%" }} />
         </div>
       </div>
@@ -96,7 +95,7 @@ export function DesignRationaleGrid() {
   // moved away, before a desktop user could even read the specimen.
   const [pinned, setPinned] = useState<number | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <div className="mt-14 grid gap-x-12 gap-y-12 sm:grid-cols-2">
@@ -129,7 +128,7 @@ export function DesignRationaleGrid() {
                     transition={{ duration: 0.35, ease: EASE_AIR }}
                     className="overflow-hidden"
                   >
-                    <div className="mt-4 rounded-2xl border border-ivory/15 bg-ivory/5">
+                    <div className="mt-4 rounded-lg border border-ivory/15 bg-ivory/5">
                       <Specimen kind={choice.kind} />
                     </div>
                   </motion.div>

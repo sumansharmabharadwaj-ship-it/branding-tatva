@@ -1,8 +1,7 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CalendlyEmbed } from "./CalendlyEmbed";
 import { BackgroundVideo } from "./BackgroundVideo";
 import { EASE_AIR } from "@/lib/motion";
@@ -44,7 +43,7 @@ function buildMonthGrid(year: number, month: number): (number | null)[][] {
 }
 
 export function SeasonalCalendarPanel() {
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const [expanded, setExpanded] = useState(false);
   const [view, setView] = useState<"weekly" | "monthly">("weekly");
   // Resolved client-side only, after mount — computing new Date() during
@@ -102,8 +101,8 @@ export function SeasonalCalendarPanel() {
           tuning left to get wrong. */}
       <div className="relative h-28 w-full shrink-0 overflow-hidden sm:h-32">
         <BackgroundVideo
-          video="/videos/site-seasonal-conversation-film-v2.mp4"
-          poster="/images/site-seasonal-conversation-film-v2-poster.jpg"
+          video="/videos/pixabay-campfire-conversation.mp4"
+          poster="/images/pixabay-campfire-conversation-poster.jpg"
         />
       </div>
 
@@ -147,7 +146,7 @@ export function SeasonalCalendarPanel() {
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: EASE_AIR }}
+            transition={{ duration: 0.3, ease: EASE_AIR }}
           >
             <div className="mt-5 flex items-baseline justify-between">
               <span className="font-display text-3xl font-normal leading-none text-ivory">
@@ -184,7 +183,7 @@ export function SeasonalCalendarPanel() {
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: EASE_AIR }}
+            transition={{ duration: 0.3, ease: EASE_AIR }}
           >
             <div className="mt-5 grid grid-cols-7 text-center">
               {DAY_LETTERS.map((d, i) => (
@@ -236,7 +235,7 @@ export function SeasonalCalendarPanel() {
           className="text-xs text-ivory/85 sm:text-sm"
           style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
         >
-          Thirty minutes, just a real conversation.
+          A real conversation, with honest feedback either way.
         </span>
         <motion.button
           type="button"
@@ -263,7 +262,7 @@ export function SeasonalCalendarPanel() {
             initial={prefersReducedMotion ? undefined : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.35, ease: EASE_AIR }}
+            transition={{ duration: 0.4, ease: EASE_AIR }}
             className="overflow-hidden"
           >
             <div className="mt-5 rounded-2xl bg-background p-1 sm:p-2">

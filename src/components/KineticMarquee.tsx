@@ -1,7 +1,6 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 // A slow, continuous horizontal drift of tracked-out text, the kind of
 // chapter divider used between sections instead of a plain rule. Reduced
@@ -9,7 +8,7 @@ import { motion } from "framer-motion";
 // the drift.
 
 export function KineticMarquee({ text }: { text: string }) {
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const items = Array.from({ length: 6 });
 
   return (

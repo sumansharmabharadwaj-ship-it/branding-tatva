@@ -1,8 +1,7 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { EASE_AIR } from "@/lib/motion";
@@ -37,7 +36,7 @@ export function Threshold({
   panels: [ThresholdPanelData, ThresholdPanelData];
 }) {
   const [active, setActive] = useState<"left" | "right" | null>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     // Was higgsfield-element-air.mp4 — direct feedback that reusing an

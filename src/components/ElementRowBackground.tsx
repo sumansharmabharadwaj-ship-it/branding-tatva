@@ -1,9 +1,8 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
@@ -32,7 +31,6 @@ export function ElementRowBackground({
   color,
   imagePosition = "center",
   active = true,
-  gate = false,
 }: {
   image: string;
   video?: string;
@@ -45,18 +43,8 @@ export function ElementRowBackground({
   // once. Defaults to true so the row-list usage (VerticalUnfold),
   // where every mounted row is genuinely meant to play, is unaffected.
   active?: boolean;
-  // Scroll OS video budget: the stacked row-list usage (VerticalUnfold)
-  // renders five of these in normal flow, and on the fatigue audit
-  // several were decoding at once whenever the list straddled the
-  // viewport. With gate on, this component watches its own root and
-  // only plays while the row is at least half on screen — a server
-  // component caller gets centrality gating without needing its own
-  // client wrapper. VideoWarden still handles the fully-offscreen case;
-  // this narrows "near the viewport" down to "actually the row you are
-  // reading".
-  gate?: boolean;
 }) {
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ref, shouldLoad] = useLazyMount();
   const [videoReady, setVideoReady] = useState(false);
@@ -64,25 +52,11 @@ export function ElementRowBackground({
   // it's still pending waits for it to settle first, instead of firing
   // immediately.
   const playPromiseRef = useRef<Promise<void> | null>(null);
-  const [inFocus, setInFocus] = useState(!gate);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!gate || !el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setInFocus(entry.isIntersecting),
-      { threshold: 0.5 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [gate, ref]);
-
-  const playing = active && inFocus;
 
   useEffect(() => {
     const el = videoRef.current;
     if (!el || !shouldLoad || prefersReducedMotion) return;
-    if (playing) {
+    if (active) {
       playPromiseRef.current = el.play().catch(() => {});
     } else {
       // PinnedSlider mounts all five rows at once and toggles `active`
@@ -96,7 +70,7 @@ export function ElementRowBackground({
       // avoids that race entirely.
       Promise.resolve(playPromiseRef.current).finally(() => el.pause());
     }
-  }, [shouldLoad, prefersReducedMotion, playing]);
+  }, [shouldLoad, prefersReducedMotion, active]);
 
   return (
     // backgroundColor here (not just the tint overlay below) so there's

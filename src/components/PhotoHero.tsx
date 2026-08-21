@@ -1,9 +1,8 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { toSvh } from "@/lib/media";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
@@ -43,41 +42,24 @@ export function PhotoHero({
   children,
   image,
   video,
-  videoMobile,
   poster,
   minHeight = "60vh",
   imagePosition = "center",
   className,
   accentColor,
-  overlayGradient = gradient,
-  playbackRate = 1,
 }: {
   children?: React.ReactNode;
   image?: string;
   video?: string;
-  videoMobile?: string;
   poster?: string;
   minHeight?: string;
   imagePosition?: string;
   className?: string;
   accentColor?: string;
-  overlayGradient?: string;
-  playbackRate?: number;
 }) {
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   useVideoFadeIn(videoRef, Boolean(video) && !prefersReducedMotion);
-
-  // Keep ambient films inside a calm range. The Services hero opts into
-  // 1.15x so its defining visual event arrives before attention drifts,
-  // while every existing call site retains the native 1x pace.
-  useEffect(() => {
-    const element = videoRef.current;
-    if (!element) return;
-    const safePlaybackRate = Math.min(1.5, Math.max(0.75, playbackRate));
-    element.defaultPlaybackRate = safePlaybackRate;
-    element.playbackRate = safePlaybackRate;
-  }, [playbackRate, video]);
 
   // A case study's hero footage is industry-specific (an office, a
   // warehouse) rather than generic nature photography, so an
@@ -115,17 +97,14 @@ export function PhotoHero({
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
             style={{ objectPosition: imagePosition }}
+            src={video}
             autoPlay
             muted
             loop
             playsInline
-            preload="auto"
-          >
-            {videoMobile && <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />}
-            <source src={video} type="video/mp4" />
-          </video>
+          />
           {accentWash}
-          <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
+          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
         </>
       ) : (
         <motion.div
@@ -143,7 +122,7 @@ export function PhotoHero({
             style={{ objectFit: "cover", objectPosition: imagePosition }}
           />
           {accentWash}
-          <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
+          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
         </motion.div>
       )}
       {children}

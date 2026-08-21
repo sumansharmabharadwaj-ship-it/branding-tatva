@@ -1,8 +1,7 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
-
+import { useReducedMotion } from "framer-motion";
 import { initSplitTextReveal } from "@/animations/splitTextReveal";
 
 // Splits a heading into individual words and staggers them in, instead
@@ -21,15 +20,14 @@ export function SplitReveal({
   className,
   as: Tag = "h2",
   splitType = "words",
-  ...headingProps
 }: {
   children: React.ReactNode;
   className?: string;
   as?: "h1" | "h2";
   splitType?: "words" | "chars";
-} & Omit<React.HTMLAttributes<HTMLHeadingElement>, "children" | "className">) {
+}) {
   const ref = useRef<HTMLHeadingElement>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const el = ref.current;
@@ -40,7 +38,7 @@ export function SplitReveal({
   }, [prefersReducedMotion, splitType]);
 
   return (
-    <Tag ref={ref} className={className} {...headingProps}>
+    <Tag ref={ref} className={className}>
       {children}
     </Tag>
   );

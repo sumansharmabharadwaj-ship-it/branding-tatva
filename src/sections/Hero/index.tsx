@@ -1,20 +1,30 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { motion, useTransform } from "framer-motion";
+import { motion, useTransform, useReducedMotion } from "framer-motion";
 import { useSpotlight } from "@/hooks/useSpotlight";
-import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 import { SplitReveal } from "@/components/SplitReveal";
 import type { CinematicHeroProps } from "./types";
 import { HERO_SCRIM_GRADIENT } from "./constants";
 import { useHeroParallax, useHeroMouseParallax } from "./animations";
 
+// Purely decorative ambient texture — contributes nothing to LCP or
+// first paint, so it's code-split out of the hero's own bundle rather
+// than shipped as part of the critical path.
 const DustMotes = dynamic(() => import("@/components/DustMotes").then((m) => m.DustMotes), {
   ssr: false,
 });
+
+// Full-screen hero, restructured after looking at how references like
+// Haven actually handle text over a photograph: a small pill badge, one
+// tight headline, a single line of support copy, two pill CTAs, all held
+// inside a strong scrim at the bottom of the frame rather than scattered
+// across the whole image. The background can be a still photo (with
+// scroll-linked parallax) or a muted looping video — a hero should never
+// sit completely still, so a video background is the default direction
+// going forward; the photo path stays for pages that don't have one yet.
 
 export function CinematicHero({
   image,
@@ -27,24 +37,25 @@ export function CinematicHero({
   children,
 }: CinematicHeroProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const { imageY, contentOpacity, contentY } = useHeroParallax(ref);
   const mouseParallax = useHeroMouseParallax(ref, Boolean(prefersReducedMotion));
   const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));
+  // A foreground layer reacting more than the background it sits in
+  // front of is the actual depth cue (closer things move more) — same
+  // spring values as the background's own mouse parallax, just a larger
+  // multiple of it, rather than a second independent pointer listener.
   const foregroundX = useTransform(mouseParallax.x, (v) => v * 2.4);
   const foregroundY = useTransform(mouseParallax.y, (v) => v * 2.4);
 
-  // The browser's autoplay attribute is treated as a request, not a
-  // guarantee. Explicit play/resume keeps the opening film alive after a
-  // protected-preview redirect, tab return, or replay of the guided journey.
-  useVideoFadeIn(
-    videoRef,
-    Boolean(video && !prefersReducedMotion),
-  );
-
   return (
     <section ref={ref} className="relative h-svh min-h-[620px] overflow-hidden bg-soil">
+      {/* The video's poster frame is what actually counts as the LCP
+          candidate here (Chrome doesn't wait for real video data to
+          paint) — a real production Lighthouse run found it wasn't
+          being prioritized, discovered late in the load. React 19
+          hoists a <link> rendered anywhere in the tree up to <head>,
+          so this reaches the browser's preload scanner immediately. */}
       {video && poster && <link rel="preload" as="image" href={poster} fetchPriority="high" />}
       {video && !prefersReducedMotion ? (
         <motion.div
@@ -53,10 +64,9 @@ export function CinematicHero({
         >
           <motion.div
             className="absolute inset-0"
-            style={{ x: mouseParallax.x, y: mouseParallax.y }}
+            style={prefersReducedMotion ? undefined : { x: mouseParallax.x, y: mouseParallax.y }}
           >
             <video
-              ref={videoRef}
               className="h-full w-full object-cover"
               style={{ objectPosition: imagePosition }}
               src={video}
@@ -66,9 +76,6 @@ export function CinematicHero({
               loop
               playsInline
               preload="metadata"
-              onCanPlay={(event) => {
-                void event.currentTarget.play().catch(() => {});
-              }}
             />
           </motion.div>
           <div className="absolute inset-0" style={{ backgroundImage: HERO_SCRIM_GRADIENT }} />
@@ -97,6 +104,10 @@ export function CinematicHero({
 
       {!prefersReducedMotion && <div className="light-rays" aria-hidden="true" />}
 
+      {/* Foreground depth layer — a soft vignette that reacts to the
+          cursor more than the background video does, so the frame
+          itself reads as sitting closer to the camera than the scene
+          behind it, instead of everything living on one flat plane. */}
       {!prefersReducedMotion && (
         <motion.div
           className="pointer-events-none absolute -inset-8"
@@ -110,6 +121,11 @@ export function CinematicHero({
         />
       )}
 
+      {/* Cursor spotlight — a soft light following the pointer, purely
+          additive atmosphere. Position is written directly to this
+          element's own CSS custom properties (see useHeroSpotlight),
+          not through React state, so mouse movement never triggers a
+          re-render; only this one composited layer ever repaints. */}
       {!prefersReducedMotion && (
         <div
           ref={spotlightRef}

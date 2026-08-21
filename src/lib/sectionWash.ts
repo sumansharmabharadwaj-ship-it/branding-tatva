@@ -40,36 +40,6 @@ export const SOIL = "#27221E";
 
 const CREAM = "#F4EFE6";
 
-// Per-section dark mood tones — the Services page's cinematic color
-// script. NOT a return of the rejected per-section element-color
-// blocking (five saturated hues cycling down a page read as cluttered
-// and were collapsed into SOIL, see that comment above): these are
-// near-neutral darks separated by temperature, the way a graded film
-// shifts mood between scenes while staying one film. Direct diagnosis,
-// confirmed by the founder: viewing every section through the same
-// warm SOIL base and soil-tinted overlays was re-warming even
-// deliberately cool footage into one continuous amber wash. Each
-// Services section now sits on its own mood; SOIL remains the warm
-// tone, reserved (with Sandstone light breaks) for the page's few
-// deliberate golden moments and for every other page's established
-// sections.
-export const MOOD = {
-  charcoal: "#171A17", // Authority — architectural, neutral-cool
-  stone: "#191B16", // Stakes — dry stone/graphite, reads grey
-  mist: "#1A2026", // Education — blue-grey mist
-  deepwater: "#0E1714", // Desire — night-water blue behind the gold
-  forest: "#141A15", // Health Check — deep forest green-black
-  slate: "#17201C", // FAQ — cool slate calm
-  // Deliverables — "the study": dark walnut-charcoal, the room the
-  // strategy documents are read in. Color Script Audit: the first
-  // study tone (#1F1A15) stacked with warm lamp glows and warm cloth
-  // light into a dominant sepia — the exact full-screen orange filter
-  // the Pinterest references never have. The room is now near-neutral
-  // smoked oak: warmth exists only as accents (ivory paper, one faint
-  // bronze highlight), never as the mood.
-  study: "#172019",
-} as const;
-
 function hexToRgb(hex: string): [number, number, number] {
   const n = parseInt(hex.slice(1), 16);
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];

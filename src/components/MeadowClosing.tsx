@@ -1,10 +1,8 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-
+import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { elements } from "@/data/elements";
 import { blendHex, SOIL } from "@/lib/sectionWash";
@@ -58,9 +56,7 @@ export function MeadowClosing() {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeIndexRef = useRef(0);
   const lenis = useLenis();
-  const prefersReducedMotion = useHydratedReducedMotion();
-
-  useVideoFadeIn(videoRef, !prefersReducedMotion);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -141,7 +137,7 @@ export function MeadowClosing() {
             keeping pin/crossfade behavior but dropping video playback). */}
         {prefersReducedMotion ? (
           <Image
-            src="/images/about-meadow-closing-film-v2-poster.jpg"
+            src="/images/pixabay-alpine-wildflowers-poster.jpg"
             alt=""
             fill
             sizes="100vw"
@@ -152,8 +148,8 @@ export function MeadowClosing() {
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover"
             style={{ willChange: "transform" }}
-            src="/videos/about-meadow-closing-film-v2.mp4"
-            poster="/images/about-meadow-closing-film-v2-poster.jpg"
+            src="/videos/pixabay-alpine-wildflowers.mp4"
+            poster="/images/pixabay-alpine-wildflowers-poster.jpg"
             autoPlay
             muted
             loop
@@ -203,11 +199,7 @@ export function MeadowClosing() {
               <p
                 ref={closingRef}
                 className="mt-10 max-w-md font-display text-[clamp(1.05rem,2.1vw,1.3rem)] font-normal text-ivory/85"
-                /* Scroll reveals this line, so it starts hidden. Under
-                   reduced motion that reveal never runs and the closing
-                   sentence of the whole page stayed invisible, so it opens
-                   already visible there instead. */
-                style={{ opacity: prefersReducedMotion ? 1 : 0 }}
+                style={{ opacity: 0 }}
               >
                 {CLOSING_LINE}
               </p>

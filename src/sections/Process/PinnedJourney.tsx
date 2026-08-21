@@ -1,9 +1,8 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-
+import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -57,7 +56,7 @@ type GlyphSlug = "earth" | "water" | "fire" | "air" | "space";
 // with its siblings instead of lowering the shared constant everywhere.
 const STAGE_SPEED = 0.95;
 
-export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
+export function PinnedJourney({ stages, elementColor, heading, finalNote }: ProcessSectionProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const stageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const bgRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -67,7 +66,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
   const lenis = useLenis();
 
   const [mediaRef, shouldLoad] = useLazyMount();
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const [videoReady, setVideoReady] = useState<boolean[]>(() => stages.map(() => false));
   // Tracks each stage's in-flight play() promise so a pause() landing
   // while one is still pending waits for it to settle first.
@@ -291,6 +290,17 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
           <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
         </div>
 
+        {heading && (
+          <div className="pointer-events-none absolute left-6 right-6 top-24 z-20 sm:left-16 sm:right-16 sm:top-28">
+            <p className="text-[0.65rem] font-medium uppercase tracking-[0.28em] text-sandstone">
+              The process
+            </p>
+            <h2 className="mt-2 font-display text-2xl font-normal text-ivory sm:text-3xl">
+              {heading}
+            </h2>
+          </div>
+        )}
+
         {stages.map((stage, i) => {
           const color = elementColor[stage.element];
           return (
@@ -323,6 +333,17 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
             </div>
           );
         })}
+
+        {finalNote && (
+          <p
+            className={`pointer-events-none absolute bottom-24 left-6 right-6 z-20 max-w-lg text-sm italic text-ivory/80 transition-all duration-500 sm:left-16 sm:right-auto sm:text-base ${
+              activeIndex === stages.length - 1 ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+            }`}
+            aria-hidden={activeIndex !== stages.length - 1}
+          >
+            {finalNote}
+          </p>
+        )}
 
         {/* Numbered index, same pattern as PinnedSlider's own — six
             stages read comfortably on one line even at the sm breakpoint

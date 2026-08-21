@@ -1,8 +1,7 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 import { EASE_AIR } from "@/lib/motion";
 
@@ -45,7 +44,7 @@ export function AnnotatedVisual({
 }) {
   const [left, right] = callouts;
   const [ref, visible] = useRevealTrigger();
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <div ref={ref} className="mx-auto max-w-5xl">
@@ -112,7 +111,7 @@ function Dot({
           strokeWidth={1}
           initial={prefersReducedMotion ? undefined : { pathLength: 0 }}
           animate={prefersReducedMotion ? undefined : { pathLength: visible ? 1 : 0 }}
-          transition={{ duration: 0.35, delay, ease: EASE_AIR }}
+          transition={{ duration: 0.5, delay, ease: EASE_AIR }}
         />
       </svg>
     </span>
@@ -125,7 +124,7 @@ function CalloutText({ callout, delay, visible }: { callout: VisualCallout; dela
       className={callout.side === "left" ? "text-right" : "text-left"}
       initial={{ opacity: 0, y: 12 }}
       animate={visible ? { opacity: 1, y: 0 } : undefined}
-      transition={{ duration: 0.35, delay, ease: EASE_AIR }}
+      transition={{ duration: 0.5, delay, ease: EASE_AIR }}
     >
       <p className="font-display text-lg text-soil">{callout.title}</p>
       <p className="mt-1 text-sm text-foreground-secondary">{callout.text}</p>

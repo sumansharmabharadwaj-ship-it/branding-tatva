@@ -1,8 +1,7 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
-
+import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 
 // A thin reading-progress bar for the About page specifically — About is
@@ -26,7 +25,7 @@ import { useLenis } from "@/components/SmoothScrollProvider";
 export function ScrollProgress() {
   const barRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     function setProgress(progress: number) {

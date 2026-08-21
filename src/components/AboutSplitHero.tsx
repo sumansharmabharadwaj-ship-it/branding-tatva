@@ -1,9 +1,8 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { LinkButton } from "@/components/Button";
@@ -11,7 +10,6 @@ import { TiltCard } from "@/components/TiltCard";
 import { ScrollCue } from "@/components/ScrollCue";
 import { Fireflies } from "@/components/Fireflies";
 import { useRevealTrigger } from "@/hooks/useRevealTrigger";
-import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
 // Full-bleed nature backdrop with a single framed photo/video card
 // floating centered on it, the headline carried directly on the card
@@ -31,8 +29,6 @@ export function AboutSplitHero({
   body,
   ctaHref,
   ctaLabel,
-  secondaryCtaHref,
-  secondaryCtaLabel,
   video,
   poster,
   bgVideo,
@@ -43,24 +39,15 @@ export function AboutSplitHero({
   body: string;
   ctaHref: string;
   ctaLabel: string;
-  // Optional second action — the redesign brief wants the authority
-  // hero to carry both the booking path and the work path.
-  secondaryCtaHref?: string;
-  secondaryCtaLabel?: string;
   video: string;
   poster: string;
   bgVideo: string;
   bgPoster: string;
 }) {
   const ref = useRef<HTMLElement>(null);
-  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
-  const portraitVideoRef = useRef<HTMLVideoElement>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const [cardRef, cardVisible] = useRevealTrigger();
-
-  useVideoFadeIn(backgroundVideoRef, !prefersReducedMotion);
-  useVideoFadeIn(portraitVideoRef, !prefersReducedMotion);
 
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const cardY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
@@ -73,7 +60,6 @@ export function AboutSplitHero({
       ) : (
         <motion.div className="absolute inset-0 top-[-10%] h-[120%] w-full" style={{ y: bgY }}>
           <video
-            ref={backgroundVideoRef}
             className="h-full w-full object-cover"
             src={bgVideo}
             poster={bgPoster}
@@ -102,7 +88,7 @@ export function AboutSplitHero({
       />
 
       <motion.div
-        className="relative z-10 flex flex-col items-center px-6 py-16 sm:py-24 text-center"
+        className="relative z-10 flex flex-col items-center px-6 py-16 text-center"
         style={prefersReducedMotion ? undefined : { opacity: contentOpacity }}
       >
         <Reveal>
@@ -133,7 +119,7 @@ export function AboutSplitHero({
           >
             <TiltCard glowColor="#C28A28" maxDegrees={7}>
               <motion.div
-                className="card-float relative w-[260px] overflow-hidden rounded-2xl border-[6px] border-ivory sm:w-[320px]"
+                className="card-float relative w-[260px] overflow-hidden rounded-lg border-[6px] border-ivory sm:w-[320px]"
                 style={{
                   ...(prefersReducedMotion ? undefined : { y: cardY }),
                   boxShadow: "0 14px 30px rgba(20,17,14,0.4), 0 0 40px 6px rgba(20,17,14,0.2)",
@@ -144,7 +130,6 @@ export function AboutSplitHero({
                     <Image src={poster} alt="" fill sizes="320px" className="object-cover" />
                   ) : (
                     <video
-                      ref={portraitVideoRef}
                       className="absolute inset-0 h-full w-full object-cover"
                       src={video}
                       poster={poster}
@@ -182,16 +167,7 @@ export function AboutSplitHero({
         </div>
 
         <Reveal delay={0.2} className="mt-9">
-          <div className="flex flex-wrap gap-3">
-            <LinkButton href={ctaHref} trackEvent="hero_booking_click" trackProps={{ page: "about" }}>
-              {ctaLabel}
-            </LinkButton>
-            {secondaryCtaHref && secondaryCtaLabel && (
-              <LinkButton href={secondaryCtaHref} variant="secondary" className="border-ivory/40 text-ivory hover:bg-ivory/10">
-                {secondaryCtaLabel}
-              </LinkButton>
-            )}
-          </div>
+          <LinkButton href={ctaHref}>{ctaLabel}</LinkButton>
         </Reveal>
       </motion.div>
 

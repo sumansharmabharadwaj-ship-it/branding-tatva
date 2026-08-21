@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -10,34 +9,14 @@ import { ParallaxVideoBackdrop } from "@/components/ParallaxVideoBackdrop";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { MeadowClosing } from "@/components/MeadowClosing";
-import { NotebookClose } from "@/components/NotebookClose";
 import { DesignRationaleGrid } from "@/components/DesignRationaleGrid";
 import { PinnedWorkingMethod } from "@/sections/About/PinnedWorkingMethod";
-import { StudioDesk } from "@/sections/About/StudioDesk";
-import { PointOfView } from "@/sections/About/PointOfView";
-import { Convergence } from "@/sections/About/Convergence";
-import { WorkingDirectly } from "@/sections/About/WorkingDirectly";
-import { Evidence } from "@/sections/About/Evidence";
-import { Behaviours } from "@/sections/About/Behaviours";
-import { LinkButton } from "@/components/Button";
 import { aboutIntro, credentials } from "@/data/about";
 import { elements } from "@/data/elements";
 import { philosophy } from "@/data/philosophy";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { site } from "@/data/site";
 import { SANDSTONE } from "@/lib/sectionWash";
-import { pageSchema, PERSON_ID, ORGANIZATION_ID } from "@/lib/pageSchema";
-
-
-const pageJsonLd = pageSchema({
-  type: "AboutPage",
-  path: "/about",
-  name: "About Suman Sharma | Branding Tatva",
-  description:
-    "The thinking behind Branding Tatva: brand strategy grounded in psychology and language.",
-  trail: [{ name: "About", path: "/about" }],
-  mainEntity: PERSON_ID,
-});
 
 export const metadata: Metadata = {
   title: "About Suman Sharma",
@@ -56,37 +35,17 @@ export default function AboutPage() {
       <Header transparent />
       <ScrollProgress />
       <main id="main-content">
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
         <AboutSplitHero
           eyebrow="About"
           headline={aboutIntro.opening}
           body={elements[0].poetic}
           ctaHref="/contact"
-          ctaLabel="Book a Brand Strategy Session"
-          secondaryCtaHref="/work"
-          secondaryCtaLabel="Explore the Work"
-          video="/videos/about-companions-film-v2.mp4"
-          poster="/images/about-companions-film-v2-poster.jpg"
-          bgVideo="/videos/about-hero-field-film-v2.mp4"
-          bgPoster="/images/about-hero-field-film-v2-poster.jpg"
+          ctaLabel="Let's build the version of your brand people remember"
+          video="/videos/own-companions-split.mp4"
+          poster="/images/own-companions-split-poster.jpg"
+          bgVideo="/videos/about-hero-bg-meadow.mp4"
+          bgPoster="/images/about-hero-bg-meadow-poster.jpg"
         />
-
-        {/* Point of view — the redesign brief's chapter two: three
-            claims, each tied to a real engagement. Sits directly after
-            the authority hero so the practice's stance arrives before
-            its story. */}
-        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
-          <BackgroundVideo
-            video="/videos/about-point-of-view-film-v2.mp4"
-            poster="/images/about-point-of-view-film-v2-poster.jpg"
-            parallax
-            playbackRate={0.84}
-          />
-          <div aria-hidden="true" className="absolute inset-0 bg-soil/80" />
-          <div className="relative">
-            <PointOfView />
-          </div>
-        </section>
 
         {/* Was own-alpenglow-peak.mp4 under an 80%-opaque Sandstone tint —
             direct feedback that the video read as barely-there under that
@@ -104,11 +63,7 @@ export default function AboutPage() {
             grade is a legitimate free-tool fix for "looks flat," not a
             content problem an AI regeneration would actually solve. */}
         <section className="relative overflow-hidden pb-20 pt-20 sm:pb-28 sm:pt-28">
-          <BackgroundVideo
-            video="/videos/about-reflection-film-v2.mp4"
-            poster="/images/about-reflection-film-v2-poster.jpg"
-            playbackRate={0.88}
-          />
+          <BackgroundVideo video="/videos/pixabay-forest-sunbeams.mp4" poster="/images/pixabay-forest-sunbeams-poster.jpg" />
           <div className="absolute inset-0" style={{ backgroundColor: `${SANDSTONE}40` }} />
           <Container className="relative">
             <div className="max-w-xl space-y-5 rounded-2xl border border-border/50 bg-background-elevated/85 px-6 py-8 text-foreground-secondary shadow-elevation-md backdrop-blur-sm sm:px-10 sm:py-10">
@@ -119,27 +74,6 @@ export default function AboutPage() {
               ))}
             </div>
           </Container>
-        </section>
-
-        {/* Psychology and language now resolve in one complete screen.
-            The 21-second film is a true forward edit of two live-action
-            water passages: no reverse, bounce, or short GIF cadence. The
-            visible confluence makes the interdisciplinary idea legible,
-            while keeping the documented decision and audit in-frame. */}
-        <section className="relative overflow-hidden bg-soil">
-          <BackgroundVideo
-            video="/videos/about-convergence-water.mp4"
-            videoMobile="/videos/about-convergence-water-mobile.mp4"
-            poster="/images/about-convergence-water-poster.jpg"
-            playbackRate={0.88}
-            push
-          />
-          <div aria-hidden="true" className="absolute inset-0 bg-soil/65" />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(31,27,24,0.34),rgba(31,27,24,0.08)_48%,rgba(31,27,24,0.4))]"
-          />
-          <Convergence />
         </section>
 
         {/* Direct feedback flagged this quote break (higgsfield-stream-
@@ -175,28 +109,6 @@ export default function AboutPage() {
             for the redwood-canopy video) is safe to wrap this way. */}
         <PinnedWorkingMethod />
 
-        {/* Suman's board, the studio wave: "the visitor explores YOU,
-            never reads about you." Six objects on the desk, each
-            opening real practice material and pointing at where that
-            material actually lives on the site. */}
-        <StudioDesk />
-
-        {/* The terms of working directly together — the brief's five
-            real commitments, stated as things a client can hold the
-            practice to. */}
-        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
-          <BackgroundVideo
-            video="/videos/about-direct-collaboration-film-v2.mp4"
-            poster="/images/about-direct-collaboration-film-v2-poster.jpg"
-            parallax
-            playbackRate={0.9}
-          />
-          <div aria-hidden="true" className="absolute inset-0 bg-soil/78" />
-          <div className="relative">
-            <WorkingDirectly />
-          </div>
-        </section>
-
         {/* Bold solid Soil, not the Phase-5 space tint — matches the
             grid-of-cards=soil rule now applied to every other card-grid
             section site-wide. Cards already use an opaque
@@ -207,12 +119,8 @@ export default function AboutPage() {
             it (the way higgsfield-element-fire does behind Home's
             card-grid Selected-work section, a bright active clip
             because that section has fewer, larger elements). */}
-        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
-          <BackgroundVideo
-            video="/videos/about-credentials-film-v2.mp4"
-            poster="/images/about-credentials-film-v2-poster.jpg"
-            playbackRate={0.88}
-          />
+        <section className="relative overflow-hidden bg-soil py-20">
+          <BackgroundVideo video="/videos/own-moonlit-sea.mp4" poster="/images/own-moonlit-sea-poster.jpg" />
           <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
             <div className="grid gap-8 md:grid-cols-[220px_1fr] md:gap-12">
@@ -230,7 +138,7 @@ export default function AboutPage() {
                   >
                     <TiltCard glowColor={c.color}>
                       <div
-                        className="spotlight-card flex h-full flex-col rounded-2xl border-t-2 border-border bg-background-elevated p-5 shadow-elevation-sm transition-colors duration-300"
+                        className="spotlight-card flex h-full flex-col rounded-lg border-t-2 border-border bg-background-elevated p-5 shadow-elevation-sm transition-colors duration-300"
                         style={{ borderTopColor: c.color, ["--card-color" as string]: c.color }}
                       >
                         <p className={c.featured ? "font-display text-lg font-normal text-soil" : "font-medium text-soil"}>
@@ -246,49 +154,18 @@ export default function AboutPage() {
           </Container>
         </section>
 
-        {/* Evidence — ambiguity, decision, observed result for three
-            selected cases, all from recorded project data. The dedicated
-            forward edit moves from an analogue editing room into live
-            flame: raw material becoming a visible signal, without
-            repeating the forest footage used earlier on this page. */}
-        <section className="relative overflow-hidden bg-soil py-16 sm:py-24">
-          <BackgroundVideo
-            video="/videos/about-evidence-craft-film-v1.mp4"
-            poster="/images/about-evidence-craft-film-v1-poster.jpg"
-            parallax
-            playbackRate={0.86}
-          />
-          <div aria-hidden="true" className="absolute inset-0 bg-soil/85" />
-          <div className="relative">
-            <Evidence />
-          </div>
-        </section>
-
-        {/* Behaviours instead of values. */}
-        <section className="relative overflow-hidden bg-soil pb-16 sm:pb-24">
-          <BackgroundVideo
-            video="/videos/about-behaviours-film-v2.mp4"
-            poster="/images/about-behaviours-film-v2-poster.jpg"
-            parallax
-            playbackRate={0.92}
-          />
-          <div aria-hidden="true" className="absolute inset-0 bg-soil/82" />
-          <div className="relative">
-            <Behaviours />
-          </div>
-        </section>
-
         {/* Where the five elements themselves come from, sitting right
             before the section that explains this site's own visual
             choices — that section already covers the mark, the
             typefaces, the palette; this one covers the actual idea
             underneath all of it, which none of those four items touch.
             Direct feedback: this section needs a real backdrop and real
-            scroll motion, not flat bg-soil. Its dedicated 17-second film
-            travels forward from blue Himalayan first light into a forested
-            alpenglow valley, giving the origin story a complete visual arc
-            without repeating the misty ridge used in Point of View. The
-            scroll drift itself is
+            scroll motion, not flat bg-soil. pixabay-misty-ridge-drift.mp4
+            — a slow aerial drift over a mist-wrapped ridge — reads as old
+            and elemental rather than staged, matching "something older
+            than a marketing framework" instead of fighting it, and is
+            distinct in mood from higgsfield-golden-peaks.mp4 right below
+            (cool/misty here, warm/gold there). The scroll drift itself is
             ParallaxVideoBackdrop, the same useScroll/useTransform
             technique VideoBreak's own `parallax` prop already uses
             elsewhere on this page — reused standalone since this
@@ -298,10 +175,10 @@ export default function AboutPage() {
             real paragraphs need to be read at the reader's own pace, not
             forced through a fixed-duration hold — the moving backdrop
             gives the cinematic feel without stalling the read. */}
-        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
+        <section className="relative overflow-hidden bg-soil py-20">
           <ParallaxVideoBackdrop
-            video="/videos/about-elements-origin-film-v1.mp4"
-            poster="/images/about-elements-origin-film-v1-poster.jpg"
+            video="/videos/pixabay-misty-ridge-drift.mp4"
+            poster="/images/pixabay-misty-ridge-drift-poster.jpg"
           />
           <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
@@ -378,10 +255,10 @@ export default function AboutPage() {
             sections directly above it. Mountain-peak light gives the
             page's final "made on purpose" statement real weight instead
             of ending the page on flat color. */}
-        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
+        <section className="relative overflow-hidden bg-soil py-20">
           <ParallaxVideoBackdrop
-            video="/videos/about-design-system-film-v2.mp4"
-            poster="/images/about-design-system-film-v2-poster.jpg"
+            video="/videos/higgsfield-golden-peaks.mp4"
+            poster="/images/higgsfield-golden-peaks-poster.jpg"
           />
           <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
@@ -389,26 +266,23 @@ export default function AboutPage() {
                 block numerals (.case-study-block::before in globals.css)
                 and Home's "ELEMENTS" watermark — ivory-toned since this
                 section is bold Indigo, not the dark-on-cream version. */}
-            {/* Rewritten per the 80 page manual (p48): the section's job
-                is converting aesthetic curiosity into commercial
-                credibility — the site as a demonstration of method, with
-                each design decision tied to a business purpose and a
-                contextual CTA onward. */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-ivory/[0.08] sm:-top-8"
+            >
+              WHY
+            </span>
             <Reveal>
               <h2 className="relative text-display-sm font-display font-normal text-ivory">
-                This website behaves like the brands it argues for.
+                Why this site looks the way it does
               </h2>
             </Reveal>
             <Reveal delay={0.08}>
               <p className="mt-4 max-w-2xl text-ivory/85">
-                Every surface here is built around the same question used in
-                brand strategy: what should a person notice, understand, and
-                remember? Earth holds the position. Water shapes the
-                experience. Fire earns attention. Air gives the idea
-                language. Space lets recognition settle. The imagery, the
-                pacing, the type, and the movement are part of the argument;
-                each decision below exists to reinforce one meaning, and the
-                coherence you can feel is the method being demonstrated.
+                I could tell a prospective client what good branding looks
+                like, or I could just let this site be the example. Every
+                choice below was made on purpose, and I&apos;d make the same
+                case for yours.
               </p>
             </Reveal>
             {/* Was a static 4-item 2-column grid, plain text only — the
@@ -419,16 +293,6 @@ export default function AboutPage() {
                 system on hover or tap, rather than a fabricated
                 brand-asset showcase built for a client with none. */}
             <DesignRationaleGrid />
-            <Reveal>
-              <p className="mt-10 text-sm">
-                <Link
-                  href="/work"
-                  className="link-underline inline-flex items-center gap-2 text-sandstone transition-colors duration-300 hover:text-ivory"
-                >
-                  See the same decisions shaping a client project <span aria-hidden="true">→</span>
-                </Link>
-              </p>
-            </Reveal>
           </Container>
         </section>
 
@@ -437,11 +301,6 @@ export default function AboutPage() {
             scroll through — see MeadowClosing's own comment for why
             this replaced two rejected WebGL attempts at this section. */}
         <MeadowClosing />
-
-        {/* Booking — Suman's board, scene five: the invitation written
-            inside the notebook on a lit desk, replacing the flat soil
-            block her review named a wasted final CTA. */}
-        <NotebookClose />
       </main>
       <Footer />
     </>

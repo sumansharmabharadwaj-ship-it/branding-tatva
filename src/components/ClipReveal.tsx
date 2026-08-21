@@ -1,7 +1,6 @@
 "use client";
 
-import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { EASE_AIR } from "@/lib/motion";
 import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 
@@ -26,10 +25,10 @@ export function ClipReveal({
   children: React.ReactNode;
   className?: string;
 }) {
-  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const prefersReducedMotion = useReducedMotion();
   const [ref, visible] = useRevealTrigger("0px 0px -15% 0px");
 
-  if (!hydrated || prefersReducedMotion) {
+  if (prefersReducedMotion) {
     return <div className={className}>{children}</div>;
   }
 
@@ -39,7 +38,7 @@ export function ClipReveal({
       className={className}
       initial={{ clipPath: "inset(0% 0 100% 0)" }}
       animate={visible ? { clipPath: "inset(0% 0 0% 0)" } : undefined}
-      transition={{ duration: 1.2, ease: EASE_AIR }}
+      transition={{ duration: 1.1, ease: EASE_AIR }}
     >
       {children}
     </motion.div>

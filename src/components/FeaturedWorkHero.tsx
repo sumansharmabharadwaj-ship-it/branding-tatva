@@ -1,9 +1,8 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { useLazyMount } from "@/hooks/useLazyMount";
@@ -45,7 +44,7 @@ export function FeaturedWorkHero({
   imagePosition?: string;
   accent?: string;
 }) {
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const [lazyRef, shouldLoad] = useLazyMount();
   const tiltRef = useRef<HTMLAnchorElement>(null);
   const { rotateX, rotateY } = useTilt(tiltRef, 2.5, Boolean(prefersReducedMotion));

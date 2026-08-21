@@ -1,5 +1,6 @@
 "use client";
 
+import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 
 // Direct feedback wanted the visitor to feel invested before the
@@ -16,38 +17,30 @@ const STEPS = [
 ] as const;
 
 // `dark` — see RiskRemovalFAQ's own comment; both moved off the light
-// bg-background-alt tier together. No longer wraps itself in its own
-// `<Container>` — this now sits as the left column of the FAQ section's
-// two-column layout (see services/page.tsx), and a nested container-page
-// would have doubled up on horizontal padding inside the already-
-// contained parent grid.
+// bg-background-alt tier together.
 export function StrategySessionPreview({ dark = false }: { dark?: boolean }) {
   return (
-    <div>
+    <Container className="max-w-2xl">
       <Reveal>
-        <p className={`text-sm font-medium uppercase tracking-wide ${dark ? "text-ivory/70" : "text-action-secondary"}`}>
+        <p className={`text-sm font-medium uppercase tracking-wide ${dark ? "text-sandstone" : "text-action-secondary"}`}>
           Before you book
         </p>
         <h2 className={`mt-2 text-display-sm font-display font-normal ${dark ? "text-ivory" : "text-soil"}`}>
           What actually happens on the call.
         </h2>
       </Reveal>
-      {/* Reveal sits INSIDE each li (a div inside li is valid HTML) —
-          the previous Reveal-wrapping-li nesting put divs directly
-          inside the ol, a real accessibility violation Lighthouse
-          caught (list/listitem audits). */}
       <ol className="mt-8 space-y-5">
         {STEPS.map((step, i) => (
-          <li key={step}>
-            <Reveal delay={i * 0.08} className="flex items-start gap-4">
+          <Reveal key={step} delay={i * 0.08}>
+            <li className="flex items-start gap-4">
               <span className={`pt-0.5 font-display text-2xl font-normal leading-none ${dark ? "text-ivory/25" : "text-soil/25"}`}>
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <p className={dark ? "text-ivory/90" : "text-foreground-secondary"}>{step}</p>
-            </Reveal>
-          </li>
+              <p className={dark ? "text-ivory/85" : "text-foreground-secondary"}>{step}</p>
+            </li>
+          </Reveal>
         ))}
       </ol>
-    </div>
+    </Container>
   );
 }

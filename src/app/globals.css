@@ -80,7 +80,7 @@
 
 @utility skip-link {
   @apply sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50
-      focus:bg-warm-white focus:text-soil focus:px-4 focus:py-2 focus:rounded-2xl;
+      focus:bg-warm-white focus:text-soil focus:px-4 focus:py-2 focus:rounded-md;
 }
 
 @utility container-page {
@@ -165,19 +165,6 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
-  }
-
-  /* The same clamp when the visitor uses the site's own motion toggle
-     (80 page manual p23: offer an optional Full/Reduced control) —
-     MotionPreference stamps data-motion on <html>; Framer components
-     get the equivalent via MotionConfig in the same provider. */
-  :root[data-motion="reduced"] *,
-  :root[data-motion="reduced"] *::before,
-  :root[data-motion="reduced"] *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 
   /* A slow-drifting wash of the brand's own five colors behind every
@@ -485,24 +472,13 @@
    cards sitting at identical, static weight. Pure CSS (:has), no JS
    state — every card already knows its own color via the inline
    --card-color custom property. */
-.spotlight-card {
-  transition-property: opacity, background-color, border-color;
-  transition-duration: 500ms;
+.spotlight-grid:has(.spotlight-card:hover) .spotlight-card:not(:hover) {
+  opacity: 0.55;
 }
 
-/* The spotlight belongs to fine-pointer exploration only. Touch
-   browsers can retain :hover after a tap, which previously dimmed five
-   disciplines indefinitely. Siblings now remain readable, and each row
-   finally receives the discipline color already authored in its data. */
-@media (hover: hover) and (pointer: fine) {
-  .spotlight-grid:has(.spotlight-card:hover) .spotlight-card:not(:hover) {
-    opacity: 0.72;
-  }
-
-  .spotlight-card:hover {
-    background-color: color-mix(in srgb, var(--card-color) 22%, transparent);
-    border-color: var(--card-color);
-  }
+.spotlight-card:hover {
+  background-color: color-mix(in srgb, var(--card-color) 22%, transparent);
+  border-color: var(--card-color);
 }
 
 /* Underline draws in on hover instead of sitting there static — a small
@@ -811,123 +787,4 @@
   to {
     --nav-angle: 360deg;
   }
-}
-
-/* FAQ decompression chamber — CSS mist layers. Direct feedback that the
-   fog video alone disappeared into the background: these two drifting,
-   heavily blurred gradient sheets sit ABOVE the overlay, so mist visibly
-   passes in front of the scene, concealing and revealing it. Constant
-   blur (never animated — only transform/opacity move, compositor safe),
-   long offset periods so the two layers never sync into a visible loop.
-   Covered by the sitewide prefers-reduced-motion rule (animation zeroed,
-   layers rest at their base opacity as a static haze). */
-@keyframes mist-drift-a {
-  0% {
-    transform: translate3d(-4%, 0, 0);
-    opacity: 0.55;
-  }
-  50% {
-    transform: translate3d(4%, -3%, 0);
-    opacity: 1;
-  }
-  100% {
-    transform: translate3d(-4%, 0, 0);
-    opacity: 0.55;
-  }
-}
-
-@keyframes mist-drift-b {
-  0% {
-    transform: translate3d(3%, 1%, 0);
-    opacity: 0.9;
-  }
-  50% {
-    transform: translate3d(-4%, -2%, 0);
-    opacity: 0.45;
-  }
-  100% {
-    transform: translate3d(3%, 1%, 0);
-    opacity: 0.9;
-  }
-}
-
-.mist-layer-a {
-  animation: mist-drift-a 46s ease-in-out infinite;
-}
-
-.mist-layer-b {
-  animation: mist-drift-b 34s ease-in-out infinite;
-}
-
-/* The strategy room's grain layer drifts almost imperceptibly — paper
-   fibres in the air rather than a printed texture. Translate only
-   (no opacity in the keyframe, unlike mist-drift), oversized element
-   (-inset) so the drift never exposes an edge. Covered by the sitewide
-   prefers-reduced-motion rule. */
-@keyframes grain-drift {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(-1.5%, 1%, 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.grain-drift {
-  animation: grain-drift 50s ease-in-out infinite;
-}
-
-/* Documentary camera breathe for locked-off macro footage
-   (BackgroundVideo's `push` prop): a 55s ease-in-out drift between
-   1.04x and 1.14x — slow enough to read as a cinematographer leaning
-   in, never a zoom animation. Killed by the sitewide reduced-motion
-   rule like every other animation. */
-@keyframes bg-slow-push {
-  from { transform: scale(1.04); }
-  to { transform: scale(1.14); }
-}
-.bg-slow-push {
-  animation: bg-slow-push 55s ease-in-out infinite alternate;
-}
-
-/* SkyLife: distant birds crossing the frame. Linear traversal with a
-   soft vertical bob layered on top — the crossing is steady, the body
-   breathes. Spawn cadence and per-bird values are randomized in the
-   component; only the paths live here. */
-@keyframes sky-cross-ltr {
-  from { transform: translateX(-6vw); }
-  to { transform: translateX(106vw); }
-}
-@keyframes sky-cross-rtl {
-  from { transform: translateX(106vw); }
-  to { transform: translateX(-6vw); }
-}
-.sky-cross-ltr { animation: sky-cross-ltr linear forwards; }
-.sky-cross-rtl { animation: sky-cross-rtl linear forwards; }
-@keyframes sky-bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-.sky-bob { animation: sky-bob 3.2s ease-in-out infinite; }
-
-/* Waystone field (Living Compass) — the selected marker breathes: a
-   soft glow pulse every ~9s and a faint light sweep every ~13s.
-   Both sit under the sitewide prefers-reduced-motion clamp. */
-@keyframes waystone-pulse {
-  0%, 88%, 100% { box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 0 0 rgba(85, 107, 74, 0); }
-  93% { box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 0 22px rgba(85, 107, 74, 0.45); }
-}
-.waystone-selected {
-  animation: waystone-pulse 9s ease-in-out infinite;
-}
-@keyframes waystone-sweep {
-  0%, 90%, 100% { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
-  94% { opacity: 0.35; }
-  97% { transform: translateX(140%) skewX(-12deg); opacity: 0; }
-}
-.waystone-sweep {
-  animation: waystone-sweep 13s ease-in-out infinite;
 }

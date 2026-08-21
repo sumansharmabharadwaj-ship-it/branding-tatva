@@ -1,8 +1,7 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 
 // Wraps a run of adjacent plain sections and washes the background from
 // one tint to the next as you scroll through them, instead of each
@@ -19,7 +18,7 @@ export function GradientSections({
   colors: string[];
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const stops = colors.map((_, i) => i / (colors.length - 1));
   const backgroundColor = useTransform(scrollYProgress, stops, colors);

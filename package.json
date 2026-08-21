@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/next-dev.mjs",
+    "dev": "node scripts/next-dev-preview.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -11,7 +11,6 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@use-gesture/react": "^10.3.1",
-    "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.42.2",
     "gsap": "^3.15.0",

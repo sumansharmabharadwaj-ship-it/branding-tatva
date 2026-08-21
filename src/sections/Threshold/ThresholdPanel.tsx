@@ -1,9 +1,8 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { LinkButton } from "@/components/Button";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useLazyMount } from "@/hooks/useLazyMount";
@@ -66,7 +65,7 @@ export function ThresholdPanel({
   onHoverEnd: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));
 
   const imageScale = prefersReducedMotion
@@ -113,7 +112,7 @@ export function ThresholdPanel({
       <motion.div
         className="relative"
         animate={{ y: isActive ? -4 : 0 }}
-        transition={{ duration: 0.35, ease: EASE_AIR }}
+        transition={{ duration: 0.4, ease: EASE_AIR }}
       >
         <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
           {panel.eyebrow}

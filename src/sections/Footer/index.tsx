@@ -7,8 +7,6 @@ import { Reveal } from "@/components/Reveal";
 import { ElementAccentButton } from "@/components/ElementAccentButton";
 import { site, footerLinks } from "@/data/site";
 import { socialLinks } from "./constants";
-import { MotionToggle } from "@/components/MotionPreference";
-import { ConsentPreferencesLink } from "@/components/ConsentPreferencesLink";
 
 // Rebuilt as a compact "widget bar" — direct feedback that the previous
 // full-screen closing scene (headline, five glyphs, giant logo, a
@@ -17,16 +15,15 @@ import { ConsentPreferencesLink } from "@/components/ConsentPreferencesLink";
 // This keeps the same close-every-page-consistently job (Footer already
 // renders on all 12 pages) but gets to the booking widget immediately,
 // side by side with a brand/CTA card and a contact card — like a taskbar,
-// not another full scene. A dedicated nineteen-second peaks-to-valley
-// film keeps the requested mountain register while giving the closing
-// passage a forward cinematic arc instead of a ten-second loop.
+// not another full scene. own-jagged-peaks.mp4 stays as the backdrop
+// texture (chosen earlier because it isn't already load-bearing
+// elsewhere on Home right before this section), just behind a much
+// shorter passage now that there's far less content sitting on top of it.
 
 const WIDGET_CLASS =
   "rounded-2xl border border-white/15 bg-black/20 backdrop-blur-md p-5 sm:p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-black/25";
 
-type FooterProps = { compact?: boolean };
-
-export function Footer({ compact = false }: FooterProps) {
+export function Footer() {
   return (
     <footer className="relative">
       {/* This used to carry a decorative IndianPattern strip here —
@@ -41,13 +38,18 @@ export function Footer({ compact = false }: FooterProps) {
           way every other section-to-section boundary on the site
           already works. */}
 
-      {/* The jagged-peaks opening now resolves into a Himalayan valley
-          over nineteen seconds. imagePosition biased down keeps the pale
-          sky band out of the section's top edge. */}
-      {!compact && (
-        <TexturedDark
-        image="/images/site-footer-peaks-film-v2-poster.jpg"
-        video="/videos/site-footer-peaks-film-v2.mp4"
+      {/* imagePosition biased down — own-jagged-peaks' own frame is a
+          pale sunset sky over the top ~55%, jagged silhouettes only in
+          the bottom half; center-cropping (the default) put a visibly
+          bright sky band right at this section's own top edge, directly
+          under the closing moonlit-sea break above it — repeated
+          feedback flagged that exact band as a leftover "divider" even
+          after the actual stroke/border was already removed. Cropping
+          toward the peaks instead keeps the section reading as
+          continuously dark from the section above straight through. */}
+      <TexturedDark
+        image="/images/own-jagged-peaks.jpg"
+        video="/videos/own-jagged-peaks.mp4"
         imagePosition="center 85%"
         className="py-12 sm:py-14"
       >
@@ -62,7 +64,7 @@ export function Footer({ compact = false }: FooterProps) {
           {/* The widget bar itself — three cards side by side on desktop,
               stacked on mobile. The calendar gets the most width: it's
               the one thing here that actually converts, everything else
-              is support. LinkButton "Book a Session" duplicates Header's
+              is support. LinkButton "Start a project" duplicates Header's
               own CTA on purpose here — this bar is the one place a
               visitor lands right at page-bottom with both conversion
               paths (project inquiry, booking) sitting together, instead
@@ -81,7 +83,7 @@ export function Footer({ compact = false }: FooterProps) {
                 </p>
               </div>
               <div className="self-start">
-                <ElementAccentButton href="/contact">Book a Session</ElementAccentButton>
+                <ElementAccentButton href="/contact">Start a project</ElementAccentButton>
               </div>
             </div>
 
@@ -120,8 +122,7 @@ export function Footer({ compact = false }: FooterProps) {
             </div>
           </Reveal>
         </Container>
-        </TexturedDark>
-      )}
+      </TexturedDark>
 
       {/* Was sectionWash("space", 14) — rgb(234,221,211), a pale near-cream
           strip sitting directly under a near-black video section, the same
@@ -154,13 +155,7 @@ export function Footer({ compact = false }: FooterProps) {
             (CC BY 4.0)
           </p>
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          {/* The sitewide Full/Reduced motion control (80 page manual
-              p23) — quiet, but present on every page via the footer. */}
-          <MotionToggle />
-          {/* Withdrawing has to be as easy as agreeing was, so the door back
-              to the consent panel sits on every page. */}
-          <ConsentPreferencesLink />
+        <div className="flex gap-4">
           {footerLinks.map((item) => (
             <Link key={item.href} href={item.href} className="text-xs text-ivory/60 hover:text-ivory">
               {item.label}

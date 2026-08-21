@@ -10,20 +10,13 @@ export const site = {
   // See HERO_HEADLINES.md for five alternatives and the reasoning behind
   // this pairing (option B for hook, A for resolution).
   heroHeadline: "Most brands are visible. Very few are remembered.",
-  tagline: "Essence first. Recognition follows.",
+  tagline: "Every memorable brand begins with the right elements.",
   positioning:
     "Branding Tatva finds the elements that make a business worth noticing, and shapes them into a brand people recognise, trust, and remember.",
   description:
-    "Most brands are visible and still go unnoticed. Suman Sharma works with founders and existing businesses on positioning, voice, and the consistency that turns attention into recognition.",
+    "A personal branding practice led by Suman Sharma, helping founders and existing businesses find clarity, voice, and consistency through an elemental approach to brand strategy.",
   url: "https://brandingtatva.com",
   email: "suman@brandingtatva.com",
-  phone: {
-    display: "+91 84477 25381",
-    tel: "+918447725381",
-    whatsappUrl:
-      "https://wa.me/918447725381?text=Hello%20Suman%2C%20I%27d%20like%20to%20discuss%20my%20brand.",
-  },
-  consultationMinutes: 30,
   calendlyUrl: "https://calendly.com/suman-brandingtatva",
   social: {
     linkedin: "https://linkedin.com/in/suman-sharma-b6a682232",
@@ -35,8 +28,7 @@ export const site = {
 export const navigation = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Work", href: "/work" },
+  { label: "Work + Services", href: "/work" },
   { label: "Insights", href: "/insights" },
   { label: "Contact", href: "/contact" },
 ] as const;

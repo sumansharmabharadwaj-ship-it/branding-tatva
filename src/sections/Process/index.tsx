@@ -1,9 +1,8 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-
+import { useReducedMotion } from "framer-motion";
 import { VerticalJourney } from "./VerticalJourney";
-import { RootSystem } from "./RootSystem";
+import { PinnedJourney } from "./PinnedJourney";
 import { Container } from "@/components/Container";
 import type { ProcessSectionProps } from "./types";
 
@@ -29,16 +28,37 @@ import type { ProcessSectionProps } from "./types";
 // mobile treatment. VerticalJourney is now reserved for
 // prefers-reduced-motion only, where a pinned/scrubbed section would
 // be exactly the kind of motion that preference exists to turn off.
-export function ProcessSection({ stages, elementColor, dark }: ProcessSectionProps) {
-  const prefersReducedMotion = useHydratedReducedMotion();
+export function ProcessSection({ stages, elementColor, dark, heading, finalNote }: ProcessSectionProps) {
+  const prefersReducedMotion = useReducedMotion();
 
   if (prefersReducedMotion) {
     return (
-      <Container>
+      <Container className="py-16 sm:py-20">
+        {heading && (
+          <h2 className={`text-display-sm font-display font-normal ${dark ? "text-ivory" : "text-soil"}`}>
+            {heading}
+          </h2>
+        )}
         <VerticalJourney stages={stages} elementColor={elementColor} dark={dark} />
+        {finalNote && (
+          <p
+            className={`mx-auto mt-10 max-w-lg text-center text-sm italic sm:text-base ${
+              dark ? "text-ivory/80" : "text-foreground-secondary"
+            }`}
+          >
+            {finalNote}
+          </p>
+        )}
       </Container>
     );
   }
 
-  return <RootSystem stages={stages} />;
+  return (
+    <PinnedJourney
+      stages={stages}
+      elementColor={elementColor}
+      heading={heading}
+      finalNote={finalNote}
+    />
+  );
 }
