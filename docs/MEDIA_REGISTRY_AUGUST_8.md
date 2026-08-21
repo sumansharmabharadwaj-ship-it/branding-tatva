@@ -279,3 +279,10 @@ Generated from the exact august-8-isolated repository tree. This is the M1 inven
 | VIDEOS-PIXABAY-ROOTS-STREAM | public/videos/pixabay-roots-stream.mp4 | 14711846 | 1cfb2a39c0d8 | Unmapped | Needs mapping | Pixabay — source URL verification required |
 | VIDEOS-PIXABAY-SEA-OF-FOG-SUNRISE | public/videos/pixabay-sea-of-fog-sunrise.mp4 | 3375047 | 78f7f1eb83c0 | Unmapped | Needs mapping | Pixabay — source URL verification required |
 | VIDEOS-PIXABAY-STREAM-MIST-RAYS | public/videos/pixabay-stream-mist-rays.mp4 | 18159919 | ad68b9d38bc9 | Unmapped | Needs mapping | Pixabay — source URL verification required |
+
+
+## Generated production assets
+
+| Media ID | Repository path | Role | Route | Provenance |
+|---|---|---|---|---|
+| BT-HOME-RECOGNITION-MIST-V1 | public/images/generated/bt-home-recognition-mist-v1.webp | Recognition scene poster and production keyframe | Home | OpenAI ImageGen, generated 2026-08-21; original asset |

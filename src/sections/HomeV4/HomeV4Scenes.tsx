@@ -257,7 +257,7 @@ export function V4RecognitionScene() {
           loop
           playsInline
           preload="metadata"
-          poster="/images/pixabay-misty-ridge-drift-poster.jpg"
+          poster="/images/generated/bt-home-recognition-mist-v1.webp"
           data-home-playback-rate="1.1"
         >
           <source src="/videos/pixabay-misty-ridge-drift.mp4" type="video/mp4" />
