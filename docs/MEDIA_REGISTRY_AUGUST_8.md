@@ -288,3 +288,5 @@ Generated from the exact august-8-isolated repository tree. This is the M1 inven
 | BT-HOME-RECOGNITION-MIST-V1 | public/images/generated/bt-home-recognition-mist-v1.webp | Recognition scene poster and production keyframe | Home | OpenAI ImageGen, generated 2026-08-21; original asset |
 
 | BT-HOME-FIVE-TATVAS-MASTER-V1 | public/images/generated/bt-home-five-tatvas-master-v1.webp | Five Tatvas supporting motion plate and video-production keyframe | Home | OpenAI ImageGen, generated 2026-08-21; original asset |
+
+| BT-HOME-HIDDEN-COST-RIVER-DAWN | public/videos/pexels-river-dawn.webm + public/videos/pexels-river-dawn.mp4 | Hidden Cost supporting film | Home | Pexels — source URL verification required |

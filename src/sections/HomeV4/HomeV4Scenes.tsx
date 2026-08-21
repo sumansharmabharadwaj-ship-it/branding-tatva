@@ -4,7 +4,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -45,30 +45,34 @@ const COST_STAGES = [
   {
     number: "01",
     title: "A campaign begins.",
-    body: "The audience is introduced to the business.",
-    effort: "18%",
-    memory: "10%",
+    body: "The audience meets the business through one clear promise.",
+    signal: "New promise",
+    memory: "Association begins",
+    cause: "The business enters memory",
   },
   {
     number: "02",
     title: "The brand changes shape.",
-    body: "The next channel teaches a different expectation.",
-    effort: "46%",
-    memory: "15%",
+    body: "The next touchpoint teaches a different expectation.",
+    signal: "Promise reframed",
+    memory: "Association splits",
+    cause: "A second version arrives",
   },
   {
     number: "03",
-    title: "Every channel relearns the company.",
-    body: "More content is spent explaining what should already feel familiar.",
-    effort: "78%",
-    memory: "21%",
+    title: "Every channel explains again.",
+    body: "Content spends more energy rebuilding context before it can create desire.",
+    signal: "Explanation repeats",
+    memory: "Familiarity slows",
+    cause: "Channels rebuild context",
   },
   {
     number: "04",
-    title: "Marketing pays the introduction fee again.",
-    body: "Reach grows. Recognition barely compounds.",
-    effort: "100%",
-    memory: "28%",
+    title: "Marketing carries the introduction.",
+    body: "Reach grows while recognition continues to trail the effort behind it.",
+    signal: "Spend reintroduces",
+    memory: "Recognition trails",
+    cause: "Investment carries the reset",
   },
 ] as const;
 
@@ -399,7 +403,6 @@ export function V4HiddenCostScene() {
   const mediaScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.14]);
   const mediaY = useTransform(scrollYProgress, [0, 1], [0, -26]);
   const copyY = useTransform(scrollYProgress, [0, 1], [18, -18]);
-  const diagramRotate = useTransform(scrollYProgress, [0, 1], [-2, 2]);
   const active = COST_STAGES[activeIndex];
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
@@ -407,14 +410,6 @@ export function V4HiddenCostScene() {
     setActiveIndex((current) => (current === next ? current : next));
   });
 
-  const effortPath = useMemo(
-    () => "M42 270 C140 260 168 242 236 212 C312 178 356 150 424 96 C480 50 530 35 584 26",
-    [],
-  );
-  const memoryPath = useMemo(
-    () => "M42 276 C150 270 218 262 304 248 C392 234 480 222 584 210",
-    [],
-  );
 
   return (
     <section
@@ -430,10 +425,12 @@ export function V4HiddenCostScene() {
       <div className="home-v4-cost__sticky">
         <motion.div
           className="home-v4-cost__media"
+          data-media-id="BT-HOME-HIDDEN-COST-RIVER-DAWN"
           style={prefersReducedMotion ? undefined : { scale: mediaScale, y: mediaY }}
           aria-hidden="true"
         >
           <video
+            data-home-playback-rate="1.1"
             muted
             autoPlay
             loop
@@ -470,96 +467,88 @@ export function V4HiddenCostScene() {
                 <p>{active.body}</p>
                 <dl>
                   <div>
-                    <dt>Marketing effort</dt>
-                    <dd>{active.effort}</dd>
+                    <dt>Market signal</dt>
+                    <dd>{active.signal}</dd>
                   </div>
                   <div>
-                    <dt>Memory retained</dt>
+                    <dt>Audience memory</dt>
                     <dd>{active.memory}</dd>
                   </div>
                 </dl>
               </motion.article>
             </AnimatePresence>
 
-            <motion.div
+            <div
               className="home-v4-cost__diagram"
-              style={prefersReducedMotion ? undefined : { rotate: diagramRotate }}
-              aria-label="Marketing effort rises faster than brand memory when the underlying brand keeps changing"
+              role="group"
+              aria-label="A qualitative causal model showing how changing brand signals creates repeated rounds of audience relearning"
             >
               <div className="home-v4-cost__diagram-head">
-                <span>Effort</span>
-                <span>Recognition</span>
+                <div>
+                  <span>Illustrative causal model</span>
+                  <strong>One shift creates four rounds of relearning.</strong>
+                </div>
+                <span>{active.number} / 04</span>
               </div>
-              <svg viewBox="0 0 620 310" role="img">
-                {[0, 1, 2, 3].map((line) => (
-                  <line
-                    key={line}
-                    x1="40"
-                    x2="590"
-                    y1={42 + line * 74}
-                    y2={42 + line * 74}
-                    stroke="rgba(244,239,230,.08)"
-                    strokeWidth="1"
-                  />
-                ))}
-                <path d={effortPath} fill="none" stroke="rgba(199,119,82,.18)" strokeWidth="10" strokeLinecap="round" />
-                <motion.path
-                  d={effortPath}
-                  fill="none"
-                  stroke="#C77752"
-                  strokeWidth="2.3"
-                  strokeLinecap="round"
-                  pathLength="1"
-                  style={{ pathLength: prefersReducedMotion ? 1 : scrollYProgress }}
-                />
-                <path d={memoryPath} fill="none" stroke="rgba(125,155,175,.18)" strokeWidth="10" strokeLinecap="round" />
-                <motion.path
-                  d={memoryPath}
-                  fill="none"
-                  stroke="#7D9BAF"
-                  strokeWidth="2.3"
-                  strokeLinecap="round"
-                  pathLength="1"
-                  style={{ pathLength: prefersReducedMotion ? 1 : scrollYProgress }}
-                />
 
+              <ol className="home-v4-cost__causal">
                 {COST_STAGES.map((stage, index) => {
-                  const x = 70 + index * 168;
-                  const effortY = [262, 205, 122, 42][index];
-                  const memoryY = [270, 258, 236, 214][index];
-                  const reached = index <= activeIndex;
+                  const activeStage = index === activeIndex;
+                  const reached = index < activeIndex;
                   return (
-                    <g key={stage.number} opacity={reached ? 1 : 0.24}>
-                      <motion.circle
-                        cx={x}
-                        cy={effortY}
-                        r="6"
-                        fill="#C77752"
-                        animate={
-                          reached && !prefersReducedMotion
-                            ? { scale: [0.82, 1.35, 0.82], opacity: [0.58, 1, 0.58] }
-                            : undefined
-                        }
-                        style={{ transformOrigin: `${x}px ${effortY}px` }}
-                        transition={{ duration: 2.6, delay: index * 0.2, repeat: Infinity, ease: "easeInOut" }}
-                      />
-                      <circle cx={x} cy={memoryY} r="4.5" fill="#7D9BAF" />
-                    </g>
+                    <motion.li
+                      key={stage.number}
+                      className={activeStage ? "is-active" : reached ? "is-reached" : undefined}
+                      animate={{
+                        opacity: activeStage ? 1 : reached ? 0.72 : 0.38,
+                        y: activeStage && !prefersReducedMotion ? -4 : 0,
+                        scale: activeStage && !prefersReducedMotion ? 1.015 : 1,
+                      }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
+                    >
+                      <span>{stage.number}</span>
+                      <strong>{stage.cause}</strong>
+                      <p>{stage.signal}</p>
+                    </motion.li>
                   );
                 })}
-              </svg>
-              <p>
-                The gap between the two lines is the price of reintroducing the business.
-              </p>
-            </motion.div>
+              </ol>
+
+              <div className="home-v4-cost__foundation-line">
+                <span>Stable foundation</span>
+                <strong>Position → distinctive cues → repeated association</strong>
+              </div>
+
+              <div className="home-v4-cost__research">
+                <p>
+                  The sequence communicates direction; percentages stay outside this model.
+                </p>
+                <div>
+                  <a
+                    href="https://www.sciencedirect.com/science/article/pii/S0167811622000465"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Communication consistency study
+                  </a>
+                  <a
+                    href="https://marketingscience.info/learn-with-us/commercial-research/distinctive-asset"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Distinctive asset research
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="home-v4-cost__footer">
             <p>
-              A stable foundation does not make marketing quieter. It lets each signal remember the one before it.
+              A stable foundation gives marketing more force. Each signal carries the memory of the one before it.
             </p>
             <Link href="#foundation" className="home-v4-button home-v4-button--sand" data-magnetic data-cursor-label="foundation">
-              Inspect the foundation <ArrowDownRight size={15} />
+              Trace the foundation <ArrowDownRight size={15} />
             </Link>
           </div>
         </div>

@@ -62,7 +62,7 @@ Master register coverage: 1,858 requirements — 1,504 sitewide, 246 motion/inte
 - [x] Reduce identity veil to 220ms and remove pointer blocking.
 - [x] Recognition mirror: one state controller, user reading hold, mobile manual behavior and unique fog film.
 - [ ] Five Tatvas: one mechanism per state with mobile panels.
-- [ ] Why branding matters: causal signal/root visualizer with sourced annotations.
+- [x] Why branding matters: qualitative causal signal visualizer with sourced annotations and zero invented percentages.
 - [ ] Selected work: verified cases only, evidence index and unique media.
 - [ ] Brand Strategy & Systems preview: three clear starting paths paired with proof.
 - [ ] Founder proof: verified portrait, direct-access evidence and credential link.
