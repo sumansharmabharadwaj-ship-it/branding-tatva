@@ -60,7 +60,7 @@ Master register coverage: 1,858 requirements — 1,504 sitewide, 246 motion/inte
 - [x] Reduce ambient playback from 1.30× to 1.10×.
 - [x] Replace competing infinite hero effects with one forward camera move.
 - [x] Reduce identity veil to 220ms and remove pointer blocking.
-- [ ] Recognition mirror: user-controlled states, stable reading, unique fog film.
+- [x] Recognition mirror: one state controller, user reading hold, mobile manual behavior and unique fog film.
 - [ ] Five Tatvas: one mechanism per state with mobile panels.
 - [ ] Why branding matters: causal signal/root visualizer with sourced annotations.
 - [ ] Selected work: verified cases only, evidence index and unique media.
@@ -119,8 +119,8 @@ Canonical route: `/work`; redirect `/services` to `/work`.
 Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenance and use.
 
 - [ ] V01 Home hero — misty forest trail, slow forward reveal, 14–18s.
-- [ ] V02 Home recognition — cloud bands resolve into clarity, 10–14s.
-- [ ] V03 Five Tatvas — five unique material studies or one directed master.
+- [ ] V02 Home recognition — unique mist film and original keyframe integrated; custom 10–14s master remains in production.
+- [ ] V03 Five Tatvas — original directed master keyframe and semantic pressure lab integrated; responsive loop exports remain in production.
 - [ ] V04 Home services — stone/paper/water/root system assembly, 10–14s.
 - [ ] V05 Home health — clear stream and five measurement stones, 12–18s.
 - [ ] V06 Home booking — one sunlight sweep over clean warm wood, 10–16s.
@@ -160,3 +160,12 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 - [ ] Attach evidence and classify anything without evidence as Unverified.
 - [ ] Record commit, hosted preview, blockers and rollback path.
 - [ ] Request Suman’s visual approval before production promotion.
+
+## Current deployed checkpoint — Home interaction batch
+
+- [x] One shared sun cursor renders across every canonical route.
+- [x] Recognition and Five Tatvas use one animation scheduler each; competing internal timers removed.
+- [x] Desktop demonstrations pause for real pointer, focus and keyboard intent.
+- [x] Touch stays visitor-led and reduced motion stays static.
+- [x] Five Tatvas uses affirmative contribution language and an original supporting motion plate.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.

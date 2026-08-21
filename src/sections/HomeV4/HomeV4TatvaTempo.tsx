@@ -6,7 +6,9 @@ import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
 
 const TATVA_SELECTOR = '[data-home-v4-chapter="tatva"]';
 const FORCE_SELECTOR = ".tatva-pressure-lab__copy .tatva-pressure-lab__force";
+const NODE_SELECTOR = ".tatva-pressure-lab__node";
 const RESTORE_SELECTOR = ".tatva-pressure-lab__restore";
+const INTERACTION_SELECTOR = `${FORCE_SELECTOR}, ${NODE_SELECTOR}, ${RESTORE_SELECTOR}`;
 const FINE_POINTER_QUERY = "(min-width: 821px) and (hover: hover) and (pointer: fine)";
 const FIRST_ADVANCE_MS = 1150;
 const AUTO_ADVANCE_MS = 2250;
@@ -66,7 +68,7 @@ export function HomeV4TatvaTempo() {
     function holdForReading(event: Event) {
       const target = event.target;
       if (!(target instanceof Element)) return;
-      if (!target.closest(`${FORCE_SELECTOR}, ${RESTORE_SELECTOR}`)) return;
+      if (!target.closest(INTERACTION_SELECTOR)) return;
       holdUntilRef.current = Date.now() + USER_HOLD_MS;
       window.clearTimeout(timerRef.current);
       setRevision((value) => value + 1);

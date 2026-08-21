@@ -12,40 +12,40 @@ const FORCES = [
     role: "Foundation",
     color: "#C77752",
     score: 34,
-    consequence:
-      "Without a foundation, every campaign has to invent a new reason for the brand to exist.",
+    contribution:
+      "Foundation gives every campaign one durable reason for the brand to exist.",
   },
   {
     name: "Jal",
     role: "Flow",
     color: "#52756F",
     score: 58,
-    consequence:
-      "Without flow, offers and touchpoints feel assembled beside one another rather than experienced as one brand.",
+    contribution:
+      "Flow connects offers and touchpoints into one recognisable brand experience.",
   },
   {
     name: "Agni",
     role: "Distinction",
     color: "#D8A251",
     score: 63,
-    consequence:
-      "Without distinction, the right audience has no reason to notice the brand twice.",
+    contribution:
+      "Distinction gives the right audience a clear reason to notice and remember.",
   },
   {
     name: "Vayu",
     role: "Voice",
     color: "#7D8565",
     score: 54,
-    consequence:
-      "Without a repeatable voice, people cannot carry the brand clearly beyond the moment they encounter it.",
+    contribution:
+      "A repeatable voice helps people carry the brand clearly beyond the first encounter.",
   },
   {
     name: "Akash",
     role: "Recognition",
     color: "#C08A7B",
     score: 47,
-    consequence:
-      "Without consistency over time, exposure keeps happening but never settles into familiarity.",
+    contribution:
+      "Consistency turns repeated exposure into familiarity over time.",
   },
 ] as const;
 
@@ -57,7 +57,6 @@ const NODE_POSITIONS = [
   { x: 74, y: 172 },
 ] as const;
 
-const AUTO_ADVANCE_MS = 4100;
 const MANUAL_HOLD_MS = 16000;
 
 export function TatvaSystemLab() {
@@ -69,17 +68,6 @@ export function TatvaSystemLab() {
   const omitted = omittedIndex === null ? null : FORCES[omittedIndex];
   const motionActive = inView && !prefersReducedMotion;
   const score = omitted?.score ?? 100;
-
-  useEffect(() => {
-    if (!motionActive) return;
-
-    const timer = window.setInterval(() => {
-      if (document.hidden || Date.now() < pauseUntilRef.current) return;
-      setOmittedIndex((current) => (current === null ? 0 : current >= FORCES.length - 1 ? null : current + 1));
-    }, AUTO_ADVANCE_MS);
-
-    return () => window.clearInterval(timer);
-  }, [motionActive]);
 
   useEffect(() => {
     function onChapter(event: Event) {
@@ -102,6 +90,7 @@ export function TatvaSystemLab() {
     <section
       ref={sectionRef}
       className="tatva-pressure-lab relative overflow-hidden border-t py-20 sm:py-28"
+      data-media-id="BT-HOME-FIVE-TATVAS-MASTER-V1"
       style={{ backgroundColor: "#111A18", borderColor: "rgba(244,239,230,0.08)" }}
       aria-labelledby="tatva-system-lab-title"
       onPointerDown={() => {
@@ -114,6 +103,9 @@ export function TatvaSystemLab() {
         pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
       }}
     >
+      <div className="tatva-pressure-lab__film" aria-hidden="true">
+        <span />
+      </div>
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute -left-40 top-[-20%] h-[30rem] w-[30rem] rounded-full blur-3xl"
@@ -139,10 +131,10 @@ export function TatvaSystemLab() {
               id="tatva-system-lab-title"
               className="mt-3 max-w-xl font-display text-[clamp(2.35rem,4.5vw,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em]"
             >
-              Remove one force. Watch recognition lose its shape.
+              Pause one force. See how each Tatva protects recognition.
             </h2>
             <p className="mt-5 max-w-xl text-sm leading-7 sm:text-base sm:leading-8">
-              This is an illustrative coherence model, rather than a performance score. Select a Tatva to see the strategic burden the remaining four are forced to carry.
+              This illustrative coherence model shows how five connected forces share the work of recognition. Choose a Tatva to reveal the strategic role it carries.
             </p>
 
             <div className="mt-7 grid gap-2 sm:grid-cols-2">
@@ -181,7 +173,7 @@ export function TatvaSystemLab() {
                       className="text-[0.55rem] font-medium uppercase tracking-[0.14em]"
                       style={{ color: missing ? force.color : "rgba(244,239,230,0.42)" }}
                     >
-                      {missing ? "Missing" : "Present"}
+                      {missing ? "Under pressure" : "In system"}
                     </span>
                   </button>
                 );
@@ -220,7 +212,7 @@ export function TatvaSystemLab() {
                 </div>
               </div>
               <span className="tatva-pressure-lab__status rounded-full border px-3 py-2 text-[0.56rem] font-medium uppercase tracking-[0.14em]">
-                {omitted ? `${omitted.name} omitted` : "Complete system"}
+                {omitted ? `${omitted.name} under pressure` : "Complete system"}
               </span>
             </div>
 
@@ -230,7 +222,7 @@ export function TatvaSystemLab() {
                   viewBox="0 0 500 420"
                   className="absolute inset-0 h-full w-full overflow-visible"
                   role="img"
-                  aria-label={omitted ? `${omitted.name} is removed from the five force brand system` : "All five Tatvas are connected to recognition"}
+                  aria-label={omitted ? `${omitted.name} is under pressure in the five-force brand system` : "All five Tatvas are connected to recognition"}
                 >
                   <motion.path
                     d="M250 54 L426 172 L360 364 L140 364 L74 172 Z"
@@ -309,7 +301,7 @@ export function TatvaSystemLab() {
                     <motion.button
                       key={force.name}
                       type="button"
-                      aria-label={`${missing ? "Restore" : "Remove"} ${force.name}`}
+                      aria-label={`${missing ? "Return" : "Test"} ${force.name}`}
                       aria-pressed={missing}
                       onClick={() => choose(index)}
                       className="tatva-pressure-lab__node absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-xl px-2 py-2 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
@@ -351,22 +343,22 @@ export function TatvaSystemLab() {
                     className="text-[0.58rem] font-medium uppercase tracking-[0.16em]"
                     style={{ color: omitted?.color ?? "#8FA283" }}
                   >
-                    {omitted ? `What breaks without ${omitted.name}` : "When all five are present"}
+                    {omitted ? `What ${omitted.name} protects` : "When all five are present"}
                   </p>
                   <p className="mt-3 font-display text-2xl leading-tight">
                     {omitted
-                      ? omitted.consequence
+                      ? omitted.contribution
                       : "Each force keeps its own job, so no single layer has to rescue the rest of the brand."}
                   </p>
                   <p className="mt-4 text-xs leading-relaxed">
-                    Select the missing force again to restore it, or let the model continue demonstrating the system automatically.
+                    Choose the highlighted force again to return it, or let the model continue through the system.
                   </p>
                   <Link
-                    href="#tatva"
+                    href="/services"
                     className="link-underline mt-5 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em]"
                     style={{ color: "#D4B99A" }}
                   >
-                    Examine every Tatva in depth <span aria-hidden="true">→</span>
+                    Explore Brand Strategy & Systems <span aria-hidden="true">→</span>
                   </Link>
                 </motion.div>
               </AnimatePresence>

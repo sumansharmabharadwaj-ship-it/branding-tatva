@@ -212,17 +212,6 @@ export function V4RecognitionScene() {
   const [activeIndex, setActiveIndex] = useState(0);
   const active = RECOGNITION_STATES[activeIndex];
 
-  useEffect(() => {
-    if (!inView || prefersReducedMotion) return;
-
-    const timer = window.setInterval(() => {
-      if (document.hidden || Date.now() < holdUntilRef.current) return;
-      setActiveIndex((current) => (current + 1) % RECOGNITION_STATES.length);
-    }, 4300);
-
-    return () => window.clearInterval(timer);
-  }, [inView, prefersReducedMotion]);
-
   function choose(index: number) {
     holdUntilRef.current = Date.now() + 11000;
     setActiveIndex(index);
@@ -285,7 +274,7 @@ export function V4RecognitionScene() {
             </h2>
           </div>
           <span>
-            Watch the conditions change, or choose the one that sounds familiar.
+            Choose the condition that feels familiar. Your selection stays in place while you read.
           </span>
         </header>
 

@@ -135,7 +135,7 @@
 .tatva-pressure-lab::before {
   content: "";
   position: absolute;
-  z-index: 0;
+  z-index: 1;
   inset: 0;
   pointer-events: none;
   opacity: 0.16;
@@ -334,5 +334,54 @@
 @media (prefers-reduced-motion: reduce) {
   .tatva-observatory__film video {
     transform: none;
+  }
+}
+
+
+.tatva-pressure-lab__film {
+  position: absolute;
+  z-index: 0;
+  inset: -4%;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    linear-gradient(100deg, rgba(7, 14, 13, 0.96) 0%, rgba(7, 14, 13, 0.78) 43%, rgba(7, 14, 13, 0.48) 100%),
+    linear-gradient(180deg, rgba(7, 14, 13, 0.52) 0%, rgba(7, 14, 13, 0.18) 46%, rgba(7, 14, 13, 0.9) 100%),
+    url("/images/generated/bt-home-five-tatvas-master-v1.webp") 68% 50% / cover no-repeat;
+  opacity: 0.46;
+  transform: scale(1.035);
+  animation: bt-tatva-master-drift 14s cubic-bezier(0.2, 0.8, 0.2, 1) alternate infinite;
+}
+
+.tatva-pressure-lab__film > span {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 74% 30%, rgba(215, 190, 135, 0.14), transparent 28%),
+    radial-gradient(circle at 54% 70%, rgba(82, 117, 111, 0.12), transparent 36%);
+}
+
+@keyframes bt-tatva-master-drift {
+  from {
+    transform: scale(1.035) translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: scale(1.065) translate3d(-0.6%, -0.35%, 0);
+  }
+}
+
+@media (max-width: 640px) {
+  .tatva-pressure-lab__film {
+    inset: 0;
+    background-position: 62% 50%;
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tatva-pressure-lab__film {
+    animation: none;
+    transform: scale(1.035);
   }
 }
