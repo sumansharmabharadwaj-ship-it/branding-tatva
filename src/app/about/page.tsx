@@ -11,22 +11,76 @@ import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { MeadowClosing } from "@/components/MeadowClosing";
 import { DesignRationaleGrid } from "@/components/DesignRationaleGrid";
 import { PinnedWorkingMethod } from "@/sections/About/PinnedWorkingMethod";
+import { AboutPracticeField } from "@/sections/About/AboutPracticeField";
+import { CredentialStrategyMap } from "@/sections/About/CredentialStrategyMap";
 import { aboutIntro, credentials } from "@/data/about";
 import { elements } from "@/data/elements";
 import { philosophy } from "@/data/philosophy";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { LinkButton } from "@/components/Button";
 import { site } from "@/data/site";
 import { SANDSTONE } from "@/lib/sectionWash";
 
 export const metadata: Metadata = {
-  title: "About Suman Sharma",
-  description: `The thinking behind ${site.name}: brand strategy grounded in psychology and language.`,
+  title: "Suman Sharma, Founder & Brand Strategist",
+  description: `Meet ${site.founder} and the psychology, language, observation, and decision method behind ${site.name}.`,
   alternates: { canonical: "/about" },
   openGraph: {
-    title: `About ${site.founder} | ${site.name}`,
-    description: `The thinking behind ${site.name}: brand strategy grounded in psychology and language.`,
+    title: `${site.founder}, Founder & Brand Strategist | ${site.name}`,
+    description: `Meet ${site.founder} and the psychology, language, observation, and decision method behind ${site.name}.`,
     type: "profile",
   },
+};
+
+const aboutStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["AboutPage", "ProfilePage"],
+      "@id": `${site.url}/about/#page`,
+      url: `${site.url}/about`,
+      name: "Suman Sharma, Founder & Brand Strategist",
+      description: `The psychology, language, observation, and decision method behind ${site.name}.`,
+      isPartOf: { "@id": `${site.url}/#website` },
+      mainEntity: { "@id": `${site.url}/about/#person` },
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: `${site.url}/images/own-portrait.jpg`,
+      },
+    },
+    {
+      "@type": "Person",
+      "@id": `${site.url}/about/#person`,
+      name: site.founder,
+      url: `${site.url}/about`,
+      image: `${site.url}/images/own-portrait.jpg`,
+      jobTitle: "Founder & Brand Strategist",
+      description: aboutIntro.opening,
+      worksFor: { "@id": `${site.url}/#organization` },
+      sameAs: [site.social.linkedin, site.social.instagram, site.social.facebook],
+      knowsAbout: [
+        "Brand strategy",
+        "Brand positioning",
+        "Audience perception",
+        "Verbal identity",
+        "Narrative architecture",
+      ],
+      hasCredential: credentials
+        .filter((credential) => credential.featured)
+        .map((credential) => ({
+          "@type": "EducationalOccupationalCredential",
+          name: credential.label,
+          description: credential.detail,
+        })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+        { "@type": "ListItem", position: 2, name: "About", item: `${site.url}/about` },
+      ],
+    },
+  ],
 };
 
 export default function AboutPage() {
@@ -107,7 +161,9 @@ export default function AboutPage() {
             it fits PinnedHold directly. See PinnedWorkingMethod's own
             comment for why this section's own overflow-hidden (kept
             for the redwood-canopy video) is safe to wrap this way. */}
+        <CredentialStrategyMap />
         <PinnedWorkingMethod />
+        <AboutPracticeField />
 
         {/* Bold solid Soil, not the Phase-5 space tint — matches the
             grid-of-cards=soil rule now applied to every other card-grid
@@ -126,7 +182,7 @@ export default function AboutPage() {
             <div className="grid gap-8 md:grid-cols-[220px_1fr] md:gap-12">
               <Reveal>
                 <h2 className="text-display-sm font-display font-normal text-ivory md:sticky md:top-28">
-                  Credentials
+                  Disciplines applied to the work
                 </h2>
               </Reveal>
               <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
@@ -145,6 +201,10 @@ export default function AboutPage() {
                           {c.label}
                         </p>
                         <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
+                        <p className="mt-5 border-t border-border/70 pt-4 text-xs font-medium uppercase tracking-[0.14em] text-foreground-secondary">
+                          Applied to
+                        </p>
+                        <p className="mt-2 text-sm text-soil/80">{c.application}</p>
                       </div>
                     </TiltCard>
                   </Reveal>
@@ -230,14 +290,24 @@ export default function AboutPage() {
             </div>
 
             <Reveal delay={0.4}>
-              <p className="mt-14 max-w-2xl border-t border-ivory/15 pt-10 text-ivory/85">
-                None of this is abstract. A sustained content push built
-                the same way took Dr. Haley Nutrition&apos;s engagement
-                rate from 0.71% to 2.81% in two months, with impressions
-                barely moving even as posting dropped by nearly half.
-                That is the difference between reach and trust, and
-                it is what these five elements are actually for.
-              </p>
+              <div className="mt-14 max-w-2xl border-t border-ivory/15 pt-10">
+                <p className="text-ivory/85">
+                  The method becomes concrete in the project files: what
+                  was diagnosed, what changed, what was delivered, and
+                  where any outcome is bounded by the evidence currently
+                  available.
+                </p>
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <LinkButton href="/work#proof">See the method in the work</LinkButton>
+                  <LinkButton
+                    href="/work#services"
+                    variant="secondary"
+                    className="border-ivory/30 text-ivory hover:border-ivory/50 hover:bg-ivory/10"
+                  >
+                    Explore ways to work together
+                  </LinkButton>
+                </div>
+              </div>
             </Reveal>
           </Container>
         </section>
@@ -266,6 +336,12 @@ export default function AboutPage() {
                 block numerals (.case-study-block::before in globals.css)
                 and Home's "ELEMENTS" watermark — ivory-toned since this
                 section is bold Indigo, not the dark-on-cream version. */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-ivory/[0.08] sm:-top-8"
+            >
+              WHY
+            </span>
             <Reveal>
               <h2 className="relative text-display-sm font-display font-normal text-ivory">
                 Why this site looks the way it does
@@ -297,6 +373,11 @@ export default function AboutPage() {
         <MeadowClosing />
       </main>
       <Footer />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutStructuredData) }}
+      />
     </>
   );
 }

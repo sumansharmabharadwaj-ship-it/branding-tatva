@@ -8,12 +8,6 @@ export type Package = {
   slug: string;
   name: string;
   forWho: string;
-  // "one-time" prices are a flat project fee; "monthly" is an ongoing
-  // retainer starting price — kept as separate fields rather than a
-  // single formatted string so the page can render "from" and "/mo"
-  // consistently instead of parsing it back out of text.
-  price: number;
-  billing: "one-time" | "monthly";
   description: string;
   includes: string[];
   color: string;
@@ -21,36 +15,29 @@ export type Package = {
   proofSlug?: string; // links to a real case study in projects.ts as evidence
 };
 
-// GBP, aimed at the UK solo-consultant/boutique market specifically
-// (per direct request) rather than a generic USD figure — these are a
-// first draft grounded in typical UK freelance brand-strategy rates,
-// not confirmed real prices. Flagged for Suman to review and adjust
-// before treating them as final; nothing here should be read as
-// already-agreed pricing.
+// These are starting pathways, not final quoted scopes. Unconfirmed draft
+// pricing is intentionally absent from client-delivered JavaScript.
 export const packages: Package[] = [
   {
     slug: "brand-beginning",
     name: "Foundation",
     forWho: "For founders starting with an idea, before anything is built.",
-    price: 1850,
-    billing: "one-time",
     description:
       "The Earth work, done first: what the brand believes, who it's for, and why it matters, so nothing built afterward has to guess.",
     includes: [
       "Brand discovery & positioning workshop",
       "Audience & purpose definition",
-      "Core visual identity (logo, colour, type system)",
+      "Visual identity direction and designer-ready brief",
       "Brand guidelines starter document",
       "Launch messaging direction",
     ],
     color: "#B85A34", // clay — Earth
+    proofSlug: "myshopineurope",
   },
   {
     slug: "brand-clarity",
     name: "Full Brand System",
     forWho: "For existing brands that feel unclear, inconsistent, or hard to explain in one sentence.",
-    price: 4200,
-    billing: "one-time",
     description:
       "Everything in Foundation, plus a full audit, repositioning, and the visual direction to carry it across every channel.",
     includes: [
@@ -63,14 +50,12 @@ export const packages: Package[] = [
     ],
     color: "#24394D", // indigo — Water
     popular: true,
-    proofSlug: "dr-haley-nutrition",
+    proofSlug: "herbalcart",
   },
   {
     slug: "brand-partnership",
     name: "Brand Partnership",
     forWho: "For brands that need ongoing content, consistency, and someone watching the whole system.",
-    price: 950,
-    billing: "monthly",
     description:
       "Recognition built month over month through sustained content and consistency work, rather than a single campaign.",
     includes: [
@@ -81,7 +66,7 @@ export const packages: Package[] = [
       "Quarterly strategy review",
     ],
     color: "#AD6F5C", // rose-earth — Space
-    proofSlug: "herbalcart",
+    proofSlug: "dr-haley-nutrition",
   },
 ];
 
@@ -96,7 +81,7 @@ export const packages: Package[] = [
 // operate in.
 export const offerings: Offering[] = [
   {
-    name: "Brand Strategy & Identity",
+    name: "Brand Strategy & Identity Direction",
     detail: "Positioning decided before a single pixel exists. The identity system, the actual architecture, carries that decision forward, always second, never the source of it.",
     color: "#B85A34", // clay
   },
@@ -126,4 +111,3 @@ export const offerings: Offering[] = [
     color: "#CD7A4C", // terracotta
   },
 ];
-

@@ -5,6 +5,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { motion, useTransform, useReducedMotion } from "framer-motion";
 import { useSpotlight } from "@/hooks/useSpotlight";
+import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 import { SplitReveal } from "@/components/SplitReveal";
 import type { CinematicHeroProps } from "./types";
 import { HERO_SCRIM_GRADIENT } from "./constants";
@@ -37,6 +38,7 @@ export function CinematicHero({
   children,
 }: CinematicHeroProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const { imageY, contentOpacity, contentY } = useHeroParallax(ref);
   const mouseParallax = useHeroMouseParallax(ref, Boolean(prefersReducedMotion));
@@ -47,6 +49,7 @@ export function CinematicHero({
   // multiple of it, rather than a second independent pointer listener.
   const foregroundX = useTransform(mouseParallax.x, (v) => v * 2.4);
   const foregroundY = useTransform(mouseParallax.y, (v) => v * 2.4);
+  useVideoFadeIn(videoRef, Boolean(video && !prefersReducedMotion));
 
   return (
     <section ref={ref} className="relative h-svh min-h-[620px] overflow-hidden bg-soil">
@@ -67,6 +70,7 @@ export function CinematicHero({
             style={prefersReducedMotion ? undefined : { x: mouseParallax.x, y: mouseParallax.y }}
           >
             <video
+              ref={videoRef}
               className="h-full w-full object-cover"
               style={{ objectPosition: imagePosition }}
               src={video}

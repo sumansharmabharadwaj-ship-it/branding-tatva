@@ -47,33 +47,13 @@ export function StrategyRoomCTA() {
 
   return (
     <Container className="relative max-w-2xl text-center">
-      {/* Deliberately centered — the one symmetric composition on the
-          page, chosen as arrival rather than convenience: after seven
-          asymmetric chapters, the visitor reaches a calm, balanced
-          room. Typography breathes wider here than anywhere else. */}
-      {/* Phase 2 motion direction — "arrival": the single slowest
-          entrance on the page, one unhurried breath rather than a
-          staggered sequence. Everything after the visitor gets here is
-          meant to feel settled; the welcome moves accordingly. */}
-      <motion.div
-        initial={prefersReducedMotion ? undefined : { opacity: 0, y: 16 }}
-        whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px 0px -15% 0px" }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">Book call</p>
-        <h2 className="mt-3 text-display-md font-display font-normal leading-[1.06] text-ivory">
-          Open the strategy room.
-        </h2>
-        {/* Phase 4: the one trust line between Desire and the calendar —
-            a real fact (one person practice, already established on
-            About and in the Footer), placed at the exact moment the
-            visitor decides whether to hand over their time. */}
-        <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-ivory/90">
-          A few quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way. You
-          talk directly with the person who does the work, from first question to final file.
-        </p>
-      </motion.div>
+      <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Book call</p>
+      <h2 className="mt-2 text-display-md font-display font-normal text-ivory">
+        Open the strategy room.
+      </h2>
+      <p className="mx-auto mt-4 max-w-md text-ivory/80">
+        A few quick questions, then send the context directly. Honest feedback either way.
+      </p>
 
       {/* Audit found this fixed height could overflow on narrow
           viewports — 6 brandStages options (some as long as "I am
@@ -86,20 +66,17 @@ export function StrategyRoomCTA() {
         <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div key="stage" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
-              <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Where is your brand right now?</p>
+              <p className="text-sm font-medium uppercase tracking-wide text-ivory/60">Where is your brand right now?</p>
               <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
                 {brandStages.map((option) => (
-                  <motion.button
+                  <button
                     key={option}
                     type="button"
                     onClick={() => pickStage(option)}
-                    whileHover={prefersReducedMotion ? undefined : { y: -2 }}
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                    transition={{ duration: 0.15 }}
-                    className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/90 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
+                    className="min-h-11 rounded-full border border-ivory/25 px-4 py-2 text-sm text-ivory/85 transition-colors duration-300 hover:border-ivory/50 hover:bg-ivory/10"
                   >
                     {option}
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             </motion.div>
@@ -107,20 +84,17 @@ export function StrategyRoomCTA() {
 
           {step === 1 && (
             <motion.div key="priority" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
-              <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">What matters most right now?</p>
+              <p className="text-sm font-medium uppercase tracking-wide text-ivory/60">What matters most right now?</p>
               <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
                 {PRIORITIES.map((option) => (
-                  <motion.button
+                  <button
                     key={option}
                     type="button"
                     onClick={() => pickPriority(option)}
-                    whileHover={prefersReducedMotion ? undefined : { y: -2 }}
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                    transition={{ duration: 0.15 }}
-                    className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/90 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
+                    className="min-h-11 rounded-full border border-ivory/25 px-4 py-2 text-sm text-ivory/85 transition-colors duration-300 hover:border-ivory/50 hover:bg-ivory/10"
                   >
                     {option}
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             </motion.div>
@@ -128,20 +102,17 @@ export function StrategyRoomCTA() {
 
           {step === 2 && (
             <motion.div key="focus" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
-              <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">What&apos;s the main focus?</p>
+              <p className="text-sm font-medium uppercase tracking-wide text-ivory/60">What&apos;s the main focus?</p>
               <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
                 {FOCUS_AREAS.map((option) => (
-                  <motion.button
+                  <button
                     key={option}
                     type="button"
                     onClick={() => pickFocus(option)}
-                    whileHover={prefersReducedMotion ? undefined : { y: -2 }}
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                    transition={{ duration: 0.15 }}
-                    className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/90 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
+                    className="min-h-11 rounded-full border border-ivory/25 px-4 py-2 text-sm text-ivory/85 transition-colors duration-300 hover:border-ivory/50 hover:bg-ivory/10"
                   >
                     {option}
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             </motion.div>
@@ -149,16 +120,41 @@ export function StrategyRoomCTA() {
 
           {step === 3 && (
             <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
-              <p className="text-sm text-ivory/90">Good. Grab a time that works.</p>
-              <div className="mt-2">
-                <CalendlyEmbed url={site.calendlyUrl} />
-              </div>
+              {site.calendlyUrl ? (
+                <>
+                  <p className="text-sm text-ivory/80">Good. Grab a time that works.</p>
+                  <div className="mt-2">
+                    <CalendlyEmbed url={site.calendlyUrl} />
+                  </div>
+                </>
+              ) : (
+                <div className="mx-auto max-w-md rounded-2xl border border-ivory/20 bg-soil/60 p-6">
+                  <p className="text-sm leading-relaxed text-ivory/80">
+                    Good. Add those answers to the project enquiry so the first reply can begin with the real question.
+                  </p>
+                  <div className="mt-5">
+                    <LinkButton href="/contact">Send the project context</LinkButton>
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
+      {step < 3 && (
+        <p className="mt-8 text-xs text-ivory/70">
+          Prefer to skip ahead? <SkipLink onSkip={() => setStep(3)} />
+        </p>
+      )}
     </Container>
   );
 }
 
+function SkipLink({ onSkip }: { onSkip: () => void }) {
+  return (
+    <button type="button" onClick={onSkip} className="link-underline text-xs text-ivory/85 hover:text-ivory">
+      Go straight to the enquiry
+    </button>
+  );
+}

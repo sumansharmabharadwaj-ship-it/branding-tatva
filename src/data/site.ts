@@ -16,8 +16,12 @@ export const site = {
   description:
     "A personal branding practice led by Suman Sharma, helping founders and existing businesses find clarity, voice, and consistency through an elemental approach to brand strategy.",
   url: "https://brandingtatva.com",
-  email: "suman@brandingtatva.com",
-  calendlyUrl: "https://calendly.com/suman-brandingtatva",
+  // Public contact details stay absent until Suman confirms the exact
+  // address and the scheduling provider is connected. Rendering a
+  // plausible placeholder as a live route would create a false lead
+  // path and contradict the website Bible's truth gate.
+  email: null as string | null,
+  calendlyUrl: null as string | null,
   social: {
     linkedin: "https://linkedin.com/in/suman-sharma-b6a682232",
     instagram: "https://instagram.com/brandingtatva",
@@ -28,9 +32,8 @@ export const site = {
 export const navigation = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Work", href: "/work" },
-  { label: "Blog", href: "/blog" },
+  { label: "Brand Strategy & Systems", href: "/work" },
+  { label: "Insights", href: "/insights" },
   { label: "Contact", href: "/contact" },
 ] as const;
 

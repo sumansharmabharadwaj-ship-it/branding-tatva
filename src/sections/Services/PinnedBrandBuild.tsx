@@ -9,7 +9,7 @@ import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { ELEMENT_HEX, MOOD } from "@/lib/sectionWash";
+import { ELEMENT_HEX } from "@/lib/sectionWash";
 import { elements } from "@/data/elements";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 
@@ -89,25 +89,11 @@ export function PinnedBrandBuild() {
   }, [runPinned]);
 
   if (!runPinned) {
-    // Mobile / reduced-motion / pre-hydration fallback — the exact same
-    // five layers, stacked in normal document flow, no pin.
-    //
-    // The wrapper is no longer `sm:hidden`: this branch is also what
-    // the SERVER renders (useMediaQuery only flips true after
-    // hydration), and hiding it at desktop widths meant desktop
-    // visitors got zero Authority section in the server HTML — then a
-    // full-viewport pinned section popped into existence at hydration,
-    // shifting every section below it by ~100vh. A Lighthouse trace
-    // measured that single insertion as a 0.21+ CLS, the whole page's
-    // worth. (Slow eager video preloading used to push hydration past
-    // the trace window, which is why the score only surfaced after the
-    // perf round sped loading up — the shift itself was always there.)
-    // It also meant desktop reduced-motion visitors permanently saw
-    // nothing here at all. min-h-screen at sm+ reserves exactly the
-    // height the pinned branch occupies, so the hydration swap is
-    // height-neutral and shifts nothing.
+    // Mobile / reduced-motion fallback — the exact same five layers,
+    // stacked in normal document flow with a plain per-item reveal
+    // instead of scroll-scrubbed, no pin at all.
     return (
-      <section className="relative flex flex-col justify-center overflow-hidden py-16 sm:min-h-screen" style={{ backgroundColor: MOOD.charcoal }}>
+      <section className="relative overflow-hidden bg-soil py-16 sm:hidden">
         <Image
           src="/images/higgsfield-mountain-mist-poster.jpg"
           alt=""
@@ -116,13 +102,9 @@ export function PinnedBrandBuild() {
           style={{ objectFit: "cover" }}
           className="opacity-30"
         />
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.35)" }} />
+        <div className="absolute inset-0 bg-soil/70" />
         <Container className="relative">
-          <p className="hidden text-sm font-medium uppercase tracking-wide text-ivory/70 sm:block">Authority</p>
-          <h2 className="hidden max-w-xl text-display-sm font-display font-normal text-ivory sm:mt-2 sm:block">
-            Marketing amplifies whatever is already there.
-          </h2>
-          <div className="space-y-8 sm:mt-10 sm:space-y-6">
+          <div className="space-y-8">
             {LAYERS.map((layer, i) => (
               <div key={layer.slug} className="flex items-start gap-4">
                 <span
@@ -136,7 +118,7 @@ export function PinnedBrandBuild() {
                     <ElementGlyph slug={layer.slug} className="h-4 w-4" style={{ color: layer.color }} />
                     <p className="font-display text-lg font-normal text-ivory">{layer.label}</p>
                   </div>
-                  <p className="mt-1 text-sm text-ivory/90">{layer.line}</p>
+                  <p className="mt-1 text-sm text-ivory/80">{layer.line}</p>
                 </div>
               </div>
             ))}
@@ -147,10 +129,7 @@ export function PinnedBrandBuild() {
   }
 
   return (
-    // Mood: CHARCOAL — neutral-cool architectural dark (see MOOD in
-    // sectionWash.ts); the warm soil base + soil overlay here were the
-    // page's second-largest amber contributor after the shared veil.
-    <div ref={sectionRef} className="relative hidden h-screen overflow-hidden sm:block" style={{ backgroundColor: MOOD.charcoal }}>
+    <div ref={sectionRef} className="relative hidden h-screen overflow-hidden bg-soil sm:block">
       {/* Direct feedback that this section read as flat and motionless —
           the shader alone (opacity 0.22) is too subtle as the section's
           only source of visible movement while the five layers are
@@ -160,88 +139,36 @@ export function PinnedBrandBuild() {
           underneath, becoming visible. Shared with PerceptionLadder's
           own AmbientElementShader right after it, so both "Authority"
           and "Education" keep reading as one continuous visual system. */}
-      {/* Approved Chapter 02 footage (Pexels 38390292, standard
-          license): root network in extreme macro — hidden intelligence
-          beneath the surface, exactly what strategy is. Full frame,
-          slow, no crop, no zoom; the layer parallax carries the
-          movement. */}
-      {/* Background spans 100vw from the pinned element's own center,
-          deliberately independent of the element's measured width.
-          ScrollTrigger pins by stamping the pre-pin measured width as
-          inline style; a resize or scrollbar-state change between
-          measure and pin can leave that width a strip narrower than
-          the real viewport (direct screenshot report: grey bands down
-          both edges of this chapter on a real display — the charcoal
-          ground showing through). A viewport-width background makes
-          that entire failure class invisible instead of trying to
-          out-guess GSAP's measurement timing. */}
-      <div className="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 overflow-hidden">
-        <BackgroundVideo video="/videos/pexels-root-network.mp4" videoWebm="/videos/pexels-root-network.webm" poster="/images/pexels-root-network-poster.jpg" />
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.3)" }} />
-        <AmbientElementShader opacity={0.08} />
-      </div>
-      {/* Direct, repeated feedback (two screenshots) that this pinned
-          frame read as a narrow content strip with empty video on both
-          sides on a real wide display, and that the stacked
-          heading-above-layers arrangement overflowed the frame's own
-          height (the heading visibly scrolled out of the top mid-pin).
-          A first attempt answered it with a decorative watermark —
-          wrong diagnosis. The actual fix is the layout: the frame is
-          now a real two-column composition on its own wider grid (the
-          site's max-w-6xl Container is deliberately not used here — a
-          full-viewport cinematic frame earns a wider stage), heading
-          and closing line locked in the left column, the five layers
-          building in the right, both vertically centered. Total column
-          height now fits inside h-screen at every common desktop
-          height, so nothing gets clipped mid-pin. */}
-      <div className="relative mx-auto flex h-full w-full max-w-[100rem] flex-col justify-center px-6 sm:px-10 lg:px-20">
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Authority</p>
-            <h2 className="mt-2 text-display-sm font-display font-normal text-ivory lg:text-display-md">
-              Marketing amplifies whatever is already there.
-            </h2>
-            <p className="mt-8 max-w-md text-sm italic text-ivory/90 lg:text-base">
-              Skip one layer, and marketing amplifies the gap instead of the position.
-            </p>
-          </div>
-          {/* The GSAP scrub timeline targets these exact ref nodes by
-              index — DOM structure and ref wiring unchanged from the
-              working version, only the surrounding layout moved. */}
-          <div className="relative">
-            {LAYERS.map((layer, i) => (
-              <div
-                key={layer.slug}
-                ref={(node) => {
-                  layerRefs.current[i] = node;
-                }}
-                // Micro-motion (Phase 2): hovering a layer nudges it
-                // forward and brightens its divider — inspecting one
-                // stratum of the build. Deliberately the ONLY motion
-                // added to this section: the scrub assembly is its
-                // primary motion, and anything running alongside it
-                // would compete rather than support.
-                className="group/layer flex items-start gap-6 border-b border-ivory/10 py-4 opacity-0 transition-[border-color,transform] duration-300 last:border-b-0 hover:translate-x-1.5 hover:border-ivory/30 xl:py-5"
-                style={{ marginLeft: `${i * 18}px` }}
-              >
-                <span
-                  className="font-display text-3xl font-normal leading-none opacity-40 xl:text-4xl"
-                  style={{ color: layer.color }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div className="flex items-start gap-4 pt-1">
-                  <ElementGlyph slug={layer.slug} className="mt-1 h-6 w-6 shrink-0" style={{ color: layer.color }} />
-                  <div>
-                    <p className="font-display text-2xl font-normal text-ivory xl:text-3xl">{layer.label}</p>
-                    <p className="mt-1 max-w-lg text-sm text-ivory/90 xl:text-base">{layer.line}</p>
-                  </div>
-                </div>
+      <BackgroundVideo video="/videos/higgsfield-mountain-mist.mp4" poster="/images/higgsfield-mountain-mist-poster.jpg" />
+      <div className="absolute inset-0 bg-soil/55" />
+      <AmbientElementShader opacity={0.3} />
+      <Container className="relative flex h-full flex-col justify-center">
+        <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Authority</p>
+        <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
+          Marketing amplifies whatever is already there.
+        </h2>
+        <div className="relative mt-10 max-w-2xl">
+          {LAYERS.map((layer, i) => (
+            <div
+              key={layer.slug}
+              ref={(node) => {
+                layerRefs.current[i] = node;
+              }}
+              className="flex items-center gap-5 border-l-2 py-3 opacity-0"
+              style={{ borderColor: layer.color, marginLeft: `${i * 18}px` }}
+            >
+              <ElementGlyph slug={layer.slug} className="h-6 w-6 shrink-0" style={{ color: layer.color }} />
+              <div>
+                <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{layer.label}</p>
+                <p className="text-sm text-ivory/80">{layer.line}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      </div>
+        <p className="mt-10 max-w-md text-sm italic text-ivory/80">
+          Skip one layer, and marketing amplifies the gap instead of the position.
+        </p>
+      </Container>
     </div>
   );
 }

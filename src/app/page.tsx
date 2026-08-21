@@ -10,6 +10,10 @@ import { KineticMarquee } from "@/components/KineticMarquee";
 import { ClipReveal } from "@/components/ClipReveal";
 import { ElementsSection } from "@/sections/Elements";
 import { SelectedWorkPinned } from "@/sections/Home/SelectedWorkPinned";
+import { RecognitionMirror } from "@/sections/Home/RecognitionMirror";
+import { HomeServicesPreview } from "@/sections/Home/HomeServicesPreview";
+import { HomeHealthCheck } from "@/sections/Home/HomeHealthCheck";
+import { HomeInsightsPreview } from "@/sections/Home/HomeInsightsPreview";
 import { CinematicHero } from "@/sections/Hero";
 import { PinnedVideoBreak } from "@/components/PinnedVideoBreak";
 import { ProcessSection } from "@/sections/Process";
@@ -20,39 +24,41 @@ import { site } from "@/data/site";
 import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
 import { process } from "@/data/process";
-import { faqs } from "@/data/faqs";
 import { elementColor } from "@/lib/elementColor";
+import { CredentialStrategyMap } from "@/sections/About/CredentialStrategyMap";
 
 // Previously relied entirely on the root layout's default title/description
 // — functional, but means "/" never explicitly owns its own metadata (no
 // page-specific canonical, no way to tune the homepage's own OG/Twitter
 // copy independent of the site-wide fallback used everywhere else).
 export const metadata: Metadata = {
-  title: `${site.name}: Brand Strategy by ${site.founder}`,
-  description: site.description,
+  title: "Brand Strategy & Identity for Memorable Brands",
+  description:
+    "Founder-led brand strategy, positioning, identity direction, messaging, and connected brand systems shaped by Suman Sharma.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: `${site.name}: Brand Strategy by ${site.founder}`,
-    description: site.description,
+    title: "Brand Strategy & Identity for Memorable Brands | Branding Tatva",
+    description:
+      "Founder-led brand strategy, positioning, identity direction, messaging, and connected brand systems shaped by Suman Sharma.",
     url: site.url,
     type: "website",
   },
 };
 
-// The homepage's FAQ section (src/sections/FAQ) already has 8 real,
-// substantive question/answer pairs — this was the single highest-value
-// AEO gap on the site: zero structured markup on real FAQ content,
-// meaning search engines' FAQ rich results and AI answer engines had no
-// explicit machine-readable signal for it, only the rendered accordion
-// text to infer from.
-const faqStructuredData = {
+const homeStructuredData = {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: { "@type": "Answer", text: faq.answer },
-  })),
+  "@type": "WebPage",
+  "@id": `${site.url}/#page`,
+  url: site.url,
+  name: "Brand Strategy & Identity for Memorable Brands",
+  description:
+    "Founder-led brand strategy, positioning, identity direction, messaging, and connected brand systems shaped by Suman Sharma.",
+  isPartOf: { "@id": `${site.url}/#website` },
+  about: { "@id": `${site.url}/#organization` },
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    url: `${site.url}/images/hero-forest-sanctuary-poster.jpg`,
+  },
 };
 
 export default function Home() {
@@ -84,16 +90,9 @@ export default function Home() {
           >
             Explore the work
           </LinkButton>
-          {/* w-full forces this onto its own line within CinematicHero's
-              flex wrap CTA row instead of crowding the two buttons. It
-              stays inside the hero's own scrim, so there is no seam
-              risk against whatever section follows. Real, verified
-              number (Dr. Haley Nutrition, already live on /work), never
-              invented social proof. */}
-          <p className="w-full text-xs text-ivory/50 sm:text-sm">
-            The same process that took one client&apos;s engagement rate from 0.71% to 2.81% in eight weeks.
-          </p>
         </CinematicHero>
+
+        <RecognitionMirror />
 
         {/* Direct feedback that this section, ElementsIntro, the two
             atmospheric quote breaks below, and Threshold all read as
@@ -153,11 +152,11 @@ not repeated here. */}
                 Clinical psychology and English literature. One studies how people notice and decide. The other studies how language carries meaning.
               </p>
               <div className="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs uppercase tracking-[0.15em] text-ivory/50 sm:text-sm">
-                <span>M.A. Clinical Psychology</span>
+                <span>Psychology-led diagnosis</span>
                 <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ivory/30" />
-                <span>B.A. (Hons) English Literature</span>
+                <span>Language-led strategy</span>
                 <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ivory/30" />
-                <span>5 real client engagements</span>
+                <span>Founder-led from diagnosis to delivery</span>
               </div>
             </Reveal>
 
@@ -177,57 +176,14 @@ not repeated here. */}
           </Container>
         </TexturedDark>
 
+        <CredentialStrategyMap compact />
+
         <ElementsSection elements={elements} />
 
-        {/* Was flat bg-soil — direct feedback that the heading zone here
-            still read as a blank gap between the elements grid above and
-            the actual case-study imagery below. Fire fits a section about
-            the work that earned a second look — pixabay-flame-texture.mp4
-            (an abstract, tight flame-texture shot, distinct from the
-            elements grid's own campfire-with-wood clip so the same
-            footage doesn't repeat on this page). Was
-            higgsfield-element-fire.mp4, an indoor theatrical stage set
-            with a film projector on a table — direct feedback that this
-            broke the site's natural-outdoor-footage standard, the same
-            class of mismatch the old mislabeled Air clip had. */}
-        {/* Heading kept as its own section, separate from the pinned
-            work content below — SelectedWorkPinned relies on
-            position: sticky, which breaks the moment an ancestor has
-            overflow other than visible (this section's own
-            overflow-hidden, kept for the fire video). Same fix pattern
-            as every other pinned section on this page. */}
-        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
-          <BackgroundVideo video="/videos/pixabay-flame-texture.mp4" poster="/images/pixabay-flame-texture-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
-          <Container className="relative">
-            <div className="flex items-baseline justify-between">
-              <Reveal>
-                <div>
-                  <h2 className="text-display-sm font-display font-normal text-ivory">Selected work</h2>
-                  <p className="mt-2 text-sm italic text-ivory/70">
-                    Real projects, real numbers, verified after launch. Everything below actually happened.
-                  </p>
-                </div>
-              </Reveal>
-              <Reveal delay={0.1}>
-                <LinkButton
-                  href="/work"
-                  variant="secondary"
-                  className="border-ivory/30 text-ivory hover:bg-ivory/10"
-                >
-                  View all work
-                </LinkButton>
-              </Reveal>
-            </div>
-          </Container>
-        </section>
-
-        {/* Featured work — one large photographic entry, two quiet
-            editorial ones, not three identical cards. Same pinned
-            mechanism as PinnedSlider/PinnedJourney; see
-            SelectedWorkPinned's own comment for why it's 2 stages, not
-            3, and why neither card component conflicts with permanent
-            mounting + opacity toggling. */}
+        {/* The chapter heading now lives inside SelectedWorkPinned's
+            full-screen frame instead of occupying a short standalone
+            strip above it. This keeps the heading, proof line, CTA, and
+            active case study visible as one cinematic scene. */}
         <SelectedWorkPinned featured={featured} />
 
         {/* Was a standalone mid-funnel CTA section here (plain bg-soil,
@@ -254,52 +210,24 @@ not repeated here. */}
             motion ProcessJourney fallback stays comfortable at that
             width regardless. */}
         <section className="bg-soil">
-          {/* overflow-hidden scoped to this heading div only, not the
-              outer section — ProcessSection's own PinnedJourney relies
-              on `position: sticky`, which breaks the moment any ancestor
-              has overflow other than visible (see PinnedJourney's own
-              comment). Was flat bg-soil here too, direct feedback that
-              the heading zone before the pinned stages begin still read
-              as a blank gap; pixabay-roots-stream.mp4 (moss-covered
-              roots framing a small forest stream) fills it, fitting
-              since this heading introduces the whole process — roots as
-              the foundation the other five stages build on, the stream
-              as the first sign of movement. Was
-              higgsfield-element-earth.mp4, architectural blueprints on
-              an indoor desk — the same natural-outdoor-footage mismatch
-              found across several of this row's clips this round. */}
-          <div className="relative overflow-hidden py-20 sm:py-28">
-            <BackgroundVideo video="/videos/pixabay-roots-stream.mp4" poster="/images/pixabay-roots-stream-poster.jpg" />
-            <div className="absolute inset-0 bg-soil/80" />
-            <Container className="relative">
-              <Reveal>
-                <h2 className="text-display-sm font-display font-normal text-ivory">How a project moves</h2>
-              </Reveal>
-            </Container>
-          </div>
-          <ProcessSection stages={process} elementColor={elementColor} />
-          {/* Direct, repeated feedback that this quote sat on bare
-              bg-soil right after the pinned journey releases — the exact
-              seam complaint above, just at the other end of the same
-              section. A second, independent overflow-hidden wrapper
-              here (a sibling AFTER ProcessSection, never an ancestor of
-              it) keeps PinnedJourney's own sticky mechanism untouched —
-              see the comment on the heading div above for why that
-              scoping matters. Same roots-and-stream clip as the
-              heading: a deliberate visual bookend (open and close the
-              section on the same footage) rather than a new clip. */}
-          <div className="relative overflow-hidden">
-            <BackgroundVideo video="/videos/pixabay-roots-stream.mp4" poster="/images/pixabay-roots-stream-poster.jpg" />
-            <div className="absolute inset-0 bg-soil/80" />
-            <Container className="relative pb-16 pt-10 text-center sm:pb-20 sm:pt-14">
-              <Reveal>
-                <p className="mx-auto max-w-lg text-sm italic text-ivory/80 sm:text-base">
-                  Skipping a step costs you quietly. The recall you paid for simply stops compounding.
-                </p>
-              </Reveal>
-            </Container>
-          </div>
+          {/* The title and closing consequence now belong to the pinned
+              journey itself. Removing the two shallow bookend strips
+              prevents half of the previous or next chapter appearing in
+              the same viewport while a process stage is active. */}
+          <ProcessSection
+            stages={process}
+            elementColor={elementColor}
+            heading="How a project moves"
+            finalNote="Skipping a step costs you quietly. The recall you paid for simply stops compounding."
+            dark
+          />
         </section>
+
+        <HomeServicesPreview />
+
+        <HomeHealthCheck />
+
+        <HomeInsightsPreview />
 
         {/* Threshold ("every brand starts at one of two thresholds") used
             to sit here — direct feedback called it out as useless along
@@ -338,7 +266,7 @@ not repeated here. */}
             with a real "mode-shift" boundary to mark (the card itself
             wiping into view), while the ambient backdrop video is
             always present underneath it. */}
-        <section className="relative overflow-hidden py-20 sm:py-28">
+        <section className="relative flex min-h-svh items-center overflow-hidden py-16 sm:py-20">
           {/* Light chapter giving way from the dark Selected-work grid
               above — the same real mode-shift ClipReveal already marks
               on Services and Work, just running the other direction
@@ -352,7 +280,7 @@ not repeated here. */}
           <ClipReveal>
             <Container className="relative max-w-2xl">
               <Reveal>
-                <div className="rounded-2xl border border-border/50 bg-background-elevated/92 px-6 py-10 shadow-elevation-md backdrop-blur-sm sm:px-14 sm:py-16">
+                <div className="rounded-2xl border border-border/50 bg-background-elevated/92 px-6 py-8 shadow-elevation-md backdrop-blur-sm sm:max-h-[calc(100svh-9rem)] sm:overflow-y-auto sm:px-12 sm:py-10">
                   <h2 className="text-display-sm font-display font-normal text-soil">
                     Common questions
                   </h2>
@@ -409,7 +337,7 @@ not repeated here. */}
                   className="mt-4 text-sm text-ivory/80"
                   style={{ textShadow: "0 1px 6px rgba(0,0,0,0.8)" }}
                 >
-                  Twenty minutes, a real conversation, zero pitch deck. Honest feedback either way.
+                  A real conversation, zero pitch deck. Honest feedback either way.
                 </p>
               </div>
             </div>
@@ -420,7 +348,7 @@ not repeated here. */}
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeStructuredData) }}
       />
     </>
   );

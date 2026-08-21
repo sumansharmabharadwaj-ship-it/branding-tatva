@@ -12,6 +12,15 @@ Next.js 15 (App Router) + React 19 + TypeScript + Tailwind v4, deployed on Verce
 
 Supplementary docs in `docs/` (`BRAND_STRATEGY.md`, `BRAND_VOICE.md`, `DESIGN_SYSTEM.md`, `MOTION_SYSTEM.md`, `HERO_HEADLINES.md`, `ASSET_INVENTORY.md`) were written near project inception and describe the *original* system. Large parts are now stale — component lists, motion inventory, and even the hero component itself have since been rebuilt. Treat them as historical/foundational reading, not current truth; this file and the actual code are current truth.
 
+## One canonical review branch and link
+
+- **Canonical deployment branch:** `homepage-cinematic-recovery`
+- **Only user-facing review link:** `https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/`
+- Every task or chat tab may work on an isolated branch, but a verified change only becomes reviewable after it is merged into `homepage-cinematic-recovery` and pushed to `origin`.
+- Never give Suman a fresh per-commit Vercel URL, an older branch URL, or `branding-tatva.vercel.app` as the active review link.
+- Never force-push the canonical branch. Fetch first, merge concurrent verified work, resolve overlap, run the full verification loop, then push a fast-forward update.
+- The canonical branch alias is the continuous review environment. Production remains a separate approval gate.
+
 ## The five elements — the site's organizing framework, not its subject
 
 Earth (foundation/positioning), Water (experience/customer journey), Fire (expression/attention), Air (voice/narrative), Space (presence/recognition) is the narrative device the whole site is built around. It explains branding; it is not what's being sold. Brand strategy is the hero. Never let an element card, a glyph, or a five-part grid become the point of a section — it should always be in service of a specific branding claim (positioning, distinctive assets, mental availability, category design, semiotics, cultural relevance, brand architecture).
@@ -60,9 +69,10 @@ npx eslint <changed files>
 pnpm build
 git add <specific files>          # never -A blind; review what's staged
 git commit -m "..."               # explain why, not just what
-git push
-vercel --prod --yes --force
-curl -sI https://branding-tatva.vercel.app/ | grep -i age:   # confirm age: 0 = fresh deploy
+git fetch origin
+git merge origin/homepage-cinematic-recovery
+git push origin HEAD:homepage-cinematic-recovery
+curl -sI https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/   # verify the one canonical branch alias
 ```
 
 Browser-verify visually before deploying whenever the change is observable (`preview_start` the dev server, screenshot/scroll through it). **This sandbox's Browser pane has a documented, recurring flakiness**: `document.visibilityState`/`hasFocus` can read `hidden`/`false` even when nothing is actually wrong, which stalls IntersectionObserver-gated lazy-mounts, `<video>` autoplay/pause state, and rAF-driven timers (a loading veil can appear stuck at "0" indefinitely). When this happens, trust direct DOM/computed-style JS extraction over screenshots or `.paused`/`.readyState` reads, and don't mistake it for a real site bug — cross-check against the actual production deploy before "fixing" something that's actually just the sandbox pane.
@@ -70,20 +80,3 @@ Browser-verify visually before deploying whenever the change is observable (`pre
 ## Working with Suman
 
 Non-technical founder. Communicates via screenshots and reference links, not code-level detail. Bug reports are reliably real — investigate them as genuine regressions, not misunderstandings. Feedback tends to escalate in strictness across rounds (e.g., the copywriting standard above went from "fix Home" → "strictly everywhere" → "every page" over several messages) — don't assume an earlier, looser pass is the final bar; look for what's still missed. When a brief is large, phase it and ship incrementally with the verify loop above after each phase, rather than batching everything into one unverified change.
-
-## Design language: the living brand system (codified from Suman's moodboard, Aug 2026)
-
-Five principles, applied to every new surface:
-1. **Nature is the interface** — real macro/landscape footage or photography IS the ground; UI floats within it, never boxed beside it.
-2. **Organic glassmorphism** — cards: 16–28px radius, backdrop-blur 20–40px, white borders at 5–10% opacity, fill transparency ~12–20%, large soft shadows. Glass resting on nature, no harsh rectangles.
-3. **Editorial typography** — serif display + thin sans labels, minimal copy, huge whitespace; nothing competes.
-4. **Earth-first desaturated palette** — Forest #1F3A28, Moss #556B4A, Sage #8FAE83, Olive #7D8E52, Cream #F2F0E8, Stone #B5B3AA, Warm Sand #C6A97A, Wood #6F4E37, Mist #DDE2DC, Charcoal #1B1B1B. Every green desaturated; warmth only as natural accents (wood, sand, sunlight).
-5. **Slow organic motion** — wind/water/breathing/fog metaphors, ease cubic-bezier(0.22, 1, 0.36, 1), 2–5px cursor drift, slow parallax, blur-sharpening reveals. Nothing mechanical, nothing fast.
-
-Photography: early morning / golden hour / overcast; macro, shallow depth of field, strong negative space, one dominant subject. Emotional register: calm, quiet confidence, slow luxury, authenticity. Ghost watermark words were removed sitewide on direct feedback (Aug 2026) — do not reintroduce them.
-
-## Media standard (recorded Aug 2026 after direct verdict: "dark, vague, low quality, serving no purpose")
-
-The failure pattern to never repeat: grading footage darker so text can sit on it. Per the moodboard, footage stays BRIGHT and luminous (backlit leaves, dew macro, bright mist, sunlit valleys); glass panels carry all text readability. Overlays stay light (peak ~0.4), localized scrims only where type sits. Encode at 1080p minimum, crf 20-22 (720p/crf26 reads soft at full-bleed retina). Every clip must serve its chapter's specific idea, or the chapter goes without video. Full Services media re-foundation is the open next phase: source a coherent bright set per the codified design language, per-file approvals as always.
-
-The full media/narrative direction lives in docs/ECOSYSTEM_DIRECTION.md — the living-ecosystem shot script, environmental-psychology map, and cinematic DNA. It is CURRENT truth (unlike the older docs/) and governs every footage, grading, and section-story decision.

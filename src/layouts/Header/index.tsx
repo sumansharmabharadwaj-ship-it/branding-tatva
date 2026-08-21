@@ -130,9 +130,9 @@ export function Header({ transparent = false }: HeaderProps) {
                 </LinkButton>
               </div>
 
-              <Link href="/" className="col-start-2 flex items-center justify-center gap-1.5">
-                <LogoMark size={22} className="shrink-0" />
-                <Logo light className="scale-[0.72] sm:scale-[0.78]" />
+              <Link href="/" className="col-start-2 flex items-center justify-center gap-2">
+                <LogoMark size={26} className="shrink-0" priority />
+                <Logo light />
               </Link>
 
               <div className="flex justify-end">

@@ -82,20 +82,52 @@ export default async function CaseStudyPage({ params }: Props) {
   if (!project) notFound();
 
   // Case-study pages carry rich structured content (industry, challenge,
-  // outcome, verified stats) but had zero JSON-LD — a real, confirmed gap
+  // outcome, bounded stats) but had zero JSON-LD — a real, confirmed gap
   // for both SEO and AEO. CreativeWork fits a portfolio/case-study
   // writeup better than Service schema, which typically expects
   // offers/pricing fields this site deliberately doesn't publish.
   const caseStudyStructuredData = {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    name: project.title,
-    about: project.industry,
-    description: project.challenge,
-    author: { "@id": `${site.url}/#person` },
-    creator: { "@id": `${site.url}/#organization` },
-    keywords: project.services.join(", "),
-    url: `${site.url}/work/${project.slug}`,
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${site.url}/work/${project.slug}/#page`,
+        url: `${site.url}/work/${project.slug}`,
+        name: project.title,
+        description: project.challenge,
+        isPartOf: { "@id": `${site.url}/#website` },
+        mainEntity: { "@id": `${site.url}/work/${project.slug}/#work` },
+        primaryImageOfPage: project.heroPoster
+          ? { "@type": "ImageObject", url: `${site.url}${project.heroPoster}` }
+          : undefined,
+      },
+      {
+        "@type": "CreativeWork",
+        "@id": `${site.url}/work/${project.slug}/#work`,
+        name: project.title,
+        about: project.industry,
+        description: project.challenge,
+        author: { "@id": `${site.url}/about/#person` },
+        creator: { "@id": `${site.url}/#organization` },
+        keywords: project.services.join(", "),
+        url: `${site.url}/work/${project.slug}`,
+        mainEntityOfPage: { "@id": `${site.url}/work/${project.slug}/#page` },
+        image: project.heroPoster ? `${site.url}${project.heroPoster}` : undefined,
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+          { "@type": "ListItem", position: 2, name: "Brand Strategy & Systems", item: `${site.url}/work` },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: project.title,
+            item: `${site.url}/work/${project.slug}`,
+          },
+        ],
+      },
+    ],
   };
 
   // Audit found this always picked the first `featured` project that
@@ -147,6 +179,12 @@ export default async function CaseStudyPage({ params }: Props) {
           minHeight="70vh"
           accentColor={project.heroVideo ? project.accent : undefined}
         >
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-4 right-0 select-none whitespace-nowrap font-display text-[clamp(3rem,13vw,9rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+          >
+            {project.industry}
+          </span>
           <Container className="relative py-20">
             <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal>
@@ -222,6 +260,9 @@ export default async function CaseStudyPage({ params }: Props) {
                 <Block id="outcome" title="Outcome" eyebrow="What actually happened" accent={project.accent}>
                   {project.outcome}
                 </Block>
+              </Reveal>
+              <Reveal delay={0.44}>
+                <Block title="Evidence boundary">{project.evidenceNote}</Block>
               </Reveal>
               {project.reflection && (
                 <Reveal delay={0.48}><Block title="Reflection">{project.reflection}</Block></Reveal>

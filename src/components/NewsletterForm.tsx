@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { newsletterSchema, type NewsletterFormValues } from "@/lib/newsletter-schema";
 import { Magnetic } from "@/components/Magnetic";
 import { EASE_AIR } from "@/lib/motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 type Status = "idle" | "submitting" | "success" | "already" | "error";
 
@@ -18,7 +19,9 @@ type Status = "idle" | "submitting" | "success" | "already" | "error";
 export function NewsletterForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
+  const successRef = useRef<HTMLParagraphElement>(null);
+  const errorRef = useRef<HTMLSpanElement>(null);
 
   const {
     register,
@@ -28,6 +31,11 @@ export function NewsletterForm() {
   } = useForm<NewsletterFormValues>({
     resolver: zodResolver(newsletterSchema),
   });
+
+  useEffect(() => {
+    if (status === "success" || status === "already") successRef.current?.focus();
+    if (status === "error") errorRef.current?.focus();
+  }, [status]);
 
   async function onSubmit(values: NewsletterFormValues) {
     setStatus("submitting");
@@ -60,6 +68,8 @@ export function NewsletterForm() {
   if (status === "success" || status === "already") {
     return (
       <motion.p
+        ref={successRef}
+        tabIndex={-1}
         role="status"
         initial={prefersReducedMotion ? undefined : { opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
@@ -84,6 +94,7 @@ export function NewsletterForm() {
         aria-hidden="true"
         {...register("company_website")}
       />
+      <input type="hidden" value="newsletter" {...register("source")} />
       <div className="flex-1">
         <label htmlFor="newsletter-email" className="sr-only">
           Email address
@@ -103,7 +114,7 @@ export function NewsletterForm() {
           </span>
         )}
         {status === "error" && serverError && (
-          <span role="alert" className="mt-1 block text-xs text-clay">
+          <span ref={errorRef} tabIndex={-1} role="alert" className="mt-1 block text-xs text-clay focus:outline-none">
             {serverError}
           </span>
         )}

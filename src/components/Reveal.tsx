@@ -18,16 +18,10 @@ export function Reveal({
   children,
   className,
   delay = 0,
-  // Optional per-section pacing (Phase 2 motion hierarchy): most
-  // sections keep the default 0.6s; the deliberately calm chapters
-  // (Services' FAQ, Book Call) pass a longer duration so their
-  // entrances read slower and quieter than everything before them.
-  duration = 0.6,
 }: {
   children: React.ReactNode;
   className?: string;
   delay?: number;
-  duration?: number;
 }) {
   const prefersReducedMotion = useReducedMotion();
   const [ref, visible] = useRevealTrigger("0px 0px -80px 0px");
@@ -42,7 +36,7 @@ export function Reveal({
       className={className}
       initial={{ opacity: 0, y: 20 }}
       animate={visible ? { opacity: 1, y: 0 } : undefined}
-      transition={{ duration, ease: EASE_AIR, delay }}
+      transition={{ duration: 0.6, ease: EASE_AIR, delay }}
     >
       {children}
     </motion.div>

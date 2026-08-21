@@ -2,21 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
-// Palette re-keyed (Aug 2026) from the warm five-element hexes to the
-// codified earth-first desaturated greens (CLAUDE.md design language).
-// Root cause of a recurring "why is this section orangish" bug class:
-// this shader's clay/ochre uniforms drifted a warm amber wash over
-// every scene it sat on — visibly re-warming chapters whose footage
-// had been deliberately cool-graded (the slate summit, the mist
-// ground). The drift now stays inside the green/mist family, so the
-// shader adds organic light without ever fighting a chapter's grade.
-const ECOSYSTEM_HEX = {
-  forest: "#1F3A28",
-  moss: "#556B4A",
-  sage: "#8FAE83",
-  olive: "#7D8E52",
-  mist: "#DDE2DC",
-} as const;
+import { ELEMENT_HEX } from "@/lib/sectionWash";
 
 // The one Three.js moment on the site (Services' Education section) —
 // deliberately vanilla `three`, not @react-three/fiber/drei. Two prior
@@ -26,7 +12,7 @@ const ECOSYSTEM_HEX = {
 // *objects* (shapes, geometry, lighting) competing with an editorial,
 // photographic, warm-earthy identity. This avoids that entirely: no
 // geometry beyond a flat full-bleed plane, no simulated props — just
-// the ecosystem greens (ECOSYSTEM_HEX below) drifting through a slow GLSL
+// the five element colors (ELEMENT_HEX) drifting through a slow GLSL
 // blend, closer to light and grain than to a rendered "scene." drei's
 // own <ScrollControls> was also avoided on purpose — it's a second
 // scroll-virtualization system that would collide with Lenis, which
@@ -99,6 +85,29 @@ function hexToVec3(hex: string): [number, number, number] {
   return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
 }
 
+// Keep this module-wide so pages with several ambient chapters probe the
+// browser once, not once per chapter. Some privacy-first and cloud browsers
+// expose a canvas but deliberately disable WebGL; Three logs a noisy renderer
+// error before throwing in that case. A quiet capability check preserves the
+// photographic fallback the component already promises.
+let webGlAvailable: boolean | undefined;
+
+function supportsWebGL() {
+  if (webGlAvailable !== undefined) return webGlAvailable;
+
+  try {
+    const canvas = document.createElement("canvas");
+    webGlAvailable = Boolean(
+      canvas.getContext("webgl2", { failIfMajorPerformanceCaveat: true }) ||
+        canvas.getContext("webgl", { failIfMajorPerformanceCaveat: true })
+    );
+  } catch {
+    webGlAvailable = false;
+  }
+
+  return webGlAvailable;
+}
+
 export function AmbientElementShader({ className, opacity = 0.35 }: { className?: string; opacity?: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -115,6 +124,11 @@ export function AmbientElementShader({ className, opacity = 0.35 }: { className?
     let cleanup: (() => void) | undefined;
 
     (async () => {
+      if (!supportsWebGL()) {
+        if (!disposed) setSupported(false);
+        return;
+      }
+
       const THREE = await import("three");
 
       let ctxCanvas: HTMLCanvasElement;
@@ -143,11 +157,11 @@ export function AmbientElementShader({ className, opacity = 0.35 }: { className?
         transparent: true,
         uniforms: {
           uTime: { value: 0 },
-          uEarth: { value: hexToVec3(ECOSYSTEM_HEX.forest) },
-          uWater: { value: hexToVec3(ECOSYSTEM_HEX.moss) },
-          uFire: { value: hexToVec3(ECOSYSTEM_HEX.sage) },
-          uAir: { value: hexToVec3(ECOSYSTEM_HEX.mist) },
-          uSpace: { value: hexToVec3(ECOSYSTEM_HEX.olive) },
+          uEarth: { value: hexToVec3(ELEMENT_HEX.earth) },
+          uWater: { value: hexToVec3(ELEMENT_HEX.water) },
+          uFire: { value: hexToVec3(ELEMENT_HEX.fire) },
+          uAir: { value: hexToVec3(ELEMENT_HEX.air) },
+          uSpace: { value: hexToVec3(ELEMENT_HEX.space) },
           uOpacity: { value: opacity },
         },
       });
@@ -163,20 +177,11 @@ export function AmbientElementShader({ className, opacity = 0.35 }: { className?
       const resizeObserver = new ResizeObserver(resize);
       resizeObserver.observe(container);
 
-      // Frame-capped to 30fps — a Lighthouse profile of Services (which
-      // runs up to six instances of this shader) attributed its longest
-      // main-thread tasks to uncapped per-frame render work. The drift
-      // here moves at uTime * 0.03; at that speed the difference
-      // between 60 and 30 renders a second is imperceptible, and the
-      // cap halves this component's total CPU/GPU cost page-wide.
-      let lastRender = 0;
       function tick(time: number) {
         if (!running || !renderer) return;
-        raf = requestAnimationFrame(tick);
-        if (time - lastRender < 33) return;
-        lastRender = time;
         material.uniforms.uTime.value = time * 0.001;
         renderer.render(scene, camera);
+        raf = requestAnimationFrame(tick);
       }
 
       const intersectionObserver = new IntersectionObserver(

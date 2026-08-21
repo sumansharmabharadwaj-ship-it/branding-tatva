@@ -15,9 +15,10 @@ import { socialLinks } from "./constants";
 // This keeps the same close-every-page-consistently job (Footer already
 // renders on all 12 pages) but gets to the booking widget immediately,
 // side by side with a brand/CTA card and a contact card — like a taskbar,
-// not another full scene. The jagged peaks backdrop (restored on
-// direct request) sits behind a much shorter passage now that there's
-// far less content sitting on top of it.
+// not another full scene. own-jagged-peaks.mp4 stays as the backdrop
+// texture (chosen earlier because it isn't already load-bearing
+// elsewhere on Home right before this section), just behind a much
+// shorter passage now that there's far less content sitting on top of it.
 
 const WIDGET_CLASS =
   "rounded-2xl border border-white/15 bg-black/20 backdrop-blur-md p-5 sm:p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-black/25";
@@ -37,10 +38,15 @@ export function Footer() {
           way every other section-to-section boundary on the site
           already works. */}
 
-      {/* Backdrop restored to the original jagged peaks on direct
-          request; the dandelion release now lives in the Deliverables
-          chapter on Services instead. imagePosition biased down keeps
-          the pale sky band out of the section's top edge. */}
+      {/* imagePosition biased down — own-jagged-peaks' own frame is a
+          pale sunset sky over the top ~55%, jagged silhouettes only in
+          the bottom half; center-cropping (the default) put a visibly
+          bright sky band right at this section's own top edge, directly
+          under the closing moonlit-sea break above it — repeated
+          feedback flagged that exact band as a leftover "divider" even
+          after the actual stroke/border was already removed. Cropping
+          toward the peaks instead keeps the section reading as
+          continuously dark from the section above straight through. */}
       <TexturedDark
         image="/images/own-jagged-peaks.jpg"
         video="/videos/own-jagged-peaks.mp4"
@@ -88,12 +94,18 @@ export function Footer() {
             <div className={`${WIDGET_CLASS} flex flex-col justify-center gap-5 sm:w-[220px] sm:shrink-0`}>
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-ivory/50">Get in touch</p>
-                <a
-                  href={`mailto:${site.email}`}
-                  className="mt-2 block break-all text-sm text-ivory/80 transition-colors hover:text-ivory"
-                >
-                  {site.email}
-                </a>
+                {site.email ? (
+                  <a
+                    href={`mailto:${site.email}`}
+                    className="mt-2 block break-all text-sm text-ivory/80 transition-colors hover:text-ivory"
+                  >
+                    {site.email}
+                  </a>
+                ) : (
+                  <Link href="/contact" className="mt-2 block text-sm text-ivory/80 transition-colors hover:text-ivory">
+                    Use the project enquiry
+                  </Link>
+                )}
               </div>
               <div className="h-px w-8 bg-ivory/20" aria-hidden="true" />
               <div>

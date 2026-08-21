@@ -22,47 +22,61 @@ import { useEffect, type RefObject } from "react";
 // loaded, muted, autoplay video), while an explicit play() call
 // resolved immediately with no error. Harmless to call on a video
 // that's already playing.
-// Also pauses the video whenever it scrolls fully offscreen and resumes
-// it when it returns. A production Playwright sweep of Services found
-// all ten of the page's background videos decoding simultaneously —
-// every one of them, including nine that were nowhere near the
-// viewport. Ten concurrent decodes is real, page-wide work fighting the
-// scroll's frame budget for no visible benefit. A 25% rootMargin keeps
-// the resume ahead of the reveal, so a video is already playing again
-// by the time any part of it is actually visible — no visible freeze
-// frame on the way in. Only this hook's consumers (the always-on
-// full-bleed backgrounds: PhotoHero, TexturedDark, BackgroundVideo,
-// FeaturedWorkHero) get this; stage-managed components (PinnedSlider
-// etc.) own their play/pause explicitly and don't run through here.
 export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: boolean) {
   useEffect(() => {
     const el = ref.current;
-    if (!el || !active) return;
-    el.play().catch(() => {});
-    if (el.readyState >= 2) {
-      el.style.opacity = "1";
+    if (!el) return;
+    const video = el;
+    video.playbackRate = 1.1;
+    if (!active) {
+      video.pause();
+      return;
+    }
+
+    let inView = false;
+
+    function syncPlayback() {
+      if (inView) {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    }
+
+    // Keep offscreen background footage from occupying a decoder. Long
+    // cinematic pages can contain many video-backed chapters, while the
+    // visitor can only see one or two boundaries at a time. Intersection
+    // state is tied to the actual viewport and avoids relying on document
+    // visibility, which is unreliable in the cloud review pane.
+    const observer =
+      typeof IntersectionObserver === "undefined"
+        ? null
+        : new IntersectionObserver(
+            ([entry]) => {
+              inView = Boolean(entry?.isIntersecting);
+              syncPlayback();
+            },
+            { threshold: 0.04 }
+          );
+
+    if (observer) {
+      observer.observe(video);
     } else {
-      el.addEventListener("loadeddata", onLoadedData);
+      inView = true;
+      syncPlayback();
+    }
+
+    if (video.readyState >= 2) {
+      video.style.opacity = "1";
     }
     function onLoadedData() {
-      if (el) el.style.opacity = "1";
+      video.style.opacity = "1";
     }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.play().catch(() => {});
-        } else {
-          el.pause();
-        }
-      },
-      { rootMargin: "25% 0px" }
-    );
-    observer.observe(el);
-
+    video.addEventListener("loadeddata", onLoadedData);
     return () => {
-      el.removeEventListener("loadeddata", onLoadedData);
-      observer.disconnect();
+      observer?.disconnect();
+      video.removeEventListener("loadeddata", onLoadedData);
+      video.pause();
     };
   }, [ref, active]);
 }

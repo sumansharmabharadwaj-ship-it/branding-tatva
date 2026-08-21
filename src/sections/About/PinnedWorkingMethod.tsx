@@ -54,7 +54,7 @@ function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
               alt="Suman Sharma"
               width={480}
               height={480}
-              priority
+              sizes="(min-width: 640px) 192px, 160px"
               className="aspect-square w-40 rounded-full object-cover sm:w-48"
             />
           </Reveal>
@@ -83,19 +83,17 @@ function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
               <h2 className="text-display-sm font-display font-normal text-ivory">
                 Recent experience
               </h2>
-            </Reveal>
-            <ul className="mt-4 space-y-4">
-              {experience.map((role, i) => (
-                <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
-                  <Reveal delay={0.18 + i * 0.06}>
+              <ul className="mt-4 space-y-4">
+                {experience.map((role, i) => (
+                  <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
                     <p className="font-medium text-ivory">{role.role}</p>
                     <p className="text-sm text-ivory/70">
                       {role.org} &middot; {role.period}
                     </p>
-                  </Reveal>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
           </div>
         </Container>
       </ClipReveal>

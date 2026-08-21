@@ -4,8 +4,7 @@ import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
-import { LazyAmbientShader } from "@/components/LazyAmbientShader";
-import { AnimatedStat } from "@/components/AnimatedStat";
+import { AmbientElementShader } from "@/components/AmbientElementShader";
 
 // "Education" objection — why premium-reading brands look different.
 // Reframed from the brief's literal "looks expensive / feels expensive"
@@ -39,88 +38,39 @@ export function PerceptionLadder() {
 
   return (
     <div className="relative py-20 sm:py-28">
-      <LazyAmbientShader opacity={0.16} />
-      {/* Was a single centered max-w-2xl column — the same dead-space
-          pattern already fixed on the Risk removal section, left
-          unaddressed here. The ladder itself is unchanged; a real proof
-          companion now fills the second column instead of empty space
-          on wide viewports — the exact 0.71% to 2.81% climb already
-          named in this page's own hero, restated here as the concrete
-          instance of the abstract ladder a visitor just read. */}
-      <Container className="relative max-w-5xl">
+      <AmbientElementShader opacity={0.16} />
+      <Container className="relative max-w-2xl">
         <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Education</p>
-          {/* Phase 4 persuasion pass: "why some brands look different"
-              was observation at a distance — this makes the ladder about
-              the reader's own brand, already being ranked whether they
-              participate or so much as know about it. */}
-          <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
-            Your brand is already on this ladder.
+          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Education</p>
+          <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+            Why some brands look different.
           </h2>
-          <p className="mt-4 max-w-xl text-ivory/90">
-            Buyers place it there with or without your involvement. Climbing deliberately is the whole discipline of
-            branding.
+          <p className="mt-4 text-ivory/85">
+            A position on the same ladder every brand climbs, deliberately or by accident.
           </p>
         </Reveal>
 
-        <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_minmax(0,20rem)] lg:gap-16">
-          <div ref={trackRef} className="relative space-y-8 pl-6 sm:pl-8">
-            <div className="absolute inset-y-0 left-0 w-[2px] bg-ivory/15" aria-hidden="true" />
-            {!prefersReducedMotion && (
-              <motion.div
-                className="absolute left-0 top-0 w-[2px] origin-top bg-[#A0A690]"
-                style={{ height: "100%", scaleY: fillScale }}
-                aria-hidden="true"
-              />
-            )}
-            {/* Phase 2 motion direction — "the climb": each rung's dot
-                ignites in sequence as the fill line draws past it, so
-                the ladder is climbed rather than shown. Hover inspects
-                a rung — the row leans in, its dot glows. */}
-            {RUNGS.map((rung, i) => (
-              <Reveal key={rung.label} delay={i * 0.1}>
-                <div className="group relative transition-transform duration-300 hover:translate-x-1">
-                  <motion.span
-                    className="absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 bg-soil transition-shadow duration-300 group-hover:shadow-[0_0_10px_rgba(160,166,144,0.55)] sm:-left-[33px]"
-                    aria-hidden="true"
-                    initial={prefersReducedMotion ? { borderColor: "#A0A690" } : { borderColor: "rgba(244,239,230,0.25)", scale: 1 }}
-                    whileInView={
-                      prefersReducedMotion
-                        ? undefined
-                        : {
-                            borderColor: "#A0A690",
-                            scale: [1, 1.35, 1],
-                            transition: { delay: 0.35 + i * 0.18, duration: 0.5 },
-                          }
-                    }
-                    viewport={{ once: true, margin: "0px 0px -25% 0px" }}
-                  />
-                  <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{rung.label}</p>
-                  <p className="mt-1 text-sm text-ivory/90 transition-colors duration-300 group-hover:text-ivory/95 sm:text-base">
-                    {rung.text}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal delay={0.15} className="lg:sticky lg:top-28 lg:self-start">
-            <div className="rounded-2xl border border-ivory/15 p-6 backdrop-blur-md sm:p-8" style={{ backgroundColor: "rgba(26,32,38,0.55)" }}>
-              <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">One real climb</p>
-              <p className="mt-4 font-display text-4xl font-normal text-ivory sm:text-5xl">
-                <AnimatedStat value="0.71%" />
-              </p>
-              <p className="mt-1 text-sm text-ivory/70">Where one client&apos;s engagement started.</p>
-              <div className="my-6 h-px bg-ivory/15" aria-hidden="true" />
-              {/* The climb's destination keeps a highlight — sage tint
-                  (blendHex(sage, ivory, 45) precomputed), the same
-                  accent as the ladder's own fill line. */}
-              <p className="font-display text-4xl font-normal text-[#A0A690] sm:text-5xl">
-                <AnimatedStat value="2.81%" />
-              </p>
-              <p className="mt-1 text-sm text-ivory/70">Eight weeks after climbing this exact ladder.</p>
-            </div>
-          </Reveal>
+        <div ref={trackRef} className="relative mt-12 space-y-8 pl-6 sm:pl-8">
+          <div className="absolute inset-y-0 left-0 w-[2px] bg-ivory/15" aria-hidden="true" />
+          {!prefersReducedMotion && (
+            <motion.div
+              className="absolute left-0 top-0 w-[2px] origin-top bg-sandstone"
+              style={{ height: "100%", scaleY: fillScale }}
+              aria-hidden="true"
+            />
+          )}
+          {RUNGS.map((rung, i) => (
+            <Reveal key={rung.label} delay={i * 0.1}>
+              <div className="relative">
+                <span
+                  className="absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-ivory/25 bg-soil sm:-left-[33px]"
+                  aria-hidden="true"
+                />
+                <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{rung.label}</p>
+                <p className="mt-1 text-sm text-ivory/80 sm:text-base">{rung.text}</p>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </Container>
     </div>

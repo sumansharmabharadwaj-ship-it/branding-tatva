@@ -5,7 +5,6 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
-import { NatureAccent } from "@/components/NatureAccent";
 import { TiltCard } from "@/components/TiltCard";
 import { PerspectiveReveal } from "@/components/PerspectiveReveal";
 import { PhotoHero } from "@/components/PhotoHero";
@@ -17,14 +16,15 @@ import { blogPosts } from "@/data/blog";
 import { elements } from "@/data/elements";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { SectionJumpNav } from "@/components/SectionJumpNav";
 
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Insights",
   description:
     "Notes on brand strategy, positioning, and the elemental approach, from Branding Tatva.",
-  alternates: { canonical: "/blog" },
+  alternates: { canonical: "/insights" },
   openGraph: {
-    title: "Blog | Branding Tatva",
+    title: "Insights | Branding Tatva",
     description:
       "Notes on brand strategy, positioning, and the elemental approach, from Branding Tatva.",
     type: "website",
@@ -41,6 +41,30 @@ function elementColor(slug: string) {
 // lead tile instead of three identical cards.
 const GRID_TILE_CLASSES = ["sm:col-span-2 sm:min-h-64", "", ""];
 
+const OBSERVATORY = [
+  {
+    number: "01",
+    element: "space",
+    title: "Systems before surfaces",
+    thesis: "A brand becomes memorable when positioning, expression, language, experience, and repetition reinforce one decision.",
+    href: "/insights/five-elements-working-as-one",
+  },
+  {
+    number: "02",
+    element: "fire",
+    title: "Recognition before reach",
+    thesis: "Visibility creates an impression. Distinctiveness and consistency decide whether that impression survives.",
+    href: "/insights/visible-versus-remembered",
+  },
+  {
+    number: "03",
+    element: "water",
+    title: "Diagnosis before redesign",
+    thesis: "An audit finds the exact point where a brand stops telling one coherent story, before new execution makes the seam more expensive.",
+    href: "/insights/what-a-brand-audit-actually-finds",
+  },
+] as const;
+
 export default function BlogPage() {
   const sorted = [...blogPosts].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
@@ -52,36 +76,77 @@ export default function BlogPage() {
       <ScrollProgress />
       <main id="main-content">
         <PhotoHero
-          video="/videos/own-dusk-ridge.mp4"
-          poster="/images/own-dusk-ridge-poster.jpg"
-          minHeight="60vh"
+          video="/videos/higgsfield-redwood-canopy.mp4"
+          poster="/images/higgsfield-redwood-canopy-poster.jpg"
+          minHeight="70vh"
         >
-          <Container className="relative py-20 text-center">
-            <Reveal className="relative">
-              {/* Ripple — ideas spreading outward — same quiet, low-opacity
-                  accent Footer/Contact/Services already carry near their
-                  own headings. */}
-              <NatureAccent
-                variant="ripple"
-                className="pointer-events-none absolute -top-6 left-1/2 hidden h-10 w-10 translate-x-[60%] text-ivory/20 sm:block"
-              />
-              <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                Blog
-              </span>
-              <SplitReveal
-                as="h1"
-                className="mx-auto mt-6 max-w-2xl font-display text-[clamp(2rem,4.5vw,3.25rem)] font-normal leading-[1.1] text-ivory"
-              >
-                Notes on brand strategy, one element at a time.
-              </SplitReveal>
-              <p className="mx-auto mt-4 max-w-xl text-ivory/80">
-                Short, specific writing on positioning, audience, and the
-                elemental approach, the kind that&apos;s
-                actually useful rather than a content calendar.
-              </p>
-            </Reveal>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-5 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,14vw,10rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+          >
+            Observe
+          </span>
+          <Container className="relative py-20">
+            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+              <Reveal>
+                <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
+                  Research observatory
+                </span>
+                <SplitReveal
+                  as="h1"
+                  className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.75rem)] font-normal leading-[1.03] text-ivory"
+                >
+                  Ideas that make brand decisions easier to see.
+                </SplitReveal>
+                <p className="mt-5 max-w-xl text-ivory/80">
+                  Original field notes on recognition, perception, positioning, and the systems that turn strategy into something people remember.
+                </p>
+              </Reveal>
+              <Reveal delay={0.1} className="border-l border-ivory/20 pl-6 lg:max-w-64 lg:pb-2">
+                <p className="text-xs font-medium uppercase tracking-[0.22em] text-ivory/55">Current lenses</p>
+                <div className="mt-4 flex flex-wrap gap-2 lg:flex-col lg:items-start">
+                  {["Recognition", "Perception", "Brand systems"].map((lens) => (
+                    <span key={lens} className="rounded-full border border-ivory/25 px-3 py-1 text-xs text-ivory/85">
+                      {lens}
+                    </span>
+                  ))}
+                </div>
+              </Reveal>
+            </div>
           </Container>
         </PhotoHero>
+
+        <section id="observatory" className="scroll-mt-24 bg-soil py-20 sm:py-28">
+          <Container>
+            <Reveal className="grid gap-6 border-b border-ivory/15 pb-10 lg:grid-cols-[0.55fr_1fr] lg:items-end">
+              <div>
+                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Three active questions</p>
+                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">The research field.</h2>
+              </div>
+              <p className="max-w-2xl text-ivory/75">
+                Each territory begins with a buyer problem, develops a clear argument, and ends with a practical decision beyond content-calendar filler.
+              </p>
+            </Reveal>
+            <div>
+              {OBSERVATORY.map((item, index) => (
+                <Reveal key={item.number} delay={index * 0.07}>
+                  <Link
+                    href={item.href}
+                    className="group grid gap-4 border-b border-ivory/15 py-7 transition-colors hover:bg-ivory/[0.03] sm:grid-cols-[5rem_1fr_1.4fr_auto] sm:items-center sm:px-3"
+                  >
+                    <span className="font-display text-2xl text-ivory/25">{item.number}</span>
+                    <span className="flex items-center gap-3 font-display text-xl text-ivory">
+                      <ElementGlyph slug={item.element} className="h-5 w-5 text-sandstone" strokeWidth={1.3} />
+                      {item.title}
+                    </span>
+                    <span className="text-sm leading-relaxed text-ivory/70">{item.thesis}</span>
+                    <span className="text-sm text-sandstone transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </section>
 
         {/* Was bold solid Soil — per direct feedback pointing at the
             reference site's own restraint, card grids read better on a
@@ -94,7 +159,7 @@ export default function BlogPage() {
             whole section meant a slow-to-fire reveal trigger showed
             blank page background during fast real-device scrolling.
             Same fix as Home's PerspectiveReveal/ClipReveal sections. */}
-        <section className="relative overflow-hidden bg-background-alt py-16">
+        <section id="notes" className="relative scroll-mt-24 overflow-hidden bg-background-alt py-16">
           {/* Ghost watermark word, same technique as Home's "ELEMENTS"
               and About's "WHY" — soil-toned rather than ivory-toned
               since this section is light, not dark, the inverse of
@@ -103,6 +168,12 @@ export default function BlogPage() {
               section's own background does (see comment above): a
               slow-to-fire reveal trigger would hide it along with
               everything else it wraps. */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-4 left-0 select-none whitespace-nowrap font-display text-[clamp(3rem,11vw,9rem)] font-bold leading-none text-soil/[0.05] sm:-top-8"
+          >
+            FIELD NOTES
+          </span>
         <PerspectiveReveal>
           <Container>
             <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
@@ -119,7 +190,7 @@ export default function BlogPage() {
                         (~1.3:1) to separate by color alone now that the
                         section isn't dark Soil anymore. */}
                     <Link
-                      href={`/blog/${post.slug}`}
+                      href={`/insights/${post.slug}`}
                       className="spotlight-card flex h-full flex-col rounded-lg border border-t-2 border-soil/10 bg-background-elevated p-6 shadow-elevation-sm transition-colors duration-300"
                       style={{
                         borderTopColor: elementColor(post.element),
@@ -181,32 +252,42 @@ export default function BlogPage() {
             in the library: a clear stream over rocks, a real visual
             match for "clarity," now upgraded from a static image to
             video. */}
-        <TexturedDark
-          image="/images/higgsfield-stream-clarity-poster.jpg"
-          video="/videos/higgsfield-stream-clarity.mp4"
-          className="py-24 text-center sm:pb-28"
-        >
-          <ClipReveal>
-            <Container>
-              <h2 className="text-display-md font-display font-normal text-ivory">
-                Want writing like this, applied to your own brand?
-              </h2>
-              <p className="mx-auto mt-4 max-w-md text-ivory/80">
-                Everything here started as a real question from a real
-                project. Tell me yours, and I&apos;ll start there too.
-              </p>
-              <div className="mt-8">
-                {/* Was "Book a Brand Strategy Session," identical to Home's
-                    and Work's own closing CTAs — same destination, worded
-                    to match this page's own conversational framing instead
-                    of repeating the same three pages' label verbatim. */}
-                <LinkButton href="/contact">Start a Brand Conversation</LinkButton>
-              </div>
-            </Container>
-          </ClipReveal>
-        </TexturedDark>
+        <div id="apply" className="scroll-mt-24">
+          <TexturedDark
+            image="/images/higgsfield-stream-clarity-poster.jpg"
+            video="/videos/higgsfield-stream-clarity.mp4"
+            className="py-24 text-center sm:pb-28"
+          >
+            <ClipReveal>
+              <Container>
+                <p className="text-sm font-medium uppercase tracking-[0.22em] text-sandstone">
+                  Applied thinking
+                </p>
+                <h2 className="mx-auto mt-3 max-w-3xl text-display-md font-display font-normal text-ivory">
+                  See how the thinking becomes a working brand system.
+                </h2>
+                <p className="mx-auto mt-4 max-w-xl text-ivory/80">
+                  Every idea should connect to a mechanism, a piece of evidence, and a clearer decision. Explore the work—or bring one live question to the strategy room.
+                </p>
+                <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                  <LinkButton href="/work">Explore Brand Strategy & Systems</LinkButton>
+                  <LinkButton href="/contact" variant="secondary">
+                    Bring a question to the strategy room
+                  </LinkButton>
+                </div>
+              </Container>
+            </ClipReveal>
+          </TexturedDark>
+        </div>
       </main>
       <Footer />
+      <SectionJumpNav
+        items={[
+          { href: "#observatory", label: "Observatory" },
+          { href: "#notes", label: "Field notes" },
+          { href: "#apply", label: "Apply" },
+        ]}
+      />
     </>
   );
 }

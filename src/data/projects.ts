@@ -8,7 +8,8 @@ export type Project = {
   strategy?: string;
   execution?: string;
   services: string[];
-  outcome: string; // only verified claims — no invented metrics
+  outcome: string; // bounded deliverable/outcome claim — no invented metrics
+  evidenceNote: string; // tells the reader exactly what is and is not currently evidenced
   // hook: a one-line opinionated headline for the Home page's Selected
   // work cards, surfacing this project's actual strategic call instead
   // of a neutral industry label — grounded in challenge/insight/
@@ -17,7 +18,7 @@ export type Project = {
   reflection?: string;
   featured: boolean;
   accent: string; // card accent color, varies per project so the grid isn't monotone
-  stats?: { value: string; label: string }[]; // real, verified numbers only — pulled from `outcome` for visual callouts
+  stats?: { value: string; label: string }[]; // only figures evidenced by the delivered project file itself
   closingQuote?: string; // the case-study page's closing VideoBreak — grounded in this project's own challenge/insight, not a generic line shared across every project
   cardImage?: string; // background photo for the Home page's secondary "Selected work" cards
   cardImagePosition?: string; // object-position override for cardImage/cardVideo — CinematicCardMedia defaults to center, which crops off-center subjects
@@ -28,8 +29,9 @@ export type Project = {
   closingPoster?: string;
 };
 
-// Client names cleared for public use by Suman. Every field below is
-// grounded in the source strategy documents — see ASSET_INVENTORY.md.
+// Every field below is grounded in the source strategy documents — see
+// ASSET_INVENTORY.md. Performance figures are withheld wherever the
+// original report and publication permission are not both archived.
 // Executive Springboard intentionally stays higher-level than the others:
 // I have a verified summary of that work but not the full source text to
 // safely add further specifics without risking invention.
@@ -39,19 +41,21 @@ export const projects: Project[] = [
     title: "Dr. Haley Nutrition",
     industry: "Nutrition & wellness",
     challenge:
-      "A nutrition brand's social presence was growing in volume while quality lagged behind. More posts were failing to translate into an audience that would actually stay. The two month engagement, running December 2025 to January 2026, needed to prove whether fewer, sharper posts could outperform a heavier posting schedule.",
+      "A nutrition brand's social presence was growing in volume while quality lagged behind. More posts were failing to translate into an audience that would actually stay. The engagement needed to test whether a lighter, more deliberate publishing rhythm could improve relevance.",
     insight:
       "The account was gaining reach while trust lagged behind. Impressions and follower counts looked fine in isolation, but the content was falling short of the kind of engagement that signals an algorithm to keep showing it to new people.",
     strategy:
       "Shifted the entire approach from volume first to quality first across Instagram, Facebook, and LinkedIn, deliberately posting less but making every post earn its place.",
     execution:
-      "Cut Instagram posting from 23 posts in December to 12 in January. Kept Facebook's cadence steady but tightened relevance. Used LinkedIn, previously dormant, to start building visibility with a professional audience from a low base.",
+      "Reduced Instagram publishing, kept Facebook's cadence steady while tightening relevance, and used LinkedIn to begin building visibility with a professional audience.",
     services: ["Space · ongoing content management", "Air · content strategy"],
     outcome:
-      "Instagram gained 126 new followers in January from 12 posts, more than December's 111 followers from 23 posts. That's a 104% increase in followers earned per post, alongside a 1,350% jump in comments per post. Facebook grew steadily from roughly 59 to 69 total fans over the same period, with engagement per post up 67%. LinkedIn impressions rose 365%, and engagement rate climbed from 0.71% to 2.81%.",
+      "Delivered a two-month, cross-platform content strategy and management system built around fewer, more intentional posts, clearer channel roles, and ongoing review.",
+    evidenceNote:
+      "Evidence shown: delivered strategy and management scope. Performance figures are withheld until the original report and publication permission are archived.",
     hook: "Proof that posting less can outperform posting more, once what remains actually earns attention.",
     reflection:
-      "The clearest signal was impressions barely dropping (down just 10%) despite posting 48% less. The platform was actively rewarding the more relevant content instead of just showing it to fewer people. That's the difference between reach and trust.",
+      "The strategic lesson was to judge the system by relevance and response quality, with publishing volume treated as a secondary signal. That is the difference between reach and trust.",
     closingQuote:
       "Fewer posts, each one earning its place. That's the difference between being seen and being remembered.",
     cardImage: "/images/card-dr-haley-nutrition-poster.jpg",
@@ -62,12 +66,6 @@ export const projects: Project[] = [
     closingPoster: "/images/hero-valley-poster.jpg",
     featured: true,
     accent: "#5C6B4A", // sage
-    stats: [
-      { value: "104%", label: "more followers earned per post" },
-      { value: "1,350%", label: "jump in comments per post" },
-      { value: "365%", label: "rise in LinkedIn impressions" },
-      { value: "2.81%", label: "engagement rate, up from 0.71%" },
-    ],
   },
   {
     slug: "myshopineurope",
@@ -86,6 +84,8 @@ export const projects: Project[] = [
     services: ["Earth · brand foundation", "Air · messaging"],
     outcome:
       "Delivered a complete brand foundation and a full content operating system: positioning, content pillars, playbooks for each channel, and a rollout plan, quarter by quarter, connecting each phase to a specific business outcome (awareness, trust, leads, conversion).",
+    evidenceNote:
+      "Evidence shown: delivered brand foundation and channel operating system. No post-launch performance outcome is claimed.",
     hook: "A marketplace that refused to compete on price. Craft and origin became the actual advantage worth selling.",
     reflection:
       "The sharpest positioning call was refusing to let 'MyShopInEurope' default to meaning 'cheap Indian goods.' Repositioning around craft and origin, ahead of price, changes who the platform can credibly sell to.",
@@ -113,6 +113,8 @@ export const projects: Project[] = [
     services: ["Water · customer journey", "Air · content strategy"],
     outcome:
       "Delivered a structured content system, built platform by platform, specifically around driving webinar registrations rather than generic engagement metrics.",
+    evidenceNote:
+      "Evidence shown: delivered competitive audit and platform-by-platform content system. No registration uplift is claimed.",
     hook: "Content built to end in a registration, a real one, well beyond a like. The difference between attention and a finished strategy.",
     closingQuote:
       "Content that only earns attention is unfinished. It has to lead somewhere before it counts as strategy.",
@@ -142,6 +144,8 @@ export const projects: Project[] = [
     services: ["Fire · content direction", "Air · messaging"],
     outcome:
       "Delivered a full campaign reset: repositioned content themes, five formats ready to shoot, and complete video scripts, moving the brand's public perception from 'herbal supplement' toward 'modern, supplement first wellness brand.'",
+    evidenceNote:
+      "Evidence shown: delivered campaign direction, content formats, and scripts. No post-launch sales or audience outcome is claimed.",
     reflection:
       "The work that landed best was the most native, rather than the most polished. Content that looked like a real person's Instagram, rather than an ad, consistently outperformed anything that read as produced.",
     closingQuote:
@@ -164,18 +168,13 @@ export const projects: Project[] = [
     strategy:
       "Built a portfolio of sixteen pieces across four distinct content types, each doing a different job: Research Papers to validate claims with evidence, Perspective Pieces to challenge assumptions leaders had yet to question, Blogs to make emerging technology feel relevant to daily life, and Articles for fast, high visibility consumption.",
     execution:
-      "Grounded the research pillar in a real proof of concept: an IoT edge integration case study with the Delhi Jal Board showing a measurable drop in chemical over dosing (15% to 20% down to under 3%), rather than relying on abstract claims. Paired that rigor with a deliberately provocative perspective piece questioning the industry's SaaS hype cycle, built around three direct questions every technology leader has to answer.",
+      "Grounded the research pillar in a documented IoT edge integration case study with the Delhi Jal Board, rather than relying on abstract claims. Paired that rigor with a deliberately provocative perspective piece questioning the industry's SaaS hype cycle, built around three direct questions every technology leader has to answer.",
     services: ["Air · content strategy"],
     outcome:
       "Produced a complete content portfolio of sixteen pieces spanning research, opinion, education, and fast consumption formats, structured around a deliberate arc: validate, challenge, humanise, define, rather than a loose content calendar.",
-    // Real numbers, both already stated in `execution`/`outcome` above,
-    // just never extracted into a structured stat before now — this
-    // was the one project besides Dr. Haley Nutrition with an actual
-    // quantifiable result in its own copy, not a number invented to
-    // fill the field. The dosing figure comes first (Delhi Jal Board,
-    // the research pillar's real proof point), the piece count second.
+    evidenceNote:
+      "Evidence shown: the authored sixteen-piece portfolio and its documented source material. No business-performance outcome is attributed to the engagement.",
     stats: [
-      { value: "Under 3%", label: "chemical over dosing, down from 15 to 20%" },
       { value: "16", label: "content pieces across four formats" },
     ],
     closingQuote:

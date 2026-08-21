@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: post.title,
     description: post.excerpt,
-    alternates: { canonical: `/blog/${post.slug}` },
+    alternates: { canonical: `/insights/${post.slug}` },
     openGraph: {
       title: post.title,
       description: post.excerpt,
@@ -71,9 +71,9 @@ export default async function BlogPostPage({ params }: Props) {
     image: `${site.url}/opengraph-image`,
     datePublished: post.publishedAt,
     dateModified: post.publishedAt,
-    author: { "@id": `${site.url}/#person` },
+    author: { "@id": `${site.url}/about/#person` },
     publisher: { "@id": `${site.url}/#organization` },
-    mainEntityOfPage: `${site.url}/blog/${post.slug}`,
+    mainEntityOfPage: `${site.url}/insights/${post.slug}`,
   };
 
   return (
@@ -104,6 +104,12 @@ export default async function BlogPostPage({ params }: Props) {
               <div className="absolute inset-0 bg-soil/80" />
             </>
           )}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,16vw,11rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+          >
+            {element?.name ?? post.element}
+          </span>
           <Container className="relative">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal>
@@ -154,7 +160,7 @@ export default async function BlogPostPage({ params }: Props) {
                     style={{ color: element?.color }}
                   />
                   <div className="h-16 w-px" style={{ backgroundColor: `${element?.color ?? "#B85A34"}40` }} />
-                  <Link href="/blog" className="link-underline text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+                  <Link href="/insights" className="link-underline text-xs font-medium uppercase tracking-wide text-foreground-secondary">
                     &larr; All posts
                   </Link>
                   {/* Audit found every post ends with only two options,
@@ -196,7 +202,7 @@ export default async function BlogPostPage({ params }: Props) {
 
                 <div className="mt-16 flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-                    <Link href="/blog" className="link-underline text-sm font-medium text-soil lg:hidden">
+                    <Link href="/insights" className="link-underline text-sm font-medium text-soil lg:hidden">
                       &larr; All posts
                     </Link>
                     {/* Mirrors the sticky sidebar's CTA for mobile, where
@@ -207,7 +213,7 @@ export default async function BlogPostPage({ params }: Props) {
                   </div>
                   {next && (
                     <Link
-                      href={`/blog/${next.slug}`}
+                      href={`/insights/${next.slug}`}
                       className="link-underline text-sm font-medium text-soil sm:ml-auto"
                     >
                       Next: {next.title} &rarr;

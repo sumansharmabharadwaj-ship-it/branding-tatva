@@ -7,52 +7,26 @@ import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { WorkGrid } from "@/sections/CaseStudies";
-import { BrandStudies } from "@/sections/CaseStudies/BrandStudies";
-import { brandStudies } from "@/data/brandStudies";
-import { site } from "@/data/site";
-
-// AEO/GEO: the brand studies as structured data, so search and answer
-// engines can cite each dissection individually. Articles, deliberately
-// never CaseStudy/Service types — these are independent analyses of the
-// public record, and the schema must say so as clearly as the page copy.
-const studiesJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  name: "Brand studies",
-  description:
-    "Independent brand strategy analyses of renowned brands, written as teaching. No client relationship with the brands analyzed.",
-  itemListElement: brandStudies.map((study, i) => ({
-    "@type": "ListItem",
-    position: i + 1,
-    item: {
-      "@type": "Article",
-      headline: `${study.brand}: ${study.lens}`,
-      about: study.brand,
-      abstract: study.premise,
-      url: `${site.url}/work`,
-    },
-  })),
-};
+import { WorkServicesJourney } from "@/sections/Work/WorkServicesJourney";
 import { ClipReveal } from "@/components/ClipReveal";
 import { AnnotatedVisual } from "@/components/AnnotatedVisual";
 import { KineticMarquee } from "@/components/KineticMarquee";
-import { TexturedDark } from "@/components/TexturedDark";
-import { LinkButton } from "@/components/Button";
+import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { projects } from "@/data/projects";
 import { elements } from "@/data/elements";
+import { packages } from "@/data/services";
+import { site } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "Work",
-  description:
-    "Selected brand and content strategy work, plus independent brand studies dissecting Coca Cola, Apple, Nike, Burberry and Tim Hortons.",
+  title: "Brand Strategy, Identity & Brand Systems",
+  description: "Brand strategy, connected delivery systems, selected work, decision-led engagements, and a practical brand health check.",
   alternates: { canonical: "/work" },
   openGraph: {
-    title: "Work | Branding Tatva",
-    description:
-    "Selected brand and content strategy work, plus independent brand studies dissecting Coca Cola, Apple, Nike, Burberry and Tim Hortons.",
+    title: "Brand Strategy, Identity & Brand Systems | Branding Tatva",
+    description: "Brand strategy, connected delivery systems, selected work, decision-led engagements, and a practical brand health check.",
     type: "website",
   },
 };
@@ -66,6 +40,61 @@ export default function WorkPage() {
   const elementsCovered = elements
     .map((e) => e.slug)
     .filter((slug) => projects.some((p) => p.services.some((s) => s.toLowerCase().startsWith(slug))));
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${site.url}/work/#page`,
+        url: `${site.url}/work`,
+        name: "Brand Strategy, Identity & Brand Systems",
+        description:
+          "Brand strategy, connected delivery systems, selected work, decision-led engagements, and a practical brand health check.",
+        isPartOf: { "@id": `${site.url}/#website` },
+        about: { "@id": `${site.url}/#organization` },
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: projects.length,
+          itemListElement: projects.map((project, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: project.title,
+            url: `${site.url}/work/${project.slug}`,
+          })),
+        },
+        hasPart: [
+          ...packages.map((item) => ({ "@id": `${site.url}/work/#service-${item.slug}` })),
+          ...projects.map((project) => ({ "@id": `${site.url}/work/${project.slug}/#work` })),
+        ],
+      },
+      ...packages.map((item) => ({
+        "@type": "Service",
+        "@id": `${site.url}/work/#service-${item.slug}`,
+        name: item.name,
+        serviceType: item.name,
+        description: item.description,
+        provider: { "@id": `${site.url}/#organization` },
+        audience: {
+          "@type": "Audience",
+          description: item.forWho,
+        },
+        isPartOf: { "@id": `${site.url}/work/#page` },
+      })),
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Brand Strategy & Systems",
+            item: `${site.url}/work`,
+          },
+        ],
+      },
+    ],
+  };
 
   return (
     <>
@@ -88,20 +117,26 @@ export default function WorkPage() {
           poster="/images/own-ridge-road-poster.jpg"
           minHeight="70vh"
         >
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,15vw,10rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+          >
+            Work
+          </span>
           <Container className="relative py-20">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal>
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85">
-                  Work
+                  Brand Strategy & Systems
                 </span>
                 <SplitReveal
                   as="h1"
                   className="mt-6 max-w-2xl font-display text-[clamp(2.4rem,6.5vw,4.5rem)] font-normal leading-[1.05] text-ivory"
                 >
-                  Projects across very different categories.
+                  See the decision behind the work. Choose what your brand needs next.
                 </SplitReveal>
                 <p className="mt-4 max-w-lg text-ivory/80">
-                  Different industries, the same underlying method.
+                  Each case names the tension, the strategic choice, the delivered system and the available evidence before an engagement enters the conversation.
                 </p>
               </Reveal>
               <Reveal delay={0.1} className="flex flex-row flex-wrap gap-2 lg:max-w-56 lg:flex-col lg:items-end lg:pb-2">
@@ -223,23 +258,13 @@ export default function WorkPage() {
             during fast real-device scrolling. Same fix as Home's
             PerspectiveReveal/ClipReveal sections and VerticalUnfold's
             element rows. */}
-        <section className="bg-background-alt py-16">
+        <section id="proof" className="scroll-mt-24 bg-background-alt py-16">
           <ClipReveal>
             <Container>
               <WorkGrid projects={projects} />
             </Container>
           </ClipReveal>
         </section>
-
-        {/* Brand studies — the teaching layer beneath the real client
-            record. Independent dissections of renowned US, UK and
-            Canadian brands through the site's own vocabulary. Framed
-            explicitly as analyses of the public record so no visitor
-            can mistake them for engagements; deliberately styled as
-            numbered editorial rows, a different visual genre from the
-            client cards above. */}
-        <BrandStudies />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(studiesJsonLd) }} />
 
         {/* Was a static image (higgsfield-canopy-light.jpg) under a quote
             that is literally about "a forest of noise" — real cinematic
@@ -258,33 +283,23 @@ export default function WorkPage() {
           height="60vh"
         />
 
-        {/* This page used to end on the ImageBreak above with no next
-            step — every other page (Home, About, Services, Contact)
-            closes with an explicit CTA. Same TexturedDark + ClipReveal
-            + LinkButton combination Services already proves at its own
-            closing section. */}
-        <TexturedDark image="/images/higgsfield-forest-path.jpg" className="py-24 text-center sm:pb-28">
-          <ClipReveal>
-            <Container>
-              <h2 className="text-display-md font-display font-normal text-ivory">
-                Want a project like these on your own brand?
-              </h2>
-              <p className="mx-auto mt-4 max-w-md text-ivory/80">
-                Every one of these started with a conversation about where
-                the brand actually stood. Yours can start the same way.
-              </p>
-              <div className="mt-8">
-                {/* Was "Book a Brand Strategy Session," identical to Home's
-                    and Blog's own closing CTAs — worded to match "yours can
-                    start the same way" right above it instead of repeating
-                    the same three pages' label verbatim. */}
-                <LinkButton href="/contact">Book Your Own Strategy Session</LinkButton>
-              </div>
-            </Container>
-          </ClipReveal>
-        </TexturedDark>
+        <WorkServicesJourney />
       </main>
       <Footer />
+      <SectionJumpNav
+        items={[
+          { href: "#proof", label: "Proof" },
+          { href: "#mechanism", label: "Mechanism" },
+          { href: "#services", label: "Engagements" },
+          { href: "#health-check", label: "Health" },
+          { href: "#questions", label: "FAQ" },
+        ]}
+      />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
     </>
   );
 }

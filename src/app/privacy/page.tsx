@@ -29,18 +29,17 @@ export default function PrivacyPage() {
                 private, and never sold or shared with third parties.
               </p>
               <p>
-                If you submit the contact form, your message is sent to{" "}
-                {site.email} via a third party email delivery service. No
-                marketing emails are sent without your separate, explicit
-                consent.
+                If you submit the contact form, your message is delivered through
+                the email provider configured for this site. Marketing messages
+                require separate, explicit consent.
               </p>
               <p>
                 This site currently avoids tracking cookies and third party
                 advertising scripts.
               </p>
               <p>
-                To request that your information be deleted, email{" "}
-                {site.email}.
+                To request that your information be deleted, use the contact form
+                and write deletion request in the project description field.
               </p>
             </div>
 

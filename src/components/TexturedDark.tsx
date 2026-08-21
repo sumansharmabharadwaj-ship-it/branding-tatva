@@ -24,28 +24,14 @@ import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 export function TexturedDark({
   children,
   className,
-  id,
   image,
   video,
-  videoWebm,
   imagePosition = "center",
 }: {
   children: React.ReactNode;
   className?: string;
-  // Optional anchor id so in-page links (the Services hero's "open the
-  // strategy room" line) can target a TexturedDark chapter directly.
-  id?: string;
   image: string;
   video?: string;
-  // Optional WebM sibling, tried first via a real <source> list (was a
-  // single `src` string). The first WebM asset on this site (the
-  // Services CTA's sunlight-on-wood clip) established this pattern —
-  // VP9/WebM compresses meaningfully smaller than H.264 at the same
-  // visual quality, the browser picks whichever <source> it can
-  // decode, and `video` alone still works exactly as before for every
-  // existing MP4-only call site (the Footer), so this is additive, not
-  // a breaking change to the prop contract.
-  videoWebm?: string;
   imagePosition?: string;
 }) {
   const [ref, shouldLoad] = useLazyMount();
@@ -63,7 +49,7 @@ export function TexturedDark({
   useVideoFadeIn(videoRef, shouldLoad && Boolean(video) && !prefersReducedMotion);
 
   return (
-    <section ref={sectionRef} id={id} className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
+    <section ref={sectionRef} className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
       <div ref={ref} className="absolute inset-0">
         {/* image renders immediately, unconditionally — not gated behind
             shouldLoad. This wrapper is almost always far down the page
@@ -92,14 +78,12 @@ export function TexturedDark({
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
             style={{ objectPosition: imagePosition }}
+            src={video}
             muted
             loop
             playsInline
             preload="metadata"
-          >
-            {videoWebm && <source src={videoWebm} type="video/webm" />}
-            <source src={video} type="video/mp4" />
-          </video>
+          />
         )}
       </div>
       {/* Was a near-opaque 0.88-0.93 flat overlay — with a video behind

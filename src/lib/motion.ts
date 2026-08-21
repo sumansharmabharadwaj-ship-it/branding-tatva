@@ -12,3 +12,20 @@
 // hover feedback rather than an entrance.
 export const EASE_AIR = [0.16, 1, 0.3, 1] as const;
 export const EASE_EARTH = [0.22, 0.61, 0.36, 1] as const;
+
+// Motion Bible tokens. Meaning-carrying transitions use the same small
+// vocabulary across pages, which keeps five very different journeys inside
+// one cinematic world.
+export const MOTION_DURATION = {
+  micro: 0.16,
+  focus: 0.22,
+  reveal: 0.58,
+  scene: 0.9,
+  signature: 1.45,
+} as const;
+
+export const MOTION_DISTANCE = {
+  near: 12,
+  content: 20,
+  scene: 28,
+} as const;

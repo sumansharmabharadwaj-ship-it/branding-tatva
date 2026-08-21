@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -8,30 +9,61 @@ import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { VideoBreak } from "@/components/VideoBreak";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
-import { NewsletterForm } from "@/components/NewsletterForm";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { Fireflies } from "@/components/Fireflies";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { LinkButton } from "@/components/Button";
 import { site } from "@/data/site";
 import { credentials } from "@/data/about";
 import { projects } from "@/data/projects";
 import { SANDSTONE, ELEMENT_HEX } from "@/lib/sectionWash";
+import { ContactDecisionSequence } from "@/sections/Contact/ContactDecisionSequence";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Tell me what your brand is becoming.",
+  title: "Book a Brand Strategy Session",
+  description: "Bring one unresolved brand question to Suman Sharma and begin a private, pressure-free strategy conversation.",
   alternates: { canonical: "/contact" },
   openGraph: {
-    title: `Contact | ${site.name}`,
-    description: "Tell me what your brand is becoming.",
+    title: `Book a Brand Strategy Session | ${site.name}`,
+    description: "Bring one unresolved brand question to Suman Sharma and begin a private, pressure-free strategy conversation.",
     type: "website",
   },
 };
 
 export default function ContactPage() {
+  const enquiryDeliveryReady = Boolean(
+    process.env.RESEND_API_KEY?.trim() &&
+      process.env.CONTACT_TO_EMAIL?.trim() &&
+      process.env.CONTACT_FROM_EMAIL?.trim(),
+  );
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ContactPage",
+        "@id": `${site.url}/contact/#page`,
+        url: `${site.url}/contact`,
+        name: "Book a Brand Strategy Session",
+        description:
+          "Bring one unresolved brand question to Suman Sharma and begin a private, pressure-free strategy conversation.",
+        isPartOf: { "@id": `${site.url}/#website` },
+        about: { "@id": `${site.url}/#organization` },
+        mainEntity: { "@id": `${site.url}/about/#person` },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+          { "@type": "ListItem", position: 2, name: "Contact", item: `${site.url}/contact` },
+        ],
+      },
+    ],
+  };
+
   return (
     <>
       <Header transparent />
@@ -73,6 +105,12 @@ export default function ContactPage() {
               feel. Same forest register as this hero's own clip, not a
               new visual idea introduced just for this page. */}
           <Fireflies />
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-6 right-0 select-none whitespace-nowrap font-display text-[clamp(4rem,15vw,10rem)] font-bold uppercase leading-none text-ivory/[0.06]"
+          >
+            Contact
+          </span>
           <Container className="relative py-20">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal className="relative">
@@ -90,8 +128,8 @@ export default function ContactPage() {
                   Tell me what your brand is becoming.
                 </SplitReveal>
                 <p className="mt-4 max-w-lg text-ivory/80">
-                  Fill in as much or as little as you know right now.
-                  I&apos;ll ask a few more questions where it helps.
+                  Begin with the decision that brought you here. Share only
+                  the context that will make the first reply useful.
                 </p>
               </Reveal>
               <Reveal delay={0.1} className="lg:pb-2 lg:text-right">
@@ -118,7 +156,7 @@ export default function ContactPage() {
             color and light only, no 3D objects) gives it quiet
             atmosphere instead of a flat fill, at the same low opacity
             Services already uses on comparable light sections. */}
-        <section className="relative overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
+        <section id="project-enquiry" className="relative scroll-mt-24 overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
           <AmbientElementShader opacity={0.14} />
           <Container className="relative grid gap-12 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
@@ -126,12 +164,16 @@ export default function ContactPage() {
                 Reach me directly
               </p>
               <div className="mt-3 space-y-2 text-sm text-foreground-secondary">
-                <p>
-                  Prefer email?{" "}
-                  <a href={`mailto:${site.email}`} className="text-action-primary-hover link-underline">
-                    {site.email}
-                  </a>
-                </p>
+                {site.email ? (
+                  <p>
+                    Prefer email?{" "}
+                    <a href={`mailto:${site.email}`} className="text-action-primary-hover link-underline">
+                      {site.email}
+                    </a>
+                  </p>
+                ) : (
+                  <p>Use the enquiry form. Every message is reviewed directly by Suman.</p>
+                )}
                 <p>
                   <a
                     href={site.social.linkedin}
@@ -161,10 +203,51 @@ export default function ContactPage() {
                   ))}
                 <span>{projects.length} real client engagements</span>
               </div>
+
+              <div className="mt-8 border-l border-clay/35 pl-5">
+                <p className="font-display text-xl font-normal text-soil">Direct, private, pressure-free.</p>
+                <p className="mt-2 text-sm leading-6 text-foreground-secondary">
+                  Suman reads each enquiry. Context is used to understand the work, and the first reply leaves both sides free to decide whether a project makes sense.
+                </p>
+                <Link href="/work" className="mt-3 inline-flex text-sm font-medium text-action-primary-hover link-underline">
+                  Review the documented work
+                </Link>
+              </div>
             </Reveal>
 
             <Reveal delay={0.1} className="lg:col-span-3">
-              <ContactForm />
+              <ContactForm deliveryEnabled={enquiryDeliveryReady} />
+            </Reveal>
+          </Container>
+
+          <Container className="relative mt-16 grid gap-8 border-t border-soil/10 pt-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
+            <Reveal>
+              <ContactDecisionSequence />
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <div className="rounded-2xl border border-soil/10 bg-parchment/75 p-6 sm:p-8">
+                <p className="text-sm font-medium uppercase tracking-[0.16em] text-action-secondary">
+                  A useful starting fit
+                </p>
+                <h2 className="mt-3 font-display text-2xl font-normal text-soil">
+                  The work begins where an important brand choice is unresolved.
+                </h2>
+                <ul className="mt-6 space-y-4 text-sm leading-6 text-foreground-secondary">
+                  {[
+                    "A business is launching, repositioning or making an existing brand easier to recognise.",
+                    "Leadership needs clarity across positioning, message, identity, architecture or customer experience.",
+                    "The team wants a founder-led strategic partner and can bring honest context into the room.",
+                  ].map((item) => (
+                    <li key={item} className="border-l border-clay/35 pl-4">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-6 text-sm leading-6 text-foreground-secondary">
+                  If the need is still difficult to name, describe the tension rather than choosing a service prematurely.
+                </p>
+              </div>
             </Reveal>
           </Container>
         </section>
@@ -221,29 +304,49 @@ export default function ContactPage() {
                 style={{ borderColor: `${ELEMENT_HEX.water}40`, backgroundColor: `${ELEMENT_HEX.water}14` }}
               >
                 <ElementGlyph slug="water" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
-                <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
-                  Or skip the form
-                </p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Just grab a time that works for you.
-                </h2>
-                <p className="mt-3 text-ivory/85">
-                  Times shown automatically adjust to your local timezone,
-                  wherever you are.
-                </p>
-                <CalendlyEmbed url={site.calendlyUrl} />
-                <p className="mt-3 text-xs text-ivory/75">
-                  Having trouble with the embed?{" "}
-                  <a
-                    href={site.calendlyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sandstone link-underline"
-                  >
-                    Open it directly instead
-                  </a>
-                  .
-                </p>
+                {site.calendlyUrl ? (
+                  <>
+                    <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
+                      Or skip the form
+                    </p>
+                    <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                      Just grab a time that works for you.
+                    </h2>
+                    <p className="mt-3 text-ivory/85">
+                      Times shown automatically adjust to your local timezone, wherever you are.
+                    </p>
+                    <CalendlyEmbed url={site.calendlyUrl} />
+                    <p className="mt-3 text-xs text-ivory/75">
+                      Having trouble with the embed?{" "}
+                      <a
+                        href={site.calendlyUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sandstone link-underline"
+                      >
+                        Open it directly instead
+                      </a>
+                      .
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
+                      Direct first step
+                    </p>
+                    <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                      Begin with enough context to make the first reply useful.
+                    </h2>
+                    <p className="mt-3 text-ivory/85">
+                      Share what is changing, where the brand feels unclear and what decision is waiting.
+                    </p>
+                    <div className="mt-6">
+                      <LinkButton href="#project-enquiry" className="bg-sandstone text-soil hover:bg-parchment">
+                        Return to the project enquiry
+                      </LinkButton>
+                    </div>
+                  </>
+                )}
               </div>
             </Reveal>
 
@@ -257,19 +360,27 @@ export default function ContactPage() {
                   Still deciding?
                 </p>
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Get occasional notes on brand clarity.
+                  Read the thinking before beginning a conversation.
                 </h2>
                 <p className="mt-3 text-ivory/85">
-                  A few honest thoughts a month, short and specific. Zero pitch,
-                  unsubscribe whenever.
+                  The field notes explain recognition, positioning and the brand decisions that compound over time.
                 </p>
-                <NewsletterForm />
+                <div className="mt-6">
+                  <LinkButton href="/insights" className="bg-sandstone text-soil hover:bg-parchment">
+                    Explore the field notes
+                  </LinkButton>
+                </div>
               </div>
             </Reveal>
           </Container>
         </section>
       </main>
       <Footer />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
     </>
   );
 }

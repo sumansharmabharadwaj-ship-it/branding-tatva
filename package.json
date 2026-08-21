@@ -3,10 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/next-dev-preview.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "audit:home": "node scripts/home-bible-gate.cjs",
+    "audit:about": "node scripts/about-bible-gate.cjs",
+    "audit:work": "node scripts/work-bible-gate.cjs",
+    "audit:insights": "node scripts/insights-bible-gate.cjs",
+    "audit:contact": "node scripts/contact-bible-gate.cjs",
+    "audit:api": "node scripts/api-contract-gate.cjs",
+    "audit:release": "node scripts/release-gate.cjs",
+    "audit:copy": "node scripts/copy-language-gate.cjs",
+    "audit:motion": "node scripts/motion-bible-gate.cjs",
+    "audit:seo": "node scripts/seo-schema-gate.cjs",
+    "audit:rendered": "node scripts/rendered-route-gate.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

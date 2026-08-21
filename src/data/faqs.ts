@@ -12,17 +12,17 @@ export const faqs = [
   {
     question: "Can you help a brand new business?",
     answer:
-      "Yes. That's Brand Beginning work: discovery, positioning, and audience definition before anything else gets built.",
+      "Yes. Foundation starts with discovery, positioning, and audience definition before anything else gets built.",
   },
   {
     question: "Can you help an existing brand that already has an identity?",
     answer:
-      "Yes. That's usually Brand Clarity or Brand Elevation work, depending on whether the issue is confusion or just needing sharper expression.",
+      "Yes. Full Brand System work starts with what already exists, then clarifies the position, voice, and direction that need to carry across channels.",
   },
   {
     question: "Do you manage ongoing content and campaigns?",
     answer:
-      "Yes. Dr. Haley Nutrition and Executive Springboard are both examples of sustained, month over month content management rather than one off projects.",
+      "Yes. The project files include both sustained content management and one-off strategy systems, with each scope and evidence boundary stated clearly.",
   },
   {
     question: "How long does a project take?",
@@ -41,7 +41,7 @@ export const faqs = [
   {
     question: "Will branding increase revenue?",
     answer:
-      "Branding works as an indirect revenue lever. It makes your marketing and sales work harder, aligned with a clear story instead of fighting one. One client's engagement rate moved from 0.71% to 2.81% over two months on the same posting budget, a real example of compounding done right, specific to that business rather than a universal promise.",
+      "Branding can make marketing and sales work from a clearer, more consistent story, but it cannot guarantee revenue. I define the decisions and deliverables I can control, agree on the signals worth watching, and only publish outcomes that the available evidence supports.",
   },
   {
     question: "How long before I see results?",
