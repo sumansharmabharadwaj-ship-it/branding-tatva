@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight, Check } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type KeyboardEvent, type ReactNode } from "react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { AskTatva } from "@/sections/HomeV4/AskTatva";
@@ -115,6 +115,28 @@ const QUESTIONS = [
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+function moveWithinTabs(
+  event: KeyboardEvent<HTMLButtonElement>,
+  index: number,
+  count: number,
+  select: (next: number) => void,
+) {
+  let next: number | null = null;
+  if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (index + 1) % count;
+  if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = (index - 1 + count) % count;
+  if (event.key === "Home") next = 0;
+  if (event.key === "End") next = count - 1;
+  if (next === null) return;
+
+  event.preventDefault();
+  select(next);
+  event.currentTarget
+    .closest('[role="tablist"]')
+    ?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
+    .item(next)
+    ?.focus();
+}
 
 function SceneCopy({ children, className = "" }: { children: ReactNode; className?: string }) {
   const reduced = Boolean(useHydratedReducedMotion());
@@ -309,7 +331,17 @@ export function HomeV5Experience() {
           <div className="home-v5-diagnosis__stage">
             <div className="home-v5-tabs" role="tablist" aria-label="Choose a brand condition">
               {DIAGNOSES.map((item, index) => (
-                <button key={item.label} type="button" role="tab" aria-selected={diagnosis === index} onClick={() => setDiagnosis(index)}>
+                <button
+                  key={item.label}
+                  id={"diagnosis-tab-" + index}
+                  type="button"
+                  role="tab"
+                  aria-controls="diagnosis-panel"
+                  aria-selected={diagnosis === index}
+                  tabIndex={diagnosis === index ? 0 : -1}
+                  onClick={() => setDiagnosis(index)}
+                  onKeyDown={(event) => moveWithinTabs(event, index, DIAGNOSES.length, setDiagnosis)}
+                >
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <strong>{item.label}</strong>
                 </button>
@@ -318,7 +350,11 @@ export function HomeV5Experience() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.article
                 key={DIAGNOSES[diagnosis].label}
+                id="diagnosis-panel"
                 className="home-v5-focus-card"
+                role="tabpanel"
+                aria-labelledby={"diagnosis-tab-" + diagnosis}
+                tabIndex={0}
                 initial={reduced ? false : { opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduced ? undefined : { opacity: 0, y: -12 }}
@@ -351,7 +387,17 @@ export function HomeV5Experience() {
           <div className="home-v5-paths__stage">
             <div className="home-v5-tabs home-v5-tabs--vertical" role="tablist" aria-label="Choose a service path">
               {PATHS.map((item, index) => (
-                <button key={item.number} type="button" role="tab" aria-selected={path === index} onClick={() => setPath(index)}>
+                <button
+                  key={item.number}
+                  id={"path-tab-" + index}
+                  type="button"
+                  role="tab"
+                  aria-controls="path-panel"
+                  aria-selected={path === index}
+                  tabIndex={path === index ? 0 : -1}
+                  onClick={() => setPath(index)}
+                  onKeyDown={(event) => moveWithinTabs(event, index, PATHS.length, setPath)}
+                >
                   <span>{item.number}</span>
                   <strong>{item.label}</strong>
                   <small>{item.forWhom}</small>
@@ -361,7 +407,11 @@ export function HomeV5Experience() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.article
                 key={PATHS[path].number}
+                id="path-panel"
                 className="home-v5-focus-card home-v5-focus-card--path"
+                role="tabpanel"
+                aria-labelledby={"path-tab-" + path}
+                tabIndex={0}
                 initial={reduced ? false : { opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={reduced ? undefined : { opacity: 0, x: -16 }}
@@ -390,7 +440,17 @@ export function HomeV5Experience() {
             <p>No black-box reveal. Each stage leaves a decision the next stage can inherit.</p>
             <div className="home-v5-method__steps" role="tablist" aria-label="Choose a method stage">
               {METHOD.map((item, index) => (
-                <button key={item.label} type="button" role="tab" aria-selected={method === index} onClick={() => setMethod(index)}>
+                <button
+                  key={item.label}
+                  id={"method-tab-" + index}
+                  type="button"
+                  role="tab"
+                  aria-controls="method-panel"
+                  aria-selected={method === index}
+                  tabIndex={method === index ? 0 : -1}
+                  onClick={() => setMethod(index)}
+                  onKeyDown={(event) => moveWithinTabs(event, index, METHOD.length, setMethod)}
+                >
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   {item.label}
                 </button>
@@ -399,7 +459,11 @@ export function HomeV5Experience() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={METHOD[method].label}
+                id="method-panel"
                 className="home-v5-method__answer"
+                role="tabpanel"
+                aria-labelledby={"method-tab-" + method}
+                tabIndex={0}
                 initial={reduced ? false : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduced ? undefined : { opacity: 0, y: -8 }}
@@ -491,7 +555,17 @@ export function HomeV5Experience() {
           <div className="home-v5-questions__stage">
             <div className="home-v5-tabs home-v5-tabs--vertical" role="tablist" aria-label="Choose a practical question">
               {QUESTIONS.map((item, index) => (
-                <button key={item.label} type="button" role="tab" aria-selected={question === index} onClick={() => setQuestion(index)}>
+                <button
+                  key={item.label}
+                  id={"question-tab-" + index}
+                  type="button"
+                  role="tab"
+                  aria-controls="question-panel"
+                  aria-selected={question === index}
+                  tabIndex={question === index ? 0 : -1}
+                  onClick={() => setQuestion(index)}
+                  onKeyDown={(event) => moveWithinTabs(event, index, QUESTIONS.length, setQuestion)}
+                >
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <strong>{item.label}</strong>
                   <small>{item.question}</small>
@@ -501,7 +575,11 @@ export function HomeV5Experience() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.article
                 key={QUESTIONS[question].label}
+                id="question-panel"
                 className="home-v5-focus-card"
+                role="tabpanel"
+                aria-labelledby={"question-tab-" + question}
+                tabIndex={0}
                 initial={reduced ? false : { opacity: 0, x: 18 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={reduced ? undefined : { opacity: 0, x: -14 }}
