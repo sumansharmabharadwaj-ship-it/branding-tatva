@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "audit:home": "node scripts/home-bible-gate.cjs"
+    "audit:home": "node scripts/home-bible-gate.cjs",
+    "audit:about": "node scripts/about-bible-gate.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

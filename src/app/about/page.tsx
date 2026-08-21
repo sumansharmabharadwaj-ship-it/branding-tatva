@@ -15,6 +15,7 @@ import { aboutIntro, credentials } from "@/data/about";
 import { elements } from "@/data/elements";
 import { philosophy } from "@/data/philosophy";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { LinkButton } from "@/components/Button";
 import { site } from "@/data/site";
 import { SANDSTONE } from "@/lib/sectionWash";
 
@@ -126,7 +127,7 @@ export default function AboutPage() {
             <div className="grid gap-8 md:grid-cols-[220px_1fr] md:gap-12">
               <Reveal>
                 <h2 className="text-display-sm font-display font-normal text-ivory md:sticky md:top-28">
-                  Credentials
+                  Disciplines applied to the work
                 </h2>
               </Reveal>
               <div className="spotlight-grid grid items-stretch gap-6 sm:grid-cols-2">
@@ -145,6 +146,10 @@ export default function AboutPage() {
                           {c.label}
                         </p>
                         <p className="mt-1 text-sm text-foreground-secondary">{c.detail}</p>
+                        <p className="mt-5 border-t border-border/70 pt-4 text-xs font-medium uppercase tracking-[0.14em] text-foreground-secondary">
+                          Applied to
+                        </p>
+                        <p className="mt-2 text-sm text-soil/80">{c.application}</p>
                       </div>
                     </TiltCard>
                   </Reveal>
@@ -230,14 +235,24 @@ export default function AboutPage() {
             </div>
 
             <Reveal delay={0.4}>
-              <p className="mt-14 max-w-2xl border-t border-ivory/15 pt-10 text-ivory/85">
-                None of this is abstract. A sustained content push built
-                the same way took Dr. Haley Nutrition&apos;s engagement
-                rate from 0.71% to 2.81% in two months, with impressions
-                barely moving even as posting dropped by nearly half.
-                That is the difference between reach and trust, and
-                it is what these five elements are actually for.
-              </p>
+              <div className="mt-14 max-w-2xl border-t border-ivory/15 pt-10">
+                <p className="text-ivory/85">
+                  The method becomes concrete in the project files: what
+                  was diagnosed, what changed, what was delivered, and
+                  where any outcome is bounded by the evidence currently
+                  available.
+                </p>
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <LinkButton href="/work#proof">See the method in the work</LinkButton>
+                  <LinkButton
+                    href="/work#services"
+                    variant="secondary"
+                    className="border-ivory/30 text-ivory hover:border-ivory/50 hover:bg-ivory/10"
+                  >
+                    Explore ways to work together
+                  </LinkButton>
+                </div>
+              </div>
             </Reveal>
           </Container>
         </section>
