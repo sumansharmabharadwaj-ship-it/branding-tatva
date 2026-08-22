@@ -5,21 +5,6 @@ import { useEffect } from "react";
 const MARGIN = "18% 0px";
 const FLAG = "wardenPaused";
 
-// How many videos may decode at once. A phone doing three at a time drops
-// frames on exactly the scroll this site is built around, so it gets one.
-function concurrencyBudget() {
-  const nav = navigator as Navigator & {
-    connection?: { saveData?: boolean; effectiveType?: string };
-    deviceMemory?: number;
-  };
-  const constrained =
-    Boolean(nav.connection?.saveData) ||
-    nav.connection?.effectiveType === "2g" ||
-    nav.connection?.effectiveType === "slow-2g";
-  const lowMemory = typeof nav.deviceMemory === "number" && nav.deviceMemory <= 4;
-  const compact = window.matchMedia("(max-width: 720px)").matches;
-  return constrained || lowMemory || compact ? 1 : 2;
-}
 
 function distanceFromViewportCentre(video: HTMLVideoElement) {
   const rect = video.getBoundingClientRect();
@@ -47,22 +32,15 @@ export function VideoWarden() {
 
     function arbitrate() {
       frame = 0;
-      const budget = concurrencyBudget();
-
       // Every video in the document, rather than only the ones the observer
       // has reported. An earlier version trusted the observer alone, and any
       // video it had yet to report kept playing outside the budget entirely.
       const all = [...document.querySelectorAll<HTMLVideoElement>("video")];
 
-      // Videos claimed by a page level director are outside this component's
-      // control, but they still consume decoding capacity, so they count
-      // against the same budget rather than sitting beside it.
-      const claimed = all.filter(
-        (video) => video.dataset.autoplayManaged === "true" && !video.paused,
-      ).length;
-
-      const free = Math.max(0, budget - claimed);
-      const governed = all.filter((video) => video.dataset.autoplayManaged !== "true");
+      // One cinematic owner at a time. Page-level directors may request play,
+      // but the warden remains the final arbiter so adjacent scenes never
+      // compete for attention or decoding capacity.
+      const governed = all;
 
       const allowed = new Set(
         governed
@@ -77,7 +55,7 @@ export function VideoWarden() {
             if (Math.abs(coverA - coverB) > 0.08) return coverB - coverA;
             return distanceFromViewportCentre(a) - distanceFromViewportCentre(b);
           })
-          .slice(0, free),
+          .slice(0, 1),
       );
 
       governed.forEach((video) => {
@@ -119,13 +97,20 @@ export function VideoWarden() {
     const mutations = new MutationObserver(watchAll);
     mutations.observe(document.body, { childList: true, subtree: true });
 
-    // A video component may start itself after the arbitration above ran, so
-    // re-arbitrate whenever one begins playing.
+    // A video component may start itself after arbitration ran. Re-arbitrate
+    // on play, visibility recovery, resizing and native scrolling so the
+    // dominant owner remains correct through every handoff.
     document.addEventListener("play", schedule, true);
+    document.addEventListener("visibilitychange", schedule);
+    window.addEventListener("resize", schedule, { passive: true });
+    window.addEventListener("scroll", schedule, { passive: true });
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
       document.removeEventListener("play", schedule, true);
+      document.removeEventListener("visibilitychange", schedule);
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("scroll", schedule);
       observer.disconnect();
       mutations.disconnect();
     };
