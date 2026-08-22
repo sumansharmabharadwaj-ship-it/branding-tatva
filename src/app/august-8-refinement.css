@@ -34,15 +34,21 @@
 }
 
 .august-8-refined [data-services-hero-scene] {
-  background-color: #303d36 !important;
+  background-color: #687362 !important;
 }
 
 .august-8-refined [data-services-hero-media] {
-  filter: brightness(1.2) saturate(0.88) contrast(0.94) !important;
+  opacity: 0.62 !important;
+  mix-blend-mode: luminosity;
+  filter: brightness(1.55) saturate(0.72) contrast(0.88) !important;
+}
+
+.august-8-refined [data-services-hero-scene] > div.absolute.inset-0:not([aria-hidden="true"]) {
+  opacity: 0.34 !important;
 }
 
 .august-8-refined [data-services-scene] > div[aria-hidden="true"].absolute.inset-0 {
-  opacity: 0.72;
+  opacity: 0.42;
 }
 
 /* About's restored convergence is deliberately a light room between the
