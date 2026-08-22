@@ -110,10 +110,6 @@ const SEGMENTS = [
   { d: "M478 238 C540 230 565 198 612 178", to: 5 },
 ];
 
-const AUTO_ADVANCE_MS = 5600;
-const MANUAL_HOLD_MS = 15000;
-const HOVER_PREVIEW_MS = 3200;
-
 function fallbackMeta(index: number): StageMeta {
   return {
     becomes: "A clearer decision.",
@@ -128,40 +124,9 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const pauseUntilRef = useRef(0);
-  const holdTimerRef = useRef(0);
   const inView = useInView(sectionRef, { amount: 0.32 });
   const [active, setActive] = useState(0);
-  const [holding, setHolding] = useState(false);
-
-  const pauseAutoplay = useCallback((duration = MANUAL_HOLD_MS) => {
-    pauseUntilRef.current = Date.now() + duration;
-    setHolding(true);
-    window.clearTimeout(holdTimerRef.current);
-    holdTimerRef.current = window.setTimeout(() => {
-      if (Date.now() >= pauseUntilRef.current) setHolding(false);
-    }, duration + 120);
-  }, []);
-
-  const chooseStage = useCallback(
-    (index: number, duration = MANUAL_HOLD_MS) => {
-      setActive(index);
-      pauseAutoplay(duration);
-    },
-    [pauseAutoplay],
-  );
-
-  useEffect(() => {
-    if (prefersReducedMotion || !inView || stages.length < 2) return;
-
-    const timer = window.setInterval(() => {
-      if (document.hidden || Date.now() < pauseUntilRef.current) return;
-      setHolding(false);
-      setActive((current) => (current + 1) % stages.length);
-    }, AUTO_ADVANCE_MS);
-
-    return () => window.clearInterval(timer);
-  }, [inView, prefersReducedMotion, stages.length]);
+  const chooseStage = useCallback((index: number) => setActive(index), []);
 
   useEffect(() => {
     if (active >= stages.length) setActive(0);
@@ -172,8 +137,6 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       const detail = (event as CustomEvent<{ id?: string }>).detail;
       if (detail?.id !== "process") return;
       setActive(0);
-      setHolding(false);
-      pauseUntilRef.current = Date.now() + 900;
     }
 
     window.addEventListener("bt:home-chapter", onChapter as EventListener);
@@ -200,13 +163,6 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       videoAtEffectStart?.pause();
     };
   }, [active, inView, prefersReducedMotion]);
-
-  useEffect(
-    () => () => {
-      window.clearTimeout(holdTimerRef.current);
-    },
-    [],
-  );
 
   const graphPoints = useMemo(() => {
     const count = Math.max(2, Math.min(stages.length, STAGE_META.length));
@@ -236,9 +192,6 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       className={`project-journey ${inView ? "is-awake" : "is-resting"}`}
       style={sectionStyle}
       aria-labelledby="project-journey-title"
-      onPointerDown={() => pauseAutoplay()}
-      onTouchStart={() => pauseAutoplay()}
-      onFocusCapture={() => pauseAutoplay()}
     >
       <div className="project-journey__media" aria-hidden="true">
         {stage.poster && (
@@ -282,11 +235,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               architecture changes with it, so the process explains itself before a call ever has to.
             </p>
             <span>
-              {holding
-                ? "Tour resting while you read"
-                : inView
-                  ? "The diagram advances on its own"
-                  : "The diagram rests outside the viewport"}
+              Select a stage to inspect its decision, output, and readiness signals.
             </span>
           </div>
         </header>
@@ -309,7 +258,6 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               tabIndex={active === index ? 0 : -1}
               className={`project-journey__stage-button${active === index ? " is-active" : ""}`}
               onClick={() => chooseStage(index)}
-              onFocus={() => pauseAutoplay()}
             >
               <span>{String(index + 1).padStart(2, "0")}</span>
               <strong>{item.stage}</strong>
@@ -353,7 +301,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                 <p>Decision architecture</p>
                 <h3>One choice feeds the next.</h3>
               </div>
-              <span>Hover previews briefly · select to hold</span>
+              <span>Select a node to inspect that stage</span>
             </div>
 
             <div className="project-journey__map" aria-label="Interactive project flow diagram">
@@ -391,8 +339,6 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                     className={`project-journey__node${reached ? " is-reached" : ""}${active === index ? " is-active" : ""}`}
                     style={{ left: `${(node.x / 700) * 100}%`, top: `${(node.y / 340) * 100}%` }}
                     onClick={() => chooseStage(index)}
-                    onMouseEnter={() => chooseStage(index, HOVER_PREVIEW_MS)}
-                    onFocus={() => pauseAutoplay()}
                     aria-label={`Show ${item.stage} stage`}
                   >
                     <i aria-hidden="true" />
@@ -1248,6 +1194,117 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
         @keyframes projectJourneyPulseNode {
           0%, 100% { box-shadow: 0 0 0 .32rem color-mix(in srgb, var(--pj-accent) 12%, transparent), 0 0 14px color-mix(in srgb, var(--pj-accent) 45%, transparent); }
           50% { box-shadow: 0 0 0 .55rem color-mix(in srgb, var(--pj-accent) 7%, transparent), 0 0 28px color-mix(in srgb, var(--pj-accent) 72%, transparent); }
+        }
+
+        @media (min-width: 1221px) and (max-height: 960px) {
+          .project-journey {
+            min-height: 100svh;
+            padding: clamp(4.6rem, 7svh, 5.2rem) 0 clamp(1.35rem, 2.8svh, 2rem);
+          }
+
+          .project-journey__header h2 {
+            margin-top: .35rem;
+            font-size: clamp(2.8rem, min(4.7vw, 7svh), 4.7rem);
+          }
+
+          .project-journey__intro p {
+            line-height: 1.5;
+          }
+
+          .project-journey__intro span {
+            margin-top: .55rem;
+            font-size: .75rem;
+          }
+
+          .project-journey__rail {
+            margin-top: .9rem;
+          }
+
+          .project-journey__stage-button {
+            min-height: 4.5rem;
+            padding: .7rem .8rem 1.55rem;
+          }
+
+          .project-journey__stage-button strong {
+            margin-top: .3rem;
+          }
+
+          .project-journey__stage-button i {
+            bottom: .55rem;
+          }
+
+          .project-journey__board {
+            margin-top: .7rem;
+          }
+
+          .project-journey__focus-card,
+          .project-journey__map-card,
+          .project-journey__signal-card {
+            min-height: clamp(20rem, 38svh, 23rem);
+            padding: 1rem 1.15rem;
+          }
+
+          .project-journey__turns {
+            margin-top: 1.1rem;
+          }
+
+          .project-journey__focus-card h3 {
+            font-size: clamp(1.8rem, min(2.7vw, 4.3svh), 2.8rem);
+          }
+
+          .project-journey__explanation {
+            margin-top: .65rem;
+            font-size: .82rem;
+            line-height: 1.5;
+          }
+
+          .project-journey__decision-block,
+          .project-journey__output-block {
+            margin-top: .75rem;
+            padding-top: .65rem;
+          }
+
+          .project-journey__map {
+            min-height: clamp(14rem, 29svh, 17rem);
+          }
+
+          .project-journey__map-note {
+            display: none;
+          }
+
+          .project-journey__donut {
+            width: 3.65rem;
+            height: 3.65rem;
+          }
+
+          .project-journey__donut::before {
+            width: 2.8rem;
+            height: 2.8rem;
+          }
+
+          .project-journey__graph {
+            height: 5.5rem;
+            margin-top: .65rem;
+          }
+
+          .project-journey__readiness {
+            margin-top: .45rem;
+            padding-top: .65rem;
+          }
+
+          .project-journey__bar-row {
+            margin-top: .4rem;
+          }
+
+          .project-journey__prevents {
+            margin-top: .7rem;
+            padding: .7rem;
+          }
+
+          .project-journey__footer {
+            margin-top: .6rem;
+            padding: .7rem 1rem;
+          }
         }
 
         @media (max-width: 1220px) {

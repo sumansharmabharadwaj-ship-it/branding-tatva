@@ -93,9 +93,6 @@ const CURVES = [
 ] as const;
 
 const ENTRY_Y = [70, 160, 250] as const;
-const AUTO_ADVANCE_MS = 4800;
-const MANUAL_HOLD_MS = 14000;
-const HOVER_HOLD_MS = 3200;
 const EASE = [0.22, 1, 0.36, 1] as const;
 const SITUATION_TO_INDEX: Record<ServicesSituationId, number> = {
   idea: 0,
@@ -116,30 +113,19 @@ function publishSituation(situation: ServicesSituationId) {
 
 export function PathsCinematicChapter() {
   const sectionRef = useRef<HTMLElement>(null);
-  const holdUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, {
     amount: 0.22,
     margin: "8% 0px -12% 0px",
   });
   const [activeIndex, setActiveIndex] = useState(0);
-  const [autoAdvance, setAutoAdvance] = useState(false);
   const [carriedChoice, setCarriedChoice] = useState(false);
   const active = PATHS[activeIndex];
-
-  useEffect(() => {
-    const query = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const sync = () => setAutoAdvance(query.matches);
-    sync();
-    query.addEventListener("change", sync);
-    return () => query.removeEventListener("change", sync);
-  }, []);
 
   useEffect(() => {
     function applySituation(value: string | null, carried: boolean) {
       if (!isServicesSituation(value)) return;
       const index = SITUATION_TO_INDEX[value];
-      holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
       setActiveIndex(index);
       setCarriedChoice(carried);
     }
@@ -157,23 +143,10 @@ export function PathsCinematicChapter() {
     return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
   }, []);
 
-  useEffect(() => {
-    if (!inView || prefersReducedMotion || !autoAdvance) return;
-
-    const timer = window.setInterval(() => {
-      if (document.hidden || Date.now() < holdUntilRef.current) return;
-      setActiveIndex((current) => (current + 1) % PATHS.length);
-      setCarriedChoice(false);
-    }, AUTO_ADVANCE_MS);
-
-    return () => window.clearInterval(timer);
-  }, [autoAdvance, inView, prefersReducedMotion]);
-
-  function choose(index: number, hold = MANUAL_HOLD_MS, persist = true) {
-    holdUntilRef.current = Date.now() + hold;
+  function choose(index: number) {
     setActiveIndex(index);
     setCarriedChoice(false);
-    if (persist) publishSituation(PATHS[index].situation);
+    publishSituation(PATHS[index].situation);
   }
 
   function onChoiceKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -198,12 +171,6 @@ export function PathsCinematicChapter() {
       className="paths-cinematic home-scene"
       aria-labelledby="paths-cinematic-title"
       style={{ "--paths-accent": active.tint } as CSSProperties}
-      onPointerDown={() => {
-        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
-      onFocusCapture={() => {
-        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
     >
       <MaterialSystemFilm activeIndex={activeIndex} inView={inView} reducedMotion={prefersReducedMotion} />
 
@@ -225,9 +192,7 @@ export function PathsCinematicChapter() {
             <span>
               {carriedChoice
                 ? "Your earlier choice is already open."
-                : autoAdvance
-                  ? "The desktop map demonstrates each route. Select one and it waits."
-                  : "Tap a starting point to open its route."}
+                : "Select a starting point to open its route."}
             </span>
           </div>
         </header>
@@ -246,9 +211,6 @@ export function PathsCinematicChapter() {
                 tabIndex={selected ? 0 : -1}
                 onClick={() => choose(index)}
                 onKeyDown={(event) => onChoiceKeyDown(event, index)}
-                onPointerEnter={() => {
-                  if (autoAdvance) choose(index, HOVER_HOLD_MS, false);
-                }}
                 className={selected ? "is-active" : undefined}
                 style={{ "--path-tint": path.tint } as CSSProperties}
               >
@@ -257,11 +219,9 @@ export function PathsCinematicChapter() {
                 <p>{path.choice}</p>
                 <i aria-hidden="true">
                   <b
-                    key={`path-progress-${active.number}`}
                     style={{
-                      animationDuration: `${AUTO_ADVANCE_MS}ms`,
-                      animationPlayState:
-                        selected && inView && autoAdvance && !prefersReducedMotion ? "running" : "paused",
+                      animation: "none",
+                      transform: selected ? "scaleX(1)" : "scaleX(0)",
                     }}
                   />
                 </i>

@@ -8,7 +8,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Logo, LogoMark } from "@/components/Logo";
 import { AmbientAudioButton } from "@/components/AmbientAudio";
-import { LinkButton } from "@/components/Button";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useCurrentElement } from "@/lib/currentElement";
 import { navigation } from "@/data/site";
@@ -166,7 +165,7 @@ export function Header({ transparent = false }: HeaderProps) {
               </Link>
               <AmbientAudioButton accent={accent} />
               <button
-                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors duration-500"
+                className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors duration-500"
                 style={{ color: accent }}
                 aria-label={open ? "Close menu" : "Open menu"}
                 aria-expanded={open}
@@ -225,7 +224,7 @@ export function Header({ transparent = false }: HeaderProps) {
                 animate="animate"
                 exit="exit"
                 transition={MOBILE_NAV_TRANSITION}
-                className="w-full max-w-sm rounded-2xl border border-border bg-background-elevated p-3 shadow-elevation-lg"
+                className="w-full max-w-sm rounded-2xl border border-ivory/14 bg-[#111615]/94 p-3 text-ivory shadow-[0_28px_90px_rgba(0,0,0,0.42)] backdrop-blur-xl"
                 aria-label="Primary"
               >
                 <motion.ul variants={prefersReducedMotion ? undefined : navListVariants} className="flex flex-col">
@@ -238,7 +237,7 @@ export function Header({ transparent = false }: HeaderProps) {
                       <Link
                         href={item.href}
                         onClick={() => setOpen(false)}
-                        className="block rounded-2xl px-4 py-3 text-center font-display text-xl text-soil transition-colors hover:bg-soil/5 hover:text-clay"
+                        className="block min-h-12 rounded-2xl px-4 py-3 text-center font-display text-xl text-ivory/84 transition-colors hover:bg-ivory/[0.06] hover:text-sandstone focus-visible:bg-ivory/[0.06] focus-visible:text-sandstone"
                       >
                         {item.label}
                       </Link>
@@ -248,16 +247,16 @@ export function Header({ transparent = false }: HeaderProps) {
                 <motion.div
                   variants={prefersReducedMotion ? undefined : navItemVariants}
                   transition={NAV_CTA_TRANSITION}
-                  className="mt-2 border-t border-border pt-3 sm:hidden"
+                  className="mt-2 border-t border-ivory/12 pt-3 sm:hidden"
                 >
-                  <LinkButton
+                  <Link
                     href="/contact"
                     onClick={() => setOpen(false)}
-                    className="w-full"
+                    className="flex min-h-12 w-full items-center justify-center rounded-full px-5 text-xs font-semibold uppercase tracking-[0.16em] text-soil"
                     style={{ backgroundColor: element.color }}
                   >
                     Book a Session
-                  </LinkButton>
+                  </Link>
                 </motion.div>
               </motion.nav>
             </div>

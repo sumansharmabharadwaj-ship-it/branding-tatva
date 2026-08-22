@@ -4,7 +4,6 @@ import { TexturedDark } from "@/components/TexturedDark";
 import { Logo } from "@/components/Logo";
 import { SeasonalCalendarPanel } from "@/components/SeasonalCalendarPanel";
 import { Reveal } from "@/components/Reveal";
-import { ElementAccentButton } from "@/components/ElementAccentButton";
 import { site, footerLinks } from "@/data/site";
 import { socialLinks } from "./constants";
 import { MotionToggle } from "@/components/MotionPreference";
@@ -81,21 +80,18 @@ export function Footer({ compact = false }: FooterProps) {
                   A solo practice. Every project led directly by Suman, start to finish.
                 </p>
               </div>
-              <div className="self-start">
-                <ElementAccentButton href="/contact">Book a Session</ElementAccentButton>
-              </div>
             </div>
 
             <div className="sm:min-w-0 sm:flex-1">
               <SeasonalCalendarPanel />
             </div>
 
-            <div className={`${WIDGET_CLASS} flex flex-col justify-center gap-5 sm:w-[220px] sm:shrink-0`}>
+            <div className={`${WIDGET_CLASS} flex flex-col justify-center gap-5 sm:w-[250px] sm:shrink-0`}>
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-ivory/50">Get in touch</p>
                 <a
                   href={`mailto:${site.email}`}
-                  className="mt-2 block break-all text-sm text-ivory/80 transition-colors hover:text-ivory"
+                  className="mt-2 block whitespace-nowrap text-[0.8rem] text-ivory/80 transition-colors hover:text-ivory"
                 >
                   {site.email}
                 </a>
@@ -111,7 +107,7 @@ export function Footer({ compact = false }: FooterProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${site.name} on ${label}`}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-ivory/25 text-ivory/70 transition-colors hover:border-ivory/50 hover:text-ivory"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-ivory/25 text-ivory/70 transition-colors hover:border-ivory/50 hover:text-ivory"
                     >
                       <Icon size={16} strokeWidth={1.75} />
                     </a>
@@ -142,7 +138,7 @@ export function Footer({ compact = false }: FooterProps) {
               page) requires this credit in exchange for no licensing
               fee, the same free-resources approach used for every
               stock video sourced this session. */}
-          <p className="text-[0.65rem] text-ivory/40">
+          <p className="text-xs text-ivory/40">
             Ambient music: &ldquo;That Zen Moment&rdquo; by{" "}
             <a
               href="https://incompetech.com"

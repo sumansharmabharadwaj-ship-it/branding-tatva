@@ -2,7 +2,7 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/Container";
 import { TatvaMechanism } from "./TatvaMechanism";
@@ -60,11 +60,8 @@ const FORCES = [
   },
 ] as const;
 
-const MANUAL_HOLD_MS = 16000;
-
 export function TatvaSystemLab() {
   const sectionRef = useRef<HTMLElement>(null);
-  const pauseUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.28 });
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
@@ -75,7 +72,6 @@ export function TatvaSystemLab() {
     function onChapter(event: Event) {
       const detail = (event as CustomEvent<{ id?: string }>).detail;
       if (detail?.id !== "framework") return;
-      pauseUntilRef.current = Date.now() + 700;
       setFocusedIndex(null);
     }
 
@@ -84,7 +80,6 @@ export function TatvaSystemLab() {
   }, []);
 
   function choose(index: number | null) {
-    pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
     setFocusedIndex((current) => (index !== null && current === index ? null : index));
   }
 
@@ -95,15 +90,6 @@ export function TatvaSystemLab() {
       data-media-id="BT-HOME-FIVE-TATVAS-MASTER-V2"
       style={{ backgroundColor: "#111A18", borderColor: "rgba(244,239,230,0.08)" }}
       aria-labelledby="tatva-system-lab-title"
-      onPointerDown={() => {
-        pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
-      onTouchStart={() => {
-        pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
-      onFocusCapture={() => {
-        pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
     >
       <div className="tatva-pressure-lab__film" aria-hidden="true">
         <span />
@@ -183,18 +169,13 @@ export function TatvaSystemLab() {
                 <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em]">
                   Active strategic mechanism
                 </p>
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.p
-                    key={focused?.name ?? "complete"}
-                    className="mt-2 font-display text-3xl leading-none sm:text-4xl"
-                    initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    {focused?.mechanism ?? "Five forces connected"}
-                  </motion.p>
-                </AnimatePresence>
+                <motion.p
+                  className="mt-2 font-display text-3xl leading-none sm:text-4xl"
+                  animate={prefersReducedMotion ? undefined : { opacity: [0.72, 1], y: [3, 0] }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {focused?.mechanism ?? "Five forces connected"}
+                </motion.p>
               </div>
               <span className="tatva-pressure-lab__status rounded-full border px-3 py-2 text-[0.56rem] font-medium uppercase tracking-[0.14em]">
                 {focused ? `${focused.name} · ${String((focusedIndex ?? 0) + 1).padStart(2, "0")} / 05` : "Complete system"}
@@ -202,38 +183,29 @@ export function TatvaSystemLab() {
             </div>
 
             <div className="grid gap-6 pt-5 md:grid-cols-[minmax(17rem,1fr)_minmax(13rem,0.72fr)] md:items-center">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={focused?.name ?? "complete"}
-                  id="tatva-mechanism-panel"
-                  role="region"
-                  aria-label={focused ? `${focused.name}: ${focused.mechanism}` : "Complete five-Tatva system"}
-                  className="tatva-pressure-lab__diagram tatva-pressure-lab__mechanism relative mx-auto aspect-[4/3] w-full max-w-[36rem]"
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 12, scale: 0.985 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, scale: 0.99 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <TatvaMechanism focusedIndex={focusedIndex} motionActive={motionActive} />
-                </motion.div>
-              </AnimatePresence>
+              <motion.div
+                id="tatva-mechanism-panel"
+                role="region"
+                aria-label={focused ? `${focused.name}: ${focused.mechanism}` : "Complete five-Tatva system"}
+                className="tatva-pressure-lab__diagram tatva-pressure-lab__mechanism relative mx-auto aspect-[4/3] w-full max-w-[36rem]"
+                animate={prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <TatvaMechanism focusedIndex={focusedIndex} motionActive={motionActive} />
+              </motion.div>
 
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={focused?.name ?? "complete-reading"}
-                  className="tatva-pressure-lab__reading rounded-2xl border p-5"
-                  style={{
-                    borderColor: focused ? `${focused.color}77` : "rgba(143,162,131,0.32)",
-                    background: focused
-                      ? `radial-gradient(circle at 88% 4%, ${focused.color}20, transparent 44%), rgba(244,239,230,0.035)`
-                      : "radial-gradient(circle at 88% 4%, rgba(143,162,131,0.16), transparent 44%), rgba(244,239,230,0.035)",
-                  }}
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 10, filter: "blur(5px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  aria-live="polite"
-                >
+              <motion.div
+                className="tatva-pressure-lab__reading rounded-2xl border p-5"
+                style={{
+                  borderColor: focused ? `${focused.color}77` : "rgba(143,162,131,0.32)",
+                  background: focused
+                    ? `radial-gradient(circle at 88% 4%, ${focused.color}20, transparent 44%), rgba(244,239,230,0.035)`
+                    : "radial-gradient(circle at 88% 4%, rgba(143,162,131,0.16), transparent 44%), rgba(244,239,230,0.035)",
+                }}
+                animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: [0.22, 1, 0.36, 1] }}
+                aria-live="polite"
+              >
                   <p
                     className="text-[0.58rem] font-medium uppercase tracking-[0.16em]"
                     style={{ color: focused?.color ?? "#9CAF91" }}
@@ -257,8 +229,7 @@ export function TatvaSystemLab() {
                   >
                     Explore Brand Strategy &amp; Systems <span aria-hidden="true">→</span>
                   </Link>
-                </motion.div>
-              </AnimatePresence>
+              </motion.div>
             </div>
           </div>
         </div>

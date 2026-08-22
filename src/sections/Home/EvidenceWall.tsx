@@ -17,7 +17,6 @@ import { projects, type Project } from "@/data/projects";
 import { ProjectFile } from "@/sections/Home/ProjectFile";
 
 const SELECTED_PROJECTS = projects.filter((project) => project.featured);
-const FINE_POINTER_QUERY = "(min-width: 821px) and (hover: hover) and (pointer: fine)";
 
 const ACTION: Record<string, string> = {
   "dr-haley-nutrition": "Watch the story",
@@ -85,9 +84,6 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
   },
 };
 
-const AUTO_ADVANCE_MS = 4800;
-const MANUAL_PAUSE_MS = 14000;
-const HOVER_PAUSE_MS = 3200;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 function trailFor(project: Project) {
@@ -112,11 +108,9 @@ function metricFor(project: Project) {
 export function EvidenceWall() {
   const sectionRef = useRef<HTMLElement>(null);
   const activeVideoRef = useRef<HTMLVideoElement>(null);
-  const manualPauseUntilRef = useRef(0);
   const indexButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [autoDemonstrates, setAutoDemonstrates] = useState(false);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
   const activeProject = SELECTED_PROJECTS[activeIndex] ?? SELECTED_PROJECTS[0];
@@ -124,14 +118,9 @@ export function EvidenceWall() {
   const activeMetric = metricFor(activeProject);
   const activeEvidence = EVIDENCE_META[activeProject.slug];
 
-  function pauseAutoplay(duration = MANUAL_PAUSE_MS) {
-    manualPauseUntilRef.current = Date.now() + duration;
-  }
-
-  function choose(index: number, hold = MANUAL_PAUSE_MS) {
+  function choose(index: number) {
     if (!SELECTED_PROJECTS.length) return;
     const safeIndex = ((index % SELECTED_PROJECTS.length) + SELECTED_PROJECTS.length) % SELECTED_PROJECTS.length;
-    pauseAutoplay(hold);
     setActiveIndex(safeIndex);
   }
 
@@ -156,35 +145,9 @@ export function EvidenceWall() {
   const closeProjectFile = useCallback(() => setOpenSlug(null), []);
 
   useEffect(() => {
-    const query = window.matchMedia(FINE_POINTER_QUERY);
-    const sync = () => setAutoDemonstrates(query.matches);
-    sync();
-    query.addEventListener("change", sync);
-    return () => query.removeEventListener("change", sync);
-  }, []);
-
-  useEffect(() => {
-    if (prefersReducedMotion || !autoDemonstrates || !inView || SELECTED_PROJECTS.length < 2) return;
-
-    const timer = window.setInterval(() => {
-      if (
-        Date.now() < manualPauseUntilRef.current ||
-        openSlug ||
-        document.hidden
-      ) {
-        return;
-      }
-      setActiveIndex((current) => (current + 1) % SELECTED_PROJECTS.length);
-    }, AUTO_ADVANCE_MS);
-
-    return () => window.clearInterval(timer);
-  }, [autoDemonstrates, inView, openSlug, prefersReducedMotion]);
-
-  useEffect(() => {
     function onChapter(event: Event) {
       const detail = (event as CustomEvent<{ id?: string }>).detail;
       if (detail?.id !== "evidence") return;
-      manualPauseUntilRef.current = Date.now() + 700;
       setActiveIndex(0);
     }
 
@@ -218,12 +181,9 @@ export function EvidenceWall() {
       className="evidence-cinematic"
       aria-labelledby="evidence-wall-title"
       data-evidence-state={activeProject.slug}
-      data-evidence-autoplay={autoDemonstrates ? "desktop" : "visitor-led"}
+      data-evidence-autoplay="visitor-led"
       data-media-id="BT-HOME-SELECTED-WORK-ARCHIVE-V1"
       style={{ "--evidence-accent": activeProject.accent } as CSSProperties}
-      onFocusCapture={() => pauseAutoplay()}
-      onPointerDown={() => pauseAutoplay()}
-      onTouchStart={() => pauseAutoplay()}
     >
       <div className="evidence-cinematic__archive-current" aria-hidden="true">
         <i />
@@ -308,7 +268,6 @@ export function EvidenceWall() {
                 <button
                   type="button"
                   onClick={() => {
-                    pauseAutoplay();
                     setOpenSlug(activeProject.slug);
                   }}
                 >
@@ -377,8 +336,8 @@ export function EvidenceWall() {
                 <motion.i
                   key={`evidence-timer-${activeProject.slug}`}
                   initial={{ scaleX: 0 }}
-                  animate={{ scaleX: autoDemonstrates ? 1 : 0 }}
-                  transition={{ duration: prefersReducedMotion || !autoDemonstrates ? 0 : AUTO_ADVANCE_MS / 1000, ease: "linear" }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.35, ease: EASE }}
                 />
               </span>
             </motion.aside>
@@ -401,7 +360,6 @@ export function EvidenceWall() {
                 className={selected ? "is-active" : undefined}
                 style={{ "--project-accent": project.accent } as CSSProperties}
                 onClick={() => choose(index)}
-                onPointerEnter={() => choose(index, HOVER_PAUSE_MS)}
                 onFocus={() => choose(index)}
                 onKeyDown={(event) => chooseFromKeyboard(event, index)}
               >

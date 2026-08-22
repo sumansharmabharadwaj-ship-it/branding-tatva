@@ -2,7 +2,7 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useMemo, useState, type CSSProperties } from "react";
 import {
   SERVICES_SITUATION_EVENT,
@@ -237,8 +237,7 @@ export function HomeBrandHealthCheck() {
               <span style={{ transform: `scaleX(${progress})` }} />
             </div>
 
-            <AnimatePresence mode="wait" initial={false}>
-              {done ? (
+            {done ? (
                 <motion.article
                   key="health-result"
                   className="home-health__result"
@@ -314,7 +313,6 @@ export function HomeBrandHealthCheck() {
                   </p>
                 </motion.div>
               )}
-            </AnimatePresence>
           </div>
         </div>
       </div>

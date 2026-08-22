@@ -60,9 +60,6 @@ const DECISION_META = [
   },
 ] as const;
 
-const AUTO_ADVANCE_MS = 4300;
-const MANUAL_HOLD_MS = 14000;
-const HOVER_HOLD_MS = 3200;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 function answerFor(question: string) {
@@ -71,7 +68,6 @@ function answerFor(question: string) {
 
 export function HomeQuestionsScene() {
   const sectionRef = useRef<HTMLElement>(null);
-  const holdUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
   const [activeIndex, setActiveIndex] = useState(0);
@@ -88,21 +84,9 @@ export function HomeQuestionsScene() {
   const motionActive = inView && !prefersReducedMotion;
 
   useEffect(() => {
-    if (!motionActive || decisions.length < 2) return;
-
-    const timer = window.setInterval(() => {
-      if (document.hidden || Date.now() < holdUntilRef.current) return;
-      setActiveIndex((current) => (current + 1) % decisions.length);
-    }, AUTO_ADVANCE_MS);
-
-    return () => window.clearInterval(timer);
-  }, [decisions.length, motionActive]);
-
-  useEffect(() => {
     function onChapter(event: Event) {
       const detail = (event as CustomEvent<{ id?: string }>).detail;
       if (detail?.id !== "questions") return;
-      holdUntilRef.current = Date.now() + 700;
       setActiveIndex(0);
     }
 
@@ -110,8 +94,7 @@ export function HomeQuestionsScene() {
     return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
   }, []);
 
-  function choose(index: number, hold = MANUAL_HOLD_MS) {
-    holdUntilRef.current = Date.now() + hold;
+  function choose(index: number) {
     setActiveIndex(index);
   }
 
@@ -121,12 +104,6 @@ export function HomeQuestionsScene() {
       className="questions-cinematic"
       aria-labelledby="home-questions-title"
       style={{ "--questions-accent": active.color } as CSSProperties}
-      onPointerDown={() => {
-        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
-      onFocusCapture={() => {
-        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
     >
       <span className="sr-only">The practical questions</span>
       <BackgroundVideo
@@ -287,7 +264,6 @@ export function HomeQuestionsScene() {
                   aria-label={`Focus ${decision.signal}: ${decision.question}`}
                   aria-pressed={selected}
                   onClick={() => choose(index)}
-                  onPointerEnter={() => choose(index, HOVER_HOLD_MS)}
                   onFocus={() => choose(index)}
                 >
                   <motion.i
@@ -318,7 +294,7 @@ export function HomeQuestionsScene() {
             </motion.div>
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="sync" initial={false}>
             <motion.article
               key={active.signal}
               id="questions-cinematic-panel"
@@ -350,7 +326,7 @@ export function HomeQuestionsScene() {
                   key={`questions-timer-${active.signal}`}
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : AUTO_ADVANCE_MS / 1000, ease: "linear" }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.35, ease: EASE }}
                 />
               </span>
             </motion.article>
@@ -370,7 +346,6 @@ export function HomeQuestionsScene() {
                 className={selected ? "is-active" : undefined}
                 style={{ "--decision-color": decision.color } as CSSProperties}
                 onClick={() => choose(index)}
-                onPointerEnter={() => choose(index, HOVER_HOLD_MS)}
                 onFocus={() => choose(index)}
               >
                 <span>{String(index + 1).padStart(2, "0")}</span>

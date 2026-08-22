@@ -1,10 +1,8 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useInView } from "framer-motion";
 
 // Suman's excavation concept: the Earth chapter stops being a list over a
@@ -12,16 +10,9 @@ import { useInView } from "framer-motion";
 // frame, mineral light travels through it, the invisible strategic layers rise
 // from the ground, and their connections become the finished foundation.
 //
-// Deliberately NO ScrollTrigger.pin. The outer wrapper supplies the scroll
-// travel and the scene holds itself with CSS sticky, which is the same
-// discipline every other held sequence here uses. GSAP drives only the
-// internal timeline, scrubbed against that wrapper. Lenis already bridges into
-// ScrollTrigger centrally in SmoothScrollProvider, so nothing here creates a
-// second scroll system.
-gsap.registerPlugin(ScrollTrigger);
-
-// useLayoutEffect measures the scene, and React warns if it runs during SSR.
-const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
+// The four layers are a visitor-controlled instrument. Keeping the complete
+// system inside one frame makes every decision available without a sticky
+// runway or a scroll-scrubbed reveal that can hide the final layers.
 
 type FoundationLayer = {
   id: string;
@@ -83,7 +74,6 @@ const FOUNDATION_LAYERS: FoundationLayer[] = [
 
 export function BrandFoundationScene() {
   const wrapperRef = useRef<HTMLElement>(null);
-  const sceneRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const sceneInView = useInView(wrapperRef, { amount: 0.08 });
@@ -111,94 +101,15 @@ export function BrandFoundationScene() {
     };
   }, [prefersReducedMotion, sceneInView]);
 
-  useIsomorphicLayoutEffect(() => {
-    const wrapper = wrapperRef.current;
-    const scene = sceneRef.current;
-    if (!wrapper || !scene || prefersReducedMotion) return;
-    // Desktop only: on a phone the cards sit in normal flow, so there is no
-    // scrubbed sequence to drive.
-    if (!window.matchMedia("(min-width: 768px)").matches) return;
-
-    const context = gsap.context(() => {
-      const landscape = scene.querySelector("[data-landscape]");
-      const sunlight = scene.querySelector("[data-sunlight]");
-      const openingCopy = scene.querySelector("[data-opening-copy]");
-      const finalCopy = scene.querySelector("[data-final-copy]");
-      const layers = gsap.utils.toArray<HTMLElement>("[data-foundation-layer]");
-      const lines = gsap.utils.toArray<SVGPathElement>("[data-connection-line]");
-      const depthGrid = scene.querySelector("[data-depth-grid]");
-
-      gsap.set(layers, { opacity: 0, y: 36, scale: 0.96 });
-      gsap.set(finalCopy, { opacity: 0, y: 24 });
-      gsap.set(lines, { strokeDasharray: 480, strokeDashoffset: 480 });
-      gsap.set(depthGrid, { opacity: 0, scaleY: 0.7, transformOrigin: "50% 100%" });
-
-      const timeline = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: wrapper,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 0.48,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            const index = Math.min(
-              FOUNDATION_LAYERS.length - 1,
-              Math.floor(self.progress * FOUNDATION_LAYERS.length),
-            );
-            setActiveLayer(FOUNDATION_LAYERS[index].id);
-          },
-        },
-      });
-
-      timeline
-        .to(landscape, { scale: 1.12, yPercent: -3, duration: 1.45 }, 0)
-        .to(sunlight, { xPercent: 190, yPercent: -30, rotate: 8, opacity: 0.76, duration: 2.1 }, 0.08)
-        .to(openingCopy, { opacity: 0, y: -22, filter: "blur(8px)", duration: 0.36 }, 0.32)
-        .to(depthGrid, { opacity: 0.62, scaleY: 1, duration: 0.56 }, 0.38);
-
-      layers.forEach((layer, index) => {
-        // Each layer arrives out of shadow when the mineral light reaches it,
-        // rather than simply fading upward like another website card.
-        timeline.fromTo(
-          layer,
-          { opacity: 0, y: 36, scale: 0.96, filter: "brightness(0.5) blur(8px)" },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            filter: "brightness(1) blur(0px)",
-            duration: 0.42,
-            ease: "power2.out",
-          },
-          0.58 + index * 0.36,
-        );
-      });
-
-      lines.forEach((line, index) => {
-        timeline.to(
-          line,
-          { strokeDashoffset: 0, duration: 0.42, ease: "power2.inOut" },
-          0.88 + index * 0.36,
-        );
-      });
-
-      timeline.to(finalCopy, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 1.88);
-    }, wrapper);
-
-    return () => context.revert();
-  }, [prefersReducedMotion]);
-
   return (
     <section
       ref={wrapperRef}
-      className="relative h-auto md:h-[145svh]"
+      className="relative min-h-svh"
       style={{ backgroundColor: "#121713" }}
       aria-labelledby="brand-foundation-title"
     >
       <div
-        ref={sceneRef}
-        className="relative min-h-svh overflow-hidden md:sticky md:top-0 md:h-svh"
+        className="relative min-h-svh overflow-hidden"
       >
         <div
           data-landscape
@@ -271,11 +182,12 @@ export function BrandFoundationScene() {
                 layer={layer}
                 active={activeLayer === layer.id}
                 staticAll={Boolean(prefersReducedMotion)}
+                onActivate={() => setActiveLayer(layer.id)}
               />
             ))}
           </div>
 
-          <FinalCopy staticAll={Boolean(prefersReducedMotion)} />
+          <FinalCopy staticAll />
         </div>
 
         <nav
@@ -301,10 +213,12 @@ function FoundationLayerCard({
   layer,
   active,
   staticAll,
+  onActivate,
 }: {
   layer: FoundationLayer;
   active: boolean;
   staticAll: boolean;
+  onActivate: () => void;
 }) {
   // Desktop reveals the system progressively. Mobile has no scrubbed scene,
   // so every explanation and output remains open in one readable sequence.
@@ -328,25 +242,34 @@ function FoundationLayerCard({
           : "md:border-[#efe5d2]/15 md:bg-[#111714]/68",
       ].join(" ")}
     >
-      <div className="flex items-center justify-between">
-        <span className="text-[0.68rem] uppercase tracking-[0.24em]" style={{ color: "#b8aa86" }}>
-          {layer.number}
+      <button
+        type="button"
+        aria-pressed={active}
+        onClick={onActivate}
+        onPointerEnter={onActivate}
+        onFocus={onActivate}
+        className="block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#b8aa86]"
+      >
+        <span className="flex items-center justify-between">
+          <span className="text-[0.68rem] uppercase tracking-[0.24em]" style={{ color: "#b8aa86" }}>
+            {layer.number}
+          </span>
+          <span
+            aria-hidden="true"
+            className={[
+              "h-2.5 w-2.5 rounded-full border transition-all duration-500",
+              "max-md:border-[#b8aa86] max-md:bg-[#b8aa86]",
+              open ? "md:border-[#b8aa86] md:bg-[#b8aa86]" : "md:border-[#efe5d2]/35",
+            ].join(" ")}
+          />
         </span>
-        <span
-          aria-hidden="true"
-          className={[
-            "h-2.5 w-2.5 rounded-full border transition-all duration-500",
-            "max-md:border-[#b8aa86] max-md:bg-[#b8aa86]",
-            open ? "md:border-[#b8aa86] md:bg-[#b8aa86]" : "md:border-[#efe5d2]/35",
-          ].join(" ")}
-        />
-      </div>
-      <p className="mt-4 text-xs uppercase tracking-[0.22em]" style={{ color: "rgba(239,229,210,0.65)" }}>
-        {layer.label}
-      </p>
-      <h3 className="mt-2 font-display text-xl font-normal leading-6" style={{ color: "#f2eadc" }}>
-        {layer.title}
-      </h3>
+        <span className="mt-4 block text-xs uppercase tracking-[0.22em]" style={{ color: "rgba(239,229,210,0.65)" }}>
+          {layer.label}
+        </span>
+        <span className="mt-2 block font-display text-xl font-normal leading-6" style={{ color: "#f2eadc" }}>
+          {layer.title}
+        </span>
+      </button>
       <p
         className={[
           "overflow-hidden text-sm leading-6 transition-[max-height,opacity,margin] duration-500",

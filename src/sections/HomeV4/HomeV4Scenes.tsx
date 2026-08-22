@@ -211,14 +211,12 @@ export function V4OpeningScene() {
 
 export function V4RecognitionScene() {
   const sectionRef = useRef<HTMLElement>(null);
-  const holdUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.34 });
   const [activeIndex, setActiveIndex] = useState(0);
   const active = RECOGNITION_STATES[activeIndex];
 
   function choose(index: number) {
-    holdUntilRef.current = Date.now() + 11000;
     setActiveIndex(index);
   }
 
@@ -233,12 +231,6 @@ export function V4RecognitionScene() {
       className="home-v4-recognition"
       aria-labelledby="home-v4-recognition-title"
       style={{ "--recognition-accent": active.accent } as React.CSSProperties}
-      onPointerDown={() => {
-        holdUntilRef.current = Date.now() + 11000;
-      }}
-      onFocusCapture={() => {
-        holdUntilRef.current = Date.now() + 11000;
-      }}
     >
       <div
         className="home-v4-recognition__media"
@@ -414,7 +406,7 @@ export function V4HiddenCostScene() {
       nextIndex = Math.min(COST_STAGES.length - 1, nextIndex + 1);
       setActiveIndex(nextIndex);
       if (nextIndex >= COST_STAGES.length - 1) window.clearInterval(timer);
-    }, 740);
+    }, 2400);
     return () => window.clearInterval(timer);
   }, [guideMode, inView, prefersReducedMotion]);
 

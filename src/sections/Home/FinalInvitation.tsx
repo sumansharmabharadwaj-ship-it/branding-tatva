@@ -2,7 +2,7 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { LinkButton } from "@/components/Button";
 import {
@@ -134,9 +134,7 @@ export function FinalInvitation() {
       className="final-invitation relative mx-auto w-full max-w-5xl"
       style={{ "--invitation-accent": invitation.accent } as CSSProperties}
     >
-      <AnimatePresence mode="wait" initial={false}>
         <motion.div
-          key={situation}
           className="final-invitation__card grid overflow-hidden rounded-[2rem] border border-ivory/16 bg-[#17140f]/68 text-left shadow-[0_32px_100px_rgba(0,0,0,0.3)] backdrop-blur-xl md:grid-cols-[minmax(0,1.15fr)_minmax(17rem,0.85fr)]"
           initial={
             prefersReducedMotion
@@ -373,7 +371,6 @@ export function FinalInvitation() {
             </div>
           </div>
         </motion.div>
-      </AnimatePresence>
     </div>
   );
 }
