@@ -4,7 +4,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 
 const DISCIPLINES = [
   {
@@ -78,7 +78,7 @@ export function StudioCinematicChapter() {
     video.defaultMuted = true;
     video.playsInline = true;
     video.loop = true;
-    video.playbackRate = 1.22;
+    video.playbackRate = 1.12;
 
     if (inView && !document.hidden) {
       void video.play().catch(() => undefined);
@@ -91,6 +91,19 @@ export function StudioCinematicChapter() {
 
   function choose(index: number) {
     setActiveIndex(index);
+  }
+
+  function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % DISCIPLINES.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + DISCIPLINES.length - 1) % DISCIPLINES.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = DISCIPLINES.length - 1;
+    else return;
+
+    event.preventDefault();
+    choose(next);
+    document.getElementById(`studio-tab-${next}`)?.focus();
   }
 
   return (
@@ -114,12 +127,9 @@ export function StudioCinematicChapter() {
               key={active.video}
               className="studio-cinematic__media-layer"
               initial={prefersReducedMotion ? false : { opacity: 0.28, scale: 1.06 }}
-              animate={{ opacity: 1, scale: inView ? 1.1 : 1.04 }}
+              animate={{ opacity: 1, scale: 1.04 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 1.025 }}
-              transition={{
-                opacity: { duration: prefersReducedMotion ? 0 : 0.42, ease: EASE },
-                scale: { duration: prefersReducedMotion ? 0 : 8.4, ease: "linear" },
-              }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
             >
               {prefersReducedMotion ? (
                 <Image
@@ -140,7 +150,7 @@ export function StudioCinematicChapter() {
                   loop
                   playsInline
                   preload={inView ? "metadata" : "none"}
-                  data-home-playback-rate="1.22"
+                  data-home-playback-rate="1.12"
                   aria-hidden="true"
                 />
               )}
@@ -187,11 +197,14 @@ export function StudioCinematicChapter() {
               return (
                 <button
                   key={discipline.title}
+                  id={`studio-tab-${index}`}
                   type="button"
                   role="tab"
                   aria-selected={selected}
                   aria-controls="studio-cinematic-panel"
+                  tabIndex={selected ? 0 : -1}
                   onClick={() => choose(index)}
+                  onKeyDown={(event) => onTabKeyDown(event, index)}
                   onFocus={() => choose(index)}
                   className={selected ? "is-active" : undefined}
                   style={{ "--studio-tab-accent": discipline.accent } as CSSProperties}
@@ -221,6 +234,7 @@ export function StudioCinematicChapter() {
             key={`panel-${active.title}`}
             id="studio-cinematic-panel"
             role="tabpanel"
+            aria-labelledby={`studio-tab-${activeIndex}`}
             className="studio-cinematic__panel"
             initial={prefersReducedMotion ? false : { opacity: 0.64, y: 8, filter: "blur(3px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -261,19 +275,7 @@ export function StudioCinematicChapter() {
         </div>
 
         <aside className="studio-cinematic__portrait">
-          <motion.div
-            className="studio-cinematic__portrait-image"
-            animate={
-              prefersReducedMotion || !inView
-                ? undefined
-                : { scale: [1.02, 1.075, 1.02], x: [0, -6, 0] }
-            }
-            transition={
-              prefersReducedMotion || !inView
-                ? undefined
-                : { duration: 12, repeat: Infinity, ease: "easeInOut" }
-            }
-          >
+          <div className="studio-cinematic__portrait-image">
             <Image
               src="/images/own-portrait.jpg"
               alt="Suman Sharma, founder and strategist at Branding Tatva"
@@ -281,7 +283,7 @@ export function StudioCinematicChapter() {
               sizes="(min-width: 1100px) 26vw, (min-width: 768px) 42vw, 100vw"
               className="studio-cinematic__portrait-photo"
             />
-          </motion.div>
+          </div>
           <div className="studio-cinematic__portrait-wash" aria-hidden="true" />
           <div className="studio-cinematic__authorship">
             <span>Direct authorship</span>
