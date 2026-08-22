@@ -144,11 +144,11 @@ html[data-services-experience="active"] {
 }
 
 /* Authority previously consumed 420vh, then 220svh, for five concise states.
-   The same assembly now completes inside 145svh: enough travel to distinguish
-   each layer while keeping the next business decision within reach. */
+   The same assembly now completes in a short 115svh hold: the build remains
+   scroll-led, but no longer behaves like a second page inside the page. */
 @media (min-width: 1024px) {
   #authority > div:first-child {
-    height: 145svh !important;
+    height: 115svh !important;
   }
 
   [data-services-scene="education"].bt-scene {
@@ -159,7 +159,7 @@ html[data-services-experience="active"] {
 @supports not (height: 1svh) {
   @media (min-width: 1024px) {
     #authority > div:first-child {
-      height: 145vh !important;
+      height: 115vh !important;
     }
 
     [data-services-scene="education"].bt-scene {
