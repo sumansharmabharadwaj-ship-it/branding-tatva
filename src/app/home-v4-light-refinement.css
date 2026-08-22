@@ -50,6 +50,39 @@
     linear-gradient(180deg, rgba(238, 232, 220, 0.64) 0%, rgba(238, 232, 220, 0.18) 48%, rgba(238, 232, 220, 0.92) 100%);
 }
 
+/* Recognition is a paper chapter. The previous depth layer left ivory type
+   on an ivory wash, so the headline and explanation now read in soil while
+   the original diagram and composition stay untouched. */
+.home-v4 .home-v4-recognition__header h2,
+.home-v4 .home-v4-recognition__copy h3 {
+  color: #302923 !important;
+  text-shadow: none !important;
+}
+
+.home-v4 .home-v4-recognition__header h2 em,
+.home-v4 .home-v4-recognition__header p,
+.home-v4 .home-v4-recognition__label {
+  color: #9b5c43 !important;
+}
+
+.home-v4 .home-v4-recognition__header > span,
+.home-v4 .home-v4-recognition__body,
+.home-v4 .home-v4-recognition__answer p {
+  color: rgba(48, 41, 35, 0.7) !important;
+}
+
+.home-v4 .home-v4-recognition__copy {
+  border-color: rgba(48, 41, 35, 0.12) !important;
+  background:
+    radial-gradient(circle at 88% 8%, rgba(155, 92, 67, 0.11), transparent 34%),
+    rgba(248, 243, 234, 0.9) !important;
+  box-shadow: 0 24px 72px rgba(62, 50, 39, 0.12) !important;
+}
+
+.home-v4 .home-v4-recognition__answer {
+  background: rgba(48, 41, 35, 0.035) !important;
+}
+
 .home-v4-guide {
   border-color: rgba(39, 34, 30, 0.12);
   background: rgba(244, 239, 230, 0.92);
@@ -80,6 +113,82 @@
 .home-v4 [data-home-v4-chapter="insights"],
 .home-v4 [data-home-v4-chapter="invitation"] {
   background-color: #2d3a33 !important;
+}
+
+/* The child scenes carried their own near-black backgrounds, so changing the
+   chapter wrapper alone had no visible effect. These overrides preserve each
+   scene's imagery and layout while giving the middle of the page a readable
+   forest progression instead of six consecutive black rooms. */
+.home-v4 [data-home-v4-chapter="foundation"] > section {
+  background: #4a594f !important;
+}
+
+.home-v4 [data-home-v4-chapter="foundation"] [data-landscape] {
+  opacity: 0.78;
+}
+
+.home-v4 [data-home-v4-chapter="foundation"] [data-landscape] + div[aria-hidden="true"] {
+  opacity: 0.62;
+}
+
+.home-v4 [data-home-v4-chapter="process"] .project-journey {
+  background: #3b4941 !important;
+}
+
+.home-v4 .project-journey__focus-card,
+.home-v4 .project-journey__map-card,
+.home-v4 .project-journey__signal-card,
+.home-v4 .project-journey__rail,
+.home-v4 .project-journey__footer {
+  border-color: rgba(244, 239, 230, 0.14) !important;
+  background-color: rgba(19, 27, 23, 0.64) !important;
+}
+
+/* Readiness charts repeated the same conclusion already expressed by the
+   interactive map. Removing them restores breathing room without changing
+   the three-column process layout or its stage interaction. */
+.home-v4 .project-journey__graph,
+.home-v4 .project-journey__readiness,
+.home-v4 .project-journey__intro > span,
+.home-v4 .project-journey__footer > p {
+  display: none !important;
+}
+
+.home-v4 [data-home-v4-chapter="evidence"] .evidence-cinematic {
+  background: #39483f !important;
+}
+
+.home-v4 .evidence-cinematic__dossier,
+.home-v4 .evidence-cinematic__index {
+  border-color: rgba(244, 239, 230, 0.14) !important;
+  background-color: rgba(25, 32, 28, 0.68) !important;
+}
+
+.home-v4 [data-home-v4-chapter="studio"] .studio-cinematic {
+  background: #34453d !important;
+}
+
+.home-v4 .studio-cinematic__panel,
+.home-v4 .studio-cinematic__tabs button,
+.home-v4 .studio-cinematic__authorship {
+  border-color: rgba(244, 239, 230, 0.14) !important;
+  background-color: rgba(21, 30, 26, 0.68) !important;
+}
+
+/* The oversized media caption sat half outside the one-screen chapter and
+   repeated the active tab label. */
+.home-v4 .studio-cinematic__media-caption {
+  display: none !important;
+}
+
+.home-v4 [data-home-v4-chapter="insights"] .home-insights {
+  background: #3a4944 !important;
+}
+
+.home-v4 .home-insights__argument,
+.home-v4 .home-insights__index button {
+  border-color: rgba(244, 239, 230, 0.14) !important;
+  background-color: rgba(20, 29, 27, 0.66) !important;
 }
 
 .home-v4 [data-home-v4-chapter] video {
