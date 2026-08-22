@@ -209,7 +209,7 @@
 .home-v4 [data-home-v4-chapter="process"] .project-journey__footer,
 .home-v4 [data-home-v4-chapter="process"] .project-journey__prevents {
   border-color: rgba(49, 43, 38, 0.14) !important;
-  background-color: rgba(248, 244, 237, 0.74) !important;
+  background: linear-gradient(145deg, rgba(250, 247, 241, 0.94), rgba(239, 232, 222, 0.9)) !important;
   box-shadow: 0 18px 50px rgba(65, 52, 41, 0.07) !important;
 }
 
