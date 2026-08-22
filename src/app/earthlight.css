@@ -309,6 +309,15 @@ body {
 .bt-consent { border-color: rgba(32,56,47,.16) !important; background: rgba(243,239,229,.96) !important; color: var(--el-ink); box-shadow: 0 20px 60px rgba(25,44,35,.18) !important; }
 
 @media (min-width: 760px) {
+  .bt-consent {
+    left: auto !important;
+    right: 1rem !important;
+    width: min(30rem, calc(100% - 2rem)) !important;
+    margin-inline: 0 !important;
+  }
+}
+
+@media (min-width: 760px) {
   .el-intro-grid { grid-template-columns: minmax(0, 1.15fr) minmax(18rem, .85fr); gap: clamp(2.5rem, 7vw, 7rem); }
   .el-stat-line { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .el-list > li { grid-template-columns: 3rem minmax(12rem, .7fr) minmax(18rem, 1.3fr); align-items: start; gap: 1.5rem; }
