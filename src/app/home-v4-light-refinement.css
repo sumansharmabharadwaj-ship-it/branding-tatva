@@ -260,6 +260,12 @@
   background: rgba(155, 92, 67, 0.09) !important;
 }
 
+.home-v4 [data-home-v4-chapter="process"] .project-journey__footer a {
+  border-color: rgba(49, 43, 38, 0.18) !important;
+  color: #5f4337 !important;
+  background: rgba(255, 252, 247, 0.72) !important;
+}
+
 .home-v4 [data-home-v4-chapter="evidence"] .evidence-cinematic {
   background: #45564c !important;
 }
