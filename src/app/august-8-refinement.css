@@ -1,0 +1,69 @@
+/* August 8 refinement: preserve the editorial layouts while moving the
+   experience from near-black cinema toward calm, warm, earth-lit rooms. */
+
+.august-8-refined {
+  background: #eee7db;
+  color: #27221e;
+}
+
+.august-8-refined::selection {
+  background: rgba(164, 95, 70, 0.24);
+}
+
+/* Existing dark chapters remain cinematic, but no longer collapse into
+   black. All original imagery and typography stay in place. */
+.august-8-refined .bg-soil {
+  background-color: #34423a !important;
+}
+
+.august-8-refined [class~="bg-soil/85"] { background-color: rgba(37, 48, 42, 0.67) !important; }
+.august-8-refined [class~="bg-soil/82"] { background-color: rgba(37, 48, 42, 0.64) !important; }
+.august-8-refined [class~="bg-soil/80"] { background-color: rgba(37, 48, 42, 0.60) !important; }
+.august-8-refined [class~="bg-soil/78"] { background-color: rgba(37, 48, 42, 0.57) !important; }
+
+.august-8-refined section.bg-soil video,
+.august-8-refined main#main-content > section:first-of-type video,
+.august-8-refined [data-services-scene] video {
+  filter: brightness(1.13) saturate(0.9) contrast(0.96);
+}
+
+/* Services keeps its August 8 scene composition, but the retained chapters
+   share one softened forest-charcoal ground instead of several near-blacks. */
+.august-8-refined [data-services-scene] {
+  background-color: #303d36 !important;
+}
+
+.august-8-refined [data-services-hero-scene] {
+  background-color: #303d36 !important;
+}
+
+.august-8-refined [data-services-hero-media] {
+  filter: brightness(1.2) saturate(0.88) contrast(0.94) !important;
+}
+
+.august-8-refined [data-services-scene] > div[aria-hidden="true"].absolute.inset-0 {
+  opacity: 0.72;
+}
+
+/* About's restored convergence is deliberately a light room between the
+   image-led opening and the darker working-practice chapters. */
+.august-8-refined [data-about-scene="method"] {
+  color-scheme: light;
+}
+
+/* Motion should add polish, never gate reading. */
+.august-8-refined a,
+.august-8-refined button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .august-8-refined *,
+  .august-8-refined *::before,
+  .august-8-refined *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

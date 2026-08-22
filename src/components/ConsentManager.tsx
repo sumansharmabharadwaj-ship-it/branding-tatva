@@ -97,14 +97,13 @@ export function ConsentManager() {
           role="dialog"
           aria-modal="false"
           aria-label="Your choice about measurement"
-          className="fixed inset-x-3 bottom-3 z-[100] mx-auto max-w-3xl rounded-2xl border p-5 shadow-2xl backdrop-blur-md sm:inset-x-6 sm:bottom-6"
-          style={{ borderColor: "rgba(198,169,122,0.35)", backgroundColor: "rgba(27,27,27,0.95)" }}
+          className="fixed inset-x-3 bottom-3 z-[100] rounded-2xl border p-4 shadow-2xl backdrop-blur-xl sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-[min(30rem,calc(100vw-3rem))]"
+          style={{ borderColor: "rgba(39,34,30,0.14)", backgroundColor: "rgba(244,239,230,0.94)" }}
         >
-          <p className="text-sm leading-relaxed text-ivory/85">
-            This site can measure which pages hold attention. Everything stays off until you choose,
-            and the booking calendar works either way.{" "}
-            <Link href="/privacy" className="link-underline" style={{ color: "#C6A97A" }}>
-              Read the privacy note
+          <p className="text-sm leading-relaxed text-soil/76">
+            Optional analytics stay off until you choose. Booking works either way.{" "}
+            <Link href="/privacy" className="link-underline" style={{ color: "#9b5c43" }}>
+              Privacy note
             </Link>
             .
           </p>
@@ -113,7 +112,7 @@ export function ConsentManager() {
               type="button"
               onClick={() => decide({ analytics: true, marketing: true })}
               className="rounded-full px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] transition-opacity duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-              style={{ backgroundColor: "#C6A97A", color: "#1B1B1B" }}
+              style={{ backgroundColor: "#9b5c43", color: "#fffaf2" }}
             >
               Accept all
             </button>
@@ -121,14 +120,14 @@ export function ConsentManager() {
             <button
               type="button"
               onClick={() => decide({ analytics: false, marketing: false })}
-              className="rounded-full border border-ivory/30 px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-ivory/85 transition-colors duration-300 hover:border-ivory/60 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="rounded-full border border-soil/20 px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-soil/75 transition-colors duration-300 hover:border-soil/45 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               Essential only
             </button>
             <button
               type="button"
               onClick={() => setPanelOpen(true)}
-              className="rounded-full px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-ivory/70 underline underline-offset-4 transition-colors duration-300 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="rounded-full px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] text-soil/58 underline underline-offset-4 transition-colors duration-300 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               Manage preferences
             </button>

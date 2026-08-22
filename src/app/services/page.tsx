@@ -158,9 +158,6 @@ const JUMP_ITEMS = [
   { href: "#offerings", label: "Services" },
   { href: "#desire", label: "Packages" },
   { href: "#authority", label: "Why it works" },
-  { href: "#education", label: "What changes" },
-  { href: "#imagine", label: "The shift" },
-  { href: "#health", label: "Health check" },
   { href: "#audit", label: "Questions" },
   { href: "#book", label: "Book a call" },
 ];
@@ -454,6 +451,15 @@ export default async function ServicesPage() {
           <SceneHandoff color="#191B16" />
         </section>
 
+        {/* The August 8 page had five additional full-screen teaching and
+            diagnostic chapters here. They repeated ideas already explained
+            by Situation, Services, Packages and Authority, while adding the
+            heaviest pinned/WebGL interactions on the page. The source is
+            intentionally retained for a future deep-dive experience, but the
+            primary commercial journey stays calm and direct. */}
+        {false && (
+          <>
+
         {/* An extension of Authority, not a new act. The visual now
             performs the argument instead of illustrating it with a
             summit: several interchangeable forms recede into category
@@ -674,6 +680,8 @@ export default async function ServicesPage() {
           </div>
           <SceneHandoff color="#171A17" />
         </section>
+          </>
+        )}
 
         {/* The Brand Recognition Audit — the site's one secondary lead
             asset, placed right after the health check so a visitor who

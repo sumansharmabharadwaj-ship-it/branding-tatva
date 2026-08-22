@@ -24,6 +24,7 @@ import "./home-v4-evidence-depth.css";
 import "./home-v4-invitation-depth.css";
 import "./home-v4-prelude-bridge.css";
 import "./home-v4-screen-fit.css";
+import "./home-v4-light-refinement.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";

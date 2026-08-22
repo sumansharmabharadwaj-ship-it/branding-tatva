@@ -6,6 +6,7 @@ import "./globals.css";
 import "./bt-scene.css";
 import "./visualizer.css";
 import "./sun-cursor.css";
+import "./august-8-refinement.css";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
@@ -66,7 +67,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#161719",
+  themeColor: "#eee7db",
   width: "device-width",
   initialScale: 1,
 };
@@ -136,7 +137,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${displayFont.variable} ${bodyFont.variable}`}>
-      <body>
+      <body className="august-8-refined">
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>

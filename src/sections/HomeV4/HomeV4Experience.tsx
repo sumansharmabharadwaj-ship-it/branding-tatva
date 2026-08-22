@@ -8,19 +8,15 @@ import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
-import { HomeBrandHealthCheck } from "@/sections/Home/HomeBrandHealthCheck";
 import { HomeInsightsPreview } from "@/sections/Home/HomeInsightsPreview";
-import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
-import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
-import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
 import { process as processStages } from "@/data/process";
 import { elementColor } from "@/lib/elementColor";
 import { HomeV4HeaderDirector } from "./HomeV4HeaderDirector";
 import { GuidedView, SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
-import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
+import { V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
 
 export function HomeV4Experience() {
   useEffect(() => {
@@ -39,9 +35,6 @@ export function HomeV4Experience() {
       <SceneHandoff motif="mist" />
 
       <V4RecognitionScene />
-      <SceneHandoff motif="river" />
-
-      <V4HiddenCostScene />
       <SceneHandoff motif="root" />
 
       <div
@@ -56,17 +49,6 @@ export function HomeV4Experience() {
       </div>
 
       <SceneHandoff motif="aperture" />
-
-      <div
-        data-home-v4-chapter="paths"
-        data-home-section="paths"
-        data-cursor-world="dark"
-        className="home-v4-chapter home-v4-chapter--paths"
-      >
-        <PathsCinematicChapter />
-      </div>
-
-      <SceneHandoff motif="light" />
 
       <section
         id="process"
@@ -93,37 +75,6 @@ export function HomeV4Experience() {
         <EvidenceWall />
       </div>
 
-      <SceneHandoff motif="constellation" />
-
-      {/* The homepage used to stack three complete five-element experiences
-          inside this single guided chapter: the observatory, pressure lab, and
-          a full-screen element carousel. The pressure lab is the clearest
-          operating-system demonstration, so it now owns the chapter alone.
-          Detailed element exploration stays elsewhere instead of adding two
-          more viewports before Studio. */}
-      {/* The first Home chapter built as a held scene. Its content already
-          fits inside one screen, at roughly 0.9 of a viewport, so the runway
-          underneath buys a genuine pause rather than a token one: the frame
-          stays still while the page keeps moving, and the pressure lab has a
-          moment to be read instead of passing by.
-
-          Chosen for that reason. The taller chapters need their own layouts
-          to fit a screen before a frame can hold them, which is a change to
-          each chapter rather than a wrapper around it. */}
-      <section
-        id="tatva"
-        data-home-v4-chapter="tatva"
-        data-home-chapter="tatva"
-        data-home-section="tatva"
-        data-cursor-world="dark"
-        className="home-v4-chapter home-v4-chapter--tatva bt-scene bt-scene--unfold-short"
-        aria-label="The five Tatvas as one operating system"
-      >
-        <div className="bt-scene__sticky">
-          <TatvaSystemLab />
-        </div>
-      </section>
-
       <SceneHandoff motif="river" />
 
       <div
@@ -134,20 +85,6 @@ export function HomeV4Experience() {
       >
         <StudioCinematicChapter />
       </div>
-
-      <SceneHandoff motif="river" />
-
-      <section
-        id="health"
-        data-home-v4-chapter="health"
-        data-home-chapter="health"
-        data-home-section="health"
-        data-cursor-world="dark"
-        className="home-v4-chapter home-v4-chapter--health"
-        aria-label="A transparent five-measure Brand Health Check"
-      >
-        <HomeBrandHealthCheck />
-      </section>
 
       <SceneHandoff motif="constellation" />
 
@@ -162,19 +99,6 @@ export function HomeV4Experience() {
       >
         <HomeInsightsPreview />
       </section>
-
-      <SceneHandoff motif="mist" />
-
-      <div
-        id="decision"
-        data-home-v4-chapter="decision"
-        data-home-chapter="decision"
-        data-home-section="decision"
-        data-cursor-world="dark"
-        className="home-v4-chapter home-v4-chapter--decision"
-      >
-        <HomeQuestionsScene />
-      </div>
 
       <SceneHandoff motif="light" />
 

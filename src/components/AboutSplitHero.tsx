@@ -10,7 +10,6 @@ import { LinkButton } from "@/components/Button";
 import { TiltCard } from "@/components/TiltCard";
 import { ScrollCue } from "@/components/ScrollCue";
 import { Fireflies } from "@/components/Fireflies";
-import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
 // Full-bleed nature backdrop with a single framed photo/video card
@@ -57,7 +56,6 @@ export function AboutSplitHero({
   const portraitVideoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const [cardRef, cardVisible] = useRevealTrigger();
 
   useVideoFadeIn(backgroundVideoRef, !prefersReducedMotion);
   useVideoFadeIn(portraitVideoRef, !prefersReducedMotion);
@@ -97,7 +95,7 @@ export function AboutSplitHero({
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 85% 65% at 50% 42%, rgba(39,34,30,0.4) 0%, rgba(39,34,30,0.1) 55%, rgba(39,34,30,0.4) 100%)",
+            "radial-gradient(ellipse 85% 68% at 50% 42%, rgba(39,34,30,0.18) 0%, rgba(39,34,30,0.04) 56%, rgba(39,34,30,0.24) 100%)",
         }}
       />
 
@@ -119,17 +117,10 @@ export function AboutSplitHero({
             TiltCard already gives every other card on the site, so the
             "wow" comes from motion quality and a real interaction, not
             from stacking on more decoration. */}
-        <div ref={cardRef} className="relative z-10 mt-6" style={{ perspective: 1200 }}>
+        <div className="relative z-10 mt-6" style={{ perspective: 1200 }}>
           <motion.div
-            initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.8, y: 56 }}
-            animate={
-              prefersReducedMotion
-                ? undefined
-                : cardVisible
-                  ? { opacity: 1, scale: 1, y: 0 }
-                  : { opacity: 0, scale: 0.8, y: 56 }
-            }
-            transition={{ type: "spring", stiffness: 170, damping: 20, mass: 0.9 }}
+            initial={false}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
           >
             <TiltCard glowColor="#C28A28" maxDegrees={7}>
               <motion.div

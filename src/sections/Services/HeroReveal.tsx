@@ -14,15 +14,15 @@ export function HeroReveal() {
   const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollY } = useScroll();
   // The defining visual event becomes clear within a modest first gesture.
-  const scrollVeil = useTransform(scrollY, [0, 260], [0.86, 0]);
+  const scrollVeil = useTransform(scrollY, [0, 180], [0.3, 0]);
   // The film also opens on its own in roughly 2.4 seconds.
-  const timeVeil = useMotionValue(0.86);
+  const timeVeil = useMotionValue(0.3);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
     const controls = animate(timeVeil, 0, {
-      duration: 2.15,
-      delay: 0.25,
+      duration: 0.85,
+      delay: 0.05,
       ease: [0.22, 1, 0.36, 1],
     });
     return () => controls.stop();
@@ -35,7 +35,7 @@ export function HeroReveal() {
     <motion.div
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 z-20"
-      style={{ opacity: veil, backgroundColor: "#0A0F0B" }}
+      style={{ opacity: veil, backgroundColor: "#2f3b33" }}
     />
   );
 }

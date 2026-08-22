@@ -1,202 +1,120 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Container } from "@/components/Container";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
-
-const METHOD_STAGES = [
+const FIELDS = [
   {
     number: "01",
-    field: "Psychology",
-    title: "Attention",
-    question: "What earns a first look without borrowing urgency?",
-    decision: "Choose the signal the audience can recognise quickly and process comfortably.",
-    accent: "#d4b99a",
+    name: "Psychology",
+    degree: "M.A. Clinical Psychology",
+    line: "Reads attention, tension and the way a choice is actually made.",
+    color: "#a45f46",
   },
   {
     number: "02",
-    field: "Language",
-    title: "Meaning",
-    question: "Which words make the value easier to understand and repeat?",
-    decision: "Shape one clear promise, then give every message the same verbal centre.",
-    accent: "#9db3c1",
-  },
-  {
-    number: "03",
-    field: "Brand Strategy & Systems",
-    title: "Memory",
-    question: "Which distinctive cues can stay coherent as the business grows?",
-    decision: "Connect position, expression and repetition so each encounter strengthens the last.",
-    accent: "#a9b69f",
+    name: "Literature",
+    degree: "B.A. English Literature",
+    line: "Gives the idea language people can understand, remember and repeat.",
+    color: "#64775f",
   },
 ] as const;
 
-export function Convergence() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const active = METHOD_STAGES[activeIndex];
+function ResolvedMethod() {
+  return (
+    <div className="mx-auto max-w-2xl text-center">
+      <p className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-clay">Where the two meet</p>
+      <p className="mt-3 font-display text-[clamp(2.7rem,6vw,5.4rem)] font-normal leading-[0.9] tracking-[-0.035em] text-soil">
+        Brand strategy <em className="font-normal text-[#6a765d]">becomes usable.</em>
+      </p>
+      <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-soil/72 sm:text-base">
+        Psychology finds the tension. Literature gives it language. Strategy turns both into a system a growing business can carry forward.
+      </p>
+      <Link
+        href="/work/dr-haley-nutrition"
+        className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-clay underline decoration-clay/30 underline-offset-4 transition-colors hover:text-soil"
+      >
+        See the method in a documented decision <span aria-hidden="true">→</span>
+      </Link>
+    </div>
+  );
+}
 
-  function handleTabKey(index: number, event: KeyboardEvent<HTMLButtonElement>) {
-    let nextIndex: number | undefined;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % METHOD_STAGES.length;
-    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + METHOD_STAGES.length) % METHOD_STAGES.length;
-    if (event.key === "Home") nextIndex = 0;
-    if (event.key === "End") nextIndex = METHOD_STAGES.length - 1;
-    if (nextIndex === undefined) return;
-    event.preventDefault();
-    setActiveIndex(nextIndex);
-    tabRefs.current[nextIndex]?.focus();
+export function Convergence() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end end"] });
+
+  const leftX = useTransform(scrollYProgress, [0.08, 0.48], ["-12vw", "0vw"]);
+  const rightX = useTransform(scrollYProgress, [0.08, 0.48], ["12vw", "0vw"]);
+  const fieldOpacity = useTransform(scrollYProgress, [0.46, 0.62], [1, 0.14]);
+  const fieldY = useTransform(scrollYProgress, [0.46, 0.62], [0, -14]);
+  const resolvedOpacity = useTransform(scrollYProgress, [0.5, 0.68], [0, 1]);
+  const resolvedY = useTransform(scrollYProgress, [0.5, 0.68], [26, 0]);
+  const ruleScale = useTransform(scrollYProgress, [0.12, 0.5], [0.18, 1]);
+
+  if (prefersReducedMotion) {
+    return (
+      <div className="bg-[#eee7db] py-20 sm:py-28" data-about-scene="method">
+        <Container className="max-w-6xl">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-clay">Two disciplines. One practice.</p>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+            {FIELDS.map((field) => (
+              <article key={field.name} className="rounded-[1.6rem] border border-soil/10 bg-[#f8f3e9]/80 p-6 text-center shadow-[0_18px_60px_rgba(67,54,42,0.08)]">
+                <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em]" style={{ color: field.color }}>{field.degree}</p>
+                <h3 className="mt-3 font-display text-4xl font-normal text-soil">{field.name}</h3>
+                <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-soil/68">{field.line}</p>
+              </article>
+            ))}
+          </div>
+          <div className="mt-12"><ResolvedMethod /></div>
+        </Container>
+      </div>
+    );
   }
 
   return (
-    <section
-      className="relative flex min-h-svh items-center overflow-hidden py-[clamp(5.5rem,10svh,8rem)]"
-      aria-labelledby="about-method-title"
-      data-about-scene="method"
-    >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-70"
-        style={{
-          background:
-            "radial-gradient(circle at 72% 36%, rgba(157,179,193,0.12), transparent 34%), radial-gradient(circle at 18% 72%, rgba(212,185,154,0.11), transparent 32%)",
-        }}
-      />
-
-      <Container className="relative w-full max-w-7xl">
-        <header className="grid gap-5 border-b border-ivory/12 pb-[clamp(1.25rem,3svh,2.25rem)] lg:grid-cols-[minmax(0,0.72fr)_minmax(24rem,1.28fr)] lg:items-end lg:gap-12">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">The method</p>
-            <p className="mt-3 text-sm leading-relaxed text-ivory/60">Two fields become one practical decision system.</p>
-          </div>
-          <h2
-            id="about-method-title"
-            className="max-w-[16ch] font-display text-[clamp(2.5rem,min(5.2vw,8svh),5.4rem)] font-normal leading-[0.94] tracking-[-0.035em] text-ivory"
-          >
-            From human attention to a brand people can <em className="font-normal text-sandstone">remember.</em>
-          </h2>
-        </header>
-
-        <div className="mt-[clamp(1.25rem,3.5svh,2.75rem)] grid gap-5 lg:grid-cols-[minmax(15rem,0.62fr)_minmax(0,1.38fr)] lg:items-stretch">
-          <div
-            role="tablist"
-            aria-label="Psychology and language method stages"
-            className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1"
-          >
-            {METHOD_STAGES.map((stage, index) => {
-              const isActive = index === activeIndex;
-              return (
-                <button
-                  key={stage.number}
-                  ref={(node) => {
-                    tabRefs.current[index] = node;
-                  }}
-                  id={`about-method-tab-${index}`}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  aria-controls="about-method-panel"
-                  tabIndex={isActive ? 0 : -1}
-                  data-cursor-label={stage.number}
-                  className="group flex min-w-0 items-center gap-4 rounded-2xl border px-4 py-3 text-left transition-[border-color,background-color,transform] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
-                  style={{
-                    borderColor: isActive ? `${stage.accent}88` : "rgba(244,239,230,0.1)",
-                    backgroundColor: isActive ? `${stage.accent}12` : "rgba(244,239,230,0.025)",
-                    transform: isActive ? "translateX(4px)" : "translateX(0)",
-                  }}
-                  onClick={() => setActiveIndex(index)}
-                  onKeyDown={(event) => handleTabKey(index, event)}
-                >
-                  <span className="text-[0.58rem] font-semibold tracking-[0.16em] text-ivory/40">{stage.number}</span>
-                  <span className="min-w-0">
-                    <strong className="block truncate text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-ivory/50">
-                      {stage.field}
-                    </strong>
-                    <span className="mt-1 block font-display text-xl text-ivory">{stage.title}</span>
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div
-            id="about-method-panel"
-            role="tabpanel"
-            aria-labelledby={`about-method-tab-${activeIndex}`}
-            className="relative min-w-0 overflow-hidden rounded-[clamp(1.25rem,2.4vw,2rem)] border border-ivory/12 bg-[rgba(9,15,16,0.58)] p-[clamp(1.25rem,2.5vw,2.25rem)] shadow-[0_30px_90px_rgba(0,0,0,0.2)] backdrop-blur-md"
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={active.number}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
-                className="grid h-full gap-[clamp(1.25rem,3svh,2.25rem)]"
-              >
-                <div className="grid gap-5 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:gap-8">
-                  <div>
-                    <p className="text-[0.62rem] font-semibold uppercase tracking-[0.16em]" style={{ color: active.accent }}>
-                      {active.field} · {active.title}
-                    </p>
-                    <p className="mt-3 max-w-[19ch] font-display text-[clamp(1.8rem,3vw,3.1rem)] leading-[1.02] text-ivory">
-                      {active.question}
-                    </p>
-                  </div>
-                  <div className="border-l border-ivory/12 pl-5 md:pl-8">
-                    <p className="text-[0.58rem] font-semibold uppercase tracking-[0.16em] text-ivory/40">Project decision</p>
-                    <p className="mt-3 max-w-[38ch] text-sm leading-relaxed text-ivory/82">{active.decision}</p>
-                  </div>
-                </div>
-
-                <div className="grid gap-3 border-t border-ivory/10 pt-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-                  <div>
-                    <p className="text-[0.58rem] font-semibold uppercase tracking-[0.16em] text-ivory/40">Ethical boundary</p>
-                    <p className="mt-2 max-w-[54ch] text-xs leading-relaxed text-ivory/65">
-                      Clarity over pressure. The work supports informed, reversible choice and leaves misleading urgency outside the system.
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs">
-                    <a
-                      href="https://www.apa.org/ethics/code"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sandstone underline decoration-sandstone/35 underline-offset-4 hover:text-ivory"
-                    >
-                      APA ethics code
-                    </a>
-                    <a
-                      href="https://www.gov.uk/government/publications/online-choice-architecture-how-digital-design-can-harm-competition-and-consumers"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sandstone underline decoration-sandstone/35 underline-offset-4 hover:text-ivory"
-                    >
-                      Choice architecture guidance
-                    </a>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-
-        <footer className="mt-[clamp(1.1rem,2.8svh,2rem)] flex flex-col gap-3 border-t border-ivory/10 pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-3xl text-xs leading-relaxed text-ivory/58">
-            Recorded application: a sharper publishing decision moved Dr. Haley Nutrition&apos;s engagement rate from 0.71% to 2.81%.
+    <div ref={wrapRef} className="relative h-[165svh] bg-[#eee7db]" data-about-scene="method">
+      <div className="sticky top-0 flex min-h-svh items-center overflow-hidden py-20">
+        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_48%,rgba(196,142,103,0.13),transparent_34%),radial-gradient(circle_at_18%_78%,rgba(101,120,95,0.12),transparent_30%)]" />
+        <Container className="relative w-full max-w-6xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">Two disciplines. One practice.</p>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-soil/60">
+            Scroll once to see how Suman&apos;s training becomes one practical decision system.
           </p>
-          <Link
-            href="/work/dr-haley-nutrition"
-            className="shrink-0 text-sm font-medium text-sandstone underline decoration-sandstone/35 underline-offset-4 transition-colors hover:text-ivory"
-          >
-            Read the documented decision <span aria-hidden="true">→</span>
-          </Link>
-        </footer>
-      </Container>
-    </section>
+
+          <div className="relative mt-10 min-h-[25rem] sm:min-h-[28rem]">
+            <motion.span
+              aria-hidden="true"
+              className="absolute left-1/2 top-[42%] h-px w-[min(72vw,46rem)] -translate-x-1/2 bg-gradient-to-r from-transparent via-clay/45 to-transparent"
+              style={{ scaleX: ruleScale }}
+            />
+
+            <motion.div className="absolute inset-x-0 top-0 grid gap-4 sm:grid-cols-2 sm:gap-8" style={{ opacity: fieldOpacity, y: fieldY }}>
+              {FIELDS.map((field, index) => (
+                <motion.article
+                  key={field.name}
+                  style={{ x: index === 0 ? leftX : rightX }}
+                  className="rounded-[1.6rem] border border-soil/10 bg-[#f8f3e9]/78 p-6 text-center shadow-[0_18px_60px_rgba(67,54,42,0.08)] backdrop-blur-sm sm:p-8"
+                >
+                  <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em]" style={{ color: field.color }}>
+                    {field.number} · {field.degree}
+                  </p>
+                  <h3 className="mt-3 font-display text-[clamp(2.5rem,5vw,4.5rem)] font-normal leading-none text-soil">{field.name}</h3>
+                  <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-soil/68">{field.line}</p>
+                </motion.article>
+              ))}
+            </motion.div>
+
+            <motion.div className="absolute inset-x-0 top-[8%] sm:top-[16%]" style={{ opacity: resolvedOpacity, y: resolvedY }}>
+              <ResolvedMethod />
+            </motion.div>
+          </div>
+        </Container>
+      </div>
+    </div>
   );
 }

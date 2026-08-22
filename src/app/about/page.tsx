@@ -122,14 +122,14 @@ export default function AboutPage() {
             traveling toward each other through measured scroll progress
             and meeting as brand strategy. Typographic, sticky, zero
             WebGL; reduced motion gets the resolved state statically. */}
-        <section className="bg-soil">
+        <section className="bg-[#eee7db]">
           <Convergence />
           {/* Lead magnet placement (bible §11): the audit signpost
               directly after the interdisciplinary section, inside the
               same soil passage so it lands as a takeaway, never a
               seam. */}
-          <Container className="max-w-3xl pb-16 pt-4">
-            <AuditInvite />
+          <Container className="max-w-3xl pb-20 pt-4">
+            <AuditInvite tone="light" />
           </Container>
         </section>
 
