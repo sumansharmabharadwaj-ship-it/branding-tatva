@@ -10,7 +10,6 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ParallaxVideoBackdrop } from "@/components/ParallaxVideoBackdrop";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { AboutSplitHero } from "@/components/AboutSplitHero";
-import { MeadowClosing } from "@/components/MeadowClosing";
 import { NotebookClose } from "@/components/NotebookClose";
 import { DesignRationaleGrid } from "@/components/DesignRationaleGrid";
 import { PinnedWorkingMethod } from "@/sections/About/PinnedWorkingMethod";
@@ -198,7 +197,7 @@ export default function AboutPage() {
             it (the way higgsfield-element-fire does behind Home's
             card-grid Selected-work section, a bright active clip
             because that section has fewer, larger elements). */}
-        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
+        <section data-about-tone="paper" className="relative overflow-hidden bg-soil py-20 sm:py-28">
           <BackgroundVideo video="/videos/own-moonlit-sea.mp4" poster="/images/own-moonlit-sea-poster.jpg" />
           <div className="absolute inset-0 bg-soil/80" />
           <Container className="relative">
@@ -281,7 +280,7 @@ export default function AboutPage() {
             real paragraphs need to be read at the reader's own pace, not
             forced through a fixed-duration hold — the moving backdrop
             gives the cinematic feel without stalling the read. */}
-        <section className="relative overflow-hidden bg-soil py-20 sm:py-28">
+        <section data-about-tone="paper" className="relative overflow-hidden bg-soil py-20 sm:py-28">
           <ParallaxVideoBackdrop
             video="/videos/pixabay-misty-ridge-drift.mp4"
             poster="/images/pixabay-misty-ridge-drift-poster.jpg"
@@ -414,12 +413,6 @@ export default function AboutPage() {
             </Reveal>
           </Container>
         </section>
-
-        {/* Closing beat: the meadow video doing a slow scroll-driven
-            zoom while a two-line closing statement reveals as you
-            scroll through — see MeadowClosing's own comment for why
-            this replaced two rejected WebGL attempts at this section. */}
-        <MeadowClosing />
 
         {/* Booking — Suman's board, scene five: the invitation written
             inside the notebook on a lit desk, replacing the flat soil
