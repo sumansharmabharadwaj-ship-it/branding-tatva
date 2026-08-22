@@ -1,34 +1,16 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
-import { Container } from "@/components/Container";
-import { ClipReveal } from "@/components/ClipReveal";
-import { TexturedDark } from "@/components/TexturedDark";
-import { LinkButton } from "@/components/Button";
-import { ContextualCTA } from "@/components/conversion/ContextualCTA";
-import { WorkOpening } from "@/sections/Work/WorkOpening";
-import { WorkProofStrip } from "@/sections/Work/WorkProofStrip";
-import { WorkIndex } from "@/sections/Work/WorkIndex";
-import { SignatureProject } from "@/sections/Work/SignatureProject";
-import { SystemFlagship } from "@/sections/Work/SystemFlagship";
-import { MobileSystemEvidenceBoard } from "@/sections/Work/MobileSystemEvidenceBoard";
-import { ProjectStoryWall } from "@/sections/Work/ProjectStoryWall";
-import { DecisionEvidenceGallery } from "@/sections/Work/DecisionEvidenceGallery";
-import { CapabilityMap } from "@/sections/Work/CapabilityMap";
-import { TatvaLab } from "@/sections/Work/TatvaLab";
-import { Authorship } from "@/sections/Work/Authorship";
-import { WorkMobileNarrativeEnhancers } from "@/sections/Work/MobileNarrativeEnhancers";
-import { BrandStudies } from "@/sections/CaseStudies/BrandStudies";
-import { brandStudies } from "@/data/brandStudies";
+import { elements } from "@/data/elements";
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 
 const WORK_URL = `${site.url}/work`;
 const PERSON_ID = `${site.url}/#person`;
 const ORGANIZATION_ID = `${site.url}/#organization`;
-const WORK_DESCRIPTION =
-  "Explore founder-led brand strategy case studies spanning positioning, messaging, content systems, campaigns, customer journeys, and measurable performance.";
+const WORK_DESCRIPTION = "Explore founder-led brand strategy case studies spanning positioning, messaging, content systems, campaigns, customer journeys, and measurable performance.";
 
 const projectsJsonLd = {
   "@context": "https://schema.org",
@@ -42,18 +24,8 @@ const projectsJsonLd = {
   breadcrumb: {
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: site.url,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Work",
-        item: WORK_URL,
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+      { "@type": "ListItem", position: 2, name: "Work", item: WORK_URL },
     ],
   },
   mainEntity: {
@@ -77,173 +49,147 @@ const projectsJsonLd = {
   },
 };
 
-const studiesJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  name: "Independent brand studies",
-  description:
-    "Independent brand strategy analyses of renowned brands, written as teaching. No client relationship with the brands analyzed.",
-  itemListElement: brandStudies.map((study, index) => ({
-    "@type": "ListItem",
-    position: index + 1,
-    item: {
-      "@type": "Article",
-      headline: `${study.brand}: ${study.lens}`,
-      about: study.brand,
-      abstract: study.premise,
-      url: `${WORK_URL}/studies/${study.slug}`,
-      author: { "@id": PERSON_ID },
-      publisher: { "@id": ORGANIZATION_ID },
-    },
-  })),
-};
-
 export const metadata: Metadata = {
   title: "Work: Brand Strategy Case Studies & Portfolio",
   description: WORK_DESCRIPTION,
   alternates: { canonical: "/work" },
-  openGraph: {
-    title: "Work: Brand Strategy Case Studies & Portfolio | Branding Tatva",
-    description: WORK_DESCRIPTION,
-    url: "/work",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Work: Brand Strategy Case Studies & Portfolio | Branding Tatva",
-    description: WORK_DESCRIPTION,
-  },
+  openGraph: { title: "Work: Brand Strategy Case Studies & Portfolio | Branding Tatva", description: WORK_DESCRIPTION, url: "/work", type: "website" },
+  twitter: { card: "summary_large_image", title: "Work: Brand Strategy Case Studies & Portfolio | Branding Tatva", description: WORK_DESCRIPTION },
 };
 
-export default function WorkPage() {
-  const performanceSignature = projects.find((project) => project.slug === "dr-haley-nutrition");
-  const systemSignature = projects.find((project) => project.slug === "myshopineurope");
+const process = [
+  { title: "Diagnose", body: "Separate the visible symptom from the strategic decision causing it." },
+  { title: "Decide", body: "Commit the position, message, and organising idea before multiplying outputs." },
+  { title: "Build", body: "Create the language, touchpoints, content system, and rules that carry the decision." },
+] as const;
 
+export default function WorkPage() {
   return (
     <>
-      <Header />
-      <main id="main-content" style={{ backgroundColor: "#F2F0E8" }}>
-        {/* Overview: immediate proposition, genuine project montage,
-            then a compact evidence line before any explanatory layer. */}
-        <WorkOpening />
-        <WorkProofStrip projects={projects} />
-
-        {/* Scan: buyer-problem filters establish relevance before the
-            page asks for a long read. */}
-        <WorkIndex projects={projects} />
-
-        {/* Immersion one: measured performance. The project's own frame
-            regains colour as the evidence resolves. */}
-        {performanceSignature && <SignatureProject project={performanceSignature} />}
-        <ContextualCTA
-          eyebrow="A similar pattern"
-          heading="Posting more, but earning less attention?"
-          href="/contact"
-          label="Discuss the pattern"
-          event="contextual_cta_clicked"
-          eventProps={{ source: "work_performance_signature" }}
-        />
-
-        {/* A faster middle tier resets the viewing mode before the next
-            long sticky chapter. Three focused engagements receive real
-            context and proportionate depth without becoming miniature
-            versions of the flagship above. */}
-        <ProjectStoryWall projects={projects} />
-
-        {/* Immersion two: system building. A different scroll language
-            assembles foundation, content architecture, and rollout. The
-            project-story wall above prevents two long sticky narratives
-            from sitting directly beside one another. */}
-        {systemSignature && <SystemFlagship project={systemSignature} />}
-        {systemSignature && <MobileSystemEvidenceBoard project={systemSignature} />}
-        <WorkMobileNarrativeEnhancers />
-
-        {/* Tier three: real decisions shown at artefact scale. The
-            fragments demonstrate breadth without turning every small
-            decision into a theatrical case study. */}
-        <DecisionEvidenceGallery />
-
-        {/* Relevance: after seeing the record, the visitor can name the
-            condition they are trying to change and reach the closest
-            project evidence and service path. */}
-        <CapabilityMap />
-
-        {/* Wider practice: concept work and public-record analysis are
-            deliberately separated from client engagements so neither
-            borrows credibility from the other. */}
-        <TatvaLab />
-        <BrandStudies />
+      <Header transparent />
+      <main id="main-content" className="el-page">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsJsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(studiesJsonLd) }} />
 
-        <Authorship />
+        <section className="el-hero" aria-labelledby="work-title">
+          <div className="el-hero__media" aria-hidden="true">
+            <video autoPlay muted loop playsInline preload="metadata" poster="/images/hero-workhorizon-poster.jpg">
+              <source src="/videos/hero-workhorizon.mp4" type="video/mp4" />
+            </video>
+            <div className="el-hero__veil" />
+          </div>
+          <div className="el-shell el-hero__content">
+            <div className="el-hero__card">
+              <p className="el-kicker">Work + services</p>
+              <h1 id="work-title" className="el-display" style={{ marginTop: "1rem" }}>The work is the <em>decision made visible.</em></h1>
+              <p className="el-lede">Founder-led strategy across positioning, messaging, customer experience, content systems, and brand recognition—with client work clearly separated from independent studies.</p>
+              <div className="el-button-row">
+                <Link className="el-button" href="#case-studies">See case studies <span aria-hidden="true">↓</span></Link>
+                <Link className="el-button el-button--quiet" href="#services">View capabilities</Link>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        <TexturedDark
-          image="/images/work-closing.jpg"
-          imagePosition="center 62%"
-          overlayGradient="radial-gradient(circle at 18% 14%, rgba(123,151,108,0.28) 0%, transparent 34%), linear-gradient(118deg, rgba(7,21,17,0.94) 0%, rgba(12,31,26,0.9) 48%, rgba(7,16,22,0.95) 100%)"
-          className="py-20 sm:py-28 sm:pb-28"
-        >
-          <ClipReveal>
-            <Container className="max-w-6xl">
-              <div className="grid gap-10 text-left lg:grid-cols-[minmax(0,1.12fr)_minmax(19rem,0.88fr)] lg:items-end lg:gap-16">
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#B9C8AE]">The next decision</p>
-                  <h2 className="mt-3 max-w-3xl font-display text-display-md font-normal text-ivory">
-                    Bring the part of the brand that no longer makes sense.
-                  </h2>
-                  <p className="mt-5 max-w-2xl text-base leading-relaxed text-ivory/80 sm:text-lg">
-                    The first conversation separates the symptom from the decision: what feels unclear, where the system stops holding together, and what should be solved first.
-                  </p>
+        <section className="el-section el-section--compact" aria-label="Verified work signals">
+          <div className="el-shell el-stat-line">
+            <div className="el-stat"><strong>104%</strong><span>more followers earned per post in documented work</span></div>
+            <div className="el-stat"><strong>365%</strong><span>rise in LinkedIn impressions in one engagement</span></div>
+            <div className="el-stat"><strong>16</strong><span>evidence-led pieces across four content formats</span></div>
+          </div>
+        </section>
 
-                  <div className="mt-8 flex flex-wrap items-center gap-5">
-                    <LinkButton
-                      href="/contact"
-                      className="bg-[#65785A] text-[#F6F1E7] hover:bg-[#74896A]"
-                    >
-                      Discuss the brand problem
-                    </LinkButton>
-                    <Link href="/services" className="link-underline text-sm font-medium text-[#EEE9DD]">
-                      See the service paths <span aria-hidden="true">→</span>
-                    </Link>
+        <section id="case-studies" className="el-section el-section--paper-deep" aria-labelledby="case-studies-title">
+          <div className="el-shell">
+            <div className="el-intro-grid">
+              <div>
+                <p className="el-kicker">Client work</p>
+                <h2 id="case-studies-title" className="el-heading" style={{ marginTop: "1rem" }}>Proof at the depth the evidence can support.</h2>
+              </div>
+              <p className="el-lede">Each study shows the situation, strategic call, execution, and verified outcome. No borrowed metrics. No concept work presented as a client relationship.</p>
+            </div>
+            <div className="el-work-grid" style={{ marginTop: "clamp(2.75rem,6vw,5.5rem)" }}>
+              {projects.map((project, index) => (
+                <Link key={project.slug} href={`/work/${project.slug}`} className={`el-card el-work-card el-work-card--${index % 2 === 0 ? "wide" : "narrow"}`}>
+                  <div className="el-work-card__media">
+                    <Image src={project.cardImage ?? project.heroPoster ?? "/images/work-closing.jpg"} alt="" fill sizes="(max-width: 760px) 100vw, 60vw" />
                   </div>
+                  <div className="el-work-card__copy">
+                    <p className="el-kicker">{project.industry}</p>
+                    <h3>{project.title}</h3>
+                    <p>{project.hook ?? project.challenge}</p>
+                    <span className="el-work-card__link">Read the case study <span aria-hidden="true">→</span></span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="services" className="el-section" aria-labelledby="services-title">
+          <div className="el-shell">
+            <div className="el-intro-grid">
+              <div>
+                <p className="el-kicker">Brand strategy &amp; systems</p>
+                <h2 id="services-title" className="el-heading" style={{ marginTop: "1rem" }}>Five parts of a brand, designed as one system.</h2>
+              </div>
+              <div>
+                <p className="el-lede">Engagements are scoped around the business condition. The five Tatvas keep every deliverable connected to the same strategic foundation.</p>
+                <div className="el-button-row" style={{ marginTop: "1.25rem" }}>
+                  <Link className="el-button" href="/contact">Discuss your starting point <span aria-hidden="true">→</span></Link>
                 </div>
-
-                <aside
-                  aria-label="What the first conversation covers"
-                  className="rounded-[1.5rem] border border-ivory/20 bg-[#06130F]/75 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-sm sm:p-7"
-                >
-                  <p className="text-[0.64rem] font-medium uppercase tracking-[0.18em] text-[#AFC19F]">
-                    First conversation
-                  </p>
-                  <ol className="mt-5 space-y-5">
-                    {[
-                      ["01", "Name what feels unclear", "The page, message, journey, or system that has started to resist the business."],
-                      ["02", "Locate where it breaks", "Whether the problem begins in perception, structure, recognition, or conversion."],
-                      ["03", "Frame the next decision", "The clearest move to make before commissioning another disconnected output."],
-                    ].map(([number, title, description]) => (
-                      <li key={number} className="grid grid-cols-[2rem_1fr] gap-3 border-t border-ivory/15 pt-4 first:border-t-0 first:pt-0">
-                        <span className="font-display text-lg text-[#9DB18F]">{number}</span>
-                        <div>
-                          <p className="font-display text-xl font-normal text-ivory">{title}</p>
-                          <p className="mt-1 text-sm leading-relaxed text-ivory/65">{description}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                </aside>
               </div>
+            </div>
+            <ol className="el-list" style={{ marginTop: "clamp(2.5rem,6vw,5rem)" }}>
+              {elements.map((element, index) => (
+                <li key={element.slug}>
+                  <span className="el-list__number">0{index + 1}</span>
+                  <div>
+                    <h3>{element.name}</h3>
+                    <p style={{ marginTop: ".65rem" }}>{element.meaning}</p>
+                  </div>
+                  <p>{element.services.join(" · ")}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
 
-              <div className="mt-10 grid gap-3 border-t border-ivory/20 pt-5 text-center text-[0.64rem] uppercase tracking-[0.16em] text-ivory/65 sm:grid-cols-3 lg:text-left">
-                <span>Founder-led</span>
-                <span>Direct collaboration</span>
-                <span>Strategy before output</span>
+        <section className="el-section el-section--mist" aria-labelledby="process-title">
+          <div className="el-shell">
+            <div className="el-intro-grid">
+              <div>
+                <p className="el-kicker">A simpler process</p>
+                <h2 id="process-title" className="el-heading" style={{ marginTop: "1rem" }}>Three movements. No theatre for theatre&apos;s sake.</h2>
               </div>
-            </Container>
-          </ClipReveal>
-        </TexturedDark>
+              <p className="el-lede">The engagement is paced around decisions and evidence. You always know what is being decided, why it matters, and what changes next.</p>
+            </div>
+            <ol className="el-list" style={{ marginTop: "clamp(2.5rem,6vw,5rem)" }}>
+              {process.map((item, index) => (
+                <li key={item.title}>
+                  <span className="el-list__number">0{index + 1}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section className="el-footer-cta" aria-labelledby="work-cta-title">
+          <video autoPlay muted loop playsInline preload="metadata" poster="/images/pixabay-golden-forest-glow-poster.jpg" aria-hidden="true">
+            <source src="/videos/pixabay-golden-forest-glow.mp4" type="video/mp4" />
+          </video>
+          <div className="el-footer-cta__copy">
+            <p className="el-kicker">The next decision</p>
+            <h2 id="work-cta-title" style={{ marginTop: "1rem" }}>Bring the part of the brand that no longer makes sense.</h2>
+            <p>The first conversation identifies the condition, separates the symptom from the cause, and finds the smallest useful place to begin.</p>
+            <div className="el-button-row">
+              <Link className="el-button el-button--paper" href="/contact">Book a strategy session <span aria-hidden="true">→</span></Link>
+            </div>
+          </div>
+        </section>
       </main>
-      <Footer compact />
+      <Footer />
     </>
   );
 }

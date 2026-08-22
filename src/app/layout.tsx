@@ -6,6 +6,7 @@ import "./globals.css";
 import "./bt-scene.css";
 import "./visualizer.css";
 import "./sun-cursor.css";
+import "./earthlight.css";
 import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
@@ -66,7 +67,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#161719",
+  themeColor: "#F3EFE5",
   width: "device-width",
   initialScale: 1,
 };

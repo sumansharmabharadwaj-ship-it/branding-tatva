@@ -29,9 +29,8 @@ export const site = {
 
 export const navigation = [
   { label: "Home", href: "/" },
-  { label: "Work", href: "/work" },
+  { label: "Work & Services", href: "/work" },
   { label: "About", href: "/about" },
-  { label: "Brand Strategy & Systems", href: "/services" },
   { label: "Insights", href: "/insights" },
   { label: "Contact", href: "/contact" },
 ] as const;

@@ -97,13 +97,11 @@ export function ConsentManager() {
           role="dialog"
           aria-modal="false"
           aria-label="Your choice about measurement"
-          className="fixed inset-x-3 bottom-3 z-[100] mx-auto max-w-3xl rounded-2xl border p-5 shadow-2xl backdrop-blur-md sm:inset-x-6 sm:bottom-6"
-          style={{ borderColor: "rgba(198,169,122,0.35)", backgroundColor: "rgba(27,27,27,0.95)" }}
+          className="bt-consent fixed inset-x-3 bottom-3 z-[100] mx-auto max-w-2xl rounded-2xl border p-4 shadow-2xl backdrop-blur-md sm:inset-x-6 sm:bottom-6"
         >
-          <p className="text-sm leading-relaxed text-ivory/85">
-            This site can measure which pages hold attention. Everything stays off until you choose,
-            and the booking calendar works either way.{" "}
-            <Link href="/privacy" className="link-underline" style={{ color: "#C6A97A" }}>
+          <p className="text-sm leading-relaxed text-[#435148]">
+            Optional analytics help improve the pages. Everything stays off until you choose, and booking works either way.{" "}
+            <Link href="/privacy" className="link-underline" style={{ color: "#8F5A43" }}>
               Read the privacy note
             </Link>
             .
@@ -113,7 +111,7 @@ export function ConsentManager() {
               type="button"
               onClick={() => decide({ analytics: true, marketing: true })}
               className="rounded-full px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] transition-opacity duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-              style={{ backgroundColor: "#C6A97A", color: "#1B1B1B" }}
+              style={{ backgroundColor: "#20382F", color: "#F3EFE5" }}
             >
               Accept all
             </button>
@@ -121,14 +119,14 @@ export function ConsentManager() {
             <button
               type="button"
               onClick={() => decide({ analytics: false, marketing: false })}
-              className="rounded-full border border-ivory/30 px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-ivory/85 transition-colors duration-300 hover:border-ivory/60 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="rounded-full border border-[#20382F]/20 px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-[#20382F] transition-colors duration-300 hover:border-[#20382F]/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               Essential only
             </button>
             <button
               type="button"
               onClick={() => setPanelOpen(true)}
-              className="rounded-full px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-ivory/70 underline underline-offset-4 transition-colors duration-300 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="rounded-full px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-[#59655D] underline underline-offset-4 transition-colors duration-300 hover:text-[#20382F] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               Manage preferences
             </button>
@@ -142,10 +140,9 @@ export function ConsentManager() {
           role="dialog"
           aria-modal="true"
           aria-label="Measurement preferences"
-          className="fixed inset-x-3 bottom-3 z-[101] mx-auto max-w-3xl rounded-2xl border p-5 shadow-2xl backdrop-blur-md sm:inset-x-6 sm:bottom-6 sm:p-6"
-          style={{ borderColor: "rgba(198,169,122,0.35)", backgroundColor: "rgba(27,27,27,0.97)" }}
+          className="bt-consent fixed inset-x-3 bottom-3 z-[101] mx-auto max-w-3xl rounded-2xl border p-5 shadow-2xl backdrop-blur-md sm:inset-x-6 sm:bottom-6 sm:p-6"
         >
-          <h2 className="font-display text-xl text-ivory">Measurement preferences</h2>
+          <h2 className="font-display text-xl text-[#20382F]">Measurement preferences</h2>
 
           <ul className="mt-4 space-y-3">
             <ConsentRow
@@ -173,14 +170,14 @@ export function ConsentManager() {
               type="button"
               onClick={() => decide(draft)}
               className="rounded-full px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] transition-opacity duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-              style={{ backgroundColor: "#C6A97A", color: "#1B1B1B" }}
+              style={{ backgroundColor: "#20382F", color: "#F3EFE5" }}
             >
               Save choices
             </button>
             <button
               type="button"
               onClick={() => decide({ analytics: false, marketing: false })}
-              className="rounded-full border border-ivory/30 px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-ivory/85 transition-colors duration-300 hover:border-ivory/60 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="rounded-full border border-[#20382F]/20 px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-[#20382F] transition-colors duration-300 hover:border-[#20382F]/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               Essential only
             </button>
@@ -188,7 +185,7 @@ export function ConsentManager() {
               <button
                 type="button"
                 onClick={() => setPanelOpen(false)}
-                className="rounded-full px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-ivory/70 underline underline-offset-4 transition-colors duration-300 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="rounded-full px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-[#59655D] underline underline-offset-4 transition-colors duration-300 hover:text-[#20382F] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 Close
               </button>
@@ -214,7 +211,7 @@ function ConsentRow({
   onChange?: (value: boolean) => void;
 }) {
   return (
-    <li className="flex items-start gap-3 rounded-xl border border-ivory/10 p-3">
+    <li className="flex items-start gap-3 rounded-xl border border-[#20382F]/10 p-3">
       <input
         type="checkbox"
         checked={checked}
@@ -224,8 +221,8 @@ function ConsentRow({
         className="mt-1 h-4 w-4 shrink-0 accent-[#C6A97A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
       />
       <span>
-        <span className="block text-sm font-medium text-ivory">{title}</span>
-        <span id={`consent-${title.toLowerCase()}-detail`} className="block text-xs leading-relaxed text-ivory/65">
+        <span className="block text-sm font-medium text-[#20382F]">{title}</span>
+        <span id={`consent-${title.toLowerCase()}-detail`} className="block text-xs leading-relaxed text-[#59655D]">
           {detail}
         </span>
       </span>

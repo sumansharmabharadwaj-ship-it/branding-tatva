@@ -12,7 +12,7 @@ import { useLenis } from "@/components/SmoothScrollProvider";
 import { useCurrentElement } from "@/lib/currentElement";
 import { navigation } from "@/data/site";
 import type { HeaderProps } from "./types";
-import { SCROLLED_THRESHOLD, HIDE_REVEAL_DELTA, HIDE_REVEAL_MIN_SCROLL } from "./constants";
+import { HIDE_REVEAL_DELTA, HIDE_REVEAL_MIN_SCROLL } from "./constants";
 import {
   ICON_TRANSITION,
   BACKDROP_TRANSITION,
@@ -39,7 +39,6 @@ import {
 
 export function Header({ transparent = false }: HeaderProps) {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [barHidden, setBarHidden] = useState(false);
   const lastScrollRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -48,8 +47,6 @@ export function Header({ transparent = false }: HeaderProps) {
 
   useEffect(() => {
     function handleScroll(current: number) {
-      setScrolled(current > SCROLLED_THRESHOLD);
-
       const last = lastScrollRef.current;
       const delta = current - last;
       if (Math.abs(delta) < HIDE_REVEAL_DELTA) return;
@@ -108,19 +105,17 @@ export function Header({ transparent = false }: HeaderProps) {
       >
         <div className="relative w-full max-w-4xl lg:max-w-5xl">
           <div
-            className={`flex w-full items-center justify-between gap-4 rounded-full border border-ivory/10 px-4 py-2.5 shadow-elevation-md backdrop-blur-md transition-colors duration-500 sm:px-6 sm:py-3 ${
-              scrolled ? "bg-[#1B1B1B]/90" : "bg-[#1B1B1B]/60"
-            }`}
+            className="bt-earthlight-header flex w-full items-center justify-between gap-4 rounded-full border px-4 py-2.5 backdrop-blur-md transition-colors duration-500 sm:px-6 sm:py-3"
           >
             <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3">
-              <LogoMark size={32} light className="shrink-0" />
-              <span aria-hidden="true" className="hidden h-6 w-px bg-ivory/25 min-[376px]:block" />
+              <LogoMark size={32} className="shrink-0" />
+              <span aria-hidden="true" className="bt-earthlight-header__divider hidden h-6 w-px min-[376px]:block" />
               {/* Logo owns an inline-flex display internally, so the
                   responsive visibility belongs to a parent wrapper.
                   This keeps the wordmark at 390px while leaving enough
                   room for sound and menu controls at 360px. */}
               <span className="hidden min-[376px]:inline-flex">
-                <Logo light className="origin-left" />
+                <Logo className="origin-left" />
               </span>
             </Link>
 
@@ -136,7 +131,7 @@ export function Header({ transparent = false }: HeaderProps) {
                         href={item.href}
                         aria-current={active ? "page" : undefined}
                         className={`relative whitespace-nowrap text-[0.72rem] font-medium uppercase tracking-[0.18em] transition-colors duration-300 ${
-                          active ? "" : "text-ivory/85 hover:text-ivory"
+                          active ? "" : "bt-earthlight-header__link"
                         }`}
                         style={active ? { color: accent } : undefined}
                       >
@@ -152,7 +147,7 @@ export function Header({ transparent = false }: HeaderProps) {
                     );
                   })}
               </nav>
-              <span aria-hidden="true" className="hidden h-6 w-px bg-ivory/25 lg:block" />
+              <span aria-hidden="true" className="bt-earthlight-header__divider hidden h-6 w-px lg:block" />
               <Link
                 href="/contact"
                 className="group hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 py-2 text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300 sm:inline-flex"
@@ -224,7 +219,7 @@ export function Header({ transparent = false }: HeaderProps) {
                 animate="animate"
                 exit="exit"
                 transition={MOBILE_NAV_TRANSITION}
-                className="w-full max-w-sm rounded-2xl border border-ivory/14 bg-[#111615]/94 p-3 text-ivory shadow-[0_28px_90px_rgba(0,0,0,0.42)] backdrop-blur-xl"
+                className="bt-earthlight-menu w-full max-w-sm rounded-2xl border p-3 backdrop-blur-xl"
                 aria-label="Primary"
               >
                 <motion.ul variants={prefersReducedMotion ? undefined : navListVariants} className="flex flex-col">
@@ -237,7 +232,7 @@ export function Header({ transparent = false }: HeaderProps) {
                       <Link
                         href={item.href}
                         onClick={() => setOpen(false)}
-                        className="block min-h-12 rounded-2xl px-4 py-3 text-center font-display text-xl text-ivory/84 transition-colors hover:bg-ivory/[0.06] hover:text-sandstone focus-visible:bg-ivory/[0.06] focus-visible:text-sandstone"
+                        className="block min-h-12 rounded-2xl px-4 py-3 text-center font-display text-xl transition-colors"
                       >
                         {item.label}
                       </Link>
