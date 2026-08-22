@@ -185,6 +185,18 @@
   background: linear-gradient(115deg, rgba(232, 225, 213, 0.98), rgba(223, 216, 204, 0.88)) !important;
 }
 
+.home-v4 [data-home-v4-chapter="process"] .project-journey::before {
+  background:
+    radial-gradient(44rem 30rem at 16% 20%, rgba(155, 92, 67, 0.1), transparent 68%),
+    radial-gradient(40rem 28rem at 86% 76%, rgba(106, 124, 104, 0.11), transparent 68%),
+    linear-gradient(125deg, rgba(238, 232, 221, 0.52), rgba(232, 225, 213, 0.18)) !important;
+}
+
+.home-v4 [data-home-v4-chapter="process"] .project-journey::after {
+  opacity: 0.04 !important;
+  mix-blend-mode: multiply !important;
+}
+
 .home-v4 [data-home-v4-chapter="process"] .project-journey__grid,
 .home-v4 [data-home-v4-chapter="process"] .project-journey__orbit {
   opacity: 0.12 !important;
