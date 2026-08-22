@@ -143,10 +143,10 @@ export function PathsCinematicChapter() {
     return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
   }, []);
 
-  function choose(index: number) {
+  function choose(index: number, persist = true) {
     setActiveIndex(index);
     setCarriedChoice(false);
-    publishSituation(PATHS[index].situation);
+    if (persist) publishSituation(PATHS[index].situation);
   }
 
   function onChoiceKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -192,7 +192,7 @@ export function PathsCinematicChapter() {
             <span>
               {carriedChoice
                 ? "Your earlier choice is already open."
-                : "Select a starting point to open its route."}
+                : "Choose a starting point. The route stays still while you compare it."}
             </span>
           </div>
         </header>
@@ -211,6 +211,9 @@ export function PathsCinematicChapter() {
                 tabIndex={selected ? 0 : -1}
                 onClick={() => choose(index)}
                 onKeyDown={(event) => onChoiceKeyDown(event, index)}
+                onPointerEnter={(event) => {
+                  if (event.pointerType === "mouse") choose(index, false);
+                }}
                 className={selected ? "is-active" : undefined}
                 style={{ "--path-tint": path.tint } as CSSProperties}
               >
@@ -269,16 +272,8 @@ export function PathsCinematicChapter() {
                       strokeWidth={selected ? 2.4 : 1.2}
                       strokeLinecap="round"
                       strokeDasharray="6 11"
-                      animate={
-                        selected && inView && !prefersReducedMotion
-                          ? { strokeDashoffset: [0, -34] }
-                          : { strokeDashoffset: 0 }
-                      }
-                      transition={{
-                        duration: 1.2,
-                        repeat: selected ? Infinity : 0,
-                        ease: "linear",
-                      }}
+                      animate={{ strokeDashoffset: 0 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.46, ease: EASE }}
                       opacity={selected ? 0.96 : 0.16}
                     />
                   </g>
