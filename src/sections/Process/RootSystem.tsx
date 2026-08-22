@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type KeyboardEvent,
 } from "react";
 import { useInView } from "framer-motion";
 import type { ProcessStage } from "@/data/process";
@@ -127,6 +128,19 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const inView = useInView(sectionRef, { amount: 0.32 });
   const [active, setActive] = useState(0);
   const chooseStage = useCallback((index: number) => setActive(index), []);
+
+  function onStageKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % stages.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + stages.length - 1) % stages.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = stages.length - 1;
+    else return;
+
+    event.preventDefault();
+    chooseStage(next);
+    document.getElementById(`project-stage-tab-${next}`)?.focus();
+  }
 
   useEffect(() => {
     if (active >= stages.length) setActive(0);
@@ -258,6 +272,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               tabIndex={active === index ? 0 : -1}
               className={`project-journey__stage-button${active === index ? " is-active" : ""}`}
               onClick={() => chooseStage(index)}
+              onKeyDown={(event) => onStageKeyDown(event, index)}
             >
               <span>{String(index + 1).padStart(2, "0")}</span>
               <strong>{item.stage}</strong>
@@ -318,15 +333,6 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                     style={{ strokeDashoffset: active >= segment.to ? 0 : 1 }}
                   />
                 ))}
-                {!prefersReducedMotion && inView && active > 0 && (
-                  <circle r="3.5" fill={accent} className="project-journey__traveller">
-                    <animateMotion
-                      dur="2.4s"
-                      repeatCount="indefinite"
-                      path={SEGMENTS[Math.min(active - 1, SEGMENTS.length - 1)]?.d}
-                    />
-                  </circle>
-                )}
               </svg>
 
               {visibleNodes.map((node, index) => {
