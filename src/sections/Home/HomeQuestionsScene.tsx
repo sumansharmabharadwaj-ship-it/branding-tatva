@@ -2,8 +2,8 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView } from "framer-motion";
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { AuditInvite } from "@/components/AuditInvite";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
@@ -67,9 +67,7 @@ function answerFor(question: string) {
 }
 
 export function HomeQuestionsScene() {
-  const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
   const [activeIndex, setActiveIndex] = useState(0);
   const decisions = useMemo(
     () =>
@@ -81,7 +79,9 @@ export function HomeQuestionsScene() {
     [],
   );
   const active = decisions[activeIndex] ?? decisions[0];
-  const motionActive = inView && !prefersReducedMotion;
+  // The film is the sole ambient movement. The compass changes only after a
+  // visitor chooses a question, so the answer stays still while it is read.
+  const motionActive = false;
 
   useEffect(() => {
     function onChapter(event: Event) {
@@ -98,9 +98,21 @@ export function HomeQuestionsScene() {
     setActiveIndex(index);
   }
 
+  function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % decisions.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + decisions.length - 1) % decisions.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = decisions.length - 1;
+    else return;
+
+    event.preventDefault();
+    choose(next);
+    document.getElementById(`question-tab-${next}`)?.focus();
+  }
+
   return (
     <section
-      ref={sectionRef}
       className="questions-cinematic"
       aria-labelledby="home-questions-title"
       style={{ "--questions-accent": active.color } as CSSProperties}
@@ -109,40 +121,9 @@ export function HomeQuestionsScene() {
       <BackgroundVideo
         video="/videos/generated/bt-home-decision-waterlight.mp4"
         poster="/images/generated/bt-home-decision-waterlight-poster.jpg"
-        parallax
-        push
         playbackRate={0.92}
       />
       <div className="questions-cinematic__veil" aria-hidden="true" />
-      <motion.div
-        aria-hidden="true"
-        className="questions-cinematic__light questions-cinematic__light--one"
-        animate={
-          motionActive
-            ? { x: [0, 78, 0], y: [0, 26, 0], scale: [0.95, 1.08, 0.95] }
-            : undefined
-        }
-        transition={
-          motionActive
-            ? { duration: 17, repeat: Infinity, ease: "easeInOut" }
-            : undefined
-        }
-      />
-      <motion.div
-        aria-hidden="true"
-        className="questions-cinematic__light questions-cinematic__light--two"
-        animate={
-          motionActive
-            ? { x: [0, -60, 0], y: [0, -24, 0], scale: [1.04, 0.95, 1.04] }
-            : undefined
-        }
-        transition={
-          motionActive
-            ? { duration: 20, repeat: Infinity, ease: "easeInOut" }
-            : undefined
-        }
-      />
-
       <Container className="questions-cinematic__shell max-w-[96rem]">
         <header className="questions-cinematic__header">
           <div>
@@ -157,7 +138,7 @@ export function HomeQuestionsScene() {
               distance should stop feeling vague.
             </p>
             <span>
-              The compass moves while you watch. Select a doubt and it waits while you read.
+              Choose a doubt. The compass changes once, then stays still while you read.
             </span>
           </div>
         </header>
@@ -299,6 +280,7 @@ export function HomeQuestionsScene() {
               key={active.signal}
               id="questions-cinematic-panel"
               role="tabpanel"
+              aria-labelledby={`question-tab-${activeIndex}`}
               className="questions-cinematic__answer"
               initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(5px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -321,14 +303,6 @@ export function HomeQuestionsScene() {
               <Link href="/contact" className="questions-cinematic__answer-link">
                 Bring the remaining question <span aria-hidden="true">↗</span>
               </Link>
-              <span className="questions-cinematic__timer" aria-hidden="true">
-                <motion.i
-                  key={`questions-timer-${active.signal}`}
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.35, ease: EASE }}
-                />
-              </span>
             </motion.article>
           </AnimatePresence>
         </div>
@@ -339,13 +313,16 @@ export function HomeQuestionsScene() {
             return (
               <button
                 key={decision.signal}
+                id={`question-tab-${index}`}
                 type="button"
                 role="tab"
                 aria-selected={selected}
                 aria-controls="questions-cinematic-panel"
+                tabIndex={selected ? 0 : -1}
                 className={selected ? "is-active" : undefined}
                 style={{ "--decision-color": decision.color } as CSSProperties}
                 onClick={() => choose(index)}
+                onKeyDown={(event) => onTabKeyDown(event, index)}
                 onFocus={() => choose(index)}
               >
                 <span>{String(index + 1).padStart(2, "0")}</span>
