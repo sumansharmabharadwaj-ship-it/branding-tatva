@@ -7,7 +7,6 @@ import "./bt-scene.css";
 import "./visualizer.css";
 import "./sun-cursor.css";
 import "./august-8-refinement.css";
-import { PageLoadVeil } from "@/components/PageLoadVeil";
 import { AmbientAudio } from "@/components/AmbientAudio";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { ConsentManager } from "@/components/ConsentManager";
@@ -151,7 +150,6 @@ export default function RootLayout({
           </MotionPreferenceProvider>
         </SmoothScrollProvider>
 
-        <PageLoadVeil />
         <AmbientAudio />
         <VideoWarden />
         {/* Measurement lives behind consent now. It used to mount here
