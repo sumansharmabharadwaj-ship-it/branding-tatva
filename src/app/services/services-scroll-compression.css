@@ -144,26 +144,26 @@ html[data-services-experience="active"] {
 }
 
 /* Authority previously consumed 420vh, then 220svh, for five concise states.
-   The same assembly now completes inside 175svh: enough travel to distinguish
+   The same assembly now completes inside 145svh: enough travel to distinguish
    each layer while keeping the next business decision within reach. */
 @media (min-width: 1024px) {
   #authority > div:first-child {
-    height: 175svh !important;
+    height: 145svh !important;
   }
 
   [data-services-scene="education"].bt-scene {
-    min-height: 150svh;
+    min-height: 125svh;
   }
 }
 
 @supports not (height: 1svh) {
   @media (min-width: 1024px) {
     #authority > div:first-child {
-      height: 175vh !important;
+      height: 145vh !important;
     }
 
     [data-services-scene="education"].bt-scene {
-      min-height: 150vh;
+      min-height: 125vh;
     }
   }
 }
