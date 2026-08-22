@@ -166,6 +166,88 @@
   display: none !important;
 }
 
+/* The process room is the cognitive pause between two cinematic chapters.
+   Its original black dashboard made the page feel heavier, not clearer. The
+   structure and six-stage interaction stay exactly where they are, but the
+   room now reads like a warm strategy folio. */
+.home-v4 [data-home-v4-chapter="process"] .project-journey {
+  background: #e8e1d5 !important;
+  color: #312b26 !important;
+}
+
+.home-v4 [data-home-v4-chapter="process"] .project-journey__media {
+  opacity: 0.12 !important;
+  filter: sepia(0.18) saturate(0.62) brightness(1.22) !important;
+}
+
+.home-v4 [data-home-v4-chapter="process"] .project-journey__wash {
+  opacity: 0.82 !important;
+  background: linear-gradient(115deg, rgba(232, 225, 213, 0.98), rgba(223, 216, 204, 0.88)) !important;
+}
+
+.home-v4 [data-home-v4-chapter="process"] .project-journey__grid,
+.home-v4 [data-home-v4-chapter="process"] .project-journey__orbit {
+  opacity: 0.12 !important;
+}
+
+.home-v4 [data-home-v4-chapter="process"] .project-journey__focus-card,
+.home-v4 [data-home-v4-chapter="process"] .project-journey__map-card,
+.home-v4 [data-home-v4-chapter="process"] .project-journey__signal-card,
+.home-v4 [data-home-v4-chapter="process"] .project-journey__rail,
+.home-v4 [data-home-v4-chapter="process"] .project-journey__footer,
+.home-v4 [data-home-v4-chapter="process"] .project-journey__prevents {
+  border-color: rgba(49, 43, 38, 0.14) !important;
+  background-color: rgba(248, 244, 237, 0.74) !important;
+  box-shadow: 0 18px 50px rgba(65, 52, 41, 0.07) !important;
+}
+
+.home-v4 [data-home-v4-chapter="process"] :is(
+  .project-journey__header h2,
+  .project-journey__focus-card h3,
+  .project-journey__map-heading h3,
+  .project-journey__signal-top h3,
+  .project-journey__output-block strong,
+  .project-journey__stage-button strong,
+  .project-journey__node span
+) {
+  color: #312b26 !important;
+  text-shadow: none !important;
+}
+
+.home-v4 [data-home-v4-chapter="process"] :is(
+  .project-journey__intro p,
+  .project-journey__explanation,
+  .project-journey__decision-block p,
+  .project-journey__prevents p,
+  .project-journey__map-note
+) {
+  color: rgba(49, 43, 38, 0.72) !important;
+}
+
+.home-v4 [data-home-v4-chapter="process"] :is(
+  .project-journey__kicker,
+  .project-journey__turns,
+  .project-journey__card-topline,
+  .project-journey__map-heading p,
+  .project-journey__map-heading > span,
+  .project-journey__signal-top p,
+  .project-journey__decision-block span,
+  .project-journey__output-block span,
+  .project-journey__prevents span
+) {
+  color: #8b5945 !important;
+}
+
+.home-v4 [data-home-v4-chapter="process"] .project-journey__stage-button {
+  border-color: rgba(49, 43, 38, 0.1) !important;
+}
+
+.home-v4 [data-home-v4-chapter="process"] .project-journey__stage-button:hover,
+.home-v4 [data-home-v4-chapter="process"] .project-journey__stage-button:focus-visible,
+.home-v4 [data-home-v4-chapter="process"] .project-journey__stage-button.is-active {
+  background: rgba(155, 92, 67, 0.09) !important;
+}
+
 .home-v4 [data-home-v4-chapter="evidence"] .evidence-cinematic {
   background: #45564c !important;
 }
