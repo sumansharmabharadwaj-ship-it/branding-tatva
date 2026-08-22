@@ -72,10 +72,6 @@ export function Convergence() {
 
   const leftX = useTransform(scrollYProgress, [0.06, 0.42], ["-5.5vw", "0vw"]);
   const rightX = useTransform(scrollYProgress, [0.06, 0.42], ["5.5vw", "0vw"]);
-  const fieldOpacity = useTransform(scrollYProgress, [0.42, 0.57], [1, 0]);
-  const fieldY = useTransform(scrollYProgress, [0.42, 0.57], [0, -10]);
-  const resolvedOpacity = useTransform(scrollYProgress, [0.5, 0.64], [0, 1]);
-  const resolvedY = useTransform(scrollYProgress, [0.5, 0.64], [22, 0]);
   const ruleScale = useTransform(scrollYProgress, [0.1, 0.44], [0.24, 1]);
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
@@ -108,7 +104,12 @@ export function Convergence() {
               style={{ scaleX: ruleScale }}
             />
 
-            <motion.div className="absolute inset-x-0 top-0 grid gap-4 sm:grid-cols-2 sm:gap-8" style={{ opacity: fieldOpacity, y: fieldY }}>
+            <motion.div
+              className="absolute inset-x-0 top-0 grid gap-4 sm:grid-cols-2 sm:gap-8"
+              animate={{ opacity: resolvedActive ? 0 : 1, y: resolvedActive ? -10 : 0 }}
+              transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+              aria-hidden={resolvedActive}
+            >
               {FIELDS.map((field, index) => (
                 <motion.article
                   key={field.name}
@@ -126,7 +127,8 @@ export function Convergence() {
 
             <motion.div
               className="absolute inset-x-0 top-[8%] sm:top-[16%]"
-              style={{ opacity: resolvedOpacity, y: resolvedY }}
+              animate={{ opacity: resolvedActive ? 1 : 0, y: resolvedActive ? 0 : 22 }}
+              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
               aria-hidden={!resolvedActive}
             >
               <ResolvedMethod active={resolvedActive} />
