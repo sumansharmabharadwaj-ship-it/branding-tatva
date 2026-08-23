@@ -382,7 +382,7 @@ export default async function ServicesPage() {
             visitor to act before the teaching chapters. Its original
             deep-water film keeps three legitimate currents visible,
             then lets them resolve into one legible scope. */}
-        <section id="desire" data-services-scene="desire" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.deepwater }}>
+        <section id="desire" data-services-scene="desire" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-14 sm:py-16 lg:py-16" style={{ backgroundColor: MOOD.deepwater }}>
           {/* Original procedural package-choice loop: three
               legitimate currents remain visible, then settle into one
               legible channel. The restrained mineral-gold trace marks
