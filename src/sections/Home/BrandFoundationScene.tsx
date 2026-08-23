@@ -108,9 +108,7 @@ export function BrandFoundationScene() {
       style={{ backgroundColor: "#121713" }}
       aria-labelledby="brand-foundation-title"
     >
-      <div
-        className="relative min-h-svh overflow-hidden"
-      >
+      <div className="relative h-svh min-h-svh overflow-hidden">
         <div
           data-landscape
           data-media-id="BT-HOME-FOUNDATION-ROOT-NETWORK"
@@ -157,7 +155,7 @@ export function BrandFoundationScene() {
 
         <DepthGrid />
 
-        <div className="relative z-20 mx-auto flex h-full max-w-[1500px] flex-col px-6 py-20 md:px-12 lg:px-16">
+        <div className="relative z-20 mx-auto flex h-svh max-w-[1500px] flex-col px-6 py-20 md:px-12 lg:px-16">
           <div data-opening-copy className="max-w-xl md:pt-[8vh]">
             <p className="mb-5 text-xs font-medium uppercase tracking-[0.28em]" style={{ color: "#b8aa86" }}>
               01 · Earth
