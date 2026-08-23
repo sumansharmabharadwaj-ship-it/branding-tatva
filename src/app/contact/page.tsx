@@ -7,11 +7,11 @@ import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
-import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { Fireflies } from "@/components/Fireflies";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { ArrowRight, CalendarDays } from "lucide-react";
 import { site } from "@/data/site";
 import { SANDSTONE, ELEMENT_HEX } from "@/lib/sectionWash";
 import { pageSchema, PERSON_ID, ORGANIZATION_ID } from "@/lib/pageSchema";
@@ -306,18 +306,36 @@ export default function ContactPage() {
                   </svg>
                   <span className="h-px w-20 bg-soil/15" />
                 </span>
-                <CalendlyEmbed url={site.calendlyUrl} />
-                <p className="mt-3 text-xs text-foreground-secondary">
-                  Having trouble with the embed?{" "}
-                  <a
-                    href={site.calendlyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="link-underline text-clay"
-                  >
-                    Open it directly instead
-                  </a>
-                  .
+                {/* A direct booking card is deliberately used instead of
+                    Calendly's 560px cross-origin embed. The embed was the
+                    only part of this conversion path that could become a
+                    blank white block behind blockers or a slow third-party
+                    request. This keeps the August 8 card composition while
+                    making the action immediate and failure-proof. */}
+                <a
+                  href={site.calendlyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group mx-auto mt-8 flex max-w-md items-center gap-4 rounded-2xl border border-soil/10 bg-white/70 p-4 text-left shadow-elevation-sm transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-[#8A6B3D]/35 hover:shadow-elevation-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8A6B3D] sm:gap-5 sm:p-5"
+                  aria-label={`Open Calendly to book a ${site.consultationMinutes}-minute meeting with ${site.founder}`}
+                >
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-soil text-ivory sm:h-14 sm:w-14">
+                    <CalendarDays aria-hidden="true" className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.45} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-display text-xl font-normal text-soil sm:text-2xl">
+                      {site.consultationMinutes} minute meeting
+                    </span>
+                    <span className="mt-1 block text-sm leading-relaxed text-foreground-secondary">
+                      Choose a time that works for you.
+                    </span>
+                  </span>
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#B08A4F] text-white transition-transform duration-300 group-hover:translate-x-1">
+                    <ArrowRight aria-hidden="true" className="h-5 w-5" strokeWidth={1.6} />
+                  </span>
+                </a>
+                <p className="mt-5 text-[0.65rem] font-medium uppercase tracking-[0.2em] text-foreground-secondary/70">
+                  Scheduling by Calendly · opens in a new tab
                 </p>
               </div>
             </Reveal>
