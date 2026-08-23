@@ -82,7 +82,10 @@ export function GuidedView() {
 
       if (lenis) {
         lenis.scrollTo(target, {
-          offset: -72,
+          // Every desktop chapter already reserves space for the floating
+          // header inside its own composition. An additional scroll offset
+          // shifted a full-height scene down and clipped its last 72 pixels.
+          offset: 0,
           duration: 0.72,
           easing: (value: number) => 1 - Math.pow(1 - value, 4),
         });

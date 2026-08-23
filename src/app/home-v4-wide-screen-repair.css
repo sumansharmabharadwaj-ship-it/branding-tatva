@@ -8,6 +8,10 @@
    last cascade layer makes each authored chapter a measured viewport frame. */
 
 @media (min-width: 821px) {
+  .home-v4 [data-home-v4-chapter] {
+    scroll-margin-top: 0;
+  }
+
   /* Light refinement changed the Recognition surface without changing the
      earlier dark-theme type rules. Own the contrast in the final layer. */
   .home-v4-recognition__header h2 {
