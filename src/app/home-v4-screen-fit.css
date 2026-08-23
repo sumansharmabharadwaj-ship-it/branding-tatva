@@ -1012,8 +1012,16 @@
   }
 
   .home-v4 .home-v4-chapter--process .project-journey__header {
-    grid-template-columns: minmax(0, 1.08fr) minmax(19rem, 0.72fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: clamp(1.2rem, 3vw, 3rem);
+  }
+
+  /* The fixed journey controller occupies the upper-right of every chapter.
+     The process intro repeated what the tabs already explain and sat directly
+     beneath that controller, so remove the duplicate line in this one-screen
+     composition instead of forcing two interface layers to compete. */
+  .home-v4 .home-v4-chapter--process .project-journey__intro {
+    display: none;
   }
 
   .home-v4 .home-v4-chapter--process .project-journey__header h2 {
