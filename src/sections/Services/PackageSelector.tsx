@@ -153,7 +153,7 @@ export function PackageSelector() {
         )}
       </AnimatePresence>
 
-      <div className="mx-auto mt-10 grid max-w-2xl gap-4 sm:grid-cols-3">
+      <div className="mx-auto mt-6 grid max-w-2xl gap-4 sm:grid-cols-3 lg:mt-7">
         {CHOICES.map((choice, choiceIndex) => {
           const pkg = packages.find((entry) => entry.slug === choice.slug);
           const isActive = active === choice.slug;
@@ -170,7 +170,7 @@ export function PackageSelector() {
               whileHover={prefersReducedMotion ? undefined : { y: -5 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.98, y: -1 }}
               transition={{ duration: 0.35, delay: choiceIndex * 0.09, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center gap-3 rounded-2xl border-t-2 p-6 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)]"
+              className="flex flex-col items-center gap-2.5 rounded-2xl border-t-2 p-5 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)] lg:min-h-[196px]"
               style={{
                 borderColor: pkg?.color,
                 backgroundColor: isActive
@@ -190,7 +190,7 @@ export function PackageSelector() {
         })}
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
         <RegionSelector />
         <button
           type="button"
@@ -209,7 +209,7 @@ export function PackageSelector() {
         </button>
       </div>
 
-      <div className="relative mt-8 min-h-[240px] text-left">
+      <div className="relative mt-5 min-h-[220px] text-left">
         <AnimatePresence mode="wait">
           {compare ? (
             <motion.div
@@ -228,7 +228,7 @@ export function PackageSelector() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 170, damping: 24 }}
-              className="rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-8"
+              className="rounded-2xl border-t-2 p-5 backdrop-blur-md sm:p-6"
               style={{ borderColor: activePackage.color, backgroundColor: blendHex(activePackage.color, "#0F151C", 14) }}
             >
               <p className="font-display text-xl font-normal text-ivory">{activePackage.name}</p>
@@ -242,8 +242,8 @@ export function PackageSelector() {
                 {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">/mo</span>}
               </div>
               <p className="mt-1 text-xs text-ivory/60">Final quotation follows the discovery call.</p>
-              <p className="mt-4 text-ivory/90">{activePackage.description}</p>
-              <ul className="mt-4 space-y-1.5">
+              <p className="mt-3 text-sm leading-relaxed text-ivory/90 sm:text-base">{activePackage.description}</p>
+              <ul className="mt-3 grid gap-x-6 gap-y-1 sm:grid-cols-2">
                 {activePackage.includes.map((item, index) => (
                   <motion.li
                     key={item}
@@ -256,7 +256,7 @@ export function PackageSelector() {
                   </motion.li>
                 ))}
               </ul>
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-wrap gap-3">
                 {proof && (
                   <LinkButton href={`/work/${proof.slug}`} variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
                     See it in action: {proof.title}
@@ -275,7 +275,7 @@ export function PackageSelector() {
         </AnimatePresence>
       </div>
 
-      <p className="mx-auto mt-8 max-w-lg text-xs leading-relaxed text-ivory/55">
+      <p className="mx-auto mt-5 max-w-2xl text-[0.68rem] leading-relaxed text-ivory/55">
         Prices are localised by market and shown in the selected currency. Final scope and quotation are confirmed
         after the discovery conversation. Taxes and third party production, media, printing, development, travel or
         licensing are listed separately where relevant.
