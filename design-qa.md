@@ -1,41 +1,56 @@
-# Design QA — August 8 refinement
+# Branding Tatva motion and layout QA
 
-Reference: the deployed August 8 preview before this refinement (`6d618a8c2a93dda16c263f15c57cdbf78742683e`)
+## Outcome
 
-Verified preview: `https://branding-tatva-git-august-8-isolated-suman22.vercel.app/`
+Status: passed for the desktop reference viewport after remediation.
 
-Desktop viewport: 1348 × 936 in Chrome
+The August 8 composition remains the visual source of truth. Timed presentation controls were removed from the narrative visualizers and replaced with a reversible scroll timeline plus inspect-on-hover/focus behavior. The restored Psychology + Literature visualizer remains present on both the homepage and About page.
 
-## Page-by-page result
+## Comparison inputs
 
-| Page | August 8 structure retained | Refinement verified |
+- Source visual: `/workspace/scratch/a3d8518ad1d9/upload/Screenshot 2026-08-23 at 9.54.49 PM.png`
+- Implementation: browser-rendered `http://terminal.local:4173/` and `http://terminal.local:4173/about`
+- Reference sites reviewed before implementation: Izanami Official, Parker, Rectangles, and the supplied reference bank.
+- QA viewport: 1363 × 936 CSS pixels, DPR 1, Chrome cloud browser.
+
+## Intent preserved
+
+- Warm, light earth-tone presentation with forest/sage/clay accents.
+- August 8 page structure and editorial serif typography.
+- Psychology and Literature shown as two disciplines converging into one applied system.
+- Cinematic dark interludes retained only where they create rhythm and proof, not as the dominant page theme.
+
+## Interaction contract
+
+- Scroll position advances and reverses every narrative visualizer.
+- Hover or keyboard focus temporarily inspects a stage without starting a timer.
+- Clicking a tab provides an accessible manual fallback.
+- Releasing a hover/focus preview returns the scene to its scroll-derived stage.
+- Reduced-motion users receive stable document flow without sticky cinematic runways.
+- No storytelling section exposes `PLAYING`, `PAUSED`, or a play-button control.
+
+## Remediation log
+
+| Severity | Finding | Resolution |
 | --- | --- | --- |
-| Home | Forest hero, editorial type, proof card, chapter navigation and original retained chapters | Hero grade is lighter, header and proof card use warm ivory, consent is compact, and the guided journey is reduced from 13 to 8 chapters. Recognition contrast is corrected; Process, Evidence and Insights now use warm editorial surfaces; and the remaining cinematic chapters use forest rather than black. Counter reads `01/08`. |
-| About | Meadow hero, portrait card, editorial narrative and existing downstream sections | The Psychology + Literature convergence is restored, shortened and given a clean held resolution. Mobile and reduced-motion users receive the complete static composition. Two paper chapters break up the dark run, and the redundant 560vh closing sequence is removed. |
-| Work | Original light editorial evidence layout and project selector | Preserved without structural redesign; shared warm header and motion-safety refinements applied. |
-| Services | Root-system opening, chapter map, situation, offerings, packages, proof, authority, audit and booking path | Opening is lifted from near-black to forest green. Heavy and redundant scroll chapters are not rendered. The six discipline tabs are horizontally reachable, package content is compact at laptop heights, and the authority hold is shortened. |
-| Insights | Water hero, editorial library introduction and light article section | Existing composition retained; shared header, palette and readable reveal behavior verified. |
-| Contact | Image-led introduction and three contact paths | Existing layout retained; shared header and compact consent behavior verified. Call, WhatsApp and enquiry paths remain visible. |
+| P1 | Process runway exceeded its outer chapter and was clipped by the next section. | Outer chapter now owns the full scroll runway; the board remains sticky and fully visible. |
+| P1 | Evidence shell inherited flex centering, delaying sticky engagement and clipping its index. | Scene wrapper now uses block ownership; the shell pins at `top: 0` and fits the viewport. |
+| P1 | Homepage Studio grid was partially above the viewport. | Sticky ownership moved to the complete studio grid and the outer wrapper no longer clips it. |
+| P1 | Insights shell inherited `height: 100%` from a higher-specificity fit stylesheet and became 215svh tall. | A higher-specificity scroll override now fixes the shell at 100svh while preserving its grid layout. |
+| P2 | Process scene had excessive empty space above the information architecture. | Sticky shell aligns content from the top with a bounded header offset. |
+| P2 | Timers could advance while a visitor was reading or report a playing state unrelated to scroll. | All key homepage/About stories now use one scroll-driven state hook. |
+| P2 | Shared cue text was vulnerable to broad descendant span rules. | Cue labels, instructions, and counters now receive explicit readable inline styles. |
 
-## Interaction and resilience
+## Verification
 
-- Header navigation resolves to Home, Work, About, Brand Strategy & Systems, Insights and Contact.
-- Home primary actions resolve to Contact and Work.
-- The six-stage process selector remains interactive after the light-theme conversion.
-- Evidence project tabs and Insights reading-path tabs update the active panel correctly.
-- Reveal content remains readable if an intersection observer or entrance animation fails.
-- The About convergence is user-led, short, and has a complete reduced-motion fallback.
-- The About resolved-state CTA is removed from keyboard order until it is visible.
-- Services no longer renders the heavy `stakes`, `education`, `deliverables`, `imagine`, or `health` scenes.
-- `prefers-reduced-motion` collapses animation and transition duration without hiding content.
-- Optional analytics remain off until consent, and the booking path is never blocked.
+- Production build: passed (`npm run build`).
+- TypeScript: passed (`tsc --noEmit`).
+- Horizontal overflow: none at the tested viewport on homepage and About.
+- Sticky fit: Process, Evidence, Studio, Insights, About Convergence, and About Evidence measured at 936px and pinned at the viewport top.
+- Accessibility state: visualizer tabs expose `role="tab"`, `aria-selected`, keyboard focus, and manual selection.
+- Runtime console: no application errors observed; only browser-extension metadata errors were present.
+- Visual comparison: the Psychology + Literature composition, cards, typography, and stage structure match the supplied source while replacing the timed player with a scroll cue.
 
-## Build verification
+## Residual coverage
 
-- Production Next.js build: passed after both refinement passes
-- 78 static pages generated
-- Home: 8 guided chapters
-- Redundant process metrics and the duplicated clipped studio caption are removed.
-- Services: 5 retained content scenes plus opening and booking destination
-
-final result: passed
+The cloud browser viewport is fixed, so mobile behavior was verified through responsive CSS and reduced-motion fallbacks rather than a second resizable browser capture. Desktop/fine-pointer sticky motion is intentionally gated behind `min-width: 1181px`, `min-height: 761px`, and `pointer: fine`; smaller/touch devices keep ordinary flow.
