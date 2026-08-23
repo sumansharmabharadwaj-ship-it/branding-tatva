@@ -1,13 +1,11 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useTimedVisualizer } from "@/hooks/useTimedVisualizer";
-import { VisualizerPlayback } from "@/components/VisualizerPlayback";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
+import { useRef } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -215,9 +213,9 @@ export function V4RecognitionScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.18, margin: "8% 0px -10% 0px" });
-  const visualizer = useTimedVisualizer({
+  const visualizer = useScrollDrivenVisualizer({
     count: RECOGNITION_STATES.length,
-    durationMs: 5200,
+    target: sectionRef,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
   });
@@ -232,6 +230,7 @@ export function V4RecognitionScene() {
       data-home-chapter="recognition"
       data-home-section="recognition"
       data-cursor-world="dark"
+      data-scroll-story="recognition"
       className="home-v4-recognition"
       aria-labelledby="home-v4-recognition-title"
       style={{ "--recognition-accent": active.accent } as React.CSSProperties}
@@ -275,7 +274,7 @@ export function V4RecognitionScene() {
             </h2>
           </div>
           <span>
-            Choose the condition that feels familiar. Your selection stays in place while you read.
+            Scroll to move through the three conditions. Hover or focus one to inspect it.
           </span>
         </header>
 
@@ -304,17 +303,11 @@ export function V4RecognitionScene() {
               See the foundation that stops the drift <span aria-hidden="true">↘</span>
             </Link>
 
-            <VisualizerPlayback
-              current={activeIndex}
-              total={RECOGNITION_STATES.length}
-              durationMs={visualizer.durationMs}
-              isRunning={visualizer.isRunning}
-              progressKey={visualizer.progressKey}
-              onToggle={visualizer.toggle}
-              label="Recognition diagram autoplay"
-              tone="light"
-              className="home-v4-recognition__playback"
-            />
+            <p className="bt-scroll-cue bt-scroll-cue--light">
+              <span aria-hidden="true">Scroll</span>
+              The diagram follows your pace. Hover a condition to inspect it.
+              <strong>{String(activeIndex + 1).padStart(2, "0")} / 03</strong>
+            </p>
           </div>
 
           <div className="home-v4-recognition__diagram" aria-label="Three brand conditions converging on one strategic decision">
@@ -384,6 +377,12 @@ export function V4RecognitionScene() {
                   type="button"
                   aria-pressed={index === activeIndex}
                   onClick={() => visualizer.choose(index)}
+                  onPointerEnter={() => visualizer.preview(index)}
+                  onPointerLeave={(event) => {
+                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                  }}
+                  onFocus={() => visualizer.preview(index)}
+                  onBlur={visualizer.releasePreview}
                   style={positions[index]}
                   className={index === activeIndex ? "is-active" : undefined}
                   data-cursor-label={state.number}
@@ -391,10 +390,9 @@ export function V4RecognitionScene() {
                   <span>{state.number}</span>
                   <strong>{state.label}</strong>
                   <i aria-hidden="true">
-                    {index === activeIndex && visualizer.isRunning ? (
+                    {index === activeIndex ? (
                       <b
-                        key={visualizer.progressKey}
-                        style={{ animationDuration: `${visualizer.durationMs}ms` }}
+                        style={{ transform: "scaleX(1)" }}
                       />
                     ) : null}
                   </i>
@@ -411,27 +409,15 @@ export function V4RecognitionScene() {
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const guideMode = useHomeGuideMode();
-  const inView = useInView(sectionRef, { amount: 0.52 });
-  const [activeIndex, setActiveIndex] = useState(0);
+  const inView = useInView(sectionRef, { amount: 0.18, margin: "8% 0px -10% 0px" });
+  const visualizer = useScrollDrivenVisualizer({
+    count: COST_STAGES.length,
+    target: sectionRef,
+    enabled: inView,
+    reducedMotion: prefersReducedMotion,
+  });
+  const activeIndex = visualizer.activeIndex;
   const active = COST_STAGES[activeIndex];
-
-  // This scene used to spread four states across a 175svh sticky runway.
-  // Guided view then crossed that runway in one short scroll, flashing through
-  // the states while the over-height composition was clipped. The frame now
-  // fits one viewport: visitors choose a state directly, while guided mode
-  // previews all four decisions inside the chapter's existing dwell time.
-  useEffect(() => {
-    if (prefersReducedMotion || guideMode !== "guided" || !inView) return;
-    setActiveIndex(0);
-    let nextIndex = 0;
-    const timer = window.setInterval(() => {
-      nextIndex = Math.min(COST_STAGES.length - 1, nextIndex + 1);
-      setActiveIndex(nextIndex);
-      if (nextIndex >= COST_STAGES.length - 1) window.clearInterval(timer);
-    }, 2400);
-    return () => window.clearInterval(timer);
-  }, [guideMode, inView, prefersReducedMotion]);
 
   return (
     <section
@@ -441,6 +427,7 @@ export function V4HiddenCostScene() {
       data-home-chapter="cost"
       data-home-section="cost"
       data-cursor-world="dark"
+      data-scroll-story="cost"
       className="home-v4-cost"
       aria-labelledby="home-v4-cost-title"
     >
@@ -473,6 +460,11 @@ export function V4HiddenCostScene() {
             <h2 id="home-v4-cost-title">
               Marketing becomes expensive when the brand underneath it <em>keeps changing shape.</em>
             </h2>
+            <p className="bt-scroll-cue bt-scroll-cue--dark">
+              <span aria-hidden="true">Scroll</span>
+              Move forward to follow the cost. Move back to retrace it.
+              <strong>{active.number} / 04</strong>
+            </p>
           </header>
 
           <div className="home-v4-cost__stage">
@@ -534,7 +526,13 @@ export function V4HiddenCostScene() {
                         aria-pressed={activeStage}
                         aria-label={`${stage.number}: ${stage.cause}`}
                         data-cursor-label={stage.number}
-                        onClick={() => setActiveIndex(index)}
+                        onClick={() => visualizer.choose(index)}
+                        onPointerEnter={() => visualizer.preview(index)}
+                        onPointerLeave={(event) => {
+                          if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                        }}
+                        onFocus={() => visualizer.preview(index)}
+                        onBlur={visualizer.releasePreview}
                       >
                         <span>{stage.number}</span>
                         <strong>{stage.cause}</strong>
