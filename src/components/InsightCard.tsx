@@ -95,7 +95,7 @@ export function InsightCard({ post, featured = false }: InsightCardProps) {
           </div>
         </div>
 
-        <div className={`flex flex-col ${featured ? "p-6 sm:p-7 lg:p-8" : "p-5"}`}>
+        <div className={`flex flex-col ${featured ? "p-6 sm:p-7 lg:p-8" : "p-4"}`}>
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-foreground-secondary">
             {formatDate(post.updatedAt)}
           </p>
@@ -103,7 +103,7 @@ export function InsightCard({ post, featured = false }: InsightCardProps) {
             className={`font-display font-normal leading-[1.08] text-soil ${
               featured
                 ? "mt-3 text-[clamp(1.8rem,3vw,2.75rem)]"
-                : "mt-3 line-clamp-3 text-[1.35rem]"
+                : "mt-3 line-clamp-2 text-[1.35rem]"
             }`}
           >
             {post.title}
@@ -112,7 +112,7 @@ export function InsightCard({ post, featured = false }: InsightCardProps) {
             className={`mt-3 text-foreground-secondary ${
               featured
                 ? "max-w-xl text-sm leading-6"
-                : "line-clamp-3 text-sm leading-6"
+                : "line-clamp-2 text-sm leading-6"
             }`}
           >
             {post.excerpt}
@@ -135,7 +135,7 @@ export function InsightCard({ post, featured = false }: InsightCardProps) {
             </div>
           )}
           <span
-            className="mt-auto inline-flex items-center gap-2 pt-5 text-xs font-semibold uppercase tracking-[0.16em] transition-transform duration-300 group-hover:translate-x-1"
+            className="mt-auto inline-flex items-center gap-2 pt-4 text-xs font-semibold uppercase tracking-[0.16em] transition-transform duration-300 group-hover:translate-x-1"
             style={{ color }}
           >
             Read the essay <span aria-hidden="true">→</span>
