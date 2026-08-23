@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
-import { Container } from "@/components/Container";
-import { AuditInvite } from "@/components/AuditInvite";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { AboutSplitHero } from "@/components/AboutSplitHero";
@@ -77,12 +75,9 @@ export default function AboutPage() {
 
         <div className="bg-[#eee7db]">
           <Convergence />
-          <Container className="max-w-3xl pb-16 pt-2 sm:pb-20">
-            <AuditInvite tone="light" />
-          </Container>
         </div>
 
-        <section className="relative overflow-hidden bg-soil py-16 sm:py-20">
+        <section className="relative overflow-hidden bg-soil py-16">
           <BackgroundVideo
             video="/videos/generated/bt-about-working-directly-woodlight.mp4"
             poster="/images/generated/bt-about-working-directly-woodlight-poster.jpg"
