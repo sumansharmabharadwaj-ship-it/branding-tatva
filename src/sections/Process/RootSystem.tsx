@@ -1,13 +1,11 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import Link from "next/link";
 import {
-  useCallback,
   useEffect,
   useRef,
-  useState,
   type CSSProperties,
   type KeyboardEvent,
 } from "react";
@@ -118,18 +116,17 @@ function fallbackMeta(index: number): StageMeta {
 
 export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const guideMode = useHomeGuideMode();
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const stageTimerRef = useRef(0);
-  const holdUntilRef = useRef(0);
-  const firstAdvanceRef = useRef(true);
-  const inView = useInView(sectionRef, { amount: 0.26 });
-  const [active, setActive] = useState(0);
-  const chooseStage = useCallback((index: number, userDriven = false) => {
-    if (userDriven) holdUntilRef.current = Date.now() + 12000;
-    setActive(index);
-  }, []);
+  const inView = useInView(sectionRef, { amount: 0.18, margin: "8% 0px -10% 0px" });
+  const visualizer = useScrollDrivenVisualizer({
+    count: stages.length,
+    target: sectionRef,
+    enabled: inView,
+    reducedMotion: prefersReducedMotion,
+  });
+  const active = visualizer.activeIndex;
+  const chooseStage = visualizer.choose;
 
   function onStageKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -140,52 +137,9 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     else return;
 
     event.preventDefault();
-    chooseStage(next, true);
+    chooseStage(next);
     document.getElementById(`project-stage-tab-${next}`)?.focus();
   }
-
-  useEffect(() => {
-    if (active >= stages.length) setActive(0);
-  }, [active, stages.length]);
-
-  useEffect(() => {
-    if (!inView) firstAdvanceRef.current = true;
-  }, [inView]);
-
-  useEffect(() => {
-    window.clearTimeout(stageTimerRef.current);
-    if (
-      prefersReducedMotion ||
-      !inView ||
-      guideMode === "paused" ||
-      document.hidden ||
-      stages.length < 2
-    ) return;
-
-    const remainingHold = Math.max(0, holdUntilRef.current - Date.now());
-    const delay = remainingHold > 0
-      ? remainingHold + 40
-      : firstAdvanceRef.current
-        ? 1500
-        : 2900;
-
-    stageTimerRef.current = window.setTimeout(() => {
-      if (document.hidden || Date.now() < holdUntilRef.current) return;
-      firstAdvanceRef.current = false;
-      setActive((current) => (current + 1) % stages.length);
-    }, delay);
-
-    return () => window.clearTimeout(stageTimerRef.current);
-  }, [active, guideMode, inView, prefersReducedMotion, stages.length]);
-
-  useEffect(() => {
-    function onChapter(event: Event) {
-      const detail = (event as CustomEvent<{ id?: string }>).detail;
-      if (detail?.id === "process") setActive(0);
-    }
-    window.addEventListener("bt:home-chapter", onChapter as EventListener);
-    return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
-  }, []);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
@@ -217,6 +171,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     <section
       ref={sectionRef}
       data-project-journey="true"
+      data-scroll-story="process"
       className={`project-journey ${inView ? "is-awake" : "is-resting"}`}
       style={sectionStyle}
       aria-labelledby="project-journey-title"
@@ -255,8 +210,8 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
             <h2 id="project-journey-title">How a project moves</h2>
           </div>
           <p className="project-journey__intro">
-            Six decisions turn an unclear business into one recognisable system. The active stage changes the
-            outcome, path, and readiness signals together.
+            Six decisions turn an unclear business into one recognisable system. Scroll to move through the
+            system; hover or focus any stage to inspect it without losing your place.
           </p>
         </header>
 
@@ -272,7 +227,13 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               aria-controls="project-stage-panel"
               tabIndex={active === index ? 0 : -1}
               className={`project-journey__stage-button${active === index ? " is-active" : ""}`}
-              onClick={() => chooseStage(index, true)}
+              onClick={() => chooseStage(index)}
+              onPointerEnter={() => visualizer.preview(index)}
+              onPointerLeave={(event) => {
+                if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+              }}
+              onFocus={() => visualizer.preview(index)}
+              onBlur={visualizer.releasePreview}
               onKeyDown={(event) => onStageKeyDown(event, index)}
             >
               <span>{String(index + 1).padStart(2, "0")}</span>
@@ -326,7 +287,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                 <p>Decision architecture</p>
                 <h3>One choice feeds the next.</h3>
               </div>
-              <span>Select any stage</span>
+              <span>Scroll the system · hover to inspect</span>
             </div>
             <div className="project-journey__map" aria-label="Interactive project flow diagram">
               <svg viewBox="0 0 700 340" role="img" aria-label="Question and Decode lead to Architect; Signal and Influence then combine into Compound">
@@ -352,7 +313,13 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                     type="button"
                     className={`project-journey__node${reached ? " is-reached" : ""}${active === index ? " is-active" : ""}`}
                     style={{ left: `${(node.x / 700) * 100}%`, top: `${(node.y / 340) * 100}%` }}
-                    onClick={() => chooseStage(index, true)}
+                    onClick={() => chooseStage(index)}
+                    onPointerEnter={() => visualizer.preview(index)}
+                    onPointerLeave={(event) => {
+                      if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                    }}
+                    onFocus={() => visualizer.preview(index)}
+                    onBlur={visualizer.releasePreview}
                     aria-label={`Show ${item.stage} stage`}
                   >
                     <i aria-hidden="true" />
