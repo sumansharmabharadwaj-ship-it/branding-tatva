@@ -83,7 +83,11 @@ export function HomeInsightsPreview() {
 
   useEffect(() => {
     window.clearTimeout(autoplayRef.current);
-    if (prefersReducedMotion || !inView || guideMode === "paused" || document.hidden) return;
+    // Manual scrolling pauses the page-level guided journey, but it should not
+    // freeze this in-section visualizer. The reading paths keep cycling while
+    // the section is visible; reduced-motion and document visibility still
+    // provide the appropriate hard stops.
+    if (prefersReducedMotion || !inView || document.hidden) return;
 
     const remainingHold = Math.max(0, holdUntilRef.current - Date.now());
     const delay = remainingHold > 0
@@ -99,7 +103,7 @@ export function HomeInsightsPreview() {
     }, delay);
 
     return () => window.clearTimeout(autoplayRef.current);
-  }, [activeIndex, guideMode, inView, prefersReducedMotion]);
+  }, [activeIndex, inView, prefersReducedMotion]);
 
   useEffect(() => {
     function onChapter(event: Event) {
