@@ -1,7 +1,9 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useTimedVisualizer } from "@/hooks/useTimedVisualizer";
+import { VisualizerPlayback } from "@/components/VisualizerPlayback";
+import { useRef, type CSSProperties } from "react";
 import Link from "next/link";
 import { useInView } from "framer-motion";
 
@@ -74,45 +76,15 @@ const FOUNDATION_LAYERS: FoundationLayer[] = [
 
 export function BrandFoundationScene() {
   const wrapperRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const manualPauseUntilRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
-  const sceneInView = useInView(wrapperRef, { amount: 0.08 });
-  const [activeLayer, setActiveLayer] = useState<string>(FOUNDATION_LAYERS[0].id);
-
-  useEffect(() => {
-    const videoAtEffectStart = videoRef.current;
-
-    function syncPlayback() {
-      const video = videoRef.current;
-      if (!video) return;
-
-      if (prefersReducedMotion || !sceneInView || document.hidden) {
-        video.pause();
-        return;
-      }
-      void video.play().catch(() => {});
-    }
-
-    syncPlayback();
-    document.addEventListener("visibilitychange", syncPlayback);
-    return () => {
-      document.removeEventListener("visibilitychange", syncPlayback);
-      videoAtEffectStart?.pause();
-    };
-  }, [prefersReducedMotion, sceneInView]);
-
-  useEffect(() => {
-    if (prefersReducedMotion || !sceneInView) return;
-    const timer = window.setInterval(() => {
-      if (Date.now() < manualPauseUntilRef.current) return;
-      setActiveLayer((current) => {
-        const index = FOUNDATION_LAYERS.findIndex((layer) => layer.id === current);
-        return FOUNDATION_LAYERS[(index + 1) % FOUNDATION_LAYERS.length].id;
-      });
-    }, 5000);
-    return () => window.clearInterval(timer);
-  }, [prefersReducedMotion, sceneInView]);
+  const sceneInView = useInView(wrapperRef, { amount: 0.08, margin: "8% 0px -10% 0px" });
+  const visualizer = useTimedVisualizer({
+    count: FOUNDATION_LAYERS.length,
+    durationMs: 5200,
+    enabled: sceneInView,
+    reducedMotion: Boolean(prefersReducedMotion),
+  });
+  const activeLayer = FOUNDATION_LAYERS[visualizer.activeIndex]?.id ?? FOUNDATION_LAYERS[0].id;
 
   return (
     <section
@@ -128,10 +100,9 @@ export function BrandFoundationScene() {
           className="absolute inset-0 will-change-transform"
         >
           <video
-            ref={videoRef}
             muted
             loop
-            autoPlay={Boolean(sceneInView && !prefersReducedMotion)}
+            autoPlay
             playsInline
             preload={sceneInView ? "metadata" : "none"}
             data-home-playback-rate="1.1"
@@ -187,16 +158,13 @@ export function BrandFoundationScene() {
 
           <div data-foundation-stage className="relative mt-10 md:mt-auto md:h-[53%]">
             <FoundationConnections />
-            {FOUNDATION_LAYERS.map((layer) => (
+            {FOUNDATION_LAYERS.map((layer, index) => (
               <FoundationLayerCard
                 key={layer.id}
                 layer={layer}
                 active={activeLayer === layer.id}
                 staticAll={Boolean(prefersReducedMotion)}
-                onActivate={() => {
-                  manualPauseUntilRef.current = Date.now() + 12000;
-                  setActiveLayer(layer.id);
-                }}
+                onActivate={() => visualizer.choose(index)}
               />
             ))}
           </div>
@@ -204,20 +172,21 @@ export function BrandFoundationScene() {
           <FinalCopy staticAll />
         </div>
 
-        <nav
-          aria-label="Brand foundation layers"
-          className="absolute bottom-6 left-6 z-40 hidden items-center gap-5 md:flex lg:left-16"
-        >
-          {FOUNDATION_LAYERS.map((layer) => (
-            <span
-              key={layer.id}
-              className="text-[0.67rem] uppercase tracking-[0.22em] transition-colors duration-300"
-              style={{ color: activeLayer === layer.id ? "#f1eadc" : "rgba(241,234,220,0.35)" }}
-            >
-              {layer.number} {layer.label}
-            </span>
-          ))}
-        </nav>
+        <div className="absolute bottom-5 left-6 z-40 hidden items-center gap-5 md:flex lg:left-16">
+          <VisualizerPlayback
+            current={visualizer.activeIndex}
+            total={FOUNDATION_LAYERS.length}
+            durationMs={visualizer.durationMs}
+            isRunning={visualizer.isRunning}
+            progressKey={visualizer.progressKey}
+            onToggle={visualizer.toggle}
+            label="Foundation diagram autoplay"
+            tone="dark"
+          />
+          <span className="text-[0.62rem] uppercase tracking-[0.18em] text-[#f1eadc]/55">
+            Select a layer to hold it
+          </span>
+        </div>
       </div>
     </section>
   );
@@ -260,7 +229,6 @@ function FoundationLayerCard({
         type="button"
         aria-pressed={active}
         onClick={onActivate}
-        onPointerEnter={onActivate}
         onFocus={onActivate}
         className="block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#b8aa86]"
       >

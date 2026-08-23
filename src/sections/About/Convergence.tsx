@@ -1,142 +1,198 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
-import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
-import { Container } from "@/components/Container";
+import { useRef, type KeyboardEvent } from "react";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { BookOpenText, Brain, MoveRight, Sparkles } from "lucide-react";
+import { VisualizerPlayback } from "@/components/VisualizerPlayback";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useTimedVisualizer } from "@/hooks/useTimedVisualizer";
+import styles from "./Convergence.module.css";
 
-const FIELDS = [
+const DWELL_MS = 5200;
+
+const STAGES = [
   {
     number: "01",
-    name: "Psychology",
-    degree: "M.A. Clinical Psychology",
-    line: "Reads attention, tension and the way a choice is actually made.",
-    color: "#a45f46",
+    label: "Notice",
+    title: "Psychology reads what happens before a choice.",
+    explanation:
+      "Attention reveals the signal. Association gives it meaning. Memory holds the pattern. Choice shows whether the pattern became useful.",
+    psychology: ["Attention", "Association", "Memory", "Choice"],
+    language: ["Framing", "Narrative", "Metaphor", "Tone"],
+    overlap: ["Positioning", "Identity", "Recognition"],
+    active: "psychology",
   },
   {
     number: "02",
-    name: "Literature",
-    degree: "B.A. English Literature",
-    line: "Gives the idea language people can understand, remember and repeat.",
-    color: "#64775f",
+    label: "Interpret",
+    title: "Literature gives the tension a form people can carry.",
+    explanation:
+      "Framing sets the angle. Narrative creates movement. Metaphor makes the unfamiliar graspable. Tone teaches people how the brand should feel.",
+    psychology: ["Attention", "Association", "Memory", "Choice"],
+    language: ["Framing", "Narrative", "Metaphor", "Tone"],
+    overlap: ["Positioning", "Identity", "Recognition"],
+    active: "language",
+  },
+  {
+    number: "03",
+    label: "Choose",
+    title: "The two disciplines become one practical decision system.",
+    explanation:
+      "The overlap turns evidence and language into positioning, identity, and repeated recognition—the parts a growing business can keep using.",
+    psychology: ["Attention", "Association", "Memory", "Choice"],
+    language: ["Framing", "Narrative", "Metaphor", "Tone"],
+    overlap: ["Positioning", "Identity", "Recognition"],
+    active: "overlap",
   },
 ] as const;
 
-function ResolvedMethod({ active = true }: { active?: boolean }) {
-  return (
-    <div className="mx-auto max-w-2xl text-center">
-      <p className="text-[0.62rem] font-semibold uppercase tracking-[0.2em] text-clay">Where the two meet</p>
-      <p className="mt-3 font-display text-[clamp(2.7rem,6vw,5.4rem)] font-normal leading-[0.9] tracking-[-0.035em] text-soil">
-        Brand strategy <em className="font-normal text-[#6a765d]">becomes usable.</em>
-      </p>
-      <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-soil/72 sm:text-base">
-        Psychology finds the tension. Literature gives it language. Strategy turns both into a system a growing business can carry forward.
-      </p>
-      <Link
-        href="/work/dr-haley-nutrition"
-        tabIndex={active ? 0 : -1}
-        className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-clay underline decoration-clay/30 underline-offset-4 transition-colors hover:text-soil"
-      >
-        See the method in a documented decision <span aria-hidden="true">→</span>
-      </Link>
-    </div>
-  );
-}
-
-function StaticConvergence({ compact = false }: { compact?: boolean }) {
-  return (
-    <div className={`bg-[#eee7db] ${compact ? "py-14" : "py-20 sm:py-28"}`} data-about-scene="method">
-      <Container className="max-w-6xl">
-        <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-clay">Two disciplines. One practice.</p>
-        <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2">
-          {FIELDS.map((field) => (
-            <article key={field.name} className="rounded-[1.6rem] border border-soil/10 bg-[#f8f3e9]/80 p-6 text-center shadow-[0_18px_60px_rgba(67,54,42,0.08)]">
-              <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em]" style={{ color: field.color }}>{field.degree}</p>
-              <h3 className="mt-3 font-display text-4xl font-normal text-soil">{field.name}</h3>
-              <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-soil/68">{field.line}</p>
-            </article>
-          ))}
-        </div>
-        <div className="mt-10 sm:mt-12"><ResolvedMethod /></div>
-      </Container>
-    </div>
-  );
-}
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function Convergence() {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [resolvedActive, setResolvedActive] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end end"] });
-
-  const leftX = useTransform(scrollYProgress, [0.06, 0.42], ["-5.5vw", "0vw"]);
-  const rightX = useTransform(scrollYProgress, [0.06, 0.42], ["5.5vw", "0vw"]);
-  const ruleScale = useTransform(scrollYProgress, [0.1, 0.44], [0.24, 1]);
-
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    const next = progress >= 0.52;
-    setResolvedActive((current) => (current === next ? current : next));
+  const inView = useInView(sectionRef, { amount: 0.18, margin: "8% 0px -12% 0px" });
+  const visualizer = useTimedVisualizer({
+    count: STAGES.length,
+    durationMs: DWELL_MS,
+    enabled: inView,
+    reducedMotion: prefersReducedMotion,
   });
+  const active = STAGES[visualizer.activeIndex];
 
-  if (prefersReducedMotion) {
-    return <StaticConvergence />;
+  function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % STAGES.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + STAGES.length - 1) % STAGES.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = STAGES.length - 1;
+    else return;
+
+    event.preventDefault();
+    visualizer.choose(next);
+    document.getElementById(`convergence-tab-${next}`)?.focus();
   }
 
   return (
-    <>
-      <div className="sm:hidden">
-        <StaticConvergence compact />
-      </div>
-      <div ref={wrapRef} className="relative hidden h-[140svh] bg-[#eee7db] sm:block" data-about-scene="method">
-      <div className="sticky top-0 flex min-h-svh items-center overflow-hidden py-20">
-        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_48%,rgba(196,142,103,0.13),transparent_34%),radial-gradient(circle_at_18%_78%,rgba(101,120,95,0.12),transparent_30%)]" />
-        <Container className="relative w-full max-w-6xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">Two disciplines. One practice.</p>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-soil/60">
-            Scroll once to see how Suman&apos;s training becomes one practical decision system.
-          </p>
-
-          <div className="relative mt-10 min-h-[25rem] sm:min-h-[28rem]">
-            <motion.span
-              aria-hidden="true"
-              className="absolute left-1/2 top-[42%] h-px w-[min(72vw,46rem)] -translate-x-1/2 bg-gradient-to-r from-transparent via-clay/45 to-transparent"
-              style={{ scaleX: ruleScale }}
-            />
-
-            <motion.div
-              className="absolute inset-x-0 top-0 grid gap-4 sm:grid-cols-2 sm:gap-8"
-              animate={{ opacity: resolvedActive ? 0 : 1, y: resolvedActive ? -10 : 0 }}
-              transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-              aria-hidden={resolvedActive}
-            >
-              {FIELDS.map((field, index) => (
-                <motion.article
-                  key={field.name}
-                  style={{ x: index === 0 ? leftX : rightX }}
-                  className="rounded-[1.6rem] border border-soil/10 bg-[#f8f3e9]/78 p-6 text-center shadow-[0_18px_60px_rgba(67,54,42,0.08)] backdrop-blur-sm sm:p-8"
-                >
-                  <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em]" style={{ color: field.color }}>
-                    {field.number} · {field.degree}
-                  </p>
-                  <h3 className="mt-3 font-display text-[clamp(2.5rem,5vw,4.5rem)] font-normal leading-none text-soil">{field.name}</h3>
-                  <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-soil/68">{field.line}</p>
-                </motion.article>
-              ))}
-            </motion.div>
-
-            <motion.div
-              className="absolute inset-x-0 top-[8%] sm:top-[16%]"
-              animate={{ opacity: resolvedActive ? 1 : 0, y: resolvedActive ? 0 : 22 }}
-              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-              aria-hidden={!resolvedActive}
-            >
-              <ResolvedMethod active={resolvedActive} />
-            </motion.div>
+    <section
+      ref={sectionRef}
+      className={styles.section}
+      data-about-scene="method"
+      data-convergence-stage={active.number}
+      aria-labelledby="convergence-title"
+    >
+      <div className={styles.shell}>
+        <header className={styles.header}>
+          <div>
+            <p className={styles.eyebrow}>The psychology × literature method</p>
+            <h2 id="convergence-title">
+              Two disciplines. <em>One usable brand system.</em>
+            </h2>
           </div>
-        </Container>
+          <div className={styles.intro}>
+            <p>
+              The August 8 idea, restored as a self-running visualizer. Select any stage to hold it; press play to continue.
+            </p>
+            <VisualizerPlayback
+              current={visualizer.activeIndex}
+              total={STAGES.length}
+              durationMs={visualizer.durationMs}
+              isRunning={visualizer.isRunning}
+              progressKey={visualizer.progressKey}
+              onToggle={visualizer.toggle}
+              label="Psychology and literature method autoplay"
+              tone="light"
+            />
+          </div>
+        </header>
+
+        <div className={styles.instrument}>
+          <div className={styles.fields} aria-label="Psychology and literature inputs">
+            <motion.article
+              className={styles.field}
+              data-active={active.active === "psychology" || active.active === "overlap"}
+              animate={{ opacity: active.active === "language" ? 0.56 : 1, y: active.active === "psychology" ? -4 : 0 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+            >
+              <div className={styles.fieldTitle}>
+                <span><Brain size={19} /></span>
+                <div><small>Field one</small><h3>Psychology</h3></div>
+              </div>
+              <p>How people notice, associate, remember, and choose.</p>
+              <ul>{active.psychology.map((term) => <li key={term}>{term}</li>)}</ul>
+            </motion.article>
+
+            <div className={styles.transfer} aria-hidden="true">
+              <MoveRight size={19} />
+              <span>evidence becomes language</span>
+              <MoveRight size={19} />
+            </div>
+
+            <motion.article
+              className={styles.field}
+              data-active={active.active === "language" || active.active === "overlap"}
+              animate={{ opacity: active.active === "psychology" ? 0.56 : 1, y: active.active === "language" ? -4 : 0 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+            >
+              <div className={styles.fieldTitle}>
+                <span><BookOpenText size={19} /></span>
+                <div><small>Field two</small><h3>Literature</h3></div>
+              </div>
+              <p>How meaning is framed, narrated, felt, and repeated.</p>
+              <ul>{active.language.map((term) => <li key={term}>{term}</li>)}</ul>
+            </motion.article>
+          </div>
+
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.article
+              key={active.number}
+              className={styles.resolution}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+              aria-live="polite"
+            >
+              <div className={styles.resolutionIcon}><Sparkles size={18} /></div>
+              <div className={styles.resolutionCopy}>
+                <span>{active.number} · {active.label}</span>
+                <h3>{active.title}</h3>
+                <p>{active.explanation}</p>
+              </div>
+              <ul>{active.overlap.map((term) => <li key={term}>{term}</li>)}</ul>
+            </motion.article>
+          </AnimatePresence>
+        </div>
+
+        <div className={styles.tabs} role="tablist" aria-label="Choose a method stage">
+          {STAGES.map((stage, index) => {
+            const selected = index === visualizer.activeIndex;
+            return (
+              <button
+                key={stage.number}
+                id={`convergence-tab-${index}`}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                tabIndex={selected ? 0 : -1}
+                data-active={selected}
+                onClick={() => visualizer.choose(index)}
+                onKeyDown={(event) => onTabKeyDown(event, index)}
+              >
+                <span>{stage.number}</span>
+                <strong>{stage.label}</strong>
+                <i aria-hidden="true">
+                  {selected && visualizer.isRunning ? (
+                    <b key={visualizer.progressKey} style={{ animationDuration: `${visualizer.durationMs}ms` }} />
+                  ) : null}
+                </i>
+              </button>
+            );
+          })}
+          <Link href="/services#proof">See the method applied <span aria-hidden="true">→</span></Link>
+        </div>
       </div>
-      </div>
-    </>
+    </section>
   );
 }

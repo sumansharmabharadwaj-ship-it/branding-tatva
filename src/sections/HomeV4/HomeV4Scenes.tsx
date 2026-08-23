@@ -1,6 +1,8 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useTimedVisualizer } from "@/hooks/useTimedVisualizer";
+import { VisualizerPlayback } from "@/components/VisualizerPlayback";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
@@ -211,25 +213,16 @@ export function V4OpeningScene() {
 
 export function V4RecognitionScene() {
   const sectionRef = useRef<HTMLElement>(null);
-  const manualPauseUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.34 });
-  const [activeIndex, setActiveIndex] = useState(0);
+  const inView = useInView(sectionRef, { amount: 0.18, margin: "8% 0px -10% 0px" });
+  const visualizer = useTimedVisualizer({
+    count: RECOGNITION_STATES.length,
+    durationMs: 5200,
+    enabled: inView,
+    reducedMotion: prefersReducedMotion,
+  });
+  const { activeIndex } = visualizer;
   const active = RECOGNITION_STATES[activeIndex];
-
-  useEffect(() => {
-    if (prefersReducedMotion || !inView) return;
-    const timer = window.setInterval(() => {
-      if (Date.now() < manualPauseUntilRef.current) return;
-      setActiveIndex((current) => (current + 1) % RECOGNITION_STATES.length);
-    }, 4800);
-    return () => window.clearInterval(timer);
-  }, [inView, prefersReducedMotion]);
-
-  function choose(index: number, manual = true) {
-    if (manual) manualPauseUntilRef.current = Date.now() + 12000;
-    setActiveIndex(index);
-  }
 
   return (
     <section
@@ -307,9 +300,21 @@ export function V4RecognitionScene() {
               </motion.div>
             </AnimatePresence>
 
-            <Link href="#cost" className="home-v4-text-link" data-magnetic data-cursor-label="follow">
-              See what the drift quietly costs <span aria-hidden="true">↘</span>
+            <Link href="#foundation" className="home-v4-text-link" data-magnetic data-cursor-label="follow">
+              See the foundation that stops the drift <span aria-hidden="true">↘</span>
             </Link>
+
+            <VisualizerPlayback
+              current={activeIndex}
+              total={RECOGNITION_STATES.length}
+              durationMs={visualizer.durationMs}
+              isRunning={visualizer.isRunning}
+              progressKey={visualizer.progressKey}
+              onToggle={visualizer.toggle}
+              label="Recognition diagram autoplay"
+              tone="light"
+              className="home-v4-recognition__playback"
+            />
           </div>
 
           <div className="home-v4-recognition__diagram" aria-label="Three brand conditions converging on one strategic decision">
@@ -378,14 +383,21 @@ export function V4RecognitionScene() {
                   key={state.number}
                   type="button"
                   aria-pressed={index === activeIndex}
-                  onClick={() => choose(index)}
+                  onClick={() => visualizer.choose(index)}
                   style={positions[index]}
                   className={index === activeIndex ? "is-active" : undefined}
                   data-cursor-label={state.number}
                 >
                   <span>{state.number}</span>
                   <strong>{state.label}</strong>
-                  <i aria-hidden="true" />
+                  <i aria-hidden="true">
+                    {index === activeIndex && visualizer.isRunning ? (
+                      <b
+                        key={visualizer.progressKey}
+                        style={{ animationDuration: `${visualizer.durationMs}ms` }}
+                      />
+                    ) : null}
+                  </i>
                 </button>
               );
             })}

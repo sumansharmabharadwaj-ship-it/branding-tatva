@@ -7,7 +7,6 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { NotebookClose } from "@/components/NotebookClose";
-import { PinnedWorkingMethod } from "@/sections/About/PinnedWorkingMethod";
 import { PointOfView } from "@/sections/About/PointOfView";
 import { Convergence } from "@/sections/About/Convergence";
 import { WorkingDirectly } from "@/sections/About/WorkingDirectly";
@@ -76,14 +75,12 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="bg-[#eee7db]">
+        <div className="bg-[#eee7db]">
           <Convergence />
           <Container className="max-w-3xl pb-16 pt-2 sm:pb-20">
             <AuditInvite tone="light" />
           </Container>
-        </section>
-
-        <PinnedWorkingMethod />
+        </div>
 
         <section className="relative overflow-hidden bg-soil py-16 sm:py-20">
           <BackgroundVideo

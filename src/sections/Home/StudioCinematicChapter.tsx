@@ -1,10 +1,12 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useTimedVisualizer } from "@/hooks/useTimedVisualizer";
+import { VisualizerPlayback } from "@/components/VisualizerPlayback";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useRef, type CSSProperties, type KeyboardEvent } from "react";
 
 const DISCIPLINE_DWELL_MS = 5200;
 
@@ -63,48 +65,19 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function StudioCinematicChapter() {
   const sectionRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const manualPauseUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, {
     amount: 0.18,
     margin: "8% 0px -12% 0px",
   });
-  const [activeIndex, setActiveIndex] = useState(0);
+  const visualizer = useTimedVisualizer({
+    count: DISCIPLINES.length,
+    durationMs: DISCIPLINE_DWELL_MS,
+    enabled: inView,
+    reducedMotion: prefersReducedMotion,
+  });
+  const { activeIndex } = visualizer;
   const active = DISCIPLINES[activeIndex];
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video || prefersReducedMotion) return;
-
-    video.muted = true;
-    video.defaultMuted = true;
-    video.playsInline = true;
-    video.loop = true;
-    video.playbackRate = 1.12;
-
-    if (inView && !document.hidden) {
-      void video.play().catch(() => undefined);
-    } else {
-      video.pause();
-    }
-
-    return () => video.pause();
-  }, [activeIndex, inView, prefersReducedMotion]);
-
-  useEffect(() => {
-    if (prefersReducedMotion || !inView) return;
-    const timer = window.setInterval(() => {
-      if (Date.now() < manualPauseUntilRef.current) return;
-      setActiveIndex((current) => (current + 1) % DISCIPLINES.length);
-    }, DISCIPLINE_DWELL_MS);
-    return () => window.clearInterval(timer);
-  }, [inView, prefersReducedMotion]);
-
-  function choose(index: number, manual = true) {
-    if (manual) manualPauseUntilRef.current = Date.now() + 12000;
-    setActiveIndex(index);
-  }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -115,7 +88,7 @@ export function StudioCinematicChapter() {
     else return;
 
     event.preventDefault();
-    choose(next);
+    visualizer.choose(next);
     document.getElementById(`studio-tab-${next}`)?.focus();
   }
 
@@ -154,7 +127,6 @@ export function StudioCinematicChapter() {
                 />
               ) : (
                 <video
-                  ref={videoRef}
                   src={active.video}
                   poster={active.poster}
                   className="studio-cinematic__media-video"
@@ -200,6 +172,18 @@ export function StudioCinematicChapter() {
             Psychology finds the tension. Literature gives it language. Strategy makes the answer usable after the room goes quiet.
           </p>
 
+          <VisualizerPlayback
+            current={activeIndex}
+            total={DISCIPLINES.length}
+            durationMs={visualizer.durationMs}
+            isRunning={visualizer.isRunning}
+            progressKey={visualizer.progressKey}
+            onToggle={visualizer.toggle}
+            label="Psychology and literature autoplay"
+            tone="dark"
+            className="studio-cinematic__playback"
+          />
+
           <div
             className="studio-cinematic__tabs"
             role="tablist"
@@ -216,9 +200,9 @@ export function StudioCinematicChapter() {
                   aria-selected={selected}
                   aria-controls="studio-cinematic-panel"
                   tabIndex={selected ? 0 : -1}
-                  onClick={() => choose(index)}
+                  onClick={() => visualizer.choose(index)}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
-                  onFocus={() => choose(index)}
+                  onFocus={() => visualizer.choose(index)}
                   className={selected ? "is-active" : undefined}
                   style={{ "--studio-tab-accent": discipline.accent } as CSSProperties}
                 >
@@ -227,9 +211,10 @@ export function StudioCinematicChapter() {
                   <small>{discipline.eyebrow}</small>
                   <i aria-hidden="true">
                     <b
+                      key={visualizer.progressKey}
                       style={{
                         animation:
-                          selected && !prefersReducedMotion
+                          selected && visualizer.isRunning
                             ? `studio-tab-progress ${DISCIPLINE_DWELL_MS}ms linear forwards`
                             : "none",
                         transform: selected && prefersReducedMotion ? "scaleX(1)" : "scaleX(0)",

@@ -16,14 +16,14 @@ const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
 // Each chapter receives a real reading interval rather than a scroll-scrubbed
 // timeline that can stop between states.
 const DWELL_MS = [
-  7000,
-  9000,
-  10000,
-  9000,
-  10000,
-  9000,
-  10000,
-  8000,
+  6200,
+  6800,
+  7200,
+  6800,
+  7200,
+  6800,
+  7200,
+  6200,
 ];
 // The invitation should be discoverable without behaving like another hero
 // banner. Three seconds is enough to register the feature; it then folds into
@@ -50,6 +50,7 @@ export function GuidedView() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const [mode, setMode] = useState<GuideMode>("guided");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [documentVisible, setDocumentVisible] = useState(true);
   const [hintVisible, setHintVisible] = useState(false);
   const guideRef = useRef<HTMLDivElement>(null);
   const chaptersRef = useRef<HTMLElement[]>([]);
@@ -139,6 +140,16 @@ export function GuidedView() {
     publishHomeGuideMode(mode);
   }, [mode]);
 
+  useEffect(() => {
+    function syncVisibility() {
+      setDocumentVisible(!document.hidden);
+    }
+
+    syncVisibility();
+    document.addEventListener("visibilitychange", syncVisibility);
+    return () => document.removeEventListener("visibilitychange", syncVisibility);
+  }, []);
+
   useEffect(
     () => () => {
       document.documentElement.removeAttribute("data-home-guide-mode");
@@ -180,7 +191,7 @@ export function GuidedView() {
     window.cancelAnimationFrame(progressFrameRef.current);
     const guide = guideRef.current;
 
-    if (prefersReducedMotion || mode !== "guided") {
+    if (prefersReducedMotion || mode !== "guided" || !documentVisible) {
       guide?.style.setProperty("--guide-progress", "0deg");
       return;
     }
@@ -211,7 +222,7 @@ export function GuidedView() {
       window.clearTimeout(timer);
       window.cancelAnimationFrame(progressFrameRef.current);
     };
-  }, [activeIndex, mode, prefersReducedMotion, resolveChapters, scrollToChapter]);
+  }, [activeIndex, documentVisible, mode, prefersReducedMotion, resolveChapters, scrollToChapter]);
 
   useEffect(() => {
     if (prefersReducedMotion) return;

@@ -1,0 +1,94 @@
+.root {
+  display: grid;
+  grid-template-columns: 2.25rem auto minmax(4rem, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  width: min(100%, 23rem);
+  min-height: 2.5rem;
+  padding: 0.24rem 0.35rem;
+  border: 1px solid;
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+}
+
+.root button {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  color: inherit;
+  opacity: 0.78;
+  transition: opacity 180ms ease, background-color 180ms ease;
+}
+
+.root button:hover,
+.root button:focus-visible {
+  opacity: 1;
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.status,
+.root strong {
+  font-size: 0.6rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.track {
+  position: relative;
+  height: 1px;
+  overflow: hidden;
+  background: currentColor;
+  opacity: 0.28;
+}
+
+.track i {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.root[data-running="true"] .track i {
+  animation-name: visualizer-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.light {
+  border-color: rgba(43, 41, 36, 0.16);
+  background: rgba(248, 243, 233, 0.78);
+  color: #704a38;
+}
+
+.dark {
+  border-color: rgba(244, 239, 230, 0.18);
+  background: rgba(13, 23, 21, 0.72);
+  color: #d4b99a;
+}
+
+@keyframes visualizer-progress {
+  to { transform: scaleX(1); }
+}
+
+@media (max-width: 560px) {
+  .root {
+    grid-template-columns: 2.25rem minmax(3.5rem, auto) 1fr;
+  }
+
+  .root strong { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root[data-running="true"] .track i {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
