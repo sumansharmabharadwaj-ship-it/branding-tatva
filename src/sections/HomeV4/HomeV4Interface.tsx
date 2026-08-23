@@ -16,22 +16,35 @@ const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
 const DWELL_MS = [
   11000,
   13000,
+  13000,
   15000,
+  16000,
   18000,
   15000,
   18000,
+  16000,
+  20000,
   14000,
   16000,
+  16000,
 ];
-const GUIDE_HINT_MS = 6200;
+// The invitation should be discoverable without behaving like another hero
+// banner. Three seconds is enough to register the feature; it then folds into
+// the quiet chapter control.
+const GUIDE_HINT_MS = 3200;
 const CHAPTER_NAMES = [
   "opening signal",
   "recognition",
+  "hidden cost",
   "foundation",
+  "three paths",
   "working method",
   "evidence",
+  "tatva system",
   "studio",
+  "health check",
   "field notes",
+  "decision",
   "invitation",
 ] as const;
 const CURSOR_SPRING = { stiffness: 460, damping: 34, mass: 0.34 } as const;
@@ -45,7 +58,6 @@ export function GuidedView() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const [mode, setMode] = useState<GuideMode>("manual");
   const [activeIndex, setActiveIndex] = useState(0);
-  const [chapterCount, setChapterCount] = useState<number>(CHAPTER_NAMES.length);
   const [hintVisible, setHintVisible] = useState(false);
   const guideRef = useRef<HTMLDivElement>(null);
   const chaptersRef = useRef<HTMLElement[]>([]);
@@ -98,7 +110,6 @@ export function GuidedView() {
   useEffect(() => {
     const chapters = resolveChapters();
     if (!chapters.length) return;
-    setChapterCount(chapters.length);
 
     const ratios = new Map<HTMLElement, number>();
     const observer = new IntersectionObserver(
@@ -247,7 +258,7 @@ export function GuidedView() {
 
   if (prefersReducedMotion) return null;
 
-  const count = Math.max(1, chapterCount);
+  const count = Math.max(1, chaptersRef.current.length || CHAPTER_NAMES.length);
   const atFinalChapter = activeIndex >= count - 1;
   const chapterName = CHAPTER_NAMES[Math.min(activeIndex, CHAPTER_NAMES.length - 1)] ?? "scene";
   const showHint = hintVisible && mode === "manual" && activeIndex === 0;
@@ -263,7 +274,7 @@ export function GuidedView() {
   const detail = atFinalChapter
     ? "the invitation"
     : showHint
-      ? "eight calm chapters · always user-led"
+      ? "thirteen calm scenes"
       : chapterName;
 
   return (

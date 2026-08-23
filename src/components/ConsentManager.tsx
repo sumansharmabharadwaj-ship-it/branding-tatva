@@ -97,21 +97,22 @@ export function ConsentManager() {
           role="dialog"
           aria-modal="false"
           aria-label="Your choice about measurement"
-          className="fixed inset-x-3 bottom-3 z-[100] rounded-2xl border p-4 shadow-2xl backdrop-blur-xl sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-[min(30rem,calc(100vw-3rem))]"
+          className="fixed inset-x-3 bottom-3 z-[100] rounded-2xl border px-4 py-3 shadow-xl backdrop-blur-xl sm:left-1/2 sm:right-auto sm:w-[min(44rem,calc(100vw-3rem))] sm:-translate-x-1/2"
           style={{ borderColor: "rgba(39,34,30,0.14)", backgroundColor: "rgba(244,239,230,0.94)" }}
         >
-          <p className="text-sm leading-relaxed text-soil/76">
-            Optional analytics stay off until you choose. Booking works either way.{" "}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-[28rem] text-[0.78rem] leading-relaxed text-soil/76">
+            Optional analytics are off. Choose whether to enable them.{" "}
             <Link href="/privacy" className="link-underline" style={{ color: "#9b5c43" }}>
               Privacy note
             </Link>
             .
           </p>
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="flex shrink-0 flex-wrap gap-1.5">
             <button
               type="button"
               onClick={() => decide({ analytics: true, marketing: true })}
-              className="rounded-full px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] transition-opacity duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="rounded-full px-4 py-2 text-[0.65rem] font-medium uppercase tracking-[0.12em] transition-opacity duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               style={{ backgroundColor: "#9b5c43", color: "#fffaf2" }}
             >
               Accept all
@@ -120,17 +121,18 @@ export function ConsentManager() {
             <button
               type="button"
               onClick={() => decide({ analytics: false, marketing: false })}
-              className="rounded-full border border-soil/20 px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] text-soil/75 transition-colors duration-300 hover:border-soil/45 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="rounded-full border border-soil/20 px-4 py-2 text-[0.65rem] font-medium uppercase tracking-[0.12em] text-soil/75 transition-colors duration-300 hover:border-soil/45 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               Essential only
             </button>
             <button
               type="button"
               onClick={() => setPanelOpen(true)}
-              className="rounded-full px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] text-soil/58 underline underline-offset-4 transition-colors duration-300 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="rounded-full px-2 py-2 text-[0.62rem] font-medium uppercase tracking-[0.12em] text-soil/58 underline underline-offset-4 transition-colors duration-300 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               Manage preferences
             </button>
+          </div>
           </div>
         </div>
       )}

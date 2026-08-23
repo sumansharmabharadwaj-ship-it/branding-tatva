@@ -50,43 +50,6 @@
     linear-gradient(180deg, rgba(238, 232, 220, 0.64) 0%, rgba(238, 232, 220, 0.18) 48%, rgba(238, 232, 220, 0.92) 100%);
 }
 
-/* Recognition is a paper chapter. The previous depth layer left ivory type
-   on an ivory wash, so the headline and explanation now read in soil while
-   the original diagram and composition stay untouched. */
-.home-v4 .home-v4-recognition__header h2,
-.home-v4 .home-v4-recognition__copy h3 {
-  color: #302923 !important;
-  text-shadow: none !important;
-}
-
-.home-v4 .home-v4-recognition__header h2 em,
-.home-v4 .home-v4-recognition__header p,
-.home-v4 .home-v4-recognition__label {
-  color: #9b5c43 !important;
-}
-
-.home-v4 .home-v4-recognition__header > span,
-.home-v4 .home-v4-recognition__body,
-.home-v4 .home-v4-recognition__answer p {
-  color: rgba(48, 41, 35, 0.7) !important;
-}
-
-.home-v4 .home-v4-recognition__copy {
-  border-color: rgba(48, 41, 35, 0.12) !important;
-  background:
-    radial-gradient(circle at 88% 8%, rgba(155, 92, 67, 0.11), transparent 34%),
-    rgba(248, 243, 234, 0.9) !important;
-  box-shadow: 0 24px 72px rgba(62, 50, 39, 0.12) !important;
-}
-
-.home-v4 .home-v4-recognition__answer {
-  background: rgba(48, 41, 35, 0.035) !important;
-}
-
-.home-v4 .home-v4-recognition__copy .home-v4-text-link {
-  color: #754736 !important;
-}
-
 .home-v4-guide {
   border-color: rgba(39, 34, 30, 0.12);
   background: rgba(244, 239, 230, 0.92);
@@ -119,317 +82,6 @@
   background-color: #2d3a33 !important;
 }
 
-/* The child scenes carried their own near-black backgrounds, so changing the
-   chapter wrapper alone had no visible effect. These overrides preserve each
-   scene's imagery and layout while giving the middle of the page a readable
-   forest progression instead of six consecutive black rooms. */
-.home-v4 [data-home-v4-chapter="foundation"] > section {
-  background: #4a594f !important;
-}
-
-.home-v4 [data-home-v4-chapter="foundation"] [data-landscape] {
-  opacity: 0.58;
-}
-
-.home-v4 [data-home-v4-chapter="foundation"] [data-landscape] + div[aria-hidden="true"] {
-  opacity: 0.4;
-}
-
-.home-v4 [data-home-v4-chapter="process"] .project-journey {
-  background: #46574d !important;
-}
-
-.home-v4 .project-journey__media {
-  opacity: 0.55 !important;
-}
-
-.home-v4 .project-journey__wash {
-  opacity: 0.46 !important;
-}
-
-.home-v4 .project-journey__focus-card,
-.home-v4 .project-journey__map-card,
-.home-v4 .project-journey__signal-card,
-.home-v4 .project-journey__rail,
-.home-v4 .project-journey__footer {
-  border-color: rgba(244, 239, 230, 0.14) !important;
-  background-color: rgba(19, 27, 23, 0.56) !important;
-}
-
-/* Readiness charts repeated the same conclusion already expressed by the
-   interactive map. Removing them restores breathing room without changing
-   the three-column process layout or its stage interaction. */
-.home-v4 .project-journey__graph,
-.home-v4 .project-journey__readiness,
-.home-v4 .project-journey__intro > span,
-.home-v4 .project-journey__footer > p {
-  display: none !important;
-}
-
-/* The process room is the cognitive pause between two cinematic chapters.
-   Its original black dashboard made the page feel heavier, not clearer. The
-   structure and six-stage interaction stay exactly where they are, but the
-   room now reads like a warm strategy folio. */
-.home-v4 [data-home-v4-chapter="process"] .project-journey {
-  background: #e8e1d5 !important;
-  color: #312b26 !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] .project-journey__media {
-  opacity: 0.12 !important;
-  filter: sepia(0.18) saturate(0.62) brightness(1.22) !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] .project-journey__wash {
-  opacity: 0.82 !important;
-  background: linear-gradient(115deg, rgba(232, 225, 213, 0.98), rgba(223, 216, 204, 0.88)) !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] .project-journey::before {
-  background:
-    radial-gradient(44rem 30rem at 16% 20%, rgba(155, 92, 67, 0.1), transparent 68%),
-    radial-gradient(40rem 28rem at 86% 76%, rgba(106, 124, 104, 0.11), transparent 68%),
-    linear-gradient(125deg, rgba(238, 232, 221, 0.52), rgba(232, 225, 213, 0.18)) !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] .project-journey::after {
-  opacity: 0.04 !important;
-  mix-blend-mode: multiply !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] .project-journey__grid,
-.home-v4 [data-home-v4-chapter="process"] .project-journey__orbit {
-  opacity: 0.12 !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] .project-journey__focus-card,
-.home-v4 [data-home-v4-chapter="process"] .project-journey__map-card,
-.home-v4 [data-home-v4-chapter="process"] .project-journey__signal-card,
-.home-v4 [data-home-v4-chapter="process"] .project-journey__rail,
-.home-v4 [data-home-v4-chapter="process"] .project-journey__footer,
-.home-v4 [data-home-v4-chapter="process"] .project-journey__prevents {
-  border-color: rgba(49, 43, 38, 0.14) !important;
-  background: linear-gradient(145deg, rgba(250, 247, 241, 0.94), rgba(239, 232, 222, 0.9)) !important;
-  box-shadow: 0 18px 50px rgba(65, 52, 41, 0.07) !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] :is(
-  .project-journey__header h2,
-  .project-journey__focus-card h3,
-  .project-journey__map-heading h3,
-  .project-journey__signal-top h3,
-  .project-journey__output-block strong,
-  .project-journey__stage-button strong,
-  .project-journey__node span
-) {
-  color: #312b26 !important;
-  text-shadow: none !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] :is(
-  .project-journey__intro p,
-  .project-journey__explanation,
-  .project-journey__decision-block p,
-  .project-journey__prevents p,
-  .project-journey__map-note
-) {
-  color: rgba(49, 43, 38, 0.72) !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] :is(
-  .project-journey__kicker,
-  .project-journey__turns,
-  .project-journey__card-topline,
-  .project-journey__map-heading p,
-  .project-journey__map-heading > span,
-  .project-journey__signal-top p,
-  .project-journey__decision-block span,
-  .project-journey__output-block span,
-  .project-journey__prevents span
-) {
-  color: #8b5945 !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] .project-journey__stage-button {
-  border-color: rgba(49, 43, 38, 0.1) !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] .project-journey__stage-button:hover,
-.home-v4 [data-home-v4-chapter="process"] .project-journey__stage-button:focus-visible,
-.home-v4 [data-home-v4-chapter="process"] .project-journey__stage-button.is-active {
-  background: rgba(155, 92, 67, 0.09) !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] .project-journey__footer a {
-  border-color: rgba(49, 43, 38, 0.18) !important;
-  color: #5f4337 !important;
-  background: rgba(255, 252, 247, 0.72) !important;
-}
-
-.home-v4 [data-home-v4-chapter="process"] :is(
-  .project-journey__card-topline span,
-  .project-journey__footer > div > span
-) {
-  color: rgba(49, 43, 38, 0.62) !important;
-}
-
-.home-v4 [data-home-v4-chapter="evidence"] .evidence-cinematic {
-  background: #45564c !important;
-}
-
-.home-v4 .evidence-cinematic__veil,
-.home-v4 .evidence-cinematic__media-wash {
-  opacity: 0.46 !important;
-}
-
-.home-v4 .evidence-cinematic__dossier,
-.home-v4 .evidence-cinematic__index {
-  border-color: rgba(244, 239, 230, 0.14) !important;
-  background-color: rgba(25, 32, 28, 0.68) !important;
-}
-
-.home-v4 [data-home-v4-chapter="studio"] .studio-cinematic {
-  background: #405249 !important;
-}
-
-.home-v4 .studio-cinematic__media-wash {
-  opacity: 0.48 !important;
-}
-
-.home-v4 .studio-cinematic__panel,
-.home-v4 .studio-cinematic__tabs button,
-.home-v4 .studio-cinematic__authorship {
-  border-color: rgba(244, 239, 230, 0.14) !important;
-  background-color: rgba(21, 30, 26, 0.68) !important;
-}
-
-/* The oversized media caption sat half outside the one-screen chapter and
-   repeated the active tab label. */
-.home-v4 .studio-cinematic__media-caption {
-  display: none !important;
-}
-
-.home-v4 [data-home-v4-chapter="insights"] .home-insights {
-  background: #43534d !important;
-}
-
-.home-v4 .home-insights__veil {
-  opacity: 0.48 !important;
-}
-
-.home-v4 .home-insights__argument,
-.home-v4 .home-insights__index button {
-  border-color: rgba(244, 239, 230, 0.14) !important;
-  background-color: rgba(20, 29, 27, 0.66) !important;
-}
-
-/* Evidence remains cinematic, but the record itself should feel inspectable.
-   A warm paper dossier creates that pause without moving the media or index. */
-.home-v4 [data-home-v4-chapter="evidence"] .evidence-cinematic__dossier {
-  border-color: rgba(48, 41, 35, 0.14) !important;
-  background:
-    radial-gradient(circle at 92% 5%, color-mix(in srgb, var(--evidence-accent) 14%, transparent), transparent 38%),
-    linear-gradient(145deg, rgba(249, 245, 238, 0.95), rgba(231, 224, 213, 0.91)) !important;
-  box-shadow: 0 24px 70px rgba(35, 45, 39, 0.14) !important;
-}
-
-.home-v4 [data-home-v4-chapter="evidence"] :is(
-  .evidence-cinematic__dossier-topline strong,
-  .evidence-cinematic__trail-step p,
-  .evidence-cinematic__evidence-note p,
-  .evidence-cinematic__dossier-footer p
-) {
-  color: rgba(48, 41, 35, 0.7) !important;
-}
-
-.home-v4 [data-home-v4-chapter="evidence"] :is(
-  .evidence-cinematic__dossier-topline,
-  .evidence-cinematic__trail-step,
-  .evidence-cinematic__evidence-note
-) {
-  border-color: rgba(48, 41, 35, 0.11) !important;
-}
-
-.home-v4 [data-home-v4-chapter="evidence"] .evidence-cinematic__index button {
-  border-color: rgba(48, 41, 35, 0.13) !important;
-  background: linear-gradient(145deg, rgba(248, 244, 237, 0.88), rgba(232, 226, 216, 0.82)) !important;
-  box-shadow: 0 12px 34px rgba(35, 45, 39, 0.08) !important;
-}
-
-.home-v4 [data-home-v4-chapter="evidence"] .evidence-cinematic__index-copy :is(strong, em) {
-  color: #332d28 !important;
-}
-
-.home-v4 [data-home-v4-chapter="evidence"] .evidence-cinematic__index-copy small {
-  color: #8e5843 !important;
-}
-
-.home-v4 [data-home-v4-chapter="evidence"] .evidence-cinematic__evidence-note span {
-  color: rgba(48, 41, 35, 0.58) !important;
-}
-
-.home-v4 [data-home-v4-chapter="evidence"] .evidence-cinematic__dossier-footer a:hover,
-.home-v4 [data-home-v4-chapter="evidence"] .evidence-cinematic__dossier-footer a:focus-visible {
-  color: #5f4337 !important;
-}
-
-/* Insights is the second paper pause. The interactive reading-path layout is
-   retained, while the black glass is replaced by calm editorial surfaces. */
-.home-v4 [data-home-v4-chapter="insights"] .home-insights__argument,
-.home-v4 [data-home-v4-chapter="insights"] .home-insights__index button {
-  border-color: rgba(48, 41, 35, 0.14) !important;
-  background:
-    radial-gradient(circle at 88% 4%, color-mix(in srgb, var(--insights-accent) 12%, transparent), transparent 35%),
-    linear-gradient(145deg, rgba(249, 246, 239, 0.94), rgba(232, 226, 216, 0.88)) !important;
-  box-shadow: 0 22px 62px rgba(35, 45, 39, 0.12) !important;
-}
-
-.home-v4 [data-home-v4-chapter="insights"] :is(
-  .home-insights__argument-topline strong,
-  .home-insights__copy h3,
-  .home-insights__current li > strong,
-  .home-insights__takeaway p,
-  .home-insights__index button > strong
-) {
-  color: #312b26 !important;
-  text-shadow: none !important;
-}
-
-.home-v4 [data-home-v4-chapter="insights"] :is(
-  .home-insights__copy > span,
-  .home-insights__current li > span,
-  .home-insights__index button > small,
-  .home-insights__actions a:last-child
-) {
-  color: rgba(49, 43, 38, 0.64) !important;
-}
-
-.home-v4 [data-home-v4-chapter="insights"] :is(
-  .home-insights__argument-topline,
-  .home-insights__takeaway
-) {
-  border-color: rgba(49, 43, 38, 0.11) !important;
-}
-
-.home-v4 [data-home-v4-chapter="insights"] .home-insights__current-track {
-  background: rgba(49, 43, 38, 0.12) !important;
-}
-
-.home-v4 [data-home-v4-chapter="insights"] .home-insights__current li > i {
-  border-color: #eee7dc !important;
-}
-
-.home-v4 [data-home-v4-chapter="insights"] .home-insights__index button:hover,
-.home-v4 [data-home-v4-chapter="insights"] .home-insights__index button:focus-visible,
-.home-v4 [data-home-v4-chapter="insights"] .home-insights__index button.is-active {
-  background: color-mix(in srgb, var(--note-accent) 10%, rgba(249, 246, 239, 0.96)) !important;
-}
-
-.home-v4 [data-home-v4-chapter="insights"] .home-insights__actions a:hover,
-.home-v4 [data-home-v4-chapter="insights"] .home-insights__actions a:focus-visible {
-  color: #5f4337 !important;
-}
-
 .home-v4 [data-home-v4-chapter] video {
   filter: brightness(1.14) saturate(0.9) contrast(0.96);
 }
@@ -445,6 +97,41 @@
     transform: scale(0.9);
     transform-origin: right top;
   }
+
+  /* Keep the August 8 hero composition, but make its two supporting UI
+     elements read as quiet instruments rather than competing cards. */
+  .home-v4-guide[data-guide-hint="visible"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) {
+    width: 12.75rem;
+    min-width: 12.75rem;
+  }
+
+  .home-v4-guide[data-guide-hint="visible"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__copy {
+    min-width: 6.9rem;
+  }
+
+  .home-v4-guide[data-guide-hint="visible"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__status em {
+    display: none;
+  }
+
+  .home-v4-opening__proof {
+    width: min(100%, 16rem);
+    padding: 0.9rem 1rem;
+    border-radius: 1rem;
+    background: rgba(244, 239, 230, 0.84);
+    box-shadow: 0 14px 44px rgba(31, 39, 35, 0.15);
+    backdrop-filter: blur(12px);
+  }
+
+  .home-v4-opening__proof strong {
+    margin-top: 0.35rem;
+    font-size: clamp(1.45rem, 2vw, 1.9rem);
+    line-height: 1;
+  }
+
+  .home-v4-opening__proof p,
+  .home-v4-opening__proof i {
+    display: none;
+  }
 }
 
 @media (max-width: 820px) {
@@ -455,34 +142,5 @@
 
   .home-v4-opening__proof {
     background: rgba(244, 239, 230, 0.88);
-  }
-
-  /* On phones the stage tabs already update the full decision card. The map
-     and duplicate signal panel are removed so one chapter does not become a
-     three-screen dashboard. */
-  .home-v4 [data-home-v4-chapter="process"] .project-journey__board {
-    display: block !important;
-  }
-
-  .home-v4 [data-home-v4-chapter="process"] :is(
-    .project-journey__map-card,
-    .project-journey__signal-card
-  ) {
-    display: none !important;
-  }
-
-  .home-v4 [data-home-v4-chapter="process"] .project-journey__focus-card {
-    min-height: auto !important;
-  }
-
-  .home-v4 [data-home-v4-chapter="process"] .project-journey__rail {
-    overflow-x: auto !important;
-    scroll-snap-type: x proximity;
-    scrollbar-width: thin;
-  }
-
-  .home-v4 [data-home-v4-chapter="process"] .project-journey__stage-button {
-    min-width: 8.75rem !important;
-    scroll-snap-align: start;
   }
 }
