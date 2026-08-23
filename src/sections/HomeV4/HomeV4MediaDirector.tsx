@@ -3,7 +3,10 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect } from "react";
 
-import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
+import {
+  HOME_GUIDE_MODE_EVENT,
+  type HomeGuideMode,
+} from "@/hooks/useHomeGuideMode";
 
 // The motion bible keeps ambient footage perceptibly alive while preserving calm.
 const DEFAULT_PLAYBACK_RATE = 1.1;
@@ -35,7 +38,6 @@ function distanceFromViewportCentre(video: HTMLVideoElement) {
 
 export function HomeV4MediaDirector() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const guideMode = useHomeGuideMode();
 
   useEffect(() => {
     const root = document.querySelector<HTMLElement>("[data-home-v4]");
@@ -54,6 +56,12 @@ export function HomeV4MediaDirector() {
       typeof navigatorHints.deviceMemory === "number" && navigatorHints.deviceMemory <= 4;
     const compactViewport = window.matchMedia("(max-width: 720px)");
     let formInteraction = false;
+    let guideMode: HomeGuideMode =
+      document.documentElement.dataset.homeGuideMode === "paused"
+        ? "paused"
+        : document.documentElement.dataset.homeGuideMode === "guided"
+          ? "guided"
+          : "manual";
 
     function mediaBudget() {
       return constrainedConnection || lowMemory || compactViewport.matches ? 1 : 2;
@@ -160,6 +168,12 @@ export function HomeV4MediaDirector() {
       syncAll();
     }
 
+    function onGuideMode(event: Event) {
+      const nextMode = (event as CustomEvent<{ mode?: HomeGuideMode }>).detail?.mode;
+      if (nextMode) guideMode = nextMode;
+      syncAll();
+    }
+
     function onViewportProfileChange() {
       syncAll();
     }
@@ -184,6 +198,7 @@ export function HomeV4MediaDirector() {
     }
 
     document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener(HOME_GUIDE_MODE_EVENT, onGuideMode as EventListener);
     window.addEventListener("resize", onViewportProfileChange, { passive: true });
     compactViewport.addEventListener("change", onViewportProfileChange);
     homeRoot.addEventListener("focusin", onFocusIn);
@@ -194,6 +209,7 @@ export function HomeV4MediaDirector() {
       mutationObserver.disconnect();
       observer.disconnect();
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener(HOME_GUIDE_MODE_EVENT, onGuideMode as EventListener);
       window.removeEventListener("resize", onViewportProfileChange);
       compactViewport.removeEventListener("change", onViewportProfileChange);
       homeRoot.removeEventListener("focusin", onFocusIn);
@@ -204,7 +220,7 @@ export function HomeV4MediaDirector() {
       tracked.clear();
       visibleRatios.clear();
     };
-  }, [guideMode, prefersReducedMotion]);
+  }, [prefersReducedMotion]);
 
   return null;
 }

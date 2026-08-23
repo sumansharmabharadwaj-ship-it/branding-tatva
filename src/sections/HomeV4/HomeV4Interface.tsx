@@ -15,18 +15,13 @@ const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
 // interval, with the densest interactive scenes given the longest holds.
 const DWELL_MS = [
   7000,
-  8000,
-  8000,
-  9000,
-  10000,
-  11000,
-  9000,
-  11000,
-  9000,
-  12000,
   9000,
   10000,
   9000,
+  10000,
+  9000,
+  10000,
+  8000,
 ];
 // The invitation should be discoverable without behaving like another hero
 // banner. Three seconds is enough to register the feature; it then folds into
@@ -35,16 +30,11 @@ const GUIDE_HINT_MS = 3200;
 const CHAPTER_NAMES = [
   "opening signal",
   "recognition",
-  "hidden cost",
   "foundation",
-  "three paths",
   "working method",
   "evidence",
-  "tatva system",
   "studio",
-  "health check",
   "field notes",
-  "decision",
   "invitation",
 ] as const;
 const CURSOR_SPRING = { stiffness: 460, damping: 34, mass: 0.34 } as const;
@@ -90,6 +80,7 @@ export function GuidedView() {
 
       if (lenis) {
         lenis.scrollTo(target, {
+          offset: -72,
           duration: 0.72,
           easing: (value: number) => 1 - Math.pow(1 - value, 4),
         });
