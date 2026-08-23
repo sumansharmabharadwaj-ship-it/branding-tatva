@@ -1,0 +1,30 @@
+.scrollStory { position: relative; }
+.sticky { position: relative; }
+
+@media (min-width: 1024px) and (min-height: 761px) and (pointer: fine) {
+  .scrollStory {
+    height: 215svh;
+    min-height: 215svh;
+  }
+
+  .sticky {
+    position: sticky;
+    top: 0;
+    display: flex;
+    min-height: 100svh;
+    box-sizing: border-box;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: clamp(5.25rem, 8svh, 6.75rem) clamp(1rem, 2svh, 2rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollStory,
+  .sticky {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: auto;
+  }
+}
