@@ -1,9 +1,12 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import {
+  useCallback,
+  useEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -59,15 +62,56 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 export function HomeInsightsPreview() {
   const sectionRef = useRef<HTMLElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const autoplayRef = useRef(0);
+  const holdUntilRef = useRef(0);
+  const firstAdvanceRef = useRef(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const guideMode = useHomeGuideMode();
   const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -12% 0px" });
   const active = INSIGHTS[activeIndex] ?? INSIGHTS[0];
 
-  function choose(index: number) {
+  const choose = useCallback((index: number, userDriven = false) => {
     const safeIndex = ((index % INSIGHTS.length) + INSIGHTS.length) % INSIGHTS.length;
+    if (userDriven) holdUntilRef.current = Date.now() + 12000;
     setActiveIndex(safeIndex);
-  }
+  }, []);
+
+  useEffect(() => {
+    if (!inView) firstAdvanceRef.current = true;
+  }, [inView]);
+
+  useEffect(() => {
+    window.clearTimeout(autoplayRef.current);
+    if (prefersReducedMotion || !inView || guideMode === "paused" || document.hidden) return;
+
+    const remainingHold = Math.max(0, holdUntilRef.current - Date.now());
+    const delay = remainingHold > 0
+      ? remainingHold + 40
+      : firstAdvanceRef.current
+        ? 1800
+        : 4600;
+
+    autoplayRef.current = window.setTimeout(() => {
+      if (document.hidden || Date.now() < holdUntilRef.current) return;
+      firstAdvanceRef.current = false;
+      setActiveIndex((current) => (current + 1) % INSIGHTS.length);
+    }, delay);
+
+    return () => window.clearTimeout(autoplayRef.current);
+  }, [activeIndex, guideMode, inView, prefersReducedMotion]);
+
+  useEffect(() => {
+    function onChapter(event: Event) {
+      const detail = (event as CustomEvent<{ id?: string }>).detail;
+      if (detail?.id === "insights") {
+        firstAdvanceRef.current = true;
+        setActiveIndex(0);
+      }
+    }
+    window.addEventListener("bt:home-chapter", onChapter as EventListener);
+    return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
+  }, []);
 
   function moveFromKeyboard(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
     const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
@@ -83,7 +127,7 @@ export function HomeInsightsPreview() {
       : event.key === "End"
         ? INSIGHTS.length - 1
         : (index + direction + INSIGHTS.length) % INSIGHTS.length;
-    choose(nextIndex);
+    choose(nextIndex, true);
     tabRefs.current[nextIndex]?.focus();
   }
 
@@ -93,6 +137,8 @@ export function HomeInsightsPreview() {
       className="home-insights"
       aria-labelledby="home-insights-title"
       data-insights-state={activeIndex}
+      data-guide-mode={guideMode}
+      data-insights-in-view={inView ? "true" : "false"}
       style={{ "--insights-accent": active.accent } as CSSProperties}
     >
       <div
@@ -213,7 +259,7 @@ export function HomeInsightsPreview() {
                   tabIndex={selected ? 0 : -1}
                   className={selected ? "is-active" : undefined}
                   style={{ "--note-accent": insight.accent } as CSSProperties}
-                  onClick={() => choose(index)}
+                  onClick={() => choose(index, true)}
                   onKeyDown={(event) => moveFromKeyboard(event, index)}
                 >
                   <span>{insight.kind}</span>

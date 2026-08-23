@@ -615,3 +615,128 @@
     transition: none;
   }
 }
+
+/* August 8 refinement — keep the editorial two-column composition, but move
+   the chapter into the calmer parchment-and-forest system used elsewhere on
+   the revised homepage. The film remains atmospheric instead of becoming the
+   reading surface. */
+.home-insights {
+  --insights-ink: #20332b;
+  --insights-muted: #647269;
+  --insights-paper: rgba(248, 243, 233, 0.9);
+  --insights-line: rgba(32, 51, 43, 0.16);
+  background: #e8dfd0;
+  color: var(--insights-ink);
+}
+
+.home-insights::after {
+  opacity: 0.055;
+  mix-blend-mode: multiply;
+}
+
+.home-insights__film video,
+.home-insights__film img {
+  opacity: 0.2;
+  filter: saturate(0.58) contrast(0.92) brightness(1.12) sepia(0.12);
+}
+
+.home-insights__veil {
+  background:
+    radial-gradient(42rem 31rem at 76% 18%, color-mix(in srgb, var(--insights-accent) 15%, transparent), transparent 72%),
+    linear-gradient(96deg, rgba(240, 232, 217, 0.98) 0%, rgba(240, 232, 217, 0.9) 48%, rgba(240, 232, 217, 0.73) 100%),
+    linear-gradient(180deg, rgba(246, 240, 229, 0.3), rgba(226, 215, 197, 0.58));
+}
+
+.home-insights__header h2,
+.home-insights__copy h3,
+.home-insights__index button > strong {
+  color: var(--insights-ink);
+}
+
+.home-insights__intro p,
+.home-insights__copy > span,
+.home-insights__takeaway p {
+  color: rgba(32, 51, 43, 0.78);
+}
+
+.home-insights__intro span,
+.home-insights__argument-topline strong,
+.home-insights__index button > small {
+  color: rgba(32, 51, 43, 0.56);
+}
+
+.home-insights__argument,
+.home-insights__index button {
+  border-color: var(--insights-line);
+  background: var(--insights-paper);
+  box-shadow: 0 24px 65px rgba(61, 48, 34, 0.12);
+  backdrop-filter: blur(20px) saturate(0.98);
+}
+
+.home-insights__argument {
+  background:
+    radial-gradient(circle at 88% 4%, color-mix(in srgb, var(--insights-accent) 16%, transparent), transparent 36%),
+    linear-gradient(145deg, rgba(251, 247, 238, 0.95), rgba(238, 229, 213, 0.91));
+}
+
+.home-insights__argument-topline,
+.home-insights__takeaway {
+  border-color: rgba(32, 51, 43, 0.13);
+}
+
+.home-insights__current-track {
+  background: rgba(32, 51, 43, 0.13);
+}
+
+.home-insights__current-track i,
+.home-insights__current-track b {
+  background: linear-gradient(90deg, var(--insights-accent), rgba(32, 51, 43, 0.68));
+}
+
+.home-insights__current li > span {
+  color: rgba(32, 51, 43, 0.5);
+}
+
+.home-insights__current li > i {
+  border-color: #f5eee2;
+}
+
+.home-insights__current li > strong {
+  color: rgba(32, 51, 43, 0.82);
+}
+
+.home-insights__actions a:last-child {
+  color: rgba(32, 51, 43, 0.7);
+}
+
+.home-insights__actions a:hover,
+.home-insights__actions a:focus-visible {
+  color: #15251f;
+}
+
+.home-insights__index button {
+  color: var(--insights-ink);
+}
+
+.home-insights__index button:hover,
+.home-insights__index button:focus-visible,
+.home-insights__index button.is-active {
+  border-color: color-mix(in srgb, var(--note-accent) 72%, rgba(32, 51, 43, 0.18));
+  background: color-mix(in srgb, var(--note-accent) 12%, rgba(250, 246, 237, 0.96));
+}
+
+.home-insights[data-insights-in-view="true"]:not([data-guide-mode="paused"]) .home-insights__index button.is-active > i {
+  animation: home-insights-tab-progress 4.6s linear both;
+  transform-origin: top center;
+}
+
+@keyframes home-insights-tab-progress {
+  from { transform: scaleY(0.08); opacity: 0.42; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-insights__index button.is-active > i {
+    animation: none !important;
+  }
+}
