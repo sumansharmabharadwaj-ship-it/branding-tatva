@@ -931,3 +931,48 @@
 .waystone-sweep {
   animation: waystone-sweep 13s ease-in-out infinite;
 }
+
+/* Passive narrative cue shared by the homepage and About visualizers. It is
+   deliberately not a control: scroll advances/reverses the story and hover or
+   keyboard focus previews a state. */
+.bt-scroll-cue {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  width: min(100%, 34rem);
+  margin: 0;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.bt-scroll-cue > span,
+.bt-scroll-cue > strong {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.bt-scroll-cue > strong { white-space: nowrap; }
+.bt-scroll-cue--light {
+  border-color: rgba(43, 41, 36, 0.16);
+  background: rgba(248, 243, 233, 0.68);
+  color: rgba(43, 41, 36, 0.72);
+}
+.bt-scroll-cue--dark {
+  border-color: rgba(244, 239, 230, 0.18);
+  background: rgba(18, 22, 19, 0.54);
+  color: rgba(244, 239, 230, 0.72);
+}
+
+@media (max-width: 760px) {
+  .bt-scroll-cue {
+    grid-template-columns: auto 1fr;
+    border-radius: 1rem;
+  }
+  .bt-scroll-cue > strong { grid-column: 2; }
+}
