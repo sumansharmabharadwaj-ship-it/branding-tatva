@@ -14,8 +14,13 @@ import { offerings } from "@/data/services";
 import { track } from "@/lib/analytics";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-const AUTOPLAY_INTERVAL_MS = 5200;
 const USER_HOLD_MS = 14000;
+const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+
+type ServicesProgressDetail = {
+  id?: string;
+  progress?: number;
+};
 
 // Six stacked description rows made the complete Services list read like
 // a catalogue and consumed almost two screens before the visitor reached
@@ -24,7 +29,6 @@ const USER_HOLD_MS = 14000;
 // changes in place. This removes another scroll runway and gives touch,
 // keyboard and pointer visitors the same predictable control.
 export function ServiceDisciplineExplorer() {
-  const rootRef = useRef<HTMLDivElement>(null);
   const railViewportRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const userHoldUntilRef = useRef(0);
@@ -50,35 +54,23 @@ export function ServiceDisciplineExplorer() {
 
   useEffect(() => {
     if (prefersReducedMotion) return;
-    const root = rootRef.current;
-    if (!root) return;
 
-    let intervalId: number | undefined;
-    const stop = () => {
-      if (intervalId === undefined) return;
-      window.clearInterval(intervalId);
-      intervalId = undefined;
-    };
-    const start = () => {
-      if (intervalId !== undefined) return;
-      intervalId = window.setInterval(() => {
-        if (document.hidden || Date.now() < userHoldUntilRef.current) return;
-        setActiveIndex((current) => (current + 1) % offerings.length);
-      }, AUTOPLAY_INTERVAL_MS);
-    };
+    function onSceneProgress(event: Event) {
+      const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
+      if (detail?.id !== "offerings" || typeof detail.progress !== "number") return;
+      if (Date.now() < userHoldUntilRef.current) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) start();
-        else stop();
-      },
-      { threshold: 0.42 },
-    );
-    observer.observe(root);
+      const index = Math.min(
+        offerings.length - 1,
+        Math.max(0, Math.floor(detail.progress * offerings.length)),
+      );
+      setActiveIndex((current) => (current === index ? current : index));
+    }
+
+    window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
 
     return () => {
-      stop();
-      observer.disconnect();
+      window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
     };
   }, [prefersReducedMotion]);
 
@@ -114,7 +106,7 @@ export function ServiceDisciplineExplorer() {
   }
 
   return (
-    <div ref={rootRef} data-services-discipline-journey="true" className="relative min-h-svh">
+    <div data-services-discipline-journey="true" className="relative min-h-svh">
       <div className="relative lg:flex lg:min-h-svh lg:items-center lg:overflow-hidden">
         <Container className="relative max-w-7xl py-2 lg:py-12">
           <div
