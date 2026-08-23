@@ -1,14 +1,11 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useTimedVisualizer } from "@/hooks/useTimedVisualizer";
-import { VisualizerPlayback } from "@/components/VisualizerPlayback";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useRef, type CSSProperties, type KeyboardEvent } from "react";
-
-const DISCIPLINE_DWELL_MS = 5200;
 
 const DISCIPLINES = [
   {
@@ -70,9 +67,9 @@ export function StudioCinematicChapter() {
     amount: 0.18,
     margin: "8% 0px -12% 0px",
   });
-  const visualizer = useTimedVisualizer({
+  const visualizer = useScrollDrivenVisualizer({
     count: DISCIPLINES.length,
-    durationMs: DISCIPLINE_DWELL_MS,
+    target: sectionRef,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
   });
@@ -98,6 +95,7 @@ export function StudioCinematicChapter() {
       id="studio"
       data-home-chapter="studio"
       data-home-section="studio"
+      data-scroll-story="studio"
       data-studio-state={active.number}
       className="studio-cinematic home-scene"
       aria-labelledby="studio-cinematic-title"
@@ -172,17 +170,11 @@ export function StudioCinematicChapter() {
             Psychology finds the tension. Literature gives it language. Strategy makes the answer usable after the room goes quiet.
           </p>
 
-          <VisualizerPlayback
-            current={activeIndex}
-            total={DISCIPLINES.length}
-            durationMs={visualizer.durationMs}
-            isRunning={visualizer.isRunning}
-            progressKey={visualizer.progressKey}
-            onToggle={visualizer.toggle}
-            label="Psychology and literature autoplay"
-            tone="dark"
-            className="studio-cinematic__playback"
-          />
+          <p className="bt-scroll-cue bt-scroll-cue--dark studio-cinematic__playback">
+            <span aria-hidden="true">Scroll</span>
+            Move from psychology to literature to an applied system. Hover to inspect.
+            <strong>{String(activeIndex + 1).padStart(2, "0")} / 03</strong>
+          </p>
 
           <div
             className="studio-cinematic__tabs"
@@ -201,8 +193,13 @@ export function StudioCinematicChapter() {
                   aria-controls="studio-cinematic-panel"
                   tabIndex={selected ? 0 : -1}
                   onClick={() => visualizer.choose(index)}
+                  onPointerEnter={() => visualizer.preview(index)}
+                  onPointerLeave={(event) => {
+                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                  }}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
-                  onFocus={() => visualizer.choose(index)}
+                  onFocus={() => visualizer.preview(index)}
+                  onBlur={visualizer.releasePreview}
                   className={selected ? "is-active" : undefined}
                   style={{ "--studio-tab-accent": discipline.accent } as CSSProperties}
                 >
@@ -210,18 +207,7 @@ export function StudioCinematicChapter() {
                   <strong>{discipline.title}</strong>
                   <small>{discipline.eyebrow}</small>
                   <i aria-hidden="true">
-                    <b
-                      key={visualizer.progressKey}
-                      style={{
-                        animation:
-                          selected && visualizer.isRunning
-                            ? `studio-tab-progress ${DISCIPLINE_DWELL_MS}ms linear forwards`
-                            : "none",
-                        transform: selected && prefersReducedMotion ? "scaleX(1)" : "scaleX(0)",
-                        transformOrigin: "left",
-                        transition: prefersReducedMotion ? "none" : undefined,
-                      }}
-                    />
+                    <b style={{ transform: selected ? "scaleX(1)" : "scaleX(0)", transformOrigin: "left" }} />
                   </i>
                 </button>
               );
