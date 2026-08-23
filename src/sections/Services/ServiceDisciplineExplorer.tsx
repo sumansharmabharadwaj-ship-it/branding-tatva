@@ -14,6 +14,8 @@ import { offerings } from "@/data/services";
 import { track } from "@/lib/analytics";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+const AUTOPLAY_INTERVAL_MS = 5200;
+const USER_HOLD_MS = 14000;
 
 // Six stacked description rows made the complete Services list read like
 // a catalogue and consumed almost two screens before the visitor reached
@@ -22,8 +24,10 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 // changes in place. This removes another scroll runway and gives touch,
 // keyboard and pointer visitors the same predictable control.
 export function ServiceDisciplineExplorer() {
+  const rootRef = useRef<HTMLDivElement>(null);
   const railViewportRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const userHoldUntilRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useHydratedReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -44,7 +48,42 @@ export function ServiceDisciplineExplorer() {
     });
   }, [activeIndex, isDesktop, prefersReducedMotion]);
 
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const root = rootRef.current;
+    if (!root) return;
+
+    let intervalId: number | undefined;
+    const stop = () => {
+      if (intervalId === undefined) return;
+      window.clearInterval(intervalId);
+      intervalId = undefined;
+    };
+    const start = () => {
+      if (intervalId !== undefined) return;
+      intervalId = window.setInterval(() => {
+        if (document.hidden || Date.now() < userHoldUntilRef.current) return;
+        setActiveIndex((current) => (current + 1) % offerings.length);
+      }, AUTOPLAY_INTERVAL_MS);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) start();
+        else stop();
+      },
+      { threshold: 0.42 },
+    );
+    observer.observe(root);
+
+    return () => {
+      stop();
+      observer.disconnect();
+    };
+  }, [prefersReducedMotion]);
+
   function activate(index: number, source: "hover" | "focus" | "click") {
+    userHoldUntilRef.current = Date.now() + USER_HOLD_MS;
     if (index === activeIndex) return;
     setActiveIndex(index);
     track("capability_selected", {
@@ -75,7 +114,7 @@ export function ServiceDisciplineExplorer() {
   }
 
   return (
-    <div data-services-discipline-journey="true" className="relative min-h-svh">
+    <div ref={rootRef} data-services-discipline-journey="true" className="relative min-h-svh">
       <div className="relative lg:flex lg:min-h-svh lg:items-center lg:overflow-hidden">
         <Container className="relative max-w-7xl py-2 lg:py-12">
           <div

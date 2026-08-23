@@ -42,7 +42,10 @@ type ServicesProgressDetail = {
 };
 
 export function PackageSelector() {
-  const [active, setActive] = useState<PackageSlug | null>(null);
+  // Start with a complete, useful recommendation. Scroll can still preview
+  // the other paths, but a blocked observer or reduced-motion preference no
+  // longer leaves this chapter looking unfinished.
+  const [active, setActive] = useState<PackageSlug | null>(CHOICES[0].slug);
   const [selectionSource, setSelectionSource] = useState<SelectionSource>(null);
   const [compare, setCompare] = useState(false);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
@@ -115,7 +118,7 @@ export function PackageSelector() {
   }
 
   return (
-    <Container data-package-selector="true" className="max-w-3xl text-center">
+    <Container className="max-w-3xl text-center">
       <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Desire</p>
       <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
         Where does your brand actually stand?
@@ -240,7 +243,7 @@ export function PackageSelector() {
               </div>
               <p className="mt-1 text-xs text-ivory/60">Final quotation follows the discovery call.</p>
               <p className="mt-4 text-ivory/90">{activePackage.description}</p>
-              <ul data-package-inclusions="true" className="mt-4 space-y-1.5">
+              <ul className="mt-4 space-y-1.5">
                 {activePackage.includes.map((item, index) => (
                   <motion.li
                     key={item}
@@ -272,8 +275,10 @@ export function PackageSelector() {
         </AnimatePresence>
       </div>
 
-      <p data-package-disclaimer="true" className="mx-auto mt-8 max-w-lg text-xs leading-relaxed text-ivory/55">
-        Final scope, taxes and third-party costs are confirmed after discovery.
+      <p className="mx-auto mt-8 max-w-lg text-xs leading-relaxed text-ivory/55">
+        Prices are localised by market and shown in the selected currency. Final scope and quotation are confirmed
+        after the discovery conversation. Taxes and third party production, media, printing, development, travel or
+        licensing are listed separately where relevant.
       </p>
     </Container>
   );
