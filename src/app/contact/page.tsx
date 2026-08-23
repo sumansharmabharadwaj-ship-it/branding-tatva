@@ -11,7 +11,6 @@ import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { Fireflies } from "@/components/Fireflies";
-import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { site } from "@/data/site";
 import { SANDSTONE, ELEMENT_HEX } from "@/lib/sectionWash";
@@ -189,16 +188,18 @@ export default function ContactPage() {
             moved into the new hero; this section now carries just the
             form and the direct-contact links.
             Redesign pass: this is the single most consequential section
-            on the entire site, the actual conversion moment, yet it was
-            the flattest, a solid color with text and form fields and
-            nothing else, while every other section on this page now
-            has real depth. AmbientElementShader (the one deliberately
-            restrained WebGL moment already proven safe on Services,
-            color and light only, no 3D objects) gives it quiet
-            atmosphere instead of a flat fill, at the same low opacity
-            Services already uses on comparable light sections. */}
+            on the entire site, so its atmosphere must never depend on a
+            WebGL context. Two restrained paper-light washes keep the form
+            dimensional without adding a GPU-heavy failure point. */}
         <section id="write" className="relative scroll-mt-24 overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
-          <AmbientElementShader opacity={0.14} />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 16% 20%, rgba(244,239,230,0.42), transparent 38%), radial-gradient(circle at 84% 76%, rgba(92,107,74,0.12), transparent 34%)",
+            }}
+          />
           <Container className="relative grid gap-12 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
               <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">Write in your own time</p>
