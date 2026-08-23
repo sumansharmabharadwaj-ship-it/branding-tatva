@@ -4,12 +4,9 @@ import Link from "next/link";
 import { useRef, type KeyboardEvent } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowRight, BookOpenText, Brain, Sparkles } from "lucide-react";
-import { VisualizerPlayback } from "@/components/VisualizerPlayback";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useTimedVisualizer } from "@/hooks/useTimedVisualizer";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import styles from "./Convergence.module.css";
-
-const DWELL_MS = 4600;
 
 const FIELDS = [
   {
@@ -42,9 +39,9 @@ export function Convergence() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
-  const visualizer = useTimedVisualizer({
+  const visualizer = useScrollDrivenVisualizer({
     count: STAGES.length,
-    durationMs: DWELL_MS,
+    target: sectionRef,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
   });
@@ -68,6 +65,7 @@ export function Convergence() {
       ref={sectionRef}
       className={styles.section}
       data-about-scene="method"
+      data-scroll-story="about-convergence"
       data-convergence-stage={STAGES[stage].number}
       aria-labelledby="convergence-title"
     >
@@ -81,16 +79,11 @@ export function Convergence() {
           </div>
           <div className={styles.headerAside}>
             <p>{STAGES[stage].cue}</p>
-            <VisualizerPlayback
-              current={stage}
-              total={STAGES.length}
-              durationMs={visualizer.durationMs}
-              isRunning={visualizer.isRunning}
-              progressKey={visualizer.progressKey}
-              onToggle={visualizer.toggle}
-              label="Psychology and literature convergence autoplay"
-              tone="light"
-            />
+            <p className="bt-scroll-cue bt-scroll-cue--light">
+              <span aria-hidden="true">Scroll</span>
+              Bring the two disciplines together. Hover a stage to inspect it.
+              <strong>{String(stage + 1).padStart(2, "0")} / 03</strong>
+            </p>
           </div>
         </header>
 
@@ -184,14 +177,18 @@ export function Convergence() {
                   tabIndex={selected ? 0 : -1}
                   data-active={selected}
                   onClick={() => visualizer.choose(index)}
+                  onPointerEnter={() => visualizer.preview(index)}
+                  onPointerLeave={(event) => {
+                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                  }}
+                  onFocus={() => visualizer.preview(index)}
+                  onBlur={visualizer.releasePreview}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
                 >
                   <span>{item.number}</span>
                   <strong>{item.label}</strong>
                   <i aria-hidden="true">
-                    {selected && visualizer.isRunning ? (
-                      <b key={visualizer.progressKey} style={{ animationDuration: `${visualizer.durationMs}ms` }} />
-                    ) : null}
+                    {selected ? <b style={{ transform: "scaleX(1)" }} /> : null}
                   </i>
                 </button>
               );
