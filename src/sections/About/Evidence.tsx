@@ -6,10 +6,10 @@ import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
-import { VisualizerPlayback } from "@/components/VisualizerPlayback";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useTimedVisualizer } from "@/hooks/useTimedVisualizer";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { projects } from "@/data/projects";
+import styles from "./Evidence.module.css";
 
 // About redesign, the evidence chapter — for each selected case: the
 // original ambiguity, the decision made, the observed result. Every
@@ -37,16 +37,15 @@ const CASES = [
   },
 ] as const;
 
-const DWELL_MS = 5400;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function Evidence() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.3, margin: "8% 0px -12% 0px" });
-  const visualizer = useTimedVisualizer({
+  const visualizer = useScrollDrivenVisualizer({
     count: CASES.length,
-    durationMs: DWELL_MS,
+    target: sectionRef,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
   });
@@ -70,8 +69,13 @@ export function Evidence() {
   if (!activeProject) return null;
 
   return (
-    <div ref={sectionRef} data-evidence-case={activeCase.slug}>
-      <Container className="max-w-6xl">
+    <div
+      ref={sectionRef}
+      className={styles.scrollStory}
+      data-evidence-case={activeCase.slug}
+      data-scroll-story="about-evidence"
+    >
+      <Container className={`${styles.sticky} max-w-6xl`}>
         <div className="grid gap-6 lg:grid-cols-[1fr_22rem] lg:items-end">
           <Reveal>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sandstone">Evidence</p>
@@ -81,18 +85,13 @@ export function Evidence() {
           </Reveal>
           <Reveal delay={0.08}>
             <p className="mb-3 text-sm leading-6 text-ivory/65">
-              Three engagements, shown one at a time so the reasoning remains visible.
+              Scroll through three engagements. Hover or focus a case to inspect its reasoning.
             </p>
-            <VisualizerPlayback
-              current={activeIndex}
-              total={CASES.length}
-              durationMs={visualizer.durationMs}
-              isRunning={visualizer.isRunning}
-              progressKey={visualizer.progressKey}
-              onToggle={visualizer.toggle}
-              label="Evidence case autoplay"
-              tone="dark"
-            />
+            <p className="bt-scroll-cue bt-scroll-cue--dark">
+              <span aria-hidden="true">Scroll</span>
+              Evidence follows your pace.
+              <strong>{String(activeIndex + 1).padStart(2, "0")} / 03</strong>
+            </p>
           </Reveal>
         </div>
 
@@ -115,6 +114,12 @@ export function Evidence() {
                   aria-selected={selected}
                   tabIndex={selected ? 0 : -1}
                   onClick={() => visualizer.choose(index)}
+                  onPointerEnter={() => visualizer.preview(index)}
+                  onPointerLeave={(event) => {
+                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                  }}
+                  onFocus={() => visualizer.preview(index)}
+                  onBlur={visualizer.releasePreview}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
                   className={`rounded-2xl border px-4 py-4 text-left transition duration-300 ${
                     selected
