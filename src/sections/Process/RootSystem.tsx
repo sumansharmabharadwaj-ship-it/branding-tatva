@@ -1,6 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
 import Link from "next/link";
 import {
   useCallback,
@@ -117,11 +118,18 @@ function fallbackMeta(index: number): StageMeta {
 
 export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const guideMode = useHomeGuideMode();
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const stageTimerRef = useRef(0);
+  const holdUntilRef = useRef(0);
+  const firstAdvanceRef = useRef(true);
   const inView = useInView(sectionRef, { amount: 0.26 });
   const [active, setActive] = useState(0);
-  const chooseStage = useCallback((index: number) => setActive(index), []);
+  const chooseStage = useCallback((index: number, userDriven = false) => {
+    if (userDriven) holdUntilRef.current = Date.now() + 12000;
+    setActive(index);
+  }, []);
 
   function onStageKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -132,13 +140,43 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     else return;
 
     event.preventDefault();
-    chooseStage(next);
+    chooseStage(next, true);
     document.getElementById(`project-stage-tab-${next}`)?.focus();
   }
 
   useEffect(() => {
     if (active >= stages.length) setActive(0);
   }, [active, stages.length]);
+
+  useEffect(() => {
+    if (!inView) firstAdvanceRef.current = true;
+  }, [inView]);
+
+  useEffect(() => {
+    window.clearTimeout(stageTimerRef.current);
+    if (
+      prefersReducedMotion ||
+      !inView ||
+      guideMode === "paused" ||
+      document.hidden ||
+      stages.length < 2
+    ) return;
+
+    const remainingHold = Math.max(0, holdUntilRef.current - Date.now());
+    const delay = remainingHold > 0
+      ? remainingHold + 40
+      : firstAdvanceRef.current
+        ? 1500
+        : 2900;
+
+    stageTimerRef.current = window.setTimeout(() => {
+      if (document.hidden || Date.now() < holdUntilRef.current) return;
+      firstAdvanceRef.current = false;
+      setActive((current) => (current + 1) % stages.length);
+    }, delay);
+
+    return () => window.clearTimeout(stageTimerRef.current);
+  }, [active, guideMode, inView, prefersReducedMotion, stages.length]);
 
   useEffect(() => {
     function onChapter(event: Event) {
@@ -234,7 +272,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               aria-controls="project-stage-panel"
               tabIndex={active === index ? 0 : -1}
               className={`project-journey__stage-button${active === index ? " is-active" : ""}`}
-              onClick={() => chooseStage(index)}
+              onClick={() => chooseStage(index, true)}
               onKeyDown={(event) => onStageKeyDown(event, index)}
             >
               <span>{String(index + 1).padStart(2, "0")}</span>
@@ -314,7 +352,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                     type="button"
                     className={`project-journey__node${reached ? " is-reached" : ""}${active === index ? " is-active" : ""}`}
                     style={{ left: `${(node.x / 700) * 100}%`, top: `${(node.y / 340) * 100}%` }}
-                    onClick={() => chooseStage(index)}
+                    onClick={() => chooseStage(index, true)}
                     aria-label={`Show ${item.stage} stage`}
                   >
                     <i aria-hidden="true" />
