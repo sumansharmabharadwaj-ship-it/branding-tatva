@@ -148,8 +148,8 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                   <Link href="/services#offerings" className="link-underline inline-flex items-center gap-2 text-clay">
                     The service paths that apply this <span aria-hidden="true">→</span>
                   </Link>
-                  <Link href="/work" className="link-underline inline-flex items-center gap-2 text-clay">
-                    The work where these decisions show <span aria-hidden="true">→</span>
+                  <Link href="/services#proof" className="link-underline inline-flex items-center gap-2 text-clay">
+                    The client proof behind these decisions <span aria-hidden="true">→</span>
                   </Link>
                 </div>
               </div>

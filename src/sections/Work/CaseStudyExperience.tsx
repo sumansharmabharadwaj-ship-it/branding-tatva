@@ -566,8 +566,8 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
             <div>
               <Reveal>
-                <Link href="/work" className="link-underline text-xs font-medium uppercase tracking-[0.18em] text-white/60">
-                  Work archive
+                <Link href="/services#proof" className="link-underline text-xs font-medium uppercase tracking-[0.18em] text-white/60">
+                  Client proof
                 </Link>
                 <div className="mt-5 flex flex-wrap gap-2">
                   <span className="rounded-full border border-white/20 bg-black/15 px-3 py-1 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-white/75 backdrop-blur-sm">

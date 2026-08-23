@@ -161,8 +161,8 @@ export function VerifiedOutcome() {
           <Reveal delay={0.08}>
             <div className="mt-7 flex flex-wrap gap-3">
               <LinkButton href={`/work/${proof.slug}`}>See the full decision trail</LinkButton>
-              <LinkButton href="/work" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
-                Explore the Work
+              <LinkButton href="/services#offerings" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
+                Explore the Services
               </LinkButton>
             </div>
           </Reveal>

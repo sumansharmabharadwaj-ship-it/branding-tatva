@@ -65,7 +65,7 @@ const LEGACY_INSIGHT_REDIRECTS = [
   },
   {
     slug: "category-reframing-a-concept-case-study",
-    destination: "/work",
+    destination: "/services#proof",
   },
   {
     slug: "pricing-brand-strategy-across-markets",
@@ -89,6 +89,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   async redirects() {
     return [
+      { source: "/work", destination: "/services#proof", permanent: true },
       ...LEGACY_INSIGHT_REDIRECTS.flatMap(({ slug, destination }) => [
         {
           source: `/blog/${slug}`,

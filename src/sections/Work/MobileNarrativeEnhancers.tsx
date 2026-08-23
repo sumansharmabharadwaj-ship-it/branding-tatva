@@ -269,7 +269,7 @@ function SignatureDeck() {
       imageSrc: evidenceImage?.getAttribute("src") ?? "",
       imageAlt: evidenceImage?.getAttribute("alt") || "Performance evidence diagram",
       beats: beatElements.map(extractNarrative),
-      href: section.querySelector<HTMLAnchorElement>('a[href^="/work/"]')?.getAttribute("href") ?? "/work",
+      href: section.querySelector<HTMLAnchorElement>('a[href^="/work/"]')?.getAttribute("href") ?? "/services#proof",
     });
 
     return () => {

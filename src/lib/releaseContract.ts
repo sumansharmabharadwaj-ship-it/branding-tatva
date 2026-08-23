@@ -9,7 +9,6 @@ export const BRANDING_TATVA_RELEASE_CONTRACT = {
   requiredRoutes: [
     "/",
     "/services",
-    "/work",
     "/insights",
     "/about",
     "/contact",

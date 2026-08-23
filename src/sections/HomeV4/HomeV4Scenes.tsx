@@ -178,12 +178,12 @@ export function V4OpeningScene() {
               Open the strategy room <ArrowUpRight size={15} />
             </Link>
             <Link
-              href="/work"
+              href="/services#proof"
               className="home-v4-button home-v4-button--quiet"
               data-magnetic
               data-cursor-label="proof"
             >
-              See the work <ArrowDownRight size={15} />
+              See client proof <ArrowDownRight size={15} />
             </Link>
           </motion.div>
         </div>

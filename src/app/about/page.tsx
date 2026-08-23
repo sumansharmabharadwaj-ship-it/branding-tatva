@@ -55,8 +55,8 @@ export default function AboutPage() {
           body={elements[0].poetic}
           ctaHref="/contact"
           ctaLabel="Book a Brand Strategy Session"
-          secondaryCtaHref="/work"
-          secondaryCtaLabel="Explore the Work"
+          secondaryCtaHref="/services#proof"
+          secondaryCtaLabel="See Client Proof"
           video="/videos/own-companions-split.mp4"
           poster="/images/own-companions-split-poster.jpg"
           bgVideo="/videos/about-hero-bg-meadow.mp4"

@@ -329,7 +329,7 @@ export function EvidenceWall() {
 
               <div className="evidence-cinematic__dossier-footer">
                 <p>One decision worth following is more useful than a wall of unexplained outcomes.</p>
-                <Link href="/work">Explore the full archive <span aria-hidden="true">→</span></Link>
+                <Link href="/services#proof">See proof and project paths <span aria-hidden="true">→</span></Link>
               </div>
 
               <span className="evidence-cinematic__timer" aria-hidden="true">

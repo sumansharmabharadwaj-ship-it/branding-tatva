@@ -119,7 +119,7 @@ export default async function CaseStudyPage({ params }: Props) {
     author: { "@id": `${site.url}/#person` },
     creator: { "@id": `${site.url}/#person` },
     publisher: { "@id": `${site.url}/#organization` },
-    isPartOf: { "@id": `${site.url}/work#collection` },
+    isPartOf: { "@id": `${site.url}/services#proof` },
     keywords: [project.industry, taxonomy.evidenceLabel, ...project.services],
     image: `${site.url}${taxonomy.evidencePoster}`,
   };
@@ -129,7 +129,7 @@ export default async function CaseStudyPage({ params }: Props) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: site.url },
-      { "@type": "ListItem", position: 2, name: "Work", item: `${site.url}/work` },
+      { "@type": "ListItem", position: 2, name: "Services", item: `${site.url}/services` },
       { "@type": "ListItem", position: 3, name: project.title, item: projectUrl },
     ],
   };

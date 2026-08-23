@@ -157,6 +157,7 @@ const JUMP_ITEMS = [
   { href: "#situation", label: "Your situation" },
   { href: "#offerings", label: "Services" },
   { href: "#desire", label: "Packages" },
+  { href: "#proof", label: "Client proof" },
   { href: "#authority", label: "Why it works" },
   { href: "#audit", label: "Questions" },
   { href: "#book", label: "Book a call" },
@@ -421,7 +422,7 @@ export default async function ServicesPage() {
             number from projects.ts verified stats. Charcoal ground so
             the numbers themselves are the visual; it also hands
             seamlessly into Authority's identical charcoal. */}
-        <section data-services-scene="verified-outcome" className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section id="proof" data-services-scene="verified-outcome" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <BackgroundVideo
             video="/videos/generated/bt-services-verified-rings.mp4"
             poster="/images/generated/bt-services-verified-rings-poster.jpg"

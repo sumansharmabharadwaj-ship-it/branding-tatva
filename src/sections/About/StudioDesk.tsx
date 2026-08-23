@@ -83,8 +83,8 @@ const DRAWERS: Drawer[] = [
     body: [
       "Five client engagements, each documented with its challenge, its decision, and only outcomes that were actually measured. Where a number exists it appears; where none exists the decision speaks instead.",
     ],
-    href: "/work",
-    linkLabel: "Walk the archive",
+    href: "/services#proof",
+    linkLabel: "See the evidence",
   },
   {
     id: "roles",

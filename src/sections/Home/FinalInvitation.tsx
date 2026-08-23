@@ -33,8 +33,8 @@ const INVITATIONS: Record<Situation, Invitation> = {
       "Thirty minutes to name the tension, choose the direction, and see what the brand needs next.",
     action: "Enter the strategy room",
     trail: ["Name the tension", "Choose the position", "Build the system"],
-    proofHref: "/work",
-    proofLabel: "Read the decisions behind the work",
+    proofHref: "/services#proof",
+    proofLabel: "See the client proof",
     accent: "#D4B99A",
   },
   idea: {

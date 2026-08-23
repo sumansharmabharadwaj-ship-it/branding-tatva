@@ -65,7 +65,7 @@ export default async function BrandStudyPage({ params }: Props) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Work", item: `${site.url}/work` },
+          { "@type": "ListItem", position: 1, name: "Insights", item: `${site.url}/insights` },
           { "@type": "ListItem", position: 2, name: study.brand, item: `${site.url}/work/studies/${study.slug}` },
         ],
       },
@@ -86,8 +86,8 @@ export default async function BrandStudyPage({ params }: Props) {
           <MediaSlot fill={study.media?.masthead} scrim={0.8} />
           <Container className="relative max-w-4xl">
             <Reveal>
-              <Link href="/work" className="text-sm text-ivory/60 transition-colors hover:text-ivory">
-                ← All work and studies
+              <Link href="/insights" className="text-sm text-ivory/60 transition-colors hover:text-ivory">
+                ← All insights
               </Link>
               <p className="mt-8 text-sm font-medium uppercase tracking-[0.18em] text-ivory/70">Brand study</p>
             </Reveal>
