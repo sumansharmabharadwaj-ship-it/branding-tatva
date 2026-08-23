@@ -7,17 +7,13 @@ import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
-import { VideoBreak } from "@/components/VideoBreak";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
-import { NewsletterForm } from "@/components/NewsletterForm";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { Fireflies } from "@/components/Fireflies";
 import { AmbientElementShader } from "@/components/AmbientElementShader";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { site } from "@/data/site";
-import { credentials } from "@/data/about";
-import { projects } from "@/data/projects";
 import { SANDSTONE, ELEMENT_HEX } from "@/lib/sectionWash";
 import { pageSchema, PERSON_ID, ORGANIZATION_ID } from "@/lib/pageSchema";
 
@@ -142,14 +138,14 @@ export default function ContactPage() {
                 <span aria-hidden="true" className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
               </p>
               <p className="mt-2 text-sm text-foreground-secondary">
-                Pick a time directly. Honest feedback either way, and a clear next step if it fits.
+                Choose a time. You will leave with an honest next step.
               </p>
             </a>
             <div className="rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path two</p>
               <p className="mt-2 font-display text-xl font-normal text-soil">Speak directly</p>
               <p className="mt-2 text-sm text-foreground-secondary">
-                Prefer a quicker first step? Call or send a WhatsApp message directly to Suman.
+                Call or send Suman a WhatsApp message.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
                 <a
@@ -180,7 +176,7 @@ export default function ContactPage() {
                 <span aria-hidden="true" className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
               </p>
               <p className="mt-2 text-sm text-foreground-secondary">
-                Prefer thinking in writing? The enquiry form takes as much or as little as you know today.
+                Share only what you know today. We can find the rest together.
               </p>
             </a>
           </Container>
@@ -205,60 +201,17 @@ export default function ContactPage() {
           <AmbientElementShader opacity={0.14} />
           <Container className="relative grid gap-12 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
-              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
-                Reach me directly
+              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">Write in your own time</p>
+              <p className="mt-3 max-w-sm font-display text-3xl font-normal leading-tight text-soil">
+                A short note is enough to begin.
               </p>
-              <div className="mt-3 space-y-2 text-sm text-foreground-secondary">
-                <p>
-                  Prefer email?{" "}
-                  <a href={`mailto:${site.email}`} className="text-action-primary-hover link-underline">
-                    {site.email}
-                  </a>
-                </p>
-                <p>
-                  Call or WhatsApp:{" "}
-                  <a href={`tel:${site.phone.tel}`} className="text-action-primary-hover link-underline">
-                    {site.phone.display}
-                  </a>
-                  {" · "}
-                  <a
-                    href={site.phone.whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-action-primary-hover link-underline"
-                  >
-                    Open WhatsApp
-                  </a>
-                </p>
-                <p>
-                  <a
-                    href={site.social.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-action-primary-hover link-underline"
-                  >
-                    Connect on LinkedIn
-                  </a>
-                </p>
-              </div>
-
-              {/* Real trust indicator, placed where a first-time visitor
-                  is actually deciding whether to fill in the form, not
-                  buried elsewhere on the page. Same real facts and same
-                  dot-separator presentation Home's own Trust beat
-                  already uses (page.tsx), not a new device and not a
-                  fabricated testimonial or client logo. */}
-              <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-soil/10 pt-5 text-xs uppercase tracking-[0.1em] text-foreground-secondary">
-                {credentials
-                  .filter((c) => c.featured)
-                  .map((c) => (
-                    <span key={c.label} className="inline-flex items-center gap-3">
-                      {c.label}
-                      <span aria-hidden="true" className="h-1 w-1 rounded-full bg-soil/25" />
-                    </span>
-                  ))}
-                <span>{projects.length} real client engagements</span>
-              </div>
+              <p className="mt-4 max-w-sm text-sm leading-relaxed text-foreground-secondary">
+                No polished brief required. Tell me what feels unclear, and I will reply personally.
+              </p>
+              <p className="mt-5 text-sm text-foreground-secondary">
+                Or email directly at{" "}
+                <a href={`mailto:${site.email}`} className="text-action-primary-hover link-underline">{site.email}</a>.
+              </p>
             </Reveal>
 
             <Reveal delay={0.1} className="lg:col-span-3">
@@ -269,19 +222,6 @@ export default function ContactPage() {
             </Reveal>
           </Container>
         </section>
-
-        {/* own-leaves-cabin.mp4 replaced with higgsfield-verdant-hills.mp4
-            (morning mist parting over green hills, originally generated
-            for Home's closing CTA) per direct feedback moving this clip
-            here instead. */}
-        <VideoBreak
-          src="/videos/higgsfield-verdant-hills.mp4"
-          poster="/images/higgsfield-verdant-hills-poster.jpg"
-          quote="A brand conversation is just the first clear view through the noise."
-          height="60vh"
-          cameraPush
-          spotlight
-        />
 
         {/* Was solid Indigo — a second distinct color on a two-section
             page already using Sandstone above, exactly the kind of
@@ -321,17 +261,16 @@ export default function ContactPage() {
               Confirmed via computed-style inspection at 375px width
               (both cards measured 370px, 43px past the actual 327px
               content box) before fixing. */}
-          {/* What happens next — the same four real steps the Services
+          {/* What happens next — the same real steps the Services
               clearing already promises, restated where the booking
               actually happens. */}
           <Container className="relative mb-10">
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">What happens next</p>
-            <ol className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ol className="mt-4 grid gap-4 sm:grid-cols-3">
               {[
                 "You describe where the brand stands today, in your own words.",
-                "I ask direct questions about positioning, audience, and where recognition is falling short.",
-                "You get honest feedback either way, no sales pitch.",
-                "If it makes sense to continue, we agree what the first thirty days would look like.",
+                "I ask direct questions about positioning and recognition.",
+                "You leave with honest feedback and a clear next step.",
               ].map((step, i) => (
                 <Reveal key={step} delay={i * 0.08}>
                   <li className="flex items-start gap-3">
@@ -344,23 +283,6 @@ export default function ContactPage() {
               ))}
             </ol>
           </Container>
-          {/* Suman's direction: the booking panel needed emotional
-              weight and a slower approach. The page spent everything
-              above this explaining the thinking, then dropped straight
-              into a scheduling widget. This beat sits between the two,
-              with real space around it, so arriving at the calendar
-              feels like a decision rather than a form. */}
-          <Container className="relative mb-14 sm:mb-20">
-            <Reveal delay={0.12}>
-              <div className="mx-auto max-w-xl text-center">
-                <span aria-hidden="true" className="mx-auto mb-7 block h-10 w-px" style={{ backgroundColor: "rgba(212,185,154,0.5)" }} />
-                <p className="font-display text-2xl font-normal leading-snug text-ivory sm:text-3xl">
-                  Everything above explains the thinking. This is where it becomes a conversation.
-                </p>
-              </div>
-            </Reveal>
-          </Container>
-
           <Container className="relative grid gap-8 lg:grid-cols-2 lg:items-start">
             <Reveal delay={0.28} className="min-w-0">
               {/* Suman's design: a cream panel carrying the booking,
@@ -405,17 +327,13 @@ export default function ContactPage() {
                 style={{ borderColor: `${ELEMENT_HEX.air}40`, backgroundColor: `${ELEMENT_HEX.air}14` }}
               >
                 <ElementGlyph slug="air" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
-                <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
-                  Still deciding?
-                </p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Get occasional notes on brand clarity.
-                </h2>
-                <p className="mt-3 text-ivory/85">
-                  A few honest thoughts a month, short and specific. Zero pitch,
-                  unsubscribe whenever.
-                </p>
-                <NewsletterForm />
+                <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">A simple first call</p>
+                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">No pitch deck. No preparation.</h2>
+                <div className="mt-6 space-y-4 text-sm leading-relaxed text-ivory/85">
+                  <p>Bring the question taking up the most room in your head.</p>
+                  <p>I will listen, ask what matters, and tell you honestly whether I can help.</p>
+                  <p>If a call feels too soon, email <a href={`mailto:${site.email}`} className="link-underline text-sandstone">{site.email}</a>.</p>
+                </div>
               </div>
             </Reveal>
           </Container>
