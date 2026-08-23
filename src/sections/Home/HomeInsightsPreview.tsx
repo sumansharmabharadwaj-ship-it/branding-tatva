@@ -1,14 +1,11 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import {
-  useCallback,
-  useEffect,
   useRef,
-  useState,
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
@@ -62,60 +59,16 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 export function HomeInsightsPreview() {
   const sectionRef = useRef<HTMLElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const autoplayRef = useRef(0);
-  const holdUntilRef = useRef(0);
-  const firstAdvanceRef = useRef(true);
-  const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const guideMode = useHomeGuideMode();
   const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -12% 0px" });
+  const visualizer = useScrollDrivenVisualizer({
+    count: INSIGHTS.length,
+    target: sectionRef,
+    enabled: inView,
+    reducedMotion: prefersReducedMotion,
+  });
+  const activeIndex = visualizer.activeIndex;
   const active = INSIGHTS[activeIndex] ?? INSIGHTS[0];
-
-  const choose = useCallback((index: number, userDriven = false) => {
-    const safeIndex = ((index % INSIGHTS.length) + INSIGHTS.length) % INSIGHTS.length;
-    if (userDriven) holdUntilRef.current = Date.now() + 12000;
-    setActiveIndex(safeIndex);
-  }, []);
-
-  useEffect(() => {
-    if (!inView) firstAdvanceRef.current = true;
-  }, [inView]);
-
-  useEffect(() => {
-    window.clearTimeout(autoplayRef.current);
-    // Manual scrolling pauses the page-level guided journey, but it should not
-    // freeze this in-section visualizer. The reading paths keep cycling while
-    // the section is visible; reduced-motion and document visibility still
-    // provide the appropriate hard stops.
-    if (prefersReducedMotion || !inView || document.hidden) return;
-
-    const remainingHold = Math.max(0, holdUntilRef.current - Date.now());
-    const delay = remainingHold > 0
-      ? remainingHold + 40
-      : firstAdvanceRef.current
-        ? 1800
-        : 4600;
-
-    autoplayRef.current = window.setTimeout(() => {
-      if (document.hidden || Date.now() < holdUntilRef.current) return;
-      firstAdvanceRef.current = false;
-      setActiveIndex((current) => (current + 1) % INSIGHTS.length);
-    }, delay);
-
-    return () => window.clearTimeout(autoplayRef.current);
-  }, [activeIndex, inView, prefersReducedMotion]);
-
-  useEffect(() => {
-    function onChapter(event: Event) {
-      const detail = (event as CustomEvent<{ id?: string }>).detail;
-      if (detail?.id === "insights") {
-        firstAdvanceRef.current = true;
-        setActiveIndex(0);
-      }
-    }
-    window.addEventListener("bt:home-chapter", onChapter as EventListener);
-    return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
-  }, []);
 
   function moveFromKeyboard(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
     const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
@@ -131,7 +84,7 @@ export function HomeInsightsPreview() {
       : event.key === "End"
         ? INSIGHTS.length - 1
         : (index + direction + INSIGHTS.length) % INSIGHTS.length;
-    choose(nextIndex, true);
+    visualizer.choose(nextIndex);
     tabRefs.current[nextIndex]?.focus();
   }
 
@@ -141,8 +94,8 @@ export function HomeInsightsPreview() {
       className="home-insights"
       aria-labelledby="home-insights-title"
       data-insights-state={activeIndex}
-      data-guide-mode={guideMode}
       data-insights-in-view={inView ? "true" : "false"}
+      data-scroll-story="insights"
       style={{ "--insights-accent": active.accent } as CSSProperties}
     >
       <div
@@ -174,7 +127,12 @@ export function HomeInsightsPreview() {
               One featured guide opens the method. Two field notes carry it into
               homepage hierarchy and buying evidence.
             </p>
-            <span>Choose a reading path. The argument resolves in five connected decisions.</span>
+            <span>Scroll to change the reading path. Hover or focus a note to inspect it.</span>
+            <p className="bt-scroll-cue bt-scroll-cue--light">
+              <span aria-hidden="true">Scroll</span>
+              The argument follows your pace.
+              <strong>{String(activeIndex + 1).padStart(2, "0")} / 03</strong>
+            </p>
           </div>
         </header>
 
@@ -263,7 +221,13 @@ export function HomeInsightsPreview() {
                   tabIndex={selected ? 0 : -1}
                   className={selected ? "is-active" : undefined}
                   style={{ "--note-accent": insight.accent } as CSSProperties}
-                  onClick={() => choose(index, true)}
+                  onClick={() => visualizer.choose(index)}
+                  onPointerEnter={() => visualizer.preview(index)}
+                  onPointerLeave={(event) => {
+                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                  }}
+                  onFocus={() => visualizer.preview(index)}
+                  onBlur={visualizer.releasePreview}
                   onKeyDown={(event) => moveFromKeyboard(event, index)}
                 >
                   <span>{insight.kind}</span>
