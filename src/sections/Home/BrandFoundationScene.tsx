@@ -1,8 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useTimedVisualizer } from "@/hooks/useTimedVisualizer";
-import { VisualizerPlayback } from "@/components/VisualizerPlayback";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { useRef, type CSSProperties } from "react";
 import Link from "next/link";
 import { useInView } from "framer-motion";
@@ -78,9 +77,9 @@ export function BrandFoundationScene() {
   const wrapperRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const sceneInView = useInView(wrapperRef, { amount: 0.08, margin: "8% 0px -10% 0px" });
-  const visualizer = useTimedVisualizer({
+  const visualizer = useScrollDrivenVisualizer({
     count: FOUNDATION_LAYERS.length,
-    durationMs: 5200,
+    target: wrapperRef,
     enabled: sceneInView,
     reducedMotion: Boolean(prefersReducedMotion),
   });
@@ -89,11 +88,12 @@ export function BrandFoundationScene() {
   return (
     <section
       ref={wrapperRef}
-      className="relative min-h-svh"
+      className="foundation-scroll-scene relative min-h-svh"
+      data-scroll-story="foundation"
       style={{ backgroundColor: "#121713" }}
       aria-labelledby="brand-foundation-title"
     >
-      <div className="relative h-svh min-h-svh overflow-hidden">
+      <div className="foundation-scroll-scene__sticky relative h-svh min-h-svh overflow-hidden">
         <div
           data-landscape
           data-media-id="BT-HOME-FOUNDATION-ROOT-NETWORK"
@@ -165,6 +165,8 @@ export function BrandFoundationScene() {
                 active={activeLayer === layer.id}
                 staticAll={Boolean(prefersReducedMotion)}
                 onActivate={() => visualizer.choose(index)}
+                onPreview={() => visualizer.preview(index)}
+                onRelease={visualizer.releasePreview}
               />
             ))}
           </div>
@@ -172,20 +174,12 @@ export function BrandFoundationScene() {
           <FinalCopy staticAll />
         </div>
 
-        <div className="absolute bottom-5 left-6 z-40 hidden items-center gap-5 md:flex lg:left-16">
-          <VisualizerPlayback
-            current={visualizer.activeIndex}
-            total={FOUNDATION_LAYERS.length}
-            durationMs={visualizer.durationMs}
-            isRunning={visualizer.isRunning}
-            progressKey={visualizer.progressKey}
-            onToggle={visualizer.toggle}
-            label="Foundation diagram autoplay"
-            tone="dark"
-          />
-          <span className="text-[0.62rem] uppercase tracking-[0.18em] text-[#f1eadc]/55">
-            Select a layer to hold it
-          </span>
+        <div className="absolute bottom-5 left-6 z-40 hidden md:block lg:left-16">
+          <p className="bt-scroll-cue bt-scroll-cue--dark">
+            <span aria-hidden="true">Scroll</span>
+            Excavate each layer. Hover or focus to inspect.
+            <strong>{String(visualizer.activeIndex + 1).padStart(2, "0")} / 04</strong>
+          </p>
         </div>
       </div>
     </section>
@@ -197,11 +191,15 @@ function FoundationLayerCard({
   active,
   staticAll,
   onActivate,
+  onPreview,
+  onRelease,
 }: {
   layer: FoundationLayer;
   active: boolean;
   staticAll: boolean;
   onActivate: () => void;
+  onPreview: () => void;
+  onRelease: () => void;
 }) {
   // Desktop reveals the system progressively. Mobile has no scrubbed scene,
   // so every explanation and output remains open in one readable sequence.
@@ -226,10 +224,15 @@ function FoundationLayerCard({
       ].join(" ")}
     >
       <button
-        type="button"
-        aria-pressed={active}
-        onClick={onActivate}
-        onFocus={onActivate}
+      type="button"
+      aria-pressed={active}
+      onClick={onActivate}
+      onPointerEnter={onPreview}
+      onPointerLeave={(event) => {
+        if (document.activeElement !== event.currentTarget) onRelease();
+      }}
+      onFocus={onPreview}
+      onBlur={onRelease}
         className="block w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#b8aa86]"
       >
         <span className="flex items-center justify-between">
