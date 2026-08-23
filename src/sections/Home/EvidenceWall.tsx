@@ -1,6 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import {
   useCallback,
   useEffect,
@@ -110,19 +111,19 @@ export function EvidenceWall() {
   const activeVideoRef = useRef<HTMLVideoElement>(null);
   const indexButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
+  const visualizer = useScrollDrivenVisualizer({
+    count: SELECTED_PROJECTS.length,
+    target: sectionRef,
+    enabled: inView,
+    reducedMotion: prefersReducedMotion,
+  });
+  const activeIndex = visualizer.activeIndex;
   const activeProject = SELECTED_PROJECTS[activeIndex] ?? SELECTED_PROJECTS[0];
   const activeTrail = trailFor(activeProject);
   const activeMetric = metricFor(activeProject);
   const activeEvidence = EVIDENCE_META[activeProject.slug];
-
-  function choose(index: number) {
-    if (!SELECTED_PROJECTS.length) return;
-    const safeIndex = ((index % SELECTED_PROJECTS.length) + SELECTED_PROJECTS.length) % SELECTED_PROJECTS.length;
-    setActiveIndex(safeIndex);
-  }
 
   function chooseFromKeyboard(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
     const keyDirection = event.key === "ArrowRight" || event.key === "ArrowDown"
@@ -138,22 +139,11 @@ export function EvidenceWall() {
       : event.key === "End"
         ? SELECTED_PROJECTS.length - 1
         : (index + keyDirection + SELECTED_PROJECTS.length) % SELECTED_PROJECTS.length;
-    choose(nextIndex);
+    visualizer.choose(nextIndex);
     indexButtonRefs.current[nextIndex]?.focus();
   }
 
   const closeProjectFile = useCallback(() => setOpenSlug(null), []);
-
-  useEffect(() => {
-    function onChapter(event: Event) {
-      const detail = (event as CustomEvent<{ id?: string }>).detail;
-      if (detail?.id !== "evidence") return;
-      setActiveIndex(0);
-    }
-
-    window.addEventListener("bt:home-chapter", onChapter as EventListener);
-    return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
-  }, []);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
@@ -182,6 +172,7 @@ export function EvidenceWall() {
       aria-labelledby="evidence-wall-title"
       data-evidence-state={activeProject.slug}
       data-evidence-autoplay="visitor-led"
+      data-scroll-story="evidence"
       data-media-id="BT-HOME-SELECTED-WORK-ARCHIVE-V1"
       style={{ "--evidence-accent": activeProject.accent } as CSSProperties}
     >
@@ -205,7 +196,12 @@ export function EvidenceWall() {
               Three selected engagements. Each file traces a signal, the strategic
               decision and the evidence that can be inspected.
             </p>
-            <span>Desktop demonstrates the archive. Every manual choice holds; touch stays visitor-led.</span>
+            <span>Scroll to follow the archive. Hover or focus any file to inspect it.</span>
+            <p className="bt-scroll-cue bt-scroll-cue--dark">
+              <span aria-hidden="true">Scroll</span>
+              The evidence trail follows your pace.
+              <strong>{String(activeIndex + 1).padStart(2, "0")} / {String(SELECTED_PROJECTS.length).padStart(2, "0")}</strong>
+            </p>
           </div>
         </header>
 
@@ -359,8 +355,13 @@ export function EvidenceWall() {
                 }}
                 className={selected ? "is-active" : undefined}
                 style={{ "--project-accent": project.accent } as CSSProperties}
-                onClick={() => choose(index)}
-                onFocus={() => choose(index)}
+                onClick={() => visualizer.choose(index)}
+                onPointerEnter={() => visualizer.preview(index)}
+                onPointerLeave={(event) => {
+                  if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                }}
+                onFocus={() => visualizer.preview(index)}
+                onBlur={visualizer.releasePreview}
                 onKeyDown={(event) => chooseFromKeyboard(event, index)}
               >
                 <span className="evidence-cinematic__index-image" aria-hidden="true">
