@@ -65,7 +65,7 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
   // The archive film stays intentionally low-contrast beneath the
   // interactive search layer, with posters covering reduced motion.
   return (
-    <section id="insights-library" className="relative overflow-hidden bg-background-alt py-16">
+    <section id="insights-library" className="relative overflow-hidden bg-background-alt py-14">
       <BackgroundVideo
         video="/videos/generated/bt-insights-library-leafcurrent.mp4"
         poster="/images/generated/bt-insights-library-leafcurrent-poster.jpg"
