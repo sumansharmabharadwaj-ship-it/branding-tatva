@@ -7,6 +7,34 @@
    were scaling independently, so content fell below the scene boundary. This
    last cascade layer makes each authored chapter a measured viewport frame. */
 
+@media (min-width: 821px) {
+  /* Light refinement changed the Recognition surface without changing the
+     earlier dark-theme type rules. Own the contrast in the final layer. */
+  .home-v4-recognition__header h2 {
+    color: #2b2924;
+    text-shadow: none;
+  }
+
+  .home-v4-recognition__header h2 em {
+    color: #a05e43;
+  }
+
+  .home-v4-recognition__header p {
+    color: #845039;
+  }
+
+  .home-v4-recognition__header > span {
+    color: rgba(43, 41, 36, 0.66);
+  }
+
+  /* The moving film and the active tabs already identify the discipline. The
+     second oversized caption was decorative duplication and caused the bottom
+     collision visible in both the supplied and cloud-browser screenshots. */
+  .home-v4-chapter--studio .studio-cinematic__media-caption {
+    display: none;
+  }
+}
+
 @media (min-width: 1440px) and (min-height: 850px) {
   /* Recognition: keep the split composition but restore readable contrast and
      make the card + decision map share the same bounded row. */
