@@ -28,7 +28,7 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
   space: "#AD6F5C",
 };
 
-const INITIAL_VISIBLE_POSTS = 9;
+const INITIAL_VISIBLE_POSTS = 6;
 const LOAD_MORE_POSTS = 6;
 
 export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {

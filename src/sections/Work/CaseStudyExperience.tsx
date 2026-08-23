@@ -14,6 +14,8 @@ import type { CaseStudyPresentation } from "@/data/caseStudyPresentation";
 import { track } from "@/lib/analytics";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const STORY_AUTOPLAY_MS = 5600;
+const STORY_USER_HOLD_MS = 16000;
 
 type Chapter = {
   id: string;
@@ -500,25 +502,43 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
   const prefersReducedMotion = useHydratedReducedMotion();
   const chapters = buildChapters(project);
   const [activeChapter, setActiveChapter] = useState(0);
-  const chapterRefs = useRef<(HTMLElement | null)[]>([]);
+  const storyRef = useRef<HTMLElement>(null);
+  const storyUserHoldUntilRef = useRef(0);
   const { palette } = presentation;
 
   useEffect(() => {
     if (prefersReducedMotion) return;
+    const story = storyRef.current;
+    if (!story) return;
+
+    let intervalId: number | undefined;
+    const stop = () => {
+      if (intervalId === undefined) return;
+      window.clearInterval(intervalId);
+      intervalId = undefined;
+    };
+    const start = () => {
+      if (intervalId !== undefined) return;
+      intervalId = window.setInterval(() => {
+        if (document.hidden || Date.now() < storyUserHoldUntilRef.current) return;
+        setActiveChapter((current) => (current + 1) % chapters.length);
+      }, STORY_AUTOPLAY_MS);
+    };
+
     const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          const index = Number(entry.target.getAttribute("data-chapter-index"));
-          if (Number.isFinite(index)) setActiveChapter(index);
-        }
+      ([entry]) => {
+        if (entry?.isIntersecting) start();
+        else stop();
       },
-      { rootMargin: "-38% 0px -48% 0px" }
+      { threshold: 0.42 }
     );
 
-    chapterRefs.current.forEach((element) => element && observer.observe(element));
-    return () => observer.disconnect();
-  }, [prefersReducedMotion]);
+    observer.observe(story);
+    return () => {
+      stop();
+      observer.disconnect();
+    };
+  }, [chapters.length, prefersReducedMotion]);
 
   return (
     <>
@@ -673,7 +693,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
         </Container>
       </section>
 
-      <section id="story" className="scroll-mt-24 py-20 sm:py-28" style={{ backgroundColor: palette.ink }}>
+      <section ref={storyRef} id="story" className="scroll-mt-24 py-14 sm:py-16" style={{ backgroundColor: palette.ink }}>
         <Container className="max-w-6xl">
           <Reveal>
             <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: palette.secondary }}>
@@ -684,8 +704,8 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
             </h2>
           </Reveal>
 
-          <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_1.08fr] lg:gap-16">
-            <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_1.08fr] lg:items-center lg:gap-16">
+            <div>
               <NarrativeVisual project={project} presentation={presentation} active={activeChapter} total={chapters.length} />
               <ol className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-7" aria-label="Case-study chapters">
                 {chapters.map((chapter, index) => (
@@ -694,8 +714,8 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
                       type="button"
                       aria-current={activeChapter === index ? "step" : undefined}
                       onClick={() => {
+                        storyUserHoldUntilRef.current = Date.now() + STORY_USER_HOLD_MS;
                         setActiveChapter(index);
-                        chapterRefs.current[index]?.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "center" });
                       }}
                       className="min-h-10 w-full rounded-full border text-[0.58rem] font-medium uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                       style={{
@@ -713,35 +733,35 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
               </ol>
             </div>
 
-            <div>
-              {chapters.map((chapter, index) => (
-                <article
-                  key={chapter.id}
-                  id={chapter.id}
-                  data-chapter-index={index}
-                  ref={(element) => {
-                    chapterRefs.current[index] = element;
-                  }}
-                  className="scroll-mt-28 border-l-2 py-10 pl-7 transition-colors duration-500 sm:pl-9 lg:flex lg:min-h-[54vh] lg:items-center"
-                  style={{ borderColor: activeChapter === index ? palette.accent : "rgba(255,255,255,0.12)" }}
+            <div className="min-h-[22rem] sm:min-h-[24rem] lg:flex lg:min-h-[28rem] lg:items-center">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.article
+                  key={chapters[activeChapter]?.id}
+                  id={chapters[activeChapter]?.id}
+                  initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
+                  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.46, ease: EASE }}
+                  className="w-full border-l-2 py-8 pl-7 sm:pl-9"
+                  style={{ borderColor: palette.accent }}
                 >
                   <div>
                     <p className="flex items-center gap-3 text-[0.6rem] font-medium uppercase tracking-[0.18em]" style={{ color: palette.secondary }}>
-                      <span className="font-display text-base" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                      {chapter.label}
+                      <span className="font-display text-base" aria-hidden="true">{String(activeChapter + 1).padStart(2, "0")}</span>
+                      {chapters[activeChapter]?.label}
                     </p>
                     <h3 className="mt-3 max-w-xl font-display text-3xl font-normal leading-tight text-white sm:text-4xl">
-                      {chapter.title}
+                      {chapters[activeChapter]?.title}
                     </h3>
                     <p
-                      className="mt-5 max-w-xl text-base leading-relaxed transition-opacity duration-500"
-                      style={{ color: "rgba(255,255,255,0.76)", opacity: prefersReducedMotion || activeChapter === index ? 1 : 0.56 }}
+                      className="mt-5 max-w-xl text-base leading-relaxed"
+                      style={{ color: "rgba(255,255,255,0.78)" }}
                     >
-                      {chapter.body}
+                      {chapters[activeChapter]?.body}
                     </p>
                   </div>
-                </article>
-              ))}
+                </motion.article>
+              </AnimatePresence>
             </div>
           </div>
         </Container>
