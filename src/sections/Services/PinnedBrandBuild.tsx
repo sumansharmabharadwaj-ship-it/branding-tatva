@@ -100,7 +100,10 @@ export function PinnedBrandBuild() {
       const progress = travel > 0 ? Math.min(1, Math.max(0, -rect.top / travel)) : 1;
       layerRefs.current.forEach((layer, i) => {
         if (!layer) return;
-        const start = i / LAYERS.length;
+        // The first layer is already present when the scene arrives, so the
+        // visualizer never opens on an empty panel. Later layers still resolve
+        // progressively as the visitor scrolls.
+        const start = (i - 0.85) / LAYERS.length;
         const span = 0.92 / LAYERS.length;
         const local = Math.min(1, Math.max(0, (progress - start) / span));
         const eased = 1 - (1 - local) * (1 - local);
@@ -133,7 +136,7 @@ export function PinnedBrandBuild() {
   }, [animate, lenis]);
 
   return (
-    <div ref={wrapRef} className="relative lg:h-[135svh]" style={{ backgroundColor: MOOD.charcoal }}>
+    <div ref={wrapRef} className="relative lg:h-[205svh]" style={{ backgroundColor: MOOD.charcoal }}>
       <div className="relative overflow-hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center">
         {/* Original procedural Authority film: a restrained signal rises
             through five natural material layers and widens only after
