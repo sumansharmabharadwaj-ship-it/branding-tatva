@@ -75,6 +75,7 @@ const FOUNDATION_LAYERS: FoundationLayer[] = [
 export function BrandFoundationScene() {
   const wrapperRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const manualPauseUntilRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
   const sceneInView = useInView(wrapperRef, { amount: 0.08 });
   const [activeLayer, setActiveLayer] = useState<string>(FOUNDATION_LAYERS[0].id);
@@ -99,6 +100,18 @@ export function BrandFoundationScene() {
       document.removeEventListener("visibilitychange", syncPlayback);
       videoAtEffectStart?.pause();
     };
+  }, [prefersReducedMotion, sceneInView]);
+
+  useEffect(() => {
+    if (prefersReducedMotion || !sceneInView) return;
+    const timer = window.setInterval(() => {
+      if (Date.now() < manualPauseUntilRef.current) return;
+      setActiveLayer((current) => {
+        const index = FOUNDATION_LAYERS.findIndex((layer) => layer.id === current);
+        return FOUNDATION_LAYERS[(index + 1) % FOUNDATION_LAYERS.length].id;
+      });
+    }, 5000);
+    return () => window.clearInterval(timer);
   }, [prefersReducedMotion, sceneInView]);
 
   return (
@@ -155,7 +168,7 @@ export function BrandFoundationScene() {
 
         <DepthGrid />
 
-        <div className="relative z-20 mx-auto flex h-svh max-w-[1500px] flex-col px-6 py-20 md:px-12 lg:px-16">
+        <div data-foundation-shell className="relative z-20 mx-auto flex h-svh max-w-[1500px] flex-col px-6 py-20 md:px-12 lg:px-16">
           <div data-opening-copy className="max-w-xl md:pt-[8vh]">
             <p className="mb-5 text-xs font-medium uppercase tracking-[0.28em]" style={{ color: "#b8aa86" }}>
               01 · Earth
@@ -172,7 +185,7 @@ export function BrandFoundationScene() {
             </p>
           </div>
 
-          <div className="relative mt-10 md:mt-auto md:h-[53%]">
+          <div data-foundation-stage className="relative mt-10 md:mt-auto md:h-[53%]">
             <FoundationConnections />
             {FOUNDATION_LAYERS.map((layer) => (
               <FoundationLayerCard
@@ -180,7 +193,10 @@ export function BrandFoundationScene() {
                 layer={layer}
                 active={activeLayer === layer.id}
                 staticAll={Boolean(prefersReducedMotion)}
-                onActivate={() => setActiveLayer(layer.id)}
+                onActivate={() => {
+                  manualPauseUntilRef.current = Date.now() + 12000;
+                  setActiveLayer(layer.id);
+                }}
               />
             ))}
           </div>

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 
+const DISCIPLINE_DWELL_MS = 5200;
+
 const DISCIPLINES = [
   {
     number: "01",
@@ -62,6 +64,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 export function StudioCinematicChapter() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const manualPauseUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, {
     amount: 0.18,
@@ -89,7 +92,17 @@ export function StudioCinematicChapter() {
     return () => video.pause();
   }, [activeIndex, inView, prefersReducedMotion]);
 
-  function choose(index: number) {
+  useEffect(() => {
+    if (prefersReducedMotion || !inView) return;
+    const timer = window.setInterval(() => {
+      if (Date.now() < manualPauseUntilRef.current) return;
+      setActiveIndex((current) => (current + 1) % DISCIPLINES.length);
+    }, DISCIPLINE_DWELL_MS);
+    return () => window.clearInterval(timer);
+  }, [inView, prefersReducedMotion]);
+
+  function choose(index: number, manual = true) {
+    if (manual) manualPauseUntilRef.current = Date.now() + 12000;
     setActiveIndex(index);
   }
 
@@ -215,13 +228,13 @@ export function StudioCinematicChapter() {
                   <i aria-hidden="true">
                     <b
                       style={{
-                        // Fills for whichever discipline is showing. It used
-                        // to animate on the rotation timer, which would now
-                        // be a countdown to nothing.
-                        animation: "none",
-                        transform: selected ? "scaleX(1)" : "scaleX(0)",
+                        animation:
+                          selected && !prefersReducedMotion
+                            ? `studio-tab-progress ${DISCIPLINE_DWELL_MS}ms linear forwards`
+                            : "none",
+                        transform: selected && prefersReducedMotion ? "scaleX(1)" : "scaleX(0)",
                         transformOrigin: "left",
-                        transition: prefersReducedMotion ? "none" : "transform 420ms cubic-bezier(0.22,1,0.36,1)",
+                        transition: prefersReducedMotion ? "none" : undefined,
                       }}
                     />
                   </i>

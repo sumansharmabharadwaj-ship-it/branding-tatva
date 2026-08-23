@@ -11,8 +11,10 @@ import {
 } from "@/hooks/useHomeGuideMode";
 
 const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
-// Guided view is explicitly opt in. Each chapter now receives a real reading
-// interval, with the densest interactive scenes given the longest holds.
+// Desktop guided view begins automatically, then yields immediately when a
+// visitor scrolls, touches, clicks outside the controls, or uses the keyboard.
+// Each chapter receives a real reading interval rather than a scroll-scrubbed
+// timeline that can stop between states.
 const DWELL_MS = [
   7000,
   9000,
@@ -46,7 +48,7 @@ type HandoffMotif = "mist" | "river" | "root" | "aperture" | "paper" | "constell
 export function GuidedView() {
   const lenis = useLenis();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const [mode, setMode] = useState<GuideMode>("manual");
+  const [mode, setMode] = useState<GuideMode>("guided");
   const [activeIndex, setActiveIndex] = useState(0);
   const [hintVisible, setHintVisible] = useState(false);
   const guideRef = useRef<HTMLDivElement>(null);

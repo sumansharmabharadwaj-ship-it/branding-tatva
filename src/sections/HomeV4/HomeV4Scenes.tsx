@@ -211,12 +211,23 @@ export function V4OpeningScene() {
 
 export function V4RecognitionScene() {
   const sectionRef = useRef<HTMLElement>(null);
+  const manualPauseUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.34 });
   const [activeIndex, setActiveIndex] = useState(0);
   const active = RECOGNITION_STATES[activeIndex];
 
-  function choose(index: number) {
+  useEffect(() => {
+    if (prefersReducedMotion || !inView) return;
+    const timer = window.setInterval(() => {
+      if (Date.now() < manualPauseUntilRef.current) return;
+      setActiveIndex((current) => (current + 1) % RECOGNITION_STATES.length);
+    }, 4800);
+    return () => window.clearInterval(timer);
+  }, [inView, prefersReducedMotion]);
+
+  function choose(index: number, manual = true) {
+    if (manual) manualPauseUntilRef.current = Date.now() + 12000;
     setActiveIndex(index);
   }
 

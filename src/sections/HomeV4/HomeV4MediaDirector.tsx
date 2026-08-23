@@ -68,7 +68,10 @@ export function HomeV4MediaDirector() {
     }
 
     function globallyPaused() {
-      return prefersReducedMotion || guideMode === "paused" || document.hidden || formInteraction;
+      // Pausing the guided journey only stops automatic chapter changes. It
+      // must not freeze ambient film or the page looks broken. Reduced motion,
+      // a hidden document, and active form input still pause media as expected.
+      return prefersReducedMotion || document.hidden || formInteraction;
     }
 
     function syncAll() {
