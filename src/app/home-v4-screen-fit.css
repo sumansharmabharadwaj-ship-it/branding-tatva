@@ -1002,7 +1002,11 @@
 
   .home-v4 .home-v4-chapter--process .project-journey__shell {
     display: grid;
-    height: 100%;
+    /* The section itself owns the viewport. A full-height shell plus the
+       section's block padding made the board 144px taller than that frame and
+       silently clipped its footer. Subtract the authored top/bottom breathing
+       room so every row resolves inside the same scene. */
+    height: calc(100svh - clamp(4.2rem, 6.8svh, 4.8rem) - clamp(0.65rem, 1.4svh, 0.95rem));
     grid-template-rows: auto auto minmax(0, 1fr) auto;
     gap: clamp(0.45rem, 0.9svh, 0.65rem);
   }
