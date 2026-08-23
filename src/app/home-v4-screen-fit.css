@@ -997,7 +997,7 @@
      one frame. Ambient video remains the only continuous movement. */
   .home-v4 .home-v4-chapter--process .project-journey {
     overflow: hidden;
-    padding: clamp(4.2rem, 6.8svh, 4.8rem) 0 clamp(0.65rem, 1.4svh, 0.95rem);
+    padding: clamp(6.1rem, 11svh, 6.6rem) 0 clamp(0.65rem, 1.4svh, 0.95rem);
   }
 
   .home-v4 .home-v4-chapter--process .project-journey__shell {
@@ -1006,7 +1006,7 @@
        section's block padding made the board 144px taller than that frame and
        silently clipped its footer. Subtract the authored top/bottom breathing
        room so every row resolves inside the same scene. */
-    height: calc(100svh - clamp(4.2rem, 6.8svh, 4.8rem) - clamp(0.65rem, 1.4svh, 0.95rem));
+    height: calc(100svh - clamp(6.1rem, 11svh, 6.6rem) - clamp(0.65rem, 1.4svh, 0.95rem));
     grid-template-rows: auto auto minmax(0, 1fr) auto;
     gap: clamp(0.45rem, 0.9svh, 0.65rem);
   }
@@ -1032,8 +1032,7 @@
   }
 
   .home-v4 .home-v4-chapter--process .project-journey__intro span::before,
-  .home-v4 .home-v4-chapter--process .project-journey__orbit,
-  .home-v4 .home-v4-chapter--process .project-journey__node.is-active i {
+  .home-v4 .home-v4-chapter--process .project-journey__orbit {
     animation: none;
   }
 
@@ -1054,7 +1053,7 @@
 
   .home-v4 .home-v4-chapter--process .project-journey__rail-line,
   .home-v4 .home-v4-chapter--process .project-journey__rail-progress {
-    bottom: 0.55rem;
+    bottom: 0;
   }
 
   .home-v4 .home-v4-chapter--process .project-journey__board {
@@ -1078,13 +1077,13 @@
 
   .home-v4 .home-v4-chapter--process .project-journey__focus-card h3 {
     margin-top: 0.3rem;
-    font-size: clamp(1.5rem, min(2vw, 3.5svh), 2.15rem);
+    font-size: clamp(1.7rem, min(2.2vw, 3.8svh), 2.35rem);
   }
 
   .home-v4 .home-v4-chapter--process .project-journey__explanation {
     margin-top: 0.55rem;
-    font-size: 0.67rem;
-    line-height: 1.4;
+    font-size: 0.76rem;
+    line-height: 1.45;
   }
 
   .home-v4 .home-v4-chapter--process .project-journey__decision-block,
@@ -1101,7 +1100,7 @@
 
   .home-v4 .home-v4-chapter--process .project-journey__output-block strong {
     margin-top: 0.32rem;
-    font-size: 0.94rem;
+    font-size: 1.02rem;
   }
 
   .home-v4 .home-v4-chapter--process .project-journey__map {

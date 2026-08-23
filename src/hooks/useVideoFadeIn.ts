@@ -17,11 +17,9 @@ import { useEffect, type RefObject } from "react";
 // listener catches the future event — no window where both miss.
 //
 // Also calls play() explicitly rather than trusting the bare `autoplay`
-// HTML attribute alone — confirmed live on the same hero that autoplay
-// wasn't reliably kicking in (video.paused stayed true with a fully
-// loaded, muted, autoplay video), while an explicit play() call
-// resolved immediately with no error. Harmless to call on a video
-// that's already playing.
+// HTML attribute alone — but only when the video is close to the viewport.
+// Starting every background once before immediately pausing it allowed long
+// article/topic pages to begin downloading all of their films at mount.
 // Also pauses the video whenever it scrolls fully offscreen and resumes
 // it when it returns. A production Playwright sweep of Services found
 // all ten of the page's background videos decoding simultaneously —
@@ -38,7 +36,6 @@ export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: 
   useEffect(() => {
     const el = ref.current;
     if (!el || !active) return;
-    el.play().catch(() => {});
     if (el.readyState >= 2) {
       el.style.opacity = "1";
     } else {
@@ -50,7 +47,7 @@ export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: 
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !document.hidden) {
           el.play().catch(() => {});
         } else {
           el.pause();
@@ -58,11 +55,35 @@ export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: 
       },
       { rootMargin: "25% 0px" }
     );
+
+    // IntersectionObserver reports asynchronously. Establish the correct
+    // initial state synchronously so an offscreen autoplay element never gets
+    // a head start on the network while a visible hero still needs bandwidth.
+    const rect = el.getBoundingClientRect();
+    const margin = window.innerHeight * 0.25;
+    const nearViewport = rect.bottom >= -margin && rect.top <= window.innerHeight + margin;
+    if (nearViewport && !document.hidden) el.play().catch(() => {});
+    else el.pause();
+
+    function syncVisibility() {
+      if (!el) return;
+      if (document.hidden) el.pause();
+      else {
+        const nextRect = el.getBoundingClientRect();
+        const nextMargin = window.innerHeight * 0.25;
+        if (nextRect.bottom >= -nextMargin && nextRect.top <= window.innerHeight + nextMargin) {
+          el.play().catch(() => {});
+        }
+      }
+    }
+
     observer.observe(el);
+    document.addEventListener("visibilitychange", syncVisibility);
 
     return () => {
       el.removeEventListener("loadeddata", onLoadedData);
       observer.disconnect();
+      document.removeEventListener("visibilitychange", syncVisibility);
 
       // Release the media element itself, which React removing the node does
       // not do. A <source media="..."> registers a MediaQueryList listener,

@@ -96,7 +96,10 @@ export function BackgroundVideo({
           className={`absolute inset-0 h-full w-full object-cover${push ? " bg-slow-push" : ""}`}
           style={{ objectPosition: imagePosition }}
           poster={poster}
-          autoPlay
+          // Playback is intentionally owned by useVideoFadeIn. Leaving the
+          // native autoplay flag here made every offscreen background start
+          // once before the observer could pause it, which was the source of
+          // the long-page bandwidth spike.
           muted
           loop
           playsInline
