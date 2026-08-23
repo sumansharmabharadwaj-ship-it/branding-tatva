@@ -14,19 +14,19 @@ const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
 // Guided view is explicitly opt in. Each chapter now receives a real reading
 // interval, with the densest interactive scenes given the longest holds.
 const DWELL_MS = [
+  7000,
+  8000,
+  8000,
+  9000,
+  10000,
   11000,
-  13000,
-  13000,
-  15000,
-  16000,
-  18000,
-  15000,
-  18000,
-  16000,
-  20000,
-  14000,
-  16000,
-  16000,
+  9000,
+  11000,
+  9000,
+  12000,
+  9000,
+  10000,
+  9000,
 ];
 // The invitation should be discoverable without behaving like another hero
 // banner. Three seconds is enough to register the feature; it then folds into
