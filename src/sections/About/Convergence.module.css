@@ -161,10 +161,17 @@
   font-size: 0.62rem;
 }
 
-.transfer {
+.transferSlot,
+.resolutionSlot {
   position: absolute;
   left: 50%;
   top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.transferSlot { pointer-events: none; }
+
+.transfer {
   display: grid;
   width: 7.4rem;
   height: 7.4rem;
@@ -176,7 +183,6 @@
   box-shadow: 0 16px 50px rgba(92, 64, 48, 0.14);
   color: #965b43;
   text-align: center;
-  transform: translate(-50%, -50%);
 }
 
 .transfer span {
@@ -187,12 +193,13 @@
   text-transform: uppercase;
 }
 
-.resolution {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  display: grid;
+.resolutionSlot {
   width: min(calc(100% - 2rem), 43rem);
+}
+
+.resolution {
+  display: grid;
+  width: 100%;
   padding: clamp(1.35rem, 2.5vw, 2.15rem);
   place-items: center;
   border: 1px solid rgba(103, 116, 94, 0.34);
@@ -200,7 +207,6 @@
   background: rgba(248, 243, 233, 0.95);
   box-shadow: 0 28px 90px rgba(67, 54, 42, 0.16);
   text-align: center;
-  transform: translate(-50%, -50%);
 }
 
 .resolution > p:not(.resolutionBody) {
@@ -299,7 +305,7 @@
   .field { padding: 1rem; }
   .field > p { display: none; }
   .field li { padding: 0.32rem 0.48rem; }
-  .resolution { width: calc(100% - 0.5rem); }
+  .resolutionSlot { width: calc(100% - 0.5rem); }
   .tabs { grid-template-columns: 1fr; }
   .tabs button { min-height: 3rem; }
 }

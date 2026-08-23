@@ -132,38 +132,40 @@ export function Convergence() {
             })}
           </div>
 
-          <motion.div
-            aria-hidden={stage !== 1}
-            className={styles.transfer}
-            animate={{ opacity: stage === 1 ? 1 : 0, scale: stage === 1 ? 1 : 0.84 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.46, ease: EASE }}
-          >
-            <Sparkles size={16} />
-            <span>evidence becomes language</span>
-          </motion.div>
+          <div className={styles.transferSlot} aria-hidden={stage !== 1}>
+            <motion.div
+              className={styles.transfer}
+              animate={{ opacity: stage === 1 ? 1 : 0, scale: stage === 1 ? 1 : 0.84 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.46, ease: EASE }}
+            >
+              <Sparkles size={16} />
+              <span>evidence becomes language</span>
+            </motion.div>
+          </div>
 
           <AnimatePresence initial={false}>
             {stage === 2 ? (
-              <motion.article
-                key="resolved-method"
-                className={styles.resolution}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 24, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12, scale: 0.97 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
-              >
-                <span className={styles.resolutionIcon}><Sparkles size={18} /></span>
-                <p>Where the two meet</p>
-                <h3>Brand strategy <em>becomes usable.</em></h3>
-                <p className={styles.resolutionBody}>
-                  Psychology finds the tension. Literature gives it language. Strategy turns both into a system a growing business can carry forward.
-                </p>
-                <ul>
-                  <li>Positioning</li>
-                  <li>Identity</li>
-                  <li>Recognition</li>
-                </ul>
-              </motion.article>
+              <div key="resolved-method" className={styles.resolutionSlot}>
+                <motion.article
+                  className={styles.resolution}
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 24, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12, scale: 0.97 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
+                >
+                  <span className={styles.resolutionIcon}><Sparkles size={18} /></span>
+                  <p>Where the two meet</p>
+                  <h3>Brand strategy <em>becomes usable.</em></h3>
+                  <p className={styles.resolutionBody}>
+                    Psychology finds the tension. Literature gives it language. Strategy turns both into a system a growing business can carry forward.
+                  </p>
+                  <ul>
+                    <li>Positioning</li>
+                    <li>Identity</li>
+                    <li>Recognition</li>
+                  </ul>
+                </motion.article>
+              </div>
             ) : null}
           </AnimatePresence>
         </div>
