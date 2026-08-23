@@ -216,25 +216,8 @@ export function SituationPath() {
                           </p>
                         )}
                         <p className="mt-3 max-w-2xl text-base leading-relaxed text-ivory/90">{option.reason}</p>
-                        <p className="mt-4 text-xs font-medium uppercase tracking-[0.15em] text-ivory/60">
-                          Indicative scope
-                        </p>
-                        <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
-                          {pkg.includes.map((item) => (
-                            <li key={item} className="text-sm text-ivory/85 before:mr-2 before:content-['•']">
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="mt-6 flex flex-wrap gap-3">
-                          <LinkButton
-                            href="#desire"
-                            variant="secondary"
-                            className="border-ivory/30 text-ivory hover:bg-ivory/10"
-                          >
-                            See the full package
-                          </LinkButton>
-                          <LinkButton href="#book">Book a Brand Strategy Session</LinkButton>
+                        <div className="mt-5 flex flex-wrap gap-3">
+                          <LinkButton href="#desire">Explore this package</LinkButton>
                         </div>
                       </div>
                     </motion.div>

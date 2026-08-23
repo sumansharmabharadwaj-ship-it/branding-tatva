@@ -190,7 +190,7 @@ export default async function ServicesPage() {
           from flashing at a sticky or transformed boundary, while the
           deliberately light contextual CTA continues to paint its own
           surface. */}
-      <main id="main-content" style={{ backgroundColor: MOOD.charcoal }}>
+      <main id="main-content" style={{ backgroundColor: "#3f4d44" }}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceCatalogJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(engagementsJsonLd) }} />
@@ -206,7 +206,7 @@ export default async function ServicesPage() {
           videoMobile="/videos/generated/bt-services-hero-root-system-mobile.mp4"
           poster="/images/generated/bt-services-hero-root-system-poster.jpg"
           minHeight="100vh"
-          overlayGradient="linear-gradient(180deg, rgba(12,17,16,0.54) 0%, rgba(12,17,16,0.64) 58%, rgba(12,17,16,0.82) 100%)"
+          overlayGradient="linear-gradient(180deg, rgba(36,45,39,0.28) 0%, rgba(36,45,39,0.38) 58%, rgba(36,45,39,0.58) 100%)"
           playbackRate={1.15}
         >
           {/* Original generated hero loop: a living underground root
@@ -223,7 +223,7 @@ export default async function ServicesPage() {
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
-            style={{ backgroundImage: "linear-gradient(90deg, rgba(15,18,17,0.38) 0%, rgba(15,18,17,0.12) 45%, transparent 70%)" }}
+            style={{ backgroundImage: "linear-gradient(90deg, rgba(34,42,37,0.28) 0%, rgba(34,42,37,0.08) 45%, transparent 70%)" }}
           />
           {/* The headline resolves by word, not character. It
               participates in the scene without delaying basic
@@ -253,10 +253,10 @@ export default async function ServicesPage() {
                   The work begins wherever recognition is breaking down.
                 </SplitReveal>
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/90">
-                  One client&apos;s engagement moved from{" "}
+                  A documented client engagement moved from{" "}
                   <span className="font-medium text-sandstone">0.71%</span> to{" "}
-                  <span className="font-medium text-sandstone">2.81%</span> in eight weeks of this exact work. The
-                  chapters below show what made that happen, and where your brand would start.
+                  <span className="font-medium text-sandstone">2.81%</span> in eight weeks. The chapters below show
+                  where recognition breaks—and the work that repairs it.
                 </p>
                 {/* The hero's one quiet action — a visitor sold by the
                     opening claim previously had nowhere to act until the
@@ -319,7 +319,7 @@ export default async function ServicesPage() {
             the site remembers where they stand instead of asking twice.
             A quiet interstitial on the page's charcoal ground; the
             chapters around it carry the media. */}
-        <section id="situation" data-services-scene="situation" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section id="situation" data-services-scene="situation" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: "#3f4d44" }}>
           {/* Original procedural Situation film: one coherent material
               world holds three different starting conditions. A pale
               mineral seed begins, shifted strata wait to realign, and
