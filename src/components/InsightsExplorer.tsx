@@ -65,7 +65,7 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
   // The archive film stays intentionally low-contrast beneath the
   // interactive search layer, with posters covering reduced motion.
   return (
-    <section id="insights-library" className="relative overflow-hidden bg-background-alt py-20 sm:py-28">
+    <section id="insights-library" className="relative overflow-hidden bg-background-alt py-16">
       <BackgroundVideo
         video="/videos/generated/bt-insights-library-leafcurrent.mp4"
         poster="/images/generated/bt-insights-library-leafcurrent-poster.jpg"
@@ -74,23 +74,23 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
       />
       <div aria-hidden="true" className="absolute inset-0 bg-[#EAE6DD]/88" />
       <div className="relative mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
-        <div className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
+        <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
               The library
             </p>
-            <h2 className="mt-4 max-w-xl font-display text-display-md font-normal text-soil">
+            <h2 className="mt-3 max-w-xl font-display text-display-sm font-normal text-soil">
               Find the question behind the visible problem.
             </h2>
           </div>
-          <p className="max-w-2xl text-base leading-7 text-foreground-secondary lg:justify-self-end">
+          <p className="max-w-2xl text-sm leading-6 text-foreground-secondary lg:justify-self-end">
             Search by the decision you are facing, or follow one of the five
             reading paths. Every article links back to the wider system, so one
             answer opens the next useful question.
           </p>
         </div>
 
-        <div className="mt-12 rounded-[1.75rem] border border-soil/10 bg-background-elevated p-4 shadow-elevation-sm sm:p-5">
+        <div className="mt-8 rounded-[1.5rem] border border-soil/10 bg-background-elevated p-4 shadow-elevation-sm">
           <label className="relative block">
             <span className="sr-only">Search the insight library</span>
             <Search
@@ -152,7 +152,7 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-between gap-4">
+        <div className="mt-4 flex items-center justify-between gap-4">
           <p className="text-sm text-foreground-secondary" aria-live="polite">
             Showing {visiblePosts.length} of {filteredPosts.length} {filteredPosts.length === 1 ? "essay" : "essays"}
           </p>
@@ -173,13 +173,13 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
 
         {filteredPosts.length > 0 ? (
           <>
-            <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {visiblePosts.map((post) => (
                 <InsightCard key={post.slug} post={post} />
               ))}
             </div>
             {remainingPosts > 0 && (
-              <div className="mt-10 flex justify-center">
+              <div className="mt-6 flex justify-center">
                 <button
                   type="button"
                   onClick={() => setVisibleCount((count) => count + LOAD_MORE_POSTS)}
