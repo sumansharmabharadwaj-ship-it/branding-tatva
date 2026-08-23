@@ -178,6 +178,7 @@
     margin: 0 !important;
     padding: clamp(0.8rem, 1.05vw, 1.1rem) !important;
     overflow: hidden;
+    translate: none !important;
     transform: none !important;
   }
 
