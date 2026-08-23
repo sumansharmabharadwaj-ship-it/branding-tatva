@@ -27,6 +27,32 @@
   grid-template-rows: auto minmax(22rem, 1fr) auto;
 }
 
+@media (min-width: 901px) and (min-height: 761px) and (pointer: fine) {
+  .section {
+    height: 215svh;
+    min-height: 215svh;
+    overflow: clip;
+  }
+
+  .shell {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 48rem;
+    box-sizing: border-box;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section,
+  .shell {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 46rem;
+  }
+}
+
 .header {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.6fr);
