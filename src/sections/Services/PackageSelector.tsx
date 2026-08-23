@@ -132,10 +132,10 @@ export function PackageSelector() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={transition}
-            className="mx-auto mt-5 max-w-xl rounded-full border border-sandstone/35 bg-[rgba(15,21,28,0.48)] px-4 py-2 text-sm text-ivory/80 backdrop-blur-md"
+            className="mx-auto mt-3 max-w-xl rounded-full border border-sandstone/35 bg-[rgba(15,21,28,0.48)] px-4 py-1.5 text-xs text-ivory/80 backdrop-blur-md"
           >
-            Your earlier choice points to <span className="font-medium text-sandstone">{activePackage.name}</span>. You
-            can still choose a different path below.
+            From your earlier choice: <span className="font-medium text-sandstone">{activePackage.name}</span>. You can
+            still compare below.
           </motion.p>
         )}
         {selectionSource === "scroll" && activePackage && !compare && (
@@ -184,7 +184,7 @@ export function PackageSelector() {
                 style={{ color: isActive ? pkg?.color : "rgba(244,239,230,0.7)" }}
               />
               <span className="font-display text-lg font-normal text-ivory">{choice.label}</span>
-              {pkg && <span className="text-xs leading-relaxed text-ivory/75">{pkg.forWho}</span>}
+              {pkg && <span className="line-clamp-3 text-xs leading-relaxed text-ivory/75">{pkg.forWho}</span>}
             </motion.button>
           );
         })}
@@ -275,11 +275,16 @@ export function PackageSelector() {
         </AnimatePresence>
       </div>
 
-      <p className="mx-auto mt-5 max-w-2xl text-[0.68rem] leading-relaxed text-ivory/55">
-        Prices are localised by market and shown in the selected currency. Final scope and quotation are confirmed
-        after the discovery conversation. Taxes and third party production, media, printing, development, travel or
-        licensing are listed separately where relevant.
-      </p>
+      <details className="group mx-auto mt-3 max-w-2xl text-left text-[0.68rem] leading-relaxed text-ivory/55">
+        <summary className="mx-auto w-fit cursor-pointer rounded-full px-3 py-1 text-center font-medium uppercase tracking-[0.14em] transition-colors hover:text-ivory/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone">
+          Pricing notes
+        </summary>
+        <p className="mt-2">
+          Prices are localised by market and shown in the selected currency. Final scope and quotation are confirmed
+          after the discovery conversation. Taxes and third party production, media, printing, development, travel or
+          licensing are listed separately where relevant.
+        </p>
+      </details>
     </Container>
   );
 }
