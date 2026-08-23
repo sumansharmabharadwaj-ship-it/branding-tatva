@@ -60,7 +60,7 @@ export default function AboutPage() {
           bgPoster="/images/about-hero-bg-meadow-poster.jpg"
         />
 
-        <section className="relative overflow-hidden bg-soil py-16 sm:py-20">
+        <section className="relative overflow-clip bg-soil py-16 sm:py-20">
           <BackgroundVideo
             video="/videos/generated/bt-about-point-view-three-stones.mp4"
             poster="/images/generated/bt-about-point-view-three-stones-poster.jpg"
@@ -77,7 +77,7 @@ export default function AboutPage() {
           <Convergence />
         </div>
 
-        <section className="relative overflow-hidden bg-soil py-16">
+        <section className="relative overflow-clip bg-soil py-16">
           <BackgroundVideo
             video="/videos/generated/bt-about-working-directly-woodlight.mp4"
             poster="/images/generated/bt-about-working-directly-woodlight-poster.jpg"
@@ -90,7 +90,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden bg-soil py-16 sm:py-20">
+        <section className="relative overflow-clip bg-soil py-16 sm:py-20">
           <BackgroundVideo
             video="/videos/pixabay-forest-sunbeams.mp4"
             poster="/images/pixabay-forest-sunbeams-poster.jpg"
