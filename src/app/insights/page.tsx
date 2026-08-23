@@ -172,7 +172,7 @@ export default function InsightsPage() {
 
         {/* A restrained folio current replaces the old flat ivory chapter;
             the dense wash keeps the foundation essay visually primary. */}
-        <section className="relative overflow-hidden bg-ivory py-20 sm:py-28">
+        <section className="relative overflow-hidden bg-ivory py-16">
           <BackgroundVideo
             video="/videos/generated/bt-insights-foundation-folio.mp4"
             poster="/images/generated/bt-insights-foundation-folio-poster.jpg"
@@ -182,16 +182,16 @@ export default function InsightsPage() {
           <div aria-hidden="true" className="absolute inset-0 bg-[#F4EFE6]/86" />
           <Container className="relative">
             <Reveal>
-              <div className="mb-10 grid gap-6 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
+              <div className="mb-7 grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
                     Start here
                   </p>
-                  <h2 className="mt-4 font-display text-display-md font-normal text-soil">
+                  <h2 className="mt-3 font-display text-display-sm font-normal text-soil">
                     One foundation essay. Five decisions.
                   </h2>
                 </div>
-                <p className="max-w-2xl text-base leading-7 text-foreground-secondary lg:justify-self-end">
+                <p className="max-w-2xl text-sm leading-6 text-foreground-secondary lg:justify-self-end">
                   Positioning is the soil beneath offer design, messaging,
                   visual direction, sales language, and content. This guide
                   turns the subject into a decision system a service business
