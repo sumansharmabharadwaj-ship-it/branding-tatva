@@ -66,7 +66,7 @@ export function InsightCard({ post, featured = false }: InsightCardProps) {
       >
         <div
           className={`relative overflow-hidden bg-soil ${
-            featured ? "min-h-[20rem] lg:min-h-[31rem]" : "aspect-[4/3]"
+            featured ? "min-h-[18rem] lg:min-h-[25rem]" : "aspect-[16/9]"
           }`}
         >
           <Image
@@ -95,26 +95,30 @@ export function InsightCard({ post, featured = false }: InsightCardProps) {
           </div>
         </div>
 
-        <div className={`flex flex-col ${featured ? "p-7 sm:p-9 lg:p-10" : "p-6"}`}>
+        <div className={`flex flex-col ${featured ? "p-6 sm:p-7 lg:p-8" : "p-5"}`}>
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-foreground-secondary">
             {formatDate(post.updatedAt)}
           </p>
           <h3
-            className={`mt-4 font-display font-normal leading-[1.08] text-soil ${
-              featured ? "text-[clamp(2rem,4vw,3.5rem)]" : "text-2xl"
+            className={`font-display font-normal leading-[1.08] text-soil ${
+              featured
+                ? "mt-3 text-[clamp(1.8rem,3vw,2.75rem)]"
+                : "mt-3 line-clamp-3 text-[1.35rem]"
             }`}
           >
             {post.title}
           </h3>
           <p
-            className={`mt-4 text-foreground-secondary ${
-              featured ? "max-w-xl text-base leading-7" : "text-sm leading-6"
+            className={`mt-3 text-foreground-secondary ${
+              featured
+                ? "max-w-xl text-sm leading-6"
+                : "line-clamp-3 text-sm leading-6"
             }`}
           >
             {post.excerpt}
           </p>
           {featured && (
-            <div className="mt-7 grid gap-3 border-t border-border pt-6">
+            <div className="mt-5 grid gap-2 border-t border-border pt-4">
               {post.keyTakeaways.slice(0, 3).map((takeaway, index) => (
                 <p key={takeaway} className="flex gap-3 text-sm leading-6 text-soil/75">
                   <span
@@ -131,7 +135,7 @@ export function InsightCard({ post, featured = false }: InsightCardProps) {
             </div>
           )}
           <span
-            className="mt-auto inline-flex items-center gap-2 pt-7 text-xs font-semibold uppercase tracking-[0.16em] transition-transform duration-300 group-hover:translate-x-1"
+            className="mt-auto inline-flex items-center gap-2 pt-5 text-xs font-semibold uppercase tracking-[0.16em] transition-transform duration-300 group-hover:translate-x-1"
             style={{ color }}
           >
             Read the essay <span aria-hidden="true">→</span>
