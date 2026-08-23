@@ -13,8 +13,6 @@ import { WorkIndex } from "@/sections/Work/WorkIndex";
 import { SignatureProject } from "@/sections/Work/SignatureProject";
 import { SystemFlagship } from "@/sections/Work/SystemFlagship";
 import { MobileSystemEvidenceBoard } from "@/sections/Work/MobileSystemEvidenceBoard";
-import { ProjectStoryWall } from "@/sections/Work/ProjectStoryWall";
-import { DecisionEvidenceGallery } from "@/sections/Work/DecisionEvidenceGallery";
 import { CapabilityMap } from "@/sections/Work/CapabilityMap";
 import { TatvaLab } from "@/sections/Work/TatvaLab";
 import { Authorship } from "@/sections/Work/Authorship";
@@ -144,24 +142,14 @@ export default function WorkPage() {
           eventProps={{ source: "work_performance_signature" }}
         />
 
-        {/* A faster middle tier resets the viewing mode before the next
-            long sticky chapter. Three focused engagements receive real
-            context and proportionate depth without becoming miniature
-            versions of the flagship above. */}
-        <ProjectStoryWall projects={projects} />
-
         {/* Immersion two: system building. A different scroll language
             assembles foundation, content architecture, and rollout. The
-            project-story wall above prevents two long sticky narratives
-            from sitting directly beside one another. */}
+            compact work index already carries the shorter engagements, so
+            the page can move directly into the second flagship without
+            repeating the same three projects at poster scale. */}
         {systemSignature && <SystemFlagship project={systemSignature} />}
         {systemSignature && <MobileSystemEvidenceBoard project={systemSignature} />}
         <WorkMobileNarrativeEnhancers />
-
-        {/* Tier three: real decisions shown at artefact scale. The
-            fragments demonstrate breadth without turning every small
-            decision into a theatrical case study. */}
-        <DecisionEvidenceGallery />
 
         {/* Relevance: after seeing the record, the visitor can name the
             condition they are trying to change and reach the closest

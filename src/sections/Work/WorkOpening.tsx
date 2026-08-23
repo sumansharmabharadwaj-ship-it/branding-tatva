@@ -219,16 +219,18 @@ export function WorkOpening() {
                 style={{ outlineColor: WORK.moss }}
               >
                 <div className="relative aspect-[4/3] overflow-hidden bg-black/10">
-                  <AnimatePresence mode="wait" initial={false}>
+                  <AnimatePresence mode="sync" initial={false}>
                     <motion.img
                       key={current.slug}
                       src={record.evidencePoster}
                       alt={`${current.title} evidence diagram`}
+                      loading="eager"
+                      fetchPriority="high"
                       className="absolute inset-0 h-full w-full object-cover"
                       initial={animateTransitions ? { opacity: 0, scale: 1.025 } : false}
                       animate={{ opacity: 1, scale: 1 }}
-                      exit={animateTransitions ? { opacity: 0 } : undefined}
-                      transition={{ duration: animateTransitions ? 0.58 : 0, ease: EASE_ORGANIC }}
+                      exit={animateTransitions ? { opacity: 0, scale: 0.995 } : undefined}
+                      transition={{ duration: animateTransitions ? 0.42 : 0, ease: EASE_ORGANIC }}
                     />
                   </AnimatePresence>
                   <div
@@ -242,7 +244,7 @@ export function WorkOpening() {
                   className="border-t p-4 sm:p-6"
                   style={{ borderColor: "rgba(255,255,255,0.12)", backgroundColor: WORK.forest }}
                 >
-                  <AnimatePresence mode="wait" initial={false}>
+                  <AnimatePresence mode="sync" initial={false}>
                     <motion.div
                       key={`${current.slug}-copy`}
                       initial={animateTransitions ? { opacity: 0, y: 10 } : false}
