@@ -13,7 +13,7 @@ import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
 import { process as processStages } from "@/data/process";
 import { elementColor } from "@/lib/elementColor";
 import { HomeV4HeaderDirector } from "./HomeV4HeaderDirector";
-import { GuidedView, SceneHandoff } from "./HomeV4Interface";
+import { SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
 import { V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
@@ -29,8 +29,6 @@ export function HomeV4Experience() {
       <HomeV4PreludeBridge />
       <HomeV4MediaDirector />
       <HomeV4HeaderDirector />
-      <GuidedView />
-
       <V4OpeningScene />
       <SceneHandoff motif="mist" />
 
