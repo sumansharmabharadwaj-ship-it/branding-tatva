@@ -143,12 +143,13 @@ html[data-services-experience="active"] {
   transform-origin: 50% 50%;
 }
 
-/* Authority previously consumed 420vh, then 220svh, for five concise states.
-   The same assembly now completes in a short 115svh hold: the build remains
-   scroll-led, but no longer behaves like a second page inside the page. */
+/* Keep one full viewport of real scroll travel for the five-layer assembly.
+   At 145svh the whole visualizer could finish inside one trackpad gesture;
+   205svh preserves a deliberate, user-controlled progression without
+   returning to the old 420vh runway. */
 @media (min-width: 1024px) {
   #authority > div:first-child {
-    height: 115svh !important;
+    height: 205svh !important;
   }
 
   [data-services-scene="education"].bt-scene {
@@ -159,7 +160,7 @@ html[data-services-experience="active"] {
 @supports not (height: 1svh) {
   @media (min-width: 1024px) {
     #authority > div:first-child {
-      height: 115vh !important;
+      height: 205vh !important;
     }
 
     [data-services-scene="education"].bt-scene {
