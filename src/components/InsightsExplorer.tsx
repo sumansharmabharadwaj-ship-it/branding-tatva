@@ -28,9 +28,13 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
   space: "#AD6F5C",
 };
 
+const INITIAL_VISIBLE_POSTS = 9;
+const LOAD_MORE_POSTS = 6;
+
 export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
   const [query, setQuery] = useState("");
   const [topicSlug, setTopicSlug] = useState("all");
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_POSTS);
 
   const filteredPosts = useMemo(() => {
     const cleanQuery = query.trim().toLowerCase();
@@ -50,6 +54,9 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
       return matchesTopic && matchesQuery;
     });
   }, [posts, query, topicSlug]);
+
+  const visiblePosts = filteredPosts.slice(0, visibleCount);
+  const remainingPosts = Math.max(0, filteredPosts.length - visiblePosts.length);
 
   // The archive film stays intentionally low-contrast beneath the
   // interactive search layer, with posters covering reduced motion.
@@ -89,7 +96,10 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
             <input
               type="search"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setVisibleCount(INITIAL_VISIBLE_POSTS);
+              }}
               placeholder="Search positioning, messaging, memory"
               className="min-h-14 w-full rounded-full border border-border bg-ivory pl-12 pr-5 text-sm text-soil outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/15"
             />
@@ -98,7 +108,10 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
           <div className="mt-4 flex flex-wrap gap-2" aria-label="Filter articles by topic">
             <button
               type="button"
-              onClick={() => setTopicSlug("all")}
+              onClick={() => {
+                setTopicSlug("all");
+                setVisibleCount(INITIAL_VISIBLE_POSTS);
+              }}
               aria-pressed={topicSlug === "all"}
               className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
                 topicSlug === "all"
@@ -116,7 +129,10 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
                 <button
                   key={topic.slug}
                   type="button"
-                  onClick={() => setTopicSlug(topic.slug)}
+                  onClick={() => {
+                    setTopicSlug(topic.slug);
+                    setVisibleCount(INITIAL_VISIBLE_POSTS);
+                  }}
                   aria-pressed={active}
                   className="rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition"
                   style={{
@@ -134,7 +150,7 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
 
         <div className="mt-6 flex items-center justify-between gap-4">
           <p className="text-sm text-foreground-secondary" aria-live="polite">
-            {filteredPosts.length} {filteredPosts.length === 1 ? "essay" : "essays"}
+            Showing {visiblePosts.length} of {filteredPosts.length} {filteredPosts.length === 1 ? "essay" : "essays"}
           </p>
           {(query || topicSlug !== "all") && (
             <button
@@ -142,6 +158,7 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
               onClick={() => {
                 setQuery("");
                 setTopicSlug("all");
+                setVisibleCount(INITIAL_VISIBLE_POSTS);
               }}
               className="link-underline text-sm font-medium text-soil"
             >
@@ -151,11 +168,24 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
         </div>
 
         {filteredPosts.length > 0 ? (
-          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {filteredPosts.map((post) => (
-              <InsightCard key={post.slug} post={post} />
-            ))}
-          </div>
+          <>
+            <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {visiblePosts.map((post) => (
+                <InsightCard key={post.slug} post={post} />
+              ))}
+            </div>
+            {remainingPosts > 0 && (
+              <div className="mt-10 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount((count) => count + LOAD_MORE_POSTS)}
+                  className="min-h-12 rounded-full border border-soil/25 bg-ivory/75 px-6 py-3 text-sm font-semibold text-soil shadow-elevation-sm transition hover:-translate-y-0.5 hover:border-soil/45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay"
+                >
+                  Show {Math.min(LOAD_MORE_POSTS, remainingPosts)} more essays
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="mt-8 rounded-[1.5rem] border border-border bg-ivory px-6 py-16 text-center">
             <p className="font-display text-2xl text-soil">

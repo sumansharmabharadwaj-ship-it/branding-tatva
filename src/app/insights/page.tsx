@@ -134,6 +134,7 @@ export default function InsightsPage() {
           video="/videos/pixabay-sea-of-fog-sunrise.mp4"
           poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg"
           minHeight="60svh"
+          overlayGradient="linear-gradient(180deg, rgba(39,34,30,0.44) 0%, rgba(39,34,30,0.58) 58%, rgba(39,34,30,0.76) 100%)"
         >
           <Container className="relative py-24 sm:py-28">
             <div className="grid gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">
