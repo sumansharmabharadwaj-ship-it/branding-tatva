@@ -28,7 +28,11 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
   space: "#AD6F5C",
 };
 
-const INITIAL_VISIBLE_POSTS = 6;
+// The landing page is a doorway, not the full archive. One complete desktop
+// row gives a visitor enough choice without turning the page into a catalogue
+// before they have searched or chosen a reading path. The remaining essays
+// stay available through an explicit, reversible "show more" action.
+const INITIAL_VISIBLE_POSTS = 3;
 const LOAD_MORE_POSTS = 6;
 
 export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
