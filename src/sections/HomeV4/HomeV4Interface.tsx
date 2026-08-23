@@ -274,7 +274,7 @@ export function GuidedView() {
   const detail = atFinalChapter
     ? "the invitation"
     : showHint
-      ? "thirteen calm scenes"
+      ? `${count} calm scenes`
       : chapterName;
 
   return (
