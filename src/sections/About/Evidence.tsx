@@ -1,6 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { useRef, type KeyboardEvent } from "react";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
+import { VisualizerPlayback } from "@/components/VisualizerPlayback";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useTimedVisualizer } from "@/hooks/useTimedVisualizer";
 import { projects } from "@/data/projects";
 
 // About redesign, the evidence chapter — for each selected case: the
@@ -29,50 +37,167 @@ const CASES = [
   },
 ] as const;
 
+const DWELL_MS = 5400;
+const EASE = [0.22, 1, 0.36, 1] as const;
+
 export function Evidence() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const inView = useInView(sectionRef, { amount: 0.3, margin: "8% 0px -12% 0px" });
+  const visualizer = useTimedVisualizer({
+    count: CASES.length,
+    durationMs: DWELL_MS,
+    enabled: inView,
+    reducedMotion: prefersReducedMotion,
+  });
+  const activeIndex = visualizer.activeIndex;
+  const activeCase = CASES[activeIndex];
+  const activeProject = projects.find((project) => project.slug === activeCase.slug);
+
+  function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % CASES.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + CASES.length - 1) % CASES.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = CASES.length - 1;
+    else return;
+
+    event.preventDefault();
+    visualizer.choose(next);
+    document.getElementById(`evidence-tab-${next}`)?.focus();
+  }
+
+  if (!activeProject) return null;
+
   return (
-    <Container className="max-w-6xl">
-      <Reveal>
-        <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Evidence</p>
-        <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory">
-          Ambiguity, decision, result. Three times on record.
-        </h2>
-      </Reveal>
-      <div className="spotlight-grid mt-12 space-y-8">
-        {CASES.map((c, i) => {
-          const project = projects.find((p) => p.slug === c.slug);
-          if (!project) return null;
-          return (
-            <Reveal key={c.slug} delay={i * 0.07}>
-              <div className="spotlight-card rounded-2xl border-t border-ivory/15 px-5 pb-6 pt-8 transition-colors duration-500 hover:bg-ivory/[0.04]">
-                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                  <Link
-                    href={`/work/${project.slug}`}
-                    className="font-display text-2xl font-normal text-ivory transition-colors duration-300 hover:text-sandstone"
-                  >
+    <div ref={sectionRef} data-evidence-case={activeCase.slug}>
+      <Container className="max-w-6xl">
+        <div className="grid gap-6 lg:grid-cols-[1fr_22rem] lg:items-end">
+          <Reveal>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sandstone">Evidence</p>
+            <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory">
+              Ambiguity becomes a decision. The result stays on record.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <p className="mb-3 text-sm leading-6 text-ivory/65">
+              Three engagements, shown one at a time so the reasoning remains visible.
+            </p>
+            <VisualizerPlayback
+              current={activeIndex}
+              total={CASES.length}
+              durationMs={visualizer.durationMs}
+              isRunning={visualizer.isRunning}
+              progressKey={visualizer.progressKey}
+              onToggle={visualizer.toggle}
+              label="Evidence case autoplay"
+              tone="dark"
+            />
+          </Reveal>
+        </div>
+
+        <div className="mt-8 grid gap-5 lg:grid-cols-[17rem_1fr]">
+          <div
+            className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1"
+            role="tablist"
+            aria-label="Choose a documented engagement"
+          >
+            {CASES.map((item, index) => {
+              const project = projects.find((candidate) => candidate.slug === item.slug);
+              const selected = index === activeIndex;
+              if (!project) return null;
+              return (
+                <button
+                  key={item.slug}
+                  id={`evidence-tab-${index}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => visualizer.choose(index)}
+                  onKeyDown={(event) => onTabKeyDown(event, index)}
+                  className={`rounded-2xl border px-4 py-4 text-left transition duration-300 ${
+                    selected
+                      ? "border-sandstone/55 bg-ivory/[0.1] text-ivory"
+                      : "border-ivory/12 bg-soil/30 text-ivory/62 hover:border-ivory/25 hover:text-ivory"
+                  }`}
+                >
+                  <span className="text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-sandstone">
+                    0{index + 1}
+                  </span>
+                  <strong className="mt-1 block font-display text-lg font-normal leading-tight">
                     {project.title}
-                  </Link>
-                  <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/50">{project.industry}</p>
+                  </strong>
+                  <span className="mt-2 block text-[0.62rem] font-medium uppercase tracking-[0.12em] opacity-60">
+                    {project.industry}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="relative min-h-[22rem] overflow-hidden rounded-[1.75rem] border border-ivory/14 bg-soil/48 p-5 shadow-elevation-md backdrop-blur-xl sm:p-7">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.article
+                key={activeCase.slug}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
+                className="flex h-full flex-col"
+                role="tabpanel"
+                aria-labelledby={`evidence-tab-${activeIndex}`}
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-ivory/12 pb-5">
+                  <div>
+                    <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-sandstone">
+                      Documented engagement
+                    </p>
+                    <h3 className="mt-1 font-display text-3xl font-normal text-ivory">
+                      {activeProject.title}
+                    </h3>
+                  </div>
+                  <span className="text-[0.65rem] font-medium uppercase tracking-[0.14em] text-ivory/45">
+                    {activeProject.industry}
+                  </span>
                 </div>
-                <div className="mt-6 grid gap-6 lg:grid-cols-3 lg:gap-10">
+
+                <div className="mt-5 grid flex-1 gap-3 md:grid-cols-[1fr_auto_1fr_auto_1fr] md:items-stretch">
                   {(
                     [
-                      ["The ambiguity", c.ambiguity],
-                      ["The decision", c.decision],
-                      ["The observed result", c.result],
+                      ["01 · The ambiguity", activeCase.ambiguity],
+                      ["02 · The decision", activeCase.decision],
+                      ["03 · The observed result", activeCase.result],
                     ] as const
-                  ).map(([label, text]) => (
-                    <div key={label}>
-                      <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">{label}</p>
-                      <p className="mt-2 text-sm leading-relaxed text-ivory/88">{text}</p>
+                  ).map(([label, text], index) => (
+                    <div key={label} className="contents">
+                      <div className="rounded-2xl border border-ivory/10 bg-ivory/[0.045] p-4">
+                        <p className="text-[0.63rem] font-semibold uppercase tracking-[0.16em] text-sandstone">
+                          {label}
+                        </p>
+                        <p className="mt-3 text-sm leading-6 text-ivory/82">{text}</p>
+                      </div>
+                      {index < 2 ? (
+                        <ArrowRight
+                          aria-hidden="true"
+                          className="hidden h-4 w-4 self-center text-sandstone/70 md:block"
+                        />
+                      ) : null}
                     </div>
                   ))}
                 </div>
-              </div>
-            </Reveal>
-          );
-        })}
-      </div>
-    </Container>
+
+                <Link
+                  href={`/work/${activeProject.slug}`}
+                  className="mt-5 inline-flex items-center gap-2 self-start text-xs font-semibold uppercase tracking-[0.15em] text-sandstone transition hover:text-ivory"
+                >
+                  Read the documented case <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              </motion.article>
+            </AnimatePresence>
+          </div>
+        </div>
+      </Container>
+    </div>
   );
 }
