@@ -358,7 +358,7 @@ export default function ContactPage() {
           </Container>
         </section>
       </main>
-      <Footer />
+      <Footer compact />
     </>
   );
 }
