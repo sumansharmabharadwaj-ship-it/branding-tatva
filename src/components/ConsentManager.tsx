@@ -97,11 +97,11 @@ export function ConsentManager() {
           role="dialog"
           aria-modal="false"
           aria-label="Your choice about measurement"
-          className="fixed inset-x-3 bottom-3 z-[100] rounded-2xl border px-4 py-3 shadow-xl backdrop-blur-xl sm:left-1/2 sm:right-auto sm:w-[min(44rem,calc(100vw-3rem))] sm:-translate-x-1/2"
+          className="fixed inset-x-3 bottom-3 z-[100] rounded-2xl border px-4 py-3 shadow-xl backdrop-blur-xl sm:left-auto sm:right-5 sm:w-[min(25rem,calc(100vw-2.5rem))]"
           style={{ borderColor: "rgba(39,34,30,0.14)", backgroundColor: "rgba(244,239,230,0.94)" }}
         >
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-[28rem] text-[0.78rem] leading-relaxed text-soil/76">
+          <div className="flex flex-col gap-3">
+          <p className="max-w-[22rem] text-[0.78rem] leading-relaxed text-soil/76">
             Optional analytics are off. Choose whether to enable them.{" "}
             <Link href="/privacy" className="link-underline" style={{ color: "#9b5c43" }}>
               Privacy note

@@ -151,18 +151,18 @@ export function AboutSplitHero({
                     // strongest point) of this gradient, which was 0.7 —
                     // under the site's normalized bg-soil/80 contrast
                     // floor. Bumped to match.
-                    style={{ backgroundImage: "linear-gradient(180deg, rgba(20,17,14,0.8) 0%, rgba(20,17,14,0) 100%)" }}
+                    style={{ backgroundImage: "linear-gradient(180deg, rgba(20,17,14,0.9) 0%, rgba(20,17,14,0.08) 78%, rgba(20,17,14,0) 100%)" }}
                   >
                     <SplitReveal
                       as="h1"
-                      className="font-display text-[clamp(1.15rem,3.6vw,1.6rem)] font-normal leading-[1.25] text-ivory"
+                      className="font-display text-[clamp(1.15rem,3.6vw,1.6rem)] font-normal leading-[1.25] text-ivory [text-shadow:0_2px_14px_rgba(0,0,0,0.72)]"
                     >
                       {headline}
                     </SplitReveal>
                   </div>
                   <div
                     className="absolute inset-x-0 bottom-0 px-5 pb-4 pt-10"
-                    style={{ backgroundImage: "linear-gradient(0deg, rgba(20,17,14,0.8) 0%, rgba(20,17,14,0) 100%)" }}
+                    style={{ backgroundImage: "linear-gradient(0deg, rgba(20,17,14,0.9) 0%, rgba(20,17,14,0.06) 82%, rgba(20,17,14,0) 100%)" }}
                   >
                     <p className="font-body text-[0.65rem] uppercase tracking-[0.18em] text-ivory/90">{body}</p>
                   </div>

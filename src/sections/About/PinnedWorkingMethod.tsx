@@ -40,44 +40,41 @@ function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
               className="aspect-square w-40 rounded-full object-cover sm:w-48"
             />
           </Reveal>
-          <div className="grid gap-12 sm:grid-cols-2">
+          <div className="grid gap-10 sm:grid-cols-2 sm:gap-12">
             <Reveal delay={0.1}>
-              <h2 className="text-display-sm font-display font-normal text-ivory">
-                Working method
-              </h2>
-              <p className="mt-4 text-ivory/85">
-                I start by asking what
-                a business believes, who it&apos;s actually speaking to,
-                and where its current story stops making sense, well
-                before any mood board enters the room. The
-                elemental system, earth, water, fire, air, space, is how I
-                keep track of which part of that is solved and which
-                still needs work.
-              </p>
-              <p className="mt-4 text-ivory/85">
-                I use &ldquo;I&rdquo; instead of &ldquo;we.&rdquo; Branding
-                Tatva is a personal practice, and every project has my
-                direct attention.
-              </p>
+              <div>
+                <h2 className="text-display-sm font-display font-normal text-ivory">
+                  Working method
+                </h2>
+                <p className="mt-4 text-ivory/85">
+                  I start by asking what a business believes, who it is
+                  actually speaking to, and where its current story stops
+                  making sense. Design begins only after that decision is clear.
+                </p>
+                <p className="mt-4 text-ivory/85">
+                  Branding Tatva is a personal practice, so every project keeps
+                  my direct attention from diagnosis through delivery.
+                </p>
+              </div>
             </Reveal>
 
             <Reveal delay={0.15}>
-              <h2 className="text-display-sm font-display font-normal text-ivory">
-                Recent experience
-              </h2>
+              <div>
+                <h2 className="text-display-sm font-display font-normal text-ivory">
+                  Recent experience
+                </h2>
+                <ul className="mt-4 space-y-4">
+                  {experience.map((role) => (
+                    <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
+                      <p className="font-medium text-ivory">{role.role}</p>
+                      <p className="text-sm text-ivory/70">
+                        {role.org} &middot; {role.period}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </Reveal>
-            <ul className="mt-4 space-y-4">
-              {experience.map((role, i) => (
-                <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
-                  <Reveal delay={0.18 + i * 0.06}>
-                    <p className="font-medium text-ivory">{role.role}</p>
-                    <p className="text-sm text-ivory/70">
-                      {role.org} &middot; {role.period}
-                    </p>
-                  </Reveal>
-                </li>
-              ))}
-            </ul>
           </div>
         </Container>
       </ClipReveal>

@@ -13,12 +13,6 @@ import { WorkIndex } from "@/sections/Work/WorkIndex";
 import { SignatureProject } from "@/sections/Work/SignatureProject";
 import { SystemFlagship } from "@/sections/Work/SystemFlagship";
 import { MobileSystemEvidenceBoard } from "@/sections/Work/MobileSystemEvidenceBoard";
-import { CapabilityMap } from "@/sections/Work/CapabilityMap";
-import { TatvaLab } from "@/sections/Work/TatvaLab";
-import { Authorship } from "@/sections/Work/Authorship";
-import { WorkMobileNarrativeEnhancers } from "@/sections/Work/MobileNarrativeEnhancers";
-import { BrandStudies } from "@/sections/CaseStudies/BrandStudies";
-import { brandStudies } from "@/data/brandStudies";
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 
@@ -75,27 +69,6 @@ const projectsJsonLd = {
   },
 };
 
-const studiesJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  name: "Independent brand studies",
-  description:
-    "Independent brand strategy analyses of renowned brands, written as teaching. No client relationship with the brands analyzed.",
-  itemListElement: brandStudies.map((study, index) => ({
-    "@type": "ListItem",
-    position: index + 1,
-    item: {
-      "@type": "Article",
-      headline: `${study.brand}: ${study.lens}`,
-      about: study.brand,
-      abstract: study.premise,
-      url: `${WORK_URL}/studies/${study.slug}`,
-      author: { "@id": PERSON_ID },
-      publisher: { "@id": ORGANIZATION_ID },
-    },
-  })),
-};
-
 export const metadata: Metadata = {
   title: "Work: Brand Strategy Case Studies & Portfolio",
   description: WORK_DESCRIPTION,
@@ -149,22 +122,7 @@ export default function WorkPage() {
             repeating the same three projects at poster scale. */}
         {systemSignature && <SystemFlagship project={systemSignature} />}
         {systemSignature && <MobileSystemEvidenceBoard project={systemSignature} />}
-        <WorkMobileNarrativeEnhancers />
-
-        {/* Relevance: after seeing the record, the visitor can name the
-            condition they are trying to change and reach the closest
-            project evidence and service path. */}
-        <CapabilityMap />
-
-        {/* Wider practice: concept work and public-record analysis are
-            deliberately separated from client engagements so neither
-            borrows credibility from the other. */}
-        <TatvaLab />
-        <BrandStudies />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsJsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(studiesJsonLd) }} />
-
-        <Authorship />
 
         <TexturedDark
           image="/images/work-closing.jpg"
