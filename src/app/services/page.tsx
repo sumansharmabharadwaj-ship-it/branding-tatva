@@ -335,7 +335,7 @@ export default async function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(16,19,20,0.9) 0%, rgba(16,19,20,0.66) 46%, rgba(16,19,20,0.38) 100%)",
+                "linear-gradient(100deg, rgba(16,19,20,0.82) 0%, rgba(16,19,20,0.56) 46%, rgba(16,19,20,0.28) 100%)",
             }}
           />
           <div className="relative">
@@ -369,7 +369,7 @@ export default async function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(16,20,19,0.9) 0%, rgba(16,20,19,0.74) 46%, rgba(16,20,19,0.56) 100%)",
+                "linear-gradient(100deg, rgba(16,20,19,0.84) 0%, rgba(16,20,19,0.64) 46%, rgba(16,20,19,0.44) 100%)",
             }}
           />
           <div className="relative w-full">
@@ -427,7 +427,7 @@ export default async function ServicesPage() {
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(13,18,18,0.92) 0%, rgba(13,18,18,0.72) 48%, rgba(13,18,18,0.5) 100%)",
+                "linear-gradient(100deg, rgba(13,18,18,0.82) 0%, rgba(13,18,18,0.63) 48%, rgba(13,18,18,0.42) 100%)",
             }}
           />
           <SceneVeil color="#0E1714" />
@@ -469,7 +469,7 @@ export default async function ServicesPage() {
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(13,18,17,0.94) 0%, rgba(13,18,17,0.74) 50%, rgba(13,18,17,0.54) 100%)",
+                "linear-gradient(100deg, rgba(13,18,17,0.84) 0%, rgba(13,18,17,0.64) 50%, rgba(13,18,17,0.44) 100%)",
             }}
           />
           <SceneVeil color="#141A15" />
@@ -497,7 +497,7 @@ export default async function ServicesPage() {
         </TexturedDark>
         </PricingProvider>
       </main>
-      <Footer />
+      <Footer compact />
       <SectionJumpNav items={JUMP_ITEMS} hideOnLast />
     </>
   );
