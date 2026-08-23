@@ -231,40 +231,46 @@ export function PackageSelector() {
               className="rounded-2xl border-t-2 p-5 backdrop-blur-md sm:p-6"
               style={{ borderColor: activePackage.color, backgroundColor: blendHex(activePackage.color, "#0F151C", 14) }}
             >
-              <p className="font-display text-xl font-normal text-ivory">{activePackage.name}</p>
-              <div className="mt-2 flex items-baseline gap-1.5">
-                <span className="text-sm text-ivory/70">
-                  {activePackage.billing === "monthly" ? "from" : "Projects begin at"}
-                </span>
-                <span className="font-display text-2xl font-normal text-ivory">
-                  {formatPrice(region, activePackage.slug as PackageSlug)}
-                </span>
-                {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">/mo</span>}
-              </div>
-              <p className="mt-1 text-xs text-ivory/60">Final quotation follows the discovery call.</p>
-              <p className="mt-3 text-sm leading-relaxed text-ivory/90 sm:text-base">{activePackage.description}</p>
-              <ul className="mt-3 grid gap-x-6 gap-y-1 sm:grid-cols-2">
-                {activePackage.includes.map((item, index) => (
-                  <motion.li
-                    key={item}
-                    initial={prefersReducedMotion ? undefined : { opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : 0.15 + index * 0.08 }}
-                    className="text-sm text-ivory/90 before:mr-2 before:content-['•']"
-                  >
-                    {item}
-                  </motion.li>
-                ))}
-              </ul>
-              <div className="mt-5 flex flex-wrap gap-3">
-                {proof && (
-                  <LinkButton href={`/work/${proof.slug}`} variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
-                    See it in action: {proof.title}
-                  </LinkButton>
-                )}
-                <LinkButton href="/contact" style={{ backgroundColor: activePackage.color }}>
-                  Start with {activePackage.name}
-                </LinkButton>
+              <div className="grid gap-5 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] sm:gap-7">
+                <div>
+                  <p className="font-display text-xl font-normal text-ivory">{activePackage.name}</p>
+                  <div className="mt-2 flex items-baseline gap-1.5">
+                    <span className="text-sm text-ivory/70">
+                      {activePackage.billing === "monthly" ? "from" : "Projects begin at"}
+                    </span>
+                    <span className="font-display text-2xl font-normal text-ivory">
+                      {formatPrice(region, activePackage.slug as PackageSlug)}
+                    </span>
+                    {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">/mo</span>}
+                  </div>
+                  <p className="mt-1 text-xs text-ivory/60">Final quotation follows the discovery call.</p>
+                  <p className="mt-3 text-sm leading-relaxed text-ivory/90 sm:text-base">{activePackage.description}</p>
+                </div>
+                <div className="border-ivory/10 sm:border-l sm:pl-7">
+                  <ul className="grid gap-y-1">
+                    {activePackage.includes.map((item, index) => (
+                      <motion.li
+                        key={item}
+                        initial={prefersReducedMotion ? undefined : { opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : 0.15 + index * 0.08 }}
+                        className="text-sm text-ivory/90 before:mr-2 before:content-['•']"
+                      >
+                        {item}
+                      </motion.li>
+                    ))}
+                  </ul>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    {proof && (
+                      <LinkButton href={`/work/${proof.slug}`} variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
+                        See it in action: {proof.title}
+                      </LinkButton>
+                    )}
+                    <LinkButton href="/contact" style={{ backgroundColor: activePackage.color }}>
+                      Start with {activePackage.name}
+                    </LinkButton>
+                  </div>
+                </div>
               </div>
             </motion.div>
           ) : (
