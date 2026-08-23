@@ -83,7 +83,7 @@ export function VerifiedOutcome() {
                 ? { opacity: 1, y: 0, scale: 1 }
                 : activeBeat === 2
                   ? { opacity: 1, y: 0, scale: 1 }
-                  : { opacity: 0.42, y: 5, scale: 0.965 }
+                  : { opacity: 0.68, y: 5, scale: 0.975 }
             }
             transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
             className="mt-10 origin-left"
@@ -123,7 +123,7 @@ export function VerifiedOutcome() {
                     animate={
                       prefersReducedMotion
                         ? { opacity: 1, x: 0 }
-                        : { opacity: active ? 1 : completed ? 0.66 : 0.42, x: active ? 7 : 0 }
+                        : { opacity: active ? 1 : completed ? 0.82 : 0.68, x: active ? 7 : 0 }
                     }
                     transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
                     className="grid grid-cols-[2.5rem_1fr] gap-4 py-5 sm:py-6"
@@ -140,7 +140,7 @@ export function VerifiedOutcome() {
                       <p className={`text-xs font-medium uppercase tracking-[0.16em] ${active ? "text-sandstone" : "text-ivory/55"}`}>
                         {beat.label}
                       </p>
-                      <p className={`mt-2 max-w-xl text-sm leading-relaxed sm:text-base ${active || prefersReducedMotion ? "text-ivory/90" : "text-ivory/62"}`}>
+                      <p className={`mt-2 max-w-xl text-sm leading-relaxed sm:text-base ${active || prefersReducedMotion ? "text-ivory/90" : "text-ivory/78"}`}>
                         {beat.text}
                       </p>
                     </div>
