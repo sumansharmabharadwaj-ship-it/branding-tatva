@@ -1,13 +1,8 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type MouseEvent,
-} from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 export type InsightScene = {
@@ -20,16 +15,60 @@ type InsightsSceneNavigatorProps = {
   scenes: InsightScene[];
 };
 
-const OBSERVER_THRESHOLDS = [0.08, 0.18, 0.32, 0.48, 0.64, 0.8];
+const OBSERVER_THRESHOLDS = [0.06, 0.14, 0.26, 0.4, 0.58, 0.76];
+const OPENING_SCENE_ID = "insights-opening-field";
+const SCENE_STYLE_PROPERTIES = [
+  "--scene-progress",
+  "--scene-presence",
+  "--scene-anticipation",
+  "--scene-activation",
+  "--scene-discovery",
+  "--scene-resolution",
+  "--scene-camera-x",
+  "--scene-camera-y",
+  "--scene-camera-scale",
+  "--scene-camera-roll",
+  "--scene-entry-shift",
+  "--scene-discovery-shift",
+  "--scene-resolution-shift",
+  "--scene-mask",
+  "--scene-content-opacity",
+] as const;
 
+function clamp(value: number, minimum = 0, maximum = 1) {
+  return Math.min(maximum, Math.max(minimum, value));
+}
+
+function range(progress: number, start: number, end: number) {
+  return clamp((progress - start) / Math.max(0.001, end - start));
+}
+
+function phaseFromProgress(progress: number) {
+  if (progress < 0.2) return "anticipation";
+  if (progress < 0.43) return "activation";
+  if (progress < 0.72) return "discovery";
+  return "resolution";
+}
+
+/**
+ * Directs the shared Insights camera without taking ownership of scrolling.
+ *
+ * Every scene receives the same four-beat timeline as CSS custom properties:
+ * anticipation -> activation -> discovery -> resolution. Lenis supplies the
+ * inertial velocity when available; native scroll remains the fallback and
+ * the only source of page position. Pointer and touch input merely change the
+ * focal point, so the page stays keyboard-, anchor-, and browser-history-safe.
+ */
 export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const ratiosRef = useRef(new Map<string, number>());
   const prefersReducedMotion = useHydratedReducedMotion();
+  const lenis = useLenis();
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, {
-    stiffness: 130,
-    damping: 26,
+    stiffness: 150,
+    damping: 30,
+    mass: 0.42,
     restDelta: 0.001,
   });
   const activeScene = scenes[activeIndex] ?? scenes[0];
@@ -62,13 +101,10 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
         });
 
         if (strongestRatio <= 0) return;
-
-        setActiveIndex((current) =>
-          current === nextIndex ? current : nextIndex,
-        );
+        setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
       },
       {
-        rootMargin: "-10% 0px -18% 0px",
+        rootMargin: "-12% 0px -20% 0px",
         threshold: OBSERVER_THRESHOLDS,
       },
     );
@@ -78,70 +114,271 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
   }, [scenes]);
 
   useEffect(() => {
+    const pageNode = document.querySelector<HTMLElement>(".insights-page");
+    if (!pageNode) return;
+    const page = pageNode;
+
+    const targets = scenes
+      .map((scene) => document.getElementById(scene.id))
+      .filter((target): target is HTMLElement => Boolean(target));
+    if (targets.length === 0) return;
+
+    page.dataset.insightsMotion = prefersReducedMotion ? "reduced" : "full";
+
+    if (prefersReducedMotion) {
+      targets.forEach((target) => {
+        target.dataset.scenePhase = "resolved";
+        target.style.setProperty("--scene-progress", "0.5");
+        target.style.setProperty("--scene-presence", "1");
+        target.style.setProperty("--scene-anticipation", "1");
+        target.style.setProperty("--scene-activation", "1");
+        target.style.setProperty("--scene-discovery", "1");
+        target.style.setProperty("--scene-resolution", "1");
+        target.style.setProperty("--scene-camera-x", "0px");
+        target.style.setProperty("--scene-camera-y", "0px");
+        target.style.setProperty("--scene-camera-scale", "1");
+        target.style.setProperty("--scene-camera-roll", "0deg");
+        target.style.setProperty("--scene-entry-shift", "0px");
+        target.style.setProperty("--scene-discovery-shift", "0px");
+        target.style.setProperty("--scene-resolution-shift", "0px");
+        target.style.setProperty("--scene-mask", "100%");
+        target.style.setProperty("--scene-content-opacity", "1");
+      });
+
+      return () => {
+        delete page.dataset.insightsMotion;
+        targets.forEach((target) => {
+          delete target.dataset.scenePhase;
+          SCENE_STYLE_PROPERTIES.forEach((property) =>
+            target.style.removeProperty(property),
+          );
+        });
+      };
+    }
+
+    let frame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let pointerTargetX = 0;
+    let pointerTargetY = 0;
+    let touchOriginX = 0;
+    let touchOriginY = 0;
+    let touchDriftX = 0;
+    let touchDriftY = 0;
+    let direction = 1;
+    let lastScroll = window.scrollY;
+    let targetVelocity = 0;
+    let renderedVelocity = 0;
+
+    function renderCamera() {
+      frame = 0;
+      pointerX += (pointerTargetX - pointerX) * 0.12;
+      pointerY += (pointerTargetY - pointerY) * 0.12;
+      renderedVelocity += (targetVelocity - renderedVelocity) * 0.18;
+      targetVelocity *= 0.84;
+
+      page.dataset.scrollDirection = direction > 0 ? "forward" : "backward";
+      page.style.setProperty("--insights-pointer-x", pointerX.toFixed(4));
+      page.style.setProperty("--insights-pointer-y", pointerY.toFixed(4));
+      page.style.setProperty("--insights-scroll-velocity", renderedVelocity.toFixed(4));
+
+      const viewportHeight = Math.max(1, window.innerHeight);
+
+      targets.forEach((target, index) => {
+        // The opening is intentionally excluded from the director. Its media,
+        // layout, typography and timing remain exactly as authored.
+        if (target.id === OPENING_SCENE_ID) return;
+
+        const bounds = target.getBoundingClientRect();
+        if (bounds.bottom < -viewportHeight || bounds.top > viewportHeight * 2) return;
+
+        const sceneProgress = clamp(
+          (viewportHeight - bounds.top) / (viewportHeight + bounds.height),
+        );
+        const presence = clamp(1 - Math.abs(sceneProgress - 0.5) * 2);
+        const anticipation = range(sceneProgress, 0.03, 0.23);
+        const activation = range(sceneProgress, 0.18, 0.43);
+        const discovery = range(sceneProgress, 0.36, 0.67);
+        const resolution = range(sceneProgress, 0.64, 0.9);
+        const alternatingPan = index % 2 === 0 ? -1 : 1;
+        const velocityKick = renderedVelocity * direction;
+        const cameraX =
+          pointerX * 8 + alternatingPan * (1 - presence) * 12 + touchDriftX * 7;
+        const cameraY =
+          pointerY * 5 + velocityKick * 9 + (0.5 - sceneProgress) * 16 + touchDriftY * 5;
+        const cameraScale = 1 + (1 - presence) * 0.032 + renderedVelocity * 0.008;
+        const cameraRoll = alternatingPan * pointerX * 0.22 + velocityKick * 0.16;
+        const entryShift = (1 - activation) * 30 * direction;
+        const discoveryShift = (1 - discovery) * 22 * alternatingPan;
+        const resolutionShift = resolution * -10 * direction;
+        const mask = 18 + activation * 82;
+        const contentOpacity = 0.52 + presence * 0.48;
+
+        target.dataset.scenePhase = phaseFromProgress(sceneProgress);
+        target.style.setProperty("--scene-progress", sceneProgress.toFixed(4));
+        target.style.setProperty("--scene-presence", presence.toFixed(4));
+        target.style.setProperty("--scene-anticipation", anticipation.toFixed(4));
+        target.style.setProperty("--scene-activation", activation.toFixed(4));
+        target.style.setProperty("--scene-discovery", discovery.toFixed(4));
+        target.style.setProperty("--scene-resolution", resolution.toFixed(4));
+        target.style.setProperty("--scene-camera-x", `${cameraX.toFixed(2)}px`);
+        target.style.setProperty("--scene-camera-y", `${cameraY.toFixed(2)}px`);
+        target.style.setProperty("--scene-camera-scale", cameraScale.toFixed(4));
+        target.style.setProperty("--scene-camera-roll", `${cameraRoll.toFixed(3)}deg`);
+        target.style.setProperty("--scene-entry-shift", `${entryShift.toFixed(2)}px`);
+        target.style.setProperty(
+          "--scene-discovery-shift",
+          `${discoveryShift.toFixed(2)}px`,
+        );
+        target.style.setProperty(
+          "--scene-resolution-shift",
+          `${resolutionShift.toFixed(2)}px`,
+        );
+        target.style.setProperty("--scene-mask", `${mask.toFixed(2)}%`);
+        target.style.setProperty("--scene-content-opacity", contentOpacity.toFixed(4));
+      });
+
+      const needsAnotherFrame =
+        Math.abs(targetVelocity) > 0.004 ||
+        Math.abs(renderedVelocity) > 0.004 ||
+        Math.abs(pointerTargetX - pointerX) > 0.003 ||
+        Math.abs(pointerTargetY - pointerY) > 0.003;
+
+      if (needsAnotherFrame) frame = window.requestAnimationFrame(renderCamera);
+    }
+
+    function scheduleCamera() {
+      if (!frame) frame = window.requestAnimationFrame(renderCamera);
+    }
+
+    function updateFromScroll(scroll: number, velocity?: number) {
+      const delta = scroll - lastScroll;
+      if (Math.abs(delta) > 0.2) direction = delta > 0 ? 1 : -1;
+      lastScroll = scroll;
+      targetVelocity = clamp(Math.abs(velocity ?? delta) / 32);
+      scheduleCamera();
+    }
+
+    function handleNativeScroll() {
+      updateFromScroll(window.scrollY);
+    }
+
+    function handlePointerMove(event: PointerEvent) {
+      if (event.pointerType !== "mouse" && event.pointerType !== "pen") return;
+      pointerTargetX = clamp(
+        (event.clientX / Math.max(1, window.innerWidth) - 0.5) * 2,
+        -1,
+        1,
+      );
+      pointerTargetY = clamp(
+        (event.clientY / Math.max(1, window.innerHeight) - 0.5) * 2,
+        -1,
+        1,
+      );
+      scheduleCamera();
+    }
+
+    function handlePointerLeave() {
+      pointerTargetX = 0;
+      pointerTargetY = 0;
+      scheduleCamera();
+    }
+
+    function handleTouchStart(event: TouchEvent) {
+      const touch = event.touches[0];
+      if (!touch) return;
+      touchOriginX = touch.clientX;
+      touchOriginY = touch.clientY;
+      touchDriftX = 0;
+      touchDriftY = 0;
+    }
+
+    function handleTouchMove(event: TouchEvent) {
+      const touch = event.touches[0];
+      if (!touch) return;
+      touchDriftX = clamp(
+        (touch.clientX - touchOriginX) / Math.max(1, window.innerWidth * 0.35),
+        -1,
+        1,
+      );
+      touchDriftY = clamp(
+        (touch.clientY - touchOriginY) / Math.max(1, window.innerHeight * 0.35),
+        -1,
+        1,
+      );
+      scheduleCamera();
+    }
+
+    function handleTouchEnd() {
+      touchDriftX = 0;
+      touchDriftY = 0;
+      scheduleCamera();
+    }
+
+    const unsubscribeLenis = lenis?.on("scroll", (instance) => {
+      updateFromScroll(instance.scroll, instance.velocity);
+    });
+
+    if (!lenis) window.addEventListener("scroll", handleNativeScroll, { passive: true });
+    window.addEventListener("resize", scheduleCamera, { passive: true });
+    window.addEventListener("pageshow", scheduleCamera);
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    document.documentElement.addEventListener("pointerleave", handlePointerLeave);
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    renderCamera();
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      unsubscribeLenis?.();
+      window.removeEventListener("scroll", handleNativeScroll);
+      window.removeEventListener("resize", scheduleCamera);
+      window.removeEventListener("pageshow", scheduleCamera);
+      window.removeEventListener("pointermove", handlePointerMove);
+      document.documentElement.removeEventListener("pointerleave", handlePointerLeave);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+      delete page.dataset.insightsMotion;
+      delete page.dataset.scrollDirection;
+      page.style.removeProperty("--insights-pointer-x");
+      page.style.removeProperty("--insights-pointer-y");
+      page.style.removeProperty("--insights-scroll-velocity");
+      targets.forEach((target) => {
+        delete target.dataset.scenePhase;
+        SCENE_STYLE_PROPERTIES.forEach((property) =>
+          target.style.removeProperty(property),
+        );
+      });
+    };
+  }, [lenis, prefersReducedMotion, scenes]);
+
+  useEffect(() => {
     scenes.forEach((scene, index) => {
       const target = document.getElementById(scene.id);
       if (target) target.dataset.sceneActive = String(index === activeIndex);
     });
   }, [activeIndex, scenes]);
 
-  function moveToScene(event: MouseEvent<HTMLAnchorElement>, index: number) {
-    setActiveIndex(index);
-
-    if (prefersReducedMotion) return;
-
-    const target = document.getElementById(scenes[index]?.id ?? "");
-    if (!target) return;
-
-    event.preventDefault();
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
   if (!activeScene || scenes.length === 0) return null;
 
   return (
     <aside
-      className="insights-scene-nav"
-      aria-label="Insights page chapters"
+      className="insights-film-spine"
+      data-visible={activeIndex > 0 ? "true" : "false"}
+      aria-hidden="true"
       style={{ "--scene-accent": activeScene.accent } as CSSProperties}
     >
-      <div className="insights-scene-nav__meta" aria-hidden="true">
-        <span>Scene {String(activeIndex + 1).padStart(2, "0")}</span>
-        <strong>{activeScene.label}</strong>
-      </div>
-
-      <nav className="insights-scene-nav__chapters">
-        <span className="insights-scene-nav__thread" aria-hidden="true">
-          <motion.i style={{ scaleY: progress }} />
-        </span>
-        <motion.span
-          className="insights-scene-nav__marker"
-          aria-hidden="true"
-          animate={{ y: activeIndex * 35.68 }}
-          transition={
-            prefersReducedMotion
-              ? { duration: 0 }
-              : { duration: 0.62, ease: [0.22, 1, 0.36, 1] }
-          }
-        />
-        {scenes.map((scene, index) => (
-          <a
-            key={scene.id}
-            href={`#${scene.id}`}
-            aria-label={`Scene ${index + 1}: ${scene.label}`}
-            aria-current={index === activeIndex ? "location" : undefined}
-            onClick={(event) => moveToScene(event, index)}
-          >
-            <i style={{ "--dot-accent": scene.accent } as CSSProperties} />
-            <span>{scene.label}</span>
-          </a>
-        ))}
-      </nav>
-
-      <div className="insights-scene-nav__count" aria-hidden="true">
-        <span>{String(activeIndex + 1).padStart(2, "0")}</span>
-        <i />
-        <span>{String(scenes.length).padStart(2, "0")}</span>
-      </div>
+      <span className="insights-film-spine__count">
+        {String(activeIndex + 1).padStart(2, "0")} /{" "}
+        {String(scenes.length).padStart(2, "0")}
+      </span>
+      <strong>{activeScene.label}</strong>
+      <span className="insights-film-spine__thread">
+        <motion.i style={{ scaleY: progress }} />
+      </span>
     </aside>
   );
 }

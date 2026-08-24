@@ -68,6 +68,16 @@ const INSIGHT_SCENES: InsightScene[] = [
   { id: "insights-field-notes", label: "Field notes", accent: "#D7A84A" },
 ];
 
+const FOUNDATION_DECISIONS = [
+  "Offer design",
+  "Messaging",
+  "Visual direction",
+  "Sales language",
+  "Content",
+];
+
+const AUDIT_LAYERS = ["Foundation", "Message", "Identity", "Experience", "Memory"];
+
 export default function InsightsPage() {
   const sortedPosts = [...insightPosts].sort(
     (a, b) =>
@@ -257,48 +267,69 @@ export default function InsightsPage() {
             the dense wash keeps the foundation essay visually primary. */}
         <section
           id="insights-foundation"
-          className="insights-foundation insights-scene relative overflow-hidden bg-ivory py-16"
+          className="insights-foundation insights-scene relative overflow-hidden bg-ivory"
           data-scene-active="false"
         >
-          <BackgroundVideo
-            video="/videos/generated/bt-insights-foundation-folio.mp4"
-            poster="/images/generated/bt-insights-foundation-folio-poster.jpg"
-            parallax
-            playbackRate={0.86}
-          />
-          <div aria-hidden="true" className="absolute inset-0 bg-[#F4EFE6]/86" />
-          <Container className="relative">
-            <Reveal>
-              <div className="mb-7 grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
-                    Foundation essay
-                  </p>
-                  <h2 className="mt-3 font-display text-display-sm font-normal text-soil">
-                    One foundation essay. Five decisions.
-                  </h2>
-                </div>
-                <p className="max-w-2xl text-sm leading-6 text-foreground-secondary lg:justify-self-end">
-                  Positioning is the soil beneath offer design, messaging,
-                  visual direction, sales language, and content. This guide
-                  turns the subject into a decision system a service business
-                  can actually use.
+          <div className="insights-foundation__film" aria-hidden="true">
+            <BackgroundVideo
+              video="/videos/generated/bt-insights-foundation-folio.mp4"
+              poster="/images/generated/bt-insights-foundation-folio-poster.jpg"
+              playbackRate={0.86}
+            />
+            <div className="absolute inset-0 bg-[#F4EFE6]/84" />
+          </div>
+          <Container className="insights-foundation__camera relative">
+            <div className="insights-foundation__header">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
+                  Foundation essay
                 </p>
+                <h2 className="mt-3 font-display text-display-sm font-normal text-soil">
+                  One foundation essay. Five decisions.
+                </h2>
               </div>
-            </Reveal>
-            <Reveal delay={0.08}>
+              <p className="max-w-2xl text-sm leading-6 text-foreground-secondary lg:justify-self-end">
+                Positioning is the soil beneath offer design, messaging,
+                visual direction, sales language, and content. This guide
+                turns the subject into a decision system a service business
+                can actually use.
+              </p>
+            </div>
+
+            <ol
+              className="insights-foundation__decisions"
+              aria-label="Five connected brand decisions"
+            >
+              {FOUNDATION_DECISIONS.map((decision, index) => (
+                <li
+                  key={decision}
+                  style={{
+                    "--decision-delay": `${index * 32}ms`,
+                  } as CSSProperties}
+                >
+                  <span>0{index + 1}</span>
+                  <strong>{decision}</strong>
+                </li>
+              ))}
+            </ol>
+
+            <div className="insights-foundation__feature">
               <InsightCard post={featured} featured />
-            </Reveal>
+            </div>
           </Container>
         </section>
 
-        <div id="knowledge-atlas" className="insights-scene" data-scene-active="false">
+        <div
+          id="knowledge-atlas"
+          className="insights-scene insights-atlas-scene"
+          data-scene-active="false"
+        >
           <InsightsKnowledgeAtlas paths={atlasPaths} />
         </div>
 
         <div
           id="insights-library-scene"
-          className="insights-scene"
+          className="insights-scene insights-library-scene"
           data-scene-active="false"
         >
           <InsightsExplorer posts={explorerPosts} topics={explorerTopics} />
@@ -306,21 +337,26 @@ export default function InsightsPage() {
 
         <section
           id="insights-audit-seam"
-          className="insights-audit-scene insights-scene bg-ivory py-20 sm:py-28"
+          className="insights-audit-scene insights-scene bg-ivory"
           data-scene-active="false"
         >
-          <Container>
-            <div className="grid overflow-hidden rounded-[2rem] border border-soil/10 bg-background-elevated shadow-elevation-md lg:grid-cols-[0.9fr_1.1fr]">
-              <div className="relative min-h-80 bg-soil">
+          <Container className="insights-audit-scene__camera">
+            <div className="insights-audit-scene__ledger" aria-hidden="true">
+              <span>Evidence ledger</span>
+              <i />
+              <span>05 signals</span>
+            </div>
+
+            <div className="insights-audit-scene__frame">
+              <div className="insights-audit-scene__film relative min-h-80 bg-soil">
                 <BackgroundVideo
                   video="/videos/generated/bt-insights-audit-seam.mp4"
                   poster="/images/generated/bt-insights-audit-seam-poster.jpg"
                   imagePosition="center"
-                  push
                   playbackRate={0.86}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-soil/85 via-soil/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-7 text-ivory sm:p-9">
+                <div className="insights-audit-scene__film-copy absolute inset-x-0 bottom-0 p-7 text-ivory sm:p-9">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sandstone">
                     A practical next read
                   </p>
@@ -329,7 +365,7 @@ export default function InsightsPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
+              <div className="insights-audit-scene__copy flex flex-col justify-center p-7 sm:p-10 lg:p-14">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
                   Brand audit checklist
                 </p>
@@ -347,6 +383,20 @@ export default function InsightsPage() {
                     Open the audit
                   </LinkButton>
                 </div>
+
+                <ol className="insights-audit-scene__layers" aria-label="Audit layers">
+                  {AUDIT_LAYERS.map((layer, index) => (
+                    <li
+                      key={layer}
+                      style={{
+                        "--audit-delay": `${index * 34}ms`,
+                      } as CSSProperties}
+                    >
+                      <span>0{index + 1}</span>
+                      <strong>{layer}</strong>
+                    </li>
+                  ))}
+                </ol>
               </div>
             </div>
           </Container>
@@ -360,11 +410,11 @@ export default function InsightsPage() {
           <TexturedDark
             image="/images/pixabay-golden-reeds-wind-poster.jpg"
             video="/videos/pixabay-golden-reeds-wind.mp4"
-            className="insights-notes-scene py-24 sm:py-28"
+            className="insights-notes-scene"
           >
-            <Container>
-              <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
-                <Reveal>
+            <Container className="insights-notes-scene__camera">
+              <div className="insights-notes-scene__composition">
+                <div className="insights-notes-scene__copy">
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sandstone">
                     Notes worth keeping
                   </p>
@@ -376,10 +426,10 @@ export default function InsightsPage() {
                     New essays, frameworks, and close readings of the choices
                     that shape perception and memory.
                   </p>
-                </Reveal>
-                <Reveal delay={0.08} className="lg:min-w-96">
+                </div>
+                <div className="insights-notes-scene__form lg:min-w-96">
                   <NewsletterForm />
-                </Reveal>
+                </div>
               </div>
             </Container>
           </TexturedDark>

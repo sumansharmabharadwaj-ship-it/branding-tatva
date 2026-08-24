@@ -1,14 +1,19 @@
 "use client";
 
 import {
-  useEffect,
   useRef,
   useState,
   type CSSProperties,
   type KeyboardEvent,
 } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useMotionValueEvent,
+  useScroll,
+} from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
@@ -55,29 +60,38 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
   space: "#D09A89",
 };
 
-const ROTATION_MS = 6200;
-
 export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const transitionDirectionRef = useRef(1);
   const inView = useInView(sectionRef, { amount: 0.42 });
   const prefersReducedMotion = useHydratedReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 92%", "end 8%"],
+  });
   const activePath = paths[activeIndex];
 
-  useEffect(() => {
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
     if (!inView || paused || prefersReducedMotion || paths.length < 2) return;
 
-    const timer = window.setInterval(() => {
-      setActiveIndex((index) => (index + 1) % paths.length);
-    }, ROTATION_MS);
+    const progress = Math.min(0.9999, Math.max(0, value));
+    const nextIndex = Math.min(paths.length - 1, Math.floor(progress * paths.length));
 
-    return () => window.clearInterval(timer);
-  }, [inView, paused, paths.length, prefersReducedMotion]);
+    setActiveIndex((current) => {
+      if (current === nextIndex) return current;
+      transitionDirectionRef.current = nextIndex > current ? 1 : -1;
+      return nextIndex;
+    });
+  });
 
   function selectPath(index: number, shouldFocus = false) {
-    setActiveIndex(index);
+    setActiveIndex((current) => {
+      transitionDirectionRef.current = index >= current ? 1 : -1;
+      return index;
+    });
     setPaused(true);
     if (shouldFocus) tabRefs.current[index]?.focus();
   }
@@ -120,7 +134,6 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
       <BackgroundVideo
         video="/videos/generated/bt-insights-reading-currents.mp4"
         poster="/images/generated/bt-insights-reading-currents-poster.jpg"
-        parallax
         playbackRate={0.96}
       />
       <div className="insights-atlas__veil" aria-hidden="true" />
@@ -147,6 +160,10 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
             aria-orientation="vertical"
             onPointerEnter={() => setPaused(true)}
             onPointerLeave={() => setPaused(false)}
+            onPointerUp={(event) => {
+              if (event.pointerType === "touch") setPaused(false);
+            }}
+            onPointerCancel={() => setPaused(false)}
           >
             <div className="insights-atlas__current" aria-hidden="true">
               <motion.span
@@ -205,26 +222,57 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
             className="insights-atlas__panel-wrap"
             onPointerEnter={() => setPaused(true)}
             onPointerLeave={() => setPaused(false)}
+            onPointerUp={(event) => {
+              if (event.pointerType === "touch") setPaused(false);
+            }}
+            onPointerCancel={() => setPaused(false)}
           >
             <div className="insights-atlas__orbital" aria-hidden="true">
               <span />
               <i />
             </div>
 
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="popLayout" initial={false}>
               <motion.article
                 key={activePath.slug}
                 id="atlas-active-panel"
                 role="tabpanel"
                 aria-labelledby={`atlas-tab-${activePath.slug}`}
                 className="insights-atlas__panel"
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -14 }}
+                initial={
+                  prefersReducedMotion
+                    ? false
+                    : {
+                        opacity: 0.58,
+                        x: transitionDirectionRef.current * 24,
+                        rotateY: transitionDirectionRef.current * 5,
+                        scale: 0.988,
+                        clipPath: "inset(0 8% 0 8% round 1.5rem)",
+                      }
+                }
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                  rotateY: 0,
+                  scale: 1,
+                  clipPath: "inset(0 0% 0 0% round 0rem)",
+                }}
+                exit={
+                  prefersReducedMotion
+                    ? undefined
+                    : {
+                        opacity: 0.42,
+                        x: transitionDirectionRef.current * -18,
+                        rotateY: transitionDirectionRef.current * -3,
+                        scale: 1.006,
+                        clipPath: "inset(0 3% 0 3% round 1rem)",
+                      }
+                }
                 transition={{
-                  duration: prefersReducedMotion ? 0 : 0.52,
+                  duration: prefersReducedMotion ? 0 : 0.58,
                   ease: [0.22, 1, 0.36, 1],
                 }}
+                style={{ transformPerspective: 1200 }}
               >
                 <div className="insights-atlas__panel-head">
                   <p style={{ color: accent }}>{activePath.eyebrow}</p>

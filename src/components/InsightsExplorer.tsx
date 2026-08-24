@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { Search } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import {
@@ -82,16 +82,17 @@ export function InsightsExplorer({
   // The archive film stays intentionally low-contrast beneath the
   // interactive search layer, with posters covering reduced motion.
   return (
-    <section id={sectionId} className="insights-library relative flex min-h-[100svh] items-center overflow-hidden bg-background-alt py-14">
-      <BackgroundVideo
-        video={video}
-        poster={poster}
-        parallax
-        playbackRate={0.84}
-      />
-      <div aria-hidden="true" className="absolute inset-0 bg-[#EAE6DD]/88" />
-      <div className="relative mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
-        <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
+    <section id={sectionId} className="insights-library relative overflow-hidden bg-background-alt">
+      <div className="insights-library__film" aria-hidden="true">
+        <BackgroundVideo
+          video={video}
+          poster={poster}
+          playbackRate={0.84}
+        />
+        <div className="absolute inset-0 bg-[#EAE6DD]/87" />
+      </div>
+      <div className="insights-library__camera relative mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
+        <div className="insights-library__header">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
               {eyebrow}
@@ -105,7 +106,7 @@ export function InsightsExplorer({
           </p>
         </div>
 
-        <div className="mt-8 rounded-[1.5rem] border border-soil/10 bg-background-elevated p-4 shadow-elevation-sm">
+        <div className="insights-library__lens rounded-[1.5rem] border border-soil/10 bg-background-elevated p-4 shadow-elevation-sm">
           <label className="relative block">
             <span className="sr-only">Search the insight library</span>
             <Search
@@ -125,7 +126,10 @@ export function InsightsExplorer({
           </label>
 
           {topics.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2" aria-label="Filter articles by topic">
+            <div
+              className="insights-library__topics mt-4 flex flex-wrap gap-2"
+              aria-label="Filter articles by topic"
+            >
               <button
                 type="button"
                 onClick={() => {
@@ -169,7 +173,7 @@ export function InsightsExplorer({
           )}
         </div>
 
-        <div className="mt-4 flex items-center justify-between gap-4">
+        <div className="insights-library__result-line flex items-center justify-between gap-4">
           <p className="text-sm text-foreground-secondary" aria-live="polite">
             Showing {visiblePosts.length} of {filteredPosts.length} {filteredPosts.length === 1 ? "essay" : "essays"}
           </p>
@@ -190,9 +194,17 @@ export function InsightsExplorer({
 
         {filteredPosts.length > 0 ? (
           <>
-            <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {visiblePosts.map((post) => (
-                <InsightCard key={post.slug} post={post} />
+            <div className="insights-library__folios grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {visiblePosts.map((post, index) => (
+                <div
+                  key={post.slug}
+                  className="insights-library__folio"
+                  style={{
+                    "--folio-delay": `${index * 38}ms`,
+                  } as CSSProperties}
+                >
+                  <InsightCard post={post} />
+                </div>
               ))}
             </div>
             {remainingPosts > 0 && (
@@ -208,7 +220,7 @@ export function InsightsExplorer({
             )}
           </>
         ) : (
-          <div className="mt-8 rounded-[1.5rem] border border-border bg-ivory px-6 py-16 text-center">
+          <div className="insights-library__empty rounded-[1.5rem] border border-border bg-ivory px-6 py-16 text-center">
             <p className="font-display text-2xl text-soil">
               This search has wandered beyond the current library.
             </p>
