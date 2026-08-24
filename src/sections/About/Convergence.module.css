@@ -1,7 +1,6 @@
 .section {
   position: relative;
   min-height: 100svh;
-  overflow: clip;
   background: #eee7db url("/images/generated/bt-services-deliverables-paperlight-poster.jpg") center / cover;
   color: #2b2924;
 }
