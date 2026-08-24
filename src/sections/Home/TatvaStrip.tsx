@@ -130,6 +130,7 @@ export function TatvaStrip() {
           autoPlay={!prefersReducedMotion}
           loop
           playsInline
+          aria-hidden="true"
           preload={inView ? "metadata" : "none"}
           data-home-playback-rate="1.2"
         />

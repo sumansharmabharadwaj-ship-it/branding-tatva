@@ -144,7 +144,7 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 - [ ] Canonicalize Work + Services IA and redirect old Services URLs.
 - [ ] Validate server-rendered headings, copy, links, canonicals, sitemap and robots.
 - [x] Replace deprecated or unsupported schema choices with truthful graphs.
-- [ ] Add image/video metadata, captions and transcripts where meaningful.
+- [x] Add image/video metadata, captions and transcript enforcement where meaningful.
 - [x] Preserve OAI-SearchBot access while previews remain noindex.
 - [x] Implement contextual internal-link graph.
 - [ ] Add consent-aware analytics for CTA, diagnostic, form and scheduling outcomes.
@@ -266,7 +266,7 @@ guide treated the whole runway as one short chapter.
 - [x] A crawlable Editorial and Evidence Policy documents authorship, source, corrections, diagnostics, independent-study and Tatva Lab boundaries.
 - [x] Sitemap, footer and `llms.txt` expose the policy; machine-readable citations remain limited to sources visible on the corresponding guide.
 - [x] Preview-mode and production-mode builds pass for all 78 routes; runtime checks confirm the intended robots metadata in each environment.
-- [ ] Complete the image/video metadata pass.
+- [x] Complete the image/video metadata pass.
 - [x] Hosted-preview verification on the exact commit.
 
 ## Current checkpoint — commercial internal-link graph
@@ -277,3 +277,13 @@ guide treated the whole runway as one short chapter.
 - [x] US/UK intent remains concentrated on the useful commercial page rather than duplicated across thin regional doorway pages.
 - [x] The graph uses only existing service anchors and recorded project routes, with an automated source gate guarding every target.
 - [ ] Validate the graph with production Search Console crawl data after launch approval.
+
+## Current checkpoint — media search and transcript contract
+
+- [x] All 29 Insight routes expose their representative image through article metadata and the XML sitemap.
+- [x] All five recorded project routes expose the editorial evidence diagram through descriptive alt text, `ImageObject` metadata and the XML sitemap.
+- [x] Home, About, Services, Insights and Contact expose one representative image each in the XML sitemap.
+- [x] Silent atmospheric loops are explicitly decorative and stay separate from client evidence.
+- [x] The media gate rejects future informational video without captions and a stable transcript reference.
+- [x] `VideoObject` remains reserved for a prominent, factual video page with verified title, description, thumbnail, duration, date and content URL.
+- [ ] Validate image discovery and indexing in Search Console after production launch approval.

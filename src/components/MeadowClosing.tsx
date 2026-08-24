@@ -158,6 +158,7 @@ export function MeadowClosing() {
             muted
             loop
             playsInline
+            aria-hidden="true"
           />
         )}
         {/* Tint shifts to each stage's own element color as it becomes

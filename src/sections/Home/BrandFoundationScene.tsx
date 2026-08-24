@@ -25,7 +25,7 @@ export function BrandFoundationScene() {
   return (
     <section ref={wrapperRef} className="foundation-orbit" data-scroll-story="foundation" aria-labelledby="brand-foundation-title">
       <div className="foundation-orbit__media" data-media-id="BT-HOME-FOUNDATION-ROOT-NETWORK" aria-hidden="true">
-        <video muted loop autoPlay playsInline preload={inView ? "metadata" : "none"} poster="/images/pexels-root-network-poster.jpg">
+        <video muted loop autoPlay playsInline aria-hidden="true" preload={inView ? "metadata" : "none"} poster="/images/pexels-root-network-poster.jpg">
           <source src="/videos/pexels-root-network.webm" type="video/webm" />
           <source src="/videos/pexels-root-network.mp4" type="video/mp4" />
         </video>

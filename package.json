@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "check:discovery": "node scripts/discovery_source_gate.cjs",
-    "check:links": "node scripts/internal_link_graph_gate.cjs"
+    "check:links": "node scripts/internal_link_graph_gate.cjs",
+    "check:media": "node scripts/media_search_gate.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

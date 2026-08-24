@@ -65,6 +65,7 @@ export function CinematicHero({
               muted
               loop
               playsInline
+              aria-hidden="true"
               preload="metadata"
               onCanPlay={(event) => {
                 void event.currentTarget.play().catch(() => {});

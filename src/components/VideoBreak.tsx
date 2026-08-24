@@ -164,6 +164,7 @@ export function VideoBreak({
             muted
             loop
             playsInline
+            aria-hidden="true"
             preload={shouldLoadVideo ? "auto" : "none"}
           />
           <div

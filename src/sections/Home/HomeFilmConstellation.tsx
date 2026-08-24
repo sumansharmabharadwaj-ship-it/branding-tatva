@@ -322,6 +322,7 @@ export function HomeFilmConstellation() {
                   }}
                 >
                   <video
+                    aria-hidden="true"
                     ref={(node: HTMLVideoElement | null) => {
                       videoRefs.current[index] = node;
                     }}

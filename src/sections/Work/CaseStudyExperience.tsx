@@ -29,6 +29,7 @@ type Props = {
   presentation: CaseStudyPresentation;
   tierLabel: string;
   evidenceLabel: string;
+  evidenceAlt: string;
   previous: Project;
   next: Project;
 };
@@ -498,7 +499,7 @@ function ProjectNeighbour({ project, direction, accent }: { project: Project; di
   );
 }
 
-export function CaseStudyExperience({ project, presentation, tierLabel, evidenceLabel, previous, next }: Props) {
+export function CaseStudyExperience({ project, presentation, tierLabel, evidenceLabel, evidenceAlt, previous, next }: Props) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const chapters = buildChapters(project);
   const [activeChapter, setActiveChapter] = useState(0);
@@ -627,7 +628,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
               <div className="relative aspect-[4/3] overflow-hidden bg-black/20">
                 <Image
                   src={(project.heroPoster ?? project.cardImage)!}
-                  alt={`${project.title} project evidence`}
+                  alt={evidenceAlt}
                   fill
                   sizes="100vw"
                   className="object-cover"
@@ -784,7 +785,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
                 <ManagedVideo
                   src={project.cardVideo}
                   poster={project.cardImage}
-                  imageAlt={`${project.title} project evidence`}
+                  imageAlt={evidenceAlt}
                   className="absolute inset-0 h-full w-full object-cover"
                   preload="none"
                 />

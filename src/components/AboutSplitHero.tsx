@@ -79,6 +79,7 @@ export function AboutSplitHero({
             muted
             loop
             playsInline
+            aria-hidden="true"
           />
         </motion.div>
       )}
@@ -143,6 +144,7 @@ export function AboutSplitHero({
                       muted
                       loop
                       playsInline
+                      aria-hidden="true"
                     />
                   )}
                   <div

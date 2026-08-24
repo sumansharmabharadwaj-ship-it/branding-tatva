@@ -37,6 +37,7 @@ function PanelVideo({ src }: { src: string }) {
     <div ref={ref} className="absolute inset-0">
       {shouldLoad && (
         <video
+          aria-hidden="true"
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
           style={{ opacity: ready ? 1 : 0 }}

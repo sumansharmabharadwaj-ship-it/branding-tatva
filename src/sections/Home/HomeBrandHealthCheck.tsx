@@ -265,6 +265,7 @@ export function HomeBrandHealthCheck() {
           autoPlay={!reducedMotion}
           loop
           playsInline
+          aria-hidden="true"
           preload={reducedMotion ? "none" : "auto"}
           data-home-playback-rate="1"
         >

@@ -9,6 +9,7 @@ import { CaseStudyMobileNarrativeEnhancer } from "@/sections/Work/MobileNarrativ
 import { projects } from "@/data/projects";
 import { getWorkTaxonomy } from "@/data/workTaxonomy";
 import { getCaseStudyPresentation } from "@/data/caseStudyPresentation";
+import { getCaseStudySearchMedia } from "@/data/searchMedia";
 import { site } from "@/data/site";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -36,7 +37,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     `${project.title} ${routeType.toLowerCase()}: ${project.hook ?? project.outcome ?? project.challenge}`,
   );
   const title = `${project.title} ${routeType}`;
-  const image = taxonomy.evidencePoster;
+  const media = getCaseStudySearchMedia(
+    project,
+    taxonomy,
+    getCaseStudyPresentation(project.slug),
+  );
 
   return {
     title,
@@ -57,13 +62,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: `/work/${project.slug}`,
       type: "article",
-      images: [{ url: image, alt: `${project.title} evidence diagram` }],
+      images: [{ url: media.url, alt: media.alt }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} | ${site.name}`,
       description,
-      images: [image],
+      images: [media.url],
     },
   };
 }
@@ -80,6 +85,7 @@ export default async function CaseStudyPage({ params }: Props) {
   const next = projects[(projectIndex + 1) % projects.length] ?? project;
   const taxonomy = getWorkTaxonomy(project.slug);
   const presentation = getCaseStudyPresentation(project.slug);
+  const media = getCaseStudySearchMedia(project, taxonomy, presentation);
   const routeType = taxonomy.tier === "flagship" ? "Flagship case study" : "Project story";
   const projectUrl = `${site.url}/work/${project.slug}`;
 
@@ -121,7 +127,17 @@ export default async function CaseStudyPage({ params }: Props) {
     publisher: { "@id": `${site.url}/#organization` },
     isPartOf: { "@id": `${site.url}/services#proof` },
     keywords: [project.industry, taxonomy.evidenceLabel, ...project.services],
-    image: `${site.url}${taxonomy.evidencePoster}`,
+    image: {
+      "@type": "ImageObject",
+      "@id": `${projectUrl}#evidence-image`,
+      url: media.url,
+      contentUrl: media.url,
+      name: media.title,
+      caption: media.caption,
+      creditText: media.creditText,
+      representativeOfPage: true,
+      creator: { "@id": `${site.url}/#organization` },
+    },
   };
 
   const breadcrumbStructuredData = {
@@ -151,6 +167,7 @@ export default async function CaseStudyPage({ params }: Props) {
           presentation={presentation}
           tierLabel={routeType}
           evidenceLabel={taxonomy.evidenceLabel}
+          evidenceAlt={media.alt}
           previous={previousEvidence}
           next={nextEvidence}
         />

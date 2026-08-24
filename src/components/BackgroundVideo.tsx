@@ -103,6 +103,7 @@ export function BackgroundVideo({
           muted
           loop
           playsInline
+          aria-hidden="true"
           // Was the browser-default eager preload — a Lighthouse profile of
           // Services caught every BackgroundVideo instance on the page
           // (~27MB combined) downloading during initial load, competing

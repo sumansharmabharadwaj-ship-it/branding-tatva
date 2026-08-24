@@ -119,6 +119,7 @@ export function PhotoHero({
             muted
             loop
             playsInline
+            aria-hidden="true"
             preload="auto"
           >
             {videoMobile && <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />}

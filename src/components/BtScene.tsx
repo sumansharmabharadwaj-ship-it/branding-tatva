@@ -91,8 +91,7 @@ export function BtScene({
                 loop
                 preload="metadata"
                 poster={poster}
-                aria-hidden={mediaAlt ? undefined : true}
-                aria-label={mediaAlt || undefined}
+                aria-hidden="true"
                 onError={() => setVideoFailed(true)}
               >
                 {videoMobile && (

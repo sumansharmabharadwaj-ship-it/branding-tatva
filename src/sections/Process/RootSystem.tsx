@@ -175,6 +175,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
             autoPlay
             loop
             playsInline
+            aria-hidden="true"
             preload="metadata"
             onCanPlay={(event) => {
               if (inView) void event.currentTarget.play().catch(() => {});

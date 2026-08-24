@@ -102,6 +102,7 @@ export function FeaturedWorkHero({
                 muted
                 loop
                 playsInline
+                aria-hidden="true"
                 preload="metadata"
               />
             )}

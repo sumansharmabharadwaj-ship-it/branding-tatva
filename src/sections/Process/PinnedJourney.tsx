@@ -267,6 +267,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
                   its video is already substantially downloaded. */}
               {stage.video && shouldLoad && !prefersReducedMotion && (
                 <video
+                  aria-hidden="true"
                   ref={(node) => {
                     videoRefs.current[i] = node;
                   }}

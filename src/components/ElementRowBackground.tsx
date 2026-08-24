@@ -139,6 +139,7 @@ export function ElementRowBackground({
       </motion.div>
       {video && shouldLoad && !prefersReducedMotion && (
         <video
+          aria-hidden="true"
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
           style={{ opacity: videoReady ? 1 : 0, objectPosition: imagePosition }}

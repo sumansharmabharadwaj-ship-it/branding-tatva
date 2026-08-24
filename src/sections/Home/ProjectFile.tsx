@@ -113,6 +113,7 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
                 muted
                 loop
                 playsInline
+                aria-hidden="true"
                 preload="metadata"
               />
             ) : (

@@ -106,6 +106,7 @@ export function V4OpeningScene() {
           autoPlay
           loop
           playsInline
+          aria-hidden="true"
           preload="metadata"
         />
         <motion.span
@@ -241,6 +242,7 @@ export function V4RecognitionScene() {
           autoPlay
           loop
           playsInline
+          aria-hidden="true"
           preload="metadata"
           poster="/images/generated/bt-home-recognition-mist-v1.webp"
           data-home-playback-rate="1.1"
@@ -374,6 +376,7 @@ export function V4HiddenCostScene() {
             autoPlay
             loop
             playsInline
+            aria-hidden="true"
             preload="metadata"
             poster="/images/pexels-river-dawn-poster.jpg"
           >
