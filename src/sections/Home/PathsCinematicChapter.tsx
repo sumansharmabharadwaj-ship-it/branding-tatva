@@ -30,7 +30,6 @@ const PATHS = [
     proof: {
       project: "MyShopInEurope",
       statement: "A complete brand foundation and year-long content operating system, built around craft and origin ahead of price.",
-      href: "/work/myshopineurope",
     },
   },
   {
@@ -49,7 +48,6 @@ const PATHS = [
     proof: {
       project: "HerbalCart",
       statement: "A campaign reset with five content formats and complete video scripts, organised around a modern supplement-first position.",
-      href: "/work/herbalcart",
     },
   },
   {
@@ -67,8 +65,7 @@ const PATHS = [
     tint: "#D3A24F",
     proof: {
       project: "Dr. Haley Nutrition",
-      statement: "Twelve focused Instagram posts earned 126 new followers in January; followers earned per post rose 104%.",
-      href: "/work/dr-haley-nutrition",
+      statement: "Twelve focused Instagram posts earned 126 new followers in January: 10.5 followers per post, compared with 4.8 in December.",
     },
   },
 ] as const satisfies ReadonlyArray<{
@@ -83,7 +80,7 @@ const PATHS = [
   result: string;
   href: string;
   tint: string;
-  proof: { project: string; statement: string; href: string };
+  proof: { project: string; statement: string };
 }>;
 
 const CURVES = [
@@ -357,33 +354,29 @@ export function PathsCinematicChapter() {
                 <span>Path {active.number}</span>
                 <i aria-hidden="true" />
               </div>
-              <p>{active.eyebrow}</p>
+              <div className="paths-cinematic__focus-audience">
+                <span className="paths-cinematic__field-label">For whom</span>
+                <p>{active.eyebrow}</p>
+              </div>
               <h3>{active.title}</h3>
-              <p className="paths-cinematic__focus-body">{active.body}</p>
+              <div className="paths-cinematic__focus-decision">
+                <span className="paths-cinematic__field-label">Decision</span>
+                <p className="paths-cinematic__focus-body">{active.body}</p>
+              </div>
               <div className="paths-cinematic__focus-result">
-                <span>What becomes possible</span>
+                <span>Output</span>
                 <strong>{active.result}</strong>
               </div>
               <div className="paths-cinematic__proof">
-                <span>Recorded work</span>
+                <span>Recorded proof</span>
                 <strong>{active.proof.project}</strong>
                 <p>{active.proof.statement}</p>
-                <Link href={active.proof.href}>
-                  Open the case file <span aria-hidden="true">→</span>
-                </Link>
               </div>
               <Link href={active.href}>
-                Follow this service path <span aria-hidden="true">↗</span>
+                Explore this service path <span aria-hidden="true">↗</span>
               </Link>
             </motion.article>
           </AnimatePresence>
-        </div>
-
-        <div className="paths-cinematic__footer">
-          <span>Still between paths?</span>
-          <Link href="/services#health">
-            Use the Brand Health Check <span aria-hidden="true">→</span>
-          </Link>
         </div>
       </div>
     </section>

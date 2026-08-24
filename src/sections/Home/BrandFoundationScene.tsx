@@ -3,8 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { AnimatePresence, motion, useInView } from "framer-motion";
-import Link from "next/link";
-import { useRef } from "react";
+import { useRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 const FOUNDATION_LAYERS = [
   { id: "category", number: "01", label: "Category", title: "Where the business belongs.", description: "The frame that tells people what you are, what they should compare you with, and why the category has room for you.", produces: ["Category frame", "Competitor codes", "Market boundaries"] },
@@ -17,10 +16,29 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function BrandFoundationScene() {
   const wrapperRef = useRef<HTMLElement>(null);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(wrapperRef, { amount: 0.12, margin: "8% 0px -10% 0px" });
   const visualizer = useScrollDrivenVisualizer({ count: FOUNDATION_LAYERS.length, target: wrapperRef, enabled: inView, reducedMotion });
   const active = FOUNDATION_LAYERS[visualizer.activeIndex] ?? FOUNDATION_LAYERS[0];
+
+  function onTabKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
+    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
+      ? 1
+      : event.key === "ArrowLeft" || event.key === "ArrowUp"
+        ? -1
+        : 0;
+    if (!direction && event.key !== "Home" && event.key !== "End") return;
+
+    event.preventDefault();
+    const nextIndex = event.key === "Home"
+      ? 0
+      : event.key === "End"
+        ? FOUNDATION_LAYERS.length - 1
+        : (index + direction + FOUNDATION_LAYERS.length) % FOUNDATION_LAYERS.length;
+    visualizer.choose(nextIndex);
+    tabRefs.current[nextIndex]?.focus();
+  }
 
   return (
     <section ref={wrapperRef} className="foundation-orbit" data-scroll-story="foundation" aria-labelledby="brand-foundation-title">
@@ -36,12 +54,11 @@ export function BrandFoundationScene() {
         <header className="foundation-orbit__header">
           <p>04 · The foundation</p>
           <h2 id="brand-foundation-title">Four decisions beneath every visible brand.</h2>
-          <Link href="/services#desire">Explore the foundation path <span aria-hidden="true">↗</span></Link>
         </header>
 
         <div className="foundation-orbit__stage">
           <AnimatePresence mode="wait" initial={false}>
-            <motion.article key={active.id} className="foundation-orbit__active" initial={reducedMotion ? false : { opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }} exit={reducedMotion ? undefined : { opacity: 0, y: -22 }} transition={{ duration: reducedMotion ? 0 : 0.62, ease: EASE }} aria-live="polite">
+            <motion.article id="foundation-active-layer" role="tabpanel" aria-label={`${active.label}: ${active.title}`} key={active.id} className="foundation-orbit__active" initial={reducedMotion ? false : { opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }} exit={reducedMotion ? undefined : { opacity: 0, y: -22 }} transition={{ duration: reducedMotion ? 0 : 0.62, ease: EASE }} aria-live="polite">
               <span>{active.number} / 04</span>
               <p>{active.label}</p>
               <h3>{active.title}</h3>
@@ -52,7 +69,7 @@ export function BrandFoundationScene() {
 
           <div className="foundation-orbit__choices" role="tablist" aria-label="Foundation decisions">
             {FOUNDATION_LAYERS.map((layer, index) => (
-              <button key={layer.id} type="button" role="tab" aria-selected={visualizer.activeIndex === index} className={visualizer.activeIndex === index ? "is-active" : undefined} onClick={() => visualizer.choose(index)} onPointerEnter={() => visualizer.preview(index)} onPointerLeave={(event) => { if (document.activeElement !== event.currentTarget) visualizer.releasePreview(); }} onFocus={() => visualizer.preview(index)} onBlur={visualizer.releasePreview}>
+              <button key={layer.id} ref={(node) => { tabRefs.current[index] = node; }} type="button" role="tab" aria-selected={visualizer.activeIndex === index} aria-controls="foundation-active-layer" tabIndex={visualizer.activeIndex === index ? 0 : -1} className={visualizer.activeIndex === index ? "is-active" : undefined} onClick={() => visualizer.choose(index)} onPointerEnter={() => visualizer.preview(index)} onPointerLeave={(event) => { if (document.activeElement !== event.currentTarget) visualizer.releasePreview(); }} onFocus={() => visualizer.choose(index)} onKeyDown={(event) => onTabKeyDown(event, index)}>
                 <span>{layer.number}</span><strong>{layer.label}</strong><i aria-hidden="true" />
               </button>
             ))}

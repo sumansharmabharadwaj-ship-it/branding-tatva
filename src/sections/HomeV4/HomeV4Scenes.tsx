@@ -475,27 +475,30 @@ export function V4HiddenCostScene() {
                 <strong>Position → distinctive cues → repeated association</strong>
               </div>
 
-              <div className="home-v4-cost__research">
-                <p>
-                  The sequence communicates direction; percentages stay outside this model.
-                </p>
-                <div>
-                  <a
-                    href="https://www.sciencedirect.com/science/article/pii/S0167811622000465"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Communication consistency study
-                  </a>
-                  <a
-                    href="https://marketingscience.info/learn-with-us/commercial-research/distinctive-asset"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Distinctive asset research
-                  </a>
+              <details className="home-v4-cost__research">
+                <summary>Research and model note</summary>
+                <div className="home-v4-cost__research-body">
+                  <p>
+                    The sequence communicates direction; percentages stay outside this model.
+                  </p>
+                  <div>
+                    <a
+                      href="https://www.sciencedirect.com/science/article/pii/S0167811622000465"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Communication consistency study
+                    </a>
+                    <a
+                      href="https://marketingscience.info/learn-with-us/commercial-research/distinctive-asset"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Distinctive asset research
+                    </a>
+                  </div>
                 </div>
-              </div>
+              </details>
             </div>
           </div>
 

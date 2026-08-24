@@ -153,6 +153,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
           ref={videoRef}
           src="/videos/pixabay-stream-mist-rays.mp4"
           poster="/images/pixabay-stream-mist-rays-poster.jpg"
+          aria-hidden="true"
           muted
           autoPlay={!prefersReducedMotion}
           loop
