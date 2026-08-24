@@ -21,6 +21,10 @@ import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { InsightsKnowledgeAtlas } from "@/sections/Insights/InsightsKnowledgeAtlas";
+import {
+  InsightsSceneNavigator,
+  type InsightScene,
+} from "@/sections/Insights/InsightsSceneNavigator";
 import "../insights-cinematic.css";
 
 export const metadata: Metadata = {
@@ -54,6 +58,15 @@ export const metadata: Metadata = {
 function elementColor(elementSlug: string) {
   return elements.find((element) => element.slug === elementSlug)?.color ?? "#B85A34";
 }
+
+const INSIGHT_SCENES: InsightScene[] = [
+  { id: "insights-opening-field", label: "Opening field", accent: "#E9C48B" },
+  { id: "insights-foundation", label: "Foundation", accent: "#D77A51" },
+  { id: "knowledge-atlas", label: "Knowledge atlas", accent: "#7FA4BA" },
+  { id: "insights-library-scene", label: "Essay library", accent: "#A8B68F" },
+  { id: "insights-audit-seam", label: "Audit seam", accent: "#D09A89" },
+  { id: "insights-field-notes", label: "Field notes", accent: "#D7A84A" },
+];
 
 export default function InsightsPage() {
   const sortedPosts = [...insightPosts].sort(
@@ -170,71 +183,83 @@ export default function InsightsPage() {
       <Header transparent />
       <ScrollProgress />
       <main id="main-content" className="insights-page">
-        <PhotoHero
-          video="/videos/pixabay-sea-of-fog-sunrise.mp4"
-          poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg"
-          minHeight="100svh"
-          className="insights-hero"
-          playbackRate={1.08}
-          overlayGradient="linear-gradient(108deg, rgba(10,18,20,0.92) 0%, rgba(17,25,26,0.75) 52%, rgba(39,34,30,0.48) 100%)"
+        <InsightsSceneNavigator scenes={INSIGHT_SCENES} />
+
+        <div
+          id="insights-opening-field"
+          className="insights-scene"
+          data-scene-active="true"
         >
-          <Container className="insights-hero__shell relative">
-            <div className="insights-hero__grid">
-              <div>
-                <Reveal>
-                  <p className="insights-hero__eyebrow">The thinking field</p>
-                </Reveal>
-                <SplitReveal
-                  as="h1"
-                  className="insights-hero__title text-ivory"
-                >
-                  See the decision beneath the brand problem.
-                </SplitReveal>
-                <Reveal delay={0.1}>
-                  <p className="insights-hero__summary">
-                    Essays, diagnostic questions, and connected reading paths
-                    for founders shaping positioning, experience,
-                    distinctiveness, language, and memory.
-                  </p>
-                  <Link href="#knowledge-atlas" className="insights-hero__link">
-                    Enter the knowledge atlas <span aria-hidden="true">↓</span>
-                  </Link>
+          <PhotoHero
+            video="/videos/pixabay-sea-of-fog-sunrise.mp4"
+            poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg"
+            minHeight="100svh"
+            className="insights-hero"
+            playbackRate={1.08}
+            overlayGradient="linear-gradient(108deg, rgba(10,18,20,0.92) 0%, rgba(17,25,26,0.75) 52%, rgba(39,34,30,0.48) 100%)"
+          >
+            <Container className="insights-hero__shell relative">
+              <div className="insights-hero__grid">
+                <div>
+                  <Reveal>
+                    <p className="insights-hero__eyebrow">The thinking field</p>
+                  </Reveal>
+                  <SplitReveal
+                    as="h1"
+                    className="insights-hero__title text-ivory"
+                  >
+                    See the decision beneath the brand problem.
+                  </SplitReveal>
+                  <Reveal delay={0.1}>
+                    <p className="insights-hero__summary">
+                      Essays, diagnostic questions, and connected reading paths
+                      for founders shaping positioning, experience,
+                      distinctiveness, language, and memory.
+                    </p>
+                    <Link href="#knowledge-atlas" className="insights-hero__link">
+                      Enter the knowledge atlas <span aria-hidden="true">↓</span>
+                    </Link>
+                  </Reveal>
+                </div>
+                <Reveal delay={0.16}>
+                  <div className="insights-hero__ledger">
+                    <div className="insights-hero__ledger-top">
+                      <p className="insights-hero__ledger-label">Living library</p>
+                      <p className="insights-hero__ledger-count">
+                        {sortedPosts.length}
+                        <small>field notes</small>
+                      </p>
+                    </div>
+                    <div className="insights-hero__ledger-list">
+                      {atlasPaths.map((path, index) => (
+                        <Link
+                          key={path.slug}
+                          href={`/insights/topic/${path.slug}`}
+                          className="insights-hero__ledger-row"
+                          style={{
+                            "--path-color": elementColor(path.element),
+                          } as CSSProperties}
+                        >
+                          <i aria-hidden="true" />
+                          <span>{path.name}</span>
+                          <span>0{index + 1}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 </Reveal>
               </div>
-              <Reveal delay={0.16}>
-                <div className="insights-hero__ledger">
-                  <div className="insights-hero__ledger-top">
-                    <p className="insights-hero__ledger-label">Living library</p>
-                    <p className="insights-hero__ledger-count">
-                      {sortedPosts.length}
-                      <small>field notes</small>
-                    </p>
-                  </div>
-                  <div className="insights-hero__ledger-list">
-                    {atlasPaths.map((path, index) => (
-                      <Link
-                        key={path.slug}
-                        href={`/insights/topic/${path.slug}`}
-                        className="insights-hero__ledger-row"
-                        style={{
-                          "--path-color": elementColor(path.element),
-                        } as CSSProperties}
-                      >
-                        <i aria-hidden="true" />
-                        <span>{path.name}</span>
-                        <span>0{index + 1}</span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </Reveal>
-            </div>
-          </Container>
-        </PhotoHero>
+            </Container>
+          </PhotoHero>
+        </div>
 
         {/* A restrained folio current replaces the old flat ivory chapter;
             the dense wash keeps the foundation essay visually primary. */}
-        <section className="insights-foundation relative overflow-hidden bg-ivory py-16">
+        <section
+          id="insights-foundation"
+          className="insights-foundation insights-scene relative overflow-hidden bg-ivory py-16"
+          data-scene-active="false"
+        >
           <BackgroundVideo
             video="/videos/generated/bt-insights-foundation-folio.mp4"
             poster="/images/generated/bt-insights-foundation-folio-poster.jpg"
@@ -267,13 +292,23 @@ export default function InsightsPage() {
           </Container>
         </section>
 
-        <div id="knowledge-atlas">
+        <div id="knowledge-atlas" className="insights-scene" data-scene-active="false">
           <InsightsKnowledgeAtlas paths={atlasPaths} />
         </div>
 
-        <InsightsExplorer posts={explorerPosts} topics={explorerTopics} />
+        <div
+          id="insights-library-scene"
+          className="insights-scene"
+          data-scene-active="false"
+        >
+          <InsightsExplorer posts={explorerPosts} topics={explorerTopics} />
+        </div>
 
-        <section className="bg-ivory py-20 sm:py-28">
+        <section
+          id="insights-audit-seam"
+          className="insights-audit-scene insights-scene bg-ivory py-20 sm:py-28"
+          data-scene-active="false"
+        >
           <Container>
             <div className="grid overflow-hidden rounded-[2rem] border border-soil/10 bg-background-elevated shadow-elevation-md lg:grid-cols-[0.9fr_1.1fr]">
               <div className="relative min-h-80 bg-soil">
@@ -317,32 +352,38 @@ export default function InsightsPage() {
           </Container>
         </section>
 
-        <TexturedDark
-          image="/images/pixabay-golden-reeds-wind-poster.jpg"
-          video="/videos/pixabay-golden-reeds-wind.mp4"
-          className="py-24 sm:py-28"
+        <div
+          id="insights-field-notes"
+          className="insights-scene"
+          data-scene-active="false"
         >
-          <Container>
-            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
-              <Reveal>
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sandstone">
-                  Notes worth keeping
-                </p>
-                <h2 className="mt-4 max-w-2xl font-display text-display-md font-normal text-ivory">
-                  One clear brand question, delivered when there is something
-                  worth saying.
-                </h2>
-                <p className="mt-5 max-w-xl text-base leading-7 text-ivory/75">
-                  New essays, frameworks, and close readings of the choices
-                  that shape perception and memory.
-                </p>
-              </Reveal>
-              <Reveal delay={0.08} className="lg:min-w-96">
-                <NewsletterForm />
-              </Reveal>
-            </div>
-          </Container>
-        </TexturedDark>
+          <TexturedDark
+            image="/images/pixabay-golden-reeds-wind-poster.jpg"
+            video="/videos/pixabay-golden-reeds-wind.mp4"
+            className="insights-notes-scene py-24 sm:py-28"
+          >
+            <Container>
+              <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+                <Reveal>
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sandstone">
+                    Notes worth keeping
+                  </p>
+                  <h2 className="mt-4 max-w-2xl font-display text-display-md font-normal text-ivory">
+                    One clear brand question, delivered when there is something
+                    worth saying.
+                  </h2>
+                  <p className="mt-5 max-w-xl text-base leading-7 text-ivory/75">
+                    New essays, frameworks, and close readings of the choices
+                    that shape perception and memory.
+                  </p>
+                </Reveal>
+                <Reveal delay={0.08} className="lg:min-w-96">
+                  <NewsletterForm />
+                </Reveal>
+              </div>
+            </Container>
+          </TexturedDark>
+        </div>
       </main>
       <Footer />
       <script
