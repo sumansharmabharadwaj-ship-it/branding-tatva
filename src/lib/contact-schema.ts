@@ -24,7 +24,7 @@ export const contactSchema = z.object({
   timeline: z.string().max(120).optional(),
   description: z
     .string()
-    .min(10, "A few sentences helps me prepare before we talk.")
+    .min(10, "A few words help me prepare before we talk.")
     .max(5000),
   referral: z.string().max(200).optional(),
   company_website: z.string().max(200).optional(),

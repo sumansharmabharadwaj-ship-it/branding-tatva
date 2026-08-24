@@ -61,15 +61,18 @@ export function ContactForm() {
   });
 
   const requiredDetails = watch(["name", "email", "description"]);
-  const completedDetails = requiredDetails.filter(
-    (value) => typeof value === "string" && value.trim().length > 0,
-  ).length;
+  const requiredDetailChecks = [
+    contactSchema.shape.name.safeParse(requiredDetails[0] ?? "").success,
+    contactSchema.shape.email.safeParse(requiredDetails[1] ?? "").success,
+    contactSchema.shape.description.safeParse(requiredDetails[2] ?? "").success,
+  ];
+  const completedDetails = requiredDetailChecks.filter(Boolean).length;
   const completionLabel =
     completedDetails === 3
       ? "Ready when you are"
       : completedDetails > 0
-        ? "Your note is taking shape"
-        : "A quiet place to begin";
+        ? `${completedDetails} of 3 ready`
+        : "Three details to begin";
 
   async function onSubmit(values: ContactFormValues) {
     setStatus("submitting");
@@ -173,7 +176,15 @@ export function ContactForm() {
         </p>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-soil/10 bg-white/30 px-4 py-3">
+      <div
+        className="mt-6 rounded-2xl border border-soil/10 bg-white/30 px-4 py-3"
+        role="progressbar"
+        aria-label="Required enquiry details"
+        aria-valuemin={0}
+        aria-valuemax={3}
+        aria-valuenow={completedDetails}
+        aria-valuetext={completionLabel}
+      >
         <div className="flex items-center justify-between gap-4">
           <p className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-soil/48">Conversation note</p>
           <p className="text-xs text-soil/58" aria-live="polite">{completionLabel}</p>
@@ -186,19 +197,26 @@ export function ContactForm() {
             transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: EASE_AIR }}
           />
         </div>
-        <div className="mt-2 flex justify-between" aria-hidden="true">
-          {[0, 1, 2].map((index) => (
+        <div className="mt-2 grid grid-cols-3 gap-2" aria-hidden="true">
+          {["Name", "Email", "Question"].map((label, index) => (
             <span
-              key={index}
-              className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${
-                completedDetails > index ? "bg-clay" : "bg-soil/15"
+              key={label}
+              className={`flex items-center gap-1.5 text-[0.58rem] font-medium uppercase tracking-[0.12em] transition-colors duration-300 ${
+                requiredDetailChecks[index] ? "text-clay" : "text-soil/34"
               }`}
-            />
+            >
+              <span
+                className={`h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-300 ${
+                  requiredDetailChecks[index] ? "bg-clay" : "bg-soil/15"
+                }`}
+              />
+              {label}
+            </span>
           ))}
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-6 space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate aria-busy={status === "submitting"} className="mt-6 space-y-5">
       {/* Honeypot — hidden from real users, visible to bots */}
       <input
         type="text"
@@ -216,10 +234,10 @@ export function ContactForm() {
         className="grid gap-5 sm:grid-cols-2"
       >
         <Field label="01 Your name" error={errors.name?.message}>
-          <input className={inputClass} {...register("name")} />
+          <input autoComplete="name" className={inputClass} {...register("name")} />
         </Field>
         <Field label="02 Your email" error={errors.email?.message}>
-          <input type="email" className={inputClass} {...register("email")} />
+          <input type="email" inputMode="email" autoComplete="email" className={inputClass} {...register("email")} />
         </Field>
       </motion.div>
 
@@ -256,14 +274,14 @@ export function ContactForm() {
               >
                 <div className="grid gap-5 sm:grid-cols-2">
                   <Field label="Business or brand name" error={errors.business?.message}>
-                    <input className={inputClass} {...register("business")} />
+                    <input autoComplete="organization" className={inputClass} {...register("business")} />
                   </Field>
                   <Field label="Phone (optional)" error={errors.phone?.message}>
-                    <input className={inputClass} {...register("phone")} />
+                    <input type="tel" inputMode="tel" autoComplete="tel" className={inputClass} {...register("phone")} />
                   </Field>
                 </div>
                 <Field label="Website or social link (optional)" error={errors.website?.message}>
-                  <input className={inputClass} {...register("website")} />
+                  <input type="url" inputMode="url" autoComplete="url" className={inputClass} {...register("website")} />
                 </Field>
                 <Field label="Where is your brand right now?" error={errors.brandStage?.message}>
                   <select className={inputClass} defaultValue="" {...register("brandStage")}>
@@ -303,14 +321,14 @@ export function ContactForm() {
         </p>
       )}
 
-        <Magnetic className="inline-block">
+        <Magnetic className="block w-full sm:inline-block sm:w-auto">
         <button
           ref={buttonRef}
           type="submit"
           onClick={handleButtonClick}
           disabled={status === "submitting"}
           className={cn(
-            "group/btn relative overflow-hidden inline-flex items-center justify-center gap-1.5 rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:bg-action-primary-hover hover:-translate-y-0.5 hover:shadow-elevation-lg focus-ring-halo disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+            "group/btn relative inline-flex min-h-12 w-full items-center justify-center gap-1.5 overflow-hidden rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:-translate-y-0.5 hover:bg-action-primary-hover hover:shadow-elevation-lg focus-ring-halo disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none sm:w-auto"
           )}
         >
           <span

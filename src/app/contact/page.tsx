@@ -83,7 +83,7 @@ export default function ContactPage() {
               feel. Same forest register as this hero's own clip, not a
               new visual idea introduced just for this page. */}
           <Fireflies />
-          <Container className="relative py-20 sm:py-28">
+          <Container className="relative py-16 sm:py-24">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal className="relative">
                 <NatureAccent
@@ -103,16 +103,27 @@ export default function ContactPage() {
                   Bring the question that keeps circling. A clear next move can begin with one honest conversation.
                 </p>
               </Reveal>
-              <Reveal delay={0.1} className="lg:pb-2 lg:text-right">
-                <p className="font-display text-lg text-ivory">{site.founder}</p>
-                <p className="mt-1 text-sm text-ivory/70">Founder, {site.name}</p>
-                <p className="mt-1 text-sm text-ivory/70">Reads every enquiry personally</p>
+              <Reveal delay={0.1} className="lg:pb-2">
+                <div className="max-w-xs rounded-2xl border border-white/15 bg-soil/25 p-4 text-left shadow-[0_18px_60px_rgba(12,18,13,0.18)] backdrop-blur-xl sm:p-5 lg:ml-auto">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-sandstone">
+                      <MessageCircle aria-hidden="true" className="h-4 w-4" strokeWidth={1.5} />
+                    </span>
+                    <div>
+                      <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/55">A personal reply</p>
+                      <p className="mt-1 font-display text-lg text-ivory">{site.founder}</p>
+                    </div>
+                  </div>
+                  <p className="mt-4 border-t border-white/10 pt-3 text-sm leading-relaxed text-ivory/72">
+                    Founder-read from the first note to the final reply.
+                  </p>
+                </div>
               </Reveal>
             </div>
           </Container>
         </PhotoHero>
 
-        <section className="relative overflow-hidden border-b border-soil/10 bg-[#E8DED0]">
+        <section aria-labelledby="contact-pathways-heading" className="relative overflow-hidden border-b border-soil/10 bg-[#E8DED0]">
           <BackgroundVideo
             video="/videos/generated/bt-contact-three-paths-waterpaper.mp4"
             poster="/images/generated/bt-contact-three-paths-waterpaper-poster.jpg"
@@ -140,7 +151,7 @@ export default function ContactPage() {
             on the entire site, so its atmosphere must never depend on a
             WebGL context. Two restrained paper-light washes keep the form
             dimensional without adding a GPU-heavy failure point. */}
-        <section id="write" className="relative flex min-h-[100svh] scroll-mt-24 items-center overflow-hidden bg-[#DDE2DC] py-16 sm:py-20">
+        <section id="write" aria-labelledby="contact-write-heading" className="relative flex min-h-[100svh] scroll-mt-24 items-center overflow-hidden bg-[#DDE2DC] py-16 sm:py-20">
           <BackgroundVideo
             video="/videos/pexels-moss-stream.mp4"
             poster="/images/pexels-moss-stream-poster.jpg"
@@ -158,7 +169,7 @@ export default function ContactPage() {
           <Container className="relative grid w-full gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-16">
             <Reveal>
               <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-soil/60">Write in your own time</p>
-              <h2 className="mt-4 max-w-lg font-display text-[clamp(2.5rem,5vw,4.8rem)] font-normal leading-[0.98] text-soil">
+              <h2 id="contact-write-heading" className="mt-4 max-w-lg font-display text-[clamp(2.5rem,5vw,4.8rem)] font-normal leading-[0.98] text-soil">
                 A short note can reveal the real question.
               </h2>
               <p className="mt-6 max-w-md text-sm leading-relaxed text-soil/72 sm:text-base">
@@ -207,7 +218,7 @@ export default function ContactPage() {
             wildflower meadow, genuinely unused elsewhere on this page
             (or its own Footer), fitting "grab a time / stay in touch."
             Overlay at bg-soil/80, the site's normalized standard. */}
-        <section id="call" className="relative flex min-h-[100svh] scroll-mt-24 items-center overflow-hidden bg-soil py-16 sm:py-20">
+        <section id="call" aria-labelledby="contact-call-heading" className="relative flex min-h-[100svh] scroll-mt-24 items-center overflow-hidden bg-soil py-16 sm:py-20">
           <BackgroundVideo
             video="/videos/pexels-valley-first-light.mp4"
             poster="/images/pexels-valley-first-light-poster.jpg"
@@ -223,7 +234,7 @@ export default function ContactPage() {
             <div>
               <Reveal>
                 <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-sandstone">The first conversation</p>
-                <h2 className="mt-4 max-w-xl font-display text-[clamp(2.7rem,5.6vw,5.4rem)] font-normal leading-[0.96] text-ivory">
+                <h2 id="contact-call-heading" className="mt-4 max-w-xl font-display text-[clamp(2.7rem,5.6vw,5.4rem)] font-normal leading-[0.96] text-ivory">
                   One question is enough for the first call.
                 </h2>
                 <p className="mt-6 max-w-md text-sm leading-relaxed text-ivory/75 sm:text-base">

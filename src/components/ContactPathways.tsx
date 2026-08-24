@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowDown,
@@ -64,8 +64,41 @@ const pathways: Pathway[] = [
 export function ContactPathways() {
   const [activeId, setActiveId] = useState<PathwayId>("book");
   const prefersReducedMotion = useHydratedReducedMotion();
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const active = pathways.find((pathway) => pathway.id === activeId) ?? pathways[0];
   const panelId = "contact-pathway-panel";
+
+  function moveToPathway(index: number) {
+    const nextIndex = (index + pathways.length) % pathways.length;
+    const next = pathways[nextIndex];
+    setActiveId(next.id);
+    tabRefs.current[nextIndex]?.focus();
+  }
+
+  function handleTabKeyDown(index: number, event: KeyboardEvent<HTMLButtonElement>) {
+    if (["ArrowRight", "ArrowDown"].includes(event.key)) {
+      event.preventDefault();
+      moveToPathway(index + 1);
+      return;
+    }
+
+    if (["ArrowLeft", "ArrowUp"].includes(event.key)) {
+      event.preventDefault();
+      moveToPathway(index - 1);
+      return;
+    }
+
+    if (event.key === "Home") {
+      event.preventDefault();
+      moveToPathway(0);
+      return;
+    }
+
+    if (event.key === "End") {
+      event.preventDefault();
+      moveToPathway(pathways.length - 1);
+    }
+  }
 
   return (
     <Container className="relative flex min-h-[62svh] items-center py-14 sm:py-16">
@@ -74,7 +107,7 @@ export function ContactPathways() {
           <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-soil/65">
             Three ways to begin
           </p>
-          <h2 className="mt-4 font-display text-[clamp(2.35rem,4.7vw,4.5rem)] font-normal leading-[0.98] text-soil">
+          <h2 id="contact-pathways-heading" className="mt-4 font-display text-[clamp(2.35rem,4.7vw,4.5rem)] font-normal leading-[0.98] text-soil">
             Start where the conversation feels natural.
           </h2>
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-soil/70 sm:text-base">
@@ -87,46 +120,60 @@ export function ContactPathways() {
             <div
               role="tablist"
               aria-label="Ways to contact Branding Tatva"
-              className="flex gap-2 border-b border-soil/10 p-3 lg:flex-col lg:border-b-0 lg:border-r lg:p-4"
+              className="grid grid-cols-3 gap-2 border-b border-soil/10 p-3 lg:flex lg:flex-col lg:border-b-0 lg:border-r lg:p-4"
             >
-              {pathways.map((pathway) => {
+              {pathways.map((pathway, index) => {
                 const selected = pathway.id === activeId;
                 const Icon = pathway.Icon;
                 return (
                   <button
                     key={pathway.id}
+                    ref={(node) => {
+                      tabRefs.current[index] = node;
+                    }}
                     type="button"
                     role="tab"
                     aria-selected={selected}
+                    tabIndex={selected ? 0 : -1}
                     id={`contact-pathway-tab-${pathway.id}`}
                     aria-controls={panelId}
                     onClick={() => setActiveId(pathway.id)}
                     onFocus={() => setActiveId(pathway.id)}
                     onMouseEnter={() => setActiveId(pathway.id)}
-                    className={`group relative flex min-h-12 flex-1 items-center gap-3 rounded-2xl px-3 py-3 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay lg:flex-none lg:px-4 lg:py-4 ${
-                      selected ? "bg-soil text-ivory" : "text-soil hover:bg-white/55"
+                    onKeyDown={(event) => handleTabKeyDown(index, event)}
+                    className={`group relative flex min-h-[5.5rem] min-w-0 flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl px-2 py-2 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay lg:min-h-0 lg:flex-none lg:flex-row lg:justify-start lg:gap-3 lg:px-4 lg:py-4 lg:text-left ${
+                      selected ? "text-ivory" : "text-soil hover:bg-white/55"
                     }`}
                   >
+                    {selected && (
+                      <motion.span
+                        layoutId="contact-pathway-active"
+                        aria-hidden="true"
+                        className="absolute inset-0 rounded-2xl bg-soil shadow-[0_12px_30px_rgba(34,39,31,0.16)]"
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE_AIR }}
+                      />
+                    )}
                     <span
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 ${
+                      className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 lg:h-9 lg:w-9 ${
                         selected ? "border-ivory/20 bg-ivory/10" : "border-soil/15 bg-white/35"
                       }`}
                     >
                       <Icon aria-hidden="true" className="h-4 w-4" strokeWidth={1.45} />
                     </span>
-                    <span className="hidden min-w-0 lg:block">
-                      <span className={`block text-[0.62rem] uppercase tracking-[0.2em] ${selected ? "text-ivory/55" : "text-soil/45"}`}>
+                    <span className="relative z-10 min-w-0">
+                      <span className={`hidden text-[0.62rem] uppercase tracking-[0.2em] lg:block ${selected ? "text-ivory/55" : "text-soil/45"}`}>
                         {pathway.index}
                       </span>
-                      <span className="mt-1 block text-sm font-medium leading-snug">{pathway.label}</span>
+                      <span className="block text-[0.68rem] font-medium leading-[1.2] sm:text-xs lg:mt-1 lg:text-sm lg:leading-snug">
+                        {pathway.label}
+                      </span>
                     </span>
-                    <span className="sr-only lg:hidden">{pathway.label}</span>
                   </button>
                 );
               })}
             </div>
 
-            <div className="relative min-h-[25rem] p-6 sm:p-9 lg:min-h-[28rem] lg:p-10">
+            <div className="relative min-h-[23rem] p-5 sm:min-h-[25rem] sm:p-9 lg:min-h-[28rem] lg:p-10">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={active.id}
@@ -148,13 +195,13 @@ export function ContactPathways() {
                     </span>
                   </div>
 
-                  <p className="mt-8 max-w-xl font-display text-[clamp(2rem,3.6vw,3.35rem)] font-normal leading-[1.02] text-soil">
+                  <p className="mt-6 max-w-xl font-display text-[clamp(2rem,3.6vw,3.35rem)] font-normal leading-[1.02] text-soil sm:mt-8">
                     {active.title}
                   </p>
                   <p className="mt-5 max-w-lg text-sm leading-relaxed text-soil/68 sm:text-base">
                     {active.description}
                   </p>
-                  <p className="mt-auto pt-8 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-soil/48">
+                  <p className="mt-auto pt-6 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-soil/48 sm:pt-8">
                     {active.detail}
                   </p>
 
