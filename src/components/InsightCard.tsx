@@ -23,6 +23,7 @@ export type InsightCardPost = Pick<
 type InsightCardProps = {
   post: InsightCardPost;
   featured?: boolean;
+  showReadingOutcome?: boolean;
 };
 
 const ELEMENT_COLORS: Record<InsightElement, string> = {
@@ -50,7 +51,11 @@ function formatDate(date: string) {
   }).format(new Date(`${date}T00:00:00Z`));
 }
 
-export function InsightCard({ post, featured = false }: InsightCardProps) {
+export function InsightCard({
+  post,
+  featured = false,
+  showReadingOutcome = false,
+}: InsightCardProps) {
   const color = ELEMENT_COLORS[post.element];
   const topicName = TOPIC_NAMES[post.topicSlug] ?? post.element;
 
@@ -115,7 +120,16 @@ export function InsightCard({ post, featured = false }: InsightCardProps) {
                 : "line-clamp-2 text-sm leading-6"
             }`}
           >
-            {post.excerpt}
+            {showReadingOutcome && post.keyTakeaways[0] ? (
+              <>
+                <span className="mr-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-clay">
+                  Reader outcome
+                </span>
+                {post.keyTakeaways[0]}
+              </>
+            ) : (
+              post.excerpt
+            )}
           </p>
           {featured && (
             <div className="mt-5 grid gap-2 border-t border-border pt-4">

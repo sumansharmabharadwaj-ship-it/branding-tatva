@@ -322,7 +322,7 @@ export function InsightsExplorer({
                       "--folio-delay": `${index * 38}ms`,
                     } as CSSProperties}
                   >
-                    <InsightCard post={post} />
+                    <InsightCard post={post} showReadingOutcome />
                   </div>
                 ))}
               </motion.div>

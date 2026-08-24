@@ -59,8 +59,8 @@ Each scene consumes the shared values in a way tied to its content:
 | Decision mirror | Five familiar tensions tune one live diagnostic frame | Self-recognition narrows a broad archive to one credible first move |
 | Knowledge atlas | Paths advance with scroll and reverse on back-scroll | A vague problem becomes a navigable system |
 | Essay library | The search lens aligns, then a three-card folio turns in place | A question focuses the archive without lengthening the page |
-| Audit seam | A film mask opens while evidence enters a ledger | Surface symptoms resolve into diagnostic layers |
-| Field notes | Copy and form settle into one final frame | Exploration resolves into an ongoing relationship |
+| Audit seam | A film mask opens while the reader marks weak evidence layers | Surface symptoms become a focused working brief |
+| Field notes | Question, lens, and move settle beside the form | Exploration resolves into a specific, low-noise promise |
 
 The opening `PhotoHero` is absent from `INSIGHT_SCENES`. The director therefore
 cannot add a wrapper, dataset, transform, or animation state to the protected
@@ -144,6 +144,34 @@ tokens.forEach((token) => {
 settles. Empty queries retain the editorial ordering, filters remain explicit,
 and the result message explains whether the visitor sees chronology or ranked
 matches.
+
+### Evidence ledger and micro-commitment
+
+The audit scene replaces a decorative five-item list with a reversible working
+ledger. Each layer exposes one signal to investigate and the corresponding
+evidence to collect. Readers may mark any combination of layers; the progress
+rule and summary update without changing the section height or forcing a form.
+
+~~~tsx
+<button
+  type="button"
+  aria-pressed={marked}
+  onClick={() => toggleLayer(layer.slug, index)}
+>
+  <strong>{layer.name}</strong>
+  <small>{marked ? "Marked" : "Open"}</small>
+</button>
+~~~
+
+The interaction creates a small commitment before the audit link while keeping
+the outcome useful on its own. Hover previews the evidence strip, keyboard
+focus exposes the same detail, touch selection remains explicit, and the marked
+state stays mounted when the reader scrolls away and returns.
+
+The final field-notes scene then states the exchange precisely: every message
+contains one question, one practical lens, and one focused move. This closes the
+journey with control and expectation clarity instead of a generic newsletter
+request.
 
 ### Scroll-linked CSS
 

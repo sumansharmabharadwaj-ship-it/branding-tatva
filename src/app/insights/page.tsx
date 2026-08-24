@@ -24,6 +24,10 @@ import {
   InsightsDecisionMirror,
   type ReaderQuest,
 } from "@/sections/Insights/InsightsDecisionMirror";
+import {
+  InsightsEvidenceLedger,
+  type EvidenceLayer,
+} from "@/sections/Insights/InsightsEvidenceLedger";
 import { InsightsKnowledgeAtlas } from "@/sections/Insights/InsightsKnowledgeAtlas";
 import {
   InsightsSceneNavigator,
@@ -109,7 +113,38 @@ const READER_QUEST_BLUEPRINTS = [
   },
 ] as const;
 
-const AUDIT_LAYERS = ["Foundation", "Message", "Identity", "Experience", "Memory"];
+const EVIDENCE_LAYERS: EvidenceLayer[] = [
+  {
+    slug: "foundation",
+    name: "Foundation",
+    signal: "Different buyers place the business in different categories.",
+    evidence: "Buyer language · lost-deal reasons · offer comparisons",
+  },
+  {
+    slug: "message",
+    name: "Message",
+    signal: "Calls explain the value faster than the website.",
+    evidence: "Homepage hierarchy · proposal language · recurring objections",
+  },
+  {
+    slug: "identity",
+    name: "Identity",
+    signal: "Recognition fades when the logo leaves the frame.",
+    evidence: "Distinctive cues · competitor similarity · channel consistency",
+  },
+  {
+    slug: "experience",
+    name: "Experience",
+    signal: "Confidence drops between enquiry and delivery.",
+    evidence: "Response gaps · handoffs · promise-to-experience alignment",
+  },
+  {
+    slug: "memory",
+    name: "Memory",
+    signal: "Publishing grows while spontaneous recall stays faint.",
+    evidence: "Repeated cues · branded search patterns · recall interviews",
+  },
+];
 
 export default function InsightsPage() {
   const sortedPosts = [...insightPosts].sort(
@@ -407,29 +442,18 @@ export default function InsightsPage() {
                   memory in one sequence.
                 </h2>
                 <p className="mt-5 max-w-xl text-base leading-7 text-foreground-secondary">
-                  The checklist helps separate high consequence brand breaks
-                  from surface inconsistencies, then turns the findings into a
-                  clear rebrand brief.
+                  Evidence grows clearer when the weakest layers appear
+                  together. The ledger turns scattered concern into a focused
+                  first pass, then the checklist carries the review forward.
                 </p>
-                <div className="mt-8">
+
+                <InsightsEvidenceLedger layers={EVIDENCE_LAYERS} />
+
+                <div className="insights-audit-scene__cta">
                   <LinkButton href="/insights/brand-audit-checklist-before-rebrand">
                     Read the brand audit checklist
                   </LinkButton>
                 </div>
-
-                <ol className="insights-audit-scene__layers" aria-label="Audit layers">
-                  {AUDIT_LAYERS.map((layer, index) => (
-                    <li
-                      key={layer}
-                      style={{
-                        "--audit-delay": `${index * 34}ms`,
-                      } as CSSProperties}
-                    >
-                      <span>0{index + 1}</span>
-                      <strong>{layer}</strong>
-                    </li>
-                  ))}
-                </ol>
               </div>
             </div>
           </Container>
@@ -452,13 +476,33 @@ export default function InsightsPage() {
                     Notes worth keeping
                   </p>
                   <h2 className="mt-4 max-w-2xl font-display text-display-md font-normal text-ivory">
-                    One clear brand question, delivered when there is something
-                    worth saying.
+                    Keep the next brand decision close. Each note earns its
+                    place.
                   </h2>
                   <p className="mt-5 max-w-xl text-base leading-7 text-ivory/75">
-                    New essays, frameworks, and close readings of the choices
-                    that shape perception and memory.
+                    A single question, one practical lens, and a focused next
+                    move—sent when a new essay can carry real weight.
                   </p>
+                  <ol
+                    className="insights-notes-scene__cadence"
+                    aria-label="What each field note contains"
+                  >
+                    <li>
+                      <span>01</span>
+                      <strong>Question</strong>
+                      <small>A tension worth examining</small>
+                    </li>
+                    <li>
+                      <span>02</span>
+                      <strong>Lens</strong>
+                      <small>Evidence or framework to use</small>
+                    </li>
+                    <li>
+                      <span>03</span>
+                      <strong>Move</strong>
+                      <small>A focused action to test</small>
+                    </li>
+                  </ol>
                 </div>
                 <div className="insights-notes-scene__form lg:min-w-96">
                   <NewsletterForm />
