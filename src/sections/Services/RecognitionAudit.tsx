@@ -223,8 +223,8 @@ export function RecognitionAudit() {
             )}
             {unlocked && (
               <p className="border-t border-ivory/12 pt-4 text-sm text-ivory/75">
-                Fewer than seven holding true usually means recognition is leaking somewhere specific. The health check
-                above narrows down where.
+                Fewer than seven holding true usually means recognition is leaking somewhere specific. The recognition
+                ladder above names the stage; these checks reveal the signals.
               </p>
             )}
           </section>

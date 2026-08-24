@@ -1,258 +1,240 @@
 "use client";
 
-import { useRef, useState } from "react";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValueEvent,
-  useScroll,
-  useTransform,
-} from "framer-motion";
-import { AnimatedStat } from "@/components/AnimatedStat";
+import type { KeyboardEvent, PointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
-import { LazyAmbientShader } from "@/components/LazyAmbientShader";
-import { Reveal } from "@/components/Reveal";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { MobilePerceptionClimb } from "@/sections/Services/MobilePerceptionClimb";
+import { track } from "@/lib/analytics";
+
+const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+const MANUAL_HOLD_MS = 14000;
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 const RUNGS = [
   {
     label: "Unknown",
-    text: "Zero recall, zero association. Where every brand starts.",
-    implication: "The market has zero shortcut to you here. Every sale starts from a cold explanation.",
     signal: "Every encounter begins from zero.",
+    explanation: "The market has no shortcut to the business yet. Each conversation starts with a complete explanation.",
+    decision: "Define the category and the belief the brand will own.",
+    system: "Category and position",
   },
   {
     label: "Recognized",
-    text: "Seen enough times to register. Still replaceable by the next thing seen.",
-    implication: "Familiar enough to be seen, still interchangeable. Price becomes the tiebreaker.",
-    signal: "The name registers, but the meaning still moves.",
+    signal: "The name registers. The meaning still moves.",
+    explanation: "A familiar name enters consideration, while inconsistent cues keep the brand interchangeable.",
+    decision: "Repeat a distinctive verbal and visual code.",
+    system: "Distinctive assets",
   },
   {
     label: "Remembered",
-    text: "Recalled without being shown again. Mental availability doing its actual job.",
-    implication: "The brand comes to mind unprompted. Distinctive assets sell before you arrive.",
     signal: "The pattern returns before the advertisement does.",
+    explanation: "Repeated meaning creates a mental shortcut. The brand begins to surface before a buyer starts searching.",
+    decision: "Carry the same meaning through every encounter.",
+    system: "Mental availability",
   },
   {
     label: "Preferred",
-    text: "The default choice, decided before any comparison even starts.",
-    implication: "Comparison ends before it begins. This is where positioning pays for itself.",
-    signal: "The choice begins to feel already made.",
+    signal: "The choice begins before comparison.",
+    explanation: "A clear position gives the brand an advantage before features and price enter the conversation.",
+    decision: "Protect the position while the business expands.",
+    system: "Brand preference",
   },
 ] as const;
 
-const MANUAL_HOLD_MS = 12000;
+type ServicesProgressDetail = {
+  id?: string;
+  progress?: number;
+};
 
 export function PerceptionLadder() {
-  const trackRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const manualUntilRef = useRef(0);
-  const [openRung, setOpenRung] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = useHydratedReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: trackRef,
-    offset: ["start 0.76", "end 0.38"],
-  });
-  const fillScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
   const activeRung = RUNGS[activeIndex] ?? RUNGS[0];
 
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    if (prefersReducedMotion || Date.now() < manualUntilRef.current) return;
-    const nextIndex = Math.min(
-      RUNGS.length - 1,
-      Math.max(0, Math.floor(progress * RUNGS.length)),
-    );
-    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-  });
+  useEffect(() => {
+    if (prefersReducedMotion) return;
 
-  function chooseRung(index: number, label: string) {
+    function onSceneProgress(event: Event) {
+      const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
+      if (detail?.id !== "education" || typeof detail.progress !== "number") return;
+      if (Date.now() < manualUntilRef.current) return;
+
+      const index = Math.min(
+        RUNGS.length - 1,
+        Math.max(0, Math.floor(detail.progress * RUNGS.length)),
+      );
+      setActiveIndex((current) => (current === index ? current : index));
+    }
+
+    window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    return () => window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+  }, [prefersReducedMotion]);
+
+  function activate(index: number, source: "hover" | "focus" | "click" | "keyboard") {
     manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
     setActiveIndex(index);
-    setOpenRung((current) => (current === label ? null : label));
+    if (source === "click" || source === "keyboard") {
+      track("capability_selected", {
+        page: "services",
+        capability: `Recognition ladder: ${RUNGS[index]?.label ?? "stage"}`,
+        source: `perception_${source}`,
+      });
+    }
+  }
+
+  function handlePointerEnter(index: number, event: PointerEvent<HTMLButtonElement>) {
+    if (event.pointerType === "mouse" || event.pointerType === "pen") activate(index, "hover");
+  }
+
+  function handleKeyDown(index: number, event: KeyboardEvent<HTMLButtonElement>) {
+    let nextIndex: number | undefined;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % RUNGS.length;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + RUNGS.length) % RUNGS.length;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = RUNGS.length - 1;
+    if (nextIndex === undefined) return;
+    event.preventDefault();
+    activate(nextIndex, "keyboard");
+    tabRefs.current[nextIndex]?.focus();
   }
 
   return (
-    <div className="relative py-20 sm:py-28">
-      <LazyAmbientShader opacity={0.16} />
-      <Container className="relative max-w-5xl">
-        <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Education</p>
-          <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
-            Your brand is already on this ladder.
+    <Container className="relative max-w-7xl">
+      <div
+        data-perception-system="true"
+        data-perception-stage={activeIndex + 1}
+        className="grid gap-8 lg:grid-cols-[minmax(15rem,0.62fr)_minmax(16rem,0.72fr)_minmax(21rem,1.05fr)] lg:items-center lg:gap-10 xl:gap-16"
+      >
+        <div>
+          <p className="text-sm font-medium uppercase tracking-wide text-[#C6CCB8]">Perception</p>
+          <h2 className="mt-2 max-w-lg text-display-sm font-display font-normal text-ivory">
+            Recognition is built in four public stages.
           </h2>
-          <p className="mt-4 max-w-xl text-ivory/90">
-            Buyers place it there with or without your involvement. Climbing deliberately is the whole discipline of
-            branding.
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-ivory/78 sm:text-base">
+            Attention begins as exposure. Repeated codes turn exposure into recall. A position carried consistently
+            turns recall into preference.
           </p>
-        </Reveal>
 
-        <MobilePerceptionClimb rungs={RUNGS} />
-
-        <div
-          data-perception-desktop-ladder="true"
-          className="mt-12 hidden gap-12 lg:grid lg:grid-cols-[1fr_minmax(0,21rem)] lg:gap-16"
-        >
-          <div
-            ref={trackRef}
-            data-perception-desktop-track="true"
-            className="relative space-y-8 pl-8"
-          >
-            <div className="absolute inset-y-0 left-0 w-[2px] bg-ivory/15" aria-hidden="true" />
-            {!prefersReducedMotion && (
-              <motion.div
-                className="absolute left-0 top-0 w-[2px] origin-top bg-[#A0A690]"
-                style={{ height: "100%", scaleY: fillScale }}
-                aria-hidden="true"
+          <div className="mt-7 flex items-center gap-3" aria-hidden="true">
+            <span className="font-display text-lg text-[#C6CCB8]">{String(activeIndex + 1).padStart(2, "0")}</span>
+            <span className="relative h-px flex-1 overflow-hidden bg-ivory/14">
+              <motion.span
+                className="absolute inset-y-0 left-0 bg-[#A0A690]"
+                animate={{ width: `${((activeIndex + 1) / RUNGS.length) * 100}%` }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
               />
-            )}
-
-            {RUNGS.map((rung, index) => {
-              const isOpen = openRung === rung.label;
-              const isActive = activeIndex === index;
-              return (
-                <Reveal key={rung.label} delay={index * 0.08}>
-                  <div
-                    data-perception-active={isActive ? "true" : "false"}
-                    className={`group relative rounded-2xl border px-5 py-4 transition-[transform,border-color,background-color,box-shadow,opacity] duration-400 ${
-                      isActive
-                        ? "translate-x-2 border-[#A0A690]/50 bg-ivory/[0.055] opacity-100 shadow-[0_18px_55px_rgba(0,0,0,0.15)]"
-                        : "border-transparent opacity-60 hover:translate-x-1 hover:opacity-100"
-                    }`}
-                  >
-                    <motion.span
-                      className="absolute -left-[38px] top-6 h-3 w-3 rounded-full border-2 bg-soil"
-                      aria-hidden="true"
-                      animate={
-                        prefersReducedMotion
-                          ? { borderColor: "#A0A690", scale: 1 }
-                          : isActive
-                            ? {
-                                borderColor: "#A0A690",
-                                scale: [1, 1.42, 1],
-                                boxShadow: [
-                                  "0 0 0 rgba(160,166,144,0)",
-                                  "0 0 16px rgba(160,166,144,0.7)",
-                                  "0 0 0 rgba(160,166,144,0)",
-                                ],
-                              }
-                            : { borderColor: "rgba(244,239,230,0.25)", scale: 1 }
-                      }
-                      transition={{
-                        duration: isActive ? 2.4 : 0.35,
-                        repeat: isActive && !prefersReducedMotion ? Infinity : 0,
-                        ease: "easeInOut",
-                      }}
-                    />
-                    <button
-                      type="button"
-                      data-perception-desktop-rung="true"
-                      aria-expanded={isOpen}
-                      aria-current={isActive ? "step" : undefined}
-                      onClick={() => chooseRung(index, rung.label)}
-                      className="w-full text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A0A690]"
-                    >
-                      <p className="flex items-baseline justify-between gap-3 font-display text-2xl font-normal text-ivory">
-                        <span>{rung.label}</span>
-                        <span
-                          aria-hidden="true"
-                          className={`text-base font-light transition-transform duration-300 ${
-                            isOpen ? "rotate-45 text-[#A0A690]" : isActive ? "text-[#A0A690]" : "text-ivory/40"
-                          }`}
-                        >
-                          +
-                        </span>
-                      </p>
-                      <p className="mt-1 text-base text-ivory/90 transition-colors duration-300 group-hover:text-ivory/95">
-                        {rung.text}
-                      </p>
-                      {isActive && !isOpen && (
-                        <p className="mt-3 text-[0.62rem] font-medium uppercase tracking-[0.15em] text-[#A0A690]">
-                          {rung.signal}
-                        </p>
-                      )}
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {isOpen && (
-                        <motion.div
-                          initial={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
-                          transition={{
-                            duration: prefersReducedMotion ? 0 : 0.42,
-                            ease: [0.22, 1, 0.36, 1],
-                          }}
-                          className="overflow-hidden"
-                        >
-                          <p className="mt-3 max-w-md border-l-2 border-[#A0A690]/50 pl-4 text-sm leading-relaxed text-ivory/80">
-                            {rung.implication}
-                          </p>
-                          <a
-                            href="#health"
-                            className="link-underline mt-2 inline-block pl-4 text-sm text-[#A0A690] transition-colors duration-300 hover:text-ivory"
-                          >
-                            Find your own rung in the health check
-                          </a>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </Reveal>
-              );
-            })}
+            </span>
+            <span className="text-[0.58rem] uppercase tracking-[0.16em] text-ivory/45">/ 04</span>
           </div>
 
-          <Reveal delay={0.12} className="sticky top-28 self-start">
-            <div
-              data-perception-desktop-proof="true"
-              className="overflow-hidden rounded-2xl border border-ivory/15 p-8 backdrop-blur-md"
-              style={{ backgroundColor: "rgba(26,32,38,0.62)" }}
-            >
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">Current market state</p>
-                <span className="text-[0.6rem] font-medium uppercase tracking-[0.16em] text-[#A0A690]">
-                  {String(activeIndex + 1).padStart(2, "0")} / 04
-                </span>
-              </div>
-
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={activeRung.label}
-                  data-perception-proof-state={activeRung.label}
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 10, filter: "blur(5px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.44, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <p className="mt-4 font-display text-4xl font-normal text-ivory">{activeRung.label}</p>
-                  <p className="mt-3 text-sm leading-relaxed text-ivory/78">{activeRung.implication}</p>
-                  <p className="mt-4 border-l-2 border-[#A0A690]/55 pl-3 text-sm italic text-[#C6CCB8]">
-                    {activeRung.signal}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-
-              <div className="my-7 h-px bg-ivory/15" aria-hidden="true" />
-              <p className="text-xs font-medium uppercase tracking-wide text-ivory/55">One recorded climb</p>
-              <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-end gap-3">
-                <div>
-                  <p className="font-display text-4xl font-normal text-ivory">
-                    <AnimatedStat value="0.71%" />
-                  </p>
-                  <p className="mt-1 text-xs text-ivory/55">Starting engagement</p>
-                </div>
-                <span aria-hidden="true" className="pb-4 text-[#A0A690]">→</span>
-                <div className="text-right">
-                  <p className="font-display text-4xl font-normal text-[#A0A690]">
-                    <AnimatedStat value="2.81%" />
-                  </p>
-                  <p className="mt-1 text-xs text-ivory/55">After eight weeks</p>
-                </div>
-              </div>
-            </div>
-          </Reveal>
+          <a
+            href="#audit"
+            className="link-underline mt-7 inline-flex min-h-11 items-center gap-2 text-sm text-[#C6CCB8] transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A0A690]"
+          >
+            Test the signals in your own brand
+            <span aria-hidden="true">↓</span>
+          </a>
         </div>
-      </Container>
-    </div>
+
+        <div
+          role="tablist"
+          aria-label="Four stages of brand recognition"
+          className="grid grid-cols-2 gap-1 rounded-3xl border border-ivory/12 bg-[rgba(14,20,18,0.42)] p-2 backdrop-blur-xl lg:block"
+        >
+          {RUNGS.map((rung, index) => {
+            const active = index === activeIndex;
+            const complete = index < activeIndex;
+            return (
+              <button
+                key={rung.label}
+                ref={(node) => {
+                  tabRefs.current[index] = node;
+                }}
+                id={`perception-stage-tab-${index}`}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                aria-controls="perception-stage-panel"
+                tabIndex={active ? 0 : -1}
+                onPointerEnter={(event) => handlePointerEnter(index, event)}
+                onFocus={() => activate(index, "focus")}
+                onClick={() => activate(index, "click")}
+                onKeyDown={(event) => handleKeyDown(index, event)}
+                className={`group relative grid min-h-14 w-full grid-cols-[2rem_1fr_auto] items-center gap-2 overflow-hidden rounded-2xl px-2.5 py-2.5 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A0A690] sm:px-4 lg:min-h-16 lg:grid-cols-[2.5rem_1fr_auto] lg:gap-3 lg:py-3 ${
+                  active ? "text-ivory" : "text-ivory/55 hover:bg-ivory/[0.04] hover:text-ivory/85"
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="active-perception-stage"
+                    aria-hidden="true"
+                    className="absolute inset-0 rounded-2xl border border-[#A0A690]/45 bg-ivory/[0.075] shadow-[0_14px_42px_rgba(0,0,0,0.18)]"
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+                  />
+                )}
+                <span className={`relative font-display text-sm ${active || complete ? "text-[#C6CCB8]" : "text-ivory/35"}`}>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="relative font-display text-base font-normal sm:text-lg lg:text-xl">{rung.label}</span>
+                <span
+                  aria-hidden="true"
+                  className={`relative h-2.5 w-2.5 rounded-full border transition-colors duration-300 ${
+                    active ? "border-[#C6CCB8] bg-[#C6CCB8] shadow-[0_0_14px_rgba(198,204,184,0.5)]" : complete ? "border-[#A0A690] bg-[#A0A690]/60" : "border-ivory/25"
+                  }`}
+                />
+              </button>
+            );
+          })}
+        </div>
+
+        <div
+          id="perception-stage-panel"
+          role="tabpanel"
+          aria-labelledby={`perception-stage-tab-${activeIndex}`}
+          className="relative min-h-[24rem] overflow-hidden rounded-[1.75rem] border border-ivory/15 bg-[rgba(12,18,17,0.62)] p-6 shadow-[0_30px_90px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:p-8"
+        >
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/55">Market state</p>
+            <span className="font-display text-5xl leading-none text-ivory/[0.08]" aria-hidden="true">
+              {String(activeIndex + 1).padStart(2, "0")}
+            </span>
+          </div>
+
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={activeRung.label}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(7px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10, filter: "blur(5px)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
+            >
+              <h3 className="mt-5 font-display text-[clamp(2.8rem,5vw,4.8rem)] font-normal leading-none text-ivory">
+                {activeRung.label}
+              </h3>
+              <p className="mt-4 max-w-lg font-display text-xl font-normal leading-snug text-[#C6CCB8] sm:text-2xl">
+                {activeRung.signal}
+              </p>
+              <p className="mt-5 max-w-lg text-sm leading-relaxed text-ivory/82 sm:text-base">
+                {activeRung.explanation}
+              </p>
+
+              <div className="mt-7 grid gap-5 border-t border-ivory/12 pt-5 sm:grid-cols-2">
+                <div>
+                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/45">System decision</p>
+                  <p className="mt-2 text-sm leading-relaxed text-ivory/90">{activeRung.decision}</p>
+                </div>
+                <div className="sm:border-l sm:border-ivory/12 sm:pl-5">
+                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/45">What begins to compound</p>
+                  <p className="mt-2 font-display text-xl font-normal text-ivory">{activeRung.system}</p>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    </Container>
   );
 }

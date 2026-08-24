@@ -89,7 +89,7 @@ export function BackgroundVideo({
   }
 
   return (
-    <div ref={wrapRef} className="absolute inset-0 overflow-hidden">
+    <div ref={wrapRef} data-background-video-stage="true" className="absolute inset-0 overflow-hidden">
       <motion.div className="absolute inset-0" style={parallax ? { y, scale: 1.13 } : undefined}>
         <video
           ref={videoRef}

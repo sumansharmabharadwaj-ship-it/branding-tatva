@@ -25,6 +25,7 @@ import { HeroReveal } from "@/sections/Services/HeroReveal";
 import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
+import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { Magnetic } from "@/components/Magnetic";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { MOOD } from "@/lib/sectionWash";
@@ -345,7 +346,7 @@ export default async function ServicesPage() {
                 "linear-gradient(100deg, rgba(16,19,20,0.82) 0%, rgba(16,19,20,0.56) 46%, rgba(16,19,20,0.28) 100%)",
             }}
           />
-          <div className="relative">
+          <div data-services-content-plane="true" className="relative">
             <SituationPath />
           </div>
           <SceneHandoff color="#171A17" />
@@ -379,7 +380,7 @@ export default async function ServicesPage() {
                 "linear-gradient(100deg, rgba(16,20,19,0.84) 0%, rgba(16,20,19,0.64) 46%, rgba(16,20,19,0.44) 100%)",
             }}
           />
-          <div className="relative w-full">
+          <div data-services-content-plane="true" className="relative w-full">
             <ServiceDisciplineExplorer />
           </div>
           <SceneHandoff color="#0E1714" />
@@ -412,7 +413,7 @@ export default async function ServicesPage() {
           {/* Scene dissolve: the situation chapter's charcoal into
               Desire's deep water. */}
           <SceneVeil color="#171A17" />
-          <div className="relative">
+          <div data-services-content-plane="true" className="relative">
             <PackageSelector />
           </div>
           <SceneHandoff color="#171A17" />
@@ -438,7 +439,7 @@ export default async function ServicesPage() {
             }}
           />
           <SceneVeil color="#0E1714" />
-          <div className="relative">
+          <div data-services-content-plane="true" className="relative">
             <VerifiedOutcome />
           </div>
         </section>
@@ -452,14 +453,42 @@ export default async function ServicesPage() {
           <SceneHandoff color="#191B16" />
         </section>
 
-        {/* The August 8 layout continues directly into the audit. Retired
-            teaching chapters were removed instead of being left dormant in
-            the route bundle, so this page keeps its motion without carrying
-            hidden WebGL and pinned-scroll code. */}
+        {/* Perception gives the system build a market consequence. The
+            dedicated ascent film and one stable interactive frame replace
+            the former shader heavy ladder: native page progress previews the
+            four states, while hover, touch, and keyboard input can hold any
+            state for closer reading. */}
+        <section
+          id="education"
+          data-services-scene="education"
+          className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24"
+          style={{ backgroundColor: "#18221F" }}
+        >
+          <BackgroundVideo
+            parallax
+            video="/videos/generated/bt-services-perception-ascent.mp4"
+            videoMobile="/videos/generated/bt-services-perception-ascent-mobile.mp4"
+            poster="/images/generated/bt-services-perception-ascent-poster.jpg"
+            playbackRate={1.08}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(102deg, rgba(13,19,17,0.9) 0%, rgba(16,24,21,0.68) 48%, rgba(16,24,21,0.54) 100%)",
+            }}
+          />
+          <SceneVeil color="#191B16" />
+          <div data-services-content-plane="true" className="relative">
+            <PerceptionLadder />
+          </div>
+          <SceneHandoff color="#141A15" />
+        </section>
 
         {/* The Brand Recognition Audit — the site's one secondary lead
-            asset, placed right after the health check so a visitor who
-            just diagnosed themselves can take the deeper checklist
+            asset, placed right after the recognition ladder so a visitor who
+            has located the brand's stage can inspect the deeper signals
             away. Five checks open to anyone, the full ten behind an
             explicit consent form feeding the existing Mailchimp double
             opt in. Charcoal ground between the forest and the warm
@@ -480,7 +509,7 @@ export default async function ServicesPage() {
             }}
           />
           <SceneVeil color="#141A15" />
-          <div className="relative">
+          <div data-services-content-plane="true" className="relative">
             <RecognitionAudit />
           </div>
           <SceneHandoff color="#27221E" />

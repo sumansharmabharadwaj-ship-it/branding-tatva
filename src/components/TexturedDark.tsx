@@ -68,7 +68,7 @@ export function TexturedDark({
 
   return (
     <section ref={sectionRef} id={id} className={`relative overflow-hidden bg-soil ${className ?? ""}`}>
-      <div ref={ref} className="absolute inset-0">
+      <div ref={ref} data-textured-media-stage="true" className="absolute inset-0">
         {/* TexturedDark is used for secondary/far-down sections rather than
             LCP heroes. Keep the still available as the visual fallback, but
             let the browser load it when the section approaches instead of
@@ -109,7 +109,7 @@ export function TexturedDark({
           className="cursor-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500"
         />
       )}
-      <div className="relative">
+      <div data-textured-content-plane="true" className="relative">
         {/* The film grade stays light enough to remain visible. This local
             radial scrim protects only the content block, preserving the
             surrounding motion instead of darkening the whole frame. */}

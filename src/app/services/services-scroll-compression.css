@@ -176,6 +176,65 @@ html[data-services-experience="active"] {
   isolation: isolate;
 }
 
+/* One camera grammar joins the chapters after the protected opening scene.
+   Runtime measurements publish a centred axis, presence, scroll velocity,
+   direction, and restrained pointer drift. Each chapter receives its own
+   movement vector, while the response mechanism stays consistent across the
+   page. Backgrounds travel slightly farther than the reading plane, creating
+   depth without intercepting native scrolling or introducing another pin. */
+[data-services-scroll-scene] > [data-background-video-stage="true"],
+[data-services-scroll-scene] > [data-textured-media-stage="true"] {
+  transform:
+    translate3d(
+      var(--services-camera-x, 0px),
+      var(--services-camera-y, 0px),
+      0
+    )
+    scale(var(--services-camera-scale, 1.02));
+  transform-origin: 50% 50%;
+  transition: transform 110ms linear;
+}
+
+[data-services-scroll-scene] > [data-services-content-plane="true"],
+[data-services-scroll-scene] > [data-textured-content-plane="true"] {
+  transform:
+    perspective(1400px)
+    translate3d(
+      var(--services-content-x, 0px),
+      var(--services-content-y, 0px),
+      0
+    )
+    rotateZ(var(--services-content-rotate, 0deg))
+    scale(var(--services-content-scale, 1));
+  transform-origin: 50% 50%;
+  transition: transform 100ms linear;
+}
+
+[data-services-scroll-scene="situation"] > [data-services-content-plane="true"],
+[data-services-scroll-scene="verified-outcome"] > [data-services-content-plane="true"] {
+  transform-origin: 35% 50%;
+}
+
+[data-services-scroll-scene="offerings"] > [data-services-content-plane="true"],
+[data-services-scroll-scene="education"] > [data-services-content-plane="true"] {
+  transform-origin: 64% 50%;
+}
+
+[data-services-scroll-scene][data-services-active="true"] > [data-background-video-stage="true"],
+[data-services-scroll-scene][data-services-active="true"] > [data-textured-media-stage="true"],
+[data-services-scroll-scene][data-services-active="true"] > [data-services-content-plane="true"],
+[data-services-scroll-scene][data-services-active="true"] > [data-textured-content-plane="true"] {
+  will-change: transform;
+}
+
+/* The audit is a reading and form surface. Once a field owns focus, its
+   content plane settles completely while the media director also quiets the
+   film and the route guide. */
+html[data-services-form-interaction="true"] [data-services-scroll-scene="audit"] > [data-services-content-plane="true"],
+html[data-services-form-interaction="true"] [data-services-scroll-scene="book"] > [data-textured-content-plane="true"] {
+  transform: none;
+}
+
 [data-services-scroll-scene] > [data-services-scene-signal="true"] {
   position: absolute;
   z-index: 20;
@@ -253,6 +312,13 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
 }
 
 @media (max-width: 767px) {
+  [data-services-scroll-scene] > [data-background-video-stage="true"],
+  [data-services-scroll-scene] > [data-textured-media-stage="true"],
+  [data-services-scroll-scene] > [data-services-content-plane="true"],
+  [data-services-scroll-scene] > [data-textured-content-plane="true"] {
+    transition-duration: 150ms;
+  }
+
   [data-services-hero-aperture="true"] {
     bottom: -10rem;
     width: 22rem;
@@ -365,6 +431,15 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  [data-services-scroll-scene] > [data-background-video-stage="true"],
+  [data-services-scroll-scene] > [data-textured-media-stage="true"],
+  [data-services-scroll-scene] > [data-services-content-plane="true"],
+  [data-services-scroll-scene] > [data-textured-content-plane="true"] {
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+
   [data-services-hero-media="true"],
   [data-services-hero-heading="true"],
   [data-services-hero-index="true"] {

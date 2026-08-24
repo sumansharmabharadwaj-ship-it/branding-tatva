@@ -7,6 +7,19 @@ const SCENE_SELECTOR = "[data-services-scene], #authority, #book";
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
 
+const SCENE_MOTION: Record<
+  string,
+  { contentX: number; contentY: number; rotate: number; scale: number; cameraX: number; cameraY: number }
+> = {
+  situation: { contentX: 22, contentY: 0, rotate: 0.45, scale: 0.008, cameraX: -12, cameraY: 18 },
+  offerings: { contentX: -18, contentY: 8, rotate: -0.35, scale: 0.012, cameraX: 14, cameraY: 14 },
+  desire: { contentX: 0, contentY: 16, rotate: 0, scale: 0.018, cameraX: 0, cameraY: -18 },
+  "verified-outcome": { contentX: 16, contentY: -7, rotate: 0.28, scale: 0.01, cameraX: -10, cameraY: 16 },
+  education: { contentX: -14, contentY: 6, rotate: -0.28, scale: 0.014, cameraX: 12, cameraY: -16 },
+  audit: { contentX: 12, contentY: 10, rotate: 0.2, scale: 0.01, cameraX: -8, cameraY: 14 },
+  book: { contentX: 0, contentY: 13, rotate: 0, scale: 0.016, cameraX: 0, cameraY: -12 },
+};
+
 const CHAPTER_META: Record<string, { id: string; label: string }> = {
   opening: { id: "services-opening", label: "Opening signal" },
   situation: { id: "situation", label: "Your situation" },
@@ -48,8 +61,9 @@ export function ServicesExperienceRuntime() {
   useEffect(() => {
     const main = document.getElementById("main-content");
     if (!main) return;
+    const servicesRoot = main;
 
-    const scenes = orderedScenes(main);
+    const scenes = orderedScenes(servicesRoot);
     const firstScene = scenes[0];
     if (!firstScene) return;
     const hero = firstScene;
@@ -68,6 +82,15 @@ export function ServicesExperienceRuntime() {
     let activeIndex = 0;
     let frame = 0;
     let hashRestoreFrame = 0;
+    let pointerFrame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let lastScrollY = window.scrollY;
+    let lastFrameTime = performance.now();
+    let smoothedVelocity = 0;
+    let scrollDirection: "up" | "down" = "down";
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
     hero.dataset.servicesHeroScene = "true";
     heroMedia.forEach((media) => {
@@ -102,6 +125,15 @@ export function ServicesExperienceRuntime() {
         generatedIds.add(scene);
       }
       scene.style.setProperty("--services-scene-progress", index === 0 ? "0" : "-1");
+      scene.style.setProperty("--services-scene-presence", index === 0 ? "1" : "0");
+      scene.style.setProperty("--services-scene-axis", "0");
+      scene.style.setProperty("--services-content-x", "0px");
+      scene.style.setProperty("--services-content-y", "0px");
+      scene.style.setProperty("--services-content-rotate", "0deg");
+      scene.style.setProperty("--services-content-scale", "1");
+      scene.style.setProperty("--services-camera-x", "0px");
+      scene.style.setProperty("--services-camera-y", "0px");
+      scene.style.setProperty("--services-camera-scale", "1.02");
 
       const signal = document.createElement("span");
       signal.dataset.servicesSceneSignal = "true";
@@ -231,6 +263,20 @@ export function ServicesExperienceRuntime() {
     function updateSceneProgress() {
       frame = 0;
       const viewportHeight = Math.max(1, window.innerHeight);
+      const now = performance.now();
+      const elapsed = Math.max(16, now - lastFrameTime);
+      const scrollDelta = window.scrollY - lastScrollY;
+      const rawVelocity = clamp(Math.abs(scrollDelta) / elapsed / 1.45);
+      smoothedVelocity += (rawVelocity - smoothedVelocity) * 0.24;
+      if (Math.abs(scrollDelta) > 0.4) scrollDirection = scrollDelta > 0 ? "down" : "up";
+      lastScrollY = window.scrollY;
+      lastFrameTime = now;
+
+      document.documentElement.dataset.servicesScrollDirection = scrollDirection;
+      document.documentElement.style.setProperty(
+        "--services-scroll-velocity",
+        smoothedVelocity.toFixed(4),
+      );
       updateHeroProgress(viewportHeight);
 
       scenes.forEach((scene) => {
@@ -239,9 +285,35 @@ export function ServicesExperienceRuntime() {
 
         const progress = clamp((viewportHeight - bounds.top) / (viewportHeight + bounds.height));
         const centred = clamp(1 - Math.abs(progress - 0.5) * 2);
+        const axis = clamp((progress - 0.5) * 2, -1, 1);
+        const key = scene.dataset.servicesScrollScene || "";
+        const motion = SCENE_MOTION[key];
         scene.style.setProperty("--services-scene-progress", progress.toFixed(4));
         scene.style.setProperty("--services-scene-presence", centred.toFixed(4));
+        scene.style.setProperty("--services-scene-axis", axis.toFixed(4));
         scene.style.setProperty("--services-scene-signal-x", `${(progress * 100).toFixed(3)}%`);
+
+        if (motion && !reducedMotion) {
+          scene.style.setProperty("--services-content-x", `${(axis * motion.contentX).toFixed(2)}px`);
+          scene.style.setProperty("--services-content-y", `${(axis * motion.contentY).toFixed(2)}px`);
+          scene.style.setProperty("--services-content-rotate", `${(axis * motion.rotate).toFixed(3)}deg`);
+          scene.style.setProperty(
+            "--services-content-scale",
+            (1 - (1 - centred) * motion.scale).toFixed(4),
+          );
+          scene.style.setProperty(
+            "--services-camera-x",
+            `${(axis * motion.cameraX + pointerX * 4).toFixed(2)}px`,
+          );
+          scene.style.setProperty(
+            "--services-camera-y",
+            `${(axis * motion.cameraY + pointerY * 3).toFixed(2)}px`,
+          );
+          scene.style.setProperty(
+            "--services-camera-scale",
+            (1.018 + (1 - centred) * 0.018 + smoothedVelocity * 0.012).toFixed(4),
+          );
+        }
 
         const phase =
           bounds.top > viewportHeight * 0.35
@@ -266,6 +338,10 @@ export function ServicesExperienceRuntime() {
           );
         }
       });
+
+      if (Math.abs(scrollDelta) < 0.4 && smoothedVelocity > 0.006) {
+        frame = window.requestAnimationFrame(updateSceneProgress);
+      }
     }
 
     function scheduleProgress() {
@@ -273,25 +349,55 @@ export function ServicesExperienceRuntime() {
       frame = window.requestAnimationFrame(updateSceneProgress);
     }
 
+    function publishPointer() {
+      pointerFrame = 0;
+      servicesRoot.style.setProperty("--services-pointer-x", pointerX.toFixed(4));
+      servicesRoot.style.setProperty("--services-pointer-y", pointerY.toFixed(4));
+      scheduleProgress();
+    }
+
+    function onPointerMove(event: PointerEvent) {
+      if (!finePointer || reducedMotion) return;
+      pointerX = clamp(event.clientX / Math.max(1, window.innerWidth) - 0.5, -0.5, 0.5) * 2;
+      pointerY = clamp(event.clientY / Math.max(1, window.innerHeight) - 0.5, -0.5, 0.5) * 2;
+      if (!pointerFrame) pointerFrame = window.requestAnimationFrame(publishPointer);
+    }
+
+    function onPointerLeave() {
+      if (!finePointer || reducedMotion) return;
+      pointerX = 0;
+      pointerY = 0;
+      if (!pointerFrame) pointerFrame = window.requestAnimationFrame(publishPointer);
+    }
+
     publishChapter(0);
     updateSceneProgress();
     window.addEventListener("scroll", scheduleProgress, { passive: true });
     window.addEventListener("resize", scheduleProgress, { passive: true });
     window.addEventListener("pageshow", scheduleProgress);
+    servicesRoot.addEventListener("pointermove", onPointerMove, { passive: true });
+    servicesRoot.addEventListener("pointerleave", onPointerLeave);
 
     return () => {
       window.cancelAnimationFrame(frame);
       window.cancelAnimationFrame(hashRestoreFrame);
+      window.cancelAnimationFrame(pointerFrame);
       observer.disconnect();
       window.removeEventListener("scroll", scheduleProgress);
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);
+      servicesRoot.removeEventListener("pointermove", onPointerMove);
+      servicesRoot.removeEventListener("pointerleave", onPointerLeave);
       delete document.documentElement.dataset.servicesExperience;
+      delete document.documentElement.dataset.servicesScrollDirection;
       delete document.documentElement.dataset.servicesActiveChapter;
       delete document.documentElement.dataset.servicesActiveChapterId;
       delete document.documentElement.dataset.servicesChapterCount;
       document.documentElement.style.removeProperty("--services-chapter-progress");
       document.documentElement.style.removeProperty("--services-chapter-angle");
+      document.documentElement.style.removeProperty("--services-scroll-velocity");
+      servicesRoot.style.removeProperty("--services-pointer-x");
+      servicesRoot.style.removeProperty("--services-pointer-y");
 
       heroAperture.remove();
       heroFragments.remove();
@@ -323,7 +429,15 @@ export function ServicesExperienceRuntime() {
         if (generatedIds.has(scene)) scene.removeAttribute("id");
         scene.style.removeProperty("--services-scene-progress");
         scene.style.removeProperty("--services-scene-presence");
+        scene.style.removeProperty("--services-scene-axis");
         scene.style.removeProperty("--services-scene-signal-x");
+        scene.style.removeProperty("--services-content-x");
+        scene.style.removeProperty("--services-content-y");
+        scene.style.removeProperty("--services-content-rotate");
+        scene.style.removeProperty("--services-content-scale");
+        scene.style.removeProperty("--services-camera-x");
+        scene.style.removeProperty("--services-camera-y");
+        scene.style.removeProperty("--services-camera-scale");
       });
       signalLayers.clear();
       generatedIds.clear();
