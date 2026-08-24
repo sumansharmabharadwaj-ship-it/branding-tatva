@@ -5,7 +5,7 @@ import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { useRef } from "react";
+import { useRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -208,6 +208,7 @@ export function V4OpeningScene() {
 
 export function V4RecognitionScene() {
   const sectionRef = useRef<HTMLElement>(null);
+  const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.18, margin: "8% 0px -10% 0px" });
   const visualizer = useScrollDrivenVisualizer({
@@ -218,6 +219,30 @@ export function V4RecognitionScene() {
   });
   const { activeIndex } = visualizer;
   const active = RECOGNITION_STATES[activeIndex];
+
+  function moveFromKeyboard(
+    event: ReactKeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) {
+    const direction =
+      event.key === "ArrowRight" || event.key === "ArrowDown"
+        ? 1
+        : event.key === "ArrowLeft" || event.key === "ArrowUp"
+          ? -1
+          : 0;
+    if (!direction && event.key !== "Home" && event.key !== "End") return;
+
+    event.preventDefault();
+    const nextIndex =
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? RECOGNITION_STATES.length - 1
+          : (index + direction + RECOGNITION_STATES.length) %
+            RECOGNITION_STATES.length;
+    visualizer.choose(nextIndex);
+    choiceRefs.current[nextIndex]?.focus();
+  }
 
   return (
     <section
@@ -301,7 +326,13 @@ export function V4RecognitionScene() {
           </div>
 
           <div className="home-v4-recognition__diagram" aria-label="Three brand conditions converging on one strategic decision">
-            <div className="home-v4-recognition__signal" aria-live="polite">
+            <div
+              id="home-v4-recognition-active-panel"
+              role="tabpanel"
+              aria-labelledby={`home-v4-recognition-tab-${activeIndex}`}
+              className="home-v4-recognition__signal"
+              aria-live="polite"
+            >
               <span>{active.number} · {active.label}</span>
               <strong>{active.path}</strong>
               <p>{active.proof}</p>
@@ -311,16 +342,22 @@ export function V4RecognitionScene() {
               {RECOGNITION_STATES.map((state, index) => (
                 <button
                   key={state.number}
+                  ref={(node) => {
+                    choiceRefs.current[index] = node;
+                  }}
                   type="button"
                   role="tab"
+                  id={`home-v4-recognition-tab-${index}`}
                   aria-selected={index === activeIndex}
+                  aria-controls="home-v4-recognition-active-panel"
+                  tabIndex={index === activeIndex ? 0 : -1}
                   onClick={() => visualizer.choose(index)}
                   onPointerEnter={() => visualizer.preview(index)}
                   onPointerLeave={(event) => {
                     if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
                   }}
-                  onFocus={() => visualizer.preview(index)}
-                  onBlur={visualizer.releasePreview}
+                  onFocus={() => visualizer.choose(index)}
+                  onKeyDown={(event) => moveFromKeyboard(event, index)}
                   className={index === activeIndex ? "is-active" : undefined}
                   data-cursor-label={state.number}
                 >

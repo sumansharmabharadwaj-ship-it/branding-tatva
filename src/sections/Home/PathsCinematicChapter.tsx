@@ -281,7 +281,7 @@ export function PathsCinematicChapter() {
               {PATHS.map((path, index) => {
                 const selected = index === activeIndex;
                 return (
-                  <g key={path.start} opacity={selected ? 1 : 0.28}>
+                  <g key={path.start} opacity={selected ? 1 : 0.46}>
                     <circle cx="112" cy={ENTRY_Y[index]} r={selected ? 8 : 5} fill={path.tint} />
                     <text
                       x="90"

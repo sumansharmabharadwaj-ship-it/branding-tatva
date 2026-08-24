@@ -97,6 +97,7 @@ export function TatvaSystemLab() {
           autoPlay
           loop
           playsInline
+          aria-hidden="true"
           preload="metadata"
           poster="/images/pexels-golden-fog-sea-poster.jpg"
         >
@@ -131,6 +132,7 @@ export function TatvaSystemLab() {
                     key={force.name}
                     type="button"
                     aria-pressed={active}
+                    aria-controls="tatva-mechanism-panel"
                     onClick={() => choose(index)}
                     className="tatva-pressure-lab__force group flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 text-left transition-[border-color,background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                     style={{
@@ -169,6 +171,7 @@ export function TatvaSystemLab() {
             <button
               type="button"
               onClick={() => choose(null)}
+              aria-controls="tatva-mechanism-panel"
               className="tatva-pressure-lab__restore mt-4 text-xs font-medium uppercase tracking-[0.16em] underline underline-offset-4 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
             >
               Show the complete system

@@ -1,0 +1,87 @@
+/* Homepage V4 · final legibility and control-state pass.
+   This layer leaves the opening composition untouched. */
+
+/* The Tatva system shifts to a light observatory in the final grade, while
+   the complete-system core intentionally stays dark. Give the two lines
+   inside that core their own inverse colors instead of inheriting the light
+   scene's dark SVG label color. */
+.home-v4 #tatva .tatva-pressure-lab__svg-core-kicker {
+  fill: rgba(244, 239, 230, 0.72);
+}
+
+.home-v4 #tatva .tatva-pressure-lab__svg-core-title {
+  fill: #f4efe6;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.26);
+}
+
+.home-v4 #tatva .tatva-pressure-lab__reading > p:last-of-type {
+  color: rgba(32, 51, 43, 0.72);
+}
+
+/* Keep every branch discoverable while retaining a clear active route. */
+.home-v4 #paths .paths-cinematic__svg-label {
+  fill: rgba(32, 51, 43, 0.76);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.home-v4 #paths .paths-cinematic__svg-step {
+  fill: rgba(32, 51, 43, 0.78);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.home-v4 #paths .paths-cinematic__svg-result {
+  fill: #20332b;
+  font-size: 16px;
+}
+
+.home-v4 #paths .paths-cinematic__spine {
+  stroke: rgba(132, 91, 61, 0.52);
+}
+
+/* Evidence is most persuasive when its provenance can be read without
+   leaning into the screen. Preserve the compact dossier, but raise the
+   smallest copy above the decorative-contrast tier. */
+.home-v4 #evidence .evidence-cinematic__evidence-note small {
+  color: rgba(244, 239, 230, 0.7);
+}
+
+.home-v4 #evidence .evidence-cinematic__evidence-note p {
+  color: rgba(244, 239, 230, 0.7);
+  font-size: 0.8rem;
+  line-height: 1.48;
+}
+
+.home-v4 #evidence .evidence-cinematic__dossier-footer p {
+  color: rgba(244, 239, 230, 0.62);
+}
+
+.home-v4 #evidence .evidence-cinematic__index button.is-active {
+  border-color: color-mix(in srgb, var(--project-accent) 58%, rgba(244, 239, 230, 0.16));
+  background: color-mix(in srgb, var(--project-accent) 8%, rgba(244, 239, 230, 0.035));
+}
+
+/* The editorial room can stay quiet without making its framework labels
+   smaller than the rest of the homepage's reading copy. */
+.home-v4 #insights-preview .home-insights__copy > span {
+  font-size: clamp(0.82rem, 0.98vw, 0.92rem);
+}
+
+.home-v4 #insights-preview .home-insights__current li > strong {
+  font-size: clamp(0.72rem, 0.86vw, 0.8rem);
+}
+
+@media (max-width: 820px) {
+  .home-v4 #paths .paths-cinematic__svg-label,
+  .home-v4 #paths .paths-cinematic__svg-step,
+  .home-v4 #paths .paths-cinematic__svg-result {
+    font-size: inherit;
+  }
+
+  .home-v4 #evidence .evidence-cinematic__evidence-note p,
+  .home-v4 #insights-preview .home-insights__copy > span,
+  .home-v4 #insights-preview .home-insights__current li > strong {
+    font-size: inherit;
+  }
+}

@@ -74,10 +74,10 @@ function CompleteSystem({ motionActive }: Pick<TatvaMechanismProps, "motionActiv
         animate={motionActive ? { r: [61, 67, 61], opacity: [0.84, 1, 0.84] } : undefined}
         transition={motionActive ? { duration: 5.8, repeat: Infinity, ease: "easeInOut" } : undefined}
       />
-      <text x="260" y="198" textAnchor="middle" className="tatva-pressure-lab__svg-kicker">
+      <text x="260" y="198" textAnchor="middle" className="tatva-pressure-lab__svg-kicker tatva-pressure-lab__svg-core-kicker">
         COMPLETE
       </text>
-      <text x="260" y="221" textAnchor="middle" className="tatva-pressure-lab__svg-title">
+      <text x="260" y="221" textAnchor="middle" className="tatva-pressure-lab__svg-title tatva-pressure-lab__svg-core-title">
         Recognition
       </text>
     </svg>
