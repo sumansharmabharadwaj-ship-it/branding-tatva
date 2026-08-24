@@ -142,6 +142,7 @@ export function HomeV4TatvaLens() {
     let chapterFocus = 1;
     let arrivalWeight = 0;
     let releaseWeight = 0;
+    let hoveredInteractive: HTMLElement | null = null;
     let pointerAttention = false;
     let focusAttention = false;
     let attentionTarget = 0;
@@ -199,20 +200,31 @@ export function HomeV4TatvaLens() {
       if (profileEnabled) scheduleRender();
     };
 
+    const syncAttention = (focusedTarget: EventTarget | null = document.activeElement) => {
+      pointerAttention = Boolean(
+        activeChapter &&
+        hoveredInteractive?.isConnected &&
+        activeChapter.contains(hoveredInteractive),
+      );
+      const focusedInteractive = focusedTarget instanceof Element
+        ? focusedTarget.closest<HTMLElement>(INTERACTIVE_SELECTOR)
+        : null;
+      focusAttention = Boolean(
+        activeChapter &&
+        focusedInteractive &&
+        activeChapter.contains(focusedInteractive),
+      );
+      attentionTarget = pointerAttention || focusAttention ? 1 : 0;
+    };
+
     const onPointerMove = (event: PointerEvent) => {
       if (!profileEnabled) return;
       pointerTargetX = clamp(event.clientX / Math.max(1, window.innerWidth));
       pointerTargetY = clamp(event.clientY / Math.max(1, window.innerHeight));
-      const target = event.target instanceof Element
+      hoveredInteractive = event.target instanceof Element
         ? event.target.closest<HTMLElement>(INTERACTIVE_SELECTOR)
         : null;
-      const nextPointerAttention = Boolean(
-        target && activeChapter?.contains(target),
-      );
-      if (pointerAttention !== nextPointerAttention) {
-        pointerAttention = nextPointerAttention;
-        attentionTarget = pointerAttention || focusAttention ? 1 : 0;
-      }
+      syncAttention();
       scheduleRender();
     };
 
@@ -220,20 +232,14 @@ export function HomeV4TatvaLens() {
       if (!profileEnabled) return;
       pointerTargetX = 0.5;
       pointerTargetY = 0.46;
-      pointerAttention = false;
-      attentionTarget = focusAttention ? 1 : 0;
+      hoveredInteractive = null;
+      syncAttention();
       scheduleRender();
     };
 
     const onFocusChange = (event: FocusEvent) => {
       const focused = event.type === "focusout" ? event.relatedTarget : event.target;
-      focusAttention = Boolean(
-        activeChapter &&
-        focused instanceof HTMLElement &&
-        activeChapter.contains(focused) &&
-        focused.matches(INTERACTIVE_SELECTOR),
-      );
-      attentionTarget = pointerAttention || focusAttention ? 1 : 0;
+      syncAttention(focused);
       scheduleRender();
     };
 
@@ -281,6 +287,9 @@ export function HomeV4TatvaLens() {
         clearActiveChapter();
         activeChapter = nextChapter;
         activeChapter.dataset.tatvaLensActive = "true";
+        // A control in the departing chapter must release the camera even if
+        // the pointer or keyboard focus has not emitted another event yet.
+        syncAttention();
       }
 
       const rect = nextChapter.getBoundingClientRect();
