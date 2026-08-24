@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { InsightDecisionPath } from "@/components/InsightDecisionPath";
 import { InsightCard } from "@/components/InsightCard";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
@@ -12,9 +13,9 @@ import { elements } from "@/data/elements";
 import {
   getInsightTopic,
   getInsightsByTopic,
-  insightPosts,
   insightTopics,
 } from "@/data/insights";
+import { getInsightPathway } from "@/data/insightPathways";
 import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
@@ -65,8 +66,14 @@ export default async function InsightTopicPage({ params }: Props) {
     (a, b) =>
       new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
-  const relatedPosts = insightPosts
-    .filter((post) => post.topicSlug !== topic.slug)
+  const pathway = getInsightPathway(topic.slug);
+  const relatedPosts = pathway.adjacentTopicSlugs
+    .flatMap((adjacentTopicSlug) =>
+      getInsightsByTopic(adjacentTopicSlug).filter((post) => post.featured)
+    )
+    .filter((post, index, items) =>
+      items.findIndex((candidate) => candidate.slug === post.slug) === index
+    )
     .slice(0, 3);
   const color = element?.color ?? "#B85A34";
 
@@ -274,6 +281,10 @@ export default async function InsightTopicPage({ params }: Props) {
                 </Reveal>
               ))}
             </div>
+
+            <Reveal delay={0.1}>
+              <InsightDecisionPath pathway={pathway} className="mt-16" />
+            </Reveal>
           </Container>
         </section>
 

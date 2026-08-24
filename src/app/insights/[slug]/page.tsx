@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { InsightDecisionPath } from "@/components/InsightDecisionPath";
 import { InsightCard } from "@/components/InsightCard";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
@@ -17,6 +18,7 @@ import {
   insightPosts,
   type InsightPost,
 } from "@/data/insights";
+import { getInsightPathway } from "@/data/insightPathways";
 import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
 import { searchRobotsMetadata } from "@/lib/searchVisibility";
@@ -113,6 +115,7 @@ export default async function InsightArticlePage({ params }: Props) {
   const sources = (post as InsightPostWithSources).sources ?? [];
   const element = elements.find((item) => item.slug === post.element);
   const topic = getInsightTopic(post.topicSlug);
+  const pathway = getInsightPathway(post.topicSlug);
   const color = element?.color ?? "#B85A34";
   const related = post.relatedSlugs
     .map((relatedSlug) => getInsightBySlug(relatedSlug))
@@ -598,6 +601,10 @@ export default async function InsightArticlePage({ params }: Props) {
                       </div>
                     </aside>
                   </Reveal>
+
+                  <Reveal>
+                    <InsightDecisionPath pathway={pathway} className="mt-16" />
+                  </Reveal>
                 </div>
 
                 <aside className="hidden xl:block">
@@ -623,11 +630,11 @@ export default async function InsightArticlePage({ params }: Props) {
                       </p>
                     </div>
                     <Link
-                      href="/contact"
+                      href={pathway.service.href}
                       className="link-underline block text-xs font-semibold uppercase tracking-[0.14em]"
                       style={{ color }}
                     >
-                      Bring this question to your brand
+                      {pathway.service.label}
                     </Link>
                   </div>
                 </aside>

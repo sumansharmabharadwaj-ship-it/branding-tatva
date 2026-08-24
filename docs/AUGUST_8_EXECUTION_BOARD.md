@@ -146,7 +146,7 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 - [x] Replace deprecated or unsupported schema choices with truthful graphs.
 - [ ] Add image/video metadata, captions and transcripts where meaningful.
 - [x] Preserve OAI-SearchBot access while previews remain noindex.
-- [ ] Implement contextual internal-link graph.
+- [x] Implement contextual internal-link graph.
 - [ ] Add consent-aware analytics for CTA, diagnostic, form and scheduling outcomes.
 - [x] Create entity fact sheet before expanding organization/person claims.
 
@@ -266,5 +266,14 @@ guide treated the whole runway as one short chapter.
 - [x] A crawlable Editorial and Evidence Policy documents authorship, source, corrections, diagnostics, independent-study and Tatva Lab boundaries.
 - [x] Sitemap, footer and `llms.txt` expose the policy; machine-readable citations remain limited to sources visible on the corresponding guide.
 - [x] Preview-mode and production-mode builds pass for all 78 routes; runtime checks confirm the intended robots metadata in each environment.
-- [ ] Complete the contextual internal-link graph and image/video metadata pass.
+- [ ] Complete the image/video metadata pass.
 - [x] Hosted-preview verification on the exact commit.
+
+## Current checkpoint — commercial internal-link graph
+
+- [x] All five topic hubs and all 29 Insight articles expose descriptive, server-rendered paths into a relevant service chapter, recorded project and contact route.
+- [x] Cross-topic recommendations follow an explicit adjacent-topic map instead of repeating the first three unrelated articles.
+- [x] The Services page states founder-led remote availability for the United States, United Kingdom and India in visible copy, metadata and service structured data.
+- [x] US/UK intent remains concentrated on the useful commercial page rather than duplicated across thin regional doorway pages.
+- [x] The graph uses only existing service anchors and recorded project routes, with an automated source gate guarding every target.
+- [ ] Validate the graph with production Search Console crawl data after launch approval.

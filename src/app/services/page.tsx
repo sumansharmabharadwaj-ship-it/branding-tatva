@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
 import { preload } from "react-dom";
 import { site } from "@/data/site";
+import { entityFacts } from "@/data/entityFacts";
 import { offerings, packages } from "@/data/services";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
@@ -31,6 +32,10 @@ import { MOOD } from "@/lib/sectionWash";
 const SERVICES_URL = `${site.url}/services`;
 const PERSON_ID = `${site.url}/#person`;
 const ORGANIZATION_ID = `${site.url}/#organization`;
+const REMOTE_SERVICE_AREAS = entityFacts.delivery.regions.map((name) => ({
+  "@type": "Country",
+  name,
+}));
 
 /*
  * Structured data for this page. It carried only the sitewide Person and
@@ -52,7 +57,7 @@ const servicesJsonLd = {
   url: SERVICES_URL,
   name: "Brand Strategy Services | Branding Tatva",
   description:
-    "Brand strategy, verbal identity, content systems and positioning, led directly by Suman Sharma.",
+    "Founder-led remote brand strategy, positioning, messaging, identity and content systems for service businesses in the United States, United Kingdom and India.",
   author: { "@id": PERSON_ID },
   publisher: { "@id": ORGANIZATION_ID },
   breadcrumb: {
@@ -84,6 +89,7 @@ const serviceCatalogJsonLd = {
       serviceType: offering.name,
       provider: { "@id": ORGANIZATION_ID },
       brand: { "@id": ORGANIZATION_ID },
+      areaServed: REMOTE_SERVICE_AREAS,
     },
   })),
 };
@@ -108,20 +114,21 @@ const engagementsJsonLd = {
       description: pkg.description,
       provider: { "@id": ORGANIZATION_ID },
       audience: { "@type": "Audience", audienceType: pkg.forWho },
+      areaServed: REMOTE_SERVICE_AREAS,
       serviceOutput: pkg.includes.map((item) => ({ "@type": "Thing", name: item })),
     },
   })),
 };
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: "Brand Strategy for Service Businesses",
   description:
-    "A brand discovery experience: why branding works, why it fails, what a project actually involves, and where your own brand stands today.",
+    "Founder-led brand strategy, positioning, messaging, identity and content systems for service businesses in the US, UK and India, delivered remotely by Suman Sharma.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "Services | Branding Tatva",
+    title: "Brand Strategy for Service Businesses | Branding Tatva",
     description:
-      "A brand discovery experience: why branding works, why it fails, what a project actually involves, and where your own brand stands today.",
+      "Founder-led brand strategy, positioning, messaging, identity and content systems for service businesses in the US, UK and India, delivered remotely by Suman Sharma.",
     type: "website",
   },
 };

@@ -3,10 +3,12 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { Container } from "@/components/Container";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { brandStages } from "@/lib/contact-schema";
 import { site } from "@/data/site";
+import { entityFacts } from "@/data/entityFacts";
 import { track } from "@/lib/analytics";
 
 // The closing "Book call" section is a short Strategy Room rather than
@@ -105,6 +107,17 @@ export function StrategyRoomCTA() {
         <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-ivory/90">
           A few quick questions, then a real time on the calendar. Thirty minutes, honest feedback either way. You
           talk directly with the person who does the work, from first question to final file.
+        </p>
+        <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-ivory/70">
+          Founder-led remote projects are available across {entityFacts.delivery.regions.slice(0, -1).join(", ")} and{" "}
+          {entityFacts.delivery.regions.at(-1)}. Read the{" "}
+          <Link
+            href="/insights/brand-positioning-strategy-service-businesses"
+            className="link-underline text-sandstone"
+          >
+            brand positioning guide for service businesses
+          </Link>
+          {" "}before choosing a time.
         </p>
       </motion.div>
 
