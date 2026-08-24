@@ -83,7 +83,7 @@ export function VerifiedOutcome() {
                 ? { opacity: 1, y: 0, scale: 1 }
                 : activeBeat === 2
                   ? { opacity: 1, y: 0, scale: 1 }
-                  : { opacity: 0.68, y: 5, scale: 0.975 }
+                  : { opacity: 0.78, y: 5, scale: 0.98 }
             }
             transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
             className="mt-10 origin-left"
@@ -110,7 +110,7 @@ export function VerifiedOutcome() {
         </div>
 
         <div className="relative">
-          <p className="mb-4 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-ivory/45">
+          <p className="mb-4 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-ivory/70">
             One decision, followed through
           </p>
           <ol className="border-y border-ivory/12">
@@ -123,24 +123,24 @@ export function VerifiedOutcome() {
                     animate={
                       prefersReducedMotion
                         ? { opacity: 1, x: 0 }
-                        : { opacity: active ? 1 : completed ? 0.82 : 0.68, x: active ? 7 : 0 }
+                        : { opacity: active ? 1 : completed ? 0.9 : 0.82, x: active ? 7 : 0 }
                     }
                     transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
                     className="grid grid-cols-[2.5rem_1fr] gap-4 py-5 sm:py-6"
                   >
                     <span
                       className={`font-display text-sm transition-colors duration-300 ${
-                        active ? "text-sandstone" : "text-ivory/35"
+                        active ? "text-sandstone" : "text-ivory/55"
                       }`}
                       aria-hidden="true"
                     >
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <div>
-                      <p className={`text-xs font-medium uppercase tracking-[0.16em] ${active ? "text-sandstone" : "text-ivory/55"}`}>
+                      <p className={`text-xs font-medium uppercase tracking-[0.16em] ${active ? "text-sandstone" : "text-ivory/72"}`}>
                         {beat.label}
                       </p>
-                      <p className={`mt-2 max-w-xl text-sm leading-relaxed sm:text-base ${active || prefersReducedMotion ? "text-ivory/90" : "text-ivory/78"}`}>
+                      <p className={`mt-2 max-w-xl text-sm leading-relaxed sm:text-base ${active || prefersReducedMotion ? "text-ivory/95" : "text-ivory/90"}`}>
                         {beat.text}
                       </p>
                     </div>
