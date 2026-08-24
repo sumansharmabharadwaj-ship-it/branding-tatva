@@ -101,6 +101,7 @@ export function ContactForm() {
     register,
     handleSubmit,
     reset,
+    getValues,
     setFocus,
     watch,
     formState: { errors, submitCount },
@@ -226,6 +227,30 @@ export function ContactForm() {
     setStatus("idle");
     setSuccessMinHeight(null);
     window.requestAnimationFrame(() => setFocus("name"));
+  }
+
+  function handleEmailFallbackClick(event: MouseEvent<HTMLAnchorElement>) {
+    const values = getValues();
+    const name = values.name?.trim();
+    const business = values.business?.trim();
+    const question = values.description?.trim();
+    const subject = name ? `Brand enquiry from ${name}` : "Brand enquiry";
+    const body = [
+      "Hello Suman,",
+      "",
+      question || "I would like to discuss my brand.",
+      "",
+      name && `Name: ${name}`,
+      business && `Brand: ${business}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    event.currentTarget.href = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    track("contact_route_selected", {
+      source: "contact_form_recovery",
+      route: "email_with_note",
+    });
   }
 
   // Every other consequential moment on this page (the button itself,
@@ -550,16 +575,11 @@ export function ContactForm() {
             </span>
             <a
               href={`mailto:${site.email}?subject=${encodeURIComponent("Brand enquiry")}`}
-              onClick={() =>
-                track("contact_route_selected", {
-                  source: "contact_form_recovery",
-                  route: "email",
-                })
-              }
+              onClick={handleEmailFallbackClick}
               className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-soil/14 bg-white/35 px-4 py-2 text-xs font-medium text-soil transition-colors hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
             >
               <Mail aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
-              Email instead
+              Email this note
             </a>
           </motion.div>
         ) : null}
@@ -608,6 +628,9 @@ export function ContactForm() {
           </span>
         </button>
         </Magnetic>
+        <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {status === "submitting" ? "Sending your enquiry." : ""}
+        </span>
       </form>
     </div>
   );

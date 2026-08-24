@@ -21,8 +21,10 @@ const SCROLL_KEYS = new Set([
 export function ContactScrollRuntime() {
   useEffect(() => {
     const root = document.documentElement;
+    const film = document.querySelector<HTMLElement>("[data-contact-film]");
     const scenes = Array.from(document.querySelectorAll<HTMLElement>("[data-contact-scene]"));
-    if (scenes.length === 0) return;
+    if (!film || scenes.length === 0) return;
+    const contactFilm = film;
 
     const cameraReady = window.matchMedia(CAMERA_QUERY);
     let frame = 0;
@@ -83,8 +85,7 @@ export function ContactScrollRuntime() {
       } catch {}
 
       const target = document.getElementById(id);
-      const film = document.querySelector<HTMLElement>("[data-contact-film]");
-      return target instanceof HTMLElement && film?.contains(target) ? target : null;
+      return target instanceof HTMLElement && contactFilm.contains(target) ? target : null;
     }
 
     function recoverHash() {
@@ -118,6 +119,31 @@ export function ContactScrollRuntime() {
       hashFrame = window.requestAnimationFrame(recoverHash);
     }
 
+    function restartHashRecovery() {
+      hashAttempts = 0;
+      hashCancelled = false;
+      window.clearTimeout(hashTimer);
+      window.cancelAnimationFrame(hashFrame);
+      scheduleHashRecovery();
+    }
+
+    function onHashChange() {
+      restartHashRecovery();
+    }
+
+    function onFilmClick(event: MouseEvent) {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const anchor = target.closest<HTMLAnchorElement>('a[href^="#"]');
+      if (!anchor || !contactFilm.contains(anchor)) return;
+
+      // Pointer-down correctly cancels an older recovery, but an intentional
+      // chapter jump needs a fresh pass after the browser applies the new
+      // fragment. The timeout also covers clicking the fragment already in
+      // the URL, which does not emit another hashchange event.
+      window.setTimeout(restartHashRecovery, 0);
+    }
+
     const motionPreferenceObserver = new MutationObserver(requestRender);
     motionPreferenceObserver.observe(root, {
       attributes: true,
@@ -143,6 +169,8 @@ export function ContactScrollRuntime() {
     window.addEventListener("touchstart", cancelHashRecovery, { passive: true });
     window.addEventListener("pointerdown", cancelHashRecovery, { passive: true });
     window.addEventListener("keydown", onManualKey);
+    window.addEventListener("hashchange", onHashChange);
+    contactFilm.addEventListener("click", onFilmClick);
     cameraReady.addEventListener("change", requestRender);
     if (document.readyState !== "complete") {
       window.addEventListener("load", scheduleHashRecovery);
@@ -162,7 +190,9 @@ export function ContactScrollRuntime() {
       window.removeEventListener("touchstart", cancelHashRecovery);
       window.removeEventListener("pointerdown", cancelHashRecovery);
       window.removeEventListener("keydown", onManualKey);
+      window.removeEventListener("hashchange", onHashChange);
       window.removeEventListener("load", scheduleHashRecovery);
+      contactFilm.removeEventListener("click", onFilmClick);
       cameraReady.removeEventListener("change", requestRender);
       motionPreferenceObserver.disconnect();
       interactionObserver.disconnect();

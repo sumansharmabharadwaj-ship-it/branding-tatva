@@ -36,11 +36,11 @@ const pageJsonLd = pageSchema({
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Schedule a 30 minute brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
+  description: "Schedule a 30-minute brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
   alternates: { canonical: "/contact" },
   openGraph: {
     title: `Contact | ${site.name}`,
-    description: "Schedule a 30 minute brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
+    description: "Schedule a 30-minute brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
     type: "website",
   },
 };

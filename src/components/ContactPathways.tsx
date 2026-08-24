@@ -423,6 +423,12 @@ export function ContactPathways() {
                         </a>
                         <a
                           href="#call"
+                          onClick={() =>
+                            track("contact_route_selected", {
+                              source: "contact_pathways",
+                              route: "call_flow",
+                            })
+                          }
                           className={secondaryActionClass}
                         >
                           See the call flow

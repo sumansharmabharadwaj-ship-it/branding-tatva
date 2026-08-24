@@ -58,6 +58,39 @@ async function postChunked(path, text, options = {}) {
   }
 
   {
+    const { response } = await post(
+      "/api/contact",
+      {
+        name: "   ",
+        email: "spaces@example.com",
+        description: "              ",
+      },
+      { ip: "203.0.113.16" },
+    );
+    assert(
+      response.status === 422,
+      `contact whitespace validation: expected 422, got ${response.status}`,
+    );
+  }
+
+  {
+    const { response } = await post(
+      "/api/contact",
+      {
+        name: "Valid Person",
+        email: "valid-link@example.com",
+        description: "I need help clarifying the position of a growing business.",
+        website: "not a website",
+      },
+      { ip: "203.0.113.17" },
+    );
+    assert(
+      response.status === 422,
+      `contact website validation: expected 422, got ${response.status}`,
+    );
+  }
+
+  {
     const { response, data } = await post(
       "/api/contact",
       {
