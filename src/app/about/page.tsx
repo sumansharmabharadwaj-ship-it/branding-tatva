@@ -4,6 +4,7 @@ import { Footer } from "@/sections/Footer";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { AboutSplitHero } from "@/components/AboutSplitHero";
+import { AboutCinematicRuntime } from "@/components/AboutCinematicRuntime";
 import { NotebookClose } from "@/components/NotebookClose";
 import { PointOfView } from "@/sections/About/PointOfView";
 import { Convergence } from "@/sections/About/Convergence";
@@ -61,62 +62,76 @@ export default function AboutPage() {
           bgPoster="/images/about-hero-bg-meadow-poster.jpg"
         />
 
-        <section className="relative overflow-clip bg-soil" data-about-chapter="philosophy">
-          <BackgroundVideo
-            video="/videos/generated/bt-about-point-view-three-stones.mp4"
-            poster="/images/generated/bt-about-point-view-three-stones-poster.jpg"
-            parallax
-            playbackRate={0.84}
-          />
+        <AboutCinematicRuntime />
+
+        <section className="relative overflow-clip bg-soil" data-about-chapter="philosophy" data-about-film-scene data-scene-tone="dark">
+          <div className="absolute inset-0" data-about-film-background>
+            <BackgroundVideo
+              video="/videos/generated/bt-about-point-view-three-stones.mp4"
+              poster="/images/generated/bt-about-point-view-three-stones-poster.jpg"
+              parallax
+              playbackRate={0.84}
+            />
+          </div>
           <div aria-hidden="true" className="absolute inset-0 bg-soil/80" />
-          <div className="relative">
+          <div className="relative" data-about-film-plane>
             <PointOfView />
           </div>
         </section>
 
-        <div className="bg-[#eee7db]">
-          <Convergence />
+        <div className="bg-[#eee7db]" data-about-film-scene data-about-chapter="convergence" data-scene-tone="light">
+          <div data-about-film-plane>
+            <Convergence />
+          </div>
         </div>
 
-        <section className="relative overflow-clip bg-soil" data-about-chapter="principles">
-          <BackgroundVideo
-            video="/videos/generated/bt-about-behaviours-mossbreath.mp4"
-            poster="/images/generated/bt-about-behaviours-mossbreath-poster.jpg"
-            parallax
-            playbackRate={0.86}
-          />
+        <section className="relative overflow-clip bg-soil" data-about-chapter="principles" data-about-film-scene data-scene-tone="dark">
+          <div className="absolute inset-0" data-about-film-background>
+            <BackgroundVideo
+              video="/videos/generated/bt-about-behaviours-mossbreath.mp4"
+              poster="/images/generated/bt-about-behaviours-mossbreath-poster.jpg"
+              parallax
+              playbackRate={0.86}
+            />
+          </div>
           <div aria-hidden="true" className="absolute inset-0 bg-soil/80" />
-          <div className="relative">
+          <div className="relative" data-about-film-plane>
             <Behaviours />
           </div>
         </section>
 
-        <section className="relative overflow-clip bg-soil" data-about-chapter="founder-led">
-          <BackgroundVideo
-            video="/videos/generated/bt-about-working-directly-woodlight.mp4"
-            poster="/images/generated/bt-about-working-directly-woodlight-poster.jpg"
-            parallax
-            playbackRate={0.9}
-          />
+        <section className="relative overflow-clip bg-soil" data-about-chapter="founder-led" data-about-film-scene data-scene-tone="dark">
+          <div className="absolute inset-0" data-about-film-background>
+            <BackgroundVideo
+              video="/videos/generated/bt-about-working-directly-woodlight.mp4"
+              poster="/images/generated/bt-about-working-directly-woodlight-poster.jpg"
+              parallax
+              playbackRate={0.9}
+            />
+          </div>
           <div aria-hidden="true" className="absolute inset-0 bg-soil/78" />
-          <div className="relative">
+          <div className="relative" data-about-film-plane>
             <WorkingDirectly />
           </div>
         </section>
 
-        <section className="relative overflow-clip bg-soil" data-about-chapter="evidence">
-          <BackgroundVideo
-            video="/videos/pixabay-forest-sunbeams.mp4"
-            poster="/images/pixabay-forest-sunbeams-poster.jpg"
-            parallax
-          />
+        <section className="relative overflow-clip bg-soil" data-about-chapter="evidence" data-about-film-scene data-scene-tone="dark">
+          <div className="absolute inset-0" data-about-film-background>
+            <BackgroundVideo
+              video="/videos/pixabay-forest-sunbeams.mp4"
+              poster="/images/pixabay-forest-sunbeams-poster.jpg"
+              parallax
+            />
+          </div>
           <div aria-hidden="true" className="absolute inset-0 bg-soil/85" />
-          <div className="relative">
+          <div className="relative" data-about-film-plane>
             <Evidence />
           </div>
         </section>
 
-        <NotebookClose />
+        <div data-about-film-scene data-about-chapter="resolution" data-scene-tone="light" data-scene-ending>
+          <NotebookClose />
+        </div>
       </main>
       <Footer compact />
     </>

@@ -976,3 +976,86 @@
   }
   .bt-scroll-cue > strong { grid-column: 2; }
 }
+
+/* About film: one shared camera grammar for every scene after the protected
+   opening. The client runtime only writes numbers; CSS owns the rendering. */
+html[data-about-film-snap="true"] {
+  scroll-snap-type: y proximity;
+}
+
+[data-about-film-scene] {
+  --scene-progress: 0;
+  --scene-focus: 0;
+  --scene-enter: 0;
+  --scene-exit: 0;
+  --scene-velocity: 0;
+  --scene-direction: 1;
+  position: relative;
+  isolation: isolate;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+[data-about-film-scene][data-scene-ending] {
+  scroll-snap-align: end;
+}
+
+[data-about-film-scene] [data-about-film-plane] {
+  opacity: calc(0.78 + var(--scene-focus) * 0.22);
+  transform:
+    perspective(90rem)
+    translate3d(0, calc((1 - var(--scene-enter)) * 2.8svh - var(--scene-exit) * 1.8svh), 0)
+    scale(calc(0.986 + var(--scene-focus) * 0.014));
+  transform-origin: 50% 45%;
+  transition: opacity 160ms linear;
+  will-change: transform, opacity;
+}
+
+[data-about-film-scene] [data-about-film-background] {
+  transform:
+    translate3d(calc(var(--scene-direction) * var(--scene-velocity) * -10vw), calc((var(--scene-progress) - 0.5) * -3svh), 0)
+    scale(calc(1.045 + var(--scene-velocity) * 1.5));
+  transform-origin: center;
+  filter: saturate(calc(0.84 + var(--scene-focus) * 0.24)) contrast(calc(0.96 + var(--scene-focus) * 0.05));
+  will-change: transform, filter;
+}
+
+[data-about-film-scene]::after {
+  position: absolute;
+  inset: 0;
+  z-index: 18;
+  background:
+    linear-gradient(to bottom, rgb(9 16 14 / calc(var(--scene-exit) * 0.2)), transparent 17%, transparent 79%, rgb(9 16 14 / calc((1 - var(--scene-focus)) * 0.28)));
+  content: "";
+  pointer-events: none;
+}
+
+[data-about-film-scene][data-scene-tone="light"]::after {
+  background:
+    linear-gradient(to bottom, rgb(78 63 48 / calc(var(--scene-exit) * 0.08)), transparent 17%, transparent 81%, rgb(78 63 48 / calc((1 - var(--scene-focus)) * 0.1)));
+}
+
+@media (max-width: 940px), (pointer: coarse) {
+  html[data-about-film-snap="true"] { scroll-snap-type: none; }
+
+  [data-about-film-scene] [data-about-film-plane] {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-about-film-scene] [data-about-film-background] {
+    transform: scale(1.025);
+    filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-about-film-snap="true"] { scroll-snap-type: none; }
+
+  [data-about-film-scene] [data-about-film-plane],
+  [data-about-film-scene] [data-about-film-background] {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}

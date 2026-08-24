@@ -12,8 +12,8 @@ import {
   ScanSearch,
 } from "lucide-react";
 import { Container } from "@/components/Container";
-import { useAmbientSequence } from "@/hooks/useAmbientSequence";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import styles from "./WorkingDirectly.module.css";
 
 const STAGES = [
@@ -70,14 +70,14 @@ const STAGES = [
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function WorkingDirectly() {
-  const rootRef = useRef<HTMLDivElement>(null);
+  const storyRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(rootRef, { amount: 0.34 });
-  const sequence = useAmbientSequence({
+  const inView = useInView(storyRef, { amount: 0.16 });
+  const sequence = useScrollDrivenVisualizer({
     count: STAGES.length,
+    target: storyRef,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
-    intervalMs: 5600,
   });
   const active = STAGES[sequence.activeIndex];
   const ActiveIcon = active.icon;
@@ -96,8 +96,9 @@ export function WorkingDirectly() {
   }
 
   return (
-    <Container className={styles.container}>
-      <div ref={rootRef} className={styles.root} data-about-visualizer="founder-led-thread">
+    <div ref={storyRef} className={styles.scrollStory} data-scroll-story="about-founder-led">
+      <Container className={styles.container}>
+      <div className={styles.root} data-about-visualizer="founder-led-thread">
         <header className={styles.header}>
           <div>
             <p className={styles.eyebrow}>Working directly · one continuous strategic thread</p>
@@ -124,9 +125,9 @@ export function WorkingDirectly() {
                 data-active={selected}
                 onClick={() => sequence.choose(index)}
                 onPointerEnter={() => sequence.preview(index)}
-                onPointerLeave={sequence.release}
+                onPointerLeave={sequence.releasePreview}
                 onFocus={() => sequence.preview(index)}
-                onBlur={sequence.release}
+                onBlur={sequence.releasePreview}
                 onKeyDown={(event) => onKeyDown(event, index)}
               >
                 <span><Icon size={15} aria-hidden="true" /></span>
@@ -197,6 +198,7 @@ export function WorkingDirectly() {
           </Link>
         </footer>
       </div>
-    </Container>
+      </Container>
+    </div>
   );
 }

@@ -5,7 +5,7 @@ import { useRef, type KeyboardEvent } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowRight, BookOpenText, Brain, Sparkles } from "lucide-react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useAmbientSequence } from "@/hooks/useAmbientSequence";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import styles from "./Convergence.module.css";
 
 const FIELDS = [
@@ -39,11 +39,11 @@ export function Convergence() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
-  const visualizer = useAmbientSequence({
+  const visualizer = useScrollDrivenVisualizer({
     count: STAGES.length,
+    target: sectionRef,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
-    intervalMs: 5200,
   });
   const stage = visualizer.activeIndex;
 
@@ -177,9 +177,9 @@ export function Convergence() {
                   data-active={selected}
                   onClick={() => visualizer.choose(index)}
                   onPointerEnter={() => visualizer.preview(index)}
-                  onPointerLeave={visualizer.release}
+                  onPointerLeave={visualizer.releasePreview}
                   onFocus={() => visualizer.preview(index)}
-                  onBlur={visualizer.release}
+                  onBlur={visualizer.releasePreview}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
                 >
                   <span>{item.number}</span>

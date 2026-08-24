@@ -1,3 +1,5 @@
+.scrollStory { position: relative; }
+
 .container { width: min(100%, 86rem); }
 
 .root {
@@ -69,7 +71,8 @@
   inset: 13% 15%;
   border: 1px solid rgba(212, 185, 154, 0.22);
   border-radius: 48% 52% 50% 50%;
-  transform: rotate(-8deg);
+  transform: rotate(calc(-16deg + 24deg * var(--scene-progress, 0)));
+  will-change: transform;
 }
 
 .orbit::after {
@@ -237,10 +240,17 @@
 .index span[data-active="true"] { border-color: #d4b99a; color: #d4b99a; }
 
 @media (max-width: 940px) {
+  .scrollStory { height: auto; }
+  .container { position: relative; top: auto; height: auto; }
   .root { min-height: auto; padding-block: 7rem 4rem; }
   .header { grid-template-columns: 1fr; gap: 1rem; }
   .stage { grid-template-columns: 1fr; gap: 1.5rem; }
   .constellation { width: min(82vw, 34rem); }
+}
+
+@media (min-width: 941px) and (prefers-reduced-motion: no-preference) {
+  .scrollStory { height: 154svh; }
+  .container { position: sticky; top: 0; height: 100svh; }
 }
 
 @media (max-width: 600px) {
@@ -254,5 +264,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .scrollStory { height: auto; }
+  .container { position: relative; top: auto; height: auto; }
+  .orbit { transform: rotate(-8deg); }
   .node { transition: none; }
 }

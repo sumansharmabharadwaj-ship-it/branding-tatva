@@ -1,9 +1,14 @@
 .section {
   position: relative;
   min-height: 100svh;
-  overflow: hidden;
+  overflow: clip;
   background: #eee7db url("/images/generated/bt-services-deliverables-paperlight-poster.jpg") center / cover;
   color: #2b2924;
+}
+
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .section { height: 146svh; min-height: 146svh; }
+  .shell { position: sticky; top: 0; height: 100svh; min-height: 100svh; }
 }
 
 .section::before {
@@ -311,7 +316,7 @@
 @keyframes convergence-progress { to { transform: scaleX(1); } }
 
 @media (max-width: 900px) {
-  .section, .shell { min-height: auto; }
+  .section, .shell { position: relative; top: auto; height: auto; min-height: auto; }
   .shell { padding-block: 6.5rem 3.5rem; grid-template-rows: auto auto auto; }
   .header { grid-template-columns: 1fr; gap: 1.2rem; }
   .stage { min-height: 34rem; }
@@ -335,5 +340,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .section { height: auto; }
   .tabs button b { animation: none; transform: scaleX(1); }
 }

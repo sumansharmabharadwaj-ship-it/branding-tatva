@@ -5,8 +5,8 @@ import { useRef, type KeyboardEvent } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowUpRight, Eye, Quote, Repeat2 } from "lucide-react";
 import { Container } from "@/components/Container";
-import { useAmbientSequence } from "@/hooks/useAmbientSequence";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { projects } from "@/data/projects";
 import styles from "./PointOfView.module.css";
 
@@ -50,14 +50,14 @@ const PROJECTS = new Map(projects.map((project) => [project.slug, project]));
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function PointOfView() {
-  const rootRef = useRef<HTMLDivElement>(null);
+  const storyRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(rootRef, { amount: 0.35 });
-  const sequence = useAmbientSequence({
+  const inView = useInView(storyRef, { amount: 0.16 });
+  const sequence = useScrollDrivenVisualizer({
     count: CLAIMS.length,
+    target: storyRef,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
-    intervalMs: 5600,
   });
   const active = CLAIMS[sequence.activeIndex];
   const ActiveIcon = active.icon;
@@ -77,8 +77,9 @@ export function PointOfView() {
   }
 
   return (
-    <Container className={styles.shell}>
-      <div ref={rootRef} className={styles.root} data-about-visualizer="philosophy-prism">
+    <div ref={storyRef} className={styles.scrollStory} data-scroll-story="about-philosophy">
+      <Container className={styles.shell}>
+      <div className={styles.root} data-about-visualizer="philosophy-prism">
         <header className={styles.header}>
           <div>
             <p className={styles.eyebrow}>Point of view · 03 working beliefs</p>
@@ -108,9 +109,9 @@ export function PointOfView() {
                   data-active={selected}
                   onClick={() => sequence.choose(index)}
                   onPointerEnter={() => sequence.preview(index)}
-                  onPointerLeave={sequence.release}
+                  onPointerLeave={sequence.releasePreview}
                   onFocus={() => sequence.preview(index)}
-                  onBlur={sequence.release}
+                  onBlur={sequence.releasePreview}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
                 >
                   <span><Icon size={15} aria-hidden="true" /></span>
@@ -198,6 +199,7 @@ export function PointOfView() {
           ))}
         </div>
       </div>
-    </Container>
+      </Container>
+    </div>
   );
 }

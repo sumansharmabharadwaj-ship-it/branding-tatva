@@ -67,7 +67,7 @@ export function useScrollDrivenVisualizer({
      fallback. This also makes wheel, trackpad, keyboard and browser-assisted
      scrolling resolve to the same reversible state. */
   useEffect(() => {
-    if (reducedMotion) return;
+    if (!enabled || reducedMotion) return;
 
     let frame = 0;
     const update = () => {
@@ -88,7 +88,7 @@ export function useScrollDrivenVisualizer({
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [readProgress, reducedMotion, safeCount]);
+  }, [enabled, readProgress, reducedMotion, safeCount]);
 
   const choose = useCallback(
     (index: number) => {

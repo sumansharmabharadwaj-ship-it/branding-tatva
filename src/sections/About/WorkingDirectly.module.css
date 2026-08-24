@@ -1,3 +1,5 @@
+.scrollStory { position: relative; }
+
 .container { width: min(100%, 86rem); }
 
 .root {
@@ -60,6 +62,20 @@
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(212, 185, 154, 0.36) 12%, rgba(212, 185, 154, 0.36) 88%, transparent);
   content: "";
+}
+
+.timeline::after {
+  position: absolute;
+  top: 1.55rem;
+  right: 8%;
+  left: 8%;
+  z-index: 0;
+  height: 1px;
+  background: #d4b99a;
+  content: "";
+  transform: scaleX(var(--scene-progress, 0));
+  transform-origin: left;
+  will-change: transform;
 }
 
 .timeline button {
@@ -304,6 +320,8 @@
 }
 
 @media (max-width: 820px) {
+  .scrollStory { height: auto; }
+  .container { position: relative; top: auto; height: auto; }
   .root { min-height: auto; padding-block: 7rem 4rem; }
   .header { grid-template-columns: 1fr; gap: 1rem; }
   .timeline { overflow-x: auto; grid-template-columns: repeat(4, minmax(10.5rem, 1fr)); scrollbar-width: none; }
@@ -316,6 +334,11 @@
   .footer a { justify-self: start; }
 }
 
+@media (min-width: 821px) and (prefers-reduced-motion: no-preference) {
+  .scrollStory { height: 156svh; }
+  .container { position: sticky; top: 0; height: 100svh; }
+}
+
 @media (max-width: 560px) {
   .root { padding-block: 6.5rem 3rem; }
   .header h2 { font-size: clamp(2.35rem, 11.5vw, 3.35rem); }
@@ -326,6 +349,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .scrollStory { height: auto; }
+  .container { position: relative; top: auto; height: auto; }
   .timeline button,
   .timeline i b { transition: none; }
 }

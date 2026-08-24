@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useAmbientSequence } from "@/hooks/useAmbientSequence";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { projects } from "@/data/projects";
 import styles from "./Evidence.module.css";
 
@@ -49,11 +49,11 @@ export function Evidence() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.3, margin: "8% 0px -12% 0px" });
-  const visualizer = useAmbientSequence({
+  const visualizer = useScrollDrivenVisualizer({
     count: CASES.length,
+    target: sectionRef,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
-    intervalMs: 6000,
   });
   const activeIndex = visualizer.activeIndex;
   const activeCase = CASES[activeIndex];
@@ -117,9 +117,9 @@ export function Evidence() {
                   tabIndex={selected ? 0 : -1}
                   onClick={() => visualizer.choose(index)}
                   onPointerEnter={() => visualizer.preview(index)}
-                  onPointerLeave={visualizer.release}
+                  onPointerLeave={visualizer.releasePreview}
                   onFocus={() => visualizer.preview(index)}
-                  onBlur={visualizer.release}
+                  onBlur={visualizer.releasePreview}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
                   className={`rounded-2xl border px-4 py-4 text-left transition duration-300 ${
                     selected

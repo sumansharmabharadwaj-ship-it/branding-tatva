@@ -26,8 +26,14 @@
 
 .caseMeta strong { color: rgba(244, 239, 230, 0.64); white-space: nowrap; }
 
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .scrollStory { height: 146svh; }
+  .sticky { position: sticky; top: 0; height: 100svh; min-height: 100svh; }
+}
+
 @media (max-width: 1023px) {
-  .sticky { min-height: auto; padding-block: 7rem 4rem; }
+  .scrollStory { height: auto; }
+  .sticky { position: relative; top: auto; height: auto; min-height: auto; padding-block: 7rem 4rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

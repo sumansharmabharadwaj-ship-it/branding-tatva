@@ -4,8 +4,8 @@ import { useRef, type KeyboardEvent } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { FileCheck2, MessageCircleMore, Repeat2, ScanSearch } from "lucide-react";
 import { Container } from "@/components/Container";
-import { useAmbientSequence } from "@/hooks/useAmbientSequence";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import styles from "./Behaviours.module.css";
 
 const PRINCIPLES = [
@@ -46,14 +46,14 @@ const PRINCIPLES = [
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function Behaviours() {
-  const rootRef = useRef<HTMLDivElement>(null);
+  const storyRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(rootRef, { amount: 0.34 });
-  const sequence = useAmbientSequence({
+  const inView = useInView(storyRef, { amount: 0.16 });
+  const sequence = useScrollDrivenVisualizer({
     count: PRINCIPLES.length,
+    target: storyRef,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
-    intervalMs: 4800,
   });
   const active = PRINCIPLES[sequence.activeIndex];
   const ActiveIcon = active.icon;
@@ -72,8 +72,9 @@ export function Behaviours() {
   }
 
   return (
-    <Container className={styles.container}>
-      <div ref={rootRef} className={styles.root} data-about-visualizer="observable-principles">
+    <div ref={storyRef} className={styles.scrollStory} data-scroll-story="about-principles">
+      <Container className={styles.container}>
+      <div className={styles.root} data-about-visualizer="observable-principles">
         <header className={styles.header}>
           <div>
             <p className={styles.eyebrow}>Observable principles · 04 standards</p>
@@ -102,9 +103,9 @@ export function Behaviours() {
                   data-active={selected}
                   onClick={() => sequence.choose(index)}
                   onPointerEnter={() => sequence.preview(index)}
-                  onPointerLeave={sequence.release}
+                  onPointerLeave={sequence.releasePreview}
                   onFocus={() => sequence.preview(index)}
-                  onBlur={sequence.release}
+                  onBlur={sequence.releasePreview}
                   onKeyDown={(event) => onKeyDown(event, index)}
                   animate={{ scale: selected ? 1.04 : 0.96, opacity: selected ? 1 : 0.62 }}
                   transition={{ duration: prefersReducedMotion ? 0 : 0.44, ease: EASE }}
@@ -165,6 +166,7 @@ export function Behaviours() {
           ))}
         </div>
       </div>
-    </Container>
+      </Container>
+    </div>
   );
 }
