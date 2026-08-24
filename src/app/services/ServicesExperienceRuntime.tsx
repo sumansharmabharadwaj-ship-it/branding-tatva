@@ -11,13 +11,13 @@ const SCENE_MOTION: Record<
   string,
   { contentX: number; contentY: number; rotate: number; scale: number; cameraX: number; cameraY: number }
 > = {
-  situation: { contentX: 22, contentY: 0, rotate: 0.45, scale: 0.008, cameraX: -12, cameraY: 18 },
-  offerings: { contentX: -18, contentY: 8, rotate: -0.35, scale: 0.012, cameraX: 14, cameraY: 14 },
-  desire: { contentX: 0, contentY: 16, rotate: 0, scale: 0.018, cameraX: 0, cameraY: -18 },
-  "verified-outcome": { contentX: 16, contentY: -7, rotate: 0.28, scale: 0.01, cameraX: -10, cameraY: 16 },
-  education: { contentX: -14, contentY: 6, rotate: -0.28, scale: 0.014, cameraX: 12, cameraY: -16 },
-  audit: { contentX: 12, contentY: 10, rotate: 0.2, scale: 0.01, cameraX: -8, cameraY: 14 },
-  book: { contentX: 0, contentY: 13, rotate: 0, scale: 0.016, cameraX: 0, cameraY: -12 },
+  situation: { contentX: 30, contentY: -4, rotate: 0.55, scale: 0.014, cameraX: -22, cameraY: 24 },
+  offerings: { contentX: -28, contentY: 10, rotate: -0.48, scale: 0.018, cameraX: 22, cameraY: 20 },
+  desire: { contentX: 0, contentY: 22, rotate: 0, scale: 0.026, cameraX: 0, cameraY: -26 },
+  "verified-outcome": { contentX: 24, contentY: -9, rotate: 0.4, scale: 0.016, cameraX: -18, cameraY: 22 },
+  education: { contentX: -22, contentY: 9, rotate: -0.38, scale: 0.02, cameraX: 20, cameraY: -22 },
+  audit: { contentX: 18, contentY: 12, rotate: 0.28, scale: 0.015, cameraX: -14, cameraY: 18 },
+  book: { contentX: 0, contentY: 18, rotate: 0, scale: 0.022, cameraX: 0, cameraY: -18 },
 };
 
 const CHAPTER_META: Record<string, { id: string; label: string }> = {
@@ -38,6 +38,11 @@ const CHAPTER_META: Record<string, { id: string; label: string }> = {
 
 function clamp(value: number, minimum = 0, maximum = 1) {
   return Math.min(maximum, Math.max(minimum, value));
+}
+
+function smoothRange(value: number, start: number, end: number) {
+  const local = clamp((value - start) / Math.max(0.0001, end - start));
+  return local * local * (3 - 2 * local);
 }
 
 function orderedScenes(main: HTMLElement) {
@@ -134,6 +139,21 @@ export function ServicesExperienceRuntime() {
       scene.style.setProperty("--services-camera-x", "0px");
       scene.style.setProperty("--services-camera-y", "0px");
       scene.style.setProperty("--services-camera-scale", "1.02");
+      scene.style.setProperty("--services-anticipation", index === 0 ? "1" : "0");
+      scene.style.setProperty("--services-activation", index === 0 ? "1" : "0");
+      scene.style.setProperty("--services-discovery", index === 0 ? "1" : "0");
+      scene.style.setProperty("--services-resolution", index === 0 ? "1" : "0");
+      scene.style.setProperty("--services-departure", "0");
+      scene.style.setProperty("--services-copy-x", "0px");
+      scene.style.setProperty("--services-copy-y", "0px");
+      scene.style.setProperty("--services-copy-opacity", "1");
+      scene.style.setProperty("--services-instrument-x", "0px");
+      scene.style.setProperty("--services-instrument-y", "0px");
+      scene.style.setProperty("--services-instrument-scale", "1");
+      scene.style.setProperty("--services-instrument-opacity", "1");
+      scene.style.setProperty("--services-instrument-mask", "0%");
+      scene.style.setProperty("--services-resolution-y", "0px");
+      scene.style.setProperty("--services-resolution-opacity", "1");
 
       const signal = document.createElement("span");
       signal.dataset.servicesSceneSignal = "true";
@@ -288,30 +308,95 @@ export function ServicesExperienceRuntime() {
         const axis = clamp((progress - 0.5) * 2, -1, 1);
         const key = scene.dataset.servicesScrollScene || "";
         const motion = SCENE_MOTION[key];
+        const anticipation = smoothRange(progress, 0.01, 0.16);
+        const activation = smoothRange(progress, 0.1, 0.38);
+        const discovery = smoothRange(progress, 0.32, 0.64);
+        const resolution = smoothRange(progress, 0.6, 0.84);
+        const departure = smoothRange(progress, 0.82, 0.98);
+        const arrival = 1 - activation;
+        const travelAxis = -arrival + departure;
+        const signedVelocity = smoothedVelocity * (scrollDirection === "down" ? 1 : -1);
         scene.style.setProperty("--services-scene-progress", progress.toFixed(4));
         scene.style.setProperty("--services-scene-presence", centred.toFixed(4));
         scene.style.setProperty("--services-scene-axis", axis.toFixed(4));
         scene.style.setProperty("--services-scene-signal-x", `${(progress * 100).toFixed(3)}%`);
+        scene.style.setProperty("--services-anticipation", anticipation.toFixed(4));
+        scene.style.setProperty("--services-activation", activation.toFixed(4));
+        scene.style.setProperty("--services-discovery", discovery.toFixed(4));
+        scene.style.setProperty("--services-resolution", resolution.toFixed(4));
+        scene.style.setProperty("--services-departure", departure.toFixed(4));
+        scene.style.setProperty("--services-scroll-kick", signedVelocity.toFixed(4));
+
+        const lateralSign = motion?.contentX && motion.contentX < 0 ? -1 : 1;
+        scene.style.setProperty(
+          "--services-copy-x",
+          `${(travelAxis * 18 * lateralSign + signedVelocity * 5).toFixed(2)}px`,
+        );
+        scene.style.setProperty(
+          "--services-copy-y",
+          `${(arrival * 15 - departure * 11 + signedVelocity * 8).toFixed(2)}px`,
+        );
+        scene.style.setProperty(
+          "--services-copy-opacity",
+          clamp(0.7 + activation * 0.3 - departure * 0.12, 0.58, 1).toFixed(4),
+        );
+        scene.style.setProperty(
+          "--services-instrument-x",
+          `${((1 - discovery) * -32 * lateralSign + departure * 18 * lateralSign + signedVelocity * 9).toFixed(2)}px`,
+        );
+        scene.style.setProperty(
+          "--services-instrument-y",
+          `${((1 - discovery) * 18 - departure * 9 + signedVelocity * 11).toFixed(2)}px`,
+        );
+        scene.style.setProperty(
+          "--services-instrument-scale",
+          clamp(0.972 + discovery * 0.028 + smoothedVelocity * 0.012 - departure * 0.006, 0.96, 1.018).toFixed(4),
+        );
+        scene.style.setProperty(
+          "--services-instrument-opacity",
+          clamp(0.62 + discovery * 0.38 - departure * 0.1, 0.52, 1).toFixed(4),
+        );
+        scene.style.setProperty(
+          "--services-instrument-mask",
+          `${((1 - discovery) * 9 + departure * 2.5).toFixed(3)}%`,
+        );
+        scene.style.setProperty(
+          "--services-resolution-y",
+          `${((1 - resolution) * 12 - departure * 8).toFixed(2)}px`,
+        );
+        scene.style.setProperty(
+          "--services-resolution-opacity",
+          clamp(0.66 + resolution * 0.34 - departure * 0.08, 0.58, 1).toFixed(4),
+        );
 
         if (motion && !reducedMotion) {
-          scene.style.setProperty("--services-content-x", `${(axis * motion.contentX).toFixed(2)}px`);
-          scene.style.setProperty("--services-content-y", `${(axis * motion.contentY).toFixed(2)}px`);
-          scene.style.setProperty("--services-content-rotate", `${(axis * motion.rotate).toFixed(3)}deg`);
+          scene.style.setProperty(
+            "--services-content-x",
+            `${(travelAxis * motion.contentX + signedVelocity * motion.contentX * 0.16).toFixed(2)}px`,
+          );
+          scene.style.setProperty(
+            "--services-content-y",
+            `${(travelAxis * motion.contentY + signedVelocity * 8).toFixed(2)}px`,
+          );
+          scene.style.setProperty(
+            "--services-content-rotate",
+            `${(travelAxis * motion.rotate + signedVelocity * motion.rotate * 0.28).toFixed(3)}deg`,
+          );
           scene.style.setProperty(
             "--services-content-scale",
-            (1 - (1 - centred) * motion.scale).toFixed(4),
+            (1 - arrival * motion.scale - departure * motion.scale * 0.55).toFixed(4),
           );
           scene.style.setProperty(
             "--services-camera-x",
-            `${(axis * motion.cameraX + pointerX * 4).toFixed(2)}px`,
+            `${(travelAxis * motion.cameraX + pointerX * 5 + signedVelocity * 6).toFixed(2)}px`,
           );
           scene.style.setProperty(
             "--services-camera-y",
-            `${(axis * motion.cameraY + pointerY * 3).toFixed(2)}px`,
+            `${(travelAxis * motion.cameraY + pointerY * 4 + signedVelocity * 9).toFixed(2)}px`,
           );
           scene.style.setProperty(
             "--services-camera-scale",
-            (1.018 + (1 - centred) * 0.018 + smoothedVelocity * 0.012).toFixed(4),
+            (1.014 + arrival * 0.024 + departure * 0.018 + smoothedVelocity * 0.018).toFixed(4),
           );
         }
 
@@ -322,6 +407,16 @@ export function ServicesExperienceRuntime() {
               ? "leaving"
               : "present";
         scene.dataset.servicesPhase = phase;
+        scene.dataset.servicesRhythm =
+          progress < 0.12
+            ? "anticipation"
+            : progress < 0.36
+              ? "activation"
+              : progress < 0.64
+                ? "discovery"
+                : progress < 0.84
+                  ? "resolution"
+                  : "handoff";
 
         if (bounds.bottom >= -viewportHeight * 0.2 && bounds.top <= viewportHeight * 1.2) {
           window.dispatchEvent(
@@ -333,6 +428,9 @@ export function ServicesExperienceRuntime() {
                 progress,
                 presence: centred,
                 phase,
+                rhythm: scene.dataset.servicesRhythm,
+                direction: scrollDirection,
+                velocity: smoothedVelocity,
               },
             }),
           );
@@ -426,6 +524,7 @@ export function ServicesExperienceRuntime() {
         delete scene.dataset.servicesChapterLabel;
         delete scene.dataset.servicesActive;
         delete scene.dataset.servicesPhase;
+        delete scene.dataset.servicesRhythm;
         if (generatedIds.has(scene)) scene.removeAttribute("id");
         scene.style.removeProperty("--services-scene-progress");
         scene.style.removeProperty("--services-scene-presence");
@@ -438,6 +537,22 @@ export function ServicesExperienceRuntime() {
         scene.style.removeProperty("--services-camera-x");
         scene.style.removeProperty("--services-camera-y");
         scene.style.removeProperty("--services-camera-scale");
+        scene.style.removeProperty("--services-anticipation");
+        scene.style.removeProperty("--services-activation");
+        scene.style.removeProperty("--services-discovery");
+        scene.style.removeProperty("--services-resolution");
+        scene.style.removeProperty("--services-departure");
+        scene.style.removeProperty("--services-scroll-kick");
+        scene.style.removeProperty("--services-copy-x");
+        scene.style.removeProperty("--services-copy-y");
+        scene.style.removeProperty("--services-copy-opacity");
+        scene.style.removeProperty("--services-instrument-x");
+        scene.style.removeProperty("--services-instrument-y");
+        scene.style.removeProperty("--services-instrument-scale");
+        scene.style.removeProperty("--services-instrument-opacity");
+        scene.style.removeProperty("--services-instrument-mask");
+        scene.style.removeProperty("--services-resolution-y");
+        scene.style.removeProperty("--services-resolution-opacity");
       });
       signalLayers.clear();
       generatedIds.clear();

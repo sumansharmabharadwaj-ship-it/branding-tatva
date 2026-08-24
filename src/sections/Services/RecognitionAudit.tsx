@@ -176,6 +176,7 @@ export function RecognitionAudit() {
 
         <div className="grid gap-12 lg:grid-cols-[1fr_minmax(0,24rem)] lg:gap-20">
           <section
+            data-services-chapter-copy="true"
             id="recognition-audit-panel-checks"
             role="tabpanel"
             aria-labelledby="recognition-audit-tab-checks"
@@ -230,6 +231,7 @@ export function RecognitionAudit() {
           </section>
 
           <section
+            data-services-chapter-instrument="true"
             id="recognition-audit-panel-unlock"
             role="tabpanel"
             aria-labelledby="recognition-audit-tab-unlock"

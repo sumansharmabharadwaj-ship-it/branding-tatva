@@ -112,38 +112,36 @@ export function ServiceDisciplineExplorer() {
           <div
             className="grid gap-10 lg:grid-cols-[minmax(15rem,0.58fr)_minmax(0,1.42fr)] lg:items-center lg:gap-12 xl:grid-cols-[minmax(16rem,0.52fr)_minmax(0,1.48fr)] xl:gap-16"
           >
-            <Reveal className="lg:self-center">
-              <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The full practice</p>
-              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                Six kinds of work, one discipline underneath.
-              </h2>
-              <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/75">
-                Every service appears inside the package paths ahead. Explore the complete practice here without leaving
-                this scene.
-              </p>
-              <p className="mt-6 max-w-xs text-xs uppercase tracking-[0.16em] text-ivory/50">
-                {isDesktop ? "Choose a discipline to change the working view." : "Tap a discipline to change the working view."}
-              </p>
+            <div data-services-chapter-copy="true" className="lg:self-center">
+              <Reveal>
+                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The full practice</p>
+                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                  Six kinds of work, one discipline underneath.
+                </h2>
+                <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/75">
+                  Every service appears inside the package paths ahead. Explore the complete practice here without leaving
+                  this scene.
+                </p>
+                <div className="mt-7 flex items-center gap-4" aria-hidden="true">
+                  <span className="font-display text-2xl text-ivory">
+                    {String(activeIndex + 1).padStart(2, "0")}
+                  </span>
+                  <span className="h-px flex-1 overflow-hidden bg-ivory/12">
+                    <motion.span
+                      className="block h-full origin-left"
+                      style={{ backgroundColor: active.color }}
+                      animate={{ scaleX: (activeIndex + 1) / offerings.length }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
+                    />
+                  </span>
+                  <span className="text-[0.58rem] uppercase tracking-[0.14em] text-ivory/45">
+                    / {String(offerings.length).padStart(2, "0")}
+                  </span>
+                </div>
+              </Reveal>
+            </div>
 
-              <div className="mt-7 flex items-center gap-4" aria-hidden="true">
-                <span className="font-display text-2xl text-ivory">
-                  {String(activeIndex + 1).padStart(2, "0")}
-                </span>
-                <span className="h-px flex-1 overflow-hidden bg-ivory/12">
-                  <motion.span
-                    className="block h-full origin-left"
-                    style={{ backgroundColor: active.color }}
-                    animate={{ scaleX: (activeIndex + 1) / offerings.length }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
-                  />
-                </span>
-                <span className="text-[0.58rem] uppercase tracking-[0.14em] text-ivory/45">
-                  / {String(offerings.length).padStart(2, "0")}
-                </span>
-              </div>
-            </Reveal>
-
-            <div className="min-w-0">
+            <div data-services-chapter-instrument="true" className="min-w-0">
               <div
                 ref={railViewportRef}
                 className="services-discipline-rail-viewport overflow-visible lg:overflow-hidden"

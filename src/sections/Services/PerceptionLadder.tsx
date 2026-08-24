@@ -108,7 +108,7 @@ export function PerceptionLadder() {
         data-perception-stage={activeIndex + 1}
         className="grid gap-8 lg:grid-cols-[minmax(15rem,0.62fr)_minmax(16rem,0.72fr)_minmax(21rem,1.05fr)] lg:items-center lg:gap-10 xl:gap-16"
       >
-        <div>
+        <div data-services-chapter-copy="true">
           <p className="text-sm font-medium uppercase tracking-wide text-[#C6CCB8]">Perception</p>
           <h2 className="mt-2 max-w-lg text-display-sm font-display font-normal text-ivory">
             Recognition is built in four public stages.
@@ -140,6 +140,7 @@ export function PerceptionLadder() {
         </div>
 
         <div
+          data-services-chapter-instrument="true"
           role="tablist"
           aria-label="Four stages of brand recognition"
           className="grid grid-cols-2 gap-1 rounded-3xl border border-ivory/12 bg-[rgba(14,20,18,0.42)] p-2 backdrop-blur-xl lg:block"
@@ -191,6 +192,7 @@ export function PerceptionLadder() {
         </div>
 
         <div
+          data-services-chapter-resolution="true"
           id="perception-stage-panel"
           role="tabpanel"
           aria-labelledby={`perception-stage-tab-${activeIndex}`}

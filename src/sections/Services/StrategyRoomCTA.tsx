@@ -95,6 +95,7 @@ export function StrategyRoomCTA() {
           page, chosen as arrival rather than convenience. After the
           asymmetric chapters, the visitor reaches a balanced room. */}
       <motion.div
+        data-services-chapter-copy="true"
         initial={prefersReducedMotion ? undefined : { opacity: 0, y: 16 }}
         whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "0px 0px -15% 0px" }}
@@ -123,7 +124,7 @@ export function StrategyRoomCTA() {
 
       {/* The progress rail makes the tiny interaction feel finite. The
           controls remain reversible, so a fast tap never becomes a trap. */}
-      <div className="relative mt-10 min-h-[330px] sm:min-h-[260px]" aria-live="polite">
+      <div data-services-chapter-resolution="true" className="relative mt-10 min-h-[330px] sm:min-h-[260px]" aria-live="polite">
         <div className="mx-auto mb-6 flex max-w-lg items-center justify-between gap-4">
           <p className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-ivory/60">{progressLabel}</p>
           <div className="flex flex-1 justify-end gap-1.5" aria-hidden="true">

@@ -145,41 +145,43 @@ export function PackageSelector() {
 
   return (
     <Container className="max-w-3xl text-center">
-      <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Desire</p>
-      <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-        Where does your brand actually stand?
-      </h2>
+      <div data-services-chapter-copy="true">
+        <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Desire</p>
+        <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+          Where does your brand actually stand?
+        </h2>
 
-      <AnimatePresence initial={false}>
-        {carriedSituation && activePackage && !compare && (
-          <motion.p
-            data-carried-package="true"
-            initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={transition}
-            className="mx-auto mt-3 max-w-xl rounded-full border border-sandstone/35 bg-[rgba(15,21,28,0.48)] px-4 py-1.5 text-xs text-ivory/80 backdrop-blur-md"
-          >
-            From your earlier choice: <span className="font-medium text-sandstone">{activePackage.name}</span>. You can
-            still compare below.
-          </motion.p>
-        )}
-        {selectionSource === "scroll" && activePackage && !compare && (
-          <motion.p
-            key="scroll-package-preview"
-            data-scroll-package-preview="true"
-            initial={{ opacity: 0, y: 7 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={transition}
-            className="mx-auto mt-5 max-w-xl text-xs font-medium uppercase tracking-[0.15em] text-sandstone/80"
-          >
-            Previewing the package paths · select a card to hold your choice
-          </motion.p>
-        )}
-      </AnimatePresence>
+        <AnimatePresence initial={false}>
+          {carriedSituation && activePackage && !compare && (
+            <motion.p
+              data-carried-package="true"
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={transition}
+              className="mx-auto mt-3 max-w-xl rounded-full border border-sandstone/35 bg-[rgba(15,21,28,0.48)] px-4 py-1.5 text-xs text-ivory/80 backdrop-blur-md"
+            >
+              From your earlier choice: <span className="font-medium text-sandstone">{activePackage.name}</span>. You can
+              still compare below.
+            </motion.p>
+          )}
+          {selectionSource === "scroll" && activePackage && !compare && (
+            <motion.p
+              key="scroll-package-preview"
+              data-scroll-package-preview="true"
+              initial={{ opacity: 0, y: 7 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={transition}
+              className="mx-auto mt-5 max-w-xl text-xs font-medium uppercase tracking-[0.15em] text-sandstone/80"
+            >
+              Path in view · {activePackage.name}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
 
-      <div className="mx-auto mt-6 grid max-w-2xl gap-4 sm:grid-cols-3 lg:mt-7">
+      <div data-services-chapter-instrument="true" className="mx-auto mt-6 grid max-w-2xl gap-4 sm:grid-cols-3 lg:mt-7">
         {CHOICES.map((choice, choiceIndex) => {
           const pkg = packages.find((entry) => entry.slug === choice.slug);
           const isActive = active === choice.slug;
@@ -236,7 +238,7 @@ export function PackageSelector() {
         </button>
       </div>
 
-      <div className="relative mt-5 min-h-[220px] text-left">
+      <div data-services-chapter-resolution="true" className="relative mt-5 min-h-[220px] text-left">
         <AnimatePresence mode="wait">
           {compare ? (
             <motion.div
@@ -302,7 +304,7 @@ export function PackageSelector() {
             </motion.div>
           ) : (
             <motion.p key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-sm text-ivory/70">
-              Scroll through the three package paths, or select the one closest to true.
+              Three paths, each shaped around a different decision.
             </motion.p>
           )}
         </AnimatePresence>

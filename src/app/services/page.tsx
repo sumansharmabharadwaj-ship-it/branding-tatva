@@ -138,13 +138,13 @@ export const metadata: Metadata = {
 // one section per objection a visitor actually carries into the page
 // (Curiosity → Authority → Education → Desire → Risk removal → Book
 // call), not a service-by-service list. Trust, Proof, and Future
-// vision (the founder bio, the case study, and the six-stage pinned
-// process) were removed after a Creative Direction Audit — the pinned
+// vision (the founder bio, the case study, and the six-stage extended
+// process) were removed after a Creative Direction Audit — the former
 // process sequence was also rendering with overlapping text, a real
 // bug, not just a pacing call. See the plan doc (Phase 14) for the
-// original reasoning. PinnedBrandBuild now uses the same CSS-sticky
-// mechanism proven elsewhere on the site; Three.js remains scoped once
-// inside PerceptionLadder rather than becoming a page-wide effect.
+// original reasoning. PinnedBrandBuild now resolves inside one native
+// scroll frame, and the recognition ladder stays a light DOM instrument
+// rather than becoming a page-wide Three.js effect.
 
 // Conversion order (Phase 2 of the redesign brief): the commercial
 // path — situation, packages, proof — comes before the teaching
@@ -444,10 +444,10 @@ export default async function ServicesPage() {
           </div>
         </section>
 
-        {/* Authority is the page's one extended CSS-sticky teaching
-            chapter. The wrapper stays in normal flow and paints its own
-            charcoal ground, so the five-layer build never disagrees
-            with the viewport width. */}
+        {/* Authority now resolves inside one viewport. The shared services
+            camera assembles its five layers during entry, discovery, and
+            resolution, so the chapter keeps its teaching sequence without
+            holding the visitor inside a long sticky runway. */}
         <section id="authority" className="relative scroll-mt-24" style={{ backgroundColor: MOOD.charcoal }}>
           <PinnedBrandBuild />
           <SceneHandoff color="#191B16" />

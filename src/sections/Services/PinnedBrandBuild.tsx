@@ -6,31 +6,27 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { useLenis } from "@/components/SmoothScrollProvider";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ELEMENT_HEX, MOOD } from "@/lib/sectionWash";
 import { elements } from "@/data/elements";
 import { MobileAuthorityDeck, type AuthorityLayer } from "@/sections/Services/MobileAuthorityDeck";
 
-// The Authority build, finally on the same mechanism as every other
-// pinned scene on this site: CSS position sticky plus measured scroll
-// progress. The GSAP ScrollTrigger pin this section used to carry was
-// the last one on the site and the source of a repeatedly reported
-// bug: the pin stamps a measured width as an inline style at pin
-// time, and any stale measurement left the whole scene a strip
-// narrower than the real viewport — visible gaps down both edges on
-// real displays. Two workarounds (viewport width background, charcoal
-// page ground) treated the symptom. This rebuild removes the cause:
-// sticky IS the wrapper's own layout, so it can never disagree with
-// the viewport about width.
+const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+
+// Authority uses the page's shared native scroll camera rather than a
+// second pinned runway. The GSAP ScrollTrigger version repeatedly
+// desynchronised and introduced dead space. A later CSS sticky version
+// fixed the width bug, but still asked for more than two viewports. The
+// current one frame build keeps the progressive layer assembly while
+// every pixel of travel remains ordinary page scroll.
 //
 // One responsive structure now serves every visitor: the server, the
 // crawler, mobile, and reduced motion all get the five layers fully
 // visible in normal flow (which also removes the old hydration height
 // swap that once measured 0.21 CLS); desktop with motion gets the
-// tall scroll range where the layers assemble one by one, driven by
-// rect math on Lenis's own scroll event, styles written directly to
-// the nodes with zero per-frame React state.
+// one viewport where the layers assemble one by one as the shared
+// services camera crosses the chapter. The same progress reverses
+// when the visitor scrolls upward, while touch and reduced motion keep
+// the complete tabbed deck in normal flow.
 // Manual guide p11/p65: the scene must DEMONSTRATE amplification
 // rather than caption it — each layer carries the marketing
 // consequence of skipping it, and the output wave at the top of the
@@ -70,12 +66,9 @@ export function PinnedBrandBuild() {
   const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const waveRef = useRef<SVGGElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const lenis = useLenis();
-  const animate = isDesktop && !prefersReducedMotion;
 
   useEffect(() => {
-    if (!animate) {
+    if (prefersReducedMotion) {
       // Static contexts keep every layer fully visible and the output
       // wave at full amplitude.
       layerRefs.current.forEach((layer) => {
@@ -93,65 +86,80 @@ export function PinnedBrandBuild() {
     const wrap = wrapRef.current;
     if (!wrap) return;
 
-    function update() {
+    function update(progress: number, direction: "up" | "down", velocity: number) {
       if (!wrap) return;
-      const rect = wrap.getBoundingClientRect();
-      const travel = rect.height - window.innerHeight;
-      const progress = travel > 0 ? Math.min(1, Math.max(0, -rect.top / travel)) : 1;
+      const assembly = Math.min(1, Math.max(0, (progress - 0.08) / 0.68));
+      const signedVelocity = Math.min(1, velocity) * (direction === "down" ? 1 : -1);
+
+      wrap.dataset.authorityDirection = direction;
+      wrap.style.setProperty("--authority-progress", assembly.toFixed(4));
+      wrap.style.setProperty("--authority-camera-y", `${((0.5 - progress) * 28 + signedVelocity * 8).toFixed(2)}px`);
+      wrap.style.setProperty("--authority-camera-scale", (1.035 - assembly * 0.025 + velocity * 0.012).toFixed(4));
+      wrap.style.setProperty("--authority-copy-x", `${((1 - assembly) * -20 + signedVelocity * 6).toFixed(2)}px`);
+      wrap.style.setProperty("--authority-copy-opacity", (0.68 + assembly * 0.32).toFixed(4));
+
       layerRefs.current.forEach((layer, i) => {
         if (!layer) return;
-        // The first layer is already present when the scene arrives, so the
-        // visualizer never opens on an empty panel. Later layers still resolve
-        // progressively as the visitor scrolls.
-        const start = (i - 0.85) / LAYERS.length;
-        const span = 0.92 / LAYERS.length;
-        const local = Math.min(1, Math.max(0, (progress - start) / span));
-        const eased = 1 - (1 - local) * (1 - local);
-        layer.style.opacity = String(eased);
-        layer.style.transform = `translateY(${(36 * (1 - eased)).toFixed(1)}px) scale(${(0.97 + 0.03 * eased).toFixed(3)})`;
+        const start = i * 0.105;
+        const local = Math.min(1, Math.max(0, (assembly - start) / 0.36));
+        const eased = 1 - Math.pow(1 - local, 3);
+        const orbit = (1 - eased) * (i % 2 === 0 ? -1 : 1) * (38 + i * 5);
+        const lift = (1 - eased) * (24 + i * 3) + signedVelocity * (5 + i);
+        const rotation = (1 - eased) * (i % 2 === 0 ? -1 : 1) * 1.2;
+        layer.style.opacity = String(0.16 + eased * 0.84);
+        layer.style.transform = `translate3d(${orbit.toFixed(1)}px, ${lift.toFixed(1)}px, 0) rotate(${rotation.toFixed(2)}deg) scale(${(0.965 + 0.035 * eased).toFixed(3)})`;
         layer.style.setProperty("--act", eased.toFixed(3));
       });
-      // The amplification made visible: the output wave gains height
-      // and presence as the layers beneath it assemble.
+
       if (waveRef.current) {
-        waveRef.current.style.transform = `scaleY(${(0.12 + 0.88 * progress).toFixed(3)})`;
-        waveRef.current.style.opacity = (0.3 + 0.7 * progress).toFixed(3);
+        waveRef.current.style.transform = `translate3d(${(signedVelocity * 7).toFixed(2)}px, 0, 0) scaleY(${(0.12 + 0.88 * assembly).toFixed(3)})`;
+        waveRef.current.style.opacity = (0.28 + 0.72 * assembly).toFixed(3);
       }
     }
 
-    update();
-    window.addEventListener("resize", update);
-    if (lenis) {
-      const off = lenis.on("scroll", update);
-      return () => {
-        off?.();
-        window.removeEventListener("resize", update);
-      };
+    function onProgress(event: Event) {
+      const detail = (
+        event as CustomEvent<{
+          id?: string;
+          progress?: number;
+          direction?: "up" | "down";
+          velocity?: number;
+        }>
+      ).detail;
+      if (detail?.id !== "authority" || typeof detail.progress !== "number") return;
+      update(detail.progress, detail.direction ?? "down", detail.velocity ?? 0);
     }
-    window.addEventListener("scroll", update, { passive: true });
+
+    update(0, "down", 0);
+    window.addEventListener(SCENE_PROGRESS_EVENT, onProgress as EventListener);
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      window.removeEventListener(SCENE_PROGRESS_EVENT, onProgress as EventListener);
+      delete wrap.dataset.authorityDirection;
+      wrap.style.removeProperty("--authority-progress");
+      wrap.style.removeProperty("--authority-camera-y");
+      wrap.style.removeProperty("--authority-camera-scale");
+      wrap.style.removeProperty("--authority-copy-x");
+      wrap.style.removeProperty("--authority-copy-opacity");
     };
-  }, [animate, lenis]);
+  }, [prefersReducedMotion]);
 
   return (
     <div
       ref={wrapRef}
       data-authority-story="true"
-      className="relative lg:h-[205svh]"
+      className="relative min-h-[100svh] lg:h-[100svh]"
       style={{ backgroundColor: MOOD.charcoal }}
     >
       <div
         data-authority-frame="true"
-        className="relative overflow-hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center"
+        className="relative overflow-hidden lg:flex lg:h-[100svh] lg:flex-col lg:justify-center"
       >
         {/* Original procedural Authority film: a restrained signal rises
             through five natural material layers and widens only after
-            the full system is present. The pinned rows remain the primary
+            the full system is present. The assembling rows remain the primary
             scroll-led demonstration; the film gives them one coherent
             material world instead of repeating the hero's root metaphor. */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div data-authority-media-plane="true" className="absolute inset-0 overflow-hidden">
           <BackgroundVideo
             video="/videos/generated/bt-services-authority-layers.mp4"
             videoMobile="/videos/generated/bt-services-authority-layers-mobile.mp4"
@@ -194,7 +202,7 @@ export function PinnedBrandBuild() {
               </Link>
             </div>
             <MobileAuthorityDeck layers={LAYERS} wavePath={WAVE_PATH} />
-            <div data-authority-diagram="true" className="relative hidden lg:block">
+            <div data-authority-diagram="true" data-services-chapter-instrument="true" className="relative hidden lg:block">
               {/* The output signal — a wave whose oscillation widens as
                   the layers beneath it assemble. Decorative twin of the
                   rows below, which carry the full text alternative. */}

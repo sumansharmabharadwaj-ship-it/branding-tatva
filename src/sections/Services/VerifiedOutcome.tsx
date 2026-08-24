@@ -69,7 +69,7 @@ export function VerifiedOutcome() {
   return (
     <Container className="max-w-6xl">
       <div data-verified-outcome-phase={activeBeat} className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-20">
-        <div>
+        <div data-services-chapter-copy="true">
           <Reveal>
             <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Verified outcome</p>
             <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
@@ -109,7 +109,7 @@ export function VerifiedOutcome() {
           </div>
         </div>
 
-        <div className="relative">
+        <div data-services-chapter-instrument="true" className="relative">
           <p className="mb-4 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-ivory/70">
             One decision, followed through
           </p>

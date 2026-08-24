@@ -130,13 +130,13 @@ export function SituationPath() {
   return (
     <Container className="max-w-6xl">
       <div className="grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-20">
-        <div className="lg:sticky lg:top-28 lg:self-start">
+        <div data-services-chapter-copy="true" className="lg:sticky lg:top-28 lg:self-start">
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Choose your situation</p>
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
             Three starting points. One of them is yours.
           </h2>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/70">
-            A short scroll previews each route. Select the row that sounds like yours and the rest of the page carries that decision forward.
+            Each starting point changes the order of decisions. The route closest to yours becomes the thread carried through the page.
           </p>
           <AnimatePresence>
             {carried && (
@@ -152,7 +152,7 @@ export function SituationPath() {
           </AnimatePresence>
         </div>
 
-        <div>
+        <div data-services-chapter-instrument="true">
           {OPTIONS.map((option, index) => {
             const isActive = displayed === option.id;
             const isCommitted = selected === option.id;
@@ -212,7 +212,7 @@ export function SituationPath() {
                         </div>
                         {!isCommitted && (
                           <p className="mt-3 text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">
-                            Previewing this route · select the row to carry it forward
+                            Route currently in view
                           </p>
                         )}
                         <p className="mt-3 max-w-2xl text-base leading-relaxed text-ivory/90">{option.reason}</p>
