@@ -91,6 +91,68 @@ passed
 
 ---
 
+# Homepage cinematic method QA · 2026-08-24
+
+## Comparison target
+
+- Source visual truth: `/workspace/scratch/55f96cacf4b7/upload/08a75655-58aa-4a35-9d03-637489c417c4(1).png` (`1536 × 1024`), the user's approved golden water-and-flower art direction.
+- Rejected pre-change scene: `/workspace/scratch/bt-midpage-before-process.jpg` (`1348 × 926`), captured in this audit run.
+- Browser-rendered live implementation: `/workspace/scratch/bt-midpage-live-process-final.jpg` (`1348 × 926`).
+- Source-direction comparison: `/workspace/scratch/bt-midpage-direction-comparison-final.jpg` (`2696 × 926`).
+- Before/after comparison: `/workspace/scratch/bt-midpage-process-comparison-final.jpg` (`2696 × 926`).
+- CSS viewport: `1363 × 936`; device pixel ratio: `1`.
+- Density normalization: the `1536 × 1024` source was proportionally resized and center-cropped to the implementation's `1348 × 926` browser-image footprint. The live implementation remained at native capture density before both images were placed together.
+- State: desktop, full motion, method chapter aligned exactly to the viewport, decision `03 / 06` active in the live final capture.
+
+## Findings
+
+No actionable P0, P1, or P2 findings remain.
+
+The earlier method chapter read as a compact dashboard: six controls, a summary card, four micro-bars, a second dark card and a conversion footer competed simultaneously. The final chapter carries one active strategic decision over a unique moving mist-and-water landscape. Supporting detail is limited to one explanation and two editorial facts, with the six-stage selector anchored in a single bottom rail.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed. Branding Tatva's existing display serif, earth-green foreground, italic copper emphasis and compact uppercase interface type remain intact. The dominant statement has clear optical weight and balanced wrapping; small utility text remains readable at the measured desktop viewport.
+- Spacing and layout rhythm: passed. The chapter and inner composition each measure exactly `936px` in the `936px` viewport. Header, active statement, supporting details and the complete six-stage rail are visible without clipping, internal scroll or blank runway.
+- Colors and visual tokens: passed. Warm vellum, earth green, muted copper and translucent forest-water tones match the approved light, organic direction. The former solid dark panel is gone; the darker bottom rail is a single transparent navigation threshold rather than a dark-theme content card.
+- Image quality and asset fidelity: passed. The implementation uses the real `public/videos/pixabay-stream-mist-rays.mp4` landscape with its native poster, full-bleed cover crop and restrained camera/light treatment. The live video reported `readyState: 4`, `paused: false` and advancing `currentTime`. No placeholder illustration, handcrafted SVG or fake media asset was introduced.
+- Copy and content: passed. All six method stages, stage-specific outputs and ambiguity statements remain available. Readiness micro-metrics and the duplicate CTA were intentionally removed because they were presentation noise, not required method content.
+
+## Interaction and browser verification
+
+- Decision selector: passed; click changed the live state to `01 Question` and updated the complete panel copy.
+- Keyboard tabs: passed; `ArrowRight` moved the live selection from `01 Question` to `02 Decode`.
+- Automatic cinematic tempo: passed; states advance on a complete reading beat (`3s` first change, `5.2s` thereafter) and manual interaction holds the selected state for `14s`.
+- Background movement: passed; the live mist-and-water video is playing and the restrained camera/light drift is active.
+- Reduced motion: passed by code path; autoplay and ambient CSS drift are disabled, and the existing reduced-motion journey remains available.
+- Section fit: passed; live bounds were `top: 0`, `height: 936`, `bottom: 936` in the `1363 × 936` CSS viewport.
+- Browser console: no application errors. Logged messages originated only from `chrome-extension://` metadata handling and were excluded from site QA.
+- Production build: passed; all `78` routes generated.
+- Live deployment: `e42218bb8f3cf91371e04e308160fc21b6e0eb03`, READY on the `august-8-isolated` branch alias.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The method was visually fragmented into a tab bar, pale summary card, four micro-bars, dark duplicate statement card and separate CTA. | Removed the dashboard structure and rebuilt the chapter as one active editorial decision over a moving landscape. The before/after board shows the reduction in competing regions. |
+| 2 | P1 | The strongest mid-page method scene was nearly static and used a light/dark split that broke the requested calm, scenic atmosphere. | Added a unique mist-and-water film, a warm vellum veil and restrained camera/light drift. The source-direction board shows consistent light, organic, cinematic pacing. |
+| 3 | P2 | The old `2.9s` state tempo moved faster than the large method statements could be read. | Increased the automatic interval to `5.2s` and the manual hold to `14s`; live click and keyboard selection both remain stable. |
+| 4 | — | Final full-view, interaction and motion checks found no remaining actionable P0/P1/P2 issue. | Passed. |
+
+## Focused-region evidence
+
+A separate crop was not needed. The `2696 × 926` source-direction comparison keeps the headline, active stage, explanatory line, both supporting facts and all six selectors legible at full resolution. Video playback, active-tab changes, keyboard navigation, exact section bounds and console state were additionally inspected directly in the cloud browser.
+
+## Follow-up polish
+
+- P3: the landscape naturally changes brightness as the eight-second film loops; the vellum veil keeps text contrast stable while preserving that live quality.
+
+## Final result
+
+passed
+
+---
+
 # Homepage scene-rhythm QA · 2026-08-24
 
 ## Comparison target
