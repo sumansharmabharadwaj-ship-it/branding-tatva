@@ -1,54 +1,79 @@
-# Branding Tatva motion and layout QA
+# Branding Tatva homepage redesign QA
 
-## Outcome
+## Final result
 
-Status: passed at the supplied desktop reference viewport after remediation.
+The deployed `august-8-isolated` homepage redesign passes the selected desktop visual target and the reported layout failures. No actionable P0, P1, or P2 findings remain.
 
-The August 8 composition remains the source of truth. The repair keeps its layouts and editorial character, moves the dominant palette toward warm ivory and earth tones, removes broken inter-scene bands, and makes scroll/hover the interaction model. The Psychology + Literature visualizer remains present on both Home and About.
+## Comparison evidence
 
-## Comparison inputs
+- Visual source of truth: `/workspace/scratch/55f96cacf4b7/generated_images/exec-f4944b75-1bfa-4997-8fb9-4b43c67c3a78.png` (`1487 × 1058`), the selected **Living Brand Orbit** direction.
+- Browser-rendered implementation: `qa/homepage-diagnostic-deployed.jpg` (`1363 × 936`), captured from the READY Vercel preview at commit `4861691f66d57a5727a026403e6f5845c5412a59`.
+- Same-input comparison board: `qa/homepage-diagnostic-comparison.jpg`.
+- State: desktop, default light appearance, quiz question `01 / 03`, no hover selection.
 
-- August 8 layout source: `/workspace/scratch/a3d8518ad1d9/upload/Screenshot 2026-08-23 at 4.21.04 PM.png`
-- Psychology + Literature source: `/workspace/scratch/a3d8518ad1d9/upload/Screenshot 2026-08-23 at 9.54.49 PM.png`
-- Reported homepage failures: the seven screenshots dated `2026-08-24 11.44–11.46 AM` in the upload folder.
-- QA viewport: 1363 × 936 CSS pixels, DPR 1, Chrome cloud browser.
+The implementation deliberately preserves the target's luminous valley, waterfall, gold sun, three spatial answer choices, editorial serif hierarchy, quiet progress treatment, and single-screen composition. The live section adds the site's existing chapter label and converts the central guidance into a legible ivory glass label. It does not add a play button, scroll instruction, card grid, or decorative node-and-line diagram.
 
-## Interaction contract
+## Pass history
 
-- Scroll position advances and reverses each narrative visualizer.
-- Hover or keyboard focus temporarily inspects a stage; leaving returns to the scroll-derived stage.
-- Clicking a tab remains an accessible manual fallback.
-- Visible ambient video plays; offscreen media pauses.
-- Reduced-motion users receive stable document flow without sticky cinematic runways.
-- No storytelling section exposes a play button or timer-shaped presentation control.
+| Pass | Severity | Visible finding | Resolution |
+| --- | --- | --- | --- |
+| 1 | P1 | Legacy scene owners made Recognition, Evidence, Studio, and Insights `2012px` tall and Process `3042px` tall at a `936px` viewport, creating dead scroll travel and apparent blank gaps. | The final homepage owner collapses every major scene to one `100svh` authored frame while preserving direct hover, focus, click, and natural document scrolling. |
+| 1 | P1 | Recognition still inherited old card/diagram styling despite the new typographic theatre. | High-specificity scene rules remove the cards and keep one large active statement with three editorial state controls. |
+| 1 | P2 | Process left unused space below the active decision board. | The process shell and board now flex to fill the remaining viewport. |
+| 1 | P2 | Framer Motion's transform temporarily displaced the diagnostic sun from its CSS centre. | Stable centring moved to the independent CSS `translate` property. |
+| 2 | P2 | White guidance copy over the gold sun was visibly low contrast in the side-by-side comparison. | The guidance now sits on a restrained translucent ivory label with dark earth-green type and an 8px backdrop blur. |
+| 3 | — | Final side-by-side comparison and browser inspection show no remaining actionable P0/P1/P2 mismatch. | Passed. |
 
-## Remediation log
+## Five-surface review
 
-| Severity | Finding | Resolution |
-| --- | --- | --- |
-| P1 | Painted handoff components consumed space and created the white/black horizontal bands shown in the supplied captures. | Handoffs remain semantic separators but now consume and paint exactly `0px`; chapters meet continuously. |
-| P1 | Sticky scene contents exceeded the viewport and leaked into adjacent chapters. | Recognition, Foundation, Process, Evidence, Studio, and Insights now own measured 100svh authored frames inside their longer scroll runways. |
-| P1 | Assisted/trackpad scrolling could miss a Framer motion-value frame and leave a visualizer on the wrong stage. | The shared visualizer now includes a requestAnimationFrame-synchronised window-scroll fallback derived from the real section runway. |
-| P1 | Homepage Studio used a portrait file with a baked grey lower half, producing a large empty-looking column. | Studio now uses the complete portrait asset with a full-height cover crop and no translating transform. |
-| P2 | Insights topic names, especially “Distinctiveness”, could overrun narrow cards. | Cards and headings now allow shrinkage and safe wrapping without horizontal overflow. |
-| P2 | The Services authority transition reached an over-dark final state that made copy appear missing. | The handoff runway and maximum veil opacity were reduced; all five final layers remain readable. |
-| P2 | Timed/player language suggested passive viewing despite the requested visitor-controlled experience. | Controls now communicate Scroll; movement is driven by scroll and inspect-on-hover/focus. |
+### 1. Full-view composition
 
-## Verification
+- Diagnostic, Recognition, Foundation, Process, Evidence, Studio, Insights, and Invitation each measure exactly `936px` high at the `1363 × 936` QA viewport.
+- Section-to-section boundaries meet continuously; there are no spacer bands, empty runways, or clipped scene bottoms.
+- The diagnostic composition retains the target's large question, central sun, three answer positions, landscape depth, and visible progress within one screen.
 
-- Production build: passed (`npm run build`, including TypeScript and lint checks).
-- Static generation: 77 routes completed.
-- Horizontal overflow: `0px` on Home, About, Services, and Insights at the QA viewport.
-- Empty handoff bands: all seven homepage handoffs measured `clientHeight: 0` and `scrollHeight: 0`.
-- Sticky fit: all six primary homepage narrative frames measured exactly 936px high with no internal viewport overflow.
-- Recognition timeline: forward `01 → 02 → 03`, reverse `03 → 02`; hover preview returns to the scroll state on release.
-- Homepage Studio timeline: forward `01 → 02 → 03`, reverse `03 → 02`.
-- About Convergence timeline: forward `01 → 02 → 03`, reverse `03 → 02`.
-- Visible media: ready state `4`, actively playing; offscreen video paused.
-- Insights “Distinctiveness”: heading right edge remained inside its card and document overflow stayed `0px`.
-- Services final authority layer: all five layer groups reached computed opacity `1` and remained readable.
-- Work navigation: absent; `/work` resolves away from a standalone Work index.
+### 2. Anatomy and spacing
 
-## Residual coverage
+- The question remains the dominant first read; the sun is the spatial centre; answers form a balanced left/right/bottom triangle.
+- Editorial rules and open image areas replace bordered card collections.
+- The diagnostic's internal `scrollHeight` is `952px` because of shadow/animated paint extents, while the authored section is clipped to `936px`; this creates no document gap or hidden interaction.
 
-The fixed cloud browser viewport matches the supplied desktop failures. Smaller/touch layouts are handled by the existing flow-mode and reduced-motion CSS gates; they do not use the desktop sticky runways.
+### 3. Typography, colour, and imagery
+
+- Dark earth-green display type remains readable over the warm mist background.
+- Gold is reserved for progress, focus, and the solar asset rather than used as a generic decoration.
+- The centre label now meets the scene's readability requirement without masking the sun's form.
+- Generated imagery is used as real production assets; no placeholder art, CSS drawing, handcrafted SVG diagram, or repeated page visual was introduced.
+
+### 4. Interactive states
+
+- Quiz progression verified end-to-end: `01/03 → 02/03 → 03/03 → diagnosis result`.
+- Result verified with services path, contact path, and retry action.
+- Recognition state control changes the active message.
+- Foundation and Process controls change the active strategic decision.
+- Hover/focus previews work without visible instructions; scrolling remains ordinary document scrolling.
+- No visible play button or passive media control is present.
+
+### 5. Technical and viewport health
+
+- `npm run build`: passed; all `77` routes generated.
+- No Next/Vite error overlay.
+- Broken images: `0`.
+- Horizontal document overflow: `0px` (the measured `-15px` is the browser scrollbar allowance).
+- Deployed preview state: `READY`; framework: Next.js; branch: `august-8-isolated`.
+- Mobile rules release fixed desktop heights into natural `min-height: 100svh` flow so content can expand rather than clip.
+
+## Verified section measurements
+
+| Section | Bounding height | Scroll height |
+| --- | ---: | ---: |
+| Recognition | 936 | 936 |
+| Brand diagnostic | 936 | 952 |
+| Foundation | 936 | 936 |
+| Process | 936 | 936 |
+| Evidence | 936 | 936 |
+| Studio | 936 | 936 |
+| Insights | 936 | 936 |
+| Invitation | 936 | 936 |
+
+passed
