@@ -1,10 +1,31 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
+
+function ParallaxLayer({ children }: { children: ReactNode }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: wrapRef,
+    offset: ["start end", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+
+  return (
+    <div
+      ref={wrapRef}
+      data-background-video-stage="true"
+      className="absolute inset-0 overflow-hidden"
+    >
+      <motion.div className="absolute inset-0" style={{ y, scale: 1.13 }}>
+        {children}
+      </motion.div>
+    </div>
+  );
+}
 
 // A bare video-with-poster-fallback fill layer, for sections that already
 // build their own overlay/content on top rather than wrapping in
@@ -58,9 +79,6 @@ export function BackgroundVideo({
 }) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
   // The bare `autoplay` attribute alone isn't reliable — confirmed
   // elsewhere on this site (PhotoHero/TexturedDark hero videos, via
   // useVideoFadeIn's own comment) that a fully-loaded, muted, autoplay
@@ -93,36 +111,45 @@ export function BackgroundVideo({
     );
   }
 
+  const videoElement = (
+    <video
+      ref={videoRef}
+      className={`absolute inset-0 h-full w-full object-cover${push ? " bg-slow-push" : ""}`}
+      style={{ objectPosition: imagePosition }}
+      poster={poster}
+      // Playback is intentionally owned by useVideoFadeIn. Leaving the
+      // native autoplay flag here made every offscreen background start
+      // once before the observer could pause it, which was the source of
+      // the long-page bandwidth spike.
+      muted
+      loop
+      playsInline
+      aria-hidden="true"
+      // Was the browser-default eager preload — a Lighthouse profile of
+      // Services caught every BackgroundVideo instance on the page
+      // (~27MB combined) downloading during initial load, competing
+      // with the LCP hero for bandwidth. metadata-only now; the
+      // offscreen-pause observer in useVideoFadeIn calls play() 25%
+      // before a video becomes visible, which starts its real download
+      // ahead of paint, with the poster covering the gap.
+      preload="metadata"
+    >
+      {videoMobile && (
+        <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />
+      )}
+      {videoWebm && <source src={videoWebm} type="video/webm" />}
+      <source src={video} type="video/mp4" />
+    </video>
+  );
+
+  if (parallax) return <ParallaxLayer>{videoElement}</ParallaxLayer>;
+
   return (
-    <div ref={wrapRef} data-background-video-stage="true" className="absolute inset-0 overflow-hidden">
-      <motion.div className="absolute inset-0" style={parallax ? { y, scale: 1.13 } : undefined}>
-        <video
-          ref={videoRef}
-          className={`absolute inset-0 h-full w-full object-cover${push ? " bg-slow-push" : ""}`}
-          style={{ objectPosition: imagePosition }}
-          poster={poster}
-          // Playback is intentionally owned by useVideoFadeIn. Leaving the
-          // native autoplay flag here made every offscreen background start
-          // once before the observer could pause it, which was the source of
-          // the long-page bandwidth spike.
-          muted
-          loop
-          playsInline
-          aria-hidden="true"
-          // Was the browser-default eager preload — a Lighthouse profile of
-          // Services caught every BackgroundVideo instance on the page
-          // (~27MB combined) downloading during initial load, competing
-          // with the LCP hero for bandwidth. metadata-only now; the
-          // offscreen-pause observer in useVideoFadeIn calls play() 25%
-          // before a video becomes visible, which starts its real download
-          // ahead of paint, with the poster covering the gap.
-          preload="metadata"
-        >
-          {videoMobile && <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />}
-          {videoWebm && <source src={videoWebm} type="video/webm" />}
-          <source src={video} type="video/mp4" />
-        </video>
-      </motion.div>
+    <div
+      data-background-video-stage="true"
+      className="absolute inset-0 overflow-hidden"
+    >
+      <div className="absolute inset-0">{videoElement}</div>
     </div>
   );
 }

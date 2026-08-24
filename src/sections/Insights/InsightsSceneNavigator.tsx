@@ -1,14 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 export type InsightScene = {
   id: string;
-  label: string;
-  accent: string;
 };
 
 type InsightsSceneNavigatorProps = {
@@ -16,7 +13,6 @@ type InsightsSceneNavigatorProps = {
 };
 
 const OBSERVER_THRESHOLDS = [0.06, 0.14, 0.26, 0.4, 0.58, 0.76];
-const OPENING_SCENE_ID = "insights-opening-field";
 const SCENE_STYLE_PROPERTIES = [
   "--scene-progress",
   "--scene-presence",
@@ -60,18 +56,11 @@ function phaseFromProgress(progress: number) {
  * focal point, so the page stays keyboard-, anchor-, and browser-history-safe.
  */
 export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const activeIndexRef = useRef(-1);
   const ratiosRef = useRef(new Map<string, number>());
   const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
-  const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 150,
-    damping: 30,
-    mass: 0.42,
-    restDelta: 0.001,
-  });
-  const activeScene = scenes[activeIndex] ?? scenes[0];
 
   useEffect(() => {
     const targets = scenes
@@ -100,7 +89,12 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
           }
         });
 
-        if (strongestRatio <= 0) return;
+        if (strongestRatio <= 0) {
+          activeIndexRef.current = -1;
+          setActiveIndex(-1);
+          return;
+        }
+        activeIndexRef.current = nextIndex;
         setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
       },
       {
@@ -110,7 +104,10 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     );
 
     targets.forEach((target) => observer.observe(target));
-    return () => observer.disconnect();
+    return () => {
+      activeIndexRef.current = -1;
+      observer.disconnect();
+    };
   }, [scenes]);
 
   useEffect(() => {
@@ -180,15 +177,14 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       page.dataset.scrollDirection = direction > 0 ? "forward" : "backward";
       page.style.setProperty("--insights-pointer-x", pointerX.toFixed(4));
       page.style.setProperty("--insights-pointer-y", pointerY.toFixed(4));
-      page.style.setProperty("--insights-scroll-velocity", renderedVelocity.toFixed(4));
+      page.style.setProperty(
+        "--insights-scroll-velocity",
+        Math.abs(renderedVelocity).toFixed(4),
+      );
 
       const viewportHeight = Math.max(1, window.innerHeight);
 
       targets.forEach((target, index) => {
-        // The opening is intentionally excluded from the director. Its media,
-        // layout, typography and timing remain exactly as authored.
-        if (target.id === OPENING_SCENE_ID) return;
-
         const bounds = target.getBoundingClientRect();
         if (bounds.bottom < -viewportHeight || bounds.top > viewportHeight * 2) return;
 
@@ -201,20 +197,24 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
         const discovery = range(sceneProgress, 0.36, 0.67);
         const resolution = range(sceneProgress, 0.64, 0.9);
         const alternatingPan = index % 2 === 0 ? -1 : 1;
-        const velocityKick = renderedVelocity * direction;
+        const velocityKick = renderedVelocity;
         const cameraX =
           pointerX * 8 + alternatingPan * (1 - presence) * 12 + touchDriftX * 7;
         const cameraY =
           pointerY * 5 + velocityKick * 9 + (0.5 - sceneProgress) * 16 + touchDriftY * 5;
-        const cameraScale = 1 + (1 - presence) * 0.032 + renderedVelocity * 0.008;
+        const cameraScale =
+          1 + (1 - presence) * 0.032 + Math.abs(renderedVelocity) * 0.008;
         const cameraRoll = alternatingPan * pointerX * 0.22 + velocityKick * 0.16;
-        const entryShift = (1 - activation) * 30 * direction;
+        const entryShift = (1 - activation) * 30;
         const discoveryShift = (1 - discovery) * 22 * alternatingPan;
-        const resolutionShift = resolution * -10 * direction;
+        const resolutionShift = resolution * -10;
         const mask = 18 + activation * 82;
-        const contentOpacity = 0.52 + presence * 0.48;
+        const contentOpacity = 0.72 + presence * 0.28;
 
-        target.dataset.scenePhase = phaseFromProgress(sceneProgress);
+        const nextPhase = phaseFromProgress(sceneProgress);
+        if (target.dataset.scenePhase !== nextPhase) {
+          target.dataset.scenePhase = nextPhase;
+        }
         target.style.setProperty("--scene-progress", sceneProgress.toFixed(4));
         target.style.setProperty("--scene-presence", presence.toFixed(4));
         target.style.setProperty("--scene-anticipation", anticipation.toFixed(4));
@@ -255,7 +255,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       const delta = scroll - lastScroll;
       if (Math.abs(delta) > 0.2) direction = delta > 0 ? 1 : -1;
       lastScroll = scroll;
-      targetVelocity = clamp(Math.abs(velocity ?? delta) / 32);
+      targetVelocity = clamp((velocity ?? delta) / 32, -1, 1);
       scheduleCamera();
     }
 
@@ -265,6 +265,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
 
     function handlePointerMove(event: PointerEvent) {
       if (event.pointerType !== "mouse" && event.pointerType !== "pen") return;
+      if (activeIndexRef.current < 0) return;
       pointerTargetX = clamp(
         (event.clientX / Math.max(1, window.innerWidth) - 0.5) * 2,
         -1,
@@ -285,6 +286,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     }
 
     function handleTouchStart(event: TouchEvent) {
+      if (activeIndexRef.current < 0) return;
       const touch = event.touches[0];
       if (!touch) return;
       touchOriginX = touch.clientX;
@@ -294,6 +296,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     }
 
     function handleTouchMove(event: TouchEvent) {
+      if (activeIndexRef.current < 0) return;
       const touch = event.touches[0];
       if (!touch) return;
       touchDriftX = clamp(
@@ -362,23 +365,5 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     });
   }, [activeIndex, scenes]);
 
-  if (!activeScene || scenes.length === 0) return null;
-
-  return (
-    <aside
-      className="insights-film-spine"
-      data-visible={activeIndex > 0 ? "true" : "false"}
-      aria-hidden="true"
-      style={{ "--scene-accent": activeScene.accent } as CSSProperties}
-    >
-      <span className="insights-film-spine__count">
-        {String(activeIndex + 1).padStart(2, "0")} /{" "}
-        {String(scenes.length).padStart(2, "0")}
-      </span>
-      <strong>{activeScene.label}</strong>
-      <span className="insights-film-spine__thread">
-        <motion.i style={{ scaleY: progress }} />
-      </span>
-    </aside>
-  );
+  return null;
 }

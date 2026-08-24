@@ -92,8 +92,10 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
       transitionDirectionRef.current = index >= current ? 1 : -1;
       return index;
     });
-    setPaused(true);
-    if (shouldFocus) tabRefs.current[index]?.focus();
+    if (shouldFocus) {
+      setPaused(true);
+      tabRefs.current[index]?.focus();
+    }
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -124,7 +126,10 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
       className="insights-atlas"
       aria-labelledby="insights-atlas-title"
       style={{ "--atlas-accent": accent } as CSSProperties}
-      onFocusCapture={() => setPaused(true)}
+      onFocusCapture={(event) => {
+        const target = event.target as HTMLElement;
+        if (target.matches(":focus-visible")) setPaused(true);
+      }}
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
           setPaused(false);
@@ -135,6 +140,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
         video="/videos/generated/bt-insights-reading-currents.mp4"
         poster="/images/generated/bt-insights-reading-currents-poster.jpg"
         playbackRate={0.96}
+        posterPriority={false}
       />
       <div className="insights-atlas__veil" aria-hidden="true" />
 
@@ -158,8 +164,12 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
             role="tablist"
             aria-label="Brand decision paths"
             aria-orientation="vertical"
-            onPointerEnter={() => setPaused(true)}
-            onPointerLeave={() => setPaused(false)}
+            onPointerEnter={(event) => {
+              if (event.pointerType !== "touch") setPaused(true);
+            }}
+            onPointerLeave={(event) => {
+              if (event.pointerType !== "touch") setPaused(false);
+            }}
             onPointerUp={(event) => {
               if (event.pointerType === "touch") setPaused(false);
             }}
@@ -190,12 +200,12 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                   role="tab"
                   id={`atlas-tab-${path.slug}`}
                   aria-selected={selected}
-                  aria-controls="atlas-active-panel"
+                  aria-controls={selected ? `atlas-panel-${path.slug}` : undefined}
                   tabIndex={selected ? 0 : -1}
                   className={selected ? "is-active" : undefined}
                   onClick={() => selectPath(index)}
-                  onPointerEnter={() => setActiveIndex(index)}
-                  onFocus={() => setActiveIndex(index)}
+                  onPointerEnter={() => selectPath(index)}
+                  onFocus={() => selectPath(index)}
                   onKeyDown={(event) => handleKeyDown(event, index)}
                 >
                   <span className="insights-atlas__path-index">0{index + 1}</span>
@@ -220,8 +230,12 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
 
           <div
             className="insights-atlas__panel-wrap"
-            onPointerEnter={() => setPaused(true)}
-            onPointerLeave={() => setPaused(false)}
+            onPointerEnter={(event) => {
+              if (event.pointerType !== "touch") setPaused(true);
+            }}
+            onPointerLeave={(event) => {
+              if (event.pointerType !== "touch") setPaused(false);
+            }}
             onPointerUp={(event) => {
               if (event.pointerType === "touch") setPaused(false);
             }}
@@ -235,7 +249,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.article
                 key={activePath.slug}
-                id="atlas-active-panel"
+                id={`atlas-panel-${activePath.slug}`}
                 role="tabpanel"
                 aria-labelledby={`atlas-tab-${activePath.slug}`}
                 className="insights-atlas__panel"

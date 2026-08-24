@@ -45,6 +45,11 @@ The director updates only scenes within one viewport above or two viewports
 below the current screen. Velocity and pointer interpolation stop requesting
 frames as soon as their values settle.
 
+`BackgroundVideo` mounts its Framer scroll subscription only when a caller
+actually requests parallax. The Insights films use the lighter static stage,
+metadata-only video preload, offscreen pause/resume, and lazy reduced-motion
+posters. The four generated scene clips are each below 175 KB.
+
 ### Meaningful scene layers
 
 Each scene consumes the shared values in a way tied to its content:
@@ -53,9 +58,13 @@ Each scene consumes the shared values in a way tied to its content:
 | --- | --- | --- |
 | Foundation | A folio opens and five decision bands assemble | Positioning supports every later decision |
 | Knowledge atlas | Paths advance with scroll and reverse on back-scroll | A vague problem becomes a navigable system |
-| Essay library | The search lens aligns before article folios settle | A question focuses the archive |
+| Essay library | The search lens aligns, then a three-card folio turns in place | A question focuses the archive without lengthening the page |
 | Audit seam | A film mask opens while evidence enters a ledger | Surface symptoms resolve into diagnostic layers |
 | Field notes | Copy and form settle into one final frame | Exploration resolves into an ongoing relationship |
+
+The opening `PhotoHero` is absent from `INSIGHT_SCENES`. The director therefore
+cannot add a wrapper, dataset, transform, or animation state to the protected
+first section.
 
 ### Scroll-linked CSS
 
@@ -108,10 +117,34 @@ stable during scroll.
 - Hover can preview or focus information; leaving returns authority to scroll.
 - Keyboard focus always exposes the same information as hover.
 - Touch gestures never call "preventDefault()"; vertical scroll stays native.
-- Horizontal mobile folios use local, mandatory inline snapping.
+- Horizontal mobile folios use local, forgiving proximity snapping.
 - Vertical desktop scenes use forgiving proximity snapping.
 - Anchor links and browser hash restoration remain native and stable.
-- The passive film spine appears only on wide screens and accepts no input.
+- Scene changes are expressed inside the composition; no fixed chapter control
+  competes with headings, search, or the newsletter form.
+
+### Keeping the library inside one screen
+
+The library replaces a growing "show more" grid with an in-place folio. Search
+and topic filters still inspect the complete archive, while each folio contains
+three cards and preserves the next scene's location.
+
+~~~tsx
+const firstPostIndex = activeFolio * POSTS_PER_FOLIO;
+const visiblePosts = filteredPosts.slice(
+  firstPostIndex,
+  firstPostIndex + POSTS_PER_FOLIO,
+);
+
+<AnimatePresence mode="wait" initial={false} custom={folio.direction}>
+  <motion.div key={`${topicSlug}-${activeFolio}`} variants={FOLIO_TURN_VARIANTS}>
+    {visiblePosts.map((post) => <InsightCard key={post.slug} post={post} />)}
+  </motion.div>
+</AnimatePresence>
+~~~
+
+Forward and backward buttons turn the folio in matching directions. Reduced
+motion swaps the rows immediately in the same stable layout.
 
 ## Reduced motion
 
@@ -123,7 +156,7 @@ a complete static page:
 - every camera transform returns to its neutral state;
 - the atlas stays on a stable selectable path;
 - ambient orbiting stops;
-- the film spine disappears.
+- vertical scene snapping is removed.
 
 Reduced motion changes presentation only. Links, search, filters, tabs, forms,
 headings, and landmarks retain their original semantics.
@@ -151,6 +184,7 @@ system for one section breaks the shared language.
 - A fast wheel gesture adds energy without hiding text.
 - Pointer movement stays subtle and ends when the pointer leaves.
 - Mobile horizontal folios remain reachable by swipe and keyboard focus.
+- Folio paging replaces cards in place without moving the next scene.
 - Short laptop viewports show the primary argument without a dead scroll zone.
 - No fixed element overlaps headings, controls, or form fields.
 - Hash links land at stable scene starts.

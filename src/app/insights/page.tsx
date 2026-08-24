@@ -60,12 +60,11 @@ function elementColor(elementSlug: string) {
 }
 
 const INSIGHT_SCENES: InsightScene[] = [
-  { id: "insights-opening-field", label: "Opening field", accent: "#E9C48B" },
-  { id: "insights-foundation", label: "Foundation", accent: "#D77A51" },
-  { id: "knowledge-atlas", label: "Knowledge atlas", accent: "#7FA4BA" },
-  { id: "insights-library-scene", label: "Essay library", accent: "#A8B68F" },
-  { id: "insights-audit-seam", label: "Audit seam", accent: "#D09A89" },
-  { id: "insights-field-notes", label: "Field notes", accent: "#D7A84A" },
+  { id: "insights-foundation" },
+  { id: "knowledge-atlas" },
+  { id: "insights-library-scene" },
+  { id: "insights-audit-seam" },
+  { id: "insights-field-notes" },
 ];
 
 const FOUNDATION_DECISIONS = [
@@ -195,73 +194,67 @@ export default function InsightsPage() {
       <main id="main-content" className="insights-page">
         <InsightsSceneNavigator scenes={INSIGHT_SCENES} />
 
-        <div
-          id="insights-opening-field"
-          className="insights-scene"
-          data-scene-active="true"
+        <PhotoHero
+          video="/videos/pixabay-sea-of-fog-sunrise.mp4"
+          poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg"
+          minHeight="100svh"
+          className="insights-hero"
+          playbackRate={1.08}
+          overlayGradient="linear-gradient(108deg, rgba(10,18,20,0.92) 0%, rgba(17,25,26,0.75) 52%, rgba(39,34,30,0.48) 100%)"
         >
-          <PhotoHero
-            video="/videos/pixabay-sea-of-fog-sunrise.mp4"
-            poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg"
-            minHeight="100svh"
-            className="insights-hero"
-            playbackRate={1.08}
-            overlayGradient="linear-gradient(108deg, rgba(10,18,20,0.92) 0%, rgba(17,25,26,0.75) 52%, rgba(39,34,30,0.48) 100%)"
-          >
-            <Container className="insights-hero__shell relative">
-              <div className="insights-hero__grid">
-                <div>
-                  <Reveal>
-                    <p className="insights-hero__eyebrow">The thinking field</p>
-                  </Reveal>
-                  <SplitReveal
-                    as="h1"
-                    className="insights-hero__title text-ivory"
-                  >
-                    See the decision beneath the brand problem.
-                  </SplitReveal>
-                  <Reveal delay={0.1}>
-                    <p className="insights-hero__summary">
-                      Essays, diagnostic questions, and connected reading paths
-                      for founders shaping positioning, experience,
-                      distinctiveness, language, and memory.
-                    </p>
-                    <Link href="#knowledge-atlas" className="insights-hero__link">
-                      Enter the knowledge atlas <span aria-hidden="true">↓</span>
-                    </Link>
-                  </Reveal>
-                </div>
-                <Reveal delay={0.16}>
-                  <div className="insights-hero__ledger">
-                    <div className="insights-hero__ledger-top">
-                      <p className="insights-hero__ledger-label">Living library</p>
-                      <p className="insights-hero__ledger-count">
-                        {sortedPosts.length}
-                        <small>field notes</small>
-                      </p>
-                    </div>
-                    <div className="insights-hero__ledger-list">
-                      {atlasPaths.map((path, index) => (
-                        <Link
-                          key={path.slug}
-                          href={`/insights/topic/${path.slug}`}
-                          className="insights-hero__ledger-row"
-                          style={{
-                            "--path-color": elementColor(path.element),
-                          } as CSSProperties}
-                        >
-                          <i aria-hidden="true" />
-                          <span>{path.name}</span>
-                          <span>0{index + 1}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
+          <Container className="insights-hero__shell relative">
+            <div className="insights-hero__grid">
+              <div>
+                <Reveal>
+                  <p className="insights-hero__eyebrow">The thinking field</p>
+                </Reveal>
+                <SplitReveal
+                  as="h1"
+                  className="insights-hero__title text-ivory"
+                >
+                  See the decision beneath the brand problem.
+                </SplitReveal>
+                <Reveal delay={0.1}>
+                  <p className="insights-hero__summary">
+                    Essays, diagnostic questions, and connected reading paths
+                    for founders shaping positioning, experience,
+                    distinctiveness, language, and memory.
+                  </p>
+                  <Link href="#knowledge-atlas" className="insights-hero__link">
+                    Enter the knowledge atlas <span aria-hidden="true">↓</span>
+                  </Link>
                 </Reveal>
               </div>
-            </Container>
-          </PhotoHero>
-        </div>
+              <Reveal delay={0.16}>
+                <div className="insights-hero__ledger">
+                  <div className="insights-hero__ledger-top">
+                    <p className="insights-hero__ledger-label">Living library</p>
+                    <p className="insights-hero__ledger-count">
+                      {sortedPosts.length}
+                      <small>field notes</small>
+                    </p>
+                  </div>
+                  <div className="insights-hero__ledger-list">
+                    {atlasPaths.map((path, index) => (
+                      <Link
+                        key={path.slug}
+                        href={`/insights/topic/${path.slug}`}
+                        className="insights-hero__ledger-row"
+                        style={{
+                          "--path-color": elementColor(path.element),
+                        } as CSSProperties}
+                      >
+                        <i aria-hidden="true" />
+                        <span>{path.name}</span>
+                        <span>0{index + 1}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+          </Container>
+        </PhotoHero>
 
         {/* A restrained folio current replaces the old flat ivory chapter;
             the dense wash keeps the foundation essay visually primary. */}
@@ -275,6 +268,7 @@ export default function InsightsPage() {
               video="/videos/generated/bt-insights-foundation-folio.mp4"
               poster="/images/generated/bt-insights-foundation-folio-poster.jpg"
               playbackRate={0.86}
+              posterPriority={false}
             />
             <div className="absolute inset-0 bg-[#F4EFE6]/84" />
           </div>
@@ -354,6 +348,7 @@ export default function InsightsPage() {
                   poster="/images/generated/bt-insights-audit-seam-poster.jpg"
                   imagePosition="center"
                   playbackRate={0.86}
+                  posterPriority={false}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-soil/85 via-soil/20 to-transparent" />
                 <div className="insights-audit-scene__film-copy absolute inset-x-0 bottom-0 p-7 text-ivory sm:p-9">

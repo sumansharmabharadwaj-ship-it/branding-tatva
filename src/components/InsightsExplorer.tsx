@@ -1,13 +1,15 @@
 "use client";
 
 import { useMemo, useState, type CSSProperties } from "react";
-import { Search } from "lucide-react";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { ArrowLeft, ArrowRight, Search } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import {
   InsightCard,
   type InsightCardPost,
 } from "@/components/InsightCard";
 import type { InsightElement } from "@/data/insights";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 type ExplorerTopic = {
   slug: string;
@@ -35,12 +37,37 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
   space: "#AD6F5C",
 };
 
-// The landing page is a doorway, not the full archive. One complete desktop
-// row gives a visitor enough choice without turning the page into a catalogue
-// before they have searched or chosen a reading path. The remaining essays
-// stay available through an explicit, reversible "show more" action.
-const INITIAL_VISIBLE_POSTS = 3;
-const LOAD_MORE_POSTS = 6;
+// The library keeps one stable row in the cinematic scene. Turning the folio
+// replaces that row in place, so deeper browsing never creates a long runway
+// or shifts the following scene farther away.
+const POSTS_PER_FOLIO = 3;
+
+const FOLIO_TURN_VARIANTS: Variants = {
+  enter: (direction: number = 1) => ({
+    opacity: 0.72,
+    rotateY: direction * 4,
+    scaleX: 0.985,
+    clipPath:
+      direction > 0
+        ? "inset(0 7% 0 0 round 1.5rem)"
+        : "inset(0 0 0 7% round 1.5rem)",
+  }),
+  settled: {
+    opacity: 1,
+    rotateY: 0,
+    scaleX: 1,
+    clipPath: "inset(0 0% 0 0% round 0rem)",
+  },
+  exit: (direction: number = 1) => ({
+    opacity: 0.48,
+    rotateY: direction * -3,
+    scaleX: 0.992,
+    clipPath:
+      direction > 0
+        ? "inset(0 0 0 7% round 1.5rem)"
+        : "inset(0 7% 0 0 round 1.5rem)",
+  }),
+};
 
 export function InsightsExplorer({
   posts,
@@ -55,7 +82,8 @@ export function InsightsExplorer({
 }: InsightsExplorerProps) {
   const [query, setQuery] = useState("");
   const [topicSlug, setTopicSlug] = useState("all");
-  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_POSTS);
+  const [folio, setFolio] = useState({ index: 0, direction: 1 });
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   const filteredPosts = useMemo(() => {
     const cleanQuery = query.trim().toLowerCase();
@@ -76,8 +104,25 @@ export function InsightsExplorer({
     });
   }, [posts, query, topicSlug]);
 
-  const visiblePosts = filteredPosts.slice(0, visibleCount);
-  const remainingPosts = Math.max(0, filteredPosts.length - visiblePosts.length);
+  const folioCount = Math.max(1, Math.ceil(filteredPosts.length / POSTS_PER_FOLIO));
+  const activeFolio = Math.min(folio.index, folioCount - 1);
+  const firstPostIndex = activeFolio * POSTS_PER_FOLIO;
+  const visiblePosts = filteredPosts.slice(
+    firstPostIndex,
+    firstPostIndex + POSTS_PER_FOLIO,
+  );
+
+  function resetFolio() {
+    setFolio({ index: 0, direction: -1 });
+  }
+
+  function turnFolio(nextIndex: number) {
+    const clampedIndex = Math.min(folioCount - 1, Math.max(0, nextIndex));
+    setFolio((current) => ({
+      index: clampedIndex,
+      direction: clampedIndex >= current.index ? 1 : -1,
+    }));
+  }
 
   // The archive film stays intentionally low-contrast beneath the
   // interactive search layer, with posters covering reduced motion.
@@ -88,6 +133,7 @@ export function InsightsExplorer({
           video={video}
           poster={poster}
           playbackRate={0.84}
+          posterPriority={false}
         />
         <div className="absolute inset-0 bg-[#EAE6DD]/87" />
       </div>
@@ -118,7 +164,7 @@ export function InsightsExplorer({
               value={query}
               onChange={(event) => {
                 setQuery(event.target.value);
-                setVisibleCount(INITIAL_VISIBLE_POSTS);
+                resetFolio();
               }}
               placeholder={searchPlaceholder}
               className="min-h-14 w-full rounded-full border border-border bg-ivory pl-12 pr-5 text-sm text-soil outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/15"
@@ -134,7 +180,7 @@ export function InsightsExplorer({
                 type="button"
                 onClick={() => {
                   setTopicSlug("all");
-                  setVisibleCount(INITIAL_VISIBLE_POSTS);
+                  resetFolio();
                 }}
                 aria-pressed={topicSlug === "all"}
                 className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
@@ -155,7 +201,7 @@ export function InsightsExplorer({
                     type="button"
                     onClick={() => {
                       setTopicSlug(topic.slug);
-                      setVisibleCount(INITIAL_VISIBLE_POSTS);
+                      resetFolio();
                     }}
                     aria-pressed={active}
                     className="rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition"
@@ -175,7 +221,10 @@ export function InsightsExplorer({
 
         <div className="insights-library__result-line flex items-center justify-between gap-4">
           <p className="text-sm text-foreground-secondary" aria-live="polite">
-            Showing {visiblePosts.length} of {filteredPosts.length} {filteredPosts.length === 1 ? "essay" : "essays"}
+            {filteredPosts.length > 0
+              ? `Showing ${firstPostIndex + 1}–${firstPostIndex + visiblePosts.length} of ${filteredPosts.length}`
+              : "Showing 0"}{" "}
+            {filteredPosts.length === 1 ? "essay" : "essays"}
           </p>
           {(query || topicSlug !== "all") && (
             <button
@@ -183,7 +232,7 @@ export function InsightsExplorer({
               onClick={() => {
                 setQuery("");
                 setTopicSlug("all");
-                setVisibleCount(INITIAL_VISIBLE_POSTS);
+                resetFolio();
               }}
               className="link-underline text-sm font-medium text-soil"
             >
@@ -194,30 +243,62 @@ export function InsightsExplorer({
 
         {filteredPosts.length > 0 ? (
           <>
-            <div className="insights-library__folios grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {visiblePosts.map((post, index) => (
-                <div
-                  key={post.slug}
-                  className="insights-library__folio"
-                  style={{
-                    "--folio-delay": `${index * 38}ms`,
-                  } as CSSProperties}
-                >
-                  <InsightCard post={post} />
-                </div>
-              ))}
-            </div>
-            {remainingPosts > 0 && (
-              <div className="mt-6 flex justify-center">
+            <AnimatePresence mode="wait" initial={false} custom={folio.direction}>
+              <motion.div
+                key={`${topicSlug}-${activeFolio}`}
+                custom={folio.direction}
+                className="insights-library__folios grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+                variants={FOLIO_TURN_VARIANTS}
+                initial={prefersReducedMotion ? false : "enter"}
+                animate="settled"
+                exit={prefersReducedMotion ? undefined : "exit"}
+                transition={{
+                  duration: prefersReducedMotion ? 0 : 0.46,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                style={{ transformPerspective: 1400 }}
+              >
+                {visiblePosts.map((post, index) => (
+                  <div
+                    key={post.slug}
+                    className="insights-library__folio"
+                    style={{
+                      "--folio-delay": `${index * 38}ms`,
+                    } as CSSProperties}
+                  >
+                    <InsightCard post={post} />
+                  </div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+
+            {folioCount > 1 ? (
+              <div
+                className="insights-library__pager"
+                role="group"
+                aria-label="Essay folios"
+              >
                 <button
                   type="button"
-                  onClick={() => setVisibleCount((count) => count + LOAD_MORE_POSTS)}
-                  className="min-h-12 rounded-full border border-soil/25 bg-ivory/75 px-6 py-3 text-sm font-semibold text-soil shadow-elevation-sm transition hover:-translate-y-0.5 hover:border-soil/45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay"
+                  onClick={() => turnFolio(activeFolio - 1)}
+                  disabled={activeFolio === 0}
                 >
-                  Show {Math.min(LOAD_MORE_POSTS, remainingPosts)} more essays
+                  <ArrowLeft aria-hidden="true" className="h-4 w-4" />
+                  Previous
+                </button>
+                <span aria-live="polite">
+                  Folio {activeFolio + 1} / {folioCount}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => turnFolio(activeFolio + 1)}
+                  disabled={activeFolio === folioCount - 1}
+                >
+                  Next
+                  <ArrowRight aria-hidden="true" className="h-4 w-4" />
                 </button>
               </div>
-            )}
+            ) : null}
           </>
         ) : (
           <div className="insights-library__empty rounded-[1.5rem] border border-border bg-ivory px-6 py-16 text-center">
