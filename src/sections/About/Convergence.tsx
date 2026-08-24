@@ -5,7 +5,7 @@ import { useRef, type KeyboardEvent } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowRight, BookOpenText, Brain, Sparkles } from "lucide-react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
+import { useAmbientSequence } from "@/hooks/useAmbientSequence";
 import styles from "./Convergence.module.css";
 
 const FIELDS = [
@@ -39,11 +39,11 @@ export function Convergence() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
-  const visualizer = useScrollDrivenVisualizer({
+  const visualizer = useAmbientSequence({
     count: STAGES.length,
-    target: sectionRef,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
+    intervalMs: 5200,
   });
   const stage = visualizer.activeIndex;
 
@@ -79,9 +79,8 @@ export function Convergence() {
           </div>
           <div className={styles.headerAside}>
             <p>{STAGES[stage].cue}</p>
-            <p className="bt-scroll-cue bt-scroll-cue--light">
-              <span aria-hidden="true">Scroll</span>
-              Bring the two disciplines together. Hover a stage to inspect it.
+            <p className={styles.stageCue} aria-live="polite">
+              <span>{STAGES[stage].label}</span>
               <strong>{String(stage + 1).padStart(2, "0")} / 03</strong>
             </p>
           </div>
@@ -178,11 +177,9 @@ export function Convergence() {
                   data-active={selected}
                   onClick={() => visualizer.choose(index)}
                   onPointerEnter={() => visualizer.preview(index)}
-                  onPointerLeave={(event) => {
-                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
-                  }}
+                  onPointerLeave={visualizer.release}
                   onFocus={() => visualizer.preview(index)}
-                  onBlur={visualizer.releasePreview}
+                  onBlur={visualizer.release}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
                 >
                   <span>{item.number}</span>

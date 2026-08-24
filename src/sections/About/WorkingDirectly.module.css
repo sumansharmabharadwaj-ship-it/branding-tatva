@@ -1,0 +1,251 @@
+.container { width: min(100%, 86rem); }
+
+.root {
+  display: grid;
+  min-height: 100svh;
+  padding-block: clamp(5.8rem, 9svh, 7rem) clamp(1.7rem, 3.5svh, 2.8rem);
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  color: #f4efe6;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(17rem, 0.55fr);
+  align-items: end;
+  gap: clamp(2rem, 6vw, 6rem);
+}
+
+.eyebrow {
+  margin: 0;
+  color: #d4b99a;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.header h2 {
+  max-width: 16ch;
+  margin: 0.5rem 0 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2.45rem, min(4.4vw, 6.6svh), 4.75rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.94;
+}
+
+.header h2 em { color: #d4b99a; font-weight: 400; }
+
+.header > p {
+  max-width: 39ch;
+  margin: 0;
+  color: rgba(244, 239, 230, 0.68);
+  font-size: 0.78rem;
+  line-height: 1.62;
+}
+
+.timeline {
+  display: grid;
+  margin-top: clamp(1.2rem, 3svh, 2.3rem);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.timeline button {
+  position: relative;
+  display: grid;
+  min-height: 3.9rem;
+  padding: 0.7rem 0.85rem 0.95rem;
+  overflow: hidden;
+  border: 1px solid rgba(244, 239, 230, 0.14);
+  border-radius: 1rem;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 0.6rem;
+  background: rgba(13, 23, 21, 0.4);
+  color: rgba(244, 239, 230, 0.56);
+  text-align: left;
+  backdrop-filter: blur(10px);
+  transition: border-color 280ms ease, background-color 280ms ease, color 280ms ease;
+}
+
+.timeline button:hover,
+.timeline button[data-active="true"] {
+  border-color: rgba(212, 185, 154, 0.56);
+  background: rgba(244, 239, 230, 0.1);
+  color: #f4efe6;
+}
+
+.timeline small {
+  color: #d4b99a;
+  font-size: 0.54rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.timeline strong {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+.timeline i {
+  position: absolute;
+  inset-inline: 0.85rem;
+  bottom: 0.48rem;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(244, 239, 230, 0.12);
+}
+
+.timeline i span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #d4b99a;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.timeline button[data-active="true"] i span { transform: scaleX(1); }
+
+.panelSlot {
+  display: grid;
+  min-height: 0;
+  place-items: center;
+  padding-block: clamp(1rem, 2.6svh, 2rem);
+}
+
+.comparison {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) 4.5rem minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.comparison article {
+  display: grid;
+  min-height: 18rem;
+  padding: clamp(1.25rem, 2.4vw, 2rem);
+  grid-template-rows: auto auto auto 1fr;
+  border: 1px solid rgba(244, 239, 230, 0.16);
+  background: rgba(13, 23, 21, 0.52);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(16px);
+}
+
+.founderCard { border-radius: 1.6rem 0.45rem 0.45rem 1.6rem; }
+.layeredCard { border-radius: 0.45rem 1.6rem 1.6rem 0.45rem; }
+
+.comparison article > span {
+  display: grid;
+  width: 2.55rem;
+  height: 2.55rem;
+  place-items: center;
+  border: 1px solid rgba(212, 185, 154, 0.46);
+  border-radius: 999px;
+  color: #d4b99a;
+}
+
+.comparison article > p:not(.body) {
+  margin: 1rem 0 0;
+  color: #d4b99a;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.comparison h3 {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2.2rem, 4vw, 4.2rem);
+  font-weight: 400;
+  line-height: 0.94;
+}
+
+.body {
+  max-width: 42ch;
+  margin: auto 0 0;
+  color: rgba(244, 239, 230, 0.76);
+  font-size: 0.78rem;
+  line-height: 1.62;
+}
+
+.thread {
+  display: grid;
+  place-items: center;
+  color: #d4b99a;
+}
+
+.thread span {
+  width: 100%;
+  height: 1px;
+  grid-area: 1 / 1;
+  background: linear-gradient(90deg, transparent, #d4b99a, transparent);
+  transform-origin: center;
+}
+
+.thread svg {
+  z-index: 2;
+  grid-area: 1 / 1;
+  padding: 0.3rem;
+  box-sizing: content-box;
+  border: 1px solid rgba(212, 185, 154, 0.38);
+  border-radius: 999px;
+  background: rgba(13, 23, 21, 0.92);
+}
+
+.footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer > div {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.65rem;
+  color: #d4b99a;
+}
+
+.footer span,
+.footer strong,
+.footer a {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.footer span { color: rgba(244, 239, 230, 0.48); }
+.footer strong { overflow: hidden; color: #f4efe6; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.footer a { display: inline-flex; align-items: center; gap: 0.4rem; color: #d4b99a; font-weight: 700; }
+.footer > span { display: grid; width: 2.35rem; height: 2.35rem; place-items: center; border: 1px solid rgba(244, 239, 230, 0.14); border-radius: 999px; }
+
+@media (max-width: 820px) {
+  .root { min-height: auto; padding-block: 7rem 4rem; }
+  .header { grid-template-columns: 1fr; gap: 1rem; }
+  .timeline { overflow-x: auto; grid-template-columns: repeat(4, minmax(8.5rem, 1fr)); scrollbar-width: none; }
+  .timeline::-webkit-scrollbar { display: none; }
+  .comparison { grid-template-columns: 1fr; gap: 0.75rem; }
+  .comparison article { min-height: 14rem; border-radius: 1.35rem; }
+  .thread { min-height: 2.5rem; transform: rotate(90deg); }
+  .footer { grid-template-columns: 1fr auto; }
+  .footer > div { grid-column: 1 / -1; }
+  .footer > span { display: none; }
+}
+
+@media (max-width: 560px) {
+  .root { padding-block: 6.5rem 3rem; }
+  .header h2 { font-size: clamp(2.4rem, 12vw, 3.4rem); }
+  .comparison article { min-height: 13rem; }
+  .footer a { letter-spacing: 0.06em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline button,
+  .timeline i span { transition: none; }
+}

@@ -7,6 +7,7 @@ import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { NotebookClose } from "@/components/NotebookClose";
 import { PointOfView } from "@/sections/About/PointOfView";
 import { Convergence } from "@/sections/About/Convergence";
+import { Behaviours } from "@/sections/About/Behaviours";
 import { WorkingDirectly } from "@/sections/About/WorkingDirectly";
 import { Evidence } from "@/sections/About/Evidence";
 import { aboutIntro } from "@/data/about";
@@ -60,7 +61,7 @@ export default function AboutPage() {
           bgPoster="/images/about-hero-bg-meadow-poster.jpg"
         />
 
-        <section className="relative overflow-clip bg-soil py-16 sm:py-20">
+        <section className="relative overflow-clip bg-soil" data-about-chapter="philosophy">
           <BackgroundVideo
             video="/videos/generated/bt-about-point-view-three-stones.mp4"
             poster="/images/generated/bt-about-point-view-three-stones-poster.jpg"
@@ -77,7 +78,20 @@ export default function AboutPage() {
           <Convergence />
         </div>
 
-        <section className="relative overflow-clip bg-soil py-16">
+        <section className="relative overflow-clip bg-soil" data-about-chapter="principles">
+          <BackgroundVideo
+            video="/videos/generated/bt-about-behaviours-mossbreath.mp4"
+            poster="/images/generated/bt-about-behaviours-mossbreath-poster.jpg"
+            parallax
+            playbackRate={0.86}
+          />
+          <div aria-hidden="true" className="absolute inset-0 bg-soil/80" />
+          <div className="relative">
+            <Behaviours />
+          </div>
+        </section>
+
+        <section className="relative overflow-clip bg-soil" data-about-chapter="founder-led">
           <BackgroundVideo
             video="/videos/generated/bt-about-working-directly-woodlight.mp4"
             poster="/images/generated/bt-about-working-directly-woodlight-poster.jpg"
@@ -90,7 +104,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="relative overflow-clip bg-soil py-16 sm:py-20">
+        <section className="relative overflow-clip bg-soil" data-about-chapter="evidence">
           <BackgroundVideo
             video="/videos/pixabay-forest-sunbeams.mp4"
             poster="/images/pixabay-forest-sunbeams-poster.jpg"

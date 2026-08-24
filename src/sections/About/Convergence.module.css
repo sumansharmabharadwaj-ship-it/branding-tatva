@@ -1,6 +1,6 @@
 .section {
   position: relative;
-  min-height: max(100svh, 46rem);
+  min-height: 100svh;
   overflow: hidden;
   background: #eee7db url("/images/generated/bt-services-deliverables-paperlight-poster.jpg") center / cover;
   color: #2b2924;
@@ -21,26 +21,10 @@
   z-index: 1;
   display: grid;
   width: min(calc(100% - 2.5rem), 88rem);
-  min-height: max(100svh, 46rem);
+  min-height: 100svh;
   margin-inline: auto;
-  padding: clamp(6.5rem, 10svh, 8rem) 0 clamp(2rem, 4svh, 3rem);
-  grid-template-rows: auto minmax(22rem, 1fr) auto;
-}
-
-@media (min-width: 901px) and (min-height: 761px) and (pointer: fine) {
-  .section {
-    height: 215svh;
-    min-height: 215svh;
-    overflow: clip;
-  }
-
-  .shell {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    min-height: 48rem;
-    box-sizing: border-box;
-  }
+  padding: clamp(5.8rem, 9svh, 7rem) 0 clamp(1.5rem, 3svh, 2.5rem);
+  grid-template-rows: auto minmax(20rem, 1fr) auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -88,6 +72,20 @@
   color: rgba(43, 41, 36, 0.68);
   font-size: 0.8rem;
   line-height: 1.55;
+}
+
+.stageCue {
+  display: flex;
+  width: min(100%, 18rem);
+  margin: 0;
+  padding-top: 0.7rem;
+  justify-content: space-between;
+  border-top: 1px solid rgba(43, 41, 36, 0.16);
+  color: #80503c !important;
+  font-size: 0.58rem !important;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 
 .stage {

@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
+import { useAmbientSequence } from "@/hooks/useAmbientSequence";
 import { projects } from "@/data/projects";
 import styles from "./Evidence.module.css";
 
@@ -22,18 +22,24 @@ const CASES = [
     ambiguity: "More posts kept going out while fewer people stayed. Volume and trust were pulling in opposite directions.",
     decision: "Post less, make every post earn its place, and let relevance rather than cadence carry the account.",
     result: "104% more followers earned per post, a 1,350% jump in comments per post, engagement rate from 0.71% to 2.81%.",
+    evidenceType: "Measured outcome",
+    record: "Two-month platform performance",
   },
   {
     slug: "myshopineurope",
     ambiguity: "A new marketplace risked reading as generic access to cheap supply, with nothing separating it from the next listings site.",
     decision: "Position around craft heritage and origin instead of price, and sell the story a buyer can pass on.",
-    result: "A complete brand foundation and a year long content operating system, each quarter tied to a specific business outcome.",
+    result: "Brand foundation, channel playbooks, and a one-year content operating system tied to awareness, trust, leads, and conversion.",
+    evidenceType: "Documented strategic output",
+    record: "Foundation and operating system",
   },
   {
     slug: "herbalcart",
     ambiguity: "Buyers saw a herbal remedy brand while the shelves held whey protein and pre workout. The perception gap was eroding trust.",
     decision: "Reset the argument: supplementation fills a practical, explainable gap, told in the category's own native content style.",
-    result: "A full campaign reset with five formats ready to shoot, moving perception toward a modern, supplement first wellness brand.",
+    result: "A repositioned campaign system with five formats ready to shoot and complete Hinglish video scripts.",
+    evidenceType: "Implementation-ready system",
+    record: "Campaign direction and scripts",
   },
 ] as const;
 
@@ -43,11 +49,11 @@ export function Evidence() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.3, margin: "8% 0px -12% 0px" });
-  const visualizer = useScrollDrivenVisualizer({
+  const visualizer = useAmbientSequence({
     count: CASES.length,
-    target: sectionRef,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
+    intervalMs: 6000,
   });
   const activeIndex = visualizer.activeIndex;
   const activeCase = CASES[activeIndex];
@@ -84,12 +90,8 @@ export function Evidence() {
             </h2>
           </Reveal>
           <Reveal delay={0.08}>
-            <p className="mb-3 text-sm leading-6 text-ivory/65">
-              Scroll through three engagements. Hover or focus a case to inspect its reasoning.
-            </p>
-            <p className="bt-scroll-cue bt-scroll-cue--dark">
-              <span aria-hidden="true">Scroll</span>
-              Evidence follows your pace.
+            <p className={styles.caseMeta} aria-live="polite">
+              <span>{activeCase.evidenceType}</span>
               <strong>{String(activeIndex + 1).padStart(2, "0")} / 03</strong>
             </p>
           </Reveal>
@@ -115,11 +117,9 @@ export function Evidence() {
                   tabIndex={selected ? 0 : -1}
                   onClick={() => visualizer.choose(index)}
                   onPointerEnter={() => visualizer.preview(index)}
-                  onPointerLeave={(event) => {
-                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
-                  }}
+                  onPointerLeave={visualizer.release}
                   onFocus={() => visualizer.preview(index)}
-                  onBlur={visualizer.releasePreview}
+                  onBlur={visualizer.release}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
                   className={`rounded-2xl border px-4 py-4 text-left transition duration-300 ${
                     selected
@@ -156,14 +156,14 @@ export function Evidence() {
                 <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-ivory/12 pb-5">
                   <div>
                     <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-sandstone">
-                      Documented engagement
+                      {activeCase.evidenceType}
                     </p>
                     <h3 className="mt-1 font-display text-3xl font-normal text-ivory">
                       {activeProject.title}
                     </h3>
                   </div>
                   <span className="text-[0.65rem] font-medium uppercase tracking-[0.14em] text-ivory/45">
-                    {activeProject.industry}
+                    {activeCase.record}
                   </span>
                 </div>
 
@@ -172,7 +172,7 @@ export function Evidence() {
                     [
                       ["01 · The ambiguity", activeCase.ambiguity],
                       ["02 · The decision", activeCase.decision],
-                      ["03 · The observed result", activeCase.result],
+                      ["03 · The record", activeCase.result],
                     ] as const
                   ).map(([label, text], index) => (
                     <div key={label} className="contents">
