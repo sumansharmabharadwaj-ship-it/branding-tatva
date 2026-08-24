@@ -123,7 +123,7 @@ export default function AboutPage() {
               parallax
             />
           </div>
-          <div aria-hidden="true" className="absolute inset-0 bg-soil/85" />
+          <div aria-hidden="true" className="absolute inset-0 bg-soil/91" />
           <div className="relative" data-about-film-plane>
             <Evidence />
           </div>

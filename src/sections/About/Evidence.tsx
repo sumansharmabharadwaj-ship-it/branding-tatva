@@ -24,6 +24,7 @@ const CASES = [
     result: "104% more followers earned per post, a 1,350% jump in comments per post, engagement rate from 0.71% to 2.81%.",
     evidenceType: "Measured outcome",
     record: "Two-month platform performance",
+    signals: ["104% more followers / post", "13.5× comments / post", "2.81% engagement"],
   },
   {
     slug: "myshopineurope",
@@ -32,6 +33,7 @@ const CASES = [
     result: "Brand foundation, channel playbooks, and a one-year content operating system tied to awareness, trust, leads, and conversion.",
     evidenceType: "Documented strategic output",
     record: "Foundation and operating system",
+    signals: ["Brand foundation", "Channel playbooks", "12-month operating system"],
   },
   {
     slug: "herbalcart",
@@ -40,10 +42,12 @@ const CASES = [
     result: "A repositioned campaign system with five formats ready to shoot and complete Hinglish video scripts.",
     evidenceType: "Implementation-ready system",
     record: "Campaign direction and scripts",
+    signals: ["5 campaign formats", "Ready-to-shoot direction", "Complete Hinglish scripts"],
   },
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const PROJECTS_BY_SLUG = new Map(projects.map((project) => [project.slug, project]));
 
 export function Evidence() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -57,7 +61,7 @@ export function Evidence() {
   });
   const activeIndex = visualizer.activeIndex;
   const activeCase = CASES[activeIndex];
-  const activeProject = projects.find((project) => project.slug === activeCase.slug);
+  const activeProject = PROJECTS_BY_SLUG.get(activeCase.slug);
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -85,8 +89,8 @@ export function Evidence() {
         <div className="grid gap-6 lg:grid-cols-[1fr_22rem] lg:items-end">
           <Reveal>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sandstone">Evidence</p>
-            <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory">
-              Ambiguity becomes a decision. The result stays on record.
+            <h2 className={styles.heading}>
+              Ambiguity becomes a decision. <em>The result stays on record.</em>
             </h2>
           </Reveal>
           <Reveal delay={0.08}>
@@ -97,14 +101,14 @@ export function Evidence() {
           </Reveal>
         </div>
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-[17rem_1fr]">
+        <div className="mt-7 grid gap-5 lg:grid-cols-[17rem_1fr]">
           <div
             className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1"
             role="tablist"
             aria-label="Choose a documented engagement"
           >
             {CASES.map((item, index) => {
-              const project = projects.find((candidate) => candidate.slug === item.slug);
+              const project = PROJECTS_BY_SLUG.get(item.slug);
               const selected = index === activeIndex;
               if (!project) return null;
               return (
@@ -141,7 +145,7 @@ export function Evidence() {
             })}
           </div>
 
-          <div className="relative min-h-[22rem] overflow-hidden rounded-[1.75rem] border border-ivory/14 bg-soil/48 p-5 shadow-elevation-md backdrop-blur-xl sm:p-7">
+          <div className={styles.ledger}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.article
                 key={activeCase.slug}
@@ -153,7 +157,7 @@ export function Evidence() {
                 role="tabpanel"
                 aria-labelledby={`evidence-tab-${activeIndex}`}
               >
-                <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-ivory/12 pb-5">
+                <div className={styles.ledgerHeader}>
                   <div>
                     <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-sandstone">
                       {activeCase.evidenceType}
@@ -167,7 +171,21 @@ export function Evidence() {
                   </span>
                 </div>
 
-                <div className="mt-5 grid flex-1 gap-3 md:grid-cols-[1fr_auto_1fr_auto_1fr] md:items-stretch">
+                <ul className={styles.signalRail} aria-label={`Recorded signals for ${activeProject.title}`}>
+                  {activeCase.signals.map((signal, index) => (
+                    <motion.li
+                      key={signal}
+                      initial={prefersReducedMotion ? false : { opacity: 0, scaleX: 0.86 }}
+                      animate={{ opacity: 1, scaleX: 1 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.5, delay: index * 0.07, ease: EASE }}
+                    >
+                      <span>0{index + 1}</span>
+                      {signal}
+                    </motion.li>
+                  ))}
+                </ul>
+
+                <div className={styles.logicChain}>
                   {(
                     [
                       ["01 · The ambiguity", activeCase.ambiguity],
@@ -176,11 +194,11 @@ export function Evidence() {
                     ] as const
                   ).map(([label, text], index) => (
                     <div key={label} className="contents">
-                      <div className="rounded-2xl border border-ivory/10 bg-ivory/[0.045] p-4">
+                      <div className={`${styles.logicStep} ${index === 2 ? styles.recordStep : ""}`}>
                         <p className="text-[0.63rem] font-semibold uppercase tracking-[0.16em] text-sandstone">
                           {label}
                         </p>
-                        <p className="mt-3 text-sm leading-6 text-ivory/82">{text}</p>
+                        <p>{text}</p>
                       </div>
                       {index < 2 ? (
                         <ArrowRight

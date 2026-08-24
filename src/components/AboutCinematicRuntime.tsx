@@ -16,12 +16,15 @@ const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, v
 
 export function AboutCinematicRuntime() {
   const runtimeRef = useRef<HTMLDivElement>(null);
+  const threadRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const runtime = runtimeRef.current;
+    const thread = threadRef.current;
     const film = document.querySelector<HTMLElement>("#main-content");
     const scenes = Array.from(document.querySelectorAll<HTMLElement>("[data-about-film-scene]"));
-    if (!runtime || !film || scenes.length === 0) return;
+    const context = thread?.getContext("2d", { alpha: true });
+    if (!runtime || !thread || !context || !film || scenes.length === 0) return;
 
     const cameraReady = window.matchMedia(
       "(min-width: 941px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
@@ -37,77 +40,240 @@ export function AboutCinematicRuntime() {
     let pointerY = window.innerHeight * 0.5;
     let pointerTargetX = pointerX;
     let pointerTargetY = pointerY;
+    let canvasWidth = 0;
+    let canvasHeight = 0;
+    let pixelRatio = 1;
+    let previousFrameAt = performance.now();
+    let ambientPhase = 0;
+    let layoutDirty = true;
+    let activeScene = 0;
+    let activeSceneProgress = 0;
+    let narrativeActive = false;
+    let activeTone = "dark";
+    let filmProgress = 0;
+    let previousActiveScene = -1;
 
-    const render = () => {
+    const resizeThread = () => {
+      canvasWidth = window.innerWidth;
+      canvasHeight = window.innerHeight;
+      pixelRatio = Math.min(window.devicePixelRatio || 1, 1.35);
+      thread.width = Math.round(canvasWidth * pixelRatio);
+      thread.height = Math.round(canvasHeight * pixelRatio);
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      layoutDirty = true;
+    };
+
+    const pointOnCurve = (
+      t: number,
+      start: readonly [number, number],
+      controlA: readonly [number, number],
+      controlB: readonly [number, number],
+      end: readonly [number, number],
+    ) => {
+      const inverse = 1 - t;
+      const inverseSquared = inverse * inverse;
+      const tSquared = t * t;
+      return {
+        x: inverseSquared * inverse * start[0]
+          + 3 * inverseSquared * t * controlA[0]
+          + 3 * inverse * tSquared * controlB[0]
+          + tSquared * t * end[0],
+        y: inverseSquared * inverse * start[1]
+          + 3 * inverseSquared * t * controlA[1]
+          + 3 * inverse * tSquared * controlB[1]
+          + tSquared * t * end[1],
+      };
+    };
+
+    const drawThread = ({
+      active,
+      activeProgress,
+      filmProgress,
+      tone,
+    }: {
+      active: boolean;
+      activeProgress: number;
+      filmProgress: number;
+      tone: string;
+    }) => {
+      context.clearRect(0, 0, canvasWidth, canvasHeight);
+      if (!active) return;
+
+      const darkScene = tone !== "light";
+      const color = darkScene ? "222, 199, 166" : "116, 83, 63";
+      const drift = Math.sin(ambientPhase * 0.72) * canvasHeight * 0.012;
+      const pointerLift = (pointerY / Math.max(canvasHeight, 1) - 0.5) * canvasHeight * 0.08;
+      const velocityWake = smoothedVelocity * canvasHeight * 1.8;
+      const start: [number, number] = [
+        -canvasWidth * 0.04,
+        canvasHeight * (0.79 - filmProgress * 0.31) + drift,
+      ];
+      const controlA: [number, number] = [
+        canvasWidth * 0.28,
+        canvasHeight * 0.72 + pointerLift + velocityWake,
+      ];
+      const controlB: [number, number] = [
+        canvasWidth * 0.7,
+        canvasHeight * 0.23 - pointerLift - velocityWake,
+      ];
+      const end: [number, number] = [
+        canvasWidth * 1.04,
+        canvasHeight * (0.19 + filmProgress * 0.28) - drift,
+      ];
+
+      const drawCurve = (offsetY: number, alpha: number, width: number) => {
+        const gradient = context.createLinearGradient(0, 0, canvasWidth, 0);
+        gradient.addColorStop(0, `rgba(${color}, 0)`);
+        gradient.addColorStop(0.22, `rgba(${color}, ${alpha * 0.42})`);
+        gradient.addColorStop(0.54, `rgba(${color}, ${alpha})`);
+        gradient.addColorStop(0.82, `rgba(${color}, ${alpha * 0.36})`);
+        gradient.addColorStop(1, `rgba(${color}, 0)`);
+        context.beginPath();
+        context.moveTo(start[0], start[1] + offsetY);
+        context.bezierCurveTo(
+          controlA[0],
+          controlA[1] + offsetY,
+          controlB[0],
+          controlB[1] + offsetY,
+          end[0],
+          end[1] + offsetY,
+        );
+        context.strokeStyle = gradient;
+        context.lineWidth = width;
+        context.stroke();
+      };
+
+      context.save();
+      context.globalCompositeOperation = darkScene ? "screen" : "multiply";
+      drawCurve(0, darkScene ? 0.2 : 0.16, 0.85 + Math.abs(smoothedVelocity) * 9);
+      if (Math.abs(smoothedVelocity) > 0.002) {
+        drawCurve(
+          lastDirection * Math.abs(smoothedVelocity) * canvasHeight * 0.42,
+          Math.min(0.12, Math.abs(smoothedVelocity) * 1.8),
+          0.55,
+        );
+      }
+
+      const beadProgress = 0.16 + activeProgress * 0.68;
+      const bead = pointOnCurve(beadProgress, start, controlA, controlB, end);
+      const glow = context.createRadialGradient(bead.x, bead.y, 0, bead.x, bead.y, 11);
+      glow.addColorStop(0, `rgba(${color}, ${darkScene ? 0.72 : 0.54})`);
+      glow.addColorStop(0.18, `rgba(${color}, 0.28)`);
+      glow.addColorStop(1, `rgba(${color}, 0)`);
+      context.fillStyle = glow;
+      context.beginPath();
+      context.arc(bead.x, bead.y, 11, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = `rgba(${color}, ${darkScene ? 0.88 : 0.72})`;
+      context.beginPath();
+      context.arc(bead.x, bead.y, 1.35 + Math.abs(smoothedVelocity) * 8, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+    };
+
+    const render = (now = performance.now()) => {
       frame = 0;
       if (document.documentElement.dataset.motion === "reduced") {
         smoothedVelocity = 0;
+        runtime.dataset.active = "false";
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
         delete document.documentElement.dataset.aboutFilmSnap;
         return;
       }
 
+      const elapsed = Math.min(34, Math.max(0, now - previousFrameAt));
+      previousFrameAt = now;
+      ambientPhase += elapsed / 1000;
+
       const viewportHeight = Math.max(window.innerHeight, 1);
-      if (window.scrollY >= scenes[0].offsetTop - 2) {
-        document.documentElement.dataset.aboutFilmSnap = "true";
-      } else {
-        delete document.documentElement.dataset.aboutFilmSnap;
-      }
-      const rawVelocity = clamp((window.scrollY - lastScrollY) / viewportHeight, -0.12, 0.12);
+      const currentScrollY = window.scrollY;
+      const scrollChanged = currentScrollY !== lastScrollY;
+      const rawVelocity = clamp((currentScrollY - lastScrollY) / viewportHeight, -0.12, 0.12);
       smoothedVelocity += (rawVelocity - smoothedVelocity) * 0.18;
       if (rawVelocity !== 0) lastDirection = rawVelocity > 0 ? 1 : -1;
       pointerX += (pointerTargetX - pointerX) * 0.18;
       pointerY += (pointerTargetY - pointerY) * 0.18;
-      lastScrollY = window.scrollY;
+      lastScrollY = currentScrollY;
 
-      let activeScene = 0;
-      let strongestFocus = -1;
+      if (layoutDirty || scrollChanged) {
+        layoutDirty = false;
+        if (currentScrollY >= scenes[0].offsetTop - 2) {
+          document.documentElement.dataset.aboutFilmSnap = "true";
+        } else {
+          delete document.documentElement.dataset.aboutFilmSnap;
+        }
 
-      scenes.forEach((scene, index) => {
-        const rect = scene.getBoundingClientRect();
-        const totalTravel = viewportHeight + rect.height;
-        const progress = clamp((viewportHeight - rect.top) / totalTravel);
-        const centerDelta = Math.abs(rect.top + rect.height * 0.5 - viewportHeight * 0.5);
-        const focus = clamp(1 - centerDelta / Math.max(viewportHeight * 0.78, rect.height * 0.58));
-        const enter = clamp((viewportHeight - rect.top) / (viewportHeight * 0.72));
-        const exit = clamp(-rect.top / Math.max(rect.height * 0.56, 1));
-        const phase = progress < 0.27
-          ? "anticipation"
-          : progress < 0.5
-            ? "activation"
-            : progress < 0.76
-              ? "discovery"
-              : "resolution";
+        let strongestFocus = -1;
+        scenes.forEach((scene, index) => {
+          const rect = scene.getBoundingClientRect();
+          const totalTravel = viewportHeight + rect.height;
+          const progress = clamp((viewportHeight - rect.top) / totalTravel);
+          const centerDelta = Math.abs(rect.top + rect.height * 0.5 - viewportHeight * 0.5);
+          const focus = clamp(1 - centerDelta / Math.max(viewportHeight * 0.78, rect.height * 0.58));
+          const enter = clamp((viewportHeight - rect.top) / (viewportHeight * 0.72));
+          const exit = clamp(-rect.top / Math.max(rect.height * 0.56, 1));
+          const phase = progress < 0.27
+            ? "anticipation"
+            : progress < 0.5
+              ? "activation"
+              : progress < 0.76
+                ? "discovery"
+                : "resolution";
 
-        scene.style.setProperty("--scene-progress", progress.toFixed(4));
-        scene.style.setProperty("--scene-focus", focus.toFixed(4));
-        scene.style.setProperty("--scene-enter", enter.toFixed(4));
-        scene.style.setProperty("--scene-exit", exit.toFixed(4));
+          scene.style.setProperty("--scene-progress", progress.toFixed(4));
+          scene.style.setProperty("--scene-focus", focus.toFixed(4));
+          scene.style.setProperty("--scene-enter", enter.toFixed(4));
+          scene.style.setProperty("--scene-exit", exit.toFixed(4));
+          scene.dataset.scenePhase = phase;
+
+          if (focus > strongestFocus) {
+            strongestFocus = focus;
+            activeScene = index;
+            activeSceneProgress = progress;
+          }
+        });
+
+        if (activeScene !== previousActiveScene) {
+          scenes.forEach((scene, index) => {
+            scene.dataset.sceneActive = String(index === activeScene);
+          });
+          chapterMarks.forEach((mark, index) => {
+            mark.dataset.active = String(index === activeScene);
+          });
+          previousActiveScene = activeScene;
+        }
+
+        const pageRunway = Math.max(document.documentElement.scrollHeight - viewportHeight, 1);
+        const firstSceneTop = scenes[0].offsetTop;
+        const finalScene = scenes[scenes.length - 1];
+        const finalSceneBottom = finalScene.offsetTop + finalScene.offsetHeight;
+        filmProgress = clamp(currentScrollY / pageRunway);
+        narrativeActive = currentScrollY >= firstSceneTop - viewportHeight * 0.12
+          && currentScrollY <= finalSceneBottom;
+        activeTone = scenes[activeScene].dataset.sceneTone ?? "dark";
+
+        runtime.dataset.active = String(narrativeActive);
+        runtime.dataset.tone = activeTone;
+        runtime.style.setProperty("--film-progress", filmProgress.toFixed(4));
+      }
+
+      scenes.forEach((scene) => {
         scene.style.setProperty("--scene-velocity", Math.abs(smoothedVelocity).toFixed(4));
         scene.style.setProperty("--scene-direction", String(lastDirection));
-        scene.dataset.scenePhase = phase;
-
-        if (focus > strongestFocus) {
-          strongestFocus = focus;
-          activeScene = index;
-        }
       });
-
-      scenes.forEach((scene, index) => {
-        scene.dataset.sceneActive = String(index === activeScene);
-      });
-      chapterMarks.forEach((mark, index) => {
-        mark.dataset.active = String(index === activeScene);
-      });
-
-      const pageRunway = Math.max(document.documentElement.scrollHeight - viewportHeight, 1);
-      runtime.style.setProperty("--film-progress", clamp(window.scrollY / pageRunway).toFixed(4));
       runtime.style.setProperty("--film-velocity", Math.abs(smoothedVelocity).toFixed(4));
       runtime.style.setProperty("--film-direction", String(lastDirection));
       runtime.style.setProperty("--film-pointer-x", `${pointerX.toFixed(1)}px`);
       runtime.style.setProperty("--film-pointer-y", `${pointerY.toFixed(1)}px`);
+      drawThread({
+        active: narrativeActive,
+        activeProgress: activeSceneProgress,
+        filmProgress,
+        tone: activeTone,
+      });
 
       const pointerSettling = Math.abs(pointerTargetX - pointerX) + Math.abs(pointerTargetY - pointerY) > 0.5;
-      if ((Math.abs(smoothedVelocity) > 0.0002 || pointerSettling) && !document.hidden) {
+      if ((narrativeActive || Math.abs(smoothedVelocity) > 0.0002 || pointerSettling) && !document.hidden) {
         frame = window.requestAnimationFrame(render);
       }
     };
@@ -134,8 +300,10 @@ export function AboutCinematicRuntime() {
       attributeFilter: ["data-motion"],
     });
 
+    resizeThread();
     render();
     window.addEventListener("scroll", requestRender, { passive: true });
+    window.addEventListener("resize", resizeThread);
     window.addEventListener("resize", requestRender);
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     document.addEventListener("visibilitychange", onVisibilityChange);
@@ -143,10 +311,12 @@ export function AboutCinematicRuntime() {
     return () => {
       window.cancelAnimationFrame(frame);
       window.removeEventListener("scroll", requestRender);
+      window.removeEventListener("resize", resizeThread);
       window.removeEventListener("resize", requestRender);
       window.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       motionPreferenceObserver.disconnect();
+      context.clearRect(0, 0, canvasWidth, canvasHeight);
       delete document.documentElement.dataset.aboutFilmSnap;
       scenes.forEach((scene) => {
         delete scene.dataset.sceneActive;
@@ -163,6 +333,7 @@ export function AboutCinematicRuntime() {
 
   return (
     <div ref={runtimeRef} className={styles.runtime} aria-hidden="true">
+      <canvas ref={threadRef} className={styles.livingThread} />
       <div className={styles.cursorLight} />
       <div className={styles.velocityVeil} />
       <div className={styles.chapterSpine}>
