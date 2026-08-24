@@ -13,6 +13,7 @@ import {
   InsightCard,
   type InsightCardPost,
 } from "@/components/InsightCard";
+import { ElementGlyph } from "@/components/ElementGlyph";
 import type { InsightElement } from "@/data/insights";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
@@ -46,14 +47,20 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
 // replaces that row in place, so deeper browsing never creates a long runway
 // or shifts the following scene farther away.
 const POSTS_PER_FOLIO = 3;
+const RECOVERY_QUERIES = [
+  "price pressure",
+  "trust gaps",
+  "brand sameness",
+  "faint recall",
+];
 
 const INTENT_LANGUAGE: Record<string, string> = {
   positioning:
-    "price pricing cheap premium compare comparison category crowded offer audience niche differentiator similar explain value unclear",
+    "price pricing pressure cheap premium compare comparison category crowded offer audience niche differentiator similar explain value unclear",
   "customer-experience":
-    "trust hesitate friction enquiry inquiry onboarding journey handoff slow confusing inconsistent experience promise delivery drop off",
+    "trust hesitate friction gap gaps enquiry inquiry onboarding journey handoff slow confusing inconsistent experience promise delivery drop off",
   "distinctive-brand":
-    "same similar generic interchangeable invisible attention recognition distinctive visual identity polished bland stand out",
+    "same sameness similar generic interchangeable invisible attention recognition distinctive visual identity polished bland stand out",
   "brand-messaging":
     "explain explanation words website homepage proposal sales language voice message confusing unclear value proposition",
   "brand-memory":
@@ -158,6 +165,38 @@ export function InsightsExplorer({
     firstPostIndex + POSTS_PER_FOLIO,
   );
   const settledQuery = deferredQuery.trim();
+  const selectedTopic =
+    topicSlug === "all"
+      ? undefined
+      : topics.find((topic) => topic.slug === topicSlug);
+  const inferredTopic = settledQuery
+    ? topics.find((topic) => topic.slug === filteredPosts[0]?.topicSlug)
+    : selectedTopic;
+  const signalKey = settledQuery
+    ? inferredTopic?.slug ?? "unresolved"
+    : selectedTopic?.slug ?? "open";
+  const signalLabel = settledQuery
+    ? inferredTopic
+      ? "Strongest current"
+      : "Signal unresolved"
+    : selectedTopic
+      ? "Path in focus"
+      : "Search lens";
+  const signalTitle = inferredTopic
+    ? inferredTopic.name
+    : settledQuery
+      ? "A wider phrase will open more paths"
+      : "Five strategic paths remain open";
+  const signalDetail = settledQuery
+    ? inferredTopic
+      ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay gathers" : "essays gather"} around this path.`
+      : "The archive needs a broader clue."
+    : selectedTopic
+      ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay remains" : "essays remain"} in this path.`
+      : "Write the symptom in the language already used in the room.";
+  const signalColor = inferredTopic
+    ? ELEMENT_COLORS[inferredTopic.element]
+    : "#B85A34";
   const resultMessage = settledQuery
     ? filteredPosts.length > 0
       ? `Best matches ${firstPostIndex + 1}–${firstPostIndex + visiblePosts.length} of ${filteredPosts.length} for “${settledQuery}”`
@@ -170,6 +209,12 @@ export function InsightsExplorer({
 
   function resetFolio() {
     setFolio({ index: 0, direction: -1 });
+  }
+
+  function recoverWithQuery(nextQuery: string) {
+    setQuery(nextQuery);
+    setTopicSlug("all");
+    resetFolio();
   }
 
   function turnFolio(nextIndex: number) {
@@ -208,7 +253,10 @@ export function InsightsExplorer({
           </p>
         </div>
 
-        <div className="insights-library__lens rounded-[1.5rem] border border-soil/10 bg-background-elevated p-4 shadow-elevation-sm">
+        <div
+          className="insights-library__lens rounded-[1.5rem] border border-soil/10 bg-background-elevated p-4 shadow-elevation-sm"
+          style={{ "--library-signal": signalColor } as CSSProperties}
+        >
           <label className="relative block">
             <span className="sr-only">Search the insight library</span>
             <Search
@@ -226,6 +274,52 @@ export function InsightsExplorer({
               className="min-h-14 w-full rounded-full border border-border bg-ivory pl-12 pr-5 text-sm text-soil outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/15"
             />
           </label>
+
+          <div
+            className="insights-library__signal"
+            aria-live="polite"
+            aria-busy={query !== deferredQuery}
+          >
+            <span
+              className="insights-library__signal-glyph"
+              style={{ color: signalColor }}
+              aria-hidden="true"
+            >
+              {inferredTopic ? (
+                <ElementGlyph
+                  slug={inferredTopic.element}
+                  className="h-4 w-4"
+                  strokeWidth={1.4}
+                />
+              ) : (
+                <Search className="h-4 w-4" strokeWidth={1.4} />
+              )}
+            </span>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.p
+                key={signalKey}
+                initial={
+                  prefersReducedMotion
+                    ? false
+                    : { clipPath: "inset(0 0 100% 0)", y: 5 }
+                }
+                animate={{ clipPath: "inset(0 0 0% 0)", y: 0 }}
+                exit={
+                  prefersReducedMotion
+                    ? undefined
+                    : { clipPath: "inset(100% 0 0 0)", y: -4 }
+                }
+                transition={{
+                  duration: prefersReducedMotion ? 0 : 0.3,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                <span>{signalLabel}</span>
+                <strong>{signalTitle}</strong>
+              </motion.p>
+            </AnimatePresence>
+            <small>{signalDetail}</small>
+          </div>
 
           {topics.length > 0 && (
             <div
@@ -362,9 +456,23 @@ export function InsightsExplorer({
               This search has wandered beyond the current library.
             </p>
             <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-foreground-secondary">
-              Try a broader phrase such as positioning, audit, recall, message,
-              price pressure, trust, sameness, or brand system.
+              Choose the clue closest to the concern and the archive will open
+              a wider route.
             </p>
+            <div
+              className="insights-library__recovery"
+              aria-label="Broader search suggestions"
+            >
+              {RECOVERY_QUERIES.map((suggestion) => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onClick={() => recoverWithQuery(suggestion)}
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>

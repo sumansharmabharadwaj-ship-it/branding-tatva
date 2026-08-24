@@ -145,6 +145,49 @@ settles. Empty queries retain the editorial ordering, filters remain explicit,
 and the result message explains whether the visitor sees chronology or ranked
 matches.
 
+The search lens also exposes its interpretation. Once a phrase settles, the
+top-ranked essay determines the strongest strategic current and the interface
+names that path beside its element glyph. Empty searches keep all five paths
+open; unmatched searches ask for a wider clue. This feedback makes relevance
+visible without silently applying another filter.
+
+~~~tsx
+const inferredTopic = settledQuery
+  ? topics.find((topic) => topic.slug === filteredPosts[0]?.topicSlug)
+  : selectedTopic;
+
+<motion.p key={inferredTopic?.slug ?? "open"}>
+  <span>Strongest current</span>
+  <strong>{inferredTopic?.name}</strong>
+</motion.p>
+~~~
+
+### Stable atlas handoffs
+
+Decision Mirror links land on a specific atlas tab. The atlas now holds that
+selection while the browser or smooth-scroll provider completes the anchor
+journey, then releases control after the reader moves a forgiving distance
+away. Pointer and keyboard selections receive the same short spatial lock.
+
+~~~ts
+if (Math.abs(window.scrollY - arrivalY) < window.innerHeight * 0.18) {
+  setActiveIndex(selectionLock.index);
+  return;
+}
+
+selectionLockRef.current = null;
+~~~
+
+The lock never captures the wheel or changes document position. It only keeps
+the intended panel stable long enough to be read, after which normal
+scroll-linked atlas progression resumes in either direction.
+
+An unmatched library search also remains productive. Four symptom-led recovery
+buttons clear any narrow topic filter and rerun the search with a broader clue:
+price pressure, trust gaps, brand sameness, or faint recall. The empty state
+therefore becomes a reversible route back into the archive instead of a dead
+end.
+
 ### Evidence ledger and micro-commitment
 
 The audit scene replaces a decorative five-item list with a reversible working

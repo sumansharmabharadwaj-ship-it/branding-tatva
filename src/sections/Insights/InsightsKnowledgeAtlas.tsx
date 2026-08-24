@@ -53,6 +53,12 @@ type InsightsKnowledgeAtlasProps = {
   paths: AtlasPath[];
 };
 
+type AtlasSelectionLock = {
+  index: number;
+  awaitingArrival: boolean;
+  arrivalY: number | null;
+};
+
 const ELEMENT_COLORS: Record<InsightElement, string> = {
   earth: "#D77A51",
   water: "#7FA4BA",
@@ -67,6 +73,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const transitionDirectionRef = useRef(1);
+  const selectionLockRef = useRef<AtlasSelectionLock | null>(null);
   const inView = useInView(sectionRef, { amount: 0.42 });
   const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -78,11 +85,20 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
   useEffect(() => {
     function syncPathFromHash() {
       const prefix = "#atlas-tab-";
-      if (!window.location.hash.startsWith(prefix)) return;
+      if (!window.location.hash.startsWith(prefix)) {
+        selectionLockRef.current = null;
+        return;
+      }
 
       const slug = decodeURIComponent(window.location.hash.slice(prefix.length));
       const nextIndex = paths.findIndex((path) => path.slug === slug);
       if (nextIndex < 0) return;
+
+      selectionLockRef.current = {
+        index: nextIndex,
+        awaitingArrival: true,
+        arrivalY: null,
+      };
 
       setActiveIndex((current) => {
         transitionDirectionRef.current = nextIndex >= current ? 1 : -1;
@@ -97,6 +113,37 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     if (!inView || paused || prefersReducedMotion || paths.length < 2) return;
+
+    const selectionLock = selectionLockRef.current;
+    if (selectionLock) {
+      const bounds = sectionRef.current?.getBoundingClientRect();
+
+      if (selectionLock.awaitingArrival) {
+        if (
+          bounds &&
+          bounds.top <= window.innerHeight * 0.24 &&
+          bounds.bottom >= window.innerHeight * 0.42
+        ) {
+          selectionLock.awaitingArrival = false;
+          selectionLock.arrivalY = window.scrollY;
+        }
+
+        setActiveIndex((current) =>
+          current === selectionLock.index ? current : selectionLock.index,
+        );
+        return;
+      }
+
+      const arrivalY = selectionLock.arrivalY ?? window.scrollY;
+      if (Math.abs(window.scrollY - arrivalY) < window.innerHeight * 0.18) {
+        setActiveIndex((current) =>
+          current === selectionLock.index ? current : selectionLock.index,
+        );
+        return;
+      }
+
+      selectionLockRef.current = null;
+    }
 
     const progress = Math.min(0.9999, Math.max(0, value));
     const nextIndex = Math.min(paths.length - 1, Math.floor(progress * paths.length));
@@ -119,6 +166,14 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
     }
   }
 
+  function lockSelection(index: number) {
+    selectionLockRef.current = {
+      index,
+      awaitingArrival: false,
+      arrivalY: window.scrollY,
+    };
+  }
+
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let nextIndex: number | null = null;
 
@@ -133,6 +188,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
 
     if (nextIndex !== null) {
       event.preventDefault();
+      lockSelection(nextIndex);
       selectPath(nextIndex, true);
     }
   }
@@ -224,8 +280,13 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                   aria-controls={selected ? `atlas-panel-${path.slug}` : undefined}
                   tabIndex={selected ? 0 : -1}
                   className={selected ? "is-active" : undefined}
-                  onClick={() => selectPath(index)}
-                  onPointerEnter={() => selectPath(index)}
+                  onClick={() => {
+                    lockSelection(index);
+                    selectPath(index);
+                  }}
+                  onPointerEnter={(event) => {
+                    if (event.pointerType !== "touch") selectPath(index);
+                  }}
                   onFocus={() => selectPath(index)}
                   onKeyDown={(event) => handleKeyDown(event, index)}
                 >

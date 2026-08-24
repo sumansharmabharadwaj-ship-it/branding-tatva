@@ -1013,9 +1013,71 @@
 
 .insights-library__lens {
   margin-top: clamp(0.5rem, 1.4svh, 1rem);
+  border-color: color-mix(in srgb, var(--library-signal) 20%, transparent);
+  background: color-mix(in srgb, var(--library-signal) 4%, #fffdf8);
   opacity: var(--scene-content-opacity);
   transform: translate3d(var(--scene-camera-x), 0, 0);
   transform-origin: center;
+  transition:
+    background-color 360ms ease,
+    border-color 360ms ease;
+}
+
+.insights-library__signal {
+  display: grid;
+  min-height: 2.8rem;
+  align-items: center;
+  margin-top: 0.65rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--library-signal) 22%, transparent);
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--library-signal) 5%, transparent);
+  gap: 0.6rem;
+  grid-template-columns: auto minmax(0, 1fr) minmax(9rem, 0.85fr);
+}
+
+.insights-library__signal-glyph {
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 1px solid currentcolor;
+  border-radius: 50%;
+  place-items: center;
+}
+
+.insights-library__signal p {
+  display: grid;
+  min-width: 0;
+  gap: 0.05rem;
+}
+
+.insights-library__signal p span {
+  color: rgb(39 34 30 / 48%);
+  font-size: 0.49rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.insights-library__signal p strong {
+  overflow: hidden;
+  color: #27221e;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.84rem;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.insights-library__signal small {
+  color: rgb(39 34 30 / 58%);
+  font-size: 0.64rem;
+  line-height: 1.35;
+  text-align: right;
+}
+
+.insights-library__signal + .insights-library__topics {
+  margin-top: 0.65rem;
 }
 
 .insights-library__result-line {
@@ -1040,6 +1102,43 @@
 
 .insights-library__empty {
   margin-top: 1rem;
+}
+
+.insights-library__recovery {
+  display: flex;
+  max-width: 38rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 1rem auto 0;
+  gap: 0.45rem;
+}
+
+.insights-library__recovery button {
+  min-height: 2.35rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid rgb(39 34 30 / 14%);
+  border-radius: 999px;
+  background: transparent;
+  color: #27221e;
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  transition:
+    background-color 240ms ease,
+    border-color 240ms ease,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-library__recovery button:is(:hover, :focus-visible) {
+  border-color: #b85a34;
+  background: rgb(184 90 52 / 8%);
+  transform: translate3d(0, -0.15rem, 0);
+}
+
+.insights-library__recovery button:focus-visible {
+  outline: 2px solid #b85a34;
+  outline-offset: 2px;
 }
 
 .insights-library__pager {
@@ -1684,6 +1783,14 @@
     min-height: 3rem;
   }
 
+  .insights-library__signal {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .insights-library__signal small {
+    display: none;
+  }
+
   .insights-library__topics {
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -1872,6 +1979,16 @@
     padding: 0.65rem;
   }
 
+  .insights-library__signal {
+    min-height: 2.35rem;
+    margin-top: 0.45rem;
+    padding-block: 0.35rem;
+  }
+
+  .insights-library__signal small {
+    display: none;
+  }
+
   .insights-library__lens input {
     min-height: 3rem;
   }
@@ -1965,6 +2082,7 @@
   .insights-decision-mirror__atlas-link svg,
   .insights-evidence-ledger__status > i span,
   .insights-evidence-ledger__layers button,
+  .insights-library__recovery button,
   .insights-atlas__paths button,
   .insights-atlas__path-glyph,
   .insights-atlas__articles a,
@@ -2027,6 +2145,7 @@ html:has(.insights-page[data-insights-motion="reduced"]) {
     .insights-library__header,
     .insights-library__lens,
     .insights-library__folio,
+    .insights-library__recovery button,
     .insights-audit-scene__ledger,
     .insights-audit-scene__frame,
     .insights-audit-scene__film,
@@ -2042,4 +2161,8 @@ html:has(.insights-page[data-insights-motion="reduced"]) {
   clip-path: none;
   opacity: 1;
   transform: none;
+}
+
+.insights-page[data-insights-motion="reduced"] .insights-library__recovery button {
+  transition-duration: 0.01ms;
 }
