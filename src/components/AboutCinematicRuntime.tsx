@@ -40,6 +40,12 @@ export function AboutCinematicRuntime() {
 
     const render = () => {
       frame = 0;
+      if (document.documentElement.dataset.motion === "reduced") {
+        smoothedVelocity = 0;
+        delete document.documentElement.dataset.aboutFilmSnap;
+        return;
+      }
+
       const viewportHeight = Math.max(window.innerHeight, 1);
       if (window.scrollY >= scenes[0].offsetTop - 2) {
         document.documentElement.dataset.aboutFilmSnap = "true";
@@ -112,6 +118,7 @@ export function AboutCinematicRuntime() {
     };
 
     const onPointerMove = (event: PointerEvent) => {
+      if (document.documentElement.dataset.motion === "reduced") return;
       pointerTargetX = event.clientX;
       pointerTargetY = event.clientY;
       requestRender();
@@ -120,6 +127,12 @@ export function AboutCinematicRuntime() {
     const onVisibilityChange = () => {
       if (!document.hidden) requestRender();
     };
+
+    const motionPreferenceObserver = new MutationObserver(requestRender);
+    motionPreferenceObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-motion"],
+    });
 
     render();
     window.addEventListener("scroll", requestRender, { passive: true });
@@ -133,6 +146,7 @@ export function AboutCinematicRuntime() {
       window.removeEventListener("resize", requestRender);
       window.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      motionPreferenceObserver.disconnect();
       delete document.documentElement.dataset.aboutFilmSnap;
       scenes.forEach((scene) => {
         delete scene.dataset.sceneActive;

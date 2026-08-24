@@ -45,3 +45,11 @@
     min-height: auto;
   }
 }
+
+:global(html[data-motion="reduced"]) .scrollStory,
+:global(html[data-motion="reduced"]) .sticky {
+  position: relative;
+  top: auto;
+  height: auto;
+  min-height: auto;
+}

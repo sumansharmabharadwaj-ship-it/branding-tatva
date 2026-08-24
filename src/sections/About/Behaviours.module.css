@@ -269,3 +269,7 @@
   .orbit { transform: rotate(-8deg); }
   .node { transition: none; }
 }
+
+:global(html[data-motion="reduced"]) .scrollStory { height: auto; }
+:global(html[data-motion="reduced"]) .container { position: relative; top: auto; height: auto; }
+:global(html[data-motion="reduced"]) .orbit { transform: rotate(-8deg); }

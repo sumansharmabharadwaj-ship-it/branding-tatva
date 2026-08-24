@@ -979,7 +979,7 @@
 
 /* About film: one shared camera grammar for every scene after the protected
    opening. The client runtime only writes numbers; CSS owns the rendering. */
-html[data-about-film-snap="true"] {
+html[data-about-film-snap="true"]:not([data-motion="reduced"]) {
   scroll-snap-type: y proximity;
 }
 
@@ -994,10 +994,6 @@ html[data-about-film-snap="true"] {
   isolation: isolate;
   scroll-snap-align: start;
   scroll-snap-stop: normal;
-}
-
-[data-about-film-scene][data-scene-ending] {
-  scroll-snap-align: end;
 }
 
 [data-about-film-scene] [data-about-film-plane] {
@@ -1058,4 +1054,15 @@ html[data-about-film-snap="true"] {
     filter: none;
     transform: none;
   }
+}
+
+html[data-motion="reduced"] {
+  scroll-snap-type: none !important;
+}
+
+html[data-motion="reduced"] [data-about-film-scene] [data-about-film-plane],
+html[data-motion="reduced"] [data-about-film-scene] [data-about-film-background] {
+  opacity: 1;
+  filter: none;
+  transform: none;
 }

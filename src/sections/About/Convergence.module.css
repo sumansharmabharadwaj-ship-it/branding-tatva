@@ -343,3 +343,16 @@
   .section { height: auto; }
   .tabs button b { animation: none; transform: scaleX(1); }
 }
+
+:global(html[data-motion="reduced"]) .section,
+:global(html[data-motion="reduced"]) .shell {
+  position: relative;
+  top: auto;
+  height: auto;
+  min-height: 46rem;
+}
+
+:global(html[data-motion="reduced"]) .tabs button b {
+  animation: none;
+  transform: scaleX(1);
+}
