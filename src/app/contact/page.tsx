@@ -4,17 +4,16 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { ContactForm } from "@/components/ContactForm";
+import { ContactPathways } from "@/components/ContactPathways";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
-import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
 import { Fireflies } from "@/components/Fireflies";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { ArrowRight, CalendarDays } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarDays, MessageCircle, Phone } from "lucide-react";
 import { site } from "@/data/site";
-import { SANDSTONE, ELEMENT_HEX } from "@/lib/sectionWash";
-import { pageSchema, PERSON_ID, ORGANIZATION_ID } from "@/lib/pageSchema";
+import { pageSchema, ORGANIZATION_ID } from "@/lib/pageSchema";
 
 
 const pageJsonLd = pageSchema({
@@ -29,11 +28,11 @@ const pageJsonLd = pageSchema({
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Schedule a 30-minute brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
+  description: "Schedule a 30 minute brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
   alternates: { canonical: "/contact" },
   openGraph: {
     title: `Contact | ${site.name}`,
-    description: "Schedule a 30-minute brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
+    description: "Schedule a 30 minute brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
     type: "website",
   },
 };
@@ -41,7 +40,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   // The hero poster is this page's LCP element — a high priority
   // preload so first paint stops waiting behind the video request.
-  preload("/images/pexels-studio-morning-light-poster.jpg", { as: "image", fetchPriority: "high" });
+  preload("/images/pexels-fog-sunrise-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
@@ -71,9 +70,10 @@ export default function ContactPage() {
             same two-jobs-one-fact pattern a masthead and a byline
             already play on any real publication. */}
         <PhotoHero
-          video="/videos/pexels-studio-morning-light.mp4"
-          poster="/images/pexels-studio-morning-light-poster.jpg"
+          video="/videos/pexels-fog-sunrise.mp4"
+          poster="/images/pexels-fog-sunrise-poster.jpg"
           minHeight="70vh"
+          overlayGradient="linear-gradient(180deg, rgba(31,29,25,0.34) 0%, rgba(31,29,25,0.44) 58%, rgba(31,29,25,0.68) 100%), linear-gradient(90deg, rgba(31,29,25,0.44) 0%, rgba(31,29,25,0.08) 72%)"
         >
           {/* Every other atmospheric hero on the site (About's forest
               backdrop) carries a small ambient layer on top of the
@@ -100,8 +100,7 @@ export default function ContactPage() {
                   Tell me what your brand is becoming.
                 </SplitReveal>
                 <p className="mt-4 max-w-lg text-ivory/80">
-                  Fill in as much or as little as you know right now.
-                  I&apos;ll ask a few more questions where it helps.
+                  Bring the question that keeps circling. A clear next move can begin with one honest conversation.
                 </p>
               </Reveal>
               <Reveal delay={0.1} className="lg:pb-2 lg:text-right">
@@ -113,72 +112,22 @@ export default function ContactPage() {
           </Container>
         </PhotoHero>
 
-        {/* The three contact paths, up front (governing bible's contact
-            architecture): a visitor can schedule, call or message directly, or write,
-            and every door is visible before any form field appears.
-            Plain anchor cards, zero novelty — this page's job is to
-            get out of the way. */}
-        <section className="relative overflow-hidden border-b border-soil/10 py-10" style={{ backgroundColor: "#E8DED0" }}>
+        <section className="relative overflow-hidden border-b border-soil/10 bg-[#E8DED0]">
           <BackgroundVideo
             video="/videos/generated/bt-contact-three-paths-waterpaper.mp4"
             poster="/images/generated/bt-contact-three-paths-waterpaper-poster.jpg"
             parallax
-            playbackRate={0.86}
+            playbackRate={0.82}
           />
-          <div aria-hidden="true" className="absolute inset-0 bg-[#E8DED0]/84" />
-          <Container className="relative grid gap-4 md:grid-cols-3">
-            <a
-              href="#call"
-              className="group rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm transition-transform duration-300 hover:translate-y-[-2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
-            >
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path one</p>
-              <p className="mt-2 font-display text-xl font-normal text-soil">
-                Schedule a thirty-minute call
-                <span aria-hidden="true" className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
-              </p>
-              <p className="mt-2 text-sm text-foreground-secondary">
-                Choose a time. You will leave with an honest next step.
-              </p>
-            </a>
-            <div className="rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm">
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path two</p>
-              <p className="mt-2 font-display text-xl font-normal text-soil">Speak directly</p>
-              <p className="mt-2 text-sm text-foreground-secondary">
-                Call or send Suman a WhatsApp message.
-              </p>
-              <div className="mt-5 flex flex-wrap gap-3">
-                <a
-                  href={`tel:${site.phone.tel}`}
-                  className="rounded-full bg-soil px-4 py-2 text-sm font-medium text-ivory transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
-                  aria-label={`Call Suman at ${site.phone.display}`}
-                >
-                  Call now
-                </a>
-                <a
-                  href={site.phone.whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full border border-soil/20 px-4 py-2 text-sm font-medium text-soil transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
-                >
-                  WhatsApp
-                </a>
-              </div>
-              <p className="mt-3 text-xs text-foreground-secondary">{site.phone.display}</p>
-            </div>
-            <a
-              href="#write"
-              className="group rounded-2xl border border-soil/15 bg-background-elevated p-6 shadow-elevation-sm transition-transform duration-300 hover:translate-y-[-2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay"
-            >
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-action-secondary">Path three</p>
-              <p className="mt-2 font-display text-xl font-normal text-soil">
-                Write it down instead
-                <span aria-hidden="true" className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
-              </p>
-              <p className="mt-2 text-sm text-foreground-secondary">
-                Share only what you know today. We can find the rest together.
-              </p>
-            </a>
-          </Container>
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(110deg, rgba(232,222,208,0.84) 0%, rgba(235,227,216,0.68) 55%, rgba(223,225,214,0.62) 100%)",
+            }}
+          />
+          <ContactPathways />
         </section>
 
         {/* Was a one-off terracotta wash (earth blended 22%) — its own
@@ -191,34 +140,49 @@ export default function ContactPage() {
             on the entire site, so its atmosphere must never depend on a
             WebGL context. Two restrained paper-light washes keep the form
             dimensional without adding a GPU-heavy failure point. */}
-        <section id="write" className="relative scroll-mt-24 overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
+        <section id="write" className="relative flex min-h-[100svh] scroll-mt-24 items-center overflow-hidden bg-[#DDE2DC] py-16 sm:py-20">
+          <BackgroundVideo
+            video="/videos/pexels-moss-stream.mp4"
+            poster="/images/pexels-moss-stream-poster.jpg"
+            parallax
+            playbackRate={0.78}
+          />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
+            className="absolute inset-0"
             style={{
               backgroundImage:
-                "radial-gradient(circle at 16% 20%, rgba(244,239,230,0.42), transparent 38%), radial-gradient(circle at 84% 76%, rgba(92,107,74,0.12), transparent 34%)",
+                "linear-gradient(100deg, rgba(235,232,221,0.88) 0%, rgba(232,229,219,0.66) 48%, rgba(218,224,214,0.48) 100%)",
             }}
           />
-          <Container className="relative grid gap-12 lg:grid-cols-5">
-            <Reveal className="lg:col-span-2">
-              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">Write in your own time</p>
-              <p className="mt-3 max-w-sm font-display text-3xl font-normal leading-tight text-soil">
-                A short note is enough to begin.
+          <Container className="relative grid w-full gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-16">
+            <Reveal>
+              <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-soil/60">Write in your own time</p>
+              <h2 className="mt-4 max-w-lg font-display text-[clamp(2.5rem,5vw,4.8rem)] font-normal leading-[0.98] text-soil">
+                A short note can reveal the real question.
+              </h2>
+              <p className="mt-6 max-w-md text-sm leading-relaxed text-soil/72 sm:text-base">
+                Bring the uncertainty, the unfinished thought, or the decision that keeps circling. I will read every word personally.
               </p>
-              <p className="mt-4 max-w-sm text-sm leading-relaxed text-foreground-secondary">
-                No polished brief required. Tell me what feels unclear, and I will reply personally.
-              </p>
-              <p className="mt-5 text-sm text-foreground-secondary">
-                Or email directly at{" "}
-                <a href={`mailto:${site.email}`} className="text-action-primary-hover link-underline">{site.email}</a>.
+
+              <div className="mt-8 max-w-md rounded-2xl border border-white/45 bg-white/28 p-5 backdrop-blur-xl">
+                <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-soil/48">Where your note goes</p>
+                <p className="mt-3 font-display text-2xl font-normal text-soil">Straight to Suman.</p>
+                <p className="mt-2 text-sm leading-relaxed text-soil/65">
+                  Every enquiry is read by the person who would shape the work with you.
+                </p>
+              </div>
+
+              <p className="mt-6 text-sm text-soil/68">
+                Prefer your inbox?{" "}
+                <a href={`mailto:${site.email}`} className="link-underline text-action-primary-hover">{site.email}</a>
               </p>
             </Reveal>
 
-            <Reveal delay={0.1} className="lg:col-span-3">
+            <Reveal delay={0.1}>
               <ContactForm />
-              <p className="mt-4 text-xs leading-relaxed text-foreground-secondary/80">
-                Your details stay with this practice: read personally, shared with nobody, and deleted on request.
+              <p className="mt-4 rounded-full border border-white/35 bg-white/25 px-4 py-2 text-center text-[0.68rem] leading-relaxed text-soil/58 backdrop-blur-lg">
+                Your details stay private, reach Suman directly, and can be deleted on request.
               </p>
             </Reveal>
           </Container>
@@ -243,115 +207,108 @@ export default function ContactPage() {
             wildflower meadow, genuinely unused elsewhere on this page
             (or its own Footer), fitting "grab a time / stay in touch."
             Overlay at bg-soil/80, the site's normalized standard. */}
-        <section id="call" className="relative scroll-mt-24 overflow-hidden bg-soil py-16 sm:py-24">
-          {/* Restored to the warm meadow per Suman's design: the green
-              backlit grasses read harsh behind this cream panel. */}
-          <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
+        <section id="call" className="relative flex min-h-[100svh] scroll-mt-24 items-center overflow-hidden bg-soil py-16 sm:py-20">
+          <BackgroundVideo
+            video="/videos/pexels-valley-first-light.mp4"
+            poster="/images/pexels-valley-first-light-poster.jpg"
+            parallax
+            playbackRate={0.8}
+          />
           <div
             className="absolute inset-0"
             aria-hidden="true"
-            style={{ backgroundImage: "linear-gradient(180deg, rgba(38,30,22,0.82) 0%, rgba(45,35,25,0.68) 45%, rgba(30,24,18,0.86) 100%)" }}
+            style={{ backgroundImage: "linear-gradient(105deg, rgba(28,34,27,0.72) 0%, rgba(39,42,31,0.52) 48%, rgba(39,32,24,0.42) 100%)" }}
           />
-          {/* min-w-0 on both grid items: CalendlyEmbed's own real
-              minWidth:320px constraint (its own widget's floor, not
-              this page's choice) was propagating up through CSS
-              Grid's default min-width:auto item behavior, forcing the
-              shared single-column mobile track wider than the
-              viewport, and dragging the Newsletter card along with it
-              even though it has no width problem of its own.
-              Confirmed via computed-style inspection at 375px width
-              (both cards measured 370px, 43px past the actual 327px
-              content box) before fixing. */}
-          {/* What happens next — the same real steps the Services
-              clearing already promises, restated where the booking
-              actually happens. */}
-          <Container className="relative mb-10">
-            <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">What happens next</p>
-            <ol className="mt-4 grid gap-4 sm:grid-cols-3">
-              {[
-                "You describe where the brand stands today, in your own words.",
-                "I ask direct questions about positioning and recognition.",
-                "You leave with honest feedback and a clear next step.",
-              ].map((step, i) => (
-                <Reveal key={step} delay={i * 0.08}>
-                  <li className="flex items-start gap-3">
-                    <span className="pt-0.5 font-display text-lg leading-none text-ivory/35" aria-hidden="true">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <p className="text-sm leading-relaxed text-ivory/85">{step}</p>
-                  </li>
-                </Reveal>
-              ))}
-            </ol>
-          </Container>
-          <Container className="relative grid gap-8 lg:grid-cols-2 lg:items-start">
-            <Reveal delay={0.28} className="min-w-0">
-              {/* Suman's design: a cream panel carrying the booking,
-                  opening on the italic welcome, her name in serif, and
-                  the sprig divider before the calendar itself. */}
-              <div className="rounded-2xl px-6 py-10 text-center shadow-elevation-lg sm:px-10" style={{ backgroundColor: "#F6F2EA" }}>
-                <p className="font-display text-3xl italic" style={{ color: "#B08A4F" }}>Welcome,</p>
-                <p className="mt-1 font-display text-4xl font-normal text-soil sm:text-5xl">{site.founder}</p>
-                <span aria-hidden="true" className="mx-auto mt-4 block h-px w-16" style={{ backgroundColor: "#C6A97A" }} />
-                <p className="mx-auto mt-5 max-w-sm font-display text-lg leading-snug text-soil sm:text-xl">
-                  {site.consultationMinutes} minutes with the person who would do the work.
+          <Container className="relative grid w-full gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
+            <div>
+              <Reveal>
+                <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-sandstone">The first conversation</p>
+                <h2 className="mt-4 max-w-xl font-display text-[clamp(2.7rem,5.6vw,5.4rem)] font-normal leading-[0.96] text-ivory">
+                  One question is enough for the first call.
+                </h2>
+                <p className="mt-6 max-w-md text-sm leading-relaxed text-ivory/75 sm:text-base">
+                  Bring the decision taking up the most room in your head. I will listen, ask what matters, and share the clearest next move I can see.
                 </p>
-                <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-foreground-secondary">
-                  Choose a time that suits you. Every slot adjusts to your timezone automatically, and confirmation arrives after booking.
+              </Reveal>
+
+              <ol className="mt-9 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                {[
+                  "You describe where the brand stands today.",
+                  "We examine positioning, perception, and recognition.",
+                  "You leave with an honest next step.",
+                ].map((step, i) => (
+                  <Reveal key={step} delay={i * 0.08}>
+                    <li className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-lg">
+                      <span className="pt-0.5 font-display text-lg leading-none text-sandstone/70" aria-hidden="true">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <p className="text-sm leading-relaxed text-ivory/82">{step}</p>
+                    </li>
+                  </Reveal>
+                ))}
+              </ol>
+            </div>
+
+            <Reveal delay={0.12} className="min-w-0">
+              <div className="rounded-[2rem] border border-white/45 bg-[#F6F2EA]/90 p-6 shadow-[0_30px_100px_rgba(10,18,11,0.34)] backdrop-blur-3xl sm:p-10">
+                <div className="flex items-start justify-between gap-6">
+                  <div>
+                    <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-clay">Direct with the founder</p>
+                    <p className="mt-3 font-display text-4xl font-normal leading-none text-soil sm:text-5xl">{site.consultationMinutes} minutes</p>
+                  </div>
+                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-soil text-ivory">
+                    <CalendarDays aria-hidden="true" className="h-6 w-6" strokeWidth={1.35} />
+                  </span>
+                </div>
+
+                <p className="mt-7 max-w-md text-sm leading-relaxed text-soil/68 sm:text-base">
+                  Choose a time that suits you. Every slot adjusts to your timezone, and the confirmation arrives after booking.
                 </p>
-                <span aria-hidden="true" className="mt-7 flex items-center justify-center gap-3">
-                  <span className="h-px w-20 bg-soil/15" />
-                  <svg viewBox="0 0 24 20" className="h-4 w-5" fill="none" style={{ color: "#C6A97A" }}>
-                    <path d="M12 19V6M12 6C12 6 9 1 4 1c0 5 4 6 8 5zM12 6c0 0 3-5 8-5 0 5-4 6-8 5z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  <span className="h-px w-20 bg-soil/15" />
-                </span>
-                {/* A direct booking card is deliberately used instead of
-                    Calendly's 560px cross-origin embed. The embed was the
-                    only part of this conversion path that could become a
-                    blank white block behind blockers or a slow third-party
-                    request. This keeps the August 8 card composition while
-                    making the action immediate and failure-proof. */}
+
+                {/* CalendlyEmbed remains the established scheduling contract;
+                    this direct route keeps the handoff immediate and resilient. */}
                 <a
                   href={site.calendlyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group mx-auto mt-8 flex max-w-md items-center gap-4 rounded-2xl border border-soil/10 bg-white/70 p-4 text-left shadow-elevation-sm transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-[#8A6B3D]/35 hover:shadow-elevation-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8A6B3D] sm:gap-5 sm:p-5"
-                  aria-label={`Open Calendly to book a ${site.consultationMinutes}-minute meeting with ${site.founder}`}
+                  className="group mt-8 flex min-h-16 w-full items-center gap-4 rounded-2xl bg-soil p-4 text-left text-ivory shadow-elevation-sm transition-[transform,box-shadow,background-color] duration-300 hover:-translate-y-1 hover:bg-action-primary-hover hover:shadow-elevation-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay sm:p-5"
+                  aria-label={`Open Calendly to book a ${site.consultationMinutes} minute meeting with ${site.founder}`}
                 >
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-soil text-ivory sm:h-14 sm:w-14">
-                    <CalendarDays aria-hidden="true" className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.45} />
-                  </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-display text-xl font-normal text-soil sm:text-2xl">
-                      {site.consultationMinutes} minute meeting
+                    <span className="block font-display text-2xl font-normal sm:text-3xl">
+                      Choose a time
                     </span>
-                    <span className="mt-1 block text-sm leading-relaxed text-foreground-secondary">
-                      Choose a time that works for you.
-                    </span>
+                    <span className="mt-1 block text-sm text-ivory/65">View the live calendar</span>
                   </span>
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#B08A4F] text-white transition-transform duration-300 group-hover:translate-x-1">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sandstone text-soil transition-transform duration-300 group-hover:translate-x-1">
                     <ArrowRight aria-hidden="true" className="h-5 w-5" strokeWidth={1.6} />
                   </span>
                 </a>
-                <p className="mt-5 text-[0.65rem] font-medium uppercase tracking-[0.2em] text-foreground-secondary/70">
-                  Scheduling by Calendly · opens in a new tab
-                </p>
-              </div>
-            </Reveal>
 
-            <Reveal delay={0.1} className="min-w-0">
-              <div
-                className="rounded-2xl border p-6 sm:p-8"
-                style={{ borderColor: `${ELEMENT_HEX.air}40`, backgroundColor: `${ELEMENT_HEX.air}14` }}
-              >
-                <ElementGlyph slug="air" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
-                <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">A simple first call</p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">No pitch deck. No preparation.</h2>
-                <div className="mt-6 space-y-4 text-sm leading-relaxed text-ivory/85">
-                  <p>Bring the question taking up the most room in your head.</p>
-                  <p>I will listen, ask what matters, and tell you honestly whether I can help.</p>
-                  <p>If a call feels too soon, email <a href={`mailto:${site.email}`} className="link-underline text-sandstone">{site.email}</a>.</p>
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-soil/10 pt-5">
+                  <p className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-soil/45">
+                    Calendly · opens in a new tab
+                  </p>
+                  <div className="flex flex-wrap items-center gap-4">
+                    <a
+                      href={`tel:${site.phone.tel}`}
+                      aria-label={`Call Suman at ${site.phone.display}`}
+                      className="inline-flex min-h-11 items-center text-sm font-medium text-soil transition-colors duration-300 hover:text-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay"
+                    >
+                      <Phone aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
+                      Call Suman
+                    </a>
+                    <a
+                      href={site.phone.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-11 items-center text-sm font-medium text-soil transition-colors duration-300 hover:text-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay"
+                    >
+                      <MessageCircle aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
+                      WhatsApp Suman
+                      <ArrowUpRight aria-hidden="true" className="ml-1.5 h-4 w-4" />
+                    </a>
+                  </div>
                 </div>
               </div>
             </Reveal>

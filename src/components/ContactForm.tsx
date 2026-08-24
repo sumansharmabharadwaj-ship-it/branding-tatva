@@ -19,7 +19,7 @@ type Status = "idle" | "submitting" | "success" | "error";
 // grid of near-identical rectangles. `bg-transparent` (not warm-white)
 // so the field reads as part of the page, not a boxed form widget.
 const inputClass =
-  "mt-2 w-full border-0 border-b-2 border-border bg-transparent px-0 py-2.5 text-lg text-soil placeholder:text-foreground-secondary/50 transition-colors duration-200 focus:border-action-primary focus:outline-none focus:ring-0";
+  "mt-2 w-full border-0 border-b border-soil/18 bg-transparent px-0 py-3 text-base text-soil placeholder:text-foreground-secondary/45 transition-[border-color,background-color] duration-300 focus:border-action-primary focus:bg-white/20 focus:outline-none focus:ring-0 sm:text-lg";
 
 let rippleId = 0;
 
@@ -54,10 +54,22 @@ export function ContactForm() {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
   });
+
+  const requiredDetails = watch(["name", "email", "description"]);
+  const completedDetails = requiredDetails.filter(
+    (value) => typeof value === "string" && value.trim().length > 0,
+  ).length;
+  const completionLabel =
+    completedDetails === 3
+      ? "Ready when you are"
+      : completedDetails > 0
+        ? "Your note is taking shape"
+        : "A quiet place to begin";
 
   async function onSubmit(values: ContactFormValues) {
     setStatus("submitting");
@@ -148,27 +160,45 @@ export function ContactForm() {
   }
 
   return (
-    <div className="rounded-2xl border border-border/60 px-6 py-8 shadow-elevation-md sm:px-10 sm:py-10" style={{ backgroundColor: "#F6F2EA" }}>
+    <div className="rounded-[2rem] border border-white/55 bg-[#F6F2EA]/88 px-6 py-7 shadow-[0_30px_100px_rgba(26,38,27,0.2)] backdrop-blur-3xl sm:px-10 sm:py-9">
       {/* The panel mirrors the booking card beside it — cream ground,
           italic display accent, serif line, and the sprig divider —
           so the two paths on this page read as siblings rather than
           a styled card next to a bare form. */}
       <div className="text-center">
-        <p className="font-display text-2xl italic text-clay">Tell me,</p>
-        <p className="mt-1 font-display text-3xl font-normal text-soil sm:text-4xl">what are you building?</p>
-        <span aria-hidden="true" className="mt-5 flex items-center justify-center gap-3">
-          <span className="h-px w-16 bg-border" />
-          <svg viewBox="0 0 24 20" className="h-4 w-5 text-clay" fill="none">
-            <path d="M12 19V6M12 6C12 6 9 1 4 1c0 5 4 6 8 5zM12 6c0 0 3-5 8-5 0 5-4 6-8 5z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <span className="h-px w-16 bg-border" />
-        </span>
-        <p className="mx-auto mt-5 max-w-sm text-sm leading-relaxed text-foreground-secondary">
-          Three questions to start. Add as much detail as you feel like, or keep it short and we will cover the rest on the call.
+        <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-clay">A note, in your own words</p>
+        <p className="mt-3 font-display text-3xl font-normal leading-tight text-soil sm:text-4xl">What are you building?</p>
+        <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-foreground-secondary">
+          Three details begin the conversation. Add more only when it helps you explain the picture.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 space-y-5">
+      <div className="mt-6 rounded-2xl border border-soil/10 bg-white/30 px-4 py-3">
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-soil/48">Conversation note</p>
+          <p className="text-xs text-soil/58" aria-live="polite">{completionLabel}</p>
+        </div>
+        <div className="mt-3 h-px overflow-hidden bg-soil/12" aria-hidden="true">
+          <motion.span
+            className="block h-full bg-clay"
+            initial={false}
+            animate={{ width: `${(completedDetails / 3) * 100}%` }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: EASE_AIR }}
+          />
+        </div>
+        <div className="mt-2 flex justify-between" aria-hidden="true">
+          {[0, 1, 2].map((index) => (
+            <span
+              key={index}
+              className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${
+                completedDetails > index ? "bg-clay" : "bg-soil/15"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-6 space-y-5">
       {/* Honeypot — hidden from real users, visible to bots */}
       <input
         type="text"
@@ -185,22 +215,22 @@ export function ContactForm() {
         transition={{ duration: 0.35, delay: nextDelay(), ease: EASE_AIR }}
         className="grid gap-5 sm:grid-cols-2"
       >
-        <Field label="Name" error={errors.name?.message}>
+        <Field label="01 Your name" error={errors.name?.message}>
           <input className={inputClass} {...register("name")} />
         </Field>
-        <Field label="Email" error={errors.email?.message}>
+        <Field label="02 Your email" error={errors.email?.message}>
           <input type="email" className={inputClass} {...register("email")} />
         </Field>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: nextDelay(), ease: EASE_AIR }}>
-        <Field label="What are you building, and what feels unclear?" error={errors.description?.message}>
+        <Field label="03 What feels unclear right now?" error={errors.description?.message}>
           <textarea rows={4} className={inputClass} {...register("description")} />
         </Field>
       </motion.div>
 
       {/* The optional seven, kept and reachable rather than removed. */}
-      <div className="border-t border-border/70 pt-5">
+      <div className="border-t border-soil/10 pt-5">
         <button
           type="button"
           aria-expanded={showMore}
