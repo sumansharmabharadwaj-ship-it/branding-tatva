@@ -299,9 +299,15 @@ export function HomeBrandHealthCheck() {
 
       <div className="brand-orbit__shell">
         <header className="brand-orbit__header">
-          <p id="brand-orbit-title">02 · Brand diagnostic</p>
+          <p id="brand-orbit-title">
+            02 · Brand diagnostic
+            <span>About 30 seconds</span>
+          </p>
           <div className="brand-orbit__progress" aria-label={`${Math.min(step + 1, QUESTIONS.length)} of ${QUESTIONS.length}`}>
-            <strong>{String(Math.min(step + 1, QUESTIONS.length)).padStart(2, "0")} / 03</strong>
+            <strong>
+              <span>Question</span>
+              {String(Math.min(step + 1, QUESTIONS.length)).padStart(2, "0")} / 03
+            </strong>
             <span><i style={{ transform: `scaleX(${done ? 1 : (step + 1) / QUESTIONS.length})` }} /></span>
           </div>
         </header>
@@ -334,6 +340,7 @@ export function HomeBrandHealthCheck() {
             <motion.div
               key={active.prompt}
               className="brand-orbit__question"
+              aria-live="polite"
               initial={reducedMotion ? false : { opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               exit={reducedMotion ? undefined : { opacity: 0, y: -18 }}
@@ -346,6 +353,10 @@ export function HomeBrandHealthCheck() {
               </div>
 
               <div className="brand-orbit__choices" role="group" aria-label={active.prompt}>
+                <p className="brand-orbit__choice-cue">
+                  <span>Choose one</span>
+                  Select the statement closest to your business to continue.
+                </p>
                 {active.choices.map((choice, index) => (
                   <motion.button
                     key={choice.label}
@@ -359,13 +370,16 @@ export function HomeBrandHealthCheck() {
                     aria-pressed={selected === index}
                     animate={
                       selected === index
-                        ? { opacity: 0, x: 48 }
+                        ? { opacity: 1, x: 0, scale: 0.985 }
                         : { opacity: selected === null ? 1 : 0.25, x: preview === index ? 14 : 0 }
                     }
                     transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}
                   >
-                    <span>0{index + 1}</span>
+                    <span className="brand-orbit__choice-number">0{index + 1}</span>
                     <strong>{choice.label}</strong>
+                    <span className="brand-orbit__choice-action" aria-hidden="true">
+                      {selected === index ? "Selected" : "Choose this"}
+                    </span>
                   </motion.button>
                 ))}
               </div>
