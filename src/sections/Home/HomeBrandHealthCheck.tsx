@@ -10,7 +10,6 @@ import {
 } from "@/lib/servicesJourney";
 import { track } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useRef, useState, type PointerEvent } from "react";
 
@@ -44,7 +43,7 @@ const QUESTIONS: readonly Question[] = [
         centre: "Give every expression one source.",
       },
       {
-        label: "Marketing moves without one direction.",
+        label: "Marketing is moving without one direction.",
         diagnosis: "demand",
         centre: "Turn activity into a repeated signal.",
       },
@@ -162,7 +161,6 @@ export function HomeBrandHealthCheck() {
   const active = QUESTIONS[Math.min(step, QUESTIONS.length - 1)];
   const diagnosis = useMemo(() => resolveDiagnosis(answers), [answers]);
   const result = RESULTS[diagnosis];
-  const previewChoice = preview === null ? null : active.choices[preview];
 
   function moveScene(event: PointerEvent<HTMLElement>) {
     if (reducedMotion || !sectionRef.current) return;
@@ -224,26 +222,29 @@ export function HomeBrandHealthCheck() {
       data-home-chapter="diagnostic"
       data-home-section="diagnostic"
       data-cursor-world="light"
+      data-preview={preview === null ? "idle" : String(preview)}
       aria-labelledby="brand-orbit-title"
       onPointerMove={moveScene}
     >
       <div className="brand-orbit__landscape" aria-hidden="true">
-        <Image
-          src="/images/generated/bt-home-brand-orbit-valley.webp"
-          alt=""
-          fill
-          priority={false}
-          sizes="100vw"
-        />
+        <video
+          muted
+          autoPlay
+          loop
+          playsInline
+          preload="metadata"
+          poster="/images/pexels-valley-first-light-poster.jpg"
+          data-home-playback-rate="0.92"
+        >
+          <source src="/videos/pexels-valley-first-light.webm" type="video/webm" />
+          <source src="/videos/pexels-valley-first-light.mp4" type="video/mp4" />
+        </video>
       </div>
       <div className="brand-orbit__veil" aria-hidden="true" />
 
       <div className="brand-orbit__shell">
         <header className="brand-orbit__header">
-          <div>
-            <p>02 · Brand diagnostic</p>
-            <h2 id="brand-orbit-title">Find the decision your brand needs next.</h2>
-          </div>
+          <p id="brand-orbit-title">02 · Brand diagnostic</p>
           <div className="brand-orbit__progress" aria-label={`${Math.min(step + 1, QUESTIONS.length)} of ${QUESTIONS.length}`}>
             <strong>{String(Math.min(step + 1, QUESTIONS.length)).padStart(2, "0")} / 03</strong>
             <span><i style={{ transform: `scaleX(${done ? 1 : (step + 1) / QUESTIONS.length})` }} /></span>
@@ -265,15 +266,6 @@ export function HomeBrandHealthCheck() {
                 <h3>{result.title}</h3>
                 <span>{result.detail}</span>
               </div>
-
-              <motion.div
-                className="brand-orbit__sun brand-orbit__sun--result"
-                initial={reducedMotion ? false : { scale: 0.74, rotate: -12 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ duration: reducedMotion ? 0 : 0.9, ease: EASE }}
-              >
-                <Image src="/images/generated/bt-home-brand-orbit-sun.webp" alt="" fill sizes="26rem" />
-              </motion.div>
 
               <div className="brand-orbit__result-action">
                 <span>The strategic centre</span>
@@ -298,33 +290,6 @@ export function HomeBrandHealthCheck() {
                 {step > 0 ? <button type="button" onClick={back}>Back one question</button> : null}
               </div>
 
-              <motion.div
-                className="brand-orbit__sun"
-                animate={
-                  reducedMotion
-                    ? undefined
-                    : {
-                        x: `calc(var(--orbit-pointer-x, 0) * 12px)`,
-                        y: `calc(var(--orbit-pointer-y, 0) * 10px)`,
-                        rotate: preview === null ? [0, 2, 0, -2, 0] : preview * 3 - 3,
-                        scale: preview === null ? [0.985, 1.015, 0.985] : 1.045,
-                      }
-                }
-                transition={
-                  preview === null
-                    ? { duration: 7, repeat: Infinity, ease: "easeInOut" }
-                    : { duration: 0.5, ease: EASE }
-                }
-                aria-hidden="true"
-              >
-                <Image src="/images/generated/bt-home-brand-orbit-sun.webp" alt="" fill sizes="24rem" />
-              </motion.div>
-
-              <div className="brand-orbit__centre-copy" aria-live="polite">
-                <span>{previewChoice ? "This answer points toward" : "Choose the sentence closest to today"}</span>
-                <strong>{previewChoice?.centre ?? "Honesty creates the useful route."}</strong>
-              </div>
-
               <div className="brand-orbit__choices" role="group" aria-label={active.prompt}>
                 {active.choices.map((choice, index) => (
                   <motion.button
@@ -339,8 +304,8 @@ export function HomeBrandHealthCheck() {
                     aria-pressed={selected === index}
                     animate={
                       selected === index
-                        ? { scale: 0.86, opacity: 0, x: index === 0 ? 170 : index === 1 ? -170 : 0, y: index === 2 ? -120 : 40 }
-                        : { scale: preview === index ? 1.035 : 1, opacity: selected === null ? 1 : 0.3 }
+                        ? { opacity: 0, x: 48 }
+                        : { opacity: selected === null ? 1 : 0.25, x: preview === index ? 14 : 0 }
                     }
                     transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}
                   >
