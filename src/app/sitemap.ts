@@ -49,6 +49,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${site.url}/editorial-policy`,
+      lastModified: new Date("2026-08-24"),
+      changeFrequency: "yearly",
+      priority: 0.5,
+    },
+    {
       url: `${site.url}/privacy`,
       lastModified: SITE_LAST_UPDATED,
       changeFrequency: "yearly",

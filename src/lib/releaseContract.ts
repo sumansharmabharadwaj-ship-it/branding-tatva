@@ -1,9 +1,9 @@
 export const BRANDING_TATVA_RELEASE_CONTRACT = {
   experience: "branding-tatva-cinematic-preview",
-  canonicalBranch: "homepage-cinematic-recovery",
+  canonicalBranch: "august-8-isolated",
   permanentReviewAlias:
-    "https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/",
-  canonicalBacklog: "docs/MASTER_PENDING_WORK.md",
+    "https://branding-tatva-git-august-8-isolated-suman22.vercel.app/",
+  canonicalBacklog: "docs/AUGUST_8_EXECUTION_BOARD.md",
   consultationMinutes: 30,
   publicPhoneE164: "+918447725381",
   requiredRoutes: [

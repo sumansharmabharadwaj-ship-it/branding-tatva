@@ -4,12 +4,12 @@ const { execFileSync } = require("node:child_process");
 
 const PREVIEW_URL = (
   process.env.PREVIEW_URL ||
-  "https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app"
+  "https://branding-tatva-git-august-8-isolated-suman22.vercel.app"
 ).replace(/\/$/, "");
 const REPOSITORY =
   process.env.GITHUB_REPOSITORY ||
   "sumansharmabharadwaj-ship-it/branding-tatva";
-const BRANCH = process.env.CANONICAL_BRANCH || "homepage-cinematic-recovery";
+const BRANCH = process.env.CANONICAL_BRANCH || "august-8-isolated";
 const TIMEOUT_MS = Number(process.env.GATE_TIMEOUT_MS || 12 * 60 * 1000);
 const POLL_MS = Number(process.env.GATE_POLL_MS || 15 * 1000);
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 20 * 1000);
@@ -195,7 +195,7 @@ async function inspect() {
     deployedHead === expected.sha &&
     deployedBranch === BRANCH &&
     alias === `${PREVIEW_URL}/` &&
-    backlog === "docs/MASTER_PENDING_WORK.md";
+    backlog === "docs/AUGUST_8_EXECUTION_BOARD.md";
 
   return {
     checkedAt: new Date().toISOString(),

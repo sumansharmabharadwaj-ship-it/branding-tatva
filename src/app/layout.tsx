@@ -13,7 +13,9 @@ import { ConsentManager } from "@/components/ConsentManager";
 import { VideoWarden } from "@/components/VideoWarden";
 import { MotionPreferenceProvider } from "@/components/MotionPreference";
 import { SparkCursor } from "@/components/SparkCursor";
+import { entityFacts } from "@/data/entityFacts";
 import { site } from "@/data/site";
+import { searchRobotsMetadata } from "@/lib/searchVisibility";
 
 const displayFont = Cormorant_Garamond({
   subsets: ["latin"],
@@ -29,8 +31,6 @@ const bodyFont = Manrope({
   display: "swap",
 });
 
-const isPreview = process.env.VERCEL_ENV !== "production";
-
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
@@ -39,15 +39,7 @@ export const metadata: Metadata = {
   },
   description: site.description,
   alternates: { canonical: "/" },
-  robots: {
-    index: !isPreview,
-    follow: !isPreview,
-    googleBot: {
-      index: !isPreview,
-      follow: !isPreview,
-      "max-image-preview": "large",
-    },
-  },
+  robots: searchRobotsMetadata(),
   openGraph: {
     title: site.name,
     description: site.description,
@@ -97,35 +89,35 @@ const structuredData = {
     {
       "@type": "Person",
       "@id": PERSON_ID,
-      name: site.founder,
-      url: site.url,
-      jobTitle: "Brand Strategist",
-      knowsAbout: [
-        "Brand positioning",
-        "Verbal identity",
-        "Brand recognition",
-        "Brand architecture",
-        "Distinctive brand assets",
-        "Consumer psychology",
-      ],
+      name: entityFacts.founder.name,
+      url: entityFacts.founder.profileUrl,
+      jobTitle: entityFacts.founder.role,
+      knowsAbout: entityFacts.knowledgeAreas,
       sameAs: SOCIAL_LINKS,
     },
     {
-      "@type": "ProfessionalService",
+      // Organization is truthful for a remote solo practice without implying
+      // a verified local office, opening hours or map presence.
+      "@type": "Organization",
       "@id": ORG_ID,
-      name: site.name,
+      name: entityFacts.practice.name,
       founder: { "@id": PERSON_ID },
-      url: site.url,
-      description: site.description,
-      areaServed: [
-        { "@type": "Country", name: "United States" },
-        { "@type": "Country", name: "United Kingdom" },
-        { "@type": "Country", name: "Canada" },
-        { "@type": "Country", name: "India" },
-        "Remote / Worldwide",
-      ],
+      url: entityFacts.practice.url,
+      description: entityFacts.practice.description,
+      areaServed: entityFacts.delivery.regions.map((name) => ({
+        "@type": "Country",
+        name,
+      })),
+      knowsAbout: entityFacts.knowledgeAreas,
       image: `${site.url}/opengraph-image`,
       logo: `${site.url}/opengraph-image`,
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "project enquiries",
+        email: site.email,
+        telephone: site.phone.tel,
+        availableLanguage: "English",
+      },
       sameAs: SOCIAL_LINKS,
     },
   ],

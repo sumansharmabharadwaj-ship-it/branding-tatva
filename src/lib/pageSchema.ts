@@ -3,7 +3,7 @@ import { site } from "@/data/site";
 /*
  * Page level structured data.
  *
- * Every page already inherits the sitewide Person and ProfessionalService
+ * Every page already inherits the sitewide Person and Organization
  * nodes from the root layout, but most carried nothing of their own, so a
  * search or answer engine could see who runs the practice and nothing about
  * the page it had actually landed on. No breadcrumbs either, which is what

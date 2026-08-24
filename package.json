@@ -6,7 +6,8 @@
     "dev": "node scripts/sites-preview-dev.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check:discovery": "node scripts/discovery_source_gate.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

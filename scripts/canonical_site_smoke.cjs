@@ -6,7 +6,7 @@ const { chromium } = require("playwright");
 
 const BASE_URL = (
   process.env.PREVIEW_URL ||
-  "https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app"
+  "https://branding-tatva-git-august-8-isolated-suman22.vercel.app"
 ).replace(/\/$/, "");
 const OUTPUT_DIR = path.resolve(
   process.env.SMOKE_OUTPUT_DIR || "artifacts/canonical-site-smoke",

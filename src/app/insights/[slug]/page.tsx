@@ -19,6 +19,7 @@ import {
 } from "@/data/insights";
 import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
+import { searchRobotsMetadata } from "@/lib/searchVisibility";
 import { Footer } from "@/sections/Footer";
 
 type Props = {
@@ -83,17 +84,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     publisher: site.name,
     category: getInsightTopic(post.topicSlug)?.name,
     alternates: { canonical: `/insights/${post.slug}` },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
-    },
+    robots: searchRobotsMetadata(),
     openGraph: {
       title: post.seoTitle,
       description: post.excerpt,

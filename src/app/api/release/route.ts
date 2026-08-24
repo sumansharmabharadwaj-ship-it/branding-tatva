@@ -1,23 +1,18 @@
 import { NextResponse } from "next/server";
+import { BRANDING_TATVA_RELEASE_CONTRACT } from "@/lib/releaseContract";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const PERMANENT_REVIEW_ALIAS =
-  "https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/";
-const BACKLOG_PATH = "docs/MASTER_PENDING_WORK.md";
-
 export function GET() {
   return NextResponse.json(
     {
-      experience: "branding-tatva-homepage-v4",
-      releaseTrack: "cinematic-recovery",
+      ...BRANDING_TATVA_RELEASE_CONTRACT,
+      releaseTrack: "august-8-isolated",
       commit: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
       branch: process.env.VERCEL_GIT_COMMIT_REF ?? null,
       environment: process.env.VERCEL_ENV ?? process.env.NODE_ENV,
       deploymentUrl: process.env.VERCEL_URL ?? null,
-      permanentReviewAlias: PERMANENT_REVIEW_ALIAS,
-      canonicalBacklog: BACKLOG_PATH,
       integratedMilestones: {
         homepageV4: true,
         servicesJourney: true,

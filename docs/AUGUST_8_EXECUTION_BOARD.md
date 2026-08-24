@@ -143,12 +143,12 @@ Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenan
 
 - [ ] Canonicalize Work + Services IA and redirect old Services URLs.
 - [ ] Validate server-rendered headings, copy, links, canonicals, sitemap and robots.
-- [ ] Replace deprecated or unsupported schema choices with truthful graphs.
+- [x] Replace deprecated or unsupported schema choices with truthful graphs.
 - [ ] Add image/video metadata, captions and transcripts where meaningful.
-- [ ] Preserve OAI-SearchBot access while previews remain noindex.
+- [x] Preserve OAI-SearchBot access while previews remain noindex.
 - [ ] Implement contextual internal-link graph.
 - [ ] Add consent-aware analytics for CTA, diagnostic, form and scheduling outcomes.
-- [ ] Create entity fact sheet before expanding organization/person claims.
+- [x] Create entity fact sheet before expanding organization/person claims.
 
 ## M10 — launch gate
 
@@ -256,3 +256,15 @@ guide treated the whole runway as one short chapter.
 - [x] Production build passes for all 78 routes on the exact source checkpoint.
 - [ ] Hosted-preview verification on the exact commit.
 - [ ] Browser viewport matrix remains launch evidence, never inferred from source checks.
+
+## Current checkpoint — Search + AI authority foundation
+
+- [x] One environment-aware robots contract keeps local and branch previews noindex while allowing public production indexing.
+- [x] The Insights article template can no longer override the preview noindex boundary.
+- [x] Production crawler rules explicitly allow Googlebot, Bingbot, OAI-SearchBot and ChatGPT-User.
+- [x] Organization and Person structured data draw from a conservative public entity fact sheet; unsupported biography, award, partner and outcome claims remain pending verification.
+- [x] A crawlable Editorial and Evidence Policy documents authorship, source, corrections, diagnostics, independent-study and Tatva Lab boundaries.
+- [x] Sitemap, footer and `llms.txt` expose the policy; machine-readable citations remain limited to sources visible on the corresponding guide.
+- [x] Preview-mode and production-mode builds pass for all 78 routes; runtime checks confirm the intended robots metadata in each environment.
+- [ ] Complete the contextual internal-link graph and image/video metadata pass.
+- [ ] Hosted-preview verification on the exact commit.

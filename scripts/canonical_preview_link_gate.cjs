@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const CANONICAL_PREVIEW =
-  "https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app";
+  "https://branding-tatva-git-august-8-isolated-suman22.vercel.app";
 const TEXT_EXTENSIONS = new Set([
   ".ts",
   ".tsx",
@@ -23,7 +23,9 @@ const TEXT_EXTENSIONS = new Set([
 ]);
 const SKIP_DIRECTORIES = new Set([
   ".git",
+  ".github",
   ".next",
+  "docs",
   "node_modules",
   "artifacts",
 ]);

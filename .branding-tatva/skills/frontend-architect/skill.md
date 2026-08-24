@@ -19,8 +19,8 @@ npx eslint <changed files>
 pnpm build
 git add <specific files>          # never blind -A — review what's staged
 git commit -m "..."               # explain why
-git push origin homepage-cinematic-recovery
-curl -s https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/api/release
+git push origin august-8-isolated
+curl -s https://branding-tatva-git-august-8-isolated-suman22.vercel.app/api/release
 ```
 
 The permanent review alias above is the only Vercel URL to share. Keep production untouched until Suman explicitly approves promotion. Confirm that `/api/release` reports the exact branch commit before describing a preview as current.

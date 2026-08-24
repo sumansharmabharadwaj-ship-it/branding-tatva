@@ -60,11 +60,11 @@ npx eslint <changed files>
 pnpm build
 git add <specific files>          # never -A blind; review what's staged
 git commit -m "..."               # explain why, not just what
-git push origin homepage-cinematic-recovery
-curl -s https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/api/release
+git push origin august-8-isolated
+curl -s https://branding-tatva-git-august-8-isolated-suman22.vercel.app/api/release
 ```
 
-The permanent review alias above is the only Vercel URL to share. Keep production untouched until Suman explicitly approves promotion. Before calling a preview current, confirm `/api/release` reports the exact `homepage-cinematic-recovery` commit. Browser-verify visually whenever a change is observable (`preview_start` the dev server, screenshot/scroll through it), then verify the same deployed commit rather than an older alias target.
+The permanent review alias above is the only Vercel URL to share. Keep production untouched until Suman explicitly approves promotion. Before calling a preview current, confirm `/api/release` reports the exact `august-8-isolated` commit. Browser-verify visually whenever a change is observable (`preview_start` the dev server, screenshot/scroll through it), then verify the same deployed commit rather than an older alias target.
 
 **This sandbox's Browser pane has a documented, recurring flakiness**: `document.visibilityState`/`hasFocus` can read `hidden`/`false` even when nothing is actually wrong, which stalls IntersectionObserver-gated lazy-mounts, `<video>` autoplay/pause state, and rAF-driven timers (a loading veil can appear stuck at "0" indefinitely). When this happens, trust direct DOM/computed-style JS extraction over screenshots or `.paused`/`.readyState` reads, and don't mistake it for a real site bug — cross-check against the actual preview deployment before "fixing" something that's actually just the sandbox pane.
 

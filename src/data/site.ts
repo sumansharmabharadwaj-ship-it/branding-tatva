@@ -36,6 +36,7 @@ export const navigation = [
 ] as const;
 
 export const footerLinks = [
+  { label: "Editorial Policy", href: "/editorial-policy" },
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
 ] as const;
