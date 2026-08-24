@@ -20,7 +20,12 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { publishInsightsIntent } from "@/lib/insights-intent";
+import {
+  INSIGHTS_INTENT_EVENT,
+  publishInsightsIntent,
+  readInsightsIntent,
+  type InsightsIntentDetail,
+} from "@/lib/insights-intent";
 import type { InsightElement } from "@/data/insights";
 
 type AtlasArticle = {
@@ -110,6 +115,38 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
     syncPathFromHash();
     window.addEventListener("hashchange", syncPathFromHash);
     return () => window.removeEventListener("hashchange", syncPathFromHash);
+  }, [paths]);
+
+  useEffect(() => {
+    function applyCarriedPath(detail: InsightsIntentDetail | undefined) {
+      if (!detail) return;
+
+      const nextIndex = paths.findIndex((path) => path.slug === detail.topicSlug);
+      if (nextIndex < 0) return;
+
+      selectionLockRef.current = {
+        index: nextIndex,
+        awaitingArrival: true,
+        arrivalY: null,
+      };
+      setActiveIndex((current) => {
+        transitionDirectionRef.current = nextIndex >= current ? 1 : -1;
+        return nextIndex;
+      });
+    }
+
+    function carryMirrorPath(event: Event) {
+      const { detail } = event as CustomEvent<InsightsIntentDetail>;
+      if (detail?.origin === "decision-mirror") applyCarriedPath(detail);
+    }
+
+    window.addEventListener(INSIGHTS_INTENT_EVENT, carryMirrorPath);
+    if (!window.location.hash.startsWith("#atlas-tab-")) {
+      applyCarriedPath(readInsightsIntent());
+    }
+
+    return () =>
+      window.removeEventListener(INSIGHTS_INTENT_EVENT, carryMirrorPath);
   }, [paths]);
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
@@ -409,7 +446,11 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                     <p className="insights-atlas__label">Recent field notes</p>
                     <div className="insights-atlas__articles">
                       {activePath.articles.map((article) => (
-                        <Link key={article.slug} href={`/insights/${article.slug}`}>
+                        <Link
+                          key={article.slug}
+                          href={`/insights/${article.slug}`}
+                          onClick={() => carryPath(activeIndex)}
+                        >
                           <span>{article.title}</span>
                           <small>{article.readingTime}</small>
                         </Link>
@@ -419,7 +460,10 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                 </div>
 
                 <div className="insights-atlas__application">
-                  <Link href={`/work/${activePath.proof.slug}`}>
+                  <Link
+                    href={`/work/${activePath.proof.slug}`}
+                    onClick={() => carryPath(activeIndex)}
+                  >
                     <small>Published project record</small>
                     <strong>{activePath.proof.title}</strong>
                     <p>{activePath.proof.frame}</p>
@@ -428,7 +472,10 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                       <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                     </span>
                   </Link>
-                  <Link href={`/services#package-${activePath.service.slug}`}>
+                  <Link
+                    href={`/services#package-${activePath.service.slug}`}
+                    onClick={() => carryPath(activeIndex)}
+                  >
                     <small>Strategy path</small>
                     <strong>{activePath.service.name}</strong>
                     <p>{activePath.service.frame}</p>
@@ -442,6 +489,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                 <Link
                   href={`/insights/topic/${activePath.slug}`}
                   className="insights-atlas__cta"
+                  onClick={() => carryPath(activeIndex)}
                 >
                   Explore {activePath.name.toLowerCase()}
                   <ArrowUpRight aria-hidden="true" className="h-4 w-4" />

@@ -211,3 +211,57 @@ A separate crop was not needed. The normalized full-view diagnostic board keeps 
 ## Final result
 
 passed
+
+---
+
+# Insights reader-trail QA · 2026-08-24
+
+## Comparison target
+
+- Source visual truth: the deployed `/insights` route at commit `c0ffabf`, preserving the approved protected opening and existing post-hero composition.
+- Browser-rendered implementation screenshot: unavailable in this checkpoint because the cloud-browser control connection timed out before capture.
+- Intended desktop viewport: `1440 × 900`, device pixel ratio `1`.
+- Intended mobile viewport: `390 × 844`, device pixel ratio `1`.
+- Density normalization: unavailable because no new source or implementation capture could be completed.
+- State: Decision Mirror choice → matching Atlas path → carried Library folio → article visit → browser-back restoration → manual release.
+
+## Findings
+
+- [P1] Browser interaction evidence is unavailable.
+  - Location: `/insights`, Decision Mirror, Knowledge Atlas and Library.
+  - Evidence: the cloud-browser control connection timed out repeatedly before a fresh rendered capture or interaction run could be completed.
+  - Impact: the production build proves compilation and static generation, but cannot prove the live storage, hash, browser-back, focus, short-viewport or touch behavior required for handoff.
+  - Fix: rerun the complete reader-trail interaction in the cloud browser after the connection recovers, capture the same desktop and mobile states, inspect console output, and append the post-fix evidence here.
+
+## Required fidelity surfaces
+
+- Fonts and typography: no type tokens or opening-scene copy changed. The only new visible copy uses the existing Library signal styles, but wrapping still needs browser evidence.
+- Spacing and layout rhythm: no section geometry, fixed position, scene height or scroll-controller code changed. Live one-screen fit remains unverified.
+- Colors and visual tokens: unchanged.
+- Image quality and asset fidelity: no image, video, crop or media treatment changed.
+- Copy and content: the Library now repeats the reader's chosen tension in a short signal sentence. Its desktop and mobile wrap remain unverified.
+
+## Interaction and browser verification
+
+- Static source review: passed; only explicit click and keyboard selection publish persistent intent, while hover and scroll-linked Atlas changes remain temporary.
+- Storage contract: passed by source review; versioned `sessionStorage` entry, 30-minute expiry, invalid-data cleanup and privacy-mode fallback are present.
+- Release controls: passed by source review; manual search, topic filters, recovery suggestions and Clear the view erase the carried trail.
+- React lifecycle review: passed; window listeners have matching cleanup, Atlas ignores its own published events, and client storage is read only after hydration.
+- TypeScript: passed.
+- Insights link, media and discovery gates: passed.
+- Production build: passed; all `78` routes generated and `/insights` remains statically rendered.
+- Browser-rendered interaction, screenshots, console errors, responsive fit and reduced-motion behavior: blocked.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | No current browser-rendered evidence could be captured. | Implementation and source checks completed; browser comparison remains blocked until the cloud-browser connection recovers. |
+
+## Focused-region evidence
+
+Unavailable. The key regions to capture are the selected Decision Mirror panel, the matching Atlas panel on arrival, the carried Library signal and first folio, and the restored state after browser back.
+
+## Final result
+
+blocked

@@ -203,6 +203,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
             <Link
               href={`/insights/${activeQuest.article.slug}`}
               className="insights-decision-mirror__first-read"
+              onClick={() => carryQuest(activeIndex)}
             >
               <span>Recommended first read</span>
               <strong>{activeQuest.article.title}</strong>
@@ -216,6 +217,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
             <Link
               href={`#atlas-tab-${activeQuest.topicSlug}`}
               className="insights-decision-mirror__atlas-link"
+              onClick={() => carryQuest(activeIndex)}
             >
               Trace the complete {activeQuest.pathName.toLowerCase()} path
               <ArrowDown aria-hidden="true" className="h-4 w-4" />

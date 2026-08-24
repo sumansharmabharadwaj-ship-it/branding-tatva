@@ -18,7 +18,9 @@ import { ElementGlyph } from "@/components/ElementGlyph";
 import type { InsightElement } from "@/data/insights";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
+  clearInsightsIntent,
   INSIGHTS_INTENT_EVENT,
+  readInsightsIntent,
   type InsightsIntentDetail,
 } from "@/lib/insights-intent";
 
@@ -147,8 +149,7 @@ export function InsightsExplorer({
   const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
-    function carryIntent(event: Event) {
-      const { detail } = event as CustomEvent<InsightsIntentDetail>;
+    function applyIntent(detail: InsightsIntentDetail | undefined) {
       if (!detail || !topics.some((topic) => topic.slug === detail.topicSlug)) {
         return;
       }
@@ -159,7 +160,13 @@ export function InsightsExplorer({
       setFolio({ index: 0, direction: -1 });
     }
 
+    function carryIntent(event: Event) {
+      const { detail } = event as CustomEvent<InsightsIntentDetail>;
+      applyIntent(detail);
+    }
+
     window.addEventListener(INSIGHTS_INTENT_EVENT, carryIntent);
+    applyIntent(readInsightsIntent());
     return () => window.removeEventListener(INSIGHTS_INTENT_EVENT, carryIntent);
   }, [topics]);
 
@@ -216,7 +223,9 @@ export function InsightsExplorer({
       ? "A wider phrase will open more paths"
       : "Five strategic paths remain open";
   const signalDetail = carriedIntent
-    ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay now follows" : "essays now follow"} the ${carriedIntent.label.toLowerCase()} route you chose.`
+    ? carriedIntent.origin === "decision-mirror" && carriedIntent.query
+      ? `“${carriedIntent.query}” stays in view. ${filteredPosts.length} ${filteredPosts.length === 1 ? "essay matches" : "essays match"} this route.`
+      : `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay now follows" : "essays now follow"} the ${carriedIntent.label.toLowerCase()} route you chose.`
     : settledQuery
       ? inferredTopic
         ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay gathers" : "essays gather"} around this path.`
@@ -241,8 +250,13 @@ export function InsightsExplorer({
     setFolio({ index: 0, direction: -1 });
   }
 
-  function recoverWithQuery(nextQuery: string) {
+  function releaseCarriedIntent() {
+    clearInsightsIntent();
     setCarriedIntent(undefined);
+  }
+
+  function recoverWithQuery(nextQuery: string) {
+    releaseCarriedIntent();
     setQuery(nextQuery);
     setTopicSlug("all");
     resetFolio();
@@ -298,7 +312,7 @@ export function InsightsExplorer({
               type="search"
               value={query}
               onChange={(event) => {
-                setCarriedIntent(undefined);
+                releaseCarriedIntent();
                 setQuery(event.target.value);
                 resetFolio();
               }}
@@ -361,7 +375,7 @@ export function InsightsExplorer({
               <button
                 type="button"
                 onClick={() => {
-                  setCarriedIntent(undefined);
+                  releaseCarriedIntent();
                   setTopicSlug("all");
                   resetFolio();
                 }}
@@ -383,7 +397,7 @@ export function InsightsExplorer({
                     key={topic.slug}
                     type="button"
                     onClick={() => {
-                      setCarriedIntent(undefined);
+                      releaseCarriedIntent();
                       setTopicSlug(topic.slug);
                       resetFolio();
                     }}
@@ -414,7 +428,7 @@ export function InsightsExplorer({
             <button
               type="button"
               onClick={() => {
-                setCarriedIntent(undefined);
+                releaseCarriedIntent();
                 setQuery("");
                 setTopicSlug("all");
                 resetFolio();

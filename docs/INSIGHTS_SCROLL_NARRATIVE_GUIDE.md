@@ -384,6 +384,18 @@ preview, and the atlas's scroll-linked path changes remain cinematic rather
 than silently rewriting the library. Manual search, filtering, recovery
 queries, and Clear the view return full control to the reader.
 
+The carried choice also forms a short-lived reader trail in `sessionStorage`.
+It expires after 30 minutes, restores the matching Atlas path and library
+folio after an article visit or browser-back journey, and remains optional:
+manual search, topic filters, recovery suggestions, and Clear the view remove
+it immediately. Storage failures fall back to the in-page event, so strict
+privacy modes never block navigation or discovery.
+
+The Decision Mirror's article and Atlas links count as explicit choices. A
+reader who previews a tension with hover and then follows its recommended link
+therefore keeps that precise question, while passive hover and scroll-linked
+Atlas changes still leave no persistent trace.
+
 ## Reduced motion
 
 The operating-system preference and Branding Tatva motion control both produce
