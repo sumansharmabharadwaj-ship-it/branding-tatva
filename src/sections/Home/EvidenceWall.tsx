@@ -198,6 +198,7 @@ export function EvidenceWall() {
               autoPlay
               playsInline
               preload={inView ? "metadata" : "none"}
+              data-home-playback-rate="0.86"
             />
           )}
         </motion.div>
@@ -222,6 +223,8 @@ export function EvidenceWall() {
             <motion.article
               key={`evidence-summary-${activeProject.slug}`}
               id="evidence-active-file"
+              role="tabpanel"
+              aria-labelledby={`evidence-tab-${activeIndex}`}
               className="evidence-cinematic__summary"
               aria-live="polite"
               initial={prefersReducedMotion ? false : { opacity: 0, y: 18, filter: "blur(4px)" }}
@@ -291,6 +294,7 @@ export function EvidenceWall() {
                 key={project.slug}
                 type="button"
                 role="tab"
+                id={`evidence-tab-${index}`}
                 aria-selected={selected}
                 aria-controls="evidence-active-file"
                 tabIndex={selected ? 0 : -1}
