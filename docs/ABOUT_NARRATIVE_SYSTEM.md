@@ -103,6 +103,30 @@ The global chapter spine names this scene **Synthesis**, so navigation language
 matches what the visitor is actually watching rather than repeating the degree
 labels from the origin chapter.
 
+## Point-of-view camera
+
+`PointOfView.tsx` treats perception, language, and memory as one recognition
+sequence rather than three tabs followed by three interchangeable cards. The
+same horizontal composition changes focus as scroll advances:
+
+```tsx
+const recognitionSequence = [
+  { verb: "See", belief: "Perception precedes preference." },
+  { verb: "Name", belief: "Language frames value." },
+  { verb: "Return", belief: "Consistency creates memory." },
+];
+```
+
+The active field widens like a camera finding focus while the other two remain
+visible as context. The record rail beneath it keeps the strategic decision,
+verified engagement evidence, and case-study path in the same visual plane.
+Pointer position changes only the ambient light; scroll, keyboard focus, and
+hover all operate the same reversible state model.
+
+Touch and reduced-motion modes show all three beliefs as a compact editorial
+record. Nothing depends on discovering a hidden gesture, and no claim is lost
+when the pinned camera is removed.
+
 ## Performance and accessibility rules
 
 - Pinning is limited to a 158svh runway with a 100svh scene; native scroll is
