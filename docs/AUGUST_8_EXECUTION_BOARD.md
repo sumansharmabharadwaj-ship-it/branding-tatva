@@ -254,7 +254,7 @@ guide treated the whole runway as one short chapter.
 - [x] TypeScript, focused ESLint and whitespace checks pass for this source checkpoint.
 - [x] Touch-led and reduced-motion behavior preserved in every rebuilt controller.
 - [x] Production build passes for all 78 routes on the exact source checkpoint.
-- [ ] Hosted-preview verification on the exact commit.
+- [x] Hosted-preview verification on the exact commit.
 - [ ] Browser viewport matrix remains launch evidence, never inferred from source checks.
 
 ## Current checkpoint — Search + AI authority foundation
@@ -267,4 +267,4 @@ guide treated the whole runway as one short chapter.
 - [x] Sitemap, footer and `llms.txt` expose the policy; machine-readable citations remain limited to sources visible on the corresponding guide.
 - [x] Preview-mode and production-mode builds pass for all 78 routes; runtime checks confirm the intended robots metadata in each environment.
 - [ ] Complete the contextual internal-link graph and image/video metadata pass.
-- [ ] Hosted-preview verification on the exact commit.
+- [x] Hosted-preview verification on the exact commit.
