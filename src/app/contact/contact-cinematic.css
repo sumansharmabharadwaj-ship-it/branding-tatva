@@ -470,13 +470,21 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   }
 }
 
-/* Two compact fields remain legible side-by-side on most phones, but the
-   smallest supported canvases need a single reading column. This selector is
-   deliberately local to the required pair; the progress ledger keeps its
-   concise three-part overview. */
-@media (max-width: 359px) {
+/* Required fields become one comfortable reading column on narrow phones;
+   the progress ledger above stays as a concise three-part overview. */
+@media (max-width: 479px) {
   [data-contact-film] [data-contact-required-grid] {
     grid-template-columns: minmax(0, 1fr);
+    gap: 0.9rem;
+  }
+
+  [data-contact-film] [data-contact-submit-row] {
+    gap: 0.7rem;
+  }
+
+  [data-contact-film] [data-contact-draft-status] {
+    max-width: 17rem;
+    margin-inline: auto;
   }
 }
 

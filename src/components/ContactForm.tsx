@@ -24,6 +24,110 @@ import { EASE_AIR } from "@/lib/motion";
 import { site } from "@/data/site";
 
 type Status = "idle" | "submitting" | "success" | "error";
+type ContactDraftField = Exclude<keyof ContactFormValues, "company_website">;
+
+const CONTACT_DRAFT_KEY = "branding-tatva:contact-note:v1";
+const CONTACT_DRAFT_VERSION = 1;
+const CONTACT_DRAFT_DELAY_MS = 360;
+const CONTACT_DRAFT_LIMITS: Record<ContactDraftField, number> = {
+  name: 120,
+  email: 254,
+  phone: 60,
+  business: 160,
+  website: 500,
+  brandStage: 80,
+  servicesNeeded: 1000,
+  budget: 120,
+  timeline: 120,
+  description: 5000,
+  referral: 200,
+};
+const CONTACT_DRAFT_FIELDS = Object.keys(
+  CONTACT_DRAFT_LIMITS,
+) as ContactDraftField[];
+const OPTIONAL_DRAFT_FIELDS: ContactDraftField[] = [
+  "phone",
+  "business",
+  "website",
+  "brandStage",
+  "servicesNeeded",
+  "budget",
+  "timeline",
+  "referral",
+];
+
+function readContactDraft(): Partial<ContactFormValues> | null {
+  try {
+    const raw = window.sessionStorage.getItem(CONTACT_DRAFT_KEY);
+    if (!raw) return null;
+    const payload: unknown = JSON.parse(raw);
+    if (!payload || typeof payload !== "object") return null;
+
+    const version = "version" in payload ? payload.version : null;
+    const values = "values" in payload ? payload.values : null;
+    if (
+      version !== CONTACT_DRAFT_VERSION ||
+      !values ||
+      typeof values !== "object"
+    ) {
+      window.sessionStorage.removeItem(CONTACT_DRAFT_KEY);
+      return null;
+    }
+
+    const draft: Record<string, string> = {};
+    const storedValues = values as Record<string, unknown>;
+    for (const field of CONTACT_DRAFT_FIELDS) {
+      const value = storedValues[field];
+      if (typeof value === "string") {
+        draft[field] = value.slice(0, CONTACT_DRAFT_LIMITS[field]);
+      }
+    }
+
+    if (
+      draft.brandStage &&
+      !brandStages.includes(draft.brandStage as (typeof brandStages)[number])
+    ) {
+      delete draft.brandStage;
+    }
+
+    return Object.values(draft).some((value) => value.trim())
+      ? (draft as Partial<ContactFormValues>)
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function persistContactDraft(values: ContactFormValues) {
+  try {
+    const draft: Record<string, string> = {};
+    for (const field of CONTACT_DRAFT_FIELDS) {
+      const value = values[field];
+      if (typeof value === "string" && value.length > 0) {
+        draft[field] = value.slice(0, CONTACT_DRAFT_LIMITS[field]);
+      }
+    }
+
+    if (!Object.values(draft).some((value) => value.trim())) {
+      window.sessionStorage.removeItem(CONTACT_DRAFT_KEY);
+      return;
+    }
+
+    window.sessionStorage.setItem(
+      CONTACT_DRAFT_KEY,
+      JSON.stringify({ version: CONTACT_DRAFT_VERSION, values: draft }),
+    );
+  } catch {
+    // Storage may be unavailable in a restricted/private browser. The form
+    // remains fully functional; only this same-tab convenience stands down.
+  }
+}
+
+function clearContactDraft() {
+  try {
+    window.sessionStorage.removeItem(CONTACT_DRAFT_KEY);
+  } catch {}
+}
 
 // Underline-only fields, not full bordered boxes — per direct feedback
 // pointing at tile.pt's own "let's talk" form as a bar to match: bigger,
@@ -70,12 +174,14 @@ export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMinHeight, setSuccessMinHeight] = useState<number | null>(null);
+  const [draftRestored, setDraftRestored] = useState(false);
   const prefersReducedMotion = useHydratedReducedMotion();
   const cardRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const recoveryRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const draftTimerRef = useRef<number | null>(null);
   const rippleTimersRef = useRef<Set<number>>(new Set());
   const spotlightRef = useSpotlight(buttonRef, Boolean(prefersReducedMotion));
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
@@ -127,6 +233,41 @@ export function ContactForm() {
   const showValidationRecovery = submitCount > 0 && invalidFields.length > 0 && status !== "error";
 
   useEffect(() => {
+    const draft = readContactDraft();
+    if (!draft) return;
+
+    reset(draft);
+    setShowMore(
+      OPTIONAL_DRAFT_FIELDS.some((field) => {
+        const value = draft[field];
+        return typeof value === "string" && Boolean(value.trim());
+      }),
+    );
+    setDraftRestored(true);
+  }, [reset]);
+
+  useEffect(() => {
+    const subscription = watch(() => {
+      if (draftTimerRef.current !== null) {
+        window.clearTimeout(draftTimerRef.current);
+      }
+      draftTimerRef.current = window.setTimeout(() => {
+        persistContactDraft(getValues());
+        draftTimerRef.current = null;
+      }, CONTACT_DRAFT_DELAY_MS);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      if (draftTimerRef.current !== null) {
+        window.clearTimeout(draftTimerRef.current);
+        draftTimerRef.current = null;
+      }
+      persistContactDraft(getValues());
+    };
+  }, [getValues, watch]);
+
+  useEffect(() => {
     if (status !== "success" && status !== "error" && !showValidationRecovery) return;
     const frame = window.requestAnimationFrame(() => {
       if (status === "success") successRef.current?.focus({ preventScroll: true });
@@ -155,8 +296,14 @@ export function ContactForm() {
         body: JSON.stringify(values),
         signal: controller.signal,
       });
-      if (!res.ok) {
-        const data: unknown = await res.json().catch(() => null);
+      const data: unknown = await res.json().catch(() => null);
+      const deliveryConfirmed =
+        res.ok &&
+        data !== null &&
+        typeof data === "object" &&
+        "ok" in data &&
+        data.ok === true;
+      if (!deliveryConfirmed) {
         const message =
           data && typeof data === "object" && "error" in data && typeof data.error === "string"
             ? data.error
@@ -179,6 +326,8 @@ export function ContactForm() {
           ? Math.min(measuredHeight, Math.max(window.innerHeight - 64, 0))
           : null,
       );
+      clearContactDraft();
+      setDraftRestored(false);
       setStatus("success");
       track("contact_form_submitted", {
         source: "contact_form",
@@ -585,49 +734,67 @@ export function ContactForm() {
         ) : null}
       </AnimatePresence>
 
-        <Magnetic className="block w-full sm:inline-block sm:w-auto">
-        <button
-          ref={buttonRef}
-          type="submit"
-          onClick={handleButtonClick}
-          disabled={status === "submitting"}
-          className={cn(
-            "group/btn relative inline-flex min-h-12 w-full items-center justify-center gap-1.5 overflow-hidden rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:-translate-y-0.5 hover:bg-action-primary-hover hover:shadow-elevation-lg focus-ring-halo disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none sm:w-auto"
-          )}
+        <div
+          data-contact-submit-row
+          className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
         >
-          <span
-            ref={spotlightRef}
-            aria-hidden="true"
-            className="cursor-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
-          />
-          {!prefersReducedMotion ? (
-            <AnimatePresence>
-              {ripples.map((r) => (
-                <motion.span
-                  key={r.id}
-                  aria-hidden="true"
-                  className="pointer-events-none absolute h-[220px] w-[220px] rounded-full bg-current"
-                  style={{ left: r.x - 110, top: r.y - 110 }}
-                  initial={{ scale: 0, opacity: 0.3 }}
-                  animate={{ scale: 1, opacity: 0 }}
-                  transition={{ duration: 0.72, ease: EASE_AIR }}
-                />
-              ))}
-            </AnimatePresence>
-          ) : null}
-          <span className="relative z-10 inline-flex items-center gap-1.5">
-            {status === "submitting" ? "Sending…" : status === "error" ? "Try sending again" : "Send enquiry"}
-            {status !== "submitting" && (
+          <Magnetic className="block w-full sm:inline-block sm:w-auto">
+            <button
+              ref={buttonRef}
+              type="submit"
+              onClick={handleButtonClick}
+              disabled={status === "submitting"}
+              className={cn(
+                "group/btn relative inline-flex min-h-12 w-full items-center justify-center gap-1.5 overflow-hidden rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:-translate-y-0.5 hover:bg-action-primary-hover hover:shadow-elevation-lg focus-ring-halo disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none sm:w-auto",
+              )}
+            >
               <span
+                ref={spotlightRef}
                 aria-hidden="true"
-                className="inline-block -translate-x-1 opacity-0 transition-all duration-300 ease-earth group-hover/btn:translate-x-0 group-hover/btn:opacity-100"
-              >
-                &rarr;
+                className="cursor-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
+              />
+              {!prefersReducedMotion ? (
+                <AnimatePresence>
+                  {ripples.map((r) => (
+                    <motion.span
+                      key={r.id}
+                      aria-hidden="true"
+                      className="pointer-events-none absolute h-[220px] w-[220px] rounded-full bg-current"
+                      style={{ left: r.x - 110, top: r.y - 110 }}
+                      initial={{ scale: 0, opacity: 0.3 }}
+                      animate={{ scale: 1, opacity: 0 }}
+                      transition={{ duration: 0.72, ease: EASE_AIR }}
+                    />
+                  ))}
+                </AnimatePresence>
+              ) : null}
+              <span className="relative z-10 inline-flex items-center gap-1.5">
+                {status === "submitting"
+                  ? "Sending…"
+                  : status === "error"
+                    ? "Try sending again"
+                    : "Send enquiry"}
+                {status !== "submitting" && (
+                  <span
+                    aria-hidden="true"
+                    className="inline-block -translate-x-1 opacity-0 transition-all duration-300 ease-earth group-hover/btn:translate-x-0 group-hover/btn:opacity-100"
+                  >
+                    &rarr;
+                  </span>
+                )}
               </span>
-            )}
-          </span>
-        </button>
-        </Magnetic>
+            </button>
+          </Magnetic>
+          <p
+            data-contact-draft-status
+            aria-live="polite"
+            className="text-center text-[0.68rem] leading-relaxed text-soil/52 sm:max-w-[13.5rem] sm:text-right"
+          >
+            {draftRestored
+              ? "Your unfinished note was restored in this tab."
+              : "Unfinished notes stay in this tab until sent or closed."}
+          </p>
+        </div>
         <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
           {status === "submitting" ? "Sending your enquiry." : ""}
         </span>
