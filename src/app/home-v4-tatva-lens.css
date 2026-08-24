@@ -12,6 +12,7 @@
   --tatva-lens-focus: 1;
   --tatva-lens-progress: 0;
   --tatva-lens-transition: 0;
+  --tatva-lens-attention: 0;
   --tatva-lens-accent-rgb: 180, 107, 77;
 }
 
@@ -70,6 +71,21 @@
   box-shadow:
     0 0 0 clamp(1.8rem, 4vw, 4rem) rgba(var(--tatva-lens-accent-rgb), .025),
     inset 0 0 2.8rem rgba(255, 247, 220, .035);
+}
+
+/* When intent moves from browsing to using a control, the lens yields. The
+   active scene resolves to its authored geometry and the optical furniture
+   quietens without an abrupt mode switch. */
+.home-v4[data-tatva-lens-attention="true"] .tatva-lens-runtime__aperture {
+  opacity: calc((.18 + var(--tatva-lens-focus) * .18) * (1 - var(--tatva-lens-attention)));
+}
+
+.home-v4[data-tatva-lens-attention="true"] .tatva-lens-runtime__focus-plane {
+  opacity: calc((var(--tatva-lens-transition) * .66 + var(--tatva-lens-speed) * .24) * (1 - var(--tatva-lens-attention)));
+}
+
+.home-v4[data-tatva-lens-attention="true"] .tatva-lens-runtime__chapter {
+  opacity: calc(1 - var(--tatva-lens-attention) * .58);
 }
 
 /* Arrival and release briefly soften the frame edges while the area around

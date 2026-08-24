@@ -5,6 +5,8 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
 const FINE_POINTER_QUERY = "(min-width: 1101px) and (hover: hover) and (pointer: fine)";
+const INTERACTIVE_SELECTOR =
+  "a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), summary, [role='button'], [role='tab'], [contenteditable='true']";
 
 const CHAPTER_LABELS: Record<string, string> = {
   opening: "Opening signal",
@@ -140,6 +142,10 @@ export function HomeV4TatvaLens() {
     let chapterFocus = 1;
     let arrivalWeight = 0;
     let releaseWeight = 0;
+    let pointerAttention = false;
+    let focusAttention = false;
+    let attentionTarget = 0;
+    let renderedAttention = 0;
     let needsMeasure = true;
     let running = true;
     let frameRunning = false;
@@ -197,6 +203,16 @@ export function HomeV4TatvaLens() {
       if (!profileEnabled) return;
       pointerTargetX = clamp(event.clientX / Math.max(1, window.innerWidth));
       pointerTargetY = clamp(event.clientY / Math.max(1, window.innerHeight));
+      const target = event.target instanceof Element
+        ? event.target.closest<HTMLElement>(INTERACTIVE_SELECTOR)
+        : null;
+      const nextPointerAttention = Boolean(
+        target && activeChapter?.contains(target),
+      );
+      if (pointerAttention !== nextPointerAttention) {
+        pointerAttention = nextPointerAttention;
+        attentionTarget = pointerAttention || focusAttention ? 1 : 0;
+      }
       scheduleRender();
     };
 
@@ -204,6 +220,20 @@ export function HomeV4TatvaLens() {
       if (!profileEnabled) return;
       pointerTargetX = 0.5;
       pointerTargetY = 0.46;
+      pointerAttention = false;
+      attentionTarget = focusAttention ? 1 : 0;
+      scheduleRender();
+    };
+
+    const onFocusChange = (event: FocusEvent) => {
+      const focused = event.type === "focusout" ? event.relatedTarget : event.target;
+      focusAttention = Boolean(
+        activeChapter &&
+        focused instanceof HTMLElement &&
+        activeChapter.contains(focused) &&
+        focused.matches(INTERACTIVE_SELECTOR),
+      );
+      attentionTarget = pointerAttention || focusAttention ? 1 : 0;
       scheduleRender();
     };
 
@@ -296,14 +326,15 @@ export function HomeV4TatvaLens() {
 
     const renderCameraMotion = () => {
       if (!activeChapter) return;
+      const motionWeight = 1 - renderedAttention;
       const transitionWeight = clamp(Math.max(arrivalWeight, releaseWeight));
       const travelAxis = arrivalWeight - releaseWeight;
-      const contentX = direction * renderedSpeed * -5.5;
-      const contentY = travelAxis * 13 + direction * renderedSpeed * 5;
-      const contentScale = 1 - transitionWeight * 0.009 - renderedSpeed * 0.002;
-      const contentOpacity = 0.9 + (1 - transitionWeight) * 0.1;
-      const mediaY = travelAxis * -8 + direction * renderedSpeed * -4;
-      const mediaScale = 1.018 + transitionWeight * 0.016 + renderedSpeed * 0.01;
+      const contentX = direction * renderedSpeed * -5.5 * motionWeight;
+      const contentY = (travelAxis * 13 + direction * renderedSpeed * 5) * motionWeight;
+      const contentScale = 1 - (transitionWeight * 0.009 + renderedSpeed * 0.002) * motionWeight;
+      const contentOpacity = 1 - transitionWeight * 0.1 * motionWeight;
+      const mediaY = (travelAxis * -8 + direction * renderedSpeed * -4) * motionWeight;
+      const mediaScale = 1 + (0.018 + transitionWeight * 0.016 + renderedSpeed * 0.01) * motionWeight;
 
       activeChapter.style.setProperty("--tatva-camera-content-x", `${contentX.toFixed(2)}px`);
       activeChapter.style.setProperty("--tatva-camera-content-y", `${contentY.toFixed(2)}px`);
@@ -313,6 +344,9 @@ export function HomeV4TatvaLens() {
       activeChapter.style.setProperty("--tatva-camera-media-scale", mediaScale.toFixed(4));
       homeRoot.style.setProperty("--tatva-lens-transition", transitionWeight.toFixed(4));
       homeRoot.style.setProperty("--tatva-lens-focus", chapterFocus.toFixed(3));
+      homeRoot.style.setProperty("--tatva-lens-attention", renderedAttention.toFixed(4));
+      if (renderedAttention > 0.02) homeRoot.dataset.tatvaLensAttention = "true";
+      else delete homeRoot.dataset.tatvaLensAttention;
     };
 
     function scheduleRender() {
@@ -329,6 +363,7 @@ export function HomeV4TatvaLens() {
       if (targetSpeed < 0.002) targetSpeed = 0;
       pointerX += (pointerTargetX - pointerX) * 0.11;
       pointerY += (pointerTargetY - pointerY) * 0.11;
+      renderedAttention += (attentionTarget - renderedAttention) * 0.16;
 
       homeRoot.style.setProperty("--tatva-lens-x", pointerX.toFixed(4));
       homeRoot.style.setProperty("--tatva-lens-y", pointerY.toFixed(4));
@@ -347,7 +382,8 @@ export function HomeV4TatvaLens() {
       const pointerMoving =
         Math.abs(pointerTargetX - pointerX) > 0.0005 ||
         Math.abs(pointerTargetY - pointerY) > 0.0005;
-      if (targetSpeed > 0.001 || renderedSpeed > 0.001 || pointerMoving || needsMeasure) {
+      const attentionMoving = Math.abs(attentionTarget - renderedAttention) > 0.002;
+      if (targetSpeed > 0.001 || renderedSpeed > 0.001 || pointerMoving || attentionMoving || needsMeasure) {
         scheduleRender();
       }
     }
@@ -358,6 +394,7 @@ export function HomeV4TatvaLens() {
       delete homeRoot.dataset.tatvaLensPhase;
       delete homeRoot.dataset.tatvaLensWorld;
       delete homeRoot.dataset.tatvaLensElement;
+      delete homeRoot.dataset.tatvaLensAttention;
       homeRoot.style.removeProperty("--tatva-lens-x");
       homeRoot.style.removeProperty("--tatva-lens-y");
       homeRoot.style.removeProperty("--tatva-lens-speed");
@@ -365,6 +402,7 @@ export function HomeV4TatvaLens() {
       homeRoot.style.removeProperty("--tatva-lens-focus");
       homeRoot.style.removeProperty("--tatva-lens-progress");
       homeRoot.style.removeProperty("--tatva-lens-transition");
+      homeRoot.style.removeProperty("--tatva-lens-attention");
     };
 
     const disableProfile = () => {
@@ -388,6 +426,8 @@ export function HomeV4TatvaLens() {
     window.addEventListener("resize", onResize, { passive: true });
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     document.documentElement.addEventListener("mouseleave", onPointerLeave);
+    document.addEventListener("focusin", onFocusChange);
+    document.addEventListener("focusout", onFocusChange);
     pointerProfile.addEventListener("change", syncPointerProfile);
 
     const mutationObserver = new MutationObserver(refreshChapters);
@@ -402,6 +442,8 @@ export function HomeV4TatvaLens() {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("pointermove", onPointerMove);
       document.documentElement.removeEventListener("mouseleave", onPointerLeave);
+      document.removeEventListener("focusin", onFocusChange);
+      document.removeEventListener("focusout", onFocusChange);
       pointerProfile.removeEventListener("change", syncPointerProfile);
       disableProfile();
     };
