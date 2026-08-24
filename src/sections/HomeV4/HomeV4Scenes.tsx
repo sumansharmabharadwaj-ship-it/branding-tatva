@@ -131,7 +131,7 @@ export function V4OpeningScene() {
         <div className="home-v4-opening__copy">
           <motion.p
             className="home-v4-opening__eyebrow"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.58, delay: 0.08, ease: EASE }}
           >
@@ -140,14 +140,14 @@ export function V4OpeningScene() {
 
           <h1 id="home-v4-opening-title">
             <motion.span
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 28 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.12, ease: EASE }}
             >
               Turn a growing business into a brand people
             </motion.span>
             <motion.em
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.66, delay: 0.24, ease: EASE }}
             >
@@ -157,7 +157,7 @@ export function V4OpeningScene() {
 
           <motion.p
             className="home-v4-opening__lede"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.58, delay: 0.32, ease: EASE }}
           >
@@ -166,7 +166,7 @@ export function V4OpeningScene() {
 
           <motion.div
             className="home-v4-opening__actions"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.56, delay: 0.4, ease: EASE }}
           >
@@ -191,7 +191,7 @@ export function V4OpeningScene() {
 
         <motion.aside
           className="home-v4-opening__proof"
-          initial={prefersReducedMotion ? false : { opacity: 0, x: 18 }}
+          initial={false}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: prefersReducedMotion ? 0 : 0.6, delay: 0.42, ease: EASE }}
         >

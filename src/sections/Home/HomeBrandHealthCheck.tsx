@@ -168,9 +168,11 @@ export function HomeBrandHealthCheck() {
   const landscapeVideoRef = useRef<HTMLVideoElement>(null);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Diagnosis[]>([]);
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selections, setSelections] = useState<Array<number | null>>([]);
+  const [resultVisible, setResultVisible] = useState(false);
   const [preview, setPreview] = useState<number | null>(null);
-  const done = step >= QUESTIONS.length;
+  const selected = selections[step] ?? null;
+  const done = resultVisible;
   const active = QUESTIONS[Math.min(step, QUESTIONS.length - 1)];
   const diagnosis = useMemo(() => resolveDiagnosis(answers), [answers]);
   const result = RESULTS[diagnosis];
@@ -196,44 +198,58 @@ export function HomeBrandHealthCheck() {
   }
 
   function choose(choice: Choice, index: number) {
-    if (selected !== null || done) return;
+    if (done) return;
     if (answers.length === 0) track("health_check_started", { source: "home" });
-    setSelected(index);
-    const nextAnswers = [...answers, choice.diagnosis];
+    setAnswers((current) => {
+      const next = [...current];
+      next[step] = choice.diagnosis;
+      return next;
+    });
+    setSelections((current) => {
+      const next = [...current];
+      next[step] = index;
+      return next;
+    });
+    setPreview(null);
+  }
 
-    window.setTimeout(
-      () => {
-        setAnswers(nextAnswers);
-        setStep((current) => current + 1);
-        setSelected(null);
-        setPreview(null);
+  function continueDiagnostic() {
+    if (selected === null) return;
 
-        if (nextAnswers.length === QUESTIONS.length) {
-          const nextDiagnosis = resolveDiagnosis(nextAnswers);
-          const nextResult = RESULTS[nextDiagnosis];
-          if (nextResult.situation) publishResult(nextResult.situation);
-          track("health_check_completed", {
-            source: "home",
-            result: nextDiagnosis,
-            diagnosis: nextDiagnosis,
-          });
-        }
-      },
-      reducedMotion ? 0 : 460,
-    );
+    if (step < QUESTIONS.length - 1) {
+      setStep((current) => current + 1);
+      setPreview(null);
+      return;
+    }
+
+    const nextDiagnosis = resolveDiagnosis(answers);
+    const nextResult = RESULTS[nextDiagnosis];
+    if (nextResult.situation) publishResult(nextResult.situation);
+    track("health_check_completed", {
+      source: "home",
+      result: nextDiagnosis,
+      diagnosis: nextDiagnosis,
+    });
+    setResultVisible(true);
   }
 
   function back() {
-    if (step === 0 || selected !== null) return;
-    setAnswers((current) => current.slice(0, -1));
+    if (step === 0) return;
     setStep((current) => current - 1);
+    setPreview(null);
+  }
+
+  function reviewAnswers() {
+    setResultVisible(false);
+    setStep(QUESTIONS.length - 1);
     setPreview(null);
   }
 
   function reset() {
     setStep(0);
     setAnswers([]);
-    setSelected(null);
+    setSelections([]);
+    setResultVisible(false);
     setPreview(null);
   }
 
@@ -333,6 +349,7 @@ export function HomeBrandHealthCheck() {
                 <strong>{result.signal}</strong>
                 <Link href="/services#health">{result.action} <i aria-hidden="true">↗</i></Link>
                 <Link href="/contact">Discuss this diagnosis <i aria-hidden="true">→</i></Link>
+                <button type="button" onClick={reviewAnswers}>Review or change answers</button>
                 <button type="button" onClick={reset}>Take the quiz again</button>
               </div>
             </motion.div>
@@ -350,12 +367,22 @@ export function HomeBrandHealthCheck() {
                 <p>{active.eyebrow}</p>
                 <h3>{active.prompt}</h3>
                 {step > 0 ? <button type="button" onClick={back}>Back one question</button> : null}
+                <button
+                  type="button"
+                  className="brand-orbit__continue"
+                  onClick={continueDiagnostic}
+                  disabled={selected === null}
+                >
+                  {step === QUESTIONS.length - 1 ? "See my result" : "Continue"}
+                  <span aria-hidden="true">→</span>
+                </button>
               </div>
 
-              <div className="brand-orbit__choices" role="group" aria-label={active.prompt}>
-                <p className="brand-orbit__choice-cue">
+              <fieldset className="brand-orbit__choices" role="radiogroup" aria-describedby={`brand-orbit-cue-${step}`}>
+                <legend className="sr-only">{active.prompt}</legend>
+                <p className="brand-orbit__choice-cue" id={`brand-orbit-cue-${step}`}>
                   <span>Choose one</span>
-                  Select the statement closest to your business to continue.
+                  Select the statement closest to your business, then continue.
                 </p>
                 {active.choices.map((choice, index) => (
                   <motion.button
@@ -367,12 +394,13 @@ export function HomeBrandHealthCheck() {
                     onPointerLeave={() => setPreview(null)}
                     onFocus={() => setPreview(index)}
                     onBlur={() => setPreview(null)}
-                    aria-pressed={selected === index}
-                    animate={
-                      selected === index
-                        ? { opacity: 1, x: 0, scale: 0.985 }
-                        : { opacity: selected === null ? 1 : 0.25, x: preview === index ? 14 : 0 }
-                    }
+                    role="radio"
+                    aria-checked={selected === index}
+                    animate={{
+                      opacity: 1,
+                      x: preview === index ? 14 : 0,
+                      scale: selected === index ? 0.985 : 1,
+                    }}
                     transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}
                   >
                     <span className="brand-orbit__choice-number">0{index + 1}</span>
@@ -382,7 +410,7 @@ export function HomeBrandHealthCheck() {
                     </span>
                   </motion.button>
                 ))}
-              </div>
+              </fieldset>
             </motion.div>
           )}
         </AnimatePresence>

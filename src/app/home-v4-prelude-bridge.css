@@ -2,6 +2,13 @@
 /* Homepage V4 prelude → opening handoff                                       */
 /* -------------------------------------------------------------------------- */
 
+/* Keep the server-rendered opening visible on the first paint. The sitewide
+   page-enter animation starts from opacity: 0; that is pleasant on internal
+   pages, but on a media-heavy homepage it reads as a broken blank loader. */
+.page-enter:has(.home-v4) {
+  animation: none;
+}
+
 html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__topline,
 html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__eyebrow,
 html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > span,

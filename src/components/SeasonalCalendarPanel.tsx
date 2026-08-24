@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CalendlyEmbed } from "./CalendlyEmbed";
 import { BackgroundVideo } from "./BackgroundVideo";
@@ -45,7 +45,7 @@ function buildMonthGrid(year: number, month: number): (number | null)[][] {
 
 export function SeasonalCalendarPanel() {
   const prefersReducedMotion = useHydratedReducedMotion();
-  const [expanded, setExpanded] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [view, setView] = useState<"weekly" | "monthly">("weekly");
   // Resolved client-side only, after mount — computing new Date() during
   // render would let the server and client disagree on "now" and trip a
@@ -81,6 +81,7 @@ export function SeasonalCalendarPanel() {
   const monthGrid = useMemo(() => buildMonthGrid(year, month), [year, month]);
 
   return (
+    <>
     <div
       className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/15"
       style={{ boxShadow: "0 20px 60px -20px rgba(0,0,0,0.5)" }}
@@ -240,55 +241,61 @@ export function SeasonalCalendarPanel() {
         </span>
         <motion.button
           type="button"
-          onClick={() => setExpanded(true)}
+          onClick={() => dialogRef.current?.showModal()}
           whileHover={prefersReducedMotion ? undefined : { scale: 1.04 }}
           whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
           style={{ backgroundColor: element.color }}
-          // tabIndex/aria-hidden tied to the same `expanded` condition as
-          // the opacity/pointer-events classes below — a real bug found
-          // in audit: the button stayed keyboard-focusable while
-          // invisible, so Tab could land on an unseen control.
-          tabIndex={expanded ? -1 : 0}
-          aria-hidden={expanded}
-          className={`shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-ivory transition-opacity duration-300 ${expanded ? "pointer-events-none opacity-0" : ""}`}
+          aria-haspopup="dialog"
+          aria-controls="footer-booking-dialog"
+          className="shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-ivory"
         >
           + Book a call
         </motion.button>
       </div>
       </div>
-
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={prefersReducedMotion ? undefined : { opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.35, ease: EASE_AIR }}
-            className="overflow-hidden"
-          >
-            <div className="mt-5 rounded-2xl bg-background p-1 sm:p-2">
-              <CalendlyEmbed url={site.calendlyUrl} />
-            </div>
-            {/* Audit found this embed had no fallback link, unlike the
-                main Contact page's own CalendlyEmbed usage, despite
-                CalendlyEmbed's own comment documenting that ad-blockers
-                can silently collapse the widget with no visible
-                failure. Same escape hatch, here too. */}
-            <p className="mt-3 text-center text-xs text-ivory/75">
-              Having trouble with the embed?{" "}
-              <a
-                href={site.calendlyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sandstone link-underline"
-              >
-                Open it directly instead
-              </a>
-              .
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
+
+    <dialog
+      ref={dialogRef}
+      id="footer-booking-dialog"
+      aria-labelledby="footer-booking-title"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) event.currentTarget.close();
+      }}
+      className="m-auto max-h-[92svh] w-[min(94vw,72rem)] overflow-auto rounded-2xl border border-white/15 bg-soil p-0 text-ivory shadow-[0_28px_100px_rgba(0,0,0,0.55)] backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+    >
+      <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-white/15 bg-soil px-5 py-4 sm:px-7">
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-ivory/55">Strategy room</p>
+          <h2 id="footer-booking-title" className="mt-1 font-display text-2xl text-ivory sm:text-3xl">
+            Choose a time for a focused conversation.
+          </h2>
+        </div>
+        <button
+          type="button"
+          onClick={() => dialogRef.current?.close()}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/25 text-xl text-ivory transition-colors hover:border-white/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
+          aria-label="Close booking dialog"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div className="bg-background p-2 sm:p-4">
+        <CalendlyEmbed url={site.calendlyUrl} />
+      </div>
+      <p className="px-5 py-4 text-center text-xs text-ivory/75">
+        Having trouble with the embed?{" "}
+        <a
+          href={site.calendlyUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sandstone link-underline"
+        >
+          Open Calendly directly
+        </a>
+        .
+      </p>
+    </dialog>
+    </>
   );
 }

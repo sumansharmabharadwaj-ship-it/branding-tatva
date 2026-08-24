@@ -34,14 +34,17 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    if (reducedMotion) return;
-
     const isHomepage = pathname === "/";
+
+    // The homepage is already composed as a sequence of full-height scenes.
+    // Native scrolling keeps wheel, trackpad, keyboard and touch input at a
+    // true 1:1 response; adding Lenis here made small gestures accumulate and
+    // then resolve as a jump. Other routes retain their existing soft scroll.
+    if (reducedMotion || isHomepage) return;
+
     const instance = new Lenis({
-      // V4 needs immediate response with a short, soft settle. The rest
-      // of the site keeps its quieter historical damping.
-      lerp: isHomepage ? 0.145 : 0.1,
-      wheelMultiplier: isHomepage ? 1 : 0.92,
+      lerp: 0.1,
+      wheelMultiplier: 0.92,
       touchMultiplier: 1,
       syncTouch: false,
     });
