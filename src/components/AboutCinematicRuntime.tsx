@@ -7,7 +7,7 @@ const CHAPTERS = [
   "Formative fields",
   "Point of view",
   "Synthesis",
-  "Principles",
+  "Working standards",
   "Founder-led",
   "Evidence",
   "Resolution",

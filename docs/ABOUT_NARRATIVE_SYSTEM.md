@@ -127,6 +127,28 @@ Touch and reduced-motion modes show all three beliefs as a compact editorial
 record. Nothing depends on discovering a hidden gesture, and no claim is lost
 when the pinned camera is removed.
 
+## Working-standards record
+
+`Behaviours.tsx` turns four stated values into one cumulative decision record.
+The scene does not ask the visitor to browse four interchangeable cards. Each
+scroll phase adds something another person can inspect in the finished work:
+
+```tsx
+const visibleTrace = [
+  "Observed evidence",
+  "Category choice",
+  "Reasoning trail",
+  "Repeatable signal",
+];
+```
+
+The paper stays in the same camera while its record fills in. Scroll direction
+reverses the assembly, pointer position changes the viewing angle and light,
+and the page-level velocity variable gives the sheet a restrained physical
+response. Mobile and reduced-motion modes replace the camera with the complete
+four-part editorial record, so every standard remains readable without a
+hidden gesture.
+
 ## Performance and accessibility rules
 
 - Pinning is limited to a 158svh runway with a 100svh scene; native scroll is
