@@ -149,6 +149,34 @@ response. Mobile and reduced-motion modes replace the camera with the complete
 four-part editorial record, so every standard remains readable without a
 hidden gesture.
 
+## Founder-led continuity record
+
+`WorkingDirectly.tsx` now keeps one strategic document in frame from the
+original question through the usable system. Scroll progressively adds the
+problem, position, language, and operating rules to that same record, so
+continuity is demonstrated through accumulation rather than explained through
+four interchangeable panels. Reverse scroll removes later conclusions while
+preserving the earlier context they depend on.
+
+```tsx
+const state = index < activeIndex
+  ? "complete"
+  : index === activeIndex
+    ? "active"
+    : "waiting";
+
+<button data-state={state} onClick={() => sequence.choose(index)}>
+  <span>{stage.recordLabel}</span>
+  <strong>{stage.record}</strong>
+  <em>{stage.output}</em>
+</button>
+```
+
+Pointer position moves the working light and restrained paper angle. Touch and
+reduced-motion modes receive the complete four-stage record in normal reading
+order, with every input, decision, and output available without a hidden
+gesture.
+
 ## Performance and accessibility rules
 
 - Pinning is limited to a 158svh runway with a 100svh scene; native scroll is

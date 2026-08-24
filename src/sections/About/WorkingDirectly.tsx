@@ -1,10 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, type KeyboardEvent } from "react";
-import { AnimatePresence, motion, useInView } from "framer-motion";
 import {
-  ArrowRight,
+  useEffect,
+  useRef,
+  type KeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
+import { AnimatePresence, motion, useInView, useTransform } from "framer-motion";
+import {
+  ArrowUpRight,
   CircleHelp,
   FileText,
   Layers3,
@@ -19,50 +24,50 @@ import styles from "./WorkingDirectly.module.css";
 const STAGES = [
   {
     label: "Question",
-    cue: "Name the real problem",
-    title: "Start with the decision beneath the brief.",
-    summary:
-      "Business context, audience signals, and the language already in use are brought into one clear starting point.",
-    context: "The commercial goal, the audience tension, and the constraint shaping the work.",
-    work: "Listen for the category or perception decision the brief is asking the brand to make.",
-    handoff: "A written problem statement and the questions the strategy must answer.",
-    record: "Problem statement and open questions",
+    verb: "Hear",
+    title: "Find the decision hiding inside the brief.",
+    note:
+      "The commercial goal, audience tension, and practical constraint enter the same record before a direction is chosen.",
+    recordLabel: "Decision to make",
+    record: "Which perception must change before growth can follow?",
+    output: "Problem statement · open questions",
+    fragments: ["Commercial goal", "Audience tension", "Real constraint"],
     icon: CircleHelp,
   },
   {
-    label: "Decision",
-    cue: "Choose the strategic path",
-    title: "Resolve the position before shaping expression.",
-    summary:
-      "The category, audience priority, and strongest strategic path are considered as one connected choice.",
-    context: "The agreed problem, available evidence, and the viable strategic paths.",
-    work: "Compare the options, choose the position, and state why that direction deserves to lead.",
-    handoff: "A strategic decision with rationale, priorities, and clear boundaries.",
-    record: "Decision, rationale, and boundaries",
+    label: "Position",
+    verb: "Decide",
+    title: "Choose the frame that deserves to lead.",
+    note:
+      "Category, audience priority, and available evidence are resolved as one connected strategic choice.",
+    recordLabel: "Chosen frame",
+    record: "A position with rationale, priorities, and clear boundaries.",
+    output: "Position · rationale · boundaries",
+    fragments: ["Category choice", "Audience priority", "Reason to believe"],
     icon: ScanSearch,
   },
   {
     label: "Language",
-    cue: "Give the decision words",
-    title: "Turn the strategic choice into language people can carry.",
-    summary:
-      "Positioning becomes a message hierarchy, narrative direction, and verbal character that can be recognised and repeated.",
-    context: "The chosen position and the audience frame it needs to enter.",
-    work: "Translate the strategic decision into messaging, narrative, tone, and repeatable verbal cues.",
-    handoff: "A usable language system for campaigns, content, and client conversations.",
-    record: "Message hierarchy and verbal rules",
+    verb: "Name",
+    title: "Give the strategic choice words people can carry.",
+    note:
+      "The chosen position becomes a message hierarchy, narrative direction, and verbal character that can be recognised and repeated.",
+    recordLabel: "Language to carry",
+    record: "A message system built around one clear strategic signal.",
+    output: "Message hierarchy · verbal rules",
+    fragments: ["Core message", "Narrative order", "Verbal character"],
     icon: MessageSquareQuote,
   },
   {
     label: "System",
-    cue: "Make the idea usable",
-    title: "Carry one strategic signal into everyday execution.",
-    summary:
-      "The approved direction becomes practical rules, formats, and playbooks that keep future expression coherent.",
-    context: "The positioning, message hierarchy, and the channels where the brand must perform.",
-    work: "Convert the direction into content formats, implementation rules, and decision tools.",
-    handoff: "A reusable brand system the client can apply, question, and extend.",
-    record: "Playbooks, formats, and next actions",
+    verb: "Carry",
+    title: "Turn the signal into rules for everyday use.",
+    note:
+      "Position and language become practical formats, playbooks, and decision tools that keep future expression coherent.",
+    recordLabel: "System to use",
+    record: "A reusable operating system for campaigns, content, and brand decisions.",
+    output: "Playbooks · formats · next actions",
+    fragments: ["Channel rules", "Repeatable formats", "Decision tools"],
     icon: Layers3,
   },
 ] as const;
@@ -71,8 +76,9 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function WorkingDirectly() {
   const storyRef = useRef<HTMLDivElement>(null);
+  const pointerFrameRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(storyRef, { amount: 0.16 });
+  const inView = useInView(storyRef, { amount: 0.16, margin: "8% 0px -12% 0px" });
   const sequence = useScrollDrivenVisualizer({
     count: STAGES.length,
     target: storyRef,
@@ -80,7 +86,35 @@ export function WorkingDirectly() {
     reducedMotion: prefersReducedMotion,
   });
   const active = STAGES[sequence.activeIndex];
-  const ActiveIcon = active.icon;
+  const sheetY = useTransform(sequence.scrollYProgress, [0, 1], ["2.4%", "-2.4%"]);
+  const sheetScale = useTransform(sequence.scrollYProgress, [0, 0.5, 1], [0.985, 1, 0.99]);
+
+  useEffect(() => () => window.cancelAnimationFrame(pointerFrameRef.current), []);
+
+  function onPointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    if (prefersReducedMotion || event.pointerType === "touch") return;
+    const node = storyRef.current;
+    if (!node) return;
+    const { left, top, width, height } = node.getBoundingClientRect();
+    const x = ((event.clientX - left) / Math.max(width, 1) - 0.5) * 2;
+    const y = ((event.clientY - top) / Math.max(height, 1) - 0.5) * 2;
+
+    window.cancelAnimationFrame(pointerFrameRef.current);
+    pointerFrameRef.current = window.requestAnimationFrame(() => {
+      node.style.setProperty("--direct-pointer-x", x.toFixed(3));
+      node.style.setProperty("--direct-pointer-y", y.toFixed(3));
+    });
+  }
+
+  function resetPointer() {
+    const node = storyRef.current;
+    if (!node) return;
+    window.cancelAnimationFrame(pointerFrameRef.current);
+    pointerFrameRef.current = window.requestAnimationFrame(() => {
+      node.style.setProperty("--direct-pointer-x", "0");
+      node.style.setProperty("--direct-pointer-y", "0");
+    });
+  }
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -92,112 +126,165 @@ export function WorkingDirectly() {
 
     event.preventDefault();
     sequence.choose(next);
-    document.getElementById(`direct-tab-${next}`)?.focus();
+    document.getElementById(`direct-record-${next}`)?.focus();
   }
 
   return (
-    <div ref={storyRef} className={styles.scrollStory} data-scroll-story="about-founder-led">
-      <Container className={styles.container}>
-      <div className={styles.root} data-about-visualizer="founder-led-thread">
-        <header className={styles.header}>
-          <div>
-            <p className={styles.eyebrow}>Working directly · one continuous strategic thread</p>
-            <h2 id="direct-title">From the first question to a system <em>you can use.</em></h2>
-          </div>
-          <p>
-            Each decision becomes the starting point for the next, held by the same strategic lead from diagnosis through handover.
-          </p>
-        </header>
+    <div
+      ref={storyRef}
+      className={styles.scrollStory}
+      data-scroll-story="about-founder-led"
+      data-direct-stage={sequence.activeIndex + 1}
+      onPointerMove={onPointerMove}
+      onPointerLeave={resetPointer}
+    >
+      <Container className={styles.sticky}>
+        <div className={styles.root}>
+          <div className={styles.editorialColumn}>
+            <header className={styles.header}>
+              <p className={styles.eyebrow}>Working directly · one continuous strategic thread</p>
+              <h2 id="direct-title">
+                The same mind holds the work from <em>question to system.</em>
+              </h2>
+              <p>
+                Context stays inside the decision. Each conclusion becomes the starting material for what follows.
+              </p>
+            </header>
 
-        <div className={styles.timeline} role="tablist" aria-label="Explore the strategic thread">
-          {STAGES.map((stage, index) => {
-            const selected = sequence.activeIndex === index;
-            const Icon = stage.icon;
-            return (
-              <button
-                key={stage.label}
-                id={`direct-tab-${index}`}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                aria-controls="direct-panel"
-                tabIndex={selected ? 0 : -1}
-                data-active={selected}
-                onClick={() => sequence.choose(index)}
-                onPointerEnter={() => sequence.preview(index)}
-                onPointerLeave={sequence.releasePreview}
-                onFocus={() => sequence.preview(index)}
-                onBlur={sequence.releasePreview}
-                onKeyDown={(event) => onKeyDown(event, index)}
-              >
-                <span><Icon size={15} aria-hidden="true" /></span>
-                <small>0{index + 1}</small>
-                <strong>{stage.label}</strong>
-                <em>{stage.cue}</em>
-                <i aria-hidden="true"><b /></i>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className={styles.panelSlot}>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.article
-              key={active.label}
-              id="direct-panel"
+            <div
+              id="direct-stage-note"
+              className={styles.activeNote}
               role="tabpanel"
-              aria-labelledby={`direct-tab-${sequence.activeIndex}`}
-              className={styles.stage}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.46, ease: EASE }}
+              aria-labelledby={`direct-record-${sequence.activeIndex}`}
+              aria-live="polite"
             >
-              <div className={styles.stageLead}>
-                <div className={styles.stageMark}>
-                  <span><ActiveIcon size={18} aria-hidden="true" /></span>
-                  <small>Stage {String(sequence.activeIndex + 1).padStart(2, "0")} / 04</small>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={active.label}
+                  initial={prefersReducedMotion ? false : { clipPath: "inset(0 100% 0 0)", x: 18 }}
+                  animate={{ clipPath: "inset(0 0% 0 0)", x: 0 }}
+                  exit={prefersReducedMotion ? undefined : { clipPath: "inset(0 0 0 100%)", x: -12 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.54, ease: EASE }}
+                >
+                  <div className={styles.noteIndex}>
+                    <span>{String(sequence.activeIndex + 1).padStart(2, "0")}</span>
+                    <strong>{active.verb}</strong>
+                  </div>
+                  <h3>{active.title}</h3>
+                  <p>{active.note}</p>
+                  <div className={styles.output}>
+                    <FileText size={15} aria-hidden="true" />
+                    <span>Added to the record</span>
+                    <strong>{active.output}</strong>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            <div className={styles.continuity} aria-label="What remains continuous through the engagement">
+              <span>One strategic lead</span>
+              <i aria-hidden="true" />
+              <span>Four connected decisions</span>
+            </div>
+
+            <Link className={styles.cta} href="/services#study">
+              See the engagement structure <ArrowUpRight size={14} aria-hidden="true" />
+            </Link>
+          </div>
+
+          <motion.div
+            className={styles.sheetCamera}
+            style={prefersReducedMotion ? undefined : { y: sheetY, scale: sheetScale }}
+          >
+            <article className={styles.sheet} aria-labelledby="direct-title">
+              <div className={styles.paperLight} aria-hidden="true" />
+              <header className={styles.sheetHeader}>
+                <div>
+                  <span>Branding Tatva</span>
+                  <strong>Live strategy record</strong>
                 </div>
-                <h3>{active.title}</h3>
-                <p>{active.summary}</p>
+                <p>
+                  Context retained
+                  <strong>{String(sequence.activeIndex + 1).padStart(2, "0")} / 04</strong>
+                </p>
+              </header>
+
+              <div className={styles.threadLabel}>
+                <span>One brief</span>
+                <i aria-hidden="true" />
+                <span>One decision trail</span>
+                <i aria-hidden="true" />
+                <span>One usable system</span>
               </div>
 
-              <div className={styles.handoff}>
-                <div>
-                  <small>What enters</small>
-                  <p>{active.context}</p>
-                </div>
-                <ArrowRight className={styles.handoffArrow} size={18} aria-hidden="true" />
-                <div>
-                  <small>Strategic work</small>
-                  <p>{active.work}</p>
-                </div>
-                <ArrowRight className={styles.handoffArrow} size={18} aria-hidden="true" />
-                <div>
-                  <small>What you leave with</small>
-                  <p>{active.handoff}</p>
-                </div>
+              <div className={styles.recordRows} role="tablist" aria-label="Explore the continuous strategic record">
+                {STAGES.map((stage, index) => {
+                  const Icon = stage.icon;
+                  const selected = sequence.activeIndex === index;
+                  const state = index < sequence.activeIndex ? "complete" : selected ? "active" : "waiting";
+
+                  return (
+                    <button
+                      key={stage.label}
+                      id={`direct-record-${index}`}
+                      type="button"
+                      role="tab"
+                      aria-selected={selected}
+                      aria-controls="direct-stage-note"
+                      tabIndex={selected ? 0 : -1}
+                      className={styles.recordRow}
+                      data-state={state}
+                      onClick={() => sequence.choose(index)}
+                      onPointerEnter={() => sequence.preview(index)}
+                      onPointerLeave={sequence.releasePreview}
+                      onFocus={() => sequence.preview(index)}
+                      onBlur={sequence.releasePreview}
+                      onKeyDown={(event) => onKeyDown(event, index)}
+                    >
+                      <span className={styles.recordMark}>
+                        <Icon size={16} aria-hidden="true" />
+                        <small>{String(index + 1).padStart(2, "0")}</small>
+                      </span>
+                      <span className={styles.recordCopy}>
+                        <small>{stage.recordLabel}</small>
+                        <strong>{stage.record}</strong>
+                        <em>{stage.output}</em>
+                      </span>
+                      <span className={styles.fragments} aria-hidden="true">
+                        {stage.fragments.map((fragment) => <i key={fragment}>{fragment}</i>)}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
-            </motion.article>
-          </AnimatePresence>
+
+              <footer className={styles.sheetFooter}>
+                <span>Founder-led from diagnosis through handover</span>
+                <strong>BT / STRATEGY / 01</strong>
+              </footer>
+            </article>
+          </motion.div>
+
+          <div className={styles.staticExperience}>
+            <p>Every stage remains visible in the finished record.</p>
+            <ol>
+              {STAGES.map((stage) => {
+                const Icon = stage.icon;
+                return (
+                  <li key={stage.label}>
+                    <span><Icon size={17} aria-hidden="true" /></span>
+                    <div>
+                      <small>{stage.label} · {stage.recordLabel}</small>
+                      <h3>{stage.record}</h3>
+                      <p>{stage.note}</p>
+                      <strong>{stage.output}</strong>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
         </div>
-
-        <footer className={styles.footer}>
-          <div className={styles.record}>
-            <FileText size={15} aria-hidden="true" />
-            <span>Documented at this stage</span>
-            <strong>{active.record}</strong>
-          </div>
-          <div className={styles.promise} aria-label="The founder-led model in summary">
-            <span>One strategic lead</span>
-            <i aria-hidden="true" />
-            <span>Four connected handoffs</span>
-          </div>
-          <Link href="/services#study">
-            See the engagement system <ArrowRight size={14} aria-hidden="true" />
-          </Link>
-        </footer>
-      </div>
       </Container>
     </div>
   );
