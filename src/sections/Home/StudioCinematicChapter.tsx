@@ -255,7 +255,7 @@ export function StudioCinematicChapter() {
         <aside className="studio-cinematic__portrait">
           <div className="studio-cinematic__portrait-image">
             <Image
-              src="/images/own-portrait.jpg"
+              src="/images/work-portrait.jpg"
               alt="Suman Sharma, founder and strategist at Branding Tatva"
               fill
               sizes="(min-width: 1100px) 26vw, (min-width: 768px) 42vw, 100vw"

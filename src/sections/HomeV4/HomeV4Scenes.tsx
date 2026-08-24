@@ -299,71 +299,19 @@ export function V4RecognitionScene() {
           </div>
 
           <div className="home-v4-recognition__diagram" aria-label="Three brand conditions converging on one strategic decision">
-            <svg viewBox="0 0 620 520" role="img">
-              <defs>
-                <radialGradient id="v4-recognition-core">
-                  <stop offset="0%" stopColor={active.accent} stopOpacity="0.34" />
-                  <stop offset="100%" stopColor={active.accent} stopOpacity="0" />
-                </radialGradient>
-              </defs>
-              <circle cx="310" cy="258" r="130" fill="url(#v4-recognition-core)" />
-              {[
-                "M92 92 C182 110 224 182 310 258",
-                "M528 92 C438 118 396 184 310 258",
-                "M310 474 C310 390 310 330 310 258",
-              ].map((path, index) => (
-                <g key={path}>
-                  <path d={path} fill="none" stroke="rgba(244,239,230,.12)" strokeWidth="1" />
-                  <motion.path
-                    d={path}
-                    fill="none"
-                    stroke={RECOGNITION_STATES[index].accent}
-                    strokeWidth={index === activeIndex ? 2.2 : 1}
-                    strokeDasharray="7 12"
-                    animate={{
-                      strokeDashoffset: index === activeIndex && inView ? [0, -52] : 0,
-                      opacity: index === activeIndex ? 0.92 : 0.22,
-                    }}
-                    transition={{
-                      strokeDashoffset: { duration: 1.5, repeat: Infinity, ease: "linear" },
-                      opacity: { duration: 0.38 },
-                    }}
-                  />
-                </g>
-              ))}
-              <motion.circle
-                cx="310"
-                cy="258"
-                r="54"
-                fill="rgba(18,22,25,.7)"
-                stroke={active.accent}
-                strokeWidth="1.6"
-                animate={
-                  prefersReducedMotion || !inView
-                    ? undefined
-                    : { scale: [0.94, 1.08, 0.94], opacity: [0.8, 1, 0.8] }
-                }
-                style={{ transformOrigin: "310px 258px" }}
-                transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
-              />
-            </svg>
-
-            <div className="home-v4-recognition__core">
-              <span>one decision</span>
-              <strong>{active.path.split(" ")[0]}</strong>
+            <div className="home-v4-recognition__signal" aria-live="polite">
+              <span>{active.number} · {active.label}</span>
+              <strong>{active.path}</strong>
+              <p>{active.proof}</p>
             </div>
 
-            {RECOGNITION_STATES.map((state, index) => {
-              const positions = [
-                { left: "15%", top: "18%" },
-                { left: "85%", top: "18%" },
-                { left: "50%", top: "88%" },
-              ];
-              return (
+            <div className="home-v4-recognition__choices" role="tablist" aria-label="Brand conditions">
+              {RECOGNITION_STATES.map((state, index) => (
                 <button
                   key={state.number}
                   type="button"
-                  aria-pressed={index === activeIndex}
+                  role="tab"
+                  aria-selected={index === activeIndex}
                   onClick={() => visualizer.choose(index)}
                   onPointerEnter={() => visualizer.preview(index)}
                   onPointerLeave={(event) => {
@@ -371,22 +319,15 @@ export function V4RecognitionScene() {
                   }}
                   onFocus={() => visualizer.preview(index)}
                   onBlur={visualizer.releasePreview}
-                  style={positions[index]}
                   className={index === activeIndex ? "is-active" : undefined}
                   data-cursor-label={state.number}
                 >
                   <span>{state.number}</span>
                   <strong>{state.label}</strong>
-                  <i aria-hidden="true">
-                    {index === activeIndex ? (
-                      <b
-                        style={{ transform: "scaleX(1)" }}
-                      />
-                    ) : null}
-                  </i>
+                  <i aria-hidden="true" />
                 </button>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       </div>

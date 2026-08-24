@@ -1,9 +1,6 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { useMemo, useState, type CSSProperties } from "react";
 import {
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
@@ -12,107 +9,128 @@ import {
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
 import { track } from "@/lib/analytics";
+import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+import { useMemo, useRef, useState, type PointerEvent } from "react";
 
-type Answer = {
-  measure: string;
-  points: number;
+type Diagnosis = "recognition" | "coherence" | "demand";
+
+type Choice = {
   label: string;
+  diagnosis: Diagnosis;
+  centre: string;
 };
 
-const MEASURES = [
+type Question = {
+  eyebrow: string;
+  prompt: string;
+  choices: readonly [Choice, Choice, Choice];
+};
+
+const QUESTIONS: readonly Question[] = [
   {
-    id: "position",
-    number: "01",
-    label: "Position",
-    prompt: "How clearly can the team explain why this business is chosen?",
-    options: [
-      { label: "The answer changes across people and moments", points: 0 },
-      { label: "A shared idea exists, with room to sharpen", points: 1 },
-      { label: "One written position guides decisions", points: 2 },
+    eyebrow: "Begin with the friction",
+    prompt: "Where is your brand losing its shape?",
+    choices: [
+      {
+        label: "The idea is clear. The market is not.",
+        diagnosis: "recognition",
+        centre: "Make the meaning easier to remember.",
+      },
+      {
+        label: "The identity exists. The system does not.",
+        diagnosis: "coherence",
+        centre: "Give every expression one source.",
+      },
+      {
+        label: "Marketing moves without one direction.",
+        diagnosis: "demand",
+        centre: "Turn activity into a repeated signal.",
+      },
     ],
   },
   {
-    id: "recognition",
-    number: "02",
-    label: "Recognition",
-    prompt: "How quickly do people recognise the brand before seeing its name?",
-    options: [
-      { label: "Recognition depends on the name and logo together", points: 0 },
-      { label: "A few assets already feel familiar", points: 1 },
-      { label: "Several assets are recognisable on their own", points: 2 },
+    eyebrow: "Notice the recurring cost",
+    prompt: "Which effort keeps starting again?",
+    choices: [
+      {
+        label: "Explaining what makes us different.",
+        diagnosis: "recognition",
+        centre: "Commit to the idea only you can carry.",
+      },
+      {
+        label: "Approving every message and visual.",
+        diagnosis: "coherence",
+        centre: "Replace personal taste with shared rules.",
+      },
+      {
+        label: "Publishing without a clear proof path.",
+        diagnosis: "demand",
+        centre: "Put evidence where buyer doubt forms.",
+      },
     ],
   },
   {
-    id: "consistency",
-    number: "03",
-    label: "Consistency",
-    prompt: "How consistently do active channels repeat the same brand idea?",
-    options: [
-      { label: "Each channel follows its own logic", points: 0 },
-      { label: "Core elements repeat with occasional drift", points: 1 },
-      { label: "One system guides every active channel", points: 2 },
-    ],
-  },
-  {
-    id: "expression",
-    number: "04",
-    label: "Expression",
-    prompt: "How easily can the team create new work from shared rules?",
-    options: [
-      { label: "Each brief begins from personal preference", points: 0 },
-      { label: "Templates help, while decisions still vary", points: 1 },
-      { label: "Shared rules make new work faster and coherent", points: 2 },
-    ],
-  },
-  {
-    id: "preference",
-    number: "05",
-    label: "Preference",
-    prompt: "How often do buyers choose the brand before a close comparison?",
-    options: [
-      { label: "Price and features carry most decisions", points: 0 },
-      { label: "Some buyers arrive with a clear preference", points: 1 },
-      { label: "Preference often begins before comparison", points: 2 },
+    eyebrow: "Choose the next visible change",
+    prompt: "What should become true in the next 90 days?",
+    choices: [
+      {
+        label: "People remember us for one clear idea.",
+        diagnosis: "recognition",
+        centre: "Build the position first.",
+      },
+      {
+        label: "The team can create from one system.",
+        diagnosis: "coherence",
+        centre: "Connect language, identity and behaviour.",
+      },
+      {
+        label: "Proof creates preference before the call.",
+        diagnosis: "demand",
+        centre: "Make the evidence carry the promise.",
+      },
     ],
   },
 ] as const;
 
-const BANDS = [
+const RESULTS: Record<
+  Diagnosis,
   {
-    max: 3,
-    title: "Foundation to define",
-    detail: "Position and recognition need the first shared direction.",
+    title: string;
+    detail: string;
+    signal: string;
+    situation: ServicesSituationId;
+    action: string;
+  }
+> = {
+  recognition: {
+    title: "Recognition needs a sharper centre.",
+    detail:
+      "The business has useful substance, while the market still has to work too hard to name what makes it different.",
+    signal: "Position before expression",
     situation: "idea",
     action: "Explore the foundation path",
   },
-  {
-    max: 7,
-    title: "System to align",
-    detail: "Useful signals already exist. A connected system can align them.",
+  coherence: {
+    title: "Coherence needs one living system.",
+    detail:
+      "Good elements already exist. They need a shared logic that the website, team and marketing can use without reinterpretation.",
+    signal: "One source for every expression",
     situation: "reposition",
     action: "Explore the repositioning path",
   },
-  {
-    max: 10,
-    title: "Recognition to compound",
-    detail: "The base is working. Consistent application can make it easier to recall and choose.",
+  demand: {
+    title: "Demand needs proof with direction.",
+    detail:
+      "Visibility is present, while the evidence, message and repeated signals have yet to compound into preference.",
+    signal: "Evidence that reinforces one promise",
     situation: "ongoing",
     action: "Explore the ongoing path",
   },
-] as const satisfies ReadonlyArray<{
-  max: number;
-  title: string;
-  detail: string;
-  situation: ServicesSituationId;
-  action: string;
-}>;
+};
 
-const MAX_SCORE = MEASURES.length * 2;
 const EASE = [0.22, 1, 0.36, 1] as const;
-
-function bandFor(score: number) {
-  return BANDS.find((band) => score <= band.max) ?? BANDS[BANDS.length - 1];
-}
 
 function publishResult(situation: ServicesSituationId) {
   try {
@@ -125,305 +143,216 @@ function publishResult(situation: ServicesSituationId) {
   } catch {}
 }
 
+function resolveDiagnosis(answers: Diagnosis[]) {
+  const score: Record<Diagnosis, number> = { recognition: 0, coherence: 0, demand: 0 };
+  answers.forEach((answer) => {
+    score[answer] += 1;
+  });
+  return (Object.entries(score) as Array<[Diagnosis, number]>).sort((a, b) => b[1] - a[1])[0][0];
+}
+
 export function HomeBrandHealthCheck() {
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const reducedMotion = Boolean(useHydratedReducedMotion());
+  const sectionRef = useRef<HTMLElement>(null);
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Answer[]>([]);
-  const [selected, setSelected] = useState<string | null>(null);
-  const done = step >= MEASURES.length;
-  const active = MEASURES[Math.min(step, MEASURES.length - 1)];
-  const score = answers.reduce((sum, answer) => sum + answer.points, 0);
-  const result = bandFor(score);
-  const progress = answers.length / MEASURES.length;
+  const [answers, setAnswers] = useState<Diagnosis[]>([]);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [preview, setPreview] = useState<number | null>(null);
+  const done = step >= QUESTIONS.length;
+  const active = QUESTIONS[Math.min(step, QUESTIONS.length - 1)];
+  const diagnosis = useMemo(() => resolveDiagnosis(answers), [answers]);
+  const result = RESULTS[diagnosis];
+  const previewChoice = preview === null ? null : active.choices[preview];
 
-  const signals = useMemo(() => {
-    if (!done || answers.length !== MEASURES.length) return null;
-    const strongest = answers.reduce((best, answer) => (answer.points > best.points ? answer : best));
-    const clearestGap = answers.reduce((lowest, answer) => (answer.points < lowest.points ? answer : lowest));
-    return { strongest, clearestGap };
-  }, [answers, done]);
+  function moveScene(event: PointerEvent<HTMLElement>) {
+    if (reducedMotion || !sectionRef.current) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+    sectionRef.current.style.setProperty("--orbit-pointer-x", x.toFixed(3));
+    sectionRef.current.style.setProperty("--orbit-pointer-y", y.toFixed(3));
+  }
 
-  function answer(label: string, points: number) {
-    if (selected || done) return;
+  function choose(choice: Choice, index: number) {
+    if (selected !== null || done) return;
     if (answers.length === 0) track("health_check_started", { source: "home" });
-    setSelected(label);
+    setSelected(index);
+    const nextAnswers = [...answers, choice.diagnosis];
 
     window.setTimeout(
       () => {
-        const nextAnswers = [
-          ...answers,
-          { measure: active.label, points, label },
-        ];
         setAnswers(nextAnswers);
         setStep((current) => current + 1);
         setSelected(null);
+        setPreview(null);
 
-        if (nextAnswers.length === MEASURES.length) {
-          const nextScore = nextAnswers.reduce((sum, answer) => sum + answer.points, 0);
-          const nextResult = bandFor(nextScore);
+        if (nextAnswers.length === QUESTIONS.length) {
+          const nextDiagnosis = resolveDiagnosis(nextAnswers);
+          const nextResult = RESULTS[nextDiagnosis];
           publishResult(nextResult.situation);
           track("health_check_completed", {
             source: "home",
-            score: nextScore,
             result: nextResult.situation,
+            diagnosis: nextDiagnosis,
           });
         }
       },
-      prefersReducedMotion ? 0 : 220,
+      reducedMotion ? 0 : 460,
     );
   }
 
   function back() {
-    if (step === 0 || selected) return;
+    if (step === 0 || selected !== null) return;
     setAnswers((current) => current.slice(0, -1));
     setStep((current) => current - 1);
+    setPreview(null);
   }
 
   function reset() {
-    setAnswers([]);
     setStep(0);
+    setAnswers([]);
     setSelected(null);
+    setPreview(null);
   }
 
   return (
     <section
-      className="home-health"
-      aria-labelledby="home-health-title"
-      style={{ "--health-progress": progress } as CSSProperties}
+      ref={sectionRef}
+      id="brand-diagnostic"
+      className="brand-orbit"
+      data-home-v4-chapter="diagnostic"
+      data-home-chapter="diagnostic"
+      data-home-section="diagnostic"
+      data-cursor-world="light"
+      aria-labelledby="brand-orbit-title"
+      onPointerMove={moveScene}
     >
-      <div className="home-health__stream" data-media-id="BT-HOME-HEALTH-FIVE-STONES" aria-hidden="true">
-        <span className="home-health__stream-bed" />
-        <span className="home-health__stream-current" />
-        <span className="home-health__stream-light" />
-        <span className="home-health__stream-wash" />
+      <div className="brand-orbit__landscape" aria-hidden="true">
+        <Image
+          src="/images/generated/bt-home-brand-orbit-valley.webp"
+          alt=""
+          fill
+          priority={false}
+          sizes="100vw"
+        />
       </div>
+      <div className="brand-orbit__veil" aria-hidden="true" />
 
-      <div className="home-health__shell">
-        <header className="home-health__header">
+      <div className="brand-orbit__shell">
+        <header className="brand-orbit__header">
           <div>
-            <p className="home-health__eyebrow">Brand Health Check</p>
-            <h2 id="home-health-title">
-              Five signals reveal <em>where recognition needs support.</em>
-            </h2>
+            <p>02 · Brand diagnostic</p>
+            <h2 id="brand-orbit-title">Find the decision your brand needs next.</h2>
           </div>
-          <div className="home-health__intro">
-            <p>
-              Choose one honest answer for each measure. The result appears here, with every point visible and every recommendation traceable to your choices.
-            </p>
-            <span>Each answer adds 0, 1, or 2 points. Total: {MAX_SCORE}.</span>
+          <div className="brand-orbit__progress" aria-label={`${Math.min(step + 1, QUESTIONS.length)} of ${QUESTIONS.length}`}>
+            <strong>{String(Math.min(step + 1, QUESTIONS.length)).padStart(2, "0")} / 03</strong>
+            <span><i style={{ transform: `scaleX(${done ? 1 : (step + 1) / QUESTIONS.length})` }} /></span>
           </div>
         </header>
 
-        <div className="home-health__stage">
-          <div className="home-health__instrument">
-            <div className="home-health__instrument-topline">
-              <span>Five measurement stones</span>
-              <strong>{String(Math.min(step + 1, MEASURES.length)).padStart(2, "0")} / 05</strong>
-            </div>
-            <HealthWaterInstrument
-              answers={answers}
-              activeIndex={Math.min(step, MEASURES.length - 1)}
-              reducedMotion={prefersReducedMotion}
-            />
-            <div className="home-health__legend" aria-hidden="true">
-              <span><i data-score="0" /> Emerging</span>
-              <span><i data-score="1" /> Forming</span>
-              <span><i data-score="2" /> Working</span>
-            </div>
-          </div>
+        <AnimatePresence mode="wait" initial={false}>
+          {done ? (
+            <motion.div
+              key="result"
+              className="brand-orbit__result"
+              initial={reducedMotion ? false : { opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reducedMotion ? 0 : 0.7, ease: EASE }}
+              aria-live="polite"
+            >
+              <div className="brand-orbit__result-copy">
+                <p>Your answers point toward</p>
+                <h3>{result.title}</h3>
+                <span>{result.detail}</span>
+              </div>
 
-          <div className="home-health__diagnostic">
-            <div className="home-health__progress" aria-label={`${answers.length} of ${MEASURES.length} measures answered`}>
-              <span style={{ transform: `scaleX(${progress})` }} />
-            </div>
+              <motion.div
+                className="brand-orbit__sun brand-orbit__sun--result"
+                initial={reducedMotion ? false : { scale: 0.74, rotate: -12 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ duration: reducedMotion ? 0 : 0.9, ease: EASE }}
+              >
+                <Image src="/images/generated/bt-home-brand-orbit-sun.webp" alt="" fill sizes="26rem" />
+              </motion.div>
 
-            {done ? (
-                <motion.article
-                  key="health-result"
-                  className="home-health__result"
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(5px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
-                  aria-live="polite"
-                >
-                  <div className="home-health__result-topline">
-                    <span>Your visible score</span>
-                    <strong>{score} / {MAX_SCORE}</strong>
-                  </div>
-                  <p className="home-health__result-label">Your answers point toward</p>
-                  <h3>{result.title}</h3>
-                  <p className="home-health__result-copy">{result.detail}</p>
+              <div className="brand-orbit__result-action">
+                <span>The strategic centre</span>
+                <strong>{result.signal}</strong>
+                <Link href="/services#health">{result.action} <i aria-hidden="true">↗</i></Link>
+                <Link href="/contact">Discuss this diagnosis <i aria-hidden="true">→</i></Link>
+                <button type="button" onClick={reset}>Take the quiz again</button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={active.prompt}
+              className="brand-orbit__question"
+              initial={reducedMotion ? false : { opacity: 0, y: 22 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reducedMotion ? undefined : { opacity: 0, y: -18 }}
+              transition={{ duration: reducedMotion ? 0 : 0.58, ease: EASE }}
+            >
+              <div className="brand-orbit__prompt">
+                <p>{active.eyebrow}</p>
+                <h3>{active.prompt}</h3>
+                {step > 0 ? <button type="button" onClick={back}>Back one question</button> : null}
+              </div>
 
-                  {signals && (
-                    <dl className="home-health__signals">
-                      <div>
-                        <dt>Strongest signal</dt>
-                        <dd>{signals.strongest.measure} · {signals.strongest.points}/2</dd>
-                      </div>
-                      <div>
-                        <dt>Clearest opportunity</dt>
-                        <dd>{signals.clearestGap.measure} · {signals.clearestGap.points}/2</dd>
-                      </div>
-                    </dl>
-                  )}
+              <motion.div
+                className="brand-orbit__sun"
+                animate={
+                  reducedMotion
+                    ? undefined
+                    : {
+                        x: `calc(var(--orbit-pointer-x, 0) * 12px)`,
+                        y: `calc(var(--orbit-pointer-y, 0) * 10px)`,
+                        rotate: preview === null ? [0, 2, 0, -2, 0] : preview * 3 - 3,
+                        scale: preview === null ? [0.985, 1.015, 0.985] : 1.045,
+                      }
+                }
+                transition={
+                  preview === null
+                    ? { duration: 7, repeat: Infinity, ease: "easeInOut" }
+                    : { duration: 0.5, ease: EASE }
+                }
+                aria-hidden="true"
+              >
+                <Image src="/images/generated/bt-home-brand-orbit-sun.webp" alt="" fill sizes="24rem" />
+              </motion.div>
 
-                  <div className="home-health__result-actions">
-                    <Link href="/services#health">{result.action} <span aria-hidden="true">↗</span></Link>
-                    <Link href="/contact">Discuss the diagnosis <span aria-hidden="true">→</span></Link>
-                    <button type="button" onClick={reset}>Measure again</button>
-                  </div>
-                </motion.article>
-              ) : (
-                <motion.div
-                  key={active.id}
-                  className="home-health__question"
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
-                  aria-live="polite"
-                >
-                  <div className="home-health__question-topline">
-                    <span>{active.number} · {active.label}</span>
-                    {step > 0 && (
-                      <button type="button" onClick={back}>Back</button>
-                    )}
-                  </div>
-                  <h3>{active.prompt}</h3>
-                  <div className="home-health__options">
-                    {active.options.map((option) => {
-                      const pressed = selected === option.label;
-                      return (
-                        <motion.button
-                          key={option.label}
-                          type="button"
-                          aria-pressed={pressed}
-                          onClick={() => answer(option.label, option.points)}
-                          whileTap={prefersReducedMotion ? undefined : { scale: 0.985 }}
-                          className={pressed ? "is-selected" : undefined}
-                        >
-                          <span>{option.label}</span>
-                          <strong>{option.points}</strong>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-                  <p className="home-health__scoring-note">
-                    The number at the right is the exact value added to your total.
-                  </p>
-                </motion.div>
-              )}
-          </div>
-        </div>
+              <div className="brand-orbit__centre-copy" aria-live="polite">
+                <span>{previewChoice ? "This answer points toward" : "Choose the sentence closest to today"}</span>
+                <strong>{previewChoice?.centre ?? "Honesty creates the useful route."}</strong>
+              </div>
+
+              <div className="brand-orbit__choices" role="group" aria-label={active.prompt}>
+                {active.choices.map((choice, index) => (
+                  <motion.button
+                    key={choice.label}
+                    type="button"
+                    className={selected === index ? "is-selected" : undefined}
+                    onClick={() => choose(choice, index)}
+                    onPointerEnter={() => setPreview(index)}
+                    onPointerLeave={() => setPreview(null)}
+                    onFocus={() => setPreview(index)}
+                    onBlur={() => setPreview(null)}
+                    aria-pressed={selected === index}
+                    animate={
+                      selected === index
+                        ? { scale: 0.86, opacity: 0, x: index === 0 ? 170 : index === 1 ? -170 : 0, y: index === 2 ? -120 : 40 }
+                        : { scale: preview === index ? 1.035 : 1, opacity: selected === null ? 1 : 0.3 }
+                    }
+                    transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}
+                  >
+                    <span>0{index + 1}</span>
+                    <strong>{choice.label}</strong>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
-  );
-}
-
-function HealthWaterInstrument({
-  answers,
-  activeIndex,
-  reducedMotion,
-}: {
-  answers: Answer[];
-  activeIndex: number;
-  reducedMotion: boolean;
-}) {
-  const points = [
-    { x: 88, y: 292 },
-    { x: 198, y: 208 },
-    { x: 308, y: 278 },
-    { x: 420, y: 176 },
-    { x: 530, y: 252 },
-  ] as const;
-
-  return (
-    <div
-      className="home-health__water-map"
-      role="img"
-      aria-label={`${answers.length} of five brand health measures answered`}
-    >
-      <svg viewBox="0 0 620 400" aria-hidden="true">
-        <defs>
-          <linearGradient id="health-current-gradient" x1="0" x2="1">
-            <stop offset="0%" stopColor="#7D9BAF" stopOpacity="0.18" />
-            <stop offset="52%" stopColor="#D4B99A" stopOpacity="0.88" />
-            <stop offset="100%" stopColor="#8FA283" stopOpacity="0.38" />
-          </linearGradient>
-          <radialGradient id="health-stone-gradient">
-            <stop offset="0%" stopColor="#D9D1BF" stopOpacity="0.84" />
-            <stop offset="100%" stopColor="#6F786E" stopOpacity="0.64" />
-          </radialGradient>
-        </defs>
-
-        <path
-          d="M42 326 C122 292 148 208 214 222 S290 318 350 270 S428 152 488 190 S546 272 590 234"
-          fill="none"
-          stroke="rgba(244,239,230,0.11)"
-          strokeWidth="2"
-        />
-        <motion.path
-          d="M42 326 C122 292 148 208 214 222 S290 318 350 270 S428 152 488 190 S546 272 590 234"
-          fill="none"
-          stroke="url(#health-current-gradient)"
-          strokeWidth="3"
-          strokeLinecap="round"
-          pathLength="1"
-          initial={false}
-          animate={{ pathLength: Math.max(0.03, answers.length / MEASURES.length) }}
-          transition={{ duration: reducedMotion ? 0 : 0.9, ease: EASE }}
-        />
-
-        {points.map((point, index) => {
-          const answer = answers[index];
-          const active = index === activeIndex && answers.length < MEASURES.length;
-          const score = answer?.points ?? -1;
-          const fill =
-            score === 2 ? "#D4B99A" :
-            score === 1 ? "#8FA283" :
-            score === 0 ? "#7D9BAF" :
-            "url(#health-stone-gradient)";
-
-          return (
-            <g key={MEASURES[index].id}>
-              {answer && !reducedMotion && (
-                <motion.circle
-                  key={`health-ring-${index}-${score}`}
-                  cx={point.x}
-                  cy={point.y}
-                  fill="none"
-                  stroke={fill === "url(#health-stone-gradient)" ? "#D4B99A" : fill}
-                  strokeWidth="1.5"
-                  initial={{ r: 22, opacity: 0.62 }}
-                  animate={{ r: 48, opacity: 0 }}
-                  transition={{ duration: 1.1, ease: "easeOut" }}
-                />
-              )}
-              <motion.ellipse
-                cx={point.x}
-                cy={point.y}
-                rx={active ? 25 : 21}
-                ry={active ? 17 : 14}
-                fill={fill}
-                stroke={active ? "#F4EFE6" : "rgba(244,239,230,0.22)"}
-                strokeWidth={active ? 1.8 : 1}
-                initial={false}
-                animate={{ scale: answer ? 1.08 : 1, opacity: answer ? 1 : active ? 0.95 : 0.52 }}
-                style={{ transformOrigin: `${point.x}px ${point.y}px` }}
-                transition={{ duration: reducedMotion ? 0 : 0.45, ease: EASE }}
-              />
-              <text x={point.x} y={point.y + 42} textAnchor="middle">
-                {MEASURES[index].label}
-              </text>
-              {answer && (
-                <text x={point.x} y={point.y + 4} textAnchor="middle" className="home-health__stone-score">
-                  {answer.points}
-                </text>
-              )}
-            </g>
-          );
-        })}
-      </svg>
-    </div>
   );
 }

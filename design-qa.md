@@ -2,55 +2,53 @@
 
 ## Outcome
 
-Status: passed for the desktop reference viewport after remediation.
+Status: passed at the supplied desktop reference viewport after remediation.
 
-The August 8 composition remains the visual source of truth. Timed presentation controls were removed from the narrative visualizers and replaced with a reversible scroll timeline plus inspect-on-hover/focus behavior. The restored Psychology + Literature visualizer remains present on both the homepage and About page.
+The August 8 composition remains the source of truth. The repair keeps its layouts and editorial character, moves the dominant palette toward warm ivory and earth tones, removes broken inter-scene bands, and makes scroll/hover the interaction model. The Psychology + Literature visualizer remains present on both Home and About.
 
 ## Comparison inputs
 
-- Source visual: `/workspace/scratch/a3d8518ad1d9/upload/Screenshot 2026-08-23 at 9.54.49 PM.png`
-- Implementation: browser-rendered `http://terminal.local:4173/` and `http://terminal.local:4173/about`
-- Reference sites reviewed before implementation: Izanami Official, Parker, Rectangles, and the supplied reference bank.
+- August 8 layout source: `/workspace/scratch/a3d8518ad1d9/upload/Screenshot 2026-08-23 at 4.21.04 PM.png`
+- Psychology + Literature source: `/workspace/scratch/a3d8518ad1d9/upload/Screenshot 2026-08-23 at 9.54.49 PM.png`
+- Reported homepage failures: the seven screenshots dated `2026-08-24 11.44–11.46 AM` in the upload folder.
 - QA viewport: 1363 × 936 CSS pixels, DPR 1, Chrome cloud browser.
-
-## Intent preserved
-
-- Warm, light earth-tone presentation with forest/sage/clay accents.
-- August 8 page structure and editorial serif typography.
-- Psychology and Literature shown as two disciplines converging into one applied system.
-- Cinematic dark interludes retained only where they create rhythm and proof, not as the dominant page theme.
 
 ## Interaction contract
 
-- Scroll position advances and reverses every narrative visualizer.
-- Hover or keyboard focus temporarily inspects a stage without starting a timer.
-- Clicking a tab provides an accessible manual fallback.
-- Releasing a hover/focus preview returns the scene to its scroll-derived stage.
+- Scroll position advances and reverses each narrative visualizer.
+- Hover or keyboard focus temporarily inspects a stage; leaving returns to the scroll-derived stage.
+- Clicking a tab remains an accessible manual fallback.
+- Visible ambient video plays; offscreen media pauses.
 - Reduced-motion users receive stable document flow without sticky cinematic runways.
-- No storytelling section exposes `PLAYING`, `PAUSED`, or a play-button control.
+- No storytelling section exposes a play button or timer-shaped presentation control.
 
 ## Remediation log
 
 | Severity | Finding | Resolution |
 | --- | --- | --- |
-| P1 | Process runway exceeded its outer chapter and was clipped by the next section. | Outer chapter now owns the full scroll runway; the board remains sticky and fully visible. |
-| P1 | Evidence shell inherited flex centering, delaying sticky engagement and clipping its index. | Scene wrapper now uses block ownership; the shell pins at `top: 0` and fits the viewport. |
-| P1 | Homepage Studio grid was partially above the viewport. | Sticky ownership moved to the complete studio grid and the outer wrapper no longer clips it. |
-| P1 | Insights shell inherited `height: 100%` from a higher-specificity fit stylesheet and became 215svh tall. | A higher-specificity scroll override now fixes the shell at 100svh while preserving its grid layout. |
-| P2 | Process scene had excessive empty space above the information architecture. | Sticky shell aligns content from the top with a bounded header offset. |
-| P2 | Timers could advance while a visitor was reading or report a playing state unrelated to scroll. | All key homepage/About stories now use one scroll-driven state hook. |
-| P2 | Shared cue text was vulnerable to broad descendant span rules. | Cue labels, instructions, and counters now receive explicit readable inline styles. |
+| P1 | Painted handoff components consumed space and created the white/black horizontal bands shown in the supplied captures. | Handoffs remain semantic separators but now consume and paint exactly `0px`; chapters meet continuously. |
+| P1 | Sticky scene contents exceeded the viewport and leaked into adjacent chapters. | Recognition, Foundation, Process, Evidence, Studio, and Insights now own measured 100svh authored frames inside their longer scroll runways. |
+| P1 | Assisted/trackpad scrolling could miss a Framer motion-value frame and leave a visualizer on the wrong stage. | The shared visualizer now includes a requestAnimationFrame-synchronised window-scroll fallback derived from the real section runway. |
+| P1 | Homepage Studio used a portrait file with a baked grey lower half, producing a large empty-looking column. | Studio now uses the complete portrait asset with a full-height cover crop and no translating transform. |
+| P2 | Insights topic names, especially “Distinctiveness”, could overrun narrow cards. | Cards and headings now allow shrinkage and safe wrapping without horizontal overflow. |
+| P2 | The Services authority transition reached an over-dark final state that made copy appear missing. | The handoff runway and maximum veil opacity were reduced; all five final layers remain readable. |
+| P2 | Timed/player language suggested passive viewing despite the requested visitor-controlled experience. | Controls now communicate Scroll; movement is driven by scroll and inspect-on-hover/focus. |
 
 ## Verification
 
-- Production build: passed (`npm run build`).
-- TypeScript: passed (`tsc --noEmit`).
-- Horizontal overflow: none at the tested viewport on homepage and About.
-- Sticky fit: Process, Evidence, Studio, Insights, About Convergence, and About Evidence measured at 936px and pinned at the viewport top.
-- Accessibility state: visualizer tabs expose `role="tab"`, `aria-selected`, keyboard focus, and manual selection.
-- Runtime console: no application errors observed; only browser-extension metadata errors were present.
-- Visual comparison: the Psychology + Literature composition, cards, typography, and stage structure match the supplied source while replacing the timed player with a scroll cue.
+- Production build: passed (`npm run build`, including TypeScript and lint checks).
+- Static generation: 77 routes completed.
+- Horizontal overflow: `0px` on Home, About, Services, and Insights at the QA viewport.
+- Empty handoff bands: all seven homepage handoffs measured `clientHeight: 0` and `scrollHeight: 0`.
+- Sticky fit: all six primary homepage narrative frames measured exactly 936px high with no internal viewport overflow.
+- Recognition timeline: forward `01 → 02 → 03`, reverse `03 → 02`; hover preview returns to the scroll state on release.
+- Homepage Studio timeline: forward `01 → 02 → 03`, reverse `03 → 02`.
+- About Convergence timeline: forward `01 → 02 → 03`, reverse `03 → 02`.
+- Visible media: ready state `4`, actively playing; offscreen video paused.
+- Insights “Distinctiveness”: heading right edge remained inside its card and document overflow stayed `0px`.
+- Services final authority layer: all five layer groups reached computed opacity `1` and remained readable.
+- Work navigation: absent; `/work` resolves away from a standalone Work index.
 
 ## Residual coverage
 
-The cloud browser viewport is fixed, so mobile behavior was verified through responsive CSS and reduced-motion fallbacks rather than a second resizable browser capture. Desktop/fine-pointer sticky motion is intentionally gated behind `min-width: 1181px`, `min-height: 761px`, and `pointer: fine`; smaller/touch devices keep ordinary flow.
+The fixed cloud browser viewport matches the supplied desktop failures. Smaller/touch layouts are handled by the existing flow-mode and reduced-motion CSS gates; they do not use the desktop sticky runways.

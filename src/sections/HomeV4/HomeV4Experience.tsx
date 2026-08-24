@@ -8,6 +8,7 @@ import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
+import { HomeBrandHealthCheck } from "@/sections/Home/HomeBrandHealthCheck";
 import { HomeInsightsPreview } from "@/sections/Home/HomeInsightsPreview";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
 import { process as processStages } from "@/data/process";
@@ -33,6 +34,9 @@ export function HomeV4Experience() {
       <SceneHandoff motif="mist" />
 
       <V4RecognitionScene />
+      <SceneHandoff motif="mist" />
+
+      <HomeBrandHealthCheck />
       <SceneHandoff motif="root" />
 
       <div
@@ -76,6 +80,7 @@ export function HomeV4Experience() {
       <SceneHandoff motif="river" />
 
       <div
+        id="studio"
         data-home-v4-chapter="studio"
         data-home-section="studio"
         data-cursor-world="dark"

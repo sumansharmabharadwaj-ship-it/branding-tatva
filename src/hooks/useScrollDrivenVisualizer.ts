@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, type RefObject } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 
 type ScrollDrivenVisualizerOptions = {
@@ -38,17 +38,57 @@ export function useScrollDrivenVisualizer({
     offset: ["start start", "end end"],
   });
 
+  const readProgress = useCallback(() => {
+    const node = target.current;
+    if (!node || typeof window === "undefined") return scrollYProgress.get();
+
+    const rect = node.getBoundingClientRect();
+    const runway = rect.height - window.innerHeight;
+    if (runway <= 1) return scrollYProgress.get();
+
+    return Math.min(1, Math.max(0, -rect.top / runway));
+  }, [scrollYProgress, target]);
+
   const syncToScroll = useCallback(() => {
-    if (!enabled || reducedMotion) return;
-    const nextIndex = stageFromProgress(scrollYProgress.get(), safeCount);
+    if (reducedMotion) return;
+    const nextIndex = stageFromProgress(readProgress(), safeCount);
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-  }, [enabled, reducedMotion, safeCount, scrollYProgress]);
+  }, [readProgress, reducedMotion, safeCount]);
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     if (!enabled || reducedMotion || previewingRef.current) return;
     const nextIndex = stageFromProgress(progress, safeCount);
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
   });
+
+  /* Framer's motion value can miss a synthetic/assisted scroll frame when a
+     sticky child is exactly one viewport tall. The browser scroll event is the
+     source of truth for the runway, so keep a lightweight RAF-synchronised
+     fallback. This also makes wheel, trackpad, keyboard and browser-assisted
+     scrolling resolve to the same reversible state. */
+  useEffect(() => {
+    if (reducedMotion) return;
+
+    let frame = 0;
+    const update = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        if (previewingRef.current) return;
+        const nextIndex = stageFromProgress(readProgress(), safeCount);
+        setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+      });
+    };
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [readProgress, reducedMotion, safeCount]);
 
   const choose = useCallback(
     (index: number) => {

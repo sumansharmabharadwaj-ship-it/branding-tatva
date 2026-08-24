@@ -29,6 +29,8 @@ import "./home-v4-wide-screen-repair.css";
 import "./home-v4-stability.css";
 import "./home-v4-scroll-motion.css";
 import "./home-v4-seamless-scenes.css";
+import "./home-v4-continuous-fit.css";
+import "./home-v4-orbit-redesign.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";

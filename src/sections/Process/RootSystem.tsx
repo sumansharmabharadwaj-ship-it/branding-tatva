@@ -86,24 +86,6 @@ const ELEMENT_COLORS: Record<string, string> = {
   Space: "#A76F65",
 };
 
-const NODES = [
-  { x: 70, y: 170 },
-  { x: 190, y: 170 },
-  { x: 320, y: 170 },
-  { x: 460, y: 92 },
-  { x: 460, y: 248 },
-  { x: 630, y: 170 },
-];
-
-const SEGMENTS = [
-  { d: "M88 170 C125 170 145 170 172 170", to: 1 },
-  { d: "M208 170 C250 170 275 170 302 170", to: 2 },
-  { d: "M338 164 C378 152 405 115 442 98", to: 3 },
-  { d: "M338 176 C378 188 405 225 442 242", to: 4 },
-  { d: "M478 102 C540 110 565 142 612 162", to: 5 },
-  { d: "M478 238 C540 230 565 198 612 178", to: 5 },
-];
-
 function fallbackMeta(index: number): StageMeta {
   return {
     becomes: "A clearer decision.",
@@ -164,7 +146,6 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const meta = STAGE_META[active] ?? fallbackMeta(active);
   const accent = ELEMENT_COLORS[stage.element] ?? "#9B7457";
   const progress = stages.length > 1 ? active / (stages.length - 1) : 1;
-  const visibleNodes = NODES.slice(0, Math.min(stages.length, NODES.length));
   const sectionStyle = { "--pj-accent": accent } as CSSProperties;
 
   return (
@@ -282,55 +263,13 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
           </article>
 
           <div className="project-journey__map-card">
-            <div className="project-journey__map-heading">
-              <div>
-                <p>Decision architecture</p>
-                <h3>One choice feeds the next.</h3>
-              </div>
+            <p className="project-journey__map-kicker">Decision {String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</p>
+            <div className="project-journey__stage-theatre" aria-live="polite">
+              <span>{stage.stage}</span>
+              <strong>{meta.becomes}</strong>
+              <p>{meta.output}</p>
             </div>
-            <div className="project-journey__map" aria-label="Interactive project flow diagram">
-              <svg viewBox="0 0 700 340" role="img" aria-label="Question and Decode lead to Architect; Signal and Influence then combine into Compound">
-                {SEGMENTS.map((segment, index) => (
-                  <path key={`base-${index}`} d={segment.d} className="project-journey__path-base" />
-                ))}
-                {SEGMENTS.map((segment, index) => (
-                  <path
-                    key={`active-${index}`}
-                    d={segment.d}
-                    pathLength="1"
-                    className="project-journey__path-live"
-                    style={{ strokeDashoffset: active >= segment.to ? 0 : 1 }}
-                  />
-                ))}
-              </svg>
-              {visibleNodes.map((node, index) => {
-                const item = stages[index];
-                const reached = index <= active;
-                return (
-                  <button
-                    key={item.stage}
-                    type="button"
-                    className={`project-journey__node${reached ? " is-reached" : ""}${active === index ? " is-active" : ""}`}
-                    style={{ left: `${(node.x / 700) * 100}%`, top: `${(node.y / 340) * 100}%` }}
-                    onClick={() => chooseStage(index)}
-                    onPointerEnter={() => visualizer.preview(index)}
-                    onPointerLeave={(event) => {
-                      if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
-                    }}
-                    onFocus={() => visualizer.preview(index)}
-                    onBlur={visualizer.releasePreview}
-                    aria-label={`Show ${item.stage} stage`}
-                  >
-                    <i aria-hidden="true" />
-                    <span>{item.stage}</span>
-                  </button>
-                );
-              })}
-            </div>
-            <div className="project-journey__prevents">
-              <span>This stage prevents</span>
-              <p>{meta.prevents}</p>
-            </div>
+            <div className="project-journey__prevents"><span>The ambiguity this removes</span><p>{meta.prevents}</p></div>
           </div>
         </div>
 
