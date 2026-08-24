@@ -39,6 +39,7 @@ import "./home-v4-legibility-pass.css";
 import "./home-v4-tatva-lens.css";
 import "./home-v4-evidence-cinematic-final.css";
 import "./home-v4-invitation-cinematic-final.css";
+import "./home-v4-questions-editorial-final.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
