@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import styles from "./AboutCinematicRuntime.module.css";
 
 const CHAPTERS = [
+  "Formative fields",
   "Point of view",
   "Two disciplines",
   "Principles",

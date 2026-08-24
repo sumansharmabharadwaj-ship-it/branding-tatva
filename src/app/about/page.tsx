@@ -6,6 +6,7 @@ import { ScrollProgress } from "@/components/ScrollProgress";
 import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { AboutCinematicRuntime } from "@/components/AboutCinematicRuntime";
 import { NotebookClose } from "@/components/NotebookClose";
+import { FounderFieldNotes } from "@/sections/About/FounderFieldNotes";
 import { PointOfView } from "@/sections/About/PointOfView";
 import { Convergence } from "@/sections/About/Convergence";
 import { Behaviours } from "@/sections/About/Behaviours";
@@ -63,6 +64,26 @@ export default function AboutPage() {
         />
 
         <AboutCinematicRuntime />
+
+        <section
+          className="relative overflow-clip bg-[#e8dfd0]"
+          data-about-chapter="origin"
+          data-about-film-scene
+          data-scene-tone="light"
+        >
+          <div className="absolute inset-0" data-about-film-background>
+            <BackgroundVideo
+              video="/videos/pexels-studio-morning-light.mp4"
+              poster="/images/pexels-studio-morning-light-poster.jpg"
+              parallax
+              playbackRate={0.84}
+            />
+          </div>
+          <div aria-hidden="true" className="absolute inset-0 bg-[#e8dfd0]/90" />
+          <div className="relative" data-about-film-plane>
+            <FounderFieldNotes />
+          </div>
+        </section>
 
         <section className="relative overflow-clip bg-soil" data-about-chapter="philosophy" data-about-film-scene data-scene-tone="dark">
           <div className="absolute inset-0" data-about-film-background>
