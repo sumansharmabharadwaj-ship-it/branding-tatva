@@ -6,7 +6,7 @@ import styles from "./AboutCinematicRuntime.module.css";
 const CHAPTERS = [
   "Formative fields",
   "Point of view",
-  "Two disciplines",
+  "Synthesis",
   "Principles",
   "Founder-led",
   "Evidence",

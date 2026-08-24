@@ -99,6 +99,10 @@ recede behind the resolved outputs. Tablet, mobile, and reduced-motion modes
 render the same model as a complete linear explanation rather than a shrunken
 version of the pinned composition.
 
+The global chapter spine names this scene **Synthesis**, so navigation language
+matches what the visitor is actually watching rather than repeating the degree
+labels from the origin chapter.
+
 ## Performance and accessibility rules
 
 - Pinning is limited to a 158svh runway with a 100svh scene; native scroll is
