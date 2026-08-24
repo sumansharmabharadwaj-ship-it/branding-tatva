@@ -1,0 +1,251 @@
+/* -------------------------------------------------------------------------- */
+/* Homepage V4 · The Tatva Lens                                                */
+/* -------------------------------------------------------------------------- */
+
+/* One fixed optical layer lets otherwise distinct chapters inherit the same
+   camera response. It never receives input and never changes layout. */
+.home-v4 {
+  --tatva-lens-x: .5;
+  --tatva-lens-y: .46;
+  --tatva-lens-speed: 0;
+  --tatva-lens-turn: 0deg;
+  --tatva-lens-focus: 1;
+  --tatva-lens-progress: 0;
+  --tatva-lens-transition: 0;
+  --tatva-lens-accent-rgb: 180, 107, 77;
+}
+
+.home-v4[data-tatva-lens-element="water"] { --tatva-lens-accent-rgb: 95, 135, 144; }
+.home-v4[data-tatva-lens-element="fire"] { --tatva-lens-accent-rgb: 183, 117, 71; }
+.home-v4[data-tatva-lens-element="air"] { --tatva-lens-accent-rgb: 127, 146, 116; }
+.home-v4[data-tatva-lens-element="space"] { --tatva-lens-accent-rgb: 159, 112, 102; }
+
+.tatva-lens-runtime {
+  position: fixed;
+  z-index: 18;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 520ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.home-v4[data-tatva-lens="active"]:not([data-tatva-lens-chapter="opening"])
+  .tatva-lens-runtime {
+  opacity: 1;
+}
+
+.tatva-lens-runtime__aperture,
+.tatva-lens-runtime__focus-plane {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+/* The aperture is deliberately incomplete. It reads as a focus ring caught in
+   water or light rather than a camera UI laid over the page. */
+.tatva-lens-runtime__aperture {
+  z-index: 1;
+  left: calc(var(--tatva-lens-x) * 100%);
+  top: calc(var(--tatva-lens-y) * 100%);
+  width: clamp(10rem, 19vw, 19rem);
+  aspect-ratio: 1;
+  border: 1px solid rgba(238, 207, 158, .24);
+  border-right-color: transparent;
+  border-bottom-color: rgba(118, 142, 111, .14);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 clamp(1.8rem, 4vw, 4rem) rgba(245, 227, 192, .018),
+    inset 0 0 2.8rem rgba(255, 247, 220, .035);
+  opacity: calc(.18 + var(--tatva-lens-focus) * .18);
+  transform:
+    translate3d(-50%, -50%, 0)
+    rotate(var(--tatva-lens-turn))
+    scale(calc(.94 + var(--tatva-lens-focus) * .06));
+  will-change: transform, opacity;
+}
+
+.home-v4[data-tatva-lens-element] .tatva-lens-runtime__aperture {
+  border-top-color: rgba(var(--tatva-lens-accent-rgb), .3);
+  box-shadow:
+    0 0 0 clamp(1.8rem, 4vw, 4rem) rgba(var(--tatva-lens-accent-rgb), .025),
+    inset 0 0 2.8rem rgba(255, 247, 220, .035);
+}
+
+/* Arrival and release briefly soften the frame edges while the area around
+   the visitor's pointer stays optically clear. The effect disappears once the
+   scene settles, so reading always wins over spectacle. */
+.tatva-lens-runtime__focus-plane {
+  z-index: 0;
+  inset: 0;
+  background: rgba(var(--tatva-lens-accent-rgb), .018);
+  backdrop-filter:
+    blur(calc(var(--tatva-lens-transition) * 2.2px + var(--tatva-lens-speed) * .8px))
+    saturate(calc(1 - var(--tatva-lens-transition) * .12));
+  mask-image:
+    radial-gradient(
+      circle clamp(11rem, 23vw, 22rem)
+      at calc(var(--tatva-lens-x) * 100%) calc(var(--tatva-lens-y) * 100%),
+      transparent 0 38%,
+      rgba(0, 0, 0, .28) 66%,
+      #000 100%
+    );
+  opacity: calc(var(--tatva-lens-transition) * .66 + var(--tatva-lens-speed) * .24);
+  transition: opacity 180ms ease-out, background-color 520ms cubic-bezier(.22, 1, .36, 1);
+  will-change: opacity, backdrop-filter;
+}
+
+/* The chapter shells become the camera's subject. Only the active chapter is
+   touched, leaving every existing component animation and sticky runway in
+   charge of its own interaction. */
+.home-v4 [data-home-v4-chapter] [data-tatva-lens-plane="content"] {
+  transition:
+    opacity 180ms ease-out,
+    filter 200ms ease-out,
+    transform 180ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.home-v4 [data-home-v4-chapter] [data-tatva-lens-plane="media"] {
+  transition: transform 220ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.home-v4 [data-home-v4-chapter][data-tatva-lens-active="true"]
+  [data-tatva-lens-plane="content"] {
+  opacity: var(--tatva-camera-opacity, 1);
+  filter: blur(var(--tatva-camera-blur, 0));
+  transform:
+    translate3d(
+      var(--tatva-camera-content-x, 0),
+      var(--tatva-camera-content-y, 0),
+      0
+    )
+    scale(var(--tatva-camera-scale, 1));
+  transform-origin: center center;
+  transition:
+    opacity 140ms ease-out,
+    filter 160ms ease-out,
+    transform 90ms linear;
+  will-change: transform, filter, opacity;
+}
+
+.home-v4 [data-home-v4-chapter][data-tatva-lens-active="true"]
+  [data-tatva-lens-plane="media"] {
+  transform:
+    translate3d(0, var(--tatva-camera-media-y, 0), 0)
+    scale(var(--tatva-camera-media-scale, 1.018));
+  transform-origin: center center;
+  transition: transform 110ms linear;
+  will-change: transform;
+}
+
+.home-v4[data-tatva-lens-world="light"] .tatva-lens-runtime__aperture {
+  border-top-color: rgba(48, 69, 55, .24);
+  border-left-color: rgba(151, 107, 69, .2);
+  box-shadow:
+    0 0 0 clamp(1.8rem, 4vw, 4rem) rgba(54, 73, 59, .012),
+    inset 0 0 2.8rem rgba(61, 79, 65, .025);
+}
+
+.tatva-lens-runtime__chapter {
+  position: absolute;
+  z-index: 2;
+  right: clamp(1rem, 2vw, 2rem);
+  bottom: clamp(1rem, 2.2svh, 1.6rem);
+  display: grid;
+  width: clamp(8rem, 10vw, 10rem);
+  gap: .22rem;
+  color: rgba(248, 240, 224, .78);
+  filter: drop-shadow(0 2px 14px rgba(18, 25, 21, .24));
+  text-align: right;
+  transition: color 420ms ease, opacity 420ms ease, transform 520ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.home-v4[data-tatva-lens-world="light"] .tatva-lens-runtime__chapter {
+  color: rgba(31, 51, 40, .72);
+  filter: none;
+}
+
+.home-v4[data-tatva-lens-phase="arrival"] .tatva-lens-runtime__chapter {
+  opacity: .62;
+  transform: translate3d(0, .35rem, 0);
+}
+
+.home-v4[data-tatva-lens-phase="resolved"] .tatva-lens-runtime__chapter {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.home-v4[data-tatva-lens-phase="release"] .tatva-lens-runtime__chapter {
+  opacity: .45;
+  transform: translate3d(0, -.3rem, 0);
+}
+
+.tatva-lens-runtime__chapter > span {
+  font-size: .51rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.tatva-lens-runtime__chapter strong {
+  overflow: hidden;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: .96rem;
+  font-weight: 400;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tatva-lens-runtime__chapter i {
+  position: relative;
+  display: block;
+  height: 1px;
+  margin-top: .3rem;
+  overflow: hidden;
+  background: currentColor;
+  opacity: .28;
+}
+
+.tatva-lens-runtime__chapter b {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 620ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.home-v4[data-scene-settling="true"] .tatva-lens-runtime__aperture {
+  animation: tatva-lens-resolve 620ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+@keyframes tatva-lens-resolve {
+  0% { opacity: .08; filter: blur(3px); }
+  62% { opacity: .46; filter: blur(0); }
+  100% { opacity: calc(.18 + var(--tatva-lens-focus) * .18); filter: blur(0); }
+}
+
+@media (max-width: 1100px), (max-height: 699px), (hover: none), (pointer: coarse) {
+  .tatva-lens-runtime {
+    display: none;
+  }
+
+  .home-v4 [data-home-v4-chapter] [data-tatva-lens-plane] {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tatva-lens-runtime {
+    display: none !important;
+  }
+}
+
+:root[data-motion="reduced"] .tatva-lens-runtime {
+  display: none !important;
+}

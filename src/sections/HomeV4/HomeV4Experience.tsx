@@ -24,6 +24,7 @@ import { HomeV4ProcessTempo } from "./HomeV4ProcessTempo";
 import { HomeV4RecognitionTempo } from "./HomeV4RecognitionTempo";
 import { HomeV4ScrollCamera } from "./HomeV4ScrollCamera";
 import { HomeV4TatvaTempo } from "./HomeV4TatvaTempo";
+import { HomeV4TatvaLens } from "./HomeV4TatvaLens";
 import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
 
 export function HomeV4Experience() {
@@ -39,6 +40,7 @@ export function HomeV4Experience() {
       <HomeV4ScrollCamera />
       <HomeV4HeaderDirector />
       <HomeV4RecognitionTempo />
+      <HomeV4TatvaLens />
       <HomeV4ProcessTempo />
       <HomeV4TatvaTempo />
       <V4OpeningScene />
