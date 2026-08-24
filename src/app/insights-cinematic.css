@@ -1463,11 +1463,22 @@
 }
 
 .insights-notes-scene__cadence {
+  position: relative;
   display: grid;
   max-width: 42rem;
   margin-top: clamp(1.5rem, 3svh, 2.25rem);
   border-block: 1px solid rgb(244 239 230 / 18%);
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.insights-notes-scene__cadence::after {
+  position: absolute;
+  height: 1px;
+  background: #d7a84a;
+  content: "";
+  inset: auto 0 -1px;
+  transform: scaleX(var(--scene-resolution));
+  transform-origin: left;
 }
 
 .insights-notes-scene__cadence li {
@@ -1477,6 +1488,18 @@
   border-right: 1px solid rgb(244 239 230 / 14%);
   gap: 0.12rem;
   transform: translate3d(0, var(--scene-entry-shift), 0);
+}
+
+.insights-notes-scene__cadence li:nth-child(1) {
+  opacity: var(--scene-activation);
+}
+
+.insights-notes-scene__cadence li:nth-child(2) {
+  opacity: var(--scene-discovery);
+}
+
+.insights-notes-scene__cadence li:nth-child(3) {
+  opacity: var(--scene-resolution);
 }
 
 .insights-notes-scene__cadence li:last-child {

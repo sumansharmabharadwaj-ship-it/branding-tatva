@@ -216,6 +216,30 @@ contains one question, one practical lens, and one focused move. This closes the
 journey with control and expectation clarity instead of a generic newsletter
 request.
 
+The three promises now resolve through the shared scene phases rather than a
+separate timeline: Question uses activation, Lens uses discovery, and Move uses
+resolution. Back-scroll reverses the sequence automatically, while the final
+gold rule reaches full width only when the scene settles.
+
+~~~css
+.insights-notes-scene__cadence li:nth-child(1) {
+  opacity: var(--scene-activation);
+}
+
+.insights-notes-scene__cadence li:nth-child(2) {
+  opacity: var(--scene-discovery);
+}
+
+.insights-notes-scene__cadence li:nth-child(3) {
+  opacity: var(--scene-resolution);
+}
+~~~
+
+The form names the destination, uses “Send the next note” as its action, states
+the confirmation and exit expectation, and turns success into a warm completed
+state. Submission behavior, validation, honeypot protection, and API contract
+remain unchanged.
+
 ### Scroll-linked CSS
 
 JavaScript calculates values that CSS can composite without layout changes:
