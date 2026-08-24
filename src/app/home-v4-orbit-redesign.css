@@ -39,9 +39,9 @@
 .brand-orbit__prompt h3 { margin:0; font:400 clamp(2.6rem,5.2vw,5.4rem)/.91 var(--font-display), Georgia, serif; letter-spacing:-.055em; }
 .brand-orbit__prompt button,.brand-orbit__result-action button { border:0; border-bottom:1px solid currentColor; margin-top:1rem; padding:.2rem 0; background:transparent; color:inherit; font-size:.73rem; text-transform:uppercase; letter-spacing:.16em; }
 
-.brand-orbit__sun { position:absolute; z-index:1; left:50%; top:54%; width:clamp(14rem,24vw,23rem); aspect-ratio:1; transform:translate(-50%,-50%); border-radius:50%; overflow:hidden; filter:drop-shadow(0 25px 54px rgba(110,71,29,.22)); }
+.brand-orbit__sun { position:absolute; z-index:1; left:50%; top:54%; width:clamp(14rem,24vw,23rem); aspect-ratio:1; translate:-50% -50%; border-radius:50%; overflow:hidden; filter:drop-shadow(0 25px 54px rgba(110,71,29,.22)); }
 .brand-orbit__sun img { object-fit:cover; }
-.brand-orbit__centre-copy { position:absolute; z-index:3; left:50%; top:54%; width:clamp(10rem,16vw,15rem); transform:translate(-50%,-50%); text-align:center; color:#f5ecd8; text-shadow:0 2px 18px rgba(31,29,20,.58); pointer-events:none; }
+.brand-orbit__centre-copy { position:absolute; z-index:3; left:50%; top:54%; width:clamp(10rem,16vw,15rem); translate:-50% -50%; text-align:center; color:#fff9ea; text-shadow:0 2px 18px rgba(31,29,20,.72); pointer-events:none; }
 .brand-orbit__centre-copy span { display:block; margin-bottom:.65rem; font-size:.6rem; text-transform:uppercase; letter-spacing:.18em; }
 .brand-orbit__centre-copy strong { display:block; font:400 clamp(1.05rem,1.7vw,1.55rem)/1.1 var(--font-display), Georgia, serif; }
 
@@ -57,7 +57,7 @@
 .brand-orbit__result { min-height:0; display:grid; grid-template-columns:minmax(0,1fr) minmax(14rem,23rem) minmax(0,.9fr); align-items:center; gap:clamp(2rem,5vw,6rem); }
 .brand-orbit__result-copy h3 { margin:0 0 1rem; font:400 clamp(3rem,5vw,5.5rem)/.93 var(--font-display), Georgia, serif; letter-spacing:-.05em; }
 .brand-orbit__result-copy span { display:block; max-width:34rem; font-size:clamp(.95rem,1.2vw,1.15rem); line-height:1.65; }
-.brand-orbit__sun--result { position:relative; inset:auto; width:100%; transform:none; }
+.brand-orbit__sun--result { position:relative; inset:auto; width:100%; translate:none; }
 .brand-orbit__result-action { align-self:center; display:flex; flex-direction:column; align-items:flex-start; }
 .brand-orbit__result-action>span { font-size:.66rem; text-transform:uppercase; letter-spacing:.2em; }
 .brand-orbit__result-action>strong { margin:.65rem 0 2rem; font:400 clamp(1.7rem,2.5vw,2.6rem)/1.04 var(--font-display), Georgia, serif; }
@@ -129,7 +129,7 @@ html .project-journey__prevents { border-top:1px solid rgba(244,237,225,.2) !imp
   .brand-orbit__question { padding:2rem 0 1rem; display:flex; flex-direction:column; }
   .brand-orbit__prompt { position:relative; inset:auto; width:100%; }
   .brand-orbit__prompt h3 { font-size:clamp(2.6rem,13vw,4.3rem); }
-  .brand-orbit__sun { position:relative; left:auto; top:auto; transform:none; width:min(55vw,17rem); margin:1.5rem auto; }
+  .brand-orbit__sun { position:relative; left:auto; top:auto; translate:none; width:min(55vw,17rem); margin:1.5rem auto; }
   .brand-orbit__centre-copy { top:52%; width:9rem; }
   .brand-orbit__choices { position:relative; inset:auto; display:grid; gap:0; }
   .brand-orbit__choices button,.brand-orbit__choices button:nth-child(n) { position:relative; inset:auto; transform:none; width:100%; }
@@ -166,4 +166,162 @@ html .project-journey__prevents { border-top:1px solid rgba(244,237,225,.2) !imp
 
 @media (prefers-reduced-motion: reduce) {
   .brand-orbit__landscape { transform:none; transition:none; }
+}
+
+/* One natural wheel gesture should leave a complete scene behind. Older
+   scroll-runway rules deliberately made these chapters 2.15–3.25 screens
+   tall; this final owner removes that dead travel while retaining direct
+   hover, focus and click control inside every visualizer. */
+html body .home-v4 section#recognition,
+html body .home-v4 section#process,
+html body .home-v4 #evidence,
+html body .home-v4 #studio,
+html body .home-v4 section#insights-preview,
+html body .home-v4 #recognition .home-v4-recognition__shell,
+html body .home-v4 #process .project-journey,
+html body .home-v4 #process .project-journey__shell,
+html body .home-v4 #evidence .evidence-cinematic,
+html body .home-v4 #evidence .evidence-cinematic__shell,
+html body .home-v4 #studio .studio-cinematic,
+html body .home-v4 #studio .studio-cinematic__grid,
+html body .home-v4 #insights-preview .home-insights,
+html body .home-v4 #insights-preview .home-insights__shell {
+  height: 100svh !important;
+  min-height: 100svh !important;
+}
+
+html body .home-v4 section#recognition .home-v4-recognition__stage {
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 0 !important;
+}
+
+html body .home-v4 section#recognition .home-v4-recognition__copy {
+  display: none !important;
+}
+
+html body .home-v4 section#recognition .home-v4-recognition__diagram {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html body .home-v4 section#recognition .home-v4-recognition__signal {
+  left: 46% !important;
+  top: 5% !important;
+  width: min(45rem, 52%) !important;
+}
+
+html body .home-v4 section#recognition .home-v4-recognition__signal > strong {
+  color: #203228 !important;
+  font-size: clamp(4.4rem, 8vw, 9rem) !important;
+  text-shadow: 0 1px 20px rgba(248, 243, 232, .58);
+}
+
+html body .home-v4 section#recognition .home-v4-recognition__signal > p {
+  color: rgba(32, 50, 40, .72) !important;
+}
+
+html body .home-v4 section#recognition .home-v4-recognition__choices {
+  position: absolute !important;
+  inset: auto 0 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(1rem, 2vw, 2rem) !important;
+}
+
+html body .home-v4 section#recognition .home-v4-recognition__choices button {
+  position: relative !important;
+  inset: auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  transform: none !important;
+  padding: 1rem 0 .2rem !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(32, 50, 40, .3) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  color: rgba(32, 50, 40, .52) !important;
+}
+
+html body .home-v4 section#recognition .home-v4-recognition__choices button.is-active {
+  color: #203228 !important;
+}
+
+html body .home-v4 section#recognition .home-v4-recognition__choices button > i {
+  top: -1px !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: 0 !important;
+  width: 0 !important;
+  height: 2px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--recognition-accent) !important;
+}
+
+html body .home-v4 section#recognition .home-v4-recognition__choices button.is-active > i {
+  width: 100% !important;
+}
+
+html body .home-v4 #process .project-journey__shell {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+html body .home-v4 #process .project-journey__board {
+  flex: 1 1 auto;
+  min-height: 0 !important;
+}
+
+html body .home-v4 #process .project-journey__focus-card,
+html body .home-v4 #process .project-journey__map-card {
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+@media (max-width: 820px) {
+  html body .home-v4 section#recognition,
+  html body .home-v4 section#process,
+  html body .home-v4 #evidence,
+  html body .home-v4 #studio,
+  html body .home-v4 section#insights-preview,
+  html body .home-v4 #recognition .home-v4-recognition__shell,
+  html body .home-v4 #process .project-journey,
+  html body .home-v4 #process .project-journey__shell,
+  html body .home-v4 #evidence .evidence-cinematic,
+  html body .home-v4 #evidence .evidence-cinematic__shell,
+  html body .home-v4 #studio .studio-cinematic,
+  html body .home-v4 #studio .studio-cinematic__grid,
+  html body .home-v4 #insights-preview .home-insights,
+  html body .home-v4 #insights-preview .home-insights__shell {
+    height: auto !important;
+    min-height: 100svh !important;
+  }
+
+  html body .home-v4 section#recognition .home-v4-recognition__diagram {
+    min-height: 36rem !important;
+  }
+
+  html body .home-v4 section#recognition .home-v4-recognition__signal {
+    left: 0 !important;
+    width: 100% !important;
+  }
+
+  html body .home-v4 section#recognition .home-v4-recognition__signal > strong {
+    font-size: clamp(3.7rem, 18vw, 6.5rem) !important;
+  }
+
+  html body .home-v4 section#recognition .home-v4-recognition__choices {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
 }
