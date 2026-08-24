@@ -250,7 +250,7 @@ export default function InsightsPage() {
                   <Reveal key={topic.slug} delay={index * 0.05} className="h-full">
                     <Link
                       href={`/insights/topic/${topic.slug}`}
-                      className="group flex h-full min-h-72 flex-col rounded-[1.5rem] border border-ivory/10 bg-ivory/[0.06] p-6 backdrop-blur-xl transition duration-500 hover:-translate-y-1 hover:bg-ivory/[0.1]"
+                      className="group flex h-full min-h-72 min-w-0 flex-col rounded-[1.5rem] border border-ivory/10 bg-ivory/[0.06] p-6 backdrop-blur-xl transition duration-500 hover:-translate-y-1 hover:bg-ivory/[0.1]"
                     >
                       <div className="flex items-center justify-between">
                         <ElementGlyph
@@ -269,7 +269,7 @@ export default function InsightsPage() {
                       >
                         {topic.eyebrow}
                       </p>
-                      <h3 className="mt-3 font-display text-3xl font-normal">
+                      <h3 className="mt-3 min-w-0 font-display text-[clamp(1.55rem,2vw,1.875rem)] font-normal leading-[1.02] [overflow-wrap:anywhere]">
                         {topic.name}
                       </h3>
                       <p className="mt-4 flex-1 text-sm leading-6 text-ivory/65">

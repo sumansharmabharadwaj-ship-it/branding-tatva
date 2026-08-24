@@ -136,8 +136,16 @@ export function PinnedBrandBuild() {
   }, [animate, lenis]);
 
   return (
-    <div ref={wrapRef} className="relative lg:h-[205svh]" style={{ backgroundColor: MOOD.charcoal }}>
-      <div className="relative overflow-hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center">
+    <div
+      ref={wrapRef}
+      data-authority-story="true"
+      className="relative lg:h-[205svh]"
+      style={{ backgroundColor: MOOD.charcoal }}
+    >
+      <div
+        data-authority-frame="true"
+        className="relative overflow-hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center"
+      >
         {/* Original procedural Authority film: a restrained signal rises
             through five natural material layers and widens only after
             the full system is present. The pinned rows remain the primary
@@ -159,9 +167,15 @@ export function PinnedBrandBuild() {
           />
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:px-10 sm:py-20 lg:px-20 lg:py-0">
-          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20">
-            <div>
+        <div
+          data-authority-shell="true"
+          className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:px-10 sm:py-20 lg:px-20 lg:py-0"
+        >
+          <div
+            data-authority-grid="true"
+            className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20"
+          >
+            <div data-authority-copy="true">
               <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Authority</p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory lg:text-display-md">
                 Marketing amplifies whatever is already there.
@@ -180,11 +194,11 @@ export function PinnedBrandBuild() {
               </Link>
             </div>
             <MobileAuthorityDeck layers={LAYERS} wavePath={WAVE_PATH} />
-            <div className="relative hidden lg:block">
+            <div data-authority-diagram="true" className="relative hidden lg:block">
               {/* The output signal — a wave whose oscillation widens as
                   the layers beneath it assemble. Decorative twin of the
                   rows below, which carry the full text alternative. */}
-              <div aria-hidden="true" className="mb-6 border-b border-ivory/10 pb-4">
+              <div data-authority-wave="true" aria-hidden="true" className="mb-6 border-b border-ivory/10 pb-4">
                 <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/50">
                   What marketing has to work with
                 </p>
