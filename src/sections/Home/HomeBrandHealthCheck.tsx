@@ -11,9 +11,10 @@ import {
 import { track } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { useMemo, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 
 type Diagnosis = "recognition" | "coherence" | "demand";
+type ResultDiagnosis = Diagnosis | "mixed";
 
 type Choice = {
   label: string;
@@ -94,12 +95,12 @@ const QUESTIONS: readonly Question[] = [
 ] as const;
 
 const RESULTS: Record<
-  Diagnosis,
+  ResultDiagnosis,
   {
     title: string;
     detail: string;
     signal: string;
-    situation: ServicesSituationId;
+    situation?: ServicesSituationId;
     action: string;
   }
 > = {
@@ -127,6 +128,13 @@ const RESULTS: Record<
     situation: "ongoing",
     action: "Explore the ongoing path",
   },
+  mixed: {
+    title: "Your answers point to a connected brand problem.",
+    detail:
+      "The friction is moving across positioning, expression and proof. The next decision needs to connect those parts before any one of them is pushed harder.",
+    signal: "One joined-up diagnosis",
+    action: "See the connected system",
+  },
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -142,17 +150,21 @@ function publishResult(situation: ServicesSituationId) {
   } catch {}
 }
 
-function resolveDiagnosis(answers: Diagnosis[]) {
+function resolveDiagnosis(answers: Diagnosis[]): ResultDiagnosis {
   const score: Record<Diagnosis, number> = { recognition: 0, coherence: 0, demand: 0 };
   answers.forEach((answer) => {
     score[answer] += 1;
   });
-  return (Object.entries(score) as Array<[Diagnosis, number]>).sort((a, b) => b[1] - a[1])[0][0];
+  const entries = Object.entries(score) as Array<[Diagnosis, number]>;
+  const highestScore = Math.max(...entries.map(([, value]) => value));
+  const winners = entries.filter(([, value]) => value === highestScore);
+  return winners.length === 1 ? winners[0][0] : "mixed";
 }
 
 export function HomeBrandHealthCheck() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
+  const landscapeVideoRef = useRef<HTMLVideoElement>(null);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Diagnosis[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
@@ -161,6 +173,17 @@ export function HomeBrandHealthCheck() {
   const active = QUESTIONS[Math.min(step, QUESTIONS.length - 1)];
   const diagnosis = useMemo(() => resolveDiagnosis(answers), [answers]);
   const result = RESULTS[diagnosis];
+
+  useEffect(() => {
+    const video = landscapeVideoRef.current;
+    if (!video) return;
+    if (reducedMotion) {
+      video.pause();
+      video.currentTime = 0;
+      return;
+    }
+    void video.play().catch(() => {});
+  }, [reducedMotion]);
 
   function moveScene(event: PointerEvent<HTMLElement>) {
     if (reducedMotion || !sectionRef.current) return;
@@ -187,10 +210,10 @@ export function HomeBrandHealthCheck() {
         if (nextAnswers.length === QUESTIONS.length) {
           const nextDiagnosis = resolveDiagnosis(nextAnswers);
           const nextResult = RESULTS[nextDiagnosis];
-          publishResult(nextResult.situation);
+          if (nextResult.situation) publishResult(nextResult.situation);
           track("health_check_completed", {
             source: "home",
-            result: nextResult.situation,
+            result: nextDiagnosis,
             diagnosis: nextDiagnosis,
           });
         }
@@ -228,11 +251,12 @@ export function HomeBrandHealthCheck() {
     >
       <div className="brand-orbit__landscape" aria-hidden="true">
         <video
+          ref={landscapeVideoRef}
           muted
-          autoPlay
+          autoPlay={!reducedMotion}
           loop
           playsInline
-          preload="metadata"
+          preload={reducedMotion ? "none" : "metadata"}
           poster="/images/pexels-valley-first-light-poster.jpg"
           data-home-playback-rate="0.92"
         >
