@@ -169,23 +169,13 @@ export function HomeV4Experience() {
         className="home-v4-chapter home-v4-chapter--invitation invitation-cinematic"
         aria-label="Begin a conversation with Branding Tatva"
       >
-        {/* Measured as a held scene and reverted. Its content runs to 1.17
-            viewports, so the frame is taller than the screen and cannot stay
-            at the top through the whole runway: it held at three of five
-            sampled positions rather than five. A frame can only hold cleanly
-            when its content fits inside one viewport, which is the rule this
-            chapter fails and Tatva passes. Holding it needs its own layout to
-            come under a screen first. */}
         <VideoBreak
           src="/videos/higgsfield-silver-tide.mp4"
           poster="/images/higgsfield-silver-tide-poster.jpg"
-          quote="Some things only become visible once everything else goes quiet."
-          height="auto"
+          height="100svh"
           imagePosition="50% 18%"
-          quoteVariant="statement"
           cameraPush
-          wordFade
-          overlayGradient="linear-gradient(180deg, rgba(16,20,24,0.36) 0%, rgba(16,20,24,0.12) 25%, rgba(16,20,24,0.28) 55%, rgba(17,20,23,0.96) 100%)"
+          overlayGradient="linear-gradient(110deg, rgba(9,16,17,0.88) 0%, rgba(9,16,17,0.58) 43%, rgba(13,20,21,0.22) 70%, rgba(12,18,19,0.48) 100%)"
         >
           <DustMotes />
           <FinalInvitation />

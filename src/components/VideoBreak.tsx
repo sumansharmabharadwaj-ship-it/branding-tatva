@@ -224,6 +224,12 @@ export function VideoBreak({
           />
         </div>
       )}
+
+      {!quote && children && (
+        <div className="video-break__content relative flex min-h-0 flex-1 items-stretch">
+          {children}
+        </div>
+      )}
     </div>
   );
 }
