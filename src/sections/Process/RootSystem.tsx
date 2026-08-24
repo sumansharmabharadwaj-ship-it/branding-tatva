@@ -210,8 +210,8 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
             <h2 id="project-journey-title">How a project moves</h2>
           </div>
           <p className="project-journey__intro">
-            Six decisions turn an unclear business into one recognisable system. Scroll to move through the
-            system; hover or focus any stage to inspect it without losing your place.
+            Six decisions turn an unclear business into one recognisable system, with each committed choice
+            feeding the next.
           </p>
         </header>
 
@@ -287,7 +287,6 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                 <p>Decision architecture</p>
                 <h3>One choice feeds the next.</h3>
               </div>
-              <span>Scroll the system · hover to inspect</span>
             </div>
             <div className="project-journey__map" aria-label="Interactive project flow diagram">
               <svg viewBox="0 0 700 340" role="img" aria-label="Question and Decode lead to Architect; Signal and Influence then combine into Compound">

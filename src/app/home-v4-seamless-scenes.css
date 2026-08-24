@@ -9,6 +9,14 @@
   display: none !important;
 }
 
+/* Scroll is the interaction language, so the interface never explains the
+   gesture with a visible instruction pill. State markers stay inside their
+   diagrams and tabs where they carry actual meaning. */
+.home-v4 .bt-scroll-cue,
+.home-v4 .home-v4-opening__scroll {
+  display: none !important;
+}
+
 /* A 13 inch laptop in a browser is often only 480 to 700 CSS pixels tall.
    Keep the authored wide composition at that height, but compact its secondary
    copy and controls. The scroll runway lives on the chapter while one stable

@@ -200,10 +200,6 @@ export function V4OpeningScene() {
           <i aria-hidden="true" />
         </motion.aside>
 
-        <a href="#recognition" className="home-v4-opening__scroll" aria-label="Continue to visitor recognition">
-          <span>Find your starting point</span>
-          <i aria-hidden="true" />
-        </a>
       </div>
     </section>
   );
@@ -273,9 +269,6 @@ export function V4RecognitionScene() {
               Most inconsistency begins <em>before the design file.</em>
             </h2>
           </div>
-          <span>
-            Scroll to move through the three conditions. Hover or focus one to inspect it.
-          </span>
         </header>
 
         <div className="home-v4-recognition__stage">
@@ -303,11 +296,6 @@ export function V4RecognitionScene() {
               See the foundation that stops the drift <span aria-hidden="true">↘</span>
             </Link>
 
-            <p className="bt-scroll-cue bt-scroll-cue--light">
-              <span aria-hidden="true">Scroll</span>
-              The diagram follows your pace. Hover a condition to inspect it.
-              <strong>{String(activeIndex + 1).padStart(2, "0")} / 03</strong>
-            </p>
           </div>
 
           <div className="home-v4-recognition__diagram" aria-label="Three brand conditions converging on one strategic decision">
@@ -460,11 +448,6 @@ export function V4HiddenCostScene() {
             <h2 id="home-v4-cost-title">
               Marketing becomes expensive when the brand underneath it <em>keeps changing shape.</em>
             </h2>
-            <p className="bt-scroll-cue bt-scroll-cue--dark">
-              <span aria-hidden="true">Scroll</span>
-              Move forward to follow the cost. Move back to retrace it.
-              <strong>{active.number} / 04</strong>
-            </p>
           </header>
 
           <div className="home-v4-cost__stage">

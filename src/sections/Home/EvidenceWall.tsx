@@ -196,12 +196,6 @@ export function EvidenceWall() {
               Three selected engagements. Each file traces a signal, the strategic
               decision and the evidence that can be inspected.
             </p>
-            <span>Scroll to follow the archive. Hover or focus any file to inspect it.</span>
-            <p className="bt-scroll-cue bt-scroll-cue--dark">
-              <span aria-hidden="true">Scroll</span>
-              The evidence trail follows your pace.
-              <strong>{String(activeIndex + 1).padStart(2, "0")} / {String(SELECTED_PROJECTS.length).padStart(2, "0")}</strong>
-            </p>
           </div>
         </header>
 

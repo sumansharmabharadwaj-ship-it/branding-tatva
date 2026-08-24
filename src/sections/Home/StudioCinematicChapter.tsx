@@ -170,12 +170,6 @@ export function StudioCinematicChapter() {
             Psychology finds the tension. Literature gives it language. Strategy makes the answer usable after the room goes quiet.
           </p>
 
-          <p className="bt-scroll-cue bt-scroll-cue--dark studio-cinematic__playback">
-            <span aria-hidden="true">Scroll</span>
-            Move from psychology to literature to an applied system. Hover to inspect.
-            <strong>{String(activeIndex + 1).padStart(2, "0")} / 03</strong>
-          </p>
-
           <div
             className="studio-cinematic__tabs"
             role="tablist"

@@ -174,13 +174,6 @@ export function BrandFoundationScene() {
           <FinalCopy staticAll />
         </div>
 
-        <div className="absolute bottom-5 left-6 z-40 hidden md:block lg:left-16">
-          <p className="bt-scroll-cue bt-scroll-cue--dark">
-            <span aria-hidden="true">Scroll</span>
-            Excavate each layer. Hover or focus to inspect.
-            <strong>{String(visualizer.activeIndex + 1).padStart(2, "0")} / 04</strong>
-          </p>
-        </div>
       </div>
     </section>
   );

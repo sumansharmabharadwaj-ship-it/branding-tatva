@@ -127,12 +127,6 @@ export function HomeInsightsPreview() {
               One featured guide opens the method. Two field notes carry it into
               homepage hierarchy and buying evidence.
             </p>
-            <span>Scroll to change the reading path. Hover or focus a note to inspect it.</span>
-            <p className="bt-scroll-cue bt-scroll-cue--light">
-              <span aria-hidden="true">Scroll</span>
-              The argument follows your pace.
-              <strong>{String(activeIndex + 1).padStart(2, "0")} / 03</strong>
-            </p>
           </div>
         </header>
 
