@@ -5,11 +5,6 @@
   color: #2b2924;
 }
 
-@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
-  .section { height: 146svh; min-height: 146svh; }
-  .shell { position: sticky; top: 0; height: 100svh; min-height: 100svh; }
-}
-
 .section::before {
   content: "";
   position: absolute;
@@ -29,6 +24,11 @@
   margin-inline: auto;
   padding: clamp(5.8rem, 9svh, 7rem) 0 clamp(1.5rem, 3svh, 2.5rem);
   grid-template-rows: auto minmax(20rem, 1fr) auto;
+}
+
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .section { height: 146svh; min-height: 146svh; }
+  .shell { position: sticky; top: 0; height: 100svh; min-height: 100svh; }
 }
 
 @media (prefers-reduced-motion: reduce) {
