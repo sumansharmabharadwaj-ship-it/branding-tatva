@@ -88,3 +88,64 @@ A separate crop was not needed because the normalized `2696 × 926` comparison k
 ## Final result
 
 passed
+
+---
+
+# Homepage scene-rhythm QA · 2026-08-24
+
+## Comparison target
+
+- Source visual truth: `/workspace/scratch/55f96cacf4b7/upload/08a75655-58aa-4a35-9d03-637489c417c4(1).png` (`1514 × 1039`), the approved golden flower-on-water diagnostic.
+- Pre-change live-flow evidence: `/workspace/scratch/bt-flow-01-06-contact.jpg`; ordinary wheel positions exposed adjacent chapters in the same viewport.
+- Browser-rendered implementation: `/workspace/scratch/bt-scene-rhythm-diagnostic-final.jpg` (`1348 × 926`).
+- Normalized full-view comparison: `/workspace/scratch/bt-scene-rhythm-comparison-final.jpg` (`2768 × 926`).
+- Opening preservation comparison: `/workspace/scratch/bt-scene-rhythm-opening-comparison.jpg` (`2768 × 926`).
+- CSS viewport: `1348 × 936`; device pixel ratio: `1`.
+- Density normalization: the source visual was proportionally resized and center-cropped to `1348 × 926`; the browser capture remained at its native page-image size before the two images were placed side by side.
+- State: desktop, full motion, diagnostic question `01 / 03`; opening captured before and after at the same route and viewport.
+
+## Findings
+
+No actionable P0, P1, or P2 findings remain.
+
+The earlier layout problem was not chapter height: all thirteen authored chapters measure exactly one `936px` viewport. The failure was the resting position between chapters, which exposed two complete compositions at once. Visitor-led scrolling now resolves to the nearest chapter only after input settles. The behavior does not prevent scrolling, show an instruction, autoplay the page, or alter the first scene.
+
+## Required fidelity surfaces
+
+- Fonts and typography: unchanged. The opening and diagnostic preserve the existing display serif, uppercase utility type, line breaks, hierarchy, and readable answer labels.
+- Spacing and layout rhythm: passed. A normal `1000px` desktop wheel gesture settled to Recognition at `936px`, Diagnostic at `1872px`, and Cost at `2808px`; the browser no longer rested at the former in-between positions.
+- Colors and visual tokens: unchanged. The arrival treatment only lifts exposure and saturation from `0.93/0.90` to the authored final values during the `620ms` settle; no new palette, surface, or dark panel was added.
+- Image quality and asset fidelity: passed. The approved flower, water, reeds, floating petals, and golden light remain the exact diagnostic scene. The live water video was playing at the aligned diagnostic frame (`readyState: 4`, `paused: false`).
+- Copy and content: unchanged. The opening copy, diagnostic question, three choices, explicit `Choose this` affordances, links, and all later chapter content remain intact.
+
+## Interaction and browser verification
+
+- Natural wheel settle: passed at three consecutive chapter boundaries.
+- Input priority: passed; the director does not prevent wheel, touch, pointer, or keyboard input and cancels its own settle when new input arrives.
+- Quiz interaction: passed; choosing answer `01` advanced from question `01 / 03` to `02 / 03` while remaining aligned at `1872px`.
+- Footer release: passed; scrolling beyond Invitation reached the document maximum (`11986px`) with the footer visible instead of snapping back.
+- Reduced motion: passed by code path and site preference; the scene director unmounts when Branding Tatva's Reduced setting is active and the CSS arrival animation is disabled under `prefers-reduced-motion`.
+- Browser console: no application errors. Logged errors were limited to `chrome-extension://` browser metadata messages and were excluded from site QA.
+- Production build: passed; all `78` routes generated.
+- Live deployment: `28e46545d9478adf55d17d0a935eb57984b0af6b`, READY on the `august-8-isolated` branch alias.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | Wheel movement could stop between two one-screen chapters, making the homepage look crowded even though each chapter fit. | Added a visitor-led idle settle to the nearest chapter; live measurements landed at `936px`, `1872px`, and `2808px` across consecutive gestures. |
+| 2 | P2 | A hard jump would have felt mechanical and would not match the cinematic reference direction. | Used the existing smooth-scroll engine with a `620ms` quartic ease and a restrained exposure/saturation arrival on the incoming scene. |
+| 3 | P1 | A scene snap could have trapped the invitation or interfered with the quiz. | Explicitly released the footer after the last scene and browser-tested a quiz selection during the new rhythm. Both passed. |
+| 4 | — | Static fidelity and opening preservation rechecked after the behavioral change. | The normalized flower-water comparison and opening before/after board show no new layout or content drift. |
+
+## Focused-region evidence
+
+A separate crop was not needed. The normalized full-view diagnostic board keeps the headline, progress, moving landscape, instruction line, all three answer columns, and answer affordances legible. Dynamic behavior was measured directly in the cloud browser because a still crop cannot prove scroll settling, video playback, input cancellation, or footer release.
+
+## Follow-up polish
+
+- P3: hash-entry alignment can finish a few pixels from the chapter top while the global hash-recovery routine hydrates; normal homepage entry and subsequent chapter gestures resolved exactly.
+
+## Final result
+
+passed
