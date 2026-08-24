@@ -22,6 +22,7 @@ import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
 import { HomeV4ProcessTempo } from "./HomeV4ProcessTempo";
 import { HomeV4RecognitionTempo } from "./HomeV4RecognitionTempo";
+import { HomeV4ScrollCamera } from "./HomeV4ScrollCamera";
 import { HomeV4TatvaTempo } from "./HomeV4TatvaTempo";
 import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
 
@@ -35,6 +36,7 @@ export function HomeV4Experience() {
     <div className="home-v4" data-home-v4>
       <HomeV4PreludeBridge />
       <HomeV4MediaDirector />
+      <HomeV4ScrollCamera />
       <HomeV4HeaderDirector />
       <HomeV4RecognitionTempo />
       <HomeV4ProcessTempo />
