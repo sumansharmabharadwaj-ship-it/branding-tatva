@@ -3,36 +3,67 @@
 import Link from "next/link";
 import { useRef, type KeyboardEvent } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
-import { ArrowRight, FileText, MessageSquareText, UserRound, UsersRound } from "lucide-react";
+import {
+  ArrowRight,
+  CircleHelp,
+  FileText,
+  Layers3,
+  MessageSquareQuote,
+  ScanSearch,
+} from "lucide-react";
 import { Container } from "@/components/Container";
 import { useAmbientSequence } from "@/hooks/useAmbientSequence";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import styles from "./WorkingDirectly.module.css";
 
-const MOMENTS = [
+const STAGES = [
   {
-    label: "Hear",
-    founder: "The founder hears the business context, the hesitation, and the language used in the room.",
-    layered: "A discovery role captures context for the team members who carry the next stage.",
-    record: "Original questions and tensions",
+    label: "Question",
+    cue: "Name the real problem",
+    title: "Start with the decision beneath the brief.",
+    summary:
+      "Business context, audience signals, and the language already in use are brought into one clear starting point.",
+    context: "The commercial goal, the audience tension, and the constraint shaping the work.",
+    work: "Listen for the category or perception decision the brief is asking the brand to make.",
+    handoff: "A written problem statement and the questions the strategy must answer.",
+    record: "Problem statement and open questions",
+    icon: CircleHelp,
   },
   {
-    label: "Decide",
-    founder: "The same person who heard the context makes the positioning and messaging recommendation.",
-    layered: "Specialist roles develop the recommendation from a shared internal brief.",
-    record: "Decision, rationale, alternatives",
+    label: "Decision",
+    cue: "Choose the strategic path",
+    title: "Resolve the position before shaping expression.",
+    summary:
+      "The category, audience priority, and strongest strategic path are considered as one connected choice.",
+    context: "The agreed problem, available evidence, and the viable strategic paths.",
+    work: "Compare the options, choose the position, and state why that direction deserves to lead.",
+    handoff: "A strategic decision with rationale, priorities, and clear boundaries.",
+    record: "Decision, rationale, and boundaries",
+    icon: ScanSearch,
   },
   {
-    label: "Explain",
-    founder: "Feedback comes directly from the person responsible for the strategic choice.",
-    layered: "Client-service roles translate specialist thinking into one joined response.",
-    record: "Reasoning a client can reuse",
+    label: "Language",
+    cue: "Give the decision words",
+    title: "Turn the strategic choice into language people can carry.",
+    summary:
+      "Positioning becomes a message hierarchy, narrative direction, and verbal character that can be recognised and repeated.",
+    context: "The chosen position and the audience frame it needs to enter.",
+    work: "Translate the strategic decision into messaging, narrative, tone, and repeatable verbal cues.",
+    handoff: "A usable language system for campaigns, content, and client conversations.",
+    record: "Message hierarchy and verbal rules",
+    icon: MessageSquareQuote,
   },
   {
-    label: "Carry",
-    founder: "One strategic thread stays intact from diagnosis through the final system and handover.",
-    layered: "A shared delivery process keeps the thread aligned across roles and handoffs.",
-    record: "Implementation boundaries and next actions",
+    label: "System",
+    cue: "Make the idea usable",
+    title: "Carry one strategic signal into everyday execution.",
+    summary:
+      "The approved direction becomes practical rules, formats, and playbooks that keep future expression coherent.",
+    context: "The positioning, message hierarchy, and the channels where the brand must perform.",
+    work: "Convert the direction into content formats, implementation rules, and decision tools.",
+    handoff: "A reusable brand system the client can apply, question, and extend.",
+    record: "Playbooks, formats, and next actions",
+    icon: Layers3,
   },
 ] as const;
 
@@ -43,19 +74,20 @@ export function WorkingDirectly() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(rootRef, { amount: 0.34 });
   const sequence = useAmbientSequence({
-    count: MOMENTS.length,
+    count: STAGES.length,
     enabled: inView,
     reducedMotion: prefersReducedMotion,
-    intervalMs: 5000,
+    intervalMs: 5600,
   });
-  const active = MOMENTS[sequence.activeIndex];
+  const active = STAGES[sequence.activeIndex];
+  const ActiveIcon = active.icon;
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % MOMENTS.length;
-    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + MOMENTS.length - 1) % MOMENTS.length;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % STAGES.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + STAGES.length - 1) % STAGES.length;
     else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = MOMENTS.length - 1;
+    else if (event.key === "End") next = STAGES.length - 1;
     else return;
 
     event.preventDefault();
@@ -68,20 +100,21 @@ export function WorkingDirectly() {
       <div ref={rootRef} className={styles.root} data-about-visualizer="founder-led-thread">
         <header className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>Working directly · Founder-led by design</p>
-            <h2 id="direct-title">One mind holds the thread from <em>question to system.</em></h2>
+            <p className={styles.eyebrow}>Working directly · one continuous strategic thread</p>
+            <h2 id="direct-title">From the first question to a system <em>you can use.</em></h2>
           </div>
           <p>
-            A layered team distributes the journey across roles. This practice keeps hearing, deciding, and explaining with the founder.
+            Each decision becomes the starting point for the next, held by the same strategic lead from diagnosis through handover.
           </p>
         </header>
 
-        <div className={styles.timeline} role="tablist" aria-label="Choose an engagement moment">
-          {MOMENTS.map((moment, index) => {
+        <div className={styles.timeline} role="tablist" aria-label="Explore the strategic thread">
+          {STAGES.map((stage, index) => {
             const selected = sequence.activeIndex === index;
+            const Icon = stage.icon;
             return (
               <button
-                key={moment.label}
+                key={stage.label}
                 id={`direct-tab-${index}`}
                 type="button"
                 role="tab"
@@ -96,9 +129,11 @@ export function WorkingDirectly() {
                 onBlur={sequence.release}
                 onKeyDown={(event) => onKeyDown(event, index)}
               >
+                <span><Icon size={15} aria-hidden="true" /></span>
                 <small>0{index + 1}</small>
-                <strong>{moment.label}</strong>
-                <i aria-hidden="true"><span /></i>
+                <strong>{stage.label}</strong>
+                <em>{stage.cue}</em>
+                <i aria-hidden="true"><b /></i>
               </button>
             );
           })}
@@ -106,52 +141,60 @@ export function WorkingDirectly() {
 
         <div className={styles.panelSlot}>
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div
+            <motion.article
               key={active.label}
               id="direct-panel"
               role="tabpanel"
               aria-labelledby={`direct-tab-${sequence.activeIndex}`}
-              className={styles.comparison}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
+              className={styles.stage}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.46, ease: EASE }}
             >
-              <article className={styles.founderCard}>
-                <span><UserRound size={18} aria-hidden="true" /></span>
-                <p>Founder-led practice</p>
-                <h3>{active.label}</h3>
-                <p className={styles.body}>{active.founder}</p>
-              </article>
-
-              <div className={styles.thread} aria-hidden="true">
-                <motion.span
-                  animate={{ scaleX: [0.15, 1, 0.15], opacity: [0.4, 1, 0.4] }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 3.8, repeat: prefersReducedMotion ? 0 : Infinity, ease: "easeInOut" }}
-                />
-                <ArrowRight size={18} />
+              <div className={styles.stageLead}>
+                <div className={styles.stageMark}>
+                  <span><ActiveIcon size={18} aria-hidden="true" /></span>
+                  <small>Stage {String(sequence.activeIndex + 1).padStart(2, "0")} / 04</small>
+                </div>
+                <h3>{active.title}</h3>
+                <p>{active.summary}</p>
               </div>
 
-              <article className={styles.layeredCard}>
-                <span><UsersRound size={18} aria-hidden="true" /></span>
-                <p>Layered delivery structure</p>
-                <h3>{active.label}</h3>
-                <p className={styles.body}>{active.layered}</p>
-              </article>
-            </motion.div>
+              <div className={styles.handoff}>
+                <div>
+                  <small>What enters</small>
+                  <p>{active.context}</p>
+                </div>
+                <ArrowRight className={styles.handoffArrow} size={18} aria-hidden="true" />
+                <div>
+                  <small>Strategic work</small>
+                  <p>{active.work}</p>
+                </div>
+                <ArrowRight className={styles.handoffArrow} size={18} aria-hidden="true" />
+                <div>
+                  <small>What you leave with</small>
+                  <p>{active.handoff}</p>
+                </div>
+              </div>
+            </motion.article>
           </AnimatePresence>
         </div>
 
         <footer className={styles.footer}>
-          <div>
+          <div className={styles.record}>
             <FileText size={15} aria-hidden="true" />
-            <span>What stays documented</span>
+            <span>Documented at this stage</span>
             <strong>{active.record}</strong>
+          </div>
+          <div className={styles.promise} aria-label="The founder-led model in summary">
+            <span>One strategic lead</span>
+            <i aria-hidden="true" />
+            <span>Four connected handoffs</span>
           </div>
           <Link href="/services#study">
             See the engagement system <ArrowRight size={14} aria-hidden="true" />
           </Link>
-          <span aria-hidden="true"><MessageSquareText size={15} /></span>
         </footer>
       </div>
     </Container>
