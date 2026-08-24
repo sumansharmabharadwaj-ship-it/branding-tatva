@@ -1,0 +1,389 @@
+/* Restored interaction systems, regraded for the current light cinematic cut. */
+
+/* Hidden cost: a moving dawn landscape behind a quiet editorial instrument. */
+.home-v4 .home-v4-cost {
+  background: #e8e0d3;
+  color: #20332b;
+}
+
+.home-v4 .home-v4-cost__media video {
+  opacity: 0.72;
+  filter: saturate(0.68) contrast(0.86) brightness(1.16) sepia(0.12);
+}
+
+.home-v4 .home-v4-cost__media > span {
+  background:
+    radial-gradient(circle at 77% 22%, rgba(244, 194, 111, 0.2), transparent 32%),
+    linear-gradient(90deg, rgba(241, 235, 224, 0.95) 0%, rgba(241, 235, 224, 0.84) 48%, rgba(241, 235, 224, 0.6) 78%, rgba(232, 224, 211, 0.82) 100%),
+    linear-gradient(180deg, rgba(244, 239, 229, 0.5) 0%, rgba(244, 239, 229, 0.12) 46%, rgba(224, 213, 195, 0.86) 100%);
+}
+
+.home-v4 .home-v4-cost__shell > header > p,
+.home-v4 .home-v4-cost__diagram-head span:first-child,
+.home-v4 .home-v4-cost__foundation-line span {
+  color: #9b6c39;
+}
+
+.home-v4 .home-v4-cost__shell > header h2,
+.home-v4 .home-v4-cost__stage > article h3,
+.home-v4 .home-v4-cost__diagram-head strong,
+.home-v4 .home-v4-cost__causal li > button > strong,
+.home-v4 .home-v4-cost__foundation-line strong {
+  color: #20332b;
+  text-shadow: none;
+}
+
+.home-v4 .home-v4-cost__shell > header h2 em {
+  color: #ae7438;
+}
+
+.home-v4 .home-v4-cost__stage > article,
+.home-v4 .home-v4-cost__diagram {
+  border-color: rgba(32, 51, 43, 0.13);
+  background: rgba(249, 246, 239, 0.68);
+  box-shadow: 0 24px 70px rgba(55, 45, 33, 0.1);
+  backdrop-filter: blur(18px) saturate(0.9);
+}
+
+.home-v4 .home-v4-cost__diagram {
+  background:
+    radial-gradient(circle at 76% 12%, rgba(199, 148, 80, 0.12), transparent 36%),
+    rgba(249, 246, 239, 0.72);
+}
+
+.home-v4 .home-v4-cost__stage > article > span,
+.home-v4 .home-v4-cost__stage > article > p,
+.home-v4 .home-v4-cost__diagram-head,
+.home-v4 .home-v4-cost__causal li > button > span,
+.home-v4 .home-v4-cost__causal li > button > p,
+.home-v4 .home-v4-cost__research > p,
+.home-v4 .home-v4-cost__footer > p {
+  color: rgba(32, 51, 43, 0.64);
+}
+
+.home-v4 .home-v4-cost__stage dl > div,
+.home-v4 .home-v4-cost__causal li {
+  border-color: rgba(32, 51, 43, 0.11);
+  background: rgba(255, 253, 248, 0.48);
+}
+
+.home-v4 .home-v4-cost__stage dt {
+  color: rgba(32, 51, 43, 0.5);
+}
+
+.home-v4 .home-v4-cost__causal li.is-reached {
+  border-color: rgba(96, 132, 125, 0.35);
+}
+
+.home-v4 .home-v4-cost__causal li.is-active {
+  border-color: rgba(190, 129, 67, 0.66);
+  background:
+    radial-gradient(circle at 82% 10%, rgba(214, 158, 91, 0.18), transparent 44%),
+    rgba(255, 251, 242, 0.78);
+  box-shadow: 0 18px 48px rgba(108, 74, 39, 0.12);
+}
+
+.home-v4 .home-v4-cost__foundation-line {
+  border-color: rgba(73, 111, 92, 0.3);
+  background: rgba(114, 142, 121, 0.1);
+}
+
+.home-v4 .home-v4-cost__research a {
+  color: #526d64;
+  text-decoration-color: rgba(82, 109, 100, 0.38);
+}
+
+.home-v4 .home-v4-cost__research a:hover,
+.home-v4 .home-v4-cost__research a:focus-visible {
+  color: #9b6c39;
+}
+
+/* Five Tatvas: moving golden fog, translucent vellum and a live mechanism. */
+.home-v4 .home-v4-chapter--tatva,
+.home-v4 .tatva-pressure-lab {
+  background: #e7dfd1 !important;
+  color: #20332b;
+}
+
+.home-v4 .tatva-pressure-lab__film {
+  inset: -3%;
+  background: #e7dfd1;
+  opacity: 1;
+  transform: scale(1.035);
+}
+
+.home-v4 .tatva-pressure-lab__film video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 48%;
+  opacity: 0.48;
+  filter: saturate(0.54) contrast(0.82) brightness(1.24) sepia(0.12);
+}
+
+.home-v4 .tatva-pressure-lab__film > span {
+  background:
+    radial-gradient(circle at 76% 26%, rgba(236, 185, 105, 0.2), transparent 32%),
+    linear-gradient(96deg, rgba(239, 233, 222, 0.96) 0%, rgba(239, 233, 222, 0.82) 45%, rgba(239, 233, 222, 0.56) 100%),
+    linear-gradient(180deg, rgba(243, 238, 228, 0.36), rgba(222, 212, 195, 0.72));
+}
+
+.home-v4 .tatva-pressure-lab::before {
+  opacity: 0.18;
+  background-image:
+    linear-gradient(rgba(32, 51, 43, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 51, 43, 0.055) 1px, transparent 1px);
+}
+
+.home-v4 .tatva-pressure-lab::after {
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+}
+
+.home-v4 .tatva-pressure-lab__copy h2,
+.home-v4 .tatva-pressure-lab__board .font-display,
+.home-v4 .tatva-pressure-lab__core-copy .font-display,
+.home-v4 .tatva-pressure-lab__node .font-display,
+.home-v4 .tatva-pressure-lab__reading .font-display,
+.home-v4 .tatva-pressure-lab__force,
+.home-v4 .tatva-pressure-lab__force .font-display,
+.home-v4 .tatva-pressure-lab__node,
+.home-v4 .tatva-pressure-lab__core-copy > span:last-child,
+.home-v4 .tatva-pressure-lab__node > span:last-child,
+.home-v4 .tatva-pressure-lab__reading {
+  color: #20332b;
+  text-shadow: none;
+}
+
+.home-v4 .tatva-pressure-lab__copy > p:first-child,
+.home-v4 .tatva-pressure-lab__restore {
+  color: #9b6c39;
+}
+
+.home-v4 .tatva-pressure-lab__copy > p:last-of-type,
+.home-v4 .tatva-pressure-lab__force span span:last-child,
+.home-v4 .tatva-pressure-lab__reading > p:last-of-type,
+.home-v4 .tatva-pressure-lab__board-top p,
+.home-v4 .tatva-pressure-lab__board-top span,
+.home-v4 .tatva-pressure-lab__core-copy > span:first-child {
+  color: rgba(32, 51, 43, 0.62);
+}
+
+.home-v4 .tatva-pressure-lab__force {
+  border-color: rgba(32, 51, 43, 0.13) !important;
+  background: rgba(251, 248, 241, 0.48) !important;
+  backdrop-filter: blur(14px);
+}
+
+.home-v4 .tatva-pressure-lab__force:hover,
+.home-v4 .tatva-pressure-lab__force:focus-visible,
+.home-v4 .tatva-pressure-lab__force[aria-pressed="true"] {
+  background: rgba(255, 252, 245, 0.8) !important;
+  box-shadow: 0 16px 42px rgba(70, 55, 39, 0.1) !important;
+}
+
+.home-v4 .tatva-pressure-lab__board {
+  border-color: rgba(32, 51, 43, 0.14);
+  background:
+    radial-gradient(circle at 88% 8%, rgba(143, 162, 131, 0.15), transparent 38%),
+    rgba(250, 247, 240, 0.7);
+  box-shadow: 0 30px 85px rgba(55, 45, 33, 0.12);
+}
+
+.home-v4 .tatva-pressure-lab__board-top,
+.home-v4 .tatva-pressure-lab__mechanism::before {
+  border-color: rgba(32, 51, 43, 0.11);
+}
+
+.home-v4 .tatva-pressure-lab__status {
+  border-color: rgba(32, 51, 43, 0.13);
+  background: rgba(255, 252, 245, 0.5);
+  color: rgba(32, 51, 43, 0.68);
+}
+
+.home-v4 .tatva-pressure-lab__mechanism {
+  background:
+    radial-gradient(circle at 50% 48%, rgba(199, 148, 80, 0.1), transparent 47%),
+    rgba(255, 252, 245, 0.4);
+}
+
+.home-v4 .tatva-pressure-lab__mechanism::before {
+  background-image:
+    linear-gradient(rgba(32, 51, 43, 0.038) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 51, 43, 0.038) 1px, transparent 1px);
+}
+
+.home-v4 .tatva-pressure-lab__svg-kicker,
+.home-v4 .tatva-pressure-lab__svg-layer {
+  fill: rgba(32, 51, 43, 0.62);
+}
+
+.home-v4 .tatva-pressure-lab__svg-title {
+  fill: #20332b;
+}
+
+.home-v4 .tatva-pressure-lab__reading {
+  background-color: rgba(255, 252, 245, 0.5) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.58);
+}
+
+/* Practical doubts: golden reeds keep moving behind a readable light compass. */
+.home-v4 .questions-cinematic {
+  background: #e8e0d1;
+  color: #20332b;
+}
+
+.home-v4 .questions-cinematic::after {
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+}
+
+.home-v4 .questions-cinematic > div:first-of-type video {
+  opacity: 0.64;
+  filter: saturate(0.68) contrast(0.86) brightness(1.18) sepia(0.1);
+}
+
+.home-v4 .questions-cinematic__veil {
+  background:
+    radial-gradient(42rem 30rem at 79% 22%, color-mix(in srgb, var(--questions-accent) 14%, transparent), transparent 70%),
+    linear-gradient(104deg, rgba(242, 236, 225, 0.97) 0%, rgba(242, 236, 225, 0.86) 48%, rgba(242, 236, 225, 0.62) 100%),
+    linear-gradient(180deg, rgba(243, 238, 229, 0.28), rgba(224, 215, 199, 0.82));
+}
+
+.home-v4 .questions-cinematic__header h2,
+.home-v4 .questions-cinematic__header h2 em,
+.home-v4 .questions-cinematic__answer h3,
+.home-v4 .questions-cinematic__outcome strong,
+.home-v4 .questions-cinematic__tabs button > strong,
+.home-v4 .questions-cinematic__core,
+.home-v4 .questions-cinematic__core strong {
+  color: #20332b;
+  text-shadow: none;
+}
+
+.home-v4 .questions-cinematic__header h2 em {
+  background-image: none;
+  -webkit-text-fill-color: currentColor;
+}
+
+.home-v4 .questions-cinematic__intro p,
+.home-v4 .questions-cinematic__intro span,
+.home-v4 .questions-cinematic__answer-copy,
+.home-v4 .questions-cinematic__tabs button > small,
+.home-v4 .questions-cinematic__utility > div:first-child p {
+  color: rgba(32, 51, 43, 0.66);
+}
+
+.home-v4 .questions-cinematic__compass,
+.home-v4 .questions-cinematic__answer {
+  border-color: rgba(32, 51, 43, 0.13);
+  box-shadow: 0 28px 76px rgba(64, 49, 33, 0.12);
+}
+
+.home-v4 .questions-cinematic__compass {
+  background:
+    linear-gradient(rgba(32, 51, 43, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 51, 43, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 50% 52%, color-mix(in srgb, var(--questions-accent) 12%, transparent), transparent 44%),
+    rgba(251, 248, 241, 0.64);
+  background-size: 60px 60px, 60px 60px, auto, auto;
+}
+
+.home-v4 .questions-cinematic__compass-topline,
+.home-v4 .questions-cinematic__answer-topline strong,
+.home-v4 .questions-cinematic__answer-label,
+.home-v4 .questions-cinematic__outcome span,
+.home-v4 .questions-cinematic__core span {
+  color: rgba(32, 51, 43, 0.54);
+}
+
+.home-v4 .questions-cinematic__node {
+  border-color: rgba(32, 51, 43, 0.13);
+  background: rgba(251, 248, 241, 0.72);
+  color: rgba(32, 51, 43, 0.66);
+  box-shadow: 0 12px 34px rgba(58, 45, 32, 0.08);
+}
+
+.home-v4 .questions-cinematic__node:hover,
+.home-v4 .questions-cinematic__node:focus-visible,
+.home-v4 .questions-cinematic__node.is-active {
+  background: rgba(255, 252, 246, 0.9);
+  color: #20332b;
+  box-shadow: 0 16px 42px rgba(73, 53, 32, 0.12);
+}
+
+.home-v4 .questions-cinematic__core {
+  background:
+    radial-gradient(circle at 50% 22%, color-mix(in srgb, var(--questions-accent) 16%, transparent), transparent 52%),
+    rgba(252, 249, 243, 0.92);
+  box-shadow:
+    0 24px 62px rgba(64, 48, 32, 0.14),
+    0 0 0 0.8rem color-mix(in srgb, var(--questions-accent) 7%, transparent);
+}
+
+.home-v4 .questions-cinematic__answer {
+  background:
+    radial-gradient(circle at 92% 5%, color-mix(in srgb, var(--questions-accent) 17%, transparent), transparent 38%),
+    rgba(251, 248, 241, 0.76);
+}
+
+.home-v4 .questions-cinematic__answer-topline {
+  border-color: rgba(32, 51, 43, 0.11);
+}
+
+.home-v4 .questions-cinematic__outcome {
+  border-color: rgba(32, 51, 43, 0.11);
+  border-left-color: var(--questions-accent);
+  background: rgba(255, 252, 245, 0.52);
+}
+
+.home-v4 .questions-cinematic__tabs button {
+  border-color: rgba(32, 51, 43, 0.12);
+  background: rgba(251, 248, 241, 0.58);
+  color: #20332b;
+}
+
+.home-v4 .questions-cinematic__tabs button:hover,
+.home-v4 .questions-cinematic__tabs button:focus-visible,
+.home-v4 .questions-cinematic__tabs button.is-active {
+  background:
+    radial-gradient(circle at 92% 4%, color-mix(in srgb, var(--decision-color) 16%, transparent), transparent 42%),
+    rgba(255, 252, 246, 0.88);
+  box-shadow: 0 16px 42px rgba(67, 50, 33, 0.1);
+}
+
+.home-v4 .questions-cinematic__answer-link {
+  color: #8b6036;
+}
+
+/* Every restored desktop chapter owns exactly one clean screen. */
+@media (min-width: 1101px) {
+  .home-v4 .home-v4-cost,
+  .home-v4 .home-v4-cost__sticky,
+  .home-v4 .home-v4-cost__shell,
+  .home-v4 .home-v4-chapter--paths,
+  .home-v4 .home-v4-chapter--paths .paths-cinematic,
+  .home-v4 .home-v4-chapter--tatva,
+  .home-v4 .home-v4-chapter--tatva .tatva-pressure-lab,
+  .home-v4 .home-v4-chapter--decision,
+  .home-v4 .home-v4-chapter--decision .questions-cinematic {
+    height: 100svh;
+    min-height: 100svh;
+    max-height: 100svh;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4 .tatva-pressure-lab__film {
+    animation: none;
+    transform: none;
+  }
+
+  .home-v4 .tatva-pressure-lab__film video {
+    display: none;
+  }
+}

@@ -119,8 +119,8 @@ export function HomeQuestionsScene() {
     >
       <span className="sr-only">The practical questions</span>
       <BackgroundVideo
-        video="/videos/generated/bt-home-decision-waterlight.mp4"
-        poster="/images/generated/bt-home-decision-waterlight-poster.jpg"
+        video="/videos/pixabay-golden-reeds-wind.mp4"
+        poster="/images/pixabay-golden-reeds-wind-poster.jpg"
         playbackRate={0.92}
       />
       <div className="questions-cinematic__veil" aria-hidden="true" />
@@ -138,7 +138,7 @@ export function HomeQuestionsScene() {
               distance should stop feeling vague.
             </p>
             <span>
-              Choose a doubt. The compass changes once, then stays still while you read.
+              Five questions resolve into one practical way to begin.
             </span>
           </div>
         </header>

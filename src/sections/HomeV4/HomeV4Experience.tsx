@@ -10,14 +10,20 @@ import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
 import { HomeBrandHealthCheck } from "@/sections/Home/HomeBrandHealthCheck";
 import { HomeInsightsPreview } from "@/sections/Home/HomeInsightsPreview";
+import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
+import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
+import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
 import { process as processStages } from "@/data/process";
 import { elementColor } from "@/lib/elementColor";
 import { HomeV4HeaderDirector } from "./HomeV4HeaderDirector";
 import { SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
-import { V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
+import { HomeV4ProcessTempo } from "./HomeV4ProcessTempo";
+import { HomeV4RecognitionTempo } from "./HomeV4RecognitionTempo";
+import { HomeV4TatvaTempo } from "./HomeV4TatvaTempo";
+import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
 
 export function HomeV4Experience() {
   useEffect(() => {
@@ -30,6 +36,9 @@ export function HomeV4Experience() {
       <HomeV4PreludeBridge />
       <HomeV4MediaDirector />
       <HomeV4HeaderDirector />
+      <HomeV4RecognitionTempo />
+      <HomeV4ProcessTempo />
+      <HomeV4TatvaTempo />
       <V4OpeningScene />
       <SceneHandoff motif="mist" />
 
@@ -37,6 +46,9 @@ export function HomeV4Experience() {
       <SceneHandoff motif="mist" />
 
       <HomeBrandHealthCheck />
+      <SceneHandoff motif="river" />
+
+      <V4HiddenCostScene />
       <SceneHandoff motif="root" />
 
       <div
@@ -51,6 +63,18 @@ export function HomeV4Experience() {
       </div>
 
       <SceneHandoff motif="aperture" />
+
+      <div
+        data-home-v4-chapter="paths"
+        data-home-chapter="paths"
+        data-home-section="paths"
+        data-cursor-world="light"
+        className="home-v4-chapter home-v4-chapter--paths"
+      >
+        <PathsCinematicChapter />
+      </div>
+
+      <SceneHandoff motif="light" />
 
       <section
         id="process"
@@ -79,6 +103,20 @@ export function HomeV4Experience() {
 
       <SceneHandoff motif="river" />
 
+      <section
+        id="tatva"
+        data-home-v4-chapter="tatva"
+        data-home-chapter="tatva"
+        data-home-section="tatva"
+        data-cursor-world="light"
+        className="home-v4-chapter home-v4-chapter--tatva"
+        aria-label="The five Tatvas as one operating system"
+      >
+        <TatvaSystemLab />
+      </section>
+
+      <SceneHandoff motif="constellation" />
+
       <div
         id="studio"
         data-home-v4-chapter="studio"
@@ -90,6 +128,19 @@ export function HomeV4Experience() {
       </div>
 
       <SceneHandoff motif="constellation" />
+
+      <div
+        id="decision"
+        data-home-v4-chapter="decision"
+        data-home-chapter="decision"
+        data-home-section="decision"
+        data-cursor-world="light"
+        className="home-v4-chapter home-v4-chapter--decision"
+      >
+        <HomeQuestionsScene />
+      </div>
+
+      <SceneHandoff motif="mist" />
 
       <section
         id="insights-preview"

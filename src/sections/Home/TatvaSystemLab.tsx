@@ -92,6 +92,17 @@ export function TatvaSystemLab() {
       aria-labelledby="tatva-system-lab-title"
     >
       <div className="tatva-pressure-lab__film" aria-hidden="true">
+        <video
+          muted
+          autoPlay
+          loop
+          playsInline
+          preload="metadata"
+          poster="/images/pexels-golden-fog-sea-poster.jpg"
+        >
+          <source src="/videos/pexels-golden-fog-sea.webm" type="video/webm" />
+          <source src="/videos/pexels-golden-fog-sea.mp4" type="video/mp4" />
+        </video>
         <span />
       </div>
 
@@ -108,7 +119,8 @@ export function TatvaSystemLab() {
               Focus one force. See the work it carries.
             </h2>
             <p className="mt-5 max-w-xl text-sm leading-7 sm:text-base sm:leading-8">
-              Each Tatva contributes through its own mechanism. Choose one to follow how strategy becomes recognition.
+              Each Tatva contributes through its own mechanism. Together they show
+              how strategy becomes recognition.
             </p>
 
             <div className="tatva-pressure-lab__controls mt-7 grid gap-2 sm:grid-cols-2" role="group" aria-label="Five Tatva mechanisms">

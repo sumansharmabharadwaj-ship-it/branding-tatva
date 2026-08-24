@@ -187,12 +187,13 @@ export function PathsCinematicChapter() {
           </div>
           <div className="paths-cinematic__intro">
             <p>
-              Choose the situation that sounds familiar. Each path opens the decisions, the practical outcome, and a recorded project that demonstrates the work.
+              Each starting point carries its own intervention, decision sequence,
+              practical outcome, and recorded project.
             </p>
             <span>
               {carriedChoice
-                ? "Your earlier choice is already open."
-                : "Choose a starting point. The route stays still while you compare it."}
+                ? "Your diagnosis has opened the most relevant route."
+                : "Three routes. One coherent operating system."}
             </span>
           </div>
         </header>
