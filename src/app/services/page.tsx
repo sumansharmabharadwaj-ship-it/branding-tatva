@@ -427,7 +427,7 @@ export default async function ServicesPage() {
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(13,18,18,0.82) 0%, rgba(13,18,18,0.63) 48%, rgba(13,18,18,0.42) 100%)",
+                "linear-gradient(100deg, rgba(13,18,18,0.88) 0%, rgba(13,18,18,0.74) 48%, rgba(13,18,18,0.7) 100%)",
             }}
           />
           <SceneVeil color="#0E1714" />
