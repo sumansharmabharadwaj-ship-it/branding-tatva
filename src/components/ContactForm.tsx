@@ -1,15 +1,27 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { cloneElement, isValidElement, useId, useRef, useState, type MouseEvent, type ReactElement } from "react";
+import {
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type MouseEvent,
+  type ReactElement,
+} from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useForm } from "react-hook-form";
+import { useForm, type Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Check, CircleAlert, Mail, RotateCcw } from "lucide-react";
 import { contactSchema, brandStages, type ContactFormValues } from "@/lib/contact-schema";
 import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/Magnetic";
 import { useSpotlight } from "@/hooks/useSpotlight";
+import { track } from "@/lib/analytics";
 import { EASE_AIR } from "@/lib/motion";
+import { site } from "@/data/site";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -19,9 +31,34 @@ type Status = "idle" | "submitting" | "success" | "error";
 // grid of near-identical rectangles. `bg-transparent` (not warm-white)
 // so the field reads as part of the page, not a boxed form widget.
 const inputClass =
-  "mt-2 w-full border-0 border-b border-soil/18 bg-transparent px-0 py-3 text-base text-soil placeholder:text-foreground-secondary/45 transition-[border-color,background-color] duration-300 focus:border-action-primary focus:bg-white/20 focus:outline-none focus:ring-0 sm:text-lg";
+  "mt-1.5 w-full border-0 border-b border-soil/18 bg-transparent px-0 py-2.5 text-base text-soil placeholder:text-foreground-secondary/45 transition-[border-color,background-color] duration-300 aria-[invalid=true]:border-state-error/70 focus:border-action-primary focus:bg-white/20 focus:outline-none focus:ring-0 sm:mt-2 sm:py-3 sm:text-lg";
 
 let rippleId = 0;
+
+const SUCCESS_STEPS = [
+  ["01", "Received", "Your enquiry is in."],
+  ["02", "Read personally", "Suman reviews the note."],
+  ["03", "Reply", "A response arrives by email."],
+] as const;
+
+const FORM_FIELD_ORDER: ReadonlyArray<{
+  name: Path<ContactFormValues>;
+  label: string;
+}> = [
+  { name: "name", label: "your name" },
+  { name: "email", label: "your email" },
+  { name: "description", label: "your question" },
+  { name: "business", label: "your brand name" },
+  { name: "phone", label: "your phone number" },
+  { name: "website", label: "your website" },
+  { name: "brandStage", label: "your brand stage" },
+  { name: "servicesNeeded", label: "the support you need" },
+  { name: "budget", label: "your budget" },
+  { name: "timeline", label: "your timeline" },
+  { name: "referral", label: "how you found us" },
+];
+
+const REQUIRED_FIELD_NAMES = new Set<Path<ContactFormValues>>(["name", "email", "description"]);
 
 // The submit button is the single most consequential click on the site,
 // yet it was the only primary CTA with none of LinkButton's signature
@@ -32,8 +69,14 @@ let rippleId = 0;
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+  const [successMinHeight, setSuccessMinHeight] = useState<number | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const recoveryRef = useRef<HTMLDivElement>(null);
+  const successRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const rippleTimersRef = useRef<Set<number>>(new Set());
   const spotlightRef = useSpotlight(buttonRef, Boolean(prefersReducedMotion));
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
   // Manual guide p38 and Suman's reference panel: ask only what is
@@ -43,19 +86,24 @@ export function ContactForm() {
   const [showMore, setShowMore] = useState(false);
 
   function handleButtonClick(e: MouseEvent<HTMLButtonElement>) {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || e.detail === 0) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const id = rippleId++;
     setRipples((prev) => [...prev, { id, x: e.clientX - rect.left, y: e.clientY - rect.top }]);
-    setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 650);
+    const timer = window.setTimeout(() => {
+      setRipples((prev) => prev.filter((r) => r.id !== id));
+      rippleTimersRef.current.delete(timer);
+    }, 650);
+    rippleTimersRef.current.add(timer);
   }
 
   const {
     register,
     handleSubmit,
     reset,
+    setFocus,
     watch,
-    formState: { errors },
+    formState: { errors, submitCount },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
   });
@@ -73,28 +121,111 @@ export function ContactForm() {
       : completedDetails > 0
         ? `${completedDetails} of 3 ready`
         : "Three details to begin";
+  const invalidFields = FORM_FIELD_ORDER.filter(({ name }) => Boolean(errors[name]));
+  const firstInvalidField = invalidFields[0];
+  const showValidationRecovery = submitCount > 0 && invalidFields.length > 0 && status !== "error";
+
+  useEffect(() => {
+    if (status !== "success" && status !== "error" && !showValidationRecovery) return;
+    const frame = window.requestAnimationFrame(() => {
+      if (status === "success") successRef.current?.focus({ preventScroll: true });
+      else recoveryRef.current?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [showValidationRecovery, status, submitCount]);
+
+  useEffect(() => {
+    const timers = rippleTimersRef.current;
+    return () => {
+      timers.forEach((timer) => window.clearTimeout(timer));
+      timers.clear();
+    };
+  }, []);
 
   async function onSubmit(values: ContactFormValues) {
     setStatus("submitting");
     setServerError(null);
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 15_000);
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
+        signal: controller.signal,
       });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setServerError(data.error ?? "Something went wrong. Please try again.");
+        const data: unknown = await res.json().catch(() => null);
+        const message =
+          data && typeof data === "object" && "error" in data && typeof data.error === "string"
+            ? data.error
+            : "Something went wrong. Please try again.";
+        track("contact_form_delivery_failed", {
+          source: "contact_form",
+          reason: "server",
+          status: res.status,
+        });
+        setServerError(message);
         setStatus("error");
         return;
       }
+      const measuredHeight = cardRef.current?.getBoundingClientRect().height;
+      // Preserve the compact form-to-confirmation handoff without inheriting
+      // the full height of an expanded optional-details form. A success card
+      // should settle within roughly one viewport, never create a blank tail.
+      setSuccessMinHeight(
+        measuredHeight
+          ? Math.min(measuredHeight, Math.max(window.innerHeight - 64, 0))
+          : null,
+      );
       setStatus("success");
+      track("contact_form_submitted", {
+        source: "contact_form",
+        optional_details_opened: showMore,
+      });
       reset();
-    } catch {
-      setServerError("The server was unreachable. Check your connection and try again.");
+    } catch (error) {
+      const timedOut = error instanceof DOMException && error.name === "AbortError";
+      track("contact_form_delivery_failed", {
+        source: "contact_form",
+        reason: timedOut ? "timeout" : "network",
+      });
+      setServerError(
+        timedOut
+          ? "Sending took longer than expected. Please try again or email Suman directly."
+          : "The server was unreachable. Check your connection and try again.",
+      );
       setStatus("error");
+    } finally {
+      window.clearTimeout(timeout);
     }
+  }
+
+  function onInvalid() {
+    track("contact_form_validation_failed", { source: "contact_form" });
+    setStatus("idle");
+    setServerError(null);
+  }
+
+  function focusInvalidField() {
+    if (!firstInvalidField) return;
+    const focusControl = () => {
+      const control = formRef.current?.elements.namedItem(firstInvalidField.name);
+      if (control instanceof HTMLElement) control.focus();
+    };
+
+    if (!REQUIRED_FIELD_NAMES.has(firstInvalidField.name) && !showMore) {
+      setShowMore(true);
+      window.requestAnimationFrame(() => window.requestAnimationFrame(focusControl));
+      return;
+    }
+    focusControl();
+  }
+
+  function startAnotherNote() {
+    setStatus("idle");
+    setSuccessMinHeight(null);
+    window.requestAnimationFrame(() => setFocus("name"));
   }
 
   // Every other consequential moment on this page (the button itself,
@@ -108,67 +239,103 @@ export function ContactForm() {
   if (status === "success") {
     return (
       <motion.div
+        ref={successRef}
+        tabIndex={-1}
         role="status"
-        initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.96, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: EASE_AIR }}
-        className="rounded-2xl border border-state-success/40 bg-state-success/10 p-6"
+        aria-labelledby="contact-success-heading"
+        data-contact-form-card
+        data-contact-form-success
+        initial={prefersReducedMotion ? undefined : { opacity: 0.72, scale: 0.985, clipPath: "inset(0 0 12% 0 round 2rem)" }}
+        animate={{ opacity: 1, scale: 1, clipPath: "inset(0 0 0% 0 round 2rem)" }}
+        transition={{ duration: 0.52, ease: EASE_AIR }}
+        style={{ minHeight: successMinHeight ?? undefined }}
+        className="flex rounded-[2rem] border border-white/55 bg-[#F6F2EA]/88 px-6 py-8 shadow-[0_30px_100px_rgba(26,38,27,0.2)] backdrop-blur-3xl focus:outline-none sm:px-10 sm:py-10"
       >
-        <motion.svg
-          width="40"
-          height="40"
-          viewBox="0 0 40 40"
-          fill="none"
-          aria-hidden="true"
-          initial={prefersReducedMotion ? undefined : { scale: 0.6, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.35, delay: 0.1, ease: EASE_AIR }}
-        >
-          <circle cx="20" cy="20" r="19" className="stroke-state-success" strokeWidth="1.5" opacity="0.4" />
-          <motion.path
-            d="M12 20.5L17 25.5L28.5 14"
-            className="stroke-state-success"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            initial={prefersReducedMotion ? undefined : { pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 0.35, delay: 0.3, ease: "easeOut" }}
-          />
-        </motion.svg>
-        <motion.div
-          initial={prefersReducedMotion ? undefined : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.5, ease: EASE_AIR }}
-        >
-          <p className="mt-4 font-display text-xl font-normal text-soil">Thank you, that&apos;s in.</p>
-          <p className="mt-2 text-sm text-foreground-secondary">
-            I read every enquiry personally and reply within a few days. If it&apos;s
-            urgent, feel free to email directly too.
-          </p>
-        </motion.div>
+        <div className="my-auto w-full">
+          <motion.span
+            aria-hidden="true"
+            initial={prefersReducedMotion ? undefined : { scale: 0.72, rotate: -8, opacity: 0 }}
+            animate={{ scale: 1, rotate: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.12, ease: EASE_AIR }}
+            className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-state-success/30 bg-state-success/10 text-state-success"
+          >
+            <Check className="h-6 w-6" strokeWidth={1.7} />
+          </motion.span>
+
+          <div className="mx-auto mt-6 max-w-lg text-center">
+            <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-clay">
+              Your note has arrived
+            </p>
+            <h3 id="contact-success-heading" className="mt-3 font-display text-3xl font-normal leading-tight text-soil sm:text-4xl">
+              The conversation has begun.
+            </h3>
+            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-foreground-secondary sm:text-base">
+              Suman reads every enquiry personally and replies within a few days. Your question now has a clear place to land.
+            </p>
+          </div>
+
+          <ol className="mx-auto mt-6 grid max-w-2xl grid-cols-3 gap-1.5 sm:mt-8 sm:gap-2" aria-label="What happens next">
+            {SUCCESS_STEPS.map(([index, title, detail], stepIndex) => (
+              <motion.li
+                key={title}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, scaleX: 0.94 }}
+                animate={{ opacity: 1, scaleX: 1 }}
+                transition={{ duration: 0.42, delay: 0.2 + stepIndex * 0.1, ease: EASE_AIR }}
+                className={`rounded-xl border px-2.5 py-3 text-left sm:rounded-2xl sm:px-4 sm:py-4 ${
+                  stepIndex === 0
+                    ? "border-state-success/25 bg-state-success/[0.07]"
+                    : "border-soil/10 bg-white/25"
+                }`}
+              >
+                <span className={`text-[0.6rem] font-medium uppercase tracking-[0.18em] ${stepIndex === 0 ? "text-state-success" : "text-soil/38"}`}>
+                  {index}
+                </span>
+                <strong className="mt-1.5 block font-display text-[0.92rem] font-normal leading-tight text-soil sm:mt-2 sm:text-lg">{title}</strong>
+                <span className="mt-1 hidden text-xs leading-relaxed text-soil/58 sm:block">{detail}</span>
+              </motion.li>
+            ))}
+          </ol>
+
+          <div className="mt-6 flex items-center justify-center gap-2 sm:mt-8 sm:gap-3">
+            <button
+              type="button"
+              onClick={startAnotherNote}
+              className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full bg-soil px-3 py-2 text-xs font-medium text-ivory transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-action-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-12 sm:flex-none sm:px-5 sm:py-3 sm:text-sm"
+            >
+              <RotateCcw aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
+              Write another note
+            </button>
+            <a
+              href={`mailto:${site.email}`}
+              onClick={() =>
+                track("contact_route_selected", {
+                  source: "contact_form_success",
+                  route: "email",
+                })
+              }
+              className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-soil/15 bg-white/30 px-3 py-2 text-xs font-medium text-soil transition-colors duration-300 hover:bg-white/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-12 sm:flex-none sm:px-5 sm:py-3 sm:text-sm"
+            >
+              <Mail aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
+              Email directly
+            </a>
+          </div>
+        </div>
       </motion.div>
     );
   }
 
-  // Direct feedback that this form read as one flat block dropped in at
-  // once — the same staggered "open folder" reveal PackageSelector's own
-  // includes list already proved, applied per row here instead. Rows
-  // fire in visual reading order (top to bottom), not per input, so a
-  // two-column row still animates as one beat.
-  let rowIndex = -1;
-  function nextDelay() {
-    rowIndex += 1;
-    return prefersReducedMotion ? 0 : rowIndex * 0.06;
-  }
-
   return (
-    <div className="rounded-[2rem] border border-white/55 bg-[#F6F2EA]/88 px-6 py-7 shadow-[0_30px_100px_rgba(26,38,27,0.2)] backdrop-blur-3xl sm:px-10 sm:py-9">
+    <div
+      ref={cardRef}
+      data-contact-form-card
+      data-contact-form-expanded={showMore ? "true" : undefined}
+      className="rounded-[2rem] border border-white/55 bg-[#F6F2EA]/88 px-6 py-7 shadow-[0_30px_100px_rgba(26,38,27,0.2)] backdrop-blur-3xl sm:px-10 sm:py-9"
+    >
       {/* The panel mirrors the booking card beside it — cream ground,
           italic display accent, serif line, and the sprig divider —
           so the two paths on this page read as siblings rather than
           a styled card next to a bare form. */}
-      <div className="text-center">
+      <div data-contact-form-intro className="text-center">
         <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-clay">A note, in your own words</p>
         <p className="mt-3 font-display text-3xl font-normal leading-tight text-soil sm:text-4xl">What are you building?</p>
         <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-foreground-secondary">
@@ -177,6 +344,7 @@ export function ContactForm() {
       </div>
 
       <div
+        data-contact-form-progress
         className="mt-6 rounded-2xl border border-soil/10 bg-white/30 px-4 py-3"
         role="progressbar"
         aria-label="Required enquiry details"
@@ -191,9 +359,9 @@ export function ContactForm() {
         </div>
         <div className="mt-3 h-px overflow-hidden bg-soil/12" aria-hidden="true">
           <motion.span
-            className="block h-full bg-clay"
+            className="block h-full origin-left bg-clay"
             initial={false}
-            animate={{ width: `${(completedDetails / 3) * 100}%` }}
+            animate={{ scaleX: completedDetails / 3 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: EASE_AIR }}
           />
         </div>
@@ -216,7 +384,7 @@ export function ContactForm() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate aria-busy={status === "submitting"} className="mt-6 space-y-5">
+      <form ref={formRef} data-contact-form-body onSubmit={handleSubmit(onSubmit, onInvalid)} noValidate aria-busy={status === "submitting"} className="mt-6 space-y-5">
       {/* Honeypot — hidden from real users, visible to bots */}
       <input
         type="text"
@@ -227,25 +395,40 @@ export function ContactForm() {
         {...register("company_website")}
       />
 
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: nextDelay(), ease: EASE_AIR }}
-        className="grid gap-5 sm:grid-cols-2"
-      >
+      <div data-contact-required-grid className="grid grid-cols-2 gap-4 sm:gap-5">
         <Field label="01 Your name" error={errors.name?.message}>
-          <input autoComplete="name" className={inputClass} {...register("name")} />
+          <input
+            required
+            aria-required="true"
+            autoComplete="name"
+            className={inputClass}
+            {...register("name")}
+          />
         </Field>
         <Field label="02 Your email" error={errors.email?.message}>
-          <input type="email" inputMode="email" autoComplete="email" className={inputClass} {...register("email")} />
+          <input
+            required
+            aria-required="true"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            className={inputClass}
+            {...register("email")}
+          />
         </Field>
-      </motion.div>
+      </div>
 
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: nextDelay(), ease: EASE_AIR }}>
+      <div data-contact-form-question>
         <Field label="03 What feels unclear right now?" error={errors.description?.message}>
-          <textarea rows={4} className={inputClass} {...register("description")} />
+          <textarea
+            required
+            aria-required="true"
+            rows={4}
+            className={inputClass}
+            {...register("description")}
+          />
         </Field>
-      </motion.div>
+      </div>
 
       {/* The optional seven, kept and reachable rather than removed. */}
       <div className="border-t border-soil/10 pt-5">
@@ -262,15 +445,16 @@ export function ContactForm() {
           </span>
         </button>
 
-        <div id="contact-more" hidden={!showMore}>
+        <div id="contact-more">
           <AnimatePresence initial={false}>
             {showMore && (
               <motion.div
-                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+                initial={prefersReducedMotion ? undefined : { opacity: 0.65, scaleY: 0.94, clipPath: "inset(0 0 100% 0 round 1rem)" }}
+                animate={{ opacity: 1, scaleY: 1, clipPath: "inset(0 0 0% 0 round 0rem)" }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, scaleY: 0.97, clipPath: "inset(0 0 100% 0 round 1rem)" }}
                 transition={{ duration: 0.35, ease: EASE_AIR }}
                 className="mt-5 space-y-5"
+                style={{ transformOrigin: "top" }}
               >
                 <div className="grid gap-5 sm:grid-cols-2">
                   <Field label="Business or brand name" error={errors.business?.message}>
@@ -315,11 +499,71 @@ export function ContactForm() {
         </div>
       </div>
 
-      {status === "error" && serverError && (
-        <p role="alert" className="text-sm text-state-error">
-          {serverError}
-        </p>
-      )}
+      {/* A single resolution line keeps validation and delivery recovery
+          in the same paper-reveal language as the rest of the scene.
+          It stays beside the submit action and takes focus without
+          moving the viewport; returning to a field remains the user's
+          explicit choice. */}
+      <AnimatePresence initial={false}>
+        {showValidationRecovery && firstInvalidField ? (
+          <motion.div
+            key="validation-recovery"
+            ref={recoveryRef}
+            tabIndex={-1}
+            role="alert"
+            initial={prefersReducedMotion ? undefined : { opacity: 0.65, scaleX: 0.97, clipPath: "inset(0 8% 0 0 round 1rem)" }}
+            animate={{ opacity: 1, scaleX: 1, clipPath: "inset(0 0% 0 0 round 1rem)" }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0, scaleX: 0.985, clipPath: "inset(0 0 0 14% round 1rem)" }}
+            transition={{ duration: 0.34, ease: EASE_AIR }}
+            className="flex origin-left items-center gap-3 rounded-2xl border border-state-error/18 bg-[#F3E8DE]/75 px-4 py-3 text-soil focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+          >
+            <CircleAlert aria-hidden="true" className="h-4 w-4 shrink-0 text-state-error" strokeWidth={1.5} />
+            <p className="min-w-0 flex-1 text-sm leading-relaxed">
+              {invalidFields.length === 1 ? "One detail needs" : `${invalidFields.length} details need`} a second look.
+            </p>
+            <button
+              type="button"
+              onClick={focusInvalidField}
+              className="shrink-0 text-xs font-medium text-clay underline decoration-clay/30 underline-offset-4 transition-colors hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+            >
+              Review {firstInvalidField.label}
+            </button>
+          </motion.div>
+        ) : status === "error" && serverError ? (
+          <motion.div
+            key="delivery-recovery"
+            ref={recoveryRef}
+            tabIndex={-1}
+            role="alert"
+            initial={prefersReducedMotion ? undefined : { opacity: 0.65, scaleX: 0.97, clipPath: "inset(0 8% 0 0 round 1rem)" }}
+            animate={{ opacity: 1, scaleX: 1, clipPath: "inset(0 0% 0 0 round 1rem)" }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0, scaleX: 0.985, clipPath: "inset(0 0 0 14% round 1rem)" }}
+            transition={{ duration: 0.34, ease: EASE_AIR }}
+            className="flex origin-left flex-col gap-3 rounded-2xl border border-state-error/18 bg-[#F3E8DE]/75 px-4 py-3 text-soil focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:flex-row sm:items-center"
+          >
+            <span className="flex min-w-0 flex-1 items-start gap-3">
+              <CircleAlert aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-state-error" strokeWidth={1.5} />
+              <span className="text-sm leading-relaxed">
+                <strong className="font-medium">Your note is still here.</strong>{" "}
+                {serverError}
+              </span>
+            </span>
+            <a
+              href={`mailto:${site.email}?subject=${encodeURIComponent("Brand enquiry")}`}
+              onClick={() =>
+                track("contact_route_selected", {
+                  source: "contact_form_recovery",
+                  route: "email",
+                })
+              }
+              className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-soil/14 bg-white/35 px-4 py-2 text-xs font-medium text-soil transition-colors hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+            >
+              <Mail aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
+              Email instead
+            </a>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
         <Magnetic className="block w-full sm:inline-block sm:w-auto">
         <button
@@ -336,23 +580,23 @@ export function ContactForm() {
             aria-hidden="true"
             className="cursor-spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
           />
-          {!prefersReducedMotion && (
+          {!prefersReducedMotion ? (
             <AnimatePresence>
               {ripples.map((r) => (
                 <motion.span
                   key={r.id}
                   aria-hidden="true"
-                  className="pointer-events-none absolute rounded-full bg-current"
-                  style={{ left: r.x, top: r.y, transform: "translate(-50%, -50%)" }}
-                  initial={{ width: 0, height: 0, opacity: 0.3 }}
-                  animate={{ width: 220, height: 220, opacity: 0 }}
+                  className="pointer-events-none absolute h-[220px] w-[220px] rounded-full bg-current"
+                  style={{ left: r.x - 110, top: r.y - 110 }}
+                  initial={{ scale: 0, opacity: 0.3 }}
+                  animate={{ scale: 1, opacity: 0 }}
                   transition={{ duration: 0.72, ease: EASE_AIR }}
                 />
               ))}
             </AnimatePresence>
-          )}
+          ) : null}
           <span className="relative z-10 inline-flex items-center gap-1.5">
-            {status === "submitting" ? "Sending…" : "Send enquiry"}
+            {status === "submitting" ? "Sending…" : status === "error" ? "Try sending again" : "Send enquiry"}
             {status !== "submitting" && (
               <span
                 aria-hidden="true"
@@ -380,7 +624,7 @@ function Field({
 }) {
   const errorId = useId();
   return (
-    <label className="block text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+    <label className="block min-w-0 text-xs font-medium uppercase tracking-wide text-foreground-secondary">
       {label}
       {isValidElement(children)
         ? cloneElement(children, {

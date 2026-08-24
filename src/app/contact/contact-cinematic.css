@@ -1,0 +1,539 @@
+/* Contact's post-hero chapters share one camera rhythm. These rules only
+   compress density where viewport height is scarce; the protected hero is
+   deliberately outside every selector below. */
+
+[data-contact-film] [data-contact-scene] {
+  isolation: isolate;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+[data-contact-film] [data-contact-scene-media="true"] {
+  transform-origin: 50% 46%;
+}
+
+[data-contact-film] [data-contact-heading-stack],
+[data-contact-film] [data-contact-heading-line] {
+  display: block;
+}
+
+[data-contact-film] [data-contact-heading-line] {
+  width: max-content;
+  max-width: 100%;
+  transform-origin: 0 50%;
+  text-wrap: pretty;
+}
+
+[data-contact-film] [data-contact-heading-line="body"] {
+  margin-inline-start: clamp(0.25rem, 2vw, 1.5rem);
+}
+
+[data-contact-film] [data-contact-heading-line="resolve"] {
+  margin-inline-start: clamp(0.5rem, 3.5vw, 2.75rem);
+  font-style: italic;
+}
+
+/* One typography behavior across every post-hero chapter. The display lines
+   begin slightly narrow, gather into their authored proportions at the reading
+   point, then compress by a fraction as the camera hands off. Transform-only
+   view timelines keep the move native, reversible and compositor-friendly. */
+@supports (animation-timeline: view()) {
+  [data-contact-film] [data-contact-scene-heading]:not([data-contact-kinetic-heading]) {
+    animation: contact-heading-gather linear both;
+    animation-timeline: view(block);
+    animation-range: entry 8% exit 88%;
+    transform-origin: 0 50%;
+  }
+
+  [data-contact-film] [data-contact-heading-line] {
+    animation-duration: 1ms;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-timeline: view(block);
+    animation-range: entry 4% exit 86%;
+  }
+
+  [data-contact-film] [data-contact-heading-line="lead"] {
+    animation-name: contact-heading-lead;
+  }
+
+  [data-contact-film] [data-contact-heading-line="body"] {
+    animation-name: contact-heading-body;
+  }
+
+  [data-contact-film] [data-contact-heading-line="resolve"] {
+    animation-name: contact-heading-resolve;
+  }
+}
+
+@keyframes contact-heading-gather {
+  0% {
+    transform: translateX(0.025em) scaleX(0.978);
+  }
+
+  46%,
+  72% {
+    transform: translateX(0) scaleX(1);
+  }
+
+  100% {
+    transform: translateX(-0.01em) scaleX(0.993);
+  }
+}
+
+@keyframes contact-heading-lead {
+  0% {
+    transform: translateX(-0.14em) scaleX(0.96);
+  }
+
+  42%,
+  72% {
+    transform: translateX(0) scaleX(1);
+  }
+
+  100% {
+    transform: translateX(0.035em) scaleX(0.994);
+  }
+}
+
+@keyframes contact-heading-body {
+  0% {
+    transform: translateX(0.18em) scaleX(0.945);
+  }
+
+  46%,
+  74% {
+    transform: translateX(0) scaleX(1);
+  }
+
+  100% {
+    transform: translateX(-0.03em) scaleX(0.992);
+  }
+}
+
+@keyframes contact-heading-resolve {
+  0% {
+    transform: translateX(-0.1em) scaleX(0.92);
+  }
+
+  50%,
+  76% {
+    transform: translateX(0) scaleX(1.012);
+  }
+
+  100% {
+    transform: translateX(0.02em) scaleX(1);
+  }
+}
+
+html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
+  scroll-snap-type: y proximity;
+}
+
+@media (min-width: 1024px) and (max-height: 800px) {
+  [data-contact-film] .contact-pathways-layout,
+  [data-contact-film] .contact-write-layout,
+  [data-contact-film] .contact-call-layout {
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-pathways-grid],
+  [data-contact-film] .contact-write-layout,
+  [data-contact-film] .contact-call-layout {
+    column-gap: 2.5rem;
+  }
+
+  [data-contact-film] [data-contact-pathways-heading] {
+    font-size: clamp(2.15rem, 4.3vw, 3.45rem);
+  }
+
+  [data-contact-film] [data-contact-pathway-panel] {
+    min-height: 23rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-panel] > div {
+    inset: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-write-heading] {
+    font-size: clamp(2.2rem, 4.4vw, 3.65rem);
+  }
+
+  [data-contact-film] [data-contact-write-note] {
+    margin-top: 1.25rem;
+    padding: 1rem;
+  }
+
+  [data-contact-film] [data-contact-form-card] {
+    padding: 1.35rem 2rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(2) {
+    margin-top: 0.45rem;
+    font-size: 1.8rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(3) {
+    margin-top: 0.55rem;
+    line-height: 1.45;
+  }
+
+  [data-contact-film] [data-contact-form-progress],
+  [data-contact-film] [data-contact-form-body] {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-form-body] > :not(.hidden) ~ :not(.hidden) {
+    margin-top: 0.9rem;
+  }
+
+  [data-contact-film] [data-contact-form-question] textarea {
+    min-height: 4.6rem;
+    height: 4.6rem;
+  }
+
+  [data-contact-film] [data-contact-call-heading] {
+    font-size: clamp(2.35rem, 4.8vw, 4.25rem);
+  }
+
+  [data-contact-film] [data-contact-call-sequence] {
+    margin-top: 1.35rem;
+  }
+
+  [data-contact-film] [data-contact-booking-card] {
+    padding: 1.75rem;
+  }
+}
+
+/* Tablet landscape needs the same one-frame composition as a short laptop,
+   but it remains on the touch camera. Move the authored two-column layouts
+   down one breakpoint only when height is scarce; portrait tablets keep the
+   calmer stacked reading order. */
+@media (min-width: 768px) and (max-width: 1023px) and (max-height: 820px) {
+  [data-contact-film] .contact-pathways-layout,
+  [data-contact-film] .contact-write-layout,
+  [data-contact-film] .contact-call-layout {
+    padding-top: 1.35rem;
+    padding-bottom: 1.35rem;
+  }
+
+  [data-contact-film] [data-contact-pathways-grid] {
+    grid-template-columns: 0.72fr 1.28fr;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  [data-contact-film] .contact-write-layout {
+    grid-template-columns: 0.78fr 1.22fr;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  [data-contact-film] .contact-call-layout {
+    grid-template-columns: 0.88fr 1.12fr;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-pathways-heading] {
+    font-size: clamp(2rem, 4.7vw, 2.75rem);
+  }
+
+  [data-contact-film] [data-contact-pathway-panel] {
+    min-height: 20.5rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-panel] > div {
+    inset: 1.5rem;
+  }
+
+  [data-contact-film] [data-contact-write-heading],
+  [data-contact-film] [data-contact-call-heading] {
+    font-size: clamp(2.1rem, 4.8vw, 3rem);
+  }
+
+  [data-contact-film] [data-contact-write-note] {
+    margin-top: 1rem;
+    padding: 0.9rem;
+  }
+
+  [data-contact-film] [data-contact-form-card] {
+    padding: 1.15rem 1.5rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(2) {
+    margin-top: 0.4rem;
+    font-size: 1.7rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(3) {
+    display: none;
+  }
+
+  [data-contact-film] [data-contact-form-progress],
+  [data-contact-film] [data-contact-form-body] {
+    margin-top: 0.9rem;
+  }
+
+  [data-contact-film] [data-contact-form-body] > :not(.hidden) ~ :not(.hidden) {
+    margin-top: 0.8rem;
+  }
+
+  [data-contact-film] [data-contact-form-question] textarea {
+    min-height: 4.25rem;
+    height: 4.25rem;
+  }
+
+  [data-contact-film] [data-contact-call-intro] {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-call-sequence],
+  [data-contact-film] .contact-booking-action-wrap {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-booking-card] {
+    padding: 1.5rem;
+  }
+
+  [data-contact-film] [data-contact-booking-description] {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-booking-options] {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+  }
+}
+
+@media (max-width: 940px), (pointer: coarse) {
+  html[data-contact-film-snap="true"] {
+    scroll-snap-type: none;
+  }
+
+  [data-contact-film] [data-contact-scene-media="true"],
+  [data-contact-film] [data-contact-scene-plane="true"] {
+    backface-visibility: hidden;
+  }
+
+  [data-contact-film] [data-contact-touch-surface] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+@media (max-width: 639px) {
+  [data-contact-film] [data-contact-gratitude] {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  [data-contact-film] [data-contact-gratitude-heading] {
+    margin-top: 0.75rem;
+  }
+
+  [data-contact-film] [data-contact-gratitude-note] {
+    min-height: 3.75rem;
+    padding: 0.7rem 0.8rem;
+  }
+
+  [data-contact-film] [data-contact-gratitude-response] {
+    min-height: 4.5rem;
+  }
+
+  [data-contact-film] .contact-write-layout {
+    gap: 1.4rem;
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-write-heading] {
+    margin-top: 0.65rem;
+    font-size: clamp(2.15rem, 10.5vw, 2.75rem);
+    line-height: 0.98;
+  }
+
+  [data-contact-film] [data-contact-write-copy] > :nth-child(3) {
+    margin-top: 0.85rem;
+  }
+
+  /* The trust card repeats the personal-reading and privacy promises already
+     visible immediately above and below the form. Removing only that duplicate
+     on the narrowest viewports brings the usable form into the first frame. */
+  [data-contact-film] [data-contact-write-note] {
+    display: none;
+  }
+
+  [data-contact-film] [data-contact-write-copy] > :last-child {
+    margin-top: 0.85rem;
+  }
+
+  [data-contact-film] [data-contact-form-card] {
+    border-radius: 1.5rem;
+    padding: 1.25rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(2) {
+    margin-top: 0.45rem;
+    font-size: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(3) {
+    display: none;
+  }
+
+  [data-contact-film] [data-contact-form-progress],
+  [data-contact-film] [data-contact-form-body] {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-form-body] > :not(.hidden) ~ :not(.hidden) {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-form-question] textarea {
+    min-height: 4.75rem;
+    height: 4.75rem;
+  }
+
+  [data-contact-film] .contact-call-layout {
+    gap: 1.35rem;
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-call-heading] {
+    margin-top: 0.65rem;
+    font-size: clamp(2.25rem, 10.8vw, 2.85rem);
+    line-height: 0.98;
+  }
+
+  [data-contact-film] [data-contact-call-intro] {
+    margin-top: 0.9rem;
+  }
+
+  [data-contact-film] [data-contact-call-sequence] {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-booking-card] {
+    border-radius: 1.5rem;
+    padding: 1.25rem;
+  }
+
+  [data-contact-film] [data-contact-booking-header] {
+    gap: 1rem;
+  }
+
+  [data-contact-film] [data-contact-booking-header] > div > :nth-child(2) {
+    margin-top: 0.5rem;
+    font-size: 2.25rem;
+  }
+
+  [data-contact-film] [data-contact-booking-header] > span {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  [data-contact-film] [data-contact-booking-description] {
+    margin-top: 1rem;
+    line-height: 1.5;
+  }
+
+  [data-contact-film] .contact-booking-action-wrap {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-booking-action] {
+    min-height: 3.5rem;
+    padding: 0.75rem;
+  }
+
+  [data-contact-film] [data-contact-booking-action-title] {
+    font-size: 1.35rem;
+  }
+
+  [data-contact-film] [data-contact-booking-action-arrow] {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  [data-contact-film] [data-contact-booking-options] {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+  }
+
+  [data-contact-film] [data-contact-booking-meta] {
+    display: none;
+  }
+}
+
+/* Two compact fields remain legible side-by-side on most phones, but the
+   smallest supported canvases need a single reading column. This selector is
+   deliberately local to the required pair; the progress ledger keeps its
+   concise three-part overview. */
+@media (max-width: 359px) {
+  [data-contact-film] [data-contact-required-grid] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 639px) and (max-height: 740px) {
+  [data-contact-film] [data-contact-call-intro],
+  [data-contact-film] [data-contact-booking-description] {
+    display: none;
+  }
+
+  [data-contact-film] .contact-call-layout {
+    gap: 1rem;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  [data-contact-film] [data-contact-call-sequence],
+  [data-contact-film] .contact-booking-action-wrap {
+    margin-top: 0.75rem;
+  }
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-scene-heading] {
+  animation: none !important;
+  transform: none !important;
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-heading-line] {
+  animation: none !important;
+  transform: none !important;
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude] * {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-contact-film-snap="true"] {
+    scroll-snap-type: none;
+  }
+
+  [data-contact-film] [data-contact-scene-media="true"],
+  [data-contact-film] [data-contact-scene-plane="true"] {
+    transform: none !important;
+    clip-path: none !important;
+  }
+
+  [data-contact-film] [data-contact-scene-heading] {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  [data-contact-film] [data-contact-heading-line] {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  [data-contact-film] [data-contact-gratitude] * {
+    animation: none !important;
+  }
+}

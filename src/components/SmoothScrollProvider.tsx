@@ -34,13 +34,13 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const isHomepage = pathname === "/";
+    const usesNativeSceneScroll = pathname === "/" || pathname === "/contact";
 
-    // The homepage is already composed as a sequence of full-height scenes.
-    // Native scrolling keeps wheel, trackpad, keyboard and touch input at a
-    // true 1:1 response; adding Lenis here made small gestures accumulate and
-    // then resolve as a jump. Other routes retain their existing soft scroll.
-    if (reducedMotion || isHomepage) return;
+    // Home and Contact already compose native scroll into full-height camera
+    // scenes. Keeping input at a true 1:1 response prevents Lenis momentum
+    // from competing with their own forgiving scene settling. Other routes
+    // retain the existing soft scroll.
+    if (reducedMotion || usesNativeSceneScroll) return;
 
     const instance = new Lenis({
       lerp: 0.1,

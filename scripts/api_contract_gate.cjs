@@ -18,6 +18,25 @@ async function post(path, body, options = {}) {
   return { response, data };
 }
 
+async function postChunked(path, text, options = {}) {
+  const payload = new TextEncoder().encode(text);
+  const body = new ReadableStream({
+    start(controller) {
+      controller.enqueue(payload);
+      controller.close();
+    },
+  });
+  return fetch(`${BASE_URL}${path}`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-forwarded-for": options.ip || "203.0.113.15",
+    },
+    body,
+    duplex: "half",
+  });
+}
+
 (async () => {
   {
     const response = await fetch(`${BASE_URL}/api/contact`, {
@@ -69,6 +88,21 @@ async function post(path, body, options = {}) {
     assert(
       response.status !== 200 || data.ok === true,
       "contact success response did not include ok=true",
+    );
+  }
+
+  {
+    const response = await postChunked(
+      "/api/contact",
+      JSON.stringify({
+        name: "Chunked Person",
+        email: "chunked@example.com",
+        description: "x".repeat(40_000),
+      }),
+    );
+    assert(
+      response.status === 413,
+      `contact chunked body limit: expected 413, got ${response.status}`,
     );
   }
 

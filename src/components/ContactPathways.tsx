@@ -1,7 +1,12 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import {
+  useEffect,
+  useRef,
+  type KeyboardEvent,
+  type PointerEvent,
+} from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -12,7 +17,10 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Container } from "@/components/Container";
+import { ContactKineticHeading } from "@/components/ContactKineticHeading";
+import { useContactSceneStage } from "@/hooks/useContactSceneStage";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { track } from "@/lib/analytics";
 import { EASE_AIR } from "@/lib/motion";
 import { site } from "@/data/site";
 
@@ -21,6 +29,7 @@ type PathwayId = "book" | "speak" | "write";
 type Pathway = {
   id: PathwayId;
   index: string;
+  tempo: string;
   label: string;
   title: string;
   description: string;
@@ -32,6 +41,7 @@ const pathways: Pathway[] = [
   {
     id: "book",
     index: "01",
+    tempo: "Scheduled",
     label: "Book a conversation",
     title: "Choose a calm half hour for the brand question taking up space.",
     description:
@@ -42,6 +52,7 @@ const pathways: Pathway[] = [
   {
     id: "speak",
     index: "02",
+    tempo: "Immediate",
     label: "Speak directly",
     title: "Reach Suman while the thought is still fresh.",
     description:
@@ -52,6 +63,7 @@ const pathways: Pathway[] = [
   {
     id: "write",
     index: "03",
+    tempo: "Unhurried",
     label: "Write a short note",
     title: "Put the uncertainty into your own words.",
     description:
@@ -61,17 +73,115 @@ const pathways: Pathway[] = [
   },
 ];
 
+const SWIPE_DISTANCE_PX = 46;
+const SWIPE_AXIS_DOMINANCE = 1.3;
+const TOUCH_DRAG_LIMIT_PX = 12;
+
+const primaryActionClass =
+  "group inline-flex min-h-11 items-center justify-center rounded-full bg-soil px-3 py-2 text-center text-[0.72rem] font-medium leading-tight text-ivory transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-action-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-12 sm:px-5 sm:py-3 sm:text-sm";
+const secondaryActionClass =
+  "inline-flex min-h-11 items-center justify-center rounded-full border border-soil/15 bg-white/35 px-3 py-2 text-center text-[0.72rem] font-medium leading-tight text-soil transition-colors duration-300 hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-12 sm:px-5 sm:py-3 sm:text-sm";
+
+function PathwayHandoff({
+  pathway,
+  reducedMotion,
+}: {
+  pathway: Pathway;
+  reducedMotion: boolean;
+}) {
+  const lineTransition = {
+    duration: reducedMotion ? 0 : 0.56,
+    ease: EASE_AIR,
+  } as const;
+
+  return (
+    <div data-contact-pathway-handoff className="mt-auto pt-4 sm:pt-7">
+      <div
+        role="img"
+        className="grid grid-cols-[auto_minmax(1rem,1fr)_auto_minmax(1rem,1fr)_auto] items-center gap-2 sm:gap-3"
+        aria-label={`${pathway.label} carries your question toward a clearer next move.`}
+      >
+        <span aria-hidden="true" className="text-[0.56rem] font-medium uppercase tracking-[0.15em] text-soil/42 sm:text-[0.62rem]">
+          Your question
+        </span>
+        <span aria-hidden="true" className="relative h-px overflow-hidden bg-soil/12">
+          <motion.span
+            key={`${pathway.id}-in`}
+            className="absolute inset-0 origin-right bg-clay/72"
+            initial={reducedMotion ? undefined : { scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={lineTransition}
+          />
+        </span>
+        <motion.span
+          key={pathway.id}
+          aria-hidden="true"
+          initial={
+            reducedMotion
+              ? undefined
+              : { clipPath: "inset(0 50% 0 50% round 999px)", scaleX: 0.86 }
+          }
+          animate={{ clipPath: "inset(0 0% 0 0% round 999px)", scaleX: 1 }}
+          transition={{ duration: reducedMotion ? 0 : 0.44, ease: EASE_AIR }}
+          className="rounded-full border border-clay/20 bg-clay/[0.08] px-2.5 py-1 text-[0.56rem] font-medium uppercase tracking-[0.15em] text-clay sm:px-3 sm:text-[0.62rem]"
+        >
+          {pathway.tempo}
+        </motion.span>
+        <span aria-hidden="true" className="relative h-px overflow-hidden bg-soil/12">
+          <motion.span
+            key={`${pathway.id}-out`}
+            className="absolute inset-0 origin-left bg-clay/72"
+            initial={reducedMotion ? undefined : { scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ ...lineTransition, delay: reducedMotion ? 0 : 0.1 }}
+          />
+        </span>
+        <span aria-hidden="true" className="text-right text-[0.56rem] font-medium uppercase tracking-[0.15em] text-soil/42 sm:text-[0.62rem]">
+          Next move
+        </span>
+      </div>
+
+      <p className="mt-2.5 text-[0.6rem] font-medium uppercase tracking-[0.14em] text-soil/48 sm:mt-3 sm:text-[0.68rem] sm:tracking-[0.18em]">
+        {pathway.detail}
+      </p>
+    </div>
+  );
+}
+
+type TouchGesture = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+};
+
 export function ContactPathways() {
-  const [activeId, setActiveId] = useState<PathwayId>("book");
   const prefersReducedMotion = useHydratedReducedMotion();
+  const sceneRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const active = pathways.find((pathway) => pathway.id === activeId) ?? pathways[0];
+  const touchGestureRef = useRef<TouchGesture | null>(null);
+  const previousIndexRef = useRef(0);
+  const touchDragX = useMotionValue(0);
+  const touchDragXSmooth = useSpring(touchDragX, {
+    stiffness: 190,
+    damping: 24,
+    mass: 0.26,
+  });
+  const { activeIndex, choose } = useContactSceneStage({
+    count: pathways.length,
+    target: sceneRef,
+    reducedMotion: prefersReducedMotion,
+  });
+  const active = pathways[activeIndex] ?? pathways[0];
+  const direction = activeIndex >= previousIndexRef.current ? 1 : -1;
   const panelId = "contact-pathway-panel";
+
+  useEffect(() => {
+    previousIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
   function moveToPathway(index: number) {
     const nextIndex = (index + pathways.length) % pathways.length;
-    const next = pathways[nextIndex];
-    setActiveId(next.id);
+    choose(nextIndex);
     tabRefs.current[nextIndex]?.focus();
   }
 
@@ -100,91 +210,184 @@ export function ContactPathways() {
     }
   }
 
-  return (
-    <Container className="relative flex min-h-[62svh] items-center py-14 sm:py-16">
-      <div className="grid w-full gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-14">
-        <div className="max-w-md">
-          <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-soil/65">
-            Three ways to begin
-          </p>
-          <h2 id="contact-pathways-heading" className="mt-4 font-display text-[clamp(2.35rem,4.7vw,4.5rem)] font-normal leading-[0.98] text-soil">
-            Start where the conversation feels natural.
-          </h2>
-          <p className="mt-5 max-w-sm text-sm leading-relaxed text-soil/70 sm:text-base">
-            The route can be immediate, considered, or somewhere between. Every enquiry reaches Suman directly.
-          </p>
-        </div>
+  function handlePanelPointerDown(event: PointerEvent<HTMLDivElement>) {
+    if (event.pointerType === "mouse" || !event.isPrimary) return;
+    touchGestureRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+    };
+    touchDragX.set(0);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
 
-        <div className="overflow-hidden rounded-[1.75rem] border border-white/55 bg-[#F6F2EA]/72 shadow-[0_28px_90px_rgba(42,35,26,0.16)] backdrop-blur-3xl">
-          <div className="grid lg:grid-cols-[0.76fr_1.24fr]">
-            <div
-              role="tablist"
-              aria-label="Ways to contact Branding Tatva"
-              className="grid grid-cols-3 gap-2 border-b border-soil/10 p-3 lg:flex lg:flex-col lg:border-b-0 lg:border-r lg:p-4"
-            >
-              {pathways.map((pathway, index) => {
-                const selected = pathway.id === activeId;
-                const Icon = pathway.Icon;
-                return (
-                  <button
-                    key={pathway.id}
-                    ref={(node) => {
-                      tabRefs.current[index] = node;
-                    }}
-                    type="button"
-                    role="tab"
-                    aria-selected={selected}
-                    tabIndex={selected ? 0 : -1}
-                    id={`contact-pathway-tab-${pathway.id}`}
-                    aria-controls={panelId}
-                    onClick={() => setActiveId(pathway.id)}
-                    onFocus={() => setActiveId(pathway.id)}
-                    onMouseEnter={() => setActiveId(pathway.id)}
-                    onKeyDown={(event) => handleTabKeyDown(index, event)}
-                    className={`group relative flex min-h-[5.5rem] min-w-0 flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl px-2 py-2 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay lg:min-h-0 lg:flex-none lg:flex-row lg:justify-start lg:gap-3 lg:px-4 lg:py-4 lg:text-left ${
-                      selected ? "text-ivory" : "text-soil hover:bg-white/55"
-                    }`}
-                  >
-                    {selected && (
-                      <motion.span
-                        layoutId="contact-pathway-active"
-                        aria-hidden="true"
-                        className="absolute inset-0 rounded-2xl bg-soil shadow-[0_12px_30px_rgba(34,39,31,0.16)]"
-                        transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE_AIR }}
-                      />
-                    )}
-                    <span
-                      className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 lg:h-9 lg:w-9 ${
-                        selected ? "border-ivory/20 bg-ivory/10" : "border-soil/15 bg-white/35"
+  function handlePanelPointerMove(event: PointerEvent<HTMLDivElement>) {
+    const gesture = touchGestureRef.current;
+    if (prefersReducedMotion || !gesture || gesture.pointerId !== event.pointerId) return;
+
+    const travelX = event.clientX - gesture.startX;
+    const travelY = event.clientY - gesture.startY;
+    if (Math.abs(travelY) > Math.abs(travelX)) {
+      touchDragX.set(0);
+      return;
+    }
+
+    const pressingPastStart = activeIndex === 0 && travelX > 0;
+    const pressingPastEnd = activeIndex === pathways.length - 1 && travelX < 0;
+    const resistance = pressingPastStart || pressingPastEnd ? 0.045 : 0.11;
+    touchDragX.set(
+      Math.max(-TOUCH_DRAG_LIMIT_PX, Math.min(TOUCH_DRAG_LIMIT_PX, travelX * resistance)),
+    );
+  }
+
+  function handlePanelPointerUp(event: PointerEvent<HTMLDivElement>) {
+    const gesture = touchGestureRef.current;
+    touchGestureRef.current = null;
+    touchDragX.set(0);
+    if (!gesture || gesture.pointerId !== event.pointerId) return;
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    const travelX = event.clientX - gesture.startX;
+    const travelY = event.clientY - gesture.startY;
+    const horizontalIntent =
+      Math.abs(travelX) >= SWIPE_DISTANCE_PX &&
+      Math.abs(travelX) > Math.abs(travelY) * SWIPE_AXIS_DOMINANCE;
+
+    if (!horizontalIntent) return;
+    event.preventDefault();
+    const nextIndex = Math.max(
+      0,
+      Math.min(pathways.length - 1, activeIndex + (travelX < 0 ? 1 : -1)),
+    );
+    if (nextIndex !== activeIndex) choose(nextIndex);
+  }
+
+  function cancelPanelGesture(event: PointerEvent<HTMLDivElement>) {
+    if (touchGestureRef.current?.pointerId === event.pointerId) {
+      touchGestureRef.current = null;
+      touchDragX.set(0);
+    }
+  }
+
+  return (
+    <div ref={sceneRef} className="w-full">
+      <Container className="contact-pathways-layout relative flex min-h-[100svh] items-center py-7 sm:py-14">
+        <div data-contact-pathways-grid className="grid w-full gap-5 sm:gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-14">
+          <div className="max-w-md">
+            <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-soil/65">
+              Three ways to begin
+            </p>
+            <ContactKineticHeading
+              id="contact-pathways-heading"
+              data-contact-pathways-heading
+              lines={["Start where", "the conversation", "feels natural."]}
+              resolveClassName="text-clay"
+              className="mt-3 font-display text-[clamp(2rem,8.7vw,2.55rem)] font-normal leading-[0.98] text-soil sm:mt-4 sm:text-[clamp(2.35rem,4.7vw,4.5rem)]"
+            />
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-soil/70 sm:mt-5 sm:text-base">
+              The route can be immediate, considered, or somewhere between. Every enquiry reaches Suman directly.
+            </p>
+          </div>
+
+          <div data-contact-pathways-card className="overflow-hidden rounded-[1.5rem] border border-white/55 bg-[#F6F2EA]/72 shadow-[0_28px_90px_rgba(42,35,26,0.16)] backdrop-blur-3xl sm:rounded-[1.75rem]">
+            <div className="grid lg:grid-cols-[0.76fr_1.24fr]">
+              <div
+                role="tablist"
+                aria-label="Ways to contact Branding Tatva"
+                className="grid grid-cols-3 gap-1.5 border-b border-soil/10 p-2.5 sm:gap-2 sm:p-3 lg:flex lg:flex-col lg:border-b-0 lg:border-r lg:p-4"
+              >
+                {pathways.map((pathway, index) => {
+                  const selected = pathway.id === active.id;
+                  const Icon = pathway.Icon;
+                  return (
+                    <button
+                      key={pathway.id}
+                      ref={(node) => {
+                        tabRefs.current[index] = node;
+                      }}
+                      type="button"
+                      role="tab"
+                      aria-selected={selected}
+                      tabIndex={selected ? 0 : -1}
+                      id={`contact-pathway-tab-${pathway.id}`}
+                      aria-controls={panelId}
+                      onClick={() => choose(index)}
+                      onFocus={() => choose(index)}
+                      onMouseEnter={() => choose(index)}
+                      onKeyDown={(event) => handleTabKeyDown(index, event)}
+                      className={`group relative flex min-h-[4.25rem] min-w-0 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl px-1.5 py-1.5 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:min-h-[5.5rem] sm:gap-2 sm:rounded-2xl sm:px-2 sm:py-2 lg:min-h-0 lg:flex-none lg:flex-row lg:justify-start lg:gap-3 lg:px-4 lg:py-4 lg:text-left ${
+                        selected ? "text-ivory" : "text-soil hover:bg-white/55"
                       }`}
                     >
-                      <Icon aria-hidden="true" className="h-4 w-4" strokeWidth={1.45} />
-                    </span>
-                    <span className="relative z-10 min-w-0">
-                      <span className={`hidden text-[0.62rem] uppercase tracking-[0.2em] lg:block ${selected ? "text-ivory/55" : "text-soil/45"}`}>
-                        {pathway.index}
+                      {selected ? (
+                        <motion.span
+                          layoutId="contact-pathway-active"
+                          aria-hidden="true"
+                          className="absolute inset-0 rounded-2xl bg-soil shadow-[0_12px_30px_rgba(34,39,31,0.16)]"
+                          transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE_AIR }}
+                        />
+                      ) : null}
+                      <span
+                        className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 lg:h-9 lg:w-9 ${
+                          selected ? "border-ivory/20 bg-ivory/10" : "border-soil/15 bg-white/35"
+                        }`}
+                      >
+                        <Icon aria-hidden="true" className="h-4 w-4" strokeWidth={1.45} />
                       </span>
-                      <span className="block text-[0.68rem] font-medium leading-[1.2] sm:text-xs lg:mt-1 lg:text-sm lg:leading-snug">
-                        {pathway.label}
+                      <span className="relative z-10 min-w-0">
+                        <span className={`hidden text-[0.62rem] uppercase tracking-[0.18em] lg:block ${selected ? "text-ivory/55" : "text-soil/45"}`}>
+                          {pathway.index} · {pathway.tempo}
+                        </span>
+                        <span className="block text-[0.68rem] font-medium leading-[1.2] sm:text-xs lg:mt-1 lg:text-sm lg:leading-snug">
+                          {pathway.label}
+                        </span>
                       </span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                    </button>
+                  );
+                })}
+              </div>
 
-            <div className="relative min-h-[23rem] p-5 sm:min-h-[25rem] sm:p-9 lg:min-h-[28rem] lg:p-10">
-              <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                id={panelId}
+                role="tabpanel"
+                aria-labelledby={`contact-pathway-tab-${active.id}`}
+                data-contact-pathway-panel
+                data-contact-touch-surface
+                onPointerDown={handlePanelPointerDown}
+                onPointerMove={handlePanelPointerMove}
+                onPointerUp={handlePanelPointerUp}
+                onPointerCancel={cancelPanelGesture}
+                onLostPointerCapture={cancelPanelGesture}
+                className="relative min-h-[20rem] touch-pan-y p-4 sm:min-h-[25rem] sm:p-9 lg:min-h-[28rem] lg:p-10"
+                style={prefersReducedMotion ? undefined : { x: touchDragXSmooth }}
+              >
                 <motion.div
                   key={active.id}
-                  id={panelId}
-                  role="tabpanel"
-                  aria-labelledby={`contact-pathway-tab-${active.id}`}
-                  initial={prefersReducedMotion ? undefined : { opacity: 0, y: 12, filter: "blur(5px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE_AIR }}
-                  className="flex h-full flex-col"
+                  initial={
+                    prefersReducedMotion
+                      ? undefined
+                      : {
+                          opacity: 0.64,
+                          x: direction * 18,
+                          scale: 0.992,
+                          clipPath:
+                            direction > 0
+                              ? "inset(0 16% 0 0 round 1.25rem)"
+                              : "inset(0 0 0 16% round 1.25rem)",
+                        }
+                  }
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                    scale: 1,
+                    clipPath: "inset(0 0 0 0 round 0rem)",
+                  }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE_AIR }}
+                  style={{ transformOrigin: "50% 50%" }}
+                  className="absolute inset-4 flex flex-col sm:inset-9 lg:inset-10"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-clay">
@@ -195,31 +398,32 @@ export function ContactPathways() {
                     </span>
                   </div>
 
-                  <p className="mt-6 max-w-xl font-display text-[clamp(2rem,3.6vw,3.35rem)] font-normal leading-[1.02] text-soil sm:mt-8">
+                  <p className="mt-4 max-w-xl font-display text-[clamp(1.65rem,7.2vw,2.2rem)] font-normal leading-[1.02] text-soil sm:mt-8 sm:text-[clamp(2rem,3.6vw,3.35rem)]">
                     {active.title}
                   </p>
-                  <p className="mt-5 max-w-lg text-sm leading-relaxed text-soil/68 sm:text-base">
+                  <p className="mt-3 max-w-lg text-[0.78rem] leading-relaxed text-soil/68 sm:mt-5 sm:text-base">
                     {active.description}
                   </p>
-                  <p className="mt-auto pt-6 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-soil/48 sm:pt-8">
-                    {active.detail}
-                  </p>
+                  <PathwayHandoff pathway={active} reducedMotion={prefersReducedMotion} />
 
-                  <div className="mt-5 flex flex-wrap gap-3">
+                  <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-3">
                     {active.id === "book" && (
                       <>
                         <a
                           href={site.calendlyUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="group inline-flex min-h-12 items-center justify-center rounded-full bg-soil px-5 py-3 text-sm font-medium text-ivory transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-action-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay"
+                          onClick={() =>
+                            track("calendar_opened", { source: "contact_pathways" })
+                          }
+                          className={primaryActionClass}
                         >
                           See available times
                           <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                         </a>
                         <a
                           href="#call"
-                          className="inline-flex min-h-12 items-center justify-center rounded-full border border-soil/15 bg-white/35 px-5 py-3 text-sm font-medium text-soil transition-colors duration-300 hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay"
+                          className={secondaryActionClass}
                         >
                           See the call flow
                           <ArrowDown aria-hidden="true" className="ml-2 h-4 w-4" />
@@ -232,7 +436,13 @@ export function ContactPathways() {
                         <a
                           href={`tel:${site.phone.tel}`}
                           aria-label={`Call Suman at ${site.phone.display}`}
-                          className="inline-flex min-h-12 items-center justify-center rounded-full bg-soil px-5 py-3 text-sm font-medium text-ivory transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-action-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay"
+                          onClick={() =>
+                            track("contact_route_selected", {
+                              source: "contact_pathways",
+                              route: "call",
+                            })
+                          }
+                          className={primaryActionClass}
                         >
                           <Phone aria-hidden="true" className="mr-2 h-4 w-4" />
                           Call Suman
@@ -241,7 +451,13 @@ export function ContactPathways() {
                           href={site.phone.whatsappUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex min-h-12 items-center justify-center rounded-full border border-soil/15 bg-white/35 px-5 py-3 text-sm font-medium text-soil transition-colors duration-300 hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay"
+                          onClick={() =>
+                            track("contact_route_selected", {
+                              source: "contact_pathways",
+                              route: "whatsapp",
+                            })
+                          }
+                          className={secondaryActionClass}
                         >
                           WhatsApp
                           <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" />
@@ -253,14 +469,26 @@ export function ContactPathways() {
                       <>
                         <a
                           href="#write"
-                          className="inline-flex min-h-12 items-center justify-center rounded-full bg-soil px-5 py-3 text-sm font-medium text-ivory transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-action-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay"
+                          onClick={() =>
+                            track("contact_route_selected", {
+                              source: "contact_pathways",
+                              route: "write",
+                            })
+                          }
+                          className={primaryActionClass}
                         >
                           Start the note
                           <ArrowDown aria-hidden="true" className="ml-2 h-4 w-4" />
                         </a>
                         <a
                           href={`mailto:${site.email}`}
-                          className="inline-flex min-h-12 items-center justify-center rounded-full border border-soil/15 bg-white/35 px-5 py-3 text-sm font-medium text-soil transition-colors duration-300 hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay"
+                          onClick={() =>
+                            track("contact_route_selected", {
+                              source: "contact_pathways",
+                              route: "email",
+                            })
+                          }
+                          className={secondaryActionClass}
                         >
                           Email instead
                           <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" />
@@ -269,11 +497,11 @@ export function ContactPathways() {
                     )}
                   </div>
                 </motion.div>
-              </AnimatePresence>
+              </motion.div>
             </div>
           </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </div>
   );
 }

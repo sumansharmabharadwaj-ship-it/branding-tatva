@@ -28,7 +28,11 @@ export type AnalyticsEvent =
   | "lead_magnet_requested"
   | "faq_opened"
   | "calendar_opened"
-  | "booking_completed";
+  | "booking_completed"
+  | "contact_form_validation_failed"
+  | "contact_form_delivery_failed"
+  | "contact_form_submitted"
+  | "contact_route_selected";
 
 export function track(event: AnalyticsEvent, props?: Record<string, string | number | boolean>) {
   // Gating the <Analytics /> component alone is half a gate: this call can

@@ -4,6 +4,7 @@ import {
   fetchWithTimeout,
   guardJsonRequest,
   jsonNoStore,
+  readJsonBody,
   singleLine,
 } from "@/lib/api-protection";
 
@@ -13,12 +14,12 @@ export async function POST(request: NextRequest) {
   const guarded = guardJsonRequest(request, { scope: "contact", limit: 5 });
   if (guarded) return guarded;
 
-  const body = await request.json().catch(() => null);
-  if (!body) {
-    return jsonNoStore({ error: "Invalid submission." }, { status: 400 });
+  const body = await readJsonBody(request);
+  if (!body.ok) {
+    return jsonNoStore({ error: body.error }, { status: body.status });
   }
 
-  const parsed = contactSchema.safeParse(body);
+  const parsed = contactSchema.safeParse(body.value);
   if (!parsed.success) {
     return jsonNoStore(
       {

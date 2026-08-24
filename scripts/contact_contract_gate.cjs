@@ -105,10 +105,10 @@ if (!durationEvidence) {
     "The contact or booking experience must state the 30-minute duration, either literally or through site.consultationMinutes.",
   );
 }
-if (!/CalendlyEmbed/.test(contactPage)) {
+if (!/href=\{site\.calendlyUrl\}|<ContactBookingAction\b/.test(contactPage)) {
   fail("Contact page must retain the Calendly booking path.");
 }
-if (!/ContactForm/.test(contactPage)) {
+if (!/<ContactForm\b/.test(contactPage)) {
   fail("Contact page must retain the written-enquiry path.");
 }
 

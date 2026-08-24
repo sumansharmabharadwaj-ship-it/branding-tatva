@@ -21,6 +21,7 @@ export function BackgroundVideo({
   parallax = false,
   push = false,
   playbackRate = 1,
+  posterPriority = true,
 }: {
   video: string;
   // Optional lower-bandwidth MP4 selected by the browser on phones.
@@ -50,6 +51,10 @@ export function BackgroundVideo({
   // An opt-in pace adjustment for generated or unusually slow ambient
   // clips. Existing sections remain at their encoded 1x speed.
   playbackRate?: number;
+  // Reduced-motion visitors receive the poster instead of video. Existing
+  // hero-like usages retain eager loading by default; known offscreen scenes
+  // can opt out so their posters do not compete with the page LCP image.
+  posterPriority?: boolean;
 }) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -81,7 +86,7 @@ export function BackgroundVideo({
         src={poster}
         alt=""
         fill
-        priority
+        priority={posterPriority}
         sizes="100vw"
         style={{ objectFit: "cover", objectPosition: imagePosition }}
       />

@@ -5,15 +5,23 @@ import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { ContactForm } from "@/components/ContactForm";
 import { ContactPathways } from "@/components/ContactPathways";
+import { ContactCinematicScene } from "@/components/ContactCinematicScene";
+import { ContactKineticHeading } from "@/components/ContactKineticHeading";
+import { ContactGratitude } from "@/components/ContactGratitude";
+import { ContactCallSequence } from "@/components/ContactCallSequence";
+import { ContactScrollRuntime } from "@/components/ContactScrollRuntime";
+import { ContactBookingAction } from "@/components/ContactBookingAction";
+import { TrackedLink } from "@/components/TrackedLink";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { NatureAccent } from "@/components/NatureAccent";
 import { Fireflies } from "@/components/Fireflies";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { ArrowRight, ArrowUpRight, CalendarDays, MessageCircle, Phone } from "lucide-react";
+import { ArrowUpRight, CalendarDays, MessageCircle, Phone } from "lucide-react";
 import { site } from "@/data/site";
 import { pageSchema, ORGANIZATION_ID } from "@/lib/pageSchema";
+import "./contact-cinematic.css";
 
 
 const pageJsonLd = pageSchema({
@@ -44,7 +52,7 @@ export default function ContactPage() {
   return (
     <>
       <Header transparent />
-      <main id="main-content">
+      <main id="main-content" data-contact-film>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
         {/* Every other page on the site opens on a real video/photo
             hero; this page used to open directly on a flat color
@@ -123,23 +131,34 @@ export default function ContactPage() {
           </Container>
         </PhotoHero>
 
-        <section aria-labelledby="contact-pathways-heading" className="relative overflow-hidden border-b border-soil/10 bg-[#E8DED0]">
-          <BackgroundVideo
-            video="/videos/generated/bt-contact-three-paths-waterpaper.mp4"
-            poster="/images/generated/bt-contact-three-paths-waterpaper-poster.jpg"
-            parallax
-            playbackRate={0.82}
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(110deg, rgba(232,222,208,0.84) 0%, rgba(235,227,216,0.68) 55%, rgba(223,225,214,0.62) 100%)",
-            }}
-          />
+        <ContactScrollRuntime />
+
+        <ContactCinematicScene
+          labelledBy="contact-pathways-heading"
+          variant="branch"
+          className="border-b border-soil/10 bg-[#E8DED0]"
+          media={
+            <>
+              <BackgroundVideo
+                video="/videos/generated/bt-contact-three-paths-waterpaper.mp4"
+                videoMobile="/videos/generated/bt-contact-three-paths-waterpaper-mobile.mp4"
+                poster="/images/generated/bt-contact-three-paths-waterpaper-poster.jpg"
+                playbackRate={0.82}
+                posterPriority={false}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(110deg, rgba(232,222,208,0.84) 0%, rgba(235,227,216,0.68) 55%, rgba(223,225,214,0.62) 100%)",
+                }}
+              />
+            </>
+          }
+        >
           <ContactPathways />
-        </section>
+        </ContactCinematicScene>
 
         {/* Was a one-off terracotta wash (earth blended 22%) — its own
             color, distinct from every other light section on the site.
@@ -151,32 +170,46 @@ export default function ContactPage() {
             on the entire site, so its atmosphere must never depend on a
             WebGL context. Two restrained paper-light washes keep the form
             dimensional without adding a GPU-heavy failure point. */}
-        <section id="write" aria-labelledby="contact-write-heading" className="relative flex min-h-[100svh] scroll-mt-24 items-center overflow-hidden bg-[#DDE2DC] py-16 sm:py-20">
-          <BackgroundVideo
-            video="/videos/pexels-moss-stream.mp4"
-            poster="/images/pexels-moss-stream-poster.jpg"
-            parallax
-            playbackRate={0.78}
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(100deg, rgba(235,232,221,0.88) 0%, rgba(232,229,219,0.66) 48%, rgba(218,224,214,0.48) 100%)",
-            }}
-          />
-          <Container className="relative grid w-full gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-16">
-            <Reveal>
+        <ContactCinematicScene
+          id="write"
+          labelledBy="contact-write-heading"
+          variant="paper"
+          className="bg-[#DDE2DC]"
+          media={
+            <>
+              <BackgroundVideo
+                video="/videos/generated/bt-contact-moss-stream.mp4"
+                videoMobile="/videos/generated/bt-contact-moss-stream-mobile.mp4"
+                poster="/images/pexels-moss-stream-poster.jpg"
+                playbackRate={0.78}
+                posterPriority={false}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(100deg, rgba(235,232,221,0.88) 0%, rgba(232,229,219,0.66) 48%, rgba(218,224,214,0.48) 100%)",
+                }}
+              />
+            </>
+          }
+        >
+          <Container className="contact-write-layout relative grid w-full gap-10 py-12 sm:py-14 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-16">
+            <div data-contact-write-copy>
               <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-soil/60">Write in your own time</p>
-              <h2 id="contact-write-heading" className="mt-4 max-w-lg font-display text-[clamp(2.5rem,5vw,4.8rem)] font-normal leading-[0.98] text-soil">
-                A short note can reveal the real question.
-              </h2>
+              <ContactKineticHeading
+                id="contact-write-heading"
+                data-contact-write-heading
+                lines={["A short note", "can reveal", "the real question."]}
+                resolveClassName="text-clay"
+                className="mt-4 max-w-lg font-display text-[clamp(2.5rem,5vw,4.8rem)] font-normal leading-[0.98] text-soil"
+              />
               <p className="mt-6 max-w-md text-sm leading-relaxed text-soil/72 sm:text-base">
                 Bring the uncertainty, the unfinished thought, or the decision that keeps circling. I will read every word personally.
               </p>
 
-              <div className="mt-8 max-w-md rounded-2xl border border-white/45 bg-white/28 p-5 backdrop-blur-xl">
+              <div data-contact-write-note className="mt-8 max-w-md rounded-2xl border border-white/45 bg-white/28 p-5 backdrop-blur-xl">
                 <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-soil/48">Where your note goes</p>
                 <p className="mt-3 font-display text-2xl font-normal text-soil">Straight to Suman.</p>
                 <p className="mt-2 text-sm leading-relaxed text-soil/65">
@@ -186,18 +219,25 @@ export default function ContactPage() {
 
               <p className="mt-6 text-sm text-soil/68">
                 Prefer your inbox?{" "}
-                <a href={`mailto:${site.email}`} className="link-underline text-action-primary-hover">{site.email}</a>
+                <TrackedLink
+                  href={`mailto:${site.email}`}
+                  event="contact_route_selected"
+                  eventProps={{ source: "contact_write_intro", route: "email" }}
+                  className="link-underline text-action-primary-hover"
+                >
+                  {site.email}
+                </TrackedLink>
               </p>
-            </Reveal>
+            </div>
 
-            <Reveal delay={0.1}>
+            <div className="min-w-0">
               <ContactForm />
               <p className="mt-4 rounded-full border border-white/35 bg-white/25 px-4 py-2 text-center text-[0.68rem] leading-relaxed text-soil/58 backdrop-blur-lg">
                 Your details stay private, reach Suman directly, and can be deleted on request.
               </p>
-            </Reveal>
+            </div>
           </Container>
-        </section>
+        </ContactCinematicScene>
 
         {/* Was solid Indigo — a second distinct color on a two-section
             page already using Sandstone above, exactly the kind of
@@ -218,51 +258,50 @@ export default function ContactPage() {
             wildflower meadow, genuinely unused elsewhere on this page
             (or its own Footer), fitting "grab a time / stay in touch."
             Overlay at bg-soil/80, the site's normalized standard. */}
-        <section id="call" aria-labelledby="contact-call-heading" className="relative flex min-h-[100svh] scroll-mt-24 items-center overflow-hidden bg-soil py-16 sm:py-20">
-          <BackgroundVideo
-            video="/videos/pexels-valley-first-light.mp4"
-            poster="/images/pexels-valley-first-light-poster.jpg"
-            parallax
-            playbackRate={0.8}
-          />
-          <div
-            className="absolute inset-0"
-            aria-hidden="true"
-            style={{ backgroundImage: "linear-gradient(105deg, rgba(28,34,27,0.72) 0%, rgba(39,42,31,0.52) 48%, rgba(39,32,24,0.42) 100%)" }}
-          />
-          <Container className="relative grid w-full gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
-            <div>
-              <Reveal>
+        <ContactCinematicScene
+          id="call"
+          labelledBy="contact-call-heading"
+          variant="horizon"
+          className="bg-soil"
+          media={
+            <>
+              <BackgroundVideo
+                video="/videos/pexels-valley-first-light.mp4"
+                videoMobile="/videos/generated/bt-contact-valley-first-light-mobile.mp4"
+                poster="/images/pexels-valley-first-light-poster.jpg"
+                playbackRate={0.8}
+                posterPriority={false}
+              />
+              <div
+                className="absolute inset-0"
+                aria-hidden="true"
+                style={{ backgroundImage: "linear-gradient(105deg, rgba(28,34,27,0.72) 0%, rgba(39,42,31,0.52) 48%, rgba(39,32,24,0.42) 100%)" }}
+              />
+            </>
+          }
+        >
+          <Container className="contact-call-layout relative grid w-full gap-12 py-12 sm:py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
+            <div data-contact-call-copy>
+              <div>
                 <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-sandstone">The first conversation</p>
-                <h2 id="contact-call-heading" className="mt-4 max-w-xl font-display text-[clamp(2.7rem,5.6vw,5.4rem)] font-normal leading-[0.96] text-ivory">
-                  One question is enough for the first call.
-                </h2>
-                <p className="mt-6 max-w-md text-sm leading-relaxed text-ivory/75 sm:text-base">
+                <ContactKineticHeading
+                  id="contact-call-heading"
+                  data-contact-call-heading
+                  lines={["One question", "is enough", "for the first call."]}
+                  resolveClassName="text-sandstone"
+                  className="mt-4 max-w-xl font-display text-[clamp(2.7rem,5.6vw,5.4rem)] font-normal leading-[0.96] text-ivory"
+                />
+                <p data-contact-call-intro className="mt-6 max-w-md text-sm leading-relaxed text-ivory/75 sm:text-base">
                   Bring the decision taking up the most room in your head. I will listen, ask what matters, and share the clearest next move I can see.
                 </p>
-              </Reveal>
+              </div>
 
-              <ol className="mt-9 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                {[
-                  "You describe where the brand stands today.",
-                  "We examine positioning, perception, and recognition.",
-                  "You leave with an honest next step.",
-                ].map((step, i) => (
-                  <Reveal key={step} delay={i * 0.08}>
-                    <li className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-lg">
-                      <span className="pt-0.5 font-display text-lg leading-none text-sandstone/70" aria-hidden="true">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <p className="text-sm leading-relaxed text-ivory/82">{step}</p>
-                    </li>
-                  </Reveal>
-                ))}
-              </ol>
+              <ContactCallSequence />
             </div>
 
-            <Reveal delay={0.12} className="min-w-0">
-              <div className="rounded-[2rem] border border-white/45 bg-[#F6F2EA]/90 p-6 shadow-[0_30px_100px_rgba(10,18,11,0.34)] backdrop-blur-3xl sm:p-10">
-                <div className="flex items-start justify-between gap-6">
+            <div className="min-w-0">
+              <div data-contact-booking-card className="rounded-[2rem] border border-white/45 bg-[#F6F2EA]/90 p-6 shadow-[0_30px_100px_rgba(10,18,11,0.34)] backdrop-blur-3xl sm:p-10">
+                <div data-contact-booking-header className="flex items-start justify-between gap-6">
                   <div>
                     <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-clay">Direct with the founder</p>
                     <p className="mt-3 font-display text-4xl font-normal leading-none text-soil sm:text-5xl">{site.consultationMinutes} minutes</p>
@@ -272,59 +311,80 @@ export default function ContactPage() {
                   </span>
                 </div>
 
-                <p className="mt-7 max-w-md text-sm leading-relaxed text-soil/68 sm:text-base">
-                  Choose a time that suits you. Every slot adjusts to your timezone, and the confirmation arrives after booking.
+                <p data-contact-booking-description className="mt-7 max-w-md text-sm leading-relaxed text-soil/68 sm:text-base">
+                  Choose a time that suits you. The calendar adjusts to your timezone, and no prepared brief or deck is needed.
                 </p>
 
-                {/* CalendlyEmbed remains the established scheduling contract;
-                    this direct route keeps the handoff immediate and resilient. */}
-                <a
+                {/* The direct Calendly route keeps the handoff immediate and
+                    resilient even when an embedded calendar is blocked. */}
+                <ContactBookingAction
                   href={site.calendlyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group mt-8 flex min-h-16 w-full items-center gap-4 rounded-2xl bg-soil p-4 text-left text-ivory shadow-elevation-sm transition-[transform,box-shadow,background-color] duration-300 hover:-translate-y-1 hover:bg-action-primary-hover hover:shadow-elevation-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay sm:p-5"
-                  aria-label={`Open Calendly to book a ${site.consultationMinutes} minute meeting with ${site.founder}`}
-                >
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-display text-2xl font-normal sm:text-3xl">
-                      Choose a time
-                    </span>
-                    <span className="mt-1 block text-sm text-ivory/65">View the live calendar</span>
-                  </span>
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sandstone text-soil transition-transform duration-300 group-hover:translate-x-1">
-                    <ArrowRight aria-hidden="true" className="h-5 w-5" strokeWidth={1.6} />
-                  </span>
-                </a>
+                  consultationMinutes={site.consultationMinutes}
+                  founder={site.founder}
+                />
 
-                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-soil/10 pt-5">
-                  <p className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-soil/45">
+                <div data-contact-booking-options className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-soil/10 pt-5">
+                  <p data-contact-booking-meta className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-soil/45">
                     Calendly · opens in a new tab
                   </p>
-                  <div className="flex flex-wrap items-center gap-4">
-                    <a
+                  <div data-contact-booking-direct className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:flex sm:flex-wrap sm:items-center sm:gap-4">
+                    <TrackedLink
                       href={`tel:${site.phone.tel}`}
                       aria-label={`Call Suman at ${site.phone.display}`}
-                      className="inline-flex min-h-11 items-center text-sm font-medium text-soil transition-colors duration-300 hover:text-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay"
+                      event="contact_route_selected"
+                      eventProps={{ source: "contact_final_scene", route: "call" }}
+                      className="inline-flex min-h-11 items-center justify-center rounded-full border border-soil/10 bg-white/30 px-2 text-sm font-medium text-soil transition-colors duration-300 hover:text-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:justify-start sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0"
                     >
                       <Phone aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
                       Call Suman
-                    </a>
-                    <a
+                    </TrackedLink>
+                    <TrackedLink
                       href={site.phone.whatsappUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex min-h-11 items-center text-sm font-medium text-soil transition-colors duration-300 hover:text-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay"
+                      event="contact_route_selected"
+                      eventProps={{ source: "contact_final_scene", route: "whatsapp" }}
+                      className="inline-flex min-h-11 items-center justify-center rounded-full border border-soil/10 bg-white/30 px-2 text-sm font-medium text-soil transition-colors duration-300 hover:text-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:justify-start sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0"
                     >
                       <MessageCircle aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
                       WhatsApp Suman
                       <ArrowUpRight aria-hidden="true" className="ml-1.5 h-4 w-4" />
-                    </a>
+                    </TrackedLink>
                   </div>
                 </div>
               </div>
-            </Reveal>
+            </div>
           </Container>
-        </section>
+        </ContactCinematicScene>
+
+        <ContactCinematicScene
+          labelledBy="contact-gratitude-heading"
+          variant="afterglow"
+          className="bg-soil"
+          media={
+            <>
+              <BackgroundVideo
+                video="/videos/pexels-aspen-sunburst.mp4"
+                videoWebm="/videos/pexels-aspen-sunburst.webm"
+                poster="/images/pexels-aspen-sunburst-poster.jpg"
+                imagePosition="center 42%"
+                playbackRate={0.8}
+                posterPriority={false}
+                push
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(180deg, rgba(24,31,23,0.5) 0%, rgba(26,34,24,0.58) 58%, rgba(39,34,30,0.86) 100%), radial-gradient(circle at 50% 43%, rgba(238,216,174,0.12) 0%, rgba(24,31,23,0.38) 70%)",
+                }}
+              />
+            </>
+          }
+        >
+          <ContactGratitude />
+        </ContactCinematicScene>
       </main>
       <Footer compact />
     </>

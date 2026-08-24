@@ -9,6 +9,11 @@ const buckets = new Map<string, RateBucket>();
 const DEFAULT_WINDOW_MS = 15 * 60 * 1000;
 const DEFAULT_LIMIT = 6;
 const DEFAULT_MAX_BYTES = 32_000;
+const MAX_RATE_BUCKETS = 2_000;
+
+type JsonBodyResult =
+  | { ok: true; value: unknown }
+  | { ok: false; status: 400 | 413; error: string };
 
 function getClientAddress(request: NextRequest) {
   const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
@@ -19,6 +24,15 @@ function pruneExpiredBuckets(now: number) {
   if (buckets.size < 500) return;
   for (const [key, bucket] of buckets) {
     if (bucket.resetAt <= now) buckets.delete(key);
+  }
+
+  // A serverless instance should never retain an unbounded collection when
+  // hostile clients continuously rotate addresses. Preserve the newest
+  // windows and evict the oldest insertion once the defensive ceiling is hit.
+  while (buckets.size >= MAX_RATE_BUCKETS) {
+    const oldestKey = buckets.keys().next().value;
+    if (typeof oldestKey !== "string") break;
+    buckets.delete(oldestKey);
   }
 }
 
@@ -82,6 +96,58 @@ export function guardJsonRequest(
   current.count += 1;
   buckets.set(key, current);
   return null;
+}
+
+/**
+ * Reads the actual request stream with a hard byte ceiling. Content-Length is
+ * only an early hint: chunked requests and some proxies omit it entirely.
+ */
+export async function readJsonBody(
+  request: NextRequest,
+  maxBytes = DEFAULT_MAX_BYTES,
+): Promise<JsonBodyResult> {
+  if (!request.body) {
+    return { ok: false, status: 400, error: "Invalid submission." };
+  }
+
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      totalBytes += value.byteLength;
+      if (totalBytes > maxBytes) {
+        await reader.cancel().catch(() => undefined);
+        return {
+          ok: false,
+          status: 413,
+          error: "That submission is too large. Please shorten the message and try again.",
+        };
+      }
+      chunks.push(value);
+    }
+  } catch {
+    return { ok: false, status: 400, error: "Invalid submission." };
+  } finally {
+    reader.releaseLock();
+  }
+
+  const body = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    body.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  try {
+    return { ok: true, value: JSON.parse(new TextDecoder().decode(body)) };
+  } catch {
+    return { ok: false, status: 400, error: "Invalid submission." };
+  }
 }
 
 export async function fetchWithTimeout(
