@@ -363,6 +363,27 @@ const visiblePosts = filteredPosts.slice(
 Forward and backward buttons turn the folio in matching directions. Reduced
 motion swaps the rows immediately in the same stable layout.
 
+### Carrying a reader's choice between scenes
+
+Explicit choices in the decision mirror and knowledge atlas now shape the
+library later in the journey. The page publishes one small local intent event;
+the library receives it, selects the matching strategic path, and reorders the
+first folio without moving the reader or changing the URL.
+
+~~~tsx
+publishInsightsIntent({
+  topicSlug: quest.topicSlug,
+  query: quest.tension,
+  label: quest.pathName,
+  origin: "decision-mirror",
+});
+~~~
+
+Only click and keyboard selection carry intent. Hover remains a reversible
+preview, and the atlas's scroll-linked path changes remain cinematic rather
+than silently rewriting the library. Manual search, filtering, recovery
+queries, and Clear the view return full control to the reader.
+
 ## Reduced motion
 
 The operating-system preference and Branding Tatva motion control both produce

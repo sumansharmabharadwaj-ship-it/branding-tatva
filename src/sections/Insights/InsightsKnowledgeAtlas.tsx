@@ -20,6 +20,7 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { publishInsightsIntent } from "@/lib/insights-intent";
 import type { InsightElement } from "@/data/insights";
 
 type AtlasArticle = {
@@ -174,6 +175,18 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
     };
   }
 
+  function carryPath(index: number) {
+    const path = paths[index];
+    if (!path) return;
+
+    publishInsightsIntent({
+      topicSlug: path.slug,
+      query: "",
+      label: path.name,
+      origin: "knowledge-atlas",
+    });
+  }
+
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let nextIndex: number | null = null;
 
@@ -190,6 +203,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
       event.preventDefault();
       lockSelection(nextIndex);
       selectPath(nextIndex, true);
+      carryPath(nextIndex);
     }
   }
 
@@ -283,6 +297,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                   onClick={() => {
                     lockSelection(index);
                     selectPath(index);
+                    carryPath(index);
                   }}
                   onPointerEnter={(event) => {
                     if (event.pointerType !== "touch") selectPath(index);

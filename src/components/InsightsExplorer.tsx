@@ -2,6 +2,7 @@
 
 import {
   useDeferredValue,
+  useEffect,
   useMemo,
   useState,
   type CSSProperties,
@@ -16,6 +17,10 @@ import {
 import { ElementGlyph } from "@/components/ElementGlyph";
 import type { InsightElement } from "@/data/insights";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import {
+  INSIGHTS_INTENT_EVENT,
+  type InsightsIntentDetail,
+} from "@/lib/insights-intent";
 
 type ExplorerTopic = {
   slug: string;
@@ -136,8 +141,27 @@ export function InsightsExplorer({
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
   const [topicSlug, setTopicSlug] = useState("all");
+  const [carriedIntent, setCarriedIntent] =
+    useState<InsightsIntentDetail>();
   const [folio, setFolio] = useState({ index: 0, direction: 1 });
   const prefersReducedMotion = useHydratedReducedMotion();
+
+  useEffect(() => {
+    function carryIntent(event: Event) {
+      const { detail } = event as CustomEvent<InsightsIntentDetail>;
+      if (!detail || !topics.some((topic) => topic.slug === detail.topicSlug)) {
+        return;
+      }
+
+      setCarriedIntent(detail);
+      setQuery(detail.query);
+      setTopicSlug(detail.topicSlug);
+      setFolio({ index: 0, direction: -1 });
+    }
+
+    window.addEventListener(INSIGHTS_INTENT_EVENT, carryIntent);
+    return () => window.removeEventListener(INSIGHTS_INTENT_EVENT, carryIntent);
+  }, [topics]);
 
   const filteredPosts = useMemo(() => {
     const cleanQuery = deferredQuery.trim().toLowerCase();
@@ -175,25 +199,31 @@ export function InsightsExplorer({
   const signalKey = settledQuery
     ? inferredTopic?.slug ?? "unresolved"
     : selectedTopic?.slug ?? "open";
-  const signalLabel = settledQuery
-    ? inferredTopic
-      ? "Strongest current"
-      : "Signal unresolved"
-    : selectedTopic
-      ? "Path in focus"
-      : "Search lens";
+  const signalLabel = carriedIntent
+    ? carriedIntent.origin === "decision-mirror"
+      ? "Carried from your mirror"
+      : "Carried from your atlas"
+    : settledQuery
+      ? inferredTopic
+        ? "Strongest current"
+        : "Signal unresolved"
+      : selectedTopic
+        ? "Path in focus"
+        : "Search lens";
   const signalTitle = inferredTopic
     ? inferredTopic.name
     : settledQuery
       ? "A wider phrase will open more paths"
       : "Five strategic paths remain open";
-  const signalDetail = settledQuery
-    ? inferredTopic
-      ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay gathers" : "essays gather"} around this path.`
-      : "The archive needs a broader clue."
-    : selectedTopic
-      ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay remains" : "essays remain"} in this path.`
-      : "Write the symptom in the language already used in the room.";
+  const signalDetail = carriedIntent
+    ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay now follows" : "essays now follow"} the ${carriedIntent.label.toLowerCase()} route you chose.`
+    : settledQuery
+      ? inferredTopic
+        ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay gathers" : "essays gather"} around this path.`
+        : "The archive needs a broader clue."
+      : selectedTopic
+        ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay remains" : "essays remain"} in this path.`
+        : "Write the symptom in the language already used in the room.";
   const signalColor = inferredTopic
     ? ELEMENT_COLORS[inferredTopic.element]
     : "#B85A34";
@@ -212,6 +242,7 @@ export function InsightsExplorer({
   }
 
   function recoverWithQuery(nextQuery: string) {
+    setCarriedIntent(undefined);
     setQuery(nextQuery);
     setTopicSlug("all");
     resetFolio();
@@ -267,6 +298,7 @@ export function InsightsExplorer({
               type="search"
               value={query}
               onChange={(event) => {
+                setCarriedIntent(undefined);
                 setQuery(event.target.value);
                 resetFolio();
               }}
@@ -329,6 +361,7 @@ export function InsightsExplorer({
               <button
                 type="button"
                 onClick={() => {
+                  setCarriedIntent(undefined);
                   setTopicSlug("all");
                   resetFolio();
                 }}
@@ -350,6 +383,7 @@ export function InsightsExplorer({
                     key={topic.slug}
                     type="button"
                     onClick={() => {
+                      setCarriedIntent(undefined);
                       setTopicSlug(topic.slug);
                       resetFolio();
                     }}
@@ -380,6 +414,7 @@ export function InsightsExplorer({
             <button
               type="button"
               onClick={() => {
+                setCarriedIntent(undefined);
                 setQuery("");
                 setTopicSlug("all");
                 resetFolio();

@@ -11,6 +11,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { publishInsightsIntent } from "@/lib/insights-intent";
 import type { InsightElement } from "@/data/insights";
 
 export type ReaderQuest = {
@@ -55,6 +56,18 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
     if (focus) tabRefs.current[index]?.focus();
   }
 
+  function carryQuest(index: number) {
+    const quest = quests[index];
+    if (!quest) return;
+
+    publishInsightsIntent({
+      topicSlug: quest.topicSlug,
+      query: quest.tension,
+      label: quest.pathName,
+      origin: "decision-mirror",
+    });
+  }
+
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let nextIndex: number | null = null;
 
@@ -70,6 +83,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
     if (nextIndex !== null) {
       event.preventDefault();
       selectQuest(nextIndex, true);
+      carryQuest(nextIndex);
     }
   }
 
@@ -106,7 +120,10 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
               }
               tabIndex={selected ? 0 : -1}
               className={selected ? "is-active" : undefined}
-              onClick={() => selectQuest(index)}
+              onClick={() => {
+                selectQuest(index);
+                carryQuest(index);
+              }}
               onPointerEnter={(event) => {
                 if (event.pointerType !== "touch") selectQuest(index);
               }}
