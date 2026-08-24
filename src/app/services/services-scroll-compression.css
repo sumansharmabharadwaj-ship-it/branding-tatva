@@ -433,6 +433,48 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
   }
 }
 
+/* The section index lands with a deliberate header offset. Medium-height
+   desktop viewports therefore have slightly less than a full frame available;
+   compress the five-layer instrument enough for the final layer to resolve
+   before the next chapter appears. */
+@media (min-width: 1024px) and (max-height: 980px) {
+  [data-authority-grid="true"] {
+    gap: clamp(1.5rem, 4vw, 4rem) !important;
+  }
+
+  [data-authority-wave="true"] {
+    margin-bottom: 0.55rem;
+    padding-bottom: 0.45rem;
+  }
+
+  [data-authority-wave="true"] svg {
+    height: 2.6rem;
+    margin-top: 0.2rem;
+  }
+
+  [data-authority-desktop-layer="true"] {
+    padding-block: 0.62rem !important;
+  }
+
+  [data-authority-desktop-layer="true"] > span > span:last-child {
+    font-size: 1.8rem !important;
+  }
+
+  [data-authority-desktop-layer="true"] > div p:first-child {
+    font-size: 1.55rem !important;
+  }
+
+  [data-authority-desktop-layer="true"] > div p:nth-child(2) {
+    font-size: 0.78rem !important;
+    line-height: 1.35;
+  }
+
+  [data-authority-desktop-layer="true"] > div p:nth-child(3) {
+    font-size: 0.7rem !important;
+    line-height: 1.35;
+  }
+}
+
 /* Short desktop browser windows keep the whole Authority instrument inside
    the one-frame chapter; spacing compresses while the scroll choreography
    remains identical. */
