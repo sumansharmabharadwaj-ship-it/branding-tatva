@@ -90,7 +90,6 @@ const CAMERA_PROPERTIES = [
   "--tatva-camera-content-x",
   "--tatva-camera-content-y",
   "--tatva-camera-scale",
-  "--tatva-camera-blur",
   "--tatva-camera-opacity",
   "--tatva-camera-media-y",
   "--tatva-camera-media-scale",
@@ -302,7 +301,6 @@ export function HomeV4TatvaLens() {
       const contentX = direction * renderedSpeed * -5.5;
       const contentY = travelAxis * 13 + direction * renderedSpeed * 5;
       const contentScale = 1 - transitionWeight * 0.009 - renderedSpeed * 0.002;
-      const contentBlur = transitionWeight * 1.65 + renderedSpeed * 0.8;
       const contentOpacity = 0.9 + (1 - transitionWeight) * 0.1;
       const mediaY = travelAxis * -8 + direction * renderedSpeed * -4;
       const mediaScale = 1.018 + transitionWeight * 0.016 + renderedSpeed * 0.01;
@@ -310,7 +308,6 @@ export function HomeV4TatvaLens() {
       activeChapter.style.setProperty("--tatva-camera-content-x", `${contentX.toFixed(2)}px`);
       activeChapter.style.setProperty("--tatva-camera-content-y", `${contentY.toFixed(2)}px`);
       activeChapter.style.setProperty("--tatva-camera-scale", contentScale.toFixed(4));
-      activeChapter.style.setProperty("--tatva-camera-blur", `${contentBlur.toFixed(2)}px`);
       activeChapter.style.setProperty("--tatva-camera-opacity", contentOpacity.toFixed(3));
       activeChapter.style.setProperty("--tatva-camera-media-y", `${mediaY.toFixed(2)}px`);
       activeChapter.style.setProperty("--tatva-camera-media-scale", mediaScale.toFixed(4));

@@ -79,9 +79,6 @@
   z-index: 0;
   inset: 0;
   background: rgba(var(--tatva-lens-accent-rgb), .018);
-  backdrop-filter:
-    blur(calc(var(--tatva-lens-transition) * 2.2px + var(--tatva-lens-speed) * .8px))
-    saturate(calc(1 - var(--tatva-lens-transition) * .12));
   mask-image:
     radial-gradient(
       circle clamp(11rem, 23vw, 22rem)
@@ -92,7 +89,7 @@
     );
   opacity: calc(var(--tatva-lens-transition) * .66 + var(--tatva-lens-speed) * .24);
   transition: opacity 180ms ease-out, background-color 520ms cubic-bezier(.22, 1, .36, 1);
-  will-change: opacity, backdrop-filter;
+  will-change: opacity;
 }
 
 /* The chapter shells become the camera's subject. Only the active chapter is
@@ -101,7 +98,6 @@
 .home-v4 [data-home-v4-chapter] [data-tatva-lens-plane="content"] {
   transition:
     opacity 180ms ease-out,
-    filter 200ms ease-out,
     transform 180ms cubic-bezier(.22, 1, .36, 1);
 }
 
@@ -112,7 +108,6 @@
 .home-v4 [data-home-v4-chapter][data-tatva-lens-active="true"]
   [data-tatva-lens-plane="content"] {
   opacity: var(--tatva-camera-opacity, 1);
-  filter: blur(var(--tatva-camera-blur, 0));
   transform:
     translate3d(
       var(--tatva-camera-content-x, 0),
@@ -123,9 +118,8 @@
   transform-origin: center center;
   transition:
     opacity 140ms ease-out,
-    filter 160ms ease-out,
     transform 90ms linear;
-  will-change: transform, filter, opacity;
+  will-change: transform, opacity;
 }
 
 .home-v4 [data-home-v4-chapter][data-tatva-lens-active="true"]
