@@ -1,7 +1,6 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import {
   useCallback,
   useEffect,
@@ -23,8 +22,6 @@ const ACTION: Record<string, string> = {
   "dr-haley-nutrition": "Watch the story",
   myshopineurope: "Open the file",
   "executive-springboard": "View the case",
-  herbalcart: "View the case",
-  "plaxonic-content-portfolio": "Open the file",
 };
 
 const DECISION: Record<string, { big: string; label: string }> = {
@@ -35,10 +32,6 @@ const DECISION: Record<string, { big: string; label: string }> = {
   "executive-springboard": {
     big: "One clear action",
     label: "every platform sequence designed toward webinar registration",
-  },
-  herbalcart: {
-    big: "Wellness first",
-    label: "perception moved from herbal supplement to modern brand",
   },
 };
 
@@ -76,16 +69,6 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
     decision: "Sequence each platform toward webinar registration and mentor action.",
     proof: "An eight-pillar, platform-specific content system built around conversion.",
   },
-  herbalcart: {
-    signal: "A modern supplement range was being read through a purely herbal lens.",
-    decision: "Explain supplementation as a practical gap-filler for active lifestyles.",
-    proof: "Five content formats ready to shoot and complete Hinglish video scripts.",
-  },
-  "plaxonic-content-portfolio": {
-    signal: "One content tone failed to serve beginners and technical experts with equal credibility.",
-    decision: "Give research, perspective, education, and fast consumption different jobs.",
-    proof: "A sixteen-piece authority portfolio structured to validate, challenge, humanise, and define.",
-  },
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -120,36 +103,35 @@ export function EvidenceWall() {
   const sectionRef = useRef<HTMLElement>(null);
   const activeVideoRef = useRef<HTMLVideoElement>(null);
   const indexButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
-  const visualizer = useScrollDrivenVisualizer({
-    count: SELECTED_PROJECTS.length,
-    target: sectionRef,
-    enabled: inView,
-    reducedMotion: prefersReducedMotion,
-  });
-  const activeIndex = visualizer.activeIndex;
+  const inView = useInView(sectionRef, { amount: 0.42, margin: "4% 0px -8% 0px" });
   const activeProject = SELECTED_PROJECTS[activeIndex] ?? SELECTED_PROJECTS[0];
   const activeTrail = trailFor(activeProject);
   const activeMetric = metricFor(activeProject);
   const activeEvidence = EVIDENCE_META[activeProject.slug];
 
+  const choose = useCallback((index: number) => {
+    const nextIndex = ((index % SELECTED_PROJECTS.length) + SELECTED_PROJECTS.length) % SELECTED_PROJECTS.length;
+    setActiveIndex(nextIndex);
+  }, []);
+
   function chooseFromKeyboard(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
-    const keyDirection = event.key === "ArrowRight" || event.key === "ArrowDown"
+    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
       ? 1
       : event.key === "ArrowLeft" || event.key === "ArrowUp"
         ? -1
         : 0;
-    if (!keyDirection && event.key !== "Home" && event.key !== "End") return;
+    if (!direction && event.key !== "Home" && event.key !== "End") return;
 
     event.preventDefault();
     const nextIndex = event.key === "Home"
       ? 0
       : event.key === "End"
         ? SELECTED_PROJECTS.length - 1
-        : (index + keyDirection + SELECTED_PROJECTS.length) % SELECTED_PROJECTS.length;
-    visualizer.choose(nextIndex);
+        : (index + direction + SELECTED_PROJECTS.length) % SELECTED_PROJECTS.length;
+    choose(nextIndex);
     indexButtonRefs.current[nextIndex]?.focus();
   }
 
@@ -162,7 +144,7 @@ export function EvidenceWall() {
     function syncPlayback() {
       const video = activeVideoRef.current;
       if (!video) return;
-      video.playbackRate = 1.2;
+      video.playbackRate = 0.86;
       if (inView && !document.hidden) void video.play().catch(() => {});
       else video.pause();
     }
@@ -181,96 +163,77 @@ export function EvidenceWall() {
       className="evidence-cinematic"
       aria-labelledby="evidence-wall-title"
       data-evidence-state={activeProject.slug}
-      data-evidence-autoplay="visitor-led"
-      data-scroll-story="evidence"
-      data-media-id="BT-HOME-SELECTED-WORK-ARCHIVE-V1"
+      data-media-id="BT-HOME-SELECTED-WORK-CINEMATIC-V2"
       style={{ "--evidence-accent": activeProject.accent } as CSSProperties}
     >
-      <div className="evidence-cinematic__archive-current" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </div>
+      <AnimatePresence mode="sync" initial={false}>
+        <motion.div
+          key={`evidence-backdrop-${activeProject.slug}`}
+          className="evidence-cinematic__backdrop"
+          aria-hidden="true"
+          initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.045 }}
+          animate={{ opacity: 1, scale: prefersReducedMotion ? 1 : 1.075 }}
+          exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+          transition={{ opacity: { duration: 0.9, ease: EASE }, scale: { duration: 11, ease: "linear" } }}
+        >
+          {activeProject.cardImage && (
+            <Image
+              src={activeProject.cardImage}
+              alt=""
+              fill
+              priority={activeIndex === 0}
+              sizes="100vw"
+              className="evidence-cinematic__backdrop-image"
+              style={{ objectPosition: activeProject.cardImagePosition ?? "center" }}
+            />
+          )}
+          {!prefersReducedMotion && activeProject.cardVideo && (
+            <video
+              ref={activeVideoRef}
+              className="evidence-cinematic__backdrop-video"
+              src={activeProject.cardVideo}
+              poster={activeProject.cardImage}
+              muted
+              loop
+              autoPlay
+              playsInline
+              preload={inView ? "metadata" : "none"}
+            />
+          )}
+        </motion.div>
+      </AnimatePresence>
+
       <div className="evidence-cinematic__veil" aria-hidden="true" />
 
       <Container className="evidence-cinematic__shell max-w-[100rem]">
         <header className="evidence-cinematic__header">
           <div>
-            <p className="evidence-cinematic__eyebrow">The evidence archive</p>
-            <h2 id="evidence-wall-title">
-              Decisions first. <em>Proof follows the trail.</em>
-            </h2>
+            <p className="evidence-cinematic__eyebrow">03 · Selected work</p>
+            <h2 id="evidence-wall-title">Proof should <em>show its working.</em></h2>
           </div>
           <div className="evidence-cinematic__intro">
-            <p>
-              Three selected engagements. Each file traces a signal, the strategic
-              decision and the evidence that can be inspected.
-            </p>
+            <span>{String(activeIndex + 1).padStart(2, "0")} / {String(SELECTED_PROJECTS.length).padStart(2, "0")}</span>
+            <p>One real signal. One strategic decision. One outcome you can inspect.</p>
           </div>
         </header>
 
         <div className="evidence-cinematic__stage">
           <AnimatePresence mode="wait" initial={false}>
             <motion.article
-              key={`media-${activeProject.slug}`}
+              key={`evidence-summary-${activeProject.slug}`}
               id="evidence-active-file"
-              className="evidence-cinematic__media"
-              initial={prefersReducedMotion ? false : { opacity: 0.34, scale: 1.035, filter: "blur(4px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 1.015, filter: "blur(3px)" }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: EASE }}
+              className="evidence-cinematic__summary"
               aria-live="polite"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 18, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10, filter: "blur(3px)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
             >
-              <div className="evidence-cinematic__media-layer">
-                {activeProject.cardImage && (
-                  <Image
-                    src={activeProject.cardImage}
-                    alt=""
-                    fill
-                    priority={activeIndex === 0}
-                    sizes="(min-width: 1100px) 62vw, 100vw"
-                    className="evidence-cinematic__media-image"
-                    style={{ objectPosition: activeProject.cardImagePosition ?? "center" }}
-                  />
-                )}
-
-                {!prefersReducedMotion && activeProject.cardVideo && (
-                  <motion.video
-                    ref={activeVideoRef}
-                    key={activeProject.cardVideo}
-                    className="evidence-cinematic__media-video"
-                    src={activeProject.cardVideo}
-                    poster={activeProject.cardImage}
-                    muted
-                    loop
-                    autoPlay
-                    playsInline
-                    preload={inView ? "metadata" : "none"}
-                    data-home-playback-rate="1.2"
-                    aria-hidden="true"
-                    initial={{ opacity: 0, scale: 1.035 }}
-                    animate={{ opacity: 1, scale: inView ? 1.1 : 1.04 }}
-                    transition={{ opacity: { duration: 0.72 }, scale: { duration: 8, ease: "linear" } }}
-                  />
-                )}
-              </div>
-              <div className="evidence-cinematic__media-wash" aria-hidden="true" />
-              <div className="evidence-cinematic__media-topline">
-                <span>Case file {String(activeIndex + 1).padStart(2, "0")}</span>
-                <span>{activeProject.industry}</span>
-              </div>
-              <div className="evidence-cinematic__media-copy">
-                <p>{activeProject.title}</p>
-                <strong>{activeMetric.big}</strong>
-                <span>{activeMetric.label}</span>
-              </div>
-              <div className="evidence-cinematic__media-actions">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOpenSlug(activeProject.slug);
-                  }}
-                >
+              <p>{activeProject.title} · {activeProject.industry}</p>
+              <strong>{activeMetric.big}</strong>
+              <span>{activeMetric.label}</span>
+              <div className="evidence-cinematic__actions">
+                <button type="button" onClick={() => setOpenSlug(activeProject.slug)}>
                   Inspect the project file <span aria-hidden="true">↗</span>
                 </button>
                 <Link href={`/work/${activeProject.slug}`}>
@@ -282,70 +245,45 @@ export function EvidenceWall() {
 
           <AnimatePresence mode="wait" initial={false}>
             <motion.aside
-              key={`trail-${activeProject.slug}`}
-              className="evidence-cinematic__dossier"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(5px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
+              key={`evidence-trail-${activeProject.slug}`}
+              className="evidence-cinematic__trail"
+              initial={prefersReducedMotion ? false : { opacity: 0, x: 16, filter: "blur(4px)" }}
+              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, x: -10, filter: "blur(3px)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
             >
-              <div className="evidence-cinematic__dossier-topline">
-                <span>Decision record</span>
-                <strong>{String(activeIndex + 1).padStart(2, "0")} / {String(SELECTED_PROJECTS.length).padStart(2, "0")}</strong>
+              <div className="evidence-cinematic__trail-topline">
+                <span>Decision trail</span>
+                <Link href="/services#proof">How the work is recorded <span aria-hidden="true">↗</span></Link>
               </div>
 
-              {[
-                ["01 · The signal", activeTrail.signal],
-                ["02 · The decision", activeTrail.decision],
-                ["03 · Recorded proof", activeTrail.proof],
-              ].map(([label, value], index) => (
-                <div key={label} className="evidence-cinematic__trail-step">
-                  <div>
-                    <span>{label}</span>
-                    <i aria-hidden="true" />
+              <div className="evidence-cinematic__trail-grid">
+                {[
+                  ["01", "Signal", activeTrail.signal],
+                  ["02", "Decision", activeTrail.decision],
+                  ["03", "Proof", activeTrail.proof],
+                ].map(([number, label, value]) => (
+                  <div key={label} className="evidence-cinematic__trail-step">
+                    <span>{number}</span>
+                    <small>{label}</small>
+                    <p>{value}</p>
                   </div>
-                  <p>{value}</p>
-                  {index < 2 && (
-                    <motion.b
-                      aria-hidden="true"
-                      animate={
-                        prefersReducedMotion || !inView
-                          ? undefined
-                          : { scaleY: [0, 1], opacity: [0.18, 0.68] }
-                      }
-                      transition={{ duration: 1.4, repeat: Infinity, repeatDelay: 1.4, delay: index * 0.32, ease: "easeInOut" }}
-                    />
-                  )}
-                </div>
-              ))}
+                ))}
+              </div>
 
               {activeEvidence && (
                 <div className="evidence-cinematic__evidence-note">
-                  <span>Evidence type</span>
+                  <span>Recorded evidence</span>
                   <strong>{activeEvidence.type}</strong>
                   <small>{activeEvidence.period}</small>
                   <p>{activeEvidence.source}</p>
                 </div>
               )}
-
-              <div className="evidence-cinematic__dossier-footer">
-                <p>One decision worth following is more useful than a wall of unexplained outcomes.</p>
-                <Link href="/services#proof">See proof and project paths <span aria-hidden="true">→</span></Link>
-              </div>
-
-              <span className="evidence-cinematic__timer" aria-hidden="true">
-                <motion.i
-                  key={`evidence-timer-${activeProject.slug}`}
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.35, ease: EASE }}
-                />
-              </span>
             </motion.aside>
           </AnimatePresence>
         </div>
 
-        <div className="evidence-cinematic__index" role="tablist" aria-label="Choose a project file">
+        <div className="evidence-cinematic__index" role="tablist" aria-label="Choose a project case">
           {SELECTED_PROJECTS.map((project, index) => {
             const selected = index === activeIndex;
             return (
@@ -355,37 +293,19 @@ export function EvidenceWall() {
                 role="tab"
                 aria-selected={selected}
                 aria-controls="evidence-active-file"
-                ref={(node) => {
-                  indexButtonRefs.current[index] = node;
-                }}
+                tabIndex={selected ? 0 : -1}
+                ref={(node) => { indexButtonRefs.current[index] = node; }}
                 className={selected ? "is-active" : undefined}
                 style={{ "--project-accent": project.accent } as CSSProperties}
-                onClick={() => visualizer.choose(index)}
-                onPointerEnter={() => visualizer.preview(index)}
-                onPointerLeave={(event) => {
-                  if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
-                }}
-                onFocus={() => visualizer.preview(index)}
-                onBlur={visualizer.releasePreview}
+                onClick={() => choose(index)}
                 onKeyDown={(event) => chooseFromKeyboard(event, index)}
               >
-                <span className="evidence-cinematic__index-image" aria-hidden="true">
-                  {project.cardImage && (
-                    <Image
-                      src={project.cardImage}
-                      alt=""
-                      fill
-                      sizes="180px"
-                      style={{ objectFit: "cover", objectPosition: project.cardImagePosition ?? "center" }}
-                    />
-                  )}
-                  <i />
-                </span>
+                <span className="evidence-cinematic__index-number">{String(index + 1).padStart(2, "0")}</span>
                 <span className="evidence-cinematic__index-copy">
-                  <small>{String(index + 1).padStart(2, "0")}</small>
                   <strong>{project.title}</strong>
                   <em>{project.industry}</em>
                 </span>
+                <i aria-hidden="true" />
               </button>
             );
           })}
