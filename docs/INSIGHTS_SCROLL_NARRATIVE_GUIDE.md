@@ -45,6 +45,29 @@ The director updates only scenes within one viewport above or two viewports
 below the current screen. Velocity and pointer interpolation stop requesting
 frames as soon as their values settle.
 
+The shared seam separates momentum from intent. Scene media follows the
+interpolated velocity, preserving a calm inertial release, while the seam uses
+the latest travel direction and the eased speed magnitude. Forward and
+backward gestures therefore register immediately without snapping the camera.
+During movement the seam tightens; once input settles, the active scene gains a
+soft accent bloom that rewards the pause without adding another looping effect.
+
+Mobile browser chrome, rotation, keyboard changes, history restoration, and
+tab visibility receive explicit recovery paths. The director reads the visual
+viewport when available, clears stale momentum after a viewport change, and
+halts animation frames while the document is hidden. Returning to the page
+recalculates the composition from the real document position, preventing a
+camera jump or stale scroll direction.
+
+~~~ts
+const viewport = window.visualViewport;
+const viewportBottom = (viewport?.offsetTop ?? 0)
+  + (viewport?.height ?? window.innerHeight);
+
+const seamShift = direction * Math.abs(renderedVelocity) * 14;
+target.style.setProperty("--scene-seam-shift", seamShift + "px");
+~~~
+
 `BackgroundVideo` mounts its Framer scroll subscription only when a caller
 actually requests parallax. The Insights films use the lighter static stage,
 metadata-only video preload, offscreen pause/resume, and lazy reduced-motion
@@ -356,12 +379,18 @@ system for one section breaks the shared language.
 - Opening scene markup and styling remain unchanged.
 - Forward and backward scroll resolve to matching reversible states.
 - A fast wheel gesture adds energy without hiding text.
+- A direction reversal changes the seam immediately while the camera releases
+  its previous momentum smoothly.
+- Pausing completes the active seam; resuming tightens it without a layout
+  shift.
 - Pointer movement stays subtle and ends when the pointer leaves.
 - Mobile horizontal folios remain reachable by swipe and keyboard focus.
 - Folio paging replaces cards in place without moving the next scene.
 - Short laptop viewports show the primary argument without a dead scroll zone.
 - No fixed element overlaps headings, controls, or form fields.
 - Hash links land at stable scene starts.
+- Mobile viewport resize, browser restoration, and tab return recalculate from
+  the current position without stale velocity.
 - Videos are muted, inline, lazy, and paused away from the viewport.
 - Reduced motion shows complete static compositions.
 - TypeScript, production build, and generated static routes pass.

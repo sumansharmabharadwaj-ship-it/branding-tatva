@@ -27,6 +27,7 @@ const SCENE_STYLE_PROPERTIES = [
   "--scene-entry-shift",
   "--scene-discovery-shift",
   "--scene-resolution-shift",
+  "--scene-seam-shift",
   "--scene-mask",
   "--scene-content-opacity",
 ] as const;
@@ -138,12 +139,14 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
         target.style.setProperty("--scene-entry-shift", "0px");
         target.style.setProperty("--scene-discovery-shift", "0px");
         target.style.setProperty("--scene-resolution-shift", "0px");
+        target.style.setProperty("--scene-seam-shift", "0px");
         target.style.setProperty("--scene-mask", "100%");
         target.style.setProperty("--scene-content-opacity", "1");
       });
 
       return () => {
         delete page.dataset.insightsMotion;
+        delete page.dataset.scrollState;
         targets.forEach((target) => {
           delete target.dataset.scenePhase;
           SCENE_STYLE_PROPERTIES.forEach((property) =>
@@ -167,8 +170,24 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     let targetVelocity = 0;
     let renderedVelocity = 0;
 
+    page.dataset.scrollState = "settled";
+
+    function viewportMetrics() {
+      const visualViewport = window.visualViewport;
+      return {
+        height: Math.max(1, visualViewport?.height ?? window.innerHeight),
+        top: visualViewport?.offsetTop ?? 0,
+      };
+    }
+
+    function setScrollState(state: "moving" | "settled") {
+      if (page.dataset.scrollState !== state) page.dataset.scrollState = state;
+    }
+
     function renderCamera() {
       frame = 0;
+      if (document.visibilityState === "hidden") return;
+
       pointerX += (pointerTargetX - pointerX) * 0.12;
       pointerY += (pointerTargetY - pointerY) * 0.12;
       renderedVelocity += (targetVelocity - renderedVelocity) * 0.18;
@@ -182,14 +201,21 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
         Math.abs(renderedVelocity).toFixed(4),
       );
 
-      const viewportHeight = Math.max(1, window.innerHeight);
+      const viewport = viewportMetrics();
+      const viewportHeight = viewport.height;
+      const viewportBottom = viewport.top + viewportHeight;
 
       targets.forEach((target, index) => {
         const bounds = target.getBoundingClientRect();
-        if (bounds.bottom < -viewportHeight || bounds.top > viewportHeight * 2) return;
+        if (
+          bounds.bottom < viewport.top - viewportHeight ||
+          bounds.top > viewportBottom + viewportHeight
+        ) {
+          return;
+        }
 
         const sceneProgress = clamp(
-          (viewportHeight - bounds.top) / (viewportHeight + bounds.height),
+          (viewportBottom - bounds.top) / (viewportHeight + bounds.height),
         );
         const presence = clamp(1 - Math.abs(sceneProgress - 0.5) * 2);
         const anticipation = range(sceneProgress, 0.03, 0.23);
@@ -205,9 +231,10 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
         const cameraScale =
           1 + (1 - presence) * 0.032 + Math.abs(renderedVelocity) * 0.008;
         const cameraRoll = alternatingPan * pointerX * 0.22 + velocityKick * 0.16;
-        const entryShift = (1 - activation) * 30;
+        const entryShift = (1 - activation) * 18;
         const discoveryShift = (1 - discovery) * 22 * alternatingPan;
         const resolutionShift = resolution * -10;
+        const seamShift = direction * Math.abs(velocityKick) * 14;
         const mask = 18 + activation * 82;
         const contentOpacity = 0.72 + presence * 0.28;
 
@@ -234,6 +261,10 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
           "--scene-resolution-shift",
           `${resolutionShift.toFixed(2)}px`,
         );
+        target.style.setProperty(
+          "--scene-seam-shift",
+          `${seamShift.toFixed(2)}px`,
+        );
         target.style.setProperty("--scene-mask", `${mask.toFixed(2)}%`);
         target.style.setProperty("--scene-content-opacity", contentOpacity.toFixed(4));
       });
@@ -244,10 +275,16 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
         Math.abs(pointerTargetX - pointerX) > 0.003 ||
         Math.abs(pointerTargetY - pointerY) > 0.003;
 
-      if (needsAnotherFrame) frame = window.requestAnimationFrame(renderCamera);
+      if (needsAnotherFrame) {
+        setScrollState("moving");
+        frame = window.requestAnimationFrame(renderCamera);
+      } else {
+        setScrollState("settled");
+      }
     }
 
     function scheduleCamera() {
+      if (document.visibilityState === "hidden") return;
       if (!frame) frame = window.requestAnimationFrame(renderCamera);
     }
 
@@ -256,6 +293,9 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       if (Math.abs(delta) > 0.2) direction = delta > 0 ? 1 : -1;
       lastScroll = scroll;
       targetVelocity = clamp((velocity ?? delta) / 32, -1, 1);
+      if (Math.abs(delta) > 0.2 || Math.abs(targetVelocity) > 0.01) {
+        setScrollState("moving");
+      }
       scheduleCamera();
     }
 
@@ -318,18 +358,56 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       scheduleCamera();
     }
 
+    function handleViewportChange() {
+      lastScroll = window.scrollY;
+      targetVelocity = 0;
+      renderedVelocity = 0;
+      scheduleCamera();
+    }
+
+    function handlePageShow() {
+      lastScroll = window.scrollY;
+      scheduleCamera();
+    }
+
+    function handleVisualViewportScroll() {
+      scheduleCamera();
+    }
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "hidden") {
+        window.cancelAnimationFrame(frame);
+        frame = 0;
+        targetVelocity = 0;
+        renderedVelocity = 0;
+        setScrollState("settled");
+        return;
+      }
+
+      lastScroll = window.scrollY;
+      scheduleCamera();
+    }
+
     const unsubscribeLenis = lenis?.on("scroll", (instance) => {
       updateFromScroll(instance.scroll, instance.velocity);
     });
 
     if (!lenis) window.addEventListener("scroll", handleNativeScroll, { passive: true });
-    window.addEventListener("resize", scheduleCamera, { passive: true });
-    window.addEventListener("pageshow", scheduleCamera);
+    window.addEventListener("resize", handleViewportChange, { passive: true });
+    window.visualViewport?.addEventListener("resize", handleViewportChange, {
+      passive: true,
+    });
+    window.visualViewport?.addEventListener("scroll", handleVisualViewportScroll, {
+      passive: true,
+    });
+    window.addEventListener("pageshow", handlePageShow);
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     document.documentElement.addEventListener("pointerleave", handlePointerLeave);
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
     window.addEventListener("touchend", handleTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", handleTouchEnd, { passive: true });
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     renderCamera();
 
@@ -337,15 +415,23 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       window.cancelAnimationFrame(frame);
       unsubscribeLenis?.();
       window.removeEventListener("scroll", handleNativeScroll);
-      window.removeEventListener("resize", scheduleCamera);
-      window.removeEventListener("pageshow", scheduleCamera);
+      window.removeEventListener("resize", handleViewportChange);
+      window.visualViewport?.removeEventListener("resize", handleViewportChange);
+      window.visualViewport?.removeEventListener(
+        "scroll",
+        handleVisualViewportScroll,
+      );
+      window.removeEventListener("pageshow", handlePageShow);
       window.removeEventListener("pointermove", handlePointerMove);
       document.documentElement.removeEventListener("pointerleave", handlePointerLeave);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchcancel", handleTouchEnd);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       delete page.dataset.insightsMotion;
       delete page.dataset.scrollDirection;
+      delete page.dataset.scrollState;
       page.style.removeProperty("--insights-pointer-x");
       page.style.removeProperty("--insights-pointer-y");
       page.style.removeProperty("--insights-scroll-velocity");

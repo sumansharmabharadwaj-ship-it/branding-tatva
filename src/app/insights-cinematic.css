@@ -21,6 +21,7 @@
   --scene-entry-shift: 0px;
   --scene-discovery-shift: 0px;
   --scene-resolution-shift: 0px;
+  --scene-seam-shift: 0px;
   --scene-mask: 100%;
   --scene-content-opacity: 1;
   position: relative;
@@ -68,9 +69,26 @@
     transparent
   );
   box-shadow: 0 0 1.25rem color-mix(in srgb, var(--scene-accent-color) 42%, transparent);
-  opacity: calc(0.22 + var(--scene-activation) * 0.68);
-  transform: scaleX(var(--scene-activation));
-  transform-origin: left;
+  opacity: calc(
+    0.14 + var(--scene-activation) * 0.76 - var(--scene-resolution) * 0.32
+  );
+  transform: translate3d(var(--scene-seam-shift), 0, 0)
+    scaleX(
+      calc(0.14 + var(--scene-activation) * 0.86 - var(--scene-resolution) * 0.16)
+    );
+  transform-origin: center;
+  transition: box-shadow 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.insights-page[data-scroll-state="moving"]
+  .insights-scene[data-scene-active="true"]::after {
+  box-shadow: 0 0 0.75rem color-mix(in srgb, var(--scene-accent-color) 30%, transparent);
+}
+
+.insights-page[data-scroll-state="settled"]
+  .insights-scene[data-scene-active="true"]::after {
+  box-shadow: 0 0 1.85rem color-mix(in srgb, var(--scene-accent-color) 48%, transparent);
 }
 
 .insights-hero {
