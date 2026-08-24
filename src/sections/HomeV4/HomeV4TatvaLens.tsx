@@ -64,7 +64,7 @@ const CAMERA_PLANES: Record<string, { content: string; media?: string }> = {
   },
   evidence: {
     content: ".evidence-cinematic__shell",
-    media: ".evidence-cinematic__archive-current",
+    media: ".evidence-cinematic__backdrop",
   },
   tatva: {
     content: ".tatva-pressure-lab > div:last-child",
