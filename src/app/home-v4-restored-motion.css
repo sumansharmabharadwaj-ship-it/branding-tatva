@@ -571,6 +571,18 @@
     height: 100%;
   }
 
+  .home-v4 .home-v4-cost__causal {
+    margin-top: auto;
+  }
+
+  .home-v4 .home-v4-cost__foundation-line {
+    margin-top: 0.7rem;
+  }
+
+  .home-v4 .home-v4-cost__research {
+    margin-top: auto;
+  }
+
   .home-v4 .tatva-pressure-lab > div:last-child {
     display: flex;
     height: 100%;
