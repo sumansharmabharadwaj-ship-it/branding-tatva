@@ -147,91 +147,96 @@ export function HomeInsightsPreview() {
             >
               <div className="home-insights__argument-topline">
                 <span>{active.kind}</span>
-                <strong>{active.topic}</strong>
+                <strong>{active.topic} · {active.readingTime}</strong>
               </div>
 
-              <div className="home-insights__copy">
-                <p>{active.readingTime} · Original article</p>
-                <h3>{active.title}</h3>
-                <span>{active.excerpt}</span>
-              </div>
-
-              <div
-                className="home-insights__current"
-                role="img"
-                aria-label={`${active.title}: ${active.steps.join(" to ")}`}
-              >
-                <div className="home-insights__current-track" aria-hidden="true">
-                  <motion.i
-                    key={`insight-current-${activeIndex}`}
-                    initial={{ scaleX: prefersReducedMotion ? 1 : 0 }}
-                    animate={{ scaleX: inView ? 1 : 0 }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 1.8, ease: EASE }}
-                  />
-                  <motion.b
-                    key={`insight-current-mobile-${activeIndex}`}
-                    initial={{ scaleY: prefersReducedMotion ? 1 : 0 }}
-                    animate={{ scaleY: inView ? 1 : 0 }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 1.8, ease: EASE }}
-                  />
+              <div className="home-insights__reading">
+                <div className="home-insights__copy">
+                  <p>Original article</p>
+                  <h3>{active.title}</h3>
+                  <span>{active.excerpt}</span>
                 </div>
-                <ol>
-                  {active.steps.map((step, index) => (
-                    <li key={step}>
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                      <i aria-hidden="true" />
-                      <strong>{step}</strong>
-                    </li>
-                  ))}
-                </ol>
+
+                <div
+                  className="home-insights__current"
+                  role="img"
+                  aria-label={`${active.title}: ${active.steps.join(" to ")}`}
+                >
+                  <p>The argument, made visible</p>
+                  <div className="home-insights__current-track" aria-hidden="true">
+                    <motion.i
+                      key={`insight-current-${activeIndex}`}
+                      initial={{ scaleX: prefersReducedMotion ? 1 : 0 }}
+                      animate={{ scaleX: inView ? 1 : 0 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 1.8, ease: EASE }}
+                    />
+                    <motion.b
+                      key={`insight-current-mobile-${activeIndex}`}
+                      initial={{ scaleY: prefersReducedMotion ? 1 : 0 }}
+                      animate={{ scaleY: inView ? 1 : 0 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 1.8, ease: EASE }}
+                    />
+                  </div>
+                  <ol>
+                    {active.steps.map((step, index) => (
+                      <li key={step}>
+                        <span>{String(index + 1).padStart(2, "0")}</span>
+                        <i aria-hidden="true" />
+                        <strong>{step}</strong>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
               </div>
 
-              <div className="home-insights__takeaway">
-                <span>Carry this into the next decision</span>
-                <p>{active.takeaway}</p>
-              </div>
+              <div className="home-insights__argument-footer">
+                <div className="home-insights__takeaway">
+                  <span>Carry this forward</span>
+                  <p>{active.takeaway}</p>
+                </div>
 
-              <div className="home-insights__actions">
-                <Link href={active.href}>Read this guide <span aria-hidden="true">→</span></Link>
-                <Link href="/insights">Enter the full Insights library <span aria-hidden="true">↗</span></Link>
+                <div className="home-insights__actions">
+                  <Link href={active.href}>Read this guide <span aria-hidden="true">→</span></Link>
+                  <Link href="/insights">All Insights <span aria-hidden="true">↗</span></Link>
+                </div>
               </div>
             </motion.article>
           </AnimatePresence>
+        </div>
 
-          <div className="home-insights__index" role="tablist" aria-label="Choose an Insight reading path">
-            {INSIGHTS.map((insight, index) => {
-              const selected = index === activeIndex;
-              return (
-                <button
-                  key={insight.href}
-                  ref={(node) => {
-                    tabRefs.current[index] = node;
-                  }}
-                  type="button"
-                  role="tab"
-                  id={`home-insights-tab-${index}`}
-                  aria-selected={selected}
-                  aria-controls="home-insights-active-panel"
-                  tabIndex={selected ? 0 : -1}
-                  className={selected ? "is-active" : undefined}
-                  style={{ "--note-accent": insight.accent } as CSSProperties}
-                  onClick={() => visualizer.choose(index)}
-                  onPointerEnter={() => visualizer.preview(index)}
-                  onPointerLeave={(event) => {
-                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
-                  }}
-                  onFocus={() => visualizer.preview(index)}
-                  onBlur={visualizer.releasePreview}
-                  onKeyDown={(event) => moveFromKeyboard(event, index)}
-                >
-                  <span>{insight.kind}</span>
-                  <strong>{insight.title}</strong>
-                  <small>{insight.topic} · {insight.readingTime}</small>
-                  <i aria-hidden="true" />
-                </button>
-              );
-            })}
-          </div>
+        <div className="home-insights__index" role="tablist" aria-label="Choose an Insight reading path">
+          {INSIGHTS.map((insight, index) => {
+            const selected = index === activeIndex;
+            return (
+              <button
+                key={insight.href}
+                ref={(node) => {
+                  tabRefs.current[index] = node;
+                }}
+                type="button"
+                role="tab"
+                id={`home-insights-tab-${index}`}
+                aria-selected={selected}
+                aria-controls="home-insights-active-panel"
+                tabIndex={selected ? 0 : -1}
+                className={selected ? "is-active" : undefined}
+                style={{ "--note-accent": insight.accent } as CSSProperties}
+                onClick={() => visualizer.choose(index)}
+                onPointerEnter={() => visualizer.preview(index)}
+                onPointerLeave={(event) => {
+                  if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                }}
+                onFocus={() => visualizer.preview(index)}
+                onBlur={visualizer.releasePreview}
+                onKeyDown={(event) => moveFromKeyboard(event, index)}
+              >
+                <span>0{index + 1} · {insight.kind}</span>
+                <strong>{insight.title}</strong>
+                <small>{insight.topic}</small>
+                <i aria-hidden="true" />
+              </button>
+            );
+          })}
         </div>
       </Container>
     </section>

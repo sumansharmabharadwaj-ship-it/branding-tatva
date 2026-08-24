@@ -10,6 +10,7 @@ import {
 } from "@/lib/servicesJourney";
 import { track } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 
@@ -250,19 +251,48 @@ export function HomeBrandHealthCheck() {
       onPointerMove={moveScene}
     >
       <div className="brand-orbit__landscape" aria-hidden="true">
+        <Image
+          className="brand-orbit__plate"
+          src="/images/generated/bt-home-brand-diagnostic-flowerwater-v1.png"
+          alt=""
+          fill
+          sizes="100vw"
+        />
         <video
           ref={landscapeVideoRef}
+          className="brand-orbit__water-motion"
           muted
           autoPlay={!reducedMotion}
           loop
           playsInline
-          preload={reducedMotion ? "none" : "metadata"}
-          poster="/images/pexels-valley-first-light-poster.jpg"
-          data-home-playback-rate="0.92"
+          preload={reducedMotion ? "none" : "auto"}
+          data-home-playback-rate="1"
         >
-          <source src="/videos/pexels-valley-first-light.webm" type="video/webm" />
-          <source src="/videos/pexels-valley-first-light.mp4" type="video/mp4" />
+          <source src="/videos/generated/bt-home-decision-waterlight.mp4" type="video/mp4" />
         </video>
+        <div className="brand-orbit__petals">
+          <Image
+            className="brand-orbit__petal brand-orbit__petal--one"
+            src="/images/generated/bt-home-brand-diagnostic-petal-v1.png"
+            alt=""
+            width={270}
+            height={180}
+          />
+          <Image
+            className="brand-orbit__petal brand-orbit__petal--two"
+            src="/images/generated/bt-home-brand-diagnostic-petal-v1.png"
+            alt=""
+            width={180}
+            height={120}
+          />
+          <Image
+            className="brand-orbit__petal brand-orbit__petal--three"
+            src="/images/generated/bt-home-brand-diagnostic-petal-v1.png"
+            alt=""
+            width={130}
+            height={87}
+          />
+        </div>
       </div>
       <div className="brand-orbit__veil" aria-hidden="true" />
 
