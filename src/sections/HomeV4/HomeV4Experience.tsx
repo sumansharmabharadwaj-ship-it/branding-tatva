@@ -83,7 +83,7 @@ export function HomeV4Experience() {
         data-home-v4-chapter="process"
         data-home-chapter="process"
         data-home-section="process"
-        data-cursor-world="dark"
+        data-cursor-world="light"
         className="home-v4-chapter home-v4-chapter--process"
         aria-label="How the Branding Tatva method moves"
       >

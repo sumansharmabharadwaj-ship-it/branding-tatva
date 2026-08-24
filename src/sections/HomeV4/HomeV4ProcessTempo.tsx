@@ -5,14 +5,13 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
 
 const PROCESS_SELECTOR = '[data-project-journey="true"]';
-const TAB_SELECTOR = '.project-journey__rail [role="tab"]';
-// The former 2.4s first wait and 4.2s steady interval made this chapter lag
-// behind the faster V4 guide. The first meaningful change now arrives inside
-// one reading beat, then the process continues roughly 30% faster. Manual
-// interaction still receives the full 12-second reading hold.
-const FIRST_ADVANCE_MS = 1500;
-const AUTO_ADVANCE_MS = 2900;
-const USER_HOLD_MS = 12000;
+const TAB_SELECTOR = '.decision-flow__rail [role="tab"]';
+// The method now carries one large decision at a time. Give each statement a
+// complete reading beat before the next one arrives; manual interaction keeps
+// the scene still long enough to inspect the selected stage.
+const FIRST_ADVANCE_MS = 3000;
+const AUTO_ADVANCE_MS = 5200;
+const USER_HOLD_MS = 14000;
 const PAUSE_PULSE_MS = 4200;
 
 /**

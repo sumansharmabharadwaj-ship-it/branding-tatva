@@ -33,6 +33,7 @@ import "./home-v4-continuous-fit.css";
 import "./home-v4-orbit-redesign.css";
 import "./home-v4-restored-motion.css";
 import "./home-v4-scene-rhythm.css";
+import "./home-v4-process-cinematic.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";

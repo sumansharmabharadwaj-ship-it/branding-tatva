@@ -1,0 +1,334 @@
+/* The method chapter is a single cinematic thought, not a dashboard. */
+
+html body .home-v4 #process,
+html body .home-v4 #process .decision-flow {
+  width: 100%;
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+html body .home-v4 #process .decision-flow {
+  --decision-accent: #7f9274;
+  position: relative;
+  isolation: isolate;
+  color: #203228;
+  background: #e9dfca;
+}
+
+html body .home-v4 #process .decision-flow__media,
+html body .home-v4 #process .decision-flow__media video,
+html body .home-v4 #process .decision-flow__veil,
+html body .home-v4 #process .decision-flow__light {
+  position: absolute;
+  inset: 0;
+}
+
+html body .home-v4 #process .decision-flow__media {
+  z-index: -2;
+  overflow: hidden;
+  background: #d7d2be;
+}
+
+html body .home-v4 #process .decision-flow__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% 52%;
+  filter: saturate(.58) sepia(.08) contrast(.86) brightness(1.13);
+  transform: scale(1.055);
+  animation: decisionFlowCamera 18s ease-in-out infinite alternate;
+}
+
+html body .home-v4 #process .decision-flow__veil {
+  background:
+    linear-gradient(90deg, rgba(240, 232, 214, .98) 0%, rgba(240, 232, 214, .89) 34%, rgba(238, 231, 214, .48) 62%, rgba(223, 219, 198, .18) 100%),
+    linear-gradient(180deg, rgba(246, 240, 226, .76) 0%, rgba(242, 235, 219, .08) 44%, rgba(30, 46, 38, .36) 100%);
+}
+
+html body .home-v4 #process .decision-flow__light {
+  inset: -20% -10%;
+  background: radial-gradient(circle at 72% 34%, rgba(255, 247, 211, .52), transparent 28%);
+  mix-blend-mode: screen;
+  animation: decisionFlowLight 12s ease-in-out infinite alternate;
+}
+
+html body .home-v4 #process .decision-flow__shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(100% - clamp(2.25rem, 6vw, 7rem), 1440px);
+  height: 100%;
+  margin-inline: auto;
+  padding: clamp(5.2rem, 10svh, 6.5rem) 0 clamp(1.15rem, 2.4svh, 1.7rem);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+html body .home-v4 #process .decision-flow__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 24rem);
+  align-items: start;
+  gap: clamp(2rem, 8vw, 9rem);
+  padding-bottom: clamp(1rem, 2.6svh, 1.6rem);
+  border-bottom: 1px solid rgba(32, 50, 40, .22);
+}
+
+html body .home-v4 #process .decision-flow__header > div > p,
+html body .home-v4 #process .decision-flow__topline,
+html body .home-v4 #process .decision-flow__stage-name,
+html body .home-v4 #process .decision-flow__rail button > span,
+html body .home-v4 #process .decision-flow__stage dt {
+  margin: 0;
+  color: rgba(32, 50, 40, .72);
+  font-size: clamp(.59rem, .68vw, .7rem);
+  font-weight: 650;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+html body .home-v4 #process .decision-flow__header h2 {
+  max-width: 15ch;
+  margin: .45rem 0 0;
+  color: #203228;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(3.1rem, min(5.4vw, 7svh), 5.65rem);
+  font-weight: 400;
+  letter-spacing: -.05em;
+  line-height: .91;
+  text-wrap: balance;
+}
+
+html body .home-v4 #process .decision-flow__header h2 em {
+  color: #9c6b42;
+  font-weight: inherit;
+}
+
+html body .home-v4 #process .decision-flow__header > p {
+  max-width: 34ch;
+  margin: 1.1rem 0 0;
+  color: rgba(32, 50, 40, .72);
+  font-size: clamp(.85rem, 1vw, 1rem);
+  line-height: 1.58;
+}
+
+html body .home-v4 #process .decision-flow__stage {
+  display: flex;
+  min-height: 0;
+  align-items: center;
+  padding: clamp(1rem, 3svh, 2rem) 0;
+}
+
+html body .home-v4 #process .decision-flow__stage article {
+  width: min(100%, 51rem);
+}
+
+html body .home-v4 #process .decision-flow__topline {
+  display: flex;
+  width: min(30rem, 100%);
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  color: var(--decision-accent);
+}
+
+html body .home-v4 #process .decision-flow__stage-name {
+  margin-top: clamp(.8rem, 1.5svh, 1.15rem);
+  color: rgba(32, 50, 40, .62);
+}
+
+html body .home-v4 #process .decision-flow__stage h3 {
+  max-width: 12ch;
+  margin: .35rem 0 0;
+  color: #203228;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(3.35rem, min(6.4vw, 9.3svh), 7rem);
+  font-weight: 400;
+  letter-spacing: -.055em;
+  line-height: .88;
+  text-wrap: balance;
+}
+
+html body .home-v4 #process .decision-flow__explanation {
+  max-width: 41rem;
+  margin: clamp(.75rem, 1.6svh, 1.15rem) 0 0;
+  color: rgba(32, 50, 40, .78);
+  font-size: clamp(.85rem, 1.05vw, 1rem);
+  line-height: 1.58;
+}
+
+html body .home-v4 #process .decision-flow__stage dl {
+  display: grid;
+  max-width: 51rem;
+  margin: clamp(1rem, 2.3svh, 1.55rem) 0 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.2rem, 4vw, 4.5rem);
+}
+
+html body .home-v4 #process .decision-flow__stage dl > div {
+  padding-top: .7rem;
+  border-top: 1px solid rgba(32, 50, 40, .25);
+}
+
+html body .home-v4 #process .decision-flow__stage dd {
+  margin: .4rem 0 0;
+  color: rgba(32, 50, 40, .9);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(.92rem, 1.2vw, 1.16rem);
+  line-height: 1.35;
+}
+
+html body .home-v4 #process .decision-flow__rail {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  border-top: 1px solid rgba(242, 237, 224, .48);
+  border-bottom: 1px solid rgba(242, 237, 224, .28);
+  background: rgba(29, 44, 37, .42);
+  box-shadow: 0 18px 55px rgba(20, 34, 28, .12);
+  backdrop-filter: blur(20px) saturate(.8);
+}
+
+html body .home-v4 #process .decision-flow__rail button {
+  position: relative;
+  min-width: 0;
+  min-height: clamp(4.5rem, 9svh, 5.8rem);
+  padding: .85rem clamp(.55rem, 1.2vw, 1rem) 1rem;
+  border: 0;
+  border-right: 1px solid rgba(242, 237, 224, .18);
+  background: transparent;
+  color: rgba(247, 241, 228, .62);
+  text-align: left;
+  cursor: pointer;
+  transition: color 320ms ease, background 320ms ease;
+}
+
+html body .home-v4 #process .decision-flow__rail button:last-child {
+  border-right: 0;
+}
+
+html body .home-v4 #process .decision-flow__rail button:hover,
+html body .home-v4 #process .decision-flow__rail button:focus-visible,
+html body .home-v4 #process .decision-flow__rail button.is-active {
+  color: #fff9ed;
+  background: rgba(246, 235, 214, .1);
+  outline: none;
+}
+
+html body .home-v4 #process .decision-flow__rail button > span {
+  color: rgba(255, 249, 237, .58);
+}
+
+html body .home-v4 #process .decision-flow__rail button strong {
+  display: block;
+  margin-top: .38rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(.85rem, 1.05vw, 1.08rem);
+  font-weight: 400;
+}
+
+html body .home-v4 #process .decision-flow__rail button i {
+  position: absolute;
+  right: .9rem;
+  bottom: .85rem;
+  left: .9rem;
+  height: 1px;
+  background: rgba(255, 249, 237, .26);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 480ms cubic-bezier(.22, 1, .36, 1), background 320ms ease;
+}
+
+html body .home-v4 #process .decision-flow__rail button:hover i,
+html body .home-v4 #process .decision-flow__rail button:focus-visible i,
+html body .home-v4 #process .decision-flow__rail button.is-active i {
+  background: var(--decision-accent);
+  transform: scaleX(1);
+}
+
+@keyframes decisionFlowCamera {
+  0% { transform: scale(1.055) translate3d(-.5%, -.3%, 0); }
+  100% { transform: scale(1.105) translate3d(1.2%, .7%, 0); }
+}
+
+@keyframes decisionFlowLight {
+  0% { opacity: .65; transform: translate3d(-1.5%, 0, 0); }
+  100% { opacity: 1; transform: translate3d(2%, -1%, 0); }
+}
+
+@media (max-width: 900px) {
+  html body .home-v4 #process,
+  html body .home-v4 #process .decision-flow {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+  }
+
+  html body .home-v4 #process .decision-flow__shell {
+    min-height: 100svh;
+    padding-top: 5.25rem;
+  }
+
+  html body .home-v4 #process .decision-flow__header {
+    grid-template-columns: 1fr;
+    gap: .75rem;
+  }
+
+  html body .home-v4 #process .decision-flow__header > p {
+    margin-top: 0;
+  }
+
+  html body .home-v4 #process .decision-flow__stage h3 {
+    font-size: clamp(3rem, 13vw, 5.6rem);
+  }
+
+  html body .home-v4 #process .decision-flow__rail {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  html body .home-v4 #process .decision-flow__rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  html body .home-v4 #process .decision-flow__rail button {
+    width: 9.25rem;
+    flex: 0 0 9.25rem;
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 620px) {
+  html body .home-v4 #process .decision-flow__shell {
+    width: calc(100% - 1.3rem);
+    padding-bottom: .7rem;
+  }
+
+  html body .home-v4 #process .decision-flow__header h2 {
+    font-size: clamp(2.8rem, 14vw, 4.3rem);
+  }
+
+  html body .home-v4 #process .decision-flow__stage dl {
+    grid-template-columns: 1fr;
+    gap: .8rem;
+  }
+
+  html body .home-v4 #process .decision-flow__explanation {
+    font-size: .82rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .home-v4 #process .decision-flow__media video,
+  html body .home-v4 #process .decision-flow__light {
+    animation: none !important;
+  }
+
+  html body .home-v4 #process .decision-flow *,
+  html body .home-v4 #process .decision-flow *::before,
+  html body .home-v4 #process .decision-flow *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .001ms !important;
+  }
+}
