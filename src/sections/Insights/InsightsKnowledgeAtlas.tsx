@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -73,6 +74,26 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
     offset: ["start 92%", "end 8%"],
   });
   const activePath = paths[activeIndex];
+
+  useEffect(() => {
+    function syncPathFromHash() {
+      const prefix = "#atlas-tab-";
+      if (!window.location.hash.startsWith(prefix)) return;
+
+      const slug = decodeURIComponent(window.location.hash.slice(prefix.length));
+      const nextIndex = paths.findIndex((path) => path.slug === slug);
+      if (nextIndex < 0) return;
+
+      setActiveIndex((current) => {
+        transitionDirectionRef.current = nextIndex >= current ? 1 : -1;
+        return nextIndex;
+      });
+    }
+
+    syncPathFromHash();
+    window.addEventListener("hashchange", syncPathFromHash);
+    return () => window.removeEventListener("hashchange", syncPathFromHash);
+  }, [paths]);
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     if (!inView || paused || prefersReducedMotion || paths.length < 2) return;

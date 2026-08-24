@@ -1,6 +1,11 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import {
+  useDeferredValue,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { ArrowLeft, ArrowRight, Search } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -42,6 +47,47 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
 // or shifts the following scene farther away.
 const POSTS_PER_FOLIO = 3;
 
+const INTENT_LANGUAGE: Record<string, string> = {
+  positioning:
+    "price pricing cheap premium compare comparison category crowded offer audience niche differentiator similar explain value unclear",
+  "customer-experience":
+    "trust hesitate friction enquiry inquiry onboarding journey handoff slow confusing inconsistent experience promise delivery drop off",
+  "distinctive-brand":
+    "same similar generic interchangeable invisible attention recognition distinctive visual identity polished bland stand out",
+  "brand-messaging":
+    "explain explanation words website homepage proposal sales language voice message confusing unclear value proposition",
+  "brand-memory":
+    "forgettable recall remember memory consistency content publish posting recognition repeated familiar awareness faint",
+};
+
+function scorePostForIntent(post: InsightCardPost, cleanQuery: string) {
+  const tokens = cleanQuery
+    .split(/[^a-z0-9]+/)
+    .filter((token) => token.length > 2);
+  const title = post.title.toLowerCase();
+  const primaryKeyword = post.primaryKeyword.toLowerCase();
+  const secondaryKeywords = post.secondaryKeywords.join(" ").toLowerCase();
+  const excerpt = post.excerpt.toLowerCase();
+  const intentLanguage = INTENT_LANGUAGE[post.topicSlug] ?? "";
+  let score = 0;
+
+  if (title.includes(cleanQuery)) score += 24;
+  if (primaryKeyword.includes(cleanQuery)) score += 18;
+  if (secondaryKeywords.includes(cleanQuery)) score += 12;
+  if (excerpt.includes(cleanQuery)) score += 8;
+  if (intentLanguage.includes(cleanQuery)) score += 10;
+
+  tokens.forEach((token) => {
+    if (title.includes(token)) score += 7;
+    if (primaryKeyword.includes(token)) score += 6;
+    if (secondaryKeywords.includes(token)) score += 4;
+    if (excerpt.includes(token)) score += 2;
+    if (intentLanguage.includes(token)) score += 3;
+  });
+
+  return score;
+}
+
 const FOLIO_TURN_VARIANTS: Variants = {
   enter: (direction: number = 1) => ({
     opacity: 0.72,
@@ -74,35 +120,35 @@ export function InsightsExplorer({
   topics,
   sectionId = "insights-library",
   eyebrow = "The library",
-  heading = "Find the question behind the visible problem.",
-  description = "Search by the decision you are facing, or follow one of the five reading paths. Every article links back to the wider system, so one answer opens the next useful question.",
-  searchPlaceholder = "Search positioning, messaging, memory",
+  heading = "Find the article closest to the tension.",
+  description = "Search in the language of the problem: price pressure, hesitation, sameness, unclear value, or faint recall. The library ranks the strongest clues first, while the five paths keep wider exploration open.",
+  searchPlaceholder = "Try “price pressure” or “hard to explain”",
   video = "/videos/generated/bt-insights-library-leafcurrent.mp4",
   poster = "/images/generated/bt-insights-library-leafcurrent-poster.jpg",
 }: InsightsExplorerProps) {
   const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query);
   const [topicSlug, setTopicSlug] = useState("all");
   const [folio, setFolio] = useState({ index: 0, direction: 1 });
   const prefersReducedMotion = useHydratedReducedMotion();
 
   const filteredPosts = useMemo(() => {
-    const cleanQuery = query.trim().toLowerCase();
+    const cleanQuery = deferredQuery.trim().toLowerCase();
+    const topicPosts = posts.filter(
+      (post) => topicSlug === "all" || post.topicSlug === topicSlug,
+    );
 
-    return posts.filter((post) => {
-      const matchesTopic = topicSlug === "all" || post.topicSlug === topicSlug;
-      const searchable = [
-        post.title,
-        post.excerpt,
-        post.primaryKeyword,
-        ...post.secondaryKeywords,
-      ]
-        .join(" ")
-        .toLowerCase();
-      const matchesQuery = cleanQuery.length === 0 || searchable.includes(cleanQuery);
+    if (cleanQuery.length === 0) return topicPosts;
 
-      return matchesTopic && matchesQuery;
-    });
-  }, [posts, query, topicSlug]);
+    return topicPosts
+      .map((post) => ({ post, score: scorePostForIntent(post, cleanQuery) }))
+      .filter((result) => result.score > 0)
+      .sort(
+        (a, b) =>
+          b.score - a.score || b.post.updatedAt.localeCompare(a.post.updatedAt),
+      )
+      .map((result) => result.post);
+  }, [deferredQuery, posts, topicSlug]);
 
   const folioCount = Math.max(1, Math.ceil(filteredPosts.length / POSTS_PER_FOLIO));
   const activeFolio = Math.min(folio.index, folioCount - 1);
@@ -111,6 +157,16 @@ export function InsightsExplorer({
     firstPostIndex,
     firstPostIndex + POSTS_PER_FOLIO,
   );
+  const settledQuery = deferredQuery.trim();
+  const resultMessage = settledQuery
+    ? filteredPosts.length > 0
+      ? `Best matches ${firstPostIndex + 1}–${firstPostIndex + visiblePosts.length} of ${filteredPosts.length} for “${settledQuery}”`
+      : `No close matches for “${settledQuery}”`
+    : `${
+        filteredPosts.length > 0
+          ? `Showing ${firstPostIndex + 1}–${firstPostIndex + visiblePosts.length} of ${filteredPosts.length}`
+          : "Showing 0"
+      } ${filteredPosts.length === 1 ? "essay" : "essays"}`;
 
   function resetFolio() {
     setFolio({ index: 0, direction: -1 });
@@ -219,12 +275,12 @@ export function InsightsExplorer({
           )}
         </div>
 
-        <div className="insights-library__result-line flex items-center justify-between gap-4">
+        <div
+          className="insights-library__result-line flex items-center justify-between gap-4"
+          aria-busy={query !== deferredQuery}
+        >
           <p className="text-sm text-foreground-secondary" aria-live="polite">
-            {filteredPosts.length > 0
-              ? `Showing ${firstPostIndex + 1}–${firstPostIndex + visiblePosts.length} of ${filteredPosts.length}`
-              : "Showing 0"}{" "}
-            {filteredPosts.length === 1 ? "essay" : "essays"}
+            {resultMessage}
           </p>
           {(query || topicSlug !== "all") && (
             <button
@@ -307,7 +363,7 @@ export function InsightsExplorer({
             </p>
             <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-foreground-secondary">
               Try a broader phrase such as positioning, audit, recall, message,
-              or brand system.
+              price pressure, trust, sameness, or brand system.
             </p>
           </div>
         )}

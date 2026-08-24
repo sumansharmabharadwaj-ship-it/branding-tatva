@@ -56,7 +56,7 @@ Each scene consumes the shared values in a way tied to its content:
 
 | Scene | Visual idea | Meaning |
 | --- | --- | --- |
-| Foundation | A folio opens and five decision bands assemble | Positioning supports every later decision |
+| Decision mirror | Five familiar tensions tune one live diagnostic frame | Self-recognition narrows a broad archive to one credible first move |
 | Knowledge atlas | Paths advance with scroll and reverse on back-scroll | A vague problem becomes a navigable system |
 | Essay library | The search lens aligns, then a three-card folio turns in place | A question focuses the archive without lengthening the page |
 | Audit seam | A film mask opens while evidence enters a ledger | Surface symptoms resolve into diagnostic layers |
@@ -65,6 +65,85 @@ Each scene consumes the shared values in a way tied to its content:
 The opening `PhotoHero` is absent from `INSIGHT_SCENES`. The director therefore
 cannot add a wrapper, dataset, transform, or animation state to the protected
 first section.
+
+## Behavioral reader journey
+
+The post-hero sequence follows the visitor's decision state, rather than the
+site's content taxonomy:
+
+1. Recognise: choose the sentence closest to the current business tension.
+2. Trace: watch that symptom resolve into a strategic reading and question.
+3. Explore: follow the related path, or search in ordinary problem language.
+4. Verify: connect the argument to an audit, a proof point, or a service route.
+5. Keep: subscribe only after the page has delivered practical value.
+
+The decision mirror uses self-relevant symptoms because self-reference can
+increase message elaboration when the underlying argument is strong. It avoids
+overclaiming: the selected sentence produces a likely reading, a diagnostic
+question, and a first article rather than a definitive diagnosis. See the
+[Journal of Consumer Research study on self-referencing and persuasion](https://academic.oup.com/jcr/article-abstract/22/1/17/1808102).
+
+Every route exposes a strong proximal cue: a recognisable symptom, the name of
+the path, the question it answers, and the next article. This follows
+information-foraging research in which people use information scent to judge
+whether staying on a path is likely to satisfy their goal. See
+[Pirolli and Card's information-foraging theory](https://onlinelibrary.wiley.com/doi/10.1207/s15516709cog0000_20).
+
+The interface groups the five routes, recommends one first read, and still
+keeps the full atlas available. Choice overload is conditional on choice
+complexity, task difficulty, preference uncertainty, and the visitor's goal;
+the design therefore improves comparison and ranking instead of blindly
+removing options. See the
+[meta-analysis of moderators of choice overload](https://doi.org/10.1016/j.jcps.2014.08.002).
+
+The atlas and search lens preserve exploration while the audit scene adds
+evaluation and reassurance. This supports the recursive exploration and
+evaluation behavior described in Google's
+[research on purchase decision-making](https://business.google.com/en-all/think/consumer-insights/navigating-purchase-behavior-and-decision-making/).
+
+### Decision mirror implementation
+
+The mirror is a semantic tab interface. Hover previews on pointer devices,
+focus and arrow keys expose the same state, and touch keeps selection explicit.
+Only one compact answer panel changes, so the section stays close to one screen.
+
+~~~tsx
+<InsightsDecisionMirror
+  quests={[{
+    tension: "People compare us on price.",
+    reading: "The market may be using the wrong comparison.",
+    firstQuestion: "Which category does the buyer place you in?",
+    article: firstPositioningArticle,
+  }]}
+/>
+~~~
+
+The answer connects directly to the matching atlas tab through a stable hash.
+`InsightsKnowledgeAtlas` reads the hash on load and on `hashchange`, making
+anchor navigation and browser history deterministic.
+
+### Intent-ranked search
+
+Visitors often search with symptoms rather than strategy terminology. The
+library maps natural phrases such as “price pressure”, “hard to explain”, and
+“looks the same” to the relevant topic, then weights direct title and keyword
+matches above broader excerpt or intent-language matches.
+
+~~~ts
+if (title.includes(cleanQuery)) score += 24;
+if (primaryKeyword.includes(cleanQuery)) score += 18;
+if (intentLanguage.includes(cleanQuery)) score += 10;
+
+tokens.forEach((token) => {
+  if (title.includes(token)) score += 7;
+  if (intentLanguage.includes(token)) score += 3;
+});
+~~~
+
+`useDeferredValue` lets the input stay responsive while the ranked archive
+settles. Empty queries retain the editorial ordering, filters remain explicit,
+and the result message explains whether the visitor sees chronology or ranked
+matches.
 
 ### Scroll-linked CSS
 

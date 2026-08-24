@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { Container } from "@/components/Container";
-import { InsightCard, type InsightCardPost } from "@/components/InsightCard";
+import type { InsightCardPost } from "@/components/InsightCard";
 import { InsightsExplorer } from "@/components/InsightsExplorer";
 import { LinkButton } from "@/components/Button";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -20,6 +20,10 @@ import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
+import {
+  InsightsDecisionMirror,
+  type ReaderQuest,
+} from "@/sections/Insights/InsightsDecisionMirror";
 import { InsightsKnowledgeAtlas } from "@/sections/Insights/InsightsKnowledgeAtlas";
 import {
   InsightsSceneNavigator,
@@ -67,13 +71,43 @@ const INSIGHT_SCENES: InsightScene[] = [
   { id: "insights-field-notes" },
 ];
 
-const FOUNDATION_DECISIONS = [
-  "Offer design",
-  "Messaging",
-  "Visual direction",
-  "Sales language",
-  "Content",
-];
+const READER_QUEST_BLUEPRINTS = [
+  {
+    topicSlug: "positioning",
+    tension: "People compare us on price.",
+    reading: "The market may be using the wrong comparison.",
+    articleSlug: "brand-positioning-strategy-service-businesses",
+    questionIndex: 1,
+  },
+  {
+    topicSlug: "customer-experience",
+    tension: "People like the work, then hesitate.",
+    reading: "Trust may be thinning between promise and experience.",
+    articleSlug: "customer-journey-mapping-service-businesses",
+    questionIndex: 2,
+  },
+  {
+    topicSlug: "distinctive-brand",
+    tension: "The brand looks polished, yet interchangeable.",
+    reading: "Recognition cues may be too weak to travel.",
+    articleSlug: "distinctive-brand-assets-audit",
+    questionIndex: 0,
+  },
+  {
+    topicSlug: "brand-messaging",
+    tension: "I explain the value better than the website does.",
+    reading: "The message hierarchy may be hiding the strongest reason to choose.",
+    articleSlug: "website-messaging-hierarchy-service-businesses",
+    questionIndex: 1,
+  },
+  {
+    topicSlug: "brand-memory",
+    tension: "We publish often, yet memory stays faint.",
+    reading: "Repeated activity may be teaching too many different ideas.",
+    articleSlug: "brand-awareness-vs-brand-recall",
+    questionIndex: 1,
+  },
+] as const;
 
 const AUDIT_LAYERS = ["Foundation", "Message", "Identity", "Experience", "Memory"];
 
@@ -82,7 +116,6 @@ export default function InsightsPage() {
     (a, b) =>
       new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
-  const featured = sortedPosts.find((post) => post.featured) ?? sortedPosts[0];
   const explorerPosts: InsightCardPost[] = sortedPosts.map((post) => ({
     slug: post.slug,
     title: post.title,
@@ -102,6 +135,32 @@ export default function InsightsPage() {
     name,
     element,
   }));
+  const readerQuests: ReaderQuest[] = READER_QUEST_BLUEPRINTS.map((blueprint) => {
+    const topic = insightTopics.find((candidate) => candidate.slug === blueprint.topicSlug);
+    const article = sortedPosts.find((candidate) => candidate.slug === blueprint.articleSlug);
+
+    if (!topic || !article) {
+      throw new Error(`Missing verified reader quest for ${blueprint.topicSlug}`);
+    }
+
+    return {
+      topicSlug: topic.slug,
+      element: topic.element,
+      pathName: topic.name,
+      tension: blueprint.tension,
+      reading: blueprint.reading,
+      firstQuestion:
+        topic.diagnosticQuestions[blueprint.questionIndex] ??
+        topic.diagnosticQuestions[0] ??
+        "Which decision would create the clearest next move?",
+      article: {
+        slug: article.slug,
+        title: article.title,
+        excerpt: article.excerpt,
+        readingTime: article.readingTime,
+      },
+    };
+  });
   const atlasPaths = insightTopics.map((topic) => {
     const articles = sortedPosts.filter((post) => post.topicSlug === topic.slug);
     const application = getInsightApplication(topic.slug);
@@ -256,8 +315,8 @@ export default function InsightsPage() {
           </Container>
         </PhotoHero>
 
-        {/* A restrained folio current replaces the old flat ivory chapter;
-            the dense wash keeps the foundation essay visually primary. */}
+        {/* A self-recognition mirror narrows a broad library to one credible
+            first route before the visitor reaches the deeper atlas. */}
         <section
           id="insights-foundation"
           className="insights-foundation insights-scene relative overflow-hidden bg-ivory"
@@ -276,40 +335,19 @@ export default function InsightsPage() {
             <div className="insights-foundation__header">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
-                  Foundation essay
+                  Decision mirror
                 </p>
                 <h2 className="mt-3 font-display text-display-sm font-normal text-soil">
-                  One foundation essay. Five decisions.
+                  Which tension feels most familiar?
                 </h2>
               </div>
               <p className="max-w-2xl text-sm leading-6 text-foreground-secondary lg:justify-self-end">
-                Positioning is the soil beneath offer design, messaging,
-                visual direction, sales language, and content. This guide
-                turns the subject into a decision system a service business
-                can actually use.
+                Five familiar symptoms lead to different strategic questions.
+                Begin with the sentence closest to the business today; the
+                mirror narrows the library to one useful first move.
               </p>
             </div>
-
-            <ol
-              className="insights-foundation__decisions"
-              aria-label="Five connected brand decisions"
-            >
-              {FOUNDATION_DECISIONS.map((decision, index) => (
-                <li
-                  key={decision}
-                  style={{
-                    "--decision-delay": `${index * 32}ms`,
-                  } as CSSProperties}
-                >
-                  <span>0{index + 1}</span>
-                  <strong>{decision}</strong>
-                </li>
-              ))}
-            </ol>
-
-            <div className="insights-foundation__feature">
-              <InsightCard post={featured} featured />
-            </div>
+            <InsightsDecisionMirror quests={readerQuests} />
           </Container>
         </section>
 
@@ -375,7 +413,7 @@ export default function InsightsPage() {
                 </p>
                 <div className="mt-8">
                   <LinkButton href="/insights/brand-audit-checklist-before-rebrand">
-                    Open the audit
+                    Read the brand audit checklist
                   </LinkButton>
                 </div>
 
