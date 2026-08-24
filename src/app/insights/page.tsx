@@ -119,30 +119,35 @@ const EVIDENCE_LAYERS: EvidenceLayer[] = [
     name: "Foundation",
     signal: "Different buyers place the business in different categories.",
     evidence: "Buyer language · lost-deal reasons · offer comparisons",
+    move: "Compare buyer language, lost-deal reasons, and offer comparisons in one table.",
   },
   {
     slug: "message",
     name: "Message",
     signal: "Calls explain the value faster than the website.",
     evidence: "Homepage hierarchy · proposal language · recurring objections",
+    move: "Place homepage claims beside sales-call phrasing and recurring objections.",
   },
   {
     slug: "identity",
     name: "Identity",
     signal: "Recognition fades when the logo leaves the frame.",
     evidence: "Distinctive cues · competitor similarity · channel consistency",
+    move: "Test which cues people recognise before the logo appears.",
   },
   {
     slug: "experience",
     name: "Experience",
     signal: "Confidence drops between enquiry and delivery.",
     evidence: "Response gaps · handoffs · promise-to-experience alignment",
+    move: "Trace confidence from enquiry through handoff and delivery.",
   },
   {
     slug: "memory",
     name: "Memory",
     signal: "Publishing grows while spontaneous recall stays faint.",
     evidence: "Repeated cues · branded search patterns · recall interviews",
+    move: "Track which cues repeat across the moments with the widest reach.",
   },
 ];
 

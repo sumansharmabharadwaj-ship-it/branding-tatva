@@ -234,6 +234,26 @@ the outcome useful on its own. Hover previews the evidence strip, keyboard
 focus exposes the same detail, touch selection remains explicit, and the marked
 state stays mounted when the reader scrolls away and returns.
 
+Marking now produces a live working brief inside the same fixed detail frame.
+One layer opens a first route; two named layers are read as a connected buyer
+journey; three or more become one compact audit route. The copy remains
+cautious: the interface calls the result a working hypothesis, then gives one
+specific evidence move for the active marked layer. This rewards the
+micro-commitment without presenting a five-click interaction as a diagnosis.
+
+~~~tsx
+const showsSynthesis = markedCount > 0 && focusedIsMarked;
+const primaryDetail = showsSynthesis
+  ? `Read ${markedRoute} as one connected buyer journey; evidence can reveal where confidence changes.`
+  : focusedLayer.signal;
+~~~
+
+Hovering or focusing an open layer temporarily restores its raw signal and
+evidence preview. Leaving the ledger returns to the latest marked layer, so the
+reader keeps both free exploration and a stable result. Selection, synthesis,
+and reduced-motion states use the same semantic buttons and live regions; no
+additional effect, subscription, or document listener is introduced.
+
 The final field-notes scene then states the exchange precisely: every message
 contains one question, one practical lens, and one focused move. This closes the
 journey with control and expectation clarity instead of a generic newsletter
