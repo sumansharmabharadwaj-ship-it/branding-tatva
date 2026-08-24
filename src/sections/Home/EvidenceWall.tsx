@@ -42,18 +42,21 @@ const DECISION: Record<string, { big: string; label: string }> = {
   },
 };
 
-const EVIDENCE_META: Record<string, { type: string; source: string }> = {
+const EVIDENCE_META: Record<string, { type: string; period: string; source: string }> = {
   "dr-haley-nutrition": {
-    type: "Measured platform performance · Dec 2025–Jan 2026",
-    source: "Documented account comparison in the project file",
+    type: "Measured performance",
+    period: "December 2025 → January 2026",
+    source: "Instagram account comparison: 111 followers from 23 posts versus 126 from 12 posts. The homepage shows the raw per-post values instead of an unexplained percentage.",
   },
   myshopineurope: {
-    type: "Delivered brand and content operating system",
-    source: "Completed foundation, channel playbooks and quarterly rollout",
+    type: "Delivered system",
+    period: "Completed project output",
+    source: "Brand foundation, channel playbooks and a quarter-by-quarter content operating plan.",
   },
   "executive-springboard": {
-    type: "Delivered conversion-led content system",
-    source: "Completed competitive audit, eight pillars and platform playbooks",
+    type: "Documented decision + delivered system",
+    period: "Completed project output",
+    source: "Competitive audit, eight content pillars and platform-specific playbooks structured around webinar registration.",
   },
 };
 
@@ -61,7 +64,7 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
   "dr-haley-nutrition": {
     signal: "More posts were producing weaker audience response.",
     decision: "Post less, then make every remaining post earn its place.",
-    proof: "Engagement moved from 0.71% to 2.81%; followers earned per post rose 104%.",
+    proof: "Engagement moved from 0.71% to 2.81%; followers earned per Instagram post moved from 4.8 to 10.5.",
   },
   myshopineurope: {
     signal: "A new marketplace risked reading as generic access and cheap supply.",
@@ -98,6 +101,13 @@ function trailFor(project: Project) {
 }
 
 function metricFor(project: Project) {
+  if (project.slug === "dr-haley-nutrition") {
+    return {
+      big: "10.5 vs 4.8",
+      label: "followers earned per Instagram post · January vs December",
+    };
+  }
+
   const stat = project.stats?.[0];
   const fallback = DECISION[project.slug];
   return {
@@ -313,6 +323,7 @@ export function EvidenceWall() {
                 <div className="evidence-cinematic__evidence-note">
                   <span>Evidence type</span>
                   <strong>{activeEvidence.type}</strong>
+                  <small>{activeEvidence.period}</small>
                   <p>{activeEvidence.source}</p>
                 </div>
               )}

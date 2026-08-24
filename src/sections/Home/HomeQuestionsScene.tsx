@@ -108,7 +108,10 @@ export function HomeQuestionsScene() {
 
     event.preventDefault();
     choose(next);
-    document.getElementById(`question-tab-${next}`)?.focus();
+    const tabPrefix = event.currentTarget.id.startsWith("question-compass")
+      ? "question-compass-tab"
+      : "question-tab";
+    document.getElementById(`${tabPrefix}-${next}`)?.focus();
   }
 
   return (
@@ -117,7 +120,7 @@ export function HomeQuestionsScene() {
       aria-labelledby="home-questions-title"
       style={{ "--questions-accent": active.color } as CSSProperties}
     >
-      <span className="sr-only">The practical questions</span>
+      <span className="sr-only">Before we work together</span>
       <BackgroundVideo
         video="/videos/pixabay-golden-reeds-wind.mp4"
         poster="/images/pixabay-golden-reeds-wind-poster.jpg"
@@ -129,7 +132,7 @@ export function HomeQuestionsScene() {
           <div>
             <p className="questions-cinematic__eyebrow">Before we work together</p>
             <h2 id="home-questions-title">
-              Five practical doubts. <em>One clear starting point.</em>
+              Five practical questions. <em>One clear starting point.</em>
             </h2>
           </div>
           <div className="questions-cinematic__intro">
@@ -228,38 +231,45 @@ export function HomeQuestionsScene() {
               })}
             </svg>
 
-            {decisions.map((decision, index) => {
-              const selected = index === activeIndex;
-              return (
-                <button
-                  key={decision.signal}
-                  type="button"
-                  className={`questions-cinematic__node${selected ? " is-active" : ""}`}
-                  style={
-                    {
-                      left: `${decision.x}%`,
-                      top: `${decision.y}%`,
-                      "--decision-color": decision.color,
-                    } as CSSProperties
-                  }
-                  aria-label={`Focus ${decision.signal}: ${decision.question}`}
-                  aria-pressed={selected}
-                  onClick={() => choose(index)}
-                  onFocus={() => choose(index)}
-                >
-                  <motion.i
-                    aria-hidden="true"
-                    animate={
-                      selected && motionActive
-                        ? { scale: [0.78, 1.24, 0.78], opacity: [0.7, 1, 0.7] }
-                        : { scale: 1, opacity: selected ? 1 : 0.58 }
+            <div className="questions-cinematic__nodes" role="tablist" aria-label="Choose a practical question">
+              {decisions.map((decision, index) => {
+                const selected = index === activeIndex;
+                return (
+                  <button
+                    key={decision.signal}
+                    id={`question-compass-tab-${index}`}
+                    type="button"
+                    role="tab"
+                    className={`questions-cinematic__node${selected ? " is-active" : ""}`}
+                    style={
+                      {
+                        left: `${decision.x}%`,
+                        top: `${decision.y}%`,
+                        "--decision-color": decision.color,
+                      } as CSSProperties
                     }
-                    transition={{ duration: 2.4, repeat: selected && motionActive ? Infinity : 0, ease: "easeInOut" }}
-                  />
-                  <span>{decision.signal}</span>
-                </button>
-              );
-            })}
+                    aria-label={`${decision.signal}: ${decision.question}`}
+                    aria-selected={selected}
+                    aria-controls="questions-cinematic-panel"
+                    tabIndex={selected ? 0 : -1}
+                    onClick={() => choose(index)}
+                    onFocus={() => choose(index)}
+                    onKeyDown={(event) => onTabKeyDown(event, index)}
+                  >
+                    <motion.i
+                      aria-hidden="true"
+                      animate={
+                        selected && motionActive
+                          ? { scale: [0.78, 1.24, 0.78], opacity: [0.7, 1, 0.7] }
+                          : { scale: 1, opacity: selected ? 1 : 0.58 }
+                      }
+                      transition={{ duration: 2.4, repeat: selected && motionActive ? Infinity : 0, ease: "easeInOut" }}
+                    />
+                    <span>{decision.signal}</span>
+                  </button>
+                );
+              })}
+            </div>
 
             <motion.div
               className="questions-cinematic__core"
@@ -280,7 +290,7 @@ export function HomeQuestionsScene() {
               key={active.signal}
               id="questions-cinematic-panel"
               role="tabpanel"
-              aria-labelledby={`question-tab-${activeIndex}`}
+              aria-label={`${active.signal}: ${active.question}`}
               className="questions-cinematic__answer"
               initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(5px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -292,7 +302,7 @@ export function HomeQuestionsScene() {
                 <span>{active.signal}</span>
                 <strong>{String(activeIndex + 1).padStart(2, "0")} / 05</strong>
               </div>
-              <p className="questions-cinematic__answer-label">What this doubt is really asking</p>
+              <p className="questions-cinematic__answer-label">What this question is really asking</p>
               <h3>{active.title}</h3>
               <p className="questions-cinematic__question">“{active.question}”</p>
               <p className="questions-cinematic__answer-copy">{active.answer}</p>

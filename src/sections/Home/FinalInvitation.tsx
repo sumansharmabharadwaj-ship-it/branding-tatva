@@ -1,7 +1,6 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { LinkButton } from "@/components/Button";
@@ -20,21 +19,17 @@ type Invitation = {
   body: string;
   action: string;
   trail: readonly [string, string, string];
-  proofHref: string;
-  proofLabel: string;
   accent: string;
 };
 
 const INVITATIONS: Record<Situation, Invitation> = {
   default: {
     eyebrow: "The next clear decision",
-    headline: "Let’s find the idea your business should be remembered for.",
+    headline: "Leave with the three decisions your brand needs next.",
     body:
-      "Thirty minutes to name the tension, choose the direction, and see what the brand needs next.",
-    action: "Enter the strategy room",
+      "In thirty focused minutes, we will name the tension, choose a direction, and define the first useful move.",
+    action: "Book the 30-minute diagnosis",
     trail: ["Name the tension", "Choose the position", "Build the system"],
-    proofHref: "/services#proof",
-    proofLabel: "See the client proof",
     accent: "#D4B99A",
   },
   idea: {
@@ -42,10 +37,8 @@ const INVITATIONS: Record<Situation, Invitation> = {
     headline: "Give the idea a position the market can recognise.",
     body:
       "We will name the category, audience tension, belief, and promise the first system should inherit.",
-    action: "Enter the foundation room",
+    action: "Book the 30-minute diagnosis",
     trail: ["Decode founder truth", "Commit the position", "Build the first system"],
-    proofHref: "/work/myshopineurope",
-    proofLabel: "See a foundation take shape",
     accent: "#C77752",
   },
   reposition: {
@@ -53,10 +46,8 @@ const INVITATIONS: Record<Situation, Invitation> = {
     headline: "Bring the scattered pieces back to one recognisable idea.",
     body:
       "We will locate the contradictions, choose the position, and decide what every touchpoint must repeat.",
-    action: "Enter the repositioning room",
+    action: "Book the 30-minute diagnosis",
     trail: ["Audit contradictions", "Re-centre the story", "Rebuild recognition"],
-    proofHref: "/work/herbalcart",
-    proofLabel: "See perception repositioned",
     accent: "#7D8565",
   },
   ongoing: {
@@ -64,10 +55,8 @@ const INVITATIONS: Record<Situation, Invitation> = {
     headline: "Give growth a system strong enough to hold it.",
     body:
       "We will turn the strongest signals into rules for identity, content, campaigns, and recognition.",
-    action: "Enter the system room",
+    action: "Book the 30-minute diagnosis",
     trail: ["Find the strongest signals", "Turn them into rules", "Compound across channels"],
-    proofHref: "/work/dr-haley-nutrition",
-    proofLabel: "See recognition compound",
     accent: "#D8A251",
   },
 };
@@ -215,27 +204,11 @@ export function FinalInvitation() {
 
               <div className="final-invitation__actions mt-7 flex flex-wrap items-center gap-4">
                 <LinkButton href="/contact">{invitation.action}</LinkButton>
-                <Link
-                  href={invitation.proofHref}
-                  className="link-underline text-sm font-medium text-ivory/62 transition-colors hover:text-sandstone"
-                >
-                  {invitation.proofLabel} <span aria-hidden="true">→</span>
-                </Link>
               </div>
 
-              <div
-                className="final-invitation__details mt-7 flex flex-wrap gap-2"
-                aria-label="First conversation details"
-              >
-                {["30 minutes", "honest diagnosis", "zero pitch deck"].map((detail) => (
-                  <span
-                    key={detail}
-                    className="rounded-full border border-ivory/12 bg-ivory/[0.035] px-3 py-2 text-[0.58rem] font-medium uppercase tracking-[0.14em] text-ivory/48"
-                  >
-                    {detail}
-                  </span>
-                ))}
-              </div>
+              <p className="final-invitation__details mt-6 text-sm text-ivory/58">
+                Thirty minutes · honest diagnosis · no pitch deck.
+              </p>
             </div>
           </div>
 

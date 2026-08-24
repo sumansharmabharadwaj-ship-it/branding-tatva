@@ -107,7 +107,10 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       if (!target) return;
 
       const rect = target.getBoundingClientRect();
-      const alreadyThere = rect.top > -4 && rect.top < window.innerHeight * 0.5;
+      // Hydration can move a chapter by a few pixels after the browser's
+      // native hash jump. Finish recovery only when the anchor is genuinely
+      // aligned instead of accepting anywhere in the upper half of the view.
+      const alreadyThere = Math.abs(rect.top) <= 1;
       if (alreadyThere && hashScrollAttempts > 0) return;
 
       hashScrollAttempts += 1;

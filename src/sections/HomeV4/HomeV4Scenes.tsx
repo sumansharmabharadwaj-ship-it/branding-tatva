@@ -388,7 +388,7 @@ export function V4HiddenCostScene() {
 
         <div className="home-v4-cost__shell">
           <header>
-            <p>02 · The hidden cost</p>
+            <p>03 · The hidden cost</p>
             <h2 id="home-v4-cost-title">
               Marketing becomes expensive when the brand underneath it <em>keeps changing shape.</em>
             </h2>

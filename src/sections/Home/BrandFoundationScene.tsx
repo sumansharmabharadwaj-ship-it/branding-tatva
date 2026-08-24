@@ -34,7 +34,7 @@ export function BrandFoundationScene() {
 
       <div className="foundation-orbit__shell">
         <header className="foundation-orbit__header">
-          <p>03 · Earth</p>
+          <p>04 · The foundation</p>
           <h2 id="brand-foundation-title">Four decisions beneath every visible brand.</h2>
           <Link href="/services#desire">Explore the foundation path <span aria-hidden="true">↗</span></Link>
         </header>
