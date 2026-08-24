@@ -369,9 +369,9 @@
   .home-v4 .home-v4-chapter--tatva .tatva-pressure-lab,
   .home-v4 .home-v4-chapter--decision,
   .home-v4 .home-v4-chapter--decision .questions-cinematic {
-    height: 100svh;
-    min-height: 100svh;
-    max-height: 100svh;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: 100svh !important;
     box-sizing: border-box;
     overflow: hidden;
   }
