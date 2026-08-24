@@ -70,6 +70,35 @@ The interaction translates each fact into a practical brand-strategy lens. The
 real portrait remains the visual anchor while the scroll controls crop, focus,
 aperture, evidence card, and editorial emphasis.
 
+## Synthesis chapter
+
+`Convergence.tsx` no longer repeats the founder-origin chapter as another pair
+of discipline cards. It answers the next visitor question instead: *how do
+those disciplines change a brand decision?*
+
+The desktop scene uses one short native-scroll runway and three reversible
+states:
+
+```tsx
+const STAGES = [
+  { label: "Read", meaning: "Keep the two lenses distinct." },
+  { label: "Connect", meaning: "Pair human signals with language." },
+  { label: "Carry", meaning: "Resolve one usable brand signal." },
+];
+```
+
+The middle state makes the logic inspectable through four pairings—attention
+with framing, association with metaphor, memory with narrative, and choice
+with tone. The resolution does not invent a performance claim; it shows the
+kind of strategic outputs the practice produces: positioning, language, and
+recognition.
+
+Desktop motion clarifies that sequence by moving the two disciplines toward a
+shared field, drawing their connections, and then letting the input layers
+recede behind the resolved outputs. Tablet, mobile, and reduced-motion modes
+render the same model as a complete linear explanation rather than a shrunken
+version of the pinned composition.
+
 ## Performance and accessibility rules
 
 - Pinning is limited to a 158svh runway with a 100svh scene; native scroll is
