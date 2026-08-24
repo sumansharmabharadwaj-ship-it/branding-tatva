@@ -1636,6 +1636,41 @@
   }
 }
 
+/* Keep the atlas as one resolved camera frame on common laptop and desktop
+   viewports. Its content still expands naturally on touch layouts, where the
+   horizontal path rail needs more breathing room. */
+@media (min-width: 1024px) and (max-height: 1050px) {
+  .insights-atlas__container {
+    padding-block: 5.75rem 2.5rem;
+  }
+
+  .insights-atlas__header h2 {
+    font-size: clamp(2.9rem, 4.35vw, 4.35rem);
+  }
+
+  .insights-atlas__stage {
+    margin-top: 1.5rem;
+  }
+
+  .insights-atlas__panel {
+    min-height: 24.5rem;
+    padding: 1.5rem 2rem;
+  }
+
+  .insights-atlas__panel h3 {
+    font-size: clamp(2.6rem, 4.1vw, 4rem);
+  }
+
+  .insights-atlas__panel-grid {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+
+  .insights-atlas__application p {
+    -webkit-line-clamp: 1;
+  }
+}
+
 @media (max-width: 899px) {
   .insights-hero__shell {
     align-items: center;
