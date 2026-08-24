@@ -41,7 +41,7 @@
 
 .brand-orbit__sun { position:absolute; z-index:1; left:50%; top:54%; width:clamp(14rem,24vw,23rem); aspect-ratio:1; translate:-50% -50%; border-radius:50%; overflow:hidden; filter:drop-shadow(0 25px 54px rgba(110,71,29,.22)); }
 .brand-orbit__sun img { object-fit:cover; }
-.brand-orbit__centre-copy { position:absolute; z-index:3; left:50%; top:54%; width:clamp(10rem,16vw,15rem); translate:-50% -50%; text-align:center; color:#fff9ea; text-shadow:0 2px 18px rgba(31,29,20,.72); pointer-events:none; }
+.brand-orbit__centre-copy { position:absolute; z-index:3; left:50%; top:54%; width:clamp(10rem,16vw,15rem); translate:-50% -50%; padding:.9rem 1rem; border:1px solid rgba(63,73,57,.18); border-radius:999px; background:rgba(249,245,234,.78); color:#27352d; box-shadow:0 16px 44px rgba(96,72,37,.16); backdrop-filter:blur(8px); text-align:center; text-shadow:none; pointer-events:none; }
 .brand-orbit__centre-copy span { display:block; margin-bottom:.65rem; font-size:.6rem; text-transform:uppercase; letter-spacing:.18em; }
 .brand-orbit__centre-copy strong { display:block; font:400 clamp(1.05rem,1.7vw,1.55rem)/1.1 var(--font-display), Georgia, serif; }
 
