@@ -30,7 +30,7 @@
   max-width: 48rem;
   margin: 0.55rem 0 0;
   color: #f4efe6;
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-display), Georgia, serif;
   font-size: clamp(2.7rem, 4.45vw, 4.8rem);
   font-weight: 400;
   line-height: 0.94;

@@ -24,7 +24,7 @@ const CASES = [
     result: "104% more followers earned per post, a 1,350% jump in comments per post, engagement rate from 0.71% to 2.81%.",
     evidenceType: "Measured outcome",
     record: "Two-month platform performance",
-    signals: ["104% more followers / post", "13.5× comments / post", "2.81% engagement"],
+    signals: ["104% more followers / post", "1,350% more comments / post", "2.81% engagement"],
   },
   {
     slug: "myshopineurope",
