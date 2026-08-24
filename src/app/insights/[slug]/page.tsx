@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -12,6 +13,7 @@ import { Reveal } from "@/components/Reveal";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { TexturedDark } from "@/components/TexturedDark";
 import { elements } from "@/data/elements";
+import { getInsightApplication } from "@/data/insightApplications";
 import {
   getInsightBySlug,
   getInsightTopic,
@@ -19,10 +21,18 @@ import {
   type InsightPost,
 } from "@/data/insights";
 import { getInsightPathway } from "@/data/insightPathways";
+import { packages } from "@/data/services";
+import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
 import { searchRobotsMetadata } from "@/lib/searchVisibility";
 import { Footer } from "@/sections/Footer";
+import { InsightFrameworkVisualizer } from "@/sections/Insights/InsightFrameworkVisualizer";
+import {
+  InsightReadingIndex,
+  InsightReadingRail,
+} from "@/sections/Insights/InsightReadingRail";
+import "./insights-article-cinematic.css";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -117,10 +127,29 @@ export default async function InsightArticlePage({ params }: Props) {
   const topic = getInsightTopic(post.topicSlug);
   const pathway = getInsightPathway(post.topicSlug);
   const color = element?.color ?? "#B85A34";
+  const application = getInsightApplication(post.topicSlug);
+  const applicationProof = projects.find(
+    (project) => project.slug === application?.projectSlug
+  );
+  const applicationPackage = packages.find(
+    (pkg) => pkg.slug === application?.packageSlug
+  );
   const related = post.relatedSlugs
     .map((relatedSlug) => getInsightBySlug(relatedSlug))
     .filter((item): item is InsightPost => Boolean(item))
     .slice(0, 3);
+  const readingRailItems = [
+    { id: "key-takeaways", label: "Argument" },
+    { id: "working-framework", label: post.framework.title },
+    ...post.sections.map((section) => ({
+      id: section.id,
+      label: section.heading,
+    })),
+    { id: "frequent-questions", label: "Questions" },
+    ...(sources.length > 0
+      ? [{ id: "research-sources", label: "Sources" }]
+      : []),
+  ];
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -199,9 +228,13 @@ export default async function InsightArticlePage({ params }: Props) {
     <>
       <Header transparent />
       <ScrollProgress />
-      <main id="main-content">
+      <main
+        id="main-content"
+        className="insight-article-page"
+        style={{ "--article-accent": color } as CSSProperties}
+      >
         <article>
-          <header className="relative flex min-h-[78svh] items-end overflow-hidden bg-soil pb-14 pt-36 sm:pb-20 sm:pt-44">
+          <header className="insight-article-hero relative flex items-end overflow-hidden bg-soil pb-14 pt-36 sm:pb-20 sm:pt-44">
             {post.heroVideo ? (
               <BackgroundVideo video={post.heroVideo} poster={post.heroImage} />
             ) : (
@@ -274,63 +307,21 @@ export default async function InsightArticlePage({ params }: Props) {
             </Container>
           </header>
 
+          <InsightReadingRail items={readingRailItems} accent={color} />
+
           <section className="bg-ivory py-16 sm:py-20">
             <Container>
               <div className="grid gap-12 xl:grid-cols-[13rem_minmax(0,48rem)_14rem] xl:items-start xl:justify-between">
                 <aside className="hidden xl:block">
-                  <nav
-                    aria-label="In this article"
-                    className="sticky top-28 rounded-[1.25rem] border border-border bg-background-elevated p-5"
-                  >
-                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-clay">
-                      In this article
-                    </p>
-                    <ol className="mt-4 space-y-3">
-                      <li>
-                        <a
-                          href="#working-framework"
-                          className="text-xs leading-5 text-foreground-secondary transition hover:text-soil"
-                        >
-                          {post.framework.title}
-                        </a>
-                      </li>
-                      {post.sections.map((section) => (
-                        <li key={section.id}>
-                          <a
-                            href={`#${section.id}`}
-                            className="text-xs leading-5 text-foreground-secondary transition hover:text-soil"
-                          >
-                            {section.heading}
-                          </a>
-                        </li>
-                      ))}
-                      <li>
-                        <a
-                          href="#frequent-questions"
-                          className="text-xs leading-5 text-foreground-secondary transition hover:text-soil"
-                        >
-                          Frequent questions
-                        </a>
-                      </li>
-                      {sources.length > 0 && (
-                        <li>
-                          <a
-                            href="#research-sources"
-                            className="text-xs leading-5 text-foreground-secondary transition hover:text-soil"
-                          >
-                            Research sources
-                          </a>
-                        </li>
-                      )}
-                    </ol>
-                  </nav>
+                  <InsightReadingIndex items={readingRailItems} accent={color} />
                 </aside>
 
                 <div className="min-w-0">
                   <Reveal>
                     <section
+                      id="key-takeaways"
                       aria-labelledby="takeaways-heading"
-                      className="rounded-[1.5rem] border border-soil/10 bg-background-elevated p-6 shadow-elevation-sm sm:p-8"
+                      className="scroll-mt-32 rounded-[1.5rem] border border-soil/10 bg-background-elevated p-6 shadow-elevation-sm sm:p-8"
                     >
                       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay">
                         Key takeaways
@@ -357,54 +348,27 @@ export default async function InsightArticlePage({ params }: Props) {
                   </Reveal>
 
                   <Reveal>
-                    <section
-                      id="working-framework"
-                      className="scroll-mt-32 pt-20"
-                      aria-labelledby="framework-heading"
-                    >
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay">
-                        Working framework
-                      </p>
-                      <h2
-                        id="framework-heading"
-                        className="mt-4 font-display text-display-sm font-normal text-soil"
-                      >
-                        {post.framework.title}
-                      </h2>
-                      <p className="mt-5 max-w-2xl text-base leading-8 text-foreground-secondary">
-                        {post.framework.introduction}
-                      </p>
-                      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                        {post.framework.steps.map((step, index) => (
-                          <div
-                            key={step.title}
-                            className="rounded-[1.25rem] border border-soil/10 bg-background-alt p-5"
-                          >
-                            <div className="flex items-center justify-between gap-4">
-                              <span
-                                className="font-display text-3xl"
-                                style={{ color }}
-                              >
-                                0{index + 1}
-                              </span>
-                              <span className="h-px flex-1 bg-border" aria-hidden="true" />
-                            </div>
-                            <h3 className="mt-5 font-display text-2xl font-normal text-soil">
-                              {step.title}
-                            </h3>
-                            <p className="mt-3 text-sm leading-6 text-foreground-secondary">
-                              {step.description}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </section>
+                    <InsightFrameworkVisualizer
+                      framework={post.framework}
+                      element={post.element}
+                      accent={color}
+                    />
                   </Reveal>
 
                   <div className="pt-4">
                     {post.sections.map((section, sectionIndex) => (
                       <Reveal key={section.id}>
-                        <section id={section.id} className="scroll-mt-32 pt-16">
+                        <section
+                          id={section.id}
+                          className="insight-article-section scroll-mt-32 pt-16"
+                        >
+                          <p
+                            className="insight-article-section__kicker"
+                            aria-hidden="true"
+                          >
+                            <span>{String(sectionIndex + 1).padStart(2, "0")}</span>
+                            Field chapter
+                          </p>
                           <h2 className="font-display text-[clamp(2rem,4vw,3.2rem)] font-normal leading-tight text-soil">
                             {section.heading}
                           </h2>
@@ -447,22 +411,32 @@ export default async function InsightArticlePage({ params }: Props) {
                           )}
 
                           {sectionIndex === Math.floor(post.sections.length / 2) && (
-                            <figure className="mt-12 overflow-hidden rounded-[1.5rem] border border-soil/10 bg-soil">
-                              <div className="relative aspect-[16/9]">
-                                <Image
-                                  src={post.heroImage}
-                                  alt={post.heroImageAlt}
-                                  fill
-                                  sizes="(min-width: 1280px) 48rem, 100vw"
-                                  className="object-cover"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-soil/70 via-transparent to-transparent" />
+                            <aside
+                              className="insight-decision-bridge"
+                              aria-label="Decision connection"
+                            >
+                              <p className="insight-decision-bridge__label">
+                                Decision bridge
+                              </p>
+                              <div className="insight-decision-bridge__map">
+                                <div className="insight-decision-bridge__node">
+                                  <span>Current layer</span>
+                                  <p>{section.heading}</p>
+                                </div>
+                                <div className="insight-decision-bridge__line" aria-hidden="true" />
+                                <div className="insight-decision-bridge__node">
+                                  <span>Connected layer</span>
+                                  <p>
+                                    {post.sections[sectionIndex + 1]?.heading ??
+                                      post.framework.title}
+                                  </p>
+                                </div>
                               </div>
-                              <figcaption className="px-5 py-4 text-xs leading-5 text-ivory/65">
-                                The framework works as a connected landscape.
-                                Each decision changes the terrain around the next one.
-                              </figcaption>
-                            </figure>
+                              <p className="insight-decision-bridge__note">
+                                A useful brand system carries one decision into
+                                the next, preserving meaning as the context changes.
+                              </p>
+                            </aside>
                           )}
                         </section>
                       </Reveal>
@@ -629,6 +603,21 @@ export default async function InsightArticlePage({ params }: Props) {
                         {topic?.promise}
                       </p>
                     </div>
+                    {application && applicationProof && applicationPackage && (
+                      <div className="insight-application-card">
+                        <p>From reading to application</p>
+                        <Link href={`/work/${applicationProof.slug}`}>
+                          <small>Published project record</small>
+                          <strong>{applicationProof.title}</strong>
+                          <span>{application.proofFrame}</span>
+                        </Link>
+                        <Link href={`/services#package-${applicationPackage.slug}`}>
+                          <small>Strategy path</small>
+                          <strong>{applicationPackage.name}</strong>
+                          <span>{application.serviceFrame}</span>
+                        </Link>
+                      </div>
+                    )}
                     <Link
                       href={pathway.service.href}
                       className="link-underline block text-xs font-semibold uppercase tracking-[0.14em]"
@@ -684,8 +673,8 @@ export default async function InsightArticlePage({ params }: Props) {
         )}
 
         <TexturedDark
-          image={post.heroImage}
-          video={post.heroVideo}
+          image="/images/generated/bt-insights-topic-across-system-poster.jpg"
+          video="/videos/generated/bt-insights-topic-across-system.mp4"
           className="py-24 text-center sm:py-28"
         >
           <Container>

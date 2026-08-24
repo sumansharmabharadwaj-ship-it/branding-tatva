@@ -68,10 +68,28 @@ export function PackageSelector() {
       setCarriedSituation(situation);
     }
 
-    try {
-      const saved = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
-      if (isServicesSituation(saved)) applySituation(saved);
-    } catch {}
+    function applyLinkedPackage() {
+      const hash = window.location.hash.replace(/^#/, "");
+      const linkedChoice = CHOICES.find(
+        (choice) => `package-${choice.slug}` === hash,
+      );
+
+      if (!linkedChoice) return false;
+
+      manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+      setActive(linkedChoice.slug);
+      setSelectionSource("manual");
+      setCompare(false);
+      setCarriedSituation(null);
+      return true;
+    }
+
+    if (!applyLinkedPackage()) {
+      try {
+        const saved = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+        if (isServicesSituation(saved)) applySituation(saved);
+      } catch {}
+    }
 
     function onSituation(event: Event) {
       const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
@@ -79,8 +97,16 @@ export function PackageSelector() {
       applySituation(detail.situation);
     }
 
+    function onHashChange() {
+      applyLinkedPackage();
+    }
+
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation);
-    return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
+    window.addEventListener("hashchange", onHashChange);
+    return () => {
+      window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
+      window.removeEventListener("hashchange", onHashChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -160,6 +186,7 @@ export function PackageSelector() {
           return (
             <motion.button
               key={choice.slug}
+              id={`package-${choice.slug}`}
               type="button"
               aria-pressed={isActive && selectionSource !== "scroll"}
               data-package-preview={isActive && selectionSource === "scroll" ? "true" : undefined}
@@ -170,7 +197,7 @@ export function PackageSelector() {
               whileHover={prefersReducedMotion ? undefined : { y: -5 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.98, y: -1 }}
               transition={{ duration: 0.35, delay: choiceIndex * 0.09, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center gap-2.5 rounded-2xl border-t-2 p-5 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)] lg:min-h-[196px]"
+              className="flex scroll-mt-28 flex-col items-center gap-2.5 rounded-2xl border-t-2 p-5 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)] lg:min-h-[196px]"
               style={{
                 borderColor: pkg?.color,
                 backgroundColor: isActive

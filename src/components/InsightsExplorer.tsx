@@ -18,6 +18,13 @@ type ExplorerTopic = {
 type InsightsExplorerProps = {
   posts: InsightCardPost[];
   topics: ExplorerTopic[];
+  sectionId?: string;
+  eyebrow?: string;
+  heading?: string;
+  description?: string;
+  searchPlaceholder?: string;
+  video?: string;
+  poster?: string;
 };
 
 const ELEMENT_COLORS: Record<InsightElement, string> = {
@@ -35,7 +42,17 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
 const INITIAL_VISIBLE_POSTS = 3;
 const LOAD_MORE_POSTS = 6;
 
-export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
+export function InsightsExplorer({
+  posts,
+  topics,
+  sectionId = "insights-library",
+  eyebrow = "The library",
+  heading = "Find the question behind the visible problem.",
+  description = "Search by the decision you are facing, or follow one of the five reading paths. Every article links back to the wider system, so one answer opens the next useful question.",
+  searchPlaceholder = "Search positioning, messaging, memory",
+  video = "/videos/generated/bt-insights-library-leafcurrent.mp4",
+  poster = "/images/generated/bt-insights-library-leafcurrent-poster.jpg",
+}: InsightsExplorerProps) {
   const [query, setQuery] = useState("");
   const [topicSlug, setTopicSlug] = useState("all");
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_POSTS);
@@ -65,10 +82,10 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
   // The archive film stays intentionally low-contrast beneath the
   // interactive search layer, with posters covering reduced motion.
   return (
-    <section id="insights-library" className="relative overflow-hidden bg-background-alt py-14">
+    <section id={sectionId} className="insights-library relative flex min-h-[100svh] items-center overflow-hidden bg-background-alt py-14">
       <BackgroundVideo
-        video="/videos/generated/bt-insights-library-leafcurrent.mp4"
-        poster="/images/generated/bt-insights-library-leafcurrent-poster.jpg"
+        video={video}
+        poster={poster}
         parallax
         playbackRate={0.84}
       />
@@ -77,16 +94,14 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
         <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
-              The library
+              {eyebrow}
             </p>
             <h2 className="mt-3 max-w-xl font-display text-display-sm font-normal text-soil">
-              Find the question behind the visible problem.
+              {heading}
             </h2>
           </div>
           <p className="max-w-2xl text-sm leading-6 text-foreground-secondary lg:justify-self-end">
-            Search by the decision you are facing, or follow one of the five
-            reading paths. Every article links back to the wider system, so one
-            answer opens the next useful question.
+            {description}
           </p>
         </div>
 
@@ -104,52 +119,54 @@ export function InsightsExplorer({ posts, topics }: InsightsExplorerProps) {
                 setQuery(event.target.value);
                 setVisibleCount(INITIAL_VISIBLE_POSTS);
               }}
-              placeholder="Search positioning, messaging, memory"
+              placeholder={searchPlaceholder}
               className="min-h-14 w-full rounded-full border border-border bg-ivory pl-12 pr-5 text-sm text-soil outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/15"
             />
           </label>
 
-          <div className="mt-4 flex flex-wrap gap-2" aria-label="Filter articles by topic">
-            <button
-              type="button"
-              onClick={() => {
-                setTopicSlug("all");
-                setVisibleCount(INITIAL_VISIBLE_POSTS);
-              }}
-              aria-pressed={topicSlug === "all"}
-              className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
-                topicSlug === "all"
-                  ? "border-soil bg-soil text-ivory"
-                  : "border-border bg-transparent text-soil hover:border-soil/30"
-              }`}
-            >
-              All themes
-            </button>
-            {topics.map((topic) => {
-              const active = topicSlug === topic.slug;
-              const color = ELEMENT_COLORS[topic.element];
+          {topics.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2" aria-label="Filter articles by topic">
+              <button
+                type="button"
+                onClick={() => {
+                  setTopicSlug("all");
+                  setVisibleCount(INITIAL_VISIBLE_POSTS);
+                }}
+                aria-pressed={topicSlug === "all"}
+                className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
+                  topicSlug === "all"
+                    ? "border-soil bg-soil text-ivory"
+                    : "border-border bg-transparent text-soil hover:border-soil/30"
+                }`}
+              >
+                All themes
+              </button>
+              {topics.map((topic) => {
+                const active = topicSlug === topic.slug;
+                const color = ELEMENT_COLORS[topic.element];
 
-              return (
-                <button
-                  key={topic.slug}
-                  type="button"
-                  onClick={() => {
-                    setTopicSlug(topic.slug);
-                    setVisibleCount(INITIAL_VISIBLE_POSTS);
-                  }}
-                  aria-pressed={active}
-                  className="rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition"
-                  style={{
-                    borderColor: active ? color : "#D9CDBC",
-                    backgroundColor: active ? `${color}18` : "transparent",
-                    color: active ? color : "#27221E",
-                  }}
-                >
-                  {topic.name}
-                </button>
-              );
-            })}
-          </div>
+                return (
+                  <button
+                    key={topic.slug}
+                    type="button"
+                    onClick={() => {
+                      setTopicSlug(topic.slug);
+                      setVisibleCount(INITIAL_VISIBLE_POSTS);
+                    }}
+                    aria-pressed={active}
+                    className="rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition"
+                    style={{
+                      borderColor: active ? color : "#D9CDBC",
+                      backgroundColor: active ? `${color}18` : "transparent",
+                      color: active ? color : "#27221E",
+                    }}
+                  >
+                    {topic.name}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         <div className="mt-4 flex items-center justify-between gap-4">

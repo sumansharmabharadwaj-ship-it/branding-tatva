@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { Container } from "@/components/Container";
-import { ElementGlyph } from "@/components/ElementGlyph";
 import { InsightCard, type InsightCardPost } from "@/components/InsightCard";
 import { InsightsExplorer } from "@/components/InsightsExplorer";
 import { LinkButton } from "@/components/Button";
@@ -13,10 +13,15 @@ import { ScrollProgress } from "@/components/ScrollProgress";
 import { SplitReveal } from "@/components/SplitReveal";
 import { TexturedDark } from "@/components/TexturedDark";
 import { elements } from "@/data/elements";
+import { getInsightApplication } from "@/data/insightApplications";
 import { insightPosts, insightTopics } from "@/data/insights";
+import { packages } from "@/data/services";
+import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
+import { InsightsKnowledgeAtlas } from "@/sections/Insights/InsightsKnowledgeAtlas";
+import "../insights-cinematic.css";
 
 export const metadata: Metadata = {
   title: "Insights on brand strategy, positioning, and messaging",
@@ -75,6 +80,41 @@ export default function InsightsPage() {
     name,
     element,
   }));
+  const atlasPaths = insightTopics.map((topic) => {
+    const articles = sortedPosts.filter((post) => post.topicSlug === topic.slug);
+    const application = getInsightApplication(topic.slug);
+    const proof = projects.find((project) => project.slug === application?.projectSlug);
+    const servicePackage = packages.find((pkg) => pkg.slug === application?.packageSlug);
+
+    if (!application || !proof || !servicePackage) {
+      throw new Error(`Missing verified Insight application for ${topic.slug}`);
+    }
+
+    return {
+      slug: topic.slug,
+      element: topic.element,
+      name: topic.name,
+      eyebrow: topic.eyebrow,
+      promise: topic.promise,
+      diagnosticQuestions: topic.diagnosticQuestions,
+      articleCount: articles.length,
+      articles: articles.slice(0, 3).map((article) => ({
+        slug: article.slug,
+        title: article.title,
+        readingTime: article.readingTime,
+      })),
+      proof: {
+        slug: proof.slug,
+        title: proof.title,
+        frame: application.proofFrame,
+      },
+      service: {
+        slug: servicePackage.slug,
+        name: servicePackage.name,
+        frame: application.serviceFrame,
+      },
+    };
+  });
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -129,41 +169,63 @@ export default function InsightsPage() {
     <>
       <Header transparent />
       <ScrollProgress />
-      <main id="main-content">
+      <main id="main-content" className="insights-page">
         <PhotoHero
           video="/videos/pixabay-sea-of-fog-sunrise.mp4"
           poster="/images/pixabay-sea-of-fog-sunrise-poster.jpg"
-          minHeight="60svh"
-          overlayGradient="linear-gradient(180deg, rgba(39,34,30,0.44) 0%, rgba(39,34,30,0.58) 58%, rgba(39,34,30,0.76) 100%)"
+          minHeight="100svh"
+          className="insights-hero"
+          playbackRate={1.08}
+          overlayGradient="linear-gradient(108deg, rgba(10,18,20,0.92) 0%, rgba(17,25,26,0.75) 52%, rgba(39,34,30,0.48) 100%)"
         >
-          <Container className="relative py-24 sm:py-28">
-            <div className="grid gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">
+          <Container className="insights-hero__shell relative">
+            <div className="insights-hero__grid">
               <div>
                 <Reveal>
-                  <span className="inline-flex items-center rounded-full border border-ivory/30 bg-soil/15 px-4 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-ivory backdrop-blur-xl">
-                    Insights
-                  </span>
+                  <p className="insights-hero__eyebrow">The thinking field</p>
                 </Reveal>
                 <SplitReveal
                   as="h1"
-                  className="mt-6 max-w-4xl font-display text-[clamp(2.8rem,7vw,6.2rem)] font-normal leading-[0.95] text-ivory"
+                  className="insights-hero__title text-ivory"
                 >
-                  Brand strategy, explained from the roots upward.
+                  See the decision beneath the brand problem.
                 </SplitReveal>
-              </div>
-              <Reveal delay={0.12} className="lg:pb-2">
-                <div className="rounded-[1.5rem] border border-ivory/15 bg-soil/30 p-6 text-ivory shadow-elevation-md backdrop-blur-2xl">
-                  <p className="text-base leading-7 text-ivory/85">
-                    Essays, field notes, and working frameworks on positioning,
-                    messaging, recognition, and the choices that make a
-                    business easier to understand.
+                <Reveal delay={0.1}>
+                  <p className="insights-hero__summary">
+                    Essays, diagnostic questions, and connected reading paths
+                    for founders shaping positioning, experience,
+                    distinctiveness, language, and memory.
                   </p>
-                  <Link
-                    href="#insights-library"
-                    className="mt-6 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-ivory"
-                  >
-                    Search the library <span aria-hidden="true">↓</span>
+                  <Link href="#knowledge-atlas" className="insights-hero__link">
+                    Enter the knowledge atlas <span aria-hidden="true">↓</span>
                   </Link>
+                </Reveal>
+              </div>
+              <Reveal delay={0.16}>
+                <div className="insights-hero__ledger">
+                  <div className="insights-hero__ledger-top">
+                    <p className="insights-hero__ledger-label">Living library</p>
+                    <p className="insights-hero__ledger-count">
+                      {sortedPosts.length}
+                      <small>field notes</small>
+                    </p>
+                  </div>
+                  <div className="insights-hero__ledger-list">
+                    {atlasPaths.map((path, index) => (
+                      <Link
+                        key={path.slug}
+                        href={`/insights/topic/${path.slug}`}
+                        className="insights-hero__ledger-row"
+                        style={{
+                          "--path-color": elementColor(path.element),
+                        } as CSSProperties}
+                      >
+                        <i aria-hidden="true" />
+                        <span>{path.name}</span>
+                        <span>0{index + 1}</span>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </Reveal>
             </div>
@@ -172,7 +234,7 @@ export default function InsightsPage() {
 
         {/* A restrained folio current replaces the old flat ivory chapter;
             the dense wash keeps the foundation essay visually primary. */}
-        <section className="relative overflow-hidden bg-ivory py-16">
+        <section className="insights-foundation relative overflow-hidden bg-ivory py-16">
           <BackgroundVideo
             video="/videos/generated/bt-insights-foundation-folio.mp4"
             poster="/images/generated/bt-insights-foundation-folio-poster.jpg"
@@ -185,7 +247,7 @@ export default function InsightsPage() {
               <div className="mb-7 grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
-                    Start here
+                    Foundation essay
                   </p>
                   <h2 className="mt-3 font-display text-display-sm font-normal text-soil">
                     One foundation essay. Five decisions.
@@ -205,87 +267,9 @@ export default function InsightsPage() {
           </Container>
         </section>
 
-        <section className="relative overflow-hidden bg-soil py-20 text-ivory sm:py-28">
-          <BackgroundVideo
-            video="/videos/generated/bt-insights-reading-currents.mp4"
-            poster="/images/generated/bt-insights-reading-currents-poster.jpg"
-            parallax
-            playbackRate={0.92}
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(105deg, rgba(12,18,20,0.9) 0%, rgba(12,18,20,0.7) 48%, rgba(12,18,20,0.55) 100%), radial-gradient(circle at 82% 82%, rgba(92,107,74,0.14), transparent 32%)",
-            }}
-          />
-          <Container className="relative">
-            <Reveal>
-              <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sandstone">
-                    Five reading paths
-                  </p>
-                  <h2 className="mt-4 max-w-xl font-display text-display-md font-normal">
-                    Follow the part of the brand that feels hardest to hold.
-                  </h2>
-                </div>
-                <p className="max-w-2xl text-base leading-7 text-ivory/70 lg:justify-self-end">
-                  The elements organise real brand decisions into five paths.
-                  Each topic page gathers related essays, so learning builds
-                  laterally rather than ending at one article.
-                </p>
-              </div>
-            </Reveal>
-
-            <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-              {insightTopics.map((topic, index) => {
-                const color = elementColor(topic.element);
-                const count = insightPosts.filter(
-                  (post) => post.topicSlug === topic.slug
-                ).length;
-
-                return (
-                  <Reveal key={topic.slug} delay={index * 0.05} className="h-full">
-                    <Link
-                      href={`/insights/topic/${topic.slug}`}
-                      className="group flex h-full min-h-72 min-w-0 flex-col overflow-hidden rounded-[1.5rem] border border-ivory/10 bg-ivory/[0.06] p-6 backdrop-blur-xl transition duration-500 hover:-translate-y-1 hover:bg-ivory/[0.1]"
-                    >
-                      <div className="flex items-center justify-between">
-                        <ElementGlyph
-                          slug={topic.element}
-                          className="h-7 w-7"
-                          strokeWidth={1.25}
-                          style={{ color }}
-                        />
-                        <span className="font-display text-2xl text-ivory/25">
-                          0{index + 1}
-                        </span>
-                      </div>
-                      <p
-                        className="mt-10 text-[0.65rem] font-semibold uppercase tracking-[0.2em]"
-                        style={{ color }}
-                      >
-                        {topic.eyebrow}
-                      </p>
-                      <h3 className="mt-3 min-w-0 font-display text-[clamp(1.45rem,1.8vw,1.875rem)] font-normal leading-[1.02] [overflow-wrap:anywhere]">
-                        {topic.name}
-                      </h3>
-                      <p className="mt-4 min-w-0 flex-1 text-sm leading-6 text-ivory/65 [overflow-wrap:anywhere]">
-                        {topic.description}
-                      </p>
-                      <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-ivory/80 transition-transform duration-300 group-hover:translate-x-1">
-                        {count} {count === 1 ? "essay" : "essays"}{" "}
-                        <span aria-hidden="true">→</span>
-                      </p>
-                    </Link>
-                  </Reveal>
-                );
-              })}
-            </div>
-          </Container>
-        </section>
+        <div id="knowledge-atlas">
+          <InsightsKnowledgeAtlas paths={atlasPaths} />
+        </div>
 
         <InsightsExplorer posts={explorerPosts} topics={explorerTopics} />
 

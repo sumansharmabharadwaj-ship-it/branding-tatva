@@ -1,0 +1,297 @@
+"use client";
+
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+} from "react";
+import Link from "next/link";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { Container } from "@/components/Container";
+import { ElementGlyph } from "@/components/ElementGlyph";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import type { InsightElement } from "@/data/insights";
+
+type AtlasArticle = {
+  slug: string;
+  title: string;
+  readingTime: string;
+};
+
+export type AtlasPath = {
+  slug: string;
+  element: InsightElement;
+  name: string;
+  eyebrow: string;
+  promise: string;
+  diagnosticQuestions: string[];
+  articleCount: number;
+  articles: AtlasArticle[];
+  proof: {
+    slug: string;
+    title: string;
+    frame: string;
+  };
+  service: {
+    slug: string;
+    name: string;
+    frame: string;
+  };
+};
+
+type InsightsKnowledgeAtlasProps = {
+  paths: AtlasPath[];
+};
+
+const ELEMENT_COLORS: Record<InsightElement, string> = {
+  earth: "#D77A51",
+  water: "#7FA4BA",
+  fire: "#D7A84A",
+  air: "#A8B68F",
+  space: "#D09A89",
+};
+
+const ROTATION_MS = 6200;
+
+export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const inView = useInView(sectionRef, { amount: 0.42 });
+  const prefersReducedMotion = useHydratedReducedMotion();
+  const activePath = paths[activeIndex];
+
+  useEffect(() => {
+    if (!inView || paused || prefersReducedMotion || paths.length < 2) return;
+
+    const timer = window.setInterval(() => {
+      setActiveIndex((index) => (index + 1) % paths.length);
+    }, ROTATION_MS);
+
+    return () => window.clearInterval(timer);
+  }, [inView, paused, paths.length, prefersReducedMotion]);
+
+  function selectPath(index: number, shouldFocus = false) {
+    setActiveIndex(index);
+    setPaused(true);
+    if (shouldFocus) tabRefs.current[index]?.focus();
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let nextIndex: number | null = null;
+
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+      nextIndex = (index + 1) % paths.length;
+    }
+    if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+      nextIndex = (index - 1 + paths.length) % paths.length;
+    }
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = paths.length - 1;
+
+    if (nextIndex !== null) {
+      event.preventDefault();
+      selectPath(nextIndex, true);
+    }
+  }
+
+  if (!activePath) return null;
+
+  const accent = ELEMENT_COLORS[activePath.element];
+
+  return (
+    <section
+      ref={sectionRef}
+      className="insights-atlas"
+      aria-labelledby="insights-atlas-title"
+      style={{ "--atlas-accent": accent } as CSSProperties}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setPaused(false);
+        }
+      }}
+    >
+      <BackgroundVideo
+        video="/videos/generated/bt-insights-reading-currents.mp4"
+        poster="/images/generated/bt-insights-reading-currents-poster.jpg"
+        parallax
+        playbackRate={0.96}
+      />
+      <div className="insights-atlas__veil" aria-hidden="true" />
+
+      <Container className="insights-atlas__container">
+        <header className="insights-atlas__header">
+          <div>
+            <p className="insights-atlas__eyebrow">Knowledge atlas</p>
+            <h2 id="insights-atlas-title">
+              Trace the decision beneath the visible brand problem.
+            </h2>
+          </div>
+          <p>
+            Five connected paths turn a vague concern into a sharper question,
+            then carry that question into essays and working frameworks.
+          </p>
+        </header>
+
+        <div className="insights-atlas__stage">
+          <div
+            className="insights-atlas__paths"
+            role="tablist"
+            aria-label="Brand decision paths"
+            aria-orientation="vertical"
+            onPointerEnter={() => setPaused(true)}
+            onPointerLeave={() => setPaused(false)}
+          >
+            <div className="insights-atlas__current" aria-hidden="true">
+              <motion.span
+                animate={{ y: `${activeIndex * 100}%` }}
+                transition={
+                  prefersReducedMotion
+                    ? { duration: 0 }
+                    : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
+                }
+              />
+            </div>
+
+            {paths.map((path, index) => {
+              const selected = index === activeIndex;
+              const color = ELEMENT_COLORS[path.element];
+
+              return (
+                <button
+                  key={path.slug}
+                  ref={(node) => {
+                    tabRefs.current[index] = node;
+                  }}
+                  type="button"
+                  role="tab"
+                  id={`atlas-tab-${path.slug}`}
+                  aria-selected={selected}
+                  aria-controls="atlas-active-panel"
+                  tabIndex={selected ? 0 : -1}
+                  className={selected ? "is-active" : undefined}
+                  onClick={() => selectPath(index)}
+                  onPointerEnter={() => setActiveIndex(index)}
+                  onFocus={() => setActiveIndex(index)}
+                  onKeyDown={(event) => handleKeyDown(event, index)}
+                >
+                  <span className="insights-atlas__path-index">0{index + 1}</span>
+                  <span
+                    className="insights-atlas__path-glyph"
+                    style={{ color }}
+                  >
+                    <ElementGlyph
+                      slug={path.element}
+                      className="h-5 w-5"
+                      strokeWidth={1.35}
+                    />
+                  </span>
+                  <span className="insights-atlas__path-name">{path.name}</span>
+                  <span className="insights-atlas__path-count">
+                    {path.articleCount} reads
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div
+            className="insights-atlas__panel-wrap"
+            onPointerEnter={() => setPaused(true)}
+            onPointerLeave={() => setPaused(false)}
+          >
+            <div className="insights-atlas__orbital" aria-hidden="true">
+              <span />
+              <i />
+            </div>
+
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.article
+                key={activePath.slug}
+                id="atlas-active-panel"
+                role="tabpanel"
+                aria-labelledby={`atlas-tab-${activePath.slug}`}
+                className="insights-atlas__panel"
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -14 }}
+                transition={{
+                  duration: prefersReducedMotion ? 0 : 0.52,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                <div className="insights-atlas__panel-head">
+                  <p style={{ color: accent }}>{activePath.eyebrow}</p>
+                  <span>{activePath.articleCount} essays</span>
+                </div>
+                <h3>{activePath.name}</h3>
+                <p className="insights-atlas__promise">{activePath.promise}</p>
+
+                <div className="insights-atlas__panel-grid">
+                  <div>
+                    <p className="insights-atlas__label">Questions in this path</p>
+                    <ol className="insights-atlas__questions">
+                      {activePath.diagnosticQuestions.map((question, index) => (
+                        <li key={question}>
+                          <span>0{index + 1}</span>
+                          <p>{question}</p>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+
+                  <div>
+                    <p className="insights-atlas__label">Recent field notes</p>
+                    <div className="insights-atlas__articles">
+                      {activePath.articles.map((article) => (
+                        <Link key={article.slug} href={`/insights/${article.slug}`}>
+                          <span>{article.title}</span>
+                          <small>{article.readingTime}</small>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="insights-atlas__application">
+                  <Link href={`/work/${activePath.proof.slug}`}>
+                    <small>Published project record</small>
+                    <strong>{activePath.proof.title}</strong>
+                    <p>{activePath.proof.frame}</p>
+                    <span>
+                      See the decision trail
+                      <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                    </span>
+                  </Link>
+                  <Link href={`/services#package-${activePath.service.slug}`}>
+                    <small>Strategy path</small>
+                    <strong>{activePath.service.name}</strong>
+                    <p>{activePath.service.frame}</p>
+                    <span>
+                      Explore the engagement
+                      <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                    </span>
+                  </Link>
+                </div>
+
+                <Link
+                  href={`/insights/topic/${activePath.slug}`}
+                  className="insights-atlas__cta"
+                >
+                  Explore {activePath.name.toLowerCase()}
+                  <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                </Link>
+              </motion.article>
+            </AnimatePresence>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}

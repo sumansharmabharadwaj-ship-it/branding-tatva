@@ -1,0 +1,750 @@
+.insights-page {
+  background: #f4efe6;
+}
+
+.insights-hero {
+  min-height: 100svh;
+}
+
+.insights-hero__shell {
+  display: flex;
+  min-height: 100svh;
+  align-items: flex-end;
+  padding-block: clamp(7.5rem, 15vh, 10.5rem) clamp(3.5rem, 8vh, 6rem);
+}
+
+.insights-hero__grid {
+  display: grid;
+  width: 100%;
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: end;
+}
+
+.insights-hero__eyebrow,
+.insights-hero__ledger-label,
+.insights-atlas__eyebrow,
+.insights-atlas__panel-head,
+.insights-atlas__label {
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.22em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.insights-hero__eyebrow {
+  color: #e9c48b;
+}
+
+.insights-hero__title {
+  max-width: 12ch;
+  margin-top: 1.1rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(3.25rem, 7.5vw, 7.4rem);
+  font-weight: 400;
+  letter-spacing: -0.048em;
+  line-height: 0.89;
+  text-wrap: balance;
+}
+
+.insights-hero__summary {
+  max-width: 40rem;
+  margin-top: 1.5rem;
+  color: rgb(244 239 230 / 78%);
+  font-size: clamp(0.98rem, 1.35vw, 1.16rem);
+  line-height: 1.7;
+}
+
+.insights-hero__link {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 2rem;
+  border-bottom: 1px solid rgb(244 239 230 / 45%);
+  color: #f4efe6;
+  font-size: 0.74rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: border-color 260ms ease, gap 260ms ease;
+}
+
+.insights-hero__link:hover,
+.insights-hero__link:focus-visible {
+  gap: 0.9rem;
+  border-color: #f4efe6;
+}
+
+.insights-hero__ledger {
+  overflow: hidden;
+  border: 1px solid rgb(244 239 230 / 18%);
+  border-radius: 1.75rem;
+  background: linear-gradient(145deg, rgb(20 26 27 / 63%), rgb(39 34 30 / 32%));
+  box-shadow: 0 2rem 7rem rgb(5 12 14 / 34%);
+  color: #f4efe6;
+  backdrop-filter: blur(22px);
+}
+
+.insights-hero__ledger-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgb(244 239 230 / 13%);
+}
+
+.insights-hero__ledger-label {
+  color: #e9c48b;
+}
+
+.insights-hero__ledger-count {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2.2rem, 4vw, 4.4rem);
+  line-height: 0.82;
+}
+
+.insights-hero__ledger-count small {
+  display: block;
+  margin-top: 0.7rem;
+  color: rgb(244 239 230 / 55%);
+  font-family: inherit;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.insights-hero__ledger-list {
+  display: grid;
+}
+
+.insights-hero__ledger-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.82rem 1.5rem;
+  border-bottom: 1px solid rgb(244 239 230 / 9%);
+  color: rgb(244 239 230 / 74%);
+  font-size: 0.8rem;
+  transition: background-color 260ms ease, color 260ms ease;
+}
+
+.insights-hero__ledger-row:last-child {
+  border-bottom: 0;
+}
+
+.insights-hero__ledger-row:hover {
+  background: rgb(244 239 230 / 7%);
+  color: #f4efe6;
+}
+
+.insights-hero__ledger-row i {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  background: var(--path-color, #d77a51);
+  box-shadow: 0 0 1.2rem var(--path-color, #d77a51);
+}
+
+.insights-hero__ledger-row span:last-child {
+  color: rgb(244 239 230 / 42%);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.insights-foundation {
+  display: flex;
+  min-height: min(100svh, 58rem);
+  align-items: center;
+}
+
+.insights-atlas {
+  --atlas-accent: #d77a51;
+  position: relative;
+  display: flex;
+  min-height: 100svh;
+  overflow: hidden;
+  align-items: center;
+  background: #11191a;
+  color: #f4efe6;
+}
+
+.insights-atlas__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(112deg, rgb(11 18 20 / 96%) 0%, rgb(11 18 20 / 88%) 48%, rgb(12 19 20 / 72%) 100%),
+    radial-gradient(circle at 82% 23%, color-mix(in srgb, var(--atlas-accent) 20%, transparent), transparent 32%);
+}
+
+.insights-atlas__container {
+  position: relative;
+  width: 100%;
+  padding-block: clamp(6.5rem, 10vh, 8rem) clamp(4rem, 8vh, 6rem);
+}
+
+.insights-atlas__header {
+  display: grid;
+  gap: 1.5rem;
+  align-items: end;
+}
+
+.insights-atlas__eyebrow {
+  color: var(--atlas-accent);
+  transition: color 500ms ease;
+}
+
+.insights-atlas__header h2 {
+  max-width: 13ch;
+  margin-top: 0.85rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2.65rem, 5vw, 5.2rem);
+  font-weight: 400;
+  letter-spacing: -0.038em;
+  line-height: 0.96;
+  text-wrap: balance;
+}
+
+.insights-atlas__header > p {
+  max-width: 38rem;
+  color: rgb(244 239 230 / 64%);
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.insights-atlas__stage {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: clamp(2rem, 4.5vh, 3.5rem);
+}
+
+.insights-atlas__paths {
+  position: relative;
+  display: grid;
+  align-content: stretch;
+  border: 1px solid rgb(244 239 230 / 12%);
+  border-radius: 1.5rem;
+  background: rgb(12 19 20 / 42%);
+  backdrop-filter: blur(18px);
+}
+
+.insights-atlas__paths button {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.2rem 2rem 1fr auto;
+  gap: 0.8rem;
+  align-items: center;
+  min-height: 4rem;
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid rgb(244 239 230 / 9%);
+  color: rgb(244 239 230 / 47%);
+  text-align: left;
+  transition: color 300ms ease, background-color 300ms ease;
+}
+
+.insights-atlas__paths button:last-child {
+  border-bottom: 0;
+}
+
+.insights-atlas__paths button:hover,
+.insights-atlas__paths button:focus-visible,
+.insights-atlas__paths button.is-active {
+  background: rgb(244 239 230 / 6%);
+  color: #f4efe6;
+}
+
+.insights-atlas__paths button:focus-visible {
+  z-index: 2;
+  outline: 2px solid var(--atlas-accent);
+  outline-offset: -2px;
+}
+
+.insights-atlas__current {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  pointer-events: none;
+}
+
+.insights-atlas__current span {
+  display: block;
+  width: 2px;
+  height: 20%;
+  background: var(--atlas-accent);
+  box-shadow: 0 0 1.4rem var(--atlas-accent);
+}
+
+.insights-atlas__path-index,
+.insights-atlas__path-count {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.insights-atlas__path-index {
+  color: rgb(244 239 230 / 27%);
+}
+
+.insights-atlas__path-glyph {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  opacity: 0.68;
+  transition: opacity 300ms ease, box-shadow 300ms ease;
+}
+
+.insights-atlas__paths button.is-active .insights-atlas__path-glyph {
+  box-shadow: 0 0 1.5rem color-mix(in srgb, currentColor 36%, transparent);
+  opacity: 1;
+}
+
+.insights-atlas__path-name {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.16rem;
+}
+
+.insights-atlas__path-count {
+  color: rgb(244 239 230 / 34%);
+}
+
+.insights-atlas__panel-wrap {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgb(244 239 230 / 14%);
+  border-radius: 1.7rem;
+  background:
+    linear-gradient(145deg, rgb(244 239 230 / 8%), rgb(244 239 230 / 3%)),
+    rgb(12 19 20 / 47%);
+  box-shadow: 0 2rem 8rem rgb(0 0 0 / 28%);
+  backdrop-filter: blur(18px);
+}
+
+.insights-atlas__orbital {
+  position: absolute;
+  top: -6rem;
+  right: -6rem;
+  width: 19rem;
+  height: 19rem;
+  border: 1px solid color-mix(in srgb, var(--atlas-accent) 34%, transparent);
+  border-radius: 999px;
+  opacity: 0.72;
+  transition: border-color 500ms ease;
+}
+
+.insights-atlas__orbital::before,
+.insights-atlas__orbital::after {
+  position: absolute;
+  inset: 14%;
+  border: 1px solid rgb(244 239 230 / 9%);
+  border-radius: inherit;
+  content: "";
+}
+
+.insights-atlas__orbital::after {
+  inset: 34%;
+  border-color: var(--atlas-accent);
+  box-shadow: 0 0 3rem color-mix(in srgb, var(--atlas-accent) 20%, transparent);
+}
+
+.insights-atlas__orbital span {
+  position: absolute;
+  top: 48%;
+  left: -0.24rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--atlas-accent);
+  box-shadow: 0 0 1.3rem var(--atlas-accent);
+  animation: insights-orbit 12s linear infinite;
+  transform-origin: 9.74rem 0;
+}
+
+.insights-atlas__orbital i {
+  position: absolute;
+  inset: 49.8% auto auto -50vw;
+  width: 58vw;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--atlas-accent) 42%, transparent));
+}
+
+.insights-atlas__panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 26.25rem;
+  flex-direction: column;
+  padding: clamp(1.5rem, 3vw, 2.75rem);
+}
+
+.insights-atlas__panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.insights-atlas__panel-head span {
+  color: rgb(244 239 230 / 38%);
+}
+
+.insights-atlas__panel h3 {
+  margin-top: 0.8rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2.35rem, 5vw, 4.9rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+}
+
+.insights-atlas__promise {
+  max-width: 42rem;
+  margin-top: 0.9rem;
+  color: rgb(244 239 230 / 70%);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.insights-atlas__panel-grid {
+  display: grid;
+  gap: 1.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.3rem;
+  border-top: 1px solid rgb(244 239 230 / 11%);
+}
+
+.insights-atlas__label {
+  color: rgb(244 239 230 / 38%);
+}
+
+.insights-atlas__questions,
+.insights-atlas__articles {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+
+.insights-atlas__questions li {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  gap: 0.55rem;
+  color: rgb(244 239 230 / 72%);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.insights-atlas__questions span {
+  color: var(--atlas-accent);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+}
+
+.insights-atlas__articles a {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid rgb(244 239 230 / 9%);
+  color: rgb(244 239 230 / 73%);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  transition: color 240ms ease, border-color 240ms ease;
+}
+
+.insights-atlas__articles a:hover,
+.insights-atlas__articles a:focus-visible {
+  border-color: var(--atlas-accent);
+  color: #f4efe6;
+}
+
+.insights-atlas__articles small {
+  color: rgb(244 239 230 / 35%);
+  font-size: 0.64rem;
+  white-space: nowrap;
+}
+
+.insights-atlas__application {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.insights-atlas__application > a {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgb(244 239 230 / 10%);
+  border-radius: 1rem;
+  background: rgb(244 239 230 / 4%);
+  transition: border-color 240ms ease, background-color 240ms ease, transform 240ms ease;
+}
+
+.insights-atlas__application > a:hover,
+.insights-atlas__application > a:focus-visible {
+  border-color: color-mix(in srgb, var(--atlas-accent) 58%, transparent);
+  background: rgb(244 239 230 / 7%);
+  transform: translateY(-2px);
+}
+
+.insights-atlas__application small {
+  color: var(--atlas-accent);
+  font-size: 0.56rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.insights-atlas__application strong {
+  margin-top: 0.38rem;
+  color: #f4efe6;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.insights-atlas__application p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 0.35rem;
+  color: rgb(244 239 230 / 52%);
+  font-size: 0.68rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.insights-atlas__application span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  margin-top: 0.55rem;
+  color: rgb(244 239 230 / 72%);
+  font-size: 0.56rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.insights-atlas__cta {
+  display: inline-flex;
+  min-height: 2.6rem;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  margin-top: auto;
+  padding-top: 1rem;
+  color: var(--atlas-accent);
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: gap 240ms ease;
+}
+
+.insights-atlas__cta:hover,
+.insights-atlas__cta:focus-visible {
+  gap: 0.75rem;
+}
+
+.insights-library {
+  display: flex;
+  min-height: 100svh;
+  align-items: center;
+}
+
+@keyframes insights-orbit {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (min-width: 900px) {
+  .insights-hero__grid {
+    grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 0.65fr);
+  }
+
+  .insights-atlas__header {
+    grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+  }
+
+  .insights-atlas__header > p {
+    justify-self: end;
+  }
+
+  .insights-atlas__stage {
+    grid-template-columns: minmax(17rem, 0.72fr) minmax(0, 1.28fr);
+  }
+
+  .insights-atlas__panel-grid {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  .insights-atlas__application {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 899px) {
+  .insights-hero__shell {
+    align-items: center;
+    padding-bottom: 4rem;
+  }
+
+  .insights-hero__title {
+    max-width: 10ch;
+  }
+
+  .insights-hero__ledger {
+    max-width: 34rem;
+  }
+
+  .insights-atlas {
+    min-height: auto;
+  }
+
+  .insights-atlas__paths {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .insights-atlas__paths::-webkit-scrollbar {
+    display: none;
+  }
+
+  .insights-atlas__paths button {
+    grid-template-columns: auto auto;
+    min-width: 11rem;
+    scroll-snap-align: start;
+    border-right: 1px solid rgb(244 239 230 / 9%);
+    border-bottom: 0;
+  }
+
+  .insights-atlas__path-index,
+  .insights-atlas__path-count {
+    display: none;
+  }
+
+  .insights-atlas__current {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .insights-hero__shell {
+    min-height: 100svh;
+    padding-top: 7rem;
+  }
+
+  .insights-hero__title {
+    font-size: clamp(3rem, 15vw, 4.4rem);
+  }
+
+  .insights-hero__summary {
+    line-height: 1.55;
+  }
+
+  .insights-hero__ledger-top,
+  .insights-hero__ledger-row {
+    padding-inline: 1.1rem;
+  }
+
+  .insights-hero__ledger-row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .insights-hero__ledger-row span:last-child {
+    display: none;
+  }
+
+  .insights-atlas__container {
+    padding-block: 6rem 4rem;
+  }
+
+  .insights-atlas__header h2 {
+    font-size: clamp(2.55rem, 13vw, 3.8rem);
+  }
+
+  .insights-atlas__panel {
+    min-height: 39rem;
+    padding: 1.35rem;
+  }
+
+  .insights-atlas__orbital {
+    opacity: 0.42;
+  }
+
+  .insights-atlas__panel h3 {
+    max-width: 8ch;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 790px) {
+  .insights-hero__shell {
+    padding-block: 6.5rem 2.5rem;
+  }
+
+  .insights-hero__title {
+    font-size: clamp(3.7rem, 7vw, 6rem);
+  }
+
+  .insights-atlas__container {
+    padding-block: 5.7rem 2.5rem;
+  }
+
+  .insights-atlas__header h2 {
+    font-size: clamp(2.6rem, 4.5vw, 4rem);
+  }
+
+  .insights-atlas__stage {
+    margin-top: 1.5rem;
+  }
+
+  .insights-atlas__panel {
+    min-height: 24.5rem;
+    padding: 1.5rem 2rem;
+  }
+
+  .insights-atlas__panel h3 {
+    font-size: clamp(2.4rem, 4vw, 3.7rem);
+  }
+
+  .insights-atlas__panel-grid {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+
+  .insights-atlas__application p {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .insights-atlas__orbital span {
+    animation: none;
+  }
+
+  .insights-hero__link,
+  .insights-hero__ledger-row,
+  .insights-atlas__paths button,
+  .insights-atlas__path-glyph,
+  .insights-atlas__articles a,
+  .insights-atlas__cta {
+    transition-duration: 0.01ms;
+  }
+}
