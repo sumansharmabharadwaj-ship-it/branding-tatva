@@ -1,0 +1,33 @@
+/* -------------------------------------------------------------------------- */
+/* Homepage V4 · visitor-led cinematic scene rhythm                            */
+/* -------------------------------------------------------------------------- */
+
+/* The page never explains the scroll gesture. On full desktop frames the
+   visitor scrolls normally; after the wheel settles, the nearest authored
+   chapter resolves to the top edge. A subtle exposure lift on the arriving
+   scene keeps the handoff cinematic without adding another spacer or layer. */
+@media (min-width: 1101px) and (min-height: 700px) and (pointer: fine) {
+  .home-v4[data-scene-settling="true"]
+    [data-home-v4-chapter][data-scene-target="true"]:not([data-home-v4-chapter="opening"])
+    > :first-child {
+    animation: home-v4-scene-arrival 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    will-change: filter, opacity;
+  }
+}
+
+@keyframes home-v4-scene-arrival {
+  from {
+    opacity: 0.93;
+    filter: saturate(0.9) brightness(0.95);
+  }
+  to {
+    opacity: 1;
+    filter: saturate(1) brightness(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4 [data-home-v4-chapter] > :first-child {
+    animation: none !important;
+  }
+}
