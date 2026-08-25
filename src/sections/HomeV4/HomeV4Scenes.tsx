@@ -106,7 +106,6 @@ export function V4OpeningScene() {
           poster="/images/hero-forest-sanctuary-poster.jpg"
           data-home-playback-rate="1.1"
           muted
-          autoPlay
           loop
           playsInline
           aria-hidden="true"
@@ -174,7 +173,7 @@ export function V4OpeningScene() {
             transition={{ duration: prefersReducedMotion ? 0 : 0.56, delay: 0.4, ease: EASE }}
           >
             <Link
-              href="/contact"
+              href="/contact#call"
               className="home-v4-button home-v4-button--primary"
               data-magnetic
               data-cursor-label="begin"
@@ -182,7 +181,7 @@ export function V4OpeningScene() {
               Open the strategy room <ArrowUpRight size={15} />
             </Link>
             <Link
-              href="/services#proof"
+              href="#evidence"
               className="home-v4-button home-v4-button--quiet"
               data-magnetic
               data-cursor-label="proof"
@@ -267,7 +266,6 @@ export function V4RecognitionScene() {
       >
         <video
           muted
-          autoPlay
           loop
           playsInline
           aria-hidden="true"
@@ -442,9 +440,9 @@ export function V4HiddenCostScene() {
         <video
           data-home-playback-rate="0.92"
           muted
-          autoPlay
           loop
           playsInline
+          aria-hidden="true"
           preload="metadata"
           poster="/images/pexels-river-dawn-poster.jpg"
         >

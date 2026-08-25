@@ -172,7 +172,6 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
           poster="/images/pixabay-stream-mist-rays-poster.jpg"
           aria-hidden="true"
           muted
-          autoPlay={!prefersReducedMotion}
           loop
           playsInline
           preload="metadata"

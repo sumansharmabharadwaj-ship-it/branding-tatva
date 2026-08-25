@@ -314,7 +314,6 @@ export function HomeBrandHealthCheck() {
           ref={landscapeVideoRef}
           className="brand-orbit__water-motion"
           muted
-          autoPlay={!reducedMotion}
           loop
           playsInline
           aria-hidden="true"

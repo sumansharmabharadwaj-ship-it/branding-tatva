@@ -160,7 +160,6 @@ export function VideoBreak({
             transition={usesCameraPush ? CAMERA_PUSH.transition : ENTRANCE_TRANSITION}
             src={shouldLoadVideo ? src : undefined}
             poster={poster}
-            autoPlay={shouldLoadVideo}
             muted
             loop
             playsInline

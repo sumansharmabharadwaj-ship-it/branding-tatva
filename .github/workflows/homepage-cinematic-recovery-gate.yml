@@ -1,80 +1,60 @@
-name: Cinematic homepage recovery gate
-run-name: Cinematic recovery · ${{ github.sha }}
+name: Homepage conversion and runtime gate
+run-name: Homepage release contract · ${{ github.sha }}
 
 on:
   workflow_dispatch:
   push:
     branches:
+      - august-8-isolated
       - homepage-cinematic-recovery
     paths:
       - .github/workflows/homepage-cinematic-recovery-gate.yml
-      - scripts/homepage_cinematic_gate.cjs
-      - scripts/homepage_process_tempo_gate.cjs
-      - scripts/home_v4_pacing_gate.cjs
-      - scripts/home_v4_semantic_tempo_gate.cjs
-      - scripts/home_v4_touch_hold_gate.cjs
-      - scripts/home_v4_density_report.cjs
-      - scripts/prelude_handoff_evidence.cjs
-      - scripts/tatva_observatory_evidence.cjs
-      - scripts/studio_scene_evidence.cjs
-      - scripts/decision_scene_evidence.cjs
-      - scripts/invitation_scene_evidence.cjs
-      - scripts/foundation_scene_evidence.cjs
-      - scripts/evidence_scene_evidence.cjs
-      - scripts/api_contract_gate.cjs
-      - scripts/home_link_integrity.cjs
-      - src/app/cinematic-preview-release.ts
-      - src/app/page.tsx
-      - src/app/home-*.css
-      - src/app/home-v4*.css
-      - src/sections/Home/**
-      - src/sections/HomeV4/**
-      - src/sections/Elements/**
-      - src/sections/Process/**
-      - src/sections/FAQ/**
-      - src/components/AuditInvite.tsx
-      - src/components/BackgroundVideo.tsx
-      - src/components/Container.tsx
-      - src/components/DustMotes.tsx
-      - src/components/SmoothScrollProvider.tsx
-      - src/components/VideoBreak.tsx
-      - src/data/elements.ts
-      - src/data/faqs.ts
-      - src/data/process.ts
-      - src/data/projects.ts
-      - src/data/site.ts
-      - src/hooks/useHomeGuideMode.ts
-      - src/layouts/Header/**
-      - src/lib/elementColor.ts
-      - src/lib/sectionWash.ts
       - package.json
       - pnpm-lock.yaml
       - next.config.ts
+      - scripts/homepage_*.cjs
+      - scripts/home_link_integrity.cjs
+      - scripts/api_contract_gate.cjs
+      - src/app/globals.css
+      - src/app/home-*.css
+      - src/app/home-v4*.css
+      - src/app/page.tsx
+      - src/components/AmbientAudio.tsx
+      - src/components/BackgroundVideo.tsx
+      - src/components/ContactCallSequence.tsx
+      - src/components/MotionPreference.tsx
+      - src/components/VideoBreak.tsx
+      - src/components/VideoWarden.tsx
+      - src/data/homeQuestions.ts
+      - src/data/projects.ts
+      - src/data/site.ts
+      - src/hooks/useHydratedReducedMotion.ts
+      - src/layouts/Header/**
+      - src/lib/analytics.ts
+      - src/lib/homeDiagnosticState.ts
+      - src/lib/servicesJourney.ts
+      - src/sections/Footer/**
+      - src/sections/Home/**
+      - src/sections/HomeV4/**
+      - src/sections/Process/**
 
 permissions:
   contents: read
 
 concurrency:
-  group: branding-tatva-cinematic-recovery
+  group: branding-tatva-homepage-release
   cancel-in-progress: true
 
 jobs:
-  audit:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 32
-
+    timeout-minutes: 24
     steps:
-      - name: Check out application without the media archive
+      - name: Check out exact commit
         uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
           fetch-depth: 1
-          filter: blob:none
-          sparse-checkout-cone-mode: false
-          sparse-checkout: |
-            /*
-            !/public/videos/*
-            !/public/audio/*
 
       - name: Use Node 24
         uses: actions/setup-node@v4
@@ -86,32 +66,53 @@ jobs:
           corepack enable
           corepack prepare pnpm@10.28.0 --activate
 
-      - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm add --save-dev --lockfile=false playwright@1.54.2
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+      - name: Verify source and state contracts
+        run: pnpm check:homepage
 
-      - name: Build the production application
+      - name: Verify TypeScript
+        run: pnpm exec tsc --noEmit
+
+      - name: Lint changed homepage contract surfaces
+        run: >-
+          pnpm exec eslint --max-warnings=0
+          src/lib/analytics.ts
+          src/lib/homeDiagnosticState.ts
+          src/lib/servicesJourney.ts
+          src/sections/Home/HomeBrandHealthCheck.tsx
+          src/sections/Home/HomePacingDirector.tsx
+          src/sections/Home/FinalInvitation.tsx
+          src/sections/Home/PathsCinematicChapter.tsx
+          src/sections/Home/StudioCinematicChapter.tsx
+          src/sections/Home/EvidenceWall.tsx
+          src/sections/Home/HomeQuestionsScene.tsx
+          src/sections/HomeV4/HomeV4Experience.tsx
+          src/sections/HomeV4/HomeV4Scenes.tsx
+          src/sections/Process/RootSystem.tsx
+
+      - name: Build exact commit
         env:
           NEXT_TELEMETRY_DISABLED: 1
         run: pnpm build
 
-      - name: Start production server
+      - name: Verify fresh rendered output
+        run: pnpm check:homepage:built
+
+      - name: Start exact production build
         env:
           NEXT_TELEMETRY_DISABLED: 1
         run: |
-          pnpm start --hostname 127.0.0.1 --port 3000 > /tmp/branding-tatva-recovery.log 2>&1 &
-          echo $! > /tmp/branding-tatva-recovery.pid
+          pnpm start --hostname 127.0.0.1 --port 3000 > /tmp/branding-tatva-homepage.log 2>&1 &
+          echo $! > /tmp/branding-tatva-homepage.pid
           for attempt in {1..90}; do
             if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then
               exit 0
             fi
             sleep 1
           done
-          cat /tmp/branding-tatva-recovery.log
+          cat /tmp/branding-tatva-homepage.log
           exit 1
 
       - name: Verify homepage destinations
@@ -124,92 +125,10 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:3000
         run: node scripts/api_contract_gate.cjs
 
-      - name: Audit V4 layout, motion control, clipping, media budget, and viewports
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-          AUDIT_COMMIT: ${{ github.sha }}
-        run: node scripts/homepage_cinematic_gate.cjs
-
-      - name: Measure V4 scroll density across six release viewports
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-          AUDIT_COMMIT: ${{ github.sha }}
-        run: node scripts/home_v4_density_report.cjs
-
-      - name: Verify live guided-view speed, interruption, and film pacing
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-          AUDIT_COMMIT: ${{ github.sha }}
-        run: node scripts/home_v4_pacing_gate.cjs
-
-      - name: Verify Recognition and Tatva semantic tempo by input type
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-          AUDIT_COMMIT: ${{ github.sha }}
-        run: node scripts/home_v4_semantic_tempo_gate.cjs
-
-      - name: Verify a touch-selected Tatva state survives the full manual hold
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-          AUDIT_COMMIT: ${{ github.sha }}
-        run: node scripts/home_v4_touch_hold_gate.cjs
-
-      - name: Verify the loader-to-opening signal handoff
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-        run: node scripts/prelude_handoff_evidence.cjs
-
-      - name: Verify the faster, user-controlled working-method tempo
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-          AUDIT_COMMIT: ${{ github.sha }}
-        run: node scripts/homepage_process_tempo_gate.cjs
-
-      - name: Capture compressed Foundation excavation states
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-        run: node scripts/foundation_scene_evidence.cjs
-
-      - name: Capture moving proof-room states
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-        run: node scripts/evidence_scene_evidence.cjs
-
-      - name: Capture compressed Tatva pressure-lab evidence
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-        run: node scripts/tatva_observatory_evidence.cjs
-
-      - name: Capture Studio thinking-room states
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-        run: node scripts/studio_scene_evidence.cjs
-
-      - name: Capture Decision clarity-compass states
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-        run: node scripts/decision_scene_evidence.cjs
-
-      - name: Capture resolved final-invitation states
-        env:
-          AUDIT_BASE_URL: http://127.0.0.1:3000
-        run: node scripts/invitation_scene_evidence.cjs
-
       - name: Stop production server
         if: always()
         run: |
-          if [ -f /tmp/branding-tatva-recovery.pid ]; then
-            kill "$(cat /tmp/branding-tatva-recovery.pid)" || true
+          if [ -f /tmp/branding-tatva-homepage.pid ]; then
+            kill "$(cat /tmp/branding-tatva-homepage.pid)" || true
           fi
-          cat /tmp/branding-tatva-recovery.log || true
-
-      - name: Upload visual evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: branding-tatva-cinematic-recovery
-          path: |
-            cinematic-recovery-audit/*
-            homepage-v4-audit/*
-          if-no-files-found: error
-          retention-days: 7
+          cat /tmp/branding-tatva-homepage.log || true

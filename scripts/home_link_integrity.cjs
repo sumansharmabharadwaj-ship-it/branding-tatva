@@ -17,13 +17,11 @@ const ROUTES = [
 
 const REQUIRED_HOME_CHAPTERS = [
   "opening",
-  "recognition",
+  "diagnostic",
   "cost",
-  "foundation",
+  "evidence",
   "paths",
   "process",
-  "evidence",
-  "tatva",
   "studio",
   "decision",
   "invitation",
@@ -49,12 +47,10 @@ const REQUIRED_HOME_CHAPTERS = [
   }
 
   const serverRenderedLinks = [
-    'href="/contact"',
+    'href="/contact#call"',
+    'href="/contact#write"',
     'href="/work"',
     'href="/about"',
-    'href="#recognition"',
-    'href="#cost"',
-    'href="#foundation"',
     'href="#evidence"',
     'href="/services#desire"',
   ];
@@ -63,7 +59,7 @@ const REQUIRED_HOME_CHAPTERS = [
     assert(html.includes(link), `V4 homepage is missing ${link}`);
   }
 
-  console.log("V4 homepage route and server-rendered link gate passed.");
+  console.log("Focused homepage route and server-rendered conversion link gate passed.");
 })().catch((error) => {
   console.error(error);
   process.exit(1);

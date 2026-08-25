@@ -25,6 +25,7 @@ for (const relative of mounted) {
   const source = read(relative);
   assert(!source.includes('mode="wait"'), `${relative} can insert a blank readable-panel interval.`);
   assert(source.includes("data-home-reading-plane"), `${relative} lacks an explicit readable-content plane.`);
+  assert(!/\bautoPlay\b\s*=|\bautoPlay\b(?=\s|>)/.test(source), `${relative} restored native autoplay instead of explicit playback ownership.`);
 }
 assert(analytics.includes("export function trackRuntimeIssue"), "Runtime issue telemetry is not centralized.");
 assert(analytics.includes("RUNTIME_SCENES.has"), "Runtime scenes are not allowlisted.");

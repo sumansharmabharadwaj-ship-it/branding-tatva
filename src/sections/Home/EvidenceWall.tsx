@@ -195,8 +195,8 @@ export function EvidenceWall() {
               poster={activeProject.cardImage}
               muted
               loop
-              autoPlay
               playsInline
+              aria-hidden="true"
               preload={inView ? "metadata" : "none"}
               data-home-playback-rate="0.86"
             />

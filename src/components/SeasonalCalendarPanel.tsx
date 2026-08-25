@@ -8,6 +8,7 @@ import { BackgroundVideo } from "./BackgroundVideo";
 import { EASE_AIR } from "@/lib/motion";
 import { useCurrentElement } from "@/lib/currentElement";
 import { site } from "@/data/site";
+import { track } from "@/lib/analytics";
 
 // A real glass-widget calendar (Weekly/Monthly toggle, an actual date
 // grid, today highlighted) — not a quote-card layout. Went through two
@@ -47,6 +48,7 @@ export function SeasonalCalendarPanel() {
   const prefersReducedMotion = useHydratedReducedMotion();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [view, setView] = useState<"weekly" | "monthly">("weekly");
+  const [bookingOpened, setBookingOpened] = useState(false);
   // Resolved client-side only, after mount — computing new Date() during
   // render would let the server and client disagree on "now" and trip a
   // hydration mismatch (see useMediaQuery's own pattern elsewhere in
@@ -60,6 +62,12 @@ export function SeasonalCalendarPanel() {
   const year = now?.getFullYear() ?? 2026;
   const today = now?.getDate() ?? 1;
   const element = useCurrentElement();
+
+  function openBooking() {
+    setBookingOpened(true);
+    track("calendar_opened", { source: "footer_calendar" });
+    dialogRef.current?.showModal();
+  }
 
   // The Sunday-starting calendar week containing today, walked via
   // real Date arithmetic (not today ± 3) — a naive day-number offset
@@ -241,7 +249,7 @@ export function SeasonalCalendarPanel() {
         </span>
         <motion.button
           type="button"
-          onClick={() => dialogRef.current?.showModal()}
+          onClick={openBooking}
           whileHover={prefersReducedMotion ? undefined : { scale: 1.04 }}
           whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
           style={{ backgroundColor: element.color }}
@@ -281,7 +289,7 @@ export function SeasonalCalendarPanel() {
         </button>
       </div>
       <div className="bg-background p-2 sm:p-4">
-        <CalendlyEmbed url={site.calendlyUrl} />
+        {bookingOpened ? <CalendlyEmbed url={site.calendlyUrl} /> : null}
       </div>
       <p className="px-5 py-4 text-center text-xs text-ivory/75">
         Having trouble with the embed?{" "}

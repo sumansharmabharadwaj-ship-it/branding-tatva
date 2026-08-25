@@ -81,7 +81,6 @@ export function StudioCinematicChapter() {
   return (
     <section
       ref={sectionRef}
-      id="studio"
       className="studio-film"
       aria-labelledby="studio-film-title"
       style={{ "--studio-film-accent": active.accent } as CSSProperties}
@@ -93,10 +92,10 @@ export function StudioCinematicChapter() {
             src={active.video}
             poster={active.poster}
             muted
-            autoPlay
             loop
             playsInline
             preload="metadata"
+            aria-hidden="true"
             initial={reducedMotion ? false : { opacity: 0, scale: 1.08 }}
             animate={{ opacity: 1, scale: 1.04 }}
             exit={reducedMotion ? undefined : { opacity: 0, scale: 1.015 }}

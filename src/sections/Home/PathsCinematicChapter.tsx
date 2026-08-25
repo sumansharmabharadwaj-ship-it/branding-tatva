@@ -193,13 +193,13 @@ export function PathsCinematicChapter() {
       <div className="paths-film__media" aria-hidden="true">
         <video
           ref={videoRef}
-          autoPlay={!prefersReducedMotion}
           muted
           loop
           playsInline
           preload="metadata"
           poster="/images/hero-goldendunes-poster.jpg"
           data-media-id="BT-HOME-PATHS-GOLDEN-DUNES"
+          aria-hidden="true"
         >
           <source src="/videos/hero-goldendunes.mp4" type="video/mp4" />
         </video>
@@ -251,7 +251,7 @@ export function PathsCinematicChapter() {
                       type="button"
                       role="tab"
                       aria-selected={selected}
-                      aria-controls="path-film-panel"
+                      aria-controls="path-active-panel"
                       tabIndex={selected ? 0 : -1}
                       onClick={() => choose(index)}
                       onFocus={() => choose(index, false)}
@@ -280,7 +280,7 @@ export function PathsCinematicChapter() {
           <AnimatePresence mode="sync" initial={false}>
             <motion.article
               key={active.number}
-              id="path-film-panel"
+              id="path-active-panel"
               className="paths-film__answer"
               role="tabpanel"
               aria-labelledby={`path-film-tab-${active.number}`}

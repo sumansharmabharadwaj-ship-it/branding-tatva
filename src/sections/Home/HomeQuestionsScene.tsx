@@ -104,7 +104,7 @@ export function HomeQuestionsScene() {
               </div>
               <h3>{active.question}</h3>
               <p>{active.answer}</p>
-              <Link href="/contact">Ask about your situation <span aria-hidden="true">↗</span></Link>
+              <Link href="/contact#write">Ask about your situation <span aria-hidden="true">↗</span></Link>
             </motion.article>
           </AnimatePresence>
         </div>
