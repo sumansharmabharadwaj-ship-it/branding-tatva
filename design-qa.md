@@ -699,3 +699,36 @@ passed
 ## Final result
 
 passed
+
+---
+
+# Homepage living method system QA · 2026-08-25
+
+## Comparison target
+
+- Before state: the deployed `#process` scene placed the active decision in a large empty field while compressing all six decisions into a cropped strip at the viewport edge.
+- Visual direction: the approved light, natural, cinematic homepage language, using genuine moving film and one complete editorial thought per screen.
+- Implementation target: homepage `#process` chapter at `1363 × 936`.
+
+## Findings and fixes
+
+- Rebuilt the scene as one two-part editorial composition: the active strategic decision and its explanation occupy the left; the complete six-decision system remains visible as one connected current on the right.
+- Replaced the ambiguous bottom strip with an explicit `Explore the six decisions` selector and a continuous vertical progression line.
+- Turned the output and risk sentence into two labelled facts, `Leaves you with` and `So you avoid`, so the method remains understandable without opening another panel.
+- Preserved the real mist-and-stream film, restrained camera drift and automatic reading tempo; added subtle cursor-responsive light without a visible play or scroll instruction.
+- Added desktop, tablet, mobile and short-height fitting rules. No P0, P1 or P2 issue remains in the verified desktop state.
+
+## Browser verification
+
+- Scene bounds: `936px` high in a `936px` viewport with `scrollHeight === 936px`; the composition has no internal overflow.
+- Selector: all six tabs are visible together. Click changed the active panel and `ArrowRight` moved the selection from `Architect` to `Signal`.
+- Active content: `Signal` exposed its complete explanation, verbal/design/message-system output and the avoided recognition failure in the same frame.
+- Film: ready state `4`, autoplaying and looping; playback advanced while the active decision changed.
+- Natural controls: hover, click, focus, Arrow keys, Home and End remain wired to the existing semantic tab system; no visible scroll/play instruction was introduced.
+- Console: no site-originated application errors; observed errors were limited to `chrome-extension://` metadata handling.
+- Production build: passed; all `78` routes generated.
+- Live deployment: commit `9ca892bd74acd0ff690d90ddb37ac3a3e1b27eef`, READY on the `august-8-isolated` branch alias, with no Vercel runtime errors for `/` in the last hour.
+
+## Final result
+
+passed
