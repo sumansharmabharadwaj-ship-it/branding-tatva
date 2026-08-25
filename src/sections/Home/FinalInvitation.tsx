@@ -114,7 +114,7 @@ export function FinalInvitation() {
     <div
       ref={rootRef}
       data-invitation-situation={situation}
-      data-media-id="BT-HOME-INVITATION-SILVER-TIDE-V2"
+      data-media-id="BT-HOME-INVITATION-SUMMIT-FIRST-LIGHT-V1"
       className="final-invitation"
       style={{ "--invitation-accent": invitation.accent } as CSSProperties}
     >
@@ -127,7 +127,7 @@ export function FinalInvitation() {
       >
         <div className="final-invitation__topline">
           <span>13 · Begin</span>
-          <span>One quiet conversation</span>
+          <span>A clear first conversation</span>
         </div>
 
         <div className="final-invitation__composition">
@@ -138,12 +138,12 @@ export function FinalInvitation() {
 
             <div className="final-invitation__actions">
               <LinkButton href="/contact">{invitation.action}</LinkButton>
-              <span>Thirty minutes · honest diagnosis · no pitch deck</span>
+              <span>30 minutes · honest diagnosis · no pitch deck</span>
             </div>
           </div>
 
           <aside className="final-invitation__promise" aria-label="What becomes clear in the diagnosis">
-            <p>What becomes clear</p>
+            <p>We leave with</p>
             <ol>
               {invitation.trail.map((step, index) => (
                 <motion.li
@@ -166,7 +166,7 @@ export function FinalInvitation() {
               animate={motionActive ? { opacity: [0.58, 0.9, 0.58] } : undefined}
               transition={motionActive ? { duration: 5.8, repeat: Infinity, ease: "easeInOut" } : undefined}
             >
-              Thank you for giving the thinking your attention.
+              Clarity first. The larger system can follow.
             </motion.p>
           </aside>
         </div>

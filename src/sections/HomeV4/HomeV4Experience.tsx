@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { DustMotes } from "@/components/DustMotes";
 import { VideoBreak } from "@/components/VideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
@@ -165,19 +164,18 @@ export function HomeV4Experience() {
         data-home-v4-chapter="invitation"
         data-home-chapter="invitation"
         data-home-section="invitation"
-        data-cursor-world="dark"
+        data-cursor-world="light"
         className="home-v4-chapter home-v4-chapter--invitation invitation-cinematic"
         aria-label="Begin a conversation with Branding Tatva"
       >
         <VideoBreak
-          src="/videos/higgsfield-silver-tide.mp4"
-          poster="/images/higgsfield-silver-tide-poster.jpg"
+          src="/videos/pexels-summit-inversion.mp4"
+          poster="/images/pexels-summit-inversion-poster.jpg"
           height="100svh"
-          imagePosition="50% 18%"
+          imagePosition="52% 48%"
           cameraPush
-          overlayGradient="linear-gradient(110deg, rgba(9,16,17,0.88) 0%, rgba(9,16,17,0.58) 43%, rgba(13,20,21,0.22) 70%, rgba(12,18,19,0.48) 100%)"
+          overlayGradient="linear-gradient(102deg, rgba(244,238,224,0.92) 0%, rgba(244,238,224,0.72) 42%, rgba(238,224,198,0.24) 70%, rgba(238,224,198,0.48) 100%)"
         >
-          <DustMotes />
           <FinalInvitation />
         </VideoBreak>
       </section>

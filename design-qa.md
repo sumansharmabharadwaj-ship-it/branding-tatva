@@ -601,3 +601,34 @@ Unavailable. The discipline selector, light overlay, active statement, film crop
 ## Final result
 
 blocked
+
+---
+
+# Homepage closing invitation QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: the approved light, golden-hour water-and-flower homepage reference supplied in the redesign thread.
+- Implementation target: homepage `#invitation` chapter.
+- Browser-rendered implementation: cloud-browser capture at `1363 × 936`, default invitation state.
+
+## Findings and fixes
+
+- Replaced the dark moonlit sea with the previously unused `pexels-summit-inversion` sunrise film.
+- Removed the artificial dust-particle layer and the dark cinematic grade.
+- Reduced the ending to one editorial headline, one primary contact action and one compact three-outcome promise.
+- Restored the light sun-cursor world for the invitation while preserving the evidence chapter's dark cursor setting.
+- No P0, P1 or P2 visual issues remain in the verified desktop state.
+
+## Browser verification
+
+- Scene bounds: `936px` high in a `936px` viewport; top `0`, bottom `936`.
+- Horizontal overflow: `0px`.
+- Film: loaded from `/videos/pexels-summit-inversion.mp4`, autoplaying, ready state `4`; current time advanced from `4.24s` to `5.83s` during observation.
+- Primary action: visible, labelled `Book the 30-minute diagnosis`, linked to `/contact`.
+- Console: no application errors observed; one unrelated Chrome-extension metadata error was present.
+- Production build: passed; all `78` routes generated.
+
+## Final result
+
+passed

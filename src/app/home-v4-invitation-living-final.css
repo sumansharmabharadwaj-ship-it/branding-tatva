@@ -1,0 +1,116 @@
+/* Homepage V4 · closing sunrise. A single light, cinematic invitation with
+   enough contrast to read without turning the film into a dark backdrop. */
+
+html body .home-v4 #invitation {
+  background: #d8d1c1;
+  color: #21362c;
+}
+
+html body .home-v4 #invitation [data-cursor-media] > video {
+  filter: saturate(0.72) sepia(0.12) brightness(1.13) contrast(0.88);
+  transform-origin: 58% 44%;
+}
+
+.home-v4 #invitation .final-invitation {
+  --invitation-accent: #b9782d;
+  color: #21362c;
+}
+
+.home-v4 #invitation .final-invitation::before {
+  display: none;
+}
+
+.home-v4 #invitation .final-invitation__frame {
+  border-color: rgba(33, 54, 44, 0.3);
+}
+
+.home-v4 #invitation .final-invitation__topline {
+  border-color: rgba(33, 54, 44, 0.16);
+  color: rgba(33, 54, 44, 0.68);
+}
+
+.home-v4 #invitation .final-invitation__topline span:last-child,
+.home-v4 #invitation .final-invitation__eyebrow {
+  color: #9d6525 !important;
+}
+
+html body .home-v4 #invitation .final-invitation__headline {
+  max-width: 10.5ch !important;
+  color: #21362c;
+  font-size: clamp(3.15rem, min(6.4vw, 9.4svh), 7.2rem) !important;
+  line-height: 0.89 !important;
+  text-shadow: none;
+}
+
+.home-v4 #invitation .final-invitation__body {
+  max-width: 38rem !important;
+  color: rgba(33, 54, 44, 0.78) !important;
+  text-shadow: none;
+}
+
+.home-v4 #invitation .final-invitation__actions > a {
+  border: 1px solid rgba(33, 54, 44, 0.7);
+  background: #21362c;
+  color: #f7f0e2;
+  box-shadow: 0 18px 42px rgba(44, 50, 35, 0.2);
+}
+
+.home-v4 #invitation .final-invitation__actions > a:hover,
+.home-v4 #invitation .final-invitation__actions > a:focus-visible {
+  background: #b9782d;
+  border-color: #b9782d;
+  color: #fffaf0;
+  transform: translateY(-2px);
+}
+
+.home-v4 #invitation .final-invitation__actions > span {
+  color: rgba(33, 54, 44, 0.64);
+}
+
+.home-v4 #invitation .final-invitation__promise {
+  border-color: rgba(33, 54, 44, 0.28);
+}
+
+.home-v4 #invitation .final-invitation__promise > p:first-child {
+  color: rgba(33, 54, 44, 0.62);
+}
+
+.home-v4 #invitation .final-invitation__promise li,
+.home-v4 #invitation .final-invitation__promise li:last-child {
+  border-color: rgba(33, 54, 44, 0.2);
+}
+
+.home-v4 #invitation .final-invitation__promise li span {
+  color: #9d6525;
+}
+
+.home-v4 #invitation .final-invitation__promise li strong {
+  color: #21362c;
+}
+
+.home-v4 #invitation .final-invitation__thanks {
+  color: rgba(33, 54, 44, 0.72);
+}
+
+@media (max-width: 820px) {
+  .home-v4 #invitation .final-invitation__promise {
+    border-color: rgba(33, 54, 44, 0.24);
+  }
+
+  html body .home-v4 #invitation .final-invitation__headline {
+    max-width: 11ch !important;
+    font-size: clamp(2.7rem, 11.5vw, 4.4rem) !important;
+  }
+}
+
+@media (min-width: 821px) and (max-height: 760px) {
+  html body .home-v4 #invitation .final-invitation__headline {
+    font-size: clamp(2.7rem, min(5vw, 8svh), 4.7rem) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .home-v4 #invitation [data-cursor-media] > video {
+    transform: none !important;
+  }
+}
