@@ -49,7 +49,7 @@ export const faqs = [
       "Depends what you mean by results. Positioning and identity land in weeks. Recognition, the kind that shows up as more inbound trust, builds gradually over months, well beyond the span of one campaign.",
   },
   {
-    question: "Can you actually implement, or just strategize?",
+    question: "Can you actually implement, or just strategise?",
     answer:
       "Both. Strategy only counts once it gets built. I carry the work through to the actual website, content, and campaigns, always beyond the plan alone.",
   },

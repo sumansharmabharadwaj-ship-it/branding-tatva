@@ -11,7 +11,7 @@ import { useMemo, useState, type KeyboardEvent } from "react";
 const QUESTIONS = [
   { label: "Starting", question: "Can you help a brand new business?" },
   { label: "Existing", question: "Can you help an existing brand that already has an identity?" },
-  { label: "Building", question: "Can you actually implement, or just strategize?" },
+  { label: "Building", question: "Can you actually implement, or just strategise?" },
   { label: "Timing", question: "How long does a project take?" },
   { label: "Distance", question: "Can we work remotely?" },
 ] as const;
@@ -78,7 +78,7 @@ export function HomeQuestionsScene() {
                 >
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <strong>{decision.label}</strong>
-                  <i aria-hidden="true">↗</i>
+                  <i aria-hidden="true">→</i>
                 </button>
               );
             })}
@@ -104,7 +104,7 @@ export function HomeQuestionsScene() {
               </div>
               <h3>{active.question}</h3>
               <p>{active.answer}</p>
-              <Link href="/contact#write">Ask about your situation <span aria-hidden="true">↗</span></Link>
+              <Link href="/contact#write">Ask about your situation <span aria-hidden="true">→</span></Link>
             </motion.article>
           </AnimatePresence>
         </div>

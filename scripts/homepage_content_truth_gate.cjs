@@ -8,6 +8,8 @@ const invitation = read("src/sections/Home/FinalInvitation.tsx");
 const site = read("src/data/site.ts");
 const contact = read("src/app/contact/page.tsx");
 const audio = read("src/components/AmbientAudio.tsx");
+const questions = read("src/sections/Home/HomeQuestionsScene.tsx");
+const faqs = read("src/data/faqs.ts");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -30,5 +32,8 @@ for (const marker of [
   assert(index >= 0 && index < bookingAction, `Contact booking fact must precede the scheduling action: ${marker}`);
 }
 assert(audio.includes("h-11 w-11"), "Ambient audio control is smaller than 44 by 44 pixels.");
+assert(!/strategize/.test(`${questions}\n${faqs}`), "Homepage FAQ has drifted from the site's British spelling system.");
+assert(!questions.includes("↗"), "Homepage FAQ uses an external-link arrow for an internal control or route.");
+assert(!studio.includes("↗"), "Studio proof uses an external-link arrow for an internal route.");
 
-console.log("Homepage content truth gate passed: claim boundaries, honest call promise, booking facts, and audio target verified.");
+console.log("Homepage content truth gate passed: claim boundaries, honest call promise, booking facts, navigation grammar, and audio target verified.");

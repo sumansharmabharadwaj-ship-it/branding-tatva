@@ -28,7 +28,7 @@
 .home-v4 .questions-editorial__instruction,
 .home-v4 .questions-editorial__answer-index,
 .home-v4 .questions-editorial__footerline {
-  margin: 0; font: 600 .69rem/1.2 var(--font-sans,sans-serif); letter-spacing: .19em; text-transform: uppercase;
+  margin: 0; font: 600 .75rem/1.2 var(--font-sans,sans-serif); letter-spacing: .12em; text-transform: uppercase;
 }
 .home-v4 .questions-editorial__header > div > p { color: #e1b65f; }
 .home-v4 .questions-editorial__header h2 {
@@ -48,17 +48,23 @@
 .home-v4 .questions-editorial__instruction { padding-bottom: .85rem; color: rgba(245,240,229,.62); }
 .home-v4 .questions-editorial__choices button {
   display: grid; grid-template-columns: 2.3rem 1fr auto; gap: .85rem; align-items: center; width: 100%;
-  padding: clamp(.72rem,1.4vh,1.05rem) 0; border: 0; border-top: 1px solid rgba(245,240,229,.22);
-  color: rgba(245,240,229,.58); background: transparent; text-align: left; cursor: pointer;
-  transition: color .35s ease, padding-left .35s ease, border-color .35s ease;
+  min-height: 3rem; padding: clamp(.72rem,1.4vh,1.05rem) .6rem; border: 0; border-top: 1px solid rgba(245,240,229,.3);
+  color: rgba(245,240,229,.76); background: linear-gradient(90deg, rgba(226,181,90,0), transparent 70%); text-align: left; cursor: pointer;
+  transition: color .35s ease, padding-left .35s ease, border-color .35s ease, background-color .35s ease, box-shadow .35s ease;
 }
-.home-v4 .questions-editorial__choices button:last-child { border-bottom: 1px solid rgba(245,240,229,.22); }
+.home-v4 .questions-editorial__choices button:last-child { border-bottom: 1px solid rgba(245,240,229,.3); }
 .home-v4 .questions-editorial__choices button:hover,
-.home-v4 .questions-editorial__choices button:focus-visible,
 .home-v4 .questions-editorial__choices button.is-active {
-  padding-left: .8rem; color: #fff8e8; border-color: rgba(226,181,90,.72); outline: none;
+  padding-left: 1rem; color: #fff8e8; border-color: rgba(226,181,90,.78);
+  background: linear-gradient(90deg, rgba(226,181,90,.14), rgba(226,181,90,0) 72%);
+  box-shadow: inset 3px 0 0 #e2b55a;
 }
-.home-v4 .questions-editorial__choices button span { font: 500 .66rem/1 var(--font-sans,sans-serif); letter-spacing: .14em; }
+.home-v4 .questions-editorial__choices button:focus-visible {
+  color: #fff8e8;
+  outline: 2px solid #fff8e8;
+  outline-offset: 3px;
+}
+.home-v4 .questions-editorial__choices button span { font: 600 .75rem/1 var(--font-sans,sans-serif); letter-spacing: .1em; }
 .home-v4 .questions-editorial__choices button strong { font: 500 clamp(.95rem,1.2vw,1.18rem)/1.2 var(--font-sans,sans-serif); }
 .home-v4 .questions-editorial__choices button i {
   color: #e2b55a; font-style: normal; opacity: 0; transform: translate(-8px,8px); transition: opacity .3s ease, transform .3s ease;
@@ -93,10 +99,16 @@
   .home-v4 .questions-editorial__experience { grid-template-columns: 1fr; gap: 1.6rem; align-content: center; }
   .home-v4 .questions-editorial__choices { grid-template-columns: repeat(5,1fr); align-self: auto; }
   .home-v4 .questions-editorial__instruction { grid-column: 1 / -1; }
-  .home-v4 .questions-editorial__choices button { grid-template-columns: 1fr; justify-items: center; padding: .8rem .15rem; border-bottom: 1px solid rgba(245,240,229,.22); }
-  .home-v4 .questions-editorial__choices button strong { font-size: .68rem; }
+  .home-v4 .questions-editorial__choices button {
+    grid-template-columns: 1fr; justify-items: center; min-height: 3.25rem; padding: .72rem .12rem;
+    border-bottom: 1px solid rgba(245,240,229,.3); background: rgba(14,22,16,.16);
+  }
+  .home-v4 .questions-editorial__choices button strong { font-size: clamp(.78rem,3.25vw,.88rem); line-height: 1.15; }
   .home-v4 .questions-editorial__choices button i { display: none; }
-  .home-v4 .questions-editorial__choices button:is(:hover,:focus-visible,.is-active) { padding-left: .15rem; border-color: #e2b55a; }
+  .home-v4 .questions-editorial__choices button:is(:hover,.is-active) {
+    padding-left: .12rem; border-color: #e2b55a; background: rgba(226,181,90,.16); box-shadow: inset 0 -3px 0 #e2b55a;
+  }
+  .home-v4 .questions-editorial__choices button:focus-visible { outline-offset: 2px; }
   .home-v4 .questions-editorial__answer { padding-left: 1.2rem; }
   .home-v4 .questions-editorial__answer h3 { font-size: clamp(1.85rem,8.5vw,3rem); }
   .home-v4 .questions-editorial__footerline { display: none; }

@@ -100,11 +100,8 @@ export function StudioCinematicChapter() {
               muted
               loop
               playsInline
+              preload="none"
               aria-hidden="true"
-              preload="metadata"
-              onLoadedData={(event) => {
-                if (!reducedMotion) void event.currentTarget.play().catch(() => undefined);
-              }}
             />
           </motion.div>
         </AnimatePresence>
@@ -161,7 +158,7 @@ export function StudioCinematicChapter() {
                 </div>
               </div>
               <div className="studio-film__outcome"><span>What this produces</span><strong>{active.outcome}</strong></div>
-              <Link href={active.proofHref}>{active.proof} <span aria-hidden="true">↗</span></Link>
+              <Link href={active.proofHref}>{active.proof} <span aria-hidden="true">→</span></Link>
             </motion.article>
           </AnimatePresence>
         </div>

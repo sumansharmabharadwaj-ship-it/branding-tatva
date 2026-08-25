@@ -15,7 +15,6 @@ const FORM_CONTROL_SELECTOR =
 
 type NavigatorWithHints = Navigator & {
   connection?: { saveData?: boolean; effectiveType?: string };
-  deviceMemory?: number;
 };
 
 function requestedPlaybackRate(video: HTMLVideoElement) {
@@ -52,9 +51,6 @@ export function HomeV4MediaDirector() {
       Boolean(navigatorHints.connection?.saveData) ||
       navigatorHints.connection?.effectiveType === "2g" ||
       navigatorHints.connection?.effectiveType === "slow-2g";
-    const lowMemory =
-      typeof navigatorHints.deviceMemory === "number" && navigatorHints.deviceMemory <= 4;
-    const compactViewport = window.matchMedia("(max-width: 720px)");
     let formInteraction = false;
     let guideMode: HomeGuideMode =
       document.documentElement.dataset.homeGuideMode === "paused"
@@ -64,7 +60,7 @@ export function HomeV4MediaDirector() {
           : "manual";
 
     function mediaBudget() {
-      return constrainedConnection || lowMemory || compactViewport.matches ? 1 : 2;
+      return 1;
     }
 
     function globallyPaused() {
@@ -99,6 +95,12 @@ export function HomeV4MediaDirector() {
       (entries) => {
         entries.forEach((entry) => {
           const video = entry.target as HTMLVideoElement;
+          const openingVideo = Boolean(video.closest('[data-home-v4-chapter="opening"]'));
+          if (!openingVideo) {
+            video.preload = entry.isIntersecting && !prefersReducedMotion && !constrainedConnection
+              ? "metadata"
+              : "none";
+          }
           visibleRatios.set(video, entry.isIntersecting ? entry.intersectionRatio : 0);
         });
         syncAll();
@@ -121,8 +123,7 @@ export function HomeV4MediaDirector() {
       video.dataset.autoplayManaged = "true";
 
       const openingVideo = Boolean(video.closest('[data-home-v4-chapter="opening"]'));
-      if (!openingVideo && video.preload === "auto") video.preload = "metadata";
-      if (constrainedConnection && !openingVideo) video.preload = "none";
+      if (!openingVideo) video.preload = "none";
 
       applyPlaybackRate(video);
 
@@ -141,6 +142,7 @@ export function HomeV4MediaDirector() {
         bounds.bottom >= -window.innerHeight * 0.24 &&
         bounds.top <= window.innerHeight * 1.24;
       visibleRatios.set(video, nearViewport ? 0.01 : 0);
+      if (nearViewport && !prefersReducedMotion && !constrainedConnection) video.preload = "metadata";
       observer.observe(video);
 
       cleanups.set(video, () => {
@@ -203,7 +205,6 @@ export function HomeV4MediaDirector() {
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener(HOME_GUIDE_MODE_EVENT, onGuideMode as EventListener);
     window.addEventListener("resize", onViewportProfileChange, { passive: true });
-    compactViewport.addEventListener("change", onViewportProfileChange);
     homeRoot.addEventListener("focusin", onFocusIn);
     homeRoot.addEventListener("focusout", onFocusOut);
     syncAll();
@@ -214,7 +215,6 @@ export function HomeV4MediaDirector() {
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener(HOME_GUIDE_MODE_EVENT, onGuideMode as EventListener);
       window.removeEventListener("resize", onViewportProfileChange);
-      compactViewport.removeEventListener("change", onViewportProfileChange);
       homeRoot.removeEventListener("focusin", onFocusIn);
       homeRoot.removeEventListener("focusout", onFocusOut);
       cleanups.forEach((cleanup) => cleanup());

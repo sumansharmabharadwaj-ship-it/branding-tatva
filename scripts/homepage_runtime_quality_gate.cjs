@@ -19,6 +19,7 @@ const pacing = read("src/sections/Home/HomePacingDirector.tsx");
 const diagnostic = read("src/sections/Home/HomeBrandHealthCheck.tsx");
 const diagnosticStyles = read("src/app/home-v4-orbit-redesign.css");
 const studio = read("src/sections/Home/StudioCinematicChapter.tsx");
+const mediaDirector = read("src/sections/HomeV4/HomeV4MediaDirector.tsx");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -45,5 +46,7 @@ assert(diagnosticStyles.includes(".brand-orbit__result:focus-visible"), "Focused
 assert(diagnosticStyles.includes(".brand-orbit__result-action a:focus-visible"), "Diagnostic result links have no explicit focus treatment.");
 assert(diagnosticStyles.includes(".brand-orbit__result-action button:focus-visible"), "Diagnostic result buttons have no explicit focus treatment.");
 assert(!studio.includes("useScroll") && !studio.includes("useMotionValueEvent"), "Studio choices must remain visitor-controlled rather than changing during scroll entry.");
+assert(/function mediaBudget\(\)\s*\{\s*return 1;\s*\}/.test(mediaDirector), "Homepage can play more than one ambient film at once.");
+assert(mediaDirector.includes('if (!openingVideo) video.preload = "none";'), "Offscreen homepage film is initialized before it nears the viewport.");
 
-console.log("Homepage runtime quality gate passed: atomic reading planes, bounded telemetry, and transition recovery verified.");
+console.log("Homepage runtime quality gate passed: atomic reading planes, one-film playback, bounded telemetry, and transition recovery verified.");
