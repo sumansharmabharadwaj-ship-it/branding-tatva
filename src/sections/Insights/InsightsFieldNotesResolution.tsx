@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Check } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import type { InsightElement } from "@/data/insights";
@@ -23,6 +24,8 @@ export type FieldNotesPath = {
 type FieldNotesResolution = {
   headline: string;
   description: string;
+  evidenceHeadline: string;
+  evidenceDescription: string;
   cadence: [string, string, string];
 };
 
@@ -34,6 +37,10 @@ const DEFAULT_RESOLUTION: FieldNotesResolution = {
   headline: "Keep the next brand decision close. Each note earns its place.",
   description:
     "A single question, one practical lens, and a focused next move—sent when a new essay can carry real weight.",
+  evidenceHeadline:
+    "The evidence has settled into one working thread. Keep the next decision close.",
+  evidenceDescription:
+    "The route now carries one question, one practical lens, and a focused move into the next field note.",
   cadence: [
     "A tension worth examining",
     "Evidence or framework to use",
@@ -47,6 +54,10 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
       "Keep the next positioning decision close. Let evidence finish the comparison.",
     description:
       "The question you chose can keep moving: one buyer-language lens, one focused test, and a new essay only when it adds real weight.",
+    evidenceHeadline:
+      "Your positioning evidence has found the comparison worth testing.",
+    evidenceDescription:
+      "Buyer language and category choice now travel as one thread: a sharp question, a usable lens, and one decision to test.",
     cadence: [
       "A comparison worth testing",
       "Buyer language and choice",
@@ -58,6 +69,10 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
       "Keep the next confidence decision close. Follow where the experience changes.",
     description:
       "The hesitation you noticed can become a useful trail: one experience lens, one focused test, and a new essay when fresh evidence earns attention.",
+    evidenceHeadline:
+      "Your experience evidence has found the confidence seam.",
+    evidenceDescription:
+      "Promise and experience now travel together: one confidence gap, one friction lens, and a focused point to test.",
     cadence: [
       "A confidence gap to trace",
       "Promise beside experience",
@@ -69,6 +84,10 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
       "Keep the next recognition decision close. Repeat the cue that travels.",
     description:
       "The recognition gap can keep sharpening: one distinctive-cue lens, one focused test, and a new essay when it strengthens memory.",
+    evidenceHeadline:
+      "Your recognition evidence has found the cue worth repeating.",
+    evidenceDescription:
+      "Recognition now has a working route: one memory gap, one distinctive-cue lens, and a signal ready to repeat.",
     cadence: [
       "A recognition gap to see",
       "Cues before the logo",
@@ -80,6 +99,10 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
       "Keep the next messaging decision close. Sharpen the reason to choose.",
     description:
       "The language tension can keep working: one message-hierarchy lens, one focused test, and a new essay when it makes the choice clearer.",
+    evidenceHeadline:
+      "Your messaging evidence has found the claim worth sharpening.",
+    evidenceDescription:
+      "Buyer language and recurring objections now travel as one thread: a choice reason, a hierarchy lens, and one claim to test.",
     cadence: [
       "A choice reason to clarify",
       "Sales language and objections",
@@ -91,6 +114,10 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
       "Keep the next memory decision close. Let repetition build recognition.",
     description:
       "The recall question can keep travelling: one repetition lens, one focused test, and a new essay when it helps the right cue stay.",
+    evidenceHeadline:
+      "Your memory evidence has found the cue worth reinforcing.",
+    evidenceDescription:
+      "Recall and repetition now travel together: one memory gap, one reach lens, and a cue ready to reinforce.",
     cadence: [
       "A recall gap to inspect",
       "Repeated cues and reach",
@@ -154,15 +181,22 @@ export function InsightsFieldNotesResolution({
       ? "carried"
       : "open";
   const readerThreadLabel = isEvidenceThread
-    ? `Your evidence thread · ${readerIntent.label}`
+    ? `Evidence secured · ${readerIntent.label}`
     : selectedPath
       ? `Your thread · ${selectedPath.name}`
       : "Notes worth keeping";
+  const resolvedHeadline = isEvidenceThread
+    ? resolution.evidenceHeadline
+    : resolution.headline;
+  const resolvedDescription = isEvidenceThread
+    ? resolution.evidenceDescription
+    : resolution.description;
 
   return (
     <div
       className="insights-notes-scene__composition"
       data-reader-thread={readerThreadState}
+      data-evidence-thread={isEvidenceThread}
       style={{ "--notes-path-color": accent } as CSSProperties}
     >
       <div className="insights-notes-scene__copy">
@@ -199,10 +233,10 @@ export function InsightsFieldNotesResolution({
               <span>{readerThreadLabel}</span>
             </p>
             <h2 className="insights-notes-scene__headline mt-4 max-w-2xl font-display text-display-md font-normal text-ivory">
-              {resolution.headline}
+              {resolvedHeadline}
             </h2>
             <p className="insights-notes-scene__description mt-5 max-w-xl text-base leading-7 text-ivory/75">
-              {resolution.description}
+              {resolvedDescription}
             </p>
             <ol
               className="insights-notes-scene__cadence"
@@ -228,6 +262,41 @@ export function InsightsFieldNotesResolution({
         </AnimatePresence>
       </div>
       <div className="insights-notes-scene__form lg:min-w-96">
+        <AnimatePresence initial={false}>
+          {isEvidenceThread && selectedPath ? (
+            <motion.div
+              key={`${selectedPath.slug}-evidence-secured`}
+              className="insights-notes-scene__secured"
+              role="status"
+              initial={
+                prefersReducedMotion
+                  ? false
+                  : { opacity: 0, clipPath: "inset(0 100% 0 0)", x: -10 }
+              }
+              animate={{ opacity: 1, clipPath: "inset(0 0% 0 0)", x: 0 }}
+              exit={
+                prefersReducedMotion
+                  ? undefined
+                  : { opacity: 0, clipPath: "inset(0 0 0 100%)", x: 8 }
+              }
+              transition={{
+                duration: prefersReducedMotion ? 0 : 0.42,
+                ease: EASE_AIR,
+              }}
+            >
+              <ElementGlyph
+                slug={selectedPath.element}
+                className="h-5 w-5"
+                strokeWidth={1.35}
+              />
+              <span>
+                <small>Evidence secured</small>
+                <strong>{selectedPath.name} is ready to continue.</strong>
+              </span>
+              <Check aria-hidden="true" />
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
         <NewsletterForm
           readerPath={selectedPath?.slug}
           readerOrigin={readerIntent?.origin}

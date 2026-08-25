@@ -1829,10 +1829,15 @@
 .insights-notes-scene__composition {
   --notes-path-color: #d7a84a;
 
+  position: relative;
   display: grid;
   width: 100%;
   gap: clamp(2rem, 6vw, 6rem);
   align-items: end;
+}
+
+.insights-notes-scene__composition[data-evidence-thread="true"] {
+  gap: clamp(2.5rem, 5vw, 5rem);
 }
 
 .insights-notes-scene__copy {
@@ -1861,6 +1866,11 @@
   flex: 0 0 auto;
 }
 
+.insights-notes-scene__composition[data-evidence-thread="true"]
+  .insights-notes-scene__eyebrow {
+  text-shadow: 0 0 1.5rem color-mix(in srgb, var(--notes-path-color) 48%, transparent);
+}
+
 .insights-notes-scene__headline {
   min-height: 1.9em;
 }
@@ -1876,6 +1886,15 @@
   margin-top: clamp(1.5rem, 3svh, 2.25rem);
   border-block: 1px solid rgb(244 239 230 / 18%);
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  transition:
+    background-color 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-notes-scene__composition[data-evidence-thread="true"]
+  .insights-notes-scene__cadence {
+  border-color: color-mix(in srgb, var(--notes-path-color) 36%, transparent);
+  background: color-mix(in srgb, var(--notes-path-color) 7%, transparent);
 }
 
 .insights-notes-scene__cadence::after {
@@ -1895,18 +1914,21 @@
   border-right: 1px solid rgb(244 239 230 / 14%);
   gap: 0.12rem;
   transform: translate3d(0, var(--scene-entry-shift), 0);
+  transition:
+    background-color 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .insights-notes-scene__cadence li:nth-child(1) {
-  opacity: var(--scene-activation);
+  opacity: calc(0.54 + var(--scene-activation) * 0.46);
 }
 
 .insights-notes-scene__cadence li:nth-child(2) {
-  opacity: var(--scene-discovery);
+  opacity: calc(0.42 + var(--scene-discovery) * 0.58);
 }
 
 .insights-notes-scene__cadence li:nth-child(3) {
-  opacity: var(--scene-resolution);
+  opacity: calc(0.34 + var(--scene-resolution) * 0.66);
 }
 
 .insights-notes-scene__cadence li:last-child {
@@ -1936,9 +1958,73 @@
 }
 
 .insights-notes-scene__form {
+  min-width: min(100%, 24rem);
+  padding: 0.35rem 0 0 clamp(1.25rem, 2.3vw, 2rem);
+  border-left: 1px solid rgb(244 239 230 / 16%);
   clip-path: inset(0 calc(100% - var(--scene-mask)) 0 0);
   opacity: var(--scene-content-opacity);
   transform: translate3d(0, var(--scene-entry-shift), 0);
+  transition:
+    border-color 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-notes-scene__composition[data-evidence-thread="true"]
+  .insights-notes-scene__form {
+  border-color: color-mix(in srgb, var(--notes-path-color) 55%, transparent);
+  background: color-mix(in srgb, #11191a 48%, transparent);
+  box-shadow: -1.25rem 0 3.5rem rgb(10 15 14 / 14%);
+}
+
+.insights-notes-scene__secured {
+  display: grid;
+  min-height: 3.9rem;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.85rem;
+  border-block: 1px solid color-mix(in srgb, var(--notes-path-color) 34%, transparent);
+  color: var(--notes-path-color);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.insights-notes-scene__secured > svg:first-child {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.insights-notes-scene__secured > span {
+  display: grid;
+  min-width: 0;
+  gap: 0.14rem;
+}
+
+.insights-notes-scene__secured small {
+  font-size: 0.55rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.insights-notes-scene__secured strong {
+  overflow: hidden;
+  color: #f4efe6;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.insights-notes-scene__secured > svg:last-child {
+  width: 1rem;
+  height: 1rem;
+  padding: 0.16rem;
+  border: 1px solid currentcolor;
+  border-radius: 999px;
 }
 
 @keyframes insights-orbit {
@@ -2416,6 +2502,18 @@
     gap: 2rem;
   }
 
+  .insights-notes-scene__form {
+    padding: 1.25rem 0 0;
+    border-top: 1px solid rgb(244 239 230 / 16%);
+    border-left: 0;
+  }
+
+  .insights-notes-scene__composition[data-evidence-thread="true"]
+    .insights-notes-scene__form {
+    border-color: color-mix(in srgb, var(--notes-path-color) 55%, transparent);
+    box-shadow: 0 -1rem 3rem rgb(10 15 14 / 12%);
+  }
+
   .insights-notes-scene__copy h2 {
     font-size: clamp(2.55rem, 12vw, 3.75rem);
     line-height: 0.96;
@@ -2536,6 +2634,12 @@
 
   .insights-notes-scene__cadence {
     margin-top: 1.15rem;
+  }
+
+  .insights-notes-scene__secured {
+    min-height: 3.25rem;
+    margin-bottom: 0.65rem;
+    padding-block: 0.5rem;
   }
 
   .insights-notes-scene {

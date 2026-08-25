@@ -115,6 +115,16 @@ export function NewsletterForm({
   const confirmation = hasConfirmation
     ? getConfirmationCopy(status, confirmedThread)
     : undefined;
+  const isEvidenceThread = readerOrigin === "evidence-ledger";
+  const formPrompt = isEvidenceThread
+    ? `Keep the ${readerLabel ?? "evidence"} thread moving`
+    : "Where should the next field note land?";
+  const submitLabel =
+    status === "submitting"
+      ? "Sending…"
+      : isEvidenceThread
+        ? "Hold this thread"
+        : "Send the next note";
 
   return (
     <div className="mt-4 min-h-[6.5rem] max-w-sm">
@@ -155,7 +165,7 @@ export function NewsletterForm({
             }}
           >
             <p className="text-xs font-medium uppercase tracking-[0.13em] text-sandstone">
-              Where should the next field note land?
+              {formPrompt}
             </p>
             <form
               onSubmit={handleSubmit(onSubmit)}
@@ -207,12 +217,14 @@ export function NewsletterForm({
                   disabled={status === "submitting"}
                   className="min-h-11 whitespace-nowrap rounded-full border border-ivory/30 px-5 py-2.5 text-sm font-medium text-ivory transition-all duration-300 ease-earth hover:-translate-y-0.5 hover:border-ivory/50 hover:bg-ivory/10 disabled:opacity-60 disabled:hover:translate-y-0"
                 >
-                  {status === "submitting" ? "Sending…" : "Send the next note"}
+                  {submitLabel}
                 </button>
               </Magnetic>
             </form>
             <p className="mt-3 text-xs leading-5 text-ivory/55">
-              One confirmation email. Leave whenever the notes stop being useful.
+              {isEvidenceThread
+                ? "One useful note at a time. Confirmation first; leaving stays simple."
+                : "One confirmation email. Leave whenever the notes stop being useful."}
             </p>
           </motion.div>
         )}
