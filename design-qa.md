@@ -268,6 +268,56 @@ blocked
 
 ---
 
+# Homepage cinematic method QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: `/workspace/scratch/55f96cacf4b7/upload/08a75655-58aa-4a35-9d03-637489c417c4(1).png` (`1536 × 1024`), the approved golden-water editorial direction.
+- Implementation target: homepage `#process` chapter in `src/sections/Process/RootSystem.tsx`.
+- Browser-rendered implementation screenshot: unavailable because the required cloud-browser connection did not initialize.
+- Intended desktop viewport: `1920 × 1080` CSS px at density `1`.
+- Intended mobile viewport: `390 × 844` CSS px at density `1`.
+- State: first method decision active; moving mist-and-water background.
+
+## Findings
+
+- [P1] Browser-rendered composition remains unverified.
+  - Location: homepage method chapter at `#process`.
+  - Evidence: there is no same-viewport implementation capture available from the cloud browser.
+  - Impact: exact film crop, type wrapping, one-screen fit and stage-selector polish cannot be certified visually.
+  - Fix: capture desktop and mobile states in the cloud browser, compare them with the source direction, then correct any visible P0/P1/P2 drift.
+
+## Required fidelity surfaces
+
+- Fonts and typography: the established Cormorant Garamond and Manrope hierarchy remains intact; rendered wrapping is unverified.
+- Spacing and layout rhythm: the chapter is constrained to one `100svh` frame, with compact short-height and mobile treatments; rendered fit is unverified.
+- Colors and visual tokens: warm vellum, forest green and stage-specific natural accents follow the approved direction; rendered contrast is unverified.
+- Image quality and asset fidelity: the real `pixabay-stream-mist-rays.mp4` film and poster remain the moving full-bleed source; no simulated visual asset was introduced.
+- Copy and content: all six method decisions remain available, while the duplicated output/prevention cards are condensed into one editorial consequence line.
+
+## Interaction and browser verification
+
+- Production build: passed; all `78` routes generated.
+- TypeScript: passed.
+- Static interaction review: passed; native tabs, clear “Choose a decision” affordance, hover/focus/click selection, arrow/Home/End keyboard navigation and scroll-led progression remain present.
+- Browser interaction, screenshots, console errors and responsive fit: blocked.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The method repeated each decision through a large output/prevention pair and an unlabeled six-control band, creating a dashboard-like hierarchy. | Condensed the outcome into one sentence and reframed the stages as a labelled continuous selector. Browser-rendered post-fix evidence remains blocked. |
+
+## Focused-region evidence
+
+Unavailable. The active decision, selector affordance, video crop, focus state and mobile fit still require browser-rendered comparison.
+
+## Final result
+
+blocked
+
+---
+
 # Homepage cinematic hidden-cost QA · 2026-08-25
 
 ## Comparison target

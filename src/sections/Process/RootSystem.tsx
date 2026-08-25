@@ -198,41 +198,42 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               <p className="decision-flow__stage-name">{stage.stage}</p>
               <h3>{meta.becomes}</h3>
               <p className="decision-flow__explanation">{meta.explanation}</p>
-              <dl>
-                <div>
-                  <dt>What leaves the room</dt>
-                  <dd>{meta.output}</dd>
-                </div>
-                <div>
-                  <dt>The ambiguity removed</dt>
-                  <dd>{meta.prevents}</dd>
-                </div>
-              </dl>
+              <p className="decision-flow__result">
+                <span>{meta.output}</span>
+                <span aria-hidden="true">—</span>
+                <span>{meta.prevents}</span>
+              </p>
             </motion.article>
           </AnimatePresence>
         </div>
 
-        <div className="decision-flow__rail" role="tablist" aria-label="Choose a decision in the Branding Tatva method">
-          {stages.map((item, index) => (
-            <button
-              key={item.stage}
-              id={`decision-flow-tab-${index}`}
-              type="button"
-              role="tab"
-              aria-selected={active === index}
-              aria-controls="decision-flow-panel"
-              tabIndex={active === index ? 0 : -1}
-              className={active === index ? "is-active" : undefined}
-              onClick={() => chooseStage(index)}
-              onPointerEnter={() => chooseStage(index)}
-              onFocus={() => chooseStage(index)}
-              onKeyDown={(event) => onStageKeyDown(event, index)}
-            >
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <strong>{item.stage}</strong>
-              <i aria-hidden="true" />
-            </button>
-          ))}
+        <div className="decision-flow__selector">
+          <div className="decision-flow__selector-label">
+            <span>Choose a decision</span>
+            <span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>
+          </div>
+          <div className="decision-flow__rail" role="tablist" aria-label="Choose a decision in the Branding Tatva method">
+            {stages.map((item, index) => (
+              <button
+                key={item.stage}
+                id={`decision-flow-tab-${index}`}
+                type="button"
+                role="tab"
+                aria-selected={active === index}
+                aria-controls="decision-flow-panel"
+                tabIndex={active === index ? 0 : -1}
+                className={active === index ? "is-active" : undefined}
+                onClick={() => chooseStage(index)}
+                onPointerEnter={() => chooseStage(index)}
+                onFocus={() => chooseStage(index)}
+                onKeyDown={(event) => onStageKeyDown(event, index)}
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{item.stage}</strong>
+                <i aria-hidden="true" />
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>
