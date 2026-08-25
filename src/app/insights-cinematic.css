@@ -1408,7 +1408,7 @@
 .insights-evidence-ledger__arrival {
   position: absolute;
   z-index: 4;
-  bottom: calc(100% + 0.35rem);
+  bottom: calc(100% - 1.15rem);
   left: calc((var(--ledger-thread-index) + 0.5) * 20%);
   display: grid;
   height: clamp(9rem, 26svh, 15rem);
