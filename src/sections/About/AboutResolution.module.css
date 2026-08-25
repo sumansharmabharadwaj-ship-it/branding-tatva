@@ -324,7 +324,7 @@
 }
 
 @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-  .root { min-height: 136svh; }
+  .root { min-height: 126svh; }
   .inner { position: sticky; top: 0; height: 100svh; min-height: 100svh; }
 }
 
