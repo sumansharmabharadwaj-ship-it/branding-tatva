@@ -23,6 +23,21 @@ declare global {
 
 const LenisContext = createContext<Lenis | null>(null);
 
+function readCssPixelValue(value: string) {
+  const parsedValue = Number.parseFloat(value);
+  return Number.isFinite(parsedValue) ? parsedValue : 0;
+}
+
+function getAnchorRestingTop(target: HTMLElement, scrollRoot: HTMLElement) {
+  const targetStyles = window.getComputedStyle(target);
+  const rootStyles = window.getComputedStyle(scrollRoot);
+
+  return (
+    readCssPixelValue(targetStyles.scrollMarginTop) +
+    readCssPixelValue(rootStyles.scrollPaddingTop)
+  );
+}
+
 export function useLenis() {
   return useContext(LenisContext);
 }
@@ -108,8 +123,11 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       const rect = target.getBoundingClientRect();
       // Hydration can move a chapter by a few pixels after the browser's
       // native hash jump. Finish recovery only when the anchor is genuinely
-      // aligned instead of accepting anywhere in the upper half of the view.
-      const alreadyThere = Math.abs(rect.top) <= 1;
+      // aligned. Lenis honours the same CSS scroll margin and padding as the
+      // browser, so compare against that shared resting point instead of the
+      // viewport edge. This keeps anchored controls clear of fixed headers.
+      const restingTop = getAnchorRestingTop(target, instance.rootElement);
+      const alreadyThere = Math.abs(rect.top - restingTop) <= 1;
       if (alreadyThere && hashScrollAttempts > 0) return;
 
       hashScrollAttempts += 1;
