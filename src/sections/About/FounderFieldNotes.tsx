@@ -210,7 +210,7 @@ export function FounderFieldNotes() {
                 transition={{ duration: 0.72, ease: EASE }}
               >
                 <Image
-                  src="/images/own-portrait.jpg"
+                  src="/images/suman-sharma-studio-portrait.webp"
                   alt=""
                   fill
                   priority={false}
@@ -299,8 +299,8 @@ export function FounderFieldNotes() {
         <div className={styles.staticExperience}>
           <figure className={styles.mobilePortrait}>
             <Image
-              src="/images/own-portrait.jpg"
-              alt="Suman Sharma seated in a mountain forest"
+              src="/images/suman-sharma-studio-portrait.webp"
+              alt="Black-and-white studio portrait of Suman Sharma"
               fill
               sizes="(max-width: 900px) 92vw, 36vw"
               className={styles.portraitImage}
