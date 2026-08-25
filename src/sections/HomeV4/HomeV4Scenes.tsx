@@ -5,7 +5,7 @@ import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { useRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -385,14 +385,23 @@ export function V4HiddenCostScene() {
   const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.18, margin: "8% 0px -10% 0px" });
-  const visualizer = useScrollDrivenVisualizer({
-    count: COST_STAGES.length,
-    target: sectionRef,
-    enabled: inView,
-    reducedMotion: prefersReducedMotion,
-  });
-  const activeIndex = visualizer.activeIndex;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [committedIndex, setCommittedIndex] = useState(0);
   const active = COST_STAGES[activeIndex];
+
+  function choose(index: number) {
+    const next = (index + COST_STAGES.length) % COST_STAGES.length;
+    setCommittedIndex(next);
+    setActiveIndex(next);
+  }
+
+  function preview(index: number) {
+    setActiveIndex((index + COST_STAGES.length) % COST_STAGES.length);
+  }
+
+  function releasePreview() {
+    setActiveIndex(committedIndex);
+  }
 
   function moveFromKeyboard(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -409,7 +418,7 @@ export function V4HiddenCostScene() {
     }
 
     event.preventDefault();
-    visualizer.choose(next);
+    choose(next);
     choiceRefs.current[next]?.focus();
   }
 
@@ -430,8 +439,8 @@ export function V4HiddenCostScene() {
         className="cost-film__media"
         data-media-id="BT-HOME-HIDDEN-COST-RIVER-DAWN"
         animate={
-          prefersReducedMotion
-            ? undefined
+          prefersReducedMotion || !inView
+            ? { scale: 1.025, x: 0 }
             : { scale: 1.025 + activeIndex * 0.012, x: activeIndex * -5 }
         }
         transition={{ duration: prefersReducedMotion ? 0 : 1.1, ease: EASE }}
@@ -455,7 +464,7 @@ export function V4HiddenCostScene() {
       <div className="cost-film__frame">
         <header className="cost-film__header">
           <div>
-            <span>04</span>
+            <span>03</span>
             <p>The hidden cost</p>
           </div>
           <p>{active.number} / 04</p>
@@ -473,6 +482,9 @@ export function V4HiddenCostScene() {
             <motion.article
               key={active.number}
               className="cost-film__moment"
+              id="cost-film-active-panel"
+              role="tabpanel"
+              aria-labelledby={`cost-film-tab-${activeIndex}`}
               data-home-reading-plane
               initial={false}
               animate={{ opacity: 1, y: 0 }}
@@ -488,11 +500,7 @@ export function V4HiddenCostScene() {
         </div>
 
         <div className="cost-film__lower">
-          <div className="cost-film__rail-label">
-            <span>Follow the four moments</span>
-            <span>Choose any moment to hold it</span>
-          </div>
-          <div className="cost-film__rail" role="group" aria-label="Four moments in the cost of changing brand signals">
+          <div className="cost-film__rail" role="tablist" aria-label="Four moments in the cost of changing brand signals">
             {COST_STAGES.map((stage, index) => {
               const selected = index === activeIndex;
               return (
@@ -502,20 +510,27 @@ export function V4HiddenCostScene() {
                     choiceRefs.current[index] = node;
                   }}
                   type="button"
-                  aria-pressed={selected}
+                  role="tab"
+                  id={`cost-film-tab-${index}`}
+                  aria-selected={selected}
+                  aria-controls="cost-film-active-panel"
+                  tabIndex={selected ? 0 : -1}
                   className={selected ? "is-active" : undefined}
                   data-cursor-label={stage.number}
-                  onClick={() => visualizer.choose(index)}
-                  onPointerEnter={() => visualizer.preview(index)}
+                  onClick={() => choose(index)}
+                  onPointerEnter={() => preview(index)}
                   onPointerLeave={(event) => {
-                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                    if (document.activeElement !== event.currentTarget) releasePreview();
                   }}
-                  onFocus={() => visualizer.preview(index)}
-                  onBlur={visualizer.releasePreview}
+                  onFocus={() => preview(index)}
+                  onBlur={releasePreview}
                   onKeyDown={(event) => moveFromKeyboard(event, index)}
                 >
                   <span>{stage.number}</span>
-                  <strong>{stage.cause}</strong>
+                  <span className="cost-film__rail-copy">
+                    <strong>{stage.cause}</strong>
+                    <small>{stage.memory}</small>
+                  </span>
                 </button>
               );
             })}
@@ -523,27 +538,11 @@ export function V4HiddenCostScene() {
 
           <div className="cost-film__resolution">
             <p>
-              <span>Stable foundation</span>
-              Position, distinctive cues, and repeated association let every signal strengthen the last.
+              <span>The alternative</span>
+              One position, repeated with care, lets every new signal strengthen the memory already there.
             </p>
-            <nav aria-label="Research behind the hidden cost model">
-              <a
-                href="https://www.sciencedirect.com/science/article/pii/S0167811622000465"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Consistency study
-              </a>
-              <a
-                href="https://marketingscience.info/learn-with-us/commercial-research/distinctive-asset"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Distinctive asset research
-              </a>
-            </nav>
-            <Link href="#foundation" data-magnetic data-cursor-label="foundation">
-              See the foundation <ArrowDownRight size={15} />
+            <Link href="#process" data-magnetic data-cursor-label="method">
+              See how the method holds <ArrowDownRight size={15} />
             </Link>
           </div>
         </div>

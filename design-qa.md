@@ -91,6 +91,64 @@ passed
 
 ---
 
+# Homepage hidden-cost film QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: `/workspace/scratch/55f96cacf4b7/upload/08a75655-58aa-4a35-9d03-637489c417c4(1).png` (`1536 × 1024`), the user's approved flower-on-water cinematic direction, with the browser-rendered `#brand-diagnostic` scene used as the live style control.
+- Implementation target: homepage `#cost` chapter in `src/sections/HomeV4/HomeV4Scenes.tsx` and `src/app/home-v4-cost-film-final.css`.
+- Browser-rendered implementation screenshot: inline cloud-browser capture emitted in the same comparison input as the diagnostic style control, `1348 × 936` page-image pixels.
+- CSS viewport: `1363 × 936`; device pixel ratio: `1`.
+- Density normalization: both browser-rendered frames came from the same selected Chrome browser, viewport and density. The original approved target is retained at its documented `1536 × 1024` source dimensions; composition was compared by art direction rather than pixel-for-pixel scene content because the chapter intentionally uses a distinct river film.
+- State: desktop, full motion, `01 / 04` active, section aligned exactly to the viewport.
+- Full-view comparison evidence: the live diagnostic reference and final hidden-cost frame were emitted together in one cloud-browser comparison input.
+- Focused-region evidence: header, lead statement, active passage, four-state rail and resolution row were inspected directly because their small interface copy required closer reading.
+
+## Findings
+
+No actionable P0, P1 or P2 findings remain.
+
+The previous frame loaded on `04 / 04`, pushed a second oversized headline into the bottom controls, and exposed two lines of scroll/hover instruction. The final frame opens predictably on `01 / 04`, separates the lasting argument from the active moment, removes instructional chrome, and keeps the complete four-state interaction inside one calm cinematic screen.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed. The existing editorial display serif, earth-green foreground, copper italic emphasis and compact uppercase labels match the approved diagnostic language. The dominant statement and active passage remain distinct and readable without competing for the same plane.
+- Spacing and layout rhythm: passed. The scene measures exactly `936px` in the `936px` viewport. The header ends at `150.2px`, the main argument at `639.1px`, the active passage at `589.9px`, the four-state rail at `864.3px`, and the resolution row at `919.2px`; every primary element remains within the viewport with no horizontal overflow.
+- Colors and visual tokens: passed. Warm vellum, muted copper and earth green remain consistent with the approved light direction. The moving river stays visible through the veil, while the selected state receives one controlled copper rule and no dark panel.
+- Image quality and asset fidelity: passed. The real `pexels-river-dawn` WebM/MP4 film and poster remain full bleed with a distinct crop, so the chapter does not repeat the flower diagnostic image. The browser reported `readyState: 4`, `paused: false`, and playback advancing by `1.22s` during a `1.2s` observation. No placeholder, handcrafted SVG or simulated background asset was introduced.
+- Copy and content: passed. All four hidden-cost stages, causes, signals, memory effects and explanations remain available. The removed copy was limited to visible interaction instructions and two secondary research links that crowded the chapter; the resolution now leads directly into the method.
+
+## Interaction and browser verification
+
+- Initial state: passed; the chapter consistently opens at `01 / 04` instead of deriving an arbitrary state from a one-viewport scroll target.
+- Click selection: passed; selecting stage `03` updated the active passage and semantic selected state.
+- Keyboard tabs: passed; `ArrowRight` moved focus and selection from stage `03` to `04`.
+- Scroll stability: passed; stage `03` remained selected through forward and reverse native scroll movement.
+- Motion: passed; the river film was playing and advancing. Active-state camera movement remains restrained and reduced-motion resolves to a stable crop.
+- Semantics: passed; the four choices are a tablist with one selected tab and a labelled tabpanel.
+- Console: no site-originated application errors. Observed error entries were limited to the Chrome extension's metadata bridge.
+- TypeScript, the full homepage gate suite, the rendered homepage gate and the `78`-route production build: passed.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The chapter arrived on the fourth state and changed with ordinary scroll because a one-viewport scene was treated as a scroll runway. | Replaced scroll-derived state with committed interaction state. Final browser checks show `01 / 04` on arrival and no state change during forward/reverse scroll. |
+| 2 | P1 | The active fourth-state headline overlapped the lower rail and made the scene read as cluttered. | Rebalanced the two-column story, reduced competing type scales and shortened the rail. The final full-view capture keeps both reading planes above the selector. |
+| 3 | P2 | `Follow the four moments` and `Choose any moment to hold it` explained the interaction instead of letting the controls communicate it. | Removed the visible instructions and exposed a semantic four-state rail with clear numbers, causes, memory outcomes and selected-state feedback. |
+| 4 | P2 | The bottom row carried research links, a paragraph and a CTA in one compressed line. | Reduced it to one alternative statement and one method handoff; the final row ends at `919.2px` with no clipping. |
+| 5 | — | Final full-view comparison and focused measurements found no remaining actionable P0/P1/P2 issue. | Passed. |
+
+## Follow-up polish
+
+- P3: run the usual physical-device sweep for dynamic mobile browser chrome; the mobile and short-height source rules remain in place and the verified desktop composition has no overflow.
+
+## Final result
+
+passed
+
+---
+
 # Insights Library-to-Evidence thread QA · 2026-08-25
 
 ## Comparison target
