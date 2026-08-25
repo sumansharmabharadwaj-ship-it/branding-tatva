@@ -71,7 +71,8 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
 
 export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [carriedPathSlug, setCarriedPathSlug] = useState<string>();
+  const [carriedIntent, setCarriedIntent] =
+    useState<InsightsIntentDetail>();
   const [paused, setPaused] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -84,8 +85,8 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
     offset: ["start 92%", "end 8%"],
   });
   const activePath = paths[activeIndex];
-  const carriedPath = carriedPathSlug
-    ? paths.find((path) => path.slug === carriedPathSlug)
+  const carriedPath = carriedIntent
+    ? paths.find((path) => path.slug === carriedIntent.topicSlug)
     : undefined;
 
   useEffect(() => {
@@ -124,7 +125,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
       const nextIndex = paths.findIndex((path) => path.slug === detail.topicSlug);
       if (nextIndex < 0) return;
 
-      setCarriedPathSlug(detail.topicSlug);
+      setCarriedIntent(detail);
       selectionLockRef.current = {
         index: nextIndex,
         awaitingArrival: true,
@@ -142,7 +143,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
     }
 
     function releaseCarriedPath() {
-      setCarriedPathSlug(undefined);
+      setCarriedIntent(undefined);
       selectionLockRef.current = null;
     }
 
@@ -166,6 +167,18 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     if (!inView || paused || prefersReducedMotion || paths.length < 2) return;
+
+    if (carriedPath) {
+      const carriedIndex = paths.findIndex(
+        (path) => path.slug === carriedPath.slug,
+      );
+      if (carriedIndex >= 0) {
+        setActiveIndex((current) =>
+          current === carriedIndex ? current : carriedIndex,
+        );
+      }
+      return;
+    }
 
     const selectionLock = selectionLockRef.current;
     if (selectionLock) {
@@ -231,13 +244,25 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
     const path = paths[index];
     if (!path) return;
 
-    setCarriedPathSlug(path.slug);
-    publishInsightsIntent({
+    const detail: InsightsIntentDetail = {
       topicSlug: path.slug,
       query: "",
       label: path.name,
       origin: "knowledge-atlas",
-    });
+    };
+    setCarriedIntent(detail);
+    publishInsightsIntent(detail);
+  }
+
+  function previewPath(index: number) {
+    selectPath(index);
+    const page = document.querySelector<HTMLElement>(".insights-page");
+    const scrollVelocity = Number.parseFloat(
+      page?.style.getPropertyValue("--insights-scroll-velocity") ?? "0",
+    );
+    if (Number.isFinite(scrollVelocity) && scrollVelocity > 0.08) return;
+    lockSelection(index);
+    carryPath(index);
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -273,6 +298,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
       className="insights-atlas"
       aria-labelledby="insights-atlas-title"
       data-thread-active={Boolean(carriedPath)}
+      data-thread-origin={carriedIntent?.origin ?? "open"}
       style={
         {
           "--atlas-accent": accent,
@@ -296,6 +322,21 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
         posterPriority={false}
       />
       <div className="insights-atlas__veil" aria-hidden="true" />
+      <div className="insights-atlas__arrival" aria-hidden="true">
+        <span>
+          {carriedPath && carriedIntent?.origin === "decision-mirror" ? (
+            <>
+              <ElementGlyph
+                slug={carriedPath.element}
+                className="h-4 w-4"
+                strokeWidth={1.35}
+              />
+              <small>Mirror held · {carriedPath.name}</small>
+            </>
+          ) : null}
+        </span>
+        <i />
+      </div>
       <div className="insights-atlas__handoff" aria-hidden="true">
         <span>
           {carriedPath ? (
@@ -321,8 +362,9 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
             </h2>
           </div>
           <p>
-            Five connected paths turn a vague concern into a sharper question,
-            then carry that question into essays and working frameworks.
+            {carriedPath
+              ? `${carriedPath.name} is now the active thread. The atlas gathers its sharpest questions, evidence, and useful next reads in one frame.`
+              : "Five connected paths turn a vague concern into a sharper question, then carry that question into essays and working frameworks."}
           </p>
         </header>
 
@@ -336,7 +378,9 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
               if (event.pointerType !== "touch") setPaused(true);
             }}
             onPointerLeave={(event) => {
-              if (event.pointerType !== "touch") setPaused(false);
+              if (event.pointerType !== "touch") {
+                setPaused(false);
+              }
             }}
             onPointerUp={(event) => {
               if (event.pointerType === "touch") setPaused(false);
@@ -377,9 +421,13 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                     carryPath(index);
                   }}
                   onPointerEnter={(event) => {
-                    if (event.pointerType !== "touch") selectPath(index);
+                    if (event.pointerType !== "touch") previewPath(index);
                   }}
-                  onFocus={() => selectPath(index)}
+                  onFocus={() => {
+                    selectPath(index);
+                    lockSelection(index);
+                    carryPath(index);
+                  }}
                   onKeyDown={(event) => handleKeyDown(event, index)}
                 >
                   <span className="insights-atlas__path-index">0{index + 1}</span>

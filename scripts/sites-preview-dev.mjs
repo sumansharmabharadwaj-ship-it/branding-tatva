@@ -4,7 +4,8 @@ const args = process.argv.slice(2);
 const portIndex = args.indexOf("--port");
 const port = portIndex >= 0 ? args[portIndex + 1] : "4173";
 
-const child = spawn("next", ["start", "--hostname", "0.0.0.0", "--port", port], {
+const nextBin = new URL("../node_modules/.bin/next", import.meta.url).pathname;
+const child = spawn(nextBin, ["start", "--hostname", "0.0.0.0", "--port", port], {
   stdio: "inherit",
   shell: false,
 });

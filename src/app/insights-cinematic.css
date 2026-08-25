@@ -286,7 +286,7 @@
   position: relative;
   display: grid;
   min-height: clamp(25rem, 54svh, 34rem);
-  overflow: hidden;
+  overflow: clip;
   border: 1px solid rgb(39 34 30 / 13%);
   border-radius: clamp(1.35rem, 2.4vw, 2.25rem);
   background: rgb(244 239 230 / 74%);
@@ -405,7 +405,7 @@
 .insights-decision-mirror__answer {
   position: relative;
   min-width: 0;
-  overflow: hidden;
+  overflow: clip;
   padding: clamp(1.25rem, 2.5vw, 2.4rem);
   background:
     radial-gradient(circle at 89% 14%, color-mix(in srgb, var(--mirror-accent) 11%, transparent), transparent 32%),
@@ -600,6 +600,7 @@
 }
 
 .insights-atlas__handoff,
+.insights-atlas__arrival,
 .insights-library__handoff,
 .insights-library__evidence-handoff {
   position: absolute;
@@ -609,6 +610,12 @@
   justify-items: center;
   pointer-events: none;
   transition: color 360ms ease, opacity 360ms ease;
+}
+
+.insights-atlas__arrival {
+  top: 0;
+  color: var(--atlas-thread-accent);
+  opacity: calc(var(--scene-activation) * 0.94);
 }
 
 .insights-atlas__handoff {
@@ -629,6 +636,8 @@
   opacity: calc(var(--scene-resolution) * 0.94);
 }
 
+.insights-atlas:not([data-thread-origin="decision-mirror"])
+  .insights-atlas__arrival,
 .insights-atlas[data-thread-active="false"] .insights-atlas__handoff,
 .insights-library[data-thread-active="false"] .insights-library__handoff,
 .insights-library[data-thread-active="false"]
@@ -637,6 +646,7 @@
 }
 
 .insights-atlas__handoff span,
+.insights-atlas__arrival span,
 .insights-library__handoff span,
 .insights-library__evidence-handoff span,
 .insights-evidence-ledger__arrival span {
@@ -662,6 +672,7 @@
 }
 
 .insights-atlas__handoff small,
+.insights-atlas__arrival small,
 .insights-library__handoff small,
 .insights-library__evidence-handoff small,
 .insights-evidence-ledger__arrival small {
@@ -676,7 +687,12 @@
   white-space: nowrap;
 }
 
+.insights-atlas__arrival small {
+  max-width: 11rem;
+}
+
 .insights-atlas__handoff i,
+.insights-atlas__arrival i,
 .insights-library__handoff i,
 .insights-library__evidence-handoff i {
   display: block;
@@ -686,6 +702,10 @@
   box-shadow: 0 0 1rem currentcolor;
   transform: scaleY(var(--scene-resolution));
   transform-origin: top;
+}
+
+.insights-atlas__arrival i {
+  transform: scaleY(var(--scene-activation));
 }
 
 .insights-library__handoff i {
@@ -845,7 +865,7 @@
 .insights-atlas__panel-wrap {
   position: relative;
   min-width: 0;
-  overflow: hidden;
+  overflow: clip;
   border: 1px solid rgb(244 239 230 / 14%);
   border-radius: 1.7rem;
   background:
@@ -2088,7 +2108,7 @@
    horizontal path rail needs more breathing room. */
 @media (min-width: 1024px) and (max-height: 1050px) {
   .insights-atlas__container {
-    padding-block: 5.75rem 2.5rem;
+    padding-block: 5.75rem 1.25rem;
   }
 
   .insights-atlas__header h2 {
@@ -2251,12 +2271,14 @@
   }
 
   .insights-atlas__handoff,
+  .insights-atlas__arrival,
   .insights-library__handoff,
   .insights-library__evidence-handoff {
     right: 1rem;
   }
 
   .insights-atlas__handoff small,
+  .insights-atlas__arrival small,
   .insights-library__handoff small,
   .insights-library__evidence-handoff small,
   .insights-evidence-ledger__arrival small {
@@ -2683,10 +2705,12 @@
   }
 
   .insights-atlas__handoff,
+  .insights-atlas__arrival,
   .insights-library__handoff,
   .insights-library__evidence-handoff,
   .insights-evidence-ledger__arrival,
   .insights-atlas__handoff i,
+  .insights-atlas__arrival i,
   .insights-library__handoff i,
   .insights-library__evidence-handoff i,
   .insights-evidence-ledger__arrival > i,

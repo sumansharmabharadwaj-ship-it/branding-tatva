@@ -169,6 +169,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     let lastScroll = window.scrollY;
     let targetVelocity = 0;
     let renderedVelocity = 0;
+    let settleTimer: number | null = null;
 
     page.dataset.scrollState = "settled";
 
@@ -182,6 +183,51 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
 
     function setScrollState(state: "moving" | "settled") {
       if (page.dataset.scrollState !== state) page.dataset.scrollState = state;
+    }
+
+    function scheduleSceneSettle() {
+      if (settleTimer !== null) window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(() => {
+        settleTimer = null;
+
+        const activeElement = document.activeElement;
+        if (
+          activeElement instanceof HTMLElement &&
+          activeElement.matches(
+            "input, textarea, select, [contenteditable='true'], [role='dialog'] *",
+          )
+        ) {
+          return;
+        }
+
+        const viewportHeight = viewportMetrics().height;
+        const threshold = Math.min(96, viewportHeight * 0.11);
+        let nearestTarget: HTMLElement | null = null;
+        let nearestDistance = Number.POSITIVE_INFINITY;
+
+        for (const target of targets) {
+          const distance = Math.abs(target.getBoundingClientRect().top);
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestTarget = target;
+          }
+        }
+
+        if (!nearestTarget || nearestDistance <= 1 || nearestDistance > threshold) {
+          return;
+        }
+
+        setScrollState("moving");
+        if (lenis) {
+          lenis.scrollTo(nearestTarget, {
+            duration: 0.42,
+            easing: (value) => 1 - Math.pow(1 - value, 3),
+          });
+          return;
+        }
+
+        nearestTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 210);
     }
 
     function renderCamera() {
@@ -295,6 +341,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       targetVelocity = clamp((velocity ?? delta) / 32, -1, 1);
       if (Math.abs(delta) > 0.2 || Math.abs(targetVelocity) > 0.01) {
         setScrollState("moving");
+        scheduleSceneSettle();
       }
       scheduleCamera();
     }
@@ -413,6 +460,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
 
     return () => {
       window.cancelAnimationFrame(frame);
+      if (settleTimer !== null) window.clearTimeout(settleTimer);
       unsubscribeLenis?.();
       window.removeEventListener("scroll", handleNativeScroll);
       window.removeEventListener("resize", handleViewportChange);

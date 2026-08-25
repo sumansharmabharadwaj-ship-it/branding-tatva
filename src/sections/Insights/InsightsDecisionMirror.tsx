@@ -5,11 +5,12 @@ import {
   useState,
   type CSSProperties,
   type KeyboardEvent,
+  type MouseEvent,
 } from "react";
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { publishInsightsIntent } from "@/lib/insights-intent";
@@ -44,9 +45,11 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
 
 export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [committedSlug, setCommittedSlug] = useState<string>();
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const directionRef = useRef(1);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const lenis = useLenis();
   const activeQuest = quests[activeIndex];
 
   function selectQuest(index: number, focus = false) {
@@ -61,11 +64,47 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
     const quest = quests[index];
     if (!quest) return;
 
+    setCommittedSlug(quest.topicSlug);
     publishInsightsIntent({
       topicSlug: quest.topicSlug,
       query: quest.tension,
       label: quest.pathName,
       origin: "decision-mirror",
+    });
+  }
+
+  function previewQuest(index: number) {
+    selectQuest(index);
+    const page = document.querySelector<HTMLElement>(".insights-page");
+    const scrollVelocity = Number.parseFloat(
+      page?.style.getPropertyValue("--insights-scroll-velocity") ?? "0",
+    );
+    if (Number.isFinite(scrollVelocity) && scrollVelocity > 0.08) return;
+    carryQuest(index);
+  }
+
+  function handleAtlasJourney(event: MouseEvent<HTMLAnchorElement>) {
+    const target = document.getElementById("knowledge-atlas");
+    carryQuest(activeIndex);
+    if (!target) return;
+
+    event.preventDefault();
+    const nextHash = "#knowledge-atlas";
+    if (window.location.hash !== nextHash) {
+      window.history.pushState(null, "", nextHash);
+    }
+
+    if (lenis && !prefersReducedMotion) {
+      lenis.scrollTo(target, {
+        duration: 0.9,
+        easing: (value) => 1 - Math.pow(1 - value, 3),
+      });
+      return;
+    }
+
+    target.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
     });
   }
 
@@ -126,9 +165,12 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
                 carryQuest(index);
               }}
               onPointerEnter={(event) => {
-                if (event.pointerType !== "touch") selectQuest(index);
+                if (event.pointerType !== "touch") previewQuest(index);
               }}
-              onFocus={() => selectQuest(index)}
+              onFocus={() => {
+                selectQuest(index);
+                carryQuest(index);
+              }}
               onKeyDown={(event) => handleKeyDown(event, index)}
             >
               <span className="insights-decision-mirror__index">0{index + 1}</span>
@@ -192,7 +234,10 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
             style={{ transformPerspective: 1100 }}
           >
             <p className="insights-decision-mirror__route">
-              Likely reading path <span>{activeQuest.pathName}</span>
+              {committedSlug === activeQuest.topicSlug
+                ? "Path held"
+                : "Likely reading path"}{" "}
+              <span>{activeQuest.pathName}</span>
             </p>
             <h3>{activeQuest.reading}</h3>
 
@@ -223,16 +268,21 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
               </small>
             </TrackedLink>
 
-            <Link
-              href={`#atlas-tab-${activeQuest.topicSlug}`}
+            <a
+              href="#knowledge-atlas"
               className="insights-decision-mirror__atlas-link"
-              onClick={() => carryQuest(activeIndex)}
+              onClick={handleAtlasJourney}
             >
               Trace the complete {activeQuest.pathName.toLowerCase()} path
               <ArrowDown aria-hidden="true" className="h-4 w-4" />
-            </Link>
+            </a>
           </motion.article>
         </AnimatePresence>
+        <p className="sr-only" aria-live="polite">
+          {committedSlug === activeQuest.topicSlug
+            ? `${activeQuest.pathName} path held for the knowledge atlas.`
+            : ""}
+        </p>
       </div>
     </div>
   );
