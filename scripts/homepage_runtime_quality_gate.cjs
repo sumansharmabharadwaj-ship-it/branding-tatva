@@ -16,6 +16,7 @@ const mounted = [
 const analytics = read("src/lib/analytics.ts");
 const pacing = read("src/sections/Home/HomePacingDirector.tsx");
 const diagnostic = read("src/sections/Home/HomeBrandHealthCheck.tsx");
+const studio = read("src/sections/Home/StudioCinematicChapter.tsx");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -35,5 +36,6 @@ assert(pacing.includes('querySelectorAll<HTMLElement>("[data-home-reading-plane]
 assert(pacing.includes("changedActiveSections.forEach"), "Active panel replacements do not trigger a visibility recheck.");
 assert(pacing.includes("}, 400);"), "Readable content is not checked within the 400 millisecond contract.");
 assert(diagnostic.includes('trackRuntimeIssue("diagnostic_transition_failed"'), "Diagnostic transition failures are silent.");
+assert(!studio.includes("useScroll") && !studio.includes("useMotionValueEvent"), "Studio choices must remain visitor-controlled rather than changing during scroll entry.");
 
 console.log("Homepage runtime quality gate passed: atomic reading planes, bounded telemetry, and transition recovery verified.");

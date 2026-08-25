@@ -1,9 +1,9 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useState, type CSSProperties, type KeyboardEvent } from "react";
 
 const DISCIPLINES = [
   {
@@ -63,17 +63,8 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function StudioCinematicChapter() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
-  const sectionRef = useRef<HTMLElement>(null);
-  const pointerPreviewRef = useRef(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const active = DISCIPLINES[activeIndex];
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    if (reducedMotion || pointerPreviewRef.current) return;
-    const next = Math.min(DISCIPLINES.length - 1, Math.max(0, Math.floor(progress * DISCIPLINES.length)));
-    setActiveIndex((current) => current === next ? current : next);
-  });
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -89,7 +80,6 @@ export function StudioCinematicChapter() {
 
   return (
     <section
-      ref={sectionRef}
       className="studio-film"
       aria-labelledby="studio-film-title"
       style={{ "--studio-film-accent": active.accent } as CSSProperties}
@@ -108,9 +98,9 @@ export function StudioCinematicChapter() {
               src={active.video}
               poster={active.poster}
               muted
-              autoPlay={!reducedMotion}
               loop
               playsInline
+              aria-hidden="true"
               preload="metadata"
               onLoadedData={(event) => {
                 if (!reducedMotion) void event.currentTarget.play().catch(() => undefined);
@@ -145,7 +135,7 @@ export function StudioCinematicChapter() {
               aria-labelledby={`studio-film-tab-${activeIndex}`}
               className="studio-film__reading"
               data-home-reading-plane
-              initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               exit={reducedMotion ? undefined : { opacity: 0, y: -6 }}
               transition={{ duration: reducedMotion ? 0 : 0.34, ease: EASE }}
@@ -194,11 +184,7 @@ export function StudioCinematicChapter() {
                   className={selected ? "is-active" : undefined}
                   style={{ "--studio-chapter-accent": discipline.accent } as CSSProperties}
                   onClick={() => setActiveIndex(index)}
-                  onPointerEnter={() => {
-                    pointerPreviewRef.current = true;
-                    setActiveIndex(index);
-                  }}
-                  onPointerLeave={() => { pointerPreviewRef.current = false; }}
+                  onPointerEnter={() => setActiveIndex(index)}
                   onFocus={() => setActiveIndex(index)}
                   onKeyDown={(event) => onKeyDown(event, index)}
                 >
