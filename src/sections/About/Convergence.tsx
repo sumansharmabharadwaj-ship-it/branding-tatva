@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowRight, BookOpenText, Brain, Sparkles } from "lucide-react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -16,24 +22,28 @@ const PAIRINGS = [
     human: "Attention",
     language: "Framing",
     result: "Category",
+    coreLine: "What kind of brand people believe they are seeing.",
     explanation: "What gets noticed first shapes what kind of brand people believe they are seeing.",
   },
   {
     human: "Association",
     language: "Metaphor",
     result: "Meaning",
+    coreLine: "Where an unfamiliar offer belongs in the mind.",
     explanation: "Comparison and imagery give an unfamiliar offer a more useful place in the mind.",
   },
   {
     human: "Memory",
     language: "Narrative",
     result: "Recognition",
+    coreLine: "A structure the audience can meet again.",
     explanation: "A coherent story gives the same strategic signal a structure worth remembering.",
   },
   {
     human: "Choice",
     language: "Tone",
     result: "Confidence",
+    coreLine: "Language that makes the next choice feel credible.",
     explanation: "The right verbal character makes the next decision feel clear, credible, and possible.",
   },
 ] as const;
@@ -72,6 +82,8 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function Convergence() {
   const sectionRef = useRef<HTMLElement>(null);
+  const pointerFrameRef = useRef(0);
+  const [inspectedPair, setInspectedPair] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -12% 0px" });
   const visualizer = useScrollDrivenVisualizer({
@@ -82,6 +94,33 @@ export function Convergence() {
   });
   const stage = prefersReducedMotion ? STAGES.length - 1 : visualizer.activeIndex;
   const activeStage = STAGES[stage];
+  const activePair = PAIRINGS[inspectedPair];
+
+  useEffect(() => () => window.cancelAnimationFrame(pointerFrameRef.current), []);
+
+  function onPointerMove(event: ReactPointerEvent<HTMLElement>) {
+    if (prefersReducedMotion || event.pointerType === "touch") return;
+    const node = sectionRef.current;
+    if (!node) return;
+    const bounds = node.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / Math.max(bounds.width, 1) - 0.5) * 2;
+    const y = ((event.clientY - bounds.top) / Math.max(bounds.height, 1) - 0.5) * 2;
+    window.cancelAnimationFrame(pointerFrameRef.current);
+    pointerFrameRef.current = window.requestAnimationFrame(() => {
+      node.style.setProperty("--convergence-pointer-x", x.toFixed(3));
+      node.style.setProperty("--convergence-pointer-y", y.toFixed(3));
+    });
+  }
+
+  function resetPointer() {
+    const node = sectionRef.current;
+    if (!node) return;
+    window.cancelAnimationFrame(pointerFrameRef.current);
+    pointerFrameRef.current = window.requestAnimationFrame(() => {
+      node.style.setProperty("--convergence-pointer-x", "0");
+      node.style.setProperty("--convergence-pointer-y", "0");
+    });
+  }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -103,7 +142,10 @@ export function Convergence() {
       data-about-scene="method"
       data-scroll-story="about-convergence"
       data-convergence-stage={activeStage.number}
+      data-convergence-pair={inspectedPair + 1}
       aria-labelledby="convergence-title"
+      onPointerMove={onPointerMove}
+      onPointerLeave={resetPointer}
     >
       <div className={styles.shell}>
         <header className={styles.header}>
@@ -160,19 +202,30 @@ export function Convergence() {
               </div>
             </div>
             <p>What people notice, connect, remember, and choose.</p>
-            <ul>
+            <ul data-inspected-pair={inspectedPair + 1}>
               {PSYCHOLOGY_SIGNALS.map((signal, index) => (
                 <li key={signal} data-pair={index + 1}><span>0{index + 1}</span>{signal}</li>
               ))}
             </ul>
           </motion.article>
 
-          <div className={styles.synthesisField} aria-hidden="true">
+          <div className={styles.synthesisField}>
             <div className={styles.threadField}>
               {PAIRINGS.map((pair, index) => (
                 <div className={styles.thread} key={pair.result} data-thread={index + 1}>
                   <span />
-                  <strong>{pair.result}</strong>
+                  <button
+                    type="button"
+                    aria-label={`${pair.human} and ${pair.language} shape ${pair.result}`}
+                    aria-pressed={inspectedPair === index}
+                    tabIndex={stage === 1 ? 0 : -1}
+                    onClick={() => setInspectedPair(index)}
+                    onPointerEnter={() => setInspectedPair(index)}
+                    onFocus={() => setInspectedPair(index)}
+                  >
+                    <small>{pair.human} + {pair.language}</small>
+                    <strong>{pair.result}</strong>
+                  </button>
                   <span />
                 </div>
               ))}
@@ -188,8 +241,8 @@ export function Convergence() {
             >
               <span className={styles.coreHalo} />
               <Sparkles size={18} />
-              <small>{activeStage.centreLabel}</small>
-              <strong>{activeStage.centreLine}</strong>
+              <small>{stage === 1 ? activePair.result : activeStage.centreLabel}</small>
+              <strong>{stage === 1 ? activePair.coreLine : activeStage.centreLine}</strong>
             </motion.div>
 
             <div className={styles.outputs}>
@@ -232,7 +285,7 @@ export function Convergence() {
               </div>
             </div>
             <p>How an idea is framed, imagined, ordered, and voiced.</p>
-            <ul>
+            <ul data-inspected-pair={inspectedPair + 1}>
               {LITERARY_SIGNALS.map((signal, index) => (
                 <li key={signal} data-pair={index + 1}><span>0{index + 1}</span>{signal}</li>
               ))}

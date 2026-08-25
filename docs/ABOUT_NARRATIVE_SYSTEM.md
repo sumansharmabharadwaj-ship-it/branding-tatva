@@ -98,15 +98,21 @@ const STAGES = [
 
 The middle state makes the logic inspectable through four pairings—attention
 with framing, association with metaphor, memory with narrative, and choice
-with tone. The resolution does not invent a performance claim; it shows the
-kind of strategic outputs the practice produces: positioning, language, and
-recognition.
+with tone. Hover, focus, or click isolates one connection and lets its two
+source signals brighten while the centre explains the brand consequence:
+Category, Meaning, Recognition, or Confidence. The resolution does not invent
+a performance claim; it shows the kind of strategic outputs the practice
+produces: positioning, language, and recognition.
 
 Desktop motion clarifies that sequence by moving the two disciplines toward a
 shared field, drawing their connections, and then letting the input layers
 recede behind the resolved outputs. Tablet, mobile, and reduced-motion modes
 render the same model as a complete linear explanation rather than a shrunken
 version of the pinned composition.
+
+The desktop runway falls from 148svh to 140svh. Fine-pointer movement shifts
+the shared field and paper light gently, while every explanation remains
+available through focus and click.
 
 The global chapter spine names this scene **Synthesis**, so navigation language
 matches what the visitor is actually watching rather than repeating the degree
@@ -157,7 +163,7 @@ decision, proof classification, and case-study route therefore change as one
 shot. The cumulative line beneath the camera resolves category, value, and
 pattern into recognition without adding another explanatory card.
 
-The desktop runway is reduced from 144svh to 140svh. Pointer movement changes
+The desktop runway uses 140svh. Pointer movement changes
 the physical viewing angle through a requestAnimationFrame-synchronised CSS
 variable update, while page velocity adds a restrained camera response. Touch
 uses a horizontal proximity-snap case reel. Reduced-motion mode presents all
