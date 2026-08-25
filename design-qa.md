@@ -268,6 +268,56 @@ blocked
 
 ---
 
+# Homepage cinematic evidence QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: `/workspace/scratch/55f96cacf4b7/upload/08a75655-58aa-4a35-9d03-637489c417c4(1).png` (`1536 × 1024`), the approved cinematic editorial direction.
+- Implementation target: homepage `#evidence` chapter in `src/sections/Home/EvidenceWall.tsx`.
+- Browser-rendered implementation screenshot: unavailable because the required cloud-browser connection did not initialize.
+- Intended desktop viewport: `1920 × 1080` CSS px at density `1`.
+- Intended mobile viewport: `390 × 844` CSS px at density `1`.
+- State: first featured project active; moving project film.
+
+## Findings
+
+- [P1] Browser-rendered composition remains unverified.
+  - Location: homepage selected-work chapter at `#evidence`.
+  - Evidence: no same-viewport implementation capture is available from the cloud browser.
+  - Impact: exact film crop, proof-line fit, typography and responsive interaction polish cannot be certified visually.
+  - Fix: capture desktop and mobile states in the cloud browser, compare them with the source direction, then correct any visible P0/P1/P2 drift.
+
+## Required fidelity surfaces
+
+- Fonts and typography: the established display and UI families remain; rendered wrapping is unverified.
+- Spacing and layout rhythm: the metric panel, dossier card and evidence card have become one `100svh` editorial proof story; rendered fit is unverified.
+- Colors and visual tokens: the existing project accent, vellum and forest palette remains; rendered contrast is unverified.
+- Image quality and asset fidelity: each project keeps its real card video/poster as the full-bleed moving source; no simulated visual asset was introduced.
+- Copy and content: every project metric, signal, decision, proof, evidence type, period, source and destination remains available.
+
+## Interaction and browser verification
+
+- Production build: passed; all `78` routes generated.
+- TypeScript: passed.
+- Static interaction review: passed; native project tabs, keyboard navigation, project-file modal and case links remain present.
+- Browser interaction, screenshots, console errors and responsive fit: blocked.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | A single case was split across a metric panel, boxed decision dossier, separate evidence note, dual actions and another project index. | Combined metric, signal, decision, proof and source into one continuous editorial story over the moving case film. Browser-rendered post-fix evidence remains blocked. |
+
+## Focused-region evidence
+
+Unavailable. The proof line, active-project index, video crop, focus state and mobile fit still require browser-rendered comparison.
+
+## Final result
+
+blocked
+
+---
+
 # Homepage cinematic method QA · 2026-08-25
 
 ## Comparison target

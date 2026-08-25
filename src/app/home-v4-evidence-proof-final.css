@@ -1,0 +1,175 @@
+/* Final evidence chapter: one proof story over one moving case film. */
+
+html body .home-v4 #evidence .evidence-cinematic__shell {
+  gap: clamp(.7rem, 1.6svh, 1.15rem);
+  padding-bottom: clamp(.75rem, 1.6svh, 1.1rem) !important;
+}
+
+html body .home-v4 #evidence .evidence-cinematic__stage {
+  display: flex;
+  align-items: center;
+  margin: 0 !important;
+}
+
+html body .home-v4 #evidence .evidence-cinematic__summary {
+  width: min(100%, 76rem);
+  padding: clamp(.5rem, 1.2svh, .9rem) 0;
+}
+
+html body .home-v4 #evidence .evidence-cinematic__summary > strong {
+  max-width: 12ch;
+  font-size: clamp(4.1rem, min(7.4vw, 11.5svh), 7.5rem);
+}
+
+.home-v4 .evidence-cinematic__proof-line {
+  display: grid;
+  max-width: 72rem;
+  margin-top: clamp(.8rem, 1.6svh, 1.1rem);
+  padding-top: clamp(.7rem, 1.35svh, .9rem);
+  border-top: 1px solid rgba(32, 50, 40, .24);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.home-v4 .evidence-cinematic__proof-line > div {
+  min-width: 0;
+  padding-right: clamp(1rem, 2.5vw, 2.5rem);
+}
+
+.home-v4 .evidence-cinematic__proof-line > div + div {
+  padding-left: clamp(1rem, 2.5vw, 2.5rem);
+  border-left: 1px solid rgba(32, 50, 40, .17);
+}
+
+.home-v4 .evidence-cinematic__proof-line small {
+  color: #7b6b43;
+  font-size: .57rem;
+  font-weight: 650;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.home-v4 .evidence-cinematic__proof-line p {
+  max-width: 30ch;
+  margin: .45rem 0 0;
+  color: rgba(32, 50, 40, .8);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(.85rem, 1.05vw, 1.04rem);
+  line-height: 1.3;
+}
+
+.home-v4 .evidence-cinematic__source {
+  max-width: 66rem;
+  margin: clamp(.55rem, 1.15svh, .8rem) 0 0;
+  color: rgba(32, 50, 40, .56);
+  font-size: clamp(.57rem, .67vw, .66rem);
+  line-height: 1.45;
+}
+
+.home-v4 .evidence-cinematic__source > span {
+  margin-right: .55rem;
+  color: rgba(32, 50, 40, .78);
+  font-weight: 650;
+  letter-spacing: .06em;
+}
+
+.home-v4 .evidence-cinematic__actions {
+  margin-top: clamp(.65rem, 1.35svh, .95rem);
+}
+
+html body .home-v4 #evidence .evidence-cinematic__index button {
+  min-height: clamp(3.8rem, 7svh, 4.75rem);
+}
+
+@media (max-width: 900px) {
+  .home-v4 .evidence-cinematic__proof-line {
+    grid-template-columns: repeat(3, minmax(12rem, 1fr));
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .home-v4 .evidence-cinematic__proof-line::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  html body .home-v4 #evidence .evidence-cinematic__shell {
+    padding-top: 4.7rem !important;
+    padding-bottom: .5rem !important;
+  }
+
+  .home-v4 .evidence-cinematic__intro p {
+    display: none;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__header h2 {
+    font-size: clamp(2.55rem, 12vw, 3.7rem);
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__summary > strong {
+    margin-top: .4rem;
+    font-size: clamp(3.5rem, 17vw, 5.2rem);
+  }
+
+  .home-v4 .evidence-cinematic__summary > span {
+    margin-top: .45rem;
+    font-size: .92rem;
+  }
+
+  .home-v4 .evidence-cinematic__proof-line {
+    margin-top: .55rem;
+    padding-top: .5rem;
+    grid-template-columns: repeat(3, minmax(10.5rem, 1fr));
+  }
+
+  .home-v4 .evidence-cinematic__proof-line p {
+    font-size: .78rem;
+  }
+
+  .home-v4 .evidence-cinematic__source {
+    display: none;
+  }
+
+  .home-v4 .evidence-cinematic__actions {
+    margin-top: .5rem;
+  }
+
+  .home-v4 .evidence-cinematic__actions button,
+  .home-v4 .evidence-cinematic__actions a {
+    min-height: 2.35rem;
+    padding-inline: .75rem;
+    font-size: .56rem;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__index button {
+    min-height: 3.35rem;
+  }
+}
+
+@media (max-height: 740px) and (min-width: 621px) {
+  html body .home-v4 #evidence .evidence-cinematic__shell {
+    padding-top: 4.6rem !important;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__header h2 {
+    font-size: clamp(2.7rem, 5vw, 4.2rem);
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__summary > strong {
+    font-size: clamp(3.5rem, 7vw, 5.7rem);
+  }
+
+  .home-v4 .evidence-cinematic__proof-line {
+    margin-top: .5rem;
+    padding-top: .5rem;
+  }
+
+  .home-v4 .evidence-cinematic__proof-line p {
+    margin-top: .25rem;
+    font-size: .82rem;
+  }
+
+  .home-v4 .evidence-cinematic__source {
+    margin-top: .35rem;
+  }
+}

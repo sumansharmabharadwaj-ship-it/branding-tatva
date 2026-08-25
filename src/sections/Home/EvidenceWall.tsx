@@ -235,6 +235,26 @@ export function EvidenceWall() {
               <p>{activeProject.title} · {activeProject.industry}</p>
               <strong>{activeMetric.big}</strong>
               <span>{activeMetric.label}</span>
+              <div className="evidence-cinematic__proof-line" aria-label="Decision trail">
+                {[
+                  ["Signal", activeTrail.signal],
+                  ["Decision", activeTrail.decision],
+                  ["Proof", activeTrail.proof],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <small>{label}</small>
+                    <p>{value}</p>
+                  </div>
+                ))}
+              </div>
+
+              {activeEvidence && (
+                <p className="evidence-cinematic__source">
+                  <span>{activeEvidence.type} · {activeEvidence.period}</span>
+                  {activeEvidence.source}
+                </p>
+              )}
+
               <div className="evidence-cinematic__actions">
                 <button type="button" onClick={() => setOpenSlug(activeProject.slug)}>
                   Inspect the project file <span aria-hidden="true">↗</span>
@@ -244,45 +264,6 @@ export function EvidenceWall() {
                 </Link>
               </div>
             </motion.article>
-          </AnimatePresence>
-
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.aside
-              key={`evidence-trail-${activeProject.slug}`}
-              className="evidence-cinematic__trail"
-              initial={prefersReducedMotion ? false : { opacity: 0, x: 16, filter: "blur(4px)" }}
-              animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, x: -10, filter: "blur(3px)" }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
-            >
-              <div className="evidence-cinematic__trail-topline">
-                <span>Decision trail</span>
-                <Link href="/services#proof">How the work is recorded <span aria-hidden="true">↗</span></Link>
-              </div>
-
-              <div className="evidence-cinematic__trail-grid">
-                {[
-                  ["01", "Signal", activeTrail.signal],
-                  ["02", "Decision", activeTrail.decision],
-                  ["03", "Proof", activeTrail.proof],
-                ].map(([number, label, value]) => (
-                  <div key={label} className="evidence-cinematic__trail-step">
-                    <span>{number}</span>
-                    <small>{label}</small>
-                    <p>{value}</p>
-                  </div>
-                ))}
-              </div>
-
-              {activeEvidence && (
-                <div className="evidence-cinematic__evidence-note">
-                  <span>Recorded evidence</span>
-                  <strong>{activeEvidence.type}</strong>
-                  <small>{activeEvidence.period}</small>
-                  <p>{activeEvidence.source}</p>
-                </div>
-              )}
-            </motion.aside>
           </AnimatePresence>
         </div>
 
