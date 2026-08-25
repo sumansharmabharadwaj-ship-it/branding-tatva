@@ -3,7 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { AnimatePresence, motion, useInView } from "framer-motion";
-import { useEffect, useRef, type CSSProperties, type KeyboardEvent } from "react";
+import { useEffect, useRef, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 import type { ProcessStage } from "@/data/process";
 
 type StageMeta = {
@@ -139,6 +139,21 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     document.getElementById(`decision-flow-tab-${next}`)?.focus();
   }
 
+  function moveLight(event: PointerEvent<HTMLElement>) {
+    if (prefersReducedMotion) return;
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+    const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+    event.currentTarget.style.setProperty("--decision-pointer-x", `${x.toFixed(2)}%`);
+    event.currentTarget.style.setProperty("--decision-pointer-y", `${y.toFixed(2)}%`);
+  }
+
+  function resetLight(event: PointerEvent<HTMLElement>) {
+    event.currentTarget.style.removeProperty("--decision-pointer-x");
+    event.currentTarget.style.removeProperty("--decision-pointer-y");
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -147,6 +162,8 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       className={`decision-flow ${inView ? "is-awake" : "is-resting"}`}
       style={sectionStyle}
       aria-labelledby="decision-flow-title"
+      onPointerMove={moveLight}
+      onPointerLeave={resetLight}
     >
       <div className="decision-flow__media" aria-hidden="true" data-media-id="BT-HOME-METHOD-STREAM-LIGHT">
         <video
@@ -198,18 +215,23 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               <p className="decision-flow__stage-name">{stage.stage}</p>
               <h3>{meta.becomes}</h3>
               <p className="decision-flow__explanation">{meta.explanation}</p>
-              <p className="decision-flow__result">
-                <span>{meta.output}</span>
-                <span aria-hidden="true">—</span>
-                <span>{meta.prevents}</span>
-              </p>
+              <dl className="decision-flow__result">
+                <div>
+                  <dt>Leaves you with</dt>
+                  <dd>{meta.output}</dd>
+                </div>
+                <div>
+                  <dt>So you avoid</dt>
+                  <dd>{meta.prevents}</dd>
+                </div>
+              </dl>
             </motion.article>
           </AnimatePresence>
         </div>
 
         <div className="decision-flow__selector">
           <div className="decision-flow__selector-label">
-            <span>Choose a decision</span>
+            <span>Explore the six decisions</span>
             <span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>
           </div>
           <div className="decision-flow__rail" role="tablist" aria-label="Choose a decision in the Branding Tatva method">

@@ -54,6 +54,7 @@ import "./home-v4-studio-living-final.css";
 import "./home-v4-insights-living-final.css";
 import "./home-v4-invitation-living-final.css";
 import "./home-v4-paths-choice-final.css";
+import "./home-v4-process-living-final.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
