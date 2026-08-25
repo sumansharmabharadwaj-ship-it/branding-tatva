@@ -17,7 +17,13 @@ type Status = "idle" | "submitting" | "success" | "already" | "error";
 // any of ContactForm's own richness (spotlight, ripple) since this is
 // meant to read as a quiet, low-commitment aside next to the real
 // enquiry form, not a second version of it.
-export function NewsletterForm({ readerPath }: { readerPath?: string }) {
+export function NewsletterForm({
+  readerPath,
+  readerOrigin,
+}: {
+  readerPath?: string;
+  readerOrigin?: string;
+}) {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -50,6 +56,7 @@ export function NewsletterForm({ readerPath }: { readerPath?: string }) {
       setStatus(nextStatus);
       track("insights_field_note_requested", {
         reader_path: readerPath ?? "none",
+        reader_origin: readerOrigin ?? "none",
         result: data.alreadySubscribed ? "already_held" : "confirmation_sent",
       });
       reset();

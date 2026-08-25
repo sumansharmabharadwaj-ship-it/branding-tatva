@@ -293,6 +293,28 @@ The field-note request records only the verified topic slug and the API result.
 Typed search language stays inside the reader trail in session storage and is
 never attached to newsletter analytics or the subscription request.
 
+The Evidence Ledger may refine that thread. Marking a layer publishes its
+verified topic and layer name as the newest reader choice; marking another
+layer moves the thread again. Removing the newest mark restores the preceding
+marked layer, while removing every mark returns to the reader's earlier Mirror,
+Atlas, or Library choice. The small `Evidence thread · …` bridge label previews
+this continuity before the final scene echoes it as `Your evidence thread · …`.
+
+~~~ts
+const nextIntent = nextLatestLayer
+  ? {
+      topicSlug: nextLatestLayer.topicSlug,
+      query: "",
+      label: nextLatestLayer.name,
+      origin: "evidence-ledger",
+    }
+  : priorReaderIntentRef.current;
+~~~
+
+Newsletter measurement also records the coarse reader origin, allowing a
+comparison between earlier exploration and an evidence-led commitment while
+keeping typed problem language out of analytics.
+
 The three promises now resolve through the shared scene phases rather than a
 separate timeline: Question uses activation, Lens uses discovery, and Move uses
 resolution. Back-scroll reverses the sequence automatically, while the final

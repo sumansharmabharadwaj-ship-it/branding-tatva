@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Check, Plus } from "lucide-react";
 import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
+  clearInsightsIntent,
   INSIGHTS_INTENT_CLEARED_EVENT,
   INSIGHTS_INTENT_EVENT,
+  publishInsightsIntent,
   readInsightsIntent,
   type InsightsIntentDetail,
 } from "@/lib/insights-intent";
@@ -35,6 +37,9 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [markedSlugs, setMarkedSlugs] = useState<string[]>([]);
   const [readerIntent, setReaderIntent] = useState<InsightsIntentDetail>();
+  const priorReaderIntentRef = useRef<InsightsIntentDetail | undefined>(
+    undefined,
+  );
   const prefersReducedMotion = useHydratedReducedMotion();
   const focusedLayer = layers[focusedIndex];
   const markedCount = markedSlugs.length;
@@ -42,11 +47,21 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
 
   useEffect(() => {
     function carryReaderIntent(event: Event) {
-      setReaderIntent((event as CustomEvent<InsightsIntentDetail>).detail);
+      const nextIntent = (event as CustomEvent<InsightsIntentDetail>).detail;
+      if (nextIntent.origin !== "evidence-ledger") {
+        priorReaderIntentRef.current = nextIntent;
+      }
+      setReaderIntent(nextIntent);
     }
 
     function releaseReaderIntent() {
+      priorReaderIntentRef.current = undefined;
       setReaderIntent(undefined);
+    }
+
+    const initialIntent = readInsightsIntent();
+    if (initialIntent?.origin !== "evidence-ledger") {
+      priorReaderIntentRef.current = initialIntent;
     }
 
     window.addEventListener(INSIGHTS_INTENT_EVENT, carryReaderIntent);
@@ -54,7 +69,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       INSIGHTS_INTENT_CLEARED_EVENT,
       releaseReaderIntent,
     );
-    setReaderIntent(readInsightsIntent());
+    setReaderIntent(initialIntent);
 
     return () => {
       window.removeEventListener(INSIGHTS_INTENT_EVENT, carryReaderIntent);
@@ -121,23 +136,43 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       : "Choose the place where buyer confidence changes. The full checklist remains available when you need the complete sequence.";
 
   function toggleLayer(slug: string, index: number) {
+    const selectedLayer = layers[index];
+    if (!selectedLayer) return;
+
     const isMarked = markedSlugs.includes(slug);
     const nextMarkedSlugs = isMarked
       ? markedSlugs.filter((candidate) => candidate !== slug)
       : [...markedSlugs, slug];
+    const nextLatestSlug = nextMarkedSlugs[nextMarkedSlugs.length - 1];
+    const nextLatestLayer = nextLatestSlug
+      ? layers.find((layer) => layer.slug === nextLatestSlug)
+      : undefined;
+    const nextIntent: InsightsIntentDetail | undefined = nextLatestLayer
+      ? {
+          topicSlug: nextLatestLayer.topicSlug,
+          query: "",
+          label: nextLatestLayer.name,
+          origin: "evidence-ledger",
+        }
+      : priorReaderIntentRef.current;
 
     setMarkedSlugs(nextMarkedSlugs);
     track("insights_evidence_layer_toggled", {
       layer: slug,
       state: isMarked ? "open" : "marked",
       marked_count: nextMarkedSlugs.length,
-      reader_path: readerIntent?.topicSlug ?? "none",
+      reader_path: nextIntent?.topicSlug ?? "none",
     });
 
-    if (isMarked && nextMarkedSlugs.length > 0) {
-      const latestMarkedSlug = nextMarkedSlugs[nextMarkedSlugs.length - 1];
+    if (nextIntent) {
+      publishInsightsIntent(nextIntent);
+    } else {
+      clearInsightsIntent();
+    }
+
+    if (isMarked && nextLatestSlug) {
       const latestMarkedIndex = layers.findIndex(
-        (layer) => layer.slug === latestMarkedSlug,
+        (layer) => layer.slug === nextLatestSlug,
       );
       setFocusedIndex(latestMarkedIndex >= 0 ? latestMarkedIndex : index);
       return;
@@ -270,7 +305,11 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         aria-label="Apply this insight"
       >
         <div className="insights-evidence-ledger__bridge-copy" aria-live="polite">
-          <span>Apply this idea</span>
+          <span>
+            {latestMarkedLayer
+              ? `Evidence thread · ${latestMarkedLayer.name}`
+              : "Apply this idea"}
+          </span>
           <strong>{actionTitle}</strong>
           <p>{actionDetail}</p>
         </div>

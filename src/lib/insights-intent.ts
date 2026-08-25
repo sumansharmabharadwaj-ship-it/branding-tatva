@@ -7,7 +7,8 @@ const INSIGHTS_INTENT_MAX_AGE = 30 * 60 * 1000;
 export type InsightsIntentOrigin =
   | "decision-mirror"
   | "knowledge-atlas"
-  | "insights-library";
+  | "insights-library"
+  | "evidence-ledger";
 
 export type InsightsIntentDetail = {
   topicSlug: string;
@@ -32,7 +33,8 @@ function isInsightsIntentDetail(value: unknown): value is InsightsIntentDetail {
     typeof detail.label === "string" &&
     (detail.origin === "decision-mirror" ||
       detail.origin === "knowledge-atlas" ||
-      detail.origin === "insights-library")
+      detail.origin === "insights-library" ||
+      detail.origin === "evidence-ledger")
   );
 }
 

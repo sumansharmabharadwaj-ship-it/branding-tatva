@@ -147,17 +147,30 @@ export function InsightsFieldNotesResolution({
   const accent = selectedPath
     ? ELEMENT_COLORS[selectedPath.element]
     : ELEMENT_COLORS.fire;
+  const isEvidenceThread = readerIntent?.origin === "evidence-ledger";
+  const readerThreadState = isEvidenceThread
+    ? "evidence"
+    : selectedPath
+      ? "carried"
+      : "open";
+  const readerThreadLabel = isEvidenceThread
+    ? `Your evidence thread · ${readerIntent.label}`
+    : selectedPath
+      ? `Your thread · ${selectedPath.name}`
+      : "Notes worth keeping";
 
   return (
     <div
       className="insights-notes-scene__composition"
-      data-reader-thread={selectedPath ? "carried" : "open"}
+      data-reader-thread={readerThreadState}
       style={{ "--notes-path-color": accent } as CSSProperties}
     >
       <div className="insights-notes-scene__copy">
         <AnimatePresence mode="sync" initial={false}>
           <motion.div
-            key={selectedPath?.slug ?? "open"}
+            key={`${readerIntent?.origin ?? "open"}-${
+              readerIntent?.label ?? selectedPath?.slug ?? "open"
+            }`}
             className="insights-notes-scene__resolution"
             initial={
               prefersReducedMotion
@@ -183,11 +196,7 @@ export function InsightsFieldNotesResolution({
                   strokeWidth={1.35}
                 />
               ) : null}
-              <span>
-                {selectedPath
-                  ? `Your thread · ${selectedPath.name}`
-                  : "Notes worth keeping"}
-              </span>
+              <span>{readerThreadLabel}</span>
             </p>
             <h2 className="insights-notes-scene__headline mt-4 max-w-2xl font-display text-display-md font-normal text-ivory">
               {resolution.headline}
@@ -219,7 +228,10 @@ export function InsightsFieldNotesResolution({
         </AnimatePresence>
       </div>
       <div className="insights-notes-scene__form lg:min-w-96">
-        <NewsletterForm readerPath={selectedPath?.slug} />
+        <NewsletterForm
+          readerPath={selectedPath?.slug}
+          readerOrigin={readerIntent?.origin}
+        />
       </div>
     </div>
   );
