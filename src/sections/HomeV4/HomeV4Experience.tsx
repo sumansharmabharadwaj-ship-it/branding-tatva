@@ -78,6 +78,7 @@ export function HomeV4Experience() {
       <div
         id="studio"
         data-home-v4-chapter="studio"
+        data-home-chapter="studio"
         data-home-section="studio"
         data-cursor-world="dark"
         className="home-v4-chapter home-v4-chapter--studio"

@@ -21,6 +21,8 @@ const assert = (condition, message) => { if (!condition) throw new Error(message
 const expected = ["opening", "diagnostic", "cost", "evidence", "paths", "process", "studio", "decision", "invitation"];
 const chapters = [...html.matchAll(/data-home-v4-chapter="([^"]+)"/g)].map((match) => match[1]);
 assert(JSON.stringify(chapters) === JSON.stringify(expected), `Rendered chapter order drifted: ${chapters.join(", ")}`);
+const runtimeChapters = [...html.matchAll(/data-home-chapter="([^"]+)"/g)].map((match) => match[1]);
+assert(JSON.stringify(runtimeChapters) === JSON.stringify(expected), `Runtime chapter order drifted: ${runtimeChapters.join(", ")}`);
 
 const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
 const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];

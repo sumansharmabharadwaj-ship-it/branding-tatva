@@ -183,8 +183,6 @@ export function PathsCinematicChapter() {
     <section
       ref={sectionRef}
       id="paths"
-      data-home-chapter="paths"
-      data-home-section="paths"
       data-active-path={active.situation}
       className="paths-film home-scene"
       aria-labelledby="paths-film-title"
