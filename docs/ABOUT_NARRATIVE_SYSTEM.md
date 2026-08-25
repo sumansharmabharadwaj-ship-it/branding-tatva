@@ -157,11 +157,13 @@ const recognitionSequence = [
 ];
 ```
 
-Each scroll state replaces the complete case frame with a direction-aware
-masked cut. The image, before-and-after strategic frame, buyer question,
-decision, proof classification, and case-study route therefore change as one
-shot. The cumulative line beneath the camera resolves category, value, and
-pattern into recognition without adding another explanatory card.
+Each scroll state now refocuses one recognition chamber instead of repeating
+the project-image camera used later by the evidence chapter. Category, value,
+and memory move through the same visual field: the buyer question sharpens,
+the operative lens changes scale and emphasis, and the before-to-after frame
+settles beneath it. A compact field note beside the chamber carries the
+strategic response and documented example, preserving inspectability without
+making the philosophy scene feel like another case-study carousel.
 
 The desktop runway uses 140svh. Pointer movement changes
 the physical viewing angle through a requestAnimationFrame-synchronised CSS

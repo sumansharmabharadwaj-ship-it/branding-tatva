@@ -74,27 +74,6 @@ const STAGES = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-const filmVariants = {
-  enter: (direction: number) => ({
-    opacity: 0.36,
-    x: direction * 34,
-    scale: 1.065,
-    clipPath: direction > 0 ? "inset(0 12% 0 0)" : "inset(0 0 0 12%)",
-  }),
-  centre: {
-    opacity: 1,
-    x: 0,
-    scale: 1,
-    clipPath: "inset(0 0 0 0)",
-  },
-  exit: (direction: number) => ({
-    opacity: 0,
-    x: direction * -24,
-    scale: 0.985,
-    clipPath: direction > 0 ? "inset(0 0 0 12%)" : "inset(0 12% 0 0)",
-  }),
-};
-
 export function PointOfView() {
   const storyRef = useRef<HTMLDivElement>(null);
   const pointerFrameRef = useRef(0);
@@ -220,37 +199,32 @@ export function PointOfView() {
                 className={styles.filmDepth}
                 style={prefersReducedMotion ? undefined : { y: filmY, scale: filmScale }}
               >
-                <AnimatePresence mode="wait" initial={false} custom={transitionDirection}>
-                  <motion.figure
-                    key={active.slug}
-                    className={styles.filmFrame}
-                    custom={transitionDirection}
-                    variants={filmVariants}
-                    initial={prefersReducedMotion ? false : "enter"}
-                    animate="centre"
-                    exit={prefersReducedMotion ? undefined : "exit"}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.68, ease: EASE }}
-                  >
-                    <Image
-                      src={active.image}
-                      alt=""
-                      fill
-                      sizes="(max-width: 980px) 88vw, 38vw"
-                      className={styles.caseImage}
-                      style={{ objectPosition: active.imagePosition }}
-                    />
-                    <span className={styles.filmWash} />
-                    <figcaption>
-                      <small>{active.number} · {active.project}</small>
-                      <strong>{active.lens}</strong>
-                    </figcaption>
-                    <div className={styles.frameShift}>
-                      <span>{active.from}</span>
-                      <i />
-                      <strong>{active.to}</strong>
-                    </div>
-                  </motion.figure>
-                </AnimatePresence>
+                <div className={styles.recognitionChamber}>
+                  <div className={styles.ambientSequence}>
+                    {STAGES.map((stage, index) => (
+                      <span key={stage.lens} data-active={index === activeIndex}>{stage.lens}</span>
+                    ))}
+                  </div>
+                  <AnimatePresence mode="wait" initial={false} custom={transitionDirection}>
+                    <motion.div
+                      key={active.lens}
+                      className={styles.signalStage}
+                      initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.08, filter: "blur(9px)" }}
+                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                      exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.94, filter: "blur(7px)" }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.66, ease: EASE }}
+                    >
+                      <small>The mind asks</small>
+                      <p>{active.question}</p>
+                      <div><span>{active.verb}</span><strong>{active.lens}</strong></div>
+                    </motion.div>
+                  </AnimatePresence>
+                  <div className={styles.frameShift}>
+                    <span>{active.from}</span>
+                    <i />
+                    <strong>{active.to}</strong>
+                  </div>
+                </div>
               </motion.div>
             </div>
 
@@ -266,16 +240,16 @@ export function PointOfView() {
                   transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
                 >
                   <p className={styles.recordKicker}>{active.number} · {active.verb} through {active.lens.toLowerCase()}</p>
-                  <h3>{active.claim}</h3>
+                  <h3>{active.decision}</h3>
 
                   <dl>
                     <div>
-                      <dt>Buyer question</dt>
-                      <dd>{active.question}</dd>
+                      <dt>Buyer sequence</dt>
+                      <dd>{active.claim}</dd>
                     </div>
                     <div>
-                      <dt>Strategic response</dt>
-                      <dd>{active.decision}</dd>
+                      <dt>Visible shift</dt>
+                      <dd>{active.from} → {active.to}</dd>
                     </div>
                   </dl>
 

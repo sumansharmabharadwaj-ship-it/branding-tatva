@@ -126,54 +126,70 @@
 
 .filmDepth { position: absolute; inset: 0; will-change: transform; }
 
-.filmFrame {
+.recognitionChamber {
   position: absolute;
   inset: 0;
-  margin: 0;
   overflow: hidden;
   border: 1px solid rgba(244, 239, 230, 0.2);
   border-radius: 46% 46% 1.25rem 1.25rem;
-  background: #17221e;
+  background:
+    radial-gradient(circle at calc(50% + var(--recognition-pointer-x) * 10%) calc(44% + var(--recognition-pointer-y) * 8%), rgba(212, 185, 154, 0.17), transparent 25%),
+    linear-gradient(145deg, rgba(31, 47, 40, 0.86), rgba(11, 20, 17, 0.96));
   box-shadow: 0 30px 78px rgba(5, 12, 9, 0.35);
   transform-origin: center;
 }
 
-.caseImage {
-  object-fit: cover;
-  filter: saturate(0.74) contrast(1.02) brightness(0.76);
-  transform: scale(calc(1.025 + var(--scene-velocity, 0) * 1.1));
-  transition: filter 560ms ease, transform 300ms ease;
-}
-
-.filmWash { position: absolute; inset: 0; background: rgba(11, 20, 17, 0.35); }
-
-.filmFrame figcaption {
+.recognitionChamber::before {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  left: 1rem;
-  z-index: 2;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
+  inset: -18%;
+  border: 1px solid rgba(212, 185, 154, 0.1);
+  border-radius: 50%;
+  content: "";
+  transform: translate3d(calc(var(--recognition-pointer-x) * 12px), calc(var(--recognition-pointer-y) * 9px), 0) scale(calc(0.82 + var(--scene-velocity, 0) * 0.8));
+  transition: transform 240ms ease-out;
 }
 
-.filmFrame figcaption small {
-  color: rgba(244, 239, 230, 0.72);
-  font-size: 0.5rem;
+.ambientSequence {
+  position: absolute;
+  inset: 1rem 1.15rem auto;
+  display: flex;
+  justify-content: space-between;
+  color: rgba(244, 239, 230, 0.2);
+  font-size: 0.48rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-.filmFrame figcaption strong {
-  color: #f4efe6;
-  font-family: var(--font-display), Georgia, serif;
-  font-size: clamp(2.6rem, 5vw, 5.2rem);
-  font-weight: 400;
-  letter-spacing: -0.055em;
-  line-height: 0.82;
+.ambientSequence span { transition: color 420ms ease, transform 560ms cubic-bezier(0.22, 1, 0.36, 1); }
+.ambientSequence span[data-active="true"] { color: #d4b99a; transform: translateY(0.18rem); }
+
+.signalStage {
+  position: absolute;
+  inset: 14% 10% 20%;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+.signalStage > small { color: #d4b99a; font-size: 0.5rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.signalStage > p { max-width: 19ch; margin: 0.7rem 0 0; color: rgba(244, 239, 230, 0.72); font-family: var(--font-display), Georgia, serif; font-size: clamp(1.25rem, 2vw, 1.75rem); line-height: 1.06; }
+.signalStage > div { display: grid; margin-top: 1.1rem; justify-items: center; }
+.signalStage > div span { color: rgba(244, 239, 230, 0.44); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+.signalStage > div strong { color: #f4efe6; font-family: var(--font-display), Georgia, serif; font-size: clamp(3.4rem, 6.8vw, 6.8rem); font-weight: 400; letter-spacing: -0.06em; line-height: 0.78; text-shadow: 0 16px 42px rgba(3, 9, 6, 0.32); }
+
+.scrollStory[data-recognition-stage="1"] .recognitionChamber { border-radius: 46% 46% 1.25rem 1.25rem; }
+.scrollStory[data-recognition-stage="2"] .recognitionChamber { border-radius: 38% 52% 1.25rem 1.25rem; }
+.scrollStory[data-recognition-stage="3"] .recognitionChamber { border-radius: 50% 40% 1.25rem 1.25rem; }
+
+.scrollStory[data-recognition-stage="1"] .signalStage > div strong { font-stretch: condensed; letter-spacing: -0.085em; }
+.scrollStory[data-recognition-stage="2"] .signalStage > div strong { letter-spacing: -0.035em; }
+.scrollStory[data-recognition-stage="3"] .signalStage > div strong { letter-spacing: 0.015em; }
+
+.recognitionChamber,
+.signalStage > div strong {
+  transition: border-radius 760ms cubic-bezier(0.22, 1, 0.36, 1), letter-spacing 760ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .frameShift {
