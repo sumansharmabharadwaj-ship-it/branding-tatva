@@ -10,7 +10,10 @@ const CSP = [
   "img-src 'self' data: blob:",
   "media-src 'self'",
   "font-src 'self'",
-  "frame-src https://calendly.com",
+  // The internal responsive QA surface embeds this site in a same-origin
+  // frame. Keeping the allow-list at self + Calendly preserves the existing
+  // boundary while making exact-width visual checks possible.
+  "frame-src 'self' https://calendly.com",
   "connect-src 'self' https://assets.calendly.com https://calendly.com",
   "object-src 'none'",
   "base-uri 'self'",
