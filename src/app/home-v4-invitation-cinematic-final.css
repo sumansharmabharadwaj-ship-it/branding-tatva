@@ -56,9 +56,9 @@ html body .home-v4 #invitation [data-cursor-media] > .video-break__content {
   padding: 0.9rem 0;
   border-bottom: 1px solid rgba(244, 239, 230, 0.14);
   color: rgba(244, 239, 230, 0.68);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 650;
-  letter-spacing: 0.17em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -84,9 +84,9 @@ html body .home-v4 #invitation [data-cursor-media] > .video-break__content {
 .home-v4 #invitation .final-invitation__eyebrow {
   margin: 0;
   color: var(--invitation-accent) !important;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 650;
-  letter-spacing: 0.17em;
+  letter-spacing: 0.12em;
   line-height: 1.4;
   text-transform: uppercase;
 }
@@ -131,7 +131,7 @@ html body .home-v4 #invitation .final-invitation__headline {
 .home-v4 #invitation .final-invitation__actions > span {
   max-width: 17rem;
   color: rgba(244, 239, 230, 0.55);
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   line-height: 1.5;
 }
 
@@ -148,9 +148,9 @@ html body .home-v4 #invitation .final-invitation__headline {
 .home-v4 #invitation .final-invitation__promise > p:first-child {
   margin: 0;
   color: rgba(244, 239, 230, 0.58);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 650;
-  letter-spacing: 0.17em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -175,9 +175,9 @@ html body .home-v4 #invitation .final-invitation__headline {
 
 .home-v4 #invitation .final-invitation__promise li span {
   color: var(--invitation-accent);
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   font-weight: 650;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
 }
 
 .home-v4 #invitation .final-invitation__promise li strong {
