@@ -17,7 +17,6 @@ import "./home-v4-scroll-motion.css";
 import "./home-v4-seamless-scenes.css";
 import "./home-v4-continuous-fit.css";
 import "./home-v4-orbit-redesign.css";
-import "./home-v4-restored-motion.css";
 import "./home-v4-scene-rhythm.css";
 import "./home-v4-process-cinematic.css";
 import "./home-v4-audit-refinement.css";
