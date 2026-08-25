@@ -664,3 +664,38 @@ passed
 ## Final result
 
 passed
+
+---
+
+# Insights Atlas-to-Library thread QA · 2026-08-25
+
+## Comparison target
+
+- Before state: August 8 preview at commit `e84a6bd`, `1363 × 936`; changing Atlas paths left two full typography panels visible together for more than one beat, while the Library received the route only as text.
+- Implementation state: August 8 preview at commit `97641c8`, same viewport, committed Positioning route.
+- Full-view evidence: resolved Atlas frame and resolved Library frame captured in the cloud browser.
+- Focused-region evidence: the `439px` Atlas / `522px` Library split view captured the route token at both sides of the scene boundary.
+
+## Findings and fixes
+
+- [P1] The outgoing and incoming Atlas panels overlapped and became unreadable during a path turn. The panel is now replaced in one DOM layer and receives a single `340ms` directional mask, so its tab, title and article set change together.
+- [P2] The chosen route lost visual continuity between the dark Atlas and light Library. A single elemental token and vertical thread now resolve out of the Atlas and activate into the Library using the existing scene progress variables.
+- Hover remains exploratory; click and keyboard selection commit the route. Clearing the Library releases the stored trail and retracts both sides of the thread on reverse scroll.
+- No new wrapper height, pinned runway, scroll instruction, custom control, asset or blocking renderer was introduced. The first Insights section remains unchanged.
+
+## Browser verification
+
+- Atlas path change: Positioning became the selected tab and visible panel in the same interaction check; `.insights-atlas__panel` remained exactly `1`.
+- Handoff: the Positioning token appeared at the Atlas exit and the Library entry on the same right-hand axis; the Library signal and all three first-folio cards matched Positioning.
+- Reverse path: `Clear the view` restored `All themes`, set both scene thread attributes to `false`, and reverse scrolling returned to an Atlas with one panel and no committed token.
+- Reduced motion: page scroll snap changed to `none`, the panel changed immediately, the thread transition resolved to `0.00001s`, and all content remained visible.
+- Compact-layout source review: path labels collapse at the existing touch breakpoint, horizontal rails retain proximity snapping, and the thread reduces to the existing elemental glyph without adding page width.
+- Library scene: height `951.125px` in a `936px` viewport; all primary information and the first folio remained visible with no dead scroll runway.
+- Horizontal overflow: `0px` after accounting for the browser scrollbar.
+- Console: no application errors; only unrelated Chrome-extension metadata messages were present.
+- Vercel runtime errors for `/insights`: none in the verified two-hour window.
+- TypeScript, targeted ESLint, discovery source gate, internal link graph gate, media search gate, and the `78`-route production build: passed.
+
+## Final result
+
+passed
