@@ -142,11 +142,11 @@ export function ConsentManager() {
           role="dialog"
           aria-modal="false"
           aria-label="Your choice about measurement"
-          className="fixed inset-x-3 bottom-3 z-[100] rounded-2xl border px-3 py-2 shadow-xl backdrop-blur-xl sm:left-auto sm:right-5 sm:w-[min(25rem,calc(100vw-2.5rem))] sm:px-4"
+          className="fixed inset-x-3 bottom-3 z-[100] rounded-2xl border px-3 py-2 shadow-xl backdrop-blur-xl sm:left-1/2 sm:right-auto sm:w-[min(43rem,calc(100vw-2.5rem))] sm:-translate-x-1/2 sm:px-3"
           style={{ borderColor: "rgba(39,34,30,0.14)", backgroundColor: "rgba(244,239,230,0.94)" }}
         >
-          <div className="grid gap-1.5">
-            <div className="flex items-start justify-between gap-3">
+          <div className="grid gap-1.5 sm:grid-cols-[minmax(0,1fr)_21rem] sm:items-center sm:gap-4">
+            <div className="flex items-start justify-between gap-3 sm:items-center">
               <p className="text-[0.74rem] leading-relaxed text-soil/76">
                 Analytics are off by default.{" "}
                 <Link href="/privacy" className="link-underline" style={{ color: "#9b5c43" }}>
