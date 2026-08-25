@@ -245,18 +245,25 @@ export function AboutCinematicRuntime() {
           previousActiveScene = activeScene;
         }
 
-        const pageRunway = Math.max(document.documentElement.scrollHeight - viewportHeight, 1);
+        chapterMarks.forEach((mark, index) => {
+          if (index === activeScene) mark.dataset.phase = scenes[activeScene].dataset.scenePhase;
+          else delete mark.dataset.phase;
+        });
+
         const firstSceneTop = scenes[0].offsetTop;
         const finalScene = scenes[scenes.length - 1];
         const finalSceneBottom = finalScene.offsetTop + finalScene.offsetHeight;
-        filmProgress = clamp(currentScrollY / pageRunway);
+        const narrativeRunway = Math.max(finalSceneBottom - viewportHeight - firstSceneTop, 1);
+        filmProgress = clamp((currentScrollY - firstSceneTop) / narrativeRunway);
         narrativeActive = currentScrollY >= firstSceneTop - viewportHeight * 0.12
           && currentScrollY <= finalSceneBottom;
         activeTone = scenes[activeScene].dataset.sceneTone ?? "dark";
 
         runtime.dataset.active = String(narrativeActive);
         runtime.dataset.tone = activeTone;
+        runtime.dataset.phase = scenes[activeScene].dataset.scenePhase ?? "anticipation";
         runtime.style.setProperty("--film-progress", filmProgress.toFixed(4));
+        runtime.style.setProperty("--active-chapter-progress", activeSceneProgress.toFixed(4));
       }
 
       scenes.forEach((scene) => {
@@ -343,7 +350,7 @@ export function AboutCinematicRuntime() {
         <ol>
           {CHAPTERS.map((chapter, index) => (
             <li key={chapter} data-film-chapter-mark data-active={index === 0}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
+              <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
               <strong>{chapter}</strong>
             </li>
           ))}
