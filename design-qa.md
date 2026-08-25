@@ -1059,3 +1059,61 @@ The mirror and Atlas panel surfaces now use non-scrolling clipping. Focus and in
 ## Final result
 
 passed
+
+---
+
+# Insights Library visual-trust QA · 2026-08-26
+
+## Comparison target
+
+- Source visual truth: the deployed August 8 Insights preview before this pass at `https://branding-tatva-git-august-8-isolated-suman22.vercel.app/insights`, with Customer experience carried from the Decision Mirror into the first Library folio.
+- Implementation: the browser-rendered local production build of `/insights` after this pass, in the same Customer experience state.
+- Browser-rendered source and implementation captures: paired inline cloud-browser captures at a `1363 × 936` CSS viewport and density `1`; both page images are `1348 × 936` after the browser scrollbar.
+- Full-view comparison evidence: the deployed and revised first folios were emitted together in one comparison input at the same scene start.
+- Focused-region evidence: direct DOM inspection recorded every visible image source and alternative description on both Customer experience folios, plus the Library scene, navigation-safe heading and document-width measurements.
+
+## Findings
+
+No actionable P0, P1 or P2 findings remain.
+
+The deployed first folio reused the same forest frame for the first and third essays. Different recommendations therefore looked like duplicated cards even though their titles and outcomes differed. The revised Library assigns all `29` essays a distinct real image already present in the project's licensed cinematic asset collection. Topic families remain coherent—routes and mountain layers for Positioning, water and continuity for Customer experience, singular natural signals for Distinctiveness, listening and writing surfaces for Messaging, and recurring light or rings for Brand memory.
+
+The Library header also receives a protected navigation line on desktop. The image aperture is slightly shallower to recover the same vertical space, so the scene remains exactly one `936px` viewport rather than gaining scroll distance.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed. Card titles, outcome labels, route metadata and the established display/body hierarchy are unchanged; the first-section typography remains untouched.
+- Spacing and layout rhythm: passed. The revised Library is exactly `936px` high. Its first folio, outcome copy and pager remain visible together, while the eyebrow now rests at `113.9px`, below the floating navigation's `90px` footprint if the navigation returns on an upward gesture.
+- Colors and visual tokens: passed. Existing elemental route colors, ivory folios, border treatments and cinematic grades remain unchanged.
+- Image quality and asset fidelity: passed. Every Library essay now receives one distinct real project asset; no repeated visible source, placeholder, generated duplicate, CSS drawing or handcrafted SVG was introduced.
+- Copy and content: passed. Search ranking, article titles, outcomes, route counts and conversion paths remain intact. Only image descriptions were updated to truthfully describe the new frames.
+
+## Interaction and browser verification
+
+- Buyer path: passed. Selecting `People like the work, then hesitate.` still produces `Path held · Customer experience`, carries the route through the Atlas and opens the five matching essays.
+- First folio imagery: passed. The three visible sources resolve to forest stream, golden reeds and waterfall frames with three corresponding descriptions.
+- Second folio imagery: passed. Next reveals river dawn and moss stream, with no repeated frame from the first folio.
+- Complete media allocation: passed. The editorial contact sheet contains `29` unique image sources for `29` essays and every referenced file exists in `public/images`.
+- Scene fit: passed. Library height is `936px` at the `936px` viewport; document `scrollWidth === clientWidth === 1348`.
+- Navigation safety: passed. The protected heading line begins below the floating navigation's full resting footprint without increasing scene height.
+- Keyboard and semantics: passed. Article links, topic filters and Previous/Next buttons retain native semantics, focus behavior and descriptive image alternatives.
+- Compact touch source review: passed. Mobile keeps the existing swipeable folio rail; the image override changes only source and alt text and introduces no width dependency.
+- Reduced-motion source review: passed. Media remains static imagery and the existing zero-duration folio state remains complete and readable.
+- Console: no site-originated application errors. Logged errors were limited to the cloud browser's `chrome-extension://` metadata bridge.
+- Production checks: TypeScript, targeted ESLint, `git diff --check` and the `78`-route Next production build passed.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The first and third Customer experience cards used the same forest image, making distinct essays look duplicated. | Added a topic-coherent editorial contact sheet with one unique real image per essay. The paired final capture shows forest stream, reeds and waterfall; DOM inspection confirms river and moss frames on folio two. |
+| 2 | P2 | When the floating navigation returned, the Library eyebrow occupied the same upper band as the navigation. | Reserved a desktop header-safe line and recovered the space by reducing only the image aperture. Final geometry places the eyebrow at `113.9px` below the `90px` navigation footprint while the scene stays `936px` high. |
+| 3 | — | Final full-view and focused-region checks found no remaining actionable P0/P1/P2 issue. | Passed. |
+
+## Follow-up polish
+
+- P3: confirm the new focal crops once on a physical mobile device with dynamic browser chrome; the responsive rail and source allocation are complete.
+
+## Final result
+
+passed
