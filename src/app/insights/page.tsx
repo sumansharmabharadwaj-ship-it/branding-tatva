@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Container } from "@/components/Container";
 import type { InsightCardPost } from "@/components/InsightCard";
 import { InsightsExplorer } from "@/components/InsightsExplorer";
-import { LinkButton } from "@/components/Button";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { PhotoHero } from "@/components/PhotoHero";
@@ -113,9 +112,10 @@ const READER_QUEST_BLUEPRINTS = [
   },
 ] as const;
 
-const EVIDENCE_LAYERS: EvidenceLayer[] = [
+const EVIDENCE_LAYER_BLUEPRINTS: Array<Omit<EvidenceLayer, "service">> = [
   {
     slug: "foundation",
+    topicSlug: "positioning",
     name: "Foundation",
     signal: "Different buyers place the business in different categories.",
     evidence: "Buyer language · lost-deal reasons · offer comparisons",
@@ -123,6 +123,7 @@ const EVIDENCE_LAYERS: EvidenceLayer[] = [
   },
   {
     slug: "message",
+    topicSlug: "brand-messaging",
     name: "Message",
     signal: "Calls explain the value faster than the website.",
     evidence: "Homepage hierarchy · proposal language · recurring objections",
@@ -130,6 +131,7 @@ const EVIDENCE_LAYERS: EvidenceLayer[] = [
   },
   {
     slug: "identity",
+    topicSlug: "distinctive-brand",
     name: "Identity",
     signal: "Recognition fades when the logo leaves the frame.",
     evidence: "Distinctive cues · competitor similarity · channel consistency",
@@ -137,6 +139,7 @@ const EVIDENCE_LAYERS: EvidenceLayer[] = [
   },
   {
     slug: "experience",
+    topicSlug: "customer-experience",
     name: "Experience",
     signal: "Confidence drops between enquiry and delivery.",
     evidence: "Response gaps · handoffs · promise-to-experience alignment",
@@ -144,6 +147,7 @@ const EVIDENCE_LAYERS: EvidenceLayer[] = [
   },
   {
     slug: "memory",
+    topicSlug: "brand-memory",
     name: "Memory",
     signal: "Publishing grows while spontaneous recall stays faint.",
     evidence: "Repeated cues · branded search patterns · recall interviews",
@@ -236,6 +240,27 @@ export default function InsightsPage() {
       },
     };
   });
+  const evidenceLayers: EvidenceLayer[] = EVIDENCE_LAYER_BLUEPRINTS.map(
+    (layer) => {
+      const application = getInsightApplication(layer.topicSlug);
+      const servicePackage = packages.find(
+        (pkg) => pkg.slug === application?.packageSlug,
+      );
+
+      if (!application || !servicePackage) {
+        throw new Error(`Missing verified evidence route for ${layer.topicSlug}`);
+      }
+
+      return {
+        ...layer,
+        service: {
+          slug: servicePackage.slug,
+          name: servicePackage.name,
+          frame: application.serviceFrame,
+        },
+      };
+    },
+  );
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -452,13 +477,7 @@ export default function InsightsPage() {
                   first pass, then the checklist carries the review forward.
                 </p>
 
-                <InsightsEvidenceLedger layers={EVIDENCE_LAYERS} />
-
-                <div className="insights-audit-scene__cta">
-                  <LinkButton href="/insights/brand-audit-checklist-before-rebrand">
-                    Read the brand audit checklist
-                  </LinkButton>
-                </div>
+                <InsightsEvidenceLedger layers={evidenceLayers} />
               </div>
             </div>
           </Container>

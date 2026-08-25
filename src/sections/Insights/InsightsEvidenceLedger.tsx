@@ -1,16 +1,28 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Plus } from "lucide-react";
+import { ArrowUpRight, Check, Plus } from "lucide-react";
+import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import {
+  INSIGHTS_INTENT_EVENT,
+  readInsightsIntent,
+  type InsightsIntentDetail,
+} from "@/lib/insights-intent";
 
 export type EvidenceLayer = {
   slug: string;
+  topicSlug: string;
   name: string;
   signal: string;
   evidence: string;
   move: string;
+  service: {
+    slug: string;
+    name: string;
+    frame: string;
+  };
 };
 
 type InsightsEvidenceLedgerProps = {
@@ -20,10 +32,32 @@ type InsightsEvidenceLedgerProps = {
 export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) {
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [markedSlugs, setMarkedSlugs] = useState<string[]>([]);
+  const [readerIntent, setReaderIntent] = useState<InsightsIntentDetail>();
   const prefersReducedMotion = useHydratedReducedMotion();
   const focusedLayer = layers[focusedIndex];
   const markedCount = markedSlugs.length;
   const markedLayers = layers.filter((layer) => markedSlugs.includes(layer.slug));
+
+  useEffect(() => {
+    function carryReaderIntent(event: Event) {
+      setReaderIntent((event as CustomEvent<InsightsIntentDetail>).detail);
+    }
+
+    window.addEventListener(INSIGHTS_INTENT_EVENT, carryReaderIntent);
+    setReaderIntent(readInsightsIntent());
+
+    return () =>
+      window.removeEventListener(INSIGHTS_INTENT_EVENT, carryReaderIntent);
+  }, []);
+
+  useEffect(() => {
+    if (!readerIntent || markedCount > 0) return;
+
+    const intentIndex = layers.findIndex(
+      (layer) => layer.topicSlug === readerIntent.topicSlug,
+    );
+    if (intentIndex >= 0) setFocusedIndex(intentIndex);
+  }, [layers, markedCount, readerIntent]);
 
   if (!focusedLayer) return null;
 
@@ -47,6 +81,26 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       : markedCount === 1
         ? `${markedLayers[0]?.name ?? "One layer"} opens the first route`
         : `${markedCount} layers form one working route`;
+  const latestMarkedLayer = markedLayers[markedLayers.length - 1];
+  const intentLayer = readerIntent
+    ? layers.find((layer) => layer.topicSlug === readerIntent.topicSlug)
+    : undefined;
+  const actionLayer = latestMarkedLayer ?? intentLayer;
+  const actionState = latestMarkedLayer
+    ? "ready"
+    : intentLayer
+      ? "carried"
+      : "open";
+  const actionTitle = latestMarkedLayer
+    ? `This evidence route points to ${latestMarkedLayer.service.name}.`
+    : intentLayer
+      ? `Continue from ${readerIntent?.label ?? intentLayer.name}.`
+      : "Mark one layer to turn concern into a working route.";
+  const actionDetail = latestMarkedLayer
+    ? latestMarkedLayer.service.frame
+    : intentLayer
+      ? `Your earlier reading trail points to ${intentLayer.name.toLowerCase()}. Mark it to shape a working hypothesis and a next evidence move.`
+      : "Choose the place where buyer confidence changes. The full checklist remains available when you need the complete sequence.";
 
   function toggleLayer(slug: string, index: number) {
     const isMarked = markedSlugs.includes(slug);
@@ -185,6 +239,48 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
           </motion.div>
         </AnimatePresence>
       </div>
+
+      <aside
+        className="insights-evidence-ledger__bridge"
+        data-action-state={actionState}
+        aria-label="Apply this insight"
+      >
+        <div className="insights-evidence-ledger__bridge-copy" aria-live="polite">
+          <span>Apply this idea</span>
+          <strong>{actionTitle}</strong>
+          <p>{actionDetail}</p>
+        </div>
+        <div className="insights-evidence-ledger__bridge-actions">
+          <TrackedLink
+            href="/insights/brand-audit-checklist-before-rebrand"
+            event="contextual_cta_clicked"
+            eventProps={{
+              source: "insights_evidence_ledger",
+              route: "audit_checklist",
+              layer: actionLayer?.slug ?? "unselected",
+            }}
+          >
+            Read the checklist
+            <ArrowUpRight aria-hidden="true" />
+          </TrackedLink>
+          {latestMarkedLayer ? (
+            <TrackedLink
+              href={`/services#package-${latestMarkedLayer.service.slug}`}
+              data-bridge-action="service"
+              event="contextual_cta_clicked"
+              eventProps={{
+                source: "insights_evidence_ledger",
+                route: latestMarkedLayer.service.slug,
+                layer: latestMarkedLayer.slug,
+              }}
+            >
+              See where {latestMarkedLayer.service.name} fits
+              <ArrowUpRight aria-hidden="true" />
+            </TrackedLink>
+          ) : null}
+        </div>
+        <i aria-hidden="true" />
+      </aside>
     </div>
   );
 }
