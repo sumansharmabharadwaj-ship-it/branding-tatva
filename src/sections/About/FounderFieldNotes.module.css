@@ -210,7 +210,7 @@
 .staticResolution p { margin: 0; color: rgba(42, 42, 37, 0.7); font-size: 0.7rem; line-height: 1.5; }
 
 @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
-  .scrollStory { height: 144svh; }
+  .scrollStory { height: 132svh; }
   .sticky { position: sticky; top: 0; height: 100svh; min-height: 100svh; }
 }
 
