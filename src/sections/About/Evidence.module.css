@@ -54,7 +54,7 @@
 .staticExperience li strong { color: #f4efe6; font-family: var(--font-display), Georgia, serif; font-size: 1.35rem; font-weight: 400; }
 .staticExperience article > a { display: inline-flex; margin-top: 1rem; align-items: center; gap: .35rem; color: #d4b99a; font-size: .56rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 @keyframes drawThread { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) { .scrollStory { height: 138svh; } .sticky { position: sticky; top: 0; height: 100svh; } }
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) { .scrollStory { height: 132svh; } .sticky { position: sticky; top: 0; height: 100svh; } }
 @media (min-width: 1024px) and (max-height: 760px) { .root { padding-block: 5rem .8rem; } .header h2 { font-size: clamp(2.15rem,min(3.55vw,5.2svh),3.6rem); } .lens { min-height: min(60svh,31rem); margin-top: .75rem; } .pathStep p { font-size: .9rem; } .outcome strong { font-size: 1.7rem; } }
 @media (max-width: 1160px) { .lens { grid-template-columns: minmax(13rem,.55fr) minmax(0,1.45fr); } .pathInner { grid-template-columns: minmax(0,.9fr) 2rem minmax(0,.9fr) 2rem minmax(0,1fr); } .caseIdentity { grid-template-columns: 1fr; } .caseIdentity > span { display: none; } }
 @media (max-width: 1023px) { .scrollStory { height: auto; } .sticky { position: relative; top: auto; height: auto; } .root { min-height: auto; padding-block: 7rem 4rem; grid-template-rows: auto; } .header { grid-template-columns: 1fr; gap: 1rem; } .header h2 { max-width: 16ch; font-size: clamp(2.5rem,10.8vw,4rem); } .intro { max-width: 52ch; } .camera { display: none; } .staticExperience { display: block; margin-top: 2rem; } }
