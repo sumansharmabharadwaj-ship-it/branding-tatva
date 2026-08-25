@@ -265,3 +265,53 @@ Unavailable. The key regions to capture are the selected Decision Mirror panel, 
 ## Final result
 
 blocked
+
+---
+
+# Homepage cinematic pathways QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: `/workspace/scratch/55f96cacf4b7/upload/08a75655-58aa-4a35-9d03-637489c417c4(1).png` (`1536 × 1024`), the approved golden water, sand-light and editorial interaction direction.
+- Implementation target: homepage `#paths` chapter in `src/sections/Home/PathsCinematicChapter.tsx`.
+- Browser-rendered implementation screenshot: unavailable because the required cloud-browser connection did not initialize.
+- Intended desktop viewport: `1920 × 1080` CSS px at density `1`.
+- Intended mobile viewport: `390 × 844` CSS px at density `1`.
+- State: first service path selected; moving cinematic background.
+
+## Findings
+
+- [P1] Browser-rendered composition remains unverified.
+  - Location: homepage pathways chapter at `#paths`.
+  - Evidence: the cloud browser returned no usable session, so there is no same-viewport implementation capture.
+  - Impact: exact video crop, one-screen fit, text wrapping and interactive-state polish cannot be certified visually.
+  - Fix: capture desktop and mobile states in the cloud browser, compare them with the source direction, then correct any visible P0/P1/P2 drift.
+
+## Required fidelity surfaces
+
+- Fonts and typography: Cormorant Garamond and Manrope preserve the existing editorial system; rendered wrapping is unverified.
+- Spacing and layout rhythm: the new component uses one three-row `100svh` frame with short-height and mobile compression; rendered fit is unverified.
+- Colors and visual tokens: warm sand, forest green and restrained gold follow the approved light organic direction; rendered contrast is unverified.
+- Image quality and asset fidelity: real `hero-goldendunes.mp4` footage and its poster replace the former CSS/SVG material simulation; crop and playback are unverified.
+- Copy and content: three starting points are explicit, concise, and connected to working service destinations.
+
+## Interaction and browser verification
+
+- Production build: passed; all `78` routes generated.
+- TypeScript: passed.
+- Static interaction review: passed; native choice buttons, `aria-pressed`, visible focus treatment, arrow/Home/End handling, quiz-state handoff and CTA destinations are present.
+- Browser interaction, screenshots, console errors and responsive fit: blocked.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The pathway chapter repeated each answer across cards, an inline SVG map, a detail panel and a simulated CSS/SVG background. | Replaced the entire structure with one real moving sand film, one editorial answer and one continuous three-choice rail. Browser-rendered post-fix evidence remains blocked. |
+
+## Focused-region evidence
+
+Unavailable. The choice rail, active service copy, video crop, type wrapping, focus state and mobile fit still require a browser-rendered capture.
+
+## Final result
+
+blocked

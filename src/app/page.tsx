@@ -44,6 +44,7 @@ import "./home-v4-opening-mobile-fit-final.css";
 import "./home-v4-tatva-film-final.css";
 import "./home-v4-studio-film-final.css";
 import "./home-v4-foundation-landscape-final.css";
+import "./home-v4-paths-film-final.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";

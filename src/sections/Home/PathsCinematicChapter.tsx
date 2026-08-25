@@ -1,9 +1,15 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+} from "react";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
@@ -17,79 +23,59 @@ const PATHS = [
   {
     number: "01",
     situation: "idea",
-    eyebrow: "For an idea becoming a business",
-    choice: "I am defining a new business",
+    choice: "I am creating something new.",
     title: "Build the foundation",
-    start: "A new direction",
+    eyebrow: "An idea becoming a business",
     body:
-      "Decide the category, audience, belief, and position first, then give identity and expression one direction to carry.",
-    route: ["Frame", "Position", "System"],
-    result: "A position and decision system the business can build from",
+      "Set the category, audience, belief, and position before identity begins, so every visible choice grows from one clear centre.",
+    route: "Frame / Position / System",
+    result: "A position and decision system the business can grow from.",
     href: "/services#desire",
-    tint: "#C98B63",
-    proof: {
-      project: "MyShopInEurope",
-      statement: "A complete brand foundation and year-long content operating system, built around craft and origin ahead of price.",
-    },
+    tint: "#ad7336",
+    proof: "MyShopInEurope began with positioning around craft and origin before the platform sold a thing.",
   },
   {
     number: "02",
     situation: "reposition",
-    eyebrow: "For a business that has evolved",
-    choice: "The business has outgrown its brand",
+    choice: "The business has outgrown its brand.",
     title: "Reposition the system",
-    start: "An established brand",
+    eyebrow: "An established business in transition",
     body:
-      "Audit the signals people already know, retain useful recognition, and align the brand with the business it has become.",
-    route: ["Decode", "Retain", "Reframe"],
-    result: "A clearer meaning that moves expectations forward",
+      "Read the signals people already recognise, keep what still carries value, and align the brand with the business it has become.",
+    route: "Decode / Retain / Reframe",
+    result: "A clearer meaning that moves expectations forward.",
     href: "/services#situation",
-    tint: "#88A77E",
-    proof: {
-      project: "HerbalCart",
-      statement: "A campaign reset with five content formats and complete video scripts, organised around a modern supplement-first position.",
-    },
+    tint: "#667d63",
+    proof: "HerbalCart turned a scattered campaign into one modern, supplement-first brand position.",
   },
   {
     number: "03",
     situation: "ongoing",
-    eyebrow: "For a brand active across channels",
-    choice: "The brand needs ongoing consistency",
+    choice: "The strategy needs to hold everywhere.",
     title: "Make the system repeatable",
-    start: "A brand in motion",
+    eyebrow: "A brand moving across channels",
     body:
-      "Codify the strategy into rules for language, content, campaigns, websites, and teams, so each release strengthens the same memory.",
-    route: ["Codify", "Apply", "Compound"],
-    result: "One recognisable logic the whole business can repeat",
+      "Translate strategy into usable rules for language, content, campaigns, websites, and teams, so every release builds the same memory.",
+    route: "Codify / Apply / Compound",
+    result: "One recognisable logic the whole business can repeat.",
     href: "/services#offerings",
-    tint: "#D3A24F",
-    proof: {
-      project: "Dr. Haley Nutrition",
-      statement: "Twelve focused Instagram posts earned 126 new followers in January: 10.5 followers per post, compared with 4.8 in December.",
-    },
+    tint: "#bd8a3f",
+    proof: "Dr. Haley Nutrition earned more response from fewer, more focused posts built around one decision system.",
   },
 ] as const satisfies ReadonlyArray<{
   number: string;
   situation: ServicesSituationId;
-  eyebrow: string;
   choice: string;
   title: string;
-  start: string;
+  eyebrow: string;
   body: string;
-  route: readonly string[];
+  route: string;
   result: string;
   href: string;
   tint: string;
-  proof: { project: string; statement: string };
+  proof: string;
 }>;
 
-const CURVES = [
-  "M112 70 C210 70 238 160 338 160",
-  "M112 160 C210 160 238 160 338 160",
-  "M112 250 C210 250 238 160 338 160",
-] as const;
-
-const ENTRY_Y = [70, 160, 250] as const;
 const EASE = [0.22, 1, 0.36, 1] as const;
 const SITUATION_TO_INDEX: Record<ServicesSituationId, number> = {
   idea: 0,
@@ -104,17 +90,19 @@ function publishSituation(situation: ServicesSituationId) {
       situation,
       packageSlug: SITUATION_TO_PACKAGE[situation],
     };
-    window.dispatchEvent(new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, { detail }));
+    window.dispatchEvent(
+      new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, {
+        detail,
+      }),
+    );
   } catch {}
 }
 
 export function PathsCinematicChapter() {
   const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(sectionRef, {
-    amount: 0.22,
-    margin: "8% 0px -12% 0px",
-  });
+  const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -10% 0px" });
   const [activeIndex, setActiveIndex] = useState(0);
   const [carriedChoice, setCarriedChoice] = useState(false);
   const active = PATHS[activeIndex];
@@ -122,8 +110,7 @@ export function PathsCinematicChapter() {
   useEffect(() => {
     function applySituation(value: string | null, carried: boolean) {
       if (!isServicesSituation(value)) return;
-      const index = SITUATION_TO_INDEX[value];
-      setActiveIndex(index);
+      setActiveIndex(SITUATION_TO_INDEX[value]);
       setCarriedChoice(carried);
     }
 
@@ -137,8 +124,24 @@ export function PathsCinematicChapter() {
     }
 
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
-    return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    return () =>
+      window.removeEventListener(
+        SERVICES_SITUATION_EVENT,
+        onSituation as EventListener,
+      );
   }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (prefersReducedMotion || !inView) {
+      video.pause();
+      return;
+    }
+
+    void video.play().catch(() => {});
+  }, [inView, prefersReducedMotion]);
 
   function choose(index: number, persist = true) {
     setActiveIndex(index);
@@ -146,17 +149,26 @@ export function PathsCinematicChapter() {
     if (persist) publishSituation(PATHS[index].situation);
   }
 
-  function onChoiceKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+  function onChoiceKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) {
     let next = index;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % PATHS.length;
-    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + PATHS.length - 1) % PATHS.length;
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = PATHS.length - 1;
-    else return;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      next = (index + 1) % PATHS.length;
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      next = (index + PATHS.length - 1) % PATHS.length;
+    } else if (event.key === "Home") {
+      next = 0;
+    } else if (event.key === "End") {
+      next = PATHS.length - 1;
+    } else {
+      return;
+    }
 
     event.preventDefault();
     choose(next);
-    document.getElementById(`path-tab-${PATHS[next].number}`)?.focus();
+    document.getElementById(`path-film-tab-${PATHS[next].number}`)?.focus();
   }
 
   return (
@@ -165,260 +177,119 @@ export function PathsCinematicChapter() {
       id="paths"
       data-home-chapter="paths"
       data-home-section="paths"
-      className="paths-cinematic home-scene"
-      aria-labelledby="paths-cinematic-title"
-      style={{ "--paths-accent": active.tint } as CSSProperties}
+      data-active-path={active.situation}
+      className="paths-film home-scene"
+      aria-labelledby="paths-film-title"
+      style={{ "--paths-film-accent": active.tint } as CSSProperties}
     >
-      <MaterialSystemFilm activeIndex={activeIndex} inView={inView} reducedMotion={prefersReducedMotion} />
+      <div className="paths-film__media" aria-hidden="true">
+        <video
+          ref={videoRef}
+          autoPlay={!prefersReducedMotion}
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster="/images/hero-goldendunes-poster.jpg"
+          data-media-id="BT-HOME-PATHS-GOLDEN-DUNES"
+        >
+          <source src="/videos/hero-goldendunes.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div className="paths-film__veil" aria-hidden="true" />
 
-      <div className="paths-cinematic__glow paths-cinematic__glow--left" aria-hidden="true" />
-      <div className="paths-cinematic__glow paths-cinematic__glow--right" aria-hidden="true" />
-
-      <div className="paths-cinematic__shell">
-        <header className="paths-cinematic__header">
-          <div>
-            <p className="paths-cinematic__eyebrow">Brand Strategy &amp; Systems</p>
-            <h2 id="paths-cinematic-title">
-              Three starting points. <em>One system built around the real gap.</em>
-            </h2>
+      <div className="paths-film__frame">
+        <header className="paths-film__header">
+          <div className="paths-film__chapter">
+            <span>05</span>
+            <p>Brand Strategy &amp; Systems</p>
           </div>
-          <div className="paths-cinematic__intro">
-            <p>
-              Each starting point carries its own intervention, decision sequence,
-              practical outcome, and recorded project.
-            </p>
-            <span>
-              {carriedChoice
-                ? "Your diagnosis has opened the most relevant route."
-                : "Three routes. One coherent operating system."}
-            </span>
-          </div>
+          <p className="paths-film__counter" aria-live="polite">
+            {active.number} / 03
+          </p>
         </header>
 
-        <div className="paths-cinematic__choices" role="tablist" aria-label="Choose a Brand Strategy and Systems starting point">
-          {PATHS.map((path, index) => {
-            const selected = index === activeIndex;
-            return (
-              <button
-                key={path.number}
-                id={`path-tab-${path.number}`}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                aria-controls={`path-panel-${path.number}`}
-                tabIndex={selected ? 0 : -1}
-                onClick={() => choose(index)}
-                onKeyDown={(event) => onChoiceKeyDown(event, index)}
-                onPointerEnter={(event) => {
-                  if (event.pointerType === "mouse") choose(index, false);
-                }}
-                className={selected ? "is-active" : undefined}
-                style={{ "--path-tint": path.tint } as CSSProperties}
-              >
-                <span>{path.number}</span>
-                <strong>{path.title}</strong>
-                <p>{path.choice}</p>
-                <i aria-hidden="true">
-                  <b
-                    style={{
-                      animation: "none",
-                      transform: selected ? "scaleX(1)" : "scaleX(0)",
-                    }}
-                  />
-                </i>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="paths-cinematic__stage">
-          <div className="paths-cinematic__map" aria-label="Three brand paths converging into a recognisable system">
-            <div className="paths-cinematic__map-heading">
-              <span>Decision architecture</span>
-              <strong>{active.number} / 03</strong>
-            </div>
-
-            <svg
-              viewBox="0 0 860 320"
-              role="img"
-              aria-label={`${active.start} moves through ${active.route.join(", ")} toward ${active.result}`}
-            >
-              <defs>
-                <radialGradient id="paths-core-glow">
-                  <stop offset="0%" stopColor={active.tint} stopOpacity="0.28" />
-                  <stop offset="100%" stopColor={active.tint} stopOpacity="0" />
-                </radialGradient>
-              </defs>
-
-              <circle cx="338" cy="160" r="90" fill="url(#paths-core-glow)" />
-
-              {CURVES.map((curve, index) => {
-                const selected = index === activeIndex;
-                return (
-                  <g key={curve}>
-                    <path
-                      d={curve}
-                      fill="none"
-                      stroke={PATHS[index].tint}
-                      strokeWidth="1"
-                      opacity={selected ? 0.38 : 0.12}
-                    />
-                    <motion.path
-                      d={curve}
-                      fill="none"
-                      stroke={PATHS[index].tint}
-                      strokeWidth={selected ? 2.4 : 1.2}
-                      strokeLinecap="round"
-                      strokeDasharray="6 11"
-                      animate={{ strokeDashoffset: 0 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.46, ease: EASE }}
-                      opacity={selected ? 0.96 : 0.16}
-                    />
-                  </g>
-                );
-              })}
-
-              {PATHS.map((path, index) => {
-                const selected = index === activeIndex;
-                return (
-                  <g key={path.start} opacity={selected ? 1 : 0.46}>
-                    <circle cx="112" cy={ENTRY_Y[index]} r={selected ? 8 : 5} fill={path.tint} />
-                    <text
-                      x="90"
-                      y={ENTRY_Y[index] + 5}
-                      textAnchor="end"
-                      className="paths-cinematic__svg-label"
-                    >
-                      {path.start}
-                    </text>
-                  </g>
-                );
-              })}
-
-              <line x1="338" y1="160" x2="648" y2="160" className="paths-cinematic__spine" />
-
-              {active.route.map((step, index) => {
-                const x = 405 + index * 96;
-                return (
-                  <g key={`${active.number}-${step}`}>
-                    <motion.circle
-                      cx={x}
-                      cy="160"
-                      r="6"
-                      fill={active.tint}
-                      initial={prefersReducedMotion ? false : { scale: 0.4, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: prefersReducedMotion ? 0 : index * 0.13, ease: EASE }}
-                      style={{ transformOrigin: `${x}px 160px` }}
-                    />
-                    <text x={x} y="132" textAnchor="middle" className="paths-cinematic__svg-step">
-                      {step}
-                    </text>
-                  </g>
-                );
-              })}
-
-              <circle cx="680" cy="160" r="32" fill="none" stroke={active.tint} strokeWidth="1.4" opacity="0.64" />
-              <circle cx="680" cy="160" r="8" fill={active.tint} />
-              <text x="720" y="151" className="paths-cinematic__svg-result">
-                A system people
-              </text>
-              <text x="720" y="175" className="paths-cinematic__svg-result">
-                recognise and choose
-              </text>
-            </svg>
-
-            <div className="paths-cinematic__mobile-route" aria-hidden="true">
-              <span>{active.start}</span>
-              {active.route.map((step) => (
-                <span key={step}>{step}</span>
-              ))}
-              <strong>{active.result}</strong>
-            </div>
+        <div className="paths-film__story">
+          <div className="paths-film__lead">
+            <p className="paths-film__eyebrow">Choose your starting point</p>
+            <h2 id="paths-film-title">
+              There is more than one way in. <em>Choose where your brand is now.</em>
+            </h2>
+            <p className="paths-film__instruction">
+              Select the sentence that feels closest. The right scope opens here
+              and carries into Services.
+            </p>
           </div>
 
           <AnimatePresence mode="wait" initial={false}>
             <motion.article
               key={active.number}
-              id={`path-panel-${active.number}`}
-              role="tabpanel"
-              aria-labelledby={`path-tab-${active.number}`}
-              className="paths-cinematic__focus"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(3px)" }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.46, ease: EASE }}
-              aria-live="polite"
+              id={`path-film-panel-${active.number}`}
+              className="paths-film__answer"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
             >
-              <div className="paths-cinematic__focus-topline">
-                <span>Path {active.number}</span>
-                <i aria-hidden="true" />
-              </div>
-              <div className="paths-cinematic__focus-audience">
-                <span className="paths-cinematic__field-label">For whom</span>
-                <p>{active.eyebrow}</p>
-              </div>
+              <p className="paths-film__answer-eyebrow">{active.eyebrow}</p>
               <h3>{active.title}</h3>
-              <div className="paths-cinematic__focus-decision">
-                <span className="paths-cinematic__field-label">Decision</span>
-                <p className="paths-cinematic__focus-body">{active.body}</p>
-              </div>
-              <div className="paths-cinematic__focus-result">
-                <span>Output</span>
-                <strong>{active.result}</strong>
-              </div>
-              <div className="paths-cinematic__proof">
-                <span>Recorded proof</span>
-                <strong>{active.proof.project}</strong>
-                <p>{active.proof.statement}</p>
-              </div>
-              <Link href={active.href}>
+              <p className="paths-film__answer-body">{active.body}</p>
+              <dl>
+                <div>
+                  <dt>The work</dt>
+                  <dd>{active.route}</dd>
+                </div>
+                <div>
+                  <dt>The outcome</dt>
+                  <dd>{active.result}</dd>
+                </div>
+              </dl>
+              <p className="paths-film__proof">{active.proof}</p>
+              <Link href={active.href} onClick={() => publishSituation(active.situation)}>
                 Explore this service path <span aria-hidden="true">↗</span>
               </Link>
             </motion.article>
           </AnimatePresence>
         </div>
+
+        <div className="paths-film__chooser">
+          <div className="paths-film__chooser-label">
+            <span>{carriedChoice ? "Your quiz answer is carried here" : "Choose one"}</span>
+            <span>Select a statement to reveal its path</span>
+          </div>
+          <div
+            className="paths-film__choices"
+            role="group"
+            aria-label="Choose the service starting point that matches your brand"
+          >
+            {PATHS.map((path, index) => {
+              const selected = index === activeIndex;
+              return (
+                <button
+                  key={path.number}
+                  id={`path-film-tab-${path.number}`}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => choose(index)}
+                  onFocus={() => choose(index, false)}
+                  onKeyDown={(event) => onChoiceKeyDown(event, index)}
+                  onPointerEnter={(event) => {
+                    if (event.pointerType === "mouse") choose(index, false);
+                  }}
+                  className={selected ? "is-active" : undefined}
+                  style={{ "--path-choice-accent": path.tint } as CSSProperties}
+                >
+                  <span className="paths-film__choice-number">{path.number}</span>
+                  <strong>{path.choice}</strong>
+                  <span className="paths-film__choice-cue">
+                    {selected ? "Selected" : "Choose"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </section>
-  );
-}
-
-function MaterialSystemFilm({
-  activeIndex,
-  inView,
-  reducedMotion,
-}: {
-  activeIndex: number;
-  inView: boolean;
-  reducedMotion: boolean;
-}) {
-  return (
-    <div
-      className={[
-        "paths-cinematic__film",
-        inView && !reducedMotion ? "is-playing" : "is-resting",
-      ].join(" ")}
-      data-media-id="BT-HOME-SERVICES-MATERIAL-ASSEMBLY"
-      data-active-material={PATHS[activeIndex].situation}
-      aria-hidden="true"
-    >
-      <span className="paths-cinematic__material paths-cinematic__material--stone" />
-      <span className="paths-cinematic__material paths-cinematic__material--paper" />
-      <span className="paths-cinematic__material paths-cinematic__material--water" />
-      <svg className="paths-cinematic__material-roots" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice">
-        {[
-          "M-80 690 C180 610 210 430 420 442 S690 580 842 396 S1060 178 1280 116",
-          "M-40 740 C190 662 318 560 438 444",
-          "M340 820 C392 636 392 520 438 444",
-          "M430 444 C510 350 552 238 530 60",
-          "M692 534 C760 488 786 444 842 396",
-          "M842 396 C924 340 980 316 1080 318",
-        ].map((path) => (
-          <path key={path} d={path} />
-        ))}
-      </svg>
-      <span className="paths-cinematic__material-signal" />
-      <span className="paths-cinematic__film-wash" />
-    </div>
   );
 }
