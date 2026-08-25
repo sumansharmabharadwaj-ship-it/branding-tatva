@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TiltCard } from "@/components/TiltCard";
+import { TrackedLink } from "@/components/TrackedLink";
 import type { InsightElement, InsightPost } from "@/data/insights";
 
 export type InsightCardPost = Pick<
@@ -24,6 +24,11 @@ type InsightCardProps = {
   post: InsightCardPost;
   featured?: boolean;
   showReadingOutcome?: boolean;
+  readingCue?: string;
+  tracking: {
+    source: "insights_library" | "insights_topic" | "related_insights";
+    context?: Record<string, string | number | boolean>;
+  };
 };
 
 const ELEMENT_COLORS: Record<InsightElement, string> = {
@@ -55,19 +60,28 @@ export function InsightCard({
   post,
   featured = false,
   showReadingOutcome = false,
+  readingCue,
+  tracking,
 }: InsightCardProps) {
   const color = ELEMENT_COLORS[post.element];
   const topicName = TOPIC_NAMES[post.topicSlug] ?? post.element;
 
   return (
     <TiltCard glowColor={color} className="h-full">
-      <Link
+      <TrackedLink
         href={`/insights/${post.slug}`}
         className={`group grid h-full overflow-hidden rounded-[1.5rem] border border-soil/10 bg-background-elevated shadow-elevation-sm ${
           featured
             ? "lg:grid-cols-[1.15fr_0.85fr]"
             : "grid-rows-[auto_1fr]"
         }`}
+        event="insights_article_selected"
+        eventProps={{
+          ...tracking.context,
+          source: tracking.source,
+          article: post.slug,
+          path: post.topicSlug,
+        }}
       >
         <div
           className={`relative overflow-hidden bg-soil ${
@@ -86,6 +100,11 @@ export function InsightCard({
             className="object-cover transition duration-700 ease-earth group-hover:scale-[1.03]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-soil/75 via-soil/5 to-transparent" />
+          {readingCue ? (
+            <span className="absolute left-4 top-4 w-fit max-w-[85%] rounded-full border border-ivory/20 bg-soil/70 px-3 py-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.13em] text-ivory shadow-elevation-sm backdrop-blur-md sm:left-5 sm:top-5">
+              {readingCue}
+            </span>
+          ) : null}
           <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-4 p-5 text-ivory sm:p-6">
             <span className="inline-flex items-center gap-2 text-[0.65rem] font-medium uppercase tracking-[0.22em]">
               <ElementGlyph
@@ -155,7 +174,7 @@ export function InsightCard({
             Read the essay <span aria-hidden="true">→</span>
           </span>
         </div>
-      </Link>
+      </TrackedLink>
     </TiltCard>
   );
 }

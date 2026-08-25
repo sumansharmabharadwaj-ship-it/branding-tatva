@@ -343,7 +343,17 @@ export default async function InsightTopicPage({ params }: Props) {
             <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {relatedPosts.map((post, index) => (
                 <Reveal key={post.slug} delay={index * 0.05}>
-                  <InsightCard post={post} />
+                  <InsightCard
+                    post={post}
+                    tracking={{
+                      source: "insights_topic",
+                      context: {
+                        topic: topic.slug,
+                        position: index + 1,
+                        mode: "topic_hub",
+                      },
+                    }}
+                  />
                 </Reveal>
               ))}
             </div>

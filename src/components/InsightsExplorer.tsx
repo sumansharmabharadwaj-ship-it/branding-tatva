@@ -105,6 +105,39 @@ function scorePostForIntent(post: InsightCardPost, cleanQuery: string) {
   return score;
 }
 
+function describeTopMatch(post: InsightCardPost, cleanQuery: string) {
+  const tokens = cleanQuery
+    .split(/[^a-z0-9]+/)
+    .filter((token) => token.length > 2);
+  const wording = [
+    post.title,
+    post.primaryKeyword,
+    post.secondaryKeywords.join(" "),
+    post.excerpt,
+  ]
+    .join(" ")
+    .toLowerCase();
+  const intentLanguage = INTENT_LANGUAGE[post.topicSlug] ?? "";
+
+  if (
+    wording.includes(cleanQuery) ||
+    (tokens.length > 0 &&
+      tokens.filter((token) => wording.includes(token)).length >=
+        Math.min(2, tokens.length))
+  ) {
+    return { label: "Closest wording match", kind: "wording" } as const;
+  }
+
+  if (
+    intentLanguage.includes(cleanQuery) ||
+    tokens.some((token) => intentLanguage.includes(token))
+  ) {
+    return { label: "Closest tension match", kind: "tension" } as const;
+  }
+
+  return { label: "Closest current match", kind: "ranked" } as const;
+}
+
 const FOLIO_TURN_VARIANTS: Variants = {
   enter: (direction: number = 1) => ({
     opacity: 0.72,
@@ -249,6 +282,12 @@ export function InsightsExplorer({
   const signalColor = inferredTopic
     ? ELEMENT_COLORS[inferredTopic.element]
     : "#B85A34";
+  const topMatch =
+    settledQuery && filteredPosts[0]
+      ? carriedIntent?.origin === "decision-mirror"
+        ? { label: "Closest to your chosen tension", kind: "reader_tension" as const }
+        : describeTopMatch(filteredPosts[0], settledQuery.toLowerCase())
+      : undefined;
   const resultMessage = settledQuery
     ? filteredPosts.length > 0
       ? `Best matches ${firstPostIndex + 1}–${firstPostIndex + visiblePosts.length} of ${filteredPosts.length} for “${settledQuery}”`
@@ -492,7 +531,32 @@ export function InsightsExplorer({
                       "--folio-delay": `${index * 38}ms`,
                     } as CSSProperties}
                   >
-                    <InsightCard post={post} showReadingOutcome />
+                    <InsightCard
+                      post={post}
+                      showReadingOutcome
+                      readingCue={
+                        firstPostIndex === 0 && index === 0
+                          ? topMatch?.label
+                          : undefined
+                      }
+                      tracking={{
+                        source: "insights_library",
+                        context: {
+                          mode: settledQuery
+                            ? "ranked_search"
+                            : topicSlug === "all"
+                              ? "open_archive"
+                              : "topic_filter",
+                          folio: activeFolio + 1,
+                          position: firstPostIndex + index + 1,
+                          match_reason:
+                            firstPostIndex === 0 && index === 0
+                              ? topMatch?.kind ?? "none"
+                              : "none",
+                          carried_from: carriedIntent?.origin ?? "none",
+                        },
+                      }}
+                    />
                   </div>
                 ))}
               </motion.div>

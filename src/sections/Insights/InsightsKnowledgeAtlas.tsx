@@ -19,6 +19,7 @@ import { ArrowUpRight } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
   INSIGHTS_INTENT_EVENT,
@@ -445,15 +446,23 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                   <div>
                     <p className="insights-atlas__label">Recent field notes</p>
                     <div className="insights-atlas__articles">
-                      {activePath.articles.map((article) => (
-                        <Link
+                      {activePath.articles.map((article, articleIndex) => (
+                        <TrackedLink
                           key={article.slug}
                           href={`/insights/${article.slug}`}
                           onClick={() => carryPath(activeIndex)}
+                          event="insights_article_selected"
+                          eventProps={{
+                            source: "knowledge_atlas",
+                            article: article.slug,
+                            path: activePath.slug,
+                            position: articleIndex + 1,
+                            match_reason: "path_recent_read",
+                          }}
                         >
                           <span>{article.title}</span>
                           <small>{article.readingTime}</small>
-                        </Link>
+                        </TrackedLink>
                       ))}
                     </div>
                   </div>

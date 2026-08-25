@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 import { track, type AnalyticsEvent } from "@/lib/analytics";
 
-type TrackedLinkProps = Omit<ComponentProps<typeof Link>, "onClick"> & {
+type TrackedLinkProps = ComponentProps<typeof Link> & {
   event: AnalyticsEvent;
   eventProps?: Record<string, string | number | boolean>;
 };
@@ -15,9 +15,16 @@ type TrackedLinkProps = Omit<ComponentProps<typeof Link>, "onClick"> & {
 export function TrackedLink({
   event,
   eventProps,
+  onClick,
   ...linkProps
 }: TrackedLinkProps) {
   return (
-    <Link {...linkProps} onClick={() => track(event, eventProps)} />
+    <Link
+      {...linkProps}
+      onClick={(clickEvent) => {
+        onClick?.(clickEvent);
+        if (!clickEvent.defaultPrevented) track(event, eventProps);
+      }}
+    />
   );
 }

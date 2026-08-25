@@ -185,6 +185,21 @@ const inferredTopic = settledQuery
 </motion.p>
 ~~~
 
+The first ranked card now explains the kind of connection it found. A direct
+title, keyword, or excerpt overlap appears as `Closest wording match`; a match
+through the symptom vocabulary appears as `Closest tension match`. A choice
+carried from the Decision Mirror keeps the more human `Closest to your chosen
+tension`. The cue sits over the image, so it reduces ranking uncertainty
+without increasing the folio height or adding another control.
+
+Article selection is measured as one journey across the Decision Mirror,
+Knowledge Atlas, Library, topic hubs, and related-reading cards. Events record
+the route, article, position, folio, and match category. They deliberately do
+not include the visitor's typed query: the interface may use that language in
+the current browser session, while analytics receives only coarse interaction
+context. This preserves useful behavioral evidence without turning a private
+problem statement into telemetry.
+
 ### Stable atlas handoffs
 
 Decision Mirror links land on a specific atlas tab. The atlas now holds that

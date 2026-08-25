@@ -10,6 +10,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { publishInsightsIntent } from "@/lib/insights-intent";
 import type { InsightElement } from "@/data/insights";
@@ -200,10 +201,18 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
               <p>{activeQuest.firstQuestion}</p>
             </div>
 
-            <Link
+            <TrackedLink
               href={`/insights/${activeQuest.article.slug}`}
               className="insights-decision-mirror__first-read"
               onClick={() => carryQuest(activeIndex)}
+              event="insights_article_selected"
+              eventProps={{
+                source: "decision_mirror",
+                article: activeQuest.article.slug,
+                path: activeQuest.topicSlug,
+                position: 1,
+                match_reason: "recommended_first_read",
+              }}
             >
               <span>Recommended first read</span>
               <strong>{activeQuest.article.title}</strong>
@@ -212,7 +221,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
                 {activeQuest.article.readingTime}
                 <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
               </small>
-            </Link>
+            </TrackedLink>
 
             <Link
               href={`#atlas-tab-${activeQuest.topicSlug}`}
