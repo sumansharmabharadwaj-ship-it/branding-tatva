@@ -9,7 +9,7 @@ const CHAPTERS = [
   "Synthesis",
   "Working standards",
   "One strategic thread",
-  "Evidence",
+  "Evidence chain",
   "Resolution",
 ] as const;
 

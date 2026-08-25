@@ -177,10 +177,35 @@ reduced-motion modes receive the complete four-stage record in normal reading
 order, with every input, decision, and output available without a hidden
 gesture.
 
+## Comparative evidence chain
+
+`Evidence.tsx` keeps three verified engagements visible in the same register
+while the scroll changes which proof column receives focus. The visitor first
+reads the ambiguity across all three cases, then the strategic decision, then
+the recorded outcome or output:
+
+```tsx
+const columns = ["Ambiguity", "Decision", "Record"];
+
+const cases = [
+  { evidenceType: "Measured performance", record: "104%" },
+  { evidenceType: "Documented strategic output", record: "Brand foundation" },
+  { evidenceType: "Implementation-ready system", record: "5 formats" },
+];
+```
+
+The scene deliberately distinguishes performance metrics from strategic
+artifacts and implementation-ready deliverables. Scroll direction reverses the
+camera focus without resetting the register. Hover and keyboard focus reveal
+the route to each complete case study. Touch and reduced-motion modes receive
+three linear case records with ambiguity, decision, and evidence visible
+together.
+
 ## Performance and accessibility rules
 
-- Pinning is limited to a 158svh runway with a 100svh scene; native scroll is
-  never intercepted or trapped.
+- Desktop pinning is capped at a 158svh runway with a 100svh scene; the
+  comparative evidence register uses only 150svh. Native scroll is never
+  intercepted or trapped.
 - Motion uses transform, opacity, clip-path, and a capped-density canvas. No
   scroll event measures layout more than once per animation frame.
 - Background video uses the shared observer-controlled player, metadata preload,
