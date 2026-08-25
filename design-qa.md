@@ -946,3 +946,66 @@ The centered scene now exposes Question, Lens and Move together. Their measured 
 ## Final result
 
 passed
+
+---
+
+# Insights Decision-Mirror-to-Atlas handoff QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: the public August 8 Insights preview before this pass at `https://branding-tatva-git-august-8-isolated-suman22.vercel.app/insights`.
+- Implementation: the final browser-rendered local production build of `/insights` from this pass.
+- Browser-rendered source and implementation captures: inline cloud-browser captures emitted together at a `1363 × 936` CSS viewport and density `1`; both page images are `1348 × 936` after the browser scrollbar.
+- State 1: Decision Mirror with Brand memory selected through the existing `End` keyboard interaction.
+- State 2: Knowledge Atlas with the same Brand memory thread carried from the mirror.
+- State 3: reverse travel from the Library back to the Atlas after the same thread had been carried forward.
+- Full-view comparison evidence: source/final Decision Mirror, source/final Atlas, and source/final reverse-return frames were each emitted as paired cloud-browser comparison inputs.
+- Focused-region evidence: direct DOM measurements checked the mirror's internal scroll position, held-path label, selected Atlas tab, arrival token, scene resting position and document overflow.
+
+## Findings
+
+No actionable P0, P1 or P2 findings remain.
+
+The mirror now distinguishes a tentative reading from a held path, cursor attention commits only when page velocity is calm, and keyboard focus produces the same result. The path shortcut uses the stable Atlas scene anchor, preserves browser history, and hands the selected tension to a visible elemental arrival token. Once carried, the selected Atlas path remains stable through forward and reverse travel instead of being replaced by unrelated scroll progress.
+
+The mirror and Atlas panel surfaces now use non-scrolling clipping. Focus and in-page navigation can no longer move their hidden overflow containers and crop earlier rows. A short, forgiving scene-settle pass resolves only when the reader stops within `11%` of a scene edge, keeping native travel intact while preventing the returning fixed navigation from covering the Atlas eyebrow.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed. The established display serif, compact uppercase route labels and body hierarchy are unchanged. `Path held` replaces only the ambiguous state phrase; the dynamic Atlas description fits the established three-line editorial measure.
+- Spacing and layout rhythm: passed. The Foundation remains exactly `936px` high. The Atlas is `959.1875px` in the `936px` viewport, slightly shorter than the source pass and within one scene beat. The Library remains `951.125px`; no pin, runway or dead scroll zone was added.
+- Colors and visual tokens: passed. The handoff reuses the selected element color and the existing pill/vertical-thread language already shared by Atlas, Library, Evidence and Field Notes. No new generic gradient, unrelated card treatment or gamified control was introduced.
+- Image quality and asset fidelity: passed. The original real video, poster, elemental glyph component and atmospheric grade remain unchanged. No duplicate media, placeholder, handcrafted SVG or simulated image asset was added.
+- Copy and content: passed. The sequence now progresses from familiar tension to `Path held`, then `Mirror held`, an active-thread explanation, matching Atlas evidence and the filtered Library. The first Insights section and its copy remain untouched.
+
+## Interaction and browser verification
+
+- Hover attention: passed. A settled hover over `People like the work, then hesitate.` changed the route to `Path held · Customer experience`; scroll velocity prevents incidental pointer crossings during movement from committing a route.
+- Keyboard parity: passed. `End` selected Brand memory, retained the existing visible focus treatment and produced the same held-thread state.
+- Stable shortcut: passed. `Trace the complete customer experience path` changed the URL to `#knowledge-atlas`, aligned the Atlas at `scrollY=1872`, selected Customer experience and rendered `Mirror held · Customer experience`.
+- Browser history: passed. Back restored `/insights` at the Foundation (`scrollY=936`); Forward restored `#knowledge-atlas` with the Atlas at top `0` (`scrollY=1872`).
+- Forward continuity: passed. The Library rendered `Carried from your mirror`, preserved the chosen hesitation sentence and ranked five Customer experience essays.
+- Reverse continuity: passed. Returning from the Library resolved to Atlas top `0`, kept the carried path selected and prevented the fixed navigation from covering the Atlas heading.
+- Focus clipping: passed. The Decision Mirror's internal `scrollTop` remained `0`; `overflow: clip` prevents the focus-driven hidden-container scrolling observed in the source behavior.
+- Horizontal overflow: passed. Final fresh-tab measurement reported document `scrollWidth === clientWidth === 1348`.
+- Fresh-tab console check: no site-originated application errors. The only error entries came from the cloud browser's `chrome-extension://` metadata bridge.
+- Compact touch source review: passed. The existing mobile Atlas becomes an unpinned horizontal path rail, the arrival token collapses to its glyph, the panel loses perspective, and no new width or page-height dependency is introduced.
+- Reduced-motion source review: passed. The navigator resolves complete static scene variables and bypasses scene settling, CSS snapping remains disabled, the new arrival transition resolves immediately, and all selected content stays visible.
+- Production checks: TypeScript, targeted ESLint, `git diff --check`, discovery source gate, internal link graph gate, media search gate and the `78`-route Next production build passed.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The mirror's Next hash link did not reliably leave the scene, and focus could turn the hidden card surface into an internal scroll container that cropped earlier rows. | Replaced the path shortcut with a stable scene anchor driven by the existing Lenis instance and changed presentation-only overflow to `clip`. Final focus and shortcut checks keep mirror `scrollTop=0` and land the Atlas at top `0`. |
+| 2 | P2 | A visually active mirror row could still read as only a likely route, so the next scene gave weak confirmation that the reader's attention mattered. | Added calm-velocity hover commitment, `Path held` feedback, an elemental `Mirror held` arrival and a route-specific Atlas explanation. Paired final frames show one continuous Brand memory argument. |
+| 3 | P2 | On reverse travel, proximity snapping could stop about `25px` below the Atlas start, allowing the returning fixed navigation to cover the eyebrow and top of the title. | Added a forgiving `11%`/`96px` settle threshold with a short `420ms` cubic release. Final reverse verification ends at `scrollY=1872`, Atlas top `0`; native travel, anchors and reduced motion remain intact. |
+| 4 | — | Final paired full-view and focused-region checks found no remaining actionable P0/P1/P2 issue. | Passed. |
+
+## Follow-up polish
+
+- P3: complete one physical-device pass for iOS dynamic browser chrome and real touch momentum; the simplified mobile source path is complete and the verified desktop flow has no overflow or dead scroll zone.
+
+## Final result
+
+passed
