@@ -52,7 +52,7 @@ export function BrandFoundationScene() {
 
       <div className="foundation-orbit__shell">
         <header className="foundation-orbit__header">
-          <p>04 · The foundation</p>
+          <p>05 · The foundation</p>
           <h2 id="brand-foundation-title">Four decisions beneath every visible brand.</h2>
         </header>
 

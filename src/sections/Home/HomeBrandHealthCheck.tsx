@@ -333,7 +333,7 @@ export function HomeBrandHealthCheck() {
       <div className="brand-orbit__shell">
         <header className="brand-orbit__header">
           <p id="brand-orbit-title">
-            02 · Brand diagnostic
+            03 · Brand diagnostic
             <span>About 30 seconds</span>
           </p>
           <div className="brand-orbit__progress" aria-label={`${Math.min(step + 1, QUESTIONS.length)} of ${QUESTIONS.length}`}>

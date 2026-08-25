@@ -209,7 +209,7 @@ export function EvidenceWall() {
       <Container className="evidence-cinematic__shell max-w-[100rem]">
         <header className="evidence-cinematic__header">
           <div>
-            <p className="evidence-cinematic__eyebrow">03 · Selected work</p>
+            <p className="evidence-cinematic__eyebrow">08 · Selected work</p>
             <h2 id="evidence-wall-title">Proof should <em>show its working.</em></h2>
           </div>
           <div className="evidence-cinematic__intro">

@@ -168,7 +168,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       <div className="decision-flow__shell">
         <header className="decision-flow__header">
           <div>
-            <p>03 · The method</p>
+            <p>07 · The method</p>
             <h2 id="decision-flow-title">
               Six decisions. <em>One recognisable system.</em>
             </h2>

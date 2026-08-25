@@ -117,7 +117,7 @@ export function HomeInsightsPreview() {
       <Container className="home-insights__shell max-w-[96rem]">
         <header className="home-insights__header">
           <div>
-            <p className="home-insights__eyebrow">The thinking room</p>
+            <p className="home-insights__eyebrow">12 · The thinking room</p>
             <h2 id="home-insights-title">
               Ideas with a job. <em>Frameworks you can use.</em>
             </h2>

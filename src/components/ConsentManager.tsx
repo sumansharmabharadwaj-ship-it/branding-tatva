@@ -22,11 +22,9 @@ import {
  * visitor has actively turned it on, which is the difference between asking
  * and announcing.
  *
- * Three doors, all equally reachable: allow analytics, keep only what the
- * site needs to work, or open the categories and decide one at a time.
- * Refusing is a real answer that takes one click, the same as agreeing;
- * burying it behind the preferences panel would make the easy path the
- * agreeable one, which is the pattern the rules exist to stop.
+ * The compact notice reports the privacy-preserving default without covering
+ * the page. Its choices panel keeps analytics opt-in, essential-only use, and
+ * category-by-category control together with equal visual weight.
  *
  * The decision is never final. Any part of the site can reopen this panel by
  * firing CONSENT_OPEN_EVENT, which is what the footer link does, so
@@ -59,7 +57,7 @@ export function ConsentManager() {
         previousFocusRef.current.focus();
         return;
       }
-      document.querySelector<HTMLElement>('[aria-label="Manage preferences"]')?.focus();
+      document.querySelector<HTMLElement>('[aria-label="Review measurement choices"]')?.focus();
     });
   }, []);
 
@@ -139,49 +137,27 @@ export function ConsentManager() {
 
       {showBanner && (
         <div
-          role="dialog"
-          aria-modal="false"
+          role="region"
           aria-label="Your choice about measurement"
-          className="fixed inset-x-3 bottom-3 z-[100] rounded-2xl border px-3 py-2 shadow-xl backdrop-blur-xl sm:left-1/2 sm:right-auto sm:w-[min(43rem,calc(100vw-2.5rem))] sm:-translate-x-1/2 sm:px-3"
+          className="fixed inset-x-3 bottom-3 z-[100] rounded-full border px-3 py-2 shadow-xl backdrop-blur-xl sm:right-5 sm:left-auto sm:w-auto"
           style={{ borderColor: "rgba(39,34,30,0.14)", backgroundColor: "rgba(244,239,230,0.94)" }}
         >
-          <div className="grid gap-1.5 sm:grid-cols-[minmax(0,1fr)_21rem] sm:items-center sm:gap-4">
-            <div className="flex items-start justify-between gap-3 sm:items-center">
-              <p className="text-[0.74rem] leading-relaxed text-soil/76">
-                Analytics are off by default.{" "}
-                <Link href="/privacy" className="link-underline" style={{ color: "#9b5c43" }}>
-                  Privacy note
-                </Link>
-                .
-              </p>
-              <button
-                type="button"
-                aria-label="Manage preferences"
-                aria-haspopup="dialog"
-                onClick={openPanel}
-                className="inline-flex min-h-6 shrink-0 items-center px-1 text-[0.6rem] font-medium uppercase tracking-[0.12em] text-soil/58 underline underline-offset-4 transition-colors duration-300 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-              >
-                Preferences
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {/* Refusing is one click, exactly like agreeing. */}
-              <button
-                type="button"
-                onClick={() => decide({ analytics: false, marketing: false })}
-                className="min-h-11 rounded-full border border-soil/22 px-3 py-2 text-[0.66rem] font-medium uppercase tracking-[0.08em] text-soil/78 transition-colors duration-300 hover:border-soil/45 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-              >
-                Keep analytics off
-              </button>
-              <button
-                type="button"
-                onClick={() => decide({ analytics: true, marketing: false })}
-                className="min-h-11 rounded-full px-3 py-2 text-[0.66rem] font-medium uppercase tracking-[0.08em] transition-opacity duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                style={{ backgroundColor: "#9b5c43", color: "#fffaf2" }}
-              >
-                Allow analytics
-              </button>
-            </div>
+          <div className="flex min-h-10 items-center justify-between gap-3">
+            <p className="m-0 text-[0.69rem] leading-tight text-soil/76">
+              Analytics off by default.{" "}
+              <Link href="/privacy" className="link-underline" style={{ color: "#9b5c43" }}>
+                Privacy
+              </Link>
+            </p>
+            <button
+              type="button"
+              aria-label="Review measurement choices"
+              aria-haspopup="dialog"
+              onClick={openPanel}
+              className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-soil/22 px-3 text-[0.58rem] font-medium uppercase tracking-[0.1em] text-soil/76 transition-colors duration-300 hover:border-soil/45 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              Choices
+            </button>
           </div>
         </div>
       )}

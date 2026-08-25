@@ -24,6 +24,7 @@ const PATHS = [
     number: "01",
     situation: "idea",
     choice: "I am creating something new.",
+    shortChoice: "New brand",
     title: "Build the foundation",
     eyebrow: "An idea becoming a business",
     body:
@@ -38,6 +39,7 @@ const PATHS = [
     number: "02",
     situation: "reposition",
     choice: "The business has outgrown its brand.",
+    shortChoice: "Outgrown",
     title: "Reposition the system",
     eyebrow: "An established business in transition",
     body:
@@ -52,6 +54,7 @@ const PATHS = [
     number: "03",
     situation: "ongoing",
     choice: "The strategy needs to hold everywhere.",
+    shortChoice: "Scale it",
     title: "Make the system repeatable",
     eyebrow: "A brand moving across channels",
     body:
@@ -66,6 +69,7 @@ const PATHS = [
   number: string;
   situation: ServicesSituationId;
   choice: string;
+  shortChoice: string;
   title: string;
   eyebrow: string;
   body: string;
@@ -201,7 +205,7 @@ export function PathsCinematicChapter() {
       <div className="paths-film__frame">
         <header className="paths-film__header">
           <div className="paths-film__chapter">
-            <span>05</span>
+            <span>06</span>
             <p>Brand Strategy &amp; Systems</p>
           </div>
           <p className="paths-film__counter" aria-live="polite">
@@ -227,11 +231,11 @@ export function PathsCinematicChapter() {
                     ? "Your 30-second diagnosis is carried here"
                     : "Choose the brand situation closest to yours"}
                 </span>
-                <span>{active.number} selected</span>
+                <span>{active.choice}</span>
               </div>
               <div
                 className="paths-film__choices"
-                role="group"
+                role="tablist"
                 aria-label="Choose the service starting point that matches your brand"
               >
                 {PATHS.map((path, index) => {
@@ -241,7 +245,10 @@ export function PathsCinematicChapter() {
                       key={path.number}
                       id={`path-film-tab-${path.number}`}
                       type="button"
-                      aria-pressed={selected}
+                      role="tab"
+                      aria-selected={selected}
+                      aria-controls="path-film-panel"
+                      tabIndex={selected ? 0 : -1}
                       onClick={() => choose(index)}
                       onFocus={() => choose(index, false)}
                       onKeyDown={(event) => onChoiceKeyDown(event, index)}
@@ -253,6 +260,9 @@ export function PathsCinematicChapter() {
                     >
                       <span className="paths-film__choice-number">{path.number}</span>
                       <strong>{path.choice}</strong>
+                      <span className="paths-film__choice-short" aria-hidden="true">
+                        {path.shortChoice}
+                      </span>
                       <span className="paths-film__choice-cue">
                         {selected ? "Selected" : "Choose"}
                       </span>
@@ -266,8 +276,10 @@ export function PathsCinematicChapter() {
           <AnimatePresence mode="wait" initial={false}>
             <motion.article
               key={active.number}
-              id={`path-film-panel-${active.number}`}
+              id="path-film-panel"
               className="paths-film__answer"
+              role="tabpanel"
+              aria-labelledby={`path-film-tab-${active.number}`}
               initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}

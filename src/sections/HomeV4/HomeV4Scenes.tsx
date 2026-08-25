@@ -294,7 +294,7 @@ export function V4RecognitionScene() {
       <div className="home-v4-recognition__shell">
         <header className="home-v4-recognition__header">
           <div>
-            <p>01 · Recognition</p>
+            <p>02 · Recognition</p>
             <h2 id="home-v4-recognition-title">
               Most inconsistency begins <em>before the design file.</em>
             </h2>
@@ -457,7 +457,7 @@ export function V4HiddenCostScene() {
       <div className="cost-film__frame">
         <header className="cost-film__header">
           <div>
-            <span>03</span>
+            <span>04</span>
             <p>The hidden cost</p>
           </div>
           <p>{active.number} / 04</p>
