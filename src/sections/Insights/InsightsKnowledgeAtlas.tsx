@@ -22,6 +22,7 @@ import { ElementGlyph } from "@/components/ElementGlyph";
 import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
+  INSIGHTS_INTENT_CLEARED_EVENT,
   INSIGHTS_INTENT_EVENT,
   publishInsightsIntent,
   readInsightsIntent,
@@ -76,6 +77,7 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
 
 export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [carriedPathSlug, setCarriedPathSlug] = useState<string>();
   const [paused, setPaused] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -88,6 +90,9 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
     offset: ["start 92%", "end 8%"],
   });
   const activePath = paths[activeIndex];
+  const carriedPath = carriedPathSlug
+    ? paths.find((path) => path.slug === carriedPathSlug)
+    : undefined;
 
   useEffect(() => {
     function syncPathFromHash() {
@@ -125,6 +130,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
       const nextIndex = paths.findIndex((path) => path.slug === detail.topicSlug);
       if (nextIndex < 0) return;
 
+      setCarriedPathSlug(detail.topicSlug);
       selectionLockRef.current = {
         index: nextIndex,
         awaitingArrival: true,
@@ -138,16 +144,30 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
 
     function carryMirrorPath(event: Event) {
       const { detail } = event as CustomEvent<InsightsIntentDetail>;
-      if (detail?.origin === "decision-mirror") applyCarriedPath(detail);
+      applyCarriedPath(detail);
+    }
+
+    function releaseCarriedPath() {
+      setCarriedPathSlug(undefined);
+      selectionLockRef.current = null;
     }
 
     window.addEventListener(INSIGHTS_INTENT_EVENT, carryMirrorPath);
+    window.addEventListener(
+      INSIGHTS_INTENT_CLEARED_EVENT,
+      releaseCarriedPath,
+    );
     if (!window.location.hash.startsWith("#atlas-tab-")) {
       applyCarriedPath(readInsightsIntent());
     }
 
-    return () =>
+    return () => {
       window.removeEventListener(INSIGHTS_INTENT_EVENT, carryMirrorPath);
+      window.removeEventListener(
+        INSIGHTS_INTENT_CLEARED_EVENT,
+        releaseCarriedPath,
+      );
+    };
   }, [paths]);
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
@@ -217,6 +237,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
     const path = paths[index];
     if (!path) return;
 
+    setCarriedPathSlug(path.slug);
     publishInsightsIntent({
       topicSlug: path.slug,
       query: "",
@@ -248,13 +269,22 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
   if (!activePath) return null;
 
   const accent = ELEMENT_COLORS[activePath.element];
+  const threadAccent = carriedPath
+    ? ELEMENT_COLORS[carriedPath.element]
+    : accent;
 
   return (
     <section
       ref={sectionRef}
       className="insights-atlas"
       aria-labelledby="insights-atlas-title"
-      style={{ "--atlas-accent": accent } as CSSProperties}
+      data-thread-active={Boolean(carriedPath)}
+      style={
+        {
+          "--atlas-accent": accent,
+          "--atlas-thread-accent": threadAccent,
+        } as CSSProperties
+      }
       onFocusCapture={(event) => {
         const target = event.target as HTMLElement;
         if (target.matches(":focus-visible")) setPaused(true);
@@ -272,6 +302,21 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
         posterPriority={false}
       />
       <div className="insights-atlas__veil" aria-hidden="true" />
+      <div className="insights-atlas__handoff" aria-hidden="true">
+        <span>
+          {carriedPath ? (
+            <>
+              <ElementGlyph
+                slug={carriedPath.element}
+                className="h-4 w-4"
+                strokeWidth={1.35}
+              />
+              <small>{carriedPath.name}</small>
+            </>
+          ) : null}
+        </span>
+        <i />
+      </div>
 
       <Container className="insights-atlas__container">
         <header className="insights-atlas__header">
@@ -381,7 +426,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
               <i />
             </div>
 
-            <AnimatePresence mode="popLayout" initial={false}>
+            <AnimatePresence mode="wait" initial={false}>
               <motion.article
                 key={activePath.slug}
                 id={`atlas-panel-${activePath.slug}`}
@@ -418,7 +463,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                       }
                 }
                 transition={{
-                  duration: prefersReducedMotion ? 0 : 0.58,
+                  duration: prefersReducedMotion ? 0 : 0.34,
                   ease: [0.22, 1, 0.36, 1],
                 }}
                 style={{ transformPerspective: 1200 }}

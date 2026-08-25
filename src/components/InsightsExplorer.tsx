@@ -53,6 +53,14 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
   space: "#AD6F5C",
 };
 
+const THREAD_COLORS: Record<InsightElement, string> = {
+  earth: "#D77A51",
+  water: "#7FA4BA",
+  fire: "#D7A84A",
+  air: "#A8B68F",
+  space: "#D09A89",
+};
+
 // The library keeps one stable row in the cinematic scene. Turning the folio
 // replaces that row in place, so deeper browsing never creates a long runway
 // or shifts the following scene farther away.
@@ -282,6 +290,12 @@ export function InsightsExplorer({
   const signalColor = inferredTopic
     ? ELEMENT_COLORS[inferredTopic.element]
     : "#B85A34";
+  const carriedTopic = carriedIntent
+    ? topics.find((topic) => topic.slug === carriedIntent.topicSlug)
+    : undefined;
+  const threadColor = carriedTopic
+    ? THREAD_COLORS[carriedTopic.element]
+    : signalColor;
   const topMatch =
     settledQuery && filteredPosts[0]
       ? carriedIntent?.origin === "decision-mirror"
@@ -338,7 +352,12 @@ export function InsightsExplorer({
   // The archive film stays intentionally low-contrast beneath the
   // interactive search layer, with posters covering reduced motion.
   return (
-    <section id={sectionId} className="insights-library relative overflow-hidden bg-background-alt">
+    <section
+      id={sectionId}
+      className="insights-library relative overflow-hidden bg-background-alt"
+      data-thread-active={Boolean(carriedTopic)}
+      style={{ "--library-thread": threadColor } as CSSProperties}
+    >
       <div className="insights-library__film" aria-hidden="true">
         <BackgroundVideo
           video={video}
@@ -347,6 +366,21 @@ export function InsightsExplorer({
           posterPriority={false}
         />
         <div className="absolute inset-0 bg-[#EAE6DD]/87" />
+      </div>
+      <div className="insights-library__handoff" aria-hidden="true">
+        <i />
+        <span>
+          {carriedTopic ? (
+            <>
+              <ElementGlyph
+                slug={carriedTopic.element}
+                className="h-4 w-4"
+                strokeWidth={1.35}
+              />
+              <small>{carriedTopic.name}</small>
+            </>
+          ) : null}
+        </span>
       </div>
       <div className="insights-library__camera relative mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
         <div className="insights-library__header">
