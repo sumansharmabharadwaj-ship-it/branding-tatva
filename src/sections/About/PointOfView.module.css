@@ -317,7 +317,7 @@
 .staticProof > a { display: inline-flex; width: fit-content; margin-top: 0.35rem; align-items: center; gap: 0.35rem; color: #d4b99a; font-size: 0.52rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
 
 @media (min-width: 981px) and (prefers-reduced-motion: no-preference) {
-  .scrollStory { height: 140svh; }
+  .scrollStory { height: 132svh; }
   .shell { position: sticky; top: 0; height: 100svh; }
 }
 
