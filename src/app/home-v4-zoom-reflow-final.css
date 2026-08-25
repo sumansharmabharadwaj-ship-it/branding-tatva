@@ -2,6 +2,41 @@
 /* Homepage V4 · short-viewport / browser-zoom reflow                         */
 /* -------------------------------------------------------------------------- */
 
+/* The cinematic method layer used to collapse to its intrinsic content height
+   on touch-width screens, leaving an empty strip at the end of an otherwise
+   sealed chapter. Keep the scene and its shell pinned to the physical viewport;
+   the short-viewport zoom rules below deliberately take over at 200%/400%. */
+@media (max-width: 900px) and (min-height: 521px) {
+  html body .home-v4 #process > .decision-flow {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+
+  html body .home-v4 #process > .decision-flow > .decision-flow__shell {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+}
+
+/* Standalone conversion actions need a dependable touch target. Inline legal,
+   editorial and credit links retain their natural text treatment; these are
+   the deliberate next-step controls inside the homepage journey. */
+@media (max-width: 900px) {
+  .home-v4 .brand-orbit__continue,
+  .home-v4 .cost-film__resolution > a,
+  .home-v4 .evidence-cinematic__actions button,
+  .home-v4 .evidence-cinematic__actions a,
+  .home-v4 .paths-film__answer > a,
+  .home-v4 .studio-film__reading > a,
+  .home-v4 .studio-film__about,
+  .home-v4 .questions-editorial__answer > a {
+    min-height: 2.75rem !important;
+    align-items: center;
+  }
+}
+
 /* At 200% and 400% browser zoom a desktop viewport becomes both narrow and
    short in CSS pixels. The cinematic chapters must stop behaving like sealed
    100svh slides in that condition; otherwise the lower copy and controls are
