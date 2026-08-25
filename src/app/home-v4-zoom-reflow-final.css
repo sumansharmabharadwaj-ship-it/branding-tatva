@@ -307,30 +307,61 @@
 }
 
 @media (max-width: 430px) and (max-height: 520px) {
-  .home-v4 .brand-orbit__choices,
-  .home-v4 .brand-orbit__choices button,
-  .home-v4 .brand-orbit__choices button:first-of-type,
-  .home-v4 .questions-editorial__choices,
-  .home-v4 .questions-editorial__choices button {
+  .home-v4 .brand-orbit__question,
+  .home-v4 .evidence-cinematic__stage,
+  .home-v4 .evidence-cinematic__summary,
+  .home-v4 .questions-editorial__experience {
     width: 100%;
     min-width: 0;
     max-width: 100%;
   }
 
+  .home-v4 .brand-orbit__choices,
+  .home-v4 .questions-editorial__choices {
+    width: calc(100dvw - 3rem) !important;
+    min-width: 0;
+    max-width: calc(100dvw - 3rem) !important;
+  }
+
+  .home-v4 .brand-orbit__choices button,
+  .home-v4 .brand-orbit__choices button:first-of-type,
+  .home-v4 .questions-editorial__choices button {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
   .home-v4 .evidence-cinematic__actions {
     display: grid;
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
+    width: calc(100dvw - 4.5rem) !important;
+    min-width: 0 !important;
+    max-width: calc(100dvw - 4.5rem) !important;
     grid-template-columns: minmax(0, 1fr);
   }
 
   .home-v4 .evidence-cinematic__actions button,
   .home-v4 .evidence-cinematic__actions a {
     width: 100%;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    justify-content: space-between;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__index {
+    width: calc(100dvw - 4.5rem) !important;
+    min-width: 0 !important;
+    max-width: calc(100dvw - 4.5rem) !important;
+    grid-auto-columns: auto;
+    grid-auto-flow: row;
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: visible;
+    scroll-snap-type: none;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__index button {
+    width: 100%;
     min-width: 0;
     max-width: 100%;
-    justify-content: space-between;
   }
 
   html body .home-v4 #process .decision-flow__stage .decision-flow__result {
