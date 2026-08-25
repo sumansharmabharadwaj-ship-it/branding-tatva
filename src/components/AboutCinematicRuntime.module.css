@@ -2,6 +2,7 @@
   --film-progress: 0;
   --film-velocity: 0;
   --film-direction: 1;
+  --active-chapter-progress: 0;
   --film-pointer-x: 50vw;
   --film-pointer-y: 50vh;
   position: fixed;
@@ -83,6 +84,7 @@
   height: 100%;
   margin: 0;
   padding: 0;
+  align-items: flex-end;
   flex-direction: column;
   justify-content: space-between;
   list-style: none;
@@ -93,23 +95,55 @@
   display: grid;
   width: 0.65rem;
   height: 0.65rem;
-  margin-left: 0.2rem;
+  margin-right: 0.15rem;
   place-items: center;
+  overflow: hidden;
   border: 1px solid rgba(244, 239, 230, 0.42);
   border-radius: 999px;
   background: rgba(13, 23, 21, 0.76);
   color: transparent;
-  transition: border-color 320ms ease, background-color 320ms ease, transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: width 480ms cubic-bezier(0.22, 1, 0.36, 1), height 480ms cubic-bezier(0.22, 1, 0.36, 1), border-color 320ms ease, background-color 320ms ease, transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.chapterSpine li::after {
+  position: absolute;
+  inset: 0;
+  background: #d4b99a;
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
 }
 
 .chapterSpine li[data-active="true"] {
+  width: 1.8rem;
+  height: 1rem;
   border-color: #d4b99a;
-  background: #d4b99a;
-  transform: scale(1.42);
+  background: rgba(13, 23, 21, 0.82);
+  color: #f4efe6;
+  transform: translateX(0);
 }
 
-.chapterSpine li span,
+.chapterSpine li[data-active="true"]::after {
+  opacity: 0.5;
+  transform: scaleX(var(--active-chapter-progress));
+}
+
+.chapterSpine li span {
+  position: relative;
+  z-index: 1;
+  display: none;
+  font-size: 0.42rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+.chapterSpine li[data-active="true"] span { display: block; }
 .chapterSpine li strong { display: none; }
+
+.runtime[data-tone="light"] .spineTrack { background: rgba(82, 60, 44, 0.22); }
+.runtime[data-tone="light"] .chapterSpine li { border-color: rgba(82, 60, 44, 0.44); background: rgba(239, 230, 216, 0.82); }
+.runtime[data-tone="light"] .chapterSpine li[data-active="true"] { border-color: #795a43; color: #3d2f25; }
+.runtime[data-tone="light"] .chapterSpine li::after { background: #8f684b; }
 
 @media (max-width: 940px), (pointer: coarse) {
   .livingThread,
