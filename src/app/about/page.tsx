@@ -122,7 +122,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="relative overflow-clip bg-soil" data-about-chapter="principles" data-about-film-scene data-scene-tone="dark">
+        <section className="relative overflow-clip bg-[#e9e0d2]" data-about-chapter="principles" data-about-film-scene data-scene-tone="light">
           <div className="absolute inset-0" data-about-film-background>
             <BackgroundVideo
               video="/videos/generated/bt-about-behaviours-mossbreath.mp4"
@@ -131,7 +131,7 @@ export default function AboutPage() {
               playbackRate={0.86}
             />
           </div>
-          <div aria-hidden="true" className="absolute inset-0 bg-soil/80" />
+          <div aria-hidden="true" className="absolute inset-0 bg-[#e9e0d2]/88" />
           <div className="relative" data-about-film-plane>
             <Behaviours />
           </div>

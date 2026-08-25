@@ -147,8 +147,8 @@ export function Behaviours() {
               </h2>
             </div>
             <p>
-              Four standards accumulate around the same decision. Scroll forward to build the
-              record; scroll back and each layer releases in reverse.
+              Each standard leaves a visible trace in the work, turning judgment into a record
+              another person can inspect, question, and carry.
             </p>
           </header>
 

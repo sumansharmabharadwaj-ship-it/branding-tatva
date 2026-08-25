@@ -173,6 +173,12 @@ response. Mobile and reduced-motion modes replace the camera with the complete
 four-part editorial record, so every standard remains readable without a
 hidden gesture.
 
+The chapter uses a light vellum field over the moving moss film. This creates a
+visual release between the dark brand-atlas and founder-led chapters while the
+shared film runtime, clay accents, typography, and cumulative record preserve
+continuity. The supporting copy explains the visible trace each standard leaves
+in the work and avoids an explicit scrolling instruction.
+
 ## Founder-led continuity record
 
 `WorkingDirectly.tsx` now keeps one strategic document in frame from the
