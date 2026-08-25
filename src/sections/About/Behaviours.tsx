@@ -218,6 +218,12 @@ export function Behaviours() {
                 <div aria-label="Completed pressure tests">
                   {STANDARDS.map((standard, index) => <span key={standard.short} data-passed={index <= activeIndex}>{standard.short}</span>)}
                 </div>
+                <p className={styles.verdict} data-complete={activeIndex === STANDARDS.length - 1} aria-live="polite">
+                  <FileCheck2 size={13} aria-hidden="true" />
+                  {activeIndex === STANDARDS.length - 1
+                    ? "Recommendation ready to carry"
+                    : `0${activeIndex + 1} of 04 traces secured`}
+                </p>
                 <Link href="/editorial-policy">Read the evidence policy <ArrowUpRight size={14} aria-hidden="true" /></Link>
               </footer>
             </div>
