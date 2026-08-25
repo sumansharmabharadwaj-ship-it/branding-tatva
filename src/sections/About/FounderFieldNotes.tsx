@@ -214,7 +214,7 @@ export function FounderFieldNotes() {
                   alt=""
                   fill
                   priority={false}
-                  sizes="(max-width: 900px) 88vw, 27vw"
+                  sizes="40rem"
                   className={styles.portraitImage}
                 />
                 <div className={styles.aperture}><span /><span /><span /></div>
@@ -302,7 +302,7 @@ export function FounderFieldNotes() {
               src="/images/suman-sharma-studio-portrait.webp"
               alt="Black-and-white studio portrait of Suman Sharma"
               fill
-              sizes="(max-width: 900px) 92vw, 36vw"
+              sizes="40rem"
               className={styles.portraitImage}
             />
             <figcaption>Suman Sharma · Founder and brand strategist</figcaption>
