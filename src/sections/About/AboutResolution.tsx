@@ -24,16 +24,22 @@ const PATH_DEFINITIONS = [
     slug: "brand-beginning",
     cue: "Beginning",
     signal: "The idea is ready. The brand still needs its ground.",
+    question: "What should this brand stand for before expression begins?",
+    decision: "Define the position, audience, and founding signal.",
   },
   {
     slug: "brand-clarity",
     cue: "Realigning",
     signal: "The brand exists. Its clearest meaning is still difficult to carry.",
+    question: "Why does a capable brand still feel difficult to understand?",
+    decision: "Clarify the category meaning and rebuild around it.",
   },
   {
     slug: "brand-partnership",
     cue: "Sustaining",
     signal: "The system exists. Recognition now needs continuity.",
+    question: "How can recognition compound while expression keeps moving?",
+    decision: "Protect one strategic signal across recurring expression.",
   },
 ] as const;
 
@@ -145,6 +151,7 @@ export function AboutResolution() {
       ref={sceneRef}
       className={styles.root}
       data-resolution-stage={activeIndex + 1}
+      data-scroll-story="about-resolution-threshold"
       aria-labelledby="about-resolution-title"
       onPointerMove={onPointerMove}
       onPointerLeave={resetPointer}
@@ -212,16 +219,25 @@ export function AboutResolution() {
                   return (
                     <article key={path.slug} className={styles.recordStage} data-state={state} aria-hidden={index !== activeIndex}>
                       <small>{path.cue} · {path.package.name}</small>
-                      <h3>{path.package.forWho}</h3>
-                      <p>{path.package.description}</p>
+                      <div className={styles.decisionPassage}>
+                        <div>
+                          <span>Question entering</span>
+                          <p>{path.question}</p>
+                        </div>
+                        <i aria-hidden="true"><b /></i>
+                        <div>
+                          <span>First decision leaving</span>
+                          <h3>{path.decision}</h3>
+                        </div>
+                      </div>
                       <dl>
                         <div>
-                          <dt>First working decisions</dt>
-                          <dd>{path.package.includes.slice(0, 2).join(" · ")}</dd>
+                          <dt>Built for</dt>
+                          <dd>{path.package.forWho}</dd>
                         </div>
                         <div>
-                          <dt>Engagement route</dt>
-                          <dd>{path.package.billing === "monthly" ? "Ongoing partnership" : "One-time strategic system"}</dd>
+                          <dt>First working choices</dt>
+                          <dd>{path.package.includes.slice(0, 2).join(" · ")}</dd>
                         </div>
                       </dl>
                     </article>

@@ -259,11 +259,12 @@ const paths = [
 ];
 ```
 
-The moving confluence film resolves the page's living-thread metaphor without
-adding another long pin. Normal page scroll changes which route receives
-focus; backward scroll restores the previous route. Hover, focus, click, and
-arrow-key input use the same state model. Package descriptions, first working
-decisions, and billing mode come directly from `data/services.ts`.
+The moving confluence film resolves the page's living-thread metaphor inside a
+short 136svh threshold. Every route carries a question into the composition and
+returns one first decision, making the transformation legible before the
+package link appears. Backward scroll restores the previous route. Hover,
+focus, click, and arrow-key input use the same state model. Package audiences
+and first working choices come directly from `data/services.ts`.
 
 Touch and reduced-motion modes show all three routes in full, followed by the
 same package and conversation links. The final state therefore remains a
