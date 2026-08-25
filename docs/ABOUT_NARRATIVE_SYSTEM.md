@@ -222,14 +222,12 @@ gesture.
 
 ## Comparative evidence chain
 
-`Evidence.tsx` keeps three verified engagements visible in the same register
-while the scroll changes which proof column receives focus. The visitor first
-reads the ambiguity across all three cases, then the strategic decision, then
-the recorded outcome or output:
+`Evidence.tsx` uses one comparative evidence lens instead of an expanding
+table. Scroll selects an engagement while one uninterrupted visual path carries
+the eye from ambiguity to strategic decision to the recorded outcome or
+deliverable:
 
 ```tsx
-const columns = ["Ambiguity", "Decision", "Record"];
-
 const cases = [
   { evidenceType: "Measured performance", record: "104%" },
   { evidenceType: "Documented strategic output", record: "Brand foundation" },
@@ -238,11 +236,11 @@ const cases = [
 ```
 
 The scene deliberately distinguishes performance metrics from strategic
-artifacts and implementation-ready deliverables. Scroll direction reverses the
-camera focus without resetting the register. Hover and keyboard focus reveal
-the route to each complete case study. Touch and reduced-motion modes receive
-three linear case records with ambiguity, decision, and evidence visible
-together.
+artifacts and implementation-ready deliverables. Each case changes as one
+masked camera cut, so its image, ambiguity, decision, and record always belong
+to the same argument. Scroll direction reverses the comparison naturally;
+hover, click, and keyboard focus preview the other cases. Touch and
+reduced-motion modes receive three complete linear records.
 
 ## Resolution threshold
 
@@ -273,7 +271,7 @@ removed.
 ## Performance and accessibility rules
 
 - Desktop pinning is capped at a 158svh runway with a 100svh scene; the
-  comparative evidence register uses only 150svh. Native scroll is never
+  comparative evidence lens uses only 138svh. Native scroll is never
   intercepted or trapped.
 - Motion uses transform, opacity, clip-path, and a capped-density canvas. No
   scroll event measures layout more than once per animation frame.
