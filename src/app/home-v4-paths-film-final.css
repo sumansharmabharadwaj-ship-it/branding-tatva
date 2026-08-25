@@ -34,7 +34,7 @@
   height: 100%;
   object-fit: cover;
   object-position: 50% 50%;
-  filter: saturate(0.72) contrast(0.88) brightness(1.12) sepia(0.08);
+  filter: saturate(0.84) contrast(1.04) brightness(0.92) sepia(0.04);
   transform: scale(1.055) translate3d(0, 0, 0);
   transition:
     transform 1.4s cubic-bezier(0.22, 1, 0.36, 1),
@@ -43,20 +43,20 @@
 
 .home-v4 .paths-film[data-active-path="reposition"] .paths-film__media video {
   transform: scale(1.075) translate3d(-1.2%, -0.4%, 0);
-  filter: saturate(0.62) contrast(0.9) brightness(1.08) sepia(0.04);
+  filter: saturate(0.78) contrast(1.03) brightness(0.9) sepia(0.03);
 }
 
 .home-v4 .paths-film[data-active-path="ongoing"] .paths-film__media video {
   transform: scale(1.095) translate3d(1.4%, 0.5%, 0);
-  filter: saturate(0.78) contrast(0.9) brightness(1.14) sepia(0.12);
+  filter: saturate(0.88) contrast(1.05) brightness(0.94) sepia(0.06);
 }
 
 .home-v4 .paths-film__veil {
   z-index: 1;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(244, 237, 224, 0.97) 0%, rgba(244, 237, 224, 0.87) 42%, rgba(244, 237, 224, 0.48) 68%, rgba(225, 207, 175, 0.18) 100%),
-    linear-gradient(180deg, rgba(245, 238, 224, 0.44) 0%, rgba(229, 214, 188, 0.12) 48%, rgba(235, 225, 207, 0.9) 100%);
+    radial-gradient(ellipse at 79% 52%, rgba(244, 237, 224, 0.88), rgba(244, 237, 224, 0.72) 30%, rgba(239, 225, 200, 0.12) 62%, transparent 82%),
+    linear-gradient(90deg, rgba(244, 237, 224, 0.95), rgba(244, 237, 224, 0.84) 36%, rgba(244, 237, 224, 0.24) 60%, rgba(225, 207, 175, 0.12));
 }
 
 .home-v4 .paths-film__frame {
