@@ -1,0 +1,159 @@
+/* Homepage V4 · service paths. Keep the complete choice and answer inside one
+   frame instead of letting the selector fall below the visible composition. */
+
+.home-v4 .paths-film__frame {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.home-v4 .paths-film__story {
+  grid-template-columns: minmax(0, 1.02fr) minmax(22rem, 0.78fr);
+  gap: clamp(2rem, 5vw, 6.5rem);
+  padding-block: clamp(0.85rem, 2.1svh, 1.65rem);
+}
+
+.home-v4 .paths-film__lead h2 {
+  max-width: 12ch;
+  font-size: clamp(3rem, min(4.8vw, 7.5svh), 5.8rem);
+}
+
+.home-v4 .paths-film__lead .paths-film__chooser {
+  width: min(100%, 39rem);
+  margin-top: clamp(1rem, 2.2svh, 1.65rem);
+}
+
+.home-v4 .paths-film__chooser-label {
+  gap: 1rem;
+  padding-bottom: 0.42rem;
+  font-size: clamp(0.56rem, 0.6vw, 0.68rem);
+}
+
+.home-v4 .paths-film__chooser-label span:last-child {
+  flex: none;
+  color: var(--paths-film-accent);
+}
+
+.home-v4 .paths-film__choices {
+  grid-template-columns: 1fr;
+  border-bottom: 0;
+  background: rgba(248, 242, 230, 0.32);
+}
+
+.home-v4 .paths-film__choices button {
+  min-height: clamp(3.15rem, 5.4svh, 4rem);
+  grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+  grid-template-rows: 1fr;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.58rem 0.75rem;
+}
+
+.home-v4 .paths-film__choices button + button {
+  border-top: 1px solid rgba(32, 51, 43, 0.16);
+  border-left: 0;
+}
+
+.home-v4 .paths-film__choice-number,
+.home-v4 .paths-film__choices button strong,
+.home-v4 .paths-film__choice-cue {
+  grid-row: 1;
+}
+
+.home-v4 .paths-film__choice-number {
+  grid-column: 1;
+}
+
+.home-v4 .paths-film__choices button strong {
+  grid-column: 2;
+  max-width: none;
+  align-self: center;
+  font-size: clamp(1.08rem, 1.45vw, 1.55rem);
+  line-height: 1.04;
+}
+
+.home-v4 .paths-film__choice-cue {
+  grid-column: 3;
+  font-size: 0.54rem;
+}
+
+.home-v4 .paths-film__choices button::before {
+  top: 0;
+  right: auto;
+  bottom: 0;
+  width: 3px;
+  height: auto;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+.home-v4 .paths-film__choices button:hover::before,
+.home-v4 .paths-film__choices button.is-active::before {
+  transform: scaleY(1);
+}
+
+@media (max-width: 1100px) {
+  .home-v4 .paths-film__story {
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.76fr);
+  }
+
+  .home-v4 .paths-film__lead h2 {
+    font-size: clamp(2.7rem, min(5.5vw, 7svh), 4.7rem);
+  }
+}
+
+@media (max-width: 760px) {
+  .home-v4 .paths-film__frame {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .home-v4 .paths-film__story {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: clamp(0.55rem, 1.4svh, 0.9rem);
+  }
+
+  .home-v4 .paths-film__lead h2 {
+    max-width: 14ch;
+    font-size: clamp(2rem, min(9.3vw, 5.7svh), 2.8rem);
+  }
+
+  .home-v4 .paths-film__instruction {
+    display: none;
+  }
+
+  .home-v4 .paths-film__lead .paths-film__chooser {
+    margin-top: 0.6rem;
+  }
+
+  .home-v4 .paths-film__chooser-label {
+    padding-bottom: 0.28rem;
+  }
+
+  .home-v4 .paths-film__choices button {
+    min-height: clamp(2.7rem, 6svh, 3.25rem);
+    padding: 0.38rem 0.58rem;
+  }
+
+  .home-v4 .paths-film__choices button strong {
+    font-size: clamp(0.92rem, 4vw, 1.16rem);
+  }
+
+  .home-v4 .paths-film__answer {
+    align-self: center;
+  }
+}
+
+@media (max-width: 390px), (max-height: 690px) and (max-width: 760px) {
+  .home-v4 .paths-film__lead h2 {
+    font-size: clamp(1.8rem, min(8.7vw, 5.2svh), 2.3rem);
+  }
+
+  .home-v4 .paths-film__chooser-label span:last-child,
+  .home-v4 .paths-film__answer dl,
+  .home-v4 .paths-film__answer-eyebrow {
+    display: none;
+  }
+
+  .home-v4 .paths-film__choices button {
+    min-height: 2.55rem;
+  }
+}

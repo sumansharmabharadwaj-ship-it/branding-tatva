@@ -632,3 +632,35 @@ blocked
 ## Final result
 
 passed
+
+---
+
+# Homepage service-path choice QA · 2026-08-25
+
+## Comparison target
+
+- Before state: deployed `#paths` scene where the three service choices occupied a separate bottom rail and appeared cropped at the viewport edge.
+- Visual direction: the approved light, quiet, cinematic homepage language established by the diagnostic reference.
+- Implementation target: homepage `#paths` chapter at `1363 × 936`.
+
+## Findings and fixes
+
+- Moved the complete three-choice interaction into the main editorial composition beside the live answer.
+- Replaced the oversized bottom cards with three compact, explicit brand-situation rows.
+- Connected the language to the earlier 30-second diagnosis so visitors understand why a choice is already selected.
+- Preserved hover, click, focus and arrow/Home/End keyboard behavior and the Services deep link.
+- No P0, P1 or P2 visual issues remain in the verified desktop state.
+
+## Browser verification
+
+- Scene bounds: top `0`, bottom `936`, height `936` in a `936px` viewport.
+- Horizontal overflow: `0px`.
+- Choice rows: all three visible and enabled; bounds `642–693`, `693–744` and `744–794`.
+- Active answer: visible from `306–725`; changing to path `02` revealed `Reposition the system` and set `aria-pressed=true`.
+- Film: loaded, ready state `4`, autoplaying; current time advanced from `2.29s` to `3.54s` during observation.
+- Console: no application errors observed; only unrelated Chrome-extension metadata messages were present.
+- Production build: passed; all `78` routes generated.
+
+## Final result
+
+passed

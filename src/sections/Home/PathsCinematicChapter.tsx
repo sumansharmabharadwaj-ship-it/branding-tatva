@@ -219,6 +219,48 @@ export function PathsCinematicChapter() {
               Select the sentence that feels closest. The right scope opens here
               and carries into Services.
             </p>
+
+            <div className="paths-film__chooser">
+              <div className="paths-film__chooser-label">
+                <span>
+                  {carriedChoice
+                    ? "Your 30-second diagnosis is carried here"
+                    : "Choose the brand situation closest to yours"}
+                </span>
+                <span>{active.number} selected</span>
+              </div>
+              <div
+                className="paths-film__choices"
+                role="group"
+                aria-label="Choose the service starting point that matches your brand"
+              >
+                {PATHS.map((path, index) => {
+                  const selected = index === activeIndex;
+                  return (
+                    <button
+                      key={path.number}
+                      id={`path-film-tab-${path.number}`}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => choose(index)}
+                      onFocus={() => choose(index, false)}
+                      onKeyDown={(event) => onChoiceKeyDown(event, index)}
+                      onPointerEnter={(event) => {
+                        if (event.pointerType === "mouse") choose(index, false);
+                      }}
+                      className={selected ? "is-active" : undefined}
+                      style={{ "--path-choice-accent": path.tint } as CSSProperties}
+                    >
+                      <span className="paths-film__choice-number">{path.number}</span>
+                      <strong>{path.choice}</strong>
+                      <span className="paths-film__choice-cue">
+                        {selected ? "Selected" : "Choose"}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           <AnimatePresence mode="wait" initial={false}>
@@ -252,43 +294,6 @@ export function PathsCinematicChapter() {
           </AnimatePresence>
         </div>
 
-        <div className="paths-film__chooser">
-          <div className="paths-film__chooser-label">
-            <span>{carriedChoice ? "Your quiz answer is carried here" : "Choose one"}</span>
-            <span>Select a statement to reveal its path</span>
-          </div>
-          <div
-            className="paths-film__choices"
-            role="group"
-            aria-label="Choose the service starting point that matches your brand"
-          >
-            {PATHS.map((path, index) => {
-              const selected = index === activeIndex;
-              return (
-                <button
-                  key={path.number}
-                  id={`path-film-tab-${path.number}`}
-                  type="button"
-                  aria-pressed={selected}
-                  onClick={() => choose(index)}
-                  onFocus={() => choose(index, false)}
-                  onKeyDown={(event) => onChoiceKeyDown(event, index)}
-                  onPointerEnter={(event) => {
-                    if (event.pointerType === "mouse") choose(index, false);
-                  }}
-                  className={selected ? "is-active" : undefined}
-                  style={{ "--path-choice-accent": path.tint } as CSSProperties}
-                >
-                  <span className="paths-film__choice-number">{path.number}</span>
-                  <strong>{path.choice}</strong>
-                  <span className="paths-film__choice-cue">
-                    {selected ? "Selected" : "Choose"}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
       </div>
     </section>
   );
