@@ -252,6 +252,18 @@
 .brand-orbit__result-action>span { font-size:.66rem; text-transform:uppercase; letter-spacing:.2em; }
 .brand-orbit__result-action>strong { margin:.65rem 0 2rem; font:400 clamp(1.7rem,2.5vw,2.6rem)/1.04 var(--font-display), Georgia, serif; }
 .brand-orbit__result-action a { width:100%; border-top:1px solid rgba(32,50,40,.35); padding:.9rem 0; display:flex; justify-content:space-between; font-size:.84rem; }
+.brand-orbit__result:focus-visible {
+  border-radius:1rem;
+  outline:2px solid rgba(143,103,45,.62);
+  outline-offset:.65rem;
+}
+.brand-orbit__prompt button:focus-visible,
+.brand-orbit__result-action a:focus-visible,
+.brand-orbit__result-action button:focus-visible {
+  border-radius:.25rem;
+  outline:2px solid #8f672d;
+  outline-offset:4px;
+}
 
 /* Recognition becomes a single cinematic thought with three typographic states. */
 .home-v4-recognition { min-height:100svh !important; height:100svh; }

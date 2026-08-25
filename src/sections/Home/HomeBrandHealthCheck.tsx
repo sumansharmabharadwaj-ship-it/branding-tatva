@@ -361,6 +361,7 @@ export function HomeBrandHealthCheck() {
             aria-valuemin={1}
             aria-valuemax={QUESTIONS.length}
             aria-valuenow={done ? QUESTIONS.length : step + 1}
+            aria-valuetext={done ? "Complete" : `Question ${step + 1} of ${QUESTIONS.length}`}
           >
             <strong>
               <span>Question</span>
@@ -381,6 +382,8 @@ export function HomeBrandHealthCheck() {
               key="result"
               className="brand-orbit__result"
               data-home-reading-plane
+              role="region"
+              aria-labelledby="brand-orbit-result-title"
               tabIndex={-1}
               initial={reducedMotion ? false : { opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -388,7 +391,7 @@ export function HomeBrandHealthCheck() {
             >
               <div className="brand-orbit__result-copy">
                 <p>Your answers point toward</p>
-                <h3>{result.title}</h3>
+                <h3 id="brand-orbit-result-title">{result.title}</h3>
                 <span>{result.detail}</span>
               </div>
 

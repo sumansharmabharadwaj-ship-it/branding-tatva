@@ -17,6 +17,7 @@ const mounted = [
 const analytics = read("src/lib/analytics.ts");
 const pacing = read("src/sections/Home/HomePacingDirector.tsx");
 const diagnostic = read("src/sections/Home/HomeBrandHealthCheck.tsx");
+const diagnosticStyles = read("src/app/home-v4-orbit-redesign.css");
 const studio = read("src/sections/Home/StudioCinematicChapter.tsx");
 
 function assert(condition, message) {
@@ -37,6 +38,12 @@ assert(pacing.includes('querySelectorAll<HTMLElement>("[data-home-reading-plane]
 assert(pacing.includes("changedActiveSections.forEach"), "Active panel replacements do not trigger a visibility recheck.");
 assert(pacing.includes("}, 400);"), "Readable content is not checked within the 400 millisecond contract.");
 assert(diagnostic.includes('trackRuntimeIssue("diagnostic_transition_failed"'), "Diagnostic transition failures are silent.");
+assert(diagnostic.includes('aria-valuetext={done ? "Complete"'), "Diagnostic progress lacks an explicit spoken completion state.");
+assert(diagnostic.includes('aria-labelledby="brand-orbit-result-title"'), "Diagnostic result focus target lacks an accessible label.");
+assert(diagnostic.includes('id="brand-orbit-result-title"'), "Diagnostic result label is missing.");
+assert(diagnosticStyles.includes(".brand-orbit__result:focus-visible"), "Focused diagnostic result has no visible treatment.");
+assert(diagnosticStyles.includes(".brand-orbit__result-action a:focus-visible"), "Diagnostic result links have no explicit focus treatment.");
+assert(diagnosticStyles.includes(".brand-orbit__result-action button:focus-visible"), "Diagnostic result buttons have no explicit focus treatment.");
 assert(!studio.includes("useScroll") && !studio.includes("useMotionValueEvent"), "Studio choices must remain visitor-controlled rather than changing during scroll entry.");
 
 console.log("Homepage runtime quality gate passed: atomic reading planes, bounded telemetry, and transition recovery verified.");
