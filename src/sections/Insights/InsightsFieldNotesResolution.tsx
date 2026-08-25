@@ -181,7 +181,7 @@ export function InsightsFieldNotesResolution({
       ? "carried"
       : "open";
   const readerThreadLabel = isEvidenceThread
-    ? `Evidence secured · ${readerIntent.label}`
+    ? `Working thread · ${readerIntent.label}`
     : selectedPath
       ? `Your thread · ${selectedPath.name}`
       : "Notes worth keeping";
@@ -290,7 +290,7 @@ export function InsightsFieldNotesResolution({
                 strokeWidth={1.35}
               />
               <span>
-                <small>Evidence secured</small>
+                <small>Thread ready</small>
                 <strong>{selectedPath.name} is ready to continue.</strong>
               </span>
               <Check aria-hidden="true" />

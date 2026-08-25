@@ -1924,11 +1924,11 @@
 }
 
 .insights-notes-scene__cadence li:nth-child(2) {
-  opacity: calc(0.42 + var(--scene-discovery) * 0.58);
+  opacity: calc(0.6 + var(--scene-discovery) * 0.4);
 }
 
 .insights-notes-scene__cadence li:nth-child(3) {
-  opacity: calc(0.34 + var(--scene-resolution) * 0.66);
+  opacity: calc(0.68 + var(--scene-resolution) * 0.32);
 }
 
 .insights-notes-scene__cadence li:last-child {
