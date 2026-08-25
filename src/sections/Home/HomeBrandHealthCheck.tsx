@@ -19,6 +19,7 @@ type ResultDiagnosis = Diagnosis | "mixed";
 
 type Choice = {
   label: string;
+  shortLabel: string;
   diagnosis: Diagnosis;
   centre: string;
 };
@@ -36,16 +37,19 @@ const QUESTIONS: readonly Question[] = [
     choices: [
       {
         label: "The idea is clear. The market is not.",
+        shortLabel: "Unclear",
         diagnosis: "recognition",
         centre: "Make the meaning easier to remember.",
       },
       {
         label: "The identity exists. The system does not.",
+        shortLabel: "Unsystemised",
         diagnosis: "coherence",
         centre: "Give every expression one source.",
       },
       {
         label: "Marketing is moving without one direction.",
+        shortLabel: "Undirected",
         diagnosis: "demand",
         centre: "Turn activity into a repeated signal.",
       },
@@ -57,16 +61,19 @@ const QUESTIONS: readonly Question[] = [
     choices: [
       {
         label: "Explaining what makes us different.",
+        shortLabel: "Difference",
         diagnosis: "recognition",
         centre: "Commit to the idea only you can carry.",
       },
       {
         label: "Approving every message and visual.",
+        shortLabel: "Approval",
         diagnosis: "coherence",
         centre: "Replace personal taste with shared rules.",
       },
       {
         label: "Publishing without a clear proof path.",
+        shortLabel: "Proof",
         diagnosis: "demand",
         centre: "Put evidence where buyer doubt forms.",
       },
@@ -78,16 +85,19 @@ const QUESTIONS: readonly Question[] = [
     choices: [
       {
         label: "People remember us for one clear idea.",
+        shortLabel: "Recall",
         diagnosis: "recognition",
         centre: "Build the position first.",
       },
       {
         label: "The team can create from one system.",
+        shortLabel: "System",
         diagnosis: "coherence",
         centre: "Connect language, identity and behaviour.",
       },
       {
         label: "Proof creates preference before the call.",
+        shortLabel: "Preference",
         diagnosis: "demand",
         centre: "Make the evidence carry the promise.",
       },
@@ -166,6 +176,7 @@ export function HomeBrandHealthCheck() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const landscapeVideoRef = useRef<HTMLVideoElement>(null);
+  const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Diagnosis[]>([]);
   const [selections, setSelections] = useState<Array<number | null>>([]);
@@ -211,6 +222,12 @@ export function HomeBrandHealthCheck() {
       return next;
     });
     setPreview(null);
+  }
+
+  function moveChoiceFocus(index: number, direction: 1 | -1) {
+    const nextIndex = (index + direction + active.choices.length) % active.choices.length;
+    choiceRefs.current[nextIndex]?.focus();
+    choose(active.choices[nextIndex], nextIndex);
   }
 
   function continueDiagnostic() {
@@ -382,11 +399,12 @@ export function HomeBrandHealthCheck() {
                 <legend className="sr-only">{active.prompt}</legend>
                 <p className="brand-orbit__choice-cue" id={`brand-orbit-cue-${step}`}>
                   <span>Choose one</span>
-                  Select the statement closest to your business, then continue.
+                  <b>{selected === null ? "Select the statement closest to your business." : active.choices[selected].label}</b>
                 </p>
                 {active.choices.map((choice, index) => (
                   <motion.button
                     key={choice.label}
+                    ref={(node) => { choiceRefs.current[index] = node; }}
                     type="button"
                     className={selected === index ? "is-selected" : undefined}
                     onClick={() => choose(choice, index)}
@@ -396,6 +414,17 @@ export function HomeBrandHealthCheck() {
                     onBlur={() => setPreview(null)}
                     role="radio"
                     aria-checked={selected === index}
+                    aria-label={`${String(index + 1).padStart(2, "0")} ${choice.label}`}
+                    tabIndex={selected === null ? (index === 0 ? 0 : -1) : (selected === index ? 0 : -1)}
+                    onKeyDown={(event) => {
+                      if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+                        event.preventDefault();
+                        moveChoiceFocus(index, 1);
+                      } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+                        event.preventDefault();
+                        moveChoiceFocus(index, -1);
+                      }
+                    }}
                     animate={{
                       opacity: 1,
                       x: preview === index ? 14 : 0,
@@ -405,6 +434,7 @@ export function HomeBrandHealthCheck() {
                   >
                     <span className="brand-orbit__choice-number">0{index + 1}</span>
                     <strong>{choice.label}</strong>
+                    <span className="brand-orbit__choice-short" aria-hidden="true">{choice.shortLabel}</span>
                     <span className="brand-orbit__choice-action" aria-hidden="true">
                       {selected === index ? "Selected" : "Choose this"}
                     </span>

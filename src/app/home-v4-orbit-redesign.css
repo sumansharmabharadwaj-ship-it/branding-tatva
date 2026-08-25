@@ -179,6 +179,8 @@
   letter-spacing:.18em;
   white-space:nowrap;
 }
+.brand-orbit__choice-cue>b { font-weight:400; }
+.brand-orbit__choice-short { display:none; }
 .brand-orbit__choices button {
   position:relative;
   width:auto;
@@ -320,16 +322,18 @@ html .project-journey__prevents { border-top:1px solid rgba(244,237,225,.2) !imp
   .brand-orbit__choices button,.brand-orbit__choices button:nth-child(n) { position:relative; inset:auto; transform:none; width:100%; }
   .brand-orbit__result { grid-template-columns:1fr; padding:2rem 0; gap:1.3rem; }
   .brand-orbit__shell { padding:clamp(5.6rem, 10svh, 6.5rem) 0 1rem; }
-  .brand-orbit__question { padding:1rem 0 .35rem; }
+  .brand-orbit__question { min-height:calc(100svh - clamp(6.8rem, 13svh, 8.3rem)); padding:.75rem 0 .35rem; }
   .brand-orbit__prompt p { margin-bottom:.35rem; }
   .brand-orbit__prompt h3 { font-size:clamp(2.3rem,11.2vw,3.6rem); }
-  .brand-orbit__choices { margin-top:auto; padding-top:1.15rem; }
-  .brand-orbit__choice-cue { display:block; padding:0 1rem .65rem; font-size:.66rem; }
-  .brand-orbit__choice-cue>span { display:block; margin-bottom:.2rem; }
-  .brand-orbit__choices button,.brand-orbit__choices button:first-of-type { min-height:5.25rem; padding:.45rem 1rem .55rem; gap:.35rem; }
+  .brand-orbit__choices { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:auto; padding-top:.75rem; }
+  .brand-orbit__choice-cue { grid-column:1/-1; min-height:2.9rem; display:block; padding:0 0 .55rem; font-size:.72rem; line-height:1.35; }
+  .brand-orbit__choice-cue>span { display:block; margin-bottom:.18rem; }
+  .brand-orbit__choices button,.brand-orbit__choices button:first-of-type { min-height:4.6rem; padding:.55rem .35rem .5rem; align-items:center; gap:.35rem; border-left:1px solid rgba(240,232,215,.22); text-align:center; }
+  .brand-orbit__choices button:first-of-type { border-left:0; }
   .brand-orbit__choices button::after { right:1rem; left:1rem; }
-  .brand-orbit__choices button>strong { max-width:26ch; font-size:clamp(1.1rem,5.8vw,1.45rem); }
-  .brand-orbit__choice-action { margin-top:.1rem; font-size:.53rem; }
+  .brand-orbit__choices button>strong { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  .brand-orbit__choice-short { display:block; color:inherit; font:400 clamp(.88rem,3.6vw,1.05rem)/1 var(--font-display),Georgia,serif; }
+  .brand-orbit__choice-action { display:none; }
   .home-v4-recognition__stage { grid-template-columns:1fr !important; }
   .home-v4-recognition__copy { display:none !important; }
   .home-v4-recognition__signal>strong { font-size:clamp(3.8rem,18vw,7rem); }
