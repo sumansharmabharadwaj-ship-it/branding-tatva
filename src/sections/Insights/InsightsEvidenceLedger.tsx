@@ -10,6 +10,7 @@ import {
   readInsightsIntent,
   type InsightsIntentDetail,
 } from "@/lib/insights-intent";
+import { track } from "@/lib/analytics";
 
 export type EvidenceLayer = {
   slug: string;
@@ -81,7 +82,10 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       : markedCount === 1
         ? `${markedLayers[0]?.name ?? "One layer"} opens the first route`
         : `${markedCount} layers form one working route`;
-  const latestMarkedLayer = markedLayers[markedLayers.length - 1];
+  const latestMarkedSlug = markedSlugs[markedSlugs.length - 1];
+  const latestMarkedLayer = latestMarkedSlug
+    ? layers.find((layer) => layer.slug === latestMarkedSlug)
+    : undefined;
   const intentLayer = readerIntent
     ? layers.find((layer) => layer.topicSlug === readerIntent.topicSlug)
     : undefined;
@@ -109,6 +113,12 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       : [...markedSlugs, slug];
 
     setMarkedSlugs(nextMarkedSlugs);
+    track("insights_evidence_layer_toggled", {
+      layer: slug,
+      state: isMarked ? "open" : "marked",
+      marked_count: nextMarkedSlugs.length,
+      reader_path: readerIntent?.topicSlug ?? "none",
+    });
 
     if (isMarked && nextMarkedSlugs.length > 0) {
       const latestMarkedSlug = nextMarkedSlugs[nextMarkedSlugs.length - 1];

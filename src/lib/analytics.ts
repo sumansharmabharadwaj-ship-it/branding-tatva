@@ -14,6 +14,7 @@ export type AnalyticsEvent =
   | "capability_selected"
   | "deliverable_inspected"
   | "contextual_cta_clicked"
+  | "insights_evidence_layer_toggled"
   | "imagine_your_brand_started"
   | "imagine_your_brand_completed"
   | "project_map_emailed"
