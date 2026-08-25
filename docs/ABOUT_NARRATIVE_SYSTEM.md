@@ -136,29 +136,33 @@ The 142svh desktop runway stays below the page's existing pin cap. Touch and
 reduced-motion layouts present the same four surfaces as a complete linear
 atlas, with no dependency on pointer discovery.
 
-## Point-of-view camera
+## Point-of-view recognition camera
 
 `PointOfView.tsx` treats perception, language, and memory as one recognition
-sequence rather than three tabs followed by three interchangeable cards. The
-same horizontal composition changes focus as scroll advances:
+sequence rather than a set of expanding interface panels. One camera now keeps
+the stage selector, a real project still, the buyer question, the strategic
+response, and the recorded proof in the same composition:
 
 ```tsx
 const recognitionSequence = [
-  { verb: "See", belief: "Perception precedes preference." },
-  { verb: "Name", belief: "Language frames value." },
-  { verb: "Return", belief: "Consistency creates memory." },
+  { verb: "See", lens: "Category", example: "HerbalCart" },
+  { verb: "Name", lens: "Value", example: "MyShopInEurope" },
+  { verb: "Return", lens: "Memory", example: "Dr. Haley Nutrition" },
 ];
 ```
 
-The active field widens like a camera finding focus while the other two remain
-visible as context. The record rail beneath it keeps the strategic decision,
-verified engagement evidence, and case-study path in the same visual plane.
-Pointer position changes only the ambient light; scroll, keyboard focus, and
-hover all operate the same reversible state model.
+Each scroll state replaces the complete case frame with a direction-aware
+masked cut. The image, before-and-after strategic frame, buyer question,
+decision, proof classification, and case-study route therefore change as one
+shot. The cumulative line beneath the camera resolves category, value, and
+pattern into recognition without adding another explanatory card.
 
-Touch and reduced-motion modes show all three beliefs as a compact editorial
-record. Nothing depends on discovering a hidden gesture, and no claim is lost
-when the pinned camera is removed.
+The desktop runway is reduced from 144svh to 140svh. Pointer movement changes
+the physical viewing angle through a requestAnimationFrame-synchronised CSS
+variable update, while page velocity adds a restrained camera response. Touch
+uses a horizontal proximity-snap case reel. Reduced-motion mode presents all
+three records in a stable grid or vertical mobile reading order, so no claim
+depends on the scrubbed camera.
 
 ## Working-standards record
 
