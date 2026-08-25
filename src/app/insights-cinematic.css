@@ -1692,11 +1692,18 @@
 
 .insights-evidence-ledger__bridge[data-action-state="ready"] {
   background: #f6eee4;
+  align-items: stretch;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .insights-evidence-ledger__bridge[data-action-state="ready"] > i {
   opacity: 1;
   transform: scaleY(1);
+}
+
+.insights-evidence-ledger__bridge[data-action-state="ready"]
+  .insights-evidence-ledger__bridge-actions {
+  justify-content: flex-start;
 }
 
 .insights-evidence-ledger__bridge-copy {
