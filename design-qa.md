@@ -91,6 +91,66 @@ passed
 
 ---
 
+# Insights Library-to-Evidence thread QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: public August 8 Insights preview before commit `3d5b1d7`, captured inline in the cloud browser with Messaging selected in the Library and the Evidence Ledger fully resolved.
+- Implementation: public August 8 branch alias at commit `81608399feb5df9f9b9b4c16e967514fc05f7fb5`, same route and interaction state.
+- Browser-rendered source capture: inline cloud-browser before-state, `1363 × 936` pixels at a `1363 × 936` CSS viewport and density `1`.
+- Browser-rendered implementation capture: inline cloud-browser final-state, `1363 × 936` pixels at a `1363 × 936` CSS viewport and density `1`.
+- State: Messaging committed in the Library, carried into Message as the ledger's working hypothesis, then marked as the first evidence route.
+- Full-view comparison evidence: the complete Audit scene was inspected before and after at the same viewport; its frame, film crop, heading, paragraph, ledger and actions remained in one viewport.
+- Focused-region comparison evidence: the Library exit token, Ledger arrival token, Message layer, hypothesis/detail rows and committed action bridge were inspected separately because the thread and small copy required closer reading.
+
+## Findings and fixes
+
+- [P1] The selected Library path previously arrived in the Ledger only as explanatory copy, so the visual narrative broke at the scene boundary. Added one reversible elemental current at the Library exit and a matching Ledger arrival, then landed its color and glyph on the exact evidence layer.
+- [P1] The first arrival position crossed the audit paragraph. Settled the token into the open space in the Ledger status rail, preserving paragraph readability while keeping the visual current connected to the selected layer.
+- [P1] The committed service route compressed the bridge explanation into a narrow column. Reflowed the ready state into a full-width explanation with a separate action row; both actions now fit without crowding or added page height.
+- The carried state now exposes `Working hypothesis` and `First evidence move` immediately. Marking the layer resolves into `Next evidence move` and the relevant service route.
+- Clearing the Library retracts the Library exit, Ledger arrival, layer mark and stored reader trail. Reverse scrolling stays native and returns to the open Library view.
+
+## Required fidelity surfaces
+
+- Fonts and typography: the existing display and interface type hierarchy, weights, letter spacing and wrapping remain unchanged; the new labels use the Ledger's established small-caps language and remain readable at the verified viewport.
+- Spacing and layout rhythm: the Audit scene remains `936px` high in the `936px` viewport; the final frame ends at `842.5px`, the committed ledger ends at `785.5px`, and no extra section height or pinned runway was introduced.
+- Colors and visual tokens: the established five-element thread colors are reused; Messaging carries the existing air color into the Ledger, then the committed state resolves into the established clay evidence color.
+- Image quality and asset fidelity: the existing muted shoreline film, poster crop and elemental glyph component are reused; no placeholder or simulated media asset was added.
+- Copy and content: the route language now progresses from chosen reading path to working hypothesis, evidence move and service application without duplicating a scroll instruction.
+
+## Interaction and browser verification
+
+- Messaging mouse selection and Brand memory keyboard selection both carried the correct elemental route into the matching Ledger layer.
+- The carried Message layer exposed `Working hypothesis` and `First evidence move`; marking it set `aria-pressed=true`, changed the bridge to `ready`, and revealed the truthful Brand Partnership route.
+- The final ready bridge resolved to one `445.7px` column; the copy and two actions occupied separate rows with no overlap.
+- Unmarking the final evidence layer retracted the arrival and returned the Ledger to its open state. `Clear the view` restored `All themes`, the search lens and the mixed first folio.
+- Horizontal overflow: `0px` after accounting for the browser scrollbar.
+- Focus visibility and semantic buttons remain intact; all five evidence controls retain `aria-pressed` states.
+- Compact touch source review: the established horizontally scrollable evidence rail remains in place, arrival copy collapses to its glyph, and the arrival line shortens to `4.5rem` without changing page width.
+- Reduced-motion source review: the thread, arrival, Ledger transitions and layer marks resolve with near-zero transition duration, while scene content remains in its complete static state and scroll snapping is disabled.
+- Console: no site-originated application errors; observed errors were limited to Chrome-extension metadata messages.
+- Vercel runtime errors for `/insights`: none in the verified one-hour window.
+- TypeScript, targeted ESLint, discovery source gate, internal link graph gate, media search gate and the `78`-route production build: passed.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The Library path became a sentence in the next scene instead of a visible continuation. | Added the reversible exit/arrival current and matching carried layer; the final full-frame capture shows Messaging seated in the Ledger status rail and Message highlighted below. |
+| 2 | P1 | The first arrival token overlapped the audit paragraph. | Moved the token into the status rail gap; the final capture shows the paragraph ending above the token with no overlap. |
+| 3 | P1 | Two committed actions squeezed the evidence explanation into a `95px` column. | Reflowed the ready bridge; the final measurement is one `445.7px` copy column followed by a separate `445.7px` action row. |
+
+## Follow-up polish
+
+- P3: verify the glyph-only arrival on a physical touch device during the next cross-device sweep; the responsive source path is complete and desktop browser verification passed.
+
+## Final result
+
+passed
+
+---
+
 # Homepage cinematic method QA · 2026-08-24
 
 ## Comparison target
