@@ -8,7 +8,8 @@ export const metadata: Metadata = {
 const PRESETS = {
   tablet: { label: "Tablet portrait", width: 768, height: 820 },
   mobile: { label: "Mobile portrait", width: 390, height: 844 },
-  zoom200: { label: "200% zoom equivalent", width: 674, height: 468 },\n  zoom400: { label: "400% zoom equivalent", width: 337, height: 234 },
+  zoom200: { label: "200% zoom equivalent", width: 674, height: 468 },
+  zoom400: { label: "400% zoom equivalent", width: 337, height: 234 },
 } as const;
 
 type PresetName = keyof typeof PRESETS;
