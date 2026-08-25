@@ -60,7 +60,7 @@ export function HomeV4Experience() {
         data-home-v4-chapter="foundation"
         data-home-chapter="foundation"
         data-home-section="foundation"
-        data-cursor-world="dark"
+        data-cursor-world="light"
         className="home-v4-chapter home-v4-chapter--foundation"
       >
         <BrandFoundationScene />

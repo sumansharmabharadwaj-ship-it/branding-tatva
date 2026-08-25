@@ -1,0 +1,89 @@
+.home-v4 .home-v4-chapter--foundation { background: #eee4d2; color: #26382d; }
+.home-v4 .foundation-orbit {
+  position: relative; height: 100svh; min-height: 100svh; overflow: hidden; isolation: isolate;
+  background: #eee4d2; color: #26382d;
+}
+.home-v4 .foundation-orbit__media,
+.home-v4 .foundation-orbit__wash { position: absolute; inset: 0; z-index: 0; }
+.home-v4 .foundation-orbit__media video {
+  width: 100%; height: 100%; object-fit: cover; object-position: 54% 48%;
+  filter: saturate(.66) sepia(.2) brightness(1.18) contrast(.82);
+  transform: scale(1.04); animation: foundation-landscape-breathe 20s ease-in-out infinite alternate;
+}
+.home-v4 .foundation-orbit__wash {
+  z-index: 1; background:
+    linear-gradient(90deg, rgba(249,243,231,.96) 0%, rgba(242,231,211,.86) 42%, rgba(235,219,190,.3) 76%),
+    linear-gradient(0deg, rgba(229,212,181,.84), transparent 48%, rgba(250,245,234,.5));
+}
+.home-v4 .foundation-orbit__shell {
+  position: relative; z-index: 2; width: min(calc(100% - clamp(2rem,6vw,7rem)),104rem); height: 100%; margin-inline: auto;
+  display: grid; grid-template-rows: auto 1fr; padding: clamp(6.6rem,9.5vh,8rem) 0 clamp(1.3rem,3vh,2.4rem);
+}
+.home-v4 .foundation-orbit__header {
+  display: grid; grid-template-columns: minmax(8rem,.28fr) minmax(0,1fr); gap: clamp(2rem,5vw,6rem); align-items: start;
+  padding-bottom: clamp(1.2rem,2.5vh,2rem); border-bottom: 1px solid rgba(38,56,45,.24);
+}
+.home-v4 .foundation-orbit__header > p {
+  margin: .25rem 0 0; color: #99623b; font: 650 .68rem/1.2 var(--font-sans,sans-serif); letter-spacing: .2em; text-transform: uppercase;
+}
+.home-v4 .foundation-orbit__header h2 {
+  max-width: 13ch; margin: 0; color: #26382d;
+  font: 400 clamp(2.8rem,5.6vw,6.2rem)/.9 var(--font-display,serif); letter-spacing: -.048em; text-wrap: balance;
+}
+.home-v4 .foundation-orbit__stage {
+  min-height: 0; display: grid; grid-template-columns: minmax(0,1.22fr) minmax(16rem,.5fr); gap: clamp(3rem,7vw,8rem); align-items: end;
+}
+.home-v4 .foundation-orbit__active { align-self: center; max-width: 58rem; padding: clamp(1.5rem,4vh,3.5rem) 0 0 clamp(0rem,4vw,5rem); }
+.home-v4 .foundation-orbit__active > span,
+.home-v4 .foundation-orbit__active > p {
+  color: #99623b; font: 650 .66rem/1.2 var(--font-sans,sans-serif); letter-spacing: .18em; text-transform: uppercase;
+}
+.home-v4 .foundation-orbit__active > p { margin: .65rem 0; }
+.home-v4 .foundation-orbit__active h3 {
+  max-width: 12ch; margin: 0; color: #26382d;
+  font: 400 clamp(3.2rem,6.7vw,7.2rem)/.84 var(--font-display,serif); letter-spacing: -.057em; text-wrap: balance;
+}
+.home-v4 .foundation-orbit__active > strong {
+  display: block; max-width: 38rem; margin: clamp(1rem,2vh,1.5rem) 0; color: rgba(38,56,45,.77);
+  font: 400 clamp(.94rem,1.12vw,1.1rem)/1.55 var(--font-sans,sans-serif);
+}
+.home-v4 .foundation-orbit__active ul {
+  display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; margin: 0; padding: 0; color: #815438; list-style: none;
+  font: 650 .61rem/1.3 var(--font-sans,sans-serif); letter-spacing: .13em; text-transform: uppercase;
+}
+.home-v4 .foundation-orbit__active li { position: relative; padding-left: .8rem; }
+.home-v4 .foundation-orbit__active li::before { content: ""; position: absolute; left: 0; top: .45em; width: .28rem; height: .28rem; border-radius: 50%; background: #c98d58; }
+.home-v4 .foundation-orbit__choices { align-self: end; padding-bottom: .2rem; }
+.home-v4 .foundation-orbit__choices button {
+  position: relative; display: grid; grid-template-columns: 2.2rem 1fr auto; gap: .75rem; align-items: center; width: 100%;
+  padding: clamp(.72rem,1.5vh,1rem) 0; border: 0; border-top: 1px solid rgba(38,56,45,.24);
+  color: rgba(38,56,45,.52); background: transparent; text-align: left; cursor: pointer;
+  transition: color .32s ease, padding-left .32s ease, border-color .32s ease;
+}
+.home-v4 .foundation-orbit__choices button:last-child { border-bottom: 1px solid rgba(38,56,45,.24); }
+.home-v4 .foundation-orbit__choices button span { font: 650 .6rem/1 var(--font-sans,sans-serif); letter-spacing: .14em; }
+.home-v4 .foundation-orbit__choices button strong { font: 400 clamp(1.12rem,1.65vw,1.55rem)/1 var(--font-display,serif); }
+.home-v4 .foundation-orbit__choices button i { width: .42rem; aspect-ratio: 1; border: 1px solid currentColor; border-radius: 50%; }
+.home-v4 .foundation-orbit__choices button:is(:hover,:focus-visible,.is-active) { padding-left: .7rem; color: #26382d; border-color: rgba(153,98,59,.58); outline: none; }
+.home-v4 .foundation-orbit__choices button.is-active i { background: #c98d58; border-color: #c98d58; box-shadow: 0 0 18px rgba(201,141,88,.42); }
+@keyframes foundation-landscape-breathe { from { transform: scale(1.04) translate3d(-.3%,0,0); } to { transform: scale(1.1) translate3d(.6%,-.4%,0); } }
+@media (max-width: 760px) {
+  .home-v4 .foundation-orbit { height: auto; min-height: 100svh; }
+  .home-v4 .foundation-orbit__shell { min-height: 100svh; width: min(calc(100% - 2rem),104rem); padding-top: 6rem; }
+  .home-v4 .foundation-orbit__header { grid-template-columns: 1fr; gap: .7rem; }
+  .home-v4 .foundation-orbit__header h2 { font-size: clamp(2.45rem,11.8vw,4rem); }
+  .home-v4 .foundation-orbit__stage { grid-template-columns: 1fr; gap: 1.25rem; align-content: center; }
+  .home-v4 .foundation-orbit__active { padding: 1.2rem 0 0; }
+  .home-v4 .foundation-orbit__active h3 { font-size: clamp(2.7rem,13vw,4.8rem); }
+  .home-v4 .foundation-orbit__active > strong { margin: .8rem 0; font-size: .87rem; line-height: 1.46; }
+  .home-v4 .foundation-orbit__active ul { font-size: .52rem; }
+  .home-v4 .foundation-orbit__choices { display: grid; grid-template-columns: repeat(4,1fr); }
+  .home-v4 .foundation-orbit__choices button { grid-template-columns: 1fr; justify-items: center; padding: .72rem .15rem; text-align: center; }
+  .home-v4 .foundation-orbit__choices button:is(:hover,:focus-visible,.is-active) { padding-left: .15rem; }
+  .home-v4 .foundation-orbit__choices button strong { font: 650 .65rem/1.1 var(--font-sans,sans-serif); }
+  .home-v4 .foundation-orbit__choices button i { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-v4 .foundation-orbit__media video { animation: none; transform: none; }
+  .home-v4 .foundation-orbit__choices button { transition: none; }
+}
