@@ -52,6 +52,7 @@ const MANUAL_HOLD_MS = 14000;
 type ServicesProgressDetail = {
   id?: string;
   progress?: number;
+  storyProgress?: number;
 };
 
 function publishSituation(id: ServicesSituationId) {
@@ -101,10 +102,11 @@ export function SituationPath() {
       const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
       if (detail?.id !== "situation" || typeof detail.progress !== "number") return;
       if (selected || Date.now() < holdUntilRef.current) return;
+      const storyProgress = detail.storyProgress ?? detail.progress;
 
       const index = Math.min(
         OPTIONS.length - 1,
-        Math.max(0, Math.floor(detail.progress * OPTIONS.length)),
+        Math.max(0, Math.floor(storyProgress * OPTIONS.length)),
       );
       const next = OPTIONS[index]?.id ?? FIRST_OPTION.id;
       setPreview((current) => (current === next ? current : next));

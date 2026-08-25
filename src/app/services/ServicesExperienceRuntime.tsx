@@ -311,11 +311,19 @@ export function ServicesExperienceRuntime() {
         const axis = clamp((progress - 0.5) * 2, -1, 1);
         const key = scene.dataset.servicesScrollScene || "";
         const motion = SCENE_MOTION[key];
-        const anticipation = smoothRange(progress, 0.01, 0.16);
-        const activation = smoothRange(progress, 0.1, 0.38);
-        const discovery = smoothRange(progress, 0.32, 0.64);
-        const resolution = smoothRange(progress, 0.6, 0.84);
+        // A direct chapter link settles the section just below the fixed
+        // navigation, which is roughly progress 0.45 for a one-screen scene.
+        // Complete the visual entrance before that focal point so hash and
+        // rail navigation never leave body copy translucent or clipped.
+        const anticipation = smoothRange(progress, 0.01, 0.1);
+        const activation = smoothRange(progress, 0.05, 0.24);
+        const discovery = smoothRange(progress, 0.13, 0.38);
+        const resolution = smoothRange(progress, 0.26, 0.44);
         const departure = smoothRange(progress, 0.82, 0.98);
+        // Interactive chapter states begin after the visual composition has
+        // arrived. This keeps the first option visible at a direct anchor,
+        // then uses the remaining scroll distance to play the sequence.
+        const storyProgress = smoothRange(progress, 0.36, 0.82);
         const arrival = 1 - activation;
         const travelAxis = -arrival + departure;
         const signedVelocity = smoothedVelocity * (scrollDirection === "down" ? 1 : -1);
@@ -411,13 +419,13 @@ export function ServicesExperienceRuntime() {
               : "present";
         scene.dataset.servicesPhase = phase;
         scene.dataset.servicesRhythm =
-          progress < 0.12
+          progress < 0.08
             ? "anticipation"
-            : progress < 0.36
+            : progress < 0.24
               ? "activation"
-              : progress < 0.64
+              : progress < 0.42
                 ? "discovery"
-                : progress < 0.84
+                : progress < 0.82
                   ? "resolution"
                   : "handoff";
 
@@ -429,6 +437,7 @@ export function ServicesExperienceRuntime() {
                 scene: scene.dataset.servicesScrollScene,
                 label: scene.dataset.servicesChapterLabel,
                 progress,
+                storyProgress,
                 presence: centred,
                 phase,
                 rhythm: scene.dataset.servicesRhythm,

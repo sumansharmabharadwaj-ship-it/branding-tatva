@@ -39,6 +39,7 @@ type SelectionSource = "situation" | "manual" | "scroll" | null;
 type ServicesProgressDetail = {
   id?: string;
   progress?: number;
+  storyProgress?: number;
 };
 
 export function PackageSelector() {
@@ -117,10 +118,11 @@ export function PackageSelector() {
       if (detail?.id !== "desire" || typeof detail.progress !== "number") return;
       if (compare || selectionSource === "situation" || selectionSource === "manual") return;
       if (Date.now() < manualUntilRef.current) return;
+      const storyProgress = detail.storyProgress ?? detail.progress;
 
       const index = Math.min(
         CHOICES.length - 1,
-        Math.max(0, Math.floor(detail.progress * CHOICES.length)),
+        Math.max(0, Math.floor(storyProgress * CHOICES.length)),
       );
       const choice = CHOICES[index] ?? CHOICES[0];
       setActive((current) => (current === choice.slug ? current : choice.slug));

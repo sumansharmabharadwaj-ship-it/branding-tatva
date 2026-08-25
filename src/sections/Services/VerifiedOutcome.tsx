@@ -15,6 +15,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 type ServicesProgressDetail = {
   id?: string;
   progress?: number;
+  storyProgress?: number;
 };
 
 // Conversion architecture: proof sits directly after the packages instead of
@@ -40,7 +41,8 @@ export function VerifiedOutcome() {
     function onProgress(event: Event) {
       const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
       if (detail?.id !== "verified-outcome" || typeof detail.progress !== "number") return;
-      const next = detail.progress < 0.43 ? 0 : detail.progress < 0.7 ? 1 : 2;
+      const storyProgress = detail.storyProgress ?? detail.progress;
+      const next = storyProgress < 0.43 ? 0 : storyProgress < 0.7 ? 1 : 2;
       setActiveBeat((current) => (current === next ? current : next));
     }
 

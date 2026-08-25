@@ -50,11 +50,34 @@
 #offerings .services-discipline-rail,
 #offerings [data-service-discipline-panel-shell="true"] {
   border-color: rgba(244, 239, 230, 0.16) !important;
-  background: rgba(16, 25, 21, 0.7) !important;
   box-shadow:
     0 28px 90px rgba(6, 12, 9, 0.24),
     inset 0 1px rgba(244, 239, 230, 0.05);
   backdrop-filter: blur(26px) saturate(0.82);
+}
+
+#offerings .services-discipline-rail {
+  background:
+    linear-gradient(100deg, rgba(18, 29, 24, 0.86), rgba(13, 22, 18, 0.76)) !important;
+}
+
+#offerings [data-service-discipline-panel-shell="true"] {
+  background:
+    linear-gradient(125deg, rgba(19, 31, 25, 0.88), rgba(12, 21, 17, 0.76)) !important;
+}
+
+#offerings .services-discipline-rail > button[aria-selected="false"] {
+  opacity: 0.9;
+  filter: saturate(0.94);
+}
+
+#proof [data-verified-outcome-phase] {
+  border-color: rgba(244, 239, 230, 0.17);
+  background:
+    linear-gradient(112deg, rgba(23, 34, 29, 0.86), rgba(14, 24, 20, 0.74));
+  box-shadow:
+    0 32px 110px rgba(6, 12, 9, 0.26),
+    inset 0 1px rgba(244, 239, 230, 0.06);
 }
 
 #desire [data-services-chapter-instrument="true"] > button,

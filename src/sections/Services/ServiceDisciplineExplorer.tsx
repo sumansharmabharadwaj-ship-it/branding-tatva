@@ -20,6 +20,7 @@ const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 type ServicesProgressDetail = {
   id?: string;
   progress?: number;
+  storyProgress?: number;
 };
 
 // Six stacked description rows made the complete Services list read like
@@ -59,10 +60,11 @@ export function ServiceDisciplineExplorer() {
       const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
       if (detail?.id !== "offerings" || typeof detail.progress !== "number") return;
       if (Date.now() < userHoldUntilRef.current) return;
+      const storyProgress = detail.storyProgress ?? detail.progress;
 
       const index = Math.min(
         offerings.length - 1,
-        Math.max(0, Math.floor(detail.progress * offerings.length)),
+        Math.max(0, Math.floor(storyProgress * offerings.length)),
       );
       setActiveIndex((current) => (current === index ? current : index));
     }

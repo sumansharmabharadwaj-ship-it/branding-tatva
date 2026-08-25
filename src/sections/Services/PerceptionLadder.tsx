@@ -45,6 +45,7 @@ const RUNGS = [
 type ServicesProgressDetail = {
   id?: string;
   progress?: number;
+  storyProgress?: number;
 };
 
 export function PerceptionLadder() {
@@ -61,10 +62,11 @@ export function PerceptionLadder() {
       const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
       if (detail?.id !== "education" || typeof detail.progress !== "number") return;
       if (Date.now() < manualUntilRef.current) return;
+      const storyProgress = detail.storyProgress ?? detail.progress;
 
       const index = Math.min(
         RUNGS.length - 1,
-        Math.max(0, Math.floor(detail.progress * RUNGS.length)),
+        Math.max(0, Math.floor(storyProgress * RUNGS.length)),
       );
       setActiveIndex((current) => (current === index ? current : index));
     }
