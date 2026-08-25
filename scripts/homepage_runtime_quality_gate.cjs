@@ -40,9 +40,11 @@ assert(pacing.includes("changedActiveSections.forEach"), "Active panel replaceme
 assert(pacing.includes("}, 400);"), "Readable content is not checked within the 400 millisecond contract.");
 assert(pacing.includes("function forceReadableFallback"), "Missing homepage content is observed but not recovered.");
 assert(pacing.includes('section.dataset.homeSceneRecovery = "forced"'), "Scene recovery does not expose a deterministic state.");
-assert(pacing.includes("plane.getAnimations({ subtree: true })"), "Scene recovery leaves stranded child animations running.");
-assert(pacing.includes('plane.style.setProperty("opacity", "1", "important")'), "Scene recovery does not force a readable final opacity.");
-assert(pacing.includes('plane.style.setProperty("transform", "none", "important")'), "Scene recovery can leave content translated outside the viewport.");
+assert(pacing.includes("effectiveOpacity *= Number(style.opacity || 1)"), "Scene visibility ignores a hidden ancestor opacity.");
+assert(pacing.includes("section.getAnimations({ subtree: true })"), "Scene recovery leaves stranded descendant animations running.");
+assert(pacing.includes("const recoveryNodes = new Set<HTMLElement>([section])"), "Scene recovery ignores hidden reading-plane ancestors.");
+assert(pacing.includes('node.style.setProperty("opacity", "1", "important")'), "Scene recovery does not force a readable final opacity.");
+assert(pacing.includes('node.style.setProperty("transform", "none", "important")'), "Scene recovery can leave content translated outside the viewport.");
 assert(pacing.includes('trackRuntimeIssue("scene_visibility_recovered"'), "Recovered homepage scenes are not measurable.");
 assert(diagnostic.includes('trackRuntimeIssue("diagnostic_transition_failed"'), "Diagnostic transition failures are silent.");
 assert(diagnostic.includes('aria-valuetext={done ? "Complete"'), "Diagnostic progress lacks an explicit spoken completion state.");
