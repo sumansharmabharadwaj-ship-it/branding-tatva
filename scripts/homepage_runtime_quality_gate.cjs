@@ -42,6 +42,8 @@ assert(diagnostic.includes('trackRuntimeIssue("diagnostic_transition_failed"'), 
 assert(diagnostic.includes('aria-valuetext={done ? "Complete"'), "Diagnostic progress lacks an explicit spoken completion state.");
 assert(diagnostic.includes('aria-labelledby="brand-orbit-result-title"'), "Diagnostic result focus target lacks an accessible label.");
 assert(diagnostic.includes('id="brand-orbit-result-title"'), "Diagnostic result label is missing.");
+assert(diagnostic.includes("pendingChoiceFocusRef.current = nextIndex"), "Diagnostic arrow-key focus is not synchronized with selection.");
+assert(diagnostic.includes("choiceRefs.current[nextIndex]?.focus()"), "Diagnostic selected radio does not receive focus after rendering.");
 assert(diagnosticStyles.includes(".brand-orbit__result:focus-visible"), "Focused diagnostic result has no visible treatment.");
 assert(diagnosticStyles.includes(".brand-orbit__result-action a:focus-visible"), "Diagnostic result links have no explicit focus treatment.");
 assert(diagnosticStyles.includes(".brand-orbit__result-action button:focus-visible"), "Diagnostic result buttons have no explicit focus treatment.");

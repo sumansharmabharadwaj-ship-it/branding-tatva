@@ -167,6 +167,7 @@ export function HomeBrandHealthCheck() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const focusRequestedRef = useRef(false);
+  const pendingChoiceFocusRef = useRef<number | null>(null);
   const [state, dispatch] = useReducer(homeDiagnosticReducer, initialHomeDiagnosticState);
   const { step, answers, selections, resultVisible, result: resolvedResult, preview } = state;
   const selected = selections[step] ?? null;
@@ -205,6 +206,13 @@ export function HomeBrandHealthCheck() {
     heading.focus({ preventScroll: true });
   }, [done, step]);
 
+  useEffect(() => {
+    const nextIndex = pendingChoiceFocusRef.current;
+    if (nextIndex === null) return;
+    pendingChoiceFocusRef.current = null;
+    choiceRefs.current[nextIndex]?.focus();
+  }, [selected]);
+
   function moveScene(event: PointerEvent<HTMLElement>) {
     if (reducedMotion || !sectionRef.current) return;
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -224,7 +232,7 @@ export function HomeBrandHealthCheck() {
 
   function moveChoiceFocus(index: number, direction: 1 | -1) {
     const nextIndex = (index + direction + active.choices.length) % active.choices.length;
-    choiceRefs.current[nextIndex]?.focus();
+    pendingChoiceFocusRef.current = nextIndex;
     choose(active.choices[nextIndex], nextIndex);
   }
 
