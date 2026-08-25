@@ -144,7 +144,7 @@ export function PackageSelector() {
   }
 
   return (
-    <Container className="max-w-3xl text-center">
+    <Container data-package-selector="true" className="max-w-3xl text-center">
       <div data-services-chapter-copy="true">
         <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Desire</p>
         <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
@@ -219,7 +219,7 @@ export function PackageSelector() {
         })}
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+      <div data-package-controls="true" className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
         <RegionSelector />
         <button
           type="button"
@@ -276,7 +276,7 @@ export function PackageSelector() {
                   <p className="mt-3 text-sm leading-relaxed text-ivory/90 sm:text-base">{activePackage.description}</p>
                 </div>
                 <div className="border-ivory/10 sm:border-l sm:pl-7">
-                  <ul className="grid gap-y-1">
+                  <ul data-package-inclusions="true" className="grid gap-y-1">
                     {activePackage.includes.map((item, index) => (
                       <motion.li
                         key={item}
@@ -310,7 +310,7 @@ export function PackageSelector() {
         </AnimatePresence>
       </div>
 
-      <details className="group mx-auto mt-3 max-w-2xl text-left text-[0.68rem] leading-relaxed text-ivory/55">
+      <details data-package-disclaimer="true" className="group mx-auto mt-3 max-w-2xl text-left text-[0.68rem] leading-relaxed text-ivory/55">
         <summary className="mx-auto w-fit cursor-pointer rounded-full px-3 py-1 text-center font-medium uppercase tracking-[0.14em] transition-colors hover:text-ivory/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone">
           Pricing notes
         </summary>

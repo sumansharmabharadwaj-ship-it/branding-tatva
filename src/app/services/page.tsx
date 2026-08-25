@@ -56,16 +56,16 @@ const servicesJsonLd = {
   "@type": "CollectionPage",
   "@id": `${SERVICES_URL}#page`,
   url: SERVICES_URL,
-  name: "Brand Strategy Services | Branding Tatva",
+  name: "Brand Strategy & Systems | Branding Tatva",
   description:
-    "Founder-led remote brand strategy, positioning, messaging, identity and content systems for service businesses in the United States, United Kingdom and India.",
+    "Founder led remote brand strategy, positioning, messaging, identity and content systems for service businesses in the United States, United Kingdom and India.",
   author: { "@id": PERSON_ID },
   publisher: { "@id": ORGANIZATION_ID },
   breadcrumb: {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: site.url },
-      { "@type": "ListItem", position: 2, name: "Services", item: SERVICES_URL },
+      { "@type": "ListItem", position: 2, name: "Brand Strategy & Systems", item: SERVICES_URL },
     ],
   },
   mainEntity: { "@id": `${SERVICES_URL}#catalog` },
@@ -124,12 +124,12 @@ const engagementsJsonLd = {
 export const metadata: Metadata = {
   title: "Brand Strategy for Service Businesses",
   description:
-    "Founder-led brand strategy, positioning, messaging, identity and content systems for service businesses in the US, UK and India, delivered remotely by Suman Sharma.",
+    "Founder led brand strategy, positioning, messaging, identity and content systems for service businesses in the US, UK and India, delivered remotely by Suman Sharma.",
   alternates: { canonical: "/services" },
   openGraph: {
     title: "Brand Strategy for Service Businesses | Branding Tatva",
     description:
-      "Founder-led brand strategy, positioning, messaging, identity and content systems for service businesses in the US, UK and India, delivered remotely by Suman Sharma.",
+      "Founder led brand strategy, positioning, messaging, identity and content systems for service businesses in the US, UK and India, delivered remotely by Suman Sharma.",
     type: "website",
   },
 };
@@ -204,11 +204,12 @@ export default async function ServicesPage() {
             frame. The scene still advances quickly because the veil and
             word reveal respond inside the viewport, not by shortening it. */}
         <PhotoHero
+          id="services-opening"
           video="/videos/generated/bt-services-hero-root-system.mp4"
           videoMobile="/videos/generated/bt-services-hero-root-system-mobile.mp4"
           poster="/images/generated/bt-services-hero-root-system-poster.jpg"
           minHeight="100vh"
-          overlayGradient="linear-gradient(180deg, rgba(36,45,39,0.28) 0%, rgba(36,45,39,0.38) 58%, rgba(36,45,39,0.58) 100%)"
+          overlayGradient="linear-gradient(180deg, rgba(36,45,39,0.16) 0%, rgba(36,45,39,0.24) 58%, rgba(36,45,39,0.42) 100%)"
           playbackRate={1.15}
         >
           {/* Original generated hero loop: a living underground root
@@ -225,16 +226,19 @@ export default async function ServicesPage() {
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
-            style={{ backgroundImage: "linear-gradient(90deg, rgba(34,42,37,0.28) 0%, rgba(34,42,37,0.08) 45%, transparent 70%)" }}
+            style={{ backgroundImage: "linear-gradient(90deg, rgba(27,36,31,0.58) 0%, rgba(27,36,31,0.22) 48%, transparent 76%)" }}
           />
           {/* The headline resolves by word, not character. It
               participates in the scene without delaying basic
               comprehension. */}
           <Container className="relative py-20 sm:py-28">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
-              <Reveal delay={0.35}>
+              <Reveal
+                delay={0.35}
+                className="rounded-[1.75rem] border border-ivory/10 bg-[rgba(22,30,25,0.36)] p-5 shadow-[0_28px_90px_rgba(10,16,13,0.2)] backdrop-blur-xl sm:p-7"
+              >
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/90">
-                  Curiosity
+                  Brand strategy &amp; systems
                 </span>
                 {/* Phase 4 persuasion pass: the old headline asked a
                     question ("Why should a business care about
@@ -252,13 +256,11 @@ export default async function ServicesPage() {
                   splitType="words"
                   className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
                 >
-                  The work begins wherever recognition is breaking down.
+                  One position. Every brand decision moving in the same direction.
                 </SplitReveal>
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/90">
-                  A documented client engagement moved from{" "}
-                  <span className="font-medium text-sandstone">0.71%</span> to{" "}
-                  <span className="font-medium text-sandstone">2.81%</span> in eight weeks. The chapters below show
-                  where recognition breaks—and the work that repairs it.
+                  Positioning, identity, messaging and content become one recognition system. Choose the situation
+                  closest to yours, inspect the work, then trace one verified result.
                 </p>
                 {/* The hero's one quiet action — a visitor sold by the
                     opening claim previously had nowhere to act until the
@@ -271,10 +273,10 @@ export default async function ServicesPage() {
                 <div className="mt-7">
                   <Magnetic>
                     <a
-                      href="#book"
+                      href="#situation"
                       className="group inline-flex items-baseline gap-2 text-sm tracking-wide text-ivory/90 transition-colors duration-300 hover:text-ivory"
                     >
-                      <span className="link-underline">Ready already? Open the strategy room</span>
+                      <span className="link-underline">Find where the work begins</span>
                       <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-y-0.5">
                         ↓
                       </span>
@@ -343,7 +345,7 @@ export default async function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(16,19,20,0.82) 0%, rgba(16,19,20,0.56) 46%, rgba(16,19,20,0.28) 100%)",
+                "linear-gradient(100deg, rgba(16,19,20,0.66) 0%, rgba(16,19,20,0.34) 46%, rgba(16,19,20,0.14) 100%)",
             }}
           />
           <div data-services-content-plane="true" className="relative">
@@ -377,7 +379,7 @@ export default async function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(16,20,19,0.84) 0%, rgba(16,20,19,0.64) 46%, rgba(16,20,19,0.44) 100%)",
+                "linear-gradient(100deg, rgba(16,20,19,0.62) 0%, rgba(16,20,19,0.36) 46%, rgba(16,20,19,0.16) 100%)",
             }}
           />
           <div data-services-content-plane="true" className="relative w-full">
@@ -407,7 +409,7 @@ export default async function ServicesPage() {
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(14,23,20,0.55) 0%, rgba(14,23,20,0.35) 45%, rgba(14,23,20,0.58) 100%)",
+                "linear-gradient(180deg, rgba(14,23,20,0.34) 0%, rgba(14,23,20,0.16) 45%, rgba(14,23,20,0.4) 100%)",
             }}
           />
           {/* Scene dissolve: the situation chapter's charcoal into
@@ -435,7 +437,7 @@ export default async function ServicesPage() {
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(13,18,18,0.88) 0%, rgba(13,18,18,0.74) 48%, rgba(13,18,18,0.7) 100%)",
+                "linear-gradient(100deg, rgba(13,18,18,0.58) 0%, rgba(13,18,18,0.36) 48%, rgba(13,18,18,0.28) 100%)",
             }}
           />
           <SceneVeil color="#0E1714" />
@@ -476,7 +478,7 @@ export default async function ServicesPage() {
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(102deg, rgba(13,19,17,0.9) 0%, rgba(16,24,21,0.68) 48%, rgba(16,24,21,0.54) 100%)",
+                "linear-gradient(102deg, rgba(13,19,17,0.62) 0%, rgba(16,24,21,0.36) 48%, rgba(16,24,21,0.2) 100%)",
             }}
           />
           <SceneVeil color="#191B16" />
@@ -505,7 +507,7 @@ export default async function ServicesPage() {
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(13,18,17,0.84) 0%, rgba(13,18,17,0.64) 50%, rgba(13,18,17,0.44) 100%)",
+                "linear-gradient(100deg, rgba(13,18,17,0.62) 0%, rgba(13,18,17,0.36) 50%, rgba(13,18,17,0.18) 100%)",
             }}
           />
           <SceneVeil color="#141A15" />
@@ -526,7 +528,7 @@ export default async function ServicesPage() {
           image="/images/generated/bt-services-strategy-room-poster.jpg"
           video="/videos/generated/bt-services-strategy-room.mp4"
           videoMobile="/videos/generated/bt-services-strategy-room-mobile.mp4"
-          overlayGradient="linear-gradient(180deg, rgba(10,15,16,0.42) 0%, rgba(14,18,18,0.52) 52%, rgba(20,17,14,0.74) 100%)"
+          overlayGradient="linear-gradient(180deg, rgba(10,15,16,0.26) 0%, rgba(14,18,18,0.34) 52%, rgba(20,17,14,0.54) 100%)"
           className="flex min-h-[100svh] scroll-mt-24 flex-col justify-center pb-16 pt-24 sm:pb-20 sm:pt-32"
         >
           <StrategyRoomCTA />

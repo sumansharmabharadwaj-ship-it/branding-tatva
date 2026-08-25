@@ -1,0 +1,134 @@
+/* -------------------------------------------------------------------------- */
+/* Brand Strategy & Systems · luminous clarity                                */
+/* -------------------------------------------------------------------------- */
+
+/* The source films remain visible and luminous. Local glass surfaces carry
+   reading contrast, so the complete frame no longer needs a heavy dark grade. */
+#main-content [data-background-video-stage="true"],
+#authority [data-authority-media-plane="true"] [data-background-video-stage="true"],
+#book [data-textured-media-stage="true"],
+#services-opening > img,
+#services-opening > video {
+  filter: brightness(1.13) saturate(0.82) contrast(0.96);
+}
+
+#services-opening [data-services-hero-index="true"] {
+  border: 1px solid rgba(244, 239, 230, 0.1);
+  border-radius: 1.35rem;
+  background: rgba(24, 33, 28, 0.34);
+  box-shadow: 0 24px 80px rgba(8, 14, 11, 0.18);
+  padding: 0.45rem 0.85rem;
+  backdrop-filter: blur(22px) saturate(0.8);
+}
+
+#situation [data-services-chapter-copy="true"],
+#offerings [data-services-chapter-copy="true"],
+#authority [data-authority-copy="true"],
+#education [data-services-chapter-copy="true"] {
+  width: calc(100% + 2rem);
+  margin: -1rem;
+  border: 1px solid rgba(244, 239, 230, 0.1);
+  border-radius: 1.6rem;
+  background:
+    linear-gradient(135deg, rgba(26, 36, 30, 0.66), rgba(19, 27, 23, 0.42));
+  box-shadow:
+    0 24px 80px rgba(7, 13, 10, 0.2),
+    inset 0 1px rgba(244, 239, 230, 0.05);
+  padding: 1rem;
+  backdrop-filter: blur(24px) saturate(0.82);
+}
+
+[data-situation-detail="true"] {
+  border: 1px solid rgba(244, 239, 230, 0.12);
+  background:
+    linear-gradient(135deg, rgba(28, 39, 32, 0.78), rgba(20, 30, 25, 0.58)) !important;
+  box-shadow:
+    0 26px 80px rgba(6, 12, 9, 0.24),
+    inset 0 1px rgba(244, 239, 230, 0.06);
+}
+
+#offerings .services-discipline-rail,
+#offerings [data-service-discipline-panel-shell="true"] {
+  border-color: rgba(244, 239, 230, 0.16) !important;
+  background: rgba(16, 25, 21, 0.7) !important;
+  box-shadow:
+    0 28px 90px rgba(6, 12, 9, 0.24),
+    inset 0 1px rgba(244, 239, 230, 0.05);
+  backdrop-filter: blur(26px) saturate(0.82);
+}
+
+#desire [data-services-chapter-instrument="true"] > button,
+#desire [data-services-chapter-resolution="true"] > div {
+  box-shadow: 0 24px 78px rgba(7, 13, 11, 0.2);
+}
+
+#authority [data-authority-desktop-layer="true"] {
+  text-shadow: 0 1px 18px rgba(5, 10, 8, 0.22);
+}
+
+#education [data-services-chapter-instrument="true"],
+#education [data-services-chapter-resolution="true"] {
+  border-color: rgba(244, 239, 230, 0.16);
+  background-color: rgba(16, 25, 21, 0.68);
+}
+
+/* The fixed rail belongs to the film, while its active label stays readable
+   over both luminous footage and deeper glass chapters. */
+html[data-services-experience="active"] nav[aria-label="Jump to section"]
+  [aria-current="location"] > span:first-child {
+  box-shadow:
+    0 18px 56px rgba(7, 12, 10, 0.32),
+    inset 0 1px rgba(244, 239, 230, 0.06);
+}
+
+@media (min-width: 1024px) and (max-height: 820px) {
+  #situation [data-services-chapter-copy="true"],
+  #offerings [data-services-chapter-copy="true"],
+  #authority [data-authority-copy="true"],
+  #education [data-services-chapter-copy="true"] {
+    width: calc(100% + 1.4rem);
+    margin: -0.7rem;
+    border-radius: 1.25rem;
+    padding: 0.7rem;
+  }
+
+  #proof [data-verified-outcome-phase] {
+    gap: 2rem;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  #services-opening [data-services-hero-index="true"] {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    backdrop-filter: none;
+  }
+
+  #situation [data-services-chapter-copy="true"],
+  #offerings [data-services-chapter-copy="true"],
+  #authority [data-authority-copy="true"],
+  #education [data-services-chapter-copy="true"] {
+    width: 100%;
+    margin: 0;
+    border-radius: 1.25rem;
+    padding: 1rem;
+  }
+
+  #proof [data-verified-outcome-phase] {
+    border-radius: 1.5rem;
+    padding: 1.15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #main-content [data-background-video-stage="true"],
+  #authority [data-authority-media-plane="true"] [data-background-video-stage="true"],
+  #book [data-textured-media-stage="true"],
+  #services-opening > img,
+  #services-opening > video {
+    filter: brightness(1.08) saturate(0.78) contrast(0.98);
+  }
+}

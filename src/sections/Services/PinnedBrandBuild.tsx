@@ -170,7 +170,7 @@ export function PinnedBrandBuild() {
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(100deg, rgba(15,17,19,0.88) 0%, rgba(15,17,19,0.62) 46%, rgba(15,17,19,0.46) 100%)",
+                "linear-gradient(100deg, rgba(15,17,19,0.58) 0%, rgba(15,17,19,0.34) 46%, rgba(15,17,19,0.18) 100%)",
             }}
           />
         </div>

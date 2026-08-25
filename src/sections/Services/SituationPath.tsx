@@ -203,6 +203,7 @@ export function SituationPath() {
                       className="overflow-hidden"
                     >
                       <div
+                        data-situation-detail="true"
                         className="mb-7 rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-7"
                         style={{ borderTopColor: pkg.color, backgroundColor: "rgba(244,239,230,0.05)" }}
                       >

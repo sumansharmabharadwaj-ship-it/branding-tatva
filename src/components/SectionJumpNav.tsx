@@ -14,6 +14,10 @@ type ServicesChapterEventDetail = {
   chapters?: Array<{ href?: string; label?: string }>;
 };
 
+type ServicesActiveChapterEventDetail = {
+  href?: string;
+};
+
 type SectionJumpNavProps = {
   items: JumpItem[];
   // Conversion chapters such as a booking room need the viewport back.
@@ -26,6 +30,7 @@ type SectionJumpNavProps = {
 };
 
 const SERVICES_CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
+const SERVICES_ACTIVE_CHAPTER_EVENT = "bt:services-active-chapter";
 
 function validChapterItems(chapters: ServicesChapterEventDetail["chapters"]): JumpItem[] {
   if (!Array.isArray(chapters)) return [];
@@ -95,6 +100,24 @@ export function SectionJumpNav({
   }, [isServicesRoute]);
 
   useEffect(() => {
+    if (isServicesRoute) {
+      function syncFromRuntime(event?: Event) {
+        const eventHref = (event as CustomEvent<ServicesActiveChapterEventDetail> | undefined)?.detail?.href;
+        const activeId = document.documentElement.dataset.servicesActiveChapterId;
+        const href = eventHref ?? (activeId ? `#${activeId}` : "");
+        if (href && navigationItems.some((item) => item.href === href)) {
+          setActiveHref(href);
+        }
+      }
+
+      window.addEventListener(SERVICES_ACTIVE_CHAPTER_EVENT, syncFromRuntime as EventListener);
+      const frame = window.requestAnimationFrame(() => syncFromRuntime());
+      return () => {
+        window.cancelAnimationFrame(frame);
+        window.removeEventListener(SERVICES_ACTIVE_CHAPTER_EVENT, syncFromRuntime as EventListener);
+      };
+    }
+
     const sections = navigationItems
       .map((item) => document.querySelector(item.href))
       .filter((element): element is Element => element !== null);
@@ -144,7 +167,7 @@ export function SectionJumpNav({
 
     sections.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
-  }, [navigationItems]);
+  }, [isServicesRoute, navigationItems]);
 
   const activeIndex = Math.max(0, navigationItems.findIndex((item) => item.href === activeHref));
   const activeItem = navigationItems[activeIndex] ?? navigationItems[0];

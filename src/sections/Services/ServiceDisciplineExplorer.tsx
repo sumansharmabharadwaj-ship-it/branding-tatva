@@ -213,7 +213,10 @@ export function ServiceDisciplineExplorer() {
                 </div>
               </div>
 
-              <div className="relative mt-4 min-h-[22rem] overflow-hidden rounded-3xl border border-ivory/14 bg-[rgba(10,16,16,0.58)] p-6 backdrop-blur-lg sm:p-8 lg:min-h-[24rem]">
+              <div
+                data-service-discipline-panel-shell="true"
+                className="relative mt-4 min-h-[22rem] overflow-hidden rounded-3xl border border-ivory/14 bg-[rgba(10,16,16,0.58)] p-6 backdrop-blur-lg sm:p-8 lg:min-h-[24rem]"
+              >
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full blur-3xl"

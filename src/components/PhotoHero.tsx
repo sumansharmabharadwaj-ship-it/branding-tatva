@@ -41,6 +41,7 @@ const gradient =
 
 export function PhotoHero({
   children,
+  id,
   image,
   video,
   videoMobile,
@@ -53,6 +54,9 @@ export function PhotoHero({
   playbackRate = 1,
 }: {
   children?: React.ReactNode;
+  // A server rendered anchor keeps chapter links stable before client
+  // motion and smooth scrolling hydrate.
+  id?: string;
   image?: string;
   video?: string;
   videoMobile?: string;
@@ -89,6 +93,7 @@ export function PhotoHero({
 
   return (
     <section
+      id={id}
       className={`relative flex items-center overflow-hidden bg-soil ${className ?? ""}`}
       style={{ minHeight: toSvh(minHeight) }}
     >

@@ -79,30 +79,30 @@
     padding-block: 2rem !important;
   }
 
-  [data-package-selector="true"] > p:first-child,
-  [data-package-selector="true"] > h2 {
+  [data-package-selector="true"] > [data-services-chapter-copy="true"] > p:first-child,
+  [data-package-selector="true"] > [data-services-chapter-copy="true"] > h2 {
     margin-top: 0.25rem !important;
   }
 
-  [data-package-selector="true"] > div:nth-of-type(1) {
+  [data-package-selector="true"] > [data-services-chapter-instrument="true"] {
     margin-top: 1.25rem !important;
     gap: 0.65rem !important;
   }
 
-  [data-package-selector="true"] > div:nth-of-type(1) > button {
+  [data-package-selector="true"] > [data-services-chapter-instrument="true"] > button {
     padding: 0.9rem !important;
   }
 
-  [data-package-selector="true"] > div:nth-of-type(2) {
+  [data-package-selector="true"] > [data-package-controls="true"] {
     margin-top: 0.65rem !important;
   }
 
-  [data-package-selector="true"] > div:nth-of-type(3) {
+  [data-package-selector="true"] > [data-services-chapter-resolution="true"] {
     min-height: 0 !important;
     margin-top: 0.9rem !important;
   }
 
-  [data-package-selector="true"] > div:nth-of-type(3) > div {
+  [data-package-selector="true"] > [data-services-chapter-resolution="true"] > div {
     padding: 1rem 1.25rem !important;
   }
 

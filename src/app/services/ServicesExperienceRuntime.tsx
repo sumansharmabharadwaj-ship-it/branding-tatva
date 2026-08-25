@@ -2,10 +2,10 @@
 
 import { useEffect } from "react";
 
-const ACTIVE_ROOT_MARGIN = "-18% 0px -50% 0px";
 const SCENE_SELECTOR = "[data-services-scene], #authority, #book";
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
+const ACTIVE_CHAPTER_EVENT = "bt:services-active-chapter";
 
 const SCENE_MOTION: Record<
   string,
@@ -59,7 +59,7 @@ function orderedScenes(main: HTMLElement) {
 }
 
 function sceneKey(scene: HTMLElement, index: number) {
-  return scene.dataset.servicesScene || scene.id || (index === 0 ? "opening" : `scene-${index + 1}`);
+  return scene.dataset.servicesScene || (index === 0 ? "opening" : scene.id || `scene-${index + 1}`);
 }
 
 export function ServicesExperienceRuntime() {
@@ -74,7 +74,6 @@ export function ServicesExperienceRuntime() {
     const hero = firstScene;
 
     document.documentElement.dataset.servicesExperience = "active";
-    const ratios = new Map<HTMLElement, number>();
     const signalLayers = new Map<HTMLElement, HTMLSpanElement>();
     const generatedIds = new Set<HTMLElement>();
     const heroMedia = Array.from(
@@ -86,7 +85,6 @@ export function ServicesExperienceRuntime() {
     const heroFragments = document.createElement("span");
     let activeIndex = 0;
     let frame = 0;
-    let hashRestoreFrame = 0;
     let pointerFrame = 0;
     let pointerX = 0;
     let pointerY = 0;
@@ -175,18 +173,6 @@ export function ServicesExperienceRuntime() {
       }),
     );
 
-    // Some chapters receive their stable IDs during this client runtime. On a
-    // fresh URL such as /services#stakes the browser performs its native hash
-    // lookup before those IDs exist, so it has nothing to scroll to. Re-run
-    // that one native alignment after IDs are assigned. Ordinary anchor clicks
-    // after hydration remain completely browser controlled.
-    const requestedHash = window.location.hash.slice(1);
-    if (requestedHash && scenes.some((scene) => scene.id === requestedHash)) {
-      hashRestoreFrame = window.requestAnimationFrame(() => {
-        document.getElementById(requestedHash)?.scrollIntoView({ behavior: "auto", block: "start" });
-      });
-    }
-
     function publishChapter(index: number) {
       if (index === activeIndex && document.documentElement.dataset.servicesActiveChapter) return;
       const chapter = scenes[index] ?? scenes[0];
@@ -210,32 +196,48 @@ export function ServicesExperienceRuntime() {
       scenes.forEach((scene, sceneIndex) => {
         scene.dataset.servicesActive = sceneIndex === index ? "true" : "false";
       });
+
+      window.dispatchEvent(
+        new CustomEvent(ACTIVE_CHAPTER_EVENT, {
+          detail: {
+            id: chapter.id,
+            href: `#${chapter.id}`,
+            index,
+            label: chapter.dataset.servicesChapterLabel,
+            scene: chapter.dataset.servicesScrollScene,
+          },
+        }),
+      );
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          ratios.set(entry.target as HTMLElement, entry.isIntersecting ? entry.intersectionRatio : 0);
-        });
+    // One geometric focal line owns chapter state. Intersection ratios can
+    // briefly favour a previous full-height scene after a hash jump, which is
+    // why the rail could still announce Opening signal beside Client proof.
+    // The focal line follows the content plane and resolves identically for
+    // wheel, trackpad, touch, keyboard and direct anchors.
+    function chapterAtFocalLine(viewportHeight: number) {
+      const focalY = viewportHeight * 0.34;
+      let nearestIndex = 0;
+      let nearestDistance = Number.POSITIVE_INFINITY;
 
-        let nextIndex = activeIndex;
-        let strongest = -1;
-        scenes.forEach((scene, index) => {
-          const ratio = ratios.get(scene) ?? 0;
-          if (ratio > strongest) {
-            strongest = ratio;
-            nextIndex = index;
-          }
-        });
-        publishChapter(nextIndex);
-      },
-      {
-        rootMargin: ACTIVE_ROOT_MARGIN,
-        threshold: [0, 0.08, 0.2, 0.38, 0.62],
-      },
-    );
+      scenes.forEach((scene, index) => {
+        const bounds = scene.getBoundingClientRect();
+        if (bounds.top <= focalY && bounds.bottom > focalY) {
+          nearestIndex = index;
+          nearestDistance = -1;
+          return;
+        }
+        if (nearestDistance < 0) return;
 
-    scenes.forEach((scene) => observer.observe(scene));
+        const distance = bounds.top > focalY ? bounds.top - focalY : focalY - bounds.bottom;
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestIndex = index;
+        }
+      });
+
+      return nearestIndex;
+    }
 
     function updateHeroProgress(viewportHeight: number) {
       const bounds = hero.getBoundingClientRect();
@@ -298,6 +300,7 @@ export function ServicesExperienceRuntime() {
         smoothedVelocity.toFixed(4),
       );
       updateHeroProgress(viewportHeight);
+      publishChapter(chapterAtFocalLine(viewportHeight));
 
       scenes.forEach((scene) => {
         const bounds = scene.getBoundingClientRect();
@@ -478,9 +481,7 @@ export function ServicesExperienceRuntime() {
 
     return () => {
       window.cancelAnimationFrame(frame);
-      window.cancelAnimationFrame(hashRestoreFrame);
       window.cancelAnimationFrame(pointerFrame);
-      observer.disconnect();
       window.removeEventListener("scroll", scheduleProgress);
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);

@@ -68,7 +68,10 @@ export function VerifiedOutcome() {
 
   return (
     <Container className="max-w-6xl">
-      <div data-verified-outcome-phase={activeBeat} className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-20">
+      <div
+        data-verified-outcome-phase={activeBeat}
+        className="grid gap-10 rounded-[2rem] border border-ivory/12 bg-[rgba(18,26,23,0.5)] p-6 shadow-[0_32px_110px_rgba(7,12,10,0.28)] backdrop-blur-xl sm:p-8 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-16 lg:p-10"
+      >
         <div data-services-chapter-copy="true">
           <Reveal>
             <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Verified outcome</p>
