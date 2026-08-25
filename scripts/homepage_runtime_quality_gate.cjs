@@ -38,6 +38,12 @@ assert(analytics.includes("runtimeIssueKeys.has"), "Runtime issues are not dedup
 assert(pacing.includes('querySelectorAll<HTMLElement>("[data-home-reading-plane]")'), "Pacing health accepts decorative content as readable.");
 assert(pacing.includes("changedActiveSections.forEach"), "Active panel replacements do not trigger a visibility recheck.");
 assert(pacing.includes("}, 400);"), "Readable content is not checked within the 400 millisecond contract.");
+assert(pacing.includes("function forceReadableFallback"), "Missing homepage content is observed but not recovered.");
+assert(pacing.includes('section.dataset.homeSceneRecovery = "forced"'), "Scene recovery does not expose a deterministic state.");
+assert(pacing.includes("plane.getAnimations({ subtree: true })"), "Scene recovery leaves stranded child animations running.");
+assert(pacing.includes('plane.style.setProperty("opacity", "1", "important")'), "Scene recovery does not force a readable final opacity.");
+assert(pacing.includes('plane.style.setProperty("transform", "none", "important")'), "Scene recovery can leave content translated outside the viewport.");
+assert(pacing.includes('trackRuntimeIssue("scene_visibility_recovered"'), "Recovered homepage scenes are not measurable.");
 assert(diagnostic.includes('trackRuntimeIssue("diagnostic_transition_failed"'), "Diagnostic transition failures are silent.");
 assert(diagnostic.includes('aria-valuetext={done ? "Complete"'), "Diagnostic progress lacks an explicit spoken completion state.");
 assert(diagnostic.includes('aria-labelledby="brand-orbit-result-title"'), "Diagnostic result focus target lacks an accessible label.");
