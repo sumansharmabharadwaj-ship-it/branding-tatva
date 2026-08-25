@@ -28,7 +28,6 @@ html body .home-v4 #process .decision-flow__light {
   background:
     radial-gradient(circle at var(--decision-pointer-x) var(--decision-pointer-y), rgba(255, 249, 218, .46), transparent 21%),
     radial-gradient(circle at 76% 30%, rgba(255, 242, 193, .3), transparent 30%);
-  transition: background-position 600ms cubic-bezier(.22, 1, .36, 1);
 }
 
 html body .home-v4 #process .decision-flow__shell {
@@ -61,7 +60,8 @@ html body .home-v4 #process .decision-flow__header h2 {
 html body .home-v4 #process .decision-flow__header > p {
   max-width: 35ch;
   margin: 0 0 .1rem;
-  font-size: clamp(.78rem, .9vw, .94rem);
+  color: rgba(32, 50, 40, .86);
+  font-size: clamp(.875rem, 1vw, 1rem);
   line-height: 1.5;
 }
 
@@ -95,7 +95,8 @@ html body .home-v4 #process .decision-flow__stage h3 {
 html body .home-v4 #process .decision-flow__explanation {
   max-width: 39rem;
   margin-top: clamp(.65rem, 1.35svh, .95rem);
-  font-size: clamp(.78rem, .92vw, .94rem);
+  color: rgba(32, 50, 40, .88);
+  font-size: clamp(.875rem, 1vw, 1rem);
   line-height: 1.5;
 }
 
@@ -115,7 +116,7 @@ html body .home-v4 #process .decision-flow__stage .decision-flow__result > div {
 }
 
 html body .home-v4 #process .decision-flow__stage .decision-flow__result dt {
-  color: rgba(32, 50, 40, .58);
+  color: rgba(32, 50, 40, .72);
 }
 
 html body .home-v4 #process .decision-flow__stage .decision-flow__result dd {
@@ -134,7 +135,7 @@ html body .home-v4 #process .decision-flow__selector {
 
 html body .home-v4 #process .decision-flow__selector-label {
   padding: 0 0 .6rem;
-  color: rgba(251, 246, 233, .88);
+  color: rgba(251, 246, 233, .94);
   text-shadow: 0 2px 20px rgba(12, 28, 20, .46);
 }
 
@@ -143,9 +144,8 @@ html body .home-v4 #process .decision-flow__rail {
   overflow: visible;
   grid-template-columns: 1fr;
   border: 0;
-  background: rgba(28, 47, 37, .32);
-  box-shadow: 0 24px 70px rgba(23, 39, 31, .12);
-  backdrop-filter: blur(18px) saturate(.78);
+  background: rgba(28, 47, 37, .68);
+  backdrop-filter: blur(8px) saturate(.82);
 }
 
 html body .home-v4 #process .decision-flow__rail::before {
@@ -166,7 +166,7 @@ html body .home-v4 #process .decision-flow__rail button {
   align-items: center;
   border: 0;
   border-bottom: 1px solid rgba(255, 248, 232, .16);
-  color: rgba(255, 250, 238, .7);
+  color: rgba(255, 250, 238, .88);
 }
 
 html body .home-v4 #process .decision-flow__rail button:last-child {
@@ -191,7 +191,7 @@ html body .home-v4 #process .decision-flow__rail button::before {
 html body .home-v4 #process .decision-flow__rail button:hover,
 html body .home-v4 #process .decision-flow__rail button:focus-visible,
 html body .home-v4 #process .decision-flow__rail button.is-active {
-  background: linear-gradient(90deg, rgba(255, 248, 232, .13), rgba(255, 248, 232, .035));
+  background: linear-gradient(90deg, rgba(255, 248, 232, .18), rgba(255, 248, 232, .06));
 }
 
 html body .home-v4 #process .decision-flow__rail button:hover::before,
@@ -206,8 +206,8 @@ html body .home-v4 #process .decision-flow__rail button > span {
   position: absolute;
   right: .85rem;
   grid-column: 2;
-  color: rgba(255, 249, 237, .48);
-  font-size: .56rem;
+  color: rgba(255, 249, 237, .72);
+  font-size: .68rem;
 }
 
 html body .home-v4 #process .decision-flow__rail button strong {

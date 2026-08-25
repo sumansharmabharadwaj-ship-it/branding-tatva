@@ -403,7 +403,7 @@ export function HomeBrandHealthCheck() {
               <div className="brand-orbit__result-action">
                 <span>The strategic centre</span>
                 <strong>{result.signal}</strong>
-                <Link href={result.href}>{result.action} <i aria-hidden="true">↗</i></Link>
+                <Link href={result.href}>{result.action} <i aria-hidden="true">→</i></Link>
                 <Link href="/contact#call">Discuss this diagnosis <i aria-hidden="true">→</i></Link>
                 <button type="button" onClick={reviewAnswers}>Review or change answers</button>
                 <button type="button" onClick={reset}>Take the quiz again</button>

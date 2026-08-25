@@ -303,7 +303,7 @@ export function PathsCinematicChapter() {
               </dl>
               <p className="paths-film__proof">{active.proof}</p>
               <Link href={active.href} onClick={() => publishSituation(active.situation)}>
-                Explore this service path <span aria-hidden="true">↗</span>
+                Explore this service path <span aria-hidden="true">→</span>
               </Link>
             </motion.article>
           </AnimatePresence>

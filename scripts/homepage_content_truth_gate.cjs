@@ -12,6 +12,9 @@ const questions = read("src/sections/Home/HomeQuestionsScene.tsx");
 const faqs = read("src/data/faqs.ts");
 const experience = read("src/sections/HomeV4/HomeV4Experience.tsx");
 const invitationCss = read("src/app/home-v4-invitation-cinematic-final.css");
+const paths = read("src/sections/Home/PathsCinematicChapter.tsx");
+const diagnostic = read("src/sections/Home/HomeBrandHealthCheck.tsx");
+const methodCss = read("src/app/home-v4-process-living-final.css");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -37,7 +40,11 @@ assert(audio.includes("h-11 w-11"), "Ambient audio control is smaller than 44 by
 assert(!/strategize/.test(`${questions}\n${faqs}`), "Homepage FAQ has drifted from the site's British spelling system.");
 assert(!questions.includes("↗"), "Homepage FAQ uses an external-link arrow for an internal control or route.");
 assert(!studio.includes("↗"), "Studio proof uses an external-link arrow for an internal route.");
+assert(!paths.includes("↗"), "Service path uses an external-link arrow for an internal route.");
+assert(!diagnostic.includes("↗"), "Diagnostic result uses an external-link arrow for an internal route.");
 assert(experience.includes("rgba(238,224,198,0.88) 100%"), "Final invitation loses its reading surface over the dark film edge.");
 assert(/final-invitation__promise > p:first-child\s*\{[^}]*font-size: 0\.75rem/.test(invitationCss), "Final invitation utility text has returned below its readable size.");
+assert(methodCss.includes("background: rgba(28, 47, 37, .68);"), "Method selector has lost its stable contrast surface.");
+assert(methodCss.includes("font-size: clamp(.875rem, 1vw, 1rem);"), "Method supporting copy has returned below its desktop reading size.");
 
 console.log("Homepage content truth gate passed: claim boundaries, honest call promise, booking facts, navigation grammar, invitation legibility, and audio target verified.");
