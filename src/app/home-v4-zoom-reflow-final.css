@@ -254,6 +254,15 @@
     display: inline-flex;
   }
 
+  html body .home-v4 #evidence .evidence-cinematic__index {
+    grid-auto-columns: auto;
+    grid-auto-flow: row;
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: visible;
+    padding-bottom: 0;
+    scroll-snap-type: none;
+  }
+
   .home-v4 .questions-editorial__footerline {
     display: flex;
   }
