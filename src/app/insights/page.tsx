@@ -5,7 +5,6 @@ import { Container } from "@/components/Container";
 import type { InsightCardPost } from "@/components/InsightCard";
 import { InsightsExplorer } from "@/components/InsightsExplorer";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { NewsletterForm } from "@/components/NewsletterForm";
 import { PhotoHero } from "@/components/PhotoHero";
 import { Reveal } from "@/components/Reveal";
 import { ScrollProgress } from "@/components/ScrollProgress";
@@ -27,6 +26,7 @@ import {
   InsightsEvidenceLedger,
   type EvidenceLayer,
 } from "@/sections/Insights/InsightsEvidenceLedger";
+import { InsightsFieldNotesResolution } from "@/sections/Insights/InsightsFieldNotesResolution";
 import { InsightsKnowledgeAtlas } from "@/sections/Insights/InsightsKnowledgeAtlas";
 import {
   InsightsSceneNavigator,
@@ -261,6 +261,11 @@ export default function InsightsPage() {
       };
     },
   );
+  const fieldNotesPaths = atlasPaths.map(({ slug, name, element }) => ({
+    slug,
+    name,
+    element,
+  }));
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -494,44 +499,7 @@ export default function InsightsPage() {
             className="insights-notes-scene"
           >
             <Container className="insights-notes-scene__camera">
-              <div className="insights-notes-scene__composition">
-                <div className="insights-notes-scene__copy">
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sandstone">
-                    Notes worth keeping
-                  </p>
-                  <h2 className="mt-4 max-w-2xl font-display text-display-md font-normal text-ivory">
-                    Keep the next brand decision close. Each note earns its
-                    place.
-                  </h2>
-                  <p className="mt-5 max-w-xl text-base leading-7 text-ivory/75">
-                    A single question, one practical lens, and a focused next
-                    move—sent when a new essay can carry real weight.
-                  </p>
-                  <ol
-                    className="insights-notes-scene__cadence"
-                    aria-label="What each field note contains"
-                  >
-                    <li>
-                      <span>01</span>
-                      <strong>Question</strong>
-                      <small>A tension worth examining</small>
-                    </li>
-                    <li>
-                      <span>02</span>
-                      <strong>Lens</strong>
-                      <small>Evidence or framework to use</small>
-                    </li>
-                    <li>
-                      <span>03</span>
-                      <strong>Move</strong>
-                      <small>A focused action to test</small>
-                    </li>
-                  </ol>
-                </div>
-                <div className="insights-notes-scene__form lg:min-w-96">
-                  <NewsletterForm />
-                </div>
-              </div>
+              <InsightsFieldNotesResolution paths={fieldNotesPaths} />
             </Container>
           </TexturedDark>
         </div>

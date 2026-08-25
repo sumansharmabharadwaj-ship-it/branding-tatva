@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { newsletterSchema, type NewsletterFormValues } from "@/lib/newsletter-schema";
 import { Magnetic } from "@/components/Magnetic";
 import { EASE_AIR } from "@/lib/motion";
+import { track } from "@/lib/analytics";
 
 type Status = "idle" | "submitting" | "success" | "already" | "error";
 
@@ -16,7 +17,7 @@ type Status = "idle" | "submitting" | "success" | "already" | "error";
 // any of ContactForm's own richness (spotlight, ripple) since this is
 // meant to read as a quiet, low-commitment aside next to the real
 // enquiry form, not a second version of it.
-export function NewsletterForm() {
+export function NewsletterForm({ readerPath }: { readerPath?: string }) {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -37,7 +38,7 @@ export function NewsletterForm() {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, source: "newsletter" }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -45,7 +46,12 @@ export function NewsletterForm() {
         setStatus("error");
         return;
       }
-      setStatus(data.alreadySubscribed ? "already" : "success");
+      const nextStatus = data.alreadySubscribed ? "already" : "success";
+      setStatus(nextStatus);
+      track("insights_field_note_requested", {
+        reader_path: readerPath ?? "none",
+        result: data.alreadySubscribed ? "already_held" : "confirmation_sent",
+      });
       reset();
     } catch {
       setServerError(

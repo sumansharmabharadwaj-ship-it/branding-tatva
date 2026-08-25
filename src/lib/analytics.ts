@@ -17,6 +17,7 @@ export type AnalyticsEvent =
   | "insights_path_selected"
   | "insights_article_selected"
   | "insights_evidence_layer_toggled"
+  | "insights_field_note_requested"
   | "imagine_your_brand_started"
   | "imagine_your_brand_completed"
   | "project_map_emailed"
