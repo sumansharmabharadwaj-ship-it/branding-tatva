@@ -30,7 +30,11 @@ export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
   const lineHeight = useVerticalLineProgress(ref);
 
   return (
-    <div ref={ref} className="relative mt-16 overflow-hidden rounded-2xl bg-soil px-4 py-10 pl-16 sm:px-8 sm:pl-20">
+    <div
+      ref={ref}
+      data-home-reading-plane
+      className="relative mt-16 overflow-hidden rounded-2xl bg-soil px-4 py-10 pl-16 sm:px-8 sm:pl-20"
+    >
       <div className="absolute left-[23px] top-12 bottom-12 w-px sm:left-[27px] bg-ivory/20" aria-hidden="true" />
       <motion.div
         className="absolute left-[23px] top-12 w-px origin-top sm:left-[27px] bg-sandstone"

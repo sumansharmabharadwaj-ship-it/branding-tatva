@@ -207,7 +207,7 @@ export function PathsCinematicChapter() {
       <div className="paths-film__frame">
         <header className="paths-film__header">
           <div className="paths-film__chapter">
-            <span>06</span>
+            <span>05</span>
             <p>Brand Strategy &amp; Systems</p>
           </div>
           <p className="paths-film__counter" aria-live="polite">

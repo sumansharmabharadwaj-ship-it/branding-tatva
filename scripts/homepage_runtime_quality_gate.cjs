@@ -9,6 +9,7 @@ const mounted = [
   "src/sections/Home/EvidenceWall.tsx",
   "src/sections/Home/PathsCinematicChapter.tsx",
   "src/sections/Process/RootSystem.tsx",
+  "src/sections/Process/VerticalJourney.tsx",
   "src/sections/Home/StudioCinematicChapter.tsx",
   "src/sections/Home/HomeQuestionsScene.tsx",
   "src/sections/Home/FinalInvitation.tsx",

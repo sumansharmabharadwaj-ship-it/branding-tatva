@@ -68,7 +68,12 @@ html body .home-v4 #invitation .final-invitation__headline {
 }
 
 .home-v4 #invitation .final-invitation__promise {
-  border-color: rgba(33, 54, 44, 0.28);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border: 1px solid rgba(33, 54, 44, 0.2);
+  border-radius: 1.25rem;
+  background: rgba(244, 239, 230, 0.78);
+  box-shadow: 0 18px 48px rgba(33, 54, 44, 0.1);
+  backdrop-filter: blur(14px) saturate(0.82);
 }
 
 .home-v4 #invitation .final-invitation__promise > p:first-child {
@@ -112,5 +117,10 @@ html body .home-v4 #invitation .final-invitation__headline {
 @media (prefers-reduced-motion: reduce) {
   html body .home-v4 #invitation [data-cursor-media] > video {
     transform: none !important;
+  }
+
+  .home-v4 #invitation .final-invitation__promise {
+    background: rgba(244, 239, 230, 0.9);
+    backdrop-filter: none;
   }
 }

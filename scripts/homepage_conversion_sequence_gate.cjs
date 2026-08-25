@@ -6,6 +6,16 @@ const source = fs.readFileSync(
   path.join(root, "src/sections/HomeV4/HomeV4Experience.tsx"),
   "utf8",
 );
+const mountedChapterSources = [
+  "src/sections/HomeV4/HomeV4Scenes.tsx",
+  "src/sections/Home/HomeBrandHealthCheck.tsx",
+  "src/sections/Home/EvidenceWall.tsx",
+  "src/sections/Home/PathsCinematicChapter.tsx",
+  "src/sections/Process/RootSystem.tsx",
+  "src/sections/Home/StudioCinematicChapter.tsx",
+  "src/sections/Home/HomeQuestionsScene.tsx",
+  "src/sections/Home/FinalInvitation.tsx",
+].map((file) => fs.readFileSync(path.join(root, file), "utf8"));
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -40,6 +50,23 @@ for (const removed of [
   "HomeV4HeaderDirector",
 ]) {
   assert(!source.includes(removed), `${removed} restored a removed chapter or competing runtime.`);
+}
+
+for (const [index, marker] of [
+  'data-home-chapter="opening"',
+  "02 · Brand diagnostic",
+  "<span>03</span>",
+  "04 · Selected work",
+  "<span>05</span>",
+  "06 · The method",
+  "07 · The thinking behind the work",
+  "08 · Before we work together",
+  "09 · Begin",
+].entries()) {
+  assert(
+    mountedChapterSources.some((chapter) => chapter.includes(marker)),
+    `Visible chapter ${String(index + 1).padStart(2, "0")} is missing its canonical label.`,
+  );
 }
 
 console.log("Homepage conversion sequence gate passed: one focused nine-chapter journey verified.");
