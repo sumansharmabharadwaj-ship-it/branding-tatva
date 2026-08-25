@@ -19,10 +19,13 @@ import type { InsightElement } from "@/data/insights";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
   clearInsightsIntent,
+  INSIGHTS_INTENT_CLEARED_EVENT,
   INSIGHTS_INTENT_EVENT,
+  publishInsightsIntent,
   readInsightsIntent,
   type InsightsIntentDetail,
 } from "@/lib/insights-intent";
+import { track } from "@/lib/analytics";
 
 type ExplorerTopic = {
   slug: string;
@@ -165,9 +168,17 @@ export function InsightsExplorer({
       applyIntent(detail);
     }
 
+    function releaseIntent() {
+      setCarriedIntent(undefined);
+    }
+
     window.addEventListener(INSIGHTS_INTENT_EVENT, carryIntent);
+    window.addEventListener(INSIGHTS_INTENT_CLEARED_EVENT, releaseIntent);
     applyIntent(readInsightsIntent());
-    return () => window.removeEventListener(INSIGHTS_INTENT_EVENT, carryIntent);
+    return () => {
+      window.removeEventListener(INSIGHTS_INTENT_EVENT, carryIntent);
+      window.removeEventListener(INSIGHTS_INTENT_CLEARED_EVENT, releaseIntent);
+    };
   }, [topics]);
 
   const filteredPosts = useMemo(() => {
@@ -209,7 +220,9 @@ export function InsightsExplorer({
   const signalLabel = carriedIntent
     ? carriedIntent.origin === "decision-mirror"
       ? "Carried from your mirror"
-      : "Carried from your atlas"
+      : carriedIntent.origin === "knowledge-atlas"
+        ? "Carried from your atlas"
+        : "Chosen in this library"
     : settledQuery
       ? inferredTopic
         ? "Strongest current"
@@ -253,6 +266,19 @@ export function InsightsExplorer({
   function releaseCarriedIntent() {
     clearInsightsIntent();
     setCarriedIntent(undefined);
+  }
+
+  function chooseTopic(topic: ExplorerTopic) {
+    publishInsightsIntent({
+      topicSlug: topic.slug,
+      query: "",
+      label: topic.name,
+      origin: "insights-library",
+    });
+    track("insights_path_selected", {
+      source: "insights_library",
+      path: topic.slug,
+    });
   }
 
   function recoverWithQuery(nextQuery: string) {
@@ -376,8 +402,13 @@ export function InsightsExplorer({
                 type="button"
                 onClick={() => {
                   releaseCarriedIntent();
+                  setQuery("");
                   setTopicSlug("all");
                   resetFolio();
+                  track("insights_path_selected", {
+                    source: "insights_library",
+                    path: "all",
+                  });
                 }}
                 aria-pressed={topicSlug === "all"}
                 className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
@@ -396,11 +427,7 @@ export function InsightsExplorer({
                   <button
                     key={topic.slug}
                     type="button"
-                    onClick={() => {
-                      releaseCarriedIntent();
-                      setTopicSlug(topic.slug);
-                      resetFolio();
-                    }}
+                    onClick={() => chooseTopic(topic)}
                     aria-pressed={active}
                     className="rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition"
                     style={{

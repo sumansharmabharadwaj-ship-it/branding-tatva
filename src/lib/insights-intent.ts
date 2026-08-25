@@ -1,8 +1,13 @@
 export const INSIGHTS_INTENT_EVENT = "branding-tatva:insights-intent";
+export const INSIGHTS_INTENT_CLEARED_EVENT =
+  "branding-tatva:insights-intent-cleared";
 const INSIGHTS_INTENT_STORAGE_KEY = "branding-tatva:insights-reader-trail";
 const INSIGHTS_INTENT_MAX_AGE = 30 * 60 * 1000;
 
-export type InsightsIntentOrigin = "decision-mirror" | "knowledge-atlas";
+export type InsightsIntentOrigin =
+  | "decision-mirror"
+  | "knowledge-atlas"
+  | "insights-library";
 
 export type InsightsIntentDetail = {
   topicSlug: string;
@@ -25,7 +30,9 @@ function isInsightsIntentDetail(value: unknown): value is InsightsIntentDetail {
     typeof detail.topicSlug === "string" &&
     typeof detail.query === "string" &&
     typeof detail.label === "string" &&
-    (detail.origin === "decision-mirror" || detail.origin === "knowledge-atlas")
+    (detail.origin === "decision-mirror" ||
+      detail.origin === "knowledge-atlas" ||
+      detail.origin === "insights-library")
   );
 }
 
@@ -38,6 +45,8 @@ export function clearInsightsIntent() {
     // Storage can be unavailable in strict privacy modes. The live event still
     // keeps the current page journey connected.
   }
+
+  window.dispatchEvent(new Event(INSIGHTS_INTENT_CLEARED_EVENT));
 }
 
 export function readInsightsIntent() {

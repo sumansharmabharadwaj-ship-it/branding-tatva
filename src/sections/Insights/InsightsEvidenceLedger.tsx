@@ -6,6 +6,7 @@ import { ArrowUpRight, Check, Plus } from "lucide-react";
 import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
+  INSIGHTS_INTENT_CLEARED_EVENT,
   INSIGHTS_INTENT_EVENT,
   readInsightsIntent,
   type InsightsIntentDetail,
@@ -44,11 +45,24 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       setReaderIntent((event as CustomEvent<InsightsIntentDetail>).detail);
     }
 
+    function releaseReaderIntent() {
+      setReaderIntent(undefined);
+    }
+
     window.addEventListener(INSIGHTS_INTENT_EVENT, carryReaderIntent);
+    window.addEventListener(
+      INSIGHTS_INTENT_CLEARED_EVENT,
+      releaseReaderIntent,
+    );
     setReaderIntent(readInsightsIntent());
 
-    return () =>
+    return () => {
       window.removeEventListener(INSIGHTS_INTENT_EVENT, carryReaderIntent);
+      window.removeEventListener(
+        INSIGHTS_INTENT_CLEARED_EVENT,
+        releaseReaderIntent,
+      );
+    };
   }, []);
 
   useEffect(() => {
@@ -268,6 +282,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               source: "insights_evidence_ledger",
               route: "audit_checklist",
               layer: actionLayer?.slug ?? "unselected",
+              reader_path: readerIntent?.topicSlug ?? "none",
             }}
           >
             Read the checklist
@@ -282,6 +297,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                 source: "insights_evidence_ledger",
                 route: latestMarkedLayer.service.slug,
                 layer: latestMarkedLayer.slug,
+                reader_path: readerIntent?.topicSlug ?? "none",
               }}
             >
               See where {latestMarkedLayer.service.name} fits
