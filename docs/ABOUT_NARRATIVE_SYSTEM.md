@@ -66,9 +66,18 @@ person and disciplines behind it. It uses only facts recorded in
 - 60 + 30 documented clinical/counselling internship hours
 - National Winner, “16 Frames” — Thomso ’19, IIT Roorkee
 
-The interaction translates each fact into a practical brand-strategy lens. The
-real portrait remains the visual anchor while the scroll controls crop, focus,
-aperture, evidence card, and editorial emphasis.
+The interaction translates each fact into a practical brand-strategy lens. All
+three fields remain visible as one formation map while the scroll gathers them
+around the real portrait and resolves them into the founder-led practice. The
+active record now holds one credential, one trained instinct, and one concise
+translation into brand work, removing the competing quote, term chips, giant
+word layer, and separate bottom control row from the earlier composition.
+
+The desktop runway is reduced from 158svh to 144svh. Pointer movement changes
+the portrait depth, scroll direction reverses the gathering sequence, and
+hover or keyboard focus can inspect any field. Touch and reduced-motion modes
+show the portrait, the three verified fields, and the completed synthesis in
+normal reading order.
 
 ## Synthesis chapter
 
