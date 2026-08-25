@@ -281,16 +281,39 @@
 .recordedOutput strong { color: #33291f; font-family: var(--font-display), Georgia, serif; font-size: 1rem; font-weight: 400; line-height: 1.2; }
 
 .sheetFooter {
-  display: flex;
+  display: grid;
   padding-top: .75rem;
   align-items: center;
-  justify-content: space-between;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 1rem;
 }
 
 .sheetFooter > div { display: flex; align-items: center; gap: .38rem; }
 .sheetFooter > div span { padding: .28rem .5rem; border: 1px solid rgba(110, 79, 53, .16); border-radius: 999px; color: rgba(51, 41, 31, .24); font-size: .46rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; transition: color 280ms ease, background-color 280ms ease; }
 .sheetFooter > div span[data-visible="true"] { color: #6e4f35; background: rgba(139, 101, 68, .08); }
+.continuityVerdict {
+  display: inline-flex;
+  margin: 0;
+  padding: .34rem .58rem;
+  align-items: center;
+  gap: .34rem;
+  border: 1px solid rgba(110, 79, 53, .2);
+  border-radius: 999px;
+  color: rgba(51, 41, 31, .48);
+  background: rgba(255, 250, 236, .2);
+  font-size: .46rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 360ms ease, border-color 360ms ease, background-color 360ms ease;
+}
+.continuityVerdict[data-complete="true"] {
+  border-color: rgba(110, 79, 53, .42);
+  color: #6e4f35;
+  background: rgba(139, 101, 68, .1);
+}
 .sheetFooter > a { display: inline-flex; align-items: center; gap: .35rem; color: #6e4f35; font-size: .5rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
 .sheetFooter > a:focus-visible { outline: 2px solid #8b6544; outline-offset: 4px; }
 
@@ -323,6 +346,7 @@
 @media (max-width: 1040px) {
   .activeRecord { grid-template-columns: minmax(8rem, .45fr) minmax(17rem, 1.25fr) minmax(9rem, .5fr); gap: 1.1rem; }
   .sheetFooter > div span { padding-inline: .35rem; }
+  .continuityVerdict { display: none; }
 }
 
 @media (max-width: 820px) {

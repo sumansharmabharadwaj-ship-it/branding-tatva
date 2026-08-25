@@ -236,13 +236,25 @@ export function WorkingDirectly() {
                     <span key={stage.label} data-visible={index <= sequence.activeIndex}>{stage.label}</span>
                   ))}
                 </div>
+                <p
+                  className={styles.continuityVerdict}
+                  data-complete={sequence.activeIndex === STAGES.length - 1}
+                  aria-live="polite"
+                >
+                  <FileText size={13} aria-hidden="true" />
+                  <span>
+                    {sequence.activeIndex === STAGES.length - 1
+                      ? "Full strategic thread retained"
+                      : `${String(sequence.activeIndex + 1).padStart(2, "0")} of 04 decisions retained`}
+                  </span>
+                </p>
                 <Link href="/services#study">See the engagement structure <ArrowUpRight size={14} aria-hidden="true" /></Link>
               </footer>
             </article>
           </motion.div>
 
           <div className={styles.staticExperience}>
-            <p>One record carries every decision forward.</p>
+            <p>One record carries every decision forward · full strategic thread retained.</p>
             <ol>
               {STAGES.map((stage) => {
                 const Icon = stage.icon;
