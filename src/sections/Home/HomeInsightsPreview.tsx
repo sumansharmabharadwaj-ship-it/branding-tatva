@@ -159,29 +159,13 @@ export function HomeInsightsPreview() {
 
                 <div
                   className="home-insights__current"
-                  role="img"
                   aria-label={`${active.title}: ${active.steps.join(" to ")}`}
                 >
-                  <p>The argument, made visible</p>
-                  <div className="home-insights__current-track" aria-hidden="true">
-                    <motion.i
-                      key={`insight-current-${activeIndex}`}
-                      initial={{ scaleX: prefersReducedMotion ? 1 : 0 }}
-                      animate={{ scaleX: inView ? 1 : 0 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 1.8, ease: EASE }}
-                    />
-                    <motion.b
-                      key={`insight-current-mobile-${activeIndex}`}
-                      initial={{ scaleY: prefersReducedMotion ? 1 : 0 }}
-                      animate={{ scaleY: inView ? 1 : 0 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 1.8, ease: EASE }}
-                    />
-                  </div>
+                  <p>Five beats in the argument</p>
                   <ol>
                     {active.steps.map((step, index) => (
                       <li key={step}>
                         <span>{String(index + 1).padStart(2, "0")}</span>
-                        <i aria-hidden="true" />
                         <strong>{step}</strong>
                       </li>
                     ))}
@@ -204,8 +188,10 @@ export function HomeInsightsPreview() {
           </AnimatePresence>
         </div>
 
-        <div className="home-insights__index" role="tablist" aria-label="Choose an Insight reading path">
-          {INSIGHTS.map((insight, index) => {
+        <div className="home-insights__selector">
+          <div className="home-insights__selector-label"><span>Choose a reading</span><span>{String(activeIndex + 1).padStart(2, "0")} / 03</span></div>
+          <div className="home-insights__index" role="tablist" aria-label="Choose an Insight reading path">
+            {INSIGHTS.map((insight, index) => {
             const selected = index === activeIndex;
             return (
               <button
@@ -236,7 +222,8 @@ export function HomeInsightsPreview() {
                 <i aria-hidden="true" />
               </button>
             );
-          })}
+            })}
+          </div>
         </div>
       </Container>
     </section>

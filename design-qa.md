@@ -268,6 +268,51 @@ blocked
 
 ---
 
+# Homepage living Insights QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: approved light, cinematic nature-led homepage direction.
+- Implementation target: homepage `#insights-preview` chapter in `src/sections/Home/HomeInsightsPreview.tsx`.
+- Browser-rendered implementation screenshot: unavailable because the required cloud-browser session is unavailable.
+- Intended viewports: `1920 × 1080` desktop and `390 × 844` mobile at density `1`.
+- State: featured positioning guide active over the moving dandelion-release film.
+
+## Findings
+
+- [P1] Browser-rendered composition remains unverified. Film crop, one-screen fit, argument-beat legibility and selector interaction require same-viewport captures.
+
+## Required fidelity surfaces
+
+- Fonts and typography: established editorial hierarchy retained; rendered wrapping is unverified.
+- Spacing and layout rhythm: the card dashboard becomes one `100svh` argument with one horizontal reading selector; rendered fit is unverified.
+- Colors and visual tokens: the former dark panel treatment is lifted into vellum, forest and article accents; rendered contrast is unverified.
+- Image quality and asset fidelity: real dandelion-release WebM/MP4 film and poster remain full bleed; the CSS-drawn track and nodes were removed.
+- Copy and content: all three original articles, excerpts, takeaways, five argument beats, reading times and destinations remain available.
+
+## Interaction and browser verification
+
+- Production build: passed after clearing a stale `.next/export` cache; all `78` routes generated.
+- TypeScript: passed.
+- Static interaction review: passed; scroll-led selection plus hover, click, focus and arrow/Home/End keyboard control remain available.
+- Browser interaction, screenshots, console errors and responsive fit: blocked.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | One reading was fragmented across a large dark card, a CSS-drawn five-node diagram, takeaway block, dual actions and three stacked article cards. | Rebuilt the scene as one light editorial argument, one semantic five-beat sequence and one horizontal reading selector. Browser-rendered evidence remains blocked. |
+
+## Focused-region evidence
+
+Unavailable. The article hierarchy, five-beat sequence, selector, film crop and mobile fit still require browser-rendered comparison.
+
+## Final result
+
+blocked
+
+---
+
 # Homepage cinematic evidence QA · 2026-08-25
 
 ## Comparison target
