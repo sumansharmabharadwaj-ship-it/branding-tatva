@@ -271,7 +271,7 @@
 .staticExperience a:focus-visible { outline: 2px solid #7d5a3f; outline-offset: 4px; }
 
 @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
-  .scrollStory { min-height: 138svh; }
+  .scrollStory { min-height: 132svh; }
   .container { position: sticky; top: 0; }
 }
 
