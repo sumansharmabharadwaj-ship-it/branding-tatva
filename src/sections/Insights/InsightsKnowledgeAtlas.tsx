@@ -8,13 +8,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import Link from "next/link";
-import {
-  AnimatePresence,
-  motion,
-  useInView,
-  useMotionValueEvent,
-  useScroll,
-} from "framer-motion";
+import { motion, useInView, useMotionValueEvent, useScroll } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
@@ -426,48 +420,36 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
               <i />
             </div>
 
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.article
-                key={activePath.slug}
-                id={`atlas-panel-${activePath.slug}`}
-                role="tabpanel"
-                aria-labelledby={`atlas-tab-${activePath.slug}`}
-                className="insights-atlas__panel"
-                initial={
-                  prefersReducedMotion
-                    ? false
-                    : {
-                        opacity: 0.58,
-                        x: transitionDirectionRef.current * 24,
-                        rotateY: transitionDirectionRef.current * 5,
-                        scale: 0.988,
-                        clipPath: "inset(0 8% 0 8% round 1.5rem)",
-                      }
-                }
-                animate={{
-                  opacity: 1,
-                  x: 0,
-                  rotateY: 0,
-                  scale: 1,
-                  clipPath: "inset(0 0% 0 0% round 0rem)",
-                }}
-                exit={
-                  prefersReducedMotion
-                    ? undefined
-                    : {
-                        opacity: 0.42,
-                        x: transitionDirectionRef.current * -18,
-                        rotateY: transitionDirectionRef.current * -3,
-                        scale: 1.006,
-                        clipPath: "inset(0 3% 0 3% round 1rem)",
-                      }
-                }
-                transition={{
-                  duration: prefersReducedMotion ? 0 : 0.34,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                style={{ transformPerspective: 1200 }}
-              >
+            <motion.article
+              key={activePath.slug}
+              id={`atlas-panel-${activePath.slug}`}
+              role="tabpanel"
+              aria-labelledby={`atlas-tab-${activePath.slug}`}
+              className="insights-atlas__panel"
+              initial={
+                prefersReducedMotion
+                  ? false
+                  : {
+                      opacity: 0.58,
+                      x: transitionDirectionRef.current * 24,
+                      rotateY: transitionDirectionRef.current * 5,
+                      scale: 0.988,
+                      clipPath: "inset(0 8% 0 8% round 1.5rem)",
+                    }
+              }
+              animate={{
+                opacity: 1,
+                x: 0,
+                rotateY: 0,
+                scale: 1,
+                clipPath: "inset(0 0% 0 0% round 0rem)",
+              }}
+              transition={{
+                duration: prefersReducedMotion ? 0 : 0.34,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              style={{ transformPerspective: 1200 }}
+            >
                 <div className="insights-atlas__panel-head">
                   <p style={{ color: accent }}>{activePath.eyebrow}</p>
                   <span>{activePath.articleCount} essays</span>
@@ -548,8 +530,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                   Explore {activePath.name.toLowerCase()}
                   <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                 </Link>
-              </motion.article>
-            </AnimatePresence>
+            </motion.article>
           </div>
         </div>
       </Container>
