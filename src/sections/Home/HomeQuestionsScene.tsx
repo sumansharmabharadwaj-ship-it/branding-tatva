@@ -50,7 +50,7 @@ export function HomeQuestionsScene() {
       <Container className="questions-editorial__frame max-w-[104rem]">
         <header className="questions-editorial__header">
           <div>
-            <p>11 · Before we work together</p>
+            <p>08 · Before we work together</p>
             <h2 id="home-questions-title">Choose the question<br /><em>you need answered.</em></h2>
           </div>
           <p className="questions-editorial__intro">Five practical answers, without a sales call or a maze of fine print.</p>
@@ -84,14 +84,15 @@ export function HomeQuestionsScene() {
             })}
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="sync" initial={false}>
             <motion.article
               key={active.label}
               id="decision-answer"
               role="tabpanel"
               aria-labelledby={`decision-question-${activeIndex}`}
               className="questions-editorial__answer"
-              initial={reducedMotion ? false : { opacity: 0, y: 18, filter: "blur(5px)" }}
+              data-home-reading-plane
+              initial={false}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={reducedMotion ? undefined : { opacity: 0, y: -10, filter: "blur(4px)" }}
               transition={{ duration: reducedMotion ? 0 : 0.45, ease: EASE }}

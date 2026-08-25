@@ -209,7 +209,7 @@ export function EvidenceWall() {
       <Container className="evidence-cinematic__shell max-w-[100rem]">
         <header className="evidence-cinematic__header">
           <div>
-            <p className="evidence-cinematic__eyebrow">08 · Selected work</p>
+            <p className="evidence-cinematic__eyebrow">04 · Selected work</p>
             <h2 id="evidence-wall-title">Proof should <em>show its working.</em></h2>
           </div>
           <div className="evidence-cinematic__intro">
@@ -219,15 +219,16 @@ export function EvidenceWall() {
         </header>
 
         <div className="evidence-cinematic__stage">
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="sync" initial={false}>
             <motion.article
               key={`evidence-summary-${activeProject.slug}`}
               id="evidence-active-file"
               role="tabpanel"
               aria-labelledby={`evidence-tab-${activeIndex}`}
               className="evidence-cinematic__summary"
+              data-home-reading-plane
               aria-live="polite"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18, filter: "blur(4px)" }}
+              initial={false}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10, filter: "blur(3px)" }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}

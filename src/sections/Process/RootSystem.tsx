@@ -185,7 +185,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       <div className="decision-flow__shell">
         <header className="decision-flow__header">
           <div>
-            <p>07 · The method</p>
+            <p>06 · The method</p>
             <h2 id="decision-flow-title">
               Six decisions. <em>One recognisable system.</em>
             </h2>
@@ -196,14 +196,15 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
         </header>
 
         <div className="decision-flow__stage">
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="sync" initial={false}>
             <motion.article
               key={`${active}-${stage.stage}`}
               id="decision-flow-panel"
               role="tabpanel"
               aria-labelledby={`decision-flow-tab-${active}`}
               aria-live="polite"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 22 }}
+              data-home-reading-plane
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.62, ease: EASE }}

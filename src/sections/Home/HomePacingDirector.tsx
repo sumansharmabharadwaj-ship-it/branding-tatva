@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { trackRuntimeIssue } from "@/lib/analytics";
 
 const SECTION_SELECTOR = "[data-home-section], [data-home-chapter], [data-home-v4-chapter]";
 
@@ -19,6 +20,55 @@ export function HomePacingDirector() {
     const observed = new Set<HTMLElement>();
     let sectionObserver: IntersectionObserver | null = null;
     let mutationObserver: MutationObserver | null = null;
+    const visibilityTimers = new Map<HTMLElement, number>();
+
+    function sceneId(section: HTMLElement) {
+      return (
+        section.dataset.homeV4Chapter ||
+        section.dataset.homeChapter ||
+        section.dataset.homeSection ||
+        section.id ||
+        "unknown"
+      );
+    }
+
+    function hasVisibleReadingPlane(section: HTMLElement) {
+      return [...section.querySelectorAll<HTMLElement>("[data-home-reading-plane]")].some(
+        (plane) => {
+          const rect = plane.getBoundingClientRect();
+          const style = window.getComputedStyle(plane);
+          return (
+            rect.width > 0 &&
+            rect.height > 0 &&
+            rect.bottom > 0 &&
+            rect.top < window.innerHeight &&
+            style.display !== "none" &&
+            style.visibility !== "hidden" &&
+            Number(style.opacity || 1) > 0.05
+          );
+        },
+      );
+    }
+
+    function scheduleVisibilityCheck(section: HTMLElement) {
+      const existing = visibilityTimers.get(section);
+      if (existing) window.clearTimeout(existing);
+      const timer = window.setTimeout(() => {
+        visibilityTimers.delete(section);
+        if (section.dataset.homeSceneState !== "active") return;
+        const visible = hasVisibleReadingPlane(section);
+        if (!visible) {
+          section.dataset.homeSceneContent = "missing";
+          trackRuntimeIssue("scene_visibility_failed", { scene: sceneId(section) });
+          return;
+        }
+        if (section.dataset.homeSceneContent === "missing") {
+          trackRuntimeIssue("scene_visibility_recovered", { scene: sceneId(section) });
+        }
+        section.dataset.homeSceneContent = "visible";
+      }, 400);
+      visibilityTimers.set(section, timer);
+    }
 
     sectionObserver = new IntersectionObserver(
       (entries) => {
@@ -28,15 +78,12 @@ export function HomePacingDirector() {
           section.dataset.homeSceneState = active ? "active" : "resting";
 
           if (active) {
+            scheduleVisibilityCheck(section);
             window.dispatchEvent(
               new CustomEvent("bt:home-scene-enter", {
                 detail: {
                   id:
-                    section.dataset.homeV4Chapter ||
-                    section.dataset.homeChapter ||
-                    section.dataset.homeSection ||
-                    section.id ||
-                    undefined,
+                    sceneId(section),
                 },
               }),
             );
@@ -69,12 +116,24 @@ export function HomePacingDirector() {
     };
 
     registerSections();
-    mutationObserver = new MutationObserver(registerSections);
+    mutationObserver = new MutationObserver((mutations) => {
+      registerSections();
+      const changedActiveSections = new Set<HTMLElement>();
+      mutations.forEach((mutation) => {
+        const section = mutation.target instanceof Element
+          ? mutation.target.closest<HTMLElement>(SECTION_SELECTOR)
+          : null;
+        if (section?.dataset.homeSceneState === "active") changedActiveSections.add(section);
+      });
+      changedActiveSections.forEach(scheduleVisibilityCheck);
+    });
     mutationObserver.observe(main, { childList: true, subtree: true });
 
     return () => {
       mutationObserver?.disconnect();
       sectionObserver?.disconnect();
+      visibilityTimers.forEach((timer) => window.clearTimeout(timer));
+      visibilityTimers.clear();
       observed.forEach((section) => {
         delete section.dataset.homeSceneObserved;
         delete section.dataset.homeSceneState;

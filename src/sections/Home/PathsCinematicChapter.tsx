@@ -277,14 +277,15 @@ export function PathsCinematicChapter() {
             </div>
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="sync" initial={false}>
             <motion.article
               key={active.number}
               id="path-film-panel"
               className="paths-film__answer"
               role="tabpanel"
               aria-labelledby={`path-film-tab-${active.number}`}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              data-home-reading-plane
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}

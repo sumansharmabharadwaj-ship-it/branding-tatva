@@ -131,7 +131,7 @@ export function V4OpeningScene() {
           <span>Founder-led · direct authorship</span>
         </div>
 
-        <div className="home-v4-opening__copy">
+        <div className="home-v4-opening__copy" data-home-reading-plane>
           <motion.p
             className="home-v4-opening__eyebrow"
             initial={false}
@@ -303,7 +303,7 @@ export function V4RecognitionScene() {
 
         <div className="home-v4-recognition__stage">
           <div className="home-v4-recognition__copy" aria-live="polite">
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="sync" initial={false}>
               <motion.div
                 key={active.number}
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
@@ -471,11 +471,12 @@ export function V4HiddenCostScene() {
             </h2>
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="sync" initial={false}>
             <motion.article
               key={active.number}
               className="cost-film__moment"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              data-home-reading-plane
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: EASE }}

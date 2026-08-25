@@ -7,7 +7,10 @@ const compiled = ts.transpileModule(fs.readFileSync(filename, "utf8"), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const moduleBox = { exports: {} };
-new Function("module", "exports", "require", compiled)(moduleBox, moduleBox.exports, require);
+const customRequire = (id) => id === "@/lib/analytics"
+  ? { trackRuntimeIssue: () => false }
+  : require(id);
+new Function("module", "exports", "require", compiled)(moduleBox, moduleBox.exports, customRequire);
 const journey = moduleBox.exports;
 
 function assert(condition, message) {

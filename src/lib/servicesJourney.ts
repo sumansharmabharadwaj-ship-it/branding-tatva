@@ -1,4 +1,5 @@
 import type { PackageSlug } from "@/data/pricing";
+import { trackRuntimeIssue } from "@/lib/analytics";
 
 // The Services page asks for the visitor's condition once, then carries
 // that answer into the package scene. Keeping the mapping in one small
@@ -63,6 +64,7 @@ export function readCompletedHomeDiagnosis(now = Date.now()): ServicesSituationI
     if (!raw?.startsWith("{")) return null;
     return completedHomeDiagnosisFrom(JSON.parse(raw) as CompletedHomeDiagnosisRecord, now);
   } catch {
+    trackRuntimeIssue("personalization_storage_read_failed");
     return null;
   }
 }
@@ -76,7 +78,9 @@ export function publishCompletedHomeDiagnosis(situation: ServicesSituationId) {
   };
   try {
     window.localStorage.setItem(SERVICES_SITUATION_STORAGE_KEY, JSON.stringify(detail));
-  } catch {}
+  } catch {
+    trackRuntimeIssue("personalization_storage_write_failed");
+  }
   window.dispatchEvent(
     new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, { detail }),
   );
@@ -85,5 +89,7 @@ export function publishCompletedHomeDiagnosis(situation: ServicesSituationId) {
 export function clearServicesSituation() {
   try {
     window.localStorage.removeItem(SERVICES_SITUATION_STORAGE_KEY);
-  } catch {}
+  } catch {
+    trackRuntimeIssue("personalization_storage_clear_failed");
+  }
 }

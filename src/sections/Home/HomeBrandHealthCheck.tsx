@@ -12,7 +12,7 @@ import {
   resolveCompletedHomeDiagnosis,
   type HomeDiagnosis,
 } from "@/lib/homeDiagnosticState";
-import { track } from "@/lib/analytics";
+import { track, trackRuntimeIssue } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -189,10 +189,20 @@ export function HomeBrandHealthCheck() {
     if (!focusRequestedRef.current) return;
     focusRequestedRef.current = false;
     if (done) {
-      resultRef.current?.focus({ preventScroll: true });
+      const resultPanel = resultRef.current;
+      if (!resultPanel) {
+        trackRuntimeIssue("diagnostic_transition_failed", { scene: "diagnostic" });
+        return;
+      }
+      resultPanel.focus({ preventScroll: true });
       return;
     }
-    headingRef.current?.focus({ preventScroll: true });
+    const heading = headingRef.current;
+    if (!heading) {
+      trackRuntimeIssue("diagnostic_transition_failed", { scene: "diagnostic" });
+      return;
+    }
+    heading.focus({ preventScroll: true });
   }, [done, step]);
 
   function moveScene(event: PointerEvent<HTMLElement>) {
@@ -229,7 +239,10 @@ export function HomeBrandHealthCheck() {
 
     const committedAnswers = [...answers];
     const nextDiagnosis = resolveCompletedHomeDiagnosis(committedAnswers);
-    if (!nextDiagnosis) return;
+    if (!nextDiagnosis) {
+      trackRuntimeIssue("diagnostic_transition_failed", { scene: "diagnostic" });
+      return;
+    }
     const nextResult = RESULTS[nextDiagnosis];
     if (nextResult.situation) publishCompletedHomeDiagnosis(nextResult.situation);
     else clearServicesSituation();
