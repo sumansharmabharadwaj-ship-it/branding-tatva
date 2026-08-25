@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import {
   useEffect,
@@ -268,37 +267,33 @@ export function PointOfView() {
           </div>
 
           <div className={styles.staticExperience}>
-            {STAGES.map((stage) => {
-              const Icon = stage.icon;
-              return (
-                <article key={stage.lens}>
-                  <figure>
-                    <Image
-                      src={stage.image}
-                      alt=""
-                      fill
-                      sizes="(max-width: 640px) 92vw, (max-width: 980px) 42vw, 30vw"
-                      className={styles.staticImage}
-                      style={{ objectPosition: stage.imagePosition }}
-                    />
-                    <figcaption>{stage.project}</figcaption>
-                  </figure>
-                  <div className={styles.staticBody}>
-                    <span><Icon size={16} aria-hidden="true" /></span>
-                    <small>{stage.number} · {stage.verb} · {stage.lens}</small>
+            <div className={styles.staticLedgerHead}>
+              <small>The recognition sequence</small>
+              <strong>Place the brand. Name the value. Protect what returns.</strong>
+            </div>
+            <div className={styles.staticLedger}>
+              {STAGES.map((stage) => {
+                const Icon = stage.icon;
+                return (
+                  <article key={stage.lens}>
+                    <div className={styles.staticIndex}>
+                      <span><Icon size={16} aria-hidden="true" /></span>
+                      <small>{stage.number} · {stage.verb}</small>
+                    </div>
+                    <strong className={styles.staticLens}>{stage.lens}</strong>
                     <h3>{stage.claim}</h3>
-                    <p>{stage.question}</p>
-                    <dl>
-                      <div><dt>Decision</dt><dd>{stage.decision}</dd></div>
-                      <div><dt>On record</dt><dd>{stage.proof}</dd></div>
-                    </dl>
-                    <Link href={`/work/${stage.slug}`}>
-                      Read {stage.project} <ArrowUpRight size={13} aria-hidden="true" />
-                    </Link>
-                  </div>
-                </article>
-              );
-            })}
+                    <p>{stage.decision}</p>
+                    <div className={styles.staticProof}>
+                      <small>{stage.project} · {stage.recordType}</small>
+                      <p>{stage.proof}</p>
+                      <Link href={`/work/${stage.slug}`}>
+                        Read the record <ArrowUpRight size={13} aria-hidden="true" />
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
           </div>
 
           <div className={styles.recognitionLine} aria-hidden="true">
