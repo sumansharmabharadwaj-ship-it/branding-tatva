@@ -263,6 +263,8 @@ export function InsightsExplorer({
       ? "Carried from your mirror"
       : carriedIntent.origin === "knowledge-atlas"
         ? "Carried from your atlas"
+        : carriedIntent.origin === "evidence-ledger"
+          ? "Confirmed in your ledger"
         : "Chosen in this library"
     : settledQuery
       ? inferredTopic
@@ -381,6 +383,21 @@ export function InsightsExplorer({
             </>
           ) : null}
         </span>
+      </div>
+      <div className="insights-library__evidence-handoff" aria-hidden="true">
+        <span>
+          {carriedTopic ? (
+            <>
+              <ElementGlyph
+                slug={carriedTopic.element}
+                className="h-4 w-4"
+                strokeWidth={1.35}
+              />
+              <small>{carriedTopic.name}</small>
+            </>
+          ) : null}
+        </span>
+        <i />
       </div>
       <div className="insights-library__camera relative mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
         <div className="insights-library__header">

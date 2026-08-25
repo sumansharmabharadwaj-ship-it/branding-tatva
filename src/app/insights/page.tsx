@@ -112,7 +112,9 @@ const READER_QUEST_BLUEPRINTS = [
   },
 ] as const;
 
-const EVIDENCE_LAYER_BLUEPRINTS: Array<Omit<EvidenceLayer, "service">> = [
+const EVIDENCE_LAYER_BLUEPRINTS: Array<
+  Omit<EvidenceLayer, "element" | "service">
+> = [
   {
     slug: "foundation",
     topicSlug: "positioning",
@@ -242,17 +244,21 @@ export default function InsightsPage() {
   });
   const evidenceLayers: EvidenceLayer[] = EVIDENCE_LAYER_BLUEPRINTS.map(
     (layer) => {
+      const topic = insightTopics.find(
+        (candidate) => candidate.slug === layer.topicSlug,
+      );
       const application = getInsightApplication(layer.topicSlug);
       const servicePackage = packages.find(
         (pkg) => pkg.slug === application?.packageSlug,
       );
 
-      if (!application || !servicePackage) {
+      if (!topic || !application || !servicePackage) {
         throw new Error(`Missing verified evidence route for ${layer.topicSlug}`);
       }
 
       return {
         ...layer,
+        element: topic.element,
         service: {
           slug: servicePackage.slug,
           name: servicePackage.name,

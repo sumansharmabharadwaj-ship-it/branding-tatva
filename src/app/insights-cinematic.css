@@ -600,7 +600,8 @@
 }
 
 .insights-atlas__handoff,
-.insights-library__handoff {
+.insights-library__handoff,
+.insights-library__evidence-handoff {
   position: absolute;
   z-index: 4;
   right: clamp(1.25rem, 4vw, 4rem);
@@ -622,13 +623,23 @@
   opacity: calc(var(--scene-activation) * 0.94);
 }
 
+.insights-library__evidence-handoff {
+  bottom: 0;
+  color: var(--library-thread);
+  opacity: calc(var(--scene-resolution) * 0.94);
+}
+
 .insights-atlas[data-thread-active="false"] .insights-atlas__handoff,
-.insights-library[data-thread-active="false"] .insights-library__handoff {
+.insights-library[data-thread-active="false"] .insights-library__handoff,
+.insights-library[data-thread-active="false"]
+  .insights-library__evidence-handoff {
   opacity: 0;
 }
 
 .insights-atlas__handoff span,
-.insights-library__handoff span {
+.insights-library__handoff span,
+.insights-library__evidence-handoff span,
+.insights-evidence-ledger__arrival span {
   display: inline-flex;
   min-height: 2rem;
   align-items: center;
@@ -645,8 +656,15 @@
   background: rgb(255 253 248 / 78%);
 }
 
+.insights-library__evidence-handoff span,
+.insights-evidence-ledger__arrival span {
+  background: rgb(255 253 248 / 86%);
+}
+
 .insights-atlas__handoff small,
-.insights-library__handoff small {
+.insights-library__handoff small,
+.insights-library__evidence-handoff small,
+.insights-evidence-ledger__arrival small {
   max-width: 8rem;
   overflow: hidden;
   color: inherit;
@@ -659,7 +677,8 @@
 }
 
 .insights-atlas__handoff i,
-.insights-library__handoff i {
+.insights-library__handoff i,
+.insights-library__evidence-handoff i {
   display: block;
   width: 1px;
   height: clamp(2.75rem, 6svh, 5rem);
@@ -672,6 +691,12 @@
 .insights-library__handoff i {
   background: linear-gradient(to bottom, transparent, currentcolor);
   transform: scaleY(var(--scene-activation));
+}
+
+.insights-library__evidence-handoff i {
+  background: linear-gradient(to bottom, currentcolor, transparent);
+  transform: scaleY(var(--scene-resolution));
+  transform-origin: top;
 }
 
 .insights-atlas__container {
@@ -1375,8 +1400,51 @@
   min-width: 0;
 }
 
-.insights-evidence-ledger {
+.insights-evidence-ledger-shell {
+  position: relative;
   margin-top: clamp(1rem, 2svh, 1.5rem);
+}
+
+.insights-evidence-ledger__arrival {
+  position: absolute;
+  z-index: 4;
+  bottom: calc(100% + 0.35rem);
+  left: calc((var(--ledger-thread-index) + 0.5) * 20%);
+  display: grid;
+  height: clamp(9rem, 26svh, 15rem);
+  justify-items: center;
+  color: var(--ledger-thread);
+  opacity: calc(var(--scene-activation) * 0.96);
+  pointer-events: none;
+  transform: translate3d(-50%, var(--scene-entry-shift), 0);
+  transition:
+    color 360ms ease,
+    left 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 360ms ease;
+}
+
+.insights-evidence-ledger-shell[data-thread-active="false"]
+  .insights-evidence-ledger__arrival {
+  opacity: 0;
+}
+
+.insights-evidence-ledger__arrival > i {
+  display: block;
+  width: 1px;
+  height: 100%;
+  min-height: 0;
+  background: linear-gradient(to bottom, transparent, currentcolor);
+  box-shadow: 0 0 1rem color-mix(in srgb, currentcolor 58%, transparent);
+  transform: scaleY(var(--scene-discovery));
+  transform-origin: top;
+}
+
+.insights-evidence-ledger__arrival span {
+  align-self: end;
+  box-shadow: 0 0 1.25rem color-mix(in srgb, currentcolor 20%, transparent);
+}
+
+.insights-evidence-ledger {
   overflow: hidden;
   border: 1px solid rgb(39 34 30 / 11%);
   border-radius: 1.15rem;
@@ -1432,6 +1500,14 @@
   transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.insights-evidence-ledger[data-threaded="true"]
+  .insights-evidence-ledger__status
+  > i
+  span {
+  background: var(--ledger-thread);
+  box-shadow: 0 0 0.85rem color-mix(in srgb, var(--ledger-thread) 48%, transparent);
+}
+
 .insights-evidence-ledger__layers {
   display: grid;
   border-block: 1px solid rgb(39 34 30 / 9%);
@@ -1477,6 +1553,11 @@
 
 .insights-evidence-ledger__layers button[aria-pressed="true"] {
   background: rgb(173 111 92 / 12%);
+}
+
+.insights-evidence-ledger__layers button[data-threaded="true"] {
+  background: color-mix(in srgb, var(--ledger-thread) 10%, transparent);
+  box-shadow: inset 0 2px 0 var(--ledger-thread);
 }
 
 .insights-evidence-ledger__layers button:focus-visible {
@@ -1527,6 +1608,12 @@
   transform: rotate(-8deg) scale(1.04);
 }
 
+.insights-evidence-ledger__layers button[data-threaded="true"] > i {
+  border-color: var(--ledger-thread);
+  color: var(--ledger-thread);
+  box-shadow: 0 0 1rem color-mix(in srgb, var(--ledger-thread) 30%, transparent);
+}
+
 .insights-evidence-ledger__detail {
   min-height: 4.6rem;
   padding: 0.75rem 0.9rem 0.85rem;
@@ -1560,6 +1647,10 @@
   text-transform: uppercase;
 }
 
+.insights-evidence-ledger__detail [data-brief-mode="carried"] p span {
+  color: color-mix(in srgb, var(--ledger-thread) 82%, #704b3e);
+}
+
 .insights-evidence-ledger__bridge {
   position: relative;
   display: grid;
@@ -1590,7 +1681,13 @@
 }
 
 .insights-evidence-ledger__bridge[data-action-state="carried"] {
-  background: #fbf6ef;
+  background: color-mix(in srgb, var(--ledger-thread) 7%, #fffdf8);
+}
+
+.insights-evidence-ledger__bridge[data-action-state="carried"] > i {
+  background: var(--ledger-thread);
+  opacity: 0.78;
+  transform: scaleY(0.72);
 }
 
 .insights-evidence-ledger__bridge[data-action-state="ready"] {
@@ -2061,12 +2158,15 @@
   }
 
   .insights-atlas__handoff,
-  .insights-library__handoff {
+  .insights-library__handoff,
+  .insights-library__evidence-handoff {
     right: 1rem;
   }
 
   .insights-atlas__handoff small,
-  .insights-library__handoff small {
+  .insights-library__handoff small,
+  .insights-library__evidence-handoff small,
+  .insights-evidence-ledger__arrival small {
     display: none;
   }
 
@@ -2259,6 +2359,10 @@
     overscroll-behavior-inline: contain;
     scroll-snap-type: inline proximity;
     scrollbar-width: none;
+  }
+
+  .insights-evidence-ledger__arrival {
+    height: 4.5rem;
   }
 
   .insights-evidence-ledger__layers::-webkit-scrollbar {
@@ -2469,8 +2573,12 @@
 
   .insights-atlas__handoff,
   .insights-library__handoff,
+  .insights-library__evidence-handoff,
+  .insights-evidence-ledger__arrival,
   .insights-atlas__handoff i,
   .insights-library__handoff i,
+  .insights-library__evidence-handoff i,
+  .insights-evidence-ledger__arrival > i,
   .insights-library__signal::before {
     transition-duration: 0.01ms;
   }
@@ -2482,6 +2590,7 @@
   .insights-decision-mirror__first-read,
   .insights-decision-mirror__atlas-link svg,
   .insights-evidence-ledger,
+  .insights-evidence-ledger__arrival,
   .insights-evidence-ledger__detail,
   .insights-evidence-ledger__status > i span,
   .insights-evidence-ledger__layers button,
@@ -2565,6 +2674,8 @@ html:has(.insights-page[data-insights-motion="reduced"]) {
     .insights-audit-scene__film > div:first-child,
     .insights-audit-scene__film-copy,
     .insights-evidence-ledger__layers button,
+    .insights-evidence-ledger__arrival,
+    .insights-evidence-ledger__arrival > i,
     .insights-evidence-ledger__status > i span,
     .insights-notes-scene > div:first-child,
     .insights-notes-scene__copy,
@@ -2582,6 +2693,8 @@ html:has(.insights-page[data-insights-motion="reduced"]) {
 
 .insights-page[data-insights-motion="reduced"] :is(
     .insights-evidence-ledger,
+    .insights-evidence-ledger__arrival,
+    .insights-evidence-ledger__arrival > i,
     .insights-evidence-ledger__detail,
     .insights-evidence-ledger__layers button > i,
     .insights-evidence-ledger__bridge,
