@@ -13,12 +13,15 @@ const DISCIPLINES = [
     verb: "reads people",
     title: "Find the tension before the audience has words for it.",
     line: "Behaviour becomes evidence. The work studies the friction, desire and perception shaping a buyer's choice.",
+    signal: "The choice stalls before the objection is spoken.",
+    move: "Name the hidden tension.",
+    decision: "Build the position around the belief that must change.",
     outcome: "Audience tension + perception map",
     proof: "Applied in HerbalCart",
     proofHref: "/work/herbalcart",
     video: "/videos/pexels-fog-sunrise.mp4",
     poster: "/images/pexels-fog-sunrise-poster.jpg",
-    accent: "#d19670",
+    accent: "#a86645",
   },
   {
     number: "02",
@@ -27,12 +30,15 @@ const DISCIPLINES = [
     verb: "shapes meaning",
     title: "Turn a strategic choice into language people can carry.",
     line: "Voice, narrative, rhythm and symbolism give the idea a form people can recognise, repeat and remember.",
+    signal: "The strategy is understood, but not remembered.",
+    move: "Give the choice rhythm, metaphor and voice.",
+    decision: "Turn the position into a story people can repeat.",
     outcome: "Verbal identity + narrative spine",
     proof: "Applied in MyShopInEurope",
     proofHref: "/work/myshopineurope",
     video: "/videos/pexels-studio-morning-light.mp4",
     poster: "/images/pexels-studio-morning-light-poster.jpg",
-    accent: "#92afbb",
+    accent: "#527687",
   },
   {
     number: "03",
@@ -41,12 +47,15 @@ const DISCIPLINES = [
     verb: "makes both useful",
     title: "Make the insight usable long after the room goes quiet.",
     line: "Positioning, identity, website, content and campaigns move as one system led directly by Suman.",
+    signal: "Every output looks considered; together they drift.",
+    move: "Set one governing decision.",
+    decision: "Align identity, website, content and campaigns to it.",
     outcome: "A brand system that keeps moving",
     proof: "Applied in Dr. Haley Nutrition",
     proofHref: "/work/dr-haley-nutrition",
     video: "/videos/pexels-aspen-sunburst.mp4",
     poster: "/images/pexels-aspen-sunburst-poster.jpg",
-    accent: "#e0b45f",
+    accent: "#9c6f26",
   },
 ] as const;
 
@@ -87,20 +96,27 @@ export function StudioCinematicChapter() {
     >
       <div className="studio-film__media" aria-hidden="true">
         <AnimatePresence mode="sync" initial={false}>
-          <motion.video
+          <motion.div
             key={active.video}
-            src={active.video}
-            poster={active.poster}
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            aria-hidden="true"
-            initial={reducedMotion ? false : { opacity: 0, scale: 1.08 }}
-            animate={{ opacity: 1, scale: 1.04 }}
-            exit={reducedMotion ? undefined : { opacity: 0, scale: 1.015 }}
+            className="studio-film__shot"
+            initial={reducedMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reducedMotion ? undefined : { opacity: 0 }}
             transition={{ duration: reducedMotion ? 0 : 0.62, ease: EASE }}
-          />
+          >
+            <video
+              src={active.video}
+              poster={active.poster}
+              muted
+              autoPlay={!reducedMotion}
+              loop
+              playsInline
+              preload="metadata"
+              onLoadedData={(event) => {
+                if (!reducedMotion) void event.currentTarget.play().catch(() => undefined);
+              }}
+            />
+          </motion.div>
         </AnimatePresence>
       </div>
       <div className="studio-film__wash" aria-hidden="true" />
@@ -115,9 +131,9 @@ export function StudioCinematicChapter() {
           <div className="studio-film__statement">
             <p>One mind · three disciplines</p>
             <h2 id="studio-film-title">
-              Psychology <em>reads people.</em><br />
-              Literature <em>shapes meaning.</em><br />
-              Strategy <em>makes both useful.</em>
+              <span className={activeIndex === 0 ? "is-active" : undefined}>Psychology <em>reads people.</em></span>
+              <span className={activeIndex === 1 ? "is-active" : undefined}>Literature <em>shapes meaning.</em></span>
+              <span className={activeIndex === 2 ? "is-active" : undefined}>Strategy <em>makes both useful.</em></span>
             </h2>
           </div>
 
@@ -129,10 +145,10 @@ export function StudioCinematicChapter() {
               aria-labelledby={`studio-film-tab-${activeIndex}`}
               className="studio-film__reading"
               data-home-reading-plane
-              initial={false}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={reducedMotion ? undefined : { opacity: 0, y: -10, filter: "blur(4px)" }}
-              transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}
+              initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reducedMotion ? undefined : { opacity: 0, y: -6 }}
+              transition={{ duration: reducedMotion ? 0 : 0.34, ease: EASE }}
               aria-live="polite"
             >
               <div className="studio-film__reading-label">
@@ -140,6 +156,20 @@ export function StudioCinematicChapter() {
               </div>
               <h3>{active.title}</h3>
               <p>{active.line}</p>
+              <div className="studio-film__synthesis" aria-label={`${active.name} from human signal to brand decision`}>
+                <div>
+                  <span>Human signal</span>
+                  <strong>{active.signal}</strong>
+                </div>
+                <div>
+                  <span>{active.name} move</span>
+                  <strong>{active.move}</strong>
+                </div>
+                <div>
+                  <span>Brand decision</span>
+                  <strong>{active.decision}</strong>
+                </div>
+              </div>
               <div className="studio-film__outcome"><span>What this produces</span><strong>{active.outcome}</strong></div>
               <Link href={active.proofHref}>{active.proof} <span aria-hidden="true">↗</span></Link>
             </motion.article>
@@ -148,7 +178,7 @@ export function StudioCinematicChapter() {
 
         <div className="studio-film__footer">
           <div className="studio-film__selector">
-            <div className="studio-film__selector-label"><span>Explore the three disciplines</span><span>{active.number} / 03</span></div>
+            <div className="studio-film__selector-label"><span>Three disciplines · one decision system</span><span>{active.number} / 03</span></div>
             <div className="studio-film__chapters" role="tablist" aria-label="Explore Suman's three disciplines">
             {DISCIPLINES.map((discipline, index) => {
               const selected = index === activeIndex;

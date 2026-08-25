@@ -151,6 +151,39 @@ passed
 
 ---
 
+# Homepage studio synthesis QA · 2026-08-25
+
+## Comparison target
+
+- Before state: the deployed `#studio` scene paired a strong psychology–literature–strategy statement with an explanation that entered through a visible blur and disappeared into the film.
+- Visual direction: the approved calm, light, cinematic homepage language, with genuine moving nature/studio footage and one complete editorial thought per viewport.
+- Implementation target: homepage `#studio` chapter at `1363 × 936`.
+
+## Findings and fixes
+
+- Removed blur from the active explanation transition. Discipline changes now use only a short opacity and vertical shift, keeping the teaching content readable throughout.
+- Turned the active discipline into a three-part synthesis: `Human signal`, the named discipline move, and the resulting `Brand decision` are visible together in one editorial field.
+- Gave the three headline lines a shared live state so Psychology, Literature and Strategy visibly correspond to the active chapter without introducing an instruction overlay.
+- Preserved three distinct real films and added restrained camera drift. Corrected the transition lifecycle so only the active film remains mounted and advancing after the crossfade.
+- Replaced pale accent colors with darker clay, blue-grey and ochre values that remain legible over the light moving scenes.
+- Added desktop, tablet, mobile and short-height fitting rules; no P0, P1 or P2 issue remains in the verified desktop state.
+
+## Browser verification
+
+- Scene bounds: `936px` high in a `936px` viewport with no section or panel overflow. The footer ends inside the viewport.
+- Active panel: computed filter is `none`, opacity is `1`, and the complete title, explanation, synthesis, output and proof link are visible.
+- Film: the settled Literature state retained exactly one video, ready state `4`, playing and advancing; the real studio-morning footage and the restrained camera animation were both active.
+- Interaction: all three semantic tabs are present. Click selected Strategy and loaded the aspen film; keyboard `Home` and `ArrowRight` moved focus and selection to Literature.
+- State synchronization: after every settled transition, the selected tab, active panel and visible film identify the same discipline.
+- Console: no site-originated application errors.
+- Production build: passed; all `78` routes generated.
+
+## Final result
+
+passed
+
+---
+
 # Homepage cinematic method QA · 2026-08-24
 
 ## Comparison target
