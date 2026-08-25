@@ -274,7 +274,11 @@ export function AboutResolution() {
         </div>
 
         <footer className={styles.footer}>
-          <p>
+          <p className={styles.interactiveSummary} aria-live="polite">
+            <span>Route identified · {activePath.cue}</span>
+            <strong>{activePath.package.name} gives this question a grounded place to begin.</strong>
+          </p>
+          <p className={styles.staticSummary}>
             <span>First conversation</span>
             <strong>Find the decision that deserves to come first.</strong>
           </p>
