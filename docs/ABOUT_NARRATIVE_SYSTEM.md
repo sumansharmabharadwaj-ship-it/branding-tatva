@@ -172,9 +172,10 @@ depends on the scrubbed camera.
 
 ## Working-standards record
 
-`Behaviours.tsx` turns four stated values into one cumulative decision record.
-The scene does not ask the visitor to browse four interchangeable cards. Each
-scroll phase adds something another person can inspect in the finished work:
+`Behaviours.tsx` turns four stated values into one pressure-test instrument.
+The scene keeps one recommendation in view while scroll progress moves it
+through four gates. Each gate strengthens the same signal and leaves something
+another person can inspect in the finished work:
 
 ```tsx
 const visibleTrace = [
@@ -185,18 +186,19 @@ const visibleTrace = [
 ];
 ```
 
-The paper stays in the same camera while its record fills in. Scroll direction
-reverses the assembly, pointer position changes the viewing angle and light,
-and the page-level velocity variable gives the sheet a restrained physical
-response. Mobile and reduced-motion modes replace the camera with the complete
-four-part editorial record, so every standard remains readable without a
-hidden gesture.
+The gate line, active pressure test, visible trace, and decision stamp resolve
+as one composition. Reverse scroll returns the recommendation to an earlier
+test, while direct selection makes the reasoning inspectable without changing
+the page position. Pointer position changes the viewing angle and light. Mobile
+and reduced-motion modes replace the instrument with the complete four-part
+editorial record, so every standard remains readable without a hidden gesture.
 
 The chapter uses a light vellum field over the moving moss film. This creates a
 visual release between the dark brand-atlas and founder-led chapters while the
 shared film runtime, clay accents, typography, and cumulative record preserve
 continuity. The supporting copy explains the visible trace each standard leaves
-in the work and avoids an explicit scrolling instruction.
+in the work and avoids an explicit scrolling instruction. The desktop runway
+uses 138svh: enough distance for four deliberate states without pinning fatigue.
 
 ## Founder-led continuity record
 
