@@ -91,6 +91,56 @@ passed
 
 ---
 
+# Homepage method state-coherence QA · 2026-08-26
+
+## Comparison target
+
+- Source visual truth: the approved live flower-on-water diagnostic at `#brand-diagnostic`, grounded in `/workspace/scratch/55f96cacf4b7/upload/08a75655-58aa-4a35-9d03-637489c417c4(1).png` (`1536 × 1024`).
+- Browser-rendered implementation: local homepage `#process`, captured inline in the same cloud-browser comparison input as the diagnostic style control.
+- Viewport and density: both browser frames used a `1363 × 936` CSS viewport at density `1`; the method section measured exactly `936px` high.
+- State: desktop, full motion, decision `01 / 06` active.
+- Full-view evidence: both complete one-screen scenes were emitted together. A separate crop was unnecessary because the heading, moving film, active decision, proof rows, six-choice rail and navigation remained legible in the full frame.
+
+## Findings and fixes
+
+- [P1 resolved] The one-viewport method scene inherited a scroll-runway state model, so an anchor arrival could select `06 / 06` before the visitor explored anything. The chapter now owns committed local state, opens predictably at `01 / 06`, and changes only through its visible semantic tabs.
+- No actionable P0, P1 or P2 finding remains. The approved scene and method scene share the same light editorial hierarchy, warm natural film treatment, earth-green typography and restrained gold accents without repeating the flower asset.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed; the established display serif, compact uppercase labels and readable supporting sans remain consistent, with no clipped or competing headline plane.
+- Spacing and layout rhythm: passed; the section is exactly one viewport, has no horizontal overflow, and keeps the heading, active story, outcomes and selector rail fully visible.
+- Colors and visual tokens: passed; warm vellum, earth green and copper accents match the approved direction while the darker selector veil protects contrast over motion.
+- Image quality and asset fidelity: passed; a distinct real forest-stream film was browser-verified at `readyState: 4`, playing and advancing. No placeholder, handcrafted SVG or simulated art was introduced.
+- Copy and content: passed; all six method decisions, explanations, outputs and avoided risks remain available. No visible scroll or play instruction appears.
+
+## Interaction and browser verification
+
+- Initial anchor state: passed; `Question 01 / 06` is selected and its labelled tabpanel is the only tabpanel in the scene.
+- Click persistence: passed; `Decode 02` remained selected after `6.5s` rather than being overwritten by scroll-derived state.
+- Keyboard navigation: passed; `ArrowRight` moved focus and selection to `Architect 03`, then resolved the matching single tabpanel.
+- Background motion: passed; the forest-water film remained playing.
+- Console: no site-originated application errors; observed errors were limited to the cloud Chrome extension metadata bridge.
+- TypeScript, homepage source gates, rendered homepage gate and the `78`-route production build: passed.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | Arriving at the method could show `Compound 06 / 06`, making the selector and story feel arbitrary. | Replaced scroll-derived state with committed interaction state. The final paired capture opens on `Question 01 / 06`. |
+| 2 | P2 | A deliberate choice could be vulnerable to later viewport calculations. | Clicked `Decode`, waited `6.5s`, and confirmed the selected tab and sole panel still matched. Keyboard then moved both to `Architect`. |
+| 3 | — | Final full-view and focused interaction checks found no actionable mismatch. | Passed. |
+
+## Follow-up polish
+
+- P3: include the method scene in the next physical-device sweep for dynamic mobile browser chrome; its responsive one-screen rules remain intact.
+
+## Final result
+
+passed
+
+---
+
 # Homepage hidden-cost film QA · 2026-08-25
 
 ## Comparison target

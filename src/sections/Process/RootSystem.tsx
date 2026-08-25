@@ -1,9 +1,8 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { AnimatePresence, motion, useInView } from "framer-motion";
-import { useEffect, useRef, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 import type { ProcessStage } from "@/data/process";
 
 type StageMeta = {
@@ -82,13 +81,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -10% 0px" });
-  const visualizer = useScrollDrivenVisualizer({
-    count: stages.length,
-    target: sectionRef,
-    enabled: inView,
-    reducedMotion: prefersReducedMotion,
-  });
-  const active = visualizer.activeIndex;
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
     const videoAtEffectStart = videoRef.current;
@@ -123,7 +116,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const sectionStyle = { "--decision-accent": accent } as CSSProperties;
 
   function chooseStage(index: number) {
-    visualizer.choose(index);
+    setActive(((index % stages.length) + stages.length) % stages.length);
   }
 
   function onStageKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
