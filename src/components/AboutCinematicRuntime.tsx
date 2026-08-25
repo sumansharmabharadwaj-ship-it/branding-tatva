@@ -10,7 +10,7 @@ const CHAPTERS = [
   "Working standards",
   "One strategic thread",
   "Evidence chain",
-  "Resolution",
+  "The next move",
 ] as const;
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));

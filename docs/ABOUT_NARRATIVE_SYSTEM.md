@@ -201,6 +201,32 @@ the route to each complete case study. Touch and reduced-motion modes receive
 three linear case records with ambiguity, decision, and evidence visible
 together.
 
+## Resolution threshold
+
+`AboutResolution.tsx` replaces the old generic notebook card with a final
+decision threshold. The closing scene keeps the three real engagement routes
+visible and lets the visitor read their own situation against the existing
+package definitions:
+
+```tsx
+const paths = [
+  { cue: "Beginning", package: "Foundation" },
+  { cue: "Realigning", package: "Full Brand System" },
+  { cue: "Sustaining", package: "Brand Partnership" },
+];
+```
+
+The moving confluence film resolves the page's living-thread metaphor without
+adding another long pin. Normal page scroll changes which route receives
+focus; backward scroll restores the previous route. Hover, focus, click, and
+arrow-key input use the same state model. Package descriptions, first working
+decisions, and billing mode come directly from `data/services.ts`.
+
+Touch and reduced-motion modes show all three routes in full, followed by the
+same package and conversation links. The final state therefore remains a
+complete decision aid even when the camera and masked record transitions are
+removed.
+
 ## Performance and accessibility rules
 
 - Desktop pinning is capped at a 158svh runway with a 100svh scene; the

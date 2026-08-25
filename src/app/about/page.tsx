@@ -5,13 +5,13 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { AboutSplitHero } from "@/components/AboutSplitHero";
 import { AboutCinematicRuntime } from "@/components/AboutCinematicRuntime";
-import { NotebookClose } from "@/components/NotebookClose";
 import { FounderFieldNotes } from "@/sections/About/FounderFieldNotes";
 import { PointOfView } from "@/sections/About/PointOfView";
 import { Convergence } from "@/sections/About/Convergence";
 import { Behaviours } from "@/sections/About/Behaviours";
 import { WorkingDirectly } from "@/sections/About/WorkingDirectly";
 import { Evidence } from "@/sections/About/Evidence";
+import { AboutResolution } from "@/sections/About/AboutResolution";
 import { aboutIntro } from "@/data/about";
 import { elements } from "@/data/elements";
 import { site } from "@/data/site";
@@ -151,7 +151,7 @@ export default function AboutPage() {
         </section>
 
         <div data-about-film-scene data-about-chapter="resolution" data-scene-tone="light" data-scene-ending>
-          <NotebookClose />
+          <AboutResolution />
         </div>
       </main>
       <Footer compact />
