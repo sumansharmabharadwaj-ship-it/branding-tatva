@@ -163,11 +163,9 @@ export function HomeBrandHealthCheck() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const landscapeVideoRef = useRef<HTMLVideoElement>(null);
-  const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const focusRequestedRef = useRef(false);
-  const pendingChoiceFocusRef = useRef<number | null>(null);
   const [state, dispatch] = useReducer(homeDiagnosticReducer, initialHomeDiagnosticState);
   const { step, answers, selections, resultVisible, result: resolvedResult, preview } = state;
   const selected = selections[step] ?? null;
@@ -206,13 +204,6 @@ export function HomeBrandHealthCheck() {
     heading.focus({ preventScroll: true });
   }, [done, step]);
 
-  useEffect(() => {
-    const nextIndex = pendingChoiceFocusRef.current;
-    if (nextIndex === null) return;
-    pendingChoiceFocusRef.current = null;
-    choiceRefs.current[nextIndex]?.focus();
-  }, [selected]);
-
   function moveScene(event: PointerEvent<HTMLElement>) {
     if (reducedMotion || !sectionRef.current) return;
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -230,9 +221,15 @@ export function HomeBrandHealthCheck() {
     dispatch({ type: "choose", step, answer: choice.diagnosis, selection: index });
   }
 
-  function moveChoiceFocus(index: number, direction: 1 | -1) {
+  function moveChoiceFocus(
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+    direction: 1 | -1,
+  ) {
     const nextIndex = (index + direction + active.choices.length) % active.choices.length;
-    pendingChoiceFocusRef.current = nextIndex;
+    const group = event.currentTarget.closest('[role="radiogroup"]');
+    const options = group?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
+    options?.[nextIndex]?.focus({ preventScroll: true });
     choose(active.choices[nextIndex], nextIndex);
   }
 
@@ -287,10 +284,10 @@ export function HomeBrandHealthCheck() {
   ) {
     if (event.key === "ArrowRight" || event.key === "ArrowDown") {
       event.preventDefault();
-      moveChoiceFocus(index, 1);
+      moveChoiceFocus(event, index, 1);
     } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
       event.preventDefault();
-      moveChoiceFocus(index, -1);
+      moveChoiceFocus(event, index, -1);
     } else if (event.key === "Tab" && !event.shiftKey && selected !== null) {
       event.preventDefault();
       document.querySelector<HTMLButtonElement>(".brand-orbit__continue")?.focus();
@@ -446,7 +443,6 @@ export function HomeBrandHealthCheck() {
                 {active.choices.map((choice, index) => (
                   <motion.button
                     key={choice.label}
-                    ref={(node) => { choiceRefs.current[index] = node; }}
                     type="button"
                     className={selected === index ? "is-selected" : undefined}
                     onClick={() => choose(choice, index)}
