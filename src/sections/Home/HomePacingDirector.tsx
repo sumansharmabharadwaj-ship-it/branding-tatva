@@ -37,15 +37,25 @@ export function HomePacingDirector() {
       return [...section.querySelectorAll<HTMLElement>("[data-home-reading-plane]")].some(
         (plane) => {
           const rect = plane.getBoundingClientRect();
-          const style = window.getComputedStyle(plane);
+          let rendered = true;
+          let effectiveOpacity = 1;
+          let current: HTMLElement | null = plane;
+
+          while (current) {
+            const style = window.getComputedStyle(current);
+            effectiveOpacity *= Number(style.opacity || 1);
+            if (style.display === "none" || style.visibility === "hidden") rendered = false;
+            if (current === section) break;
+            current = current.parentElement;
+          }
+
           return (
             rect.width > 0 &&
             rect.height > 0 &&
             rect.bottom > 0 &&
             rect.top < window.innerHeight &&
-            style.display !== "none" &&
-            style.visibility !== "hidden" &&
-            Number(style.opacity || 1) > 0.05
+            rendered &&
+            effectiveOpacity > 0.05
           );
         },
       );
@@ -53,18 +63,27 @@ export function HomePacingDirector() {
 
     function forceReadableFallback(section: HTMLElement) {
       section.dataset.homeSceneRecovery = "forced";
+      section.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
+      const recoveryNodes = new Set<HTMLElement>([section]);
       section
         .querySelectorAll<HTMLElement>("[data-home-reading-plane]")
         .forEach((plane) => {
-          plane.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
-          plane.style.setProperty("animation", "none", "important");
-          plane.style.setProperty("transition", "none", "important");
-          plane.style.setProperty("opacity", "1", "important");
-          plane.style.setProperty("visibility", "visible", "important");
-          plane.style.setProperty("transform", "none", "important");
-          plane.style.setProperty("filter", "none", "important");
-          plane.style.setProperty("clip-path", "none", "important");
+          let current: HTMLElement | null = plane;
+          while (current) {
+            recoveryNodes.add(current);
+            if (current === section) break;
+            current = current.parentElement;
+          }
         });
+      recoveryNodes.forEach((node) => {
+        node.style.setProperty("animation", "none", "important");
+        node.style.setProperty("transition", "none", "important");
+        node.style.setProperty("opacity", "1", "important");
+        node.style.setProperty("visibility", "visible", "important");
+        node.style.setProperty("transform", "none", "important");
+        node.style.setProperty("filter", "none", "important");
+        node.style.setProperty("clip-path", "none", "important");
+      });
 
       const existingFrame = recoveryFrames.get(section);
       if (existingFrame) window.cancelAnimationFrame(existingFrame);
