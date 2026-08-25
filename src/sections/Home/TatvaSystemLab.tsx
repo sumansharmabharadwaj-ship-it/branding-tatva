@@ -2,9 +2,9 @@
 
 import { Container } from "@/components/Container";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import Link from "next/link";
-import { useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 
 const FORCES = [
   { name: "Prithvi", role: "Foundation", title: "Give the idea somewhere firm to stand.", text: "Category, audience, belief and position resolve into one durable strategic ground.", color: "#ad6848" },
@@ -18,8 +18,20 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function TatvaSystemLab() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
+  const sectionRef = useRef<HTMLElement>(null);
+  const pointerPreviewRef = useRef(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const active = FORCES[activeIndex];
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    if (reducedMotion || pointerPreviewRef.current) return;
+    const next = Math.min(FORCES.length - 1, Math.max(0, Math.floor(progress * FORCES.length)));
+    setActiveIndex((current) => current === next ? current : next);
+  });
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -34,7 +46,7 @@ export function TatvaSystemLab() {
   }
 
   return (
-    <section className="tatva-film" aria-labelledby="tatva-film-title">
+    <section ref={sectionRef} className="tatva-film" aria-labelledby="tatva-film-title">
       <div className="tatva-film__media" aria-hidden="true">
         <video muted autoPlay loop playsInline preload="metadata" poster="/images/pexels-golden-fog-sea-poster.jpg">
           <source src="/videos/pexels-golden-fog-sea.webm" type="video/webm" />
@@ -51,7 +63,7 @@ export function TatvaSystemLab() {
 
         <div className="tatva-film__story">
           <div className="tatva-film__intro">
-            <p>Not five services. Five jobs inside one brand.</p>
+            <p>Five distinct jobs inside one brand.</p>
             <h2 id="tatva-film-title">Five forces.<br /><em>One recognisable whole.</em></h2>
           </div>
 
@@ -77,31 +89,41 @@ export function TatvaSystemLab() {
           </AnimatePresence>
         </div>
 
-        <div className="tatva-film__forces" role="tablist" aria-label="Explore the five Tatvas">
-          {FORCES.map((force, index) => {
-            const selected = index === activeIndex;
-            return (
-              <button
-                key={force.name}
-                id={`tatva-force-${index}`}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                aria-controls="tatva-force-panel"
-                tabIndex={selected ? 0 : -1}
-                className={selected ? "is-active" : undefined}
-                style={{ "--tatva-accent": force.color } as CSSProperties}
-                onClick={() => setActiveIndex(index)}
-                onPointerEnter={() => setActiveIndex(index)}
-                onFocus={() => setActiveIndex(index)}
-                onKeyDown={(event) => onKeyDown(event, index)}
-              >
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <strong>{force.name}</strong>
-                <small>{force.role}</small>
-              </button>
-            );
-          })}
+        <div className="tatva-film__selector">
+          <div className="tatva-film__selector-label">
+            <span>Explore the five forces</span>
+            <span>{String(activeIndex + 1).padStart(2, "0")} / {String(FORCES.length).padStart(2, "0")}</span>
+          </div>
+          <div className="tatva-film__forces" role="tablist" aria-label="Explore the five Tatvas">
+            {FORCES.map((force, index) => {
+              const selected = index === activeIndex;
+              return (
+                <button
+                  key={force.name}
+                  id={`tatva-force-${index}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  aria-controls="tatva-force-panel"
+                  tabIndex={selected ? 0 : -1}
+                  className={selected ? "is-active" : undefined}
+                  style={{ "--tatva-accent": force.color } as CSSProperties}
+                  onClick={() => setActiveIndex(index)}
+                  onPointerEnter={() => {
+                    pointerPreviewRef.current = true;
+                    setActiveIndex(index);
+                  }}
+                  onPointerLeave={() => { pointerPreviewRef.current = false; }}
+                  onFocus={() => setActiveIndex(index)}
+                  onKeyDown={(event) => onKeyDown(event, index)}
+                >
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{force.name}</strong>
+                  <small>{force.role}</small>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </Container>
     </section>

@@ -466,3 +466,48 @@ Unavailable. The choice rail, active service copy, video crop, type wrapping, fo
 ## Final result
 
 blocked
+
+---
+
+# Homepage living Tatva QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: `/workspace/scratch/55f96cacf4b7/upload/08a75655-58aa-4a35-9d03-637489c417c4(1).png` (`1536 × 1024`), the approved cinematic nature-led editorial direction.
+- Implementation target: homepage `#tatva` chapter in `src/sections/Home/TatvaSystemLab.tsx`.
+- Browser-rendered implementation screenshot: unavailable because the required cloud-browser connection did not initialize.
+- Intended viewports: `1920 × 1080` desktop and `390 × 844` mobile at density `1`.
+- State: first elemental force active over moving golden fog and sea film.
+
+## Findings
+
+- [P1] Browser-rendered composition remains unverified. Exact film crop, one-screen fit, selector legibility and transition timing require a same-viewport cloud-browser capture.
+
+## Required fidelity surfaces
+
+- Fonts and typography: existing editorial hierarchy retained; rendered wrapping is unverified.
+- Spacing and layout rhythm: one `100svh` scene with compact short-height/mobile rules; rendered fit is unverified.
+- Colors and visual tokens: existing elemental accents, vellum and forest palette retained; rendered contrast is unverified.
+- Image quality and asset fidelity: real `pexels-golden-fog-sea` WebM/MP4 film and poster remain full bleed; no simulated visual asset was introduced.
+- Copy and content: all five forces, roles, strategic consequences and service route remain available; negative framing was replaced with affirmative copy.
+
+## Interaction and browser verification
+
+- Production build: passed; all `78` routes generated.
+- TypeScript: passed.
+- Static interaction review: passed; natural viewport travel now advances the five forces, with hover, click, focus and arrow/Home/End keyboard control preserved.
+- Browser interaction, screenshots, console errors and responsive fit: blocked.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The current Tatva component stayed static because the legacy tempo director targeted obsolete selectors. | Connected the active force to the real scene's viewport travel and added an explicit selector label. Browser-rendered post-fix evidence remains blocked. |
+
+## Focused-region evidence
+
+Unavailable. The active force, selector, film crop, focus state and mobile fit still require browser-rendered comparison.
+
+## Final result
+
+blocked
