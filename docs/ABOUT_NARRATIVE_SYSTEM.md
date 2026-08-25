@@ -194,31 +194,25 @@ in the work and avoids an explicit scrolling instruction.
 
 ## Founder-led continuity record
 
-`WorkingDirectly.tsx` now keeps one strategic document in frame from the
-original question through the usable system. Scroll progressively adds the
-problem, position, language, and operating rules to that same record, so
-continuity is demonstrated through accumulation rather than explained through
-four interchangeable panels. Reverse scroll removes later conclusions while
+`WorkingDirectly.tsx` keeps one living decision trail in frame from the
+original question through the usable system. The old split composition repeated
+the active stage in a left-hand explanation and four dense document rows. The
+new scene gives the whole viewport to one record: incoming context enters, the
+active decision sharpens in the centre, and its output is stamped into the
+same accumulating archive. Reverse scroll removes later conclusions while
 preserving the earlier context they depend on.
 
 ```tsx
-const state = index < activeIndex
-  ? "complete"
-  : index === activeIndex
-    ? "active"
-    : "waiting";
-
-<button data-state={state} onClick={() => sequence.choose(index)}>
-  <span>{stage.recordLabel}</span>
-  <strong>{stage.record}</strong>
-  <em>{stage.output}</em>
+<button data-reached={index <= activeIndex} data-active={index === activeIndex}>
+  <Icon />
+  <span>{stage.label}</span>
 </button>
 ```
 
-Pointer position moves the working light and restrained paper angle. Touch and
-reduced-motion modes receive the complete four-stage record in normal reading
-order, with every input, decision, and output available without a hidden
-gesture.
+Pointer position moves the working light and restrained paper angle. The
+desktop runway falls from 154svh to 140svh. Touch and reduced-motion modes
+receive the complete four-stage record in normal reading order, with every
+input, decision, and output available without a hidden gesture.
 
 ## Comparative evidence chain
 
