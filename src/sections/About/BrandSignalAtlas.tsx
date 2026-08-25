@@ -131,7 +131,7 @@ export function BrandSignalAtlas() {
     });
   }
 
-  function onSurfaceKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+  function onSurfaceKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number, idPrefix = "brand-surface") {
     let next = index;
     if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % SURFACES.length;
     else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + SURFACES.length - 1) % SURFACES.length;
@@ -141,7 +141,7 @@ export function BrandSignalAtlas() {
 
     event.preventDefault();
     setSelectedSurface(next);
-    document.getElementById(`brand-surface-${next}`)?.focus();
+    document.getElementById(`${idPrefix}-${next}`)?.focus();
   }
 
   return (
@@ -256,6 +256,59 @@ export function BrandSignalAtlas() {
               </motion.article>
             </AnimatePresence>
           </div>
+        </div>
+
+        <div className={styles.touchAtlas}>
+          <div className={styles.touchRail} role="tablist" aria-label="Explore the surfaces of the brand system">
+            {SURFACES.map((item, index) => {
+              const Icon = item.icon;
+              const selected = selectedSurface === index;
+              return (
+                <button
+                  key={item.label}
+                  id={`touch-brand-surface-${index}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  aria-controls="touch-brand-surface-panel"
+                  tabIndex={selected ? 0 : -1}
+                  data-active={selected}
+                  onClick={() => setSelectedSurface(index)}
+                  onFocus={() => setSelectedSurface(index)}
+                  onKeyDown={(event) => onSurfaceKeyDown(event, index, "touch-brand-surface")}
+                >
+                  <span><Icon size={16} aria-hidden="true" /></span>
+                  <small>{item.number}</small>
+                  <strong>{item.label}</strong>
+                </button>
+              );
+            })}
+          </div>
+
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.article
+              key={`touch-${surface.label}`}
+              id="touch-brand-surface-panel"
+              role="tabpanel"
+              aria-labelledby={`touch-brand-surface-${selectedSurface}`}
+              className={styles.touchRecord}
+              initial={prefersReducedMotion ? false : { opacity: 0, clipPath: "inset(0 12% 0 0)" }}
+              animate={{ opacity: 1, clipPath: "inset(0 0 0 0)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, clipPath: "inset(0 0 0 12%)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+            >
+              <div className={styles.touchRecordIndex}>
+                <span><ActiveIcon size={18} aria-hidden="true" /></span>
+                <small>{surface.number} / 04 · {surface.short}</small>
+              </div>
+              <h3>{surface.title}</h3>
+              <p>{surface.description}</p>
+              <div className={styles.touchTest}>
+                <small>Coherence check</small>
+                <strong>{surface.test}</strong>
+              </div>
+            </motion.article>
+          </AnimatePresence>
         </div>
 
         <div className={styles.staticAtlas}>
