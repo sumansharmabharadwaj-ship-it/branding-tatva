@@ -7,6 +7,7 @@ const CHAPTERS = [
   "Formative fields",
   "Point of view",
   "Synthesis",
+  "Brand system",
   "Working standards",
   "One strategic thread",
   "Evidence chain",

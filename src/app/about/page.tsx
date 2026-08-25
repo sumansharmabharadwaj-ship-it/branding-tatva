@@ -8,6 +8,7 @@ import { AboutCinematicRuntime } from "@/components/AboutCinematicRuntime";
 import { FounderFieldNotes } from "@/sections/About/FounderFieldNotes";
 import { PointOfView } from "@/sections/About/PointOfView";
 import { Convergence } from "@/sections/About/Convergence";
+import { BrandSignalAtlas } from "@/sections/About/BrandSignalAtlas";
 import { Behaviours } from "@/sections/About/Behaviours";
 import { WorkingDirectly } from "@/sections/About/WorkingDirectly";
 import { Evidence } from "@/sections/About/Evidence";
@@ -105,6 +106,21 @@ export default function AboutPage() {
             <Convergence />
           </div>
         </div>
+
+        <section className="relative overflow-clip bg-soil" data-about-chapter="system" data-about-film-scene data-scene-tone="dark">
+          <div className="absolute inset-0" data-about-film-background>
+            <BackgroundVideo
+              video="/videos/pexels-root-network.mp4"
+              poster="/images/pexels-root-network-poster.jpg"
+              parallax
+              playbackRate={0.82}
+            />
+          </div>
+          <div aria-hidden="true" className="absolute inset-0 bg-soil/88" />
+          <div className="relative" data-about-film-plane>
+            <BrandSignalAtlas />
+          </div>
+        </section>
 
         <section className="relative overflow-clip bg-soil" data-about-chapter="principles" data-about-film-scene data-scene-tone="dark">
           <div className="absolute inset-0" data-about-film-background>

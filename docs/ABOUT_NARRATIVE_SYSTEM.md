@@ -103,6 +103,30 @@ The global chapter spine names this scene **Synthesis**, so navigation language
 matches what the visitor is actually watching rather than repeating the degree
 labels from the origin chapter.
 
+## Brand-system atlas
+
+`BrandSignalAtlas.tsx` answers the practical question that follows synthesis:
+*what does the resolved signal need to govern?* The scene holds four connected
+brand surfaces in one composition—position, language, creative direction, and
+team practice—while the short scroll runway changes the system state:
+
+```tsx
+const stages = [
+  { label: "Find", meaning: "Isolate one credible signal." },
+  { label: "Carry", meaning: "Coordinate every expression around it." },
+  { label: "Recognise", meaning: "Let repeated coherence compound." },
+];
+```
+
+Scroll controls the whole composition rather than selecting a single card.
+Hover, click, and keyboard focus inspect each surface without interrupting the
+scroll state. Each record includes a coherence question so the interaction
+works as a compact diagnostic as well as an explanation of the practice.
+
+The 142svh desktop runway stays below the page's existing pin cap. Touch and
+reduced-motion layouts present the same four surfaces as a complete linear
+atlas, with no dependency on pointer discovery.
+
 ## Point-of-view camera
 
 `PointOfView.tsx` treats perception, language, and memory as one recognition
