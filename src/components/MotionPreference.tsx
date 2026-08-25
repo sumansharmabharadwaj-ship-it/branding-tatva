@@ -8,8 +8,9 @@ const STORAGE_KEY = "bt-motion";
 
 const MotionPrefContext = createContext<{
   pref: MotionPref;
+  hydrated: boolean;
   setPref: (p: MotionPref) => void;
-}>({ pref: "full", setPref: () => {} });
+}>({ pref: "full", hydrated: false, setPref: () => {} });
 
 export function useMotionPreference() {
   return useContext(MotionPrefContext);
@@ -50,7 +51,7 @@ export function MotionPreferenceProvider({ children }: { children: React.ReactNo
   const reducedMotion = !hydrated ? "never" : pref === "reduced" ? "always" : "user";
 
   return (
-    <MotionPrefContext.Provider value={{ pref, setPref }}>
+    <MotionPrefContext.Provider value={{ pref, hydrated, setPref }}>
       <MotionConfig reducedMotion={reducedMotion}>{children}</MotionConfig>
     </MotionPrefContext.Provider>
   );

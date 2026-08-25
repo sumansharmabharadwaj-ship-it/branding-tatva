@@ -135,12 +135,12 @@ export default function RootLayout({
         <div className="gradient-mesh" aria-hidden="true" />
         <div className="paper-grain" aria-hidden="true" />
 
-        <SmoothScrollProvider>
-          <MotionPreferenceProvider>
+        <MotionPreferenceProvider>
+          <SmoothScrollProvider>
             {children}
             <SparkCursor />
-          </MotionPreferenceProvider>
-        </SmoothScrollProvider>
+          </SmoothScrollProvider>
+        </MotionPreferenceProvider>
 
         <AmbientAudio />
         <VideoWarden />

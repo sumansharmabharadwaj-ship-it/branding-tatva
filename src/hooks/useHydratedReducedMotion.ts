@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { useMotionPreference } from "@/components/MotionPreference";
 
@@ -11,12 +10,7 @@ import { useMotionPreference } from "@/components/MotionPreference";
  */
 export function useHydratedMotionPreference() {
   const osReducedMotion = useReducedMotion();
-  const { pref } = useMotionPreference();
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
+  const { pref, hydrated } = useMotionPreference();
 
   return {
     hydrated,

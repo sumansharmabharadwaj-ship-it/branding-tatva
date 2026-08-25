@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,18 +30,16 @@ export function useLenis() {
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [lenis, setLenis] = useState<Lenis | null>(null);
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
     const usesNativeSceneScroll = pathname === "/" || pathname === "/contact";
 
     // Home and Contact already compose native scroll into full-height camera
     // scenes. Keeping input at a true 1:1 response prevents Lenis momentum
     // from competing with their own forgiving scene settling. Other routes
     // retain the existing soft scroll.
-    if (reducedMotion || usesNativeSceneScroll) return;
+    if (!hydrated || prefersReducedMotion || usesNativeSceneScroll) return;
 
     const instance = new Lenis({
       lerp: 0.1,
@@ -152,7 +151,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("load", refresh);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [pathname]);
+  }, [hydrated, pathname, prefersReducedMotion]);
 
   return <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>;
 }
