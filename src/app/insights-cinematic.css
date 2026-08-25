@@ -2138,6 +2138,19 @@
   }
 }
 
+/* The floating navigation returns on an upward scroll. Give the Library a
+   protected editorial header line in that state, then recover the same
+   one-screen rhythm from the image aperture rather than adding scroll. */
+@media (min-width: 1024px) and (min-height: 791px) {
+  .insights-library {
+    padding-block: 6.65rem 1.5rem;
+  }
+
+  .insights-library__folios > div a > div:first-child {
+    max-height: 11.5rem;
+  }
+}
+
 @media (max-width: 899px) {
   .insights-hero__shell {
     align-items: center;
@@ -2555,6 +2568,10 @@
   .insights-library,
   .insights-audit-scene {
     padding-block: 5.25rem 1.75rem;
+  }
+
+  .insights-library {
+    padding-block: 5.75rem 1.25rem;
   }
 
   .insights-foundation__camera,

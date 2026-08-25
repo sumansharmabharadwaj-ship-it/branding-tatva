@@ -25,6 +25,10 @@ type InsightCardProps = {
   featured?: boolean;
   showReadingOutcome?: boolean;
   readingCue?: string;
+  imageOverride?: {
+    src: string;
+    alt: string;
+  };
   tracking: {
     source: "insights_library" | "insights_topic" | "related_insights";
     context?: Record<string, string | number | boolean>;
@@ -61,6 +65,7 @@ export function InsightCard({
   featured = false,
   showReadingOutcome = false,
   readingCue,
+  imageOverride,
   tracking,
 }: InsightCardProps) {
   const color = ELEMENT_COLORS[post.element];
@@ -89,8 +94,8 @@ export function InsightCard({
           }`}
         >
           <Image
-            src={post.heroImage}
-            alt={post.heroImageAlt}
+            src={imageOverride?.src ?? post.heroImage}
+            alt={imageOverride?.alt ?? post.heroImageAlt}
             fill
             sizes={
               featured
