@@ -511,3 +511,48 @@ Unavailable. The active force, selector, film crop, focus state and mobile fit s
 ## Final result
 
 blocked
+
+---
+
+# Homepage living studio QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: approved light, golden-water editorial reference supplied in the homepage redesign thread.
+- Implementation target: homepage `#studio` chapter in `src/sections/Home/StudioCinematicChapter.tsx`.
+- Browser-rendered implementation screenshot: unavailable because the required cloud-browser session is unavailable.
+- Intended viewports: `1920 × 1080` desktop and `390 × 844` mobile at density `1`.
+- State: Psychology active over the moving fog-sunrise film.
+
+## Findings
+
+- [P1] Browser-rendered composition remains unverified. Film crops, one-screen fitting, light-overlay contrast and natural progression timing require same-viewport captures.
+
+## Required fidelity surfaces
+
+- Fonts and typography: established editorial hierarchy retained; rendered wrapping is unverified.
+- Spacing and layout rhythm: one `100svh` scene with compact short-height/mobile rules; rendered fit is unverified.
+- Colors and visual tokens: the former dark treatment is lifted into vellum, forest and discipline-specific accents; rendered contrast is unverified.
+- Image quality and asset fidelity: three repeated process clips were replaced by real fog sunrise, studio morning light and aspen sunburst films with matching posters.
+- Copy and content: Psychology, Literature and Strategy credentials, arguments, outputs and truthful project links remain available.
+
+## Interaction and browser verification
+
+- Production build: passed; all `78` routes generated.
+- TypeScript: passed.
+- Static interaction review: passed; viewport travel advances the disciplines while hover, click, focus and arrow/Home/End keyboard control remain available.
+- Browser interaction, screenshots, console errors and responsive fit: blocked.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The scene used a dark interface treatment and repeated three videos already assigned to the process system. | Regraded the chapter into a light cinematic scene, assigned three distinct real films and connected its disciplines to natural page travel. Browser-rendered evidence remains blocked. |
+
+## Focused-region evidence
+
+Unavailable. The discipline selector, light overlay, active statement, film crop and mobile fit still require browser-rendered comparison.
+
+## Final result
+
+blocked

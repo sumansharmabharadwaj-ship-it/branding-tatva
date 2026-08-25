@@ -1,9 +1,9 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import Link from "next/link";
-import { useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 
 const DISCIPLINES = [
   {
@@ -16,8 +16,8 @@ const DISCIPLINES = [
     outcome: "Audience tension + perception map",
     proof: "Applied in HerbalCart",
     proofHref: "/work/herbalcart",
-    video: "/videos/higgsfield-process-listen.mp4",
-    poster: "/images/higgsfield-process-listen-poster.jpg",
+    video: "/videos/pexels-fog-sunrise.mp4",
+    poster: "/images/pexels-fog-sunrise-poster.jpg",
     accent: "#d19670",
   },
   {
@@ -30,8 +30,8 @@ const DISCIPLINES = [
     outcome: "Verbal identity + narrative spine",
     proof: "Applied in MyShopInEurope",
     proofHref: "/work/myshopineurope",
-    video: "/videos/higgsfield-idea-sketch.mp4",
-    poster: "/images/higgsfield-idea-sketch.jpg",
+    video: "/videos/pexels-studio-morning-light.mp4",
+    poster: "/images/pexels-studio-morning-light-poster.jpg",
     accent: "#92afbb",
   },
   {
@@ -44,8 +44,8 @@ const DISCIPLINES = [
     outcome: "A brand system that keeps moving",
     proof: "Applied in Dr. Haley Nutrition",
     proofHref: "/work/dr-haley-nutrition",
-    video: "/videos/higgsfield-process-shape.mp4",
-    poster: "/images/higgsfield-process-shape-poster.jpg",
+    video: "/videos/pexels-aspen-sunburst.mp4",
+    poster: "/images/pexels-aspen-sunburst-poster.jpg",
     accent: "#e0b45f",
   },
 ] as const;
@@ -54,8 +54,17 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function StudioCinematicChapter() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
+  const sectionRef = useRef<HTMLElement>(null);
+  const pointerPreviewRef = useRef(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const active = DISCIPLINES[activeIndex];
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    if (reducedMotion || pointerPreviewRef.current) return;
+    const next = Math.min(DISCIPLINES.length - 1, Math.max(0, Math.floor(progress * DISCIPLINES.length)));
+    setActiveIndex((current) => current === next ? current : next);
+  });
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -71,6 +80,7 @@ export function StudioCinematicChapter() {
 
   return (
     <section
+      ref={sectionRef}
       id="studio"
       className="studio-film"
       aria-labelledby="studio-film-title"
@@ -137,7 +147,9 @@ export function StudioCinematicChapter() {
         </div>
 
         <div className="studio-film__footer">
-          <div className="studio-film__chapters" role="tablist" aria-label="Explore Suman's three disciplines">
+          <div className="studio-film__selector">
+            <div className="studio-film__selector-label"><span>Explore the three disciplines</span><span>{active.number} / 03</span></div>
+            <div className="studio-film__chapters" role="tablist" aria-label="Explore Suman's three disciplines">
             {DISCIPLINES.map((discipline, index) => {
               const selected = index === activeIndex;
               return (
@@ -152,7 +164,11 @@ export function StudioCinematicChapter() {
                   className={selected ? "is-active" : undefined}
                   style={{ "--studio-chapter-accent": discipline.accent } as CSSProperties}
                   onClick={() => setActiveIndex(index)}
-                  onPointerEnter={() => setActiveIndex(index)}
+                  onPointerEnter={() => {
+                    pointerPreviewRef.current = true;
+                    setActiveIndex(index);
+                  }}
+                  onPointerLeave={() => { pointerPreviewRef.current = false; }}
                   onFocus={() => setActiveIndex(index)}
                   onKeyDown={(event) => onKeyDown(event, index)}
                 >
@@ -160,6 +176,7 @@ export function StudioCinematicChapter() {
                 </button>
               );
             })}
+            </div>
           </div>
           <Link href="/about" className="studio-film__about">Meet the strategist <span aria-hidden="true">→</span></Link>
         </div>

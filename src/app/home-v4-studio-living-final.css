@@ -1,0 +1,178 @@
+/* Final studio chapter: a light, living editorial film rather than a dark panel. */
+
+.home-v4 .home-v4-chapter--studio {
+  background: #e8dfcd;
+  color: #23362b;
+}
+
+.home-v4 .studio-film {
+  color: #23362b;
+}
+
+.home-v4 .studio-film__media video {
+  filter: saturate(.62) sepia(.08) contrast(.88) brightness(1.14);
+}
+
+.home-v4 .studio-film__wash {
+  background:
+    linear-gradient(90deg, rgba(244, 237, 222, .97) 0%, rgba(242, 234, 217, .86) 43%, rgba(239, 228, 207, .34) 76%),
+    linear-gradient(0deg, rgba(228, 215, 190, .8), transparent 48%, rgba(249, 244, 232, .5));
+}
+
+.home-v4 .studio-film__frame {
+  padding-bottom: clamp(.7rem, 1.6svh, 1.1rem);
+}
+
+.home-v4 .studio-film__topline {
+  border-color: rgba(35, 54, 43, .24);
+  color: rgba(35, 54, 43, .68);
+}
+
+.home-v4 .studio-film__body {
+  padding-block: clamp(.85rem, 2.5svh, 2rem);
+}
+
+.home-v4 .studio-film__statement h2,
+.home-v4 .studio-film__reading h3 {
+  color: #23362b;
+}
+
+.home-v4 .studio-film__reading > p {
+  color: rgba(35, 54, 43, .78);
+}
+
+.home-v4 .studio-film__outcome {
+  border-color: rgba(35, 54, 43, .2);
+}
+
+.home-v4 .studio-film__outcome span {
+  color: rgba(35, 54, 43, .52);
+}
+
+.home-v4 .studio-film__outcome strong,
+.home-v4 .studio-film__reading > a,
+.home-v4 .studio-film__about {
+  color: #4d4a31;
+}
+
+.home-v4 .studio-film__reading > a,
+.home-v4 .studio-film__about {
+  border-color: rgba(77, 74, 49, .45);
+}
+
+.home-v4 .studio-film__footer {
+  grid-template-columns: minmax(0, 1fr) auto;
+  border-color: rgba(35, 54, 43, .24);
+}
+
+.home-v4 .studio-film__selector {
+  min-width: 0;
+}
+
+.home-v4 .studio-film__selector-label {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 .15rem .5rem;
+  color: rgba(35, 54, 43, .66);
+  font-size: clamp(.55rem, .65vw, .65rem);
+  font-weight: 650;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.home-v4 .studio-film__chapters {
+  border-top: 1px solid rgba(35, 54, 43, .22);
+}
+
+.home-v4 .studio-film__chapters button {
+  min-height: clamp(4rem, 7.4svh, 4.9rem);
+  border-color: rgba(35, 54, 43, .17);
+  color: rgba(35, 54, 43, .55);
+}
+
+.home-v4 .studio-film__chapters button:is(:hover, :focus-visible, .is-active) {
+  background: rgba(250, 244, 231, .3);
+  color: #23362b;
+}
+
+@media (max-width: 760px) {
+  .home-v4 .studio-film {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
+  .home-v4 .studio-film__frame {
+    min-height: 100svh;
+    padding-top: 4.75rem;
+    padding-bottom: .45rem;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  .home-v4 .studio-film__topline {
+    padding-bottom: .6rem;
+  }
+
+  .home-v4 .studio-film__body {
+    gap: .65rem;
+    padding-block: .5rem;
+  }
+
+  .home-v4 .studio-film__statement > p {
+    margin-bottom: .4rem;
+  }
+
+  .home-v4 .studio-film__statement h2 {
+    font-size: clamp(2.15rem, 9.9vw, 3.35rem);
+  }
+
+  .home-v4 .studio-film__reading h3 {
+    margin-block: .45rem .35rem;
+    font-size: clamp(1.5rem, 6.7vw, 2.15rem);
+  }
+
+  .home-v4 .studio-film__reading > p {
+    font-size: .78rem;
+    line-height: 1.4;
+  }
+
+  .home-v4 .studio-film__outcome {
+    margin-top: .45rem;
+    padding-top: .4rem;
+  }
+
+  .home-v4 .studio-film__outcome strong {
+    font-size: 1.02rem;
+  }
+
+  .home-v4 .studio-film__reading > a {
+    margin-top: .45rem;
+    font-size: .58rem;
+  }
+
+  .home-v4 .studio-film__footer {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .home-v4 .studio-film__selector-label {
+    padding-bottom: .3rem;
+    font-size: .5rem;
+  }
+
+  .home-v4 .studio-film__chapters button {
+    min-height: 3.15rem;
+    padding-block: .42rem;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 761px) {
+  .home-v4 .studio-film__frame {
+    padding-top: 4.6rem;
+    padding-bottom: .4rem;
+  }
+  .home-v4 .studio-film__statement h2 { font-size: clamp(2.55rem, 5.1vw, 4.7rem); }
+  .home-v4 .studio-film__reading h3 { margin-block: .55rem .4rem; font-size: clamp(1.7rem, 2.8vw, 2.8rem); }
+  .home-v4 .studio-film__outcome { margin-top: .55rem; padding-top: .45rem; }
+  .home-v4 .studio-film__reading > a { margin-top: .55rem; }
+  .home-v4 .studio-film__chapters button { min-height: 3.4rem; padding-block: .45rem; }
+}
