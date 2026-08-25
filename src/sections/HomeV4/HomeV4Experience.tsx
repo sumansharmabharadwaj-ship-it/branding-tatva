@@ -3,28 +3,19 @@
 import { useEffect } from "react";
 import { VideoBreak } from "@/components/VideoBreak";
 import { ProcessSection } from "@/sections/Process";
-import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
 import { HomeBrandHealthCheck } from "@/sections/Home/HomeBrandHealthCheck";
-import { HomeInsightsPreview } from "@/sections/Home/HomeInsightsPreview";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
-import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
 import { process as processStages } from "@/data/process";
 import { elementColor } from "@/lib/elementColor";
-import { HomeV4HeaderDirector } from "./HomeV4HeaderDirector";
 import { SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
-import { HomeV4ProcessTempo } from "./HomeV4ProcessTempo";
-import { HomeV4RecognitionTempo } from "./HomeV4RecognitionTempo";
-import { HomeV4ScrollCamera } from "./HomeV4ScrollCamera";
-import { HomeV4TatvaTempo } from "./HomeV4TatvaTempo";
-import { HomeV4TatvaLens } from "./HomeV4TatvaLens";
-import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
+import { V4HiddenCostScene, V4OpeningScene } from "./HomeV4Scenes";
 
 export function HomeV4Experience() {
   useEffect(() => {
@@ -36,16 +27,7 @@ export function HomeV4Experience() {
     <div className="home-v4" data-home-v4>
       <HomeV4PreludeBridge />
       <HomeV4MediaDirector />
-      <HomeV4ScrollCamera />
-      <HomeV4HeaderDirector />
-      <HomeV4RecognitionTempo />
-      <HomeV4TatvaLens />
-      <HomeV4ProcessTempo />
-      <HomeV4TatvaTempo />
       <V4OpeningScene />
-      <SceneHandoff motif="mist" />
-
-      <V4RecognitionScene />
       <SceneHandoff motif="mist" />
 
       <HomeBrandHealthCheck />
@@ -55,17 +37,17 @@ export function HomeV4Experience() {
       <SceneHandoff motif="root" />
 
       <div
-        id="foundation"
-        data-home-v4-chapter="foundation"
-        data-home-chapter="foundation"
-        data-home-section="foundation"
-        data-cursor-world="light"
-        className="home-v4-chapter home-v4-chapter--foundation"
+        id="evidence"
+        data-home-v4-chapter="evidence"
+        data-home-chapter="evidence"
+        data-home-section="evidence"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--evidence"
       >
-        <BrandFoundationScene />
+        <EvidenceWall />
       </div>
 
-      <SceneHandoff motif="aperture" />
+      <SceneHandoff motif="river" />
 
       <div
         data-home-v4-chapter="paths"
@@ -89,33 +71,6 @@ export function HomeV4Experience() {
         aria-label="How the Branding Tatva method moves"
       >
         <ProcessSection stages={processStages} elementColor={elementColor} />
-      </section>
-
-      <SceneHandoff motif="paper" />
-
-      <div
-        id="evidence"
-        data-home-v4-chapter="evidence"
-        data-home-chapter="evidence"
-        data-home-section="evidence"
-        data-cursor-world="dark"
-        className="home-v4-chapter home-v4-chapter--evidence"
-      >
-        <EvidenceWall />
-      </div>
-
-      <SceneHandoff motif="river" />
-
-      <section
-        id="tatva"
-        data-home-v4-chapter="tatva"
-        data-home-chapter="tatva"
-        data-home-section="tatva"
-        data-cursor-world="light"
-        className="home-v4-chapter home-v4-chapter--tatva"
-        aria-label="The five Tatvas as one operating system"
-      >
-        <TatvaSystemLab />
       </section>
 
       <SceneHandoff motif="constellation" />
@@ -146,20 +101,6 @@ export function HomeV4Experience() {
       <SceneHandoff motif="mist" />
 
       <section
-        id="insights-preview"
-        data-home-v4-chapter="insights"
-        data-home-chapter="insights"
-        data-home-section="insights"
-        data-cursor-world="dark"
-        className="home-v4-chapter home-v4-chapter--insights"
-        aria-label="Featured Branding Tatva Insight and two supporting field notes"
-      >
-        <HomeInsightsPreview />
-      </section>
-
-      <SceneHandoff motif="light" />
-
-      <section
         id="invitation"
         data-home-v4-chapter="invitation"
         data-home-chapter="invitation"
@@ -169,8 +110,8 @@ export function HomeV4Experience() {
         aria-label="Begin a conversation with Branding Tatva"
       >
         <VideoBreak
-          src="/videos/pexels-summit-inversion.mp4"
-          poster="/images/pexels-summit-inversion-poster.jpg"
+          src="/videos/higgsfield-silver-tide.mp4"
+          poster="/images/higgsfield-silver-tide-poster.jpg"
           height="100svh"
           imagePosition="52% 48%"
           cameraPush
