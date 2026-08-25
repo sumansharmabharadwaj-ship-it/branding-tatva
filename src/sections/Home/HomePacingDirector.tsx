@@ -21,6 +21,7 @@ export function HomePacingDirector() {
     let sectionObserver: IntersectionObserver | null = null;
     let mutationObserver: MutationObserver | null = null;
     const visibilityTimers = new Map<HTMLElement, number>();
+    const recoveryFrames = new Map<HTMLElement, number>();
 
     function sceneId(section: HTMLElement) {
       return (
@@ -50,6 +51,33 @@ export function HomePacingDirector() {
       );
     }
 
+    function forceReadableFallback(section: HTMLElement) {
+      section.dataset.homeSceneRecovery = "forced";
+      section
+        .querySelectorAll<HTMLElement>("[data-home-reading-plane]")
+        .forEach((plane) => {
+          plane.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
+          plane.style.setProperty("animation", "none", "important");
+          plane.style.setProperty("transition", "none", "important");
+          plane.style.setProperty("opacity", "1", "important");
+          plane.style.setProperty("visibility", "visible", "important");
+          plane.style.setProperty("transform", "none", "important");
+          plane.style.setProperty("filter", "none", "important");
+          plane.style.setProperty("clip-path", "none", "important");
+        });
+
+      const existingFrame = recoveryFrames.get(section);
+      if (existingFrame) window.cancelAnimationFrame(existingFrame);
+      const frame = window.requestAnimationFrame(() => {
+        recoveryFrames.delete(section);
+        if (section.dataset.homeSceneState !== "active") return;
+        if (!hasVisibleReadingPlane(section)) return;
+        section.dataset.homeSceneContent = "visible";
+        trackRuntimeIssue("scene_visibility_recovered", { scene: sceneId(section) });
+      });
+      recoveryFrames.set(section, frame);
+    }
+
     function scheduleVisibilityCheck(section: HTMLElement) {
       const existing = visibilityTimers.get(section);
       if (existing) window.clearTimeout(existing);
@@ -60,6 +88,7 @@ export function HomePacingDirector() {
         if (!visible) {
           section.dataset.homeSceneContent = "missing";
           trackRuntimeIssue("scene_visibility_failed", { scene: sceneId(section) });
+          forceReadableFallback(section);
           return;
         }
         if (section.dataset.homeSceneContent === "missing") {
@@ -134,9 +163,13 @@ export function HomePacingDirector() {
       sectionObserver?.disconnect();
       visibilityTimers.forEach((timer) => window.clearTimeout(timer));
       visibilityTimers.clear();
+      recoveryFrames.forEach((frame) => window.cancelAnimationFrame(frame));
+      recoveryFrames.clear();
       observed.forEach((section) => {
         delete section.dataset.homeSceneObserved;
         delete section.dataset.homeSceneState;
+        delete section.dataset.homeSceneContent;
+        delete section.dataset.homeSceneRecovery;
       });
       observed.clear();
     };
