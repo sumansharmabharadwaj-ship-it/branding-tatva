@@ -825,3 +825,65 @@ passed
 ## Final result
 
 passed
+
+---
+
+# Insights Evidence-to-Field-Notes resolution QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: the deployed August 8 Insights Field Notes scene at commit `81608399feb5df9f9b9b4c16e967514fc05f7fb5`, with Message committed in the Evidence Ledger.
+- Implementation: public August 8 branch alias at commit `b468d553fab40abb6a7b979ab4a1c9f85a10a1da`, with the same Message route committed.
+- Browser-rendered source capture: inline cloud-browser capture from `https://branding-tatva-ehlnw18ok-suman22.vercel.app/insights`, `1348 × 936` page-image pixels at a `1363 × 936` CSS viewport and density `1`.
+- Browser-rendered implementation capture: inline cloud-browser capture from `https://branding-tatva-git-august-8-isolated-suman22.vercel.app/insights`, `1348 × 936` page-image pixels at the same `1363 × 936` CSS viewport and density `1`.
+- State: desktop, full motion, Field Notes scene aligned to the viewport, Message committed in the preceding Evidence Ledger.
+- Density normalization: both captures came from the same selected Chrome browser, viewport and device density. Browser scrollbar width accounts for the `1348px` page-image width.
+- Full-view comparison evidence: the source and final viewport captures were emitted together in one cloud-browser comparison input. The complete headline, description, cadence, handoff and email action remained legible in the final frame.
+- Focused-region evidence: the three-step cadence and the secured-thread panel were inspected with direct element measurements because their small copy and progressive opacity needed closer reading.
+
+## Findings
+
+No actionable P0, P1 or P2 findings remain.
+
+The final scene now resolves the exact evidence route rather than only repeating the selected topic in its eyebrow. Message becomes a specific working conclusion, the elemental thread lands in a visible `Thread ready` folio, and the email action continues that same route with a lower-friction commitment.
+
+The centered scene now exposes Question, Lens and Move together. Their measured opacities are `1`, `0.78036` and `0.68`, so the full meaning is available in one screen while the scroll timeline can still increase emphasis during resolution.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed. The established Branding Tatva display serif, compact uppercase interface type and elemental eyebrow remain intact. The evidence-specific headline wraps to two balanced lines, supporting copy remains readable over the film, and the field-note panel preserves the existing form hierarchy.
+- Spacing and layout rhythm: passed. The scene remains exactly `936px` high in the `936px` viewport. The final composition occupies `316.875px` from `469.765px` to `786.64px`; the form panel occupies `187.984px` and does not overlap the headline, cadence, navigation or footer. No section height or scroll runway was added.
+- Colors and visual tokens: passed. The selected route reuses its established elemental color for the eyebrow, cadence rail and secured token. The dark translucent folio gains enough separation from the moving reeds without introducing a new generic gradient or unrelated visual language.
+- Image quality and asset fidelity: passed. The existing real golden-reeds video, poster and elemental glyph component remain the full visual source. No placeholder, generated duplicate, handcrafted SVG or simulated media was introduced.
+- Copy and content: passed. The copy progresses from evidence route to working conclusion, Question/Lens/Move and a thread-specific field-note action. The open state keeps the original general invitation, and the reverse path restores it immediately.
+
+## Interaction and browser verification
+
+- Commit flow: passed. Marking Message in the Evidence Ledger changed Field Notes to `data-reader-thread="evidence"`, rendered `Working thread · Message`, added the `Thread ready` folio and changed the CTA to `Hold this thread`.
+- Reverse flow: passed. Unmarking Message removed the secured folio, restored `Notes worth keeping`, returned the general headline and restored `Where should the next field note land?`.
+- Progressive cadence: passed. Question, Lens and Move are all visible in the centered `discovery` phase; Move no longer waits for the footer transition to become readable.
+- Keyboard reachability: passed. Tab moved from the labelled email input to the submit button, which retained a visible `3px` ivory focus outline.
+- Scene bounds and overflow: passed. Document `scrollWidth` equals `clientWidth` at `1348px`; intentional background glow, video and navigation backdrop are clipped by the scene and create no horizontal scrollbar.
+- Anchor stability: passed. `#insights-audit-seam` landed at the stable Audit scene before the forward handoff; native reverse scrolling remained intact.
+- Compact touch source review: passed. At the existing mobile breakpoint the two-column composition becomes one column, the form changes from a left rail to a top rail, secured content remains one compact row and the cadence keeps all three labels without adding page width.
+- Reduced-motion source review: passed. The navigator resolves every scene variable to its complete static state, disables snapping, and the Framer handoff uses zero-duration transitions; all three cadence steps therefore remain fully visible.
+- Console: no site-originated application errors. Observed messages were limited to `chrome-extension://` metadata handling.
+- Vercel runtime errors for `/insights`: none in the verified one-hour window.
+- TypeScript, targeted ESLint, discovery source gate, internal link graph gate, media search gate and the `78`-route production build: passed.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The committed evidence route changed only the eyebrow; the final scene still looked like a generic newsletter conversion. | Added route-specific resolution copy, the elemental `Thread ready` folio and a thread-specific prompt/action. The final full-view capture shows one continuous Message argument from evidence to field note. |
+| 2 | P2 | The centered viewport left Move at `0` opacity, so the three-part promise became understandable only after the footer entered. | Added readable opacity floors while preserving progressive emphasis. Final measured opacities are `1`, `0.78036` and `0.68` at the centered scene. |
+| 3 | P2 | The first secured state repeated `Evidence secured` in both the eyebrow and the folio. | Reframed the sequence as `Working thread · Message` followed by `Thread ready`, removing the duplicate while keeping the resolution clear. |
+| 4 | — | Final full-view and focused-region comparison found no remaining actionable P0/P1/P2 issue. | Passed. |
+
+## Follow-up polish
+
+- P3: run one physical-device sweep for touch inertia and dynamic browser chrome; the responsive source path is complete and the verified desktop composition has no overflow.
+
+## Final result
+
+passed
