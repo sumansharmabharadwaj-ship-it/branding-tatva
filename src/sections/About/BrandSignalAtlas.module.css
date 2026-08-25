@@ -227,7 +227,7 @@
 }
 
 @media (min-width: 981px) and (prefers-reduced-motion: no-preference) {
-  .scrollStory { height: 142svh; }
+  .scrollStory { height: 132svh; }
   .sticky { position: sticky; top: 0; height: 100svh; }
 }
 
