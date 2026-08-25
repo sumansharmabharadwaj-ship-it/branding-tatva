@@ -9,7 +9,7 @@ const DISCIPLINES = [
   {
     number: "01",
     name: "Psychology",
-    credential: "M.A. Clinical Psychology",
+    credential: "Applied psychology",
     verb: "reads people",
     title: "Find the tension before the audience has words for it.",
     line: "Behaviour becomes evidence. The work studies the friction, desire and perception shaping a buyer's choice.",
@@ -23,7 +23,7 @@ const DISCIPLINES = [
   {
     number: "02",
     name: "Literature",
-    credential: "B.A. English Literature",
+    credential: "Applied literature",
     verb: "shapes meaning",
     title: "Turn a strategic choice into language people can carry.",
     line: "Voice, narrative, rhythm and symbolism give the idea a form people can recognise, repeat and remember.",
@@ -108,7 +108,7 @@ export function StudioCinematicChapter() {
 
       <div className="studio-film__frame">
         <header className="studio-film__topline">
-          <span>10 · The thinking behind the work</span>
+          <span>07 · The thinking behind the work</span>
           <span>Led directly by Suman Sharma</span>
         </header>
 
@@ -122,14 +122,15 @@ export function StudioCinematicChapter() {
             </h2>
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="sync" initial={false}>
             <motion.article
               key={active.name}
               id="studio-film-panel"
               role="tabpanel"
               aria-labelledby={`studio-film-tab-${activeIndex}`}
               className="studio-film__reading"
-              initial={reducedMotion ? false : { opacity: 0, y: 16, filter: "blur(5px)" }}
+              data-home-reading-plane
+              initial={false}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={reducedMotion ? undefined : { opacity: 0, y: -10, filter: "blur(4px)" }}
               transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}

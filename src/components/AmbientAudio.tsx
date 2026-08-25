@@ -119,7 +119,7 @@ export function AmbientAudioButton({ accent }: { accent?: string }) {
       aria-label={enabled ? "Mute ambient sound" : "Play ambient sound"}
       aria-pressed={enabled}
       title={enabled ? "Mute ambient sound" : "Play ambient sound"}
-      className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ivory/12 text-ivory/75 transition-[background-color,border-color,transform,color] duration-300 hover:-translate-y-0.5 hover:border-ivory/30 hover:bg-ivory/[0.06] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+      className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ivory/12 text-ivory/75 transition-[background-color,border-color,transform,color] duration-300 hover:-translate-y-0.5 hover:border-ivory/30 hover:bg-ivory/[0.06] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
       style={{ color: accent, outlineColor: accent }}
     >
       {enabled ? <Volume2 size={17} strokeWidth={1.7} /> : <VolumeX size={17} strokeWidth={1.7} />}

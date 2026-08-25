@@ -19,7 +19,7 @@ import { NatureAccent } from "@/components/NatureAccent";
 import { Fireflies } from "@/components/Fireflies";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ArrowUpRight, CalendarDays, MessageCircle, Phone } from "lucide-react";
-import { site } from "@/data/site";
+import { consultation, site } from "@/data/site";
 import { pageSchema, ORGANIZATION_ID } from "@/lib/pageSchema";
 import "./contact-cinematic.css";
 
@@ -312,7 +312,7 @@ export default function ContactPage() {
                 </div>
 
                 <p data-contact-booking-description className="mt-7 max-w-md text-sm leading-relaxed text-soil/68 sm:text-base">
-                  Choose a time that suits you. The calendar adjusts to your timezone, and no prepared brief or deck is needed.
+                  Choose a time that suits you. The calendar adjusts to your timezone. {consultation.preparation}
                 </p>
 
                 {/* The direct Calendly route keeps the handoff immediate and

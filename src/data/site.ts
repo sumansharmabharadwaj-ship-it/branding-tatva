@@ -27,6 +27,22 @@ export const site = {
   },
 } as const;
 
+export const consultation = {
+  minutes: site.consultationMinutes,
+  actionLabel: `Book the ${site.consultationMinutes} minute diagnosis`,
+  preparation: "No prepared brief or deck is needed.",
+  steps: [
+    "Name the question",
+    "Receive honest feedback",
+    "Choose the clearest next step",
+  ],
+  fullSteps: [
+    "You describe where the brand stands today.",
+    "Suman tests the question against positioning, audience, and recognition.",
+    "You receive honest feedback and the clearest next step.",
+  ],
+} as const;
+
 export const navigation = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },

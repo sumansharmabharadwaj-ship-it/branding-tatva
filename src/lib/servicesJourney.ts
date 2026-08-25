@@ -6,6 +6,7 @@ import type { PackageSlug } from "@/data/pricing";
 // parallel vocabularies or drifting apart later.
 export const SERVICES_SITUATION_STORAGE_KEY = "branding-tatva:services-situation";
 export const SERVICES_SITUATION_EVENT = "branding-tatva:services-situation";
+export const SERVICES_SITUATION_MAX_AGE_MS = 30 * 60 * 1000;
 
 export const SERVICES_SITUATIONS = ["idea", "reposition", "ongoing"] as const;
 export type ServicesSituationId = (typeof SERVICES_SITUATIONS)[number];
@@ -25,8 +26,64 @@ export const SITUATION_TO_PACKAGE: Record<ServicesSituationId, PackageSlug> = {
 export type ServicesSituationDetail = {
   situation: ServicesSituationId;
   packageSlug: PackageSlug;
+  origin?: "home_diagnostic" | "home_paths" | "services";
+  completedAt?: number;
+};
+
+type CompletedHomeDiagnosisRecord = ServicesSituationDetail & {
+  origin: "home_diagnostic";
+  completedAt: number;
 };
 
 export function isServicesSituation(value: string | null): value is ServicesSituationId {
   return value !== null && SERVICES_SITUATIONS.includes(value as ServicesSituationId);
+}
+
+export function completedHomeDiagnosisFrom(
+  value: ServicesSituationDetail | null | undefined,
+  now = Date.now(),
+): ServicesSituationId | null {
+  if (
+    !value ||
+    value.origin !== "home_diagnostic" ||
+    !isServicesSituation(value.situation) ||
+    value.packageSlug !== SITUATION_TO_PACKAGE[value.situation] ||
+    typeof value.completedAt !== "number" ||
+    value.completedAt > now ||
+    now - value.completedAt > SERVICES_SITUATION_MAX_AGE_MS
+  ) {
+    return null;
+  }
+  return value.situation;
+}
+
+export function readCompletedHomeDiagnosis(now = Date.now()): ServicesSituationId | null {
+  try {
+    const raw = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+    if (!raw?.startsWith("{")) return null;
+    return completedHomeDiagnosisFrom(JSON.parse(raw) as CompletedHomeDiagnosisRecord, now);
+  } catch {
+    return null;
+  }
+}
+
+export function publishCompletedHomeDiagnosis(situation: ServicesSituationId) {
+  const detail: CompletedHomeDiagnosisRecord = {
+    situation,
+    packageSlug: SITUATION_TO_PACKAGE[situation],
+    origin: "home_diagnostic",
+    completedAt: Date.now(),
+  };
+  try {
+    window.localStorage.setItem(SERVICES_SITUATION_STORAGE_KEY, JSON.stringify(detail));
+  } catch {}
+  window.dispatchEvent(
+    new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, { detail }),
+  );
+}
+
+export function clearServicesSituation() {
+  try {
+    window.localStorage.removeItem(SERVICES_SITUATION_STORAGE_KEY);
+  } catch {}
 }

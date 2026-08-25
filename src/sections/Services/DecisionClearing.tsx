@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { faqs } from "@/data/faqs";
 import { track } from "@/lib/analytics";
+import { consultation } from "@/data/site";
 
 // The decision clearing — a full recomposition of "Is this the right
 // fit?" per the direct redesign brief. A sticky editorial panel on the
@@ -45,13 +46,6 @@ const GROUPS = [
     label: "Timeline & results",
     questions: ["How long does a project take?", "Will branding increase revenue?", "How long before I see results?"],
   },
-] as const;
-
-const CALL_STEPS = [
-  "You describe where the brand stands today, in your own words.",
-  "I ask direct questions about positioning, audience, and where recognition is actually falling short.",
-  "You get honest feedback either way, no sales pitch.",
-  "If it makes sense to continue, we agree on what the first thirty days would actually look like.",
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -152,7 +146,7 @@ export function DecisionClearing() {
         <div className="mt-10 hidden border-t border-ivory/10 pt-8 lg:block">
           <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/60">What happens on the call</p>
           <ol className="mt-4 space-y-3.5">
-            {CALL_STEPS.map((step, i) => (
+            {consultation.fullSteps.map((step, i) => (
               <li key={step} className="flex items-start gap-3">
                 <span className="pt-0.5 font-display text-lg font-normal leading-none text-ivory/30" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}

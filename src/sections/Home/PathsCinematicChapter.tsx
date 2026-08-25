@@ -15,6 +15,7 @@ import {
   SERVICES_SITUATION_STORAGE_KEY,
   SITUATION_TO_PACKAGE,
   isServicesSituation,
+  readCompletedHomeDiagnosis,
   type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
@@ -93,6 +94,7 @@ function publishSituation(situation: ServicesSituationId) {
     const detail: ServicesSituationDetail = {
       situation,
       packageSlug: SITUATION_TO_PACKAGE[situation],
+      origin: "home_paths",
     };
     window.dispatchEvent(
       new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, {
@@ -119,7 +121,9 @@ export function PathsCinematicChapter() {
     }
 
     try {
-      applySituation(window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY), true);
+      const completedDiagnosis = readCompletedHomeDiagnosis();
+      if (completedDiagnosis) applySituation(completedDiagnosis, true);
+      else applySituation(window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY), true);
     } catch {}
 
     function onSituation(event: Event) {

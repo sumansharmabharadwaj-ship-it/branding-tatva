@@ -5,19 +5,20 @@ import { motion, useInView, useSpring, useTransform } from "framer-motion";
 import { useContactSceneStage } from "@/hooks/useContactSceneStage";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { EASE_AIR } from "@/lib/motion";
+import { consultation } from "@/data/site";
 
 const STEPS = [
   {
     compact: "Where the brand stands",
-    full: "You describe where the brand stands today.",
+    full: consultation.fullSteps[0],
   },
   {
     compact: "What shapes perception",
-    full: "We examine positioning, perception, and recognition.",
+    full: consultation.fullSteps[1],
   },
   {
     compact: "The clearest next step",
-    full: "You leave with an honest next step.",
+    full: consultation.fullSteps[2],
   },
 ] as const;
 

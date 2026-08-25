@@ -4,10 +4,13 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { LinkButton } from "@/components/Button";
+import { consultation } from "@/data/site";
 import {
   SERVICES_SITUATION_EVENT,
-  SERVICES_SITUATION_STORAGE_KEY,
+  completedHomeDiagnosisFrom,
   isServicesSituation,
+  readCompletedHomeDiagnosis,
+  type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
 
@@ -17,59 +20,44 @@ type Invitation = {
   eyebrow: string;
   headline: string;
   body: string;
-  action: string;
-  trail: readonly [string, string, string];
   accent: string;
 };
 
 const INVITATIONS: Record<Situation, Invitation> = {
   default: {
     eyebrow: "The next clear decision",
-    headline: "Leave with the three decisions your brand needs next.",
+    headline: "Bring the question taking up the most room.",
     body:
-      "In thirty focused minutes, we will name the tension, choose a direction, and define the first useful move.",
-    action: "Book the 30-minute diagnosis",
-    trail: ["Name the tension", "Choose the position", "Build the system"],
+      "One focused conversation gives the question an honest diagnosis and a clearer next move.",
     accent: "#D4B99A",
   },
   idea: {
     eyebrow: "Your diagnosis · the idea is ahead of the brand",
     headline: "Give the idea a position the market can recognise.",
     body:
-      "We will name the category, audience tension, belief, and promise the first system should inherit.",
-    action: "Book the 30-minute diagnosis",
-    trail: ["Decode founder truth", "Commit the position", "Build the first system"],
+      "Bring the category or audience question. The conversation will test where the idea needs clarity first.",
     accent: "#C77752",
   },
   reposition: {
     eyebrow: "Your diagnosis · the brand has drifted",
     headline: "Bring the scattered pieces back to one recognisable idea.",
     body:
-      "We will locate the contradictions, choose the position, and decide what every touchpoint must repeat.",
-    action: "Book the 30-minute diagnosis",
-    trail: ["Audit contradictions", "Re-centre the story", "Rebuild recognition"],
+      "Bring the contradiction causing the most friction. The conversation will identify the clearest place to begin.",
     accent: "#7D8565",
   },
   ongoing: {
-    eyebrow: "Your diagnosis · growth is outrunning consistency",
-    headline: "Give growth a system strong enough to hold it.",
+    eyebrow: "Your diagnosis · consistency needs a stronger centre",
+    headline: "Give every channel one idea to return to.",
     body:
-      "We will turn the strongest signals into rules for identity, content, campaigns, and recognition.",
-    action: "Book the 30-minute diagnosis",
-    trail: ["Find the strongest signals", "Turn them into rules", "Compound across channels"],
+      "Bring the channel or campaign creating the most drift. The conversation will surface the first rule worth defining.",
     accent: "#D8A251",
   },
 };
 
 function readSituation(): Situation {
   try {
-    const savedServicesChoice = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
-    if (isServicesSituation(savedServicesChoice)) return savedServicesChoice;
-
-    const savedLegacyChoice = window.localStorage.getItem("bt-situation");
-    if (savedLegacyChoice === "idea") return "idea";
-    if (savedLegacyChoice === "inconsistent") return "reposition";
-    if (savedLegacyChoice === "outgrown") return "ongoing";
+    const completedDiagnosis = readCompletedHomeDiagnosis();
+    if (isServicesSituation(completedDiagnosis)) return completedDiagnosis;
   } catch {}
   return "default";
 }
@@ -95,20 +83,24 @@ export function FinalInvitation() {
       if (detail?.id === "invitation") sync();
     }
 
+    function onCompletedDiagnosis(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      setSituation(completedHomeDiagnosisFrom(detail) ?? "default");
+    }
+
     window.addEventListener("storage", sync);
-    window.addEventListener(SERVICES_SITUATION_EVENT, sync as EventListener);
+    window.addEventListener(SERVICES_SITUATION_EVENT, onCompletedDiagnosis as EventListener);
     window.addEventListener("bt:situation", sync as EventListener);
     window.addEventListener("bt:home-chapter", onChapter as EventListener);
     return () => {
       window.removeEventListener("storage", sync);
-      window.removeEventListener(SERVICES_SITUATION_EVENT, sync as EventListener);
+      window.removeEventListener(SERVICES_SITUATION_EVENT, onCompletedDiagnosis as EventListener);
       window.removeEventListener("bt:situation", sync as EventListener);
       window.removeEventListener("bt:home-chapter", onChapter as EventListener);
     };
   }, []);
 
   const invitation = INVITATIONS[situation];
-  const motionActive = inView && !prefersReducedMotion;
 
   return (
     <div
@@ -120,35 +112,40 @@ export function FinalInvitation() {
     >
       <motion.div
         className="final-invitation__frame"
-        initial={prefersReducedMotion ? false : { opacity: 0, y: 18, filter: "blur(7px)" }}
+        initial={false}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={{ duration: prefersReducedMotion ? 0 : 0.8, ease: [0.22, 1, 0.36, 1] }}
-        aria-live="polite"
       >
         <div className="final-invitation__topline">
-          <span>13 · Begin</span>
-          <span>A clear first conversation</span>
+          <span>09 · Begin</span>
+          <span>One quiet conversation</span>
         </div>
 
         <div className="final-invitation__composition">
-          <div className="final-invitation__copy">
+          <div className="final-invitation__copy" data-home-reading-plane>
             <p className="final-invitation__eyebrow">{invitation.eyebrow}</p>
             <h2 className="final-invitation__headline">{invitation.headline}</h2>
             <p className="final-invitation__body">{invitation.body}</p>
 
             <div className="final-invitation__actions">
-              <LinkButton href="/contact">{invitation.action}</LinkButton>
-              <span>30 minutes · honest diagnosis · no pitch deck</span>
+              <LinkButton
+                href="/contact#call"
+                trackEvent="hero_booking_click"
+                trackProps={{ page: "home", position: "final_invitation", situation }}
+              >
+                {consultation.actionLabel}
+              </LinkButton>
+              <span>{consultation.minutes} minutes · honest feedback · no pitch deck</span>
             </div>
           </div>
 
           <aside className="final-invitation__promise" aria-label="What becomes clear in the diagnosis">
-            <p>We leave with</p>
+            <p>What becomes clear</p>
             <ol>
-              {invitation.trail.map((step, index) => (
+              {consultation.steps.map((step, index) => (
                 <motion.li
                   key={step}
-                  initial={prefersReducedMotion ? false : { opacity: 0, x: 16 }}
+                  initial={false}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{
                     duration: prefersReducedMotion ? 0 : 0.62,
@@ -161,13 +158,9 @@ export function FinalInvitation() {
                 </motion.li>
               ))}
             </ol>
-            <motion.p
-              className="final-invitation__thanks"
-              animate={motionActive ? { opacity: [0.58, 0.9, 0.58] } : undefined}
-              transition={motionActive ? { duration: 5.8, repeat: Infinity, ease: "easeInOut" } : undefined}
-            >
-              Clarity first. The larger system can follow.
-            </motion.p>
+            <p className="final-invitation__thanks">
+              Thank you for giving the thinking your attention.
+            </p>
           </aside>
         </div>
       </motion.div>

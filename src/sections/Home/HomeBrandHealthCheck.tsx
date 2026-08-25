@@ -2,20 +2,24 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
-  SERVICES_SITUATION_EVENT,
-  SERVICES_SITUATION_STORAGE_KEY,
-  SITUATION_TO_PACKAGE,
-  type ServicesSituationDetail,
+  clearServicesSituation,
+  publishCompletedHomeDiagnosis,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
+import {
+  homeDiagnosticReducer,
+  initialHomeDiagnosticState,
+  resolveCompletedHomeDiagnosis,
+  type HomeDiagnosis,
+} from "@/lib/homeDiagnosticState";
 import { track } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useReducer, useRef, type KeyboardEvent, type PointerEvent } from "react";
 
-type Diagnosis = "recognition" | "coherence" | "demand";
-type ResultDiagnosis = Diagnosis | "mixed";
+type Diagnosis = HomeDiagnosis;
+type ResultDiagnosis = HomeDiagnosis | "mixed";
 
 type Choice = {
   label: string;
@@ -113,6 +117,7 @@ const RESULTS: Record<
     signal: string;
     situation?: ServicesSituationId;
     action: string;
+    href: string;
   }
 > = {
   recognition: {
@@ -122,6 +127,7 @@ const RESULTS: Record<
     signal: "Position before expression",
     situation: "idea",
     action: "Explore the foundation path",
+    href: "/services#desire",
   },
   coherence: {
     title: "Coherence needs one living system.",
@@ -130,6 +136,7 @@ const RESULTS: Record<
     signal: "One source for every expression",
     situation: "reposition",
     action: "Explore the repositioning path",
+    href: "/services#situation",
   },
   demand: {
     title: "Demand needs proof with direction.",
@@ -138,6 +145,7 @@ const RESULTS: Record<
     signal: "Evidence that reinforces one promise",
     situation: "ongoing",
     action: "Explore the ongoing path",
+    href: "/services#offerings",
   },
   mixed: {
     title: "Your answers point to a connected brand problem.",
@@ -145,48 +153,26 @@ const RESULTS: Record<
       "The friction is moving across positioning, expression and proof. The next decision needs to connect those parts before any one of them is pushed harder.",
     signal: "One joined-up diagnosis",
     action: "See the connected system",
+    href: "/services#offerings",
   },
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-
-function publishResult(situation: ServicesSituationId) {
-  try {
-    window.localStorage.setItem(SERVICES_SITUATION_STORAGE_KEY, situation);
-    const detail: ServicesSituationDetail = {
-      situation,
-      packageSlug: SITUATION_TO_PACKAGE[situation],
-    };
-    window.dispatchEvent(new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, { detail }));
-  } catch {}
-}
-
-function resolveDiagnosis(answers: Diagnosis[]): ResultDiagnosis {
-  const score: Record<Diagnosis, number> = { recognition: 0, coherence: 0, demand: 0 };
-  answers.forEach((answer) => {
-    score[answer] += 1;
-  });
-  const entries = Object.entries(score) as Array<[Diagnosis, number]>;
-  const highestScore = Math.max(...entries.map(([, value]) => value));
-  const winners = entries.filter(([, value]) => value === highestScore);
-  return winners.length === 1 ? winners[0][0] : "mixed";
-}
 
 export function HomeBrandHealthCheck() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const landscapeVideoRef = useRef<HTMLVideoElement>(null);
   const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Diagnosis[]>([]);
-  const [selections, setSelections] = useState<Array<number | null>>([]);
-  const [resultVisible, setResultVisible] = useState(false);
-  const [preview, setPreview] = useState<number | null>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+  const focusRequestedRef = useRef(false);
+  const [state, dispatch] = useReducer(homeDiagnosticReducer, initialHomeDiagnosticState);
+  const { step, answers, selections, resultVisible, result: resolvedResult, preview } = state;
   const selected = selections[step] ?? null;
   const done = resultVisible;
   const active = QUESTIONS[Math.min(step, QUESTIONS.length - 1)];
-  const diagnosis = useMemo(() => resolveDiagnosis(answers), [answers]);
-  const result = RESULTS[diagnosis];
+  const result = RESULTS[resolvedResult ?? "mixed"];
 
   useEffect(() => {
     const video = landscapeVideoRef.current;
@@ -199,6 +185,16 @@ export function HomeBrandHealthCheck() {
     void video.play().catch(() => {});
   }, [reducedMotion]);
 
+  useEffect(() => {
+    if (!focusRequestedRef.current) return;
+    focusRequestedRef.current = false;
+    if (done) {
+      resultRef.current?.focus({ preventScroll: true });
+      return;
+    }
+    headingRef.current?.focus({ preventScroll: true });
+  }, [done, step]);
+
   function moveScene(event: PointerEvent<HTMLElement>) {
     if (reducedMotion || !sectionRef.current) return;
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -210,18 +206,10 @@ export function HomeBrandHealthCheck() {
 
   function choose(choice: Choice, index: number) {
     if (done) return;
-    if (answers.length === 0) track("health_check_started", { source: "home" });
-    setAnswers((current) => {
-      const next = [...current];
-      next[step] = choice.diagnosis;
-      return next;
-    });
-    setSelections((current) => {
-      const next = [...current];
-      next[step] = index;
-      return next;
-    });
-    setPreview(null);
+    if (answers.every((answer) => answer === null)) {
+      track("health_check_started", { source: "home" });
+    }
+    dispatch({ type: "choose", step, answer: choice.diagnosis, selection: index });
   }
 
   function moveChoiceFocus(index: number, direction: 1 | -1) {
@@ -234,40 +222,58 @@ export function HomeBrandHealthCheck() {
     if (selected === null) return;
 
     if (step < QUESTIONS.length - 1) {
-      setStep((current) => current + 1);
-      setPreview(null);
+      focusRequestedRef.current = true;
+      dispatch({ type: "continue" });
       return;
     }
 
-    const nextDiagnosis = resolveDiagnosis(answers);
+    const committedAnswers = [...answers];
+    const nextDiagnosis = resolveCompletedHomeDiagnosis(committedAnswers);
+    if (!nextDiagnosis) return;
     const nextResult = RESULTS[nextDiagnosis];
-    if (nextResult.situation) publishResult(nextResult.situation);
+    if (nextResult.situation) publishCompletedHomeDiagnosis(nextResult.situation);
+    else clearServicesSituation();
     track("health_check_completed", {
       source: "home",
       result: nextDiagnosis,
       diagnosis: nextDiagnosis,
     });
-    setResultVisible(true);
+    focusRequestedRef.current = true;
+    dispatch({ type: "complete", answers: committedAnswers });
   }
 
   function back() {
     if (step === 0) return;
-    setStep((current) => current - 1);
-    setPreview(null);
+    focusRequestedRef.current = true;
+    dispatch({ type: "back" });
   }
 
   function reviewAnswers() {
-    setResultVisible(false);
-    setStep(QUESTIONS.length - 1);
-    setPreview(null);
+    clearServicesSituation();
+    focusRequestedRef.current = true;
+    dispatch({ type: "review" });
   }
 
   function reset() {
-    setStep(0);
-    setAnswers([]);
-    setSelections([]);
-    setResultVisible(false);
-    setPreview(null);
+    clearServicesSituation();
+    focusRequestedRef.current = true;
+    dispatch({ type: "reset" });
+  }
+
+  function onChoiceKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) {
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      event.preventDefault();
+      moveChoiceFocus(index, 1);
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      event.preventDefault();
+      moveChoiceFocus(index, -1);
+    } else if (event.key === "Tab" && !event.shiftKey && selected !== null) {
+      event.preventDefault();
+      document.querySelector<HTMLButtonElement>(".brand-orbit__continue")?.focus();
+    }
   }
 
   return (
@@ -332,11 +338,18 @@ export function HomeBrandHealthCheck() {
 
       <div className="brand-orbit__shell">
         <header className="brand-orbit__header">
-          <p id="brand-orbit-title">
-            03 · Brand diagnostic
+          <h2 id="brand-orbit-title">
+            02 · Brand diagnostic
             <span>About 30 seconds</span>
-          </p>
-          <div className="brand-orbit__progress" aria-label={`${Math.min(step + 1, QUESTIONS.length)} of ${QUESTIONS.length}`}>
+          </h2>
+          <div
+            className="brand-orbit__progress"
+            role="progressbar"
+            aria-label="Brand diagnostic progress"
+            aria-valuemin={1}
+            aria-valuemax={QUESTIONS.length}
+            aria-valuenow={done ? QUESTIONS.length : step + 1}
+          >
             <strong>
               <span>Question</span>
               {String(Math.min(step + 1, QUESTIONS.length)).padStart(2, "0")} / 03
@@ -345,15 +358,21 @@ export function HomeBrandHealthCheck() {
           </div>
         </header>
 
-        <AnimatePresence mode="wait" initial={false}>
+        <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {done ? result.title : `Question ${step + 1} of ${QUESTIONS.length}. ${active.prompt}`}
+        </p>
+
+        <AnimatePresence mode="sync" initial={false}>
           {done ? (
             <motion.div
+              ref={resultRef}
               key="result"
               className="brand-orbit__result"
+              data-home-reading-plane
+              tabIndex={-1}
               initial={reducedMotion ? false : { opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: reducedMotion ? 0 : 0.7, ease: EASE }}
-              aria-live="polite"
             >
               <div className="brand-orbit__result-copy">
                 <p>Your answers point toward</p>
@@ -364,8 +383,8 @@ export function HomeBrandHealthCheck() {
               <div className="brand-orbit__result-action">
                 <span>The strategic centre</span>
                 <strong>{result.signal}</strong>
-                <Link href="/services#health">{result.action} <i aria-hidden="true">↗</i></Link>
-                <Link href="/contact">Discuss this diagnosis <i aria-hidden="true">→</i></Link>
+                <Link href={result.href}>{result.action} <i aria-hidden="true">↗</i></Link>
+                <Link href="/contact#call">Discuss this diagnosis <i aria-hidden="true">→</i></Link>
                 <button type="button" onClick={reviewAnswers}>Review or change answers</button>
                 <button type="button" onClick={reset}>Take the quiz again</button>
               </div>
@@ -374,7 +393,7 @@ export function HomeBrandHealthCheck() {
             <motion.div
               key={active.prompt}
               className="brand-orbit__question"
-              aria-live="polite"
+              data-home-reading-plane
               initial={reducedMotion ? false : { opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               exit={reducedMotion ? undefined : { opacity: 0, y: -18 }}
@@ -382,7 +401,7 @@ export function HomeBrandHealthCheck() {
             >
               <div className="brand-orbit__prompt">
                 <p>{active.eyebrow}</p>
-                <h3>{active.prompt}</h3>
+                <h3 ref={headingRef} tabIndex={-1}>{active.prompt}</h3>
                 {step > 0 ? <button type="button" onClick={back}>Back one question</button> : null}
                 <button
                   type="button"
@@ -408,23 +427,15 @@ export function HomeBrandHealthCheck() {
                     type="button"
                     className={selected === index ? "is-selected" : undefined}
                     onClick={() => choose(choice, index)}
-                    onPointerEnter={() => setPreview(index)}
-                    onPointerLeave={() => setPreview(null)}
-                    onFocus={() => setPreview(index)}
-                    onBlur={() => setPreview(null)}
+                    onPointerEnter={() => dispatch({ type: "preview", selection: index })}
+                    onPointerLeave={() => dispatch({ type: "preview", selection: null })}
+                    onFocus={() => dispatch({ type: "preview", selection: index })}
+                    onBlur={() => dispatch({ type: "preview", selection: null })}
                     role="radio"
                     aria-checked={selected === index}
                     aria-label={`${String(index + 1).padStart(2, "0")} ${choice.label}`}
-                    tabIndex={selected === null ? (index === 0 ? 0 : -1) : (selected === index ? 0 : -1)}
-                    onKeyDown={(event) => {
-                      if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-                        event.preventDefault();
-                        moveChoiceFocus(index, 1);
-                      } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-                        event.preventDefault();
-                        moveChoiceFocus(index, -1);
-                      }
-                    }}
+                    tabIndex={selected === index || (selected === null && index === 0) ? 0 : -1}
+                    onKeyDown={(event) => onChoiceKeyDown(event, index)}
                     animate={{
                       opacity: 1,
                       x: preview === index ? 14 : 0,
