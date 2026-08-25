@@ -12,6 +12,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const RECOGNITION_STATES = [
   {
     number: "01",
+    shortLabel: "Clear idea",
     label: "The idea is clear in your head.",
     headline: "The market keeps meeting a different version.",
     body:
@@ -22,6 +23,7 @@ const RECOGNITION_STATES = [
   },
   {
     number: "02",
+    shortLabel: "Outgrown identity",
     label: "The identity already exists.",
     headline: "The business has quietly outgrown it.",
     body:
@@ -32,6 +34,7 @@ const RECOGNITION_STATES = [
   },
   {
     number: "03",
+    shortLabel: "Active marketing",
     label: "Marketing is active.",
     headline: "Memory is starting from zero each time.",
     body:
@@ -362,7 +365,12 @@ export function V4RecognitionScene() {
                   data-cursor-label={state.number}
                 >
                   <span>{state.number}</span>
-                  <strong>{state.label}</strong>
+                  <strong>
+                    <span className="home-v4-recognition__choice-short" aria-hidden="true">
+                      {state.shortLabel}
+                    </span>
+                    <span className="home-v4-recognition__choice-full">{state.label}</span>
+                  </strong>
                   <i aria-hidden="true" />
                 </button>
               ))}
