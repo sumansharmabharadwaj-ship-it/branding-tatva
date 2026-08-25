@@ -121,7 +121,7 @@ The previous frame loaded on `04 / 04`, pushed a second oversized headline into 
 ## Interaction and browser verification
 
 - Initial state: passed; the chapter consistently opens at `01 / 04` instead of deriving an arbitrary state from a one-viewport scroll target.
-- Click selection: passed; selecting stage `03` updated the active passage and semantic selected state.
+- Click selection: passed; selecting stage `03` updated the semantic selected state and replaced the labelled tabpanel immediately while its new text entered.
 - Keyboard tabs: passed; `ArrowRight` moved focus and selection from stage `03` to `04`.
 - Scroll stability: passed; stage `03` remained selected through forward and reverse native scroll movement.
 - Motion: passed; the river film was playing and advancing. Active-state camera movement remains restrained and reduced-motion resolves to a stable crop.
@@ -137,7 +137,8 @@ The previous frame loaded on `04 / 04`, pushed a second oversized headline into 
 | 2 | P1 | The active fourth-state headline overlapped the lower rail and made the scene read as cluttered. | Rebalanced the two-column story, reduced competing type scales and shortened the rail. The final full-view capture keeps both reading planes above the selector. |
 | 3 | P2 | `Follow the four moments` and `Choose any moment to hold it` explained the interaction instead of letting the controls communicate it. | Removed the visible instructions and exposed a semantic four-state rail with clear numbers, causes, memory outcomes and selected-state feedback. |
 | 4 | P2 | The bottom row carried research links, a paragraph and a CTA in one compressed line. | Reduced it to one alternative statement and one method handoff; the final row ends at `919.2px` with no clipping. |
-| 5 | — | Final full-view comparison and focused measurements found no remaining actionable P0/P1/P2 issue. | Passed. |
+| 5 | P2 | During the exit transition, the newly selected tab could briefly coexist with the previous tabpanel, creating a short semantic and visual mismatch. | Removed the outgoing duplicate panel and kept a single entering article. The selected tab and labelled tabpanel now identify the same stage immediately. |
+| 6 | — | Final full-view comparison and focused measurements found no remaining actionable P0/P1/P2 issue. | Passed. |
 
 ## Follow-up polish
 

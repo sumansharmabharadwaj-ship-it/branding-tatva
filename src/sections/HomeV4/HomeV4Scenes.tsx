@@ -478,25 +478,22 @@ export function V4HiddenCostScene() {
             </h2>
           </div>
 
-          <AnimatePresence mode="sync" initial={false}>
-            <motion.article
-              key={active.number}
-              className="cost-film__moment"
-              id="cost-film-active-panel"
-              role="tabpanel"
-              aria-labelledby={`cost-film-tab-${activeIndex}`}
-              data-home-reading-plane
-              initial={false}
-              animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: EASE }}
-            >
-              <p>{active.signal}</p>
-              <h3>{active.title}</h3>
-              <p>{active.body}</p>
-              <strong>{active.memory}</strong>
-            </motion.article>
-          </AnimatePresence>
+          <motion.article
+            key={active.number}
+            className="cost-film__moment"
+            id="cost-film-active-panel"
+            role="tabpanel"
+            aria-labelledby={`cost-film-tab-${activeIndex}`}
+            data-home-reading-plane
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.44, ease: EASE }}
+          >
+            <p>{active.signal}</p>
+            <h3>{active.title}</h3>
+            <p>{active.body}</p>
+            <strong>{active.memory}</strong>
+          </motion.article>
         </div>
 
         <div className="cost-film__lower">
