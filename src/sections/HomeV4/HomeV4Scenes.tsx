@@ -376,6 +376,7 @@ export function V4RecognitionScene() {
 
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
+  const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.18, margin: "8% 0px -10% 0px" });
   const visualizer = useScrollDrivenVisualizer({
@@ -387,6 +388,25 @@ export function V4HiddenCostScene() {
   const activeIndex = visualizer.activeIndex;
   const active = COST_STAGES[activeIndex];
 
+  function moveFromKeyboard(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      next = (index + 1) % COST_STAGES.length;
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      next = (index + COST_STAGES.length - 1) % COST_STAGES.length;
+    } else if (event.key === "Home") {
+      next = 0;
+    } else if (event.key === "End") {
+      next = COST_STAGES.length - 1;
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+    visualizer.choose(next);
+    choiceRefs.current[next]?.focus();
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -394,157 +414,129 @@ export function V4HiddenCostScene() {
       data-home-v4-chapter="cost"
       data-home-chapter="cost"
       data-home-section="cost"
-      data-cursor-world="dark"
+      data-cursor-world="light"
       data-scroll-story="cost"
-      className="home-v4-cost"
-      aria-labelledby="home-v4-cost-title"
+      data-active-cost={active.number}
+      className="cost-film"
+      aria-labelledby="cost-film-title"
     >
-      <div className="home-v4-cost__sticky">
-        <motion.div
-          className="home-v4-cost__media"
-          data-media-id="BT-HOME-HIDDEN-COST-RIVER-DAWN"
-          animate={prefersReducedMotion ? undefined : { scale: 1.02 + activeIndex * 0.012, y: activeIndex * -4 }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.72, ease: EASE }}
-          aria-hidden="true"
+      <motion.div
+        className="cost-film__media"
+        data-media-id="BT-HOME-HIDDEN-COST-RIVER-DAWN"
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { scale: 1.025 + activeIndex * 0.012, x: activeIndex * -5 }
+        }
+        transition={{ duration: prefersReducedMotion ? 0 : 1.1, ease: EASE }}
+        aria-hidden="true"
+      >
+        <video
+          data-home-playback-rate="0.92"
+          muted
+          autoPlay
+          loop
+          playsInline
+          preload="metadata"
+          poster="/images/pexels-river-dawn-poster.jpg"
         >
-          <video
-            data-home-playback-rate="1.1"
-            muted
-            autoPlay
-            loop
-            playsInline
-            aria-hidden="true"
-            preload="metadata"
-            poster="/images/pexels-river-dawn-poster.jpg"
-          >
-            <source src="/videos/pexels-river-dawn.webm" type="video/webm" />
-            <source src="/videos/pexels-river-dawn.mp4" type="video/mp4" />
-          </video>
-          <span />
-        </motion.div>
+          <source src="/videos/pexels-river-dawn.webm" type="video/webm" />
+          <source src="/videos/pexels-river-dawn.mp4" type="video/mp4" />
+        </video>
+      </motion.div>
+      <div className="cost-film__veil" aria-hidden="true" />
 
-        <div className="home-v4-cost__shell">
-          <header>
-            <p>03 · The hidden cost</p>
-            <h2 id="home-v4-cost-title">
-              Marketing becomes expensive when the brand underneath it <em>keeps changing shape.</em>
+      <div className="cost-film__frame">
+        <header className="cost-film__header">
+          <div>
+            <span>03</span>
+            <p>The hidden cost</p>
+          </div>
+          <p>{active.number} / 04</p>
+        </header>
+
+        <div className="cost-film__story">
+          <div className="cost-film__lead">
+            <p>What repeated change asks of the market</p>
+            <h2 id="cost-film-title">
+              Every new version asks people to <em>learn the brand again.</em>
             </h2>
-          </header>
-
-          <div className="home-v4-cost__stage">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.article
-                key={active.number}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
-                aria-live="polite"
-              >
-                <span>{active.number} / 04</span>
-                <h3>{active.title}</h3>
-                <p>{active.body}</p>
-                <dl>
-                  <div>
-                    <dt>Market signal</dt>
-                    <dd>{active.signal}</dd>
-                  </div>
-                  <div>
-                    <dt>Audience memory</dt>
-                    <dd>{active.memory}</dd>
-                  </div>
-                </dl>
-              </motion.article>
-            </AnimatePresence>
-
-            <div
-              className="home-v4-cost__diagram"
-              role="group"
-              aria-label="A qualitative causal model showing how changing brand signals creates repeated rounds of audience relearning"
-            >
-              <div className="home-v4-cost__diagram-head">
-                <div>
-                  <span>Illustrative causal model</span>
-                  <strong>One shift creates four rounds of relearning.</strong>
-                </div>
-                <span>{active.number} / 04</span>
-              </div>
-
-              <ol className="home-v4-cost__causal">
-                {COST_STAGES.map((stage, index) => {
-                  const activeStage = index === activeIndex;
-                  const reached = index < activeIndex;
-                  return (
-                    <motion.li
-                      key={stage.number}
-                      className={activeStage ? "is-active" : reached ? "is-reached" : undefined}
-                      animate={{
-                        opacity: activeStage ? 1 : reached ? 0.72 : 0.38,
-                        y: activeStage && !prefersReducedMotion ? -4 : 0,
-                        scale: activeStage && !prefersReducedMotion ? 1.015 : 1,
-                      }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
-                    >
-                      <button
-                        type="button"
-                        aria-pressed={activeStage}
-                        aria-label={`${stage.number}: ${stage.cause}`}
-                        data-cursor-label={stage.number}
-                        onClick={() => visualizer.choose(index)}
-                        onPointerEnter={() => visualizer.preview(index)}
-                        onPointerLeave={(event) => {
-                          if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
-                        }}
-                        onFocus={() => visualizer.preview(index)}
-                        onBlur={visualizer.releasePreview}
-                      >
-                        <span>{stage.number}</span>
-                        <strong>{stage.cause}</strong>
-                        <p>{stage.signal}</p>
-                      </button>
-                    </motion.li>
-                  );
-                })}
-              </ol>
-
-              <div className="home-v4-cost__foundation-line">
-                <span>Stable foundation</span>
-                <strong>Position → distinctive cues → repeated association</strong>
-              </div>
-
-              <details className="home-v4-cost__research">
-                <summary>Research and model note</summary>
-                <div className="home-v4-cost__research-body">
-                  <p>
-                    The sequence communicates direction; percentages stay outside this model.
-                  </p>
-                  <div>
-                    <a
-                      href="https://www.sciencedirect.com/science/article/pii/S0167811622000465"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Communication consistency study
-                    </a>
-                    <a
-                      href="https://marketingscience.info/learn-with-us/commercial-research/distinctive-asset"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Distinctive asset research
-                    </a>
-                  </div>
-                </div>
-              </details>
-            </div>
           </div>
 
-          <div className="home-v4-cost__footer">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.article
+              key={active.number}
+              className="cost-film__moment"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: EASE }}
+            >
+              <p>{active.signal}</p>
+              <h3>{active.title}</h3>
+              <p>{active.body}</p>
+              <strong>{active.memory}</strong>
+            </motion.article>
+          </AnimatePresence>
+        </div>
+
+        <div className="cost-film__lower">
+          <div className="cost-film__rail-label">
+            <span>Follow the four moments</span>
+            <span>Choose any moment to hold it</span>
+          </div>
+          <div className="cost-film__rail" role="group" aria-label="Four moments in the cost of changing brand signals">
+            {COST_STAGES.map((stage, index) => {
+              const selected = index === activeIndex;
+              return (
+                <button
+                  key={stage.number}
+                  ref={(node) => {
+                    choiceRefs.current[index] = node;
+                  }}
+                  type="button"
+                  aria-pressed={selected}
+                  className={selected ? "is-active" : undefined}
+                  data-cursor-label={stage.number}
+                  onClick={() => visualizer.choose(index)}
+                  onPointerEnter={() => visualizer.preview(index)}
+                  onPointerLeave={(event) => {
+                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                  }}
+                  onFocus={() => visualizer.preview(index)}
+                  onBlur={visualizer.releasePreview}
+                  onKeyDown={(event) => moveFromKeyboard(event, index)}
+                >
+                  <span>{stage.number}</span>
+                  <strong>{stage.cause}</strong>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="cost-film__resolution">
             <p>
-              A stable foundation gives marketing more force. Each signal carries the memory of the one before it.
+              <span>Stable foundation</span>
+              Position, distinctive cues, and repeated association let every signal strengthen the last.
             </p>
-            <Link href="#foundation" className="home-v4-button home-v4-button--sand" data-magnetic data-cursor-label="foundation">
-              Trace the foundation <ArrowDownRight size={15} />
+            <nav aria-label="Research behind the hidden cost model">
+              <a
+                href="https://www.sciencedirect.com/science/article/pii/S0167811622000465"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Consistency study
+              </a>
+              <a
+                href="https://marketingscience.info/learn-with-us/commercial-research/distinctive-asset"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Distinctive asset research
+              </a>
+            </nav>
+            <Link href="#foundation" data-magnetic data-cursor-label="foundation">
+              See the foundation <ArrowDownRight size={15} />
             </Link>
           </div>
         </div>

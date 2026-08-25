@@ -268,6 +268,57 @@ blocked
 
 ---
 
+# Homepage cinematic hidden-cost QA · 2026-08-25
+
+## Comparison target
+
+- Source visual truth: `/workspace/scratch/55f96cacf4b7/upload/08a75655-58aa-4a35-9d03-637489c417c4(1).png`, used for the approved light, organic, cinematic pacing and one-screen hierarchy.
+- Implementation target: homepage `#cost` chapter in `src/sections/HomeV4/HomeV4Scenes.tsx`.
+- Browser-rendered implementation screenshot: unavailable because the required cloud-browser connection did not initialize.
+- Intended desktop viewport: `1920 × 1080` CSS px at density `1`.
+- Intended mobile viewport: `390 × 844` CSS px at density `1`.
+- State: first causal moment active over the moving river-at-dawn film.
+
+## Findings
+
+- [P1] Browser-rendered composition remains unverified.
+  - Location: homepage hidden-cost chapter at `#cost`.
+  - Evidence: the required cloud browser did not return a usable session.
+  - Impact: exact media crop, one-screen fit, type wrapping, pointer states and mobile compression cannot be visually certified.
+  - Fix: capture the desktop and mobile scenes after browser access recovers and correct any visible P0/P1/P2 drift.
+
+## Required fidelity surfaces
+
+- Fonts and typography: existing Cormorant Garamond and Manrope hierarchy retained; wrapping remains unverified.
+- Spacing and layout rhythm: one `100svh` frame replaces the former article, diagram, four cards, foundation strip, expandable research note and separate footer; rendered fit remains unverified.
+- Colors and visual tokens: river footage is lifted into warm vellum, forest green and copper; rendered contrast remains unverified.
+- Image quality and asset fidelity: real `pexels-river-dawn` WebM/MP4 media and poster remain the full-bleed moving source; no handcrafted SVG or simulated visual asset was introduced.
+- Copy and content: all four causal moments, both research sources and the foundation route remain available in a flatter hierarchy.
+
+## Interaction and browser verification
+
+- Production build: passed; all `78` routes generated.
+- TypeScript: passed.
+- React source review: passed; static data stays hoisted, event listeners are unchanged, the scroll visualizer remains the single state owner, and no new data or rendering waterfall was introduced.
+- Static interaction review: passed; native buttons, `aria-pressed`, visible focus, hover preview, click hold, and arrow/Home/End keyboard navigation are present.
+- Browser interaction, screenshots, console errors and responsive fit: blocked.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The scene repeated the same causal story across a detail panel, diagram panel, four tiles, foundation strip, expandable note and footer. | Rebuilt it as one moving river scene, one changing editorial moment, one continuous four-beat rail and one compact resolution line. Browser-rendered post-fix evidence remains blocked. |
+
+## Focused-region evidence
+
+Unavailable. The headline, active causal moment, four-beat rail, research links, CTA, media crop and mobile 2 × 2 rail still require browser-rendered comparison.
+
+## Final result
+
+blocked
+
+---
+
 # Homepage cinematic pathways QA · 2026-08-25
 
 ## Comparison target

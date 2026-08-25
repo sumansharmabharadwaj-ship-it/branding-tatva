@@ -49,16 +49,16 @@ const CAMERA_PLANES: Record<string, { content: string; media?: string }> = {
     media: ".brand-orbit__landscape",
   },
   cost: {
-    content: ".home-v4-cost__shell",
-    media: ".home-v4-cost__media",
+    content: ".cost-film__frame",
+    media: ".cost-film__media",
   },
   foundation: {
     content: ".foundation-orbit__shell",
     media: ".foundation-orbit__media",
   },
   paths: {
-    content: ".paths-cinematic__shell",
-    media: ".paths-cinematic__film",
+    content: ".paths-film__frame",
+    media: ".paths-film__media",
   },
   process: {
     content: ".decision-flow__shell",
