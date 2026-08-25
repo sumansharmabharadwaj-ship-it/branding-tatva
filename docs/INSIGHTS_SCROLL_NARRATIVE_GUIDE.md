@@ -286,7 +286,11 @@ const selectedPath = readerIntent
   ? paths.find((path) => path.slug === readerIntent.topicSlug)
   : undefined;
 
-<NewsletterForm readerPath={selectedPath?.slug} />
+<NewsletterForm
+  readerPath={selectedPath?.slug}
+  readerOrigin={readerIntent?.origin}
+  readerLabel={readerIntent?.label ?? selectedPath?.name}
+/>
 ~~~
 
 The field-note request records only the verified topic slug and the API result.
@@ -339,6 +343,18 @@ the confirmation and exit expectation, and turns success into a warm completed
 state. Validation and honeypot protection remain unchanged; the request now
 uses the existing `newsletter` source value so downstream subscription records
 retain a clear acquisition route.
+
+The completed state snapshots the active thread at submission time. A later
+path change therefore cannot rewrite the acknowledgement. Evidence-led choices
+resolve as `Evidence thread secured`, earlier reading choices resolve as
+`Reading path secured`, and an open journey resolves as `Place secured`.
+Existing subscribers receive the matching path-aware message as well.
+
+The form and confirmation share the same `6.5rem` minimum footprint. Their
+crossfade uses opacity and transform only, preserving the scene's `100svh`
+height and preventing the final composition from jumping after submission.
+The label stays visible in the browser while analytics continue to receive only
+the verified topic slug and coarse origin.
 
 ### Scroll-linked CSS
 

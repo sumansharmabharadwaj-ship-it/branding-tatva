@@ -231,6 +231,7 @@ export function InsightsFieldNotesResolution({
         <NewsletterForm
           readerPath={selectedPath?.slug}
           readerOrigin={readerIntent?.origin}
+          readerLabel={readerIntent?.label ?? selectedPath?.name}
         />
       </div>
     </div>
