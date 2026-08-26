@@ -409,3 +409,34 @@
     display: inline;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Homepage V4 · compact-viewport target-size closure                         */
+/* -------------------------------------------------------------------------- */
+
+/* Keep the authored type and spacing while enlarging the interactive hit area
+   for short/narrow layouts. Inline legal text outside the footer remains
+   unchanged; the standalone navigation, footer, and consent actions meet the
+   44px touch-target baseline at phone width and 200%/400% zoom equivalents. */
+@media (max-width: 900px) {
+  html.home-v4-mounted body > .page-enter > header a[href="/"],
+  html.home-v4-mounted body > .page-enter > header a[href="/contact"] {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  html.home-v4-mounted body > .page-enter footer a,
+  html.home-v4-mounted body > .page-enter footer button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  html.home-v4-mounted body > div.fixed.inset-x-3.bottom-3 button {
+    min-height: 2.75rem;
+  }
+}
