@@ -46,6 +46,9 @@ assert(pacing.includes("const recoveryNodes = new Set<HTMLElement>([section])"),
 assert(pacing.includes('node.style.setProperty("opacity", "1", "important")'), "Scene recovery does not force a readable final opacity.");
 assert(pacing.includes('node.style.setProperty("transform", "none", "important")'), "Scene recovery can leave content translated outside the viewport.");
 assert(pacing.includes('trackRuntimeIssue("scene_visibility_recovered"'), "Recovered homepage scenes are not measurable.");
+assert(pacing.includes('window.location.hostname.endsWith(".vercel.app")'), "Failure injection is not confined to Vercel previews.");
+assert(pacing.includes('get("qa-home-scene-recovery") === "ancestor"'), "The deployed recovery probe is not explicit and deterministic.");
+assert(pacing.includes('section.dataset.homeSceneRecoveryProbe = "injected"'), "The recovery probe does not expose auditable injection evidence.");
 assert(diagnostic.includes('trackRuntimeIssue("diagnostic_transition_failed"'), "Diagnostic transition failures are silent.");
 assert(diagnostic.includes('aria-valuetext={done ? "Complete"'), "Diagnostic progress lacks an explicit spoken completion state.");
 assert(diagnostic.includes('aria-labelledby="brand-orbit-result-title"'), "Diagnostic result focus target lacks an accessible label.");

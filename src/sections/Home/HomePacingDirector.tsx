@@ -22,6 +22,7 @@ export function HomePacingDirector() {
     let mutationObserver: MutationObserver | null = null;
     const visibilityTimers = new Map<HTMLElement, number>();
     const recoveryFrames = new Map<HTMLElement, number>();
+    let qaProbeTimer: number | null = null;
 
     function sceneId(section: HTMLElement) {
       return (
@@ -164,6 +165,30 @@ export function HomePacingDirector() {
     };
 
     registerSections();
+
+    // Deployed previews expose a bounded failure-injection hook so the recovery
+    // contract can be verified in the real browser without shipping a failure
+    // mode on the public brandingtatva.com domain.
+    const qaProbeRequested =
+      window.location.hostname.endsWith(".vercel.app") &&
+      new URLSearchParams(window.location.search).get("qa-home-scene-recovery") === "ancestor";
+    if (qaProbeRequested) {
+      qaProbeTimer = window.setTimeout(() => {
+        const section =
+          [...observed].find((candidate) => candidate.dataset.homeSceneState === "active") ??
+          [...observed][0];
+        const plane = section?.querySelector<HTMLElement>("[data-home-reading-plane]");
+        if (!section || !plane) return;
+
+        const injectedAncestor = plane.parentElement ?? plane;
+        injectedAncestor.style.setProperty("opacity", "0", "important");
+        injectedAncestor.style.setProperty("transform", "translateX(120vw)", "important");
+        section.dataset.homeSceneRecoveryProbe = "injected";
+        section.dataset.homeSceneState = "active";
+        scheduleVisibilityCheck(section);
+      }, 50);
+    }
+
     mutationObserver = new MutationObserver((mutations) => {
       registerSections();
       const changedActiveSections = new Set<HTMLElement>();
@@ -180,6 +205,7 @@ export function HomePacingDirector() {
     return () => {
       mutationObserver?.disconnect();
       sectionObserver?.disconnect();
+      if (qaProbeTimer !== null) window.clearTimeout(qaProbeTimer);
       visibilityTimers.forEach((timer) => window.clearTimeout(timer));
       visibilityTimers.clear();
       recoveryFrames.forEach((frame) => window.cancelAnimationFrame(frame));
@@ -189,6 +215,7 @@ export function HomePacingDirector() {
         delete section.dataset.homeSceneState;
         delete section.dataset.homeSceneContent;
         delete section.dataset.homeSceneRecovery;
+        delete section.dataset.homeSceneRecoveryProbe;
       });
       observed.clear();
     };
