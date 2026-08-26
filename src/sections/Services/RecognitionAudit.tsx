@@ -253,8 +253,8 @@ export function RecognitionAudit() {
                   key="thanks"
                   initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="rounded-2xl border border-ivory/15 p-6 backdrop-blur-md sm:p-7"
-                  style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
+                  className="rounded-2xl border border-ivory/20 p-6 shadow-[0_28px_90px_rgba(5,10,8,0.3)] backdrop-blur-xl sm:p-7"
+                  style={{ backgroundColor: "rgba(18,26,22,0.84)" }}
                 >
                   <p className="font-display text-xl font-normal text-ivory">The full audit is open.</p>
                   <p className="mt-3 text-sm leading-relaxed text-ivory/80">
@@ -275,15 +275,15 @@ export function RecognitionAudit() {
                   key="form"
                   data-recognition-audit-form="true"
                   onSubmit={submit}
-                  className="rounded-2xl border border-ivory/15 p-6 backdrop-blur-md sm:p-7"
-                  style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
+                  className="rounded-2xl border border-ivory/20 p-6 shadow-[0_28px_90px_rgba(5,10,8,0.3)] backdrop-blur-xl sm:p-7"
+                  style={{ backgroundColor: "rgba(18,26,22,0.84)" }}
                 >
                   <p className="font-display text-lg font-normal text-ivory">See all ten checks</p>
-                  <p className="mt-2 text-sm leading-relaxed text-ivory/65">
+                  <p className="mt-2 text-sm leading-relaxed text-ivory/82">
                     Your details deliver the full audit. The checkbox below controls future email, and confirmation is
                     still required before anything else is sent.
                   </p>
-                  <label className="mt-5 block text-xs font-medium uppercase tracking-[0.12em] text-ivory/60">
+                  <label className="mt-5 block text-xs font-medium uppercase tracking-[0.12em] text-ivory/78">
                     First name
                     <input
                       type="text"
@@ -291,10 +291,10 @@ export function RecognitionAudit() {
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       autoComplete="given-name"
-                      className="mt-1.5 w-full border-b border-ivory/25 bg-transparent pb-2 text-base normal-case tracking-normal text-ivory outline-none transition-colors focus:border-sandstone"
+                      className="mt-2 min-h-11 w-full rounded-xl border border-ivory/30 bg-black/15 px-3 py-2 text-base normal-case tracking-normal text-ivory outline-none transition-[border-color,background-color,box-shadow] focus:border-sandstone focus:bg-black/25 focus:shadow-[0_0_0_3px_rgba(212,185,154,0.12)]"
                     />
                   </label>
-                  <label className="mt-5 block text-xs font-medium uppercase tracking-[0.12em] text-ivory/60">
+                  <label className="mt-4 block text-xs font-medium uppercase tracking-[0.12em] text-ivory/78">
                     Email
                     <input
                       type="email"
@@ -302,20 +302,20 @@ export function RecognitionAudit() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       autoComplete="email"
-                      className="mt-1.5 w-full border-b border-ivory/25 bg-transparent pb-2 text-base normal-case tracking-normal text-ivory outline-none transition-colors focus:border-sandstone"
+                      className="mt-2 min-h-11 w-full rounded-xl border border-ivory/30 bg-black/15 px-3 py-2 text-base normal-case tracking-normal text-ivory outline-none transition-[border-color,background-color,box-shadow] focus:border-sandstone focus:bg-black/25 focus:shadow-[0_0_0_3px_rgba(212,185,154,0.12)]"
                     />
                   </label>
-                  <label className="mt-5 block text-xs font-medium uppercase tracking-[0.12em] text-ivory/60">
+                  <label className="mt-4 block text-xs font-medium uppercase tracking-[0.12em] text-ivory/78">
                     Business name, optional
                     <input
                       type="text"
                       value={business}
                       onChange={(e) => setBusiness(e.target.value)}
                       autoComplete="organization"
-                      className="mt-1.5 w-full border-b border-ivory/25 bg-transparent pb-2 text-base normal-case tracking-normal text-ivory outline-none transition-colors focus:border-sandstone"
+                      className="mt-2 min-h-11 w-full rounded-xl border border-ivory/30 bg-black/15 px-3 py-2 text-base normal-case tracking-normal text-ivory outline-none transition-[border-color,background-color,box-shadow] focus:border-sandstone focus:bg-black/25 focus:shadow-[0_0_0_3px_rgba(212,185,154,0.12)]"
                     />
                   </label>
-                  <label className="mt-6 flex items-start gap-3 text-sm text-ivory/80">
+                  <label className="mt-5 flex items-start gap-3 text-sm text-ivory/88">
                     <input
                       type="checkbox"
                       required
@@ -328,7 +328,11 @@ export function RecognitionAudit() {
                       click, any time.
                     </span>
                   </label>
-                  {error && <p className="mt-4 text-sm text-terracotta">{error}</p>}
+                  {error && (
+                    <p className="mt-4 text-sm text-terracotta" role="status" aria-live="polite">
+                      {error}
+                    </p>
+                  )}
                   <button
                     type="submit"
                     disabled={status === "submitting"}

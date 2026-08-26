@@ -88,7 +88,11 @@ export function PinnedBrandBuild() {
 
     function update(progress: number, direction: "up" | "down", velocity: number) {
       if (!wrap) return;
-      const assembly = Math.min(1, Math.max(0, (progress - 0.08) / 0.68));
+      // Resolve the complete system before the chapter reaches the viewport
+      // focal line. Direct chapter links therefore arrive on a readable,
+      // finished diagram, while ordinary scrolling still controls the build
+      // during the chapter's anticipation and activation phases.
+      const assembly = Math.min(1, Math.max(0, (progress - 0.04) / 0.58));
       const signedVelocity = Math.min(1, velocity) * (direction === "down" ? 1 : -1);
 
       wrap.dataset.authorityDirection = direction;
@@ -100,13 +104,15 @@ export function PinnedBrandBuild() {
 
       layerRefs.current.forEach((layer, i) => {
         if (!layer) return;
-        const start = i * 0.105;
-        const local = Math.min(1, Math.max(0, (assembly - start) / 0.36));
+        const start = i * 0.095;
+        const local = Math.min(1, Math.max(0, (assembly - start) / 0.34));
         const eased = 1 - Math.pow(1 - local, 3);
         const orbit = (1 - eased) * (i % 2 === 0 ? -1 : 1) * (38 + i * 5);
         const lift = (1 - eased) * (24 + i * 3) + signedVelocity * (5 + i);
         const rotation = (1 - eased) * (i % 2 === 0 ? -1 : 1) * 1.2;
-        layer.style.opacity = String(0.16 + eased * 0.84);
+        // The unfinished rows remain present enough to be understood as a
+        // system, instead of disappearing into detailed moving footage.
+        layer.style.opacity = String(0.3 + eased * 0.7);
         layer.style.transform = `translate3d(${orbit.toFixed(1)}px, ${lift.toFixed(1)}px, 0) rotate(${rotation.toFixed(2)}deg) scale(${(0.965 + 0.035 * eased).toFixed(3)})`;
         layer.style.setProperty("--act", eased.toFixed(3));
       });

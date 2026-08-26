@@ -89,6 +89,66 @@
   text-shadow: 0 1px 18px rgba(5, 10, 8, 0.22);
 }
 
+/* Authority is the page's explanation scene. Give the assembled system one
+   calm reading surface so its five consequences stay legible while the source
+   film and the scroll-led build remain visible around it. */
+#authority [data-authority-diagram="true"] {
+  border: 1px solid rgba(244, 239, 230, 0.14);
+  border-radius: 1.65rem;
+  background:
+    linear-gradient(128deg, rgba(20, 30, 25, 0.82), rgba(13, 22, 18, 0.68));
+  box-shadow:
+    0 30px 96px rgba(5, 10, 8, 0.26),
+    inset 0 1px rgba(244, 239, 230, 0.05);
+  padding: clamp(0.9rem, 1.6vw, 1.4rem);
+  backdrop-filter: blur(24px) saturate(0.82);
+}
+
+#authority [data-authority-wave="true"] > p {
+  color: rgba(244, 239, 230, 0.78);
+}
+
+#authority [data-authority-desktop-layer="true"] {
+  border-color: rgba(244, 239, 230, 0.16);
+  border-radius: 0.9rem;
+  padding-inline: 0.6rem;
+}
+
+#authority [data-authority-desktop-layer="true"]:hover {
+  background: rgba(244, 239, 230, 0.035);
+}
+
+#authority [data-authority-desktop-layer="true"] > div p:nth-child(2) {
+  color: rgba(244, 239, 230, 0.94);
+}
+
+#authority [data-authority-desktop-layer="true"] > div p:nth-child(3) {
+  color: rgba(244, 239, 230, 0.72);
+}
+
+/* The audit carries the page's secondary conversion. Detailed leaf footage
+   now frames the interaction instead of competing with the questions and
+   consent form. */
+#audit [data-audit-chapter="checks"] {
+  border: 1px solid rgba(244, 239, 230, 0.14);
+  border-radius: 1.65rem;
+  background:
+    linear-gradient(130deg, rgba(18, 27, 23, 0.84), rgba(14, 22, 18, 0.7));
+  box-shadow:
+    0 30px 96px rgba(5, 10, 8, 0.26),
+    inset 0 1px rgba(244, 239, 230, 0.05);
+  padding: clamp(1rem, 2vw, 1.55rem);
+  backdrop-filter: blur(24px) saturate(0.78);
+}
+
+#audit [data-recognition-audit-form="true"] {
+  border-color: rgba(244, 239, 230, 0.22);
+}
+
+#audit [data-public-audit-checks="true"] > li {
+  border-color: rgba(244, 239, 230, 0.17);
+}
+
 #education [data-services-chapter-instrument="true"],
 #education [data-services-chapter-resolution="true"] {
   border-color: rgba(244, 239, 230, 0.16);
@@ -118,6 +178,14 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   #proof [data-verified-outcome-phase] {
     gap: 2rem;
     padding: 1.5rem;
+  }
+
+  #authority [data-authority-diagram="true"] {
+    padding: 0.7rem;
+  }
+
+  #audit [data-audit-chapter="checks"] {
+    padding: 1rem;
   }
 }
 
