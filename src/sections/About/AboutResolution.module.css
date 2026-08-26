@@ -251,7 +251,7 @@
   line-height: 1.02;
 }
 
-.decisionPassage { display: grid; margin-top: 0.85rem; grid-template-columns: minmax(0, 0.9fr) 2.4rem minmax(0, 1.1fr); align-items: center; gap: 0.65rem; }
+.decisionPassage { display: grid; margin-top: 0.85rem; grid-template-columns: minmax(0, 0.72fr) 1.65rem minmax(0, 1.28fr); align-items: center; gap: 0.5rem; }
 .decisionPassage > div { min-width: 0; }
 .decisionPassage span { color: rgba(139, 101, 68, 0.9); font-size: 0.47rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 .decisionPassage p { margin: 0.38rem 0 0; color: rgba(51, 41, 31, 0.7); font-family: var(--font-display), Georgia, serif; font-size: clamp(1rem, 1.25vw, 1.25rem); line-height: 1.08; }
