@@ -69,7 +69,7 @@ export function AboutResolution() {
   const inView = useInView(sceneRef, { amount: 0.12, margin: "8% 0px -10% 0px" });
   const { scrollYProgress } = useScroll({
     target: sceneRef,
-    offset: ["start end", "end start"],
+    offset: ["start 82%", "end end"],
   });
   const cameraY = useTransform(scrollYProgress, [0, 1], ["-3.5%", "3.5%"]);
   const cameraScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.055, 1, 1.04]);
@@ -81,6 +81,12 @@ export function AboutResolution() {
     const nextIndex = indexFromProgress(progress);
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
   });
+
+  useEffect(() => {
+    if (!inView || prefersReducedMotion || previewingRef.current) return;
+    const nextIndex = indexFromProgress(scrollYProgress.get());
+    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+  }, [inView, prefersReducedMotion, scrollYProgress]);
 
   useEffect(() => () => window.cancelAnimationFrame(pointerFrameRef.current), []);
 
