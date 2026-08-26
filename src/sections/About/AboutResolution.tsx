@@ -9,7 +9,7 @@ import {
   type KeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { LinkButton } from "@/components/Button";
@@ -66,6 +66,7 @@ export function AboutResolution() {
   const progressRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const inView = useInView(sceneRef, { amount: 0.12, margin: "8% 0px -10% 0px" });
   const { scrollYProgress } = useScroll({
     target: sceneRef,
     offset: ["start end", "end start"],
@@ -76,7 +77,7 @@ export function AboutResolution() {
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     progressRef.current = progress;
-    if (prefersReducedMotion || previewingRef.current) return;
+    if (!inView || prefersReducedMotion || previewingRef.current) return;
     const nextIndex = indexFromProgress(progress);
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
   });

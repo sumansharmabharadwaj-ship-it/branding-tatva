@@ -12,7 +12,7 @@
 .imageField { position: absolute; inset: 0 62% 0 0; overflow: hidden; }
 .imageField img { object-fit: cover; filter: saturate(.7) contrast(1.06); transform: scale(1.025); }
 .imageVeil { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(14,18,15,.12) 0, rgba(14,18,15,.52) 31%, #171c18 43%, #171c18 100%); pointer-events: none; }
-.caseIdentity, .reasoningPath, .caseControls, .caseLink { position: relative; z-index: 2; }
+.caseIdentity, .reasoningPath, .caseControls, .proofResolution, .caseLink { position: relative; z-index: 2; }
 .caseIdentity { display: grid; padding: clamp(1.15rem, 2vw, 1.7rem); grid-column: 1; grid-row: 1 / 3; grid-template-columns: 2.55rem 1fr; align-content: end; align-items: start; gap: .75rem; }
 .caseIdentity > span { display: grid; width: 2.4rem; height: 2.4rem; place-items: center; border: 1px solid currentColor; border-radius: 999px; background: rgba(18,22,18,.44); }
 .caseIdentity > div { display: grid; gap: .18rem; }
@@ -32,14 +32,23 @@
 .outcome p { margin-top: .35rem; font-family: inherit; font-size: .65rem; font-weight: 650; line-height: 1.42; }
 .outcome small { display: block; margin-top: .8rem; padding-top: .55rem; border-top: 1px solid rgba(212,185,154,.18); color: rgba(244,239,230,.48); font-size: .48rem; line-height: 1.45; }
 .caseControls { display: grid; grid-column: 1 / 3; grid-row: 3; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(212,185,154,.16); }
-.caseControls button { position: relative; display: flex; min-width: 0; padding: .78rem 1rem .9rem; border: 0; border-right: 1px solid rgba(212,185,154,.12); gap: .55rem; background: rgba(8,11,9,.32); color: rgba(244,239,230,.43); cursor: pointer; text-align: left; transition: color 280ms ease, background-color 280ms ease; }
+.caseControls button { position: relative; display: grid; min-width: 0; padding: .68rem 1rem .82rem; border: 0; border-right: 1px solid rgba(212,185,154,.12); grid-template-columns: auto minmax(0,1fr); align-items: start; gap: .55rem; background: rgba(8,11,9,.32); color: rgba(244,239,230,.43); cursor: pointer; text-align: left; transition: color 280ms ease, background-color 280ms ease; }
 .caseControls button small { color: #d4b99a; font-size: .48rem; font-weight: 700; letter-spacing: .12em; }
+.caseControls button > span { display: grid; min-width: 0; gap: .16rem; }
 .caseControls button strong { overflow: hidden; font-family: var(--font-display), Georgia, serif; font-size: .88rem; font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
+.caseControls button em { overflow: hidden; color: rgba(212,185,154,.58); font-size: .43rem; font-style: normal; font-weight: 700; letter-spacing: .08em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
 .caseControls button i { position: absolute; right: 1rem; bottom: .28rem; left: 1rem; height: 1px; background: rgba(212,185,154,.12); }
 .caseControls button i b { display: block; width: 100%; height: 100%; background: #d4b99a; transform: scaleX(0); transform-origin: left; transition: transform .55s cubic-bezier(.22,1,.36,1); }
 .caseControls button[data-active="true"] { color: #f4efe6; background: rgba(212,185,154,.08); }
-.caseControls button[data-active="true"] i b { transform: scaleX(1); }
+.caseControls button[data-reached="true"] i b { transform: scaleX(1); }
+.caseControls button[data-reached="true"] em { color: rgba(212,185,154,.88); }
 .caseControls button:focus-visible { z-index: 3; outline: 2px solid #d4b99a; outline-offset: -3px; }
+.proofResolution { position: absolute; right: clamp(11.5rem,18vw,15rem); bottom: 4.05rem; left: 41%; display: grid; max-width: 28rem; gap: .2rem; clip-path: inset(0 100% 0 0); opacity: 0; transform: translateX(-1rem); transition: clip-path .78s cubic-bezier(.22,1,.36,1), opacity .18s ease, transform .78s cubic-bezier(.22,1,.36,1); }
+.proofResolution::before { position: absolute; top: -.7rem; right: 0; left: 0; height: 1px; background: linear-gradient(90deg,#d4b99a,rgba(212,185,154,0)); content: ""; transform: scaleX(0); transform-origin: left; transition: transform .72s .16s cubic-bezier(.22,1,.36,1); }
+.proofResolution[data-complete="true"] { clip-path: inset(0); opacity: 1; transform: translateX(0); }
+.proofResolution[data-complete="true"]::before { transform: scaleX(1); }
+.proofResolution span { color: #d4b99a; font-size: .47rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+.proofResolution strong { color: rgba(244,239,230,.8); font-family: var(--font-display), Georgia, serif; font-size: clamp(.78rem,1vw,.96rem); font-weight: 400; line-height: 1.18; }
 .caseLink { position: absolute; right: clamp(1.3rem, 2.4vw, 2.2rem); bottom: 4.2rem; display: inline-flex; align-items: center; gap: .35rem; color: #d4b99a; font-size: .52rem; font-weight: 700; letter-spacing: .11em; text-decoration: none; text-transform: uppercase; }
 .caseLink:focus-visible { outline: 2px solid #d4b99a; outline-offset: 4px; }
 .staticExperience { display: none; }
@@ -53,10 +62,13 @@
 .staticExperience li p { margin: 0; color: rgba(244,239,230,.74); font-size: .76rem; line-height: 1.55; }
 .staticExperience li strong { color: #f4efe6; font-family: var(--font-display), Georgia, serif; font-size: 1.35rem; font-weight: 400; }
 .staticExperience article > a { display: inline-flex; margin-top: 1rem; align-items: center; gap: .35rem; color: #d4b99a; font-size: .56rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.staticResolution { display: grid; margin: 1.4rem 0 0; padding-top: 1.1rem; border-top: 1px solid rgba(212,185,154,.32); gap: .35rem; }
+.staticResolution span { color: #d4b99a; font-size: .52rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.staticResolution strong { max-width: 28ch; color: rgba(244,239,230,.84); font-family: var(--font-display), Georgia, serif; font-size: clamp(1.35rem,5.6vw,2rem); font-weight: 400; line-height: 1.05; }
 @keyframes drawThread { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) { .scrollStory { height: 132svh; } .sticky { position: sticky; top: 0; height: 100svh; } }
-@media (min-width: 1024px) and (max-height: 760px) { .root { padding-block: 5rem .8rem; } .header h2 { font-size: clamp(2.15rem,min(3.55vw,5.2svh),3.6rem); } .lens { min-height: min(60svh,31rem); margin-top: .75rem; } .pathStep p { font-size: .9rem; } .outcome strong { font-size: 1.7rem; } }
-@media (max-width: 1160px) { .lens { grid-template-columns: minmax(13rem,.55fr) minmax(0,1.45fr); } .pathInner { grid-template-columns: minmax(0,.9fr) 2rem minmax(0,.9fr) 2rem minmax(0,1fr); } .caseIdentity { grid-template-columns: 1fr; } .caseIdentity > span { display: none; } }
+@media (min-width: 1024px) and (max-height: 760px) { .root { padding-block: 5rem .8rem; } .header h2 { font-size: clamp(2.15rem,min(3.55vw,5.2svh),3.6rem); } .lens { min-height: min(60svh,31rem); margin-top: .75rem; } .pathStep p { font-size: .9rem; } .outcome strong { font-size: 1.7rem; } .proofResolution { display: none; } }
+@media (max-width: 1160px) { .lens { grid-template-columns: minmax(13rem,.55fr) minmax(0,1.45fr); } .pathInner { grid-template-columns: minmax(0,.9fr) 2rem minmax(0,.9fr) 2rem minmax(0,1fr); } .caseIdentity { grid-template-columns: 1fr; } .caseIdentity > span { display: none; } .proofResolution { left: 38%; } }
 @media (max-width: 1023px) { .scrollStory { height: auto; } .sticky { position: relative; top: auto; height: auto; } .root { min-height: auto; padding-block: 7rem 4rem; grid-template-rows: auto; } .header { grid-template-columns: 1fr; gap: 1rem; } .header h2 { max-width: 16ch; font-size: clamp(2.5rem,10.8vw,4rem); } .intro { max-width: 52ch; } .camera { display: none; } .staticExperience { display: block; margin-top: 2rem; } }
 @media (max-width: 560px) { .staticExperience li { grid-template-columns: 1fr; gap: .3rem; } }
 @media (prefers-reduced-motion: reduce) { .scrollStory { height: auto; } .sticky { position: relative; top: auto; height: auto; } .root { min-height: auto; padding-block: 7rem 4rem; grid-template-rows: auto; } .header { grid-template-columns: 1fr; gap: 1rem; } .camera { display: none; } .staticExperience { display: block; margin-top: 2rem; } }

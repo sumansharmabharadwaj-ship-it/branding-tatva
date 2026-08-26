@@ -114,8 +114,14 @@ export function Evidence() {
                 {CASES.map((item, index) => {
                   const itemProject = PROJECTS_BY_SLUG.get(item.slug);
                   const selected = sequence.activeIndex === index;
-                  return <button key={item.slug} id={`evidence-case-${index}`} type="button" role="tab" aria-selected={selected} aria-controls="evidence-record" tabIndex={selected ? 0 : -1} data-active={selected} onClick={() => sequence.choose(index)} onPointerEnter={() => sequence.preview(index)} onPointerLeave={sequence.releasePreview} onFocus={() => sequence.preview(index)} onBlur={sequence.releasePreview} onKeyDown={(event) => onCaseKeyDown(event, index)}><small>0{index + 1}</small><strong>{itemProject?.title}</strong><i aria-hidden="true"><b /></i></button>;
+                  const reached = index <= sequence.activeIndex;
+                  return <button key={item.slug} id={`evidence-case-${index}`} type="button" role="tab" aria-selected={selected} aria-controls="evidence-record" tabIndex={selected ? 0 : -1} data-active={selected} data-reached={reached} onClick={() => sequence.choose(index)} onPointerEnter={() => sequence.preview(index)} onPointerLeave={sequence.releasePreview} onFocus={() => sequence.preview(index)} onBlur={sequence.releasePreview} onKeyDown={(event) => onCaseKeyDown(event, index)}><small>0{index + 1}</small><span><strong>{itemProject?.title}</strong><em>{item.evidenceType}</em></span><i aria-hidden="true"><b /></i></button>;
                 })}
+              </div>
+
+              <div className={styles.proofResolution} data-complete={sequence.activeIndex === CASES.length - 1} aria-hidden={sequence.activeIndex !== CASES.length - 1}>
+                <span>The proof standard · three traces collected</span>
+                <strong>The outcome matters. The reasoning that produced it remains visible.</strong>
               </div>
 
               <Link className={styles.caseLink} href={`/work/${active.slug}`}>Read the documented case <ArrowUpRight size={14} aria-hidden="true" /></Link>
@@ -129,6 +135,10 @@ export function Evidence() {
               if (!itemProject) return null;
               return <article key={item.slug}><header><span><Icon size={17} aria-hidden="true" /></span><div><small>{item.evidenceType}</small><h3>{itemProject.title}</h3></div></header><ol><li><span>Ambiguity</span><p>{item.ambiguity}</p></li><li><span>Decision</span><p>{item.decision}</p></li><li><span>Record</span><strong>{item.record}</strong><p>{item.recordLabel}</p></li></ol><Link href={`/work/${item.slug}`}>Read the documented case <ArrowUpRight size={14} /></Link></article>;
             })}
+            <p className={styles.staticResolution}>
+              <span>The proof standard</span>
+              <strong>The outcome matters. The reasoning that produced it remains visible.</strong>
+            </p>
           </div>
         </div>
       </Container>
