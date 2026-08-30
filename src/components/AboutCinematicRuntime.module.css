@@ -231,6 +231,10 @@
     visibility: visible;
   }
 
+  :global(html[data-consent-banner="visible"]) .mobileChapterControls {
+    bottom: calc(max(0.75rem, env(safe-area-inset-bottom)) + 4rem);
+  }
+
   .mobileStepButton {
     display: grid;
     width: 2.75rem;

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { ChevronDown, ChevronUp, ListTree } from "lucide-react";
 import { useLenis } from "@/components/SmoothScrollProvider";
@@ -529,7 +528,7 @@ export function AboutCinematicRuntime() {
               data-active={index === activeChapter}
               data-state={index < activeChapter ? "passed" : index === activeChapter ? "active" : "waiting"}
             >
-              <Link
+              <a
                 id={`about-chapter-control-${index}`}
                 href={`#${chapter.id}`}
                 aria-current={index === activeChapter ? "step" : undefined}
@@ -544,7 +543,7 @@ export function AboutCinematicRuntime() {
               >
                 <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                 <strong>{chapter.label}</strong>
-              </Link>
+              </a>
             </li>
           ))}
         </ol>
@@ -567,7 +566,7 @@ export function AboutCinematicRuntime() {
           <ol>
             {CHAPTERS.map((chapter, index) => (
               <li key={chapter.id} data-active={index === activeChapter}>
-                <Link
+                <a
                   href={`#${chapter.id}`}
                   aria-current={index === activeChapter ? "step" : undefined}
                   tabIndex={mobileMenuOpen ? 0 : -1}
@@ -578,7 +577,7 @@ export function AboutCinematicRuntime() {
                 >
                   <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                   <strong>{chapter.label}</strong>
-                </Link>
+                </a>
               </li>
             ))}
           </ol>

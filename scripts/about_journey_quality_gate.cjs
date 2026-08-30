@@ -6,6 +6,7 @@ const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const runtime = read("src/components/AboutCinematicRuntime.tsx");
 const visualizer = read("src/hooks/useScrollDrivenVisualizer.ts");
 const runtimeStyles = read("src/components/AboutCinematicRuntime.module.css");
+const consent = read("src/components/ConsentManager.tsx");
 const origin = read("src/sections/About/FounderFieldNotes.tsx");
 const originStyles = read("src/sections/About/FounderFieldNotes.module.css");
 const pointOfViewStyles = read("src/sections/About/PointOfView.module.css");
@@ -68,6 +69,11 @@ assert(
     runtime.includes('window.addEventListener("scroll", closeOnScroll, { passive: true })') &&
     runtime.includes('window.removeEventListener("scroll", closeOnScroll)'),
   "The mobile About chapter chooser no longer yields when attention leaves it.",
+);
+assert(
+  consent.includes('root.dataset.consentBanner = "visible"') &&
+    /:global\(html\[data-consent-banner="visible"\]\) \.mobileChapterControls\s*\{[^}]*bottom:\s*calc\(/.test(runtimeStyles),
+  "The mobile About chapter chooser can collide with the unresolved consent banner.",
 );
 assert(
   runtime.includes("if (lenis && !reducedMotion)"),

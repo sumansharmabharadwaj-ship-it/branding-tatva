@@ -62,7 +62,7 @@ async function auditViewport(browser, viewport) {
     assert(mode.documentWidth <= mode.viewportWidth + 2, `${viewport.name}: horizontal overflow ${mode.documentWidth}px`);
 
     if (viewport.interactive) {
-      const buttons = scene.locator('[role="group"] button');
+      const buttons = scene.locator('[role="tablist"] [role="tab"]');
       assert((await buttons.count()) === 3, `${viewport.name}: expected three closing routes`);
       const routeResults = [];
       for (let index = 0; index < 3; index += 1) {
@@ -75,7 +75,7 @@ async function auditViewport(browser, viewport) {
           const sheetBox = sheet?.getBoundingClientRect();
           const bounds = content.map((node) => node.getBoundingClientRect());
           return {
-            pressed: Array.from(document.querySelectorAll('[data-scroll-story="about-resolution-threshold"] [role="group"] button')).map((button) => button.getAttribute("aria-pressed")),
+            selected: Array.from(document.querySelectorAll('[data-scroll-story="about-resolution-threshold"] [role="tablist"] [role="tab"]')).map((button) => button.getAttribute("aria-selected")),
             hidden: Array.from(sheet?.querySelectorAll("article") || []).map((article) => article.getAttribute("aria-hidden")),
             sheet: sheetBox && { top: sheetBox.top, right: sheetBox.right, bottom: sheetBox.bottom, left: sheetBox.left },
             content: {
@@ -93,7 +93,7 @@ async function auditViewport(browser, viewport) {
           geometry.content.left >= geometry.sheet.left - 1;
         routeResults.push({ route: index + 1, contained, geometry });
         await scene.screenshot({ path: path.join(OUTPUT_DIR, `${viewport.name}-route-${index + 1}.png`) });
-        assert(geometry.pressed[index] === "true", `${viewport.name}: route ${index + 1} did not become pressed`);
+        assert(geometry.selected[index] === "true", `${viewport.name}: route ${index + 1} did not become selected`);
         assert(geometry.hidden.filter((value) => value === "false").length === 1, `${viewport.name}: more than one record is exposed`);
       }
       const clippedRoutes = routeResults.filter((result) => !result.contained);
@@ -101,12 +101,45 @@ async function auditViewport(browser, viewport) {
         clippedRoutes.length === 0,
         `${viewport.name}: record content is clipped ${JSON.stringify(clippedRoutes)}`,
       );
+
+      await buttons.nth(0).click();
+      await buttons.nth(0).press("End");
+      const keyboardState = await scene.evaluate((root) => ({
+        focusId: document.activeElement?.id,
+        selected: Array.from(root.querySelectorAll('[role="tablist"] [role="tab"]')).map((tab) => tab.getAttribute("aria-selected")),
+        exposedRecords: root.querySelectorAll('#about-resolution-record article[aria-hidden="false"]').length,
+        panelLabelledBy: root.querySelector("#about-resolution-record")?.getAttribute("aria-labelledby"),
+      }));
+      assert(keyboardState.focusId === "about-resolution-path-2", `${viewport.name}: End did not focus the final route`);
+      assert(keyboardState.selected.join(",") === "false,false,true", `${viewport.name}: End did not select the final route`);
+      assert(keyboardState.exposedRecords === 1, `${viewport.name}: keyboard selection exposed multiple records`);
+      assert(keyboardState.panelLabelledBy === "about-resolution-path-2", `${viewport.name}: panel label did not follow keyboard selection`);
     } else {
       const cards = scene.locator('[class*="staticPaths"] article:visible');
       assert((await cards.count()) === 3, `${viewport.name}: complete three-route fallback is missing`);
       for (const card of await cards.all()) {
         const box = await card.boundingBox();
         assert(box && box.width > 0 && box.height > 0, `${viewport.name}: fallback route has no readable box`);
+      }
+
+      if (viewport.name === "mobile-390x844") {
+        await page.locator("#about-system").scrollIntoViewIfNeeded();
+        await page.waitForTimeout(700);
+        const chooser = page.getByRole("button", { name: /Choose About chapter/ });
+        assert(await chooser.isVisible(), `${viewport.name}: mobile chapter chooser is not visible`);
+        const collision = await page.evaluate(() => {
+          const controls = document.querySelector('[class*="mobileChapterControls"]')?.getBoundingClientRect();
+          const consent = document.querySelector(".consent-notice")?.getBoundingClientRect();
+          return controls && consent ? consent.top - controls.bottom : null;
+        });
+        assert(collision === null || collision > 0, `${viewport.name}: consent banner overlaps the chapter chooser`);
+        await chooser.click();
+        assert((await chooser.getAttribute("aria-expanded")) === "true", `${viewport.name}: chapter chooser did not open`);
+        assert((await page.locator('#about-mobile-chapter-list a[tabindex="0"]').count()) === 8, `${viewport.name}: complete chapter list is not keyboard available`);
+        await chooser.press("Escape");
+        await page.waitForTimeout(50);
+        assert((await chooser.getAttribute("aria-expanded")) === "false", `${viewport.name}: Escape did not close the chapter chooser`);
+        assert(await chooser.evaluate((node) => document.activeElement === node), `${viewport.name}: Escape did not restore chapter-chooser focus`);
       }
     }
 
