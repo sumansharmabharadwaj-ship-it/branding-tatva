@@ -14,6 +14,7 @@ import { ScrollProgress } from "@/components/ScrollProgress";
 import { TexturedDark } from "@/components/TexturedDark";
 import { elements } from "@/data/elements";
 import { getInsightApplication } from "@/data/insightApplications";
+import { buildInsightEditorialVisuals } from "@/data/insightEditorialVisuals";
 import {
   getInsightBySlug,
   getInsightTopic,
@@ -138,6 +139,12 @@ export default async function InsightArticlePage({ params }: Props) {
     .map((relatedSlug) => getInsightBySlug(relatedSlug))
     .filter((item): item is InsightPost => Boolean(item))
     .slice(0, 3);
+  const editorialVisuals = buildInsightEditorialVisuals(
+    [...insightPosts].sort(
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    ),
+  );
   const readingRailItems = [
     {
       id: "key-takeaways",
@@ -711,6 +718,7 @@ export default async function InsightArticlePage({ params }: Props) {
                   <Reveal key={relatedPost.slug} delay={index * 0.05}>
                     <InsightCard
                       post={relatedPost}
+                      imageOverride={editorialVisuals.get(relatedPost.slug)}
                       tracking={{
                         source: "related_insights",
                         context: {
