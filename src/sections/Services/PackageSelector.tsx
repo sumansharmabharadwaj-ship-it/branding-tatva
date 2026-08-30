@@ -268,7 +268,7 @@ export function PackageSelector() {
       </div>
 
       <div data-services-chapter-resolution="true" className="relative mt-5 min-h-[220px] text-left">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout" initial={false}>
           {compare ? (
             <motion.div
               key="compare"
