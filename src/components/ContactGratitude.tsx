@@ -115,21 +115,21 @@ function GratitudeNote({
       data-contact-gratitude-visited={visited ? "true" : undefined}
       data-cursor-label={active ? "Close note" : "Open note"}
       className={cn(
-        "relative flex min-h-16 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-soil/20 px-4 py-3 text-center text-ivory shadow-[0_16px_48px_rgba(10,18,12,0.14)] backdrop-blur-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone sm:min-h-[4.5rem] sm:px-5 xl:absolute xl:w-[13rem]",
+        "relative flex min-h-16 items-center justify-center overflow-hidden rounded-full border border-white/30 bg-soil/40 px-4 py-3 text-center text-ivory shadow-[0_16px_48px_rgba(10,18,12,0.24)] backdrop-blur-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone sm:min-h-[4.5rem] sm:px-5 xl:absolute xl:w-[13rem]",
         note.position,
       )}
       initial={false}
       animate={{
-        backgroundColor: active ? "rgba(246,242,234,0.92)" : "rgba(39,34,30,0.2)",
+        backgroundColor: active ? "rgba(246,242,234,0.94)" : "rgba(39,34,30,0.42)",
         borderColor: active
-          ? "rgba(246,242,234,0.68)"
+          ? "rgba(246,242,234,0.76)"
           : visited
-            ? "rgba(212,185,154,0.5)"
-            : "rgba(255,255,255,0.25)",
+            ? "rgba(212,185,154,0.68)"
+            : "rgba(255,255,255,0.36)",
         color: active
           ? "rgb(39,34,30)"
           : visited
-            ? "rgb(226,204,176)"
+            ? "rgb(238,216,184)"
             : "rgb(246,242,234)",
       }}
       transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE_AIR }}
