@@ -62,8 +62,10 @@ function indexFromProgress(progress: number) {
 
 export function AboutResolution() {
   const sceneRef = useRef<HTMLElement>(null);
+  const pathRailRef = useRef<HTMLDivElement>(null);
   const pointerFrameRef = useRef(0);
   const previewingRef = useRef(false);
+  const manualChoiceRef = useRef(false);
   const progressRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
@@ -78,21 +80,43 @@ export function AboutResolution() {
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     progressRef.current = progress;
-    if (!inView || prefersReducedMotion || previewingRef.current) return;
+    if (!inView || prefersReducedMotion || previewingRef.current || manualChoiceRef.current) return;
     const nextIndex = indexFromProgress(progress);
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
   });
 
   useEffect(() => {
-    if (!inView || prefersReducedMotion || previewingRef.current) return;
+    if (!inView || prefersReducedMotion || previewingRef.current || manualChoiceRef.current) return;
     const nextIndex = indexFromProgress(scrollYProgress.get());
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
   }, [inView, prefersReducedMotion, scrollYProgress]);
 
   useEffect(() => () => window.cancelAnimationFrame(pointerFrameRef.current), []);
 
+  useEffect(() => {
+    function releaseManualChoice(event: Event) {
+      if (
+        event instanceof KeyboardEvent &&
+        event.target instanceof Node &&
+        pathRailRef.current?.contains(event.target)
+      ) return;
+
+      manualChoiceRef.current = false;
+    }
+
+    window.addEventListener("wheel", releaseManualChoice, { passive: true });
+    window.addEventListener("touchstart", releaseManualChoice, { passive: true });
+    window.addEventListener("keydown", releaseManualChoice);
+
+    return () => {
+      window.removeEventListener("wheel", releaseManualChoice);
+      window.removeEventListener("touchstart", releaseManualChoice);
+      window.removeEventListener("keydown", releaseManualChoice);
+    };
+  }, []);
+
   function syncToScroll() {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || manualChoiceRef.current) return;
     setActiveIndex(indexFromProgress(progressRef.current));
   }
 
@@ -108,6 +132,7 @@ export function AboutResolution() {
 
   function choose(index: number) {
     previewingRef.current = false;
+    manualChoiceRef.current = true;
     setActiveIndex(index);
     track("package_viewed", {
       package: PATHS[index].package.slug,
@@ -177,7 +202,12 @@ export function AboutResolution() {
         </header>
 
         <div className={styles.interactiveExperience}>
-          <div className={styles.pathRail} role="tablist" aria-label="Three ways an engagement can begin">
+          <div
+            ref={pathRailRef}
+            className={styles.pathRail}
+            role="tablist"
+            aria-label="Three ways an engagement can begin"
+          >
             {PATHS.map((path, index) => {
               const state = index < activeIndex ? "passed" : index === activeIndex ? "active" : "waiting";
               return (

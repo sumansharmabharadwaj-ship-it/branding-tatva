@@ -62,7 +62,7 @@ assert(
   "The concise route-change announcement is missing.",
 );
 assert(
-  component.includes('className={styles.pathRail} role="tablist"') &&
+  /className=\{styles\.pathRail\}[\s\S]*?role="tablist"/.test(component) &&
     component.includes('role="tab"') &&
     component.includes("aria-selected={index === activeIndex}") &&
     component.includes('aria-controls="about-resolution-record"') &&
@@ -77,6 +77,15 @@ assert(
     component.includes("className={styles.staticContactCta}") &&
     component.includes('href="/contact"'),
   "The closing route no longer carries an explicit choice while keeping static journeys neutral.",
+);
+assert(
+  component.includes("manualChoiceRef.current = true") &&
+    component.includes("previewingRef.current || manualChoiceRef.current") &&
+    component.includes('window.addEventListener("wheel", releaseManualChoice, { passive: true })') &&
+    component.includes('window.addEventListener("touchstart", releaseManualChoice, { passive: true })') &&
+    component.includes('window.addEventListener("keydown", releaseManualChoice)') &&
+    component.includes("pathRailRef.current?.contains(event.target)"),
+  "An explicit closing-route choice can be overwritten before its Contact handoff.",
 );
 assert(
   !memoryGate.includes('await client.send("DOM.enable")'),
