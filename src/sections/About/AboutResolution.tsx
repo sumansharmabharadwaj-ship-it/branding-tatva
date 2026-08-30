@@ -333,7 +333,7 @@ export function AboutResolution() {
             <span>First conversation</span>
             <strong>Find the decision that deserves to come first.</strong>
           </p>
-          <div className={styles.footerActions}>
+          <div className={styles.footerActions} data-about-resolution-actions>
             <div className={styles.interactiveCta}>
               <LinkButton
                 href={`/services#package-${activePath.slug}`}

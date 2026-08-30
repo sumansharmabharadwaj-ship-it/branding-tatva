@@ -140,6 +140,19 @@ async function auditViewport(browser, viewport) {
         await page.waitForTimeout(50);
         assert((await chooser.getAttribute("aria-expanded")) === "false", `${viewport.name}: Escape did not close the chapter chooser`);
         assert(await chooser.evaluate((node) => document.activeElement === node), `${viewport.name}: Escape did not restore chapter-chooser focus`);
+
+        const protectedEndingSpace = await scene.evaluate((node) => {
+          const inner = node.querySelector('[class*="inner"]');
+          const actions = node.querySelector("[data-about-resolution-actions]");
+          if (!(inner instanceof HTMLElement) || !(actions instanceof HTMLElement)) return null;
+          const paddingBottom = Number.parseFloat(getComputedStyle(inner).paddingBottom);
+          const actionBottom = actions.getBoundingClientRect().bottom;
+          const innerBottom = inner.getBoundingClientRect().bottom;
+          return { paddingBottom, trailingSpace: innerBottom - actionBottom };
+        });
+        assert(protectedEndingSpace, `${viewport.name}: final action geometry is unavailable`);
+        assert(protectedEndingSpace.paddingBottom >= 124, `${viewport.name}: mobile closing clearance is too small`);
+        assert(protectedEndingSpace.trailingSpace >= 120, `${viewport.name}: final actions do not retain usable trailing space`);
       }
     }
 

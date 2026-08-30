@@ -422,3 +422,15 @@
   :global(html[data-motion="reduced"]) .staticPaths,
   .staticPaths { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 1023px) {
+  .inner,
+  :global(html[data-motion="reduced"]) .inner {
+    padding-bottom: calc(7.75rem + env(safe-area-inset-bottom));
+  }
+
+  :global(html[data-consent-banner="visible"]) .inner,
+  :global(html[data-consent-banner="visible"][data-motion="reduced"]) .inner {
+    padding-bottom: calc(11.75rem + env(safe-area-inset-bottom));
+  }
+}

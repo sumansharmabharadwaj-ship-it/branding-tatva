@@ -95,6 +95,12 @@ assert(
   "The closing Contact link can retain a stale client-side destination after the route changes.",
 );
 assert(
+  component.includes("data-about-resolution-actions") &&
+    /@media \(max-width: 1023px\) \{[\s\S]*?\.inner,[\s\S]*?padding-bottom:\s*calc\(7\.75rem \+ env\(safe-area-inset-bottom\)\);/.test(styles) &&
+    /html\[data-consent-banner="visible"\][\s\S]*?padding-bottom:\s*calc\(11\.75rem \+ env\(safe-area-inset-bottom\)\);/.test(styles),
+  "The final About actions can fall underneath the persistent mobile navigator or consent-banner stack.",
+);
+assert(
   !memoryGate.includes('await client.send("DOM.enable")'),
   "The retained-node sampler re-enables the long-lived DOM diagnostic session.",
 );
