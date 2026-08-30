@@ -71,38 +71,50 @@ export function ContactChapterRail() {
   const activeChapter = CHAPTERS[Math.max(activeIndex, 0)] ?? CHAPTERS[0];
 
   return (
-    <nav
-      data-contact-chapter-rail
-      data-visible={visible ? "true" : "false"}
-      data-tone={activeChapter.tone}
-      aria-label="Contact chapters"
-      aria-hidden={!visible}
-    >
-      <ol>
-        {CHAPTERS.map((chapter, index) => {
-          const active = index === activeIndex;
-          return (
-            <li key={chapter.id} data-active={active ? "true" : "false"}>
-              <a
-                href={`#${chapter.id}`}
-                aria-current={active ? "location" : undefined}
-                tabIndex={visible ? 0 : -1}
-                data-cursor-label={chapter.label}
-                onClick={() => {
-                  setActiveIndex(index);
-                  track("contact_route_selected", {
-                    source: "contact_chapter_rail",
-                    route: chapter.id,
-                  });
-                }}
-              >
-                <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                <strong>{chapter.label}</strong>
-              </a>
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
+    <>
+      <span
+        data-contact-chapter-status
+        className="sr-only"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {visible
+          ? `Chapter ${activeIndex + 1} of ${CHAPTERS.length}: ${activeChapter.label}`
+          : ""}
+      </span>
+      <nav
+        data-contact-chapter-rail
+        data-visible={visible ? "true" : "false"}
+        data-tone={activeChapter.tone}
+        aria-label="Contact chapters"
+        aria-hidden={!visible}
+      >
+        <ol>
+          {CHAPTERS.map((chapter, index) => {
+            const active = index === activeIndex;
+            return (
+              <li key={chapter.id} data-active={active ? "true" : "false"}>
+                <a
+                  href={`#${chapter.id}`}
+                  aria-current={active ? "location" : undefined}
+                  tabIndex={visible ? 0 : -1}
+                  data-cursor-label={chapter.label}
+                  onClick={() => {
+                    setActiveIndex(index);
+                    track("contact_route_selected", {
+                      source: "contact_chapter_rail",
+                      route: chapter.id,
+                    });
+                  }}
+                >
+                  <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{chapter.label}</strong>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
+    </>
   );
 }

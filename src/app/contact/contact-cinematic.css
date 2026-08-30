@@ -510,9 +510,17 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
     margin-top: 1.35rem;
   }
 
-  [data-contact-film] [data-contact-hero-aside],
-  [data-contact-film] [data-contact-hero-trust] {
+  [data-contact-film] [data-contact-hero-aside] {
     display: none;
+  }
+
+  /* Keep the smallest reassurance visible beside the mobile booking choice.
+     The larger founder card stays removed so the first frame remains calm. */
+  [data-contact-film] [data-contact-hero-trust] {
+    margin-top: 0.75rem;
+    font-size: 0.58rem;
+    line-height: 1.45;
+    letter-spacing: 0.14em;
   }
 
   [data-contact-film] [data-contact-gratitude] {

@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
-const CONTRACT_VERSION = 6;
+const CONTRACT_VERSION = 7;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -74,6 +74,8 @@ const siteFile = source.get("src/data/site.ts") || "";
 const contactPage = source.get("src/app/contact/page.tsx") || "";
 const contactForm = source.get("src/components/ContactForm.tsx") || "";
 const contactGratitude = source.get("src/components/ContactGratitude.tsx") || "";
+const contactChapterRail = source.get("src/components/ContactChapterRail.tsx") || "";
+const contactCinematicCss = source.get("src/app/contact/contact-cinematic.css") || "";
 const contactRoute = source.get("src/app/api/contact/route.ts") || "";
 const contactDelivery = source.get("src/lib/contact-delivery.ts") || "";
 const calendly = source.get("src/components/CalendlyEmbed.tsx") || "";
@@ -147,6 +149,25 @@ if (!contactGratitude.includes("aria-hidden={!allNotesVisited}")) {
 }
 if (!contactGratitude.includes("tabIndex={allNotesVisited ? undefined : -1}")) {
   fail("Contact gratitude reading route must stay outside the tab order until completion.");
+}
+if (!contactChapterRail.includes("data-contact-chapter-status")) {
+  fail("Contact chapter navigation must expose an assistive current-chapter status.");
+}
+if (!contactChapterRail.includes('aria-live="polite"')) {
+  fail("Contact chapter status must announce chapter changes politely.");
+}
+if (!contactPage.includes("data-contact-hero-trust")) {
+  fail("Contact hero must retain its concise booking reassurance.");
+}
+if (!contactCinematicCss.includes("[data-contact-film] [data-contact-hero-trust] {")) {
+  fail("Contact mobile hero reassurance must retain its compact treatment.");
+}
+if (
+  /\[data-contact-film\]\s+\[data-contact-hero-aside\]\s*,\s*\[data-contact-film\]\s+\[data-contact-hero-trust\]\s*\{\s*display:\s*none/.test(
+    contactCinematicCss,
+  )
+) {
+  fail("Contact mobile hero must retain its concise booking reassurance.");
 }
 
 if (!process.exitCode) {
