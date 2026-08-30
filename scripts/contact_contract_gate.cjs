@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
-const CONTRACT_VERSION = 12;
+const CONTRACT_VERSION = 13;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -80,7 +80,9 @@ const servicesContactPackageHook = source.get("src/hooks/useServicesContactPacka
 const contactCinematicCss = source.get("src/app/contact/contact-cinematic.css") || "";
 const contactRoute = source.get("src/app/api/contact/route.ts") || "";
 const contactMonitorRoute = source.get("src/app/api/cron/contact-delivery/route.ts") || "";
+const contactVerificationRoute = source.get("src/app/api/verification/route.ts") || "";
 const contactDelivery = source.get("src/lib/contact-delivery.ts") || "";
+const contactReadiness = source.get("src/lib/contact-readiness.ts") || "";
 const vercelConfig = fs.readFileSync(path.join(ROOT, "vercel.json"), "utf8");
 const envExample = fs.readFileSync(path.join(ROOT, ".env.example"), "utf8");
 const calendly = source.get("src/components/CalendlyEmbed.tsx") || "";
@@ -160,6 +162,21 @@ if (!vercelConfig.includes('"path": "/api/cron/contact-delivery"')) {
 }
 if (!/^CRON_SECRET=$/m.test(envExample)) {
   fail("The server environment contract must document the Contact cron secret.");
+}
+if (!contactVerificationRoute.includes("getContactReadiness()")) {
+  fail("Public release verification must expose the secrets-free Contact readiness contract.");
+}
+if (!contactVerificationRoute.includes("jsonNoStore")) {
+  fail("Public Contact readiness must never be cached.");
+}
+if (!contactReadiness.includes('rateLimitScope: CONTACT_RATE_LIMIT_SCOPE')) {
+  fail("Contact readiness must report the serverless rate-limit scope truthfully.");
+}
+if (!contactReadiness.includes('CONTACT_RATE_LIMIT_SCOPE = "instance-local"')) {
+  fail("Contact readiness must not describe process-local throttling as distributed protection.");
+}
+if (/apiKey|toEmail|cronSecret/i.test(contactVerificationRoute)) {
+  fail("Public Contact readiness must not serialize delivery configuration values.");
 }
 if (!contactGratitude.includes('role="progressbar"')) {
   fail("Contact gratitude must expose acknowledgement progress.");

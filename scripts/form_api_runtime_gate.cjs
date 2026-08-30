@@ -21,11 +21,18 @@ async function request(pathname, init = {}) {
     },
   });
   const text = await response.text();
+  let body = null;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    // Non-JSON rejection bodies remain valid evidence for method guards.
+  }
   return {
     status: response.status,
     contentType: response.headers.get("content-type") || "",
     cacheControl: response.headers.get("cache-control") || "",
     bodyPreview: text.slice(0, 500),
+    body,
   };
 }
 
@@ -111,6 +118,7 @@ async function main() {
       actual: await request("/api/verification"),
       allowedStatuses: [200],
       expectNoStore: true,
+      expectContactReadiness: true,
     },
     {
       name: "Contact delivery monitor fails closed without cron authorization",
@@ -136,6 +144,17 @@ async function main() {
     }
     if (check.forbidSuccess && /\"ok\"\s*:\s*true/.test(check.actual.bodyPreview)) {
       failures.push(`${check.name}: returned a false success body`);
+    }
+    if (check.expectContactReadiness) {
+      const contact = check.actual.body?.contact;
+      if (
+        typeof contact?.deliveryConfigured !== "boolean" ||
+        typeof contact?.monitorConfigured !== "boolean" ||
+        contact?.monitorSchedule !== "production-daily" ||
+        contact?.rateLimitScope !== "instance-local"
+      ) {
+        failures.push(`${check.name}: Contact readiness contract is missing or misleading`);
+      }
     }
   }
 

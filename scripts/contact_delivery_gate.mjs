@@ -46,6 +46,66 @@ const {
   probeContactDeliveryProvider,
 } = deliveryModule.exports;
 
+const readinessSource = fs.readFileSync(
+  path.resolve("src/lib/contact-readiness.ts"),
+  "utf8",
+);
+const readinessCompiled = ts.transpileModule(readinessSource, {
+  compilerOptions: {
+    module: ts.ModuleKind.CommonJS,
+    target: ts.ScriptTarget.ES2020,
+  },
+  fileName: "contact-readiness.ts",
+  reportDiagnostics: true,
+});
+const readinessCompileErrors = (readinessCompiled.diagnostics || []).filter(
+  (diagnostic) => diagnostic.category === ts.DiagnosticCategory.Error,
+);
+assert.deepEqual(
+  readinessCompileErrors,
+  [],
+  "Contact readiness helper must transpile for the runtime gate.",
+);
+const readinessModule = { exports: {} };
+new Function("exports", "module", "require", readinessCompiled.outputText)(
+  readinessModule.exports,
+  readinessModule,
+  require,
+);
+const { getContactReadiness } = readinessModule.exports;
+
+assert.deepEqual(getContactReadiness({}), {
+  deliveryConfigured: false,
+  monitorConfigured: false,
+  monitorSchedule: "production-daily",
+  rateLimitScope: "instance-local",
+});
+assert.deepEqual(
+  getContactReadiness({
+    RESEND_API_KEY: "resend_key",
+    CONTACT_TO_EMAIL: "contact@example.com",
+  }),
+  {
+    deliveryConfigured: true,
+    monitorConfigured: false,
+    monitorSchedule: "production-daily",
+    rateLimitScope: "instance-local",
+  },
+);
+assert.deepEqual(
+  getContactReadiness({
+    RESEND_API_KEY: "resend_key",
+    CONTACT_TO_EMAIL: "contact@example.com",
+    CRON_SECRET: "cron_secret",
+  }),
+  {
+    deliveryConfigured: true,
+    monitorConfigured: true,
+    monitorSchedule: "production-daily",
+    rateLimitScope: "instance-local",
+  },
+);
+
 const submissionId = "123e4567-e89b-42d3-a456-426614174000";
 const request = {
   apiKey: "resend_test_key",
@@ -198,6 +258,8 @@ console.log(
       syntheticRecipientIsolated: true,
       monitorRetryKeyStablePerUtcDay: true,
       monitorRetryKeyRotatesNextUtcDay: true,
+      publicReadinessIsSecretsFree: true,
+      serverlessRateLimitScopeIsTruthful: true,
     },
     null,
     2,
