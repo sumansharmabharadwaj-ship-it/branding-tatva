@@ -8,6 +8,11 @@ const visualizer = read("src/hooks/useScrollDrivenVisualizer.ts");
 const runtimeStyles = read("src/components/AboutCinematicRuntime.module.css");
 const consent = read("src/components/ConsentManager.tsx");
 const origin = read("src/sections/About/FounderFieldNotes.tsx");
+const pointOfView = read("src/sections/About/PointOfView.tsx");
+const convergence = read("src/sections/About/Convergence.tsx");
+const evidence = read("src/sections/About/Evidence.tsx");
+const standards = read("src/sections/About/Behaviours.tsx");
+const workingDirectly = read("src/sections/About/WorkingDirectly.tsx");
 const originStyles = read("src/sections/About/FounderFieldNotes.module.css");
 const pointOfViewStyles = read("src/sections/About/PointOfView.module.css");
 const atlasStyles = read("src/sections/About/BrandSignalAtlas.module.css");
@@ -94,6 +99,19 @@ assert(
     visualizer.includes("setActiveIndex(manualChoiceIndexRef.current)"),
   "Shared About visualizers no longer protect an explicit choice until genuine scroll movement resumes.",
 );
+for (const [name, component, handler] of [
+  ["origin", origin, "onPointerDown={() => visualizer.choose(index)}"],
+  ["point of view", pointOfView, "onPointerDown={() => sequence.choose(index)}"],
+  ["convergence", convergence, "onPointerDown={() => visualizer.choose(index)}"],
+  ["evidence", evidence, "onPointerDown={() => sequence.choose(index)}"],
+  ["standards", standards, "onPointerDown={() => sequence.choose(index)}"],
+  ["founder-led", workingDirectly, "onPointerDown={() => sequence.choose(index)}"],
+]) {
+  assert(
+    component.includes(handler),
+    `The ${name} scene can mistake an intentional pointer press for a temporary preview.`,
+  );
+}
 assert(
   /\.chapterSpine li\[data-active="true"\] a\s*\{[^}]*width:\s*min\(/.test(runtimeStyles),
   "The active desktop About chapter no longer keeps its label exposed.",

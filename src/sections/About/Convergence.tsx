@@ -336,7 +336,8 @@ export function Convergence() {
                   aria-controls="convergence-panel"
                   tabIndex={selected ? 0 : -1}
                   data-active={selected}
-                  onClick={() => visualizer.choose(index)}
+                  onPointerDown={() => visualizer.choose(index)}
+                  onClick={(event) => event.detail === 0 && visualizer.choose(index)}
                   onPointerEnter={() => visualizer.preview(index)}
                   onPointerLeave={visualizer.releasePreview}
                   onFocus={() => visualizer.preview(index)}

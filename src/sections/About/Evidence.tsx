@@ -117,7 +117,7 @@ export function Evidence() {
                   const itemProject = PROJECTS_BY_SLUG.get(item.slug);
                   const selected = sequence.activeIndex === index;
                   const reached = index <= sequence.activeIndex;
-                  return <button key={item.slug} id={`evidence-case-${index}`} type="button" role="tab" aria-selected={selected} aria-controls="evidence-record" tabIndex={selected ? 0 : -1} data-active={selected} data-reached={reached} onClick={() => sequence.choose(index)} onPointerEnter={() => sequence.preview(index)} onPointerLeave={sequence.releasePreview} onFocus={() => sequence.preview(index)} onBlur={sequence.releasePreview} onKeyDown={(event) => onCaseKeyDown(event, index)}><small>0{index + 1}</small><span><strong>{itemProject?.title}</strong><em>{item.evidenceType}</em></span><i aria-hidden="true"><b /></i></button>;
+                  return <button key={item.slug} id={`evidence-case-${index}`} type="button" role="tab" aria-selected={selected} aria-controls="evidence-record" tabIndex={selected ? 0 : -1} data-active={selected} data-reached={reached} onPointerDown={() => sequence.choose(index)} onClick={(event) => event.detail === 0 && sequence.choose(index)} onPointerEnter={() => sequence.preview(index)} onPointerLeave={sequence.releasePreview} onFocus={() => sequence.preview(index)} onBlur={sequence.releasePreview} onKeyDown={(event) => onCaseKeyDown(event, index)}><small>0{index + 1}</small><span><strong>{itemProject?.title}</strong><em>{item.evidenceType}</em></span><i aria-hidden="true"><b /></i></button>;
                 })}
               </div>
 

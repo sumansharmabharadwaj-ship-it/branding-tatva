@@ -166,7 +166,8 @@ export function Behaviours() {
                       tabIndex={selected ? 0 : -1}
                       data-active={selected}
                       data-passed={passed}
-                      onClick={() => sequence.choose(index)}
+                      onPointerDown={() => sequence.choose(index)}
+                      onClick={(event) => event.detail === 0 && sequence.choose(index)}
                       onPointerEnter={() => sequence.preview(index)}
                       onPointerLeave={sequence.releasePreview}
                       onFocus={() => sequence.preview(index)}
