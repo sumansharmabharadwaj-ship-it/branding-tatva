@@ -145,10 +145,11 @@
 
   .site-header__menu-panel {
     padding: 0.35rem;
+    scroll-padding-block: 0.35rem;
   }
 
   .site-header__menu-panel li a {
-    min-height: 2.5rem;
+    min-height: 2.75rem;
     padding-block: 0.4rem;
     font-size: 1rem;
   }
