@@ -5,6 +5,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 const FORM_CONTROL_SELECTOR =
   "input, textarea, select, [contenteditable='true'], [role='textbox']";
+const MODAL_INTERACTION_EVENT = "bt:services-modal-interaction";
 
 type NavigatorWithHints = Navigator & {
   connection?: { saveData?: boolean; effectiveType?: string };
@@ -35,15 +36,17 @@ export function ServicesMediaDirector() {
       hints.connection?.effectiveType === "slow-2g" ||
       (typeof hints.deviceMemory === "number" && hints.deviceMemory <= 4);
     let formInteraction = false;
+    let fieldInteraction = false;
+    let modalInteraction = false;
     let syncing = false;
 
     function mediaBudget() {
       return compactViewport.matches || constrained ? 1 : 2;
     }
 
-    function publishFormInteraction(active: boolean) {
-      formInteraction = active;
-      document.documentElement.dataset.servicesFormInteraction = active ? "true" : "false";
+    function publishFormInteraction() {
+      formInteraction = fieldInteraction || modalInteraction;
+      document.documentElement.dataset.servicesFormInteraction = formInteraction ? "true" : "false";
     }
 
     function syncVideos() {
@@ -125,29 +128,37 @@ export function ServicesMediaDirector() {
     function onFocusIn(event: FocusEvent) {
       const target = event.target;
       if (!(target instanceof Element) || !target.matches(FORM_CONTROL_SELECTOR)) return;
-      publishFormInteraction(true);
+      fieldInteraction = true;
+      publishFormInteraction();
       syncVideos();
     }
 
     function onFocusOut() {
       window.setTimeout(() => {
         const active = document.activeElement;
-        publishFormInteraction(
-          Boolean(
-            active instanceof Element &&
-              servicesRoot.contains(active) &&
-              active.matches(FORM_CONTROL_SELECTOR),
-          ),
+        fieldInteraction = Boolean(
+          active instanceof Element &&
+            servicesRoot.contains(active) &&
+            active.matches(FORM_CONTROL_SELECTOR),
         );
+        publishFormInteraction();
         syncVideos();
       }, 0);
     }
 
-    publishFormInteraction(false);
+    function onModalInteraction(event: Event) {
+      const detail = (event as CustomEvent<{ active?: boolean }>).detail;
+      modalInteraction = Boolean(detail?.active);
+      publishFormInteraction();
+      syncVideos();
+    }
+
+    publishFormInteraction();
     document.addEventListener("visibilitychange", syncVideos);
     compactViewport.addEventListener("change", syncVideos);
     servicesRoot.addEventListener("focusin", onFocusIn);
     servicesRoot.addEventListener("focusout", onFocusOut);
+    window.addEventListener(MODAL_INTERACTION_EVENT, onModalInteraction);
     syncVideos();
 
     return () => {
@@ -157,6 +168,7 @@ export function ServicesMediaDirector() {
       compactViewport.removeEventListener("change", syncVideos);
       servicesRoot.removeEventListener("focusin", onFocusIn);
       servicesRoot.removeEventListener("focusout", onFocusOut);
+      window.removeEventListener(MODAL_INTERACTION_EVENT, onModalInteraction);
       cleanups.forEach((cleanup) => cleanup());
       videos.forEach((video) => video.pause());
       cleanups.clear();
