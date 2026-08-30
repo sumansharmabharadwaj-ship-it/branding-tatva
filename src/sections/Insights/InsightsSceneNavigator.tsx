@@ -510,6 +510,34 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     });
   }, [activeIndex, scenes]);
 
+  useEffect(() => {
+    function restoreSceneFromHistory() {
+      const scene = scenes.find(({ id }) => window.location.hash === `#${id}`);
+      if (!scene) return;
+
+      const target = document.getElementById(scene.id);
+      if (!target) return;
+
+      window.requestAnimationFrame(() => {
+        if (lenis && !prefersReducedMotion) {
+          lenis.scrollTo(target, {
+            duration: 0.68,
+            easing: (value) => 1 - Math.pow(1 - value, 3),
+          });
+          return;
+        }
+
+        target.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "start",
+        });
+      });
+    }
+
+    window.addEventListener("popstate", restoreSceneFromHistory);
+    return () => window.removeEventListener("popstate", restoreSceneFromHistory);
+  }, [lenis, prefersReducedMotion, scenes]);
+
   function handleSceneJourney(
     event: MouseEvent<HTMLAnchorElement>,
     scene: InsightScene,
