@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useRef, useState, type PointerEvent } from "react";
+import {
+  useCallback,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+} from "react";
 import {
   motion,
   useScroll,
@@ -81,11 +87,12 @@ function GratitudeNote({
   const rotate = useTransform(progress, [0, 0.36, 0.74, 1], note.rotate);
   const scale = useTransform(progress, [0, 0.34, 0.78, 1], [0.9, 1, 1, 0.97]);
   const active = activeNote === index;
+  const noteState = visited && !active ? ", already received" : "";
 
   return (
     <motion.button
       type="button"
-      aria-label={`${active ? "Close" : "Open"} acknowledgement for ${note.label}`}
+      aria-label={`${active ? "Close" : "Open"} acknowledgement for ${note.label}${noteState}`}
       aria-pressed={active}
       aria-controls="contact-gratitude-response"
       onClick={() => onActiveNoteChange(active ? null : index)}
@@ -93,7 +100,12 @@ function GratitudeNote({
         if (event.pointerType === "mouse") onActiveNoteChange(index);
       }}
       onPointerLeave={(event) => {
-        if (event.pointerType === "mouse") onActiveNoteChange(null);
+        if (
+          event.pointerType === "mouse" &&
+          document.activeElement !== event.currentTarget
+        ) {
+          onActiveNoteChange(null);
+        }
       }}
       onFocus={() => onActiveNoteChange(index)}
       onBlur={() => onActiveNoteChange(null)}
@@ -196,6 +208,12 @@ export function ContactGratitude() {
     }
   }
 
+  function handleSceneKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Escape" && activeNote !== null) {
+      setActiveNote(null);
+    }
+  }
+
   return (
     <div
       ref={sceneRef}
@@ -203,6 +221,7 @@ export function ContactGratitude() {
       data-contact-gratitude-complete={allNotesVisited ? "true" : undefined}
       data-contact-gratitude-active={activeNote === null ? undefined : "true"}
       onPointerDown={handleScenePointerDown}
+      onKeyDown={handleSceneKeyDown}
       className="relative flex min-h-[100svh] w-full items-center py-12 sm:py-16"
     >
       <motion.div
@@ -296,6 +315,47 @@ export function ContactGratitude() {
                   </motion.p>
                 );
               })}
+            </div>
+
+            <div
+              data-contact-gratitude-progress
+              role="progressbar"
+              aria-label="Acknowledgements received"
+              aria-valuemin={0}
+              aria-valuemax={NOTES.length}
+              aria-valuenow={visitedCount}
+              aria-valuetext={
+                allNotesVisited
+                  ? "All four acknowledgements received"
+                  : `${visitedCount} of ${NOTES.length} acknowledgements received`
+              }
+              className="mx-auto mt-4 flex w-fit items-center gap-3 rounded-full border border-white/12 bg-soil/18 px-3 py-2 backdrop-blur-md"
+            >
+              <span aria-hidden="true" className="flex items-center gap-1.5">
+                {NOTES.map((note, index) => {
+                  const noteVisited = (visitedNotes & (1 << index)) !== 0;
+                  return (
+                    <motion.span
+                      key={note.label}
+                      className="block h-1.5 w-5 rounded-full"
+                      initial={false}
+                      animate={{
+                        backgroundColor: noteVisited
+                          ? "rgba(212,185,154,0.92)"
+                          : "rgba(246,242,234,0.2)",
+                        scaleX: noteVisited ? 1 : 0.72,
+                      }}
+                      transition={{
+                        duration: reducedMotion ? 0 : 0.32,
+                        ease: EASE_AIR,
+                      }}
+                    />
+                  );
+                })}
+              </span>
+              <span aria-hidden="true" className="text-[0.58rem] font-medium uppercase tracking-[0.16em] text-ivory/58">
+                {allNotesVisited ? "All four received" : `${visitedCount} of ${NOTES.length}`}
+              </span>
             </div>
           </motion.div>
 

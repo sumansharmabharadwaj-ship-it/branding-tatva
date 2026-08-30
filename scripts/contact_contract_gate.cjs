@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
-const CONTRACT_VERSION = 4;
+const CONTRACT_VERSION = 5;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -73,6 +73,7 @@ for (const file of BOOKING_SURFACES) {
 const siteFile = source.get("src/data/site.ts") || "";
 const contactPage = source.get("src/app/contact/page.tsx") || "";
 const contactForm = source.get("src/components/ContactForm.tsx") || "";
+const contactGratitude = source.get("src/components/ContactGratitude.tsx") || "";
 const contactRoute = source.get("src/app/api/contact/route.ts") || "";
 const contactDelivery = source.get("src/lib/contact-delivery.ts") || "";
 const calendly = source.get("src/components/CalendlyEmbed.tsx") || "";
@@ -125,6 +126,15 @@ if (!contactDelivery.includes('"Idempotency-Key"')) {
 }
 if (!/response\.ok\s*&&\s*deliveryId/.test(contactDelivery)) {
   fail("Contact delivery must verify a provider delivery ID before reporting success.");
+}
+if (!contactGratitude.includes('role="progressbar"')) {
+  fail("Contact gratitude must expose acknowledgement progress.");
+}
+if (!contactGratitude.includes('event.key === "Escape"')) {
+  fail("Contact gratitude must let keyboard visitors close an active acknowledgement.");
+}
+if (!contactGratitude.includes("document.activeElement !== event.currentTarget")) {
+  fail("Contact gratitude hover must preserve a keyboard-focused acknowledgement.");
 }
 
 if (!process.exitCode) {
