@@ -148,9 +148,9 @@ export function Header({ transparent = false }: HeaderProps) {
     <>
       <motion.header
         data-site-header
-        variants={prefersReducedMotion ? undefined : barVariants}
+        variants={barVariants}
         animate={isBarHidden ? "hidden" : "visible"}
-        transition={BAR_TRANSITION}
+        transition={prefersReducedMotion ? { duration: 0 } : BAR_TRANSITION}
         className="site-header fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5"
       >
         <div className="relative w-full max-w-4xl lg:max-w-5xl">

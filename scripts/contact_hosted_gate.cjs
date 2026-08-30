@@ -204,6 +204,105 @@ async function auditViewport(browser, viewport) {
       `${viewport.name}: invalid email submission exposes no browser or accessible error state`,
     );
 
+    let mobileFormChromeState = null;
+    if (viewport.touch) {
+      mobileFormChromeState = await page.evaluate(() => {
+        const rect = (node) => {
+          if (!node) return null;
+          const bounds = node.getBoundingClientRect();
+          const style = getComputedStyle(node);
+          if (
+            bounds.width <= 0 ||
+            bounds.height <= 0 ||
+            bounds.bottom <= 0 ||
+            bounds.top >= window.innerHeight ||
+            style.display === "none" ||
+            style.visibility === "hidden"
+          ) return null;
+          return {
+            x: bounds.x,
+            y: bounds.y,
+            width: bounds.width,
+            height: bounds.height,
+            right: bounds.right,
+            bottom: bounds.bottom,
+          };
+        };
+        const overlaps = (left, right) => Boolean(
+          left && right &&
+          left.x < right.right &&
+          left.right > right.x &&
+          left.y < right.bottom &&
+          left.bottom > right.y
+        );
+        const header = rect(document.querySelector("[data-site-header]"));
+        const controls = Array.from(
+          document.querySelectorAll("main form input, main form textarea, main form select, main form button, main form a"),
+        )
+          .map((node) => ({
+            tag: node.tagName.toLowerCase(),
+            label:
+              node.getAttribute("name") ||
+              node.getAttribute("aria-label") ||
+              (node.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80) ||
+              node.tagName.toLowerCase(),
+            rect: rect(node),
+          }))
+          .filter((entry) => entry.rect);
+        return {
+          header,
+          obscuredControls: controls.filter((entry) => overlaps(header, entry.rect)),
+          undersizedButtons: controls.filter(
+            (entry) =>
+              entry.tag === "button" &&
+              entry.rect &&
+              (Math.round(entry.rect.width) < 44 || Math.round(entry.rect.height) < 44),
+          ),
+        };
+      });
+      assert(
+        mobileFormChromeState.obscuredControls.length === 0,
+        `${viewport.name}: the shared header obscures visible form controls ${JSON.stringify(mobileFormChromeState)}`,
+      );
+      assert(
+        mobileFormChromeState.undersizedButtons.length === 0,
+        `${viewport.name}: visible secondary form buttons are below a practical touch target ${JSON.stringify(mobileFormChromeState)}`,
+      );
+
+      if (viewport.reducedMotion === "reduce") {
+        const headerState = async () => page.evaluate(() => {
+          const header = document.querySelector("[data-site-header]");
+          if (!header) return null;
+          const bounds = header.getBoundingClientRect();
+          const style = getComputedStyle(header);
+          return {
+            top: bounds.top,
+            bottom: bounds.bottom,
+            opacity: Number(style.opacity),
+            transform: style.transform,
+          };
+        });
+        await page.evaluate(() => window.scrollBy({ top: -300, left: 0, behavior: "instant" }));
+        await page.waitForTimeout(250);
+        const revealedHeader = await headerState();
+        assert(
+          revealedHeader && revealedHeader.bottom > 0 && revealedHeader.opacity > 0.9,
+          `${viewport.name}: reduced-motion header did not return on upward scroll ${JSON.stringify(revealedHeader)}`,
+        );
+        await page.evaluate(() => window.scrollBy({ top: 300, left: 0, behavior: "instant" }));
+        await page.waitForTimeout(250);
+        const rehiddenHeader = await headerState();
+        assert(
+          rehiddenHeader && (rehiddenHeader.bottom <= 0 || rehiddenHeader.opacity < 0.01),
+          `${viewport.name}: reduced-motion header did not hide instantly on downward scroll ${JSON.stringify(rehiddenHeader)}`,
+        );
+        mobileFormChromeState.reducedMotionHeaderDirection = {
+          revealedOnUpwardScroll: true,
+          hiddenOnDownwardScroll: true,
+        };
+      }
+    }
+
     const keyActions = [telLinks.first(), whatsappLinks.first(), submit];
     for (const control of keyActions) {
       if (!(await visible(control))) continue;
@@ -229,6 +328,7 @@ async function auditViewport(browser, viewport) {
       schedulingTargets: await schedulingTargets.count(),
       formPresent: true,
       invalidEmailRejected: true,
+      mobileFormChromeState,
       reducedMotionState,
       shortViewportState,
     };

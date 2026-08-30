@@ -873,7 +873,7 @@ export function ContactForm() {
           aria-controls="contact-more"
           onClick={() => setShowMore((v) => !v)}
           data-cursor-label={showMore ? "Close details" : "Add details"}
-          className="link-underline inline-flex items-center gap-2 text-sm font-medium text-clay transition-colors duration-300 hover:text-soil"
+          className="link-underline inline-flex min-h-11 items-center gap-2 py-2 text-sm font-medium text-clay transition-colors duration-300 hover:text-soil"
         >
           {showMore ? "Fewer details" : "Add more detail"}
           <span aria-hidden="true" className={`text-base transition-transform duration-300 ${showMore ? "rotate-45" : ""}`}>
@@ -970,7 +970,7 @@ export function ContactForm() {
               type="button"
               onClick={focusInvalidField}
               data-cursor-label="Review detail"
-              className="shrink-0 text-xs font-medium text-clay underline decoration-clay/30 underline-offset-4 transition-colors hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+              className="inline-flex min-h-11 shrink-0 items-center px-1 text-xs font-medium text-clay underline decoration-clay/30 underline-offset-4 transition-colors hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
             >
               Review {firstInvalidField.label}
             </button>
@@ -1114,7 +1114,7 @@ export function ContactForm() {
                 type="button"
                 onClick={clearSavedNote}
                 data-cursor-label="Clear note"
-                className="text-[0.68rem] font-medium text-clay underline decoration-clay/30 underline-offset-4 transition-colors hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+                className="inline-flex min-h-11 items-center px-1 text-[0.68rem] font-medium text-clay underline decoration-clay/30 underline-offset-4 transition-colors hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
               >
                 Clear note
               </button>
