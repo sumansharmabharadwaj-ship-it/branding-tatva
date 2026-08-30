@@ -55,6 +55,7 @@ export function PackageSelector() {
   const [selectionSource, setSelectionSource] = useState<SelectionSource>(null);
   const [compare, setCompare] = useState(false);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
+  const [routeReady, setRouteReady] = useState(false);
   const manualUntilRef = useRef(0);
   const committedRouteRef = useRef(false);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -105,6 +106,12 @@ export function PackageSelector() {
         if (savedSituation) applySituation(savedSituation);
       } catch {}
     }
+
+    // The server renders Foundation as the useful no-JS fallback. Keep that
+    // default visually neutral until the browser has had one synchronous pass
+    // to resolve a linked or saved route, so returning visitors never see the
+    // wrong recommendation flash before their actual package appears.
+    setRouteReady(true);
 
     function onSituation(event: Event) {
       const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
@@ -165,7 +172,12 @@ export function PackageSelector() {
   }
 
   return (
-    <Container data-package-selector="true" className="max-w-3xl text-center">
+    <Container
+      data-package-selector="true"
+      data-package-route-ready={routeReady ? "true" : "false"}
+      aria-busy={!routeReady}
+      className="max-w-3xl text-center"
+    >
       <div data-services-chapter-copy="true">
         <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Desire</p>
         <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
@@ -214,7 +226,7 @@ export function PackageSelector() {
       <div data-services-chapter-instrument="true" className="mx-auto mt-6 grid max-w-2xl gap-4 sm:grid-cols-3 lg:mt-7">
         {CHOICES.map((choice, choiceIndex) => {
           const pkg = packages.find((entry) => entry.slug === choice.slug);
-          const isActive = active === choice.slug;
+          const isActive = routeReady && active === choice.slug;
           return (
             <motion.button
               key={choice.slug}
@@ -268,7 +280,12 @@ export function PackageSelector() {
         </button>
       </div>
 
-      <div data-services-chapter-resolution="true" className="relative mt-5 min-h-[220px] text-left">
+      <div
+        data-services-chapter-resolution="true"
+        className={`relative mt-5 min-h-[220px] text-left transition-opacity duration-200 motion-reduce:transition-none ${
+          routeReady ? "visible opacity-100" : "invisible opacity-0"
+        }`}
+      >
         {compare ? (
             <motion.div
               key="compare"
