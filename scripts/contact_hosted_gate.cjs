@@ -15,6 +15,20 @@ function normalise(value) {
   return String(value || "").replace(/\s+/g, " ").trim();
 }
 
+function rectsOverlap(left, right) {
+  if (!left || !right) return false;
+  return !(
+    left.x + left.width <= right.x ||
+    right.x + right.width <= left.x ||
+    left.y + left.height <= right.y ||
+    right.y + right.height <= left.y
+  );
+}
+
+function hasPracticalTouchTarget(box) {
+  return Boolean(box && Math.round(box.width) >= 44 && Math.round(box.height) >= 44);
+}
+
 async function waitForPrelude(page, label) {
   const loader = page.locator("[data-page-load-veil]");
   if ((await loader.count()) > 0) {
@@ -347,8 +361,21 @@ async function auditStatefulExperience(browser) {
     assert(await recoveryCopy.isVisible(), "stateful flow: copy-note recovery action is missing");
     const recoveryCopyBox = await recoveryCopy.boundingBox();
     assert(
-      recoveryCopyBox && recoveryCopyBox.width >= 40 && recoveryCopyBox.height >= 40,
+      hasPracticalTouchTarget(recoveryCopyBox),
       `stateful flow: copy-note recovery action is below a practical touch target ${JSON.stringify(recoveryCopyBox)}`,
+    );
+    const recoveryEmail = page.locator("[data-contact-recovery-email]");
+    assert(await recoveryEmail.isVisible(), "stateful flow: email-note recovery action is missing");
+    const recoveryEmailBox = await recoveryEmail.boundingBox();
+    assert(
+      hasPracticalTouchTarget(recoveryEmailBox),
+      `stateful flow: email-note recovery action is below a practical touch target ${JSON.stringify(recoveryEmailBox)}`,
+    );
+    const consentNotice = page.getByRole("region", { name: "Your choice about measurement" });
+    const consentNoticeBox = await consentNotice.boundingBox();
+    assert(
+      !rectsOverlap(consentNoticeBox, recoveryCopyBox) && !rectsOverlap(consentNoticeBox, recoveryEmailBox),
+      `stateful flow: measurement notice obscures delivery recovery actions ${JSON.stringify({ consentNoticeBox, recoveryCopyBox, recoveryEmailBox })}`,
     );
     await recoveryCopy.click();
     await page.getByText("Full note copied.", { exact: true }).waitFor({ state: "visible", timeout: 5_000 });
@@ -357,11 +384,52 @@ async function auditStatefulExperience(browser) {
     assert(copiedRecoveryNote.includes(draftValues.email), "stateful flow: copied recovery note omitted the visitor email");
     assert(copiedRecoveryNote.includes(draftValues.description), "stateful flow: copied recovery note omitted the question");
     assert(copiedRecoveryNote.includes("Reference: 8f2236000000"), "stateful flow: copied recovery note omitted the failure reference");
+    const fallbackHref = await recoveryEmail.evaluate((node) => {
+      node.addEventListener("click", (event) => event.preventDefault(), { once: true });
+      node.click();
+      return node.getAttribute("href");
+    });
+    assert(fallbackHref, "stateful flow: email-note recovery action did not build a fallback message");
+    const fallbackUrl = new URL(fallbackHref);
+    const fallbackBody = fallbackUrl.searchParams.get("body") || "";
+    assert(fallbackUrl.protocol === "mailto:", `stateful flow: email fallback uses the wrong protocol (${fallbackHref})`);
+    assert(fallbackUrl.pathname === "suman@brandingtatva.com", `stateful flow: email fallback targets the wrong inbox (${fallbackHref})`);
+    assert(
+      fallbackUrl.searchParams.get("subject") === `Brand enquiry from ${draftValues.name}`,
+      `stateful flow: email fallback subject lost the visitor name (${fallbackHref})`,
+    );
+    assert(fallbackBody.includes(draftValues.name), "stateful flow: email fallback omitted the visitor name");
+    assert(fallbackBody.includes(draftValues.email), "stateful flow: email fallback omitted the visitor email");
+    assert(fallbackBody.includes(draftValues.description), "stateful flow: email fallback omitted the question");
+    assert(fallbackBody.includes("Reference: 8f2236000000"), "stateful flow: email fallback omitted the failure reference");
     await page.screenshot({
       path: path.join(OUTPUT_DIR, "02-contact-delivery-recovery.png"),
       fullPage: true,
       animations: "disabled",
     });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await assertNoOverflow(page, "stateful mobile delivery recovery");
+    const mobileConsentNoticeBox = await consentNotice.boundingBox();
+    const mobileRecoveryCopyBox = await recoveryCopy.boundingBox();
+    const mobileRecoveryEmailBox = await recoveryEmail.boundingBox();
+    assert(
+      hasPracticalTouchTarget(mobileRecoveryCopyBox),
+      `stateful mobile flow: copy-note action is below a practical touch target ${JSON.stringify(mobileRecoveryCopyBox)}`,
+    );
+    assert(
+      hasPracticalTouchTarget(mobileRecoveryEmailBox),
+      `stateful mobile flow: email-note action is below a practical touch target ${JSON.stringify(mobileRecoveryEmailBox)}`,
+    );
+    assert(
+      !rectsOverlap(mobileConsentNoticeBox, mobileRecoveryCopyBox) && !rectsOverlap(mobileConsentNoticeBox, mobileRecoveryEmailBox),
+      `stateful mobile flow: measurement notice obscures delivery recovery actions ${JSON.stringify({ mobileConsentNoticeBox, mobileRecoveryCopyBox, mobileRecoveryEmailBox })}`,
+    );
+    await page.screenshot({
+      path: path.join(OUTPUT_DIR, "04-contact-mobile-delivery-recovery.png"),
+      fullPage: true,
+      animations: "disabled",
+    });
+    await page.setViewportSize({ width: 1180, height: 820 });
 
     const revisedDescription = `${draftValues.description} The scope changed before retrying.`;
     await description.fill(revisedDescription);
@@ -399,6 +467,30 @@ async function auditStatefulExperience(browser) {
     );
     await page.screenshot({
       path: path.join(OUTPUT_DIR, "03-contact-success-confirmation.png"),
+      fullPage: true,
+      animations: "disabled",
+    });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.waitForTimeout(700);
+    await assertNoOverflow(page, "stateful mobile success");
+    assert(
+      await page.locator("#contact-success-heading").isVisible(),
+      "stateful mobile flow: success heading disappeared after responsive reflow",
+    );
+    assert(
+      normalise(await success.innerText()).toLowerCase().includes("the conversation has begun"),
+      "stateful mobile flow: success content disappeared after responsive reflow",
+    );
+    const successActions = success.locator("a, button");
+    for (let index = 0; index < await successActions.count(); index += 1) {
+      const actionBox = await successActions.nth(index).boundingBox();
+      assert(
+        hasPracticalTouchTarget(actionBox),
+        `stateful mobile flow: success action ${index + 1} is below a practical touch target ${JSON.stringify(actionBox)}`,
+      );
+    }
+    await page.screenshot({
+      path: path.join(OUTPUT_DIR, "05-contact-mobile-success-confirmation.png"),
       fullPage: true,
       animations: "disabled",
     });
@@ -464,11 +556,14 @@ async function auditStatefulExperience(browser) {
       falseSuccessRejected: true,
       providerFailureRecovered: true,
       recoveryNoteCopied: true,
+      recoveryEmailPreservedNote: true,
+      mobileRecoveryUnobscured: true,
       stableRetrySubmissionId: submissionIds[0],
       editedPayloadRotatedSubmissionId: true,
       confirmedSuccessClearedDraft: true,
       successDestinationConfirmed: true,
       successFocusManaged: true,
+      mobileSuccessActionsReachable: true,
     };
   } finally {
     await context.close();

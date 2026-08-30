@@ -1006,7 +1006,7 @@ export function ContactForm() {
                   onClick={copyRecoveryNote}
                   data-contact-recovery-copy
                   data-cursor-label="Copy this note"
-                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-soil/14 bg-white/35 px-3 py-2 text-xs font-medium text-soil transition-colors hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-soil/14 bg-white/35 px-3 py-2 text-xs font-medium text-soil transition-colors hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
                 >
                   {recoveryCopyStatus === "copied" ? (
                     <Check aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
@@ -1018,8 +1018,9 @@ export function ContactForm() {
                 <a
                   href={`mailto:${site.email}?subject=${encodeURIComponent("Brand enquiry")}`}
                   onClick={handleEmailFallbackClick}
+                  data-contact-recovery-email
                   data-cursor-label="Email this note"
-                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-soil/14 bg-white/35 px-3 py-2 text-xs font-medium text-soil transition-colors hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-soil/14 bg-white/35 px-3 py-2 text-xs font-medium text-soil transition-colors hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
                 >
                   <Mail aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
                   Email note
