@@ -199,6 +199,7 @@ async function auditStatefulExperience(browser) {
   const context = await browser.newContext({
     viewport: { width: 1180, height: 820 },
     reducedMotion: "no-preference",
+    permissions: ["clipboard-read", "clipboard-write"],
   });
   const page = await context.newPage();
   const deliveryAttempts = [];
@@ -278,6 +279,12 @@ async function auditStatefulExperience(browser) {
       normalise(await draftStatus.innerText()) === "Your unfinished note was restored in this tab.",
       "stateful flow: restored-draft copy is not truthful",
     );
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+    await page.screenshot({
+      path: path.join(OUTPUT_DIR, "01-contact-draft-restored.png"),
+      fullPage: true,
+      animations: "disabled",
+    });
 
     await submit.click();
     const recovery = page.locator('[role="alert"]').filter({ hasText: "Your note is still here." });
@@ -311,6 +318,25 @@ async function auditStatefulExperience(browser) {
       normalise(await providerRecovery.innerText()).includes("Reference 8f2236000000"),
       "stateful flow: provider failure reference is missing",
     );
+    const recoveryCopy = page.locator("[data-contact-recovery-copy]");
+    assert(await recoveryCopy.isVisible(), "stateful flow: copy-note recovery action is missing");
+    const recoveryCopyBox = await recoveryCopy.boundingBox();
+    assert(
+      recoveryCopyBox && recoveryCopyBox.width >= 40 && recoveryCopyBox.height >= 40,
+      `stateful flow: copy-note recovery action is below a practical touch target ${JSON.stringify(recoveryCopyBox)}`,
+    );
+    await recoveryCopy.click();
+    await page.getByText("Full note copied.", { exact: true }).waitFor({ state: "visible", timeout: 5_000 });
+    const copiedRecoveryNote = await page.evaluate(() => navigator.clipboard.readText());
+    assert(copiedRecoveryNote.includes(draftValues.name), "stateful flow: copied recovery note omitted the visitor name");
+    assert(copiedRecoveryNote.includes(draftValues.email), "stateful flow: copied recovery note omitted the visitor email");
+    assert(copiedRecoveryNote.includes(draftValues.description), "stateful flow: copied recovery note omitted the question");
+    assert(copiedRecoveryNote.includes("Reference: 8f2236000000"), "stateful flow: copied recovery note omitted the failure reference");
+    await page.screenshot({
+      path: path.join(OUTPUT_DIR, "02-contact-delivery-recovery.png"),
+      fullPage: true,
+      animations: "disabled",
+    });
 
     const revisedDescription = `${draftValues.description} The scope changed before retrying.`;
     await description.fill(revisedDescription);
@@ -330,6 +356,27 @@ async function auditStatefulExperience(browser) {
       await success.evaluate((node) => document.activeElement === node),
       "stateful flow: success confirmation did not receive focus",
     );
+    const successDestination = page.locator("[data-contact-success-destination]");
+    assert(await successDestination.isVisible(), "stateful flow: success destination confirmation is missing");
+    await page.waitForFunction(
+      () =>
+        document
+          .querySelector("[data-contact-success-destination]")
+          ?.textContent?.includes("8f2236000000") === true,
+      undefined,
+      { timeout: 2_000 },
+    ).catch(() => {});
+    const successDestinationCopy = normalise(await successDestination.innerText());
+    assert(successDestinationCopy.includes(draftValues.email), "stateful flow: success destination omits the reply email");
+    assert(
+      successDestinationCopy.toLowerCase().includes("8f2236000000"),
+      `stateful flow: success destination omits the enquiry reference (${successDestinationCopy})`,
+    );
+    await page.screenshot({
+      path: path.join(OUTPUT_DIR, "03-contact-success-confirmation.png"),
+      fullPage: true,
+      animations: "disabled",
+    });
     assert(deliveryAttempts.length === 3, `stateful flow: expected 3 delivery attempts, received ${deliveryAttempts.length}`);
     const submissionIds = deliveryAttempts.map((attempt) => attempt.submissionId);
     assert(
@@ -389,9 +436,11 @@ async function auditStatefulExperience(browser) {
       draftClearPersisted: true,
       falseSuccessRejected: true,
       providerFailureRecovered: true,
+      recoveryNoteCopied: true,
       stableRetrySubmissionId: submissionIds[0],
       editedPayloadRotatedSubmissionId: true,
       confirmedSuccessClearedDraft: true,
+      successDestinationConfirmed: true,
       successFocusManaged: true,
     };
   } finally {
