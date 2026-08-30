@@ -86,10 +86,17 @@ export function AboutCinematicRuntime() {
     };
   }, []);
 
-  function goToChapter(index: number) {
+  function goToChapter(index: number, moveFocus = false) {
     const chapter = CHAPTERS[index];
     if (!chapter) return;
-    document.getElementById(chapter.id)?.scrollIntoView({
+    const target = document.getElementById(chapter.id);
+    if (!target) return;
+    if (moveFocus) {
+      const focusTarget = target.querySelector<HTMLElement>("h2") ?? target;
+      focusTarget.tabIndex = -1;
+      focusTarget.focus({ preventScroll: true });
+    }
+    target.scrollIntoView({
       behavior: reducedMotion ? "auto" : "smooth",
       block: "start",
     });
@@ -476,7 +483,7 @@ export function AboutCinematicRuntime() {
           type="button"
           aria-label="Next About chapter"
           tabIndex={mobileNavigatorActive ? 0 : -1}
-          onClick={() => goToChapter(activeChapter + 1)}
+          onClick={() => goToChapter(activeChapter + 1, activeChapter === CHAPTERS.length - 2)}
         >
           <ChevronDown size={16} aria-hidden="true" />
         </button>

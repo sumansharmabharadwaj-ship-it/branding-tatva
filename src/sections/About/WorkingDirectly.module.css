@@ -89,17 +89,17 @@
 .sheet {
   position: relative;
   display: grid;
-  min-height: min(61svh, 38rem);
+  min-height: min(63svh, 39.5rem);
   margin-top: clamp(1rem, 2.2svh, 1.65rem);
   padding: clamp(1.1rem, 1.8vw, 1.55rem) clamp(1.2rem, 2.2vw, 1.9rem);
   overflow: hidden;
-  border: 1px solid rgba(87, 67, 49, .24);
+  border: 1px solid rgba(87, 67, 49, .34);
   border-radius: .42rem 1.2rem .5rem .95rem;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   background:
     linear-gradient(90deg, rgba(96, 73, 50, .06) 1px, transparent 1px) 2.9rem 0 / 3.2rem 100%,
-    linear-gradient(180deg, rgba(255, 255, 255, .36), rgba(236, 225, 205, .12)),
-    #e7dcc8;
+    linear-gradient(180deg, rgba(255, 255, 255, .5), rgba(236, 225, 205, .16)),
+    #eadfca;
   box-shadow: 0 30px 85px rgba(0, 0, 0, .3);
   color: #33291f;
   transform: perspective(1500px)
@@ -150,7 +150,7 @@
 
 .sheetHeader span,
 .sheetHeader p {
-  font-size: .5rem;
+  font-size: .56rem;
   font-weight: 700;
   letter-spacing: .14em;
   text-transform: uppercase;
@@ -160,23 +160,23 @@
 
 .sheetHeader > div strong {
   font-family: var(--font-display), Georgia, serif;
-  font-size: clamp(1.2rem, 1.8vw, 1.7rem);
+  font-size: clamp(1.35rem, 2vw, 1.9rem);
   font-weight: 400;
   letter-spacing: -.02em;
 }
 
 .sheetHeader p { display: grid; margin: 0; justify-items: end; color: rgba(51, 41, 31, .46); }
-.sheetHeader p strong { margin-top: .12rem; color: #6e4f35; font-size: .62rem; }
+.sheetHeader p strong { margin-top: .12rem; color: #6e4f35; font-size: .7rem; }
 
 .stageRail {
   display: grid;
-  margin-top: .75rem;
+  margin-top: .85rem;
   grid-template-columns: repeat(4, 1fr);
 }
 
 .railLine {
   position: absolute;
-  top: 1.05rem;
+  top: 1.22rem;
   right: 10%;
   left: 10%;
   height: 1px;
@@ -202,7 +202,8 @@
 .stageRail button {
   position: relative;
   display: grid;
-  padding: 0 .5rem .7rem;
+  min-height: 3.75rem;
+  padding: 0 .5rem .78rem;
   border: 0;
   justify-items: center;
   gap: .18rem;
@@ -215,81 +216,108 @@
 
 .stageRail button > span {
   display: grid;
-  width: 2.1rem;
-  height: 2.1rem;
+  width: 2.45rem;
+  height: 2.45rem;
   place-items: center;
   border: 1px solid currentColor;
   border-radius: 50%;
-  background: #e7dcc8;
+  background: #eadfca;
   transition: background-color 280ms ease, transform 420ms cubic-bezier(.22, 1, .36, 1);
 }
 
-.stageRail button small { color: #8b6544; font-size: .44rem; font-weight: 700; letter-spacing: .11em; }
-.stageRail button strong { font-family: var(--font-display), Georgia, serif; font-size: .82rem; font-weight: 400; }
+.stageRail button small { color: #795637; font-size: .5rem; font-weight: 700; letter-spacing: .11em; }
+.stageRail button strong { font-family: var(--font-display), Georgia, serif; font-size: .92rem; font-weight: 400; }
 .stageRail button[data-reached="true"] { color: #6e4f35; }
 .stageRail button[data-active="true"] { color: #2d231a; }
 .stageRail button[data-active="true"] > span { background: #d8c2a2; transform: scale(1.08); }
 .stageRail button:focus-visible { outline: 2px solid #8b6544; outline-offset: 3px; }
 
 .recordStage {
+  position: relative;
   display: grid;
-  min-height: 0;
-  margin-top: .25rem;
-  border-top: 1px solid rgba(61, 46, 33, .2);
-  border-bottom: 1px solid rgba(61, 46, 33, .2);
+  min-height: clamp(16rem, 32svh, 20rem);
+  margin-top: .35rem;
+  overflow: hidden;
+  border-top: 1px solid rgba(61, 46, 33, .28);
+  border-bottom: 1px solid rgba(61, 46, 33, .28);
   align-items: center;
+  background:
+    linear-gradient(90deg, rgba(111, 80, 53, .055), transparent 26%, transparent 74%, rgba(111, 80, 53, .055)),
+    rgba(255, 250, 236, .18);
 }
 
 .activeRecord {
+  position: relative;
+  z-index: 1;
   display: grid;
-  padding: clamp(1rem, 2svh, 1.5rem) 0;
-  grid-template-columns: minmax(10rem, .55fr) minmax(19rem, 1.2fr) minmax(10rem, .58fr);
+  min-height: 100%;
+  padding: clamp(1.3rem, 2.4svh, 1.8rem) clamp(.2rem, .6vw, .55rem);
+  grid-template-columns: minmax(10rem, .5fr) minmax(20rem, 1.35fr) minmax(11rem, .58fr);
   align-items: center;
-  gap: clamp(1.2rem, 3vw, 2.6rem);
+  gap: clamp(1.35rem, 3vw, 2.75rem);
 }
 
-.inputs { display: grid; gap: .42rem; }
+.recordIndex {
+  position: absolute;
+  right: clamp(10.5rem, 14vw, 13.5rem);
+  bottom: -.72rem;
+  z-index: -1;
+  color: rgba(102, 75, 51, .075);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(6rem, 10vw, 9.5rem);
+  font-weight: 400;
+  letter-spacing: -.08em;
+  line-height: .8;
+  pointer-events: none;
+}
+
+.inputs { display: grid; align-content: center; gap: .58rem; }
 .inputs > span,
 .decision small,
 .recordedOutput span {
-  color: #8b6544;
-  font-size: .49rem;
+  color: #795637;
+  font-size: .58rem;
   font-weight: 700;
-  letter-spacing: .13em;
+  letter-spacing: .12em;
   text-transform: uppercase;
 }
 
 .inputs i {
   position: relative;
-  padding-left: .85rem;
-  color: rgba(51, 41, 31, .62);
-  font-size: .58rem;
+  width: fit-content;
+  padding: .38rem .55rem .38rem 1.15rem;
+  border: 1px solid rgba(110, 79, 53, .18);
+  border-radius: 999px;
+  color: rgba(51, 41, 31, .78);
+  background: rgba(255, 250, 236, .42);
+  font-size: .64rem;
   font-style: normal;
   font-weight: 650;
-  letter-spacing: .08em;
+  letter-spacing: .065em;
   text-transform: uppercase;
 }
 
-.inputs i::before { position: absolute; top: 50%; left: 0; width: .42rem; height: 1px; background: #8b6544; content: ""; }
+.inputs i::before { position: absolute; top: 50%; left: .54rem; width: .34rem; height: 1px; background: #8b6544; content: ""; }
 
-.decision { padding-inline: clamp(1rem, 2vw, 1.8rem); border-inline: 1px solid rgba(61, 46, 33, .18); }
-.decision h3 { margin: .55rem 0 0; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.45rem, 2.15vw, 2.35rem); font-weight: 400; letter-spacing: -.035em; line-height: 1; }
-.decision > strong { display: block; margin-top: .75rem; color: #6e4f35; font-family: var(--font-display), Georgia, serif; font-size: clamp(.95rem, 1.25vw, 1.15rem); font-weight: 400; line-height: 1.25; }
-.decision p { max-width: 56ch; margin: .62rem 0 0; color: rgba(51, 41, 31, .62); font-size: .64rem; line-height: 1.5; }
+.decision { padding-inline: clamp(1.25rem, 2.2vw, 2rem); border-inline: 1px solid rgba(61, 46, 33, .24); }
+.decision h3 { max-width: 19ch; margin: .62rem 0 0; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.75rem, 2.45vw, 2.7rem); font-weight: 400; letter-spacing: -.04em; line-height: .98; }
+.decision > strong { display: block; max-width: 34ch; margin-top: .82rem; color: #68472f; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.02rem, 1.35vw, 1.28rem); font-weight: 400; line-height: 1.28; }
+.decision p { max-width: 58ch; margin: .7rem 0 0; color: rgba(51, 41, 31, .74); font-size: .75rem; line-height: 1.55; }
 
-.recordedOutput { display: grid; padding: 1rem; border: 1px solid rgba(110, 79, 53, .28); border-radius: .28rem .9rem .28rem .72rem; gap: .45rem; color: #8b6544; background: rgba(255, 250, 236, .22); }
-.recordedOutput strong { color: #33291f; font-family: var(--font-display), Georgia, serif; font-size: 1rem; font-weight: 400; line-height: 1.2; }
+.recordedOutput { display: grid; min-height: 9.4rem; padding: 1.1rem; border: 1px solid rgba(110, 79, 53, .38); border-radius: .3rem 1rem .3rem .78rem; align-content: center; gap: .55rem; color: #795637; background: rgba(255, 250, 236, .62); box-shadow: 0 12px 28px rgba(76, 55, 39, .08); }
+.recordedOutput svg { width: 1.9rem; height: 1.9rem; padding: .42rem; border: 1px solid rgba(110, 79, 53, .34); border-radius: 50%; }
+.recordedOutput strong { color: #33291f; font-family: var(--font-display), Georgia, serif; font-size: 1.14rem; font-weight: 400; line-height: 1.22; }
 
 .sheetFooter {
   display: grid;
-  padding-top: .75rem;
+  padding-top: .8rem;
   align-items: center;
   grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 1rem;
 }
 
 .sheetFooter > div { display: flex; align-items: center; gap: .38rem; }
-.sheetFooter > div span { padding: .28rem .5rem; border: 1px solid rgba(110, 79, 53, .16); border-radius: 999px; color: rgba(51, 41, 31, .24); font-size: .46rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; transition: color 280ms ease, background-color 280ms ease; }
+.sheetFooter > div span { padding: .32rem .55rem; border: 1px solid rgba(110, 79, 53, .18); border-radius: 999px; color: rgba(51, 41, 31, .34); font-size: .51rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; transition: color 280ms ease, background-color 280ms ease; }
 .sheetFooter > div span[data-visible="true"] { color: #6e4f35; background: rgba(139, 101, 68, .08); }
 .continuityVerdict {
   display: inline-flex;
@@ -301,7 +329,7 @@
   border-radius: 999px;
   color: rgba(51, 41, 31, .48);
   background: rgba(255, 250, 236, .2);
-  font-size: .46rem;
+  font-size: .5rem;
   font-weight: 700;
   letter-spacing: .08em;
   line-height: 1;
@@ -314,7 +342,7 @@
   color: #6e4f35;
   background: rgba(139, 101, 68, .1);
 }
-.sheetFooter > a { display: inline-flex; align-items: center; gap: .35rem; color: #6e4f35; font-size: .5rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+.sheetFooter > a { display: inline-flex; min-height: 2.75rem; padding-inline: .25rem; align-items: center; gap: .35rem; color: #68472f; font-size: .55rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 .sheetFooter > a:focus-visible { outline: 2px solid #8b6544; outline-offset: 4px; }
 
 .staticExperience { display: none; }
@@ -323,10 +351,10 @@
 .staticExperience li { display: grid; padding: 1.1rem 0; border-top: 1px solid rgba(244, 239, 230, .14); grid-template-columns: 2.8rem 1fr; gap: .8rem; }
 .staticExperience li > span { display: grid; width: 2.35rem; height: 2.35rem; place-items: center; border: 1px solid rgba(212, 185, 154, .44); border-radius: 50%; color: #d4b99a; }
 .staticExperience small,
-.staticExperience strong { color: #d4b99a; font-size: .54rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.staticExperience strong { color: #d4b99a; font-size: .61rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
 .staticExperience h3 { margin: .4rem 0 0; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.3rem, 5.5vw, 1.85rem); font-weight: 400; line-height: 1.08; }
-.staticExperience p { margin: .55rem 0 .7rem; color: rgba(244, 239, 230, .68); font-size: .72rem; line-height: 1.55; }
-.staticExperience > a { display: inline-flex; margin-top: 1rem; align-items: center; gap: .35rem; color: #d4b99a; font-size: .56rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.staticExperience p { margin: .55rem 0 .7rem; color: rgba(244, 239, 230, .74); font-size: .82rem; line-height: 1.58; }
+.staticExperience > a { display: inline-flex; min-height: 2.75rem; margin-top: 1rem; align-items: center; gap: .35rem; color: #d4b99a; font-size: .62rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
 
 @media (min-width: 821px) and (prefers-reduced-motion: no-preference) {
   .scrollStory { height: 132svh; }
@@ -338,13 +366,20 @@
   .header h2 { font-size: clamp(2.15rem, min(3.55vw, 5.2svh), 3.6rem); }
   .sheet { min-height: min(60svh, 31rem); margin-top: .75rem; padding-block: .85rem; }
   .stageRail { margin-top: .45rem; }
-  .activeRecord { padding-block: .7rem; }
-  .decision h3 { font-size: 1.35rem; }
-  .decision p { font-size: .58rem; }
+  .stageRail button { min-height: 3.25rem; padding-bottom: .45rem; }
+  .stageRail button > span { width: 2.1rem; height: 2.1rem; }
+  .recordStage { min-height: 11.75rem; }
+  .activeRecord { padding-block: .65rem; }
+  .recordIndex { font-size: 5.5rem; }
+  .decision h3 { font-size: 1.45rem; }
+  .decision > strong { margin-top: .48rem; font-size: .94rem; }
+  .decision p { margin-top: .45rem; font-size: .64rem; }
+  .recordedOutput { min-height: 7.4rem; padding: .75rem; }
 }
 
 @media (max-width: 1040px) {
-  .activeRecord { grid-template-columns: minmax(8rem, .45fr) minmax(17rem, 1.25fr) minmax(9rem, .5fr); gap: 1.1rem; }
+  .activeRecord { grid-template-columns: minmax(8rem, .44fr) minmax(17rem, 1.3fr) minmax(9rem, .52fr); gap: 1.1rem; }
+  .recordIndex { right: 9rem; }
   .sheetFooter > div span { padding-inline: .35rem; }
   .continuityVerdict { display: none; }
 }

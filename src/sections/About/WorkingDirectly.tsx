@@ -199,11 +199,15 @@ export function WorkingDirectly() {
                   <motion.div
                     key={active.label}
                     className={styles.activeRecord}
+                    data-record-stage={sequence.activeIndex + 1}
                     initial={prefersReducedMotion ? false : { clipPath: "inset(0 100% 0 0)", x: 24 }}
                     animate={{ clipPath: "inset(0 0% 0 0)", x: 0 }}
                     exit={prefersReducedMotion ? undefined : { clipPath: "inset(0 0 0 100%)", x: -16 }}
                     transition={{ duration: prefersReducedMotion ? 0 : 0.56, ease: EASE }}
                   >
+                    <span className={styles.recordIndex} aria-hidden="true">
+                      {String(sequence.activeIndex + 1).padStart(2, "0")}
+                    </span>
                     <div className={styles.inputs}>
                       <span>{active.verb} · incoming context</span>
                       {active.fragments.map((fragment, index) => (
