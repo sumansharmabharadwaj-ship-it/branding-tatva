@@ -10,6 +10,15 @@
 }
 
 @media (max-width: 430px) {
+  /* The global page-entry scale makes this wrapper a containing block for
+     fixed descendants while it runs. On long mobile pages that can pull the
+     shared header hundreds of pixels down the document (and a throttled or
+     backgrounded tab can leave it there). Each cinematic page already owns
+     its meaningful motion, so keep the mobile shell stable from frame one. */
+  .page-enter {
+    animation: none;
+  }
+
   .site-header {
     padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
     padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
