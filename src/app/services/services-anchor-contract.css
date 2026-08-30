@@ -8,6 +8,23 @@
   scroll-margin-top: clamp(4.75rem, 9vh, 6.5rem);
 }
 
+/* The server rail starts from the page's short editorial index, while the
+   client runtime discovers the complete cinematic chapter map. Keep that
+   provisional guide quiet until the runtime can publish a truthful active
+   chapter; otherwise a cold #proof or #desire entry briefly announces the
+   wrong scene beside already-correct content. */
+main[data-services-page="true"] ~ nav[aria-label="Jump to section"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html[data-services-experience="active"]
+  main[data-services-page="true"]
+  ~ nav[aria-label="Jump to section"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 @media (max-width: 767px) {
   [data-services-scroll-scene] {
     scroll-margin-top: max(4.25rem, env(safe-area-inset-top));

@@ -192,7 +192,7 @@ export default async function ServicesPage() {
           from flashing at a sticky or transformed boundary, while the
           deliberately light contextual CTA continues to paint its own
           surface. */}
-      <main id="main-content" style={{ backgroundColor: "#3f4d44" }}>
+      <main id="main-content" data-services-page="true" style={{ backgroundColor: "#3f4d44" }}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceCatalogJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(engagementsJsonLd) }} />
