@@ -263,28 +263,53 @@ async function auditStatefulExperience(browser) {
 
     await name.fill(draftValues.name);
     await email.fill(draftValues.email);
-    await description.fill(draftValues.description);
     await page.locator('[data-contact-draft-status][data-state="saved"]').waitFor({ state: "attached", timeout: 5_000 });
-    assert((await draftStatus.getAttribute("data-state")) === "saved", "stateful flow: draft never reached saved state");
-    assert(normalise(await draftStatus.innerText()) === "Saved in this tab.", "stateful flow: saved-draft copy is not truthful");
-    assert(await page.getByRole("button", { name: "Clear note" }).isVisible(), "stateful flow: saved draft cannot be cleared");
 
+    // Leave immediately after the final field changes, before the 360ms draft
+    // debounce can settle. The pagehide flush must still preserve the latest
+    // value instead of restoring a stale, partially written note.
+    await description.fill(draftValues.description);
     await page.reload({ waitUntil: "domcontentloaded" });
     await waitForPrelude(page, "stateful draft restore");
     await page.locator('[data-contact-draft-status][data-state="restored"]').waitFor({ state: "attached", timeout: 5_000 });
     assert((await name.inputValue()) === draftValues.name, "stateful flow: name was not restored");
     assert((await email.inputValue()) === draftValues.email, "stateful flow: email was not restored");
-    assert((await description.inputValue()) === draftValues.description, "stateful flow: question was not restored");
+    assert(
+      (await description.inputValue()) === draftValues.description,
+      "stateful flow: question typed immediately before pagehide was not restored",
+    );
     assert(
       normalise(await draftStatus.innerText()) === "Your unfinished note was restored in this tab.",
       "stateful flow: restored-draft copy is not truthful",
     );
+    const draftAnnouncement = page.locator("[data-contact-draft-announcement]");
+    assert((await draftAnnouncement.count()) === 1, "stateful flow: restored draft announcement is missing or duplicated");
+    assert(
+      normalise(await draftAnnouncement.innerText()) === "Your unfinished contact note was restored in this tab.",
+      "stateful flow: restored draft announcement is not focused and truthful",
+    );
+    assert(
+      (await draftAnnouncement.getAttribute("aria-live")) === "polite",
+      "stateful flow: restored draft is not announced politely",
+    );
+    assert(
+      (await draftStatus.getAttribute("aria-live")) === null,
+      "stateful flow: routine visual draft status is exposed as a noisy live region",
+    );
+    assert(await page.getByRole("button", { name: "Clear note" }).isVisible(), "stateful flow: saved draft cannot be cleared");
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
     await page.screenshot({
       path: path.join(OUTPUT_DIR, "01-contact-draft-restored.png"),
       fullPage: true,
       animations: "disabled",
     });
+
+    await description.fill(`${draftValues.description} More context.`);
+    await page.locator('[data-contact-draft-status][data-state="saved"]').waitFor({ state: "attached", timeout: 5_000 });
+    assert(normalise(await draftAnnouncement.innerText()) === "", "stateful flow: routine draft save repeats the restore announcement");
+    assert(normalise(await draftStatus.innerText()) === "Saved in this tab.", "stateful flow: saved-draft copy is not truthful");
+    await description.fill(draftValues.description);
+    await page.locator('[data-contact-draft-status][data-state="saved"]').waitFor({ state: "attached", timeout: 5_000 });
 
     await submit.click();
     const recovery = page.locator('[role="alert"]').filter({ hasText: "Your note is still here." });
@@ -433,6 +458,8 @@ async function auditStatefulExperience(browser) {
     return {
       draftSaved: true,
       draftRestored: true,
+      draftFlushedOnPagehide: true,
+      draftAnnouncementsScoped: true,
       draftClearPersisted: true,
       falseSuccessRejected: true,
       providerFailureRecovered: true,
