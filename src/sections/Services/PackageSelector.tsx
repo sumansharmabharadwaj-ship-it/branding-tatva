@@ -268,13 +268,11 @@ export function PackageSelector() {
       </div>
 
       <div data-services-chapter-resolution="true" className="relative mt-5 min-h-[220px] text-left">
-        <AnimatePresence mode="popLayout" initial={false}>
-          {compare ? (
+        {compare ? (
             <motion.div
               key="compare"
               initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
               transition={transition}
             >
               <PackageComparisonDeck region={region} />
@@ -284,7 +282,6 @@ export function PackageSelector() {
               key={activePackage.slug}
               initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 28, scale: 0.985 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0 }}
               transition={
                 prefersReducedMotion
                   ? { duration: 0 }
@@ -344,7 +341,6 @@ export function PackageSelector() {
               Three paths, each shaped around a different decision.
             </motion.p>
           )}
-        </AnimatePresence>
       </div>
 
       <details data-package-disclaimer="true" className="group mx-auto mt-3 max-w-2xl text-left text-[0.68rem] leading-relaxed text-ivory/55">
