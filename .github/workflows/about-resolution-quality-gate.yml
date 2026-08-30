@@ -1,0 +1,42 @@
+name: About resolution quality gate
+run-name: About closing record · ${{ github.sha }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - august-8-isolated
+    paths:
+      - .github/workflows/about-resolution-quality-gate.yml
+      - scripts/about_resolution_quality_gate.cjs
+      - src/sections/About/AboutResolution.module.css
+      - src/sections/About/AboutResolution.tsx
+      - package.json
+  pull_request:
+    paths:
+      - .github/workflows/about-resolution-quality-gate.yml
+      - scripts/about_resolution_quality_gate.cjs
+      - src/sections/About/AboutResolution.module.css
+      - src/sections/About/AboutResolution.tsx
+      - package.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: about-resolution-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  closing-record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Check out the tested revision
+        uses: actions/checkout@v4
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Verify closing-record quality contracts
+        run: node scripts/about_resolution_quality_gate.cjs

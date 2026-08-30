@@ -6,8 +6,10 @@ on:
   push:
     branches:
       - homepage-cinematic-recovery
+      - august-8-isolated
     paths:
       - .github/workflows/about-route-memory-gate.yml
+      - scripts/about_resolution_rendered_gate.cjs
       - scripts/about_route_memory_gate.cjs
       - src/app/about/**
       - src/components/AboutSplitHero.tsx
@@ -49,6 +51,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+
+      - name: Verify About source contracts before installation
+        run: npm run check:about
 
       - name: Activate pnpm
         run: |
@@ -96,6 +101,12 @@ jobs:
           ABOUT_MEMORY_ENFORCE: 0
         run: node scripts/about_route_memory_gate.cjs
 
+      - name: Verify the rendered About closing record
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:3000
+          ABOUT_MEMORY_MOCK_VIDEO: /tmp/about-memory-video.mp4
+        run: npm run check:about:rendered
+
       - name: Stop the production server
         if: always()
         run: |
@@ -109,6 +120,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: branding-tatva-about-memory
-          path: about-memory-audit/*
+          path: |
+            about-memory-audit/*
+            about-resolution-audit/*
           if-no-files-found: warn
           retention-days: 7

@@ -11,6 +11,7 @@
     "check:links": "node scripts/internal_link_graph_gate.cjs",
     "check:media": "node scripts/media_search_gate.cjs",
     "check:about": "node scripts/about_resolution_quality_gate.cjs",
+    "check:about:rendered": "node scripts/about_resolution_rendered_gate.cjs",
     "check:homepage": "node scripts/homepage_conversion_sequence_gate.cjs && node scripts/homepage_diagnostic_state_gate.cjs && node scripts/homepage_personalization_state_gate.cjs && node scripts/homepage_content_truth_gate.cjs && node scripts/homepage_analytics_contract_gate.cjs && node scripts/homepage_runtime_quality_gate.cjs",
     "check:homepage:built": "node scripts/homepage_rendered_quality_gate.cjs"
   },
