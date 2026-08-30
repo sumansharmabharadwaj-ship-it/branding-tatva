@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
-const CONTRACT_VERSION = 7;
+const CONTRACT_VERSION = 8;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -75,6 +75,7 @@ const contactPage = source.get("src/app/contact/page.tsx") || "";
 const contactForm = source.get("src/components/ContactForm.tsx") || "";
 const contactGratitude = source.get("src/components/ContactGratitude.tsx") || "";
 const contactChapterRail = source.get("src/components/ContactChapterRail.tsx") || "";
+const servicesContactPackageHook = source.get("src/hooks/useServicesContactPackage.ts") || "";
 const contactCinematicCss = source.get("src/app/contact/contact-cinematic.css") || "";
 const contactRoute = source.get("src/app/api/contact/route.ts") || "";
 const contactDelivery = source.get("src/lib/contact-delivery.ts") || "";
@@ -168,6 +169,30 @@ if (
   )
 ) {
   fail("Contact mobile hero must retain its concise booking reassurance.");
+}
+if (!contactForm.includes("data-contact-form-package-remove")) {
+  fail("Carried service context must offer an explicit removal action.");
+}
+if (!contactForm.includes("data-contact-form-package-status")) {
+  fail("Carried service removal must announce its result.");
+}
+if (!contactForm.includes("packageStatusRef.current?.focus({ preventScroll: true })")) {
+  fail("Carried service removal must preserve keyboard focus.");
+}
+if (!contactForm.includes("clearServicesContactPackage()")) {
+  fail("Contact form must clear carried service context through the shared boundary.");
+}
+if (!servicesContactPackageHook.includes("window.history.replaceState")) {
+  fail("Clearing carried service context must keep the visitor on the current Contact scene.");
+}
+if (!servicesContactPackageHook.includes('url.searchParams.delete("package")')) {
+  fail("Clearing carried service context must remove it from the Contact URL.");
+}
+if (!servicesContactPackageHook.includes("SERVICES_CONTACT_PACKAGE_EVENT")) {
+  fail("Contact surfaces must share carried service changes immediately.");
+}
+if (!servicesContactPackageHook.includes('window.addEventListener("popstate"')) {
+  fail("Contact service context must follow browser history changes.");
 }
 
 if (!process.exitCode) {
