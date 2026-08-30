@@ -129,6 +129,12 @@ This prevents timers, hover, and scroll from competing for control.
 - Use direct taps on touch screens. Cursor light, velocity veil, and chapter spine remain desktop enhancements.
 - In reduced motion, remove sticky runways, scroll snapping, camera transforms, and scrub-dependent movement. Present the real first state and keep every tab directly selectable.
 
+### Atomic film handoffs
+
+`VideoWarden` owns the page-wide playback budget: at most one film may be playing at any instant. Scroll, resize, mutation, and intersection changes remain frame-batched, but a video's `play` event is arbitrated synchronously. This immediately pauses the outgoing film before the incoming decoder can compete for a frame.
+
+Keep the `play` listener synchronous if the media system changes. `npm run check:about` guards this invariant alongside the rest of the About journey contract.
+
 ## QA route
 
 Check these states before publishing:
