@@ -4,6 +4,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const runtime = read("src/components/AboutCinematicRuntime.tsx");
+const visualizer = read("src/hooks/useScrollDrivenVisualizer.ts");
 const runtimeStyles = read("src/components/AboutCinematicRuntime.module.css");
 const origin = read("src/sections/About/FounderFieldNotes.tsx");
 const originStyles = read("src/sections/About/FounderFieldNotes.module.css");
@@ -77,6 +78,12 @@ assert(
     origin.includes("existing brand\n              feels difficult to explain") &&
     origin.includes("recognition needs steadier continuity"),
   "The first post-hero chapter no longer connects Suman's formative fields to a buyer's situation.",
+);
+assert(
+  visualizer.includes("manualChoiceProgressRef.current = readProgress()") &&
+    visualizer.includes("Math.abs(progress - manualChoiceProgressRef.current) <= MANUAL_CHOICE_SCROLL_EPSILON") &&
+    visualizer.includes("setActiveIndex(manualChoiceIndexRef.current)"),
+  "Shared About visualizers no longer protect an explicit choice until genuine scroll movement resumes.",
 );
 assert(
   /\.chapterSpine li\[data-active="true"\] a\s*\{[^}]*width:\s*min\(/.test(runtimeStyles),

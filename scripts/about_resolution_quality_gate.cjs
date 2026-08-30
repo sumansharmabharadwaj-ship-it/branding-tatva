@@ -80,6 +80,8 @@ assert(
 );
 assert(
   component.includes("manualChoiceRef.current = true") &&
+    component.includes("manualChoiceIndexRef.current = index") &&
+    component.includes("setActiveIndex(manualChoiceIndexRef.current)") &&
     component.includes("previewingRef.current || manualChoiceRef.current") &&
     component.includes('window.addEventListener("wheel", releaseManualChoice, { passive: true })') &&
     component.includes('window.addEventListener("touchstart", releaseManualChoice, { passive: true })') &&

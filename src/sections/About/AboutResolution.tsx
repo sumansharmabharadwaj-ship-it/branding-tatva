@@ -66,6 +66,7 @@ export function AboutResolution() {
   const pointerFrameRef = useRef(0);
   const previewingRef = useRef(false);
   const manualChoiceRef = useRef(false);
+  const manualChoiceIndexRef = useRef(0);
   const progressRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
@@ -127,12 +128,17 @@ export function AboutResolution() {
 
   function releasePreview() {
     previewingRef.current = false;
+    if (manualChoiceRef.current) {
+      setActiveIndex(manualChoiceIndexRef.current);
+      return;
+    }
     syncToScroll();
   }
 
   function choose(index: number) {
     previewingRef.current = false;
     manualChoiceRef.current = true;
+    manualChoiceIndexRef.current = index;
     setActiveIndex(index);
     track("package_viewed", {
       package: PATHS[index].package.slug,

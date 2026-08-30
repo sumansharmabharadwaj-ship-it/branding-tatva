@@ -10,6 +10,8 @@ type ScrollDrivenVisualizerOptions = {
   reducedMotion?: boolean;
 };
 
+const MANUAL_CHOICE_SCROLL_EPSILON = 0.0005;
+
 function stageFromProgress(progress: number, count: number) {
   const safeCount = Math.max(1, count);
   const clamped = Math.min(1, Math.max(0, progress));
@@ -33,6 +35,9 @@ export function useScrollDrivenVisualizer({
   const safeCount = Math.max(1, count);
   const [activeIndex, setActiveIndex] = useState(0);
   const previewingRef = useRef(false);
+  const manualChoiceRef = useRef(false);
+  const manualChoiceIndexRef = useRef(0);
+  const manualChoiceProgressRef = useRef(0);
   const { scrollYProgress } = useScroll({
     target,
     offset: ["start start", "end end"],
@@ -50,13 +55,17 @@ export function useScrollDrivenVisualizer({
   }, [scrollYProgress, target]);
 
   const syncToScroll = useCallback(() => {
-    if (reducedMotion) return;
+    if (reducedMotion || manualChoiceRef.current) return;
     const nextIndex = stageFromProgress(readProgress(), safeCount);
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
   }, [readProgress, reducedMotion, safeCount]);
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     if (!enabled || reducedMotion || previewingRef.current) return;
+    if (manualChoiceRef.current) {
+      if (Math.abs(progress - manualChoiceProgressRef.current) <= MANUAL_CHOICE_SCROLL_EPSILON) return;
+      manualChoiceRef.current = false;
+    }
     const nextIndex = stageFromProgress(progress, safeCount);
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
   });
@@ -74,7 +83,12 @@ export function useScrollDrivenVisualizer({
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
         if (previewingRef.current) return;
-        const nextIndex = stageFromProgress(readProgress(), safeCount);
+        const progress = readProgress();
+        if (manualChoiceRef.current) {
+          if (Math.abs(progress - manualChoiceProgressRef.current) <= MANUAL_CHOICE_SCROLL_EPSILON) return;
+          manualChoiceRef.current = false;
+        }
+        const nextIndex = stageFromProgress(progress, safeCount);
         setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
       });
     };
@@ -94,9 +108,12 @@ export function useScrollDrivenVisualizer({
     (index: number) => {
       const nextIndex = ((index % safeCount) + safeCount) % safeCount;
       previewingRef.current = false;
+      manualChoiceRef.current = true;
+      manualChoiceIndexRef.current = nextIndex;
+      manualChoiceProgressRef.current = readProgress();
       setActiveIndex(nextIndex);
     },
-    [safeCount],
+    [readProgress, safeCount],
   );
 
   const preview = useCallback(
@@ -110,6 +127,10 @@ export function useScrollDrivenVisualizer({
 
   const releasePreview = useCallback(() => {
     previewingRef.current = false;
+    if (manualChoiceRef.current) {
+      setActiveIndex(manualChoiceIndexRef.current);
+      return;
+    }
     syncToScroll();
   }, [syncToScroll]);
 
