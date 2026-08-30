@@ -19,6 +19,7 @@ import {
   SERVICES_SITUATION_STORAGE_KEY,
   PACKAGE_TO_SITUATION,
   SITUATION_TO_PACKAGE,
+  SITUATION_TO_PROOF_SLUG,
   isServicesSituation,
   publishServicesSituation,
   readCompletedHomeDiagnosis,
@@ -57,8 +58,9 @@ export function PackageSelector() {
   const committedRouteRef = useRef(false);
   const prefersReducedMotion = useHydratedReducedMotion();
   const activePackage = packages.find((pkg) => pkg.slug === active);
-  const proof = activePackage?.proofSlug
-    ? projects.find((project) => project.slug === activePackage.proofSlug)
+  const activeSituation = active ? PACKAGE_TO_SITUATION[active] : null;
+  const proof = activeSituation
+    ? projects.find((project) => project.slug === SITUATION_TO_PROOF_SLUG[activeSituation])
     : undefined;
   const transition = prefersReducedMotion
     ? { duration: 0 }

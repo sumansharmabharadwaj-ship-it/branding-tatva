@@ -18,7 +18,6 @@ export type Package = {
   includes: string[];
   color: string;
   popular?: boolean;
-  proofSlug?: string; // links to a real case study in projects.ts as evidence
 };
 
 // GBP, aimed at the UK solo-consultant/boutique market specifically
@@ -63,7 +62,6 @@ export const packages: Package[] = [
     ],
     color: "#24394D", // indigo — Water
     popular: true,
-    proofSlug: "dr-haley-nutrition",
   },
   {
     slug: "brand-partnership",
@@ -81,7 +79,6 @@ export const packages: Package[] = [
       "Quarterly strategy review",
     ],
     color: "#AD6F5C", // rose-earth — Space
-    proofSlug: "herbalcart",
   },
 ];
 
@@ -126,4 +123,3 @@ export const offerings: Offering[] = [
     color: "#CD7A4C", // terracotta
   },
 ];
-

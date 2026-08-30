@@ -11,6 +11,7 @@ import { projects } from "@/data/projects";
 import {
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
+  SITUATION_TO_PROOF_SLUG,
   isServicesSituation,
   readCompletedHomeDiagnosis,
   type ServicesSituationDetail,
@@ -36,7 +37,7 @@ const PROOF_ROUTES: Record<
 > = {
   idea: {
     routeLabel: "Beginning with an idea",
-    slug: "myshopineurope",
+    slug: SITUATION_TO_PROOF_SLUG.idea,
     headline: "MyShopInEurope: foundation before visibility.",
     lead: {
       value: "4",
@@ -47,7 +48,7 @@ const PROOF_ROUTES: Record<
   },
   reposition: {
     routeLabel: "Repositioning an existing brand",
-    slug: "herbalcart",
+    slug: SITUATION_TO_PROOF_SLUG.reposition,
     headline: "HerbalCart: the category meaning, reset.",
     lead: {
       value: "5",
@@ -58,7 +59,7 @@ const PROOF_ROUTES: Record<
   },
   ongoing: {
     routeLabel: "Building ongoing consistency",
-    slug: "dr-haley-nutrition",
+    slug: SITUATION_TO_PROOF_SLUG.ongoing,
     headline: "Dr. Haley Nutrition: eight weeks of exactly this work.",
     lead: {
       value: "104%",
@@ -78,9 +79,8 @@ type ServicesProgressDetail = {
 };
 
 // Conversion architecture: proof sits directly after the packages instead of
-// waiting for the Work page. Every sentence and number below comes from the
-// verified Dr. Haley Nutrition project record. Services still foregrounds one
-// result only; the complete four-stat narrative remains on the Work page.
+// waiting for the Work page. Every route uses one documented project record;
+// no result is inferred beyond the selected case study's source material.
 //
 // A natural 100svh chapter now carries three semantic beats through the same
 // stable composition: the strategic decision, the behavioural shift it

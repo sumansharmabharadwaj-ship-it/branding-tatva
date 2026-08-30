@@ -1,14 +1,24 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Link from "next/link";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ELEMENT_HEX, MOOD } from "@/lib/sectionWash";
 import { elements } from "@/data/elements";
+import { packages } from "@/data/services";
 import { MobileAuthorityDeck, type AuthorityLayer } from "@/sections/Services/MobileAuthorityDeck";
+import {
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  SITUATION_TO_PACKAGE,
+  isServicesSituation,
+  readCompletedHomeDiagnosis,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 
@@ -48,6 +58,12 @@ const LAYERS: AuthorityLayer[] = elements.map((el) => ({
   color: ELEMENT_HEX[el.slug] ?? "#C6A97A",
 }));
 
+const AUTHORITY_ROUTE_ACTION: Record<ServicesSituationId, string> = {
+  idea: "Build the foundation first",
+  reposition: "Rebuild every layer",
+  ongoing: "Keep every layer coherent",
+};
+
 // The amplified signal: one path whose oscillation widens left to
 // right — small input, growing output. Scaled vertically by scroll
 // progress so the wave visibly gains amplitude as layers activate.
@@ -65,7 +81,35 @@ export function PinnedBrandBuild() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const waveRef = useRef<SVGGElement>(null);
+  const [situation, setSituation] = useState<ServicesSituationId | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const recommendedPackage = packages.find(
+    (pkg) => pkg.slug === (situation ? SITUATION_TO_PACKAGE[situation] : "brand-clarity"),
+  );
+  const authorityAction = situation
+    ? AUTHORITY_ROUTE_ACTION[situation]
+    : "The package that builds every layer";
+
+  useEffect(() => {
+    try {
+      const storedSituation = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+      setSituation(
+        isServicesSituation(storedSituation)
+          ? storedSituation
+          : readCompletedHomeDiagnosis(),
+      );
+    } catch {
+      setSituation(null);
+    }
+
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      setSituation(isServicesSituation(detail?.situation) ? detail.situation : null);
+    }
+
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+  }, []);
 
   useEffect(() => {
     if (prefersReducedMotion) {
@@ -153,6 +197,7 @@ export function PinnedBrandBuild() {
     <div
       ref={wrapRef}
       data-authority-story="true"
+      data-authority-route={situation ?? "default"}
       className="relative min-h-[100svh] lg:h-[100svh]"
       style={{ backgroundColor: MOOD.charcoal }}
     >
@@ -203,7 +248,7 @@ export function PinnedBrandBuild() {
                 href="#desire"
                 className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory"
               >
-                The package that builds every layer: Full Brand System
+                {authorityAction}: {recommendedPackage?.name ?? "Full Brand System"}
                 <span aria-hidden="true">→</span>
               </Link>
             </div>

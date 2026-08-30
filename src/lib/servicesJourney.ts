@@ -30,6 +30,12 @@ export const PACKAGE_TO_SITUATION: Record<PackageSlug, ServicesSituationId> = {
   "brand-partnership": "ongoing",
 };
 
+export const SITUATION_TO_PROOF_SLUG: Record<ServicesSituationId, string> = {
+  idea: "myshopineurope",
+  reposition: "herbalcart",
+  ongoing: "dr-haley-nutrition",
+};
+
 export type ServicesSituationOrigin =
   | "home_diagnostic"
   | "home_paths"
