@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { faqs } from "@/data/faqs";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
+  SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   isServicesSituation,
@@ -96,12 +97,20 @@ export function HomeQuestionsScene() {
       applySituation(detail?.situation ?? null);
     }
 
+    function onSituationCleared() {
+      setCarriedSituation(null);
+      setActiveIndex(0);
+    }
+
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
-    return () =>
+    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
+    return () => {
       window.removeEventListener(
         SERVICES_SITUATION_EVENT,
         onSituation as EventListener,
       );
+      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
+    };
   }, []);
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {

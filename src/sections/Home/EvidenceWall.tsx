@@ -4,6 +4,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -15,8 +16,25 @@ import { AnimatePresence, motion, useInView } from "framer-motion";
 import { Container } from "@/components/Container";
 import { projects, type Project } from "@/data/projects";
 import { ProjectFile } from "@/sections/Home/ProjectFile";
+import {
+  SERVICES_SITUATION_CLEARED_EVENT,
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  SITUATION_TO_PROOF_SLUG,
+  isServicesSituation,
+  readCompletedHomeDiagnosis,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 
-const SELECTED_PROJECTS = projects.filter((project) => project.featured);
+const DEFAULT_PROJECTS = projects.filter((project) => project.featured);
+const PROJECTS_BY_SLUG = new Map(projects.map((project) => [project.slug, project]));
+
+const SITUATION_LABEL: Record<ServicesSituationId, string> = {
+  idea: "New brand",
+  reposition: "Repositioning",
+  ongoing: "Brand growth",
+};
 
 const DECISION: Record<string, { big: string; label: string }> = {
   myshopineurope: {
@@ -26,6 +44,10 @@ const DECISION: Record<string, { big: string; label: string }> = {
   "executive-springboard": {
     big: "One clear action",
     label: "every platform sequence designed toward webinar registration",
+  },
+  herbalcart: {
+    big: "Perception reset",
+    label: "a modern supplement-first campaign system replacing the accidental herbal frame",
   },
 };
 
@@ -45,6 +67,11 @@ const EVIDENCE_META: Record<string, { type: string; period: string; source: stri
     period: "Completed project output",
     source: "Competitive audit, eight content pillars and platform-specific playbooks structured around webinar registration.",
   },
+  herbalcart: {
+    type: "Delivered campaign reset",
+    period: "Completed project output",
+    source: "Repositioned content themes, five production-ready formats and complete video scripts.",
+  },
 };
 
 const TRAILS: Record<string, { signal: string; decision: string; proof: string }> = {
@@ -62,6 +89,11 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
     signal: "Social content was building awareness without a clear destination.",
     decision: "Sequence each platform toward webinar registration and mentor action.",
     proof: "An eight-pillar, platform-specific content system built around conversion.",
+  },
+  herbalcart: {
+    signal: "The product range was being read through an accidental herbal and Ayurvedic frame.",
+    decision: "Reposition the campaign around practical, modern supplementation for active lifestyles.",
+    proof: "Five shoot-ready content formats and complete scripts built around one clearer category signal.",
   },
 };
 
@@ -93,22 +125,75 @@ function metricFor(project: Project) {
   };
 }
 
+function projectsForSituation(situation: ServicesSituationId | null) {
+  if (!situation) return DEFAULT_PROJECTS;
+
+  const primary = PROJECTS_BY_SLUG.get(SITUATION_TO_PROOF_SLUG[situation]);
+  if (!primary) return DEFAULT_PROJECTS;
+
+  return [
+    primary,
+    ...DEFAULT_PROJECTS.filter((project) => project.slug !== primary.slug).slice(0, 2),
+  ];
+}
+
 export function EvidenceWall() {
   const sectionRef = useRef<HTMLElement>(null);
   const activeVideoRef = useRef<HTMLVideoElement>(null);
   const indexButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
+  const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.42, margin: "4% 0px -8% 0px" });
-  const activeProject = SELECTED_PROJECTS[activeIndex] ?? SELECTED_PROJECTS[0];
+  const visibleProjects = useMemo(
+    () => projectsForSituation(carriedSituation),
+    [carriedSituation],
+  );
+  const activeProject = visibleProjects[activeIndex] ?? visibleProjects[0];
   const activeTrail = trailFor(activeProject);
   const activeMetric = metricFor(activeProject);
   const activeEvidence = EVIDENCE_META[activeProject.slug];
 
   const choose = useCallback((index: number) => {
-    const nextIndex = ((index % SELECTED_PROJECTS.length) + SELECTED_PROJECTS.length) % SELECTED_PROJECTS.length;
-    setActiveIndex(nextIndex);
+    const count = visibleProjects.length;
+    setActiveIndex(count > 0 ? ((index % count) + count) % count : 0);
+  }, [visibleProjects]);
+
+  useEffect(() => {
+    function applySituation(value: string | null) {
+      if (!isServicesSituation(value)) return;
+      setCarriedSituation(value);
+      setActiveIndex(0);
+      setOpenSlug(null);
+    }
+
+    try {
+      const completedDiagnosis = readCompletedHomeDiagnosis();
+      if (completedDiagnosis) applySituation(completedDiagnosis);
+      else applySituation(window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY));
+    } catch {}
+
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      applySituation(detail?.situation ?? null);
+    }
+
+    function onSituationCleared() {
+      setCarriedSituation(null);
+      setActiveIndex(0);
+      setOpenSlug(null);
+    }
+
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
+    return () => {
+      window.removeEventListener(
+        SERVICES_SITUATION_EVENT,
+        onSituation as EventListener,
+      );
+      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
+    };
   }, []);
 
   function chooseFromKeyboard(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
@@ -123,8 +208,8 @@ export function EvidenceWall() {
     const nextIndex = event.key === "Home"
       ? 0
       : event.key === "End"
-        ? SELECTED_PROJECTS.length - 1
-        : (index + direction + SELECTED_PROJECTS.length) % SELECTED_PROJECTS.length;
+        ? visibleProjects.length - 1
+        : (index + direction + visibleProjects.length) % visibleProjects.length;
     choose(nextIndex);
     indexButtonRefs.current[nextIndex]?.focus();
   }
@@ -149,7 +234,7 @@ export function EvidenceWall() {
       document.removeEventListener("visibilitychange", syncPlayback);
       videoAtEffectStart?.pause();
     };
-  }, [activeIndex, inView, prefersReducedMotion]);
+  }, [activeProject.slug, inView, prefersReducedMotion]);
 
   return (
     <section
@@ -157,6 +242,7 @@ export function EvidenceWall() {
       className="evidence-cinematic"
       aria-labelledby="evidence-wall-title"
       data-evidence-state={activeProject.slug}
+      data-evidence-match={carriedSituation ?? "default"}
       data-media-id="BT-HOME-SELECTED-WORK-CINEMATIC-V2"
       style={{ "--evidence-accent": activeProject.accent } as CSSProperties}
     >
@@ -207,7 +293,12 @@ export function EvidenceWall() {
             <h2 id="evidence-wall-title">Proof should <em>show its working.</em></h2>
           </div>
           <div className="evidence-cinematic__intro">
-            <span>{String(activeIndex + 1).padStart(2, "0")} / {String(SELECTED_PROJECTS.length).padStart(2, "0")}</span>
+            <span>{String(activeIndex + 1).padStart(2, "0")} / {String(visibleProjects.length).padStart(2, "0")}</span>
+            {carriedSituation && (
+              <small className="evidence-cinematic__match">
+                Matched proof · {SITUATION_LABEL[carriedSituation]}
+              </small>
+            )}
             <p>One real signal. One strategic decision. One outcome you can inspect.</p>
           </div>
         </header>
@@ -263,7 +354,7 @@ export function EvidenceWall() {
         </div>
 
         <div className="evidence-cinematic__index" role="tablist" aria-label="Choose a project case">
-          {SELECTED_PROJECTS.map((project, index) => {
+          {visibleProjects.map((project, index) => {
             const selected = index === activeIndex;
             return (
               <button
@@ -299,7 +390,7 @@ export function EvidenceWall() {
       </Container>
 
       <ProjectFile
-        project={SELECTED_PROJECTS.find((project) => project.slug === openSlug) ?? null}
+        project={visibleProjects.find((project) => project.slug === openSlug) ?? null}
         onClose={closeProjectFile}
       />
     </section>

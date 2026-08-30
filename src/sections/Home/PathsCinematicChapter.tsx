@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
+  SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   SITUATION_TO_PACKAGE,
@@ -127,12 +128,20 @@ export function PathsCinematicChapter() {
       applySituation(detail?.situation ?? null, true);
     }
 
+    function onSituationCleared() {
+      setActiveIndex(0);
+      setCarriedChoice(false);
+    }
+
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
-    return () =>
+    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
+    return () => {
       window.removeEventListener(
         SERVICES_SITUATION_EVENT,
         onSituation as EventListener,
       );
+      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
+    };
   }, []);
 
   useEffect(() => {

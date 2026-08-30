@@ -59,6 +59,10 @@ assert(!paths.includes("↗"), "Service path uses an external-link arrow for an 
 assert(!diagnostic.includes("↗"), "Diagnostic result uses an external-link arrow for an internal route.");
 assert(diagnostic.includes('href="#evidence"'), "Diagnostic no longer carries its result into client proof.");
 assert(!diagnostic.includes("Take the quiz again"), "Diagnostic restored a redundant restart action beside answer review.");
+assert(evidence.includes("SITUATION_TO_PROOF_SLUG") && evidence.includes("SERVICES_SITUATION_EVENT"), "Client proof no longer responds to the visitor's chosen brand situation.");
+assert(evidence.includes("projectsForSituation") && evidence.includes("Matched proof"), "Client proof no longer prioritises or labels the most relevant real case.");
+assert(evidence.includes("project.slug !== primary.slug"), "Client proof can repeat its matched case in the supporting evidence index.");
+assert(evidence.includes("herbalcart") && evidence.includes("Delivered campaign reset"), "Repositioning proof is missing its factual delivered-work boundary.");
 assert(evidence.includes('href="#paths"'), "Client proof no longer hands the visitor into a matched service path.");
 assert(paths.includes('href="#process"'), "The chosen service path no longer continues into the working method.");
 assert(paths.includes("publishSituation(active.situation)"), "The service-path handoff loses the visitor's chosen situation.");

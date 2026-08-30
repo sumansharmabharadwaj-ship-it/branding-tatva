@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { LinkButton } from "@/components/Button";
 import { consultation } from "@/data/site";
 import {
+  SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   isServicesSituation,
@@ -100,13 +101,19 @@ export function FinalInvitation() {
       }
     }
 
+    function onSituationCleared() {
+      setSituation("default");
+    }
+
     window.addEventListener("storage", sync);
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
     window.addEventListener("bt:situation", sync as EventListener);
     window.addEventListener("bt:home-chapter", onChapter as EventListener);
     return () => {
       window.removeEventListener("storage", sync);
       window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
       window.removeEventListener("bt:situation", sync as EventListener);
       window.removeEventListener("bt:home-chapter", onChapter as EventListener);
     };

@@ -7,6 +7,7 @@ import { trackRuntimeIssue } from "@/lib/analytics";
 // parallel vocabularies or drifting apart later.
 export const SERVICES_SITUATION_STORAGE_KEY = "branding-tatva:services-situation";
 export const SERVICES_SITUATION_EVENT = "branding-tatva:services-situation";
+export const SERVICES_SITUATION_CLEARED_EVENT = "branding-tatva:services-situation-cleared";
 export const SERVICES_SITUATION_MAX_AGE_MS = 30 * 60 * 1000;
 
 export const SERVICES_SITUATIONS = ["idea", "reposition", "ongoing"] as const;
@@ -151,4 +152,5 @@ export function clearServicesSituation() {
   } catch {
     trackRuntimeIssue("personalization_storage_clear_failed");
   }
+  window.dispatchEvent(new CustomEvent(SERVICES_SITUATION_CLEARED_EVENT));
 }

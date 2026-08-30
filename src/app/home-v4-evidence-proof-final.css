@@ -72,6 +72,24 @@ html body .home-v4 #evidence .evidence-cinematic__summary > strong {
   letter-spacing: .06em;
 }
 
+.home-v4 .evidence-cinematic__match {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  margin-top: .45rem;
+  padding: .28rem .58rem;
+  border: 1px solid color-mix(in srgb, var(--evidence-accent) 38%, transparent);
+  border-radius: 999px;
+  background: rgba(249, 245, 236, .55);
+  color: color-mix(in srgb, var(--evidence-accent) 78%, #203228);
+  font-size: .55rem;
+  font-weight: 680;
+  letter-spacing: .11em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+}
+
 .home-v4 .evidence-cinematic__actions {
   margin-top: clamp(.65rem, 1.35svh, .95rem);
 }
@@ -100,6 +118,13 @@ html body .home-v4 #evidence .evidence-cinematic__index button {
 
   .home-v4 .evidence-cinematic__intro p {
     display: none;
+  }
+
+  .home-v4 .evidence-cinematic__match {
+    min-height: 1.6rem;
+    margin-top: .3rem;
+    padding: .22rem .48rem;
+    font-size: .5rem;
   }
 
   html body .home-v4 #evidence .evidence-cinematic__header h2 {

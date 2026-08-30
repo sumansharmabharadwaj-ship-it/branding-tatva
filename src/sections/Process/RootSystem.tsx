@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 import type { ProcessStage } from "@/data/process";
 import {
+  SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   isServicesSituation,
@@ -130,12 +131,21 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       applySituation(detail?.situation ?? null);
     }
 
+    function onSituationCleared() {
+      setCarriedSituation(null);
+      setActive(0);
+      firstBeatRef.current = true;
+    }
+
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
-    return () =>
+    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
+    return () => {
       window.removeEventListener(
         SERVICES_SITUATION_EVENT,
         onSituation as EventListener,
       );
+      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
+    };
   }, []);
 
   useEffect(() => {

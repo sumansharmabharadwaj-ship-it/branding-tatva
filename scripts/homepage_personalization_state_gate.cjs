@@ -33,16 +33,23 @@ assert(journey.completedHomeDiagnosisFrom({ ...valid, packageSlug: "brand-clarit
 
 let stored = JSON.stringify(valid);
 let dispatched = null;
+const dispatchedEvents = [];
 global.window = {
   localStorage: {
     getItem: () => stored,
     setItem: (_key, value) => { stored = value; },
     removeItem: () => { stored = null; },
   },
-  dispatchEvent: (event) => { dispatched = event.detail; },
+  dispatchEvent: (event) => {
+    dispatched = event.detail;
+    dispatchedEvents.push(event);
+  },
 };
 global.CustomEvent = class CustomEvent {
-  constructor(_name, options) { this.detail = options.detail; }
+  constructor(name, options = {}) {
+    this.type = name;
+    this.detail = options.detail;
+  }
 };
 assert(journey.readCompletedHomeDiagnosis(now) === "idea", "Valid stored diagnosis failed reload recovery.");
 stored = "idea";
@@ -52,5 +59,10 @@ assert(journey.readCompletedHomeDiagnosis(now) === null, "Corrupt storage person
 window.localStorage.setItem = () => { throw new Error("blocked"); };
 journey.publishCompletedHomeDiagnosis("reposition");
 assert(dispatched?.origin === "home_diagnostic" && dispatched?.situation === "reposition", "Blocked storage prevented in-session personalization.");
+journey.clearServicesSituation();
+assert(
+  dispatchedEvents.at(-1)?.type === journey.SERVICES_SITUATION_CLEARED_EVENT,
+  "Clearing a diagnosis did not reset downstream homepage personalization.",
+);
 
-console.log("Homepage personalization state gate passed: fresh, origin, expiry, corruption, reload, and blocked-storage behavior verified.");
+console.log("Homepage personalization state gate passed: fresh, origin, expiry, corruption, reload, clear, and blocked-storage behavior verified.");
