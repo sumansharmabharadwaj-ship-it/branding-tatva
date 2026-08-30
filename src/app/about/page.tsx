@@ -67,6 +67,7 @@ export default function AboutPage() {
         <AboutCinematicRuntime />
 
         <section
+          id="about-origin"
           className="relative overflow-clip bg-[#e8dfd0]"
           data-about-chapter="origin"
           data-about-film-scene
@@ -86,7 +87,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="relative overflow-clip bg-soil" data-about-chapter="philosophy" data-about-film-scene data-scene-tone="dark">
+        <section id="about-philosophy" className="relative overflow-clip bg-soil" data-about-chapter="philosophy" data-about-film-scene data-scene-tone="dark">
           <div className="absolute inset-0" data-about-film-background>
             <BackgroundVideo
               video="/videos/generated/bt-about-point-view-three-stones.mp4"
@@ -101,13 +102,13 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <div className="bg-[#eee7db]" data-about-film-scene data-about-chapter="convergence" data-scene-tone="light">
+        <div id="about-convergence" className="bg-[#eee7db]" data-about-film-scene data-about-chapter="convergence" data-scene-tone="light">
           <div data-about-film-plane>
             <Convergence />
           </div>
         </div>
 
-        <section className="relative overflow-clip bg-soil" data-about-chapter="system" data-about-film-scene data-scene-tone="dark">
+        <section id="about-system" className="relative overflow-clip bg-soil" data-about-chapter="system" data-about-film-scene data-scene-tone="dark">
           <div className="absolute inset-0" data-about-film-background>
             <BackgroundVideo
               video="/videos/pexels-root-network.mp4"
@@ -122,7 +123,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="relative overflow-clip bg-[#e9e0d2]" data-about-chapter="principles" data-about-film-scene data-scene-tone="light">
+        <section id="about-principles" className="relative overflow-clip bg-[#e9e0d2]" data-about-chapter="principles" data-about-film-scene data-scene-tone="light">
           <div className="absolute inset-0" data-about-film-background>
             <BackgroundVideo
               video="/videos/generated/bt-about-behaviours-mossbreath.mp4"
@@ -137,7 +138,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="relative overflow-clip bg-soil" data-about-chapter="founder-led" data-about-film-scene data-scene-tone="dark">
+        <section id="about-founder-led" className="relative overflow-clip bg-soil" data-about-chapter="founder-led" data-about-film-scene data-scene-tone="dark">
           <div className="absolute inset-0" data-about-film-background>
             <BackgroundVideo
               video="/videos/generated/bt-about-working-directly-woodlight.mp4"
@@ -152,7 +153,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="relative overflow-clip bg-soil" data-about-chapter="evidence" data-about-film-scene data-scene-tone="dark">
+        <section id="about-evidence" className="relative overflow-clip bg-soil" data-about-chapter="evidence" data-about-film-scene data-scene-tone="dark">
           <div className="absolute inset-0" data-about-film-background>
             <BackgroundVideo
               video="/videos/pixabay-forest-sunbeams.mp4"
@@ -166,7 +167,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <div data-about-film-scene data-about-chapter="resolution" data-scene-tone="light" data-scene-ending>
+        <div id="about-resolution" data-about-film-scene data-about-chapter="resolution" data-scene-tone="light" data-scene-ending>
           <AboutResolution />
         </div>
       </main>

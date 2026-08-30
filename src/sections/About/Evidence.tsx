@@ -12,9 +12,9 @@ import { projects } from "@/data/projects";
 import styles from "./Evidence.module.css";
 
 const CASES = [
-  { slug: "dr-haley-nutrition", evidenceType: "Measured performance", ambiguity: "More posts kept going out while fewer people stayed.", decision: "Publish less. Make relevance carry the account.", record: "104%", recordLabel: "more followers earned per post", trace: "1,350% more comments per post · engagement rate 0.71% → 2.81%", icon: BarChart3, accent: "#a7b68b" },
-  { slug: "myshopineurope", evidenceType: "Documented strategic output", ambiguity: "A marketplace risked becoming another route to cheap supply.", decision: "Lead with craft heritage and origin buyers can pass on.", record: "Brand foundation", recordLabel: "plus a year-long content operating system", trace: "Channel playbooks · quarter-by-quarter rollout", icon: FileCheck2, accent: "#d69066" },
-  { slug: "herbalcart", evidenceType: "Implementation-ready system", ambiguity: "A modern supplement range was being read as a herbal remedy brand.", decision: "Reset the category around supplement-first wellness.", record: "5 formats", recordLabel: "ready to shoot with complete Hinglish scripts", trace: "Repositioned campaign system · native content direction", icon: ScanLine, accent: "#d0a954" },
+  { slug: "dr-haley-nutrition", evidenceType: "Measured performance", basis: "Measured · Dec 2025–Jan 2026", ambiguity: "More posts kept going out while fewer people stayed.", decision: "Publish less. Make relevance carry the account.", record: "104%", recordLabel: "more followers earned per post", trace: "1,350% more comments per post · engagement rate 0.71% → 2.81%", icon: BarChart3, accent: "#a7b68b" },
+  { slug: "myshopineurope", evidenceType: "Documented strategic output", basis: "Delivered · foundation and year-long system", ambiguity: "A marketplace risked becoming another route to cheap supply.", decision: "Lead with craft heritage and origin buyers can pass on.", record: "Brand foundation", recordLabel: "plus a year-long content operating system", trace: "Channel playbooks · quarter-by-quarter rollout", icon: FileCheck2, accent: "#d69066" },
+  { slug: "herbalcart", evidenceType: "Implementation-ready system", basis: "Delivered · five formats and complete scripts", ambiguity: "A modern supplement range was being read as a herbal remedy brand.", decision: "Reset the category around supplement-first wellness.", record: "5 formats", recordLabel: "ready to shoot with complete Hinglish scripts", trace: "Repositioned campaign system · native content direction", icon: ScanLine, accent: "#d0a954" },
 ] as const;
 
 const PROJECTS_BY_SLUG = new Map(projects.map((project) => [project.slug, project]));
@@ -78,7 +78,7 @@ export function Evidence() {
         <div className={styles.root}>
           <header className={styles.header}>
             <div><p className={styles.eyebrow}>Evidence · the reasoning leaves a trace</p><h2 id="evidence-title">Follow the decision. <em>Then inspect what remained.</em></h2></div>
-            <p className={styles.intro}>Three engagements use different kinds of proof. Every one reveals the same chain from ambiguity to a strategic choice and a record another person can inspect.</p>
+            <p className={styles.intro}>Three engagements, three evidence classes. Each separates the business ambiguity, the strategic decision, and the record another person can inspect.</p>
           </header>
 
           <motion.div className={styles.camera} style={prefersReducedMotion ? undefined : { y: cameraY, scale: cameraScale }}>
@@ -90,7 +90,7 @@ export function Evidence() {
               </AnimatePresence>
               <div className={styles.imageVeil} aria-hidden="true" />
 
-              <div className={styles.caseIdentity}><span style={{ color: active.accent }}><ActiveIcon size={17} aria-hidden="true" /></span><div><small>{active.evidenceType}</small><strong>{project.title}</strong><em>{project.industry}</em></div></div>
+              <div className={styles.caseIdentity}><span style={{ color: active.accent }}><ActiveIcon size={17} aria-hidden="true" /></span><div><small>Engagement {String(sequence.activeIndex + 1).padStart(2, "0")} / {String(CASES.length).padStart(2, "0")}</small><strong>{project.title}</strong><em>{project.industry}</em></div></div>
 
               <div
                 id="evidence-record"
@@ -101,11 +101,14 @@ export function Evidence() {
               >
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div key={active.slug} className={styles.pathInner} initial={prefersReducedMotion ? false : { opacity: 0, x: 28 }} animate={{ opacity: 1, x: 0 }} exit={prefersReducedMotion ? undefined : { opacity: 0, x: -18 }} transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}>
-                    <article className={styles.pathStep}><span>01 · Ambiguity</span><p>{active.ambiguity}</p></article>
-                    <i className={styles.thread} aria-hidden="true"><b /></i>
-                    <article className={styles.pathStep}><span>02 · Decision</span><p>{active.decision}</p></article>
-                    <i className={styles.thread} aria-hidden="true"><b /></i>
-                    <article className={`${styles.pathStep} ${styles.outcome}`}><span>03 · Record</span><strong>{active.record}</strong><p>{active.recordLabel}</p><small>{active.trace}</small></article>
+                    <p className={styles.recordBasis}><span>Evidence class</span><strong>{active.evidenceType}</strong><em>{active.basis}</em></p>
+                    <div className={styles.pathChain}>
+                      <article className={styles.pathStep}><span>01 · Ambiguity</span><p>{active.ambiguity}</p></article>
+                      <i className={styles.thread} aria-hidden="true"><b /></i>
+                      <article className={styles.pathStep}><span>02 · Decision</span><p>{active.decision}</p></article>
+                      <i className={styles.thread} aria-hidden="true"><b /></i>
+                      <article className={`${styles.pathStep} ${styles.outcome}`}><span>03 · Record</span><strong>{active.record}</strong><p>{active.recordLabel}</p><small><b>Trace</b>{active.trace}</small></article>
+                    </div>
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -124,7 +127,7 @@ export function Evidence() {
                 <strong>The outcome matters. The reasoning that produced it remains visible.</strong>
               </div>
 
-              <Link className={styles.caseLink} href={`/work/${active.slug}`}>Read the documented case <ArrowUpRight size={14} aria-hidden="true" /></Link>
+              <Link className={styles.caseLink} href={`/work/${active.slug}`}>Inspect the full case <ArrowUpRight size={14} aria-hidden="true" /></Link>
             </section>
           </motion.div>
 
@@ -133,7 +136,7 @@ export function Evidence() {
               const itemProject = PROJECTS_BY_SLUG.get(item.slug);
               const Icon = item.icon;
               if (!itemProject) return null;
-              return <article key={item.slug}><header><span><Icon size={17} aria-hidden="true" /></span><div><small>{item.evidenceType}</small><h3>{itemProject.title}</h3></div></header><ol><li><span>Ambiguity</span><p>{item.ambiguity}</p></li><li><span>Decision</span><p>{item.decision}</p></li><li><span>Record</span><strong>{item.record}</strong><p>{item.recordLabel}</p></li></ol><Link href={`/work/${item.slug}`}>Read the documented case <ArrowUpRight size={14} /></Link></article>;
+              return <article key={item.slug}><header><span><Icon size={17} aria-hidden="true" /></span><div><small>{item.evidenceType}</small><h3>{itemProject.title}</h3><p className={styles.staticBasis}>{item.basis}</p></div></header><ol><li><span>Ambiguity</span><p>{item.ambiguity}</p></li><li><span>Decision</span><p>{item.decision}</p></li><li><span>Record</span><strong>{item.record}</strong><p>{item.recordLabel}</p><em className={styles.staticTrace}>{item.trace}</em></li></ol><Link href={`/work/${item.slug}`}>Inspect the full case <ArrowUpRight size={14} /></Link></article>;
             })}
             <p className={styles.staticResolution}>
               <span>The proof standard</span>

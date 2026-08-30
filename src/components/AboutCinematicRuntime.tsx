@@ -1,17 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import styles from "./AboutCinematicRuntime.module.css";
 
 const CHAPTERS = [
-  "Formative fields",
-  "Point of view",
-  "Synthesis",
-  "Brand system",
-  "Working standards",
-  "One strategic thread",
-  "Evidence chain",
-  "The next move",
+  { id: "about-origin", label: "Formative fields" },
+  { id: "about-philosophy", label: "Point of view" },
+  { id: "about-convergence", label: "Synthesis" },
+  { id: "about-system", label: "Brand system" },
+  { id: "about-principles", label: "Working standards" },
+  { id: "about-founder-led", label: "One strategic thread" },
+  { id: "about-evidence", label: "Evidence chain" },
+  { id: "about-resolution", label: "The next move" },
 ] as const;
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
@@ -19,6 +21,91 @@ const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, v
 export function AboutCinematicRuntime() {
   const runtimeRef = useRef<HTMLDivElement>(null);
   const threadRef = useRef<HTMLCanvasElement>(null);
+  const reducedMotion = Boolean(useHydratedReducedMotion());
+  const [activeChapter, setActiveChapter] = useState(0);
+  const [navigatorActive, setNavigatorActive] = useState(false);
+  const [navigatorTone, setNavigatorTone] = useState("dark");
+
+  useEffect(() => {
+    const runtime = runtimeRef.current;
+    const scenes = Array.from(document.querySelectorAll<HTMLElement>("[data-about-film-scene]"));
+    if (!runtime || scenes.length === 0) return;
+
+    let frame = 0;
+
+    const updateNavigator = () => {
+      frame = 0;
+      const viewportHeight = Math.max(window.innerHeight, 1);
+      let strongestFocus = -1;
+      let nextActive = 0;
+
+      scenes.forEach((scene, index) => {
+        const rect = scene.getBoundingClientRect();
+        const centerDelta = Math.abs(rect.top + rect.height * 0.5 - viewportHeight * 0.5);
+        const focus = clamp(1 - centerDelta / Math.max(viewportHeight * 0.78, rect.height * 0.58));
+        if (focus > strongestFocus) {
+          strongestFocus = focus;
+          nextActive = index;
+        }
+      });
+
+      const firstRect = scenes[0].getBoundingClientRect();
+      const finalRect = scenes[scenes.length - 1].getBoundingClientRect();
+      const firstTop = window.scrollY + firstRect.top;
+      const finalBottom = window.scrollY + finalRect.bottom;
+      const runway = Math.max(finalBottom - viewportHeight - firstTop, 1);
+      const progress = clamp((window.scrollY - firstTop) / runway);
+      const active = firstRect.top <= viewportHeight * 0.82 && finalRect.bottom >= viewportHeight * 0.18;
+      const tone = scenes[nextActive].dataset.sceneTone ?? "dark";
+
+      scenes.forEach((scene, index) => {
+        scene.dataset.sceneActive = String(index === nextActive);
+      });
+      runtime.style.setProperty("--navigator-progress", progress.toFixed(4));
+      runtime.dataset.navigatorActive = String(active);
+      runtime.dataset.navigatorTone = tone;
+      setActiveChapter(nextActive);
+      setNavigatorActive(active);
+      setNavigatorTone(tone);
+    };
+
+    const requestUpdate = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(updateNavigator);
+    };
+
+    updateNavigator();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      scenes.forEach((scene) => delete scene.dataset.sceneActive);
+    };
+  }, []);
+
+  function goToChapter(index: number) {
+    const chapter = CHAPTERS[index];
+    if (!chapter) return;
+    document.getElementById(chapter.id)?.scrollIntoView({
+      behavior: reducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
+  }
+
+  function onChapterKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") next = Math.min(index + 1, CHAPTERS.length - 1);
+    else if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = Math.max(index - 1, 0);
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = CHAPTERS.length - 1;
+    else return;
+    event.preventDefault();
+    goToChapter(next);
+    document.getElementById(`about-chapter-control-${next}`)?.focus();
+  }
 
   useEffect(() => {
     const runtime = runtimeRef.current;
@@ -33,7 +120,6 @@ export function AboutCinematicRuntime() {
     );
     if (!cameraReady.matches) return;
 
-    const chapterMarks = Array.from(runtime.querySelectorAll<HTMLElement>("[data-film-chapter-mark]"));
     let frame = 0;
     let lastScrollY = window.scrollY;
     let smoothedVelocity = 0;
@@ -239,16 +325,8 @@ export function AboutCinematicRuntime() {
           scenes.forEach((scene, index) => {
             scene.dataset.sceneActive = String(index === activeScene);
           });
-          chapterMarks.forEach((mark, index) => {
-            mark.dataset.active = String(index === activeScene);
-          });
           previousActiveScene = activeScene;
         }
-
-        chapterMarks.forEach((mark, index) => {
-          if (index === activeScene) mark.dataset.phase = scenes[activeScene].dataset.scenePhase;
-          else delete mark.dataset.phase;
-        });
 
         const firstSceneTop = scenes[0].offsetTop;
         const finalScene = scenes[scenes.length - 1];
@@ -340,22 +418,69 @@ export function AboutCinematicRuntime() {
     };
   }, []);
 
+  const mobileNavigatorActive = navigatorActive && activeChapter < CHAPTERS.length - 1;
+
   return (
-    <div ref={runtimeRef} className={styles.runtime} aria-hidden="true">
-      <canvas ref={threadRef} className={styles.livingThread} />
-      <div className={styles.cursorLight} />
-      <div className={styles.velocityVeil} />
-      <div className={styles.chapterSpine}>
+    <div ref={runtimeRef} className={styles.runtime} data-navigator-ending={activeChapter === CHAPTERS.length - 1}>
+      <canvas ref={threadRef} className={styles.livingThread} aria-hidden="true" />
+      <div className={styles.cursorLight} aria-hidden="true" />
+      <div className={styles.velocityVeil} aria-hidden="true" />
+      <nav
+        className={styles.chapterSpine}
+        aria-label="About page chapters"
+        aria-hidden={!navigatorActive}
+        data-tone={navigatorTone}
+      >
         <span className={styles.spineTrack}><i /></span>
         <ol>
           {CHAPTERS.map((chapter, index) => (
-            <li key={chapter} data-film-chapter-mark data-active={index === 0}>
-              <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-              <strong>{chapter}</strong>
+            <li key={chapter.id} data-active={index === activeChapter}>
+              <button
+                id={`about-chapter-control-${index}`}
+                type="button"
+                aria-current={index === activeChapter ? "step" : undefined}
+                aria-label={`${String(index + 1).padStart(2, "0")}. ${chapter.label}`}
+                tabIndex={navigatorActive && index === activeChapter ? 0 : -1}
+                onClick={() => goToChapter(index)}
+                onKeyDown={(event) => onChapterKeyDown(event, index)}
+              >
+                <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                <strong>{chapter.label}</strong>
+              </button>
             </li>
           ))}
         </ol>
-      </div>
+      </nav>
+
+      <nav
+        className={styles.mobileChapterControls}
+        aria-label="Move through About page chapters"
+        aria-hidden={!mobileNavigatorActive}
+        data-active={mobileNavigatorActive}
+        data-tone={navigatorTone}
+      >
+        <button
+          type="button"
+          aria-label="Previous About chapter"
+          disabled={activeChapter === 0}
+          tabIndex={mobileNavigatorActive ? 0 : -1}
+          onClick={() => goToChapter(activeChapter - 1)}
+        >
+          <ChevronUp size={16} aria-hidden="true" />
+        </button>
+        <span aria-live="polite">
+          <small>{String(activeChapter + 1).padStart(2, "0")} / {String(CHAPTERS.length).padStart(2, "0")}</small>
+          <strong>{CHAPTERS[activeChapter].label}</strong>
+        </span>
+        <button
+          type="button"
+          aria-label="Next About chapter"
+          tabIndex={mobileNavigatorActive ? 0 : -1}
+          onClick={() => goToChapter(activeChapter + 1)}
+        >
+          <ChevronDown size={16} aria-hidden="true" />
+        </button>
+      </nav>
     </div>
   );
 }
