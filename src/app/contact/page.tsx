@@ -358,7 +358,15 @@ export default function ContactPage() {
                       className="inline-flex min-h-11 items-center justify-center rounded-full border border-soil/10 bg-white/30 px-2 text-sm font-medium text-soil transition-colors duration-300 hover:text-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:justify-start sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0"
                     >
                       <Phone aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
-                      Call Suman
+                      <span className="leading-tight">
+                        <span className="block">Call Suman</span>
+                        <span
+                          data-contact-phone-number
+                          className="mt-0.5 block text-[0.62rem] font-normal tracking-[0.04em] text-soil/55"
+                        >
+                          {site.phone.display}
+                        </span>
+                      </span>
                     </TrackedLink>
                     <TrackedLink
                       href={site.phone.whatsappUrl}
