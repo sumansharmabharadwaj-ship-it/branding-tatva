@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useRef, useState, type PointerEvent } from "react";
+import {
+  useCallback,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+} from "react";
 import {
   motion,
   useScroll,
@@ -8,7 +14,9 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/Container";
+import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { EASE_AIR } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -81,11 +89,12 @@ function GratitudeNote({
   const rotate = useTransform(progress, [0, 0.36, 0.74, 1], note.rotate);
   const scale = useTransform(progress, [0, 0.34, 0.78, 1], [0.9, 1, 1, 0.97]);
   const active = activeNote === index;
+  const noteState = visited && !active ? ", already received" : "";
 
   return (
     <motion.button
       type="button"
-      aria-label={`${active ? "Close" : "Open"} acknowledgement for ${note.label}`}
+      aria-label={`${active ? "Close" : "Open"} acknowledgement for ${note.label}${noteState}`}
       aria-pressed={active}
       aria-controls="contact-gratitude-response"
       onClick={() => onActiveNoteChange(active ? null : index)}
@@ -93,7 +102,12 @@ function GratitudeNote({
         if (event.pointerType === "mouse") onActiveNoteChange(index);
       }}
       onPointerLeave={(event) => {
-        if (event.pointerType === "mouse") onActiveNoteChange(null);
+        if (
+          event.pointerType === "mouse" &&
+          document.activeElement !== event.currentTarget
+        ) {
+          onActiveNoteChange(null);
+        }
       }}
       onFocus={() => onActiveNoteChange(index)}
       onBlur={() => onActiveNoteChange(null)}
@@ -139,9 +153,10 @@ const RESPONSES = [DEFAULT_RESPONSE, ...NOTES.map((note) => note.response), COMP
 const ALL_NOTES_VISITED = (1 << NOTES.length) - 1;
 
 /**
- * A non-conversion ending for Contact. The visitor's attention is treated as
+ * A gratitude-first ending for Contact. The visitor's attention is treated as
  * something received, rather than another metric: the sentence assembles with
- * scroll, while four small acknowledgements offer optional hover/tap details.
+ * scroll, four acknowledgements offer optional hover/tap details, and a quiet
+ * reading route appears only after the full interaction has been received.
  */
 export function ContactGratitude() {
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -196,6 +211,12 @@ export function ContactGratitude() {
     }
   }
 
+  function handleSceneKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Escape" && activeNote !== null) {
+      setActiveNote(null);
+    }
+  }
+
   return (
     <div
       ref={sceneRef}
@@ -203,6 +224,7 @@ export function ContactGratitude() {
       data-contact-gratitude-complete={allNotesVisited ? "true" : undefined}
       data-contact-gratitude-active={activeNote === null ? undefined : "true"}
       onPointerDown={handleScenePointerDown}
+      onKeyDown={handleSceneKeyDown}
       className="relative flex min-h-[100svh] w-full items-center py-12 sm:py-16"
     >
       <motion.div
@@ -297,6 +319,80 @@ export function ContactGratitude() {
                 );
               })}
             </div>
+
+            <div
+              data-contact-gratitude-progress
+              role="progressbar"
+              aria-label="Acknowledgements received"
+              aria-valuemin={0}
+              aria-valuemax={NOTES.length}
+              aria-valuenow={visitedCount}
+              aria-valuetext={
+                allNotesVisited
+                  ? "All four acknowledgements received"
+                  : `${visitedCount} of ${NOTES.length} acknowledgements received`
+              }
+              className="mx-auto mt-4 flex w-fit items-center gap-3 rounded-full border border-white/12 bg-soil/18 px-3 py-2 backdrop-blur-md"
+            >
+              <span aria-hidden="true" className="flex items-center gap-1.5">
+                {NOTES.map((note, index) => {
+                  const noteVisited = (visitedNotes & (1 << index)) !== 0;
+                  return (
+                    <motion.span
+                      key={note.label}
+                      className="block h-1.5 w-5 rounded-full"
+                      initial={false}
+                      animate={{
+                        backgroundColor: noteVisited
+                          ? "rgba(212,185,154,0.92)"
+                          : "rgba(246,242,234,0.2)",
+                        scaleX: noteVisited ? 1 : 0.72,
+                      }}
+                      transition={{
+                        duration: reducedMotion ? 0 : 0.32,
+                        ease: EASE_AIR,
+                      }}
+                    />
+                  );
+                })}
+              </span>
+              <span aria-hidden="true" className="text-[0.58rem] font-medium uppercase tracking-[0.16em] text-ivory/58">
+                {allNotesVisited ? "All four received" : `${visitedCount} of ${NOTES.length}`}
+              </span>
+            </div>
+
+            <motion.div
+              data-contact-gratitude-next
+              aria-hidden={!allNotesVisited}
+              className={cn(
+                "mx-auto mt-3 flex min-h-11 w-fit items-center",
+                allNotesVisited ? "pointer-events-auto" : "pointer-events-none",
+              )}
+              initial={false}
+              animate={{
+                clipPath: allNotesVisited
+                  ? "inset(0 0% 0 0% round 999px)"
+                  : "inset(0 50% 0 50% round 999px)",
+                y: allNotesVisited || reducedMotion ? 0 : 8,
+              }}
+              transition={{ duration: reducedMotion ? 0 : 0.52, ease: EASE_AIR }}
+            >
+              <TrackedLink
+                href="/insights"
+                tabIndex={allNotesVisited ? undefined : -1}
+                event="contact_route_selected"
+                eventProps={{ source: "contact_gratitude", route: "insights" }}
+                data-cursor-label="Open field notes"
+                className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-sandstone/35 bg-soil/28 px-5 py-2.5 text-[0.65rem] font-medium uppercase tracking-[0.16em] text-ivory backdrop-blur-lg transition-[background-color,border-color] duration-300 hover:border-sandstone/55 hover:bg-ivory/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
+              >
+                Carry a question into the field notes
+                <ArrowRight
+                  aria-hidden="true"
+                  className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                  strokeWidth={1.5}
+                />
+              </TrackedLink>
+            </motion.div>
           </motion.div>
 
           <div className="mt-8 grid w-full grid-cols-2 gap-2.5 sm:mt-10 sm:gap-3 xl:contents">
