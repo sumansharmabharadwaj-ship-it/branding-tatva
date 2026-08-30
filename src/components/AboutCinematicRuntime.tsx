@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, ListTree } from "lucide-react";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import styles from "./AboutCinematicRuntime.module.css";
 
@@ -21,10 +23,14 @@ const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, v
 export function AboutCinematicRuntime() {
   const runtimeRef = useRef<HTMLDivElement>(null);
   const threadRef = useRef<HTMLCanvasElement>(null);
+  const mobileControlsRef = useRef<HTMLElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
   const reducedMotion = Boolean(useHydratedReducedMotion());
+  const lenis = useLenis();
   const [activeChapter, setActiveChapter] = useState(0);
   const [navigatorActive, setNavigatorActive] = useState(false);
   const [navigatorTone, setNavigatorTone] = useState("dark");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const runtime = runtimeRef.current;
@@ -86,23 +92,100 @@ export function AboutCinematicRuntime() {
     };
   }, []);
 
+  useEffect(() => {
+    function restoreChapterFromHistory() {
+      const index = CHAPTERS.findIndex(({ id }) => window.location.hash === `#${id}`);
+      if (index < 0) return;
+
+      const target = document.getElementById(CHAPTERS[index].id);
+      if (!target) return;
+      setActiveChapter(index);
+
+      window.requestAnimationFrame(() => {
+        if (lenis && !reducedMotion) {
+          lenis.scrollTo(target, {
+            duration: 0.68,
+            easing: (value) => 1 - Math.pow(1 - value, 3),
+          });
+          return;
+        }
+
+        target.scrollIntoView({
+          behavior: reducedMotion ? "auto" : "smooth",
+          block: "start",
+        });
+      });
+    }
+
+    window.addEventListener("popstate", restoreChapterFromHistory);
+    return () => window.removeEventListener("popstate", restoreChapterFromHistory);
+  }, [lenis, reducedMotion]);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [activeChapter, navigatorActive]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setMobileMenuOpen(false);
+      window.requestAnimationFrame(() => mobileMenuButtonRef.current?.focus());
+    }
+
+    function closeOnOutsidePointer(event: PointerEvent) {
+      if (event.target instanceof Node && mobileControlsRef.current?.contains(event.target)) return;
+      setMobileMenuOpen(false);
+    }
+
+    function closeOnScroll() {
+      setMobileMenuOpen(false);
+    }
+
+    window.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    window.addEventListener("scroll", closeOnScroll, { passive: true });
+    return () => {
+      window.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("pointerdown", closeOnOutsidePointer);
+      window.removeEventListener("scroll", closeOnScroll);
+    };
+  }, [mobileMenuOpen]);
+
   function goToChapter(index: number, moveFocus = false) {
     const chapter = CHAPTERS[index];
     if (!chapter) return;
     const target = document.getElementById(chapter.id);
     if (!target) return;
+    setMobileMenuOpen(false);
+
+    const nextHash = `#${chapter.id}`;
+    if (window.location.hash !== nextHash) {
+      window.history.pushState({ aboutChapter: chapter.id }, "", nextHash);
+    }
+
     if (moveFocus) {
       const focusTarget = target.querySelector<HTMLElement>("h2") ?? target;
       focusTarget.tabIndex = -1;
       focusTarget.focus({ preventScroll: true });
     }
+
+    if (lenis && !reducedMotion) {
+      lenis.scrollTo(target, {
+        duration: 0.82,
+        easing: (value) => 1 - Math.pow(1 - value, 3),
+      });
+      return;
+    }
+
     target.scrollIntoView({
       behavior: reducedMotion ? "auto" : "smooth",
       block: "start",
     });
   }
 
-  function onChapterKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
+  function onChapterKeyDown(event: ReactKeyboardEvent<HTMLAnchorElement>, index: number) {
     let next = index;
     if (event.key === "ArrowDown" || event.key === "ArrowRight") next = Math.min(index + 1, CHAPTERS.length - 1);
     else if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = Math.max(index - 1, 0);
@@ -441,32 +524,67 @@ export function AboutCinematicRuntime() {
         <span className={styles.spineTrack}><i /></span>
         <ol>
           {CHAPTERS.map((chapter, index) => (
-            <li key={chapter.id} data-active={index === activeChapter}>
-              <button
+            <li
+              key={chapter.id}
+              data-active={index === activeChapter}
+              data-state={index < activeChapter ? "passed" : index === activeChapter ? "active" : "waiting"}
+            >
+              <Link
                 id={`about-chapter-control-${index}`}
-                type="button"
+                href={`#${chapter.id}`}
                 aria-current={index === activeChapter ? "step" : undefined}
+                aria-controls={chapter.id}
                 aria-label={`${String(index + 1).padStart(2, "0")}. ${chapter.label}`}
                 tabIndex={navigatorActive && index === activeChapter ? 0 : -1}
-                onClick={() => goToChapter(index)}
+                onClick={(event) => {
+                  event.preventDefault();
+                  goToChapter(index, event.detail === 0);
+                }}
                 onKeyDown={(event) => onChapterKeyDown(event, index)}
               >
                 <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                 <strong>{chapter.label}</strong>
-              </button>
+              </Link>
             </li>
           ))}
         </ol>
       </nav>
 
       <nav
+        ref={mobileControlsRef}
         className={styles.mobileChapterControls}
         aria-label="Move through About page chapters"
         aria-hidden={!mobileNavigatorActive}
         data-active={mobileNavigatorActive}
         data-tone={navigatorTone}
       >
+        <div
+          id="about-mobile-chapter-list"
+          className={styles.mobileChapterPanel}
+          data-open={mobileMenuOpen}
+          aria-hidden={!mobileMenuOpen}
+        >
+          <ol>
+            {CHAPTERS.map((chapter, index) => (
+              <li key={chapter.id} data-active={index === activeChapter}>
+                <Link
+                  href={`#${chapter.id}`}
+                  aria-current={index === activeChapter ? "step" : undefined}
+                  tabIndex={mobileMenuOpen ? 0 : -1}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    goToChapter(index, true);
+                  }}
+                >
+                  <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{chapter.label}</strong>
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </div>
         <button
+          className={styles.mobileStepButton}
           type="button"
           aria-label="Previous About chapter"
           disabled={activeChapter === 0}
@@ -475,11 +593,24 @@ export function AboutCinematicRuntime() {
         >
           <ChevronUp size={16} aria-hidden="true" />
         </button>
-        <span aria-live="polite">
-          <small>{String(activeChapter + 1).padStart(2, "0")} / {String(CHAPTERS.length).padStart(2, "0")}</small>
-          <strong>{CHAPTERS[activeChapter].label}</strong>
-        </span>
         <button
+          ref={mobileMenuButtonRef}
+          className={styles.mobileChapterSummary}
+          type="button"
+          aria-label={`Choose About chapter. Current chapter: ${CHAPTERS[activeChapter].label}`}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="about-mobile-chapter-list"
+          tabIndex={mobileNavigatorActive ? 0 : -1}
+          onClick={() => setMobileMenuOpen((open) => !open)}
+        >
+          <span aria-live="polite">
+            <small>{String(activeChapter + 1).padStart(2, "0")} / {String(CHAPTERS.length).padStart(2, "0")}</small>
+            <strong>{CHAPTERS[activeChapter].label}</strong>
+          </span>
+          <ListTree size={15} aria-hidden="true" />
+        </button>
+        <button
+          className={styles.mobileStepButton}
           type="button"
           aria-label="Next About chapter"
           tabIndex={mobileNavigatorActive ? 0 : -1}

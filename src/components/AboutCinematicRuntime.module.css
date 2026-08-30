@@ -109,7 +109,7 @@
   justify-content: flex-end;
 }
 
-.chapterSpine button {
+.chapterSpine a {
   display: grid;
   width: 2.75rem;
   min-width: 2.75rem;
@@ -129,19 +129,19 @@
   transition: width 440ms cubic-bezier(0.22, 1, 0.36, 1), border-color 240ms ease, background-color 240ms ease, color 240ms ease;
 }
 
-.chapterSpine:hover button,
-.chapterSpine:focus-within button {
+.chapterSpine:hover a,
+.chapterSpine:focus-within a {
   width: min(12.5rem, 28vw);
 }
 
-.chapterSpine button span {
-  font-size: 0.52rem;
+.chapterSpine a span {
+  font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-align: center;
 }
 
-.chapterSpine button strong {
+.chapterSpine a strong {
   overflow: hidden;
   font-size: 0.62rem;
   font-weight: 700;
@@ -154,28 +154,42 @@
   white-space: nowrap;
 }
 
-.chapterSpine:hover button strong,
-.chapterSpine:focus-within button strong {
+.chapterSpine:hover a strong,
+.chapterSpine:focus-within a strong {
   opacity: 1;
   transform: translateX(0);
 }
 
-.chapterSpine li[data-active="true"] button {
+.chapterSpine li[data-active="true"] a {
+  width: min(10.5rem, 24vw);
   border-color: #d4b99a;
   background: rgba(13, 23, 21, 0.94);
   color: #f4efe6;
 }
 
-.chapterSpine button:hover { color: #f4efe6; }
-.chapterSpine button:focus-visible { outline: 2px solid #e8c9a4; outline-offset: 2px; }
+.chapterSpine li[data-active="true"] a strong {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.chapterSpine:hover li[data-active="true"] a,
+.chapterSpine:focus-within li[data-active="true"] a {
+  width: min(12.5rem, 28vw);
+}
+
+.chapterSpine li[data-state="passed"] a span { color: #d4b99a; }
+
+.chapterSpine a:hover { color: #f4efe6; }
+.chapterSpine a:focus-visible { outline: 2px solid #e8c9a4; outline-offset: 2px; }
 
 .runtime[data-tone="light"] .spineTrack { background: rgba(82, 60, 44, 0.22); }
 .chapterSpine[data-tone="light"] .spineTrack { background: rgba(82, 60, 44, 0.22); }
 .chapterSpine[data-tone="light"] .spineTrack i { background: #795a43; }
-.chapterSpine[data-tone="light"] button { background: rgba(239, 230, 216, 0.9); color: rgba(61, 47, 37, 0.66); }
-.chapterSpine[data-tone="light"] li[data-active="true"] button { border-color: #795a43; background: rgba(239, 230, 216, 0.98); color: #3d2f25; }
-.chapterSpine[data-tone="light"] button:hover { color: #3d2f25; }
-.chapterSpine[data-tone="light"] button:focus-visible { outline-color: #795a43; }
+.chapterSpine[data-tone="light"] a { background: rgba(239, 230, 216, 0.9); color: rgba(61, 47, 37, 0.66); }
+.chapterSpine[data-tone="light"] li[data-active="true"] a { border-color: #795a43; background: rgba(239, 230, 216, 0.98); color: #3d2f25; }
+.chapterSpine[data-tone="light"] li[data-state="passed"] a span { color: #795a43; }
+.chapterSpine[data-tone="light"] a:hover { color: #3d2f25; }
+.chapterSpine[data-tone="light"] a:focus-visible { outline-color: #795a43; }
 
 .mobileChapterControls { display: none; }
 
@@ -217,7 +231,7 @@
     visibility: visible;
   }
 
-  .mobileChapterControls button {
+  .mobileStepButton {
     display: grid;
     width: 2.75rem;
     height: 2.75rem;
@@ -230,19 +244,43 @@
     cursor: pointer;
   }
 
-  .mobileChapterControls button:disabled { opacity: 0.32; }
-  .mobileChapterControls button:focus-visible { outline: 2px solid #d4b99a; outline-offset: 1px; }
+  .mobileStepButton:disabled { opacity: 0.32; }
+  .mobileStepButton:focus-visible,
+  .mobileChapterSummary:focus-visible,
+  .mobileChapterPanel a:focus-visible { outline: 2px solid #d4b99a; outline-offset: 1px; }
 
-  .mobileChapterControls > span {
+  .mobileChapterSummary {
+    display: grid;
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.22rem 0.5rem;
+    border: 0;
+    border-radius: 999px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .mobileChapterSummary > span {
     display: grid;
     min-width: 0;
     gap: 0.08rem;
     text-align: center;
   }
 
+  .mobileChapterSummary > svg {
+    color: #d4b99a;
+    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .mobileChapterSummary[aria-expanded="true"] > svg { transform: rotate(90deg); }
+
   .mobileChapterControls small {
     color: #d4b99a;
-    font-size: 0.5rem;
+    font-size: 0.55rem;
     font-weight: 700;
     letter-spacing: 0.12em;
   }
@@ -257,6 +295,71 @@
     white-space: nowrap;
   }
 
+  .mobileChapterPanel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.55rem);
+    left: 0;
+    padding: 0.45rem;
+    border: 1px solid rgba(212, 185, 154, 0.42);
+    border-radius: 1rem;
+    background: rgba(13, 23, 21, 0.97);
+    box-shadow: 0 1rem 2.8rem rgba(5, 10, 8, 0.34);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.65rem) scale(0.98);
+    transform-origin: bottom center;
+    transition: opacity 200ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1), visibility 200ms ease;
+    visibility: hidden;
+  }
+
+  .mobileChapterPanel[data-open="true"] {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+  }
+
+  .mobileChapterPanel ol {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.25rem;
+    list-style: none;
+  }
+
+  .mobileChapterPanel a {
+    display: grid;
+    min-height: 2.75rem;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid transparent;
+    border-radius: 0.72rem;
+    grid-template-columns: 1.4rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.4rem;
+    color: rgba(244, 239, 230, 0.68);
+  }
+
+  .mobileChapterPanel a > span {
+    color: #d4b99a;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .mobileChapterPanel a strong {
+    font-size: 0.62rem;
+    line-height: 1.25;
+    text-align: left;
+  }
+
+  .mobileChapterPanel li[data-active="true"] a {
+    border-color: rgba(212, 185, 154, 0.5);
+    background: rgba(244, 239, 230, 0.09);
+    color: #f4efe6;
+  }
+
   .mobileChapterControls[data-tone="light"] {
     border-color: rgba(82, 60, 44, 0.28);
     background: rgba(239, 230, 216, 0.96);
@@ -264,9 +367,20 @@
     color: #3d2f25;
   }
 
-  .mobileChapterControls[data-tone="light"] button { background: rgba(82, 60, 44, 0.08); }
+  .mobileChapterControls[data-tone="light"] .mobileStepButton { background: rgba(82, 60, 44, 0.08); }
+  .mobileChapterControls[data-tone="light"] .mobileChapterSummary > svg { color: #795a43; }
+  .mobileChapterControls[data-tone="light"] .mobileChapterPanel {
+    border-color: rgba(82, 60, 44, 0.28);
+    background: rgba(239, 230, 216, 0.98);
+    box-shadow: 0 1rem 2.8rem rgba(82, 60, 44, 0.2);
+  }
+  .mobileChapterControls[data-tone="light"] .mobileChapterPanel a { color: rgba(61, 47, 37, 0.68); }
+  .mobileChapterControls[data-tone="light"] .mobileChapterPanel a > span { color: #795a43; }
+  .mobileChapterControls[data-tone="light"] .mobileChapterPanel li[data-active="true"] a { border-color: rgba(121, 90, 67, 0.4); background: rgba(82, 60, 44, 0.08); color: #3d2f25; }
   .mobileChapterControls[data-tone="light"] small { color: #795a43; }
-  .mobileChapterControls[data-tone="light"] button:focus-visible { outline-color: #795a43; }
+  .mobileChapterControls[data-tone="light"] .mobileStepButton:focus-visible,
+  .mobileChapterControls[data-tone="light"] .mobileChapterSummary:focus-visible,
+  .mobileChapterControls[data-tone="light"] .mobileChapterPanel a:focus-visible { outline-color: #795a43; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -275,9 +389,11 @@
   .velocityVeil { display: none; }
 
   .chapterSpine,
-  .chapterSpine button,
-  .chapterSpine button strong,
-  .mobileChapterControls { transition: none; }
+  .chapterSpine a,
+  .chapterSpine a strong,
+  .mobileChapterControls,
+  .mobileChapterPanel,
+  .mobileChapterSummary > svg { transition: none; }
 }
 
 :global(html[data-motion="reduced"]) .livingThread,
@@ -285,6 +401,8 @@
 :global(html[data-motion="reduced"]) .velocityVeil { display: none; }
 
 :global(html[data-motion="reduced"]) .chapterSpine,
-:global(html[data-motion="reduced"]) .chapterSpine button,
-:global(html[data-motion="reduced"]) .chapterSpine button strong,
-:global(html[data-motion="reduced"]) .mobileChapterControls { transition: none; }
+:global(html[data-motion="reduced"]) .chapterSpine a,
+:global(html[data-motion="reduced"]) .chapterSpine a strong,
+:global(html[data-motion="reduced"]) .mobileChapterControls,
+:global(html[data-motion="reduced"]) .mobileChapterPanel,
+:global(html[data-motion="reduced"]) .mobileChapterSummary > svg { transition: none; }

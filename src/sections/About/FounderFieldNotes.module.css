@@ -96,9 +96,9 @@
 .fieldRail button:focus-visible { outline: 2px solid #965b43; outline-offset: 3px; }
 .fieldRail button > span { display: grid; width: 2rem; height: 2rem; grid-row: 1 / 4; place-items: center; border: 1px solid rgba(150, 91, 67, 0.25); border-radius: 999px; color: #965b43; transition: background-color 300ms ease, color 300ms ease; }
 .fieldRail button[data-gathered="true"] > span { background: #965b43; color: #f7f1e7; }
-.fieldRail button small { color: #965b43; font-size: 0.47rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.fieldRail button small { color: #965b43; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 .fieldRail button strong { font-family: var(--font-display), Georgia, serif; font-size: 1.02rem; font-weight: 400; line-height: 1; }
-.fieldRail button em { color: rgba(42, 42, 37, 0.46); font-size: 0.51rem; font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; }
+.fieldRail button em { color: rgba(42, 42, 37, 0.46); font-size: 0.55rem; font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; }
 .fieldRail button i { position: absolute; right: 0; bottom: -1px; left: 0; height: 1px; overflow: hidden; background: rgba(42, 42, 37, 0.08); }
 .fieldRail button b { display: block; width: 100%; height: 100%; background: #965b43; transform: scaleX(0); transform-origin: left; transition: transform 560ms cubic-bezier(0.22, 1, 0.36, 1); }
 .fieldRail button[data-gathered="true"] b { transform: scaleX(1); }
@@ -138,7 +138,7 @@
 .scrollStory[data-origin-stage="4"] .portraitImage { object-position: 52% 50%; transform: scale(1); filter: grayscale(1) contrast(1.03) brightness(1) sepia(0.1); }
 .portrait figcaption { position: absolute; right: 0.9rem; bottom: 0.85rem; left: 0.9rem; z-index: 4; display: flex; align-items: flex-end; justify-content: space-between; gap: 0.7rem; color: #f5efe6; }
 .portrait figcaption span { font-family: var(--font-display), Georgia, serif; font-size: 1.05rem; }
-.portrait figcaption strong { max-width: 8rem; color: rgba(245, 239, 230, 0.68); font-size: 0.45rem; font-weight: 650; letter-spacing: 0.12em; line-height: 1.45; text-align: right; text-transform: uppercase; }
+.portrait figcaption strong { max-width: 8rem; color: rgba(245, 239, 230, 0.68); font-size: 0.55rem; font-weight: 650; letter-spacing: 0.12em; line-height: 1.45; text-align: right; text-transform: uppercase; }
 
 .aperture { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-columns: repeat(3, 1fr); pointer-events: none; }
 .aperture span { border-right: 1px solid rgba(245, 239, 230, 0.15); background: rgba(22, 31, 26, 0.42); transform: scaleX(0); transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1), background-color 520ms ease; }
@@ -164,7 +164,7 @@
 .threadField span[data-active="true"] { opacity: 0.58; transform: rotate(var(--thread-angle)) scaleX(1); }
 
 .synthesisSeal { position: absolute; right: -0.65rem; bottom: 1.1rem; z-index: 7; display: grid; width: 9rem; min-height: 5.2rem; padding: 0.75rem; border: 1px solid rgba(101, 113, 92, 0.38); align-content: space-between; background: rgba(101, 113, 92, 0.94); box-shadow: 0 16px 40px rgba(63, 50, 38, 0.18); color: #f6f0e6; transform-origin: 80% 100%; }
-.synthesisSeal span { font-size: 0.46rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.synthesisSeal span { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 .synthesisSeal strong { font-family: var(--font-display), Georgia, serif; font-size: 0.95rem; font-weight: 400; line-height: 1.08; }
 
 .recordSlot { min-height: clamp(21rem, 46svh, 27rem); perspective: 80rem; }
@@ -175,7 +175,7 @@
 .cardTopline > span { display: grid; width: 2.4rem; height: 2.4rem; place-items: center; border: 1px solid rgba(150, 91, 67, 0.25); border-radius: 999px; }
 .cardTopline small,
 .credential > span,
-.application > span { color: #965b43; font-size: 0.52rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+.application > span { color: #965b43; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
 .recordCard h3 { max-width: 14ch; margin: 0.9rem 0 0; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.9rem, min(2.9vw, 4.35svh), 3.15rem); font-weight: 400; letter-spacing: -0.035em; line-height: 0.98; }
 .credential { margin-top: 1rem; padding-block: 0.85rem; border-block: 1px solid rgba(42, 42, 37, 0.11); }
 .credential strong { display: block; margin-top: 0.42rem; font-family: var(--font-display), Georgia, serif; font-size: 1.05rem; font-weight: 400; line-height: 1.08; }
@@ -183,11 +183,11 @@
 .credential small { display: block; margin-top: 0.55rem; color: #65715c; font-size: 0.55rem; font-weight: 650; line-height: 1.42; }
 .application { margin-top: auto; padding-top: 1rem; }
 .application p { max-width: 50ch; margin: 0.42rem 0 0; color: rgba(42, 42, 37, 0.72); font-size: 0.72rem; line-height: 1.52; }
-.recordCard footer { display: flex; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid rgba(42, 42, 37, 0.1); align-items: center; gap: 0.65rem; color: rgba(42, 42, 37, 0.48); font-size: 0.49rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.recordCard footer { display: flex; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid rgba(42, 42, 37, 0.1); align-items: center; gap: 0.65rem; color: rgba(42, 42, 37, 0.48); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 .recordCard footer i { height: 1px; flex: 1; background: rgba(150, 91, 67, 0.3); }
 .recordCard footer strong { color: #80503c; }
 
-.progressRail { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.8rem; color: rgba(42, 42, 37, 0.48); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
+.progressRail { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.8rem; color: rgba(42, 42, 37, 0.48); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
 .progressRail > div { height: 1px; overflow: hidden; background: rgba(42, 42, 37, 0.12); }
 .progressRail i { display: block; width: 100%; height: 100%; background: #965b43; transform-origin: left; transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1); }
 .progressRail strong { color: #965b43; }
@@ -200,7 +200,7 @@
 .staticExperience ol { display: grid; margin: 0; padding: 0; gap: 0.7rem; list-style: none; }
 .staticExperience li { display: grid; padding: 1rem; border: 1px solid rgba(42, 42, 37, 0.12); border-radius: 1rem; grid-template-columns: auto 1fr; gap: 0.85rem; background: rgba(247, 241, 231, 0.78); }
 .staticExperience li > span { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid rgba(150, 91, 67, 0.27); border-radius: 999px; color: #965b43; }
-.staticExperience small { color: #965b43; font-size: 0.52rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.staticExperience small { color: #965b43; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
 .staticExperience h3 { margin: 0.28rem 0 0; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 400; line-height: 1.04; }
 .staticExperience li p { margin: 0.45rem 0 0; color: rgba(42, 42, 37, 0.65); font-size: 0.7rem; line-height: 1.52; }
 .staticExperience li p + p { margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px solid rgba(42, 42, 37, 0.1); color: rgba(42, 42, 37, 0.76); }

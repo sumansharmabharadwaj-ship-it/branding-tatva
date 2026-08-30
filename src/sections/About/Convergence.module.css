@@ -125,7 +125,7 @@
 .disciplineHeading small {
   display: block;
   color: rgba(43, 41, 36, 0.48);
-  font-size: 0.52rem;
+  font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -186,7 +186,7 @@
 .discipline li span {
   color: #965b43;
   font-family: var(--font-body), Arial, sans-serif;
-  font-size: 0.5rem;
+  font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.12em;
 }
@@ -239,14 +239,14 @@
 }
 
 .thread button small {
-  font-size: 0.39rem;
+  font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .thread button strong {
-  font-size: 0.5rem;
+  font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -305,7 +305,7 @@
 
 .signalCore small {
   margin-top: -0.7rem;
-  font-size: 0.48rem;
+  font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -341,7 +341,7 @@
   box-shadow: 0 18px 42px rgba(67, 54, 42, 0.1);
 }
 
-.outputs span { color: #965b43; font-size: 0.48rem; font-weight: 700; letter-spacing: 0.14em; }
+.outputs span { color: #965b43; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; }
 .outputs strong { display: block; margin-top: 0.4rem; font-family: var(--font-display), Georgia, serif; font-size: 1.25rem; font-weight: 400; }
 .outputs p { margin: 0.5rem 0 0; color: rgba(43, 41, 36, 0.65); font-size: 0.61rem; line-height: 1.42; }
 
@@ -361,7 +361,7 @@
 
 .tabs button:hover,
 .tabs button[data-active="true"] { border-color: #965b43; color: #2b2924; }
-.tabs button span { margin-right: 0.65rem; color: #965b43; font-size: 0.5rem; letter-spacing: 0.14em; }
+.tabs button span { margin-right: 0.65rem; color: #965b43; font-size: 0.55rem; letter-spacing: 0.14em; }
 .tabs button strong { font-family: var(--font-display), Georgia, serif; font-size: 0.98rem; font-weight: 400; }
 .tabs button i { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; background: #965b43; transform: scaleX(0); transform-origin: left; transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1); }
 .tabs button[data-active="true"] i { transform: scaleX(1); }
@@ -413,7 +413,7 @@
   .mobileSynthesis > ol > li > div strong { font-family: var(--font-display), Georgia, serif; font-size: 1.3rem; font-weight: 400; }
   .mobileSynthesis > ol > li > div p { max-width: 48ch; margin: 0.24rem 0 0; color: rgba(43, 41, 36, 0.64); font-size: 0.7rem; line-height: 1.48; }
   .mobileResolution { padding: 1rem; border: 1px solid rgba(101, 120, 95, 0.28); background: rgba(248, 243, 233, 0.65); }
-  .mobileResolution small { color: #965b43; font-size: 0.54rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+  .mobileResolution small { color: #965b43; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
 .mobileResolution ul { display: flex; margin: 0.65rem 0 0; padding: 0; flex-wrap: wrap; gap: 0.45rem; list-style: none; }
 .mobileResolution li { padding: 0.4rem 0.65rem; border: 1px solid rgba(43, 41, 36, 0.12); border-radius: 999px; color: rgba(43, 41, 36, 0.72); font-size: 0.65rem; }
   .mobileResolution a { display: inline-flex; margin-top: 0.9rem; align-items: center; gap: 0.4rem; color: #80503c; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }

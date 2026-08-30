@@ -61,7 +61,7 @@
   align-items: center;
   gap: .55rem;
   color: rgba(244, 239, 230, .46);
-  font-size: .5rem;
+  font-size: .58rem;
   font-weight: 700;
   letter-spacing: .11em;
   text-transform: uppercase;
@@ -225,7 +225,7 @@
   transition: background-color 280ms ease, transform 420ms cubic-bezier(.22, 1, .36, 1);
 }
 
-.stageRail button small { color: #795637; font-size: .5rem; font-weight: 700; letter-spacing: .11em; }
+.stageRail button small { color: #795637; font-size: .56rem; font-weight: 700; letter-spacing: .1em; }
 .stageRail button strong { font-family: var(--font-display), Georgia, serif; font-size: .92rem; font-weight: 400; }
 .stageRail button[data-reached="true"] { color: #6e4f35; }
 .stageRail button[data-active="true"] { color: #2d231a; }
@@ -317,7 +317,7 @@
 }
 
 .sheetFooter > div { display: flex; align-items: center; gap: .38rem; }
-.sheetFooter > div span { padding: .32rem .55rem; border: 1px solid rgba(110, 79, 53, .18); border-radius: 999px; color: rgba(51, 41, 31, .34); font-size: .51rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; transition: color 280ms ease, background-color 280ms ease; }
+.sheetFooter > div span { padding: .32rem .55rem; border: 1px solid rgba(110, 79, 53, .18); border-radius: 999px; color: rgba(51, 41, 31, .46); font-size: .56rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; transition: color 280ms ease, background-color 280ms ease; }
 .sheetFooter > div span[data-visible="true"] { color: #6e4f35; background: rgba(139, 101, 68, .08); }
 .continuityVerdict {
   display: inline-flex;
@@ -329,7 +329,7 @@
   border-radius: 999px;
   color: rgba(51, 41, 31, .48);
   background: rgba(255, 250, 236, .2);
-  font-size: .5rem;
+  font-size: .56rem;
   font-weight: 700;
   letter-spacing: .08em;
   line-height: 1;

@@ -118,7 +118,7 @@
 
 .pathRail button > span:first-child {
   color: #8b6544;
-  font-size: 0.54rem;
+  font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.12em;
 }
@@ -131,7 +131,7 @@
 .staticPaths small,
 .footer p span {
   color: #8b6544;
-  font-size: 0.51rem;
+  font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.13em;
   text-transform: uppercase;
@@ -203,7 +203,7 @@
   top: 17%;
   right: 24%;
   color: rgba(244, 239, 230, 0.58);
-  font-size: 0.48rem;
+  font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.15em;
   text-align: right;
@@ -315,7 +315,8 @@
 .footer p strong { font-family: var(--font-display), Georgia, serif; font-size: 1.05rem; font-weight: 400; }
 .staticSummary { display: none !important; }
 .footerActions { display: flex; align-items: center; gap: 0.65rem; }
-.staticCta { display: none; }
+.staticCta,
+.staticContactCta { display: none; }
 
 @media (min-width: 1024px) and (max-height: 760px) {
   .inner { padding-block: 5.5rem 1rem; }
@@ -346,8 +347,10 @@
   .footer { margin-top: 1rem; }
   .interactiveSummary { display: none !important; }
   .staticSummary { display: grid !important; }
-  .interactiveCta { display: none; }
-  .staticCta { display: block; }
+  .interactiveCta,
+  .interactiveContactCta { display: none; }
+  .staticCta,
+  .staticContactCta { display: block; }
 }
 
 @media (max-width: 1120px) and (min-width: 1024px) {
@@ -372,8 +375,10 @@
   .interactiveSummary { display: none !important; }
   .staticSummary { display: grid !important; }
   .footerActions { width: 100%; flex-wrap: wrap; }
-  .interactiveCta { display: none; }
-  .staticCta { display: block; }
+  .interactiveCta,
+  .interactiveContactCta { display: none; }
+  .staticCta,
+  .staticContactCta { display: block; }
 }
 
 @media (max-width: 560px) {
@@ -392,8 +397,10 @@
   .footer { margin-top: 1rem; }
   .interactiveSummary { display: none !important; }
   .staticSummary { display: grid !important; }
-  .interactiveCta { display: none; }
-  .staticCta { display: block; }
+  .interactiveCta,
+  .interactiveContactCta { display: none; }
+  .staticCta,
+  .staticContactCta { display: block; }
 }
 
 :global(html[data-motion="reduced"]) .interactiveExperience { display: none; }
@@ -406,8 +413,10 @@
 :global(html[data-motion="reduced"]) .footer { margin-top: 1rem; }
 :global(html[data-motion="reduced"]) .interactiveSummary { display: none !important; }
 :global(html[data-motion="reduced"]) .staticSummary { display: grid !important; }
-:global(html[data-motion="reduced"]) .interactiveCta { display: none; }
-:global(html[data-motion="reduced"]) .staticCta { display: block; }
+:global(html[data-motion="reduced"]) .interactiveCta,
+:global(html[data-motion="reduced"]) .interactiveContactCta { display: none; }
+:global(html[data-motion="reduced"]) .staticCta,
+:global(html[data-motion="reduced"]) .staticContactCta { display: block; }
 
 @media (max-width: 760px) {
   :global(html[data-motion="reduced"]) .staticPaths,

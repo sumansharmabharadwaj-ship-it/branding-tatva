@@ -17,6 +17,7 @@ import { Container } from "@/components/Container";
 import { packages, type Package } from "@/data/services";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { track } from "@/lib/analytics";
+import { servicesContactHref } from "@/lib/servicesJourney";
 import styles from "./AboutResolution.module.css";
 
 const PATH_DEFINITIONS = [
@@ -176,7 +177,7 @@ export function AboutResolution() {
         </header>
 
         <div className={styles.interactiveExperience}>
-          <div className={styles.pathRail} role="group" aria-label="Three ways an engagement can begin">
+          <div className={styles.pathRail} role="tablist" aria-label="Three ways an engagement can begin">
             {PATHS.map((path, index) => {
               const state = index < activeIndex ? "passed" : index === activeIndex ? "active" : "waiting";
               return (
@@ -184,9 +185,11 @@ export function AboutResolution() {
                   key={path.slug}
                   id={`about-resolution-path-${index}`}
                   type="button"
+                  role="tab"
                   data-state={state}
-                  aria-pressed={index === activeIndex}
+                  aria-selected={index === activeIndex}
                   aria-controls="about-resolution-record"
+                  tabIndex={index === activeIndex ? 0 : -1}
                   onClick={() => choose(index)}
                   onPointerEnter={() => preview(index)}
                   onPointerLeave={releasePreview}
@@ -220,7 +223,12 @@ export function AboutResolution() {
                 BT / FIRST CONVERSATION / 0{activeIndex + 1}
               </span>
 
-              <div id="about-resolution-record" className={styles.recordSheet}>
+              <div
+                id="about-resolution-record"
+                className={styles.recordSheet}
+                role="tabpanel"
+                aria-labelledby={`about-resolution-path-${activeIndex}`}
+              >
                 {PATHS.map((path, index) => {
                   const state = index < activeIndex ? "passed" : index === activeIndex ? "active" : "waiting";
                   return (
@@ -310,13 +318,28 @@ export function AboutResolution() {
                 Compare engagement routes
               </LinkButton>
             </div>
-            <LinkButton
-              href="/contact"
-              trackEvent="hero_booking_click"
-              trackProps={{ page: "about", position: "resolution_threshold" }}
-            >
-              Bring your brand question
-            </LinkButton>
+            <div className={styles.interactiveContactCta}>
+              <LinkButton
+                href={servicesContactHref(activePath.slug)}
+                trackEvent="hero_booking_click"
+                trackProps={{
+                  page: "about",
+                  position: "resolution_threshold",
+                  package: activePath.slug,
+                }}
+              >
+                Bring this question
+              </LinkButton>
+            </div>
+            <div className={styles.staticContactCta}>
+              <LinkButton
+                href="/contact"
+                trackEvent="hero_booking_click"
+                trackProps={{ page: "about", position: "resolution_threshold" }}
+              >
+                Bring your brand question
+              </LinkButton>
+            </div>
           </div>
         </footer>
       </Container>

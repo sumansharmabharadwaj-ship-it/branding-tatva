@@ -150,7 +150,8 @@ export function FounderFieldNotes() {
           <div className={styles.headerAside}>
             <p>
               Psychology sharpened observation. Literature sharpened language. Film sharpened
-              attention. Brand strategy brings all three into one practice.
+              attention. The combination matters when a founder is beginning, an existing brand
+              feels difficult to explain, or recognition needs steadier continuity.
             </p>
             <p className={styles.stageReadout}>
               <span>{active.verb}</span>

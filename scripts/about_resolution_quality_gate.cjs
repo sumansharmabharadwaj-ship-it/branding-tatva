@@ -38,6 +38,18 @@ assert(
   "Closing-record supporting copy has fallen below the protected readable size.",
 );
 assert(
+  /\.pathRail button > span:first-child\s*\{[^}]*font-size:\s*0\.55rem;/.test(styles),
+  "Closing-route numbers have fallen below the protected reading floor.",
+);
+assert(
+  /\.pathRail small,\s*\n\.recordStage small,\s*\n\.recordStage dt,\s*\n\.staticPaths small,\s*\n\.footer p span\s*\{[^}]*font-size:\s*0\.55rem;/.test(styles),
+  "Closing-route and static-path labels have fallen below the protected reading floor.",
+);
+assert(
+  /\.frameMark\s*\{[^}]*font-size:\s*0\.55rem;/.test(styles),
+  "The closing cinematic frame mark has fallen below the protected reading floor.",
+);
+assert(
   /\.recordSheet\s*\{[^}]*min-height:\s*27rem;/.test(styles),
   "Desktop closing records have lost their protected vertical reading room.",
 );
@@ -50,8 +62,21 @@ assert(
   "The concise route-change announcement is missing.",
 );
 assert(
-  component.includes('aria-controls="about-resolution-record"') && component.includes("aria-pressed={index === activeIndex}"),
+  component.includes('className={styles.pathRail} role="tablist"') &&
+    component.includes('role="tab"') &&
+    component.includes("aria-selected={index === activeIndex}") &&
+    component.includes('aria-controls="about-resolution-record"') &&
+    component.includes("tabIndex={index === activeIndex ? 0 : -1}") &&
+    component.includes('role="tabpanel"') &&
+    component.includes("aria-labelledby={`about-resolution-path-${activeIndex}`}"),
   "Closing-record controls have lost their accessible state relationship.",
+);
+assert(
+  component.includes("href={servicesContactHref(activePath.slug)}") &&
+    component.includes("package: activePath.slug") &&
+    component.includes("className={styles.staticContactCta}") &&
+    component.includes('href="/contact"'),
+  "The closing route no longer carries an explicit choice while keeping static journeys neutral.",
 );
 assert(
   !memoryGate.includes('await client.send("DOM.enable")'),
