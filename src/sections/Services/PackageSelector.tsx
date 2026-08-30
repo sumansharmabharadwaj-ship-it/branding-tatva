@@ -54,6 +54,7 @@ export function PackageSelector() {
   const [compare, setCompare] = useState(false);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
   const manualUntilRef = useRef(0);
+  const committedRouteRef = useRef(false);
   const prefersReducedMotion = useHydratedReducedMotion();
   const activePackage = packages.find((pkg) => pkg.slug === active);
   const proof = activePackage?.proofSlug
@@ -66,6 +67,7 @@ export function PackageSelector() {
 
   useEffect(() => {
     function applySituation(situation: ServicesSituationId) {
+      committedRouteRef.current = true;
       setActive(SITUATION_TO_PACKAGE[situation]);
       setSelectionSource("situation");
       setCompare(false);
@@ -81,6 +83,7 @@ export function PackageSelector() {
       if (!linkedChoice) return false;
 
       const linkedSituation = PACKAGE_TO_SITUATION[linkedChoice.slug];
+      committedRouteRef.current = true;
       manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
       setActive(linkedChoice.slug);
       setSelectionSource("manual");
@@ -125,6 +128,7 @@ export function PackageSelector() {
     function onSceneProgress(event: Event) {
       const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
       if (detail?.id !== "desire" || typeof detail.progress !== "number") return;
+      if (committedRouteRef.current) return;
       if (compare || selectionSource === "situation" || selectionSource === "manual") return;
       if (Date.now() < manualUntilRef.current) return;
       const storyProgress = detail.storyProgress ?? detail.progress;
@@ -147,6 +151,7 @@ export function PackageSelector() {
 
   function choosePackage(slug: PackageSlug) {
     const situation = PACKAGE_TO_SITUATION[slug];
+    committedRouteRef.current = true;
     manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
     setActive(slug);
     setSelectionSource("manual");
