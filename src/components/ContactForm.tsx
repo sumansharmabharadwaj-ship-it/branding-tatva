@@ -14,7 +14,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useForm, type Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarDays, Check, CircleAlert, Mail, RotateCcw } from "lucide-react";
+import { CalendarDays, Check, CircleAlert, Mail, RotateCcw, X } from "lucide-react";
 import { contactSchema, brandStages, type ContactFormValues } from "@/lib/contact-schema";
 import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/Magnetic";
@@ -23,7 +23,10 @@ import { track } from "@/lib/analytics";
 import { EASE_AIR } from "@/lib/motion";
 import { site } from "@/data/site";
 import { packages } from "@/data/services";
-import { useServicesContactPackage } from "@/hooks/useServicesContactPackage";
+import {
+  clearServicesContactPackage,
+  useServicesContactPackage,
+} from "@/hooks/useServicesContactPackage";
 import { calendlyHrefForServicesPackage } from "@/lib/servicesJourney";
 
 type Status = "idle" | "submitting" | "success" | "error";
@@ -196,12 +199,14 @@ export function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const recoveryRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
+  const packageStatusRef = useRef<HTMLParagraphElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const draftTimerRef = useRef<number | null>(null);
   const submissionRef = useRef<ContactSubmission | null>(null);
   const rippleTimersRef = useRef<Set<number>>(new Set());
   const spotlightRef = useSpotlight(buttonRef, Boolean(prefersReducedMotion));
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [packageNotice, setPackageNotice] = useState("");
   // Manual guide p38 and Suman's reference panel: ask only what is
   // needed up front. Three essential fields carry the enquiry; the
   // seven optional ones stay one click away rather than gone, so a
@@ -445,6 +450,25 @@ export function ContactForm() {
     window.requestAnimationFrame(() => setFocus("name"));
   }
 
+  function removeSelectedPackage() {
+    if (!selectedPackage || !servicePackage) return;
+
+    const removedPackageName = selectedPackage.name;
+    clearServicesContactPackage();
+    setPackageNotice(
+      `${removedPackageName} was removed. Your note stays here.`,
+    );
+    submissionRef.current = null;
+    track("contact_route_selected", {
+      source: "contact_form",
+      route: "package_cleared",
+      package: servicePackage,
+    });
+    window.requestAnimationFrame(() =>
+      packageStatusRef.current?.focus({ preventScroll: true }),
+    );
+  }
+
   function handleEmailFallbackClick(event: MouseEvent<HTMLAnchorElement>) {
     const values = getValues();
     const name = values.name?.trim();
@@ -590,12 +614,33 @@ export function ContactForm() {
           Three details begin the conversation. Add more only when it helps you explain the picture.
         </p>
         {selectedPackage ? (
-          <p
+          <div
             data-contact-form-package="true"
-            className="mx-auto mt-4 w-fit rounded-full border border-clay/20 bg-clay/[0.06] px-4 py-2 text-xs font-medium text-soil/70"
+            className="mx-auto mt-5 flex max-w-md items-start gap-3 rounded-2xl border border-clay/20 bg-clay/[0.06] px-4 py-3 text-left"
           >
-            Selected via Brand Strategy &amp; Systems · <span className="text-clay">{selectedPackage.name}</span>
-          </p>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[0.6rem] font-medium uppercase tracking-[0.18em] text-soil/45">
+                Brought into this note
+              </span>
+              <strong className="mt-1 block font-display text-lg font-normal leading-tight text-clay">
+                {selectedPackage.name}
+              </strong>
+              <span className="mt-1.5 block text-xs leading-relaxed text-soil/58">
+                This stays with your note and booking links. Your question can still point elsewhere.
+              </span>
+            </span>
+            <button
+              type="button"
+              onClick={removeSelectedPackage}
+              data-contact-form-package-remove
+              data-cursor-label="Remove package"
+              aria-label={`Remove ${selectedPackage.name} from this enquiry`}
+              className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border border-soil/12 bg-white/35 px-3 py-2 text-[0.68rem] font-medium text-soil/62 transition-[background-color,color] duration-300 hover:bg-white/70 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+            >
+              Remove
+              <X aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.5} />
+            </button>
+          </div>
         ) : null}
       </div>
 
@@ -639,6 +684,18 @@ export function ContactForm() {
           ))}
         </div>
       </div>
+
+      <p
+        ref={packageStatusRef}
+        tabIndex={-1}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-contact-form-package-status
+        className="sr-only"
+      >
+        {packageNotice}
+      </p>
 
       <form
         ref={formRef}
