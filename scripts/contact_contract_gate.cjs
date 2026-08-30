@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
-const CONTRACT_VERSION = 5;
+const CONTRACT_VERSION = 6;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -135,6 +135,18 @@ if (!contactGratitude.includes('event.key === "Escape"')) {
 }
 if (!contactGratitude.includes("document.activeElement !== event.currentTarget")) {
   fail("Contact gratitude hover must preserve a keyboard-focused acknowledgement.");
+}
+if (!contactGratitude.includes('data-contact-gratitude-next')) {
+  fail("Contact gratitude must expose its completed reading handoff.");
+}
+if (!contactGratitude.includes('href="/insights"')) {
+  fail("Contact gratitude must offer a useful reading route after completion.");
+}
+if (!contactGratitude.includes("aria-hidden={!allNotesVisited}")) {
+  fail("Contact gratitude reading route must stay hidden until completion.");
+}
+if (!contactGratitude.includes("tabIndex={allNotesVisited ? undefined : -1}")) {
+  fail("Contact gratitude reading route must stay outside the tab order until completion.");
 }
 
 if (!process.exitCode) {

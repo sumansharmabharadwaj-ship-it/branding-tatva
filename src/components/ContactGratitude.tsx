@@ -14,7 +14,9 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/Container";
+import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { EASE_AIR } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -151,9 +153,10 @@ const RESPONSES = [DEFAULT_RESPONSE, ...NOTES.map((note) => note.response), COMP
 const ALL_NOTES_VISITED = (1 << NOTES.length) - 1;
 
 /**
- * A non-conversion ending for Contact. The visitor's attention is treated as
+ * A gratitude-first ending for Contact. The visitor's attention is treated as
  * something received, rather than another metric: the sentence assembles with
- * scroll, while four small acknowledgements offer optional hover/tap details.
+ * scroll, four acknowledgements offer optional hover/tap details, and a quiet
+ * reading route appears only after the full interaction has been received.
  */
 export function ContactGratitude() {
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -357,6 +360,39 @@ export function ContactGratitude() {
                 {allNotesVisited ? "All four received" : `${visitedCount} of ${NOTES.length}`}
               </span>
             </div>
+
+            <motion.div
+              data-contact-gratitude-next
+              aria-hidden={!allNotesVisited}
+              className={cn(
+                "mx-auto mt-3 flex min-h-11 w-fit items-center",
+                allNotesVisited ? "pointer-events-auto" : "pointer-events-none",
+              )}
+              initial={false}
+              animate={{
+                clipPath: allNotesVisited
+                  ? "inset(0 0% 0 0% round 999px)"
+                  : "inset(0 50% 0 50% round 999px)",
+                y: allNotesVisited || reducedMotion ? 0 : 8,
+              }}
+              transition={{ duration: reducedMotion ? 0 : 0.52, ease: EASE_AIR }}
+            >
+              <TrackedLink
+                href="/insights"
+                tabIndex={allNotesVisited ? undefined : -1}
+                event="contact_route_selected"
+                eventProps={{ source: "contact_gratitude", route: "insights" }}
+                data-cursor-label="Open field notes"
+                className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-sandstone/35 bg-soil/28 px-5 py-2.5 text-[0.65rem] font-medium uppercase tracking-[0.16em] text-ivory backdrop-blur-lg transition-[background-color,border-color] duration-300 hover:border-sandstone/55 hover:bg-ivory/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
+              >
+                Carry a question into the field notes
+                <ArrowRight
+                  aria-hidden="true"
+                  className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                  strokeWidth={1.5}
+                />
+              </TrackedLink>
+            </motion.div>
           </motion.div>
 
           <div className="mt-8 grid w-full grid-cols-2 gap-2.5 sm:mt-10 sm:gap-3 xl:contents">
