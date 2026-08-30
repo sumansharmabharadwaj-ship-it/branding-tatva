@@ -10,6 +10,16 @@ import {
 
 export const runtime = "nodejs";
 
+const CONTACT_SUBMISSION_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function contactSubmissionId(request: NextRequest) {
+  const candidate = request.headers.get("x-contact-submission")?.trim();
+  return candidate && CONTACT_SUBMISSION_PATTERN.test(candidate)
+    ? candidate
+    : crypto.randomUUID();
+}
+
 export async function POST(request: NextRequest) {
   const guarded = guardJsonRequest(request, { scope: "contact", limit: 5 });
   if (guarded) return guarded;
@@ -40,6 +50,7 @@ export async function POST(request: NextRequest) {
     process.env.CONTACT_FROM_EMAIL?.trim() ||
     "Branding Tatva <contact@brandingtatva.com>";
   const requestId = crypto.randomUUID();
+  const submissionId = contactSubmissionId(request);
 
   if (!apiKey || !toEmail) {
     console.error(`[contact:${requestId}] Email delivery is not configured.`);
@@ -79,6 +90,7 @@ export async function POST(request: NextRequest) {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
+        "Idempotency-Key": `contact-enquiry-${submissionId}`,
       },
       body: JSON.stringify({
         from: fromEmail,
@@ -89,13 +101,30 @@ export async function POST(request: NextRequest) {
       }),
     });
 
-    if (!response.ok) {
-      const deliveryError = await response
-        .text()
-        .catch(() => "Unknown delivery error");
+    const deliveryBody = await response
+      .text()
+      .catch(() => "Unknown delivery error");
+    let deliveryId: string | null = null;
+
+    if (response.ok) {
+      try {
+        const deliveryData: unknown = JSON.parse(deliveryBody);
+        if (
+          deliveryData &&
+          typeof deliveryData === "object" &&
+          "id" in deliveryData &&
+          typeof deliveryData.id === "string" &&
+          deliveryData.id.trim()
+        ) {
+          deliveryId = deliveryData.id.trim();
+        }
+      } catch {}
+    }
+
+    if (!response.ok || !deliveryId) {
       console.error(
-        `[contact:${requestId}] Resend failed:`,
-        deliveryError.slice(0, 600),
+        `[contact:${requestId}] Resend rejected or returned no delivery ID:`,
+        deliveryBody.slice(0, 600),
       );
       return jsonNoStore(
         {
@@ -105,6 +134,8 @@ export async function POST(request: NextRequest) {
         { status: 502 },
       );
     }
+
+    console.info(`[contact:${requestId}] Resend accepted delivery ${deliveryId}.`);
 
     return jsonNoStore({ ok: true, requestId });
   } catch (error) {

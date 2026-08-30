@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
-const CONTRACT_VERSION = 2;
+const CONTRACT_VERSION = 3;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -72,6 +72,8 @@ for (const file of BOOKING_SURFACES) {
 
 const siteFile = source.get("src/data/site.ts") || "";
 const contactPage = source.get("src/app/contact/page.tsx") || "";
+const contactForm = source.get("src/components/ContactForm.tsx") || "";
+const contactRoute = source.get("src/app/api/contact/route.ts") || "";
 const calendly = source.get("src/components/CalendlyEmbed.tsx") || "";
 const contactExperience = `${contactPage}\n${calendly}`;
 
@@ -110,6 +112,15 @@ if (!/href=\{site\.calendlyUrl\}|<ContactBookingAction\b/.test(contactPage)) {
 }
 if (!/<ContactForm\b/.test(contactPage)) {
   fail("Contact page must retain the written-enquiry path.");
+}
+if (!contactForm.includes('"X-Contact-Submission"')) {
+  fail("Contact form retries must keep a stable submission identity.");
+}
+if (!contactRoute.includes('"Idempotency-Key"')) {
+  fail("Contact delivery must send a Resend idempotency key.");
+}
+if (!/response\.ok\s*\|\|\s*!deliveryId/.test(contactRoute)) {
+  fail("Contact delivery must verify a provider delivery ID before reporting success.");
 }
 
 if (!process.exitCode) {

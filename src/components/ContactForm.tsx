@@ -26,6 +26,7 @@ import { site } from "@/data/site";
 type Status = "idle" | "submitting" | "success" | "error";
 type DraftStatus = "empty" | "restored" | "saving" | "saved";
 type ContactDraftField = Exclude<keyof ContactFormValues, "company_website">;
+type ContactSubmission = { fingerprint: string; id: string };
 
 const CONTACT_DRAFT_KEY = "branding-tatva:contact-note:v1";
 const CONTACT_DRAFT_VERSION = 1;
@@ -181,6 +182,7 @@ const REQUIRED_FIELD_NAMES = new Set<Path<ContactFormValues>>(["name", "email", 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+  const [serverRequestId, setServerRequestId] = useState<string | null>(null);
   const [successMinHeight, setSuccessMinHeight] = useState<number | null>(null);
   const [draftStatus, setDraftStatus] = useState<DraftStatus>("empty");
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -190,6 +192,7 @@ export function ContactForm() {
   const successRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const draftTimerRef = useRef<number | null>(null);
+  const submissionRef = useRef<ContactSubmission | null>(null);
   const rippleTimersRef = useRef<Set<number>>(new Set());
   const spotlightRef = useSpotlight(buttonRef, Boolean(prefersReducedMotion));
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
@@ -207,6 +210,7 @@ export function ContactForm() {
         : draftStatus === "saved"
           ? "Saved in this tab."
           : "Unfinished notes stay in this tab.";
+  const serverReference = serverRequestId?.replaceAll("-", "").slice(0, 12) ?? null;
 
   function handleButtonClick(e: MouseEvent<HTMLButtonElement>) {
     if (prefersReducedMotion || e.detail === 0) return;
@@ -308,12 +312,21 @@ export function ContactForm() {
   async function onSubmit(values: ContactFormValues) {
     setStatus("submitting");
     setServerError(null);
+    setServerRequestId(null);
+    const fingerprint = JSON.stringify(values);
+    if (submissionRef.current?.fingerprint !== fingerprint) {
+      submissionRef.current = { fingerprint, id: crypto.randomUUID() };
+    }
+    const submissionId = submissionRef.current.id;
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 15_000);
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Contact-Submission": submissionId,
+        },
         body: JSON.stringify(values),
         signal: controller.signal,
       });
@@ -324,6 +337,13 @@ export function ContactForm() {
         typeof data === "object" &&
         "ok" in data &&
         data.ok === true;
+      const requestId =
+        data &&
+        typeof data === "object" &&
+        "requestId" in data &&
+        typeof data.requestId === "string"
+          ? data.requestId
+          : null;
       if (!deliveryConfirmed) {
         const message =
           data && typeof data === "object" && "error" in data && typeof data.error === "string"
@@ -334,6 +354,7 @@ export function ContactForm() {
           reason: "server",
           status: res.status,
         });
+        setServerRequestId(requestId);
         setServerError(message);
         setStatus("error");
         return;
@@ -348,6 +369,7 @@ export function ContactForm() {
           : null,
       );
       clearContactDraft();
+      submissionRef.current = null;
       setDraftStatus("empty");
       setStatus("success");
       track("contact_form_submitted", {
@@ -366,6 +388,7 @@ export function ContactForm() {
           ? "Sending took longer than expected. Please try again or email Suman directly."
           : "The server was unreachable. Check your connection and try again.",
       );
+      setServerRequestId(null);
       setStatus("error");
     } finally {
       window.clearTimeout(timeout);
@@ -376,6 +399,7 @@ export function ContactForm() {
     track("contact_form_validation_failed", { source: "contact_form" });
     setStatus("idle");
     setServerError(null);
+    setServerRequestId(null);
   }
 
   function focusInvalidField() {
@@ -405,6 +429,8 @@ export function ContactForm() {
     setDraftStatus("empty");
     setShowMore(false);
     setServerError(null);
+    setServerRequestId(null);
+    submissionRef.current = null;
     setStatus("idle");
     track("contact_route_selected", { source: "contact_form", route: "draft_cleared" });
     window.requestAnimationFrame(() => setFocus("name"));
@@ -423,6 +449,7 @@ export function ContactForm() {
       "",
       name && `Name: ${name}`,
       business && `Brand: ${business}`,
+      serverReference && `Reference: ${serverReference}`,
     ]
       .filter(Boolean)
       .join("\n");
@@ -774,6 +801,11 @@ export function ContactForm() {
               <span className="text-sm leading-relaxed">
                 <strong className="font-medium">Your note is still here.</strong>{" "}
                 {serverError}
+                {serverReference ? (
+                  <span className="mt-1 block text-xs text-soil/52">
+                    Reference {serverReference}
+                  </span>
+                ) : null}
               </span>
             </span>
             <a
