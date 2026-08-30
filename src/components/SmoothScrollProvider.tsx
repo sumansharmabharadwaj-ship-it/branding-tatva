@@ -48,6 +48,75 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
 
   useEffect(() => {
+    if (!hydrated || !prefersReducedMotion || !window.location.hash) return;
+
+    let cancelled = false;
+    let attempts = 0;
+    let timer: number | null = null;
+
+    function cancelHashRecovery() {
+      cancelled = true;
+      if (timer !== null) {
+        window.clearTimeout(timer);
+        timer = null;
+      }
+    }
+
+    function onManualKey(event: KeyboardEvent) {
+      if (
+        event.key === "PageDown" ||
+        event.key === "PageUp" ||
+        event.key === "Home" ||
+        event.key === "End" ||
+        event.key === " " ||
+        event.key === "ArrowDown" ||
+        event.key === "ArrowUp"
+      ) {
+        cancelHashRecovery();
+      }
+    }
+
+    function alignHashWithoutMotion() {
+      if (cancelled || attempts >= 6) return;
+
+      let target: HTMLElement | null = null;
+      try {
+        target = document.querySelector<HTMLElement>(window.location.hash);
+      } catch {}
+      if (!target) return;
+
+      const restingTop = getAnchorRestingTop(target, document.documentElement);
+      const alreadyThere = Math.abs(target.getBoundingClientRect().top - restingTop) <= 1;
+      if (alreadyThere && attempts > 0) return;
+
+      attempts += 1;
+      target.scrollIntoView({ behavior: "auto", block: "start" });
+      if (attempts < 6 && !cancelled) {
+        timer = window.setTimeout(() => {
+          timer = null;
+          alignHashWithoutMotion();
+        }, 350);
+      }
+    }
+
+    // Native hash navigation may happen before fonts and client-only scenes
+    // settle. Re-align without animation, but immediately yield to any real
+    // visitor input so accessibility preferences never create scroll fights.
+    window.addEventListener("wheel", cancelHashRecovery, { passive: true });
+    window.addEventListener("touchstart", cancelHashRecovery, { passive: true });
+    window.addEventListener("keydown", onManualKey);
+    alignHashWithoutMotion();
+    document.fonts?.ready?.then(alignHashWithoutMotion);
+
+    return () => {
+      cancelHashRecovery();
+      window.removeEventListener("wheel", cancelHashRecovery);
+      window.removeEventListener("touchstart", cancelHashRecovery);
+      window.removeEventListener("keydown", onManualKey);
+    };
+  }, [hydrated, pathname, prefersReducedMotion]);
+
+  useEffect(() => {
     const usesNativeSceneScroll = pathname === "/" || pathname === "/contact";
 
     // Home and Contact already compose native scroll into full-height camera

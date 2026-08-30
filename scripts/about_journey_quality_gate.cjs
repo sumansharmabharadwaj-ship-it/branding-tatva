@@ -4,7 +4,10 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const runtime = read("src/components/AboutCinematicRuntime.tsx");
+const aboutPage = read("src/app/about/page.tsx");
+const anchorContract = read("src/app/about/about-anchor-contract.css");
 const visualizer = read("src/hooks/useScrollDrivenVisualizer.ts");
+const smoothScroll = read("src/components/SmoothScrollProvider.tsx");
 const runtimeStyles = read("src/components/AboutCinematicRuntime.module.css");
 const consent = read("src/components/ConsentManager.tsx");
 const origin = read("src/sections/About/FounderFieldNotes.tsx");
@@ -32,6 +35,24 @@ function fontSizeRem(source, selector) {
   assert(declaration, `Missing rem font size for: ${selector}`);
   return Number(declaration[1]);
 }
+
+assert(
+  aboutPage.includes('import "./about-anchor-contract.css";') &&
+    (aboutPage.match(/data-about-chapter=/g) || []).length === 8,
+  "The complete About chapter set no longer loads its anchor-alignment contract.",
+);
+assert(
+  /\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*clamp\(5\.75rem,\s*10svh,\s*6\.5rem\);/.test(anchorContract) &&
+    /@media \(max-width:\s*430px\)[\s\S]*?\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*calc\(4\.75rem \+ env\(safe-area-inset-top,\s*0px\)\);/.test(anchorContract),
+  "About chapter hashes can settle beneath the fixed header in a responsive state.",
+);
+assert(
+  smoothScroll.includes("if (!hydrated || !prefersReducedMotion || !window.location.hash) return;") &&
+    smoothScroll.includes('target.scrollIntoView({ behavior: "auto", block: "start" })') &&
+    smoothScroll.includes("document.fonts?.ready?.then(alignHashWithoutMotion)") &&
+    smoothScroll.includes('window.addEventListener("wheel", cancelHashRecovery, { passive: true })'),
+  "Reduced-motion About deep links no longer recover their fixed-header-safe position after hydration.",
+);
 
 assert(
   runtime.includes('data-state={index < activeChapter ? "passed" : index === activeChapter ? "active" : "waiting"}'),

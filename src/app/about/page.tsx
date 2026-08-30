@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./about-anchor-contract.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { BackgroundVideo } from "@/components/BackgroundVideo";

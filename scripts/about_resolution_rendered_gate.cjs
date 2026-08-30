@@ -24,6 +24,46 @@ async function waitForPrelude(page) {
   await page.waitForTimeout(300);
 }
 
+async function readChapterAlignment(page, id) {
+  let alignment = null;
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    alignment = await page.evaluate((chapterId) => {
+      const target = document.getElementById(chapterId);
+      const header = document.querySelector("[data-site-header]");
+      const headerBar = header?.querySelector(".site-header__bar");
+      if (!target || !header || !headerBar) return null;
+
+      const margin = Number.parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+      const padding = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      const headerPadding = Number.parseFloat(getComputedStyle(header).paddingTop) || 0;
+      return {
+        top: target.getBoundingClientRect().top,
+        restingTop: margin + padding,
+        headerClearance: headerPadding + headerBar.getBoundingClientRect().height,
+      };
+    }, id);
+    if (alignment && Math.abs(alignment.top - alignment.restingTop) <= 3) return alignment;
+    await page.waitForTimeout(250);
+  }
+  return alignment;
+}
+
+function assertChapterAlignment(viewportName, chapterId, alignment) {
+  assert(alignment, `${viewportName}: ${chapterId} has no measurable anchor geometry`);
+  assert(
+    Math.abs(alignment.top - alignment.restingTop) <= 3,
+    `${viewportName}: ${chapterId} rested at ${alignment.top}px instead of ${alignment.restingTop}px`,
+  );
+  assert(
+    alignment.restingTop >= alignment.headerClearance - 1,
+    `${viewportName}: ${chapterId} clears ${alignment.restingTop}px but the header occupies ${alignment.headerClearance}px`,
+  );
+  assert(
+    alignment.top >= alignment.headerClearance - 1,
+    `${viewportName}: ${chapterId} is visibly covered at ${alignment.top}px by a ${alignment.headerClearance}px header`,
+  );
+}
+
 async function auditViewport(browser, viewport) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
@@ -40,9 +80,11 @@ async function auditViewport(browser, viewport) {
   }
 
   try {
-    const response = await page.goto(`${BASE_URL}/about`, { waitUntil: "domcontentloaded", timeout: 90_000 });
+    const response = await page.goto(`${BASE_URL}/about#about-system`, { waitUntil: "domcontentloaded", timeout: 90_000 });
     assert(response?.ok(), `${viewport.name}: /about returned ${response?.status()}`);
     await waitForPrelude(page);
+    const directAnchorAlignment = await readChapterAlignment(page, "about-system");
+    assertChapterAlignment(viewport.name, "about-system", directAnchorAlignment);
     const scene = page.locator('[data-scroll-story="about-resolution-threshold"]');
     await scene.scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
@@ -153,12 +195,27 @@ async function auditViewport(browser, viewport) {
         assert(protectedEndingSpace, `${viewport.name}: final action geometry is unavailable`);
         assert(protectedEndingSpace.paddingBottom >= 124, `${viewport.name}: mobile closing clearance is too small`);
         assert(protectedEndingSpace.trailingSpace >= 120, `${viewport.name}: final actions do not retain usable trailing space`);
+
+        await chooser.click();
+        await page.locator('#about-mobile-chapter-list a[href="#about-philosophy"]').click();
+        const chooserAnchorAlignment = await readChapterAlignment(page, "about-philosophy");
+        assertChapterAlignment(viewport.name, "about-philosophy", chooserAnchorAlignment);
+        assert(page.url().endsWith("/about#about-philosophy"), `${viewport.name}: chapter choice did not update the URL hash`);
+        assert(
+          await page.locator("#about-philosophy h2").evaluate((node) => document.activeElement === node),
+          `${viewport.name}: chapter choice did not move focus to its heading`,
+        );
       }
     }
 
     assert(pageErrors.length === 0, `${viewport.name}: page errors ${JSON.stringify(pageErrors)}`);
     await scene.screenshot({ path: path.join(OUTPUT_DIR, `${viewport.name}.png`) });
-    return { viewport: viewport.name, mode: viewport.interactive ? "interactive" : "static" };
+    return {
+      viewport: viewport.name,
+      mode: viewport.interactive ? "interactive" : "static",
+      anchorTop: directAnchorAlignment.top,
+      headerClearance: directAnchorAlignment.headerClearance,
+    };
   } finally {
     await context.close();
   }

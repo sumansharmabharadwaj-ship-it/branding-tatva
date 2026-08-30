@@ -1,0 +1,14 @@
+/* About chapter links are available as native hashes before the cinematic
+   runtime hydrates, then reused by Lenis and browser-history restoration.
+   Keep every path on the same fixed-header-safe resting line without adding
+   scroll interception or changing the natural height of any scene. */
+
+[data-about-chapter] {
+  scroll-margin-top: clamp(5.75rem, 10svh, 6.5rem);
+}
+
+@media (max-width: 430px) {
+  [data-about-chapter] {
+    scroll-margin-top: calc(4.75rem + env(safe-area-inset-top, 0px));
+  }
+}
