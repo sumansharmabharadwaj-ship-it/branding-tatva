@@ -15,6 +15,7 @@ import { elementColor } from "@/lib/elementColor";
 import { SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
+import { HomeV4SeamDirector } from "./HomeV4SeamDirector";
 import { V4HiddenCostScene, V4OpeningScene } from "./HomeV4Scenes";
 
 export function HomeV4Experience() {
@@ -27,8 +28,9 @@ export function HomeV4Experience() {
     <div className="home-v4" data-home-v4>
       <HomeV4PreludeBridge />
       <HomeV4MediaDirector />
+      <HomeV4SeamDirector />
       <V4OpeningScene />
-      <SceneHandoff motif="mist" />
+      <SceneHandoff motif="mist" preservePrevious />
 
       <HomeBrandHealthCheck />
       <SceneHandoff motif="river" />

@@ -18,12 +18,6 @@ import { ProjectFile } from "@/sections/Home/ProjectFile";
 
 const SELECTED_PROJECTS = projects.filter((project) => project.featured);
 
-const ACTION: Record<string, string> = {
-  "dr-haley-nutrition": "Watch the story",
-  myshopineurope: "Open the file",
-  "executive-springboard": "View the case",
-};
-
 const DECISION: Record<string, { big: string; label: string }> = {
   myshopineurope: {
     big: "Craft over price",
@@ -260,8 +254,8 @@ export function EvidenceWall() {
                 <button type="button" onClick={() => setOpenSlug(activeProject.slug)}>
                   Inspect the project file <span aria-hidden="true">↗</span>
                 </button>
-                <Link href={`/work/${activeProject.slug}`}>
-                  {ACTION[activeProject.slug] ?? "View the case"} <span aria-hidden="true">→</span>
+                <Link href="#paths">
+                  Match this proof to your path <span aria-hidden="true">→</span>
                 </Link>
               </div>
             </motion.article>
@@ -284,12 +278,18 @@ export function EvidenceWall() {
                 className={selected ? "is-active" : undefined}
                 style={{ "--project-accent": project.accent } as CSSProperties}
                 onClick={() => choose(index)}
+                onFocus={() => choose(index)}
+                onPointerEnter={(event) => {
+                  if (event.pointerType === "mouse") choose(index);
+                }}
                 onKeyDown={(event) => chooseFromKeyboard(event, index)}
               >
                 <span className="evidence-cinematic__index-number">{String(index + 1).padStart(2, "0")}</span>
                 <span className="evidence-cinematic__index-copy">
                   <strong>{project.title}</strong>
-                  <em>{project.industry}</em>
+                  <em>
+                    {EVIDENCE_META[project.slug]?.type ?? "Project evidence"} · {project.industry}
+                  </em>
                 </span>
                 <i aria-hidden="true" />
               </button>

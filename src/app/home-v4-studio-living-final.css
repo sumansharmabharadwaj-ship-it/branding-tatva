@@ -95,6 +95,38 @@
   color: #23362b;
 }
 
+/* Desktop page travel now develops this single composition through its three
+   disciplines. The runway is deliberately shorter than half a second screen
+   per state: enough for a controlled reveal without returning to the old,
+   exhausting multi-screen chapter. Pointer, keyboard and touch controls stay
+   available, and the film itself remains exactly one viewport. */
+@media (min-width: 1101px) and (min-height: 700px) and (pointer: fine) {
+  html body .home-v4 #studio.home-v4-chapter--studio {
+    height: 148svh !important;
+    min-height: 148svh !important;
+    overflow: clip !important;
+  }
+
+  html body .home-v4 #studio > .studio-film {
+    position: sticky !important;
+    top: 0;
+    height: 100svh !important;
+    min-height: 100svh !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .home-v4 #studio.home-v4-chapter--studio {
+    height: 100svh !important;
+    min-height: 100svh !important;
+  }
+
+  html body .home-v4 #studio > .studio-film {
+    position: relative !important;
+    top: auto;
+  }
+}
+
 @media (max-width: 760px) {
   .home-v4 .studio-film {
     height: 100svh;

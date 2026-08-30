@@ -35,6 +35,14 @@ function distanceFromViewportCentre(video: HTMLVideoElement) {
   return Math.abs(centre - window.innerHeight / 2);
 }
 
+function viewportRatio(video: HTMLVideoElement) {
+  const bounds = video.getBoundingClientRect();
+  if (bounds.height <= 0 || bounds.width <= 0) return 0;
+  const visibleHeight = Math.min(bounds.bottom, window.innerHeight) - Math.max(bounds.top, 0);
+  if (visibleHeight <= 0) return 0;
+  return Math.min(1, visibleHeight / bounds.height);
+}
+
 export function HomeV4MediaDirector() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
 
@@ -45,6 +53,7 @@ export function HomeV4MediaDirector() {
 
     const tracked = new Set<HTMLVideoElement>();
     const visibleRatios = new Map<HTMLVideoElement, number>();
+    const nearbyMedia = new Map<HTMLVideoElement, boolean>();
     const cleanups = new Map<HTMLVideoElement, () => void>();
     const navigatorHints = navigator as NavigatorWithHints;
     const constrainedConnection =
@@ -72,7 +81,12 @@ export function HomeV4MediaDirector() {
 
     function syncAll() {
       const candidates = [...visibleRatios.entries()]
-        .filter(([video, ratio]) => video.isConnected && ratio > 0)
+        .filter(
+          ([video, ratio]) =>
+            video.isConnected &&
+            ratio > 0 &&
+            video.dataset.homeMediaState !== "failed",
+        )
         .sort(([videoA, ratioA], [videoB, ratioB]) => {
           if (Math.abs(ratioA - ratioB) > 0.04) return ratioB - ratioA;
           return distanceFromViewportCentre(videoA) - distanceFromViewportCentre(videoB);
@@ -80,35 +94,78 @@ export function HomeV4MediaDirector() {
         .slice(0, mediaBudget())
         .map(([video]) => video);
       const allowed = new Set(candidates);
+      const warmCandidate = [...nearbyMedia.entries()]
+        .filter(
+          ([video, nearby]) =>
+            nearby &&
+            video.isConnected &&
+            !allowed.has(video) &&
+            !video.closest('[data-home-v4-chapter="opening"]') &&
+            video.dataset.homeMediaState !== "failed",
+        )
+        .sort(([videoA], [videoB]) => {
+          const readinessA = videoA.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA ? 1 : 0;
+          const readinessB = videoB.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA ? 1 : 0;
+          if (readinessA !== readinessB) return readinessA - readinessB;
+          return distanceFromViewportCentre(videoA) - distanceFromViewportCentre(videoB);
+        })[0]?.[0];
 
       tracked.forEach((video) => {
         applyPlaybackRate(video);
-        if (!globallyPaused() && allowed.has(video)) {
-          if (video.paused) void video.play().catch(() => {});
+        const openingVideo = Boolean(video.closest('[data-home-v4-chapter="opening"]'));
+        const admitted = allowed.has(video);
+        const warming = video === warmCandidate;
+
+        video.dataset.homeMediaAdmission = admitted
+          ? globallyPaused()
+            ? "held"
+            : "playing"
+          : warming
+            ? "warming"
+            : "parked";
+
+        if (!openingVideo) {
+          video.preload = !prefersReducedMotion && !constrainedConnection && !document.hidden && (admitted || warming)
+            ? "auto"
+            : "none";
+        }
+
+        if (!globallyPaused() && admitted) {
+          if (video.paused) {
+            void video.play().catch(() => {
+              if (video.dataset.homeMediaState !== "failed") {
+                video.dataset.homeMediaState = "poster";
+              }
+            });
+          }
         } else if (!video.paused) {
           video.pause();
         }
       });
     }
 
-    const observer = new IntersectionObserver(
+    const playbackObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const video = entry.target as HTMLVideoElement;
-          const openingVideo = Boolean(video.closest('[data-home-v4-chapter="opening"]'));
-          if (!openingVideo) {
-            video.preload = entry.isIntersecting && !prefersReducedMotion && !constrainedConnection
-              ? "metadata"
-              : "none";
-          }
           visibleRatios.set(video, entry.isIntersecting ? entry.intersectionRatio : 0);
         });
         syncAll();
       },
       {
-        rootMargin: "24% 0px",
+        rootMargin: "0px",
         threshold: [0, 0.02, 0.15, 0.35, 0.65],
       },
+    );
+
+    const prewarmObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          nearbyMedia.set(entry.target as HTMLVideoElement, entry.isIntersecting);
+        });
+        syncAll();
+      },
+      { rootMargin: "55% 0px", threshold: 0 },
     );
 
     function track(video: HTMLVideoElement) {
@@ -126,6 +183,9 @@ export function HomeV4MediaDirector() {
       if (!openingVideo) video.preload = "none";
 
       applyPlaybackRate(video);
+      video.dataset.homeMediaState = video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+        ? "ready"
+        : "poster";
 
       // Individual media components still own their own lifecycle. Whenever
       // one of them tries to resume, the director reapplies the shared pace
@@ -134,30 +194,73 @@ export function HomeV4MediaDirector() {
         applyPlaybackRate(video);
         queueMicrotask(syncAll);
       };
+      const markReady = () => {
+        video.dataset.homeMediaState = "ready";
+        queueMicrotask(syncAll);
+      };
+      const markPlaying = () => {
+        video.dataset.homeMediaState = "playing";
+      };
+      const markWaiting = () => {
+        if (video.dataset.homeMediaState !== "failed") {
+          video.dataset.homeMediaState = video.currentTime > 0 ? "buffering" : "poster";
+        }
+      };
+      const markFailed = () => {
+        video.dataset.homeMediaState = "failed";
+        visibleRatios.set(video, 0);
+        queueMicrotask(syncAll);
+      };
       video.addEventListener("loadedmetadata", refreshMediaState);
       video.addEventListener("play", refreshMediaState);
+      video.addEventListener("loadeddata", markReady);
+      video.addEventListener("playing", markPlaying);
+      video.addEventListener("waiting", markWaiting);
+      video.addEventListener("error", markFailed);
 
       const bounds = video.getBoundingClientRect();
-      const nearViewport =
-        bounds.bottom >= -window.innerHeight * 0.24 &&
-        bounds.top <= window.innerHeight * 1.24;
-      visibleRatios.set(video, nearViewport ? 0.01 : 0);
-      if (nearViewport && !prefersReducedMotion && !constrainedConnection) video.preload = "metadata";
-      observer.observe(video);
+      const nearViewport = bounds.bottom >= -window.innerHeight * 0.55 && bounds.top <= window.innerHeight * 1.55;
+      visibleRatios.set(video, viewportRatio(video));
+      nearbyMedia.set(video, nearViewport);
+      playbackObserver.observe(video);
+      prewarmObserver.observe(video);
 
       cleanups.set(video, () => {
         video.removeEventListener("loadedmetadata", refreshMediaState);
         video.removeEventListener("play", refreshMediaState);
-        observer.unobserve(video);
+        video.removeEventListener("loadeddata", markReady);
+        video.removeEventListener("playing", markPlaying);
+        video.removeEventListener("waiting", markWaiting);
+        video.removeEventListener("error", markFailed);
+        playbackObserver.unobserve(video);
+        prewarmObserver.unobserve(video);
         visibleRatios.delete(video);
+        nearbyMedia.delete(video);
         // Hand the video back to the sitewide warden on the way out.
         delete video.dataset.autoplayManaged;
+        delete video.dataset.homeMediaAdmission;
+        delete video.dataset.homeMediaState;
       });
+    }
+
+    function untrack(video: HTMLVideoElement) {
+      if (!tracked.has(video)) return;
+      video.pause();
+      cleanups.get(video)?.();
+      cleanups.delete(video);
+      tracked.delete(video);
     }
 
     homeRoot.querySelectorAll<HTMLVideoElement>("video").forEach(track);
 
     const mutationObserver = new MutationObserver((records) => {
+      records.forEach((record) => {
+        record.removedNodes.forEach((node) => {
+          if (!(node instanceof Element)) return;
+          if (node instanceof HTMLVideoElement) untrack(node);
+          node.querySelectorAll<HTMLVideoElement>("video").forEach(untrack);
+        });
+      });
       records.forEach((record) => {
         record.addedNodes.forEach((node) => {
           if (!(node instanceof Element)) return;
@@ -180,6 +283,14 @@ export function HomeV4MediaDirector() {
     }
 
     function onViewportProfileChange() {
+      tracked.forEach((video) => {
+        const bounds = video.getBoundingClientRect();
+        visibleRatios.set(video, viewportRatio(video));
+        nearbyMedia.set(
+          video,
+          bounds.bottom >= -window.innerHeight * 0.55 && bounds.top <= window.innerHeight * 1.55,
+        );
+      });
       syncAll();
     }
 
@@ -211,7 +322,8 @@ export function HomeV4MediaDirector() {
 
     return () => {
       mutationObserver.disconnect();
-      observer.disconnect();
+      playbackObserver.disconnect();
+      prewarmObserver.disconnect();
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener(HOME_GUIDE_MODE_EVENT, onGuideMode as EventListener);
       window.removeEventListener("resize", onViewportProfileChange);
@@ -222,6 +334,7 @@ export function HomeV4MediaDirector() {
       cleanups.clear();
       tracked.clear();
       visibleRatios.clear();
+      nearbyMedia.clear();
     };
   }, [prefersReducedMotion]);
 

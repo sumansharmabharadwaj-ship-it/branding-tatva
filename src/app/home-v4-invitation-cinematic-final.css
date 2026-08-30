@@ -154,17 +154,35 @@ html body .home-v4 #invitation .final-invitation__headline {
   text-transform: uppercase;
 }
 
-.home-v4 #invitation .final-invitation__promise ol {
+.home-v4 #invitation .final-invitation__promise-list {
+  position: relative;
   margin: clamp(1rem, 2.6svh, 1.75rem) 0 0;
+}
+
+.home-v4 #invitation .final-invitation__promise ol {
+  position: relative;
+  z-index: 1;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
+.home-v4 #invitation .final-invitation__thread {
+  position: absolute;
+  top: 1.4rem;
+  bottom: 1.4rem;
+  left: 0.94rem;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--invitation-accent) 16%, var(--invitation-accent) 84%, transparent);
+  transform-origin: top;
+}
+
 .home-v4 #invitation .final-invitation__promise li {
+  position: relative;
   display: grid;
   grid-template-columns: 2.35rem minmax(0, 1fr);
   gap: 0.85rem;
-  align-items: baseline;
+  align-items: center;
   padding: clamp(0.8rem, 2svh, 1.2rem) 0;
   border-top: 1px solid rgba(244, 239, 230, 0.16);
 }
@@ -174,6 +192,13 @@ html body .home-v4 #invitation .final-invitation__headline {
 }
 
 .home-v4 #invitation .final-invitation__promise li span {
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--invitation-accent) 58%, transparent);
+  border-radius: 999px;
+  background: #20332b;
   color: var(--invitation-accent);
   font-size: 0.72rem;
   font-weight: 650;
@@ -270,7 +295,7 @@ html body .home-v4 #invitation .final-invitation__headline {
 
   .home-v4 #invitation .final-invitation__body,
   .home-v4 #invitation .final-invitation__actions,
-  .home-v4 #invitation .final-invitation__promise ol,
+  .home-v4 #invitation .final-invitation__promise-list,
   .home-v4 #invitation .final-invitation__thanks {
     margin-top: 0.7rem !important;
   }

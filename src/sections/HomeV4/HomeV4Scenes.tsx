@@ -5,7 +5,7 @@ import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -383,14 +383,55 @@ export function V4RecognitionScene() {
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const ambientCompleteRef = useRef(false);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.18, margin: "8% 0px -10% 0px" });
   const [activeIndex, setActiveIndex] = useState(0);
   const [committedIndex, setCommittedIndex] = useState(0);
+  const [interactionHeld, setInteractionHeld] = useState(false);
+  const [pageVisible, setPageVisible] = useState(true);
   const active = COST_STAGES[activeIndex];
+  const ambientSequencing =
+    !prefersReducedMotion &&
+    inView &&
+    pageVisible &&
+    !interactionHeld &&
+    !ambientCompleteRef.current;
+
+  useEffect(() => {
+    function syncVisibility() {
+      setPageVisible(document.visibilityState === "visible");
+    }
+
+    syncVisibility();
+    document.addEventListener("visibilitychange", syncVisibility);
+    return () => document.removeEventListener("visibilitychange", syncVisibility);
+  }, []);
+
+  useEffect(() => {
+    if (!ambientSequencing) return;
+
+    const nextIndex = committedIndex + 1;
+    if (nextIndex >= COST_STAGES.length) {
+      ambientCompleteRef.current = true;
+      return;
+    }
+
+    const timer = window.setTimeout(
+      () => {
+        setCommittedIndex(nextIndex);
+        setActiveIndex(nextIndex);
+        if (nextIndex === COST_STAGES.length - 1) ambientCompleteRef.current = true;
+      },
+      committedIndex === 0 ? 2800 : 3600,
+    );
+
+    return () => window.clearTimeout(timer);
+  }, [ambientSequencing, committedIndex]);
 
   function choose(index: number) {
     const next = (index + COST_STAGES.length) % COST_STAGES.length;
+    ambientCompleteRef.current = true;
     setCommittedIndex(next);
     setActiveIndex(next);
   }
@@ -401,6 +442,7 @@ export function V4HiddenCostScene() {
 
   function releasePreview() {
     setActiveIndex(committedIndex);
+    setInteractionHeld(false);
   }
 
   function moveFromKeyboard(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
@@ -432,6 +474,7 @@ export function V4HiddenCostScene() {
       data-cursor-world="light"
       data-scroll-story="cost"
       data-active-cost={active.number}
+      data-cost-motion={ambientSequencing ? "sequencing" : "held"}
       className="cost-film"
       aria-labelledby="cost-film-title"
     >
@@ -500,6 +543,7 @@ export function V4HiddenCostScene() {
           <div className="cost-film__rail" role="tablist" aria-label="Four moments in the cost of changing brand signals">
             {COST_STAGES.map((stage, index) => {
               const selected = index === activeIndex;
+              const stageState = selected ? "active" : index < activeIndex ? "past" : "future";
               return (
                 <button
                   key={stage.number}
@@ -513,13 +557,18 @@ export function V4HiddenCostScene() {
                   aria-controls="cost-film-active-panel"
                   tabIndex={selected ? 0 : -1}
                   className={selected ? "is-active" : undefined}
+                  data-cost-state={stageState}
                   data-cursor-label={stage.number}
                   onClick={() => choose(index)}
-                  onPointerEnter={() => preview(index)}
+                  onPointerEnter={(event) => {
+                    if (event.pointerType !== "mouse") return;
+                    setInteractionHeld(true);
+                    preview(index);
+                  }}
                   onPointerLeave={(event) => {
                     if (document.activeElement !== event.currentTarget) releasePreview();
                   }}
-                  onFocus={() => preview(index)}
+                  onFocus={() => choose(index)}
                   onBlur={releasePreview}
                   onKeyDown={(event) => moveFromKeyboard(event, index)}
                 >
@@ -538,8 +587,8 @@ export function V4HiddenCostScene() {
               <span>The alternative</span>
               One position, repeated with care, lets every new signal strengthen the memory already there.
             </p>
-            <Link href="#process" data-magnetic data-cursor-label="method">
-              See how the method holds <ArrowDownRight size={15} />
+            <Link href="#evidence" data-magnetic data-cursor-label="proof">
+              See the decision in practice <ArrowDownRight size={15} />
             </Link>
           </div>
         </div>

@@ -32,7 +32,6 @@ const PATHS = [
       "Set the category, audience, belief, and position before identity begins, so every visible choice grows from one clear centre.",
     route: "Frame / Position / System",
     result: "A position and decision system the business can grow from.",
-    href: "/services#desire",
     tint: "#ad7336",
     proof: "MyShopInEurope began with positioning around craft and origin before the platform sold a thing.",
   },
@@ -47,7 +46,6 @@ const PATHS = [
       "Read the signals people already recognise, keep what still carries value, and align the brand with the business it has become.",
     route: "Decode / Retain / Reframe",
     result: "A clearer meaning that moves expectations forward.",
-    href: "/services#situation",
     tint: "#667d63",
     proof: "HerbalCart turned a scattered campaign into one modern, supplement-first brand position.",
   },
@@ -62,7 +60,6 @@ const PATHS = [
       "Translate strategy into usable rules for language, content, campaigns, websites, and teams, so every release builds the same memory.",
     route: "Codify / Apply / Compound",
     result: "One recognisable logic the whole business can repeat.",
-    href: "/services#offerings",
     tint: "#bd8a3f",
     proof: "Dr. Haley Nutrition earned more response from fewer, more focused posts built around one decision system.",
   },
@@ -76,7 +73,6 @@ const PATHS = [
   body: string;
   route: string;
   result: string;
-  href: string;
   tint: string;
   proof: string;
 }>;
@@ -217,21 +213,21 @@ export function PathsCinematicChapter() {
 
         <div className="paths-film__story">
           <div className="paths-film__lead">
-            <p className="paths-film__eyebrow">Choose your starting point</p>
+            <p className="paths-film__eyebrow">Three brand moments</p>
             <h2 id="paths-film-title">
-              There is more than one way in. <em>Choose where your brand is now.</em>
+              There is more than one way in. <em>Where is your brand now?</em>
             </h2>
             <p className="paths-film__instruction">
-              Select the sentence that feels closest. The right scope opens here
-              and carries into Services.
+              Each starting point begins with a different brand tension and a
+              different first decision.
             </p>
 
             <div className="paths-film__chooser">
               <div className="paths-film__chooser-label">
                 <span>
                   {carriedChoice
-                    ? "Your 30-second diagnosis is carried here"
-                    : "Choose the brand situation closest to yours"}
+                    ? "Your 30-second diagnosis is carried forward"
+                    : "Your starting point"}
                 </span>
                 <span>{active.choice}</span>
               </div>
@@ -266,7 +262,7 @@ export function PathsCinematicChapter() {
                         {path.shortChoice}
                       </span>
                       <span className="paths-film__choice-cue">
-                        {selected ? "Selected" : "Choose"}
+                        {selected ? "Current" : ""}
                       </span>
                     </button>
                   );
@@ -302,8 +298,8 @@ export function PathsCinematicChapter() {
                 </div>
               </dl>
               <p className="paths-film__proof">{active.proof}</p>
-              <Link href={active.href} onClick={() => publishSituation(active.situation)}>
-                Explore this service path <span aria-hidden="true">→</span>
+              <Link href="#process" onClick={() => publishSituation(active.situation)}>
+                The method for this path <span aria-hidden="true">↓</span>
               </Link>
             </motion.article>
           </AnimatePresence>

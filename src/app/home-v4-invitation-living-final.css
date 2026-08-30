@@ -31,7 +31,8 @@ html body .home-v4 #invitation [data-cursor-media] > video {
 
 .home-v4 #invitation .final-invitation__topline span:last-child,
 .home-v4 #invitation .final-invitation__eyebrow {
-  color: #9d6525 !important;
+  color: var(--invitation-accent) !important;
+  transition: color 0.5s ease;
 }
 
 html body .home-v4 #invitation .final-invitation__headline {
@@ -57,8 +58,8 @@ html body .home-v4 #invitation .final-invitation__headline {
 
 .home-v4 #invitation .final-invitation__actions > a:hover,
 .home-v4 #invitation .final-invitation__actions > a:focus-visible {
-  background: #b9782d;
-  border-color: #b9782d;
+  background: var(--invitation-accent);
+  border-color: var(--invitation-accent);
   color: #fffaf0;
   transform: translateY(-2px);
 }
@@ -71,8 +72,10 @@ html body .home-v4 #invitation .final-invitation__headline {
   padding: clamp(1.5rem, 3vw, 2.5rem);
   border: 1px solid rgba(33, 54, 44, 0.2);
   border-radius: 1.25rem;
-  background: rgba(244, 239, 230, 0.78);
-  box-shadow: 0 18px 48px rgba(33, 54, 44, 0.1);
+  background:
+    radial-gradient(circle at 10% 12%, color-mix(in srgb, var(--invitation-accent) 10%, transparent), transparent 44%),
+    rgba(244, 239, 230, 0.78);
+  box-shadow: 0 18px 48px rgba(33, 54, 44, 0.1), inset 0 1px 0 rgba(255, 251, 242, 0.64);
   backdrop-filter: blur(14px) saturate(0.82);
 }
 
@@ -86,7 +89,10 @@ html body .home-v4 #invitation .final-invitation__headline {
 }
 
 .home-v4 #invitation .final-invitation__promise li span {
-  color: #9d6525;
+  border-color: color-mix(in srgb, var(--invitation-accent) 44%, rgba(33, 54, 44, 0.2));
+  background: #f4efe6;
+  color: var(--invitation-accent);
+  transition: border-color 0.5s ease, color 0.5s ease;
 }
 
 .home-v4 #invitation .final-invitation__promise li strong {
@@ -94,6 +100,8 @@ html body .home-v4 #invitation .final-invitation__headline {
 }
 
 .home-v4 #invitation .final-invitation__thanks {
+  padding-left: 1rem;
+  border-left: 2px solid color-mix(in srgb, var(--invitation-accent) 58%, transparent);
   color: rgba(33, 54, 44, 0.82);
 }
 
@@ -122,5 +130,11 @@ html body .home-v4 #invitation .final-invitation__headline {
   .home-v4 #invitation .final-invitation__promise {
     background: rgba(244, 239, 230, 0.9);
     backdrop-filter: none;
+  }
+
+  .home-v4 #invitation .final-invitation__topline span:last-child,
+  .home-v4 #invitation .final-invitation__eyebrow,
+  .home-v4 #invitation .final-invitation__promise li span {
+    transition: none;
   }
 }

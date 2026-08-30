@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 // Long-page wayfinding uses different densities according to the route.
 // Most pages retain the quiet technical index along the bottom edge. A
 // cinematic route can opt into a narrow desktop rail instead, while mobile
-// keeps one small corner dial. The complete index only expands after the
+// keeps one small chapter pill. The complete index only expands after the
 // visitor asks for it, so reading, forms, and calls to action keep their space.
 type JumpItem = { href: string; label: string };
 
@@ -20,6 +20,9 @@ type ServicesActiveChapterEventDetail = {
 
 type SectionJumpNavProps = {
   items: JumpItem[];
+  // Hero scenes can keep their full cinematic frame. The guide still tracks
+  // the route from mount, then enters only after the visitor leaves chapter 1.
+  hideOnFirst?: boolean;
   // Conversion chapters such as a booking room need the viewport back.
   // Opting in removes the fixed guide once the final indexed section is
   // active, while every existing call site keeps the persistent default.
@@ -27,6 +30,9 @@ type SectionJumpNavProps = {
   // The compact rail is intentionally opt in. Services uses it by default;
   // other routes retain the established bottom bar unless they request it.
   desktopMode?: "bar" | "rail";
+  // Light cinematic pages can keep an ivory navigation surface while the
+  // established dark treatment remains the default everywhere else.
+  tone?: "dark" | "light";
 };
 
 const SERVICES_CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
@@ -46,8 +52,10 @@ function validChapterItems(chapters: ServicesChapterEventDetail["chapters"]): Ju
 
 export function SectionJumpNav({
   items,
+  hideOnFirst = false,
   hideOnLast = false,
   desktopMode,
+  tone = "dark",
 }: SectionJumpNavProps) {
   const pathname = usePathname();
   const isServicesRoute = pathname === "/services";
@@ -56,6 +64,9 @@ export function SectionJumpNav({
   const navigationItems = isServicesRoute && servicesItems?.length ? servicesItems : items;
   const [activeHref, setActiveHref] = useState(items[0]?.href ?? "");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileNavRef = useRef<HTMLElement>(null);
+  const mobileTriggerRef = useRef<HTMLButtonElement>(null);
+  const lightTone = tone === "light";
 
   // Services contains more directed scenes than the page's short editorial
   // hero index. The runtime publishes every real scene after it has assigned
@@ -171,23 +182,47 @@ export function SectionJumpNav({
 
   const activeIndex = Math.max(0, navigationItems.findIndex((item) => item.href === activeHref));
   const activeItem = navigationItems[activeIndex] ?? navigationItems[0];
+  const firstHref = navigationItems[0]?.href;
   const finalHref = navigationItems[navigationItems.length - 1]?.href;
+  const hiddenForFirstScene = hideOnFirst && Boolean(firstHref) && activeHref === firstHref;
   const hiddenForFinalScene = hideOnLast && Boolean(finalHref) && activeHref === finalHref;
   const progress = navigationItems.length > 0 ? ((activeIndex + 1) / navigationItems.length) * 100 : 0;
 
   useEffect(() => {
-    if (hiddenForFinalScene) setMobileOpen(false);
-  }, [hiddenForFinalScene]);
+    if (hiddenForFirstScene || hiddenForFinalScene) setMobileOpen(false);
+  }, [hiddenForFirstScene, hiddenForFinalScene]);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    function dismissFromKeyboard(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setMobileOpen(false);
+      mobileTriggerRef.current?.focus();
+    }
+
+    function dismissFromOutside(event: PointerEvent) {
+      if (mobileNavRef.current?.contains(event.target as Node)) return;
+      setMobileOpen(false);
+    }
+
+    document.addEventListener("keydown", dismissFromKeyboard);
+    document.addEventListener("pointerdown", dismissFromOutside);
+    return () => {
+      document.removeEventListener("keydown", dismissFromKeyboard);
+      document.removeEventListener("pointerdown", dismissFromOutside);
+    };
+  }, [mobileOpen]);
 
   function choose(href: string) {
     setActiveHref(href);
     setMobileOpen(false);
   }
 
-  // The final section can become a true arrival scene. Returning null also
-  // removes every hidden link from keyboard order instead of leaving an
-  // invisible fixed layer above the booking interface.
-  if (hiddenForFinalScene) return null;
+  // The opening and final sections keep their full cinematic frame. Returning
+  // null also removes every hidden link from keyboard order instead of leaving
+  // an invisible fixed layer above either composition.
+  if (hiddenForFirstScene || hiddenForFinalScene) return null;
 
   const mobileBreakpoint = resolvedDesktopMode === "rail" ? "lg:hidden" : "sm:hidden";
 
@@ -196,12 +231,56 @@ export function SectionJumpNav({
       {/* Compact touch and small-screen guide. Cinematic routes keep this
           through tablet widths because the desktop rail begins at lg. */}
       <nav
+        ref={mobileNavRef}
         aria-label="Jump to section"
         data-section-jump-nav-mobile="true"
+        data-section-jump-tone={tone}
         className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-[calc(0.75rem+env(safe-area-inset-right))] z-30 ${mobileBreakpoint}`}
       >
+        <button
+          ref={mobileTriggerRef}
+          type="button"
+          data-section-jump-nav-trigger="true"
+          aria-expanded={mobileOpen}
+          aria-controls={mobileOpen ? "section-jump-mobile-menu" : undefined}
+          aria-label={`${mobileOpen ? "Close" : "Open"} section navigation. Current chapter ${activeIndex + 1} of ${navigationItems.length}: ${activeItem?.label ?? "Sections"}`}
+          onClick={() => setMobileOpen((open) => !open)}
+          className={`relative flex h-14 max-w-[min(18rem,calc(100vw-1.5rem))] items-center justify-center gap-2.5 rounded-full border px-3.5 shadow-elevation-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${
+            lightTone
+              ? "border-soil/14 bg-ivory/92 hover:bg-ivory"
+              : "border-ivory/16 bg-soil/92 hover:bg-soil"
+          }`}
+        >
+          <span className="flex min-w-0 items-center gap-2 leading-none" aria-hidden="true">
+            <span className="font-display text-base text-terracotta">
+              {String(activeIndex + 1).padStart(2, "0")}
+            </span>
+            <span
+              className={`max-w-[10rem] truncate text-[0.55rem] font-semibold uppercase tracking-[0.13em] ${
+                lightTone ? "text-soil/72" : "text-ivory/72"
+              }`}
+            >
+              {activeItem?.label ?? "Sections"}
+            </span>
+            <span className={`text-[0.48rem] font-medium tracking-[0.08em] ${lightTone ? "text-soil/45" : "text-ivory/48"}`}>
+              / {String(navigationItems.length).padStart(2, "0")}
+            </span>
+          </span>
+          <span
+            aria-hidden="true"
+            className={`ml-0.5 text-sm leading-none text-terracotta transition-transform duration-300 ${mobileOpen ? "rotate-45" : ""}`}
+          >
+            +
+          </span>
+        </button>
+
         {mobileOpen && (
-          <div className="absolute bottom-[calc(100%+0.5rem)] right-0 grid w-[min(19rem,calc(100vw-1.5rem))] grid-cols-2 gap-1.5 rounded-2xl border border-ivory/12 bg-soil/95 p-2 shadow-elevation-lg backdrop-blur-md">
+          <div
+            id="section-jump-mobile-menu"
+            className={`absolute bottom-[calc(100%+0.5rem)] right-0 grid w-[min(19rem,calc(100vw-1.5rem))] grid-cols-2 gap-1.5 rounded-2xl border p-2 shadow-elevation-lg backdrop-blur-md ${
+              lightTone ? "border-soil/12 bg-ivory/95" : "border-ivory/12 bg-soil/95"
+            }`}
+          >
             {navigationItems.map((item, index) => {
               const active = activeHref === item.href;
               return (
@@ -210,12 +289,21 @@ export function SectionJumpNav({
                   href={item.href}
                   aria-current={active ? "location" : undefined}
                   onClick={() => choose(item.href)}
-                  className={`flex min-h-11 items-center justify-between rounded-xl px-3 py-2 text-[0.62rem] font-medium uppercase tracking-[0.14em] transition-colors ${
-                    active ? "bg-ivory/10 text-terracotta" : "text-ivory/68 hover:bg-ivory/[0.06] hover:text-ivory"
+                  className={`flex min-h-11 items-center justify-between rounded-xl px-3 py-2 text-[0.62rem] font-medium uppercase tracking-[0.14em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-terracotta ${
+                    active
+                      ? lightTone
+                        ? "bg-soil/[0.08] text-terracotta"
+                        : "bg-ivory/10 text-terracotta"
+                      : lightTone
+                        ? "text-soil/70 hover:bg-soil/[0.06] hover:text-soil"
+                        : "text-ivory/68 hover:bg-ivory/[0.06] hover:text-ivory"
                   }`}
                 >
                   <span>{item.label}</span>
-                  <span className="font-display text-xs text-ivory/42" aria-hidden="true">
+                  <span
+                    className={`font-display text-xs ${lightTone ? "text-soil/45" : "text-ivory/42"}`}
+                    aria-hidden="true"
+                  >
                     {String(index + 1).padStart(2, "0")}
                   </span>
                 </a>
@@ -223,53 +311,37 @@ export function SectionJumpNav({
             })}
           </div>
         )}
-
-        <button
-          type="button"
-          data-section-jump-nav-trigger="true"
-          aria-expanded={mobileOpen}
-          aria-label={`${mobileOpen ? "Close" : "Open"} section navigation. Current chapter ${activeIndex + 1} of ${navigationItems.length}: ${activeItem?.label ?? "Sections"}`}
-          onClick={() => setMobileOpen((open) => !open)}
-          className="relative flex h-14 w-14 items-center justify-center rounded-full border border-ivory/16 bg-soil/92 shadow-elevation-lg backdrop-blur-md transition-[opacity,transform] duration-300 hover:scale-[1.03] hover:bg-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta"
-        >
-          <span className="flex flex-col items-center justify-center leading-none" aria-hidden="true">
-            <span className="font-display text-base text-terracotta">
-              {String(activeIndex + 1).padStart(2, "0")}
-            </span>
-            <span className="mt-0.5 text-[0.48rem] font-medium uppercase tracking-[0.12em] text-ivory/48">
-              / {String(navigationItems.length).padStart(2, "0")}
-            </span>
-          </span>
-          <span
-            aria-hidden="true"
-            className={`absolute right-1.5 top-1 text-xs text-terracotta transition-transform duration-300 ${mobileOpen ? "rotate-45" : ""}`}
-          >
-            +
-          </span>
-        </button>
       </nav>
 
       {resolvedDesktopMode === "rail" ? (
         <nav
           aria-label="Jump to section"
           data-section-jump-nav-desktop-mode="rail"
+          data-section-jump-tone={tone}
           className="fixed right-[calc(0.75rem+env(safe-area-inset-right))] top-1/2 z-30 hidden -translate-y-1/2 lg:block"
         >
-          <div className="relative flex w-12 flex-col items-center rounded-[1.65rem] border border-ivory/12 bg-soil/88 px-1.5 py-3 shadow-elevation-lg backdrop-blur-md">
+          <div
+            className={`relative flex w-12 flex-col items-center rounded-[1.65rem] border px-1.5 py-3 shadow-elevation-lg backdrop-blur-md ${
+              lightTone ? "border-soil/12 bg-ivory/90" : "border-ivory/12 bg-soil/88"
+            }`}
+          >
             <span className="font-display text-[0.68rem] leading-none text-terracotta" aria-hidden="true">
               {String(activeIndex + 1).padStart(2, "0")}
             </span>
-            <span className="mt-1 text-[0.42rem] font-medium uppercase tracking-[0.12em] text-ivory/40" aria-hidden="true">
+            <span
+              className={`mt-1 text-[0.42rem] font-medium uppercase tracking-[0.12em] ${lightTone ? "text-soil/45" : "text-ivory/40"}`}
+              aria-hidden="true"
+            >
               / {String(navigationItems.length).padStart(2, "0")}
             </span>
 
             <div className="relative mt-3">
               <span
                 aria-hidden="true"
-                className="absolute bottom-2 left-1/2 top-2 w-px -translate-x-1/2 overflow-hidden bg-ivory/10"
+                className={`absolute bottom-2 left-1/2 top-2 w-px -translate-x-1/2 overflow-hidden ${lightTone ? "bg-soil/12" : "bg-ivory/10"}`}
               >
                 <span
-                  className="block w-full bg-sandstone transition-[height] duration-500 ease-out"
+                  className={`block w-full transition-[height] duration-500 ease-out ${lightTone ? "bg-terracotta" : "bg-sandstone"}`}
                   style={{ height: `${progress}%` }}
                 />
               </span>
@@ -283,13 +355,17 @@ export function SectionJumpNav({
                         aria-current={active ? "location" : undefined}
                         aria-label={`Chapter ${index + 1}: ${item.label}`}
                         onClick={() => choose(item.href)}
-                        className="group relative flex h-7 w-7 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                        className={`group relative flex h-7 w-7 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${lightTone ? "focus-visible:outline-terracotta" : "focus-visible:outline-sandstone"}`}
                       >
                         <span
                           className={`absolute right-[calc(100%+0.55rem)] whitespace-nowrap rounded-full border px-3 py-1.5 text-[0.58rem] font-medium uppercase tracking-[0.14em] shadow-elevation-lg backdrop-blur-md transition-[opacity,transform] duration-200 ${
                             active
-                              ? "border-sandstone/35 bg-soil/96 text-sandstone opacity-100"
-                              : "pointer-events-none translate-x-1 border-ivory/12 bg-soil/94 text-ivory/75 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
+                              ? lightTone
+                                ? "border-terracotta/30 bg-ivory/96 text-terracotta opacity-100"
+                                : "border-sandstone/35 bg-soil/96 text-sandstone opacity-100"
+                              : lightTone
+                                ? "pointer-events-none translate-x-1 border-soil/12 bg-ivory/96 text-soil/75 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
+                                : "pointer-events-none translate-x-1 border-ivory/12 bg-soil/94 text-ivory/75 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
                           }`}
                         >
                           {item.label}
@@ -298,8 +374,12 @@ export function SectionJumpNav({
                           aria-hidden="true"
                           className={`relative z-10 rounded-full transition-all duration-300 ${
                             active
-                              ? "h-2.5 w-2.5 bg-sandstone shadow-[0_0_14px_rgba(212,185,154,0.42)]"
-                              : "h-1.5 w-1.5 bg-ivory/35 group-hover:h-2 group-hover:w-2 group-hover:bg-ivory/75"
+                              ? lightTone
+                                ? "h-2.5 w-2.5 bg-terracotta shadow-[0_0_14px_rgba(199,119,82,0.34)]"
+                                : "h-2.5 w-2.5 bg-sandstone shadow-[0_0_14px_rgba(212,185,154,0.42)]"
+                              : lightTone
+                                ? "h-1.5 w-1.5 bg-soil/35 group-hover:h-2 group-hover:w-2 group-hover:bg-soil/70"
+                                : "h-1.5 w-1.5 bg-ivory/35 group-hover:h-2 group-hover:w-2 group-hover:bg-ivory/75"
                           }`}
                         />
                       </a>
@@ -314,7 +394,10 @@ export function SectionJumpNav({
         <nav
           aria-label="Jump to section"
           data-section-jump-nav-desktop-mode="bar"
-          className="fixed inset-x-0 bottom-0 z-30 hidden border-t border-ivory/10 bg-soil/95 backdrop-blur-xs sm:block"
+          data-section-jump-tone={tone}
+          className={`fixed inset-x-0 bottom-0 z-30 hidden border-t backdrop-blur-xs sm:block ${
+            lightTone ? "border-soil/10 bg-ivory/95" : "border-ivory/10 bg-soil/95"
+          }`}
         >
           <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 overflow-x-auto px-6 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {navigationItems.map((item) => {
@@ -326,7 +409,11 @@ export function SectionJumpNav({
                   aria-current={active ? "location" : undefined}
                   onClick={() => choose(item.href)}
                   className={`whitespace-nowrap text-[0.65rem] uppercase tracking-[0.2em] transition-colors duration-300 ${
-                    active ? "text-terracotta" : "text-ivory/55 hover:text-ivory"
+                    active
+                      ? "text-terracotta"
+                      : lightTone
+                        ? "text-soil/60 hover:text-soil"
+                        : "text-ivory/55 hover:text-ivory"
                   }`}
                 >
                   {item.label}

@@ -32,72 +32,13 @@
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/* Native scroll camera · reference behavior translated from HeyParker         */
-/* -------------------------------------------------------------------------- */
-
-.home-v4-scroll-camera {
-  display: none;
-}
-
+/* Chapter seams borrow the visitor's own scroll energy. They occupy no layout
+   height and never introduce a second page-wide camera or pointer effect. */
 @media (min-width: 901px) and (min-height: 640px) and (pointer: fine) {
-  .home-v4[data-camera-ready="true"] {
-    --home-camera-x: 50%;
-    --home-camera-y: 42%;
-    --home-camera-velocity: 0;
-    --home-camera-direction: 1;
-  }
-
-  .home-v4-scroll-camera {
-    position: fixed;
-    z-index: 5;
-    inset: 0;
-    display: block;
-    overflow: hidden;
-    pointer-events: none;
-    mix-blend-mode: soft-light;
-  }
-
-  .home-v4-scroll-camera__light {
-    position: absolute;
-    left: var(--home-camera-x);
-    top: var(--home-camera-y);
-    width: 58vw;
-    height: 58vw;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle,
-      rgba(255, 239, 203, 0.2) 0%,
-      rgba(214, 184, 138, 0.08) 30%,
-      transparent 70%
-    );
-    opacity: var(--home-camera-light-opacity, 0.22);
-    transform: translate3d(-50%, -50%, 0)
-      scale(var(--home-camera-light-scale, 0.94));
-    filter: blur(var(--home-camera-light-blur, 12px));
-    will-change: transform, opacity;
-  }
-
-  .home-v4-scroll-camera__edge {
-    position: absolute;
-    inset: -8%;
-    background:
-      radial-gradient(ellipse at 50% 45%, transparent 56%, rgba(8, 12, 10, 0.2) 100%),
-      linear-gradient(
-        var(--home-camera-angle, 95deg),
-        transparent 42%,
-        rgba(244, 224, 188, 0.08) 50%,
-        transparent 58%
-      );
-    opacity: var(--home-camera-edge-opacity, 0.2);
-    transform: translate3d(var(--home-camera-shift, 0vw), 0, 0);
-    will-change: transform, opacity;
-  }
-
   /* Handoffs occupy zero layout height. Their motifs now paint across the
      seam as scroll-controlled wipes, so transitions feel authored without
      reintroducing the empty spacer bands removed by the fitting pass. */
-  .home-v4 .home-v4-handoff {
+  .home-v4[data-seam-ready="true"] .home-v4-handoff {
     position: relative !important;
     z-index: 6 !important;
     display: block !important;
@@ -109,14 +50,23 @@
     background: transparent !important;
   }
 
-  .home-v4 .home-v4-handoff::before,
-  .home-v4 .home-v4-handoff::after,
-  .home-v4 .home-v4-handoff > * {
+  .home-v4[data-seam-ready="true"]
+    .home-v4-handoff[data-home-handoff-preserve="true"] {
+    display: none !important;
+  }
+
+  .home-v4[data-seam-ready="true"] .home-v4-handoff::before,
+  .home-v4[data-seam-ready="true"] .home-v4-handoff::after,
+  .home-v4[data-seam-ready="true"] .home-v4-handoff > * {
     display: block !important;
     pointer-events: none;
   }
 
-  .home-v4 .home-v4-handoff__veil {
+  .home-v4[data-seam-ready="true"] .home-v4-handoff::after {
+    opacity: var(--home-handoff-presence, 0) !important;
+  }
+
+  .home-v4[data-seam-ready="true"] .home-v4-handoff__veil {
     position: absolute;
     inset: auto -8vw;
     top: -9svh;
@@ -132,7 +82,7 @@
     will-change: transform, opacity;
   }
 
-  .home-v4 .home-v4-handoff svg {
+  .home-v4[data-seam-ready="true"] .home-v4-handoff svg {
     position: absolute;
     inset: auto 0;
     top: -3rem;
@@ -141,12 +91,12 @@
     opacity: var(--home-handoff-presence, 0) !important;
   }
 
-  .home-v4 .home-v4-handoff svg path {
+  .home-v4[data-seam-ready="true"] .home-v4-handoff svg path {
     opacity: var(--home-handoff-presence, 0) !important;
     stroke-dashoffset: var(--home-handoff-dash, 0px) !important;
   }
 
-  .home-v4 .home-v4-handoff__stars {
+  .home-v4[data-seam-ready="true"] .home-v4-handoff__stars {
     position: absolute;
     inset: auto 0;
     top: -4rem;
@@ -155,25 +105,21 @@
     opacity: var(--home-handoff-presence, 0) !important;
   }
 
-  .home-v4 .home-v4-handoff__stars i {
+  .home-v4[data-seam-ready="true"] .home-v4-handoff__stars i {
     display: block !important;
     opacity: var(--home-handoff-star-opacity, 0.18) !important;
     transform: scale(var(--home-handoff-star-scale, 0.72)) !important;
   }
 
-  .home-v4 .home-v4-handoff--aperture::before,
-  .home-v4 .home-v4-handoff--light::after,
-  .home-v4 .home-v4-handoff--paper::before {
+  .home-v4[data-seam-ready="true"] .home-v4-handoff--aperture::before,
+  .home-v4[data-seam-ready="true"] .home-v4-handoff--light::after,
+  .home-v4[data-seam-ready="true"] .home-v4-handoff--paper::before {
     animation: none !important;
     opacity: var(--home-handoff-presence, 0) !important;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-v4-scroll-camera {
-    display: none !important;
-  }
-
   .home-v4 .home-v4-handoff {
     display: none !important;
   }

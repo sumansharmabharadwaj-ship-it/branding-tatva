@@ -3,7 +3,14 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { useState, type CSSProperties, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 
 const DISCIPLINES = [
   {
@@ -60,11 +67,86 @@ const DISCIPLINES = [
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const STUDIO_SCROLL_QUERY = "(min-width: 1101px) and (min-height: 700px) and (pointer: fine)";
+
+type ManualMode = "none" | "pointer" | "focus";
 
 export function StudioCinematicChapter() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
+  const sectionRef = useRef<HTMLElement>(null);
+  const manualModeRef = useRef<ManualMode>("none");
+  const syncStageRef = useRef<() => void>(() => {});
   const [activeIndex, setActiveIndex] = useState(0);
   const active = DISCIPLINES[activeIndex];
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const runway = section?.closest<HTMLElement>('[data-home-v4-chapter="studio"]');
+    if (!section || !runway) return;
+    const runwayElement = runway;
+
+    const eligible = window.matchMedia(STUDIO_SCROLL_QUERY);
+    let frame = 0;
+
+    function syncStage() {
+      if (reducedMotion || !eligible.matches) return;
+      if (manualModeRef.current === "focus") return;
+      if (manualModeRef.current === "pointer") manualModeRef.current = "none";
+
+      const bounds = runwayElement.getBoundingClientRect();
+      const travel = Math.max(1, bounds.height - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, -bounds.top / travel));
+      const next = Math.min(DISCIPLINES.length - 1, Math.floor(progress * DISCIPLINES.length));
+      setActiveIndex((current) => current === next ? current : next);
+    }
+
+    function scheduleScrollStage() {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(syncStage);
+    }
+
+    syncStageRef.current = syncStage;
+    scheduleScrollStage();
+    window.addEventListener("scroll", scheduleScrollStage, { passive: true });
+    window.addEventListener("resize", scheduleScrollStage);
+    eligible.addEventListener("change", scheduleScrollStage);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", scheduleScrollStage);
+      window.removeEventListener("resize", scheduleScrollStage);
+      eligible.removeEventListener("change", scheduleScrollStage);
+      syncStageRef.current = () => {};
+    };
+  }, [reducedMotion]);
+
+  function choose(index: number) {
+    manualModeRef.current = "none";
+    setActiveIndex(index);
+  }
+
+  function previewFromPointer(event: ReactPointerEvent<HTMLButtonElement>, index: number) {
+    if (event.pointerType !== "mouse") return;
+    manualModeRef.current = "pointer";
+    setActiveIndex(index);
+  }
+
+  function releasePointerPreview(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (manualModeRef.current !== "pointer" || document.activeElement === event.currentTarget) return;
+    manualModeRef.current = "none";
+    syncStageRef.current();
+  }
+
+  function previewFromFocus(index: number) {
+    manualModeRef.current = "focus";
+    setActiveIndex(index);
+  }
+
+  function releaseFocusPreview() {
+    if (manualModeRef.current !== "focus") return;
+    manualModeRef.current = "none";
+    syncStageRef.current();
+  }
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -74,14 +156,18 @@ export function StudioCinematicChapter() {
     else if (event.key === "End") next = DISCIPLINES.length - 1;
     else return;
     event.preventDefault();
+    manualModeRef.current = "focus";
     setActiveIndex(next);
     document.getElementById(`studio-film-tab-${next}`)?.focus();
   }
 
   return (
     <section
+      ref={sectionRef}
       className="studio-film"
       aria-labelledby="studio-film-title"
+      data-scroll-story="studio-disciplines"
+      data-studio-stage={active.number}
       style={{ "--studio-film-accent": active.accent } as CSSProperties}
     >
       <div className="studio-film__media" aria-hidden="true">
@@ -180,9 +266,11 @@ export function StudioCinematicChapter() {
                   tabIndex={selected ? 0 : -1}
                   className={selected ? "is-active" : undefined}
                   style={{ "--studio-chapter-accent": discipline.accent } as CSSProperties}
-                  onClick={() => setActiveIndex(index)}
-                  onPointerEnter={() => setActiveIndex(index)}
-                  onFocus={() => setActiveIndex(index)}
+                  onClick={() => choose(index)}
+                  onPointerEnter={(event) => previewFromPointer(event, index)}
+                  onPointerLeave={releasePointerPreview}
+                  onFocus={() => previewFromFocus(index)}
+                  onBlur={releaseFocusPreview}
                   onKeyDown={(event) => onKeyDown(event, index)}
                 >
                   <span>{discipline.number}</span><strong>{discipline.name}</strong><small>{discipline.verb}</small>

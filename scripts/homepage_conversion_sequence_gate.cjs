@@ -6,6 +6,8 @@ const source = fs.readFileSync(
   path.join(root, "src/sections/HomeV4/HomeV4Experience.tsx"),
   "utf8",
 );
+const pageSource = fs.readFileSync(path.join(root, "src/app/page.tsx"), "utf8");
+const jumpNavSource = fs.readFileSync(path.join(root, "src/components/SectionJumpNav.tsx"), "utf8");
 const mountedChapterSources = [
   "src/sections/HomeV4/HomeV4Scenes.tsx",
   "src/sections/Home/HomeBrandHealthCheck.tsx",
@@ -40,6 +42,9 @@ for (const marker of sequence) {
   previous = index;
 }
 
+assert(source.includes("<HomeV4SeamDirector />"), "Homepage chapter seams have lost their shared scroll owner.");
+assert(source.includes('<SceneHandoff motif="mist" preservePrevious />'), "Opening boundary no longer remains visually untouched.");
+
 for (const removed of [
   "V4RecognitionScene",
   "BrandFoundationScene",
@@ -50,6 +55,50 @@ for (const removed of [
   "HomeV4HeaderDirector",
 ]) {
   assert(!source.includes(removed), `${removed} restored a removed chapter or competing runtime.`);
+}
+
+for (const marker of [
+  "<SectionJumpNav",
+  "hideOnFirst",
+  "hideOnLast",
+  'desktopMode="rail"',
+  'tone="light"',
+]) {
+  assert(pageSource.includes(marker), `Homepage wayfinding is missing ${marker}.`);
+}
+
+for (const marker of [
+  "activeItem?.label",
+  "dismissFromKeyboard",
+  "dismissFromOutside",
+  "data-section-jump-tone",
+]) {
+  assert(jumpNavSource.includes(marker), `Homepage wayfinding interaction is missing ${marker}.`);
+}
+
+for (const retiredStylesheet of [
+  "home-v4-health.css",
+  "home-v4-decision-depth.css",
+  "home-v4-invitation-depth.css",
+]) {
+  assert(
+    !pageSource.includes(retiredStylesheet),
+    `Retired homepage stylesheet restored: ${retiredStylesheet}.`,
+  );
+}
+
+for (const href of [
+  "#opening",
+  "#brand-diagnostic",
+  "#cost",
+  "#evidence",
+  "#paths",
+  "#process",
+  "#studio",
+  "#decision",
+  "#invitation",
+]) {
+  assert(pageSource.includes(`href: "${href}"`), `Homepage wayfinding is missing ${href}.`);
 }
 
 for (const [index, marker] of [

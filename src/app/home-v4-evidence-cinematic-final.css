@@ -51,6 +51,7 @@ html body .home-v4 #evidence .evidence-cinematic::after {
   inset: 0;
   pointer-events: none;
   background:
+    radial-gradient(circle at 76% 44%, color-mix(in srgb, var(--evidence-accent) 18%, transparent), transparent 31%),
     linear-gradient(90deg, rgba(243, 237, 224, 0.97) 0%, rgba(243, 237, 224, 0.91) 31%, rgba(243, 237, 224, 0.48) 66%, rgba(238, 229, 210, 0.58) 100%),
     linear-gradient(180deg, rgba(249, 244, 234, 0.82) 0%, rgba(249, 244, 234, 0.08) 37%, rgba(32, 40, 31, 0.2) 100%);
 }
@@ -102,10 +103,11 @@ html body .home-v4 #evidence .evidence-cinematic__header h2 {
 }
 
 .home-v4 .evidence-cinematic__header h2 em {
-  color: #b67b28;
+  color: var(--evidence-accent);
   background: none;
   font-weight: 400;
   animation: none;
+  transition: color 620ms ease;
   -webkit-text-fill-color: currentColor;
 }
 
@@ -211,7 +213,7 @@ html body .home-v4 #evidence .evidence-cinematic__stage {
 .home-v4 .evidence-cinematic__actions button:focus-visible,
 .home-v4 .evidence-cinematic__actions a:hover,
 .home-v4 .evidence-cinematic__actions a:focus-visible {
-  border-color: #b67b28;
+  border-color: var(--evidence-accent);
   background: rgba(249, 245, 236, 0.82);
   outline: none;
   transform: translateY(-2px);
@@ -368,7 +370,7 @@ html body .home-v4 #evidence .evidence-cinematic__index button {
 html body .home-v4 #evidence .evidence-cinematic__index button:hover,
 html body .home-v4 #evidence .evidence-cinematic__index button:focus-visible,
 html body .home-v4 #evidence .evidence-cinematic__index button.is-active {
-  border-color: rgba(32, 50, 40, 0.62);
+  border-color: color-mix(in srgb, var(--project-accent) 68%, #203228);
   background: transparent;
   box-shadow: none;
   color: #203228;
@@ -378,7 +380,7 @@ html body .home-v4 #evidence .evidence-cinematic__index button.is-active {
 
 .home-v4 .evidence-cinematic__index-number {
   padding-top: 0.07rem;
-  color: #b67b28;
+  color: var(--project-accent);
   font-size: 0.57rem;
   font-weight: 650;
   letter-spacing: 0.12em;
@@ -420,8 +422,8 @@ html body .home-v4 #evidence .evidence-cinematic__index-copy em {
   left: 0;
   width: 0;
   height: 2px;
-  background: #b67b28;
-  box-shadow: 0 0 14px rgba(182, 123, 40, 0.28);
+  background: var(--project-accent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--project-accent) 34%, transparent);
   transition: width 620ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 

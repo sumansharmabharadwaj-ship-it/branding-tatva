@@ -12,12 +12,12 @@ export const faqs = [
   {
     question: "Can you help a brand new business?",
     answer:
-      "Yes. That's Brand Beginning work: discovery, positioning, and audience definition before anything else gets built.",
+      "Yes. The work starts with brand foundation: audience, category, positioning, promise, and proof, so identity and launch decisions inherit one clear direction.",
   },
   {
     question: "Can you help an existing brand that already has an identity?",
     answer:
-      "Yes. That's usually Brand Clarity or Brand Elevation work, depending on whether the issue is confusion or just needing sharper expression.",
+      "Yes. I first locate whether the friction sits in positioning, expression, or consistency. From there, the work can repair the current system, reposition it, or build the ongoing discipline it lacks.",
   },
   {
     question: "Do you manage ongoing content and campaigns?",
@@ -51,6 +51,6 @@ export const faqs = [
   {
     question: "Can you actually implement, or just strategise?",
     answer:
-      "Both. Strategy only counts once it gets built. I carry the work through to the actual website, content, and campaigns, always beyond the plan alone.",
+      "Both. Strategy can continue into messaging, visual direction, website structure, content, and campaigns. The exact implementation depends on the agreed scope.",
   },
 ] as const;

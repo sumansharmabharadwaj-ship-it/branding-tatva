@@ -41,7 +41,7 @@ html body .home-v4 #evidence .evidence-cinematic__summary > strong {
 }
 
 .home-v4 .evidence-cinematic__proof-line small {
-  color: #7b6b43;
+  color: var(--evidence-accent);
   font-size: .57rem;
   font-weight: 650;
   letter-spacing: .17em;
@@ -67,7 +67,7 @@ html body .home-v4 #evidence .evidence-cinematic__summary > strong {
 
 .home-v4 .evidence-cinematic__source > span {
   margin-right: .55rem;
-  color: rgba(32, 50, 40, .78);
+  color: color-mix(in srgb, var(--evidence-accent) 72%, #203228);
   font-weight: 650;
   letter-spacing: .06em;
 }

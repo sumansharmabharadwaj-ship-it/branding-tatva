@@ -116,8 +116,7 @@ const RESULTS: Record<
     detail: string;
     signal: string;
     situation?: ServicesSituationId;
-    action: string;
-    href: string;
+    nextAction: string;
   }
 > = {
   recognition: {
@@ -126,8 +125,7 @@ const RESULTS: Record<
       "The business has useful substance, while the market still has to work too hard to name what makes it different.",
     signal: "Position before expression",
     situation: "idea",
-    action: "Explore the foundation path",
-    href: "/services#desire",
+    nextAction: "See proof, then the foundation path",
   },
   coherence: {
     title: "Coherence needs one living system.",
@@ -135,8 +133,7 @@ const RESULTS: Record<
       "Good elements already exist. They need a shared logic that the website, team and marketing can use without reinterpretation.",
     signal: "One source for every expression",
     situation: "reposition",
-    action: "Explore the repositioning path",
-    href: "/services#situation",
+    nextAction: "See proof, then the repositioning path",
   },
   demand: {
     title: "Demand needs proof with direction.",
@@ -144,16 +141,14 @@ const RESULTS: Record<
       "Visibility is present, while the evidence, message and repeated signals have yet to compound into preference.",
     signal: "Evidence that reinforces one promise",
     situation: "ongoing",
-    action: "Explore the ongoing path",
-    href: "/services#offerings",
+    nextAction: "See proof, then the ongoing path",
   },
   mixed: {
     title: "Your answers point to a connected brand problem.",
     detail:
       "The friction is moving across positioning, expression and proof. The next decision needs to connect those parts before any one of them is pushed harder.",
     signal: "One joined-up diagnosis",
-    action: "See the connected system",
-    href: "/services#offerings",
+    nextAction: "See proof, then the connected system",
   },
 };
 
@@ -162,7 +157,6 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 export function HomeBrandHealthCheck() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
-  const landscapeVideoRef = useRef<HTMLVideoElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const focusRequestedRef = useRef(false);
@@ -172,17 +166,7 @@ export function HomeBrandHealthCheck() {
   const done = resultVisible;
   const active = QUESTIONS[Math.min(step, QUESTIONS.length - 1)];
   const result = RESULTS[resolvedResult ?? "mixed"];
-
-  useEffect(() => {
-    const video = landscapeVideoRef.current;
-    if (!video) return;
-    if (reducedMotion) {
-      video.pause();
-      video.currentTime = 0;
-      return;
-    }
-    void video.play().catch(() => {});
-  }, [reducedMotion]);
+  const visualPreview = preview ?? selected;
 
   useEffect(() => {
     if (!focusRequestedRef.current) return;
@@ -205,7 +189,7 @@ export function HomeBrandHealthCheck() {
   }, [done, step]);
 
   function moveScene(event: PointerEvent<HTMLElement>) {
-    if (reducedMotion || !sectionRef.current) return;
+    if (reducedMotion || event.pointerType !== "mouse" || !sectionRef.current) return;
     const bounds = event.currentTarget.getBoundingClientRect();
     const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
     const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
@@ -219,6 +203,11 @@ export function HomeBrandHealthCheck() {
       track("health_check_started", { source: "home" });
     }
     dispatch({ type: "choose", step, answer: choice.diagnosis, selection: index });
+  }
+
+  function previewChoice(event: PointerEvent<HTMLButtonElement>, index: number | null) {
+    if (event.pointerType !== "mouse") return;
+    dispatch({ type: "preview", selection: index });
   }
 
   function moveChoiceFocus(
@@ -272,12 +261,6 @@ export function HomeBrandHealthCheck() {
     dispatch({ type: "review" });
   }
 
-  function reset() {
-    clearServicesSituation();
-    focusRequestedRef.current = true;
-    dispatch({ type: "reset" });
-  }
-
   function onChoiceKeyDown(
     event: KeyboardEvent<HTMLButtonElement>,
     index: number,
@@ -303,7 +286,8 @@ export function HomeBrandHealthCheck() {
       data-home-chapter="diagnostic"
       data-home-section="diagnostic"
       data-cursor-world="light"
-      data-preview={preview === null ? "idle" : String(preview)}
+      data-preview={visualPreview === null ? "idle" : String(visualPreview)}
+      data-diagnostic-state={done ? "complete" : selected === null ? "choosing" : "ready"}
       aria-labelledby="brand-orbit-title"
       onPointerMove={moveScene}
     >
@@ -316,13 +300,12 @@ export function HomeBrandHealthCheck() {
           sizes="100vw"
         />
         <video
-          ref={landscapeVideoRef}
           className="brand-orbit__water-motion"
           muted
           loop
           playsInline
           aria-hidden="true"
-          preload={reducedMotion ? "none" : "auto"}
+          preload="none"
           data-home-playback-rate="1"
         >
           <source src="/videos/generated/bt-home-decision-waterlight.mp4" type="video/mp4" />
@@ -403,10 +386,13 @@ export function HomeBrandHealthCheck() {
               <div className="brand-orbit__result-action">
                 <span>The strategic centre</span>
                 <strong>{result.signal}</strong>
-                <Link href={result.href}>{result.action} <i aria-hidden="true">→</i></Link>
-                <Link href="/contact#call">Discuss this diagnosis <i aria-hidden="true">→</i></Link>
-                <button type="button" onClick={reviewAnswers}>Review or change answers</button>
-                <button type="button" onClick={reset}>Take the quiz again</button>
+                <Link href="#evidence" className="brand-orbit__result-primary">
+                  {result.nextAction} <i aria-hidden="true">→</i>
+                </Link>
+                <Link href="/contact#call" className="brand-orbit__result-secondary">
+                  Discuss this diagnosis <i aria-hidden="true">→</i>
+                </Link>
+                <button type="button" onClick={reviewAnswers}>Change an answer</button>
               </div>
             </motion.div>
           ) : (
@@ -423,54 +409,62 @@ export function HomeBrandHealthCheck() {
                 <p>{active.eyebrow}</p>
                 <h3 ref={headingRef} tabIndex={-1}>{active.prompt}</h3>
                 {step > 0 ? <button type="button" onClick={back}>Back one question</button> : null}
-                <button
-                  type="button"
-                  className="brand-orbit__continue"
-                  onClick={continueDiagnostic}
-                  disabled={selected === null}
-                >
-                  {step === QUESTIONS.length - 1 ? "See my result" : "Continue"}
-                  <span aria-hidden="true">→</span>
-                </button>
               </div>
 
-              <fieldset className="brand-orbit__choices" role="radiogroup" aria-describedby={`brand-orbit-cue-${step}`}>
-                <legend className="sr-only">{active.prompt}</legend>
-                <p className="brand-orbit__choice-cue" id={`brand-orbit-cue-${step}`}>
-                  <span>Choose one</span>
-                  <b>{selected === null ? "Select the statement closest to your business." : active.choices[selected].label}</b>
-                </p>
-                {active.choices.map((choice, index) => (
-                  <motion.button
-                    key={choice.label}
+              <div className="brand-orbit__decision">
+                <div className="brand-orbit__choice-cue" id={`brand-orbit-cue-${step}`}>
+                  <p>
+                    <span>{selected === null ? "Choose one" : "This points toward"}</span>
+                    <b>
+                      {selected === null
+                        ? "The statement closest to where the friction lives."
+                        : active.choices[selected].centre}
+                    </b>
+                  </p>
+                  <button
                     type="button"
-                    className={selected === index ? "is-selected" : undefined}
-                    onClick={() => choose(choice, index)}
-                    onPointerEnter={() => dispatch({ type: "preview", selection: index })}
-                    onPointerLeave={() => dispatch({ type: "preview", selection: null })}
-                    onFocus={() => dispatch({ type: "preview", selection: index })}
-                    onBlur={() => dispatch({ type: "preview", selection: null })}
-                    role="radio"
-                    aria-checked={selected === index}
-                    aria-label={`${String(index + 1).padStart(2, "0")} ${choice.label}`}
-                    tabIndex={selected === index || (selected === null && index === 0) ? 0 : -1}
-                    onKeyDown={(event) => onChoiceKeyDown(event, index)}
-                    animate={{
-                      opacity: 1,
-                      x: preview === index ? 14 : 0,
-                      scale: selected === index ? 0.985 : 1,
-                    }}
-                    transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}
+                    className="brand-orbit__continue"
+                    onClick={continueDiagnostic}
+                    disabled={selected === null}
                   >
-                    <span className="brand-orbit__choice-number">0{index + 1}</span>
-                    <strong>{choice.label}</strong>
-                    <span className="brand-orbit__choice-short" aria-hidden="true">{choice.shortLabel}</span>
-                    <span className="brand-orbit__choice-action" aria-hidden="true">
-                      {selected === index ? "Selected" : "Choose this"}
-                    </span>
-                  </motion.button>
-                ))}
-              </fieldset>
+                    {step === QUESTIONS.length - 1 ? "See my result" : "Continue"}
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+
+                <fieldset className="brand-orbit__choices" role="radiogroup" aria-describedby={`brand-orbit-cue-${step}`}>
+                  <legend className="sr-only">{active.prompt}</legend>
+                  {active.choices.map((choice, index) => (
+                    <motion.button
+                      key={choice.label}
+                      type="button"
+                      className={selected === index ? "is-selected" : undefined}
+                      onClick={() => choose(choice, index)}
+                      onPointerEnter={(event) => previewChoice(event, index)}
+                      onPointerLeave={(event) => previewChoice(event, null)}
+                      onFocus={() => dispatch({ type: "preview", selection: index })}
+                      onBlur={() => dispatch({ type: "preview", selection: null })}
+                      role="radio"
+                      aria-checked={selected === index}
+                      aria-label={`${String(index + 1).padStart(2, "0")} ${choice.label}`}
+                      tabIndex={selected === index || (selected === null && index === 0) ? 0 : -1}
+                      onKeyDown={(event) => onChoiceKeyDown(event, index)}
+                      animate={{
+                        opacity: 1,
+                        scale: selected === index ? 0.985 : 1,
+                      }}
+                      transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}
+                    >
+                      <span className="brand-orbit__choice-number">0{index + 1}</span>
+                      <strong>{choice.label}</strong>
+                      <span className="brand-orbit__choice-short" aria-hidden="true">{choice.shortLabel}</span>
+                      <span className="brand-orbit__choice-action" aria-hidden="true">
+                        {selected === index ? "Selected" : "Choose this"}
+                      </span>
+                    </motion.button>
+                  ))}
+                </fieldset>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

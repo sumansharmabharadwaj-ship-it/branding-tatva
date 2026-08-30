@@ -41,7 +41,7 @@ const videos = [...html.matchAll(/<video\b[^>]*>/gi)].map((match) => match[0]);
 assert(videos.every((tag) => /\baria-hidden="true"/i.test(tag)), "A decorative homepage video is exposed to assistive technology.");
 assert(!/<video\b[^>]*\bautoplay\b/i.test(html), "A homepage film restored unreliable native autoplay.");
 assert(!html.includes("assets.calendly.com"), "Calendly loads before booking intent.");
-for (const href of ["/contact#call", "/contact#write", "#evidence"]) {
+for (const href of ["/contact#call", "#evidence", "#paths", "#process", "#invitation"]) {
   assert(html.includes(`href="${href}"`), `Rendered conversion handoff is missing ${href}.`);
 }
 assert(!/\b(?:click here|learn more)\b/i.test(html), "Homepage contains a generic link label.");

@@ -4,10 +4,7 @@ import "./home-cinematic-finish.css";
 import "./home-final-polish.css";
 import "./home-v4-continuity.css";
 import "./home-v4-living-type.css";
-import "./home-v4-health.css";
-import "./home-v4-decision-depth.css";
 import "./home-v4-evidence-depth.css";
-import "./home-v4-invitation-depth.css";
 import "./home-v4-prelude-bridge.css";
 import "./home-v4-screen-fit.css";
 import "./home-v4-light-refinement.css";
@@ -39,6 +36,7 @@ import "./home-v4-zoom-reflow-final.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
+import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { site } from "@/data/site";
 import { faqs } from "@/data/faqs";
 
@@ -64,6 +62,18 @@ const faqStructuredData = {
   })),
 };
 
+const HOME_JUMP_ITEMS = [
+  { href: "#opening", label: "Opening" },
+  { href: "#brand-diagnostic", label: "Brand diagnosis" },
+  { href: "#cost", label: "Cost of drift" },
+  { href: "#evidence", label: "Client proof" },
+  { href: "#paths", label: "Choose a path" },
+  { href: "#process", label: "Working method" },
+  { href: "#studio", label: "Psychology + literature" },
+  { href: "#decision", label: "Practical answers" },
+  { href: "#invitation", label: "Begin" },
+] as const;
+
 export default function Home() {
   return (
     <>
@@ -71,6 +81,13 @@ export default function Home() {
       <main id="main-content">
         <HomeV4Experience />
       </main>
+      <SectionJumpNav
+        items={[...HOME_JUMP_ITEMS]}
+        hideOnFirst
+        hideOnLast
+        desktopMode="rail"
+        tone="light"
+      />
       <Footer />
       <script
         type="application/ld+json"

@@ -4,6 +4,14 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 import type { ProcessStage } from "@/data/process";
+import {
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  isServicesSituation,
+  readCompletedHomeDiagnosis,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 
 type StageMeta = {
   becomes: string;
@@ -66,6 +74,20 @@ const ELEMENT_COLORS: Record<string, string> = {
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const FINE_POINTER_QUERY = "(min-width: 901px) and (hover: hover) and (pointer: fine)";
+const FIRST_BEAT_MS = 4400;
+const AMBIENT_BEAT_MS = 6200;
+const MANUAL_HOLD_MS = 14000;
+const SITUATION_TO_STAGE: Record<ServicesSituationId, number> = {
+  idea: 0,
+  reposition: 1,
+  ongoing: 4,
+};
+const SITUATION_LABEL: Record<ServicesSituationId, string> = {
+  idea: "New brand",
+  reposition: "Repositioning",
+  ongoing: "Brand growth",
+};
 
 function fallbackMeta(): StageMeta {
   return {
@@ -82,6 +104,89 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -10% 0px" });
   const [active, setActive] = useState(0);
+  const [finePointer, setFinePointer] = useState(false);
+  const [pageVisible, setPageVisible] = useState(true);
+  const [selectorEngaged, setSelectorEngaged] = useState(false);
+  const [manualHoldUntil, setManualHoldUntil] = useState(0);
+  const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
+  const firstBeatRef = useRef(true);
+
+  useEffect(() => {
+    function applySituation(value: string | null) {
+      if (!isServicesSituation(value)) return;
+      setCarriedSituation(value);
+      setActive(SITUATION_TO_STAGE[value]);
+      firstBeatRef.current = true;
+    }
+
+    try {
+      const completedDiagnosis = readCompletedHomeDiagnosis();
+      if (completedDiagnosis) applySituation(completedDiagnosis);
+      else applySituation(window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY));
+    } catch {}
+
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      applySituation(detail?.situation ?? null);
+    }
+
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    return () =>
+      window.removeEventListener(
+        SERVICES_SITUATION_EVENT,
+        onSituation as EventListener,
+      );
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia(FINE_POINTER_QUERY);
+    const syncPointer = () => setFinePointer(media.matches);
+    syncPointer();
+    media.addEventListener("change", syncPointer);
+    return () => media.removeEventListener("change", syncPointer);
+  }, []);
+
+  useEffect(() => {
+    const syncVisibility = () => setPageVisible(!document.hidden);
+    syncVisibility();
+    document.addEventListener("visibilitychange", syncVisibility);
+    return () => document.removeEventListener("visibilitychange", syncVisibility);
+  }, []);
+
+  useEffect(() => {
+    if (!inView) firstBeatRef.current = true;
+  }, [inView]);
+
+  useEffect(() => {
+    if (
+      prefersReducedMotion ||
+      !finePointer ||
+      !inView ||
+      !pageVisible ||
+      selectorEngaged ||
+      stages.length < 2
+    ) {
+      return;
+    }
+
+    const remainingHold = Math.max(0, manualHoldUntil - Date.now());
+    if (remainingHold > 0) {
+      const holdTimer = window.setTimeout(() => setManualHoldUntil(0), remainingHold + 40);
+      return () => window.clearTimeout(holdTimer);
+    }
+    if (manualHoldUntil !== 0) {
+      setManualHoldUntil(0);
+      return;
+    }
+
+    const delay = firstBeatRef.current ? FIRST_BEAT_MS : AMBIENT_BEAT_MS;
+    const beatTimer = window.setTimeout(() => {
+      firstBeatRef.current = false;
+      setActive((current) => (current + 1) % stages.length);
+    }, delay);
+
+    return () => window.clearTimeout(beatTimer);
+  }, [finePointer, inView, manualHoldUntil, pageVisible, prefersReducedMotion, selectorEngaged, stages.length, active]);
 
   useEffect(() => {
     const videoAtEffectStart = videoRef.current;
@@ -113,9 +218,24 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const stage = stages[active] ?? stages[0];
   const meta = STAGE_META[active] ?? fallbackMeta();
   const accent = ELEMENT_COLORS[stage.element] ?? "#9b7457";
-  const sectionStyle = { "--decision-accent": accent } as CSSProperties;
+  const sectionStyle = {
+    "--decision-accent": accent,
+    "--decision-beat": `${firstBeatRef.current ? FIRST_BEAT_MS : AMBIENT_BEAT_MS}ms`,
+    "--decision-progress": (active + 0.5) / stages.length,
+  } as CSSProperties;
+  const ambientMotion =
+    !prefersReducedMotion &&
+    finePointer &&
+    inView &&
+    pageVisible &&
+    !selectorEngaged &&
+    manualHoldUntil === 0;
 
-  function chooseStage(index: number) {
+  function chooseStage(index: number, manual = false) {
+    if (manual) {
+      firstBeatRef.current = true;
+      setManualHoldUntil(Date.now() + MANUAL_HOLD_MS);
+    }
     setActive(((index % stages.length) + stages.length) % stages.length);
   }
 
@@ -128,8 +248,13 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     else return;
 
     event.preventDefault();
-    chooseStage(next);
+    chooseStage(next, true);
     document.getElementById(`decision-flow-tab-${next}`)?.focus();
+  }
+
+  function holdForReading() {
+    firstBeatRef.current = true;
+    setManualHoldUntil(Date.now() + MANUAL_HOLD_MS);
   }
 
   function moveLight(event: PointerEvent<HTMLElement>) {
@@ -152,10 +277,13 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       ref={sectionRef}
       data-project-journey="true"
       data-scroll-story="process"
+      data-method-motion={ambientMotion ? "ambient" : "held"}
+      data-method-stage={active + 1}
       className={`decision-flow ${inView ? "is-awake" : "is-resting"}`}
       style={sectionStyle}
       aria-labelledby="decision-flow-title"
       onPointerMove={moveLight}
+      onPointerDown={holdForReading}
       onPointerLeave={resetLight}
     >
       <div className="decision-flow__media" aria-hidden="true" data-media-id="BT-HOME-METHOD-STREAM-LIGHT">
@@ -177,7 +305,10 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       <div className="decision-flow__shell">
         <header className="decision-flow__header">
           <div>
-            <p>06 · The method</p>
+            <p>
+              06 · The method
+              {carriedSituation ? ` · ${SITUATION_LABEL[carriedSituation]}` : ""}
+            </p>
             <h2 id="decision-flow-title">
               Six decisions. <em>One recognisable system.</em>
             </h2>
@@ -194,7 +325,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               id="decision-flow-panel"
               role="tabpanel"
               aria-labelledby={`decision-flow-tab-${active}`}
-              aria-live="polite"
+              aria-live={selectorEngaged ? "polite" : "off"}
               data-home-reading-plane
               initial={false}
               animate={{ opacity: 1, y: 0 }}
@@ -224,10 +355,24 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
 
         <div className="decision-flow__selector">
           <div className="decision-flow__selector-label">
-            <span>Explore the six decisions</span>
+            <span>The six decisions</span>
             <span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>
           </div>
-          <div className="decision-flow__rail" role="tablist" aria-label="Choose a decision in the Branding Tatva method">
+          <div
+            className="decision-flow__rail"
+            role="tablist"
+            aria-label="Choose a decision in the Branding Tatva method"
+            onPointerEnter={(event) => {
+              if (event.pointerType === "mouse") setSelectorEngaged(true);
+            }}
+            onPointerLeave={(event) => {
+              if (event.pointerType === "mouse") setSelectorEngaged(false);
+            }}
+            onFocusCapture={() => setSelectorEngaged(true)}
+            onBlurCapture={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) setSelectorEngaged(false);
+            }}
+          >
             {stages.map((item, index) => (
               <button
                 key={item.stage}
@@ -238,9 +383,13 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                 aria-controls="decision-flow-panel"
                 tabIndex={active === index ? 0 : -1}
                 className={active === index ? "is-active" : undefined}
-                onClick={() => chooseStage(index)}
-                onPointerEnter={() => chooseStage(index)}
-                onFocus={() => chooseStage(index)}
+                onClick={() => chooseStage(index, true)}
+                onPointerEnter={(event) => {
+                  if (event.pointerType !== "mouse") return;
+                  firstBeatRef.current = true;
+                  chooseStage(index);
+                }}
+                onFocus={() => chooseStage(index, true)}
                 onKeyDown={(event) => onStageKeyDown(event, index)}
               >
                 <span>{String(index + 1).padStart(2, "0")}</span>

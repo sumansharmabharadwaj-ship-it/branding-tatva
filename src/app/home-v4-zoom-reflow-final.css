@@ -263,10 +263,6 @@
     scroll-snap-type: none;
   }
 
-  .home-v4 .questions-editorial__footerline {
-    display: flex;
-  }
-
   html body .home-v4 #process .decision-flow__shell {
     padding-top: max(4.8rem, calc(4rem + env(safe-area-inset-top, 0px)));
     padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
