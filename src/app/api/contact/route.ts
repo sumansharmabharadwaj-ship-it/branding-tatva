@@ -7,6 +7,7 @@ import {
   readJsonBody,
   singleLine,
 } from "@/lib/api-protection";
+import { deliverContactEnquiry } from "@/lib/contact-delivery";
 
 export const runtime = "nodejs";
 
@@ -85,46 +86,23 @@ export async function POST(request: NextRequest) {
       .filter(Boolean)
       .join("\n");
 
-    const response = await fetchWithTimeout("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "Idempotency-Key": `contact-enquiry-${submissionId}`,
-      },
-      body: JSON.stringify({
-        from: fromEmail,
-        to: [toEmail],
-        reply_to: data.email.trim(),
+    const delivery = await deliverContactEnquiry(
+      {
+        apiKey,
+        fromEmail,
+        toEmail,
+        replyTo: data.email.trim(),
         subject: `Branding Tatva enquiry · ${singleLine(data.name)}`,
         text,
-      }),
-    });
+        submissionId,
+      },
+      fetchWithTimeout,
+    );
 
-    const deliveryBody = await response
-      .text()
-      .catch(() => "Unknown delivery error");
-    let deliveryId: string | null = null;
-
-    if (response.ok) {
-      try {
-        const deliveryData: unknown = JSON.parse(deliveryBody);
-        if (
-          deliveryData &&
-          typeof deliveryData === "object" &&
-          "id" in deliveryData &&
-          typeof deliveryData.id === "string" &&
-          deliveryData.id.trim()
-        ) {
-          deliveryId = deliveryData.id.trim();
-        }
-      } catch {}
-    }
-
-    if (!response.ok || !deliveryId) {
+    if (!delivery.ok) {
       console.error(
         `[contact:${requestId}] Resend rejected or returned no delivery ID:`,
-        deliveryBody.slice(0, 600),
+        delivery.providerBody.slice(0, 600),
       );
       return jsonNoStore(
         {
@@ -135,7 +113,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.info(`[contact:${requestId}] Resend accepted delivery ${deliveryId}.`);
+    console.info(
+      `[contact:${requestId}] Resend accepted delivery ${delivery.deliveryId}.`,
+    );
 
     return jsonNoStore({ ok: true, requestId });
   } catch (error) {
