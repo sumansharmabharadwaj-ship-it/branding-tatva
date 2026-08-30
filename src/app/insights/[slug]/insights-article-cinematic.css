@@ -6,6 +6,43 @@
   min-height: 100svh;
 }
 
+.insight-article-hero__framework-link {
+  display: grid;
+  gap: 0.28rem;
+  margin-top: 1.15rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(244 239 230 / 15%);
+  color: #f4efe6;
+}
+
+.insight-article-hero__framework-link span {
+  color: var(--article-accent);
+  font-size: 0.58rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.insight-article-hero__framework-link strong {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.insight-article-hero__framework-link:hover strong,
+.insight-article-hero__framework-link:focus-visible strong {
+  text-decoration: underline;
+  text-decoration-color: var(--article-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22rem;
+}
+
+.insight-article-hero__framework-link:focus-visible {
+  outline: 2px solid var(--article-accent);
+  outline-offset: 0.35rem;
+}
+
 .insight-reading-rail {
   position: sticky;
   z-index: 30;
@@ -90,14 +127,10 @@
 .insight-reading-index {
   position: sticky;
   top: 7rem;
-  max-height: calc(100svh - 8.5rem);
-  overflow-y: auto;
   padding: 1.1rem;
   border: 1px solid rgb(39 34 30 / 10%);
   border-radius: 1.25rem;
   background: rgb(255 252 246 / 70%);
-  scrollbar-width: thin;
-  scrollbar-color: var(--reading-accent) transparent;
 }
 
 .insight-reading-index__head {
@@ -135,13 +168,118 @@
   transition: background 320ms ease;
 }
 
-.insight-reading-index ol {
+.insight-reading-index__current {
   display: grid;
-  gap: 0.18rem;
-  margin-top: 0.8rem;
+  gap: 0.45rem;
+  min-height: 7.5rem;
+  align-content: end;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgb(39 34 30 / 9%);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--reading-accent) 14%, transparent), transparent 42%),
+    rgb(255 252 246 / 78%);
 }
 
-.insight-reading-index a {
+.insight-reading-index__current span,
+.insight-reading-index__moves span {
+  color: var(--reading-accent);
+  font-size: 0.55rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.insight-reading-index__current strong {
+  color: #27221e;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.28rem;
+  font-weight: 400;
+  line-height: 1.12;
+}
+
+.insight-reading-index__moves {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.6rem;
+}
+
+.insight-reading-index__moves a {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.72rem 0.8rem;
+  border-radius: 0.8rem;
+  background: rgb(39 34 30 / 3%);
+  transition: background-color 220ms ease;
+}
+
+.insight-reading-index__moves strong {
+  display: -webkit-box;
+  overflow: hidden;
+  color: rgb(39 34 30 / 68%);
+  font-size: 0.68rem;
+  font-weight: 500;
+  line-height: 1.38;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.insight-reading-index__moves a:hover,
+.insight-reading-index__moves a:focus-visible {
+  background: color-mix(in srgb, var(--reading-accent) 9%, transparent);
+}
+
+.insight-reading-index__moves a:focus-visible,
+.insight-reading-index__all a:focus-visible,
+.insight-reading-index__all summary:focus-visible {
+  outline: 2px solid var(--reading-accent);
+  outline-offset: 1px;
+}
+
+.insight-reading-index__all {
+  margin-top: 0.8rem;
+  border-top: 1px solid rgb(39 34 30 / 9%);
+  padding-top: 0.75rem;
+}
+
+.insight-reading-index__all summary {
+  display: flex;
+  cursor: pointer;
+  list-style: none;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 2.4rem;
+  padding-inline: 0.35rem;
+  border-radius: 0.6rem;
+  color: rgb(39 34 30 / 62%);
+  font-size: 0.65rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.insight-reading-index__all summary::-webkit-details-marker {
+  display: none;
+}
+
+.insight-reading-index__all summary small {
+  color: var(--reading-accent);
+  font-size: 0.56rem;
+}
+
+.insight-reading-index__all ol {
+  display: grid;
+  max-height: min(46svh, 28rem);
+  gap: 0.18rem;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+  padding-right: 0.2rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--reading-accent) transparent;
+}
+
+.insight-reading-index__all a {
   display: grid;
   grid-template-columns: 1.45rem 1fr;
   gap: 0.45rem;
@@ -154,27 +292,22 @@
   transition: background-color 220ms ease, color 220ms ease;
 }
 
-.insight-reading-index a > span {
+.insight-reading-index__all a > span {
   color: rgb(39 34 30 / 34%);
   font-size: 0.53rem;
   letter-spacing: 0.08em;
   transition: color 220ms ease;
 }
 
-.insight-reading-index a:hover,
-.insight-reading-index a:focus-visible,
-.insight-reading-index a[aria-current="location"] {
+.insight-reading-index__all a:hover,
+.insight-reading-index__all a:focus-visible,
+.insight-reading-index__all a[aria-current="location"] {
   background: color-mix(in srgb, var(--reading-accent) 9%, transparent);
   color: #27221e;
 }
 
-.insight-reading-index a[aria-current="location"] > span {
+.insight-reading-index__all a[aria-current="location"] > span {
   color: var(--reading-accent);
-}
-
-.insight-reading-index a:focus-visible {
-  outline: 2px solid var(--reading-accent);
-  outline-offset: 1px;
 }
 
 .insight-article-section__kicker {
@@ -327,13 +460,14 @@
 }
 
 .insight-framework__active h3 {
-  max-width: 12ch;
+  max-width: 100%;
   margin-top: 0.75rem;
   font-family: var(--font-display), Georgia, serif;
-  font-size: clamp(2.5rem, 6vw, 4.6rem);
+  font-size: clamp(2.25rem, 3.6vw, 3.2rem);
   font-weight: 400;
   letter-spacing: -0.045em;
-  line-height: 0.92;
+  line-height: 0.96;
+  overflow-wrap: anywhere;
 }
 
 .insight-framework__active blockquote {
@@ -611,11 +745,13 @@
 
   .insight-framework__steps button,
   .insight-framework__steps i,
+  .insight-article-hero__framework-link strong,
   .insight-reading-rail__items a,
   .insight-reading-rail__progress,
   .insight-reading-index__progress,
-  .insight-reading-index a,
-  .insight-reading-index a > span {
+  .insight-reading-index__moves a,
+  .insight-reading-index__all a,
+  .insight-reading-index__all a > span {
     transition-duration: 0.01ms;
   }
 }

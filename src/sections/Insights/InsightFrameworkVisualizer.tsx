@@ -57,7 +57,9 @@ export function InsightFrameworkVisualizer({
         }
       }}
     >
-      <p className="insight-framework__eyebrow">Working framework</p>
+      <p className="insight-framework__eyebrow">
+        Working framework · {framework.steps.length} decisions
+      </p>
       <h2 id="framework-heading">{framework.title}</h2>
       <p className="insight-framework__introduction">{framework.introduction}</p>
 

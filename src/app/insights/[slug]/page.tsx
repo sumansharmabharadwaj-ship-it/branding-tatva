@@ -288,7 +288,7 @@ export default async function InsightArticlePage({ params }: Props) {
                 </Reveal>
 
                 <Reveal delay={0.1}>
-                  <div className="rounded-[1.5rem] border border-ivory/15 bg-soil/30 p-6 text-ivory shadow-elevation-md backdrop-blur-2xl">
+                  <div className="insight-article-hero__answer rounded-[1.5rem] border border-ivory/15 bg-soil/30 p-6 text-ivory shadow-elevation-md backdrop-blur-2xl">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sandstone">
                       The direct answer
                     </p>
@@ -301,6 +301,15 @@ export default async function InsightArticlePage({ params }: Props) {
                       <span>Updated {formatDate(post.updatedAt)}</span>
                       <span>{post.readingTime}</span>
                     </div>
+                    <a
+                      href="#working-framework"
+                      className="insight-article-hero__framework-link"
+                    >
+                      <span>Use the framework</span>
+                      <strong>
+                        {post.framework.steps.length} decisions · {post.framework.title}
+                      </strong>
+                    </a>
                   </div>
                 </Reveal>
               </div>

@@ -160,8 +160,12 @@ export function InsightReadingIndex({
   const progress = items.length
     ? `${((activeIndex + 1) / items.length) * 100}%`
     : "0%";
+  const activeItem = items[activeIndex];
+  const previousItem = activeIndex > 0 ? items[activeIndex - 1] : null;
+  const nextItem =
+    activeIndex < items.length - 1 ? items[activeIndex + 1] : null;
 
-  if (items.length === 0) return null;
+  if (items.length === 0 || !activeItem) return null;
 
   return (
     <nav
@@ -175,27 +179,57 @@ export function InsightReadingIndex({
       }
     >
       <div className="insight-reading-index__head">
-        <p>In this article</p>
+        <p>Reading thread</p>
         <span aria-hidden="true">
           {String(activeIndex + 1).padStart(2, "0")} /{" "}
           {String(items.length).padStart(2, "0")}
         </span>
       </div>
       <span className="insight-reading-index__progress" aria-hidden="true" />
-      <ol>
-        {items.map((item, index) => (
-          <li key={item.id}>
-            <a
-              href={`#${item.id}`}
-              aria-current={activeId === item.id ? "location" : undefined}
-              onClick={() => setActiveId(item.id)}
-            >
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              {item.label}
-            </a>
-          </li>
-        ))}
-      </ol>
+      <div className="insight-reading-index__current" aria-live="polite">
+        <span>Current chapter</span>
+        <strong>{activeItem.label}</strong>
+      </div>
+      <div className="insight-reading-index__moves">
+        {previousItem && (
+          <a
+            href={`#${previousItem.id}`}
+            onClick={() => setActiveId(previousItem.id)}
+          >
+            <span>Previous</span>
+            <strong>{previousItem.label}</strong>
+          </a>
+        )}
+        {nextItem && (
+          <a
+            href={`#${nextItem.id}`}
+            onClick={() => setActiveId(nextItem.id)}
+          >
+            <span>Next</span>
+            <strong>{nextItem.label}</strong>
+          </a>
+        )}
+      </div>
+      <details className="insight-reading-index__all">
+        <summary>
+          <span>All chapters</span>
+          <small>{String(items.length).padStart(2, "0")}</small>
+        </summary>
+        <ol>
+          {items.map((item, index) => (
+            <li key={item.id}>
+              <a
+                href={`#${item.id}`}
+                aria-current={activeId === item.id ? "location" : undefined}
+                onClick={() => setActiveId(item.id)}
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </details>
     </nav>
   );
 }
