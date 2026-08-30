@@ -236,7 +236,6 @@ export function ContactForm() {
     reset,
     getValues,
     setFocus,
-    setValue,
     watch,
     formState: { errors, submitCount },
   } = useForm<ContactFormValues>({
@@ -273,10 +272,6 @@ export function ContactForm() {
     );
     setDraftStatus("restored");
   }, [reset]);
-
-  useEffect(() => {
-    setValue("servicePackage", servicePackage ?? undefined, { shouldDirty: false });
-  }, [servicePackage, setValue]);
 
   useEffect(() => {
     const subscription = watch(() => {
@@ -324,7 +319,10 @@ export function ContactForm() {
     setStatus("submitting");
     setServerError(null);
     setServerRequestId(null);
-    const fingerprint = JSON.stringify(values);
+    const submissionValues: ContactFormValues = servicePackage
+      ? { ...values, servicePackage }
+      : values;
+    const fingerprint = JSON.stringify(submissionValues);
     if (submissionRef.current?.fingerprint !== fingerprint) {
       submissionRef.current = { fingerprint, id: crypto.randomUUID() };
     }
@@ -338,7 +336,7 @@ export function ContactForm() {
           "Content-Type": "application/json",
           "X-Contact-Submission": submissionId,
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(submissionValues),
         signal: controller.signal,
       });
       const data: unknown = await res.json().catch(() => null);
@@ -656,7 +654,9 @@ export function ContactForm() {
       {servicePackage ? (
         <input
           type="hidden"
-          {...register("servicePackage", { value: servicePackage })}
+          name="servicePackage"
+          value={servicePackage}
+          readOnly
         />
       ) : null}
 
