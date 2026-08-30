@@ -138,7 +138,7 @@ export default function ContactPage() {
                     event="contact_route_selected"
                     eventProps={{ source: "contact_hero", route: "call" }}
                     data-cursor-label="Call Suman"
-                    className="link-underline inline-flex min-h-8 items-center text-ivory transition-colors hover:text-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
+                    className="link-underline inline-flex min-h-11 items-center text-ivory transition-colors hover:text-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
                     aria-label={`Call Suman at ${site.phone.display}`}
                   >
                     <Phone aria-hidden="true" className="mr-1.5 h-3.5 w-3.5" strokeWidth={1.5} />
@@ -151,7 +151,7 @@ export default function ContactPage() {
                     event="contact_route_selected"
                     eventProps={{ source: "contact_hero", route: "whatsapp" }}
                     data-cursor-label="WhatsApp Suman"
-                    className="link-underline inline-flex min-h-8 items-center text-ivory transition-colors hover:text-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
+                    className="link-underline inline-flex min-h-11 items-center text-ivory transition-colors hover:text-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
                   >
                     <MessageCircle aria-hidden="true" className="mr-1.5 h-3.5 w-3.5" strokeWidth={1.5} />
                     WhatsApp
