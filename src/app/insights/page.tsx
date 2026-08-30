@@ -68,11 +68,41 @@ function elementColor(elementSlug: string) {
 }
 
 const INSIGHT_SCENES: InsightScene[] = [
-  { id: "insights-foundation" },
-  { id: "knowledge-atlas" },
-  { id: "insights-library-scene" },
-  { id: "insights-audit-seam" },
-  { id: "insights-field-notes" },
+  {
+    id: "insights-foundation",
+    label: "Decision mirror",
+    shortLabel: "Mirror",
+    theme: "light",
+    accent: "#D77A51",
+  },
+  {
+    id: "knowledge-atlas",
+    label: "Knowledge atlas",
+    shortLabel: "Atlas",
+    theme: "dark",
+    accent: "#7FA4BA",
+  },
+  {
+    id: "insights-library-scene",
+    label: "Insight library",
+    shortLabel: "Library",
+    theme: "light",
+    accent: "#A8B68F",
+  },
+  {
+    id: "insights-audit-seam",
+    label: "Evidence ledger",
+    shortLabel: "Evidence",
+    theme: "light",
+    accent: "#D77A51",
+  },
+  {
+    id: "insights-field-notes",
+    label: "Field notes",
+    shortLabel: "Field notes",
+    theme: "dark",
+    accent: "#D7A84A",
+  },
 ];
 
 const READER_QUEST_BLUEPRINTS = [

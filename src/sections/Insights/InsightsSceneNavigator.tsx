@@ -1,11 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent,
+} from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 export type InsightScene = {
   id: string;
+  label: string;
+  shortLabel: string;
+  theme: "light" | "dark";
+  accent: string;
 };
 
 type InsightsSceneNavigatorProps = {
@@ -499,5 +510,70 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     });
   }, [activeIndex, scenes]);
 
-  return null;
+  function handleSceneJourney(
+    event: MouseEvent<HTMLAnchorElement>,
+    scene: InsightScene,
+  ) {
+    const target = document.getElementById(scene.id);
+    if (!target) return;
+
+    event.preventDefault();
+    const nextHash = `#${scene.id}`;
+    if (window.location.hash !== nextHash) {
+      window.history.pushState(null, "", nextHash);
+    }
+
+    if (lenis && !prefersReducedMotion) {
+      lenis.scrollTo(target, {
+        duration: 0.86,
+        easing: (value) => 1 - Math.pow(1 - value, 3),
+      });
+      return;
+    }
+
+    target.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
+  }
+
+  const activeScene = scenes[activeIndex];
+
+  return (
+    <nav
+      className="insights-scene-compass"
+      aria-label="Insights chapters"
+      data-visible={activeScene ? "true" : "false"}
+      data-theme={activeScene?.theme ?? "light"}
+      style={
+        {
+          "--compass-accent": activeScene?.accent ?? "#D77A51",
+        } as CSSProperties
+      }
+    >
+      <ol>
+        {scenes.map((scene, index) => {
+          const isActive = index === activeIndex;
+
+          return (
+            <li key={scene.id}>
+              <Link
+                href={`#${scene.id}`}
+                aria-label={`Chapter ${index + 1}: ${scene.label}`}
+                aria-current={isActive ? "location" : undefined}
+                onClick={(event) => handleSceneJourney(event, scene)}
+              >
+                <span className="insights-scene-compass__index">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="insights-scene-compass__label">
+                  {scene.shortLabel}
+                </span>
+              </Link>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
+  );
 }

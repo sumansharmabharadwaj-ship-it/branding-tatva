@@ -5,6 +5,130 @@
   background: #f4efe6;
 }
 
+.insights-scene-compass {
+  --compass-accent: #d77a51;
+
+  position: fixed;
+  z-index: 35;
+  top: 50%;
+  right: clamp(0.55rem, 1.15vw, 1rem);
+  width: max-content;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(calc(100% + 1.5rem), -50%, 0);
+  transition:
+    opacity 260ms ease,
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 520ms;
+  visibility: hidden;
+}
+
+.insights-scene-compass[data-visible="true"] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate3d(0, -50%, 0);
+  transition-delay: 0s;
+  visibility: visible;
+}
+
+.insights-scene-compass ol {
+  display: grid;
+  justify-items: end;
+  gap: 0.34rem;
+}
+
+.insights-scene-compass a {
+  display: grid;
+  width: 2.7rem;
+  min-height: 2.7rem;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgb(39 34 30 / 13%);
+  border-radius: 999px;
+  background: rgb(244 239 230 / 84%);
+  box-shadow: 0 0.6rem 1.8rem rgb(39 34 30 / 8%);
+  color: rgb(39 34 30 / 50%);
+  grid-template-columns: 2.7rem minmax(0, 0fr);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition:
+    width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 240ms ease,
+    background-color 240ms ease,
+    color 240ms ease,
+    box-shadow 320ms ease;
+}
+
+.insights-scene-compass[data-theme="dark"] a {
+  border-color: rgb(244 239 230 / 14%);
+  background: rgb(17 25 26 / 74%);
+  box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 16%);
+  color: rgb(244 239 230 / 54%);
+}
+
+.insights-scene-compass a:is(:hover, :focus-visible),
+.insights-scene-compass a[aria-current="location"] {
+  width: 7.2rem;
+  border-color: color-mix(in srgb, var(--compass-accent) 62%, transparent);
+  background: rgb(244 239 230 / 94%);
+  box-shadow: 0 0.75rem 2.2rem
+    color-mix(in srgb, var(--compass-accent) 18%, transparent);
+  color: #27221e;
+  grid-template-columns: 2.7rem minmax(0, 1fr);
+}
+
+.insights-scene-compass[data-theme="dark"]
+  a:is(:hover, :focus-visible),
+.insights-scene-compass[data-theme="dark"]
+  a[aria-current="location"] {
+  background: rgb(17 25 26 / 92%);
+  color: #f4efe6;
+}
+
+.insights-scene-compass a:focus-visible {
+  outline: 2px solid var(--compass-accent);
+  outline-offset: 3px;
+}
+
+.insights-scene-compass__index {
+  display: grid;
+  width: 2.7rem;
+  height: 2.7rem;
+  color: currentcolor;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  place-items: center;
+}
+
+.insights-scene-compass a[aria-current="location"]
+  .insights-scene-compass__index {
+  color: var(--compass-accent);
+}
+
+.insights-scene-compass__label {
+  min-width: 0;
+  padding-right: 0.85rem;
+  opacity: 0;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  transform: translate3d(0.35rem, 0, 0);
+  transition:
+    opacity 180ms ease,
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  white-space: nowrap;
+}
+
+.insights-scene-compass a:is(:hover, :focus-visible)
+  .insights-scene-compass__label,
+.insights-scene-compass a[aria-current="location"]
+  .insights-scene-compass__label {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
 .insights-scene {
   --scene-accent-color: #d77a51;
   --scene-transition-color: #11191a;
@@ -2424,6 +2548,10 @@
 }
 
 @media (max-width: 899px) {
+  .insights-scene-compass {
+    display: none;
+  }
+
   .insights-hero__shell {
     align-items: center;
     padding-bottom: 4rem;
@@ -3054,6 +3182,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .insights-scene-compass,
+  .insights-scene-compass a,
+  .insights-scene-compass__label {
+    transition-duration: 0.01ms;
+  }
+
   .insights-atlas__orbital span {
     animation: none;
   }
