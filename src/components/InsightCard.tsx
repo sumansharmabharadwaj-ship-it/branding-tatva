@@ -3,6 +3,7 @@ import { ElementGlyph } from "@/components/ElementGlyph";
 import { TiltCard } from "@/components/TiltCard";
 import { TrackedLink } from "@/components/TrackedLink";
 import type { InsightElement, InsightPost } from "@/data/insights";
+import type { CSSProperties } from "react";
 
 export type InsightCardPost = Pick<
   InsightPost,
@@ -18,7 +19,9 @@ export type InsightCardPost = Pick<
   | "keyTakeaways"
   | "primaryKeyword"
   | "secondaryKeywords"
->;
+> & {
+  framework?: InsightPost["framework"];
+};
 
 type InsightCardProps = {
   post: InsightCardPost;
@@ -75,11 +78,18 @@ export function InsightCard({
     <TiltCard glowColor={color} className="h-full">
       <TrackedLink
         href={`/insights/${post.slug}`}
-        className={`group grid h-full overflow-hidden rounded-[1.5rem] border border-soil/10 bg-background-elevated shadow-elevation-sm ${
+        className={`insight-card group grid h-full overflow-hidden rounded-[1.5rem] border border-soil/10 bg-background-elevated shadow-elevation-sm ${
+          showReadingOutcome ? "insight-card--decision-brief" : ""
+        } ${
           featured
             ? "lg:grid-cols-[1.15fr_0.85fr]"
             : "grid-rows-[auto_1fr]"
         }`}
+        style={
+          {
+            "--insight-card-accent": color,
+          } as CSSProperties
+        }
         event="insights_article_selected"
         eventProps={{
           ...tracking.context,
@@ -89,7 +99,7 @@ export function InsightCard({
         }}
       >
         <div
-          className={`relative overflow-hidden bg-soil ${
+          className={`insight-card__image relative overflow-hidden bg-soil ${
             featured ? "min-h-[18rem] lg:min-h-[25rem]" : "aspect-[16/9]"
           }`}
         >
@@ -106,8 +116,13 @@ export function InsightCard({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-soil/75 via-soil/5 to-transparent" />
           {readingCue ? (
-            <span className="absolute left-4 top-4 w-fit max-w-[85%] rounded-full border border-ivory/20 bg-soil/70 px-3 py-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.13em] text-ivory shadow-elevation-sm backdrop-blur-md sm:left-5 sm:top-5">
+            <span className="absolute left-4 top-4 w-fit max-w-[58%] rounded-full border border-ivory/20 bg-soil/70 px-3 py-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.13em] text-ivory shadow-elevation-sm backdrop-blur-md sm:left-5 sm:top-5">
               {readingCue}
+            </span>
+          ) : null}
+          {showReadingOutcome && post.framework ? (
+            <span className="insight-card__depth absolute right-4 top-4 rounded-full border border-ivory/20 bg-soil/70 px-3 py-1.5 text-[0.58rem] font-semibold uppercase tracking-[0.12em] text-ivory shadow-elevation-sm backdrop-blur-md sm:right-5 sm:top-5">
+              {post.framework.steps.length} decision steps
             </span>
           ) : null}
           <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-4 p-5 text-ivory sm:p-6">
@@ -124,12 +139,19 @@ export function InsightCard({
           </div>
         </div>
 
-        <div className={`flex flex-col ${featured ? "p-6 sm:p-7 lg:p-8" : "p-4"}`}>
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-foreground-secondary">
+        <div
+          className={`insight-card__body flex flex-col ${
+            featured ? "p-6 sm:p-7 lg:p-8" : "p-4"
+          }`}
+        >
+          <time
+            dateTime={post.updatedAt}
+            className="insight-card__date text-xs font-medium uppercase tracking-[0.16em] text-foreground-secondary"
+          >
             {formatDate(post.updatedAt)}
-          </p>
+          </time>
           <h3
-            className={`font-display font-normal leading-[1.08] text-soil ${
+            className={`insight-card__title font-display font-normal leading-[1.08] text-soil ${
               featured
                 ? "mt-3 text-[clamp(1.8rem,3vw,2.75rem)]"
                 : "mt-3 line-clamp-2 text-[1.35rem]"
@@ -138,7 +160,7 @@ export function InsightCard({
             {post.title}
           </h3>
           <p
-            className={`mt-3 text-foreground-secondary ${
+            className={`insight-card__decision-copy mt-3 text-foreground-secondary ${
               featured
                 ? "max-w-xl text-sm leading-6"
                 : "line-clamp-2 text-sm leading-6"
@@ -146,8 +168,8 @@ export function InsightCard({
           >
             {showReadingOutcome && post.keyTakeaways[0] ? (
               <>
-                <span className="mr-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-clay">
-                  Reader outcome
+                <span className="insight-card__decision-label mr-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-clay">
+                  Helps you decide
                 </span>
                 {post.keyTakeaways[0]}
               </>
@@ -172,12 +194,24 @@ export function InsightCard({
               ))}
             </div>
           )}
-          <span
-            className="mt-auto inline-flex items-center gap-2 pt-4 text-xs font-semibold uppercase tracking-[0.16em] transition-transform duration-300 group-hover:translate-x-1"
-            style={{ color }}
-          >
-            Read the essay <span aria-hidden="true">→</span>
-          </span>
+          {showReadingOutcome && post.framework ? (
+            <span className="insight-card__footer mt-auto flex items-end justify-between gap-4 pt-4">
+              <span className="insight-card__framework min-w-0">
+                <span>Framework</span>
+                <strong>{post.framework.title}</strong>
+              </span>
+              <span className="insight-card__open" style={{ color }}>
+                Open <span aria-hidden="true">→</span>
+              </span>
+            </span>
+          ) : (
+            <span
+              className="mt-auto inline-flex items-center gap-2 pt-4 text-xs font-semibold uppercase tracking-[0.16em] transition-transform duration-300 group-hover:translate-x-1"
+              style={{ color }}
+            >
+              Read the essay <span aria-hidden="true">→</span>
+            </span>
+          )}
         </div>
       </TrackedLink>
     </TiltCard>

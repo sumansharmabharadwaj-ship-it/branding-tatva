@@ -204,6 +204,7 @@ export default function InsightsPage() {
     heroImage: post.heroImage,
     heroImageAlt: post.heroImageAlt,
     keyTakeaways: post.keyTakeaways,
+    framework: post.framework,
     primaryKeyword: post.primaryKeyword,
     secondaryKeywords: post.secondaryKeywords,
   }));
