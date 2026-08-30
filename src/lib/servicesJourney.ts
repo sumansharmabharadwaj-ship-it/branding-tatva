@@ -24,10 +24,22 @@ export const SITUATION_TO_PACKAGE: Record<ServicesSituationId, PackageSlug> = {
   ongoing: "brand-partnership",
 };
 
+export const PACKAGE_TO_SITUATION: Record<PackageSlug, ServicesSituationId> = {
+  "brand-beginning": "idea",
+  "brand-clarity": "reposition",
+  "brand-partnership": "ongoing",
+};
+
+export type ServicesSituationOrigin =
+  | "home_diagnostic"
+  | "home_paths"
+  | "services"
+  | "services_package";
+
 export type ServicesSituationDetail = {
   situation: ServicesSituationId;
   packageSlug: PackageSlug;
-  origin?: "home_diagnostic" | "home_paths" | "services";
+  origin?: ServicesSituationOrigin;
   completedAt?: number;
 };
 
@@ -78,6 +90,25 @@ export function publishCompletedHomeDiagnosis(situation: ServicesSituationId) {
   };
   try {
     window.localStorage.setItem(SERVICES_SITUATION_STORAGE_KEY, JSON.stringify(detail));
+  } catch {
+    trackRuntimeIssue("personalization_storage_write_failed");
+  }
+  window.dispatchEvent(
+    new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, { detail }),
+  );
+}
+
+export function publishServicesSituation(
+  situation: ServicesSituationId,
+  origin: Exclude<ServicesSituationOrigin, "home_diagnostic"> = "services",
+) {
+  const detail: ServicesSituationDetail = {
+    situation,
+    packageSlug: SITUATION_TO_PACKAGE[situation],
+    origin,
+  };
+  try {
+    window.localStorage.setItem(SERVICES_SITUATION_STORAGE_KEY, situation);
   } catch {
     trackRuntimeIssue("personalization_storage_write_failed");
   }

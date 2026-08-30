@@ -17,8 +17,10 @@ import { formatPrice, type PackageSlug } from "@/data/pricing";
 import {
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
+  PACKAGE_TO_SITUATION,
   SITUATION_TO_PACKAGE,
   isServicesSituation,
+  publishServicesSituation,
   readCompletedHomeDiagnosis,
   type ServicesSituationDetail,
   type ServicesSituationId,
@@ -78,11 +80,13 @@ export function PackageSelector() {
 
       if (!linkedChoice) return false;
 
+      const linkedSituation = PACKAGE_TO_SITUATION[linkedChoice.slug];
       manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
       setActive(linkedChoice.slug);
       setSelectionSource("manual");
       setCompare(false);
-      setCarriedSituation(null);
+      setCarriedSituation(linkedSituation);
+      publishServicesSituation(linkedSituation, "services_package");
       return true;
     }
 
@@ -99,6 +103,7 @@ export function PackageSelector() {
     function onSituation(event: Event) {
       const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
       if (!detail || !isServicesSituation(detail.situation)) return;
+      if (detail.origin === "services_package") return;
       applySituation(detail.situation);
     }
 
@@ -141,12 +146,14 @@ export function PackageSelector() {
   }, [compare, prefersReducedMotion, selectionSource]);
 
   function choosePackage(slug: PackageSlug) {
+    const situation = PACKAGE_TO_SITUATION[slug];
     manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
     setActive(slug);
     setSelectionSource("manual");
-    setCarriedSituation(null);
+    setCarriedSituation(situation);
     setCompare(false);
-    track("package_viewed", { package: slug });
+    publishServicesSituation(situation, "services_package");
+    track("package_viewed", { package: slug, situation, source: "manual" });
   }
 
   return (
@@ -167,8 +174,17 @@ export function PackageSelector() {
               transition={transition}
               className="mx-auto mt-3 max-w-xl rounded-full border border-sandstone/35 bg-[rgba(15,21,28,0.48)] px-4 py-1.5 text-xs text-ivory/80 backdrop-blur-md"
             >
-              From your earlier choice: <span className="font-medium text-sandstone">{activePackage.name}</span>. You can
-              still compare below.
+              {selectionSource === "manual" ? (
+                <>
+                  Your selected route: <span className="font-medium text-sandstone">{activePackage.name}</span>. Proof,
+                  perception and the Strategy Room now follow it.
+                </>
+              ) : (
+                <>
+                  From your earlier choice: <span className="font-medium text-sandstone">{activePackage.name}</span>. You
+                  can still compare below.
+                </>
+              )}
             </motion.p>
           )}
           {selectionSource === "scroll" && activePackage && !compare && (
