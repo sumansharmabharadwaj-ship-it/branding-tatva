@@ -28,6 +28,20 @@ function useActiveReadingChapter(
   const [activeId, setActiveId] = useState(items[0]?.id ?? "");
 
   useEffect(() => {
+    const knownIds = new Set(items.map((item) => item.id));
+
+    function syncHash() {
+      const hash = decodeURIComponent(window.location.hash.slice(1));
+      if (knownIds.has(hash)) setActiveId(hash);
+    }
+
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, [items]);
+
+  useEffect(() => {
     const query = window.matchMedia(mediaQuery);
     let observer: IntersectionObserver | null = null;
 

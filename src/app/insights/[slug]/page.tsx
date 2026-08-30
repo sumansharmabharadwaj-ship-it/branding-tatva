@@ -326,7 +326,7 @@ export default async function InsightArticlePage({ params }: Props) {
           <section className="bg-ivory py-16 sm:py-20">
             <Container>
               <div className="grid gap-12 xl:grid-cols-[13rem_minmax(0,48rem)_14rem] xl:items-start xl:justify-between">
-                <aside className="hidden xl:block">
+                <aside className="insight-reading-index-shell hidden xl:block">
                   <InsightReadingIndex items={readingRailItems} accent={color} />
                 </aside>
 
