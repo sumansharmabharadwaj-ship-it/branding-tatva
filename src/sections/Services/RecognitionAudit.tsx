@@ -45,11 +45,21 @@ export function RecognitionAudit() {
   const [email, setEmail] = useState("");
   const [business, setBusiness] = useState("");
   const [consent, setConsent] = useState(false);
+  const [markedChecks, setMarkedChecks] = useState<Set<number>>(() => new Set());
   const [mobileChapter, setMobileChapter] = useState<MobileChapter>("checks");
   const chapterRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const mobileNavRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const unlocked = status === "done";
+
+  function toggleCheck(index: number) {
+    setMarkedChecks((current) => {
+      const next = new Set(current);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }
 
   function openMobileChapter(nextChapter: MobileChapter) {
     setMobileChapter(nextChapter);
@@ -128,6 +138,17 @@ export function RecognitionAudit() {
   }
 
   const shown = unlocked ? CHECKS : CHECKS.slice(0, VISIBLE);
+  const markedCount = shown.filter((_, index) => markedChecks.has(index)).length;
+  const scoreGuidance =
+    markedCount === 0
+      ? "Mark each statement that already holds."
+      : markedCount < Math.ceil(shown.length * 0.5)
+        ? "Recognition is leaking through more than one signal."
+        : markedCount < shown.length
+          ? "A usable pattern is forming; the remaining gaps are specific."
+          : unlocked
+            ? "All ten signals are working together."
+            : "The open signals are coherent. Five deeper checks remain.";
 
   return (
     <div data-recognition-audit-desk="true" data-mobile-chapter={mobileChapter}>
@@ -188,30 +209,58 @@ export function RecognitionAudit() {
               Ten checks that tell you where recognition stands today.
             </h2>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-ivory/85">
-              Count how many hold true for your brand right now. The first five are open to anyone; the full ten arrive
-              with your name on them.
+              Mark what holds true for your brand right now. The first five are open to anyone; the full ten arrive with
+              your name on them.
             </p>
-            <ol data-public-audit-checks="true" className="mt-7 sm:mt-8">
+            <ol data-public-audit-checks="true" className="mt-7 sm:mt-8" aria-label="Brand recognition checks">
               {shown.map((check, i) => (
                 <motion.li
                   key={check}
                   initial={prefersReducedMotion || i < VISIBLE ? undefined : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : (i - VISIBLE) * 0.08 }}
-                  className="flex items-start gap-4 border-t border-ivory/12 py-3.5 sm:py-4"
+                  className="border-t border-ivory/12"
                 >
-                  <span className="pt-0.5 font-display text-lg leading-none text-sandstone" aria-hidden="true">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <p className="text-[0.95rem] leading-relaxed text-ivory/90 sm:text-base">{check}</p>
+                  <button
+                    type="button"
+                    aria-pressed={markedChecks.has(i)}
+                    onClick={() => toggleCheck(i)}
+                    className={`group flex min-h-11 w-full items-start gap-3 rounded-xl px-2 py-3 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:gap-4 sm:py-3.5 ${
+                      markedChecks.has(i) ? "bg-sandstone/[0.09]" : "hover:bg-ivory/[0.035]"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border font-display text-sm leading-none transition-colors duration-300 ${
+                        markedChecks.has(i)
+                          ? "border-sandstone bg-sandstone text-soil"
+                          : "border-sandstone/45 text-sandstone group-hover:border-sandstone"
+                      }`}
+                      aria-hidden="true"
+                    >
+                      {markedChecks.has(i) ? "✓" : String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="pt-1 text-[0.95rem] leading-relaxed text-ivory/90 sm:text-base">{check}</span>
+                  </button>
                 </motion.li>
               ))}
             </ol>
             {!unlocked && (
               <div className="border-t border-ivory/12 pt-4">
-                <p className="text-sm text-ivory/60">
-                  Checks six through ten open after an explicit email consent. The first five remain useful without it.
-                </p>
+                <div className="flex items-end justify-between gap-5" role="status" aria-live="polite">
+                  <div>
+                    <p className="text-[0.65rem] font-medium uppercase tracking-[0.16em] text-sandstone/75">
+                      Your private first pass
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-ivory/68">{scoreGuidance}</p>
+                  </div>
+                  <p
+                    className="shrink-0 font-display text-2xl text-ivory"
+                    aria-label={`${markedCount} of ${shown.length} checks marked`}
+                  >
+                    {markedCount}
+                    <span className="text-base text-ivory/45"> / {shown.length}</span>
+                  </p>
+                </div>
                 <button
                   type="button"
                   onClick={() => openMobileChapter("unlock")}
@@ -223,10 +272,25 @@ export function RecognitionAudit() {
               </div>
             )}
             {unlocked && (
-              <p className="border-t border-ivory/12 pt-4 text-sm text-ivory/75">
-                Fewer than seven holding true usually means recognition is leaking somewhere specific. The recognition
-                ladder above names the stage; these checks reveal the signals.
-              </p>
+              <div
+                className="flex items-end justify-between gap-5 border-t border-ivory/12 pt-4"
+                role="status"
+                aria-live="polite"
+              >
+                <div>
+                  <p className="text-[0.65rem] font-medium uppercase tracking-[0.16em] text-sandstone/75">
+                    Your full audit
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-ivory/68">{scoreGuidance}</p>
+                </div>
+                <p
+                  className="shrink-0 font-display text-2xl text-ivory"
+                  aria-label={`${markedCount} of ${shown.length} checks marked`}
+                >
+                  {markedCount}
+                  <span className="text-base text-ivory/45"> / {shown.length}</span>
+                </p>
+              </div>
             )}
           </section>
 

@@ -75,6 +75,7 @@ export function StrategyRoomCTA() {
   const dialogRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const briefHeadingRef = useRef<HTMLParagraphElement>(null);
+  const briefStartButtonRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
@@ -164,9 +165,19 @@ export function StrategyRoomCTA() {
     };
   }, [calendarOpen]);
 
+  function focusBriefHeading() {
+    window.requestAnimationFrame(() => briefHeadingRef.current?.focus());
+  }
+
   function startBrief() {
     setBriefStarted(true);
-    window.requestAnimationFrame(() => briefHeadingRef.current?.focus());
+    focusBriefHeading();
+  }
+
+  function closeBrief() {
+    restart();
+    setBriefStarted(false);
+    window.requestAnimationFrame(() => briefStartButtonRef.current?.focus());
   }
 
   function openCalendar() {
@@ -182,11 +193,13 @@ export function StrategyRoomCTA() {
     setPriority(value);
     setFocus(null);
     setStep(1);
+    focusBriefHeading();
   }
 
   function pickFocus(value: string) {
     setFocus(value);
     setStep(2);
+    focusBriefHeading();
   }
 
   function goBack() {
@@ -194,11 +207,13 @@ export function StrategyRoomCTA() {
       setPriority(null);
       setFocus(null);
       setStep(0);
+      focusBriefHeading();
       return;
     }
     if (step === 2) {
       setFocus(null);
       setStep(1);
+      focusBriefHeading();
     }
   }
 
@@ -346,7 +361,7 @@ export function StrategyRoomCTA() {
                     See available times
                     <span aria-hidden="true" className="ml-2">↗</span>
                   </button>
-                  <button type="button" data-strategy-control="true" onClick={startBrief} className={OPTION_BUTTON_CLASS}>
+                  <button ref={briefStartButtonRef} type="button" data-strategy-control="true" onClick={startBrief} className={OPTION_BUTTON_CLASS}>
                     Add a 60-second brief
                   </button>
                 </div>
@@ -454,7 +469,12 @@ export function StrategyRoomCTA() {
                 </AnimatePresence>
 
                 {step < QUESTION_COUNT ? (
-                  <div className="mt-5 flex justify-center">
+                  <div className="mt-5 flex flex-wrap justify-center gap-2">
+                    {step === 0 ? (
+                      <button type="button" data-strategy-control="true" onClick={closeBrief} className={QUIET_ACTION_CLASS}>
+                        Back to availability
+                      </button>
+                    ) : null}
                     <button
                       type="button"
                       data-strategy-control="true"
