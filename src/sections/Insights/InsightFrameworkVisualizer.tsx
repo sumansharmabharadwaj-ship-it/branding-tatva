@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import { useState, type CSSProperties } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import type { InsightElement, InsightFramework } from "@/data/insights";
@@ -18,44 +18,22 @@ export function InsightFrameworkVisualizer({
   accent,
 }: InsightFrameworkVisualizerProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-  const inView = useInView(sectionRef, { amount: 0.45 });
   const prefersReducedMotion = useHydratedReducedMotion();
   const activeStep = framework.steps[activeIndex];
-
-  useEffect(() => {
-    if (
-      !inView ||
-      paused ||
-      prefersReducedMotion ||
-      framework.steps.length < 2
-    ) {
-      return;
-    }
-
-    const timer = window.setInterval(() => {
-      setActiveIndex((index) => (index + 1) % framework.steps.length);
-    }, 5200);
-
-    return () => window.clearInterval(timer);
-  }, [framework.steps.length, inView, paused, prefersReducedMotion]);
+  const previousIndex =
+    (activeIndex - 1 + framework.steps.length) % framework.steps.length;
+  const nextIndex = (activeIndex + 1) % framework.steps.length;
+  const previousStep = framework.steps[previousIndex];
+  const nextStep = framework.steps[nextIndex];
 
   if (!activeStep) return null;
 
   return (
     <section
-      ref={sectionRef}
       id="working-framework"
       className="insight-framework scroll-mt-32 pt-20"
       aria-labelledby="framework-heading"
       style={{ "--framework-accent": accent } as CSSProperties}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-          setPaused(false);
-        }
-      }}
     >
       <p className="insight-framework__eyebrow">
         Working framework · {framework.steps.length} decisions
@@ -68,8 +46,6 @@ export function InsightFrameworkVisualizer({
           className="insight-framework__steps"
           role="tablist"
           aria-label={`${framework.title} steps`}
-          onPointerEnter={() => setPaused(true)}
-          onPointerLeave={() => setPaused(false)}
         >
           {framework.steps.map((step, index) => {
             const selected = index === activeIndex;
@@ -86,9 +62,7 @@ export function InsightFrameworkVisualizer({
                 className={selected ? "is-active" : undefined}
                 onClick={() => {
                   setActiveIndex(index);
-                  setPaused(true);
                 }}
-                onPointerEnter={() => setActiveIndex(index)}
                 onFocus={() => setActiveIndex(index)}
                 onKeyDown={(event) => {
                   if (
@@ -107,7 +81,6 @@ export function InsightFrameworkVisualizer({
                     (index + direction + framework.steps.length) %
                     framework.steps.length;
                   setActiveIndex(nextIndex);
-                  setPaused(true);
                   const next = event.currentTarget.parentElement?.querySelectorAll("button")[
                     nextIndex
                   ] as HTMLButtonElement | undefined;
@@ -124,8 +97,6 @@ export function InsightFrameworkVisualizer({
 
         <div
           className="insight-framework__active"
-          onPointerEnter={() => setPaused(true)}
-          onPointerLeave={() => setPaused(false)}
         >
           <div className="insight-framework__rings" aria-hidden="true">
             <span />
@@ -155,6 +126,31 @@ export function InsightFrameworkVisualizer({
               </p>
               <h3>{activeStep.title}</h3>
               <blockquote>{activeStep.description}</blockquote>
+              {framework.steps.length > 1 && previousStep && nextStep ? (
+                <nav
+                  className="insight-framework__controls"
+                  aria-label="Framework decision navigation"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setActiveIndex(previousIndex)}
+                    aria-label={`Show previous decision: ${previousStep.title}`}
+                  >
+                    <span>Previous</span>
+                    <strong>{previousStep.title}</strong>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveIndex(nextIndex)}
+                    aria-label={`Show next decision: ${nextStep.title}`}
+                  >
+                    <span>
+                      {activeIndex === framework.steps.length - 1 ? "Return" : "Next"}
+                    </span>
+                    <strong>{nextStep.title}</strong>
+                  </button>
+                </nav>
+              ) : null}
             </motion.div>
           </AnimatePresence>
         </div>

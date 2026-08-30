@@ -482,6 +482,61 @@
   line-height: 1.7;
 }
 
+.insight-framework__controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.35rem;
+}
+
+.insight-framework__controls button {
+  min-width: 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgb(244 239 230 / 16%);
+  color: rgb(244 239 230 / 72%);
+  text-align: left;
+  transition: border-color 220ms ease, color 220ms ease;
+}
+
+.insight-framework__controls button:last-child {
+  text-align: right;
+}
+
+.insight-framework__controls button:hover,
+.insight-framework__controls button:focus-visible {
+  border-color: var(--framework-accent);
+  color: #f4efe6;
+}
+
+.insight-framework__controls button:focus-visible {
+  outline: 2px solid var(--framework-accent);
+  outline-offset: 0.35rem;
+}
+
+.insight-framework__controls span,
+.insight-framework__controls strong {
+  display: block;
+}
+
+.insight-framework__controls span {
+  color: var(--framework-accent);
+  font-size: 0.54rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.insight-framework__controls strong {
+  overflow: hidden;
+  margin-top: 0.28rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.92rem;
+  font-weight: 400;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .insight-framework__glyph {
   position: absolute;
   z-index: 2;
@@ -749,6 +804,7 @@
 
   .insight-framework__steps button,
   .insight-framework__steps i,
+  .insight-framework__controls button,
   .insight-article-hero__framework-link strong,
   .insight-reading-rail__items a,
   .insight-reading-rail__progress,
