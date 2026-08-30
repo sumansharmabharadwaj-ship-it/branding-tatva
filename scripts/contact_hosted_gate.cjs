@@ -312,6 +312,8 @@ async function auditStatefulExperience(browser) {
       "stateful flow: provider failure reference is missing",
     );
 
+    const revisedDescription = `${draftValues.description} The scope changed before retrying.`;
+    await description.fill(revisedDescription);
     await page.getByRole("button", { name: "Try sending again" }).click();
     const success = page.locator("[data-contact-form-success]");
     await success.waitFor({ state: "visible", timeout: 5_000 });
@@ -331,12 +333,20 @@ async function auditStatefulExperience(browser) {
     assert(deliveryAttempts.length === 3, `stateful flow: expected 3 delivery attempts, received ${deliveryAttempts.length}`);
     const submissionIds = deliveryAttempts.map((attempt) => attempt.submissionId);
     assert(
-      submissionIds.every((submissionId) => submissionId && submissionId === submissionIds[0]),
-      `stateful flow: retry submission identity drifted ${JSON.stringify(submissionIds)}`,
+      submissionIds[0] && submissionIds[0] === submissionIds[1],
+      `stateful flow: identical retry submission identity drifted ${JSON.stringify(submissionIds)}`,
     );
     assert(
-      deliveryAttempts.every((attempt) => JSON.stringify(attempt.body) === JSON.stringify(deliveryAttempts[0].body)),
-      "stateful flow: retry payload changed without visitor edits",
+      submissionIds[2] && submissionIds[2] !== submissionIds[1],
+      `stateful flow: edited payload reused its previous submission identity ${JSON.stringify(submissionIds)}`,
+    );
+    assert(
+      JSON.stringify(deliveryAttempts[0].body) === JSON.stringify(deliveryAttempts[1].body),
+      "stateful flow: identical retry payload changed",
+    );
+    assert(
+      deliveryAttempts[2].body.description === revisedDescription,
+      "stateful flow: edited retry did not send the revised payload",
     );
     assert(
       await page.evaluate(() => sessionStorage.getItem("branding-tatva:contact-note:v1") === null),
@@ -354,12 +364,33 @@ async function auditStatefulExperience(browser) {
       "stateful flow: starting another note did not return focus to the first field",
     );
 
+    await name.fill("Temporary draft to clear");
+    await page.locator('[data-contact-draft-status][data-state="saved"]').waitFor({ state: "attached", timeout: 5_000 });
+    await page.getByRole("button", { name: "Clear note" }).click();
+    await page.locator('[data-contact-draft-status][data-state="empty"]').waitFor({ state: "attached", timeout: 5_000 });
+    await page.waitForTimeout(500);
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await waitForPrelude(page, "stateful cleared draft reload");
+    assert((await name.inputValue()) === "", "stateful flow: cleared name returned after reload");
+    assert((await email.inputValue()) === "", "stateful flow: cleared email returned after reload");
+    assert((await description.inputValue()) === "", "stateful flow: cleared question returned after reload");
+    assert(
+      await page.evaluate(() => sessionStorage.getItem("branding-tatva:contact-note:v1") === null),
+      "stateful flow: cleared draft was resurrected by a pending save",
+    );
+    assert(
+      !(await page.getByRole("button", { name: "Clear note" }).isVisible().catch(() => false)),
+      "stateful flow: clear-note action remains visible after the draft was removed",
+    );
+
     return {
       draftSaved: true,
       draftRestored: true,
+      draftClearPersisted: true,
       falseSuccessRejected: true,
       providerFailureRecovered: true,
       stableRetrySubmissionId: submissionIds[0],
+      editedPayloadRotatedSubmissionId: true,
       confirmedSuccessClearedDraft: true,
       successFocusManaged: true,
     };
@@ -382,6 +413,21 @@ async function auditKeyboardJourney(browser) {
     });
     assert(response && response.ok(), `keyboard journey: /contact returned ${response?.status()}`);
     await waitForPrelude(page, "keyboard journey");
+
+    const pathwayTabs = page.getByRole("tab");
+    assert((await pathwayTabs.count()) === 3, "keyboard journey: contact pathway tabs are incomplete");
+    await pathwayTabs.nth(0).focus();
+    await pathwayTabs.nth(0).press("End");
+    assert((await pathwayTabs.nth(2).getAttribute("aria-selected")) === "true", "keyboard journey: End did not select the final contact pathway");
+    await pathwayTabs.nth(2).press("Home");
+    assert((await pathwayTabs.nth(0).getAttribute("aria-selected")) === "true", "keyboard journey: Home did not select the first contact pathway");
+    await pathwayTabs.nth(0).press("ArrowRight");
+    assert((await pathwayTabs.nth(1).getAttribute("aria-selected")) === "true", "keyboard journey: ArrowRight did not select the next contact pathway");
+    const pathwayPanel = page.locator("[data-contact-pathway-panel]");
+    assert(
+      normalise(await pathwayPanel.innerText()).replace(/\D/g, "").includes(PHONE_DIGITS),
+      "keyboard journey: the direct-contact pathway does not visibly disclose the phone number",
+    );
 
     const chapterRail = page.locator("[data-contact-chapter-rail]");
     const writeChapter = chapterRail.locator('a[href="#write"]');
@@ -433,6 +479,8 @@ async function auditKeyboardJourney(browser) {
     );
 
     return {
+      pathwayTabKeyboardNavigation: true,
+      pathwayPhoneDisclosed: true,
       chapterKeyboardNavigation: true,
       chapterAnnouncement: true,
       gratitudeEscape: true,

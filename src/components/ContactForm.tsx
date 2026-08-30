@@ -138,6 +138,26 @@ function hasContactDraftValues(values: ContactFormValues) {
   });
 }
 
+function emptyContactFormValues(
+  servicePackage?: ContactFormValues["servicePackage"],
+): ContactFormValues {
+  return {
+    name: "",
+    email: "",
+    phone: "",
+    business: "",
+    website: "",
+    brandStage: undefined,
+    servicesNeeded: "",
+    budget: "",
+    timeline: "",
+    description: "",
+    referral: "",
+    servicePackage,
+    company_website: "",
+  };
+}
+
 function clearContactDraft() {
   try {
     window.sessionStorage.removeItem(CONTACT_DRAFT_KEY);
@@ -390,7 +410,7 @@ export function ContactForm() {
         source: "contact_form",
         optional_details_opened: showMore,
       });
-      reset({ servicePackage: servicePackage ?? undefined });
+      reset(emptyContactFormValues(servicePackage ?? undefined));
     } catch (error) {
       const timedOut = error instanceof DOMException && error.name === "AbortError";
       track("contact_form_delivery_failed", {
@@ -439,7 +459,7 @@ export function ContactForm() {
 
   function clearSavedNote() {
     clearContactDraft();
-    reset({ servicePackage: servicePackage ?? undefined });
+    reset(emptyContactFormValues(servicePackage ?? undefined));
     setDraftStatus("empty");
     setShowMore(false);
     setServerError(null);
