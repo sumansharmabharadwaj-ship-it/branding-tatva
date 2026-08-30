@@ -82,8 +82,8 @@ async function visitAboutAndReturn(page, label) {
   });
   await page.waitForTimeout(650);
 
-  await clickRoute(page, "/work");
-  assert(new URL(page.url()).pathname === "/work", `${label}: Work route did not return`);
+  await clickRoute(page, "/services");
+  assert(new URL(page.url()).pathname === "/services", `${label}: Services route did not return`);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(250);
 }
@@ -168,7 +168,7 @@ async function sampleMemory(client, page, label) {
       });
     }
 
-    await page.goto(`${BASE_URL}/work`, { waitUntil: "domcontentloaded", timeout: 90_000 });
+    await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded", timeout: 90_000 });
     await waitForPrelude(page, "about/memory");
 
     for (let trip = 0; trip < WARMUP_TRIPS; trip += 1) {
