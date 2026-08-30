@@ -640,7 +640,15 @@ export function ContactForm() {
         </div>
       </div>
 
-      <form ref={formRef} data-contact-form-body onSubmit={handleSubmit(onSubmit, onInvalid)} noValidate aria-busy={status === "submitting"} className="mt-6 space-y-5">
+      <form
+        ref={formRef}
+        data-contact-form-body
+        data-service-package={servicePackage ?? undefined}
+        onSubmit={handleSubmit(onSubmit, onInvalid)}
+        noValidate
+        aria-busy={status === "submitting"}
+        className="mt-6 space-y-5"
+      >
       {/* Honeypot — hidden from real users, visible to bots */}
       <input
         type="text"
@@ -651,15 +659,6 @@ export function ContactForm() {
         aria-hidden="true"
         {...register("company_website")}
       />
-      {servicePackage ? (
-        <input
-          type="hidden"
-          name="servicePackage"
-          value={servicePackage}
-          readOnly
-        />
-      ) : null}
-
       <div data-contact-required-grid className="grid grid-cols-2 gap-4 sm:gap-5">
         <Field label="01 Your name" error={errors.name?.message}>
           <input
