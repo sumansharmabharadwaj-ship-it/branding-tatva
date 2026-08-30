@@ -20,8 +20,11 @@ import { Container } from "@/components/Container";
 import { ContactKineticHeading } from "@/components/ContactKineticHeading";
 import { useContactSceneStage } from "@/hooks/useContactSceneStage";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useServicesContactPackage } from "@/hooks/useServicesContactPackage";
 import { track } from "@/lib/analytics";
 import { EASE_AIR } from "@/lib/motion";
+import { calendlyHrefForServicesPackage } from "@/lib/servicesJourney";
+import { packages } from "@/data/services";
 import { site } from "@/data/site";
 
 type PathwayId = "book" | "speak" | "write";
@@ -88,9 +91,11 @@ const secondaryActionClass =
 
 function PathwayHandoff({
   pathway,
+  detail,
   reducedMotion,
 }: {
   pathway: Pathway;
+  detail?: string;
   reducedMotion: boolean;
 }) {
   const lineTransition = {
@@ -146,7 +151,7 @@ function PathwayHandoff({
       </div>
 
       <p className="mt-2.5 text-[0.6rem] font-medium uppercase tracking-[0.14em] text-soil/48 sm:mt-3 sm:text-[0.68rem] sm:tracking-[0.18em]">
-        {pathway.detail}
+        {detail ?? pathway.detail}
       </p>
     </div>
   );
@@ -160,6 +165,9 @@ type TouchGesture = {
 
 export function ContactPathways() {
   const prefersReducedMotion = useHydratedReducedMotion();
+  const servicePackage = useServicesContactPackage();
+  const selectedPackage = packages.find((entry) => entry.slug === servicePackage);
+  const bookingHref = calendlyHrefForServicesPackage(site.calendlyUrl, servicePackage);
   const sceneRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const touchGestureRef = useRef<TouchGesture | null>(null);
@@ -176,6 +184,10 @@ export function ContactPathways() {
     reducedMotion: prefersReducedMotion,
   });
   const active = pathways[activeIndex] ?? pathways[0];
+  const activeDetail =
+    active.id === "book" && selectedPackage
+      ? `${selectedPackage.name} · ${site.consultationMinutes} minutes · your timezone`
+      : active.detail;
   const direction = activeIndex >= previousIndexRef.current ? 1 : -1;
   const panelId = "contact-pathway-panel";
 
@@ -413,17 +425,32 @@ export function ContactPathways() {
                     <span className="font-medium text-clay">Best when:</span>{" "}
                     {active.bestWhen}
                   </p>
-                  <PathwayHandoff pathway={active} reducedMotion={prefersReducedMotion} />
+                  {active.id === "book" && selectedPackage ? (
+                    <p
+                      data-contact-pathway-package
+                      className="mt-3 w-fit max-w-full rounded-full border border-clay/18 bg-clay/[0.06] px-3 py-1.5 text-[0.64rem] font-medium leading-relaxed text-clay sm:text-xs"
+                    >
+                      Carrying your {selectedPackage.name} choice
+                    </p>
+                  ) : null}
+                  <PathwayHandoff
+                    pathway={active}
+                    detail={activeDetail}
+                    reducedMotion={prefersReducedMotion}
+                  />
 
                   <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-3">
                     {active.id === "book" && (
                       <>
                         <a
-                          href={site.calendlyUrl}
+                          href={bookingHref}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() =>
-                            track("calendar_opened", { source: "contact_pathways" })
+                            track("calendar_opened", {
+                              source: "contact_pathways",
+                              ...(servicePackage ? { package: servicePackage } : {}),
+                            })
                           }
                           data-cursor-label="See available times"
                           className={primaryActionClass}

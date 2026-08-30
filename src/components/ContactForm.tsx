@@ -410,6 +410,7 @@ export function ContactForm() {
       submissionRef.current = null;
       setDraftStatus("empty");
       setReceiptEmail(values.email.trim());
+      setServerRequestId(requestId);
       setStatus("success");
       track("contact_form_submitted", {
         source: "contact_form",
@@ -620,12 +621,19 @@ export function ContactForm() {
               Suman reads every enquiry personally and replies by email. Your question now has a clear place to land.
             </p>
             {receiptEmail ? (
-              <p
+              <div
                 data-contact-success-destination
-                className="mx-auto mt-4 w-fit max-w-full rounded-full border border-soil/10 bg-white/35 px-4 py-2 text-xs leading-relaxed text-soil/62"
+                className="mx-auto mt-4 w-fit max-w-full rounded-2xl border border-soil/10 bg-white/35 px-4 py-2.5 text-xs leading-relaxed text-soil/62"
               >
-                Replying to <strong className="break-all font-medium text-soil">{receiptEmail}</strong>
-              </p>
+                <p>
+                  Replying to <strong className="break-all font-medium text-soil">{receiptEmail}</strong>
+                </p>
+                {serverReference ? (
+                  <p className="mt-1 text-[0.62rem] uppercase tracking-[0.12em] text-soil/42">
+                    Enquiry reference <span className="font-medium text-soil/62">{serverReference}</span>
+                  </p>
+                ) : null}
+              </div>
             ) : null}
           </div>
 

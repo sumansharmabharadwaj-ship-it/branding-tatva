@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
-const CONTRACT_VERSION = 9;
+const CONTRACT_VERSION = 10;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -73,6 +73,7 @@ for (const file of BOOKING_SURFACES) {
 const siteFile = source.get("src/data/site.ts") || "";
 const contactPage = source.get("src/app/contact/page.tsx") || "";
 const contactForm = source.get("src/components/ContactForm.tsx") || "";
+const contactPathways = source.get("src/components/ContactPathways.tsx") || "";
 const contactGratitude = source.get("src/components/ContactGratitude.tsx") || "";
 const contactChapterRail = source.get("src/components/ContactChapterRail.tsx") || "";
 const servicesContactPackageHook = source.get("src/hooks/useServicesContactPackage.ts") || "";
@@ -188,11 +189,23 @@ if (!contactForm.includes("clearServicesContactPackage()")) {
 if (!contactForm.includes("data-contact-success-destination")) {
   fail("Contact success must confirm where the reply will be sent.");
 }
+if (!contactForm.includes("Enquiry reference")) {
+  fail("Contact success must expose a support reference when delivery returns one.");
+}
 if (!contactForm.includes("data-contact-recovery-copy")) {
   fail("Contact delivery recovery must let visitors preserve their full note outside the form.");
 }
 if (!contactForm.includes("Support needed:")) {
   fail("Contact email recovery must retain optional enquiry context.");
+}
+if (
+  !contactPathways.includes("calendlyHrefForServicesPackage") ||
+  !contactPathways.includes("href={bookingHref}")
+) {
+  fail("Every Contact booking pathway must retain carried service context.");
+}
+if (!contactPathways.includes("data-contact-pathway-package")) {
+  fail("The Contact booking pathway must make carried service context visible.");
 }
 if (!servicesContactPackageHook.includes("window.history.replaceState")) {
   fail("Clearing carried service context must keep the visitor on the current Contact scene.");
