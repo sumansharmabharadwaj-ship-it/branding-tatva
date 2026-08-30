@@ -6,6 +6,7 @@ const SCENE_SELECTOR = "[data-services-scene], #authority, #book";
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
 const ACTIVE_CHAPTER_EVENT = "bt:services-active-chapter";
+const DIRECT_ANCHOR_PROGRESS = 0.455;
 
 const SCENE_MOTION: Record<
   string,
@@ -343,11 +344,22 @@ export function ServicesExperienceRuntime() {
       updateHeroProgress(viewportHeight);
       publishChapter(chapterAtFocalLine(viewportHeight));
 
-      scenes.forEach((scene) => {
+      scenes.forEach((scene, index) => {
         const bounds = scene.getBoundingClientRect();
         if (bounds.bottom < -viewportHeight || bounds.top > viewportHeight * 2) return;
 
-        const progress = clamp((viewportHeight - bounds.top) / (viewportHeight + bounds.height));
+        const measuredProgress = clamp(
+          (viewportHeight - bounds.top) / (viewportHeight + bounds.height),
+        );
+        // The requested chapter can paint before the browser finishes its
+        // native anchor movement. Give that one scene its settled arrival
+        // composition immediately, then return to measured scroll progress as
+        // soon as the scene reaches the focal line. This prevents masks,
+        // choice cards and proof copy from appearing partially closed.
+        const progress =
+          pendingAnchorIndex === index
+            ? Math.max(measuredProgress, DIRECT_ANCHOR_PROGRESS)
+            : measuredProgress;
         const centred = clamp(1 - Math.abs(progress - 0.5) * 2);
         const axis = clamp((progress - 0.5) * 2, -1, 1);
         const key = scene.dataset.servicesScrollScene || "";
