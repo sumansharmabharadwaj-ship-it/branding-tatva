@@ -4,12 +4,22 @@
 
 [data-contact-film] [data-contact-scene] {
   isolation: isolate;
+  scroll-margin-top: clamp(4.75rem, 8vw, 6.5rem);
   scroll-snap-align: start;
   scroll-snap-stop: normal;
 }
 
 [data-contact-film] [data-contact-scene-media="true"] {
   transform-origin: 50% 46%;
+}
+
+/* The compact measurement choice remains available throughout the journey,
+   but it must not sit over validation, delivery recovery, or the confirmed
+   reply destination. Defer it during those finite resolution states; it
+   returns as soon as the visitor starts another note. */
+body:has([data-contact-form-resolution]) .consent-notice,
+body:has([data-contact-form-success]) .consent-notice {
+  display: none;
 }
 
 [data-contact-film] [data-contact-heading-stack],

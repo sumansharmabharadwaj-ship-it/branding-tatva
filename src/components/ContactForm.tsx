@@ -956,6 +956,7 @@ export function ContactForm() {
             ref={recoveryRef}
             tabIndex={-1}
             role="alert"
+            data-contact-form-resolution
             initial={prefersReducedMotion ? undefined : { opacity: 0.65, scaleX: 0.97, clipPath: "inset(0 8% 0 0 round 1rem)" }}
             animate={{ opacity: 1, scaleX: 1, clipPath: "inset(0 0% 0 0 round 1rem)" }}
             exit={prefersReducedMotion ? undefined : { opacity: 0, scaleX: 0.985, clipPath: "inset(0 0 0 14% round 1rem)" }}
@@ -981,6 +982,7 @@ export function ContactForm() {
             ref={recoveryRef}
             tabIndex={-1}
             role="alert"
+            data-contact-form-resolution
             initial={prefersReducedMotion ? undefined : { opacity: 0.65, scaleX: 0.97, clipPath: "inset(0 8% 0 0 round 1rem)" }}
             animate={{ opacity: 1, scaleX: 1, clipPath: "inset(0 0% 0 0 round 1rem)" }}
             exit={prefersReducedMotion ? undefined : { opacity: 0, scaleX: 0.985, clipPath: "inset(0 0 0 14% round 1rem)" }}

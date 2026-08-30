@@ -391,6 +391,28 @@ async function auditStatefulExperience(browser) {
     assert(response && response.ok(), `stateful flow: /contact returned ${response?.status()}`);
     await waitForPrelude(page, "stateful flow");
 
+    const directWriteState = await page.evaluate(() => {
+      const bounds = (selector) => {
+        const node = document.querySelector(selector);
+        if (!node) return null;
+        const rect = node.getBoundingClientRect();
+        return { top: rect.top, bottom: rect.bottom };
+      };
+      const write = document.getElementById("write");
+      return {
+        header: bounds("[data-site-header]"),
+        formIntro: bounds("[data-contact-form-intro]"),
+        scrollMarginTop: write ? Number.parseFloat(getComputedStyle(write).scrollMarginTop) : 0,
+      };
+    });
+    assert(
+      directWriteState.header &&
+        directWriteState.formIntro &&
+        directWriteState.formIntro.top >= directWriteState.header.bottom - 3 &&
+        directWriteState.scrollMarginTop > 0,
+      `stateful flow: direct #write navigation leaves the form introduction under the header ${JSON.stringify(directWriteState)}`,
+    );
+
     const form = page.locator("main form").first();
     const name = form.locator('[name="name"]');
     const email = form.locator('[name="email"]');
@@ -499,7 +521,13 @@ async function auditStatefulExperience(browser) {
       hasPracticalTouchTarget(recoveryEmailBox),
       `stateful flow: email-note recovery action is below a practical touch target ${JSON.stringify(recoveryEmailBox)}`,
     );
-    const consentNotice = page.getByRole("region", { name: "Your choice about measurement" });
+    // Keep the DOM locator stable while the notice is intentionally removed
+    // from the accessibility tree during a finite form-resolution state.
+    const consentNotice = page.locator(".consent-notice");
+    assert(
+      !(await consentNotice.isVisible()),
+      "stateful flow: measurement notice remains over the delivery resolution state",
+    );
     const consentNoticeBox = await consentNotice.boundingBox();
     assert(
       !rectsOverlap(consentNoticeBox, recoveryCopyBox) && !rectsOverlap(consentNoticeBox, recoveryEmailBox),
@@ -564,6 +592,10 @@ async function auditStatefulExperience(browser) {
     await page.getByRole("button", { name: "Try sending again" }).click();
     const success = page.locator("[data-contact-form-success]");
     await success.waitFor({ state: "visible", timeout: 5_000 });
+    assert(
+      !(await consentNotice.isVisible()),
+      "stateful flow: measurement notice remains over the confirmed delivery state",
+    );
     assert(
       normalise(await success.innerText()).toLowerCase().includes("your note has arrived"),
       "stateful flow: confirmed delivery did not render success",
@@ -655,6 +687,10 @@ async function auditStatefulExperience(browser) {
       await name.evaluate((node) => document.activeElement === node),
       "stateful flow: starting another note did not return focus to the first field",
     );
+    assert(
+      await consentNotice.isVisible(),
+      "stateful flow: deferred measurement notice did not return after starting another note",
+    );
 
     await name.fill("Temporary draft to clear");
     await page.locator('[data-contact-draft-status][data-state="saved"]').waitFor({ state: "attached", timeout: 5_000 });
@@ -685,6 +721,8 @@ async function auditStatefulExperience(browser) {
       providerFailureRecovered: true,
       recoveryNoteCopied: true,
       recoveryEmailPreservedNote: true,
+      measurementNoticeDeferredDuringResolution: true,
+      measurementNoticeRestoredAfterResolution: true,
       mobileRecoveryUnobscured: true,
       stableRetrySubmissionId: submissionIds[0],
       editedPayloadRotatedSubmissionId: true,
