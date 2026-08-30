@@ -68,6 +68,7 @@ export function ServiceDisciplineExplorer() {
   const userHoldUntilRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [situation, setSituation] = useState<ServicesSituationId | null>(null);
+  const [routeReady, setRouteReady] = useState(false);
   const prefersReducedMotion = useHydratedReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const active = offerings[activeIndex];
@@ -78,7 +79,12 @@ export function ServiceDisciplineExplorer() {
   useEffect(() => {
     function applySituation(nextSituation: ServicesSituationId | null) {
       setSituation(nextSituation);
-      if (nextSituation) setActiveIndex(ROUTE_PLANS[nextSituation].order[0] ?? 0);
+      setActiveIndex(
+        nextSituation
+          ? (ROUTE_PLANS[nextSituation].order[0] ?? DEFAULT_DISCIPLINE_ORDER[0])
+          : DEFAULT_DISCIPLINE_ORDER[0],
+      );
+      setRouteReady(true);
     }
 
     try {
@@ -117,7 +123,7 @@ export function ServiceDisciplineExplorer() {
   }, [activeIndex, isDesktop, prefersReducedMotion]);
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || !routeReady) return;
 
     function onSceneProgress(event: Event) {
       const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
@@ -138,7 +144,7 @@ export function ServiceDisciplineExplorer() {
     return () => {
       window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
     };
-  }, [disciplineOrder, prefersReducedMotion]);
+  }, [disciplineOrder, prefersReducedMotion, routeReady]);
 
   function activate(index: number, source: "hover" | "focus" | "click") {
     userHoldUntilRef.current = Date.now() + USER_HOLD_MS;

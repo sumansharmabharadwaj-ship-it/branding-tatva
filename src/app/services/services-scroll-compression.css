@@ -242,6 +242,15 @@ html[data-services-experience="active"] {
     clip-path 120ms linear;
 }
 
+/* Once a chapter owns the focal line, its reading instrument is complete.
+   Scroll can keep directing the semantic state inside the chapter, but a
+   delayed mask must never crop tabs, proof copy, or conversion actions after
+   a rail or hash arrival. */
+[data-services-scroll-scene][data-services-active="true"] [data-services-chapter-instrument="true"] {
+  clip-path: none;
+  opacity: 1;
+}
+
 [data-services-scroll-scene] [data-services-chapter-resolution="true"] {
   opacity: var(--services-resolution-opacity, 1);
   transform: translate3d(0, var(--services-resolution-y, 0px), 0);

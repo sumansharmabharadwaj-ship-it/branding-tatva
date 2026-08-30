@@ -40,18 +40,23 @@
   }
 
   .services-discipline-rail {
-    padding-inline: clamp(0.5rem, 2vw, 1.4rem);
+    display: grid !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem !important;
+    padding: 0.5rem !important;
   }
 
   .services-discipline-rail-viewport {
-    overflow-x: auto !important;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(244, 239, 230, 0.3) transparent;
-    scroll-snap-type: x proximity;
+    overflow: visible !important;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .services-discipline-rail > button {
-    scroll-snap-align: start;
+    width: 100% !important;
+    scroll-snap-align: none;
   }
 
   .services-discipline-rail > button {
