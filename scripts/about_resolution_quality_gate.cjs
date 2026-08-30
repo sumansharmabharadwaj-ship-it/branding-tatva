@@ -88,6 +88,11 @@ assert(
   "An explicit closing-route choice can be overwritten before its Contact handoff.",
 );
 assert(
+  component.includes("key={activePath.slug}") &&
+    component.includes("href={servicesContactHref(activePath.slug)}"),
+  "The closing Contact link can retain a stale client-side destination after the route changes.",
+);
+assert(
   !memoryGate.includes('await client.send("DOM.enable")'),
   "The retained-node sampler re-enables the long-lived DOM diagnostic session.",
 );

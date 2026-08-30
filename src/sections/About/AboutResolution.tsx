@@ -350,6 +350,7 @@ export function AboutResolution() {
             </div>
             <div className={styles.interactiveContactCta}>
               <LinkButton
+                key={activePath.slug}
                 href={servicesContactHref(activePath.slug)}
                 trackEvent="hero_booking_click"
                 trackProps={{
