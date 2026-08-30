@@ -7,6 +7,7 @@ const OUTPUT = path.join(process.cwd(), "site-release-audit");
 const VIEWPORTS = [
   { name: "desktop-1440x900", width: 1440, height: 900 },
   { name: "mobile-390x844", width: 390, height: 844, touch: true },
+  { name: "narrow-320x720", width: 320, height: 720, touch: true },
 ];
 const FALLBACK_ROUTES = [
   "/",
@@ -174,6 +175,21 @@ async function auditRoute(browser, viewport, route) {
         .map((node) => node.getAttribute("href") || "")
         .filter((href) => /^\/insights\/[^/]+$/.test(href) && !href.endsWith(".xml"));
       const headerWordmark = document.querySelector(".site-header__wordmark");
+      const headerBrand = document.querySelector(".site-header__brand");
+      const consentNotice = document.querySelector(".consent-notice");
+      const visibleRect = (node) => {
+        if (!node) return null;
+        const rect = node.getBoundingClientRect();
+        const style = getComputedStyle(node);
+        if (rect.width <= 0 || rect.height <= 0 || style.display === "none" || style.visibility === "hidden") {
+          return null;
+        }
+        return { width: rect.width, height: rect.height };
+      };
+      const headerBrandRect = visibleRect(headerBrand);
+      const consentTargetRects = consentNotice
+        ? Array.from(consentNotice.querySelectorAll("a, button")).map(visibleRect).filter(Boolean)
+        : [];
 
       return {
         route: currentRoute,
@@ -197,9 +213,16 @@ async function auditRoute(browser, viewport, route) {
         currentPhoneVisible: mainText.includes("+91 84477 25381"),
         currentDurationVisible: /\b(?:30|thirty)[ -]minutes?\b/i.test(mainText),
         staleDurationVisible: /\b(?:20|twenty)[ -]minutes?\b/i.test(mainText),
+        headerWordmarkVisible: Boolean(visibleRect(headerWordmark)),
         headerWordmarkClipped: headerWordmark
           ? headerWordmark.scrollWidth > headerWordmark.clientWidth + 1
           : false,
+        headerBrandMeetsTouchTarget: Boolean(
+          headerBrandRect && headerBrandRect.width >= 44 && headerBrandRect.height >= 44,
+        ),
+        consentTargetsMeetTouchTarget:
+          consentTargetRects.length === 0 ||
+          consentTargetRects.every((rect) => rect.width >= 44 && rect.height >= 44),
       };
     }, route);
 
@@ -220,9 +243,15 @@ async function auditRoute(browser, viewport, route) {
     assert(result.focusables >= 2, `${viewport.name}${route}: too few focusable destinations`);
     assert(result.brokenHashLinks.length === 0,
       `${viewport.name}${route}: broken in-page destinations ${result.brokenHashLinks.join(", ")}`);
-    if (viewport.name.startsWith("mobile-")) {
+    if (viewport.touch) {
+      assert(result.headerWordmarkVisible,
+        `${viewport.name}${route}: header wordmark is not visible`);
       assert(!result.headerWordmarkClipped,
         `${viewport.name}${route}: header wordmark is horizontally clipped`);
+      assert(result.headerBrandMeetsTouchTarget,
+        `${viewport.name}${route}: header brand target is smaller than 44px`);
+      assert(result.consentTargetsMeetTouchTarget,
+        `${viewport.name}${route}: consent action target is smaller than 44px`);
     }
     if (route !== "/") {
       assert(result.canonical.includes(route), `${viewport.name}${route}: canonical mismatch (${result.canonical})`);

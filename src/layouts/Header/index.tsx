@@ -163,8 +163,8 @@ export function Header({ transparent = false }: HeaderProps) {
               <span aria-hidden="true" className="site-header__divider hidden h-6 w-px bg-soil/20 min-[360px]:block" />
               {/* Logo owns an inline-flex display internally, so the
                   responsive visibility belongs to a parent wrapper.
-                  This keeps the wordmark at 390px while leaving enough
-                  room for sound and menu controls at 360px. */}
+                  Shared mobile CSS keeps the complete wordmark visible
+                  without crowding the menu control on narrow phones. */}
               <span className="site-header__wordmark hidden min-[360px]:inline-flex">
                 <Logo className="origin-left" />
               </span>

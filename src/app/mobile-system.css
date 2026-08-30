@@ -24,6 +24,9 @@
 
   .site-header__brand {
     gap: 0.5rem !important;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    align-items: center;
   }
 
   .site-header__wordmark {
@@ -72,6 +75,22 @@
     padding: 0.35rem 0.4rem 0.35rem 0.75rem !important;
   }
 
+  .consent-notice p {
+    display: flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .consent-notice a,
+  .consent-notice button {
+    display: inline-flex;
+    min-width: 2.75rem;
+    min-height: 2.75rem !important;
+    align-items: center;
+    justify-content: center;
+  }
+
   html[data-site-menu="open"] .consent-notice {
     display: none;
   }
@@ -109,8 +128,16 @@
 }
 
 @media (max-width: 359px) {
-  .site-header__divider,
+  .site-header__divider {
+    display: block !important;
+  }
+
   .site-header__wordmark {
-    display: none !important;
+    display: inline-flex !important;
+  }
+
+  .site-header__wordmark > span > span {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
   }
 }
