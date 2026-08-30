@@ -82,6 +82,7 @@ const contactRoute = source.get("src/app/api/contact/route.ts") || "";
 const contactMonitorRoute = source.get("src/app/api/cron/contact-delivery/route.ts") || "";
 const contactDelivery = source.get("src/lib/contact-delivery.ts") || "";
 const vercelConfig = fs.readFileSync(path.join(ROOT, "vercel.json"), "utf8");
+const envExample = fs.readFileSync(path.join(ROOT, ".env.example"), "utf8");
 const calendly = source.get("src/components/CalendlyEmbed.tsx") || "";
 const contactExperience = `${contactPage}\n${calendly}`;
 
@@ -156,6 +157,9 @@ if (!contactMonitorRoute.includes('status: "degraded"')) {
 }
 if (!vercelConfig.includes('"path": "/api/cron/contact-delivery"')) {
   fail("Vercel must schedule the authenticated Contact provider monitor.");
+}
+if (!/^CRON_SECRET=$/m.test(envExample)) {
+  fail("The server environment contract must document the Contact cron secret.");
 }
 if (!contactGratitude.includes('role="progressbar"')) {
   fail("Contact gratitude must expose acknowledgement progress.");
