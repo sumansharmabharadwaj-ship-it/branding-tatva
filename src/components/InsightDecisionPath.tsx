@@ -4,14 +4,17 @@ import type { InsightPathway } from "@/data/insightPathways";
 export function InsightDecisionPath({
   pathway,
   className = "",
+  id,
 }: {
   pathway: InsightPathway;
   className?: string;
+  id?: string;
 }) {
   const links = [pathway.service, pathway.proof, pathway.conversation];
 
   return (
     <section
+      id={id}
       aria-labelledby="insight-decision-path-heading"
       className={`border-y border-soil/10 py-10 sm:py-12 ${className}`}
     >

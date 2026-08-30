@@ -139,16 +139,43 @@ export default async function InsightArticlePage({ params }: Props) {
     .filter((item): item is InsightPost => Boolean(item))
     .slice(0, 3);
   const readingRailItems = [
-    { id: "key-takeaways", label: "Argument" },
-    { id: "working-framework", label: post.framework.title },
-    ...post.sections.map((section) => ({
+    {
+      id: "key-takeaways",
+      label: "Argument",
+      eyebrow: "Reader brief",
+    },
+    {
+      id: "working-framework",
+      label: post.framework.title,
+      eyebrow: "Working framework",
+    },
+    ...post.sections.map((section, index) => ({
       id: section.id,
       label: section.heading,
+      eyebrow: `Field chapter · ${String(index + 1).padStart(
+        2,
+        "0"
+      )} of ${String(post.sections.length).padStart(2, "0")}`,
     })),
-    { id: "frequent-questions", label: "Questions" },
+    {
+      id: "frequent-questions",
+      label: "Questions",
+      eyebrow: "Reader questions",
+    },
     ...(sources.length > 0
-      ? [{ id: "research-sources", label: "Sources" }]
+      ? [
+          {
+            id: "research-sources",
+            label: "Sources",
+            eyebrow: "Research record",
+          },
+        ]
       : []),
+    {
+      id: "reading-next-step",
+      label: "Choose the next move",
+      eyebrow: "Decision path",
+    },
   ];
 
   const structuredData = {
@@ -591,7 +618,11 @@ export default async function InsightArticlePage({ params }: Props) {
                   </Reveal>
 
                   <Reveal>
-                    <InsightDecisionPath pathway={pathway} className="mt-16" />
+                    <InsightDecisionPath
+                      pathway={pathway}
+                      id="reading-next-step"
+                      className="mt-16 scroll-mt-32"
+                    />
                   </Reveal>
                 </div>
 

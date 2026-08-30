@@ -11,6 +11,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 type ReadingRailItem = {
   id: string;
   label: string;
+  eyebrow?: string;
 };
 
 type InsightReadingRailProps = {
@@ -202,7 +203,7 @@ export function InsightReadingIndex({
       </div>
       <span className="insight-reading-index__progress" aria-hidden="true" />
       <div className="insight-reading-index__current" aria-live="polite">
-        <span>Current chapter</span>
+        <span>{activeItem.eyebrow ?? "Current chapter"}</span>
         <strong>{activeItem.label}</strong>
       </div>
       <div className="insight-reading-index__moves">
