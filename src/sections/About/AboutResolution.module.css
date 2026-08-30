@@ -87,7 +87,7 @@
   align-items: center;
   gap: 0.6rem;
   background: transparent;
-  color: rgba(51, 41, 31, 0.46);
+  color: rgba(51, 41, 31, 0.72);
   text-align: left;
   cursor: pointer;
   transition: color 320ms ease, padding-left 540ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -135,6 +135,12 @@
   font-weight: 700;
   letter-spacing: 0.13em;
   text-transform: uppercase;
+}
+
+.recordStage small,
+.recordStage dt {
+  color: #765234;
+  font-size: 0.625rem;
 }
 
 .pathRail strong {
@@ -255,7 +261,7 @@
 
 .decisionPassage { display: grid; margin-top: 0.85rem; grid-template-columns: minmax(0, 0.72fr) 1.65rem minmax(0, 1.28fr); align-items: center; gap: 0.5rem; }
 .decisionPassage > div { min-width: 0; }
-.decisionPassage span { color: rgba(139, 101, 68, 0.9); font-size: 0.47rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.decisionPassage span { color: #765234; font-size: 0.625rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
 .decisionPassage p { margin: 0.38rem 0 0; color: rgba(51, 41, 31, 0.7); font-family: var(--font-display), Georgia, serif; font-size: clamp(1rem, 1.25vw, 1.25rem); line-height: 1.08; }
 .decisionPassage > i { position: relative; display: block; height: 1px; overflow: visible; background: rgba(139, 101, 68, 0.28); }
 .decisionPassage > i::before,
@@ -266,8 +272,7 @@
 
 .recordStage dl { display: grid; margin: 1rem 0 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.72rem; }
 .recordStage dl > div { padding-top: 0.65rem; border-top: 1px solid rgba(51, 41, 31, 0.14); }
-.recordStage dt { color: rgba(139, 101, 68, 0.9); }
-.recordStage dd { margin: 0.3rem 0 0; color: rgba(51, 41, 31, 0.74); font-size: 0.61rem; line-height: 1.45; }
+.recordStage dd { margin: 0.3rem 0 0; color: rgba(51, 41, 31, 0.82); font-size: 0.6875rem; line-height: 1.42; }
 
 @keyframes resolve-line { to { transform: scaleX(1); } }
 
@@ -328,6 +333,21 @@
 @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
   .root { min-height: 126svh; }
   .inner { position: sticky; top: 0; height: 100svh; min-height: 100svh; }
+}
+
+@media (min-width: 1024px) and (max-height: 620px) {
+  .root { min-height: auto; overflow: hidden; }
+  .inner { position: relative; top: auto; display: block; height: auto; min-height: auto; padding-block: 5.5rem 2rem; }
+  .interactiveExperience { display: none; }
+  .staticExperience { display: grid; margin-top: 1.5rem; gap: 1rem; }
+  .staticFilm { min-height: 15rem; }
+  .staticPaths { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .staticPaths article { padding: 1rem; border-right: 1px solid rgba(51, 41, 31, 0.14); }
+  .footer { margin-top: 1rem; }
+  .interactiveSummary { display: none !important; }
+  .staticSummary { display: grid !important; }
+  .interactiveCta { display: none; }
+  .staticCta { display: block; }
 }
 
 @media (max-width: 1120px) and (min-width: 1024px) {

@@ -220,7 +220,7 @@ export function AboutResolution() {
                 BT / FIRST CONVERSATION / 0{activeIndex + 1}
               </span>
 
-              <div id="about-resolution-record" className={styles.recordSheet} aria-live="polite">
+              <div id="about-resolution-record" className={styles.recordSheet}>
                 {PATHS.map((path, index) => {
                   const state = index < activeIndex ? "passed" : index === activeIndex ? "active" : "waiting";
                   return (
