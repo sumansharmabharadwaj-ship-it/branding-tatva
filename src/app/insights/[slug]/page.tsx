@@ -296,10 +296,15 @@ export default async function InsightArticlePage({ params }: Props) {
                       {post.directAnswer}
                     </p>
                     <div className="mt-6 grid gap-2 border-t border-ivory/15 pt-5 text-xs text-ivory/60">
-                      <span>By {site.founder}</span>
-                      <span>Published {formatDate(post.publishedAt)}</span>
-                      <span>Updated {formatDate(post.updatedAt)}</span>
-                      <span>{post.readingTime}</span>
+                      <span>
+                        By {site.founder} · {post.readingTime}
+                      </span>
+                      <span>
+                        Published {formatDate(post.publishedAt)}
+                        {post.updatedAt !== post.publishedAt
+                          ? ` · Updated ${formatDate(post.updatedAt)}`
+                          : ""}
+                      </span>
                     </div>
                     <a
                       href="#working-framework"
