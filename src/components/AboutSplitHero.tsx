@@ -8,7 +8,6 @@ import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { LinkButton } from "@/components/Button";
 import { TiltCard } from "@/components/TiltCard";
-import { ScrollCue } from "@/components/ScrollCue";
 import { Fireflies } from "@/components/Fireflies";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
@@ -190,7 +189,6 @@ export function AboutSplitHero({
         </Reveal>
       </motion.div>
 
-      <ScrollCue />
     </section>
   );
 }

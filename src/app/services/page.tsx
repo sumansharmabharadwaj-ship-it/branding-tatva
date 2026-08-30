@@ -8,7 +8,6 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
-import { ScrollCue } from "@/components/ScrollCue";
 import { PhotoHero } from "@/components/PhotoHero";
 import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
@@ -309,7 +308,6 @@ export default async function ServicesPage() {
               </Reveal>
             </div>
           </Container>
-          <ScrollCue raised />
           {/* The hero's last frames darken into the Situation
               chapter's charcoal. Every later chapter uses the same
               veil-and-handoff grammar, so the page reads as one colour
