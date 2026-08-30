@@ -5,6 +5,8 @@ const root = path.resolve(__dirname, "..");
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const component = read("src/sections/About/AboutResolution.tsx");
 const styles = read("src/sections/About/AboutResolution.module.css");
+const memoryGate = read("scripts/about_route_memory_gate.cjs");
+const browserWorkflow = read(".github/workflows/about-route-memory-gate.yml");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -51,7 +53,22 @@ assert(
   component.includes('aria-controls="about-resolution-record"') && component.includes("aria-pressed={index === activeIndex}"),
   "Closing-record controls have lost their accessible state relationship.",
 );
+assert(
+  !memoryGate.includes('await client.send("DOM.enable")'),
+  "The retained-node sampler re-enables the long-lived DOM diagnostic session.",
+);
+assert(
+  memoryGate.indexOf("const finalDetachedDomTrees = await detachedDomCount(page);") >
+    memoryGate.indexOf("samples.push(await sampleMemory(client, page, `after-${trip + 1}`));"),
+  "Detached-tree diagnostics run before the retained-node sample series is complete.",
+);
+assert(
+  /id:\s*memory\s*\n\s*continue-on-error:\s*true/.test(browserWorkflow) &&
+    /id:\s*rendered\s*\n\s*continue-on-error:\s*true/.test(browserWorkflow) &&
+    browserWorkflow.includes("About memory and responsive rendering gates passed."),
+  "A memory failure can hide the rendered responsive result again.",
+);
 
 console.log(
-  "About resolution quality gate passed: short-screen fallback, readable record type, and single route announcement verified.",
+  "About resolution quality gate passed: reading fallback, accessible route state, isolated memory sampling, and independent rendered QA verified.",
 );

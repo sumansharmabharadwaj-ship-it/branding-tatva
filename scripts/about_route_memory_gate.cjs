@@ -96,12 +96,25 @@ async function forceCollection(client, page) {
   }
 }
 
-async function detachedDomCount(client) {
+async function detachedDomCount(page) {
+  // DOM.getDetachedDomNodes returns full protocol DOM.Node records. Keeping
+  // the DOM domain enabled on the same long-lived CDP session therefore
+  // gives those diagnostic node IDs a lifetime that spans later samples and
+  // can make the audit itself retain the detached route trees it is trying
+  // to measure. Use a disposable session for each probe, disable the domain,
+  // and detach it before the next route trip.
+  const diagnosticClient = await page.context().newCDPSession(page);
   try {
-    const result = await client.send("DOM.getDetachedDomNodes", { includeWhitespace: "none" });
+    await diagnosticClient.send("DOM.enable");
+    const result = await diagnosticClient.send("DOM.getDetachedDomNodes", {
+      includeWhitespace: "none",
+    });
     return Array.isArray(result.detachedNodes) ? result.detachedNodes.length : null;
   } catch {
     return null;
+  } finally {
+    await diagnosticClient.send("DOM.disable").catch(() => {});
+    await diagnosticClient.detach().catch(() => {});
   }
 }
 
@@ -126,7 +139,6 @@ async function sampleMemory(client, page, label) {
   return {
     label,
     ...counters,
-    detachedDomTrees: await detachedDomCount(client),
     jsHeapUsedSize: await heapUsed(client),
     routeState,
   };
@@ -150,7 +162,6 @@ async function sampleMemory(client, page, label) {
 
   try {
     await client.send("Performance.enable");
-    await client.send("DOM.enable");
     await client.send("HeapProfiler.enable");
 
     if (MOCK_VIDEO_PATH && fs.existsSync(MOCK_VIDEO_PATH)) {
@@ -184,10 +195,13 @@ async function sampleMemory(client, page, label) {
     const nodeValues = samples.map((sample) => sample.nodes);
     const listenerValues = samples.map((sample) => sample.jsEventListeners);
     const documentValues = samples.map((sample) => sample.documents);
-    const detachedValues = samples
-      .map((sample) => sample.detachedDomTrees)
-      .filter((value) => typeof value === "number");
     const increments = nodeValues.slice(1).map((value, index) => value - nodeValues[index]);
+
+    // Probe detached trees only after every enforced memory sample is
+    // complete. Even a disposable DOM-domain session should never sit on the
+    // critical path between samples, because materialising diagnostic nodes
+    // can perturb the renderer's own retained-node counters.
+    const finalDetachedDomTrees = await detachedDomCount(page);
 
     const summary = {
       baseUrl: BASE_URL,
@@ -205,10 +219,7 @@ async function sampleMemory(client, page, label) {
         maxSingleTripNodeGrowth: Math.max(...increments),
         listenerGrowth: listenerValues.at(-1) - listenerValues[0],
         documentGrowth: documentValues.at(-1) - documentValues[0],
-        detachedDomTreeGrowth:
-          detachedValues.length === samples.length
-            ? detachedValues.at(-1) - detachedValues[0]
-            : null,
+        finalDetachedDomTrees,
       },
       samples,
       pageErrors,

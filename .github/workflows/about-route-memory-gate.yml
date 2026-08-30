@@ -94,6 +94,8 @@ jobs:
           exit 1
 
       - name: Measure repeated About route round trips
+        id: memory
+        continue-on-error: true
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
           ABOUT_MEMORY_MOCK_VIDEO: /tmp/about-memory-video.mp4
@@ -103,10 +105,32 @@ jobs:
         run: node scripts/about_route_memory_gate.cjs
 
       - name: Verify the rendered About closing record
+        id: rendered
+        continue-on-error: true
         env:
           AUDIT_BASE_URL: http://127.0.0.1:3000
           ABOUT_MEMORY_MOCK_VIDEO: /tmp/about-memory-video.mp4
         run: npm run check:about:rendered
+
+      - name: Enforce About browser gates
+        if: ${{ always() }}
+        env:
+          MEMORY_OUTCOME: ${{ steps.memory.outcome }}
+          RENDERED_OUTCOME: ${{ steps.rendered.outcome }}
+        shell: bash
+        run: |
+          failures=()
+          if [ "$MEMORY_OUTCOME" != "success" ]; then
+            failures+=("memory=$MEMORY_OUTCOME")
+          fi
+          if [ "$RENDERED_OUTCOME" != "success" ]; then
+            failures+=("rendered=$RENDERED_OUTCOME")
+          fi
+          if [ "${#failures[@]}" -gt 0 ]; then
+            printf 'About browser gates failed: %s\n' "${failures[*]}"
+            exit 1
+          fi
+          echo "About memory and responsive rendering gates passed."
 
       - name: Stop the production server
         if: always()
