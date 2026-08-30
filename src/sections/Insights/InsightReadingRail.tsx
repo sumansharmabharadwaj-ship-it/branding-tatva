@@ -169,6 +169,8 @@ export function InsightReadingIndex({
     DESKTOP_READING_QUERY,
   );
   const [isOutlineOpen, setIsOutlineOpen] = useState(false);
+  const outlineListRef = useRef<HTMLOListElement>(null);
+  const prefersReducedMotion = useHydratedReducedMotion();
   const activeIndex = Math.max(
     0,
     items.findIndex((item) => item.id === activeId),
@@ -180,6 +182,22 @@ export function InsightReadingIndex({
   const previousItem = activeIndex > 0 ? items[activeIndex - 1] : null;
   const nextItem =
     activeIndex < items.length - 1 ? items[activeIndex + 1] : null;
+
+  useEffect(() => {
+    const list = outlineListRef.current;
+    const activeLink = list?.querySelector<HTMLAnchorElement>(
+      'a[aria-current="location"]',
+    );
+
+    if (!isOutlineOpen || !list || !activeLink) return;
+
+    const centeredPosition =
+      activeLink.offsetTop - (list.clientHeight - activeLink.offsetHeight) / 2;
+    list.scrollTo({
+      top: Math.max(0, centeredPosition),
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
+  }, [activeId, isOutlineOpen, prefersReducedMotion]);
 
   if (items.length === 0 || !activeItem) return null;
 
@@ -224,12 +242,24 @@ export function InsightReadingIndex({
         className="insight-reading-index__all"
         open={isOutlineOpen}
         onToggle={(event) => setIsOutlineOpen(event.currentTarget.open)}
+        onKeyDown={(event) => {
+          if (event.key !== "Escape" || !isOutlineOpen) return;
+
+          event.preventDefault();
+          const details = event.currentTarget;
+          setIsOutlineOpen(false);
+          window.requestAnimationFrame(() => {
+            details.querySelector("summary")?.focus();
+          });
+        }}
       >
-        <summary>
-          <span>All chapters</span>
+        <summary
+          aria-label={isOutlineOpen ? "Close article outline" : "Open article outline"}
+        >
+          <span>{isOutlineOpen ? "Close outline" : "All chapters"}</span>
           <small>{String(items.length).padStart(2, "0")}</small>
         </summary>
-        <ol>
+        <ol ref={outlineListRef}>
           {items.map((item, index) => (
             <li key={item.id}>
               <a
