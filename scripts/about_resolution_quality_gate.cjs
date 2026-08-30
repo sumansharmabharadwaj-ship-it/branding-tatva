@@ -6,6 +6,7 @@ const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const component = read("src/sections/About/AboutResolution.tsx");
 const styles = read("src/sections/About/AboutResolution.module.css");
 const memoryGate = read("scripts/about_route_memory_gate.cjs");
+const renderedGate = read("scripts/about_resolution_rendered_gate.cjs");
 const browserWorkflow = read(".github/workflows/about-route-memory-gate.yml");
 
 function assert(condition, message) {
@@ -114,6 +115,14 @@ assert(
     /id:\s*rendered\s*\n\s*continue-on-error:\s*true/.test(browserWorkflow) &&
     browserWorkflow.includes("About memory and responsive rendering gates passed."),
   "A memory failure can hide the rendered responsive result again.",
+);
+assert(
+  renderedGate.includes('name: "zoom-equivalent-720x450"') &&
+    renderedGate.includes('name: "narrow-mobile-320x568"') &&
+    renderedGate.includes('name: "reduced-mobile-320x568"') &&
+    renderedGate.includes("fallbackGeometry.contentContained") &&
+    renderedGate.includes("focusState.outlineWidth >= 2 || focusState.hasHalo"),
+  "Narrow, high-zoom, or reduced-motion closing records can regress outside the rendered matrix.",
 );
 
 console.log(

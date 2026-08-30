@@ -9,8 +9,11 @@ const VIEWPORTS = [
   { name: "desktop-1440x900", width: 1440, height: 900, interactive: true },
   { name: "short-desktop-1024x600", width: 1024, height: 600, interactive: false },
   { name: "tablet-1023x768", width: 1023, height: 768, interactive: false, touch: true },
-  { name: "mobile-390x844", width: 390, height: 844, interactive: false, touch: true },
+  { name: "zoom-equivalent-720x450", width: 720, height: 450, interactive: false },
+  { name: "mobile-390x844", width: 390, height: 844, interactive: false, touch: true, mobileNavigation: true },
+  { name: "narrow-mobile-320x568", width: 320, height: 568, interactive: false, touch: true, mobileNavigation: true },
   { name: "reduced-desktop-1440x900", width: 1440, height: 900, interactive: false, reducedMotion: "reduce" },
+  { name: "reduced-mobile-320x568", width: 320, height: 568, interactive: false, touch: true, reducedMotion: "reduce" },
 ];
 
 function assert(condition, message) {
@@ -164,7 +167,47 @@ async function auditViewport(browser, viewport) {
         assert(box && box.width > 0 && box.height > 0, `${viewport.name}: fallback route has no readable box`);
       }
 
-      if (viewport.name === "mobile-390x844") {
+      const fallbackGeometry = await scene.evaluate((root) => {
+        const cards = Array.from(root.querySelectorAll('[class*="staticPaths"] article'))
+          .filter((card) => card.getClientRects().length > 0);
+        const contentContained = cards.every((card) => {
+          const cardBox = card.getBoundingClientRect();
+          return Array.from(card.querySelectorAll("small, h3, p, strong, a")).every((node) => {
+            const box = node.getBoundingClientRect();
+            return box.top >= cardBox.top - 1 &&
+              box.right <= cardBox.right + 1 &&
+              box.bottom <= cardBox.bottom + 1 &&
+              box.left >= cardBox.left - 1;
+          });
+        });
+        const actions = root.querySelector("[data-about-resolution-actions]")?.getBoundingClientRect();
+        return {
+          contentContained,
+          actionsVisible: Boolean(actions && actions.width > 0 && actions.height > 0),
+        };
+      });
+      assert(fallbackGeometry.contentContained, `${viewport.name}: fallback text escapes its reading record`);
+      assert(fallbackGeometry.actionsVisible, `${viewport.name}: closing actions are not reachable`);
+
+      const firstRouteLink = scene.locator('[class*="staticPaths"] a:visible').first();
+      await firstRouteLink.focus();
+      // Reduced motion clamps an existing `transition: all` to 0.01ms. Let
+      // that single style frame settle before checking the final focus ring.
+      await page.waitForTimeout(20);
+      const focusState = await firstRouteLink.evaluate((node) => {
+        const style = getComputedStyle(node);
+        return {
+          focusVisible: node.matches(":focus-visible"),
+          outlineWidth: Number.parseFloat(style.outlineWidth) || 0,
+          hasHalo: style.boxShadow !== "none",
+        };
+      });
+      assert(
+        focusState.focusVisible && (focusState.outlineWidth >= 2 || focusState.hasHalo),
+        `${viewport.name}: fallback route has no visible keyboard focus ring`,
+      );
+
+      if (viewport.mobileNavigation) {
         await page.locator("#about-system").scrollIntoViewIfNeeded();
         await page.waitForTimeout(700);
         const chooser = page.getByRole("button", { name: /Choose About chapter/ });
