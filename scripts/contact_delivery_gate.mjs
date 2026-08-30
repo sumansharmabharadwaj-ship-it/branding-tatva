@@ -40,7 +40,11 @@ loadDeliveryModule(
   deliveryModule,
   require,
 );
-const { deliverContactEnquiry } = deliveryModule.exports;
+const {
+  CONTACT_DELIVERY_MONITOR_RECIPIENT,
+  deliverContactEnquiry,
+  probeContactDeliveryProvider,
+} = deliveryModule.exports;
 
 const submissionId = "123e4567-e89b-42d3-a456-426614174000";
 const request = {
@@ -136,6 +140,51 @@ await assert.rejects(
   /network unavailable/,
 );
 
+const monitorRequests = [];
+const monitorFetcher = async (url, init) => {
+  monitorRequests.push({ url, init });
+  return new Response(JSON.stringify({ id: "monitor_delivery_123" }), {
+    status: 200,
+  });
+};
+const monitorRequest = {
+  apiKey: "resend_monitor_key",
+  fromEmail: "Branding Tatva <contact@brandingtatva.com>",
+  replyTo: "suman@brandingtatva.com",
+  scope: "preview/unsafe characters",
+};
+const monitorDate = new Date("2026-08-30T23:59:00.000Z");
+
+const monitorAccepted = await probeContactDeliveryProvider(
+  monitorRequest,
+  monitorFetcher,
+  monitorDate,
+);
+await probeContactDeliveryProvider(monitorRequest, monitorFetcher, monitorDate);
+await probeContactDeliveryProvider(
+  monitorRequest,
+  monitorFetcher,
+  new Date("2026-08-31T00:01:00.000Z"),
+);
+
+assert.deepEqual(monitorAccepted, {
+  ok: true,
+  deliveryId: "monitor_delivery_123",
+});
+assert.equal(monitorRequests.length, 3);
+const monitorBodies = monitorRequests.map(({ init }) => JSON.parse(init.body));
+for (const body of monitorBodies) {
+  assert.deepEqual(body.to, [CONTACT_DELIVERY_MONITOR_RECIPIENT]);
+  assert.equal(body.to.includes(monitorRequest.replyTo), false);
+  assert.match(body.text, /No visitor enquiry was submitted\./);
+}
+const monitorKeys = monitorRequests.map(({ init }) =>
+  new Headers(init.headers).get("Idempotency-Key"),
+);
+assert.equal(monitorKeys[0], monitorKeys[1]);
+assert.notEqual(monitorKeys[1], monitorKeys[2]);
+assert.match(monitorKeys[0], /provider-monitor-preview-unsafe-characters-2026-08-30$/);
+
 console.log(
   JSON.stringify(
     {
@@ -146,6 +195,9 @@ console.log(
       providerRejection: true,
       unreadableResponse: true,
       networkFailure: true,
+      syntheticRecipientIsolated: true,
+      monitorRetryKeyStablePerUtcDay: true,
+      monitorRetryKeyRotatesNextUtcDay: true,
     },
     null,
     2,

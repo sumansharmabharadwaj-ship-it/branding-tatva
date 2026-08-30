@@ -1,5 +1,8 @@
 const RESEND_EMAILS_URL = "https://api.resend.com/emails";
 
+export const CONTACT_DELIVERY_MONITOR_RECIPIENT =
+  "delivered+branding-tatva-contact@resend.dev";
+
 type ContactDeliveryFetch = (
   input: string,
   init: RequestInit,
@@ -18,6 +21,22 @@ export type ContactDeliveryRequest = {
 export type ContactDeliveryResult =
   | { ok: true; deliveryId: string }
   | { ok: false; providerBody: string; providerStatus: number };
+
+type ContactDeliveryMonitorRequest = {
+  apiKey: string;
+  fromEmail: string;
+  replyTo: string;
+  scope: string;
+};
+
+function monitorScope(value: string) {
+  const normalized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48);
+  return normalized || "unknown";
+}
 
 export async function deliverContactEnquiry(
   request: ContactDeliveryRequest,
@@ -66,4 +85,37 @@ export async function deliverContactEnquiry(
         providerBody,
         providerStatus: response.status,
       };
+}
+
+/**
+ * Exercises the real provider boundary with Resend's designated delivered
+ * test recipient. No visitor payload or lead-inbox address is used as the
+ * destination. The UTC day and deployment scope make retries idempotent while
+ * allowing the next scheduled check to create fresh evidence.
+ */
+export function probeContactDeliveryProvider(
+  request: ContactDeliveryMonitorRequest,
+  fetcher: ContactDeliveryFetch,
+  now = new Date(),
+) {
+  const utcDay = now.toISOString().slice(0, 10);
+  const scope = monitorScope(request.scope);
+
+  return deliverContactEnquiry(
+    {
+      apiKey: request.apiKey,
+      fromEmail: request.fromEmail,
+      toEmail: CONTACT_DELIVERY_MONITOR_RECIPIENT,
+      replyTo: request.replyTo,
+      subject: "Branding Tatva contact delivery monitor",
+      text: [
+        "Synthetic delivery probe.",
+        "No visitor enquiry was submitted.",
+        `Scope: ${scope}`,
+        `UTC day: ${utcDay}`,
+      ].join("\n"),
+      submissionId: `provider-monitor-${scope}-${utcDay}`,
+    },
+    fetcher,
+  );
 }

@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
-const CONTRACT_VERSION = 11;
+const CONTRACT_VERSION = 12;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -79,7 +79,9 @@ const contactChapterRail = source.get("src/components/ContactChapterRail.tsx") |
 const servicesContactPackageHook = source.get("src/hooks/useServicesContactPackage.ts") || "";
 const contactCinematicCss = source.get("src/app/contact/contact-cinematic.css") || "";
 const contactRoute = source.get("src/app/api/contact/route.ts") || "";
+const contactMonitorRoute = source.get("src/app/api/cron/contact-delivery/route.ts") || "";
 const contactDelivery = source.get("src/lib/contact-delivery.ts") || "";
+const vercelConfig = fs.readFileSync(path.join(ROOT, "vercel.json"), "utf8");
 const calendly = source.get("src/components/CalendlyEmbed.tsx") || "";
 const contactExperience = `${contactPage}\n${calendly}`;
 
@@ -125,11 +127,35 @@ if (!contactForm.includes('"X-Contact-Submission"')) {
 if (!contactRoute.includes("deliverContactEnquiry")) {
   fail("Contact API route must use the tested delivery boundary.");
 }
+if (!contactRoute.includes('"contact_delivery_accepted"')) {
+  fail("Contact delivery must emit structured success evidence.");
+}
+if (!contactRoute.includes('"contact_delivery_rejected"')) {
+  fail("Contact delivery must emit structured provider-failure evidence.");
+}
+if (contactRoute.includes("providerBody.slice")) {
+  fail("Contact runtime logs must not include raw provider response bodies.");
+}
 if (!contactDelivery.includes('"Idempotency-Key"')) {
   fail("Contact delivery must send a Resend idempotency key.");
 }
 if (!/response\.ok\s*&&\s*deliveryId/.test(contactDelivery)) {
   fail("Contact delivery must verify a provider delivery ID before reporting success.");
+}
+if (!contactDelivery.includes("delivered+branding-tatva-contact@resend.dev")) {
+  fail("Contact provider monitoring must use Resend's designated test recipient.");
+}
+if (!contactMonitorRoute.includes('`Bearer ${cronSecret}`')) {
+  fail("Contact provider monitoring must require the Vercel cron secret.");
+}
+if (!contactMonitorRoute.includes("probeContactDeliveryProvider")) {
+  fail("Contact provider monitoring must exercise the tested delivery boundary.");
+}
+if (!contactMonitorRoute.includes('status: "degraded"')) {
+  fail("Contact provider monitoring must report provider failures truthfully.");
+}
+if (!vercelConfig.includes('"path": "/api/cron/contact-delivery"')) {
+  fail("Vercel must schedule the authenticated Contact provider monitor.");
 }
 if (!contactGratitude.includes('role="progressbar"')) {
   fail("Contact gratitude must expose acknowledgement progress.");

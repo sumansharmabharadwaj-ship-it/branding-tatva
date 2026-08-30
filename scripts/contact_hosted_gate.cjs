@@ -119,6 +119,33 @@ async function auditViewport(browser, viewport) {
     assert(!/20[ -]?minute/.test(lower), `${viewport.name}: stale 20-minute consultation copy remains`);
     assert(lower.includes("timezone") || lower.includes("time zone"), `${viewport.name}: scheduling timezone guidance is missing`);
 
+    let shortViewportState = null;
+    if (viewport.shortViewport) {
+      shortViewportState = await page.evaluate(() => {
+        const heading = document.querySelector("main h1")?.getBoundingClientRect();
+        const header = document.querySelector(".site-header")?.getBoundingClientRect();
+        const consent = document.querySelector(".consent-notice")?.getBoundingClientRect();
+        return {
+          viewportHeight: window.innerHeight,
+          heading: heading
+            ? { top: heading.top, bottom: heading.bottom, height: heading.height }
+            : null,
+          headerBottom: header?.bottom ?? 0,
+          consentTop: consent?.top ?? window.innerHeight,
+        };
+      });
+      assert(
+        shortViewportState.heading &&
+          shortViewportState.heading.top >= shortViewportState.headerBottom - 3 &&
+          shortViewportState.heading.bottom <= shortViewportState.consentTop + 3,
+        `${viewport.name}: fixed chrome obscures the opening Contact heading ${JSON.stringify(shortViewportState)}`,
+      );
+      assert(
+        shortViewportState.heading.top < shortViewportState.viewportHeight,
+        `${viewport.name}: the opening Contact heading is not present on first paint`,
+      );
+    }
+
     const telLinks = page.locator('a[href^="tel:"]');
     const whatsappLinks = page.locator('a[href*="wa.me"], a[href*="whatsapp.com"]');
     const emailLinks = page.locator('a[href^="mailto:"]');
@@ -203,6 +230,7 @@ async function auditViewport(browser, viewport) {
       formPresent: true,
       invalidEmailRejected: true,
       reducedMotionState,
+      shortViewportState,
     };
   } finally {
     await context.close();
@@ -729,6 +757,17 @@ async function auditApiRejectionPaths() {
   assert([400, 413, 415, 422].includes(results.newsletterInvalid.status), `newsletter API: invalid email was not rejected, status=${results.newsletterInvalid.status}`);
   falseSuccess(results.newsletterInvalid, "newsletter API invalid email");
 
+  results.contactMonitorUnauthorized = await request("/api/cron/contact-delivery");
+  assert(
+    [401, 503].includes(results.contactMonitorUnauthorized.status),
+    `contact monitor: unauthenticated request did not fail closed, status=${results.contactMonitorUnauthorized.status}`,
+  );
+  falseSuccess(results.contactMonitorUnauthorized, "contact monitor unauthorized request");
+  assert(
+    /no-store/i.test(results.contactMonitorUnauthorized.headers["cache-control"] || ""),
+    "contact monitor: failure response must not be cached",
+  );
+
   return Object.fromEntries(Object.entries(results).map(([key, value]) => [key, value.status]));
 }
 
@@ -743,6 +782,7 @@ async function auditApiRejectionPaths() {
     const viewports = [
       { name: "contact-desktop-1440x900", width: 1440, height: 900, touch: false },
       { name: "contact-mobile-390x844", width: 390, height: 844, touch: true },
+      { name: "contact-mobile-short-390x520", width: 390, height: 520, touch: true, shortViewport: true },
       { name: "contact-mobile-reduced-390x844", width: 390, height: 844, touch: true, reducedMotion: "reduce" },
     ];
     const viewportResults = [];
@@ -766,6 +806,7 @@ async function auditApiRejectionPaths() {
         "No contact message was submitted",
         "No newsletter subscription was created",
         "No Calendly appointment was booked",
+        "No Contact provider monitor delivery was triggered",
       ],
     };
 

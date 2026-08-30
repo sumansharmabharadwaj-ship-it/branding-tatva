@@ -112,6 +112,13 @@ async function main() {
       allowedStatuses: [200],
       expectNoStore: true,
     },
+    {
+      name: "Contact delivery monitor fails closed without cron authorization",
+      actual: await request("/api/cron/contact-delivery"),
+      allowedStatuses: [401, 503],
+      expectNoStore: true,
+      forbidSuccess: true,
+    },
   ];
 
   const failures = [];
@@ -126,6 +133,9 @@ async function main() {
       failures.push(
         `${check.name}: cache-control is ${check.actual.cacheControl || "missing"}`,
       );
+    }
+    if (check.forbidSuccess && /\"ok\"\s*:\s*true/.test(check.actual.bodyPreview)) {
+      failures.push(`${check.name}: returned a false success body`);
     }
   }
 

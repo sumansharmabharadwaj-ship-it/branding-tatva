@@ -14,6 +14,24 @@ export const runtime = "nodejs";
 
 const CONTACT_SUBMISSION_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const CONTACT_ROUTE = "/api/contact";
+
+type ContactLogLevel = "info" | "error";
+
+function contactLog(
+  level: ContactLogLevel,
+  event: string,
+  fields: Record<string, unknown>,
+) {
+  const line = JSON.stringify({
+    level,
+    event,
+    route: CONTACT_ROUTE,
+    ...fields,
+  });
+  if (level === "error") console.error(line);
+  else console.info(line);
+}
 
 function contactSubmissionId(request: NextRequest) {
   const candidate = request.headers.get("x-contact-submission")?.trim();
@@ -23,16 +41,44 @@ function contactSubmissionId(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const startedAt = Date.now();
+  const requestId = crypto.randomUUID();
+  const logContext = {
+    requestId,
+    vercelRequestId: request.headers.get("x-vercel-id") || null,
+  };
+  contactLog("info", "contact_request_started", logContext);
+
   const guarded = guardJsonRequest(request, { scope: "contact", limit: 5 });
-  if (guarded) return guarded;
+  if (guarded) {
+    contactLog("info", "contact_request_rejected", {
+      ...logContext,
+      durationMs: Date.now() - startedAt,
+      status: guarded.status,
+      stage: "request_guard",
+    });
+    return guarded;
+  }
 
   const body = await readJsonBody(request);
   if (!body.ok) {
+    contactLog("info", "contact_request_rejected", {
+      ...logContext,
+      durationMs: Date.now() - startedAt,
+      status: body.status,
+      stage: "body_read",
+    });
     return jsonNoStore({ error: body.error }, { status: body.status });
   }
 
   const parsed = contactSchema.safeParse(body.value);
   if (!parsed.success) {
+    contactLog("info", "contact_request_rejected", {
+      ...logContext,
+      durationMs: Date.now() - startedAt,
+      status: 422,
+      stage: "validation",
+    });
     return jsonNoStore(
       {
         error: "Please check the highlighted fields.",
@@ -43,6 +89,10 @@ export async function POST(request: NextRequest) {
   }
 
   if (parsed.data.company_website) {
+    contactLog("info", "contact_honeypot_accepted", {
+      ...logContext,
+      durationMs: Date.now() - startedAt,
+    });
     return jsonNoStore({ ok: true });
   }
 
@@ -51,11 +101,15 @@ export async function POST(request: NextRequest) {
   const fromEmail =
     process.env.CONTACT_FROM_EMAIL?.trim() ||
     "Branding Tatva <contact@brandingtatva.com>";
-  const requestId = crypto.randomUUID();
   const submissionId = contactSubmissionId(request);
 
   if (!apiKey || !toEmail) {
-    console.error(`[contact:${requestId}] Email delivery is not configured.`);
+    contactLog("error", "contact_delivery_unconfigured", {
+      ...logContext,
+      durationMs: Date.now() - startedAt,
+      resendConfigured: Boolean(apiKey),
+      destinationConfigured: Boolean(toEmail),
+    });
     return jsonNoStore(
       {
         error:
@@ -105,10 +159,11 @@ export async function POST(request: NextRequest) {
     );
 
     if (!delivery.ok) {
-      console.error(
-        `[contact:${requestId}] Resend rejected or returned no delivery ID:`,
-        delivery.providerBody.slice(0, 600),
-      );
+      contactLog("error", "contact_delivery_rejected", {
+        ...logContext,
+        durationMs: Date.now() - startedAt,
+        providerStatus: delivery.providerStatus,
+      });
       return jsonNoStore(
         {
           error: "Delivery failed. Please try again shortly or email Suman directly.",
@@ -118,13 +173,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.info(
-      `[contact:${requestId}] Resend accepted delivery ${delivery.deliveryId}.`,
-    );
+    contactLog("info", "contact_delivery_accepted", {
+      ...logContext,
+      durationMs: Date.now() - startedAt,
+      deliveryId: delivery.deliveryId,
+    });
 
     return jsonNoStore({ ok: true, requestId });
   } catch (error) {
-    console.error(`[contact:${requestId}] Submission error:`, error);
+    contactLog("error", "contact_delivery_failed", {
+      ...logContext,
+      durationMs: Date.now() - startedAt,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return jsonNoStore(
       {
         error: "Something went wrong. Please try again or email Suman directly.",

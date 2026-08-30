@@ -9,5 +9,11 @@
   },
   "github": {
     "autoJobCancelation": false
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/contact-delivery",
+      "schedule": "17 4 * * *"
+    }
+  ]
 }
