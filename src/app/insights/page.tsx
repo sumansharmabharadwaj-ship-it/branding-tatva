@@ -27,6 +27,7 @@ import {
   type EvidenceLayer,
 } from "@/sections/Insights/InsightsEvidenceLedger";
 import { InsightsFieldNotesResolution } from "@/sections/Insights/InsightsFieldNotesResolution";
+import { InsightsFooterInvitation } from "@/sections/Insights/InsightsFooterInvitation";
 import { InsightsKnowledgeAtlas } from "@/sections/Insights/InsightsKnowledgeAtlas";
 import {
   InsightsSceneNavigator,
@@ -272,6 +273,17 @@ export default function InsightsPage() {
     name,
     element,
   }));
+  const footerPaths = atlasPaths.map(
+    ({ slug, name, element, service }) => ({
+      slug,
+      name,
+      element,
+      service: {
+        slug: service.slug,
+        name: service.name,
+      },
+    }),
+  );
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -510,7 +522,10 @@ export default function InsightsPage() {
           </TexturedDark>
         </div>
       </main>
-      <Footer />
+      <Footer
+        className="insights-footer"
+        intro={<InsightsFooterInvitation paths={footerPaths} />}
+      />
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger

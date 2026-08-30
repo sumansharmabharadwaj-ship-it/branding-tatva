@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { Container } from "@/components/Container";
 import { TexturedDark } from "@/components/TexturedDark";
 import { Logo } from "@/components/Logo";
@@ -23,11 +24,15 @@ import { ConsentPreferencesLink } from "@/components/ConsentPreferencesLink";
 const WIDGET_CLASS =
   "rounded-2xl border border-white/15 bg-black/20 backdrop-blur-md p-5 sm:p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-black/25";
 
-type FooterProps = { compact?: boolean };
+type FooterProps = {
+  compact?: boolean;
+  className?: string;
+  intro?: ReactNode;
+};
 
-export function Footer({ compact = false }: FooterProps) {
+export function Footer({ compact = false, className, intro }: FooterProps) {
   return (
-    <footer className="relative">
+    <footer className={`relative ${className ?? ""}`}>
       {/* This used to carry a decorative IndianPattern strip here —
           first with no background of its own (showing plain cream
           through it), then with a bg-soil fix, then with its own
@@ -52,11 +57,15 @@ export function Footer({ compact = false }: FooterProps) {
         className="py-12 sm:py-14"
       >
         <Container className="relative">
-          <Reveal className="mx-auto max-w-xl text-center">
-            <p className="text-xs uppercase tracking-[0.3em] text-ivory/50">Let&apos;s talk</p>
-            <h2 className="mt-2 font-display text-2xl font-normal leading-tight text-ivory sm:text-3xl">
-              Every brand is visible. Let&apos;s make yours unforgettable.
-            </h2>
+          <Reveal className="mx-auto max-w-2xl text-center">
+            {intro ?? (
+              <>
+                <p className="text-xs uppercase tracking-[0.3em] text-ivory/50">Let&apos;s talk</p>
+                <h2 className="mt-2 font-display text-2xl font-normal leading-tight text-ivory sm:text-3xl">
+                  Every brand is visible. Let&apos;s make yours unforgettable.
+                </h2>
+              </>
+            )}
           </Reveal>
 
           {/* The widget bar itself — three cards side by side on desktop,
