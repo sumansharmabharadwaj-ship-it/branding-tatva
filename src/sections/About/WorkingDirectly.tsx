@@ -193,7 +193,6 @@ export function WorkingDirectly() {
                 className={styles.recordStage}
                 role="tabpanel"
                 aria-labelledby={`direct-stage-${sequence.activeIndex}`}
-                aria-live="polite"
               >
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div

@@ -174,7 +174,7 @@ export function BrandSignalAtlas() {
                 {stage.cue}
               </motion.p>
             </AnimatePresence>
-            <p className={styles.stageReadout} aria-live="polite">
+            <p className={styles.stageReadout}>
               <span>{stage.label}</span>
               <strong>{stage.number} / 03</strong>
             </p>

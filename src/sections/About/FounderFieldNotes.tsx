@@ -152,7 +152,7 @@ export function FounderFieldNotes() {
               Psychology sharpened observation. Literature sharpened language. Film sharpened
               attention. Brand strategy brings all three into one practice.
             </p>
-            <p className={styles.stageReadout} aria-live="polite">
+            <p className={styles.stageReadout}>
               <span>{active.verb}</span>
               <strong>{active.number} / 04</strong>
             </p>

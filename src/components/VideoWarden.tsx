@@ -83,18 +83,40 @@ export function VideoWarden() {
       { rootMargin: MARGIN, threshold: [0, 0.1, 0.35, 0.6] },
     );
 
-    const watched = new WeakSet<HTMLVideoElement>();
+    const watched = new Set<HTMLVideoElement>();
+
+    function videosWithin(node: Node) {
+      const videos: HTMLVideoElement[] = [];
+      if (node instanceof HTMLVideoElement) videos.push(node);
+      if (node instanceof Element) {
+        videos.push(...node.querySelectorAll<HTMLVideoElement>("video"));
+      }
+      return videos;
+    }
+
+    function watch(video: HTMLVideoElement) {
+      if (watched.has(video)) return;
+      watched.add(video);
+      observer.observe(video);
+    }
+
+    function unwatch(video: HTMLVideoElement) {
+      if (!watched.delete(video)) return;
+      observer.unobserve(video);
+    }
 
     function watchAll() {
-      document.querySelectorAll<HTMLVideoElement>("video").forEach((video) => {
-        if (watched.has(video)) return;
-        watched.add(video);
-        observer.observe(video);
-      });
+      document.querySelectorAll<HTMLVideoElement>("video").forEach(watch);
     }
 
     watchAll();
-    const mutations = new MutationObserver(watchAll);
+    const mutations = new MutationObserver((records) => {
+      records.forEach((record) => {
+        record.removedNodes.forEach((node) => videosWithin(node).forEach(unwatch));
+        record.addedNodes.forEach((node) => videosWithin(node).forEach(watch));
+      });
+      schedule();
+    });
     mutations.observe(document.body, { childList: true, subtree: true });
 
     // A video component may start itself after arbitration ran. Re-arbitrate
@@ -113,6 +135,7 @@ export function VideoWarden() {
       window.removeEventListener("scroll", schedule);
       observer.disconnect();
       mutations.disconnect();
+      watched.clear();
     };
   }, []);
 

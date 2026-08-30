@@ -97,7 +97,6 @@ export function Evidence() {
                 className={styles.reasoningPath}
                 role="tabpanel"
                 aria-labelledby={`evidence-case-${sequence.activeIndex}`}
-                aria-live="polite"
               >
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div key={active.slug} className={styles.pathInner} initial={prefersReducedMotion ? false : { opacity: 0, x: 28 }} animate={{ opacity: 1, x: 0 }} exit={prefersReducedMotion ? undefined : { opacity: 0, x: -18 }} transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}>

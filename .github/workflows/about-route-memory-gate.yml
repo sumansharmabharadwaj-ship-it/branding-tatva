@@ -16,6 +16,7 @@ on:
       - src/components/MeadowClosing.tsx
       - src/components/ParallaxVideoBackdrop.tsx
       - src/components/BackgroundVideo.tsx
+      - src/components/VideoWarden.tsx
       - src/hooks/useVideoFadeIn.ts
       - src/sections/About/**
       - package.json
@@ -84,7 +85,7 @@ jobs:
           pnpm start --hostname 127.0.0.1 --port 3000 > /tmp/branding-tatva-about-memory.log 2>&1 &
           echo $! > /tmp/branding-tatva-about-memory.pid
           for attempt in {1..90}; do
-            if curl --fail --silent http://127.0.0.1:3000/work > /dev/null; then
+            if curl --fail --silent http://127.0.0.1:3000/services > /dev/null; then
               exit 0
             fi
             sleep 1
@@ -98,7 +99,7 @@ jobs:
           ABOUT_MEMORY_MOCK_VIDEO: /tmp/about-memory-video.mp4
           ABOUT_MEMORY_WARMUPS: 1
           ABOUT_MEMORY_TRIPS: 4
-          ABOUT_MEMORY_ENFORCE: 0
+          ABOUT_MEMORY_ENFORCE: 1
         run: node scripts/about_route_memory_gate.cjs
 
       - name: Verify the rendered About closing record

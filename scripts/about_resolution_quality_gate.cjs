@@ -36,6 +36,10 @@ assert(
   "Closing-record supporting copy has fallen below the protected readable size.",
 );
 assert(
+  /\.recordSheet\s*\{[^}]*min-height:\s*25\.5rem;/.test(styles),
+  "Desktop closing records have lost their protected vertical reading room.",
+);
+assert(
   !/<div id="about-resolution-record"[^>]*aria-live=/.test(component),
   "The detailed record duplicates the concise route announcement.",
 );

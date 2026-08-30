@@ -187,7 +187,6 @@ export function Behaviours() {
                 className={styles.testResult}
                 role="tabpanel"
                 aria-labelledby={`standard-gate-${activeIndex}`}
-                aria-live="polite"
               >
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.article

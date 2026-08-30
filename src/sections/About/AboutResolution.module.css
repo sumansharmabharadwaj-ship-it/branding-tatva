@@ -216,7 +216,7 @@
   right: 8%;
   bottom: 10%;
   width: min(63%, 25rem);
-  min-height: 24rem;
+  min-height: 25.5rem;
   padding: clamp(1.25rem, 2.2vw, 1.8rem);
   overflow: hidden;
   border: 1px solid rgba(72, 54, 40, 0.18);

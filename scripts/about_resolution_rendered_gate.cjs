@@ -60,6 +60,7 @@ async function auditViewport(browser, viewport) {
     if (viewport.interactive) {
       const buttons = scene.locator('[role="group"] button');
       assert((await buttons.count()) === 3, `${viewport.name}: expected three closing routes`);
+      const routeResults = [];
       for (let index = 0; index < 3; index += 1) {
         await buttons.nth(index).click();
         await page.waitForTimeout(700);
@@ -81,14 +82,21 @@ async function auditViewport(browser, viewport) {
             },
           };
         });
+        const contained =
+          geometry.content.top >= geometry.sheet.top - 1 &&
+          geometry.content.right <= geometry.sheet.right + 1 &&
+          geometry.content.bottom <= geometry.sheet.bottom + 1 &&
+          geometry.content.left >= geometry.sheet.left - 1;
+        routeResults.push({ route: index + 1, contained, geometry });
+        await scene.screenshot({ path: path.join(OUTPUT_DIR, `${viewport.name}-route-${index + 1}.png`) });
         assert(geometry.pressed[index] === "true", `${viewport.name}: route ${index + 1} did not become pressed`);
         assert(geometry.hidden.filter((value) => value === "false").length === 1, `${viewport.name}: more than one record is exposed`);
-        assert(
-          geometry.content.top >= geometry.sheet.top - 1 && geometry.content.right <= geometry.sheet.right + 1 &&
-            geometry.content.bottom <= geometry.sheet.bottom + 1 && geometry.content.left >= geometry.sheet.left - 1,
-          `${viewport.name}: route ${index + 1} content is clipped by the record sheet`,
-        );
       }
+      const clippedRoutes = routeResults.filter((result) => !result.contained);
+      assert(
+        clippedRoutes.length === 0,
+        `${viewport.name}: record content is clipped ${JSON.stringify(clippedRoutes)}`,
+      );
     } else {
       const cards = scene.locator('[class*="staticPaths"] article:visible');
       assert((await cards.count()) === 3, `${viewport.name}: complete three-route fallback is missing`);
@@ -111,9 +119,18 @@ async function auditViewport(browser, viewport) {
   const browser = await chromium.launch({ headless: true });
   try {
     const results = [];
-    for (const viewport of VIEWPORTS) results.push(await auditViewport(browser, viewport));
-    fs.writeFileSync(path.join(OUTPUT_DIR, "results.json"), JSON.stringify(results, null, 2));
-    console.log(JSON.stringify(results, null, 2));
+    const failures = [];
+    for (const viewport of VIEWPORTS) {
+      try {
+        results.push(await auditViewport(browser, viewport));
+      } catch (error) {
+        failures.push({ viewport: viewport.name, error: String(error) });
+      }
+    }
+    const report = { results, failures };
+    fs.writeFileSync(path.join(OUTPUT_DIR, "results.json"), JSON.stringify(report, null, 2));
+    console.log(JSON.stringify(report, null, 2));
+    assert(failures.length === 0, `About resolution rendered gate failed ${JSON.stringify(failures)}`);
   } finally {
     await browser.close();
   }
