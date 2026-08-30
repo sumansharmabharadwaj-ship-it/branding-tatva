@@ -84,6 +84,7 @@ export function ServicesExperienceRuntime() {
     const heroAperture = document.createElement("span");
     const heroFragments = document.createElement("span");
     let activeIndex = 0;
+    let pendingAnchorIndex: number | null = null;
     let frame = 0;
     let pointerFrame = 0;
     let pointerX = 0;
@@ -210,6 +211,33 @@ export function ServicesExperienceRuntime() {
       );
     }
 
+    function chapterIndexForHash(hash = window.location.hash) {
+      if (!hash.startsWith("#")) return -1;
+
+      let id = hash.slice(1);
+      try {
+        id = decodeURIComponent(id);
+      } catch {
+        // A malformed fragment cannot match a scene, so the focal line keeps
+        // ownership of chapter state.
+        return -1;
+      }
+
+      return scenes.findIndex((scene) => scene.id === id);
+    }
+
+    function publishAnchorChapter() {
+      const index = chapterIndexForHash();
+      if (index < 0) return;
+
+      // Native anchor alignment can finish a frame or two after hydration.
+      // Keep the requested destination authoritative until its content plane
+      // reaches the focal line, then hand control back to normal scrolling.
+      pendingAnchorIndex = index;
+      publishChapter(index);
+      scheduleProgress();
+    }
+
     // One geometric focal line owns chapter state. Intersection ratios can
     // briefly favour a previous full-height scene after a hash jump, which is
     // why the rail could still announce Opening signal beside Client proof.
@@ -217,6 +245,19 @@ export function ServicesExperienceRuntime() {
     // wheel, trackpad, touch, keyboard and direct anchors.
     function chapterAtFocalLine(viewportHeight: number) {
       const focalY = viewportHeight * 0.34;
+
+      if (pendingAnchorIndex !== null) {
+        const anchorScene = scenes[pendingAnchorIndex];
+        const anchorBounds = anchorScene?.getBoundingClientRect();
+        const anchorIndex = pendingAnchorIndex;
+
+        if (anchorBounds && anchorBounds.top <= focalY && anchorBounds.bottom > focalY) {
+          pendingAnchorIndex = null;
+        }
+
+        return anchorIndex;
+      }
+
       let nearestIndex = 0;
       let nearestDistance = Number.POSITIVE_INFINITY;
 
@@ -480,11 +521,18 @@ export function ServicesExperienceRuntime() {
       if (!pointerFrame) pointerFrame = window.requestAnimationFrame(publishPointer);
     }
 
-    publishChapter(0);
+    const initialAnchorIndex = chapterIndexForHash();
+    if (initialAnchorIndex >= 0) {
+      pendingAnchorIndex = initialAnchorIndex;
+      publishChapter(initialAnchorIndex);
+    } else {
+      publishChapter(0);
+    }
     updateSceneProgress();
     window.addEventListener("scroll", scheduleProgress, { passive: true });
     window.addEventListener("resize", scheduleProgress, { passive: true });
     window.addEventListener("pageshow", scheduleProgress);
+    window.addEventListener("hashchange", publishAnchorChapter);
     servicesRoot.addEventListener("pointermove", onPointerMove, { passive: true });
     servicesRoot.addEventListener("pointerleave", onPointerLeave);
 
@@ -494,6 +542,7 @@ export function ServicesExperienceRuntime() {
       window.removeEventListener("scroll", scheduleProgress);
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);
+      window.removeEventListener("hashchange", publishAnchorChapter);
       servicesRoot.removeEventListener("pointermove", onPointerMove);
       servicesRoot.removeEventListener("pointerleave", onPointerLeave);
       delete document.documentElement.dataset.servicesExperience;
