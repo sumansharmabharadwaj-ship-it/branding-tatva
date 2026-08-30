@@ -171,6 +171,20 @@ export function StrategyRoomCTA() {
     window.requestAnimationFrame(() => briefHeadingRef.current?.focus());
   }
 
+  function registerBriefHeading(node: HTMLParagraphElement | null) {
+    briefHeadingRef.current = node;
+    if (!node || !shouldFocusBriefHeadingRef.current) return;
+    shouldFocusBriefHeadingRef.current = false;
+    node.focus();
+  }
+
+  function registerBriefStartButton(node: HTMLButtonElement | null) {
+    briefStartButtonRef.current = node;
+    if (!node || !shouldRestoreBriefStartFocusRef.current) return;
+    shouldRestoreBriefStartFocusRef.current = false;
+    node.focus();
+  }
+
   function startBrief() {
     shouldFocusBriefHeadingRef.current = true;
     setBriefStarted(true);
@@ -339,11 +353,6 @@ export function StrategyRoomCTA() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={transition}
-                onAnimationComplete={() => {
-                  if (!shouldRestoreBriefStartFocusRef.current) return;
-                  shouldRestoreBriefStartFocusRef.current = false;
-                  briefStartButtonRef.current?.focus();
-                }}
                 className="mx-auto max-w-2xl rounded-[1.75rem] border border-ivory/18 bg-[rgba(18,24,21,0.68)] p-6 shadow-[0_28px_90px_rgba(6,10,8,0.26)] backdrop-blur-xl sm:p-8"
               >
                 {carriedPackage ? (
@@ -368,7 +377,7 @@ export function StrategyRoomCTA() {
                     See available times
                     <span aria-hidden="true" className="ml-2">↗</span>
                   </button>
-                  <button ref={briefStartButtonRef} type="button" data-strategy-control="true" onClick={startBrief} className={OPTION_BUTTON_CLASS}>
+                  <button ref={registerBriefStartButton} type="button" data-strategy-control="true" onClick={startBrief} className={OPTION_BUTTON_CLASS}>
                     Add a 60-second brief
                   </button>
                 </div>
@@ -382,14 +391,9 @@ export function StrategyRoomCTA() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={transition}
-                onAnimationComplete={() => {
-                  if (!shouldFocusBriefHeadingRef.current) return;
-                  shouldFocusBriefHeadingRef.current = false;
-                  briefHeadingRef.current?.focus();
-                }}
                 className="mx-auto max-w-2xl rounded-[1.75rem] border border-ivory/18 bg-[rgba(18,24,21,0.68)] p-6 shadow-[0_28px_90px_rgba(6,10,8,0.26)] backdrop-blur-xl sm:p-8"
               >
-                <p ref={briefHeadingRef} tabIndex={-1} className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-ivory/60 outline-none">
+                <p ref={registerBriefHeading} tabIndex={-1} className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-ivory/60 outline-none">
                   {progressLabel}
                 </p>
                 <div className="mx-auto mt-3 flex max-w-sm justify-center gap-1.5" aria-hidden="true">
