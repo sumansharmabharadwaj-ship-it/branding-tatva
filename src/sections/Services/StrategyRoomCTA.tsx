@@ -10,10 +10,13 @@ import { site } from "@/data/site";
 import { entityFacts } from "@/data/entityFacts";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
+  SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   SITUATION_TO_PACKAGE,
   isServicesSituation,
   readCompletedHomeDiagnosis,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
 } from "@/lib/servicesJourney";
 import { track } from "@/lib/analytics";
 
@@ -26,6 +29,31 @@ const PRIORITIES = ["Getting positioning right", "Building recognition", "Stayin
 const FOCUS_AREAS = ["Positioning & identity", "Content & voice", "Ongoing management", "Still exploring"] as const;
 const QUESTION_COUNT = 2;
 const MODAL_INTERACTION_EVENT = "bt:services-modal-interaction";
+
+const ROUTE_BRIEFS: Record<
+  ServicesSituationId,
+  {
+    invitation: string;
+    priorities: readonly (typeof PRIORITIES)[number][];
+    focusAreas: readonly (typeof FOCUS_AREAS)[number][];
+  }
+> = {
+  idea: {
+    invitation: "Begin with the position, then name the first expression that needs a clear direction.",
+    priorities: ["Getting positioning right", "Building recognition", "Staying consistent", "Still deciding"],
+    focusAreas: ["Positioning & identity", "Content & voice", "Ongoing management", "Still exploring"],
+  },
+  reposition: {
+    invitation: "Bring the meaning that no longer fits and the touchpoint where that confusion appears most clearly.",
+    priorities: ["Getting positioning right", "Building recognition", "Staying consistent", "Still deciding"],
+    focusAreas: ["Positioning & identity", "Content & voice", "Ongoing management", "Still exploring"],
+  },
+  ongoing: {
+    invitation: "Bring the recurring decision that keeps drifting as more content and campaigns go live.",
+    priorities: ["Staying consistent", "Building recognition", "Getting positioning right", "Still deciding"],
+    focusAreas: ["Ongoing management", "Content & voice", "Positioning & identity", "Still exploring"],
+  },
+};
 
 const OPTION_BUTTON_CLASS =
   "min-h-11 rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2.5 text-sm text-ivory/90 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone";
@@ -42,6 +70,7 @@ export function StrategyRoomCTA() {
   const [priority, setPriority] = useState<string | null>(null);
   const [focus, setFocus] = useState<string | null>(null);
   const [carriedPackage, setCarriedPackage] = useState<string | null>(null);
+  const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
@@ -49,16 +78,39 @@ export function StrategyRoomCTA() {
   const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
+    function applySituation(situation: ServicesSituationId | null) {
+      setCarriedSituation(situation);
+      if (!situation) {
+        setCarriedPackage(null);
+        return;
+      }
+      const packageSlug = SITUATION_TO_PACKAGE[situation];
+      const matchedPackage = packages.find((entry) => entry.slug === packageSlug);
+      setCarriedPackage(matchedPackage?.name ?? null);
+    }
+
     try {
       const storedSituation = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
       const savedSituation = isServicesSituation(storedSituation)
         ? storedSituation
         : readCompletedHomeDiagnosis();
-      if (!savedSituation) return;
-      const packageSlug = SITUATION_TO_PACKAGE[savedSituation];
-      const matchedPackage = packages.find((entry) => entry.slug === packageSlug);
-      setCarriedPackage(matchedPackage?.name ?? null);
-    } catch {}
+      applySituation(savedSituation);
+    } catch {
+      applySituation(null);
+    }
+
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      const nextSituation = isServicesSituation(detail?.situation) ? detail.situation : null;
+      applySituation(nextSituation);
+      setPriority(null);
+      setFocus(null);
+      setStep(0);
+      setBriefStarted(false);
+    }
+
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
   }, []);
 
   useEffect(() => {
@@ -121,6 +173,7 @@ export function StrategyRoomCTA() {
     track("calendar_opened", {
       source: "services-strategy-room",
       brief: step === QUESTION_COUNT ? "completed" : "skipped",
+      route: carriedSituation ?? "unselected",
     });
     setCalendarOpen(true);
   }
@@ -162,6 +215,9 @@ export function StrategyRoomCTA() {
   }
 
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const };
+  const routeBrief = carriedSituation ? ROUTE_BRIEFS[carriedSituation] : null;
+  const priorityOptions = routeBrief?.priorities ?? PRIORITIES;
+  const focusOptions = routeBrief?.focusAreas ?? FOCUS_AREAS;
   const progressLabel = step < QUESTION_COUNT ? `Question ${step + 1} of ${QUESTION_COUNT}` : "Brief ready";
   const answers = [carriedPackage ? `Route: ${carriedPackage}` : null, priority, focus].filter(
     (answer): answer is string => Boolean(answer),
@@ -272,6 +328,7 @@ export function StrategyRoomCTA() {
                   <div className="mx-auto mb-6 max-w-lg rounded-2xl border border-sandstone/25 bg-sandstone/[0.07] px-4 py-3 text-left">
                     <p className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">Carried from your situation</p>
                     <p className="mt-1 font-display text-lg font-normal text-ivory">{carriedPackage}</p>
+                    {routeBrief ? <p className="mt-1 text-xs leading-relaxed text-ivory/62">{routeBrief.invitation}</p> : null}
                   </div>
                 ) : null}
                 <p className="font-display text-2xl font-normal text-ivory">Availability is one step away.</p>
@@ -324,7 +381,7 @@ export function StrategyRoomCTA() {
                     <motion.div key="priority" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
                       <p className="mt-6 text-sm font-medium uppercase tracking-wide text-ivory/78">What matters most right now?</p>
                       <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
-                        {PRIORITIES.map((option) => (
+                        {priorityOptions.map((option) => (
                           <motion.button
                             key={option}
                             type="button"
@@ -346,7 +403,7 @@ export function StrategyRoomCTA() {
                     <motion.div key="focus" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
                       <p className="mt-6 text-sm font-medium uppercase tracking-wide text-ivory/78">Where should the conversation focus?</p>
                       <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
-                        {FOCUS_AREAS.map((option) => (
+                        {focusOptions.map((option) => (
                           <motion.button
                             key={option}
                             type="button"
