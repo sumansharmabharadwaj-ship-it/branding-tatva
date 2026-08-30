@@ -76,6 +76,8 @@ export function StrategyRoomCTA() {
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const briefHeadingRef = useRef<HTMLParagraphElement>(null);
   const briefStartButtonRef = useRef<HTMLButtonElement>(null);
+  const shouldFocusBriefHeadingRef = useRef(false);
+  const shouldRestoreBriefStartFocusRef = useRef(false);
   const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
@@ -170,14 +172,14 @@ export function StrategyRoomCTA() {
   }
 
   function startBrief() {
+    shouldFocusBriefHeadingRef.current = true;
     setBriefStarted(true);
-    focusBriefHeading();
   }
 
   function closeBrief() {
+    shouldRestoreBriefStartFocusRef.current = true;
     restart();
     setBriefStarted(false);
-    window.requestAnimationFrame(() => briefStartButtonRef.current?.focus());
   }
 
   function openCalendar() {
@@ -337,6 +339,11 @@ export function StrategyRoomCTA() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={transition}
+                onAnimationComplete={() => {
+                  if (!shouldRestoreBriefStartFocusRef.current) return;
+                  shouldRestoreBriefStartFocusRef.current = false;
+                  briefStartButtonRef.current?.focus();
+                }}
                 className="mx-auto max-w-2xl rounded-[1.75rem] border border-ivory/18 bg-[rgba(18,24,21,0.68)] p-6 shadow-[0_28px_90px_rgba(6,10,8,0.26)] backdrop-blur-xl sm:p-8"
               >
                 {carriedPackage ? (
@@ -375,6 +382,11 @@ export function StrategyRoomCTA() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={transition}
+                onAnimationComplete={() => {
+                  if (!shouldFocusBriefHeadingRef.current) return;
+                  shouldFocusBriefHeadingRef.current = false;
+                  briefHeadingRef.current?.focus();
+                }}
                 className="mx-auto max-w-2xl rounded-[1.75rem] border border-ivory/18 bg-[rgba(18,24,21,0.68)] p-6 shadow-[0_28px_90px_rgba(6,10,8,0.26)] backdrop-blur-xl sm:p-8"
               >
                 <p ref={briefHeadingRef} tabIndex={-1} className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-ivory/60 outline-none">
