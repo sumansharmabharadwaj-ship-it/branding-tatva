@@ -18,6 +18,8 @@ const CHAPTERS = [
 ] as const;
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+const THREAD_ACTIVE_FRAME_MS = 32;
+const THREAD_IDLE_FRAME_MS = 64;
 
 export function AboutCinematicRuntime() {
   const runtimeRef = useRef<HTMLDivElement>(null);
@@ -30,6 +32,14 @@ export function AboutCinematicRuntime() {
   const [navigatorActive, setNavigatorActive] = useState(false);
   const [navigatorTone, setNavigatorTone] = useState("dark");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.aboutFilm = "true";
+    return () => {
+      delete root.dataset.aboutFilm;
+    };
+  }, []);
 
   useEffect(() => {
     const runtime = runtimeRef.current;
@@ -229,6 +239,14 @@ export function AboutCinematicRuntime() {
     let activeTone = "dark";
     let filmProgress = 0;
     let previousActiveScene = -1;
+    let previousVelocityValue = "";
+    let previousDirectionValue = "";
+    let previousPointerXValue = "";
+    let previousPointerYValue = "";
+    let previousNarrativeActive = false;
+    let previousThreadTone = activeTone;
+    let lastThreadPaintAt = Number.NEGATIVE_INFINITY;
+    let threadPaintDirty = true;
 
     const resizeThread = () => {
       canvasWidth = window.innerWidth;
@@ -238,6 +256,7 @@ export function AboutCinematicRuntime() {
       thread.height = Math.round(canvasHeight * pixelRatio);
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
       layoutDirty = true;
+      threadPaintDirty = true;
     };
 
     const pointOnCurve = (
@@ -358,18 +377,22 @@ export function AboutCinematicRuntime() {
         return;
       }
 
-      const elapsed = Math.min(34, Math.max(0, now - previousFrameAt));
+      const frameElapsed = Math.min(100, Math.max(0, now - previousFrameAt));
       previousFrameAt = now;
-      ambientPhase += elapsed / 1000;
+      ambientPhase += Math.min(34, frameElapsed) / 1000;
+      const responseBlend = 1 - Math.pow(0.82, frameElapsed / (1000 / 60));
 
       const viewportHeight = Math.max(window.innerHeight, 1);
       const currentScrollY = window.scrollY;
       const scrollChanged = currentScrollY !== lastScrollY;
       const rawVelocity = clamp((currentScrollY - lastScrollY) / viewportHeight, -0.12, 0.12);
-      smoothedVelocity += (rawVelocity - smoothedVelocity) * 0.18;
+      smoothedVelocity += (rawVelocity - smoothedVelocity) * responseBlend;
+      if (rawVelocity === 0 && Math.abs(smoothedVelocity) < 0.00005) smoothedVelocity = 0;
       if (rawVelocity !== 0) lastDirection = rawVelocity > 0 ? 1 : -1;
-      pointerX += (pointerTargetX - pointerX) * 0.18;
-      pointerY += (pointerTargetY - pointerY) * 0.18;
+      pointerX += (pointerTargetX - pointerX) * responseBlend;
+      pointerY += (pointerTargetY - pointerY) * responseBlend;
+      if (Math.abs(pointerTargetX - pointerX) < 0.1) pointerX = pointerTargetX;
+      if (Math.abs(pointerTargetY - pointerY) < 0.1) pointerY = pointerTargetY;
       lastScrollY = currentScrollY;
 
       if (layoutDirty || scrollChanged) {
@@ -433,23 +456,54 @@ export function AboutCinematicRuntime() {
         runtime.style.setProperty("--active-chapter-progress", activeSceneProgress.toFixed(4));
       }
 
-      scenes.forEach((scene) => {
-        scene.style.setProperty("--scene-velocity", Math.abs(smoothedVelocity).toFixed(4));
-        scene.style.setProperty("--scene-direction", String(lastDirection));
-      });
-      runtime.style.setProperty("--film-velocity", Math.abs(smoothedVelocity).toFixed(4));
-      runtime.style.setProperty("--film-direction", String(lastDirection));
-      runtime.style.setProperty("--film-pointer-x", `${pointerX.toFixed(1)}px`);
-      runtime.style.setProperty("--film-pointer-y", `${pointerY.toFixed(1)}px`);
-      drawThread({
-        active: narrativeActive,
-        activeProgress: activeSceneProgress,
-        filmProgress,
-        tone: activeTone,
-      });
-
       const pointerSettling = Math.abs(pointerTargetX - pointerX) + Math.abs(pointerTargetY - pointerY) > 0.5;
-      if ((narrativeActive || Math.abs(smoothedVelocity) > 0.0002 || pointerSettling) && !document.hidden) {
+      const velocityValue = Math.abs(smoothedVelocity).toFixed(4);
+      const directionValue = String(lastDirection);
+      if (velocityValue !== previousVelocityValue || directionValue !== previousDirectionValue) {
+        scenes.forEach((scene) => {
+          scene.style.setProperty("--scene-velocity", velocityValue);
+          scene.style.setProperty("--scene-direction", directionValue);
+        });
+        runtime.style.setProperty("--film-velocity", velocityValue);
+        runtime.style.setProperty("--film-direction", directionValue);
+        previousVelocityValue = velocityValue;
+        previousDirectionValue = directionValue;
+      }
+
+      const pointerXValue = `${pointerX.toFixed(1)}px`;
+      const pointerYValue = `${pointerY.toFixed(1)}px`;
+      if (pointerXValue !== previousPointerXValue || pointerYValue !== previousPointerYValue) {
+        runtime.style.setProperty("--film-pointer-x", pointerXValue);
+        runtime.style.setProperty("--film-pointer-y", pointerYValue);
+        previousPointerXValue = pointerXValue;
+        previousPointerYValue = pointerYValue;
+      }
+
+      // The final thread frame remains visible while the visitor pauses, but
+      // full-screen canvas compositing yields completely once input settles.
+      // Scene progress still updates on every scheduled render; only the
+      // decorative paint is capped during input.
+      const threadInteracting = scrollChanged || Math.abs(smoothedVelocity) > 0.0002 || pointerSettling;
+      const threadFrameInterval = threadInteracting ? THREAD_ACTIVE_FRAME_MS : THREAD_IDLE_FRAME_MS;
+      const threadStateChanged =
+        narrativeActive !== previousNarrativeActive || activeTone !== previousThreadTone;
+      if (threadPaintDirty || threadStateChanged || now - lastThreadPaintAt >= threadFrameInterval) {
+        drawThread({
+          active: narrativeActive,
+          activeProgress: activeSceneProgress,
+          filmProgress,
+          tone: activeTone,
+        });
+        // Measure the next interval from completed paint, not the rAF start.
+        // On a constrained device the paint itself may consume a frame; using
+        // `now` would make the next callback immediately eligible again.
+        lastThreadPaintAt = performance.now();
+        previousNarrativeActive = narrativeActive;
+        previousThreadTone = activeTone;
+        threadPaintDirty = false;
+      }
+
+      if ((Math.abs(smoothedVelocity) > 0.0002 || pointerSettling) && !document.hidden) {
         frame = window.requestAnimationFrame(render);
       }
     };

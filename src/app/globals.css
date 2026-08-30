@@ -209,6 +209,13 @@
     50% { transform: translate(-3%, 2%) scale(1.06); }
   }
 
+  /* About supplies its own full-bleed film and chapter atmospheres. Keep the
+     global wash visible there, but do not continuously composite another
+     full-viewport animation underneath the entire long-form journey. */
+  html[data-about-film="true"] .gradient-mesh {
+    animation-play-state: paused;
+  }
+
   /* A whisper of paper grain over the flat cream sections, so the base
      background reads as material rather than a solid digital fill.
      Fixed + very low opacity + multiply so it never fights photos or
@@ -477,6 +484,15 @@
 }
 .card-float {
   animation: card-float 6.5s ease-in-out infinite;
+}
+
+/* The hero remains mounted after it leaves the viewport. Freeze only its
+   decorative loops while it is off-screen; they resume at the same frame if
+   the visitor returns, and the semantic content is unaffected. */
+[data-about-hero-active="false"] .hero-fog,
+[data-about-hero-active="false"] .firefly,
+[data-about-hero-active="false"] .card-float {
+  animation-play-state: paused;
 }
 
 /* Spotlight card group — hovering one offering card intensifies its own

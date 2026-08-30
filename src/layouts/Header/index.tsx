@@ -140,6 +140,7 @@ export function Header({ transparent = false }: HeaderProps) {
     : pathname.startsWith("/work") ? "#D4B99A"
     : pathname.startsWith("/insights") || pathname.startsWith("/glossary") ? "#C28A28"
     : pathname.startsWith("/contact") ? "#AD6F5C"
+    : pathname.startsWith("/about") ? "#795A43"
     : "#C6A97A";
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 

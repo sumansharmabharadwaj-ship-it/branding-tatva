@@ -218,6 +218,10 @@
   to { opacity: 0.88; transform: scaleX(1); }
 }
 
+:global([data-about-film-scene][data-scene-active="false"]) .frameShift i {
+  animation-play-state: paused;
+}
+
 .recordSlot { min-height: clamp(21rem, 47svh, 28rem); perspective: 80rem; }
 
 .record {

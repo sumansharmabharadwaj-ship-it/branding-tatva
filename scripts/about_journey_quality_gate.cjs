@@ -5,7 +5,10 @@ const root = path.resolve(__dirname, "..");
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const runtime = read("src/components/AboutCinematicRuntime.tsx");
 const videoWarden = read("src/components/VideoWarden.tsx");
+const splitHero = read("src/components/AboutSplitHero.tsx");
+const header = read("src/layouts/Header/index.tsx");
 const aboutPage = read("src/app/about/page.tsx");
+const globalStyles = read("src/app/globals.css");
 const anchorContract = read("src/app/about/about-anchor-contract.css");
 const visualizer = read("src/hooks/useScrollDrivenVisualizer.ts");
 const smoothScroll = read("src/components/SmoothScrollProvider.tsx");
@@ -44,7 +47,7 @@ assert(
 );
 assert(
   /\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*clamp\(5\.75rem,\s*10svh,\s*6\.5rem\);/.test(anchorContract) &&
-    /@media \(max-width:\s*430px\)[\s\S]*?\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*calc\(4\.75rem \+ env\(safe-area-inset-top,\s*0px\)\);/.test(anchorContract),
+    /@media \(max-width:\s*430px\)[\s\S]*?\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*calc\(5rem \+ env\(safe-area-inset-top,\s*0px\)\);/.test(anchorContract),
   "About chapter hashes can settle beneath the fixed header in a responsive state.",
 );
 assert(
@@ -125,6 +128,39 @@ assert(
 assert(
   runtime.includes("if (lenis && !reducedMotion)"),
   "About chapter history no longer hands restoration to the active scroll runtime.",
+);
+assert(
+  runtime.includes("const THREAD_ACTIVE_FRAME_MS = 32;") &&
+    runtime.includes("const THREAD_IDLE_FRAME_MS = 64;") &&
+    runtime.includes("now - lastThreadPaintAt >= threadFrameInterval") &&
+    runtime.includes("lastThreadPaintAt = performance.now()") &&
+    runtime.includes("const responseBlend = 1 - Math.pow(0.82, frameElapsed / (1000 / 60))") &&
+    runtime.includes("velocityValue !== previousVelocityValue") &&
+    runtime.includes("pointerXValue !== previousPointerXValue") &&
+    runtime.includes("if ((Math.abs(smoothedVelocity) > 0.0002 || pointerSettling) && !document.hidden)"),
+  "The living About thread can monopolise every display frame while the visitor is reading.",
+);
+assert(
+  runtime.includes('root.dataset.aboutFilm = "true"') &&
+    runtime.includes("delete root.dataset.aboutFilm") &&
+    /html\[data-about-film="true"\] \.gradient-mesh\s*\{[^}]*animation-play-state:\s*paused;/.test(globalStyles),
+  "The global fixed mesh can keep compositing beneath the entire About film.",
+);
+assert(
+  splitHero.includes("const heroInView = useInView(ref") &&
+    splitHero.includes("data-about-hero-active={heroInView}") &&
+    /\[data-about-hero-active="false"\] \.hero-fog,[\s\S]*?\[data-about-hero-active="false"\] \.card-float\s*\{[^}]*animation-play-state:\s*paused;/.test(globalStyles),
+  "The About hero can keep its decorative animation stack running far off-screen.",
+);
+assert(
+  header.includes('pathname.startsWith("/about") ? "#795A43"'),
+  "The persistent About header can expose a low-contrast booking action over its ivory surface.",
+);
+assert(
+  /data-scene-active="false"[^}]*\.frameShift i\s*\{[^}]*animation-play-state:\s*paused;/.test(pointOfViewStyles) &&
+    /data-scene-active="false"[^}]*\.coreHalo\s*\{[^}]*animation-play-state:\s*paused;/.test(convergenceStyles) &&
+    /data-scene-active="false"[^}]*\.core::before\s*\{[^}]*animation-play-state:\s*paused;/.test(atlasStyles),
+  "Off-screen About chapters can keep their ambient CSS loops running.",
 );
 assert(
   origin.includes("when a founder is beginning") &&

@@ -3,7 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { LinkButton } from "@/components/Button";
@@ -54,6 +54,7 @@ export function AboutSplitHero({
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
   const portraitVideoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const heroInView = useInView(ref, { amount: 0.05, margin: "12% 0px 12% 0px" });
   // Keep the same scroll geometry while avoiding Framer Motion's native
   // ViewTimeline cache, which strongly retains unmounted target elements.
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0%", "end 0%"] });
@@ -66,7 +67,11 @@ export function AboutSplitHero({
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
-    <section ref={ref} className="relative flex min-h-screen items-center justify-center overflow-hidden bg-soil pt-24">
+    <section
+      ref={ref}
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-soil pt-24"
+      data-about-hero-active={heroInView}
+    >
       {prefersReducedMotion ? (
         <Image src={bgPoster} alt="" fill priority sizes="100vw" className="object-cover" />
       ) : (
