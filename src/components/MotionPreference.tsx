@@ -60,7 +60,7 @@ export function MotionPreferenceProvider({ children }: { children: React.ReactNo
 export function MotionToggle() {
   const { pref, setPref } = useMotionPreference();
   return (
-    <div className="inline-flex items-center gap-2 text-xs text-ivory/60">
+    <div className="inline-flex items-center gap-2 text-xs text-ivory/70">
       <span id="motion-toggle-label" className="uppercase tracking-[0.14em]">
         Motion
       </span>
@@ -73,7 +73,7 @@ export function MotionToggle() {
             onPointerDown={() => setPref(option)}
             onClick={() => setPref(option)}
             className={`px-3 py-1 capitalize transition-colors duration-300 ${
-              pref === option ? "bg-ivory/15 text-ivory" : "text-ivory/55 hover:text-ivory"
+              pref === option ? "bg-ivory/15 text-ivory" : "text-ivory/70 hover:text-ivory"
             }`}
           >
             {option}

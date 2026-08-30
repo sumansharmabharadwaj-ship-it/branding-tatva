@@ -12,7 +12,7 @@ export function ConsentPreferencesLink() {
     <button
       type="button"
       onClick={openConsentPreferences}
-      className="text-xs text-ivory/60 underline decoration-ivory/30 underline-offset-2 transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+      className="text-xs text-ivory/70 underline decoration-ivory/40 underline-offset-2 transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
     >
       Measurement preferences
     </button>

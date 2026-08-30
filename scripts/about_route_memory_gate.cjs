@@ -11,6 +11,7 @@ const MAX_NODE_SLOPE = Number(process.env.ABOUT_MEMORY_MAX_NODE_SLOPE || 240);
 const MAX_NODE_GROWTH = Number(process.env.ABOUT_MEMORY_MAX_NODE_GROWTH || 850);
 const MAX_LISTENER_GROWTH = Number(process.env.ABOUT_MEMORY_MAX_LISTENER_GROWTH || 24);
 const MOCK_VIDEO_PATH = process.env.ABOUT_MEMORY_MOCK_VIDEO || "";
+const CAPTURE_HEAP_SNAPSHOT = process.env.ABOUT_MEMORY_HEAP_SNAPSHOT === "1";
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -127,6 +128,22 @@ async function heapUsed(client) {
   }
 }
 
+async function captureHeapSnapshot(client, outputPath) {
+  const chunks = [];
+  const onChunk = ({ chunk }) => chunks.push(chunk);
+  client.on("HeapProfiler.addHeapSnapshotChunk", onChunk);
+  try {
+    await client.send("HeapProfiler.takeHeapSnapshot", {
+      reportProgress: false,
+      captureNumericValue: true,
+    });
+    fs.writeFileSync(outputPath, chunks.join(""));
+    return fs.statSync(outputPath).size;
+  } finally {
+    client.off("HeapProfiler.addHeapSnapshotChunk", onChunk);
+  }
+}
+
 async function sampleMemory(client, page, label) {
   await forceCollection(client, page);
   const counters = await client.send("Memory.getDOMCounters");
@@ -201,6 +218,10 @@ async function sampleMemory(client, page, label) {
     // complete. Even a disposable DOM-domain session should never sit on the
     // critical path between samples, because materialising diagnostic nodes
     // can perturb the renderer's own retained-node counters.
+    const heapSnapshotPath = path.join(OUTPUT_DIR, "about-route-memory.heapsnapshot");
+    const heapSnapshotBytes = CAPTURE_HEAP_SNAPSHOT
+      ? await captureHeapSnapshot(client, heapSnapshotPath)
+      : null;
     const finalDetachedDomTrees = await detachedDomCount(page);
 
     const summary = {
@@ -220,6 +241,7 @@ async function sampleMemory(client, page, label) {
         listenerGrowth: listenerValues.at(-1) - listenerValues[0],
         documentGrowth: documentValues.at(-1) - documentValues[0],
         finalDetachedDomTrees,
+        heapSnapshotBytes,
       },
       samples,
       pageErrors,

@@ -47,12 +47,16 @@ async function auditViewport(browser, viewport) {
     await scene.scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
 
-    const mode = await scene.evaluate((node) => ({
-      interactive: getComputedStyle(node.querySelector('[role="group"]')).display !== "none",
-      static: getComputedStyle(node.querySelector('[class*="staticExperience"]')).display !== "none",
-      documentWidth: document.documentElement.scrollWidth,
-      viewportWidth: window.innerWidth,
-    }));
+    const mode = await scene.evaluate((node) => {
+      const interactive = node.querySelector('[class*="interactiveExperience"]');
+      const fallback = node.querySelector('[class*="staticExperience"]');
+      return {
+        interactive: getComputedStyle(interactive).display !== "none",
+        static: getComputedStyle(fallback).display !== "none",
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth,
+      };
+    });
     assert(mode.interactive === viewport.interactive, `${viewport.name}: rendered the wrong closing-record mode`);
     assert(mode.static !== viewport.interactive, `${viewport.name}: fallback visibility does not match the intended mode`);
     assert(mode.documentWidth <= mode.viewportWidth + 2, `${viewport.name}: horizontal overflow ${mode.documentWidth}px`);

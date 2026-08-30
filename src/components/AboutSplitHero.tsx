@@ -55,7 +55,9 @@ export function AboutSplitHero({
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
   const portraitVideoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  // Keep the same scroll geometry while avoiding Framer Motion's native
+  // ViewTimeline cache, which strongly retains unmounted target elements.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0%", "end 0%"] });
 
   useVideoFadeIn(backgroundVideoRef, !prefersReducedMotion);
   useVideoFadeIn(portraitVideoRef, !prefersReducedMotion);

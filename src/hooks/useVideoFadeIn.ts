@@ -95,12 +95,21 @@ export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: 
       // growing without limit.
       //
       // Dropping the sources and calling load() resets the element and lets
-      // the listeners go. Order matters: pause first so no fetch is in
-      // flight, and clear src last so load() has nothing left to resolve.
+      // the listeners go. Clear each responsive source's media query while
+      // it is still attached so Blink can unregister its MediaQueryList
+      // listener before React detaches the source node. Order matters: pause
+      // first so no fetch is in flight, reset the attached source list, and
+      // only then remove it.
       try {
         el.pause();
-        while (el.firstChild) el.removeChild(el.firstChild);
+        const sources = Array.from(el.querySelectorAll("source"));
+        for (const source of sources) {
+          source.removeAttribute("media");
+          source.removeAttribute("src");
+        }
         el.removeAttribute("src");
+        el.load();
+        for (const source of sources) source.remove();
         el.load();
       } catch {
         // Releasing is best effort. A browser that objects to any step here

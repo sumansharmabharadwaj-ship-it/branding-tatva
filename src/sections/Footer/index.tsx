@@ -139,7 +139,7 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
           light-on-dark equivalents to match. */}
       <div className="flex flex-col-reverse items-center gap-3 bg-soil px-6 py-5 text-center sm:flex-row sm:justify-between sm:px-10">
         <div className="flex flex-col items-center gap-1 sm:items-start">
-          <p className="text-xs text-ivory/60">
+          <p className="text-xs text-ivory/70">
             © {new Date().getFullYear()} {site.name}
           </p>
           {/* Kevin MacLeod's Creative Commons license (the free tier of
@@ -147,13 +147,13 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
               page) requires this credit in exchange for no licensing
               fee, the same free-resources approach used for every
               stock video sourced this session. */}
-          <p className="text-xs text-ivory/40">
+          <p className="text-xs text-ivory/70">
             Ambient music: &ldquo;That Zen Moment&rdquo; by{" "}
             <a
               href="https://incompetech.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline decoration-ivory/30 underline-offset-2 hover:text-ivory/60"
+              className="underline decoration-ivory/40 underline-offset-2 hover:text-ivory"
             >
               Kevin MacLeod
             </a>{" "}
@@ -168,7 +168,7 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
               to the consent panel sits on every page. */}
           <ConsentPreferencesLink />
           {footerLinks.map((item) => (
-            <Link key={item.href} href={item.href} className="text-xs text-ivory/60 hover:text-ivory">
+            <Link key={item.href} href={item.href} className="text-xs text-ivory/70 hover:text-ivory">
               {item.label}
             </Link>
           ))}
