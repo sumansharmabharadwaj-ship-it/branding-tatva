@@ -173,6 +173,7 @@ async function auditRoute(browser, viewport, route) {
       const articleLinks = Array.from(document.querySelectorAll('a[href^="/insights/"]'))
         .map((node) => node.getAttribute("href") || "")
         .filter((href) => /^\/insights\/[^/]+$/.test(href) && !href.endsWith(".xml"));
+      const headerWordmark = document.querySelector(".site-header__wordmark");
 
       return {
         route: currentRoute,
@@ -196,6 +197,9 @@ async function auditRoute(browser, viewport, route) {
         currentPhoneVisible: mainText.includes("+91 84477 25381"),
         currentDurationVisible: /\b(?:30|thirty)[ -]minutes?\b/i.test(mainText),
         staleDurationVisible: /\b(?:20|twenty)[ -]minutes?\b/i.test(mainText),
+        headerWordmarkClipped: headerWordmark
+          ? headerWordmark.scrollWidth > headerWordmark.clientWidth + 1
+          : false,
       };
     }, route);
 
@@ -216,6 +220,10 @@ async function auditRoute(browser, viewport, route) {
     assert(result.focusables >= 2, `${viewport.name}${route}: too few focusable destinations`);
     assert(result.brokenHashLinks.length === 0,
       `${viewport.name}${route}: broken in-page destinations ${result.brokenHashLinks.join(", ")}`);
+    if (viewport.name.startsWith("mobile-")) {
+      assert(!result.headerWordmarkClipped,
+        `${viewport.name}${route}: header wordmark is horizontally clipped`);
+    }
     if (route !== "/") {
       assert(result.canonical.includes(route), `${viewport.name}${route}: canonical mismatch (${result.canonical})`);
     }

@@ -28,8 +28,8 @@
 
   .site-header__wordmark {
     min-width: 0;
-    max-width: 8.75rem;
-    overflow: hidden;
+    max-width: none;
+    overflow: visible;
   }
 
   .site-header__wordmark > span > span {
