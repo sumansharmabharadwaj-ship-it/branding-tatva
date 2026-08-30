@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
-const CONTRACT_VERSION = 10;
+const CONTRACT_VERSION = 11;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -194,6 +194,18 @@ if (!contactForm.includes("Enquiry reference")) {
 }
 if (!contactForm.includes("data-contact-recovery-copy")) {
   fail("Contact delivery recovery must let visitors preserve their full note outside the form.");
+}
+if (
+  !contactForm.includes('window.addEventListener("pagehide", persistLatestDraft)') ||
+  !contactForm.includes('document.addEventListener("visibilitychange", persistWhenHidden)')
+) {
+  fail("Contact drafts must flush before a tab is backgrounded or released.");
+}
+if (!contactForm.includes("data-contact-draft-announcement")) {
+  fail("Restored Contact drafts must retain a focused assistive announcement.");
+}
+if (/data-contact-draft-status[\s\S]{0,180}aria-live=/.test(contactForm)) {
+  fail("Routine Contact draft saving must not repeatedly interrupt assistive technology.");
 }
 if (!contactForm.includes("Support needed:")) {
   fail("Contact email recovery must retain optional enquiry context.");

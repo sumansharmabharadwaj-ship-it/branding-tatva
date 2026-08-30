@@ -316,8 +316,20 @@ export function ContactForm() {
       }, CONTACT_DRAFT_DELAY_MS);
     });
 
+    const persistLatestDraft = () => {
+      persistContactDraft(getValues());
+    };
+    const persistWhenHidden = () => {
+      if (document.visibilityState === "hidden") persistLatestDraft();
+    };
+
+    window.addEventListener("pagehide", persistLatestDraft);
+    document.addEventListener("visibilitychange", persistWhenHidden);
+
     return () => {
       subscription.unsubscribe();
+      window.removeEventListener("pagehide", persistLatestDraft);
+      document.removeEventListener("visibilitychange", persistWhenHidden);
       if (draftTimerRef.current !== null) {
         window.clearTimeout(draftTimerRef.current);
         draftTimerRef.current = null;
@@ -1081,12 +1093,21 @@ export function ContactForm() {
             <p
               data-contact-draft-status
               data-state={draftStatus}
-              aria-live="polite"
-              aria-atomic="true"
               className="text-center text-[0.68rem] leading-relaxed text-soil/52 sm:text-right"
             >
               {draftStatusCopy}
             </p>
+            <span
+              data-contact-draft-announcement
+              className="sr-only"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {draftStatus === "restored"
+                ? "Your unfinished contact note was restored in this tab."
+                : ""}
+            </span>
             {hasDraft ? (
               <button
                 type="button"
