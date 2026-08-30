@@ -256,7 +256,7 @@ export function FounderFieldNotes() {
             </motion.div>
           </div>
 
-          <div className={styles.recordSlot} aria-live="polite">
+          <div className={styles.recordSlot}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.article
                 key={active.field}

@@ -8,6 +8,7 @@ const visualizer = read("src/hooks/useScrollDrivenVisualizer.ts");
 const runtimeStyles = read("src/components/AboutCinematicRuntime.module.css");
 const consent = read("src/components/ConsentManager.tsx");
 const origin = read("src/sections/About/FounderFieldNotes.tsx");
+const atlas = read("src/sections/About/BrandSignalAtlas.tsx");
 const pointOfView = read("src/sections/About/PointOfView.tsx");
 const convergence = read("src/sections/About/Convergence.tsx");
 const evidence = read("src/sections/About/Evidence.tsx");
@@ -64,6 +65,11 @@ assert(
   "Mobile visitors can no longer open and keyboard through the complete About chapter list.",
 );
 assert(
+  runtime.includes("className={styles.mobileChapterProgress}") &&
+    /\.mobileChapterProgress b\s*\{[^}]*transform:\s*scaleX\(var\(--navigator-progress\)\);/.test(runtimeStyles),
+  "The mobile About navigator no longer exposes continuous journey progress.",
+);
+assert(
   runtime.includes('if (event.key !== "Escape") return;') &&
     runtime.includes("mobileMenuButtonRef.current?.focus()"),
   "The mobile About chapter chooser no longer closes and returns focus on Escape.",
@@ -89,6 +95,18 @@ assert(
     origin.includes("existing brand\n              feels difficult to explain") &&
     origin.includes("recognition needs steadier continuity"),
   "The first post-hero chapter no longer connects Suman's formative fields to a buyer's situation.",
+);
+assert(
+  !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
+    origin.includes('role="tabpanel"') &&
+    origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),
+  "The origin record can announce its full animated contents instead of relying on its labelled tab relationship.",
+);
+assert(
+  !atlas.includes('className={styles.recordSlot} aria-live="polite"') &&
+    atlas.includes('role="tabpanel"') &&
+    atlas.includes("aria-labelledby={`brand-surface-${selectedSurface}`}"),
+  "The brand-system record can announce its full animated contents instead of relying on its labelled tab relationship.",
 );
 assert(
   visualizer.includes("previewingRef.current || manualChoiceRef.current") &&

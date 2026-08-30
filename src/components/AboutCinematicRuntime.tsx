@@ -605,6 +605,7 @@ export function AboutCinematicRuntime() {
           <span aria-live="polite">
             <small>{String(activeChapter + 1).padStart(2, "0")} / {String(CHAPTERS.length).padStart(2, "0")}</small>
             <strong>{CHAPTERS[activeChapter].label}</strong>
+            <i className={styles.mobileChapterProgress} aria-hidden="true"><b /></i>
           </span>
           <ListTree size={15} aria-hidden="true" />
         </button>
