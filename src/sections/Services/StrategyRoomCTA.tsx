@@ -12,9 +12,12 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
+  SERVICES_RECOGNITION_AUDIT_EVENT,
   SITUATION_TO_PACKAGE,
   isServicesSituation,
   readCompletedHomeDiagnosis,
+  recognitionAuditGuidance,
+  type ServicesRecognitionAuditDetail,
   type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
@@ -61,6 +64,9 @@ const OPTION_BUTTON_CLASS =
 const QUIET_ACTION_CLASS =
   "inline-flex min-h-11 items-center justify-center rounded-full px-4 py-2.5 text-sm text-ivory/70 transition-colors duration-300 hover:bg-ivory/[0.06] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone";
 
+const CARRIED_CONTEXT_CLASS =
+  "rounded-2xl border border-sandstone/25 bg-sandstone/[0.07] px-4 py-3 text-left";
+
 type Step = 0 | 1 | 2;
 
 export function StrategyRoomCTA() {
@@ -71,6 +77,7 @@ export function StrategyRoomCTA() {
   const [focus, setFocus] = useState<string | null>(null);
   const [carriedPackage, setCarriedPackage] = useState<string | null>(null);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
+  const [recognitionAudit, setRecognitionAudit] = useState<ServicesRecognitionAuditDetail | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
@@ -114,6 +121,25 @@ export function StrategyRoomCTA() {
 
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
     return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+  }, []);
+
+  useEffect(() => {
+    function onRecognitionAudit(event: Event) {
+      const detail = (event as CustomEvent<ServicesRecognitionAuditDetail>).detail;
+      if (
+        !detail ||
+        !Number.isInteger(detail.score) ||
+        !Number.isInteger(detail.total) ||
+        detail.score < 0 ||
+        detail.score > detail.total
+      ) {
+        return;
+      }
+      setRecognitionAudit(detail.score > 0 ? detail : null);
+    }
+
+    window.addEventListener(SERVICES_RECOGNITION_AUDIT_EVENT, onRecognitionAudit as EventListener);
+    return () => window.removeEventListener(SERVICES_RECOGNITION_AUDIT_EVENT, onRecognitionAudit as EventListener);
   }, []);
 
   useEffect(() => {
@@ -250,7 +276,12 @@ export function StrategyRoomCTA() {
   const priorityOptions = routeBrief?.priorities ?? PRIORITIES;
   const focusOptions = routeBrief?.focusAreas ?? FOCUS_AREAS;
   const progressLabel = step < QUESTION_COUNT ? `Question ${step + 1} of ${QUESTION_COUNT}` : "Brief ready";
-  const answers = [carriedPackage ? `Route: ${carriedPackage}` : null, priority, focus].filter(
+  const answers = [
+    carriedPackage ? `Route: ${carriedPackage}` : null,
+    recognitionAudit ? `Recognition: ${recognitionAudit.score} / ${recognitionAudit.total} signals` : null,
+    priority,
+    focus,
+  ].filter(
     (answer): answer is string => Boolean(answer),
   );
 
@@ -355,11 +386,29 @@ export function StrategyRoomCTA() {
                 transition={transition}
                 className="mx-auto max-w-2xl rounded-[1.75rem] border border-ivory/18 bg-[rgba(18,24,21,0.68)] p-6 shadow-[0_28px_90px_rgba(6,10,8,0.26)] backdrop-blur-xl sm:p-8"
               >
-                {carriedPackage ? (
-                  <div className="mx-auto mb-6 max-w-lg rounded-2xl border border-sandstone/25 bg-sandstone/[0.07] px-4 py-3 text-left">
-                    <p className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">Carried from your situation</p>
-                    <p className="mt-1 font-display text-lg font-normal text-ivory">{carriedPackage}</p>
-                    {routeBrief ? <p className="mt-1 text-xs leading-relaxed text-ivory/62">{routeBrief.invitation}</p> : null}
+                {carriedPackage || recognitionAudit ? (
+                  <div
+                    className={`mx-auto mb-6 grid max-w-xl gap-3 ${carriedPackage && recognitionAudit ? "sm:grid-cols-2" : ""}`}
+                    data-strategy-room-context="true"
+                  >
+                    {carriedPackage ? (
+                      <div className={CARRIED_CONTEXT_CLASS}>
+                        <p className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">Carried from your situation</p>
+                        <p className="mt-1 font-display text-lg font-normal text-ivory">{carriedPackage}</p>
+                        {routeBrief ? <p className="mt-1 text-xs leading-relaxed text-ivory/62">{routeBrief.invitation}</p> : null}
+                      </div>
+                    ) : null}
+                    {recognitionAudit ? (
+                      <div className={CARRIED_CONTEXT_CLASS} data-carried-recognition-audit="true">
+                        <p className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">Carried from your audit</p>
+                        <p className="mt-1 font-display text-lg font-normal text-ivory">
+                          {recognitionAudit.score} of {recognitionAudit.total} signals hold
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-ivory/62">
+                          {recognitionAuditGuidance(recognitionAudit.score, recognitionAudit.total)}
+                        </p>
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
                 <p className="font-display text-2xl font-normal text-ivory">Availability is one step away.</p>

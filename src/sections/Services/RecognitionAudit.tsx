@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { track } from "@/lib/analytics";
 import { motionTokens } from "@/lib/motionTokens";
+import { publishServicesRecognitionAudit, recognitionAuditGuidance } from "@/lib/servicesJourney";
 
 // The Brand Recognition Audit — the redesign brief's one secondary
 // lead asset. Ten real checks drawn from the site's own frameworks
@@ -53,12 +54,15 @@ export function RecognitionAudit() {
   const unlocked = status === "done";
 
   function toggleCheck(index: number) {
-    setMarkedChecks((current) => {
-      const next = new Set(current);
-      if (next.has(index)) next.delete(index);
-      else next.add(index);
-      return next;
-    });
+    const next = new Set(markedChecks);
+    if (next.has(index)) next.delete(index);
+    else next.add(index);
+    setMarkedChecks(next);
+    const total = unlocked ? CHECKS.length : VISIBLE;
+    const score = Array.from({ length: total }, (_, checkIndex) => checkIndex).filter((checkIndex) =>
+      next.has(checkIndex),
+    ).length;
+    publishServicesRecognitionAudit(score, total);
   }
 
   function openMobileChapter(nextChapter: MobileChapter) {
@@ -139,16 +143,7 @@ export function RecognitionAudit() {
 
   const shown = unlocked ? CHECKS : CHECKS.slice(0, VISIBLE);
   const markedCount = shown.filter((_, index) => markedChecks.has(index)).length;
-  const scoreGuidance =
-    markedCount === 0
-      ? "Mark each statement that already holds."
-      : markedCount < Math.ceil(shown.length * 0.5)
-        ? "Recognition is leaking through more than one signal."
-        : markedCount < shown.length
-          ? "A usable pattern is forming; the remaining gaps are specific."
-          : unlocked
-            ? "All ten signals are working together."
-            : "The open signals are coherent. Five deeper checks remain.";
+  const scoreGuidance = recognitionAuditGuidance(markedCount, shown.length);
 
   return (
     <div data-recognition-audit-desk="true" data-mobile-chapter={mobileChapter}>
@@ -246,20 +241,40 @@ export function RecognitionAudit() {
             </ol>
             {!unlocked && (
               <div className="border-t border-ivory/12 pt-4">
-                <div className="flex items-end justify-between gap-5" role="status" aria-live="polite">
-                  <div>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-5">
+                  <div role="status" aria-live="polite">
                     <p className="text-[0.65rem] font-medium uppercase tracking-[0.16em] text-sandstone/75">
                       Your private first pass
                     </p>
                     <p className="mt-1 text-sm leading-relaxed text-ivory/68">{scoreGuidance}</p>
                   </div>
-                  <p
-                    className="shrink-0 font-display text-2xl text-ivory"
-                    aria-label={`${markedCount} of ${shown.length} checks marked`}
-                  >
-                    {markedCount}
-                    <span className="text-base text-ivory/45"> / {shown.length}</span>
-                  </p>
+                  {markedCount > 0 ? (
+                    <a
+                      href="#book"
+                      data-recognition-audit-handoff="true"
+                      onClick={() => publishServicesRecognitionAudit(markedCount, shown.length)}
+                      className="group inline-flex min-h-11 shrink-0 items-center justify-between gap-4 rounded-full border border-sandstone/38 bg-sandstone/[0.06] px-4 py-2 text-left transition-colors hover:border-sandstone hover:bg-sandstone/12 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                      aria-label={`Bring your ${markedCount} of ${shown.length} recognition score to the Strategy Room`}
+                    >
+                      <span className="font-display text-2xl text-ivory">
+                        {markedCount}
+                        <span className="text-base text-ivory/45"> / {shown.length}</span>
+                      </span>
+                      <span className="text-[0.62rem] font-medium uppercase leading-[1.35] tracking-[0.12em] text-sandstone">
+                        Bring to the
+                        <br />
+                        Strategy Room <span aria-hidden="true">→</span>
+                      </span>
+                    </a>
+                  ) : (
+                    <p
+                      className="shrink-0 font-display text-2xl text-ivory"
+                      aria-label={`${markedCount} of ${shown.length} checks marked`}
+                    >
+                      {markedCount}
+                      <span className="text-base text-ivory/45"> / {shown.length}</span>
+                    </p>
+                  )}
                 </div>
                 <button
                   type="button"

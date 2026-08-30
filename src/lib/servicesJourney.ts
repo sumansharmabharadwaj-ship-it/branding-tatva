@@ -8,6 +8,7 @@ import { trackRuntimeIssue } from "@/lib/analytics";
 export const SERVICES_SITUATION_STORAGE_KEY = "branding-tatva:services-situation";
 export const SERVICES_SITUATION_EVENT = "branding-tatva:services-situation";
 export const SERVICES_SITUATION_CLEARED_EVENT = "branding-tatva:services-situation-cleared";
+export const SERVICES_RECOGNITION_AUDIT_EVENT = "branding-tatva:services-recognition-audit";
 export const SERVICES_SITUATION_MAX_AGE_MS = 30 * 60 * 1000;
 
 export const SERVICES_SITUATIONS = ["idea", "reposition", "ongoing"] as const;
@@ -71,6 +72,27 @@ export type ServicesSituationDetail = {
   origin?: ServicesSituationOrigin;
   completedAt?: number;
 };
+
+export type ServicesRecognitionAuditDetail = {
+  score: number;
+  total: number;
+};
+
+export function recognitionAuditGuidance(score: number, total: number) {
+  if (score === 0) return "Mark each statement that already holds.";
+  if (score < Math.ceil(total * 0.5)) return "Recognition is leaking through more than one signal.";
+  if (score < total) return "A usable pattern is forming; the remaining gaps are specific.";
+  return total > 5 ? "All ten signals are working together." : "The open signals are coherent. Five deeper checks remain.";
+}
+
+export function publishServicesRecognitionAudit(score: number, total: number) {
+  if (!Number.isInteger(score) || !Number.isInteger(total) || total < 1 || score < 0 || score > total) return;
+  window.dispatchEvent(
+    new CustomEvent<ServicesRecognitionAuditDetail>(SERVICES_RECOGNITION_AUDIT_EVENT, {
+      detail: { score, total },
+    }),
+  );
+}
 
 type CompletedHomeDiagnosisRecord = ServicesSituationDetail & {
   origin: "home_diagnostic";
