@@ -20,7 +20,8 @@ export type InsightCardPost = Pick<
   | "primaryKeyword"
   | "secondaryKeywords"
 > & {
-  framework?: InsightPost["framework"];
+  frameworkTitle?: string;
+  frameworkStepCount?: number;
 };
 
 type InsightCardProps = {
@@ -120,9 +121,9 @@ export function InsightCard({
               {readingCue}
             </span>
           ) : null}
-          {showReadingOutcome && post.framework ? (
+          {showReadingOutcome && post.frameworkStepCount ? (
             <span className="insight-card__depth absolute right-4 top-4 rounded-full border border-ivory/20 bg-soil/70 px-3 py-1.5 text-[0.58rem] font-semibold uppercase tracking-[0.12em] text-ivory shadow-elevation-sm backdrop-blur-md sm:right-5 sm:top-5">
-              {post.framework.steps.length} decision steps
+              {post.frameworkStepCount} decision steps
             </span>
           ) : null}
           <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-4 p-5 text-ivory sm:p-6">
@@ -194,11 +195,11 @@ export function InsightCard({
               ))}
             </div>
           )}
-          {showReadingOutcome && post.framework ? (
+          {showReadingOutcome && post.frameworkTitle ? (
             <span className="insight-card__footer mt-auto flex items-end justify-between gap-4 pt-4">
               <span className="insight-card__framework min-w-0">
                 <span>Framework</span>
-                <strong>{post.framework.title}</strong>
+                <strong>{post.frameworkTitle}</strong>
               </span>
               <span className="insight-card__open" style={{ color }}>
                 Open <span aria-hidden="true">→</span>
