@@ -6,6 +6,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { track } from "@/lib/analytics";
+import {
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  isServicesSituation,
+  readCompletedHomeDiagnosis,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const MANUAL_HOLD_MS = 14000;
@@ -13,34 +21,56 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 const RUNGS = [
   {
-    label: "Unknown",
-    signal: "Every encounter begins from zero.",
-    explanation: "The market has no shortcut to the business yet. Each conversation starts with a complete explanation.",
+    label: "Unfamiliar",
+    signal: "The business makes sense only after a full explanation.",
+    explanation: "The market has no reliable shortcut to the business yet. Every encounter must rebuild category, meaning, and relevance from the beginning.",
     decision: "Define the category and the belief the brand will own.",
-    system: "Category and position",
+    evidence: "Independent descriptions of what the business is—and who it is for.",
+    system: "Category & position",
   },
   {
     label: "Recognized",
-    signal: "The name registers. The meaning still moves.",
-    explanation: "A familiar name enters consideration, while inconsistent cues keep the brand interchangeable.",
-    decision: "Repeat a distinctive verbal and visual code.",
-    system: "Distinctive assets",
+    signal: "The name or cues register. The meaning still moves.",
+    explanation: "Familiarity has begun, but recognition alone does not make the brand easy to describe or choose. Inconsistent cues can still make it interchangeable.",
+    decision: "Repeat a small set of distinctive verbal and visual codes.",
+    evidence: "Correct identification from non-name cues, plus consistent language across interviews.",
+    system: "Distinctive codes",
   },
   {
-    label: "Remembered",
-    signal: "The pattern returns before the advertisement does.",
-    explanation: "Repeated meaning creates a mental shortcut. The brand begins to surface before a buyer starts searching.",
-    decision: "Carry the same meaning through every encounter.",
+    label: "Recalled",
+    signal: "The brand returns in a relevant buying moment.",
+    explanation: "Recognition needs a prompt. Recall happens when the need appears and the brand comes to mind without one. Repetition can support that memory; distribution and relevance still matter.",
+    decision: "Link the same meaning to the situations in which buyers need it.",
+    evidence: "Unaided mentions, branded searches, and repeat direct visits at relevant moments.",
     system: "Mental availability",
   },
   {
-    label: "Preferred",
-    signal: "The choice begins before comparison.",
-    explanation: "A clear position gives the brand an advantage before features and price enter the conversation.",
-    decision: "Protect the position while the business expands.",
-    system: "Brand preference",
+    label: "Considered",
+    signal: "The brand enters the shortlist before price alone decides.",
+    explanation: "Recall creates an opportunity, not guaranteed preference. Relevance, proof, availability, experience, and price still shape the final decision.",
+    decision: "Protect the position and support it with evidence buyers can inspect.",
+    evidence: "Shortlist mentions, qualified enquiries, and win-loss notes that cite the position.",
+    system: "Consideration",
   },
 ] as const;
+
+const ROUTE_FOCUS: Record<
+  ServicesSituationId,
+  { transition: string; note: string }
+> = {
+  idea: {
+    transition: "Unfamiliar → Recognized",
+    note: "Foundation gives the business a category, position, and repeatable identity before launch.",
+  },
+  reposition: {
+    transition: "Recognized → Recalled",
+    note: "Full Brand System aligns the meaning and cues already circulating in the market.",
+  },
+  ongoing: {
+    transition: "Recalled → Considered",
+    note: "Brand Partnership protects consistency as the system meets the market repeatedly.",
+  },
+};
 
 type ServicesProgressDetail = {
   id?: string;
@@ -52,8 +82,34 @@ export function PerceptionLadder() {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const manualUntilRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [routeFocus, setRouteFocus] = useState<(typeof ROUTE_FOCUS)[ServicesSituationId] | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const activeRung = RUNGS[activeIndex] ?? RUNGS[0];
+
+  useEffect(() => {
+    function applySituation(situation: ServicesSituationId | null) {
+      setRouteFocus(situation ? ROUTE_FOCUS[situation] : null);
+    }
+
+    try {
+      const storedSituation = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+      applySituation(
+        isServicesSituation(storedSituation)
+          ? storedSituation
+          : readCompletedHomeDiagnosis(),
+      );
+    } catch {
+      applySituation(null);
+    }
+
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      applySituation(isServicesSituation(detail?.situation) ? detail.situation : null);
+    }
+
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+  }, []);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
@@ -113,12 +169,32 @@ export function PerceptionLadder() {
         <div data-services-chapter-copy="true">
           <p className="text-sm font-medium uppercase tracking-wide text-[#C6CCB8]">Perception</p>
           <h2 className="mt-2 max-w-lg text-display-sm font-display font-normal text-ivory">
-            Recognition is built in four public stages.
+            Four ways a market can hold—or lose—your brand.
           </h2>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-ivory/78 sm:text-base">
-            Attention begins as exposure. Repeated codes turn exposure into recall. A position carried consistently
-            turns recall into preference.
+            A practical diagnostic, not a promise of a linear climb. Recognition, recall, and consideration are
+            different states; each needs a different brand decision.
           </p>
+
+          <AnimatePresence initial={false}>
+            {routeFocus ? (
+              <motion.div
+                key={routeFocus.transition}
+                data-perception-route="true"
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
+                className="mt-5 rounded-2xl border border-[#A0A690]/30 bg-[rgba(160,166,144,0.08)] px-4 py-3"
+              >
+                <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em] text-[#C6CCB8]/75">
+                  Your selected route concentrates here
+                </p>
+                <p className="mt-1 font-display text-lg font-normal text-ivory">{routeFocus.transition}</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-ivory/68">{routeFocus.note}</p>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
 
           <div className="mt-7 flex items-center gap-3" aria-hidden="true">
             <span className="font-display text-lg text-[#C6CCB8]">{String(activeIndex + 1).padStart(2, "0")}</span>
@@ -136,7 +212,7 @@ export function PerceptionLadder() {
             href="#audit"
             className="link-underline mt-7 inline-flex min-h-11 items-center gap-2 text-sm text-[#C6CCB8] transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A0A690]"
           >
-            Test the signals in your own brand
+            Test which signals already hold
             <span aria-hidden="true">↓</span>
           </a>
         </div>
@@ -195,6 +271,7 @@ export function PerceptionLadder() {
 
         <div
           data-services-chapter-resolution="true"
+          data-perception-panel="true"
           id="perception-stage-panel"
           role="tabpanel"
           aria-labelledby={`perception-stage-tab-${activeIndex}`}
@@ -210,9 +287,9 @@ export function PerceptionLadder() {
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={activeRung.label}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(7px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10, filter: "blur(5px)" }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
             >
               <h3 className="mt-5 font-display text-[clamp(2.8rem,5vw,4.8rem)] font-normal leading-none text-ivory">
@@ -225,15 +302,20 @@ export function PerceptionLadder() {
                 {activeRung.explanation}
               </p>
 
-              <div className="mt-7 grid gap-5 border-t border-ivory/12 pt-5 sm:grid-cols-2">
+              <div data-perception-evidence-grid="true" className="mt-7 grid gap-5 border-t border-ivory/12 pt-5 sm:grid-cols-2">
                 <div>
-                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/45">System decision</p>
+                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/55">Strategy decision</p>
                   <p className="mt-2 text-sm leading-relaxed text-ivory/90">{activeRung.decision}</p>
                 </div>
                 <div className="sm:border-l sm:border-ivory/12 sm:pl-5">
-                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/45">What begins to compound</p>
-                  <p className="mt-2 font-display text-xl font-normal text-ivory">{activeRung.system}</p>
+                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/55">Evidence worth watching</p>
+                  <p className="mt-2 text-sm leading-relaxed text-ivory/90">{activeRung.evidence}</p>
                 </div>
+              </div>
+
+              <div className="mt-5 flex flex-wrap items-baseline justify-between gap-3 border-t border-ivory/12 pt-4">
+                <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/50">System to build</p>
+                <p className="font-display text-xl font-normal text-[#C6CCB8]">{activeRung.system}</p>
               </div>
             </motion.div>
           </AnimatePresence>

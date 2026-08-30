@@ -187,6 +187,56 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   #audit [data-audit-chapter="checks"] {
     padding: 1rem;
   }
+
+  /* The carried route makes the Perception chapter more useful, but short
+     laptop windows still need the complete market-state instrument in one
+     frame. Compress only the surrounding rhythm; every decision and evidence
+     line remains readable and interactive. */
+  #education {
+    padding-block: 3rem !important;
+  }
+
+  #education [data-perception-system="true"] {
+    gap: 1.5rem !important;
+    grid-template-columns: minmax(13rem, 0.58fr) minmax(14rem, 0.68fr) minmax(20rem, 1.08fr) !important;
+  }
+
+  #education [data-perception-route="true"] {
+    margin-top: 0.75rem;
+    padding: 0.65rem 0.8rem;
+  }
+
+  #education [data-perception-route="true"] > p:last-child {
+    margin-top: 0.2rem;
+    font-size: 0.64rem;
+    line-height: 1.35;
+  }
+
+  #education [data-perception-panel="true"] {
+    min-height: 0 !important;
+    padding: 1.25rem;
+  }
+
+  #education [data-perception-panel="true"] h3 {
+    margin-top: 0.55rem;
+    font-size: clamp(2.5rem, 5.8svh, 3.5rem);
+  }
+
+  #education [data-perception-panel="true"] h3 + p,
+  #education [data-perception-panel="true"] h3 + p + p {
+    margin-top: 0.65rem;
+  }
+
+  #education [data-perception-evidence-grid="true"] {
+    margin-top: 0.9rem;
+    gap: 0.9rem;
+    padding-top: 0.8rem;
+  }
+
+  #education [data-perception-evidence-grid="true"] + div {
+    margin-top: 0.8rem;
+    padding-top: 0.7rem;
+  }
 }
 
 @media (max-width: 767px) {
