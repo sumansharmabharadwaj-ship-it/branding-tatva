@@ -14,7 +14,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useForm, type Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, CircleAlert, Mail, RotateCcw } from "lucide-react";
+import { CalendarDays, Check, CircleAlert, Mail, RotateCcw } from "lucide-react";
 import { contactSchema, brandStages, type ContactFormValues } from "@/lib/contact-schema";
 import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/Magnetic";
@@ -123,6 +123,13 @@ function persistContactDraft(values: ContactFormValues) {
   }
 }
 
+function hasContactDraftValues(values: ContactFormValues) {
+  return CONTACT_DRAFT_FIELDS.some((field) => {
+    const value = values[field];
+    return typeof value === "string" && Boolean(value.trim());
+  });
+}
+
 function clearContactDraft() {
   try {
     window.sessionStorage.removeItem(CONTACT_DRAFT_KEY);
@@ -175,6 +182,7 @@ export function ContactForm() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMinHeight, setSuccessMinHeight] = useState<number | null>(null);
   const [draftRestored, setDraftRestored] = useState(false);
+  const [hasDraft, setHasDraft] = useState(false);
   const prefersReducedMotion = useHydratedReducedMotion();
   const cardRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -244,6 +252,7 @@ export function ContactForm() {
       }),
     );
     setDraftRestored(true);
+    setHasDraft(true);
   }, [reset]);
 
   useEffect(() => {
@@ -252,7 +261,9 @@ export function ContactForm() {
         window.clearTimeout(draftTimerRef.current);
       }
       draftTimerRef.current = window.setTimeout(() => {
-        persistContactDraft(getValues());
+        const values = getValues();
+        persistContactDraft(values);
+        setHasDraft(hasContactDraftValues(values));
         draftTimerRef.current = null;
       }, CONTACT_DRAFT_DELAY_MS);
     });
@@ -328,6 +339,7 @@ export function ContactForm() {
       );
       clearContactDraft();
       setDraftRestored(false);
+      setHasDraft(false);
       setStatus("success");
       track("contact_form_submitted", {
         source: "contact_form",
@@ -375,6 +387,18 @@ export function ContactForm() {
   function startAnotherNote() {
     setStatus("idle");
     setSuccessMinHeight(null);
+    window.requestAnimationFrame(() => setFocus("name"));
+  }
+
+  function clearSavedNote() {
+    clearContactDraft();
+    reset();
+    setDraftRestored(false);
+    setHasDraft(false);
+    setShowMore(false);
+    setServerError(null);
+    setStatus("idle");
+    track("contact_route_selected", { source: "contact_form", route: "draft_cleared" });
     window.requestAnimationFrame(() => setFocus("name"));
   }
 
@@ -444,7 +468,7 @@ export function ContactForm() {
               The conversation has begun.
             </h3>
             <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-foreground-secondary sm:text-base">
-              Suman reads every enquiry personally and replies within a few days. Your question now has a clear place to land.
+              Suman reads every enquiry personally and replies by email. Your question now has a clear place to land.
             </p>
           </div>
 
@@ -471,27 +495,30 @@ export function ContactForm() {
           </ol>
 
           <div className="mt-6 flex items-center justify-center gap-2 sm:mt-8 sm:gap-3">
+            <a
+              href={site.calendlyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() =>
+                track("calendar_opened", {
+                  source: "contact_form_success",
+                })
+              }
+              data-cursor-label="Book a session"
+              className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full bg-soil px-3 py-2 text-xs font-medium text-ivory transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-action-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-12 sm:flex-none sm:px-5 sm:py-3 sm:text-sm"
+            >
+              <CalendarDays aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
+              Book a session
+            </a>
             <button
               type="button"
               onClick={startAnotherNote}
-              className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full bg-soil px-3 py-2 text-xs font-medium text-ivory transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-action-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-12 sm:flex-none sm:px-5 sm:py-3 sm:text-sm"
+              data-cursor-label="Write another note"
+              className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-soil/15 bg-white/30 px-3 py-2 text-xs font-medium text-soil transition-colors duration-300 hover:bg-white/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-12 sm:flex-none sm:px-5 sm:py-3 sm:text-sm"
             >
               <RotateCcw aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
               Write another note
             </button>
-            <a
-              href={`mailto:${site.email}`}
-              onClick={() =>
-                track("contact_route_selected", {
-                  source: "contact_form_success",
-                  route: "email",
-                })
-              }
-              className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-soil/15 bg-white/30 px-3 py-2 text-xs font-medium text-soil transition-colors duration-300 hover:bg-white/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-12 sm:flex-none sm:px-5 sm:py-3 sm:text-sm"
-            >
-              <Mail aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
-              Email directly
-            </a>
           </div>
         </div>
       </motion.div>
@@ -562,6 +589,7 @@ export function ContactForm() {
       {/* Honeypot — hidden from real users, visible to bots */}
       <input
         type="text"
+        maxLength={200}
         tabIndex={-1}
         autoComplete="off"
         className="hidden"
@@ -575,6 +603,7 @@ export function ContactForm() {
             required
             aria-required="true"
             autoComplete="name"
+            maxLength={CONTACT_DRAFT_LIMITS.name}
             className={inputClass}
             {...register("name")}
           />
@@ -586,6 +615,7 @@ export function ContactForm() {
             type="email"
             inputMode="email"
             autoComplete="email"
+            maxLength={CONTACT_DRAFT_LIMITS.email}
             className={inputClass}
             {...register("email")}
           />
@@ -593,11 +623,16 @@ export function ContactForm() {
       </div>
 
       <div data-contact-form-question>
-        <Field label="03 What feels unclear right now?" error={errors.description?.message}>
+        <Field
+          label="03 What feels unclear right now?"
+          hint="Share the decision, uncertainty, or change taking up the most room. A few lines are enough."
+          error={errors.description?.message}
+        >
           <textarea
             required
             aria-required="true"
             rows={4}
+            maxLength={CONTACT_DRAFT_LIMITS.description}
             className={inputClass}
             {...register("description")}
           />
@@ -611,6 +646,7 @@ export function ContactForm() {
           aria-expanded={showMore}
           aria-controls="contact-more"
           onClick={() => setShowMore((v) => !v)}
+          data-cursor-label={showMore ? "Close details" : "Add details"}
           className="link-underline inline-flex items-center gap-2 text-sm font-medium text-clay transition-colors duration-300 hover:text-soil"
         >
           {showMore ? "Fewer details" : "Add more detail"}
@@ -630,43 +666,52 @@ export function ContactForm() {
                 className="mt-5 space-y-5"
                 style={{ transformOrigin: "top" }}
               >
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <Field label="Business or brand name" error={errors.business?.message}>
-                    <input autoComplete="organization" className={inputClass} {...register("business")} />
+                <p className="text-xs leading-relaxed text-soil/52">
+                  Add only the context already at hand. Every field below is optional.
+                </p>
+                <fieldset className="space-y-5">
+                  <legend className="sr-only">About the brand</legend>
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <Field label="Business or brand name" error={errors.business?.message}>
+                      <input autoComplete="organization" maxLength={CONTACT_DRAFT_LIMITS.business} className={inputClass} {...register("business")} />
+                    </Field>
+                    <Field label="Phone (optional)" error={errors.phone?.message}>
+                      <input type="tel" inputMode="tel" autoComplete="tel" maxLength={CONTACT_DRAFT_LIMITS.phone} className={inputClass} {...register("phone")} />
+                    </Field>
+                  </div>
+                  <Field label="Website or social link (optional)" error={errors.website?.message}>
+                    <input type="url" inputMode="url" autoComplete="url" maxLength={CONTACT_DRAFT_LIMITS.website} className={inputClass} {...register("website")} />
                   </Field>
-                  <Field label="Phone (optional)" error={errors.phone?.message}>
-                    <input type="tel" inputMode="tel" autoComplete="tel" className={inputClass} {...register("phone")} />
-                  </Field>
-                </div>
-                <Field label="Website or social link (optional)" error={errors.website?.message}>
-                  <input type="url" inputMode="url" autoComplete="url" className={inputClass} {...register("website")} />
-                </Field>
-                <Field label="Where is your brand right now?" error={errors.brandStage?.message}>
-                  <select className={inputClass} defaultValue="" {...register("brandStage")}>
-                    <option value="" disabled>
-                      Choose the closest fit
-                    </option>
-                    {brandStages.map((stage) => (
-                      <option key={stage} value={stage}>
-                        {stage}
+                  <Field label="Where is your brand right now?" error={errors.brandStage?.message}>
+                    <select className={inputClass} defaultValue="" {...register("brandStage")}>
+                      <option value="" disabled>
+                        Choose the closest fit
                       </option>
-                    ))}
-                  </select>
-                </Field>
-                <Field label="What do you think you need?" error={errors.servicesNeeded?.message}>
-                  <input className={inputClass} {...register("servicesNeeded")} placeholder="A rough idea is fine" />
-                </Field>
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <Field label="Estimated budget (optional)" error={errors.budget?.message}>
-                    <input className={inputClass} {...register("budget")} />
+                      {brandStages.map((stage) => (
+                        <option key={stage} value={stage}>
+                          {stage}
+                        </option>
+                      ))}
+                    </select>
                   </Field>
-                  <Field label="Desired timeline (optional)" error={errors.timeline?.message}>
-                    <input className={inputClass} {...register("timeline")} />
+                </fieldset>
+                <fieldset className="space-y-5 border-t border-soil/10 pt-5">
+                  <legend className="sr-only">Scope and timing</legend>
+                  <Field label="What do you think you need?" error={errors.servicesNeeded?.message}>
+                    <input maxLength={CONTACT_DRAFT_LIMITS.servicesNeeded} className={inputClass} {...register("servicesNeeded")} placeholder="A rough idea is fine" />
                   </Field>
-                </div>
-                <Field label="How did you find Branding Tatva? (optional)" error={errors.referral?.message}>
-                  <input className={inputClass} {...register("referral")} />
-                </Field>
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <Field label="Estimated budget (optional)" error={errors.budget?.message}>
+                      <input maxLength={CONTACT_DRAFT_LIMITS.budget} className={inputClass} {...register("budget")} />
+                    </Field>
+                    <Field label="Desired timeline (optional)" error={errors.timeline?.message}>
+                      <input maxLength={CONTACT_DRAFT_LIMITS.timeline} className={inputClass} {...register("timeline")} />
+                    </Field>
+                  </div>
+                  <Field label="How did you find Branding Tatva? (optional)" error={errors.referral?.message}>
+                    <input maxLength={CONTACT_DRAFT_LIMITS.referral} className={inputClass} {...register("referral")} />
+                  </Field>
+                </fieldset>
               </motion.div>
             )}
           </AnimatePresence>
@@ -698,6 +743,7 @@ export function ContactForm() {
             <button
               type="button"
               onClick={focusInvalidField}
+              data-cursor-label="Review detail"
               className="shrink-0 text-xs font-medium text-clay underline decoration-clay/30 underline-offset-4 transition-colors hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
             >
               Review {firstInvalidField.label}
@@ -725,6 +771,7 @@ export function ContactForm() {
             <a
               href={`mailto:${site.email}?subject=${encodeURIComponent("Brand enquiry")}`}
               onClick={handleEmailFallbackClick}
+              data-cursor-label="Email this note"
               className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-soil/14 bg-white/35 px-4 py-2 text-xs font-medium text-soil transition-colors hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
             >
               <Mail aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
@@ -744,6 +791,7 @@ export function ContactForm() {
               type="submit"
               onClick={handleButtonClick}
               disabled={status === "submitting"}
+              data-cursor-label={status === "submitting" ? "Sending" : "Send enquiry"}
               className={cn(
                 "group/btn relative inline-flex min-h-12 w-full items-center justify-center gap-1.5 overflow-hidden rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:-translate-y-0.5 hover:bg-action-primary-hover hover:shadow-elevation-lg focus-ring-halo disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none sm:w-auto",
               )}
@@ -785,15 +833,27 @@ export function ContactForm() {
               </span>
             </button>
           </Magnetic>
-          <p
-            data-contact-draft-status
-            aria-live="polite"
-            className="text-center text-[0.68rem] leading-relaxed text-soil/52 sm:max-w-[13.5rem] sm:text-right"
-          >
-            {draftRestored
-              ? "Your unfinished note was restored in this tab."
-              : "Unfinished notes stay in this tab until sent or closed."}
-          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:max-w-[16rem] sm:justify-end">
+            <p
+              data-contact-draft-status
+              aria-live="polite"
+              className="text-center text-[0.68rem] leading-relaxed text-soil/52 sm:text-right"
+            >
+              {draftRestored
+                ? "Your unfinished note was restored in this tab."
+                : "Unfinished notes stay in this tab."}
+            </p>
+            {hasDraft ? (
+              <button
+                type="button"
+                onClick={clearSavedNote}
+                data-cursor-label="Clear note"
+                className="text-[0.68rem] font-medium text-clay underline decoration-clay/30 underline-offset-4 transition-colors hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+              >
+                Clear note
+              </button>
+            ) : null}
+          </div>
         </div>
         <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
           {status === "submitting" ? "Sending your enquiry." : ""}
@@ -805,23 +865,43 @@ export function ContactForm() {
 
 function Field({
   label,
+  hint,
   error,
   children,
 }: {
   label: string;
+  hint?: string;
   error?: string;
-  children: ReactElement<{ "aria-invalid"?: boolean; "aria-describedby"?: string }>;
+  children: ReactElement<{
+    "aria-invalid"?: boolean;
+    "aria-describedby"?: string;
+    "aria-errormessage"?: string;
+  }>;
 }) {
+  const hintId = useId();
   const errorId = useId();
+  const existingDescription = isValidElement(children)
+    ? children.props["aria-describedby"]
+    : undefined;
+  const describedBy = [existingDescription, hint ? hintId : null, error ? errorId : null]
+    .filter(Boolean)
+    .join(" ") || undefined;
+
   return (
     <label className="block min-w-0 text-xs font-medium uppercase tracking-wide text-foreground-secondary">
       {label}
       {isValidElement(children)
         ? cloneElement(children, {
             "aria-invalid": Boolean(error),
-            "aria-describedby": error ? errorId : undefined,
+            "aria-describedby": describedBy,
+            "aria-errormessage": error ? errorId : undefined,
           })
         : children}
+      {hint ? (
+        <span id={hintId} className="mt-1.5 block text-xs font-normal normal-case leading-relaxed tracking-normal text-soil/52">
+          {hint}
+        </span>
+      ) : null}
       {error && (
         <span id={errorId} className="mt-1 block text-xs font-normal text-state-error">
           {error}

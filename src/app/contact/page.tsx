@@ -10,6 +10,7 @@ import { ContactKineticHeading } from "@/components/ContactKineticHeading";
 import { ContactGratitude } from "@/components/ContactGratitude";
 import { ContactCallSequence } from "@/components/ContactCallSequence";
 import { ContactScrollRuntime } from "@/components/ContactScrollRuntime";
+import { ContactChapterRail } from "@/components/ContactChapterRail";
 import { ContactBookingAction } from "@/components/ContactBookingAction";
 import { TrackedLink } from "@/components/TrackedLink";
 import { Reveal } from "@/components/Reveal";
@@ -91,8 +92,8 @@ export default function ContactPage() {
               feel. Same forest register as this hero's own clip, not a
               new visual idea introduced just for this page. */}
           <Fireflies />
-          <Container className="relative py-16 sm:py-24">
-            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+          <Container data-contact-hero className="relative py-16 sm:py-24">
+            <div data-contact-hero-grid className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal className="relative">
                 <NatureAccent
                   variant="butterfly"
@@ -110,8 +111,34 @@ export default function ContactPage() {
                 <p className="mt-4 max-w-lg text-ivory/80">
                   Bring the question that keeps circling. A clear next move can begin with one honest conversation.
                 </p>
+                <div data-contact-hero-actions className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <TrackedLink
+                    href={site.calendlyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    event="calendar_opened"
+                    eventProps={{ source: "contact_hero" }}
+                    data-cursor-label="Book a session"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-ivory px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
+                  >
+                    Book a {site.consultationMinutes} minute session
+                    <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
+                  </TrackedLink>
+                  <TrackedLink
+                    href="#write"
+                    event="contact_route_selected"
+                    eventProps={{ source: "contact_hero", route: "write" }}
+                    data-cursor-label="Write a note"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full border border-ivory/30 bg-soil/20 px-6 py-3 text-sm font-medium text-ivory backdrop-blur-lg transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-soil/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
+                  >
+                    Write a note
+                  </TrackedLink>
+                </div>
+                <p data-contact-hero-trust className="mt-4 text-[0.64rem] font-medium uppercase tracking-[0.18em] text-ivory/62">
+                  {site.consultationMinutes} minutes · founder led · your timezone
+                </p>
               </Reveal>
-              <Reveal delay={0.1} className="lg:pb-2">
+              <Reveal delay={0.1} className="lg:pb-2" data-contact-hero-aside>
                 <div className="max-w-xs rounded-2xl border border-white/15 bg-soil/25 p-4 text-left shadow-[0_18px_60px_rgba(12,18,13,0.18)] backdrop-blur-xl sm:p-5 lg:ml-auto">
                   <div className="flex items-center gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-sandstone">
@@ -123,7 +150,7 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <p className="mt-4 border-t border-white/10 pt-3 text-sm leading-relaxed text-ivory/72">
-                    Founder-read from the first note to the final reply.
+                    Read by Suman from the first note to the final reply.
                   </p>
                 </div>
               </Reveal>
@@ -132,8 +159,10 @@ export default function ContactPage() {
         </PhotoHero>
 
         <ContactScrollRuntime />
+        <ContactChapterRail />
 
         <ContactCinematicScene
+          id="choose"
           labelledBy="contact-pathways-heading"
           variant="branch"
           className="border-b border-soil/10 bg-[#E8DED0]"
@@ -223,6 +252,7 @@ export default function ContactPage() {
                   href={`mailto:${site.email}`}
                   event="contact_route_selected"
                   eventProps={{ source: "contact_write_intro", route: "email" }}
+                  data-cursor-label="Email Suman"
                   className="link-underline text-action-primary-hover"
                 >
                   {site.email}
@@ -233,7 +263,17 @@ export default function ContactPage() {
             <div className="min-w-0">
               <ContactForm />
               <p className="mt-4 rounded-full border border-white/35 bg-white/25 px-4 py-2 text-center text-[0.68rem] leading-relaxed text-soil/58 backdrop-blur-lg">
-                Your details stay private, reach Suman directly, and can be deleted on request.
+                Your details reach Suman directly and can be deleted on request. Read the{" "}
+                <TrackedLink
+                  href="/privacy"
+                  event="contact_route_selected"
+                  eventProps={{ source: "contact_form_privacy", route: "privacy" }}
+                  data-cursor-label="Read privacy"
+                  className="link-underline text-action-primary-hover"
+                >
+                  privacy note
+                </TrackedLink>
+                .
               </p>
             </div>
           </Container>
@@ -315,6 +355,10 @@ export default function ContactPage() {
                   Choose a time that suits you. The calendar adjusts to your timezone. {consultation.preparation}
                 </p>
 
+                <p className="mt-4 border-l border-clay/25 pl-4 text-sm leading-relaxed text-soil/62">
+                  You will speak with Suman throughout. Bring one question and leave with a clear next move.
+                </p>
+
                 {/* The direct Calendly route keeps the handoff immediate and
                     resilient even when an embedded calendar is blocked. */}
                 <ContactBookingAction
@@ -333,6 +377,7 @@ export default function ContactPage() {
                       aria-label={`Call Suman at ${site.phone.display}`}
                       event="contact_route_selected"
                       eventProps={{ source: "contact_final_scene", route: "call" }}
+                      data-cursor-label="Call Suman"
                       className="inline-flex min-h-11 items-center justify-center rounded-full border border-soil/10 bg-white/30 px-2 text-sm font-medium text-soil transition-colors duration-300 hover:text-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:justify-start sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0"
                     >
                       <Phone aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
@@ -344,6 +389,7 @@ export default function ContactPage() {
                       rel="noopener noreferrer"
                       event="contact_route_selected"
                       eventProps={{ source: "contact_final_scene", route: "whatsapp" }}
+                      data-cursor-label="WhatsApp Suman"
                       className="inline-flex min-h-11 items-center justify-center rounded-full border border-soil/10 bg-white/30 px-2 text-sm font-medium text-soil transition-colors duration-300 hover:text-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:justify-start sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0"
                     >
                       <MessageCircle aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
@@ -358,6 +404,7 @@ export default function ContactPage() {
         </ContactCinematicScene>
 
         <ContactCinematicScene
+          id="thanks"
           labelledBy="contact-gratitude-heading"
           variant="afterglow"
           className="bg-soil"

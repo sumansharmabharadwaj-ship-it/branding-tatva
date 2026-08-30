@@ -33,6 +33,7 @@ type Pathway = {
   label: string;
   title: string;
   description: string;
+  bestWhen: string;
   detail: string;
   Icon: LucideIcon;
 };
@@ -46,6 +47,7 @@ const pathways: Pathway[] = [
     title: "Choose a calm half hour for the brand question taking up space.",
     description:
       "The conversation begins with where the brand stands today and ends with a clear next move.",
+    bestWhen: "You want a focused decision and prefer a time already held for it.",
     detail: `${site.consultationMinutes} minutes · your timezone · direct with Suman`,
     Icon: CalendarDays,
   },
@@ -57,6 +59,7 @@ const pathways: Pathway[] = [
     title: "Reach Suman while the thought is still fresh.",
     description:
       "A call or WhatsApp message works when a long brief would slow the conversation down.",
+    bestWhen: "You have one immediate question and a call or message feels easiest.",
     detail: site.phone.display,
     Icon: MessageCircle,
   },
@@ -68,6 +71,7 @@ const pathways: Pathway[] = [
     title: "Put the uncertainty into your own words.",
     description:
       "A few lines about what you are building and what feels unclear are enough to begin.",
+    bestWhen: "You need room to describe the context before choosing a conversation.",
     detail: "Three details · read personally · reply by email",
     Icon: PenLine,
   },
@@ -318,6 +322,7 @@ export function ContactPathways() {
                       onFocus={() => choose(index)}
                       onMouseEnter={() => choose(index)}
                       onKeyDown={(event) => handleTabKeyDown(index, event)}
+                      data-cursor-label={pathway.label}
                       className={`group relative flex min-h-[4.25rem] min-w-0 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl px-1.5 py-1.5 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:min-h-[5.5rem] sm:gap-2 sm:rounded-2xl sm:px-2 sm:py-2 lg:min-h-0 lg:flex-none lg:flex-row lg:justify-start lg:gap-3 lg:px-4 lg:py-4 lg:text-left ${
                         selected ? "text-ivory" : "text-soil hover:bg-white/55"
                       }`}
@@ -404,6 +409,10 @@ export function ContactPathways() {
                   <p className="mt-3 max-w-lg text-[0.78rem] leading-relaxed text-soil/68 sm:mt-5 sm:text-base">
                     {active.description}
                   </p>
+                  <p className="mt-3 max-w-lg border-l border-clay/25 pl-3 text-[0.72rem] leading-relaxed text-soil/58 sm:text-sm">
+                    <span className="font-medium text-clay">Best when:</span>{" "}
+                    {active.bestWhen}
+                  </p>
                   <PathwayHandoff pathway={active} reducedMotion={prefersReducedMotion} />
 
                   <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-3">
@@ -416,6 +425,7 @@ export function ContactPathways() {
                           onClick={() =>
                             track("calendar_opened", { source: "contact_pathways" })
                           }
+                          data-cursor-label="See available times"
                           className={primaryActionClass}
                         >
                           See available times
@@ -429,6 +439,7 @@ export function ContactPathways() {
                               route: "call_flow",
                             })
                           }
+                          data-cursor-label="See the call flow"
                           className={secondaryActionClass}
                         >
                           See the call flow
@@ -448,6 +459,7 @@ export function ContactPathways() {
                               route: "call",
                             })
                           }
+                          data-cursor-label="Call Suman"
                           className={primaryActionClass}
                         >
                           <Phone aria-hidden="true" className="mr-2 h-4 w-4" />
@@ -463,6 +475,7 @@ export function ContactPathways() {
                               route: "whatsapp",
                             })
                           }
+                          data-cursor-label="Open WhatsApp"
                           className={secondaryActionClass}
                         >
                           WhatsApp
@@ -481,6 +494,7 @@ export function ContactPathways() {
                               route: "write",
                             })
                           }
+                          data-cursor-label="Start the note"
                           className={primaryActionClass}
                         >
                           Start the note
@@ -494,6 +508,7 @@ export function ContactPathways() {
                               route: "email",
                             })
                           }
+                          data-cursor-label="Email Suman"
                           className={secondaryActionClass}
                         >
                           Email instead
