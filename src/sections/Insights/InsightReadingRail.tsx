@@ -163,10 +163,11 @@ export function InsightReadingIndex({
   items,
   accent,
 }: InsightReadingRailProps) {
-  const { activeId, setActiveId } = useActiveReadingChapter(
+  const { activeId } = useActiveReadingChapter(
     items,
     DESKTOP_READING_QUERY,
   );
+  const [isOutlineOpen, setIsOutlineOpen] = useState(false);
   const activeIndex = Math.max(
     0,
     items.findIndex((item) => item.id === activeId),
@@ -206,25 +207,23 @@ export function InsightReadingIndex({
       </div>
       <div className="insight-reading-index__moves">
         {previousItem && (
-          <a
-            href={`#${previousItem.id}`}
-            onClick={() => setActiveId(previousItem.id)}
-          >
+          <a href={`#${previousItem.id}`}>
             <span>Previous</span>
             <strong>{previousItem.label}</strong>
           </a>
         )}
         {nextItem && (
-          <a
-            href={`#${nextItem.id}`}
-            onClick={() => setActiveId(nextItem.id)}
-          >
+          <a href={`#${nextItem.id}`}>
             <span>Next</span>
             <strong>{nextItem.label}</strong>
           </a>
         )}
       </div>
-      <details className="insight-reading-index__all">
+      <details
+        className="insight-reading-index__all"
+        open={isOutlineOpen}
+        onToggle={(event) => setIsOutlineOpen(event.currentTarget.open)}
+      >
         <summary>
           <span>All chapters</span>
           <small>{String(items.length).padStart(2, "0")}</small>
@@ -235,7 +234,7 @@ export function InsightReadingIndex({
               <a
                 href={`#${item.id}`}
                 aria-current={activeId === item.id ? "location" : undefined}
-                onClick={() => setActiveId(item.id)}
+                onClick={() => setIsOutlineOpen(false)}
               >
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 {item.label}
