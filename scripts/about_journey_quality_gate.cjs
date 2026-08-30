@@ -4,6 +4,7 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const runtime = read("src/components/AboutCinematicRuntime.tsx");
+const videoWarden = read("src/components/VideoWarden.tsx");
 const aboutPage = read("src/app/about/page.tsx");
 const anchorContract = read("src/app/about/about-anchor-contract.css");
 const visualizer = read("src/hooks/useScrollDrivenVisualizer.ts");
@@ -89,6 +90,13 @@ assert(
   runtime.includes("className={styles.mobileChapterProgress}") &&
     /\.mobileChapterProgress b\s*\{[^}]*transform:\s*scaleX\(var\(--navigator-progress\)\);/.test(runtimeStyles),
   "The mobile About navigator no longer exposes continuous journey progress.",
+);
+assert(
+  videoWarden.includes('document.addEventListener("play", enforcePlaybackBudget, true)') &&
+    videoWarden.includes('document.removeEventListener("play", enforcePlaybackBudget, true)') &&
+    videoWarden.includes("cancelAnimationFrame(frame)") &&
+    videoWarden.includes("arbitrate();"),
+  "Adjacent About films can briefly decode together instead of handing playback over atomically.",
 );
 assert(
   runtime.includes("const mobileNavigatorActive = navigatorActive;") &&

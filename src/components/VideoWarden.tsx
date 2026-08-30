@@ -76,6 +76,17 @@ export function VideoWarden() {
       frame = requestAnimationFrame(arbitrate);
     }
 
+    function enforcePlaybackBudget() {
+      // A play request is the only moment when a second decoder can enter the
+      // budget. Resolve that handoff synchronously instead of waiting for the
+      // next animation frame, while scroll/resize work remains frame-batched.
+      if (frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+      arbitrate();
+    }
+
     const observer = new IntersectionObserver(
       // The observer is purely a trigger now: any crossing means the picture
       // changed, so re-arbitrate. What actually plays is decided in arbitrate.
@@ -119,17 +130,17 @@ export function VideoWarden() {
     });
     mutations.observe(document.body, { childList: true, subtree: true });
 
-    // A video component may start itself after arbitration ran. Re-arbitrate
-    // on play, visibility recovery, resizing and native scrolling so the
-    // dominant owner remains correct through every handoff.
-    document.addEventListener("play", schedule, true);
+    // A video component may start itself after arbitration ran. Enforce the
+    // budget immediately on play so adjacent scenes never share even one
+    // scheduled frame, then keep lower-priority triggers frame-batched.
+    document.addEventListener("play", enforcePlaybackBudget, true);
     document.addEventListener("visibilitychange", schedule);
     window.addEventListener("resize", schedule, { passive: true });
     window.addEventListener("scroll", schedule, { passive: true });
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
-      document.removeEventListener("play", schedule, true);
+      document.removeEventListener("play", enforcePlaybackBudget, true);
       document.removeEventListener("visibilitychange", schedule);
       window.removeEventListener("resize", schedule);
       window.removeEventListener("scroll", schedule);
