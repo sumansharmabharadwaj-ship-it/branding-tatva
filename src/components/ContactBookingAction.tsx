@@ -8,6 +8,8 @@ import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { track } from "@/lib/analytics";
 import { EASE_AIR } from "@/lib/motion";
+import { useServicesContactPackage } from "@/hooks/useServicesContactPackage";
+import { calendlyHrefForServicesPackage } from "@/lib/servicesJourney";
 
 let bookingRippleId = 0;
 
@@ -33,6 +35,8 @@ export function ContactBookingAction({
   founder: string;
 }) {
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const packageSlug = useServicesContactPackage();
+  const bookingHref = calendlyHrefForServicesPackage(href, packageSlug);
   const linkRef = useRef<HTMLAnchorElement>(null);
   const rippleTimersRef = useRef<Set<number>>(new Set());
   const spotlightRef = useSpotlight(linkRef, Boolean(prefersReducedMotion));
@@ -51,7 +55,10 @@ export function ContactBookingAction({
   }, []);
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
-    track("calendar_opened", { source: "contact_final_scene" });
+    track("calendar_opened", {
+      source: "contact_final_scene",
+      ...(packageSlug ? { package: packageSlug } : {}),
+    });
     if (prefersReducedMotion || event.detail === 0) return;
 
     const rect = event.currentTarget.getBoundingClientRect();
@@ -72,7 +79,7 @@ export function ContactBookingAction({
       <a
         data-contact-booking-action
         ref={linkRef}
-        href={href}
+        href={bookingHref}
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleClick}

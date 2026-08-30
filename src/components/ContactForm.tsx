@@ -22,10 +22,13 @@ import { useSpotlight } from "@/hooks/useSpotlight";
 import { track } from "@/lib/analytics";
 import { EASE_AIR } from "@/lib/motion";
 import { site } from "@/data/site";
+import { packages } from "@/data/services";
+import { useServicesContactPackage } from "@/hooks/useServicesContactPackage";
+import { calendlyHrefForServicesPackage } from "@/lib/servicesJourney";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type DraftStatus = "empty" | "restored" | "saving" | "saved";
-type ContactDraftField = Exclude<keyof ContactFormValues, "company_website">;
+type ContactDraftField = Exclude<keyof ContactFormValues, "company_website" | "servicePackage">;
 type ContactSubmission = { fingerprint: string; id: string };
 
 const CONTACT_DRAFT_KEY = "branding-tatva:contact-note:v1";
@@ -185,6 +188,9 @@ export function ContactForm() {
   const [serverRequestId, setServerRequestId] = useState<string | null>(null);
   const [successMinHeight, setSuccessMinHeight] = useState<number | null>(null);
   const [draftStatus, setDraftStatus] = useState<DraftStatus>("empty");
+  const servicePackage = useServicesContactPackage();
+  const selectedPackage = packages.find((entry) => entry.slug === servicePackage);
+  const bookingHref = calendlyHrefForServicesPackage(site.calendlyUrl, servicePackage);
   const prefersReducedMotion = useHydratedReducedMotion();
   const cardRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -230,6 +236,7 @@ export function ContactForm() {
     reset,
     getValues,
     setFocus,
+    setValue,
     watch,
     formState: { errors, submitCount },
   } = useForm<ContactFormValues>({
@@ -266,6 +273,10 @@ export function ContactForm() {
     );
     setDraftStatus("restored");
   }, [reset]);
+
+  useEffect(() => {
+    setValue("servicePackage", servicePackage ?? undefined, { shouldDirty: false });
+  }, [servicePackage, setValue]);
 
   useEffect(() => {
     const subscription = watch(() => {
@@ -376,7 +387,7 @@ export function ContactForm() {
         source: "contact_form",
         optional_details_opened: showMore,
       });
-      reset();
+      reset({ servicePackage: servicePackage ?? undefined });
     } catch (error) {
       const timedOut = error instanceof DOMException && error.name === "AbortError";
       track("contact_form_delivery_failed", {
@@ -425,7 +436,7 @@ export function ContactForm() {
 
   function clearSavedNote() {
     clearContactDraft();
-    reset();
+    reset({ servicePackage: servicePackage ?? undefined });
     setDraftStatus("empty");
     setShowMore(false);
     setServerError(null);
@@ -449,16 +460,18 @@ export function ContactForm() {
       "",
       name && `Name: ${name}`,
       business && `Brand: ${business}`,
+      selectedPackage && `Selected package: ${selectedPackage.name}`,
       serverReference && `Reference: ${serverReference}`,
     ]
       .filter(Boolean)
       .join("\n");
 
     event.currentTarget.href = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    track("contact_route_selected", {
-      source: "contact_form_recovery",
-      route: "email_with_note",
-    });
+      track("contact_route_selected", {
+        source: "contact_form_recovery",
+        route: "email_with_note",
+        ...(servicePackage ? { package: servicePackage } : {}),
+      });
   }
 
   // Every other consequential moment on this page (the button itself,
@@ -531,12 +544,13 @@ export function ContactForm() {
 
           <div className="mt-6 flex items-center justify-center gap-2 sm:mt-8 sm:gap-3">
             <a
-              href={site.calendlyUrl}
+              href={bookingHref}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() =>
                 track("calendar_opened", {
                   source: "contact_form_success",
+                  ...(servicePackage ? { package: servicePackage } : {}),
                 })
               }
               data-cursor-label="Book a session"
@@ -577,6 +591,14 @@ export function ContactForm() {
         <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-foreground-secondary">
           Three details begin the conversation. Add more only when it helps you explain the picture.
         </p>
+        {selectedPackage ? (
+          <p
+            data-contact-form-package="true"
+            className="mx-auto mt-4 w-fit rounded-full border border-clay/20 bg-clay/[0.06] px-4 py-2 text-xs font-medium text-soil/70"
+          >
+            Selected via Brand Strategy &amp; Systems · <span className="text-clay">{selectedPackage.name}</span>
+          </p>
+        ) : null}
       </div>
 
       <div
@@ -631,6 +653,9 @@ export function ContactForm() {
         aria-hidden="true"
         {...register("company_website")}
       />
+      {servicePackage ? (
+        <input type="hidden" value={servicePackage} {...register("servicePackage")} />
+      ) : null}
 
       <div data-contact-required-grid className="grid grid-cols-2 gap-4 sm:gap-5">
         <Field label="01 Your name" error={errors.name?.message}>

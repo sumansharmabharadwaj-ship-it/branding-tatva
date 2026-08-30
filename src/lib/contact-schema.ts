@@ -26,6 +26,12 @@ export const brandStages = [
   "I need help deciding",
 ] as const;
 
+export const servicePackages = [
+  "brand-beginning",
+  "brand-clarity",
+  "brand-partnership",
+] as const;
+
 export const contactSchema = z.object({
   name: z.string().trim().min(2, "Please share your name.").max(120),
   email: z
@@ -51,6 +57,7 @@ export const contactSchema = z.object({
     .min(10, "A few words help me prepare before we talk.")
     .max(5000),
   referral: z.string().trim().max(200).optional(),
+  servicePackage: z.enum(servicePackages).optional(),
   company_website: z.string().trim().max(200).optional(),
 });
 

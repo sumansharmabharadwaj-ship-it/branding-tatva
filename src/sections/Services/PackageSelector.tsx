@@ -23,6 +23,7 @@ import {
   isServicesSituation,
   publishServicesSituation,
   readCompletedHomeDiagnosis,
+  servicesContactHref,
   type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
@@ -329,7 +330,7 @@ export function PackageSelector() {
                         See it in action: {proof.title}
                       </LinkButton>
                     )}
-                    <LinkButton href="/contact" style={{ backgroundColor: activePackage.color }}>
+                    <LinkButton href={servicesContactHref(activePackage.slug as PackageSlug)} style={{ backgroundColor: activePackage.color }}>
                       Start with {activePackage.name}
                     </LinkButton>
                   </div>

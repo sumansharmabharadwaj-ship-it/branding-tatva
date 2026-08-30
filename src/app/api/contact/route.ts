@@ -8,6 +8,7 @@ import {
   singleLine,
 } from "@/lib/api-protection";
 import { deliverContactEnquiry } from "@/lib/contact-delivery";
+import { packages } from "@/data/services";
 
 export const runtime = "nodejs";
 
@@ -67,6 +68,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const data = parsed.data;
+    const selectedPackage = packages.find(
+      (entry) => entry.slug === data.servicePackage,
+    );
     const text = [
       `Request ID: ${requestId}`,
       `Name: ${singleLine(data.name)}`,
@@ -79,6 +83,7 @@ export async function POST(request: NextRequest) {
       data.budget && `Budget: ${singleLine(data.budget)}`,
       data.timeline && `Timeline: ${singleLine(data.timeline)}`,
       data.referral && `Found via: ${singleLine(data.referral)}`,
+      selectedPackage && `Selected package: ${singleLine(selectedPackage.name)}`,
       "",
       "Project description:",
       data.description.trim(),

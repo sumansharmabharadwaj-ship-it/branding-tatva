@@ -36,6 +36,28 @@ export const SITUATION_TO_PROOF_SLUG: Record<ServicesSituationId, string> = {
   ongoing: "dr-haley-nutrition",
 };
 
+export function servicesContactHref(packageSlug: PackageSlug) {
+  return `/contact?package=${encodeURIComponent(packageSlug)}`;
+}
+
+export function packageSlugFromServicesContactParam(value: string | null): PackageSlug | null {
+  return value && value in PACKAGE_TO_SITUATION ? (value as PackageSlug) : null;
+}
+
+export function calendlyHrefForServicesPackage(baseHref: string, packageSlug: PackageSlug | null) {
+  if (!packageSlug) return baseHref;
+
+  try {
+    const href = new URL(baseHref);
+    href.searchParams.set("utm_source", "services");
+    href.searchParams.set("utm_medium", "website");
+    href.searchParams.set("utm_campaign", packageSlug);
+    return href.toString();
+  } catch {
+    return baseHref;
+  }
+}
+
 export type ServicesSituationOrigin =
   | "home_diagnostic"
   | "home_paths"

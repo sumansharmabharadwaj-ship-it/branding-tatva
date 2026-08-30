@@ -4,6 +4,7 @@ import { useRef, useState, type UIEvent } from "react";
 import { LinkButton } from "@/components/Button";
 import { packages } from "@/data/services";
 import { formatPrice, type PackageSlug, type Region } from "@/data/pricing";
+import { servicesContactHref } from "@/lib/servicesJourney";
 import { blendHex } from "@/lib/sectionWash";
 import { track } from "@/lib/analytics";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -147,7 +148,7 @@ export function PackageComparisonDeck({ region }: { region: Region }) {
               ))}
             </ul>
 
-            <LinkButton href="/contact" className="mt-6 self-start" style={{ backgroundColor: pkg.color }}>
+            <LinkButton href={servicesContactHref(pkg.slug as PackageSlug)} className="mt-6 self-start" style={{ backgroundColor: pkg.color }}>
               Start with {pkg.name}
             </LinkButton>
           </article>
