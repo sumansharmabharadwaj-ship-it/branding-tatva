@@ -138,6 +138,10 @@ export function VideoWarden() {
     window.addEventListener("resize", schedule, { passive: true });
     window.addEventListener("scroll", schedule, { passive: true });
 
+    // Autoplay may have started before this effect subscribed to `play`.
+    // Resolve that first frame against the same one-film budget immediately.
+    enforcePlaybackBudget();
+
     return () => {
       if (frame) cancelAnimationFrame(frame);
       document.removeEventListener("play", enforcePlaybackBudget, true);
