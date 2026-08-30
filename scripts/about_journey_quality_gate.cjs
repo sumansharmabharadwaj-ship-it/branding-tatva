@@ -70,6 +70,12 @@ assert(
   "The mobile About navigator no longer exposes continuous journey progress.",
 );
 assert(
+  runtime.includes("const mobileNavigatorActive = navigatorActive;") &&
+    runtime.includes("disabled={activeChapter === CHAPTERS.length - 1}") &&
+    runtime.includes("disabled={activeChapter === 0}"),
+  "The mobile About navigator no longer preserves its 08 / 08 ending state with safe previous and next boundaries.",
+);
+assert(
   runtime.includes('if (event.key !== "Escape") return;') &&
     runtime.includes("mobileMenuButtonRef.current?.focus()"),
   "The mobile About chapter chooser no longer closes and returns focus on Escape.",

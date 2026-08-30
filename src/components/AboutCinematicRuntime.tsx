@@ -507,7 +507,7 @@ export function AboutCinematicRuntime() {
     };
   }, []);
 
-  const mobileNavigatorActive = navigatorActive && activeChapter < CHAPTERS.length - 1;
+  const mobileNavigatorActive = navigatorActive;
 
   return (
     <div ref={runtimeRef} className={styles.runtime} data-navigator-ending={activeChapter === CHAPTERS.length - 1}>
@@ -613,6 +613,7 @@ export function AboutCinematicRuntime() {
           className={styles.mobileStepButton}
           type="button"
           aria-label="Next About chapter"
+          disabled={activeChapter === CHAPTERS.length - 1}
           tabIndex={mobileNavigatorActive ? 0 : -1}
           onClick={() => goToChapter(activeChapter + 1, activeChapter === CHAPTERS.length - 2)}
         >
