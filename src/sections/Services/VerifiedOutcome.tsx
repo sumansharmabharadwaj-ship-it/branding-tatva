@@ -8,12 +8,15 @@ import { LinkButton } from "@/components/Button";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { projects } from "@/data/projects";
+import { packages } from "@/data/services";
 import {
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
+  SITUATION_TO_PACKAGE,
   SITUATION_TO_PROOF_SLUG,
   isServicesSituation,
   readCompletedHomeDiagnosis,
+  servicesContactHref,
   type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
@@ -92,6 +95,10 @@ export function VerifiedOutcome() {
   const prefersReducedMotion = useHydratedReducedMotion();
   const proofRoute = situation ? PROOF_ROUTES[situation] : DEFAULT_PROOF_ROUTE;
   const proof = projects.find((project) => project.slug === proofRoute.slug);
+  const selectedPackageSlug = situation ? SITUATION_TO_PACKAGE[situation] : null;
+  const selectedPackage = selectedPackageSlug
+    ? packages.find((entry) => entry.slug === selectedPackageSlug)
+    : null;
 
   useEffect(() => {
     function applySituation(nextSituation: ServicesSituationId | null) {
@@ -204,7 +211,7 @@ export function VerifiedOutcome() {
         </div>
 
         <div data-services-chapter-instrument="true" className="relative">
-          <p className="mb-4 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-ivory/70">
+          <p className="mb-4 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-ivory/70 sm:ml-14">
             One decision, followed through
           </p>
           <ol className="border-y border-ivory/12">
@@ -254,9 +261,17 @@ export function VerifiedOutcome() {
 
           <Reveal delay={0.08}>
             <div className="mt-7 flex flex-wrap gap-3">
-              <LinkButton href={`/work/${proof.slug}`}>See the full decision trail</LinkButton>
-              <LinkButton href="/services#offerings" variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
-                Explore the Services
+              <LinkButton
+                href={selectedPackageSlug ? servicesContactHref(selectedPackageSlug) : "/contact"}
+              >
+                {selectedPackage ? `Start with ${selectedPackage.name}` : "Book a strategy session"}
+              </LinkButton>
+              <LinkButton
+                href={`/work/${proof.slug}`}
+                variant="secondary"
+                className="border-ivory/30 text-ivory hover:bg-ivory/10"
+              >
+                See the full decision trail
               </LinkButton>
             </div>
           </Reveal>
