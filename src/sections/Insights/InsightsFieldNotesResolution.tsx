@@ -301,6 +301,7 @@ export function InsightsFieldNotesResolution({
           readerPath={selectedPath?.slug}
           readerOrigin={readerIntent?.origin}
           readerLabel={readerIntent?.label ?? selectedPath?.name}
+          readerPathName={selectedPath?.name}
         />
       </div>
     </div>

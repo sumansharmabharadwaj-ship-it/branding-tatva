@@ -2124,6 +2124,94 @@
   border-radius: 999px;
 }
 
+.insights-field-note__status {
+  display: grid;
+  margin-top: 0.9rem;
+  border-block: 1px solid rgb(244 239 230 / 13%);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.insights-field-note__status li {
+  display: grid;
+  min-width: 0;
+  min-height: 3.15rem;
+  align-content: center;
+  padding: 0.55rem 0.5rem;
+  border-right: 1px solid rgb(244 239 230 / 11%);
+  gap: 0.12rem;
+}
+
+.insights-field-note__status li:last-child {
+  border-right: 0;
+}
+
+.insights-field-note__status li > :first-child {
+  width: 0.72rem;
+  height: 0.72rem;
+  color: rgb(244 239 230 / 42%);
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+}
+
+.insights-field-note__status li > span:last-child,
+.insights-field-note__status strong {
+  overflow: hidden;
+  color: rgb(244 239 230 / 52%);
+  font-size: 0.56rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.insights-field-note__status li[data-state="complete"] > :first-child {
+  color: var(--notes-path-color);
+}
+
+.insights-field-note__status li[data-state="active"] {
+  background: color-mix(in srgb, var(--notes-path-color) 8%, transparent);
+}
+
+.insights-field-note__status li[data-state="active"] > * {
+  color: #f4efe6;
+}
+
+.insights-field-note__return {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+  color: var(--notes-path-color);
+  font-size: 0.65rem;
+  font-weight: 650;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  transition:
+    color 220ms ease,
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-field-note__return svg {
+  width: 0.82rem;
+  height: 0.82rem;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-field-note__return:is(:hover, :focus-visible) {
+  color: #f4efe6;
+}
+
+.insights-field-note__return:is(:hover, :focus-visible) svg {
+  transform: translate3d(0, -0.18rem, 0);
+}
+
+.insights-field-note__return:focus-visible {
+  outline: 2px solid var(--notes-path-color);
+  outline-offset: 3px;
+}
+
 @keyframes insights-orbit {
   to {
     rotate: 360deg;
@@ -2905,6 +2993,15 @@
 
 @media (prefers-reduced-motion: reduce) {
   .insights-evidence-ledger__layers button[aria-pressed="true"] > i {
+    transform: none;
+  }
+
+  .insights-field-note__return,
+  .insights-field-note__return svg {
+    transition-duration: 0.01ms;
+  }
+
+  .insights-field-note__return:is(:hover, :focus-visible) svg {
     transform: none;
   }
 }

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUp, Check } from "lucide-react";
 import { newsletterSchema, type NewsletterFormValues } from "@/lib/newsletter-schema";
 import { Magnetic } from "@/components/Magnetic";
 import { EASE_AIR } from "@/lib/motion";
@@ -15,39 +16,31 @@ type Status = "idle" | "submitting" | "success" | "already" | "error";
 type ReaderThread = {
   label?: string;
   origin?: string;
+  pathName?: string;
 };
 
 function getConfirmationCopy(
   status: "success" | "already",
   thread: ReaderThread,
 ) {
-  const isEvidenceThread = thread.origin === "evidence-ledger";
   const label = thread.label?.trim();
 
   if (status === "already") {
     return {
       eyebrow: "Field notes already active",
-      title: label
-        ? isEvidenceThread
-          ? `This inbox already carries the ${label} thread.`
-          : `This inbox already carries the ${label} path.`
-        : "This inbox already carries the field notes.",
-      detail: "Fresh evidence will arrive when it adds weight.",
+      title: "This inbox already receives Field Notes.",
+      detail: label
+        ? `${label} can keep guiding what you read here; the emails remain broad, occasional, and editorial.`
+        : "The emails remain broad, occasional, and editorial.",
     };
   }
 
   return {
-    eyebrow: isEvidenceThread
-      ? "Evidence thread secured"
-      : label
-        ? "Reading path secured"
-        : "Place secured",
-    title: label
-      ? isEvidenceThread
-        ? `${label} will steer the next note.`
-        : `${label} will frame the next note.`
-      : "Your inbox has a place for the next note.",
-    detail: "Open the confirmation email to complete the handoff.",
+    eyebrow: "Confirmation sent",
+    title: "One last step: open your inbox.",
+    detail: label
+      ? `${label} stays active on this page while you confirm your place for the next field note.`
+      : "Confirm your place for the next field note from the email that just arrived.",
   };
 }
 
@@ -60,10 +53,12 @@ export function NewsletterForm({
   readerPath,
   readerOrigin,
   readerLabel,
+  readerPathName,
 }: {
   readerPath?: string;
   readerOrigin?: string;
   readerLabel?: string;
+  readerPathName?: string;
 }) {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
@@ -95,7 +90,11 @@ export function NewsletterForm({
         return;
       }
       const nextStatus = data.alreadySubscribed ? "already" : "success";
-      setConfirmedThread({ label: readerLabel, origin: readerOrigin });
+      setConfirmedThread({
+        label: readerLabel,
+        origin: readerOrigin,
+        pathName: readerPathName,
+      });
       setStatus(nextStatus);
       track("insights_field_note_requested", {
         reader_path: readerPath ?? "none",
@@ -117,14 +116,15 @@ export function NewsletterForm({
     : undefined;
   const isEvidenceThread = readerOrigin === "evidence-ledger";
   const formPrompt = isEvidenceThread
-    ? `Keep the ${readerLabel ?? "evidence"} thread moving`
+    ? "Receive the next useful field note"
     : "Where should the next field note land?";
   const submitLabel =
     status === "submitting"
       ? "Sending…"
-      : isEvidenceThread
-        ? "Hold this thread"
-        : "Send the next note";
+      : "Request field notes";
+  const returnCopy = confirmedThread.pathName
+    ? `Return to ${confirmedThread.pathName} essays`
+    : "Return to the essay library";
 
   return (
     <div className="mt-4 min-h-[6.5rem] max-w-sm">
@@ -153,6 +153,38 @@ export function NewsletterForm({
             <p className="mt-2 text-xs leading-5 text-ivory/60">
               {confirmation.detail}
             </p>
+            {status === "success" ? (
+              <ol
+                className="insights-field-note__status"
+                aria-label="Field note confirmation progress"
+              >
+                <li data-state="complete">
+                  <Check aria-hidden="true" />
+                  <span>Request received</span>
+                </li>
+                <li data-state="active">
+                  <span>02</span>
+                  <strong>Confirm in email</strong>
+                </li>
+                <li data-state="pending">
+                  <span>03</span>
+                  <strong>Next field note</strong>
+                </li>
+              </ol>
+            ) : null}
+            <a
+              href="#insights-library-scene"
+              className="insights-field-note__return"
+              onClick={() =>
+                track("insights_field_note_return_to_library", {
+                  reader_path: readerPath ?? "none",
+                  result: status,
+                })
+              }
+            >
+              {returnCopy}
+              <ArrowUp aria-hidden="true" />
+            </a>
           </motion.div>
         ) : (
           <motion.div
@@ -223,8 +255,8 @@ export function NewsletterForm({
             </form>
             <p className="mt-3 text-xs leading-5 text-ivory/55">
               {isEvidenceThread
-                ? "One useful note at a time. Confirmation first; leaving stays simple."
-                : "One confirmation email. Leave whenever the notes stop being useful."}
+                ? "Double opt-in. Occasional and editorial—not a personalised drip sequence. Leave in one click."
+                : "Double opt-in. Leave whenever the notes stop being useful."}
             </p>
           </motion.div>
         )}
