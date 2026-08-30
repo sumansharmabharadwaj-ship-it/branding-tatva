@@ -10,30 +10,49 @@ const BASE_URL = (
 const OUTPUT_DIR = path.resolve(
   process.env.API_OUTPUT_DIR || "artifacts/form-api-runtime-gate",
 );
+const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 20_000);
+const bypassSecret = (process.env.VERCEL_AUTOMATION_BYPASS_SECRET || "").trim();
+
+function protectionHeaders() {
+  if (!bypassSecret) return {};
+  return {
+    "x-vercel-protection-bypass": bypassSecret,
+    "x-vercel-set-bypass-cookie": "true",
+  };
+}
 
 async function request(pathname, init = {}) {
-  const response = await fetch(`${BASE_URL}${pathname}`, {
-    redirect: "manual",
-    ...init,
-    headers: {
-      "User-Agent": "branding-tatva-api-runtime-gate",
-      ...(init.headers || {}),
-    },
-  });
-  const text = await response.text();
-  let body = null;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
-    body = JSON.parse(text);
-  } catch {
-    // Non-JSON rejection bodies remain valid evidence for method guards.
+    const response = await fetch(`${BASE_URL}${pathname}`, {
+      redirect: "manual",
+      ...init,
+      signal: controller.signal,
+      headers: {
+        "User-Agent": "branding-tatva-api-runtime-gate",
+        ...protectionHeaders(),
+        ...(init.headers || {}),
+      },
+    });
+    const text = await response.text();
+    let body = null;
+    try {
+      body = JSON.parse(text);
+    } catch {
+      // Non-JSON rejection bodies remain valid evidence for method guards.
+    }
+    return {
+      status: response.status,
+      contentType: response.headers.get("content-type") || "",
+      cacheControl: response.headers.get("cache-control") || "",
+      location: response.headers.get("location") || "",
+      bodyPreview: text.slice(0, 500),
+      body,
+    };
+  } finally {
+    clearTimeout(timer);
   }
-  return {
-    status: response.status,
-    contentType: response.headers.get("content-type") || "",
-    cacheControl: response.headers.get("cache-control") || "",
-    bodyPreview: text.slice(0, 500),
-    body,
-  };
 }
 
 async function main() {
@@ -162,6 +181,7 @@ async function main() {
     result: failures.length ? "failed" : "passed",
     checkedAt: new Date().toISOString(),
     baseUrl: BASE_URL,
+    deploymentProtectionBypassConfigured: Boolean(bypassSecret),
     checks,
     failures,
   };
