@@ -654,7 +654,10 @@ export function ContactForm() {
         {...register("company_website")}
       />
       {servicePackage ? (
-        <input type="hidden" value={servicePackage} {...register("servicePackage")} />
+        <input
+          type="hidden"
+          {...register("servicePackage", { value: servicePackage })}
+        />
       ) : null}
 
       <div data-contact-required-grid className="grid grid-cols-2 gap-4 sm:gap-5">
