@@ -80,8 +80,11 @@ assert(
   "The first post-hero chapter no longer connects Suman's formative fields to a buyer's situation.",
 );
 assert(
-  visualizer.includes("manualChoiceProgressRef.current = readProgress()") &&
-    visualizer.includes("Math.abs(progress - manualChoiceProgressRef.current) <= MANUAL_CHOICE_SCROLL_EPSILON") &&
+  visualizer.includes("previewingRef.current || manualChoiceRef.current") &&
+    visualizer.includes('window.addEventListener("wheel", releaseManualChoice, { passive: true })') &&
+    visualizer.includes('window.addEventListener("touchstart", releaseManualChoice, { passive: true })') &&
+    visualizer.includes('window.addEventListener("keydown", releaseManualChoiceFromKeyboard)') &&
+    visualizer.includes("target.current?.contains(event.target)") &&
     visualizer.includes("setActiveIndex(manualChoiceIndexRef.current)"),
   "Shared About visualizers no longer protect an explicit choice until genuine scroll movement resumes.",
 );
