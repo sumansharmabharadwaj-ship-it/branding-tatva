@@ -176,7 +176,9 @@ export function PackageSelector() {
       data-package-selector="true"
       data-package-route-ready={routeReady ? "true" : "false"}
       aria-busy={!routeReady}
-      className="max-w-3xl text-center"
+      className={`text-center transition-[max-width] duration-500 ease-out motion-reduce:transition-none ${
+        compare ? "max-w-5xl" : "max-w-3xl"
+      }`}
     >
       <div data-services-chapter-copy="true">
         <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Desire</p>
