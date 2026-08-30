@@ -8,11 +8,23 @@ const VIEWPORTS = [
   { name: "desktop-1440x900", width: 1440, height: 900 },
   { name: "mobile-390x844", width: 390, height: 844, touch: true },
 ];
-const ROUTES = ["/", "/services", "/work", "/insights", "/about", "/contact"];
+const FALLBACK_ROUTES = [
+  "/",
+  "/about",
+  "/services",
+  "/insights",
+  "/contact",
+  "/blog",
+  "/glossary",
+  "/editorial-policy",
+  "/privacy",
+  "/terms",
+];
 const RUN_STATE = {
   commit: process.env.AUDIT_COMMIT || "local",
   generatedAt: new Date().toISOString(),
   routeResults: [],
+  routeManifest: [],
   caseStudy: null,
   insight: null,
   release: null,
@@ -30,6 +42,22 @@ function pathnameFor(value) {
   } catch {
     return value;
   }
+}
+
+function evidenceName(route) {
+  if (route === "/") return "home";
+  return route.replace(/^\/+|\/+$/g, "").replace(/[^a-z0-9]+/gi, "-");
+}
+
+async function discoverPublicRoutes() {
+  const response = await fetch(`${BASE_URL}/sitemap.xml`, { cache: "no-store" });
+  if (!response.ok) return FALLBACK_ROUTES;
+
+  const xml = await response.text();
+  const routes = [...xml.matchAll(/<loc>([^<]+)<\/loc>/gi)]
+    .map((match) => pathnameFor(match[1]))
+    .filter((route) => route.startsWith("/") && !route.startsWith("/api/") && !route.startsWith("/qa/"));
+  return routes.length ? [...new Set([...FALLBACK_ROUTES, ...routes])].sort() : FALLBACK_ROUTES;
 }
 
 function isExpectedNetworkFailure(url, detail = "") {
@@ -172,7 +200,7 @@ async function auditRoute(browser, viewport, route) {
     }, route);
 
     const browserErrors = [...new Set(errors)];
-    const evidencePath = path.join(OUTPUT, `${viewport.name}-${route === "/" ? "home" : route.slice(1)}.png`);
+    const evidencePath = path.join(OUTPUT, `${viewport.name}-${evidenceName(route)}.png`);
     await page.screenshot({ path: evidencePath, fullPage: false });
 
     const audited = { ...result, browserErrors, evidencePath: path.basename(evidencePath) };
@@ -201,7 +229,6 @@ async function auditRoute(browser, viewport, route) {
       assert(result.currentDurationVisible, `${viewport.name}/contact: 30-minute duration is not visible`);
       assert(!result.staleDurationVisible, `${viewport.name}/contact: stale 20-minute duration is still visible`);
     }
-    if (route === "/work") assert(result.workLinks >= 1, `${viewport.name}/work: no case-study routes found`);
     if (route === "/insights") assert(result.insightLinks >= 27, `${viewport.name}/insights: expected at least 27 guide routes, found ${result.insightLinks}`);
     assert(browserErrors.length === 0, `${viewport.name}${route}: browser errors:\n${browserErrors.join("\n")}`);
 
@@ -249,12 +276,14 @@ async function releaseFingerprint() {
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
+    const routes = await discoverPublicRoutes();
+    RUN_STATE.routeManifest = routes;
     for (const viewport of VIEWPORTS) {
-      for (const route of ROUTES) {
+      for (const route of routes) {
         await auditRoute(browser, viewport, route);
       }
     }
-    RUN_STATE.caseStudy = await firstDynamicRoute(browser, "/work", 'a[href^="/work/"]');
+    RUN_STATE.caseStudy = await firstDynamicRoute(browser, "/", 'a[href^="/work/"]');
     RUN_STATE.insight = await firstDynamicRoute(
       browser,
       "/insights",

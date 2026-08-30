@@ -100,7 +100,7 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
                 <p className="text-xs uppercase tracking-[0.2em] text-ivory/50">Get in touch</p>
                 <a
                   href={`mailto:${site.email}`}
-                  className="mt-2 block whitespace-nowrap text-[0.8rem] text-ivory/80 transition-colors hover:text-ivory"
+                  className="site-footer-email mt-2 block text-[0.8rem] text-ivory/80 transition-colors hover:text-ivory"
                 >
                   {site.email}
                 </a>
@@ -137,7 +137,7 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
           continuous dark passage through to the very last pixel instead
           of resetting to light for the copyright line; text flips to its
           light-on-dark equivalents to match. */}
-      <div className="flex flex-col-reverse items-center gap-3 bg-soil px-6 py-5 text-center sm:flex-row sm:justify-between sm:px-10">
+      <div className="site-footer-meta flex flex-col-reverse items-center gap-3 bg-soil px-6 py-5 text-center sm:flex-row sm:justify-between sm:px-10">
         <div className="flex flex-col items-center gap-1 sm:items-start">
           <p className="text-xs text-ivory/70">
             © {new Date().getFullYear()} {site.name}

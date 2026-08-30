@@ -16,9 +16,9 @@
   display: none !important;
 }
 
-/* Ambient sound is an optional edge control, not a floating object inside
-   the composition. Coarse-pointer and compact devices keep the interface
-   clear; the audio preference still persists for returning desktop users. */
+/* Ambient sound stays visually quiet in the shared header. Its mobile
+   placement is owned by the global header system so it remains reachable
+   from the menu on coarse-pointer and compact devices. */
 [data-ambient-audio-toggle] {
   opacity: 0.58;
   transform: translateX(0.12rem);
@@ -28,12 +28,6 @@
 [data-ambient-audio-toggle]:focus-visible {
   opacity: 1;
   transform: translateX(0);
-}
-
-@media (max-width: 1199px), (pointer: coarse) {
-  [data-ambient-audio-toggle] {
-    display: none !important;
-  }
 }
 
 @media (max-width: 760px) {

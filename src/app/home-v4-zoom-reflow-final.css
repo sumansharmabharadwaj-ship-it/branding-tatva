@@ -37,6 +37,73 @@
   }
 }
 
+/* The selected-work chapter previously kept its desktop proof row and inline
+   italic title on phones. The third proof disappeared beyond the clipped scene
+   and the title could finish off-screen. Mobile now reads the full reasoning
+   vertically, while the project selector remains the compact horizontal deck. */
+@media (max-width: 620px) and (min-height: 521px) {
+  html body .home-v4 #evidence .evidence-cinematic__shell {
+    width: calc(100% - 1.5rem) !important;
+    max-width: calc(100dvw - 1.5rem) !important;
+  }
+
+  .home-v4 .evidence-cinematic__header,
+  .home-v4 .evidence-cinematic__header > div,
+  .home-v4 .evidence-cinematic__stage,
+  .home-v4 .evidence-cinematic__summary {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__header h2 {
+    max-width: 100%;
+    font-size: clamp(2.25rem, 10.6vw, 2.7rem) !important;
+    line-height: 0.94;
+    text-wrap: balance;
+    overflow-wrap: normal;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__header h2 em {
+    display: block;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__summary > strong {
+    font-size: clamp(3.25rem, 15vw, 4.25rem);
+  }
+
+  .home-v4 .evidence-cinematic__proof-line {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) !important;
+    overflow: visible;
+  }
+
+  .home-v4 .evidence-cinematic__proof-line > div,
+  .home-v4 .evidence-cinematic__proof-line > div + div {
+    display: grid;
+    min-width: 0;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: 0.65rem;
+    align-items: baseline;
+    padding: 0.42rem 0;
+    border-left: 0;
+    border-top: 1px solid rgba(32, 50, 40, 0.14);
+  }
+
+  .home-v4 .evidence-cinematic__proof-line > div:first-child {
+    border-top: 0;
+  }
+
+  .home-v4 .evidence-cinematic__proof-line p {
+    max-width: none;
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.28;
+  }
+}
+
 /* At 200% and 400% browser zoom a desktop viewport becomes both narrow and
    short in CSS pixels. The cinematic chapters must stop behaving like sealed
    100svh slides in that condition; otherwise the lower copy and controls are

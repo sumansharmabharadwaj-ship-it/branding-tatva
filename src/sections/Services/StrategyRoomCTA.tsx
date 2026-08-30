@@ -307,7 +307,7 @@ export function StrategyRoomCTA() {
             required.
           </p>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-ivory/68">
-            Founder led remote projects are available across {entityFacts.delivery.regions.slice(0, -1).join(", ")} and{" "}
+            Founder-led remote projects are available across {entityFacts.delivery.regions.slice(0, -1).join(", ")} and{" "}
             {entityFacts.delivery.regions.at(-1)}.
           </p>
         </motion.div>

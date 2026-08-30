@@ -7,6 +7,7 @@ import "./bt-scene.css";
 import "./visualizer.css";
 import "./sun-cursor.css";
 import "./august-8-refinement.css";
+import "./mobile-system.css";
 import { AmbientAudio } from "@/components/AmbientAudio";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { ConsentManager } from "@/components/ConsentManager";
@@ -61,6 +62,7 @@ export const viewport: Viewport = {
   themeColor: "#eee7db",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 const PERSON_ID = `${site.url}/#person`;

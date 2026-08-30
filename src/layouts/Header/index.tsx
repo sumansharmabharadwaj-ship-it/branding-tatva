@@ -42,9 +42,12 @@ export function Header({ transparent = false }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [barHidden, setBarHidden] = useState(false);
   const lastScrollRef = useRef(0);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
   const element = useCurrentElement();
+  const pathname = usePathname() ?? "/";
 
   useEffect(() => {
     function handleScroll(current: number) {
@@ -77,19 +80,61 @@ export function Header({ transparent = false }: HeaderProps) {
 
   useEffect(() => {
     if (!open) return;
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.documentElement.dataset.siteMenu = "open";
+    const inertTargets = [document.querySelector<HTMLElement>("main"), document.querySelector<HTMLElement>("footer")]
+      .filter((target): target is HTMLElement => Boolean(target));
+    const previousInert = inertTargets.map((target) => target.inert);
+    inertTargets.forEach((target) => {
+      target.inert = true;
+    });
+
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        window.requestAnimationFrame(() => menuButtonRef.current?.focus());
+        return;
+      }
+      if (e.key !== "Tab") return;
+
+      const menu = menuRef.current;
+      const trigger = menuButtonRef.current;
+      if (!menu || !trigger) return;
+      const menuItems = Array.from(
+        menu.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((item) => item.getClientRects().length > 0);
+      const focusables = [trigger, ...menuItems];
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      if (e.shiftKey && (active === first || !active || !focusables.includes(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !active || !focusables.includes(active))) {
+        e.preventDefault();
+        first.focus();
+      }
     }
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.documentElement.style.overflow = previousOverflow;
+      delete document.documentElement.dataset.siteMenu;
+      inertTargets.forEach((target, index) => {
+        target.inert = previousInert[index];
+      });
+    };
   }, [open]);
 
   useEffect(() => {
     setOpen(false);
-  }, [transparent]);
+  }, [pathname, transparent]);
 
   const isBarHidden = barHidden && !open;
-  const pathname = usePathname() ?? "/";
   const accent =
     pathname.startsWith("/services") ? "#8FAE83"
     : pathname.startsWith("/work") ? "#D4B99A"
@@ -101,30 +146,31 @@ export function Header({ transparent = false }: HeaderProps) {
   return (
     <>
       <motion.header
+        data-site-header
         variants={prefersReducedMotion ? undefined : barVariants}
         animate={isBarHidden ? "hidden" : "visible"}
         transition={BAR_TRANSITION}
-        className="fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5"
+        className="site-header fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5"
       >
         <div className="relative w-full max-w-4xl lg:max-w-5xl">
           <div
-            className={`flex w-full items-center justify-between gap-4 rounded-full border border-soil/10 px-4 py-2.5 shadow-elevation-md backdrop-blur-md transition-colors duration-500 sm:px-6 sm:py-3 ${
+            className={`site-header__bar flex w-full items-center justify-between gap-4 rounded-full border border-soil/10 px-4 py-2.5 shadow-elevation-md backdrop-blur-md transition-colors duration-500 sm:px-6 sm:py-3 ${
               scrolled ? "bg-[#f4efe6]/94" : "bg-[#f4efe6]/84"
             }`}
           >
-            <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3">
+            <Link href="/" className="site-header__brand flex min-w-0 shrink-0 items-center gap-3">
               <LogoMark size={32} className="shrink-0" />
-              <span aria-hidden="true" className="hidden h-6 w-px bg-soil/20 min-[376px]:block" />
+              <span aria-hidden="true" className="site-header__divider hidden h-6 w-px bg-soil/20 min-[360px]:block" />
               {/* Logo owns an inline-flex display internally, so the
                   responsive visibility belongs to a parent wrapper.
                   This keeps the wordmark at 390px while leaving enough
                   room for sound and menu controls at 360px. */}
-              <span className="hidden min-[376px]:inline-flex">
+              <span className="site-header__wordmark hidden min-[360px]:inline-flex">
                 <Logo className="origin-left" />
               </span>
             </Link>
 
-            <div className="flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-5">
+            <div className="site-header__actions flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-5">
               <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
                 {navigation
                   .filter((item) => item.href !== "/" && item.href !== "/contact")
@@ -163,12 +209,16 @@ export function Header({ transparent = false }: HeaderProps) {
                   →
                 </span>
               </Link>
-              <AmbientAudioButton accent={accent} />
+              <span className="site-header__ambient">
+                <AmbientAudioButton accent={accent} />
+              </span>
               <button
-                className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors duration-500"
+                ref={menuButtonRef}
+                className="site-header__menu-button relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors duration-500"
                 style={{ color: accent }}
                 aria-label={open ? "Close menu" : "Open menu"}
                 aria-expanded={open}
+                aria-controls="primary-menu"
                 onClick={() => setOpen((v) => !v)}
               >
                 <AnimatePresence initial={false}>
@@ -217,14 +267,16 @@ export function Header({ transparent = false }: HeaderProps) {
               onClick={() => setOpen(false)}
               aria-hidden="true"
             />
-            <div className="fixed inset-x-0 top-20 z-40 flex justify-center px-4 sm:top-24">
+            <div className="site-header__menu-shell fixed inset-x-0 top-20 z-40 flex justify-center px-4 sm:top-24">
               <motion.nav
+                ref={menuRef}
+                id="primary-menu"
                 variants={prefersReducedMotion ? undefined : mobileNavVariants}
                 initial="initial"
                 animate="animate"
                 exit="exit"
                 transition={MOBILE_NAV_TRANSITION}
-                className="w-full max-w-sm rounded-2xl border border-soil/10 bg-[#f4efe6]/96 p-3 text-soil shadow-[0_28px_90px_rgba(67,54,42,0.22)] backdrop-blur-xl"
+                className="site-header__menu-panel w-full max-w-sm rounded-2xl border border-soil/10 bg-[#f4efe6]/96 p-3 text-soil shadow-[0_28px_90px_rgba(67,54,42,0.22)] backdrop-blur-xl"
                 aria-label="Primary"
               >
                 <motion.ul variants={prefersReducedMotion ? undefined : navListVariants} className="flex flex-col">
@@ -244,6 +296,16 @@ export function Header({ transparent = false }: HeaderProps) {
                     </motion.li>
                   ))}
                 </motion.ul>
+                <motion.div
+                  variants={prefersReducedMotion ? undefined : navItemVariants}
+                  transition={NAV_ITEM_TRANSITION}
+                  className="site-header__mobile-audio mt-2 items-center justify-between rounded-2xl border-t border-soil/10 px-4 pt-3 min-[430px]:hidden"
+                >
+                  <span className="text-xs font-medium uppercase tracking-[0.16em] text-soil/62">
+                    Ambient sound
+                  </span>
+                  <AmbientAudioButton accent={accent} />
+                </motion.div>
                 <motion.div
                   variants={prefersReducedMotion ? undefined : navItemVariants}
                   transition={NAV_CTA_TRANSITION}

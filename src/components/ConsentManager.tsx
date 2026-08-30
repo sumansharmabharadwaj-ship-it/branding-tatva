@@ -130,6 +130,15 @@ export function ConsentManager() {
   const decided = hasDecided(consent);
   const showBanner = ready && !decided && !panelOpen;
 
+  useEffect(() => {
+    const root = document.documentElement;
+    if (showBanner) root.dataset.consentBanner = "visible";
+    else delete root.dataset.consentBanner;
+    return () => {
+      delete root.dataset.consentBanner;
+    };
+  }, [showBanner]);
+
   return (
     <>
       {/* The single gate. Measurement exists only inside this condition. */}
@@ -139,12 +148,12 @@ export function ConsentManager() {
         <div
           role="region"
           aria-label="Your choice about measurement"
-          className="fixed inset-x-3 bottom-3 z-[100] rounded-full border px-3 py-2 shadow-xl backdrop-blur-xl sm:right-5 sm:left-auto sm:w-auto"
+          className="consent-notice fixed inset-x-3 bottom-3 z-[100] rounded-full border px-3 py-2 shadow-xl backdrop-blur-xl sm:right-5 sm:left-auto sm:w-auto"
           style={{ borderColor: "rgba(39,34,30,0.14)", backgroundColor: "rgba(244,239,230,0.94)" }}
         >
           <div className="flex min-h-10 items-center justify-between gap-3">
             <p className="m-0 text-[0.69rem] leading-tight text-soil/76">
-              Analytics off by default.{" "}
+              Analytics stays off.{" "}
               <Link href="/privacy" className="link-underline" style={{ color: "#9b5c43" }}>
                 Privacy
               </Link>
