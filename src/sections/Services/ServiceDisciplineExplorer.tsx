@@ -12,10 +12,43 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { offerings } from "@/data/services";
 import { track } from "@/lib/analytics";
+import {
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  isServicesSituation,
+  readCompletedHomeDiagnosis,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const USER_HOLD_MS = 14000;
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+const DEFAULT_DISCIPLINE_ORDER = offerings.map((_, index) => index);
+
+// A situation changes sequencing, not scope. Every route can still inspect all
+// six disciplines, while the work most consequential at that stage appears
+// first in the scroll-led chapter and keyboard order.
+const ROUTE_PLANS: Record<
+  ServicesSituationId,
+  { label: string; summary: string; order: readonly number[] }
+> = {
+  idea: {
+    label: "Beginning with an idea",
+    summary: "Position first, then build the message and the places it must travel.",
+    order: [0, 1, 3, 4, 5, 2],
+  },
+  reposition: {
+    label: "Repositioning an existing brand",
+    summary: "Reset the position, align the message, then rebuild the highest-traffic encounters.",
+    order: [0, 1, 3, 5, 4, 2],
+  },
+  ongoing: {
+    label: "Building ongoing consistency",
+    summary: "Plan the message, create it in one voice, distribute it, then learn from the response.",
+    order: [1, 4, 2, 5, 3, 0],
+  },
+};
 
 type ServicesProgressDetail = {
   id?: string;
@@ -34,9 +67,39 @@ export function ServiceDisciplineExplorer() {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const userHoldUntilRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [situation, setSituation] = useState<ServicesSituationId | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const active = offerings[activeIndex];
+  const routePlan = situation ? ROUTE_PLANS[situation] : null;
+  const disciplineOrder = routePlan?.order ?? DEFAULT_DISCIPLINE_ORDER;
+  const activePosition = Math.max(0, disciplineOrder.indexOf(activeIndex));
+
+  useEffect(() => {
+    function applySituation(nextSituation: ServicesSituationId | null) {
+      setSituation(nextSituation);
+      if (nextSituation) setActiveIndex(ROUTE_PLANS[nextSituation].order[0] ?? 0);
+    }
+
+    try {
+      const storedSituation = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+      applySituation(
+        isServicesSituation(storedSituation)
+          ? storedSituation
+          : readCompletedHomeDiagnosis(),
+      );
+    } catch {
+      applySituation(null);
+    }
+
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      applySituation(isServicesSituation(detail?.situation) ? detail.situation : null);
+    }
+
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+  }, []);
 
   useEffect(() => {
     if (!isDesktop) return;
@@ -62,10 +125,11 @@ export function ServiceDisciplineExplorer() {
       if (Date.now() < userHoldUntilRef.current) return;
       const storyProgress = detail.storyProgress ?? detail.progress;
 
-      const index = Math.min(
-        offerings.length - 1,
-        Math.max(0, Math.floor(storyProgress * offerings.length)),
+      const position = Math.min(
+        disciplineOrder.length - 1,
+        Math.max(0, Math.floor(storyProgress * disciplineOrder.length)),
       );
+      const index = disciplineOrder[position] ?? DEFAULT_DISCIPLINE_ORDER[0];
       setActiveIndex((current) => (current === index ? current : index));
     }
 
@@ -74,7 +138,7 @@ export function ServiceDisciplineExplorer() {
     return () => {
       window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
     };
-  }, [prefersReducedMotion]);
+  }, [disciplineOrder, prefersReducedMotion]);
 
   function activate(index: number, source: "hover" | "focus" | "click") {
     userHoldUntilRef.current = Date.now() + USER_HOLD_MS;
@@ -96,13 +160,19 @@ export function ServiceDisciplineExplorer() {
   }
 
   function handleTabKey(index: number, event: KeyboardEvent<HTMLButtonElement>) {
-    let nextIndex: number | undefined;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % offerings.length;
-    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + offerings.length) % offerings.length;
-    if (event.key === "Home") nextIndex = 0;
-    if (event.key === "End") nextIndex = offerings.length - 1;
-    if (nextIndex === undefined) return;
+    const currentPosition = Math.max(0, disciplineOrder.indexOf(index));
+    let nextPosition: number | undefined;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      nextPosition = (currentPosition + 1) % disciplineOrder.length;
+    }
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      nextPosition = (currentPosition - 1 + disciplineOrder.length) % disciplineOrder.length;
+    }
+    if (event.key === "Home") nextPosition = 0;
+    if (event.key === "End") nextPosition = disciplineOrder.length - 1;
+    if (nextPosition === undefined) return;
     event.preventDefault();
+    const nextIndex = disciplineOrder[nextPosition] ?? DEFAULT_DISCIPLINE_ORDER[0];
     activate(nextIndex, "focus");
     tabRefs.current[nextIndex]?.focus();
   }
@@ -118,21 +188,22 @@ export function ServiceDisciplineExplorer() {
               <Reveal>
                 <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The full practice</p>
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Six kinds of work, one discipline underneath.
+                  Six disciplines. One route through them.
                 </h2>
                 <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/75">
-                  Every service appears inside the package paths ahead. Explore the complete practice here without leaving
-                  this scene.
+                  {routePlan
+                    ? `${routePlan.label} changes what should come first. The complete practice remains available.`
+                    : "Choose a situation above to order the work around your stage, or explore the complete practice here."}
                 </p>
                 <div className="mt-7 flex items-center gap-4" aria-hidden="true">
                   <span className="font-display text-2xl text-ivory">
-                    {String(activeIndex + 1).padStart(2, "0")}
+                    {String(activePosition + 1).padStart(2, "0")}
                   </span>
                   <span className="h-px flex-1 overflow-hidden bg-ivory/12">
                     <motion.span
                       className="block h-full origin-left"
                       style={{ backgroundColor: active.color }}
-                      animate={{ scaleX: (activeIndex + 1) / offerings.length }}
+                      animate={{ scaleX: (activePosition + 1) / offerings.length }}
                       transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
                     />
                   </span>
@@ -150,28 +221,33 @@ export function ServiceDisciplineExplorer() {
               >
                 <div
                   role="tablist"
-                  aria-label="Branding Tatva service disciplines"
+                  aria-label={
+                    routePlan
+                      ? `Branding Tatva service disciplines ordered for ${routePlan.label}`
+                      : "Branding Tatva service disciplines"
+                  }
                   className="services-discipline-rail grid gap-1.5 rounded-2xl border border-ivory/12 bg-[rgba(11,17,16,0.46)] p-2 backdrop-blur-md lg:flex lg:w-max lg:min-w-full lg:gap-2"
                 >
-                  {offerings.map((offer, index) => {
-                    const isActive = activeIndex === index;
+                  {disciplineOrder.map((offeringIndex, sequenceIndex) => {
+                    const offer = offerings[offeringIndex] ?? offerings[0];
+                    const isActive = activeIndex === offeringIndex;
                     return (
                       <button
                         key={offer.name}
                         ref={(node) => {
-                          tabRefs.current[index] = node;
+                          tabRefs.current[offeringIndex] = node;
                         }}
-                        id={`service-discipline-tab-${index}`}
-                        data-service-discipline-index={index}
+                        id={`service-discipline-tab-${offeringIndex}`}
+                        data-service-discipline-index={offeringIndex}
                         type="button"
                         role="tab"
                         aria-selected={isActive}
                         aria-controls="service-discipline-panel"
                         tabIndex={isActive ? 0 : -1}
-                        onPointerEnter={(event) => handlePointerEnter(index, event)}
-                        onFocus={() => activate(index, "focus")}
-                        onClick={() => activate(index, "click")}
-                        onKeyDown={(event) => handleTabKey(index, event)}
+                        onPointerEnter={(event) => handlePointerEnter(offeringIndex, event)}
+                        onFocus={() => activate(offeringIndex, "focus")}
+                        onClick={() => activate(offeringIndex, "click")}
+                        onKeyDown={(event) => handleTabKey(offeringIndex, event)}
                         className="group relative flex min-h-14 min-w-0 items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:px-4 lg:w-[13.5rem] lg:flex-none"
                         style={{ "--discipline-color": offer.color } as CSSProperties}
                       >
@@ -193,7 +269,7 @@ export function ServiceDisciplineExplorer() {
                             isActive ? "text-ivory" : "text-ivory/35 group-hover:text-ivory/65"
                           }`}
                         >
-                          {String(index + 1).padStart(2, "0")}
+                          {String(sequenceIndex + 1).padStart(2, "0")}
                         </span>
                         <span
                           className={`relative flex-1 font-display text-[1.05rem] font-normal leading-tight transition-colors duration-300 sm:text-lg ${
@@ -241,10 +317,10 @@ export function ServiceDisciplineExplorer() {
                     <div>
                       <div className="flex items-baseline justify-between gap-4">
                         <p className="text-xs font-medium uppercase tracking-[0.18em] text-ivory/55">
-                          Discipline {String(activeIndex + 1).padStart(2, "0")} / {String(offerings.length).padStart(2, "0")}
+                          Discipline {String(activePosition + 1).padStart(2, "0")} / {String(offerings.length).padStart(2, "0")}
                         </p>
                         <span className="font-display text-5xl font-normal text-ivory/10" aria-hidden="true">
-                          {String(activeIndex + 1).padStart(2, "0")}
+                          {String(activePosition + 1).padStart(2, "0")}
                         </span>
                       </div>
                       <h3 className="mt-5 max-w-xl font-display text-3xl font-normal leading-tight text-ivory sm:text-4xl">
@@ -254,8 +330,17 @@ export function ServiceDisciplineExplorer() {
                     </div>
 
                     <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-ivory/12 pt-5">
-                      <p className="max-w-sm text-sm leading-relaxed text-ivory/60">
-                        Woven into the package paths below, rather than sold as an isolated output.
+                      <p data-service-route-context="true" className="max-w-sm text-sm leading-relaxed text-ivory/60">
+                        {routePlan ? (
+                          <>
+                            <span className="block text-[0.58rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">
+                              Your route · {routePlan.label}
+                            </span>
+                            <span className="mt-1 block">{routePlan.summary}</span>
+                          </>
+                        ) : (
+                          "Woven into the package paths below, rather than sold as an isolated output."
+                        )}
                       </p>
                       <a
                         href="#desire"

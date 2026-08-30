@@ -19,6 +19,7 @@ import {
   SERVICES_SITUATION_STORAGE_KEY,
   SITUATION_TO_PACKAGE,
   isServicesSituation,
+  readCompletedHomeDiagnosis,
   type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
@@ -88,7 +89,10 @@ export function PackageSelector() {
     if (!applyLinkedPackage()) {
       try {
         const saved = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
-        if (isServicesSituation(saved)) applySituation(saved);
+        const savedSituation = isServicesSituation(saved)
+          ? saved
+          : readCompletedHomeDiagnosis();
+        if (savedSituation) applySituation(savedSituation);
       } catch {}
     }
 

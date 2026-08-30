@@ -13,6 +13,7 @@ import {
   SERVICES_SITUATION_STORAGE_KEY,
   SITUATION_TO_PACKAGE,
   isServicesSituation,
+  readCompletedHomeDiagnosis,
   type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
@@ -58,12 +59,14 @@ type ServicesProgressDetail = {
 function publishSituation(id: ServicesSituationId) {
   try {
     window.localStorage.setItem(SERVICES_SITUATION_STORAGE_KEY, id);
-    const detail: ServicesSituationDetail = {
-      situation: id,
-      packageSlug: SITUATION_TO_PACKAGE[id],
-    };
-    window.dispatchEvent(new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, { detail }));
   } catch {}
+
+  const detail: ServicesSituationDetail = {
+    situation: id,
+    packageSlug: SITUATION_TO_PACKAGE[id],
+    origin: "services",
+  };
+  window.dispatchEvent(new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, { detail }));
 }
 
 export function SituationPath() {
@@ -75,8 +78,11 @@ export function SituationPath() {
 
   useEffect(() => {
     try {
-      const savedServicesChoice = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
-      if (isServicesSituation(savedServicesChoice)) {
+      const storedSituation = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+      const savedServicesChoice = isServicesSituation(storedSituation)
+        ? storedSituation
+        : readCompletedHomeDiagnosis();
+      if (savedServicesChoice) {
         setSelected(savedServicesChoice);
         setPreview(savedServicesChoice);
         setCarried(true);
