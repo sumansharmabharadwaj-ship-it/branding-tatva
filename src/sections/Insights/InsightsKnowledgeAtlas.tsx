@@ -92,6 +92,19 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
   useEffect(() => {
     function syncPathFromHash() {
       const prefix = "#atlas-tab-";
+      if (window.location.hash === "#knowledge-atlas") {
+        selectionLockRef.current = {
+          index: 0,
+          awaitingArrival: true,
+          arrivalY: null,
+        };
+        setActiveIndex((current) => {
+          transitionDirectionRef.current = current === 0 ? 1 : -1;
+          return 0;
+        });
+        return;
+      }
+
       if (!window.location.hash.startsWith(prefix)) {
         selectionLockRef.current = null;
         return;

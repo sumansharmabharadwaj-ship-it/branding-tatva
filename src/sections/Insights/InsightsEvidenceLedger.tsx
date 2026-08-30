@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+} from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Check, Plus } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
@@ -51,6 +57,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   const priorReaderIntentRef = useRef<InsightsIntentDetail | undefined>(
     undefined,
   );
+  const layerButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
   const focusedLayer = layers[focusedIndex];
   const markedCount = markedSlugs.length;
@@ -112,6 +119,11 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     : undefined;
   const focusedIsCarried =
     markedCount === 0 && intentLayer?.slug === focusedLayer.slug;
+  const focusedStateLabel = focusedIsMarked
+    ? "Marked for review"
+    : focusedIsCarried
+      ? "Carried from your reading path"
+      : "Open to review";
   const showsWorkingHypothesis = showsSynthesis || focusedIsCarried;
   const markedRoute =
     markedCount === 2
@@ -220,6 +232,28 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     if (latestMarkedIndex >= 0) setFocusedIndex(latestMarkedIndex);
   }
 
+  function handleLayerKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) {
+    let nextIndex: number | null = null;
+
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+      nextIndex = (index + 1) % layers.length;
+    }
+    if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+      nextIndex = (index - 1 + layers.length) % layers.length;
+    }
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = layers.length - 1;
+
+    if (nextIndex === null) return;
+
+    event.preventDefault();
+    setFocusedIndex(nextIndex);
+    layerButtonRefs.current[nextIndex]?.focus();
+  }
+
   return (
     <div
       className="insights-evidence-ledger-shell"
@@ -271,6 +305,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
 
         <ol
           className="insights-evidence-ledger__layers"
+          aria-label="Evidence layers to review"
           onBlur={(event) => {
             const nextTarget = event.relatedTarget;
             if (
@@ -293,12 +328,16 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
             return (
               <li key={layer.slug}>
                 <button
+                  ref={(node) => {
+                    layerButtonRefs.current[index] = node;
+                  }}
                   type="button"
                   aria-pressed={marked}
                   data-threaded={carried}
                   className={focused ? "is-focused" : undefined}
                   onClick={() => toggleLayer(layer.slug, index)}
                   onFocus={() => setFocusedIndex(index)}
+                  onKeyDown={(event) => handleLayerKeyDown(event, index)}
                   onPointerEnter={(event) => {
                     if (event.pointerType !== "touch") setFocusedIndex(index);
                   }}
@@ -362,24 +401,38 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              <p>
+              <header className="insights-evidence-ledger__detail-head">
+                <ElementGlyph
+                  slug={focusedLayer.element}
+                  className="h-5 w-5"
+                  strokeWidth={1.35}
+                />
                 <span>
-                  {showsWorkingHypothesis
-                    ? "Working hypothesis"
-                    : "Signal to investigate"}
+                  <small>Layer 0{focusedIndex + 1}</small>
+                  <strong>{focusedLayer.name}</strong>
                 </span>
-                {primaryDetail}
-              </p>
-              <p>
-                <span>
-                  {showsWorkingHypothesis
-                    ? focusedIsCarried
-                      ? "First evidence move"
-                      : "Next evidence move"
-                    : "Evidence to collect"}
-                </span>
-                {secondaryDetail}
-              </p>
+                <em>{focusedStateLabel}</em>
+              </header>
+              <div className="insights-evidence-ledger__detail-grid">
+                <p>
+                  <span>
+                    {showsWorkingHypothesis
+                      ? "Working hypothesis"
+                      : "Signal to investigate"}
+                  </span>
+                  {primaryDetail}
+                </p>
+                <p>
+                  <span>
+                    {showsWorkingHypothesis
+                      ? focusedIsCarried
+                        ? "First evidence move"
+                        : "Next evidence move"
+                      : "Evidence to collect"}
+                  </span>
+                  {secondaryDetail}
+                </p>
+              </div>
             </motion.div>
           </AnimatePresence>
         </div>
