@@ -127,6 +127,36 @@ export default function ContactPage() {
                 <p data-contact-hero-trust className="mt-4 text-[0.64rem] font-medium uppercase tracking-[0.18em] text-ivory/62">
                   {site.consultationMinutes} minutes · founder led · your timezone
                 </p>
+                <div
+                  data-contact-hero-direct
+                  className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-ivory/72"
+                  aria-label="Direct contact options"
+                >
+                  <span className="text-ivory/52">Prefer direct?</span>
+                  <TrackedLink
+                    href={`tel:${site.phone.tel}`}
+                    event="contact_route_selected"
+                    eventProps={{ source: "contact_hero", route: "call" }}
+                    data-cursor-label="Call Suman"
+                    className="link-underline inline-flex min-h-8 items-center text-ivory transition-colors hover:text-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
+                    aria-label={`Call Suman at ${site.phone.display}`}
+                  >
+                    <Phone aria-hidden="true" className="mr-1.5 h-3.5 w-3.5" strokeWidth={1.5} />
+                    Call
+                  </TrackedLink>
+                  <TrackedLink
+                    href={site.phone.whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    event="contact_route_selected"
+                    eventProps={{ source: "contact_hero", route: "whatsapp" }}
+                    data-cursor-label="WhatsApp Suman"
+                    className="link-underline inline-flex min-h-8 items-center text-ivory transition-colors hover:text-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
+                  >
+                    <MessageCircle aria-hidden="true" className="mr-1.5 h-3.5 w-3.5" strokeWidth={1.5} />
+                    WhatsApp
+                  </TrackedLink>
+                </div>
               </Reveal>
               <Reveal delay={0.1} className="lg:pb-2" data-contact-hero-aside>
                 <ContactHeroContextCard />

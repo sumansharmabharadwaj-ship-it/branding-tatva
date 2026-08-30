@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
-const CONTRACT_VERSION = 8;
+const CONTRACT_VERSION = 9;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -160,6 +160,9 @@ if (!contactChapterRail.includes('aria-live="polite"')) {
 if (!contactPage.includes("data-contact-hero-trust")) {
   fail("Contact hero must retain its concise booking reassurance.");
 }
+if (!contactPage.includes("data-contact-hero-direct")) {
+  fail("Contact hero must expose direct call and WhatsApp routes without another scroll.");
+}
 if (!contactCinematicCss.includes("[data-contact-film] [data-contact-hero-trust] {")) {
   fail("Contact mobile hero reassurance must retain its compact treatment.");
 }
@@ -181,6 +184,15 @@ if (!contactForm.includes("packageStatusRef.current?.focus({ preventScroll: true
 }
 if (!contactForm.includes("clearServicesContactPackage()")) {
   fail("Contact form must clear carried service context through the shared boundary.");
+}
+if (!contactForm.includes("data-contact-success-destination")) {
+  fail("Contact success must confirm where the reply will be sent.");
+}
+if (!contactForm.includes("data-contact-recovery-copy")) {
+  fail("Contact delivery recovery must let visitors preserve their full note outside the form.");
+}
+if (!contactForm.includes("Support needed:")) {
+  fail("Contact email recovery must retain optional enquiry context.");
 }
 if (!servicesContactPackageHook.includes("window.history.replaceState")) {
   fail("Clearing carried service context must keep the visitor on the current Contact scene.");

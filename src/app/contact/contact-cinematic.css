@@ -295,6 +295,10 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   [data-contact-film] [data-contact-hero-trust] {
     margin-top: 0.75rem;
   }
+
+  [data-contact-film] [data-contact-hero-direct] {
+    margin-top: 0.5rem;
+  }
 }
 
 @media (min-width: 1024px) and (max-height: 800px) {
@@ -521,6 +525,11 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
     font-size: 0.58rem;
     line-height: 1.45;
     letter-spacing: 0.14em;
+  }
+
+  [data-contact-film] [data-contact-hero-direct] {
+    margin-top: 0.45rem;
+    font-size: 0.76rem;
   }
 
   [data-contact-film] [data-contact-gratitude] {

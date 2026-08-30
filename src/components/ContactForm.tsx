@@ -14,7 +14,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useForm, type Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarDays, Check, CircleAlert, Mail, RotateCcw, X } from "lucide-react";
+import { CalendarDays, Check, CircleAlert, Copy, Mail, RotateCcw, X } from "lucide-react";
 import { contactSchema, brandStages, type ContactFormValues } from "@/lib/contact-schema";
 import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/Magnetic";
@@ -31,6 +31,7 @@ import { calendlyHrefForServicesPackage } from "@/lib/servicesJourney";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type DraftStatus = "empty" | "restored" | "saving" | "saved";
+type RecoveryCopyStatus = "idle" | "copied" | "error";
 type ContactDraftField = Exclude<keyof ContactFormValues, "company_website" | "servicePackage">;
 type ContactSubmission = { fingerprint: string; id: string };
 
@@ -210,7 +211,9 @@ export function ContactForm() {
   const [serverError, setServerError] = useState<string | null>(null);
   const [serverRequestId, setServerRequestId] = useState<string | null>(null);
   const [successMinHeight, setSuccessMinHeight] = useState<number | null>(null);
+  const [receiptEmail, setReceiptEmail] = useState<string | null>(null);
   const [draftStatus, setDraftStatus] = useState<DraftStatus>("empty");
+  const [recoveryCopyStatus, setRecoveryCopyStatus] = useState<RecoveryCopyStatus>("idle");
   const servicePackage = useServicesContactPackage();
   const selectedPackage = packages.find((entry) => entry.slug === servicePackage);
   const bookingHref = calendlyHrefForServicesPackage(site.calendlyUrl, servicePackage);
@@ -344,6 +347,7 @@ export function ContactForm() {
     setStatus("submitting");
     setServerError(null);
     setServerRequestId(null);
+    setRecoveryCopyStatus("idle");
     const submissionValues: ContactFormValues = servicePackage
       ? { ...values, servicePackage }
       : values;
@@ -405,6 +409,7 @@ export function ContactForm() {
       clearContactDraft();
       submissionRef.current = null;
       setDraftStatus("empty");
+      setReceiptEmail(values.email.trim());
       setStatus("success");
       track("contact_form_submitted", {
         source: "contact_form",
@@ -434,6 +439,7 @@ export function ContactForm() {
     setStatus("idle");
     setServerError(null);
     setServerRequestId(null);
+    setRecoveryCopyStatus("idle");
   }
 
   function focusInvalidField() {
@@ -454,6 +460,8 @@ export function ContactForm() {
   function startAnotherNote() {
     setStatus("idle");
     setSuccessMinHeight(null);
+    setReceiptEmail(null);
+    setRecoveryCopyStatus("idle");
     window.requestAnimationFrame(() => setFocus("name"));
   }
 
@@ -464,6 +472,8 @@ export function ContactForm() {
     setShowMore(false);
     setServerError(null);
     setServerRequestId(null);
+    setReceiptEmail(null);
+    setRecoveryCopyStatus("idle");
     submissionRef.current = null;
     setStatus("idle");
     track("contact_route_selected", { source: "contact_form", route: "draft_cleared" });
@@ -489,31 +499,80 @@ export function ContactForm() {
     );
   }
 
-  function handleEmailFallbackClick(event: MouseEvent<HTMLAnchorElement>) {
+  function buildFallbackNote() {
     const values = getValues();
     const name = values.name?.trim();
+    const email = values.email?.trim();
+    const phone = values.phone?.trim();
     const business = values.business?.trim();
+    const website = values.website?.trim();
+    const brandStage = values.brandStage?.trim();
+    const servicesNeeded = values.servicesNeeded?.trim();
+    const budget = values.budget?.trim();
+    const timeline = values.timeline?.trim();
     const question = values.description?.trim();
-    const subject = name ? `Brand enquiry from ${name}` : "Brand enquiry";
-    const body = [
+    const referral = values.referral?.trim();
+
+    return [
       "Hello Suman,",
       "",
       question || "I would like to discuss my brand.",
       "",
       name && `Name: ${name}`,
+      email && `Email: ${email}`,
+      phone && `Phone: ${phone}`,
       business && `Brand: ${business}`,
+      website && `Website or social: ${website}`,
+      brandStage && `Brand stage: ${brandStage}`,
+      servicesNeeded && `Support needed: ${servicesNeeded}`,
+      budget && `Budget: ${budget}`,
+      timeline && `Timeline: ${timeline}`,
+      referral && `Found Branding Tatva through: ${referral}`,
       selectedPackage && `Selected package: ${selectedPackage.name}`,
       serverReference && `Reference: ${serverReference}`,
     ]
       .filter(Boolean)
       .join("\n");
+  }
+
+  function handleEmailFallbackClick(event: MouseEvent<HTMLAnchorElement>) {
+    const name = getValues("name")?.trim();
+    const subject = name ? `Brand enquiry from ${name}` : "Brand enquiry";
+    const body = buildFallbackNote();
 
     event.currentTarget.href = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    track("contact_route_selected", {
+      source: "contact_form_recovery",
+      route: "email_with_note",
+      ...(servicePackage ? { package: servicePackage } : {}),
+    });
+  }
+
+  async function copyRecoveryNote() {
+    const note = buildFallbackNote();
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(note);
+      } else {
+        const fallback = document.createElement("textarea");
+        fallback.value = note;
+        fallback.setAttribute("readonly", "");
+        fallback.style.position = "fixed";
+        fallback.style.opacity = "0";
+        document.body.appendChild(fallback);
+        fallback.select();
+        const copied = document.execCommand("copy");
+        fallback.remove();
+        if (!copied) throw new Error("Copy command was unavailable");
+      }
+      setRecoveryCopyStatus("copied");
       track("contact_route_selected", {
         source: "contact_form_recovery",
-        route: "email_with_note",
-        ...(servicePackage ? { package: servicePackage } : {}),
+        route: "note_copied",
       });
+    } catch {
+      setRecoveryCopyStatus("error");
+    }
   }
 
   // Every other consequential moment on this page (the button itself,
@@ -560,6 +619,14 @@ export function ContactForm() {
             <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-foreground-secondary sm:text-base">
               Suman reads every enquiry personally and replies by email. Your question now has a clear place to land.
             </p>
+            {receiptEmail ? (
+              <p
+                data-contact-success-destination
+                className="mx-auto mt-4 w-fit max-w-full rounded-full border border-soil/10 bg-white/35 px-4 py-2 text-xs leading-relaxed text-soil/62"
+              >
+                Replying to <strong className="break-all font-medium text-soil">{receiptEmail}</strong>
+              </p>
+            ) : null}
           </div>
 
           <ol className="mx-auto mt-6 grid max-w-2xl grid-cols-3 gap-1.5 sm:mt-8 sm:gap-2" aria-label="What happens next">
@@ -912,15 +979,40 @@ export function ContactForm() {
                 ) : null}
               </span>
             </span>
-            <a
-              href={`mailto:${site.email}?subject=${encodeURIComponent("Brand enquiry")}`}
-              onClick={handleEmailFallbackClick}
-              data-cursor-label="Email this note"
-              className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-soil/14 bg-white/35 px-4 py-2 text-xs font-medium text-soil transition-colors hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
-            >
-              <Mail aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
-              Email this note
-            </a>
+            <span className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:items-end">
+              <span className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={copyRecoveryNote}
+                  data-contact-recovery-copy
+                  data-cursor-label="Copy this note"
+                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-soil/14 bg-white/35 px-3 py-2 text-xs font-medium text-soil transition-colors hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+                >
+                  {recoveryCopyStatus === "copied" ? (
+                    <Check aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
+                  ) : (
+                    <Copy aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
+                  )}
+                  {recoveryCopyStatus === "copied" ? "Copied" : "Copy note"}
+                </button>
+                <a
+                  href={`mailto:${site.email}?subject=${encodeURIComponent("Brand enquiry")}`}
+                  onClick={handleEmailFallbackClick}
+                  data-cursor-label="Email this note"
+                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-soil/14 bg-white/35 px-3 py-2 text-xs font-medium text-soil transition-colors hover:bg-white/65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+                >
+                  <Mail aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
+                  Email note
+                </a>
+              </span>
+              <span className="min-h-4 text-right text-[0.64rem] leading-relaxed text-soil/52" role="status" aria-live="polite">
+                {recoveryCopyStatus === "copied"
+                  ? "Full note copied."
+                  : recoveryCopyStatus === "error"
+                    ? "Copy unavailable. Use email instead."
+                    : "Both options keep every detail you entered."}
+              </span>
+            </span>
           </motion.div>
         ) : null}
       </AnimatePresence>
