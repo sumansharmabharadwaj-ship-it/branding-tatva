@@ -95,7 +95,8 @@ assert(
   videoWarden.includes('document.addEventListener("play", enforcePlaybackBudget, true)') &&
     videoWarden.includes('document.removeEventListener("play", enforcePlaybackBudget, true)') &&
     videoWarden.includes("cancelAnimationFrame(frame)") &&
-    videoWarden.includes("arbitrate();"),
+    videoWarden.includes("arbitrate();") &&
+    /window\.addEventListener\("scroll", schedule, \{ passive: true \}\);\s*\/\/ Autoplay[\s\S]*?enforcePlaybackBudget\(\);/.test(videoWarden),
   "Adjacent About films can briefly decode together instead of handing playback over atomically.",
 );
 assert(
