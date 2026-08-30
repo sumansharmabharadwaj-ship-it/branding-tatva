@@ -85,8 +85,9 @@ function GratitudeNote({
   return (
     <motion.button
       type="button"
-      aria-label={`${note.label}. ${note.response}`}
+      aria-label={`${active ? "Close" : "Open"} acknowledgement for ${note.label}`}
       aria-pressed={active}
+      aria-controls="contact-gratitude-response"
       onClick={() => onActiveNoteChange(active ? null : index)}
       onPointerEnter={(event) => {
         if (event.pointerType === "mouse") onActiveNoteChange(index);
@@ -98,6 +99,7 @@ function GratitudeNote({
       onBlur={() => onActiveNoteChange(null)}
       data-contact-gratitude-note
       data-contact-gratitude-visited={visited ? "true" : undefined}
+      data-cursor-label={active ? "Close note" : "Open note"}
       className={cn(
         "relative flex min-h-16 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-soil/20 px-4 py-3 text-center text-ivory shadow-[0_16px_48px_rgba(10,18,12,0.14)] backdrop-blur-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone sm:min-h-[4.5rem] sm:px-5 xl:absolute xl:w-[13rem]",
         note.position,
@@ -199,6 +201,7 @@ export function ContactGratitude() {
       ref={sceneRef}
       data-contact-gratitude
       data-contact-gratitude-complete={allNotesVisited ? "true" : undefined}
+      data-contact-gratitude-active={activeNote === null ? undefined : "true"}
       onPointerDown={handleScenePointerDown}
       className="relative flex min-h-[100svh] w-full items-center py-12 sm:py-16"
     >
@@ -263,6 +266,7 @@ export function ContactGratitude() {
               Whether we work together or this visit simply helped you name what matters, I am glad you found your way here.
             </p>
             <div
+              id="contact-gratitude-response"
               data-contact-gratitude-response
               className="relative mt-3 min-h-[3.25rem] overflow-hidden font-display text-lg italic text-sandstone sm:min-h-[2rem] sm:text-xl"
             >

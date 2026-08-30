@@ -220,7 +220,8 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
 
 @supports selector(body:has(*)) {
   body:has([data-contact-form-card]:focus-within) [data-contact-chapter-rail],
-  body:has([data-contact-form-expanded="true"]) [data-contact-chapter-rail] {
+  body:has([data-contact-form-expanded="true"]) [data-contact-chapter-rail],
+  body:has([data-contact-gratitude-active="true"]) [data-contact-chapter-rail] {
     opacity: 0;
     pointer-events: none;
     transform: translate(-50%, 0.75rem);
@@ -263,7 +264,8 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
 
   @supports selector(body:has(*)) {
     body:has([data-contact-form-card]:focus-within) [data-contact-chapter-rail],
-    body:has([data-contact-form-expanded="true"]) [data-contact-chapter-rail] {
+    body:has([data-contact-form-expanded="true"]) [data-contact-chapter-rail],
+    body:has([data-contact-gratitude-active="true"]) [data-contact-chapter-rail] {
       opacity: 1;
       pointer-events: auto;
       transform: translate(0, -50%);

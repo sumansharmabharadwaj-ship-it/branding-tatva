@@ -24,6 +24,7 @@ import { EASE_AIR } from "@/lib/motion";
 import { site } from "@/data/site";
 
 type Status = "idle" | "submitting" | "success" | "error";
+type DraftStatus = "empty" | "restored" | "saving" | "saved";
 type ContactDraftField = Exclude<keyof ContactFormValues, "company_website">;
 
 const CONTACT_DRAFT_KEY = "branding-tatva:contact-note:v1";
@@ -181,8 +182,7 @@ export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMinHeight, setSuccessMinHeight] = useState<number | null>(null);
-  const [draftRestored, setDraftRestored] = useState(false);
-  const [hasDraft, setHasDraft] = useState(false);
+  const [draftStatus, setDraftStatus] = useState<DraftStatus>("empty");
   const prefersReducedMotion = useHydratedReducedMotion();
   const cardRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -198,6 +198,15 @@ export function ContactForm() {
   // seven optional ones stay one click away rather than gone, so a
   // visitor who wants to say more still can.
   const [showMore, setShowMore] = useState(false);
+  const hasDraft = draftStatus !== "empty";
+  const draftStatusCopy =
+    draftStatus === "restored"
+      ? "Your unfinished note was restored in this tab."
+      : draftStatus === "saving"
+        ? "Saving in this tab."
+        : draftStatus === "saved"
+          ? "Saved in this tab."
+          : "Unfinished notes stay in this tab.";
 
   function handleButtonClick(e: MouseEvent<HTMLButtonElement>) {
     if (prefersReducedMotion || e.detail === 0) return;
@@ -251,8 +260,7 @@ export function ContactForm() {
         return typeof value === "string" && Boolean(value.trim());
       }),
     );
-    setDraftRestored(true);
-    setHasDraft(true);
+    setDraftStatus("restored");
   }, [reset]);
 
   useEffect(() => {
@@ -260,10 +268,12 @@ export function ContactForm() {
       if (draftTimerRef.current !== null) {
         window.clearTimeout(draftTimerRef.current);
       }
+      const hasValues = hasContactDraftValues(getValues());
+      setDraftStatus(hasValues ? "saving" : "empty");
       draftTimerRef.current = window.setTimeout(() => {
         const values = getValues();
         persistContactDraft(values);
-        setHasDraft(hasContactDraftValues(values));
+        setDraftStatus(hasContactDraftValues(values) ? "saved" : "empty");
         draftTimerRef.current = null;
       }, CONTACT_DRAFT_DELAY_MS);
     });
@@ -338,8 +348,7 @@ export function ContactForm() {
           : null,
       );
       clearContactDraft();
-      setDraftRestored(false);
-      setHasDraft(false);
+      setDraftStatus("empty");
       setStatus("success");
       track("contact_form_submitted", {
         source: "contact_form",
@@ -393,8 +402,7 @@ export function ContactForm() {
   function clearSavedNote() {
     clearContactDraft();
     reset();
-    setDraftRestored(false);
-    setHasDraft(false);
+    setDraftStatus("empty");
     setShowMore(false);
     setServerError(null);
     setStatus("idle");
@@ -836,12 +844,12 @@ export function ContactForm() {
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:max-w-[16rem] sm:justify-end">
             <p
               data-contact-draft-status
+              data-state={draftStatus}
               aria-live="polite"
+              aria-atomic="true"
               className="text-center text-[0.68rem] leading-relaxed text-soil/52 sm:text-right"
             >
-              {draftRestored
-                ? "Your unfinished note was restored in this tab."
-                : "Unfinished notes stay in this tab."}
+              {draftStatusCopy}
             </p>
             {hasDraft ? (
               <button
