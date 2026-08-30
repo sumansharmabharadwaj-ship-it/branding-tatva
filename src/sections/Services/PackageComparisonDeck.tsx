@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type UIEvent } from "react";
+import { Plus } from "lucide-react";
 import { LinkButton } from "@/components/Button";
 import { packages } from "@/data/services";
 import { formatPrice, type PackageSlug, type Region } from "@/data/pricing";
@@ -139,8 +140,8 @@ export function PackageComparisonDeck({ region }: { region: Region }) {
             </div>
             <p className="mt-3 min-h-12 text-sm leading-relaxed text-ivory/75">{pkg.forWho}</p>
 
-            <ul className="mt-5 flex-1 space-y-2 border-t border-ivory/10 pt-5">
-              {pkg.includes.map((item) => (
+            <ul className="mt-4 flex-1 space-y-2 border-t border-ivory/10 pt-4">
+              {pkg.includes.slice(0, 3).map((item) => (
                 <li key={item} className="grid grid-cols-[0.7rem_1fr] gap-2 text-sm leading-relaxed text-ivory/88">
                   <span aria-hidden="true" className="pt-0.5 text-sandstone">•</span>
                   <span>{item}</span>
@@ -148,9 +149,31 @@ export function PackageComparisonDeck({ region }: { region: Region }) {
               ))}
             </ul>
 
-            <LinkButton href={servicesContactHref(pkg.slug as PackageSlug)} className="mt-6 self-start" style={{ backgroundColor: pkg.color }}>
+            <LinkButton href={servicesContactHref(pkg.slug as PackageSlug)} className="mt-5 self-start" style={{ backgroundColor: pkg.color }}>
               Start with {pkg.name}
             </LinkButton>
+
+            {pkg.includes.length > 3 && (
+              <details data-package-comparison-details="true" className="group mt-4 border-t border-ivory/10 pt-3">
+                <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-lg px-1 text-xs font-medium text-ivory/70 transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone">
+                  <span>
+                    View {pkg.includes.length - 3} more {pkg.includes.length - 3 === 1 ? "deliverable" : "deliverables"}
+                  </span>
+                  <Plus
+                    aria-hidden="true"
+                    className="h-4 w-4 shrink-0 text-sandstone transition-transform duration-300 group-open:rotate-45"
+                  />
+                </summary>
+                <ul className="space-y-2 pb-1 pt-2">
+                  {pkg.includes.slice(3).map((item) => (
+                    <li key={item} className="grid grid-cols-[0.7rem_1fr] gap-2 text-sm leading-relaxed text-ivory/80">
+                      <span aria-hidden="true" className="pt-0.5 text-sandstone">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
           </article>
         ))}
       </div>

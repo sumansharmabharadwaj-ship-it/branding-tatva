@@ -255,7 +255,7 @@ export function PackageSelector() {
                 style={{ color: isActive ? pkg?.color : "rgba(244,239,230,0.7)" }}
               />
               <span className="font-display text-lg font-normal text-ivory">{choice.label}</span>
-              {pkg && <span className="line-clamp-3 text-xs leading-relaxed text-ivory/75">{pkg.forWho}</span>}
+              {pkg && <span className="text-xs leading-relaxed text-ivory/75">{pkg.forWho}</span>}
             </motion.button>
           );
         })}
@@ -265,7 +265,7 @@ export function PackageSelector() {
         <RegionSelector />
         <button
           type="button"
-          aria-label="Compare all three side by side"
+          aria-label={compare ? "Back to one package recommendation" : "Compare all three packages side by side"}
           aria-pressed={compare}
           onClick={() => {
             manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
@@ -274,9 +274,15 @@ export function PackageSelector() {
               return !current;
             });
           }}
-          className="link-underline inline-flex min-h-11 items-center rounded-full px-3 py-2.5 text-sm text-ivory/70 transition-colors duration-300 hover:bg-ivory/[0.05] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+          className="inline-flex min-h-11 items-center gap-3 rounded-full border border-sandstone/35 bg-[rgba(15,21,28,0.42)] px-4 py-2.5 text-sm font-medium text-ivory/85 backdrop-blur-md transition-[border-color,background-color,color] duration-300 hover:border-sandstone/65 hover:bg-ivory/[0.07] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
         >
-          {compare ? "Back to one recommendation" : "Compare all three side by side"}
+          <span>{compare ? "Back to recommendation" : "Compare all packages"}</span>
+          <span
+            aria-hidden="true"
+            className="rounded-full border border-ivory/15 bg-ivory/[0.05] px-2 py-0.5 text-[0.56rem] font-medium uppercase tracking-[0.14em] text-sandstone"
+          >
+            {compare ? "1 view" : "3 paths"}
+          </span>
         </button>
       </div>
 
