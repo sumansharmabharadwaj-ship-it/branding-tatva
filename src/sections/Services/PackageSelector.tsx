@@ -38,6 +38,7 @@ const CHOICES = [
 ] as const;
 
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+const ANCHOR_SETTLE_EVENT = "bt:services-anchor-settle";
 const MANUAL_HOLD_MS = 16000;
 
 type SelectionSource = "situation" | "manual" | "scroll" | null;
@@ -58,7 +59,6 @@ export function PackageSelector() {
   const [routeReady, setRouteReady] = useState(false);
   const manualUntilRef = useRef(0);
   const committedRouteRef = useRef(false);
-  const viewportRestoreFrameRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
   const activePackage = packages.find((pkg) => pkg.slug === active);
   const activeSituation = active ? PACKAGE_TO_SITUATION[active] : null;
@@ -128,7 +128,6 @@ export function PackageSelector() {
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation);
     window.addEventListener("hashchange", onHashChange);
     return () => {
-      window.cancelAnimationFrame(viewportRestoreFrameRef.current);
       window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
       window.removeEventListener("hashchange", onHashChange);
     };
@@ -161,20 +160,11 @@ export function PackageSelector() {
     };
   }, [compare, prefersReducedMotion, selectionSource]);
 
-  function preserveViewport(scrollY: number) {
-    window.cancelAnimationFrame(viewportRestoreFrameRef.current);
-    viewportRestoreFrameRef.current = window.requestAnimationFrame(() => {
-      viewportRestoreFrameRef.current = window.requestAnimationFrame(() => {
-        if (Math.abs(window.scrollY - scrollY) > 1) {
-          window.scrollTo({ top: scrollY, behavior: "auto" });
-        }
-        viewportRestoreFrameRef.current = 0;
-      });
-    });
+  function settlePackageChapter() {
+    window.dispatchEvent(new CustomEvent(ANCHOR_SETTLE_EVENT, { detail: { id: "desire" } }));
   }
 
   function choosePackage(slug: PackageSlug) {
-    const scrollY = window.scrollY;
     const situation = PACKAGE_TO_SITUATION[slug];
     committedRouteRef.current = true;
     manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
@@ -184,7 +174,7 @@ export function PackageSelector() {
     setCompare(false);
     publishServicesSituation(situation, "services_package");
     track("package_viewed", { package: slug, situation, source: "manual" });
-    preserveViewport(scrollY);
+    settlePackageChapter();
   }
 
   return (
@@ -296,13 +286,12 @@ export function PackageSelector() {
           aria-label={compare ? "Back to one package recommendation" : "Compare all three packages side by side"}
           aria-pressed={compare}
           onClick={() => {
-            const scrollY = window.scrollY;
             manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
             setCompare((current) => {
               if (!current) track("packages_compared");
               return !current;
             });
-            preserveViewport(scrollY);
+            settlePackageChapter();
           }}
           className="inline-flex min-h-11 items-center gap-3 rounded-full border border-sandstone/35 bg-[rgba(15,21,28,0.42)] px-4 py-2.5 text-sm font-medium text-ivory/85 backdrop-blur-md transition-[border-color,background-color,color] duration-300 hover:border-sandstone/65 hover:bg-ivory/[0.07] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
         >

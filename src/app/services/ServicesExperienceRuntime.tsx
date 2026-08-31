@@ -6,7 +6,12 @@ const SCENE_SELECTOR = "[data-services-scene], #authority, #book";
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
 const ACTIVE_CHAPTER_EVENT = "bt:services-active-chapter";
+const ANCHOR_SETTLE_EVENT = "bt:services-anchor-settle";
 const DIRECT_ANCHOR_PROGRESS = 0.455;
+
+type AnchorSettleDetail = {
+  id?: string;
+};
 
 const SCENE_MOTION: Record<
   string,
@@ -287,6 +292,17 @@ export function ServicesExperienceRuntime() {
       anchorAlignCancelled = false;
       anchorAlignAttempts = 0;
       anchorAlignTimer = window.setTimeout(() => alignAnchorChapter(index), 0);
+    }
+
+    function onAnchorSettle(event: Event) {
+      const id = (event as CustomEvent<AnchorSettleDetail>).detail?.id;
+      const index = scenes.findIndex((scene) => scene.id === id);
+      if (index < 0) return;
+
+      pendingAnchorIndex = index;
+      publishChapter(index);
+      scheduleProgress();
+      settleAnchorChapter(index);
     }
 
     // One geometric focal line owns chapter state. Intersection ratios can
@@ -609,6 +625,7 @@ export function ServicesExperienceRuntime() {
     window.addEventListener("resize", scheduleProgress, { passive: true });
     window.addEventListener("pageshow", scheduleProgress);
     window.addEventListener("hashchange", publishAnchorChapter);
+    window.addEventListener(ANCHOR_SETTLE_EVENT, onAnchorSettle as EventListener);
     window.addEventListener("wheel", cancelAnchorAlignment, { passive: true });
     window.addEventListener("touchmove", cancelAnchorAlignment, { passive: true });
     window.addEventListener("keydown", onManualAnchorKey);
@@ -624,6 +641,7 @@ export function ServicesExperienceRuntime() {
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);
       window.removeEventListener("hashchange", publishAnchorChapter);
+      window.removeEventListener(ANCHOR_SETTLE_EVENT, onAnchorSettle as EventListener);
       window.removeEventListener("wheel", cancelAnchorAlignment);
       window.removeEventListener("touchmove", cancelAnchorAlignment);
       window.removeEventListener("keydown", onManualAnchorKey);
