@@ -55,6 +55,10 @@ assert(
   "The copy dense synthesis chapter can fade below the protected reading exposure.",
 );
 assert(
+  /id="about-system"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense brand-system chapter can fade below the protected reading exposure.",
+);
+assert(
   /\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*clamp\(5\.75rem,\s*10svh,\s*6\.5rem\);/.test(anchorContract) &&
     /@media \(max-width:\s*430px\)[\s\S]*?\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*calc\(5rem \+ env\(safe-area-inset-top,\s*0px\)\);/.test(anchorContract),
   "About chapter hashes can settle beneath the fixed header in a responsive state.",
@@ -300,18 +304,23 @@ assert(
 );
 
 const protectedAtlasType = [
+  [".headerAside > p:first-child", 0.76],
+  [".stageReadout", 0.6],
   [".core small", 0.55],
-  [".surfaceNodes button small", 0.55],
-  [".surfaceNodes button em", 0.55],
-  [".recordTopline small", 0.55],
-  [".record dt", 0.55],
-  [".recordFoot", 0.55],
-  [".touchRail button small", 0.55],
-  [".touchRail button strong", 0.55],
-  [".touchRecordIndex small", 0.55],
-  [".touchTest small", 0.55],
-  [".staticCore small", 0.55],
-  [".staticAtlas li small", 0.55],
+  [".surfaceNodes button small", 0.6],
+  [".surfaceNodes button em", 0.58],
+  [".recordTopline small", 0.6],
+  [".record > p", 0.76],
+  [".record dt", 0.6],
+  [".recordFoot", 0.58],
+  [".touchRail button small", 0.6],
+  [".touchRail button strong", 0.6],
+  [".touchRecordIndex small", 0.6],
+  [".touchRecord > p", 0.76],
+  [".touchTest small", 0.6],
+  [".staticCore small", 0.6],
+  [".staticAtlas li small", 0.6],
+  [".staticAtlas li p", 0.74],
 ];
 
 for (const [selector, minimum] of protectedAtlasType) {
@@ -349,6 +358,13 @@ assert(
     convergenceStyles.includes('.thread[data-thread="2"] button { translate:') &&
     convergenceStyles.includes('.thread[data-thread="3"] button { translate:'),
   "The centre seal can block the interactive Synthesis pairings.",
+);
+
+assert(
+  atlasStyles.includes("--atlas-navigation-gutter:") &&
+    atlasStyles.includes("var(--atlas-navigation-gutter)") &&
+    /@media \(max-width: 980px\)[\s\S]*?padding:\s*6\.8rem 0 3\.7rem;/.test(atlasStyles),
+  "The brand atlas chapter spine can overlap its record or leave a touch-layout gutter behind.",
 );
 
 const protectedEvidenceType = [

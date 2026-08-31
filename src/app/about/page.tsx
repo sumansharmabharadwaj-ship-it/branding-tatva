@@ -110,7 +110,7 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <section id="about-system" className="relative overflow-clip bg-soil" data-about-chapter="system" data-about-film-scene data-scene-tone="dark">
+        <section id="about-system" className="relative overflow-clip bg-soil" data-about-chapter="system" data-about-film-scene data-reading-scene data-scene-tone="dark">
           <div className="absolute inset-0" data-about-film-background>
             <BackgroundVideo
               video="/videos/pexels-root-network.mp4"
