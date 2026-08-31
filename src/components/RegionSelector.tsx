@@ -9,8 +9,8 @@ import { REGIONS, isRegion } from "@/data/pricing";
 export function RegionSelector() {
   const { region, setRegion } = usePricing();
   return (
-    <label className="inline-flex items-center gap-2 text-xs text-ivory/70">
-      Prices shown for
+    <label data-region-selector="true" className="inline-flex items-center gap-2 text-xs text-ivory/70">
+      <span data-region-selector-label="true">Prices shown for</span>
       <select
         value={region}
         onChange={(e) => {

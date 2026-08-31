@@ -32,9 +32,9 @@ import {
 // paths, but only a carried diagnosis or explicit click is treated as a real
 // recommendation. Passive preview never writes preference or analytics.
 const CHOICES = [
-  { slug: "brand-beginning", label: "Starting with an idea", element: "earth" },
-  { slug: "brand-clarity", label: "Feeling unclear or inconsistent", element: "water" },
-  { slug: "brand-partnership", label: "Needing ongoing consistency", element: "space" },
+  { slug: "brand-beginning", label: "Starting with an idea", shortLabel: "Idea", element: "earth" },
+  { slug: "brand-clarity", label: "Feeling unclear or inconsistent", shortLabel: "Reposition", element: "water" },
+  { slug: "brand-partnership", label: "Needing ongoing consistency", shortLabel: "Ongoing", element: "space" },
 ] as const;
 
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
@@ -224,7 +224,11 @@ export function PackageSelector() {
         </AnimatePresence>
       </div>
 
-      <div data-services-chapter-instrument="true" className="mx-auto mt-6 grid max-w-2xl gap-4 sm:grid-cols-3 lg:mt-7">
+      <div
+        data-services-chapter-instrument="true"
+        aria-label="Choose a package route"
+        className="mx-auto mt-6 grid max-w-2xl gap-4 sm:grid-cols-3 lg:mt-7"
+      >
         {CHOICES.map((choice, choiceIndex) => {
           const pkg = packages.find((entry) => entry.slug === choice.slug);
           const isActive = routeReady && active === choice.slug;
@@ -234,6 +238,8 @@ export function PackageSelector() {
               id={`package-${choice.slug}`}
               type="button"
               aria-pressed={isActive && selectionSource !== "scroll"}
+              aria-controls="package-recommendation"
+              data-package-choice="true"
               data-package-preview={isActive && selectionSource === "scroll" ? "true" : undefined}
               onClick={() => choosePackage(choice.slug)}
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 22 }}
@@ -255,8 +261,13 @@ export function PackageSelector() {
                 className="h-7 w-7"
                 style={{ color: isActive ? pkg?.color : "rgba(244,239,230,0.7)" }}
               />
-              <span className="font-display text-lg font-normal text-ivory">{choice.label}</span>
-              {pkg && <span className="text-xs leading-relaxed text-ivory/75">{pkg.forWho}</span>}
+              <span data-package-choice-short="true" className="font-display text-sm font-normal text-ivory sm:hidden">
+                {choice.shortLabel}
+              </span>
+              <span data-package-choice-label="true" className="hidden font-display text-lg font-normal text-ivory sm:inline">
+                {choice.label}
+              </span>
+              {pkg && <span data-package-choice-audience="true" className="text-xs leading-relaxed text-ivory/75">{pkg.forWho}</span>}
             </motion.button>
           );
         })}
@@ -288,7 +299,9 @@ export function PackageSelector() {
       </div>
 
       <div
+        id="package-recommendation"
         data-services-chapter-resolution="true"
+        aria-live="polite"
         className={`relative mt-5 min-h-[220px] text-left transition-opacity duration-200 motion-reduce:transition-none ${
           routeReady ? "visible opacity-100" : "invisible opacity-0"
         }`}
@@ -316,13 +329,14 @@ export function PackageSelector() {
                       scale: { type: "spring", stiffness: 170, damping: 24 },
                     }
               }
+              data-package-card="true"
               className="rounded-2xl border-t-2 p-5 backdrop-blur-md sm:p-6"
               style={{ borderColor: activePackage.color, backgroundColor: blendHex(activePackage.color, "#0F151C", 14) }}
             >
-              <div className="grid gap-5 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] sm:gap-7">
-                <div>
+              <div data-package-card-grid="true" className="grid gap-5 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] sm:gap-7">
+                <div data-package-summary="true">
                   <p className="font-display text-xl font-normal text-ivory">{activePackage.name}</p>
-                  <div className="mt-2 flex items-baseline gap-1.5">
+                  <div data-package-price="true" className="mt-2 flex items-baseline gap-1.5">
                     <span className="text-sm text-ivory/70">
                       {activePackage.billing === "monthly" ? "from" : "Projects begin at"}
                     </span>
@@ -332,9 +346,9 @@ export function PackageSelector() {
                     {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">/mo</span>}
                   </div>
                   <p className="mt-1 text-xs text-ivory/60">Final quotation follows the discovery call.</p>
-                  <p className="mt-3 text-sm leading-relaxed text-ivory/90 sm:text-base">{activePackage.description}</p>
+                  <p data-package-description="true" className="mt-3 text-sm leading-relaxed text-ivory/90 sm:text-base">{activePackage.description}</p>
                 </div>
-                <div className="border-ivory/10 sm:border-l sm:pl-7">
+                <div data-package-details="true" className="border-ivory/10 sm:border-l sm:pl-7">
                   <ul data-package-inclusions="true" className="grid gap-y-1">
                     {activePackage.includes.map((item, index) => (
                       <motion.li
@@ -348,9 +362,9 @@ export function PackageSelector() {
                       </motion.li>
                     ))}
                   </ul>
-                  <div className="mt-4 flex flex-wrap gap-3">
+                  <div data-package-actions="true" className="mt-4 flex flex-wrap gap-3">
                     {proof && (
-                      <LinkButton href={`/work/${proof.slug}`} variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
+                      <LinkButton href={`/work/${proof.slug}`} variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10" >
                         See it in action: {proof.title}
                       </LinkButton>
                     )}
