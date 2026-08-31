@@ -149,6 +149,40 @@ function describeTopMatch(post: InsightCardPost, cleanQuery: string) {
   return { label: "Closest current match", kind: "ranked" } as const;
 }
 
+function interleaveTopicPaths(
+  posts: InsightCardPost[],
+  topics: ExplorerTopic[],
+) {
+  const knownTopicSlugs = new Set(topics.map((topic) => topic.slug));
+  const topicQueues = new Map(
+    topics.map((topic) => [
+      topic.slug,
+      posts.filter((post) => post.topicSlug === topic.slug),
+    ]),
+  );
+  const balancedPosts: InsightCardPost[] = [];
+  let depth = 0;
+
+  while (balancedPosts.length < posts.length) {
+    let foundPostAtDepth = false;
+
+    topics.forEach((topic) => {
+      const post = topicQueues.get(topic.slug)?.[depth];
+      if (!post) return;
+      balancedPosts.push(post);
+      foundPostAtDepth = true;
+    });
+
+    if (!foundPostAtDepth) break;
+    depth += 1;
+  }
+
+  return [
+    ...balancedPosts,
+    ...posts.filter((post) => !knownTopicSlugs.has(post.topicSlug)),
+  ];
+}
+
 const FOLIO_TURN_VARIANTS: Variants = {
   enter: (direction: number = 1) => ({
     opacity: 0.72,
@@ -241,7 +275,11 @@ export function InsightsExplorer({
       (post) => topicSlug === "all" || post.topicSlug === topicSlug,
     );
 
-    if (cleanQuery.length === 0) return topicPosts;
+    if (cleanQuery.length === 0) {
+      return topicSlug === "all"
+        ? interleaveTopicPaths(topicPosts, topics)
+        : topicPosts;
+    }
 
     return topicPosts
       .map((post) => ({ post, score: scorePostForIntent(post, cleanQuery) }))
@@ -251,7 +289,7 @@ export function InsightsExplorer({
           b.score - a.score || b.post.updatedAt.localeCompare(a.post.updatedAt),
       )
       .map((result) => result.post);
-  }, [deferredQuery, posts, topicSlug]);
+  }, [deferredQuery, posts, topicSlug, topics]);
 
   const folioCount = Math.max(1, Math.ceil(filteredPosts.length / POSTS_PER_FOLIO));
   const activeFolio = Math.min(folio.index, folioCount - 1);
