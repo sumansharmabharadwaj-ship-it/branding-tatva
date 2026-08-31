@@ -1,49 +1,12 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-
-const RECOGNITION_STATES = [
-  {
-    number: "01",
-    shortLabel: "Clear idea",
-    label: "The idea is clear in your head.",
-    headline: "The market keeps meeting a different version.",
-    body:
-      "The logo, website, pitch, and content are making separate promises because the position was never committed first.",
-    path: "Build the foundation",
-    proof: "A position the rest of the business can inherit.",
-    accent: "#C77752",
-  },
-  {
-    number: "02",
-    shortLabel: "Outgrown identity",
-    label: "The identity already exists.",
-    headline: "The business has quietly outgrown it.",
-    body:
-      "What the company has become and what its brand still teaches people to expect are no longer the same thing.",
-    path: "Reposition the system",
-    proof: "Useful recognition kept. Confusing signals removed.",
-    accent: "#7D9BAF",
-  },
-  {
-    number: "03",
-    shortLabel: "Active marketing",
-    label: "Marketing is active.",
-    headline: "Memory is starting from zero each time.",
-    body:
-      "Every campaign works alone. Attention arrives, then disappears because no repeated pattern is waiting underneath it.",
-    path: "Create consistency",
-    proof: "One idea repeated with intent across every channel.",
-    accent: "#C6A97A",
-  },
-] as const;
 
 const COST_STAGES = [
   {
@@ -181,12 +144,12 @@ export function V4OpeningScene() {
               Open the strategy room <ArrowUpRight size={15} />
             </Link>
             <Link
-              href="#evidence"
+              href="#brand-diagnostic"
               className="home-v4-button home-v4-button--quiet"
               data-magnetic
-              data-cursor-label="proof"
+              data-cursor-label="diagnose"
             >
-              See client proof <ArrowDownRight size={15} />
+              Diagnose my brand <ArrowDownRight size={15} />
             </Link>
           </motion.div>
         </div>
@@ -200,181 +163,12 @@ export function V4OpeningScene() {
           <span>How the engagement feels</span>
           <strong>One strategist. One connected system.</strong>
           <p>Direct access from the first diagnosis through the decisions that shape the final brand.</p>
+          <Link href="#evidence" className="home-v4-opening__proof-link">
+            Inspect verified client evidence <ArrowDownRight size={13} />
+          </Link>
           <i aria-hidden="true" />
         </motion.aside>
 
-      </div>
-    </section>
-  );
-}
-
-export function V4RecognitionScene() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.18, margin: "8% 0px -10% 0px" });
-  const visualizer = useScrollDrivenVisualizer({
-    count: RECOGNITION_STATES.length,
-    target: sectionRef,
-    enabled: inView,
-    reducedMotion: prefersReducedMotion,
-  });
-  const { activeIndex } = visualizer;
-  const active = RECOGNITION_STATES[activeIndex];
-
-  function moveFromKeyboard(
-    event: ReactKeyboardEvent<HTMLButtonElement>,
-    index: number,
-  ) {
-    const direction =
-      event.key === "ArrowRight" || event.key === "ArrowDown"
-        ? 1
-        : event.key === "ArrowLeft" || event.key === "ArrowUp"
-          ? -1
-          : 0;
-    if (!direction && event.key !== "Home" && event.key !== "End") return;
-
-    event.preventDefault();
-    const nextIndex =
-      event.key === "Home"
-        ? 0
-        : event.key === "End"
-          ? RECOGNITION_STATES.length - 1
-          : (index + direction + RECOGNITION_STATES.length) %
-            RECOGNITION_STATES.length;
-    visualizer.choose(nextIndex);
-    choiceRefs.current[nextIndex]?.focus();
-  }
-
-  return (
-    <section
-      ref={sectionRef}
-      id="recognition"
-      data-home-v4-chapter="recognition"
-      data-home-chapter="recognition"
-      data-home-section="recognition"
-      data-cursor-world="dark"
-      data-scroll-story="recognition"
-      className="home-v4-recognition"
-      aria-labelledby="home-v4-recognition-title"
-      style={{ "--recognition-accent": active.accent } as React.CSSProperties}
-    >
-      <div
-        className="home-v4-recognition__media"
-        aria-hidden="true"
-        data-media-id="BT-HOME-RECOGNITION-MISTY-RIDGE"
-      >
-        <video
-          muted
-          loop
-          playsInline
-          aria-hidden="true"
-          preload="metadata"
-          poster="/images/generated/bt-home-recognition-mist-v1.webp"
-          data-home-playback-rate="1.1"
-        >
-          <source src="/videos/pixabay-misty-ridge-drift.mp4" type="video/mp4" />
-        </video>
-        <span />
-      </div>
-
-      <motion.div
-        className="home-v4-recognition__reflection"
-        aria-hidden="true"
-        animate={
-          prefersReducedMotion || !inView
-            ? undefined
-            : { x: ["-8%", "8%", "-8%"], opacity: [0.18, 0.5, 0.18] }
-        }
-        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      <div className="home-v4-recognition__shell">
-        <header className="home-v4-recognition__header">
-          <div>
-            <p>02 · Recognition</p>
-            <h2 id="home-v4-recognition-title">
-              Most inconsistency begins <em>before the design file.</em>
-            </h2>
-          </div>
-        </header>
-
-        <div className="home-v4-recognition__stage">
-          <div className="home-v4-recognition__copy" aria-live="polite">
-            <AnimatePresence mode="sync" initial={false}>
-              <motion.div
-                key={active.number}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
-              >
-                <p className="home-v4-recognition__label">{active.label}</p>
-                <h3>{active.headline}</h3>
-                <p className="home-v4-recognition__body">{active.body}</p>
-                <div className="home-v4-recognition__answer">
-                  <span>The useful move</span>
-                  <strong>{active.path}</strong>
-                  <p>{active.proof}</p>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            <Link href="#foundation" className="home-v4-text-link" data-magnetic data-cursor-label="follow">
-              See the foundation that stops the drift <span aria-hidden="true">↘</span>
-            </Link>
-
-          </div>
-
-          <div className="home-v4-recognition__diagram" aria-label="Three brand conditions converging on one strategic decision">
-            <div
-              id="home-v4-recognition-active-panel"
-              role="tabpanel"
-              aria-labelledby={`home-v4-recognition-tab-${activeIndex}`}
-              className="home-v4-recognition__signal"
-              aria-live="polite"
-            >
-              <span>{active.number} · {active.label}</span>
-              <strong>{active.path}</strong>
-              <p>{active.proof}</p>
-            </div>
-
-            <div className="home-v4-recognition__choices" role="tablist" aria-label="Brand conditions">
-              {RECOGNITION_STATES.map((state, index) => (
-                <button
-                  key={state.number}
-                  ref={(node) => {
-                    choiceRefs.current[index] = node;
-                  }}
-                  type="button"
-                  role="tab"
-                  id={`home-v4-recognition-tab-${index}`}
-                  aria-selected={index === activeIndex}
-                  aria-controls="home-v4-recognition-active-panel"
-                  tabIndex={index === activeIndex ? 0 : -1}
-                  onClick={() => visualizer.choose(index)}
-                  onPointerEnter={() => visualizer.preview(index)}
-                  onPointerLeave={(event) => {
-                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
-                  }}
-                  onFocus={() => visualizer.choose(index)}
-                  onKeyDown={(event) => moveFromKeyboard(event, index)}
-                  className={index === activeIndex ? "is-active" : undefined}
-                  data-cursor-label={state.number}
-                >
-                  <span>{state.number}</span>
-                  <strong>
-                    <span className="home-v4-recognition__choice-short" aria-hidden="true">
-                      {state.shortLabel}
-                    </span>
-                    <span className="home-v4-recognition__choice-full">{state.label}</span>
-                  </strong>
-                  <i aria-hidden="true" />
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -495,7 +289,7 @@ export function V4HiddenCostScene() {
           loop
           playsInline
           aria-hidden="true"
-          preload="metadata"
+          preload="none"
           poster="/images/pexels-river-dawn-poster.jpg"
         >
           <source src="/videos/pexels-river-dawn.webm" type="video/webm" />

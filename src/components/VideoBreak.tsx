@@ -92,6 +92,8 @@ export function VideoBreak({
   spotlight = false,
   topContent,
   children,
+  managedByHomepage = false,
+  homePlaybackRate = 1,
 }: {
   src: string;
   poster: string;
@@ -106,6 +108,8 @@ export function VideoBreak({
   spotlight?: boolean;
   topContent?: React.ReactNode;
   children?: React.ReactNode;
+  managedByHomepage?: boolean;
+  homePlaybackRate?: number;
 }) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -123,7 +127,9 @@ export function VideoBreak({
   useVideoFadeIn(
     videoRef,
     Boolean(shouldLoadVideo && !prefersReducedMotion),
+    managedByHomepage,
   );
+  const safeHomePlaybackRate = Math.min(1.5, Math.max(0.65, homePlaybackRate));
 
   return (
     <div
@@ -164,7 +170,8 @@ export function VideoBreak({
             loop
             playsInline
             aria-hidden="true"
-            preload={shouldLoadVideo ? "auto" : "none"}
+            data-home-playback-rate={safeHomePlaybackRate}
+            preload={managedByHomepage ? "none" : shouldLoadVideo ? "auto" : "none"}
           />
           <div
             className="absolute inset-0"

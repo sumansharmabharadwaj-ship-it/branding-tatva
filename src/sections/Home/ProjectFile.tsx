@@ -24,7 +24,6 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
   const lenis = useLenis();
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -75,15 +74,6 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
     };
   }, [project, lenis, onClose]);
 
-  // The bare autoplay attribute is unreliable on this site — every
-  // video plays explicitly (see CLAUDE.md).
-  useEffect(() => {
-    if (!project || prefersReducedMotion) return;
-    const videoAtEffectStart = videoRef.current;
-    void videoAtEffectStart?.play().catch(() => {});
-    return () => videoAtEffectStart?.pause();
-  }, [project, prefersReducedMotion]);
-
   const video = project?.heroVideo ?? project?.cardVideo;
   const poster = project?.heroPoster ?? project?.cardImage;
 
@@ -106,7 +96,6 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
           <div className="pointer-events-none fixed inset-0" aria-hidden="true">
             {video && !prefersReducedMotion ? (
               <video
-                ref={videoRef}
                 className="h-full w-full object-cover"
                 src={video}
                 poster={poster}
@@ -114,7 +103,9 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
                 loop
                 playsInline
                 aria-hidden="true"
-                preload="metadata"
+                preload="none"
+                data-home-media-priority="10"
+                data-home-playback-rate="0.86"
               />
             ) : (
               poster && (

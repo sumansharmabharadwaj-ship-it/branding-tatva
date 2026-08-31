@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   useEffect,
-  useRef,
   useState,
   type CSSProperties,
   type KeyboardEvent,
@@ -14,8 +13,8 @@ import {
   SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
-  SITUATION_TO_PACKAGE,
   isServicesSituation,
+  publishServicesSituation,
   readCompletedHomeDiagnosis,
   type ServicesSituationDetail,
   type ServicesSituationId,
@@ -85,51 +84,37 @@ const SITUATION_TO_INDEX: Record<ServicesSituationId, number> = {
   ongoing: 2,
 };
 
-function publishSituation(situation: ServicesSituationId) {
-  try {
-    window.localStorage.setItem(SERVICES_SITUATION_STORAGE_KEY, situation);
-    const detail: ServicesSituationDetail = {
-      situation,
-      packageSlug: SITUATION_TO_PACKAGE[situation],
-      origin: "home_paths",
-    };
-    window.dispatchEvent(
-      new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, {
-        detail,
-      }),
-    );
-  } catch {}
-}
-
 export function PathsCinematicChapter() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -10% 0px" });
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [committedIndex, setCommittedIndex] = useState(0);
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [carriedChoice, setCarriedChoice] = useState(false);
+  const activeIndex = previewIndex ?? committedIndex;
+  const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
   const active = PATHS[activeIndex];
 
   useEffect(() => {
     function applySituation(value: string | null, carried: boolean) {
       if (!isServicesSituation(value)) return;
-      setActiveIndex(SITUATION_TO_INDEX[value]);
+      setCommittedIndex(SITUATION_TO_INDEX[value]);
+      setPreviewIndex(null);
       setCarriedChoice(carried);
     }
 
     try {
       const completedDiagnosis = readCompletedHomeDiagnosis();
       if (completedDiagnosis) applySituation(completedDiagnosis, true);
-      else applySituation(window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY), true);
+      else applySituation(window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY), false);
     } catch {}
 
     function onSituation(event: Event) {
       const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
-      applySituation(detail?.situation ?? null, true);
+      applySituation(detail?.situation ?? null, detail?.origin === "home_diagnostic");
     }
 
     function onSituationCleared() {
-      setActiveIndex(0);
+      setCommittedIndex(0);
+      setPreviewIndex(null);
       setCarriedChoice(false);
     }
 
@@ -144,22 +129,15 @@ export function PathsCinematicChapter() {
     };
   }, []);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (prefersReducedMotion || !inView) {
-      video.pause();
+  function choose(index: number, persist = true) {
+    if (!persist) {
+      setPreviewIndex(index);
       return;
     }
-
-    void video.play().catch(() => {});
-  }, [inView, prefersReducedMotion]);
-
-  function choose(index: number, persist = true) {
-    setActiveIndex(index);
+    setCommittedIndex(index);
+    setPreviewIndex(null);
     setCarriedChoice(false);
-    if (persist) publishSituation(PATHS[index].situation);
+    publishServicesSituation(PATHS[index].situation, "home_paths");
   }
 
   function onChoiceKeyDown(
@@ -186,7 +164,6 @@ export function PathsCinematicChapter() {
 
   return (
     <section
-      ref={sectionRef}
       id="paths"
       data-active-path={active.situation}
       className="paths-film home-scene"
@@ -195,13 +172,13 @@ export function PathsCinematicChapter() {
     >
       <div className="paths-film__media" aria-hidden="true">
         <video
-          ref={videoRef}
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           poster="/images/hero-goldendunes-poster.jpg"
           data-media-id="BT-HOME-PATHS-GOLDEN-DUNES"
+          data-home-playback-rate="0.82"
           aria-hidden="true"
         >
           <source src="/videos/hero-goldendunes.mp4" type="video/mp4" />
@@ -236,7 +213,9 @@ export function PathsCinematicChapter() {
                 <span>
                   {carriedChoice
                     ? "Your 30-second diagnosis is carried forward"
-                    : "Your starting point"}
+                    : isPreviewing
+                      ? "Previewing another starting point"
+                      : "Your starting point"}
                 </span>
                 <span>{active.choice}</span>
               </div>
@@ -244,9 +223,13 @@ export function PathsCinematicChapter() {
                 className="paths-film__choices"
                 role="tablist"
                 aria-label="Choose the service starting point that matches your brand"
+                onPointerLeave={(event) => {
+                  if (event.pointerType === "mouse") setPreviewIndex(null);
+                }}
               >
                 {PATHS.map((path, index) => {
                   const selected = index === activeIndex;
+                  const committed = index === committedIndex;
                   return (
                     <button
                       key={path.number}
@@ -263,6 +246,7 @@ export function PathsCinematicChapter() {
                         if (event.pointerType === "mouse") choose(index, false);
                       }}
                       className={selected ? "is-active" : undefined}
+                      data-committed={committed ? "true" : undefined}
                       style={{ "--path-choice-accent": path.tint } as CSSProperties}
                     >
                       <span className="paths-film__choice-number">{path.number}</span>
@@ -271,7 +255,7 @@ export function PathsCinematicChapter() {
                         {path.shortChoice}
                       </span>
                       <span className="paths-film__choice-cue">
-                        {selected ? "Current" : ""}
+                        {selected && isPreviewing ? "Preview" : committed ? "Chosen" : ""}
                       </span>
                     </button>
                   );
@@ -307,7 +291,7 @@ export function PathsCinematicChapter() {
                 </div>
               </dl>
               <p className="paths-film__proof">{active.proof}</p>
-              <Link href="#process" onClick={() => publishSituation(active.situation)}>
+              <Link href="#process" onClick={() => choose(activeIndex)}>
                 The method for this path <span aria-hidden="true">↓</span>
               </Link>
             </motion.article>

@@ -13,37 +13,43 @@ import {
   type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
+import { track } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useMemo, useState, type CSSProperties, type KeyboardEvent } from "react";
 
 const QUESTIONS = [
   {
-    label: "Starting",
+    id: "new-brand",
+    label: "New",
     question: "Can you help a brand new business?",
     signalLabel: "A useful starting point",
     signal: "A real offer needs its position before identity and launch decisions begin.",
   },
   {
+    id: "existing-brand",
     label: "Existing",
     question: "Can you help an existing brand that already has an identity?",
     signalLabel: "A useful starting point",
     signal: "The business has evolved beyond the story or system people currently meet.",
   },
   {
-    label: "Building",
+    id: "implementation",
+    label: "Delivery",
     question: "Can you actually implement, or just strategise?",
     signalLabel: "What can carry through",
     signal: "Messaging, visual direction, website structure, content, and campaigns.",
   },
   {
+    id: "timing",
     label: "Timing",
     question: "How long does a project take?",
     signalLabel: "How timing is set",
     signal: "Scope, dependencies, and decision speed determine the honest schedule.",
   },
   {
-    label: "Distance",
+    id: "remote",
+    label: "Remote",
     question: "Can we work remotely?",
     signalLabel: "Working model",
     signal: "Remote collaboration across every client project shown on this site.",
@@ -64,7 +70,8 @@ const SITUATION_LABEL: Record<ServicesSituationId, string> = {
 
 export function HomeQuestionsScene() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [committedIndex, setCommittedIndex] = useState(0);
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
   const decisions = useMemo(
     () => QUESTIONS.map((item) => ({
@@ -73,6 +80,8 @@ export function HomeQuestionsScene() {
     })),
     [],
   );
+  const activeIndex = previewIndex ?? committedIndex;
+  const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
   const active = decisions[activeIndex] ?? decisions[0];
   const matchedToSituation = carriedSituation !== null && SITUATION_TO_QUESTION[carriedSituation] === activeIndex;
   const sceneStyle = {
@@ -83,7 +92,8 @@ export function HomeQuestionsScene() {
     function applySituation(value: string | null) {
       if (!isServicesSituation(value)) return;
       setCarriedSituation(value);
-      setActiveIndex(SITUATION_TO_QUESTION[value]);
+      setCommittedIndex(SITUATION_TO_QUESTION[value]);
+      setPreviewIndex(null);
     }
 
     try {
@@ -99,7 +109,8 @@ export function HomeQuestionsScene() {
 
     function onSituationCleared() {
       setCarriedSituation(null);
-      setActiveIndex(0);
+      setCommittedIndex(0);
+      setPreviewIndex(null);
     }
 
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
@@ -113,6 +124,21 @@ export function HomeQuestionsScene() {
     };
   }, []);
 
+  function choose(index: number, persist = true, measure = false) {
+    if (!persist) {
+      setPreviewIndex(index);
+      return;
+    }
+    if (measure) {
+      track("faq_opened", {
+        source: "home_questions",
+        question: decisions[index]?.id ?? "unknown",
+      });
+    }
+    setCommittedIndex(index);
+    setPreviewIndex(null);
+  }
+
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
     if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % decisions.length;
@@ -121,7 +147,7 @@ export function HomeQuestionsScene() {
     else if (event.key === "End") next = decisions.length - 1;
     else return;
     event.preventDefault();
-    setActiveIndex(next);
+    choose(next, true, true);
     document.getElementById(`decision-question-${next}`)?.focus();
   }
 
@@ -129,10 +155,16 @@ export function HomeQuestionsScene() {
     <section
       className="questions-editorial"
       aria-labelledby="home-questions-title"
-      data-question-state={active.label.toLowerCase()}
+      data-question-state={active.id}
+      data-question-preview={isPreviewing ? active.id : undefined}
       style={sceneStyle}
     >
-      <BackgroundVideo video="/videos/pixabay-golden-reeds-wind.mp4" poster="/images/pixabay-golden-reeds-wind-poster.jpg" playbackRate={0.78} />
+      <BackgroundVideo
+        video="/videos/pixabay-golden-reeds-wind.mp4"
+        poster="/images/pixabay-golden-reeds-wind-poster.jpg"
+        playbackRate={0.78}
+        managedByHomepage
+      />
       <div className="questions-editorial__veil" aria-hidden="true" />
 
       <Container className="questions-editorial__frame max-w-[104rem]">
@@ -148,25 +180,33 @@ export function HomeQuestionsScene() {
         </header>
 
         <div className="questions-editorial__experience">
-          <div className="questions-editorial__choices" role="tablist" aria-label="Choose a practical question">
+          <div
+            className="questions-editorial__choices"
+            role="tablist"
+            aria-label="Choose a practical question"
+            onPointerLeave={(event) => {
+              if (event.pointerType === "mouse") setPreviewIndex(null);
+            }}
+          >
             <p className="questions-editorial__instruction">Five common questions</p>
             {decisions.map((decision, index) => {
               const selected = index === activeIndex;
               return (
                 <button
-                  key={decision.label}
+                  key={decision.id}
                   id={`decision-question-${index}`}
                   type="button"
                   role="tab"
                   aria-selected={selected}
                   aria-controls="decision-answer"
+                  aria-label={`${decision.label}: ${decision.question}`}
                   tabIndex={selected ? 0 : -1}
                   className={selected ? "is-active" : undefined}
-                  onClick={() => setActiveIndex(index)}
+                  onClick={() => choose(index, true, true)}
                   onPointerEnter={(event) => {
-                    if (event.pointerType === "mouse") setActiveIndex(index);
+                    if (event.pointerType === "mouse") choose(index, false);
                   }}
-                  onFocus={() => setActiveIndex(index)}
+                  onFocus={() => choose(index)}
                   onKeyDown={(event) => onKeyDown(event, index)}
                 >
                   <span>{String(index + 1).padStart(2, "0")}</span>
@@ -179,7 +219,7 @@ export function HomeQuestionsScene() {
 
           <AnimatePresence mode="sync" initial={false}>
             <motion.article
-              key={active.label}
+              key={active.id}
               id="decision-answer"
               role="tabpanel"
               aria-labelledby={`decision-question-${activeIndex}`}
@@ -192,7 +232,7 @@ export function HomeQuestionsScene() {
               aria-live="polite"
             >
               <div className="questions-editorial__answer-index">
-                <span>{active.label}</span>
+                <span>{isPreviewing ? "Preview" : active.label}</span>
                 <strong>{String(activeIndex + 1).padStart(2, "0")} / 05</strong>
               </div>
               <h3>{active.question}</h3>

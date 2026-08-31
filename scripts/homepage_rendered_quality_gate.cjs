@@ -51,6 +51,12 @@ const cssBytes = cssHrefs.reduce((total, href) => {
   const relative = href.replace(/^\/_next\/static\//, "");
   return total + fs.statSync(path.join(root, ".next/static", relative)).size;
 }, 0);
-assert(cssBytes <= 520_000, `Homepage CSS budget exceeded: ${cssBytes.toLocaleString()} bytes.`);
+const cssText = cssHrefs.map((href) => {
+  const relative = href.replace(/^\/_next\/static\//, "");
+  return fs.readFileSync(path.join(root, ".next/static", relative), "utf8");
+}).join("\n");
+assert(!cssText.includes(".home-v4-guide"), "Removed homepage guide styles remain in the rendered bundle.");
+assert(!cssText.includes(".home-v4-cursor"), "Removed homepage cursor styles remain in the rendered bundle.");
+assert(cssBytes <= 470_000, `Homepage CSS budget exceeded: ${cssBytes.toLocaleString()} bytes.`);
 
 console.log(`Rendered homepage gate passed: nine ordered chapters, unique IDs, heading and media semantics, conversion handoffs, deferred scheduling, and ${cssBytes.toLocaleString()} CSS bytes verified.`);

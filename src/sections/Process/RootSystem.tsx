@@ -102,7 +102,6 @@ function fallbackMeta(): StageMeta {
 export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -10% 0px" });
   const [active, setActive] = useState(0);
   const [finePointer, setFinePointer] = useState(false);
@@ -198,31 +197,6 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     return () => window.clearTimeout(beatTimer);
   }, [finePointer, inView, manualHoldUntil, pageVisible, prefersReducedMotion, selectorEngaged, stages.length, active]);
 
-  useEffect(() => {
-    const videoAtEffectStart = videoRef.current;
-
-    function syncPlayback() {
-      const video = videoRef.current;
-      if (!video) return;
-
-      if (prefersReducedMotion || !inView || document.hidden) {
-        video.pause();
-        return;
-      }
-
-      video.playbackRate = 0.72;
-      void video.play().catch(() => {});
-    }
-
-    syncPlayback();
-    document.addEventListener("visibilitychange", syncPlayback);
-
-    return () => {
-      document.removeEventListener("visibilitychange", syncPlayback);
-      videoAtEffectStart?.pause();
-    };
-  }, [inView, prefersReducedMotion]);
-
   if (stages.length === 0) return null;
 
   const stage = stages[active] ?? stages[0];
@@ -298,14 +272,13 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     >
       <div className="decision-flow__media" aria-hidden="true" data-media-id="BT-HOME-METHOD-STREAM-LIGHT">
         <video
-          ref={videoRef}
           src="/videos/pixabay-stream-mist-rays.mp4"
           poster="/images/pixabay-stream-mist-rays-poster.jpg"
           aria-hidden="true"
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           data-home-playback-rate="0.72"
         />
         <span className="decision-flow__veil" />

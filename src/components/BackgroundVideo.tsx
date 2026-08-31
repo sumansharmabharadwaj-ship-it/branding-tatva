@@ -43,6 +43,7 @@ export function BackgroundVideo({
   push = false,
   playbackRate = 1,
   posterPriority = true,
+  managedByHomepage = false,
 }: {
   video: string;
   // Optional lower-bandwidth MP4 selected by the browser on phones.
@@ -76,9 +77,14 @@ export function BackgroundVideo({
   // hero-like usages retain eager loading by default; known offscreen scenes
   // can opt out so their posters do not compete with the page LCP image.
   posterPriority?: boolean;
+  // Homepage scenes share one playback budget. When opted in, this component
+  // keeps fade/source cleanup ownership while the page director owns play,
+  // pause, preload admission, and visibility arbitration.
+  managedByHomepage?: boolean;
 }) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const safePlaybackRate = Math.min(1.5, Math.max(0.65, playbackRate));
   // The bare `autoplay` attribute alone isn't reliable — confirmed
   // elsewhere on this site (PhotoHero/TexturedDark hero videos, via
   // useVideoFadeIn's own comment) that a fully-loaded, muted, autoplay
@@ -88,15 +94,14 @@ export function BackgroundVideo({
   // sits behind a section heading (Selected work, Process, FAQ,
   // SelectedWorkPinned's own backdrop) — exactly the sections that
   // would read as flat/static if their autoplay silently never fired.
-  useVideoFadeIn(videoRef, !prefersReducedMotion);
+  useVideoFadeIn(videoRef, !prefersReducedMotion, managedByHomepage);
 
   useEffect(() => {
     const element = videoRef.current;
     if (!element) return;
-    const safePlaybackRate = Math.min(1.5, Math.max(0.75, playbackRate));
     element.defaultPlaybackRate = safePlaybackRate;
     element.playbackRate = safePlaybackRate;
-  }, [playbackRate, video]);
+  }, [safePlaybackRate, video]);
 
   if (prefersReducedMotion) {
     return (
@@ -125,6 +130,7 @@ export function BackgroundVideo({
       loop
       playsInline
       aria-hidden="true"
+      data-home-playback-rate={safePlaybackRate}
       // Was the browser-default eager preload — a Lighthouse profile of
       // Services caught every BackgroundVideo instance on the page
       // (~27MB combined) downloading during initial load, competing
@@ -132,7 +138,7 @@ export function BackgroundVideo({
       // offscreen-pause observer in useVideoFadeIn calls play() 25%
       // before a video becomes visible, which starts its real download
       // ahead of paint, with the poster covering the gap.
-      preload="metadata"
+      preload={managedByHomepage ? "none" : "metadata"}
     >
       {videoMobile && (
         <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />

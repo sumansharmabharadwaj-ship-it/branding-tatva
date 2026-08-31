@@ -118,6 +118,8 @@ export function HomeV4Experience() {
           height="100svh"
           imagePosition="52% 48%"
           cameraPush
+          managedByHomepage
+          homePlaybackRate={0.84}
           overlayGradient="linear-gradient(102deg, rgba(244,238,224,0.92) 0%, rgba(244,238,224,0.72) 42%, rgba(238,224,198,0.60) 70%, rgba(238,224,198,0.88) 100%)"
         >
           <FinalInvitation />

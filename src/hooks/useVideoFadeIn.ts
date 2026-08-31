@@ -32,7 +32,11 @@ import { useEffect, type RefObject } from "react";
 // full-bleed backgrounds: PhotoHero, TexturedDark, BackgroundVideo,
 // FeaturedWorkHero) get this; stage-managed components (PinnedSlider
 // etc.) own their play/pause explicitly and don't run through here.
-export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: boolean) {
+export function useVideoFadeIn(
+  ref: RefObject<HTMLVideoElement | null>,
+  active: boolean,
+  playbackManagedExternally = false,
+) {
   useEffect(() => {
     const el = ref.current;
     if (!el || !active) return;
@@ -45,25 +49,29 @@ export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: 
       if (el) el.style.opacity = "1";
     }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !document.hidden) {
-          el.play().catch(() => {});
-        } else {
-          el.pause();
-        }
-      },
-      { rootMargin: "25% 0px" }
-    );
+    const observer = playbackManagedExternally
+      ? null
+      : new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting && !document.hidden) {
+              el.play().catch(() => {});
+            } else {
+              el.pause();
+            }
+          },
+          { rootMargin: "25% 0px" },
+        );
 
     // IntersectionObserver reports asynchronously. Establish the correct
     // initial state synchronously so an offscreen autoplay element never gets
     // a head start on the network while a visible hero still needs bandwidth.
-    const rect = el.getBoundingClientRect();
-    const margin = window.innerHeight * 0.25;
-    const nearViewport = rect.bottom >= -margin && rect.top <= window.innerHeight + margin;
-    if (nearViewport && !document.hidden) el.play().catch(() => {});
-    else el.pause();
+    if (!playbackManagedExternally) {
+      const rect = el.getBoundingClientRect();
+      const margin = window.innerHeight * 0.25;
+      const nearViewport = rect.bottom >= -margin && rect.top <= window.innerHeight + margin;
+      if (nearViewport && !document.hidden) el.play().catch(() => {});
+      else el.pause();
+    }
 
     function syncVisibility() {
       if (!el) return;
@@ -77,13 +85,17 @@ export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: 
       }
     }
 
-    observer.observe(el);
-    document.addEventListener("visibilitychange", syncVisibility);
+    observer?.observe(el);
+    if (!playbackManagedExternally) {
+      document.addEventListener("visibilitychange", syncVisibility);
+    }
 
     return () => {
       el.removeEventListener("loadeddata", onLoadedData);
-      observer.disconnect();
-      document.removeEventListener("visibilitychange", syncVisibility);
+      observer?.disconnect();
+      if (!playbackManagedExternally) {
+        document.removeEventListener("visibilitychange", syncVisibility);
+      }
 
       // Release the media element itself, which React removing the node does
       // not do. A <source media="..."> registers a MediaQueryList listener,
@@ -116,5 +128,5 @@ export function useVideoFadeIn(ref: RefObject<HTMLVideoElement | null>, active: 
         // leaves the element as it was rather than breaking the unmount.
       }
     };
-  }, [ref, active]);
+  }, [ref, active, playbackManagedExternally]);
 }

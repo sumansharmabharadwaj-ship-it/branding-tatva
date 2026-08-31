@@ -8,6 +8,7 @@ const source = fs.readFileSync(
 );
 const pageSource = fs.readFileSync(path.join(root, "src/app/page.tsx"), "utf8");
 const jumpNavSource = fs.readFileSync(path.join(root, "src/components/SectionJumpNav.tsx"), "utf8");
+const openingSource = fs.readFileSync(path.join(root, "src/sections/HomeV4/HomeV4Scenes.tsx"), "utf8");
 const mountedChapterSources = [
   "src/sections/HomeV4/HomeV4Scenes.tsx",
   "src/sections/Home/HomeBrandHealthCheck.tsx",
@@ -63,6 +64,8 @@ for (const marker of [
   "hideOnLast",
   'desktopMode="rail"',
   'tone="light"',
+  'showActiveLabel={false}',
+  'home-v4-experience-upgrade.css',
 ]) {
   assert(pageSource.includes(marker), `Homepage wayfinding is missing ${marker}.`);
 }
@@ -72,9 +75,19 @@ for (const marker of [
   "dismissFromKeyboard",
   "dismissFromOutside",
   "data-section-jump-tone",
+  "showActiveLabel",
 ]) {
   assert(jumpNavSource.includes(marker), `Homepage wayfinding interaction is missing ${marker}.`);
 }
+
+assert(
+  openingSource.includes('href="#brand-diagnostic"') && openingSource.includes("Diagnose my brand"),
+  "Opening no longer gives the interactive diagnosis a clear first-screen entry.",
+);
+assert(
+  openingSource.includes('href="#evidence"') && openingSource.includes("Inspect verified client evidence"),
+  "Opening no longer keeps verified evidence one action away.",
+);
 
 for (const retiredStylesheet of [
   "home-v4-health.css",

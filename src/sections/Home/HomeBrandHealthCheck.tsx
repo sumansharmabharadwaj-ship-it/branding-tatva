@@ -4,6 +4,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
   clearServicesSituation,
   publishCompletedHomeDiagnosis,
+  servicesContactHrefForSituation,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
 import {
@@ -389,7 +390,10 @@ export function HomeBrandHealthCheck() {
                 <Link href="#evidence" className="brand-orbit__result-primary">
                   {result.nextAction} <i aria-hidden="true">→</i>
                 </Link>
-                <Link href="/contact#call" className="brand-orbit__result-secondary">
+                <Link
+                  href={servicesContactHrefForSituation(result.situation, "call")}
+                  className="brand-orbit__result-secondary"
+                >
                   Discuss this diagnosis <i aria-hidden="true">→</i>
                 </Link>
                 <button type="button" onClick={reviewAnswers}>Change an answer</button>

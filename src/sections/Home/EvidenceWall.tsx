@@ -12,16 +12,17 @@ import {
 } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import dynamic from "next/dynamic";
+import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { projects, type Project } from "@/data/projects";
-import { ProjectFile } from "@/sections/Home/ProjectFile";
 import {
   SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   SITUATION_TO_PROOF_SLUG,
   isServicesSituation,
+  publishServicesSituation,
   readCompletedHomeDiagnosis,
   type ServicesSituationDetail,
   type ServicesSituationId,
@@ -34,6 +35,12 @@ const SITUATION_LABEL: Record<ServicesSituationId, string> = {
   idea: "New brand",
   reposition: "Repositioning",
   ongoing: "Brand growth",
+};
+
+const PROOF_TO_SITUATION: Partial<Record<string, ServicesSituationId>> = {
+  [SITUATION_TO_PROOF_SLUG.idea]: "idea",
+  [SITUATION_TO_PROOF_SLUG.reposition]: "reposition",
+  [SITUATION_TO_PROOF_SLUG.ongoing]: "ongoing",
 };
 
 const DECISION: Record<string, { big: string; label: string }> = {
@@ -99,6 +106,12 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+const loadProjectFile = () => import("@/sections/Home/ProjectFile");
+const ProjectFile = dynamic(
+  () => loadProjectFile().then((module) => module.ProjectFile),
+  { ssr: false },
+);
+
 function trailFor(project: Project) {
   return (
     TRAILS[project.slug] ?? {
@@ -138,33 +151,42 @@ function projectsForSituation(situation: ServicesSituationId | null) {
 }
 
 export function EvidenceWall() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const activeVideoRef = useRef<HTMLVideoElement>(null);
   const indexButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [committedIndex, setCommittedIndex] = useState(0);
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
+  const [projectFileRequested, setProjectFileRequested] = useState(false);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.42, margin: "4% 0px -8% 0px" });
   const visibleProjects = useMemo(
     () => projectsForSituation(carriedSituation),
     [carriedSituation],
   );
+  const activeIndex = previewIndex ?? committedIndex;
+  const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
   const activeProject = visibleProjects[activeIndex] ?? visibleProjects[0];
   const activeTrail = trailFor(activeProject);
   const activeMetric = metricFor(activeProject);
   const activeEvidence = EVIDENCE_META[activeProject.slug];
+  const activeSituation = PROOF_TO_SITUATION[activeProject.slug];
 
-  const choose = useCallback((index: number) => {
+  function choose(index: number, persist = true) {
     const count = visibleProjects.length;
-    setActiveIndex(count > 0 ? ((index % count) + count) % count : 0);
-  }, [visibleProjects]);
+    const next = count > 0 ? ((index % count) + count) % count : 0;
+    if (!persist) {
+      setPreviewIndex(next);
+      return;
+    }
+    setCommittedIndex(next);
+    setPreviewIndex(null);
+  }
 
   useEffect(() => {
     function applySituation(value: string | null) {
       if (!isServicesSituation(value)) return;
       setCarriedSituation(value);
-      setActiveIndex(0);
+      setCommittedIndex(0);
+      setPreviewIndex(null);
       setOpenSlug(null);
     }
 
@@ -181,7 +203,8 @@ export function EvidenceWall() {
 
     function onSituationCleared() {
       setCarriedSituation(null);
-      setActiveIndex(0);
+      setCommittedIndex(0);
+      setPreviewIndex(null);
       setOpenSlug(null);
     }
 
@@ -216,33 +239,28 @@ export function EvidenceWall() {
 
   const closeProjectFile = useCallback(() => setOpenSlug(null), []);
 
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-    const videoAtEffectStart = activeVideoRef.current;
+  function prepareProjectFile() {
+    setProjectFileRequested(true);
+    void loadProjectFile();
+  }
 
-    function syncPlayback() {
-      const video = activeVideoRef.current;
-      if (!video) return;
-      video.playbackRate = 0.86;
-      if (inView && !document.hidden) void video.play().catch(() => {});
-      else video.pause();
-    }
+  function openProjectFile() {
+    prepareProjectFile();
+    setOpenSlug(activeProject.slug);
+  }
 
-    syncPlayback();
-    document.addEventListener("visibilitychange", syncPlayback);
-    return () => {
-      document.removeEventListener("visibilitychange", syncPlayback);
-      videoAtEffectStart?.pause();
-    };
-  }, [activeProject.slug, inView, prefersReducedMotion]);
+  function continueIntoPath() {
+    if (!activeSituation) return;
+    publishServicesSituation(activeSituation, "home_paths");
+  }
 
   return (
     <section
-      ref={sectionRef}
       className="evidence-cinematic"
       aria-labelledby="evidence-wall-title"
       data-evidence-state={activeProject.slug}
       data-evidence-match={carriedSituation ?? "default"}
+      data-evidence-preview={isPreviewing ? activeProject.slug : undefined}
       data-media-id="BT-HOME-SELECTED-WORK-CINEMATIC-V2"
       style={{ "--evidence-accent": activeProject.accent } as CSSProperties}
     >
@@ -269,7 +287,6 @@ export function EvidenceWall() {
           )}
           {!prefersReducedMotion && activeProject.cardVideo && (
             <video
-              ref={activeVideoRef}
               className="evidence-cinematic__backdrop-video"
               src={activeProject.cardVideo}
               poster={activeProject.cardImage}
@@ -277,7 +294,7 @@ export function EvidenceWall() {
               loop
               playsInline
               aria-hidden="true"
-              preload={inView ? "metadata" : "none"}
+              preload="none"
               data-home-playback-rate="0.86"
             />
           )}
@@ -294,9 +311,11 @@ export function EvidenceWall() {
           </div>
           <div className="evidence-cinematic__intro">
             <span>{String(activeIndex + 1).padStart(2, "0")} / {String(visibleProjects.length).padStart(2, "0")}</span>
-            {carriedSituation && (
+            {(isPreviewing || carriedSituation) && (
               <small className="evidence-cinematic__match">
-                Matched proof · {SITUATION_LABEL[carriedSituation]}
+                {isPreviewing
+                  ? "Previewing project"
+                  : `Matched proof · ${SITUATION_LABEL[carriedSituation!]}`}
               </small>
             )}
             <p>One real signal. One strategic decision. One outcome you can inspect.</p>
@@ -321,78 +340,121 @@ export function EvidenceWall() {
               <p>{activeProject.title} · {activeProject.industry}</p>
               <strong>{activeMetric.big}</strong>
               <span>{activeMetric.label}</span>
-              <div className="evidence-cinematic__proof-line" aria-label="Decision trail">
+              <ol className="evidence-cinematic__proof-line" aria-label="Decision trail">
                 {[
                   ["Signal", activeTrail.signal],
                   ["Decision", activeTrail.decision],
                   ["Proof", activeTrail.proof],
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <small>{label}</small>
-                    <p>{value}</p>
-                  </div>
+                ].map(([label, value], index) => (
+                  <motion.li
+                    key={label}
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: prefersReducedMotion ? 0 : 0.48,
+                      delay: prefersReducedMotion ? 0 : 0.08 + index * 0.08,
+                      ease: EASE,
+                    }}
+                  >
+                    <span className="evidence-cinematic__proof-number" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <div>
+                      <small>{label}</small>
+                      <p>{value}</p>
+                    </div>
+                  </motion.li>
                 ))}
-              </div>
+              </ol>
 
               {activeEvidence && (
-                <p className="evidence-cinematic__source">
-                  <span>{activeEvidence.type} · {activeEvidence.period}</span>
-                  {activeEvidence.source}
-                </p>
+                <aside className="evidence-cinematic__source" aria-label="Evidence note">
+                  <p>Evidence note</p>
+                  <div>
+                    <strong>{activeEvidence.type} · {activeEvidence.period}</strong>
+                    <span>{activeEvidence.source}</span>
+                  </div>
+                </aside>
               )}
 
               <div className="evidence-cinematic__actions">
-                <button type="button" onClick={() => setOpenSlug(activeProject.slug)}>
+                <button
+                  type="button"
+                  onClick={openProjectFile}
+                  onPointerEnter={prepareProjectFile}
+                  onFocus={prepareProjectFile}
+                >
                   Inspect the project file <span aria-hidden="true">↗</span>
                 </button>
-                <Link href="#paths">
-                  Match this proof to your path <span aria-hidden="true">→</span>
+                <Link href="#paths" onClick={continueIntoPath}>
+                  {activeSituation
+                    ? `Continue with the ${SITUATION_LABEL[activeSituation].toLowerCase()} path`
+                    : "Choose the right path"}
+                  <span aria-hidden="true">→</span>
                 </Link>
               </div>
             </motion.article>
           </AnimatePresence>
         </div>
 
-        <div className="evidence-cinematic__index" role="tablist" aria-label="Choose a project case">
-          {visibleProjects.map((project, index) => {
-            const selected = index === activeIndex;
-            return (
-              <button
-                key={project.slug}
-                type="button"
-                role="tab"
-                id={`evidence-tab-${index}`}
-                aria-selected={selected}
-                aria-controls="evidence-active-file"
-                tabIndex={selected ? 0 : -1}
-                ref={(node) => { indexButtonRefs.current[index] = node; }}
-                className={selected ? "is-active" : undefined}
-                style={{ "--project-accent": project.accent } as CSSProperties}
-                onClick={() => choose(index)}
-                onFocus={() => choose(index)}
-                onPointerEnter={(event) => {
-                  if (event.pointerType === "mouse") choose(index);
-                }}
-                onKeyDown={(event) => chooseFromKeyboard(event, index)}
-              >
-                <span className="evidence-cinematic__index-number">{String(index + 1).padStart(2, "0")}</span>
-                <span className="evidence-cinematic__index-copy">
-                  <strong>{project.title}</strong>
-                  <em>
-                    {EVIDENCE_META[project.slug]?.type ?? "Project evidence"} · {project.industry}
-                  </em>
-                </span>
-                <i aria-hidden="true" />
-              </button>
-            );
-          })}
+        <div className="evidence-cinematic__index-area">
+          <p className="evidence-cinematic__index-guide">
+            <span>Choose a case</span>
+            <span>Select to inspect the reasoning</span>
+          </p>
+          <div
+            className="evidence-cinematic__index"
+            role="tablist"
+            aria-label="Choose a project case"
+            onPointerLeave={(event) => {
+              if (event.pointerType === "mouse") setPreviewIndex(null);
+            }}
+          >
+            {visibleProjects.map((project, index) => {
+              const selected = index === activeIndex;
+              return (
+                <button
+                  key={project.slug}
+                  type="button"
+                  role="tab"
+                  id={`evidence-tab-${index}`}
+                  aria-selected={selected}
+                  aria-controls="evidence-active-file"
+                  tabIndex={selected ? 0 : -1}
+                  ref={(node) => { indexButtonRefs.current[index] = node; }}
+                  className={selected ? "is-active" : undefined}
+                  style={{ "--project-accent": project.accent } as CSSProperties}
+                  onClick={() => choose(index)}
+                  onFocus={() => choose(index)}
+                  onPointerEnter={(event) => {
+                    if (event.pointerType === "mouse") choose(index, false);
+                  }}
+                  onKeyDown={(event) => chooseFromKeyboard(event, index)}
+                >
+                  <span className="evidence-cinematic__index-number">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="evidence-cinematic__index-copy">
+                    <strong>{project.title}</strong>
+                    <em>
+                      {EVIDENCE_META[project.slug]?.type ?? "Project evidence"} · {project.industry}
+                    </em>
+                  </span>
+                  <span className="evidence-cinematic__index-state" aria-hidden="true">
+                    {selected ? (isPreviewing ? "Preview" : "Viewing") : ""}
+                  </span>
+                  <i aria-hidden="true" />
+                </button>
+              );
+            })}
+          </div>
         </div>
       </Container>
 
-      <ProjectFile
-        project={visibleProjects.find((project) => project.slug === openSlug) ?? null}
-        onClose={closeProjectFile}
-      />
+      {projectFileRequested ? (
+        <ProjectFile
+          project={visibleProjects.find((project) => project.slug === openSlug) ?? null}
+          onClose={closeProjectFile}
+        />
+      ) : null}
     </section>
   );
 }

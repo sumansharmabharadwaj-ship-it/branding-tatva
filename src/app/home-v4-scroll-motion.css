@@ -3,19 +3,8 @@
    Touch, short screens, and reduced-motion users keep ordinary document flow. */
 
 /* Remove the remaining timer-shaped bars. Active states are stable markers. */
-.home-v4-recognition__diagram button > i > b,
-.studio-cinematic__tabs button > i > b,
-.home-insights__index button.is-active > i {
-  animation: none !important;
-}
 
-.home-insights__index button.is-active > i {
-  transform: scaleY(1) !important;
-  opacity: 1 !important;
-}
-
-.evidence-cinematic__intro .bt-scroll-cue,
-.home-insights__intro .bt-scroll-cue {
+.evidence-cinematic__intro .bt-scroll-cue {
   margin-top: 0.8rem;
   color: inherit;
   font-size: 0.68rem;
@@ -23,9 +12,7 @@
 }
 
 .evidence-cinematic__intro .bt-scroll-cue > span,
-.home-insights__intro .bt-scroll-cue > span,
-.evidence-cinematic__intro .bt-scroll-cue > strong,
-.home-insights__intro .bt-scroll-cue > strong {
+.evidence-cinematic__intro .bt-scroll-cue > strong {
   display: inline;
   margin: 0;
   color: inherit;
@@ -33,50 +20,6 @@
 }
 
 @media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
-  .home-v4-recognition {
-    height: 215svh !important;
-    min-height: 215svh !important;
-    overflow: clip !important;
-  }
-
-  .home-v4-recognition__shell {
-    position: sticky !important;
-    top: 0;
-    height: 100svh !important;
-    min-height: 100svh !important;
-    box-sizing: border-box;
-  }
-
-  .home-v4-chapter--foundation > .foundation-scroll-scene {
-    height: 250svh !important;
-    min-height: 250svh !important;
-  }
-
-  .home-v4-chapter--foundation > .foundation-scroll-scene > .foundation-scroll-scene__sticky {
-    position: sticky !important;
-    top: 0;
-    height: 100svh !important;
-    min-height: 100svh !important;
-  }
-
-  .project-journey {
-    height: 325svh !important;
-    min-height: 325svh !important;
-    padding: 0 !important;
-    overflow: clip !important;
-  }
-
-  .project-journey__shell {
-    position: sticky !important;
-    top: 0;
-    display: flex !important;
-    height: 100svh !important;
-    min-height: 48rem !important;
-    box-sizing: border-box;
-    flex-direction: column;
-    justify-content: flex-start !important;
-    padding-block: clamp(5.5rem, 8svh, 6.75rem) clamp(1rem, 2svh, 1.75rem);
-  }
 
   .evidence-cinematic {
     height: 215svh !important;
@@ -97,56 +40,17 @@
     padding-block: clamp(5.2rem, 7svh, 6.25rem) clamp(1rem, 2svh, 1.7rem);
   }
 
-  .home-v4-chapter--studio > .studio-cinematic {
-    height: 215svh !important;
-    min-height: 215svh !important;
-    display: block !important;
-  }
-
-  .home-v4-chapter--studio > .studio-cinematic > .studio-cinematic__grid {
-    position: sticky !important;
-    top: 0;
-    height: 100svh !important;
-    min-height: 48rem !important;
-  }
-
-  .home-insights {
-    height: 215svh !important;
-    min-height: 215svh !important;
-    padding-block: 0 !important;
-    overflow: clip !important;
-    display: block !important;
-  }
-
-  .home-v4-chapter--foundation,
   .home-v4-chapter--evidence,
-  .home-v4-chapter--studio,
-  .home-v4-chapter--insights {
+.home-v4-chapter--studio {
     height: auto !important;
     min-height: 0 !important;
     overflow: visible !important;
-  }
-
-  .home-v4-chapter--studio > .studio-cinematic {
-    overflow: clip !important;
   }
 
   .home-v4-chapter--process {
     height: auto !important;
     min-height: 0 !important;
     overflow: visible !important;
-  }
-
-  .home-v4 .home-insights__shell {
-    position: sticky !important;
-    top: 0 !important;
-    display: grid !important;
-    height: 100svh !important;
-    min-height: 100svh !important;
-    box-sizing: border-box;
-    grid-template-rows: auto minmax(0, 1fr) !important;
-    align-content: center;
-    padding-block: clamp(5.25rem, 7.5svh, 6.5rem) clamp(1rem, 2svh, 1.75rem) !important;
   }
 }
 
@@ -157,11 +61,7 @@
   }
 
   [data-scroll-story] > *,
-  .foundation-scroll-scene__sticky,
-  .project-journey__shell,
-  .evidence-cinematic__shell,
-  .studio-cinematic__grid,
-  .home-v4 .home-insights__shell {
+.evidence-cinematic__shell {
     position: relative !important;
     top: auto !important;
     height: auto !important;

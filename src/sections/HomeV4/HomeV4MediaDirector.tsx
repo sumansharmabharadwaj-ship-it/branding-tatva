@@ -3,13 +3,10 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect } from "react";
 
-import {
-  HOME_GUIDE_MODE_EVENT,
-  type HomeGuideMode,
-} from "@/hooks/useHomeGuideMode";
-
 // The motion bible keeps ambient footage perceptibly alive while preserving calm.
 const DEFAULT_PLAYBACK_RATE = 1.1;
+const MIN_PLAYBACK_RATE = 0.65;
+const MAX_PLAYBACK_RATE = 1.15;
 const FORM_CONTROL_SELECTOR =
   "input, textarea, select, [contenteditable='true'], [role='textbox']";
 
@@ -20,13 +17,18 @@ type NavigatorWithHints = Navigator & {
 function requestedPlaybackRate(video: HTMLVideoElement) {
   const requested = Number(video.dataset.homePlaybackRate ?? DEFAULT_PLAYBACK_RATE);
   if (!Number.isFinite(requested)) return DEFAULT_PLAYBACK_RATE;
-  return Math.min(1.15, Math.max(1, requested));
+  return Math.min(MAX_PLAYBACK_RATE, Math.max(MIN_PLAYBACK_RATE, requested));
 }
 
 function applyPlaybackRate(video: HTMLVideoElement) {
   const rate = requestedPlaybackRate(video);
   if (Math.abs(video.defaultPlaybackRate - rate) > 0.001) video.defaultPlaybackRate = rate;
   if (Math.abs(video.playbackRate - rate) > 0.001) video.playbackRate = rate;
+}
+
+function playbackPriority(video: HTMLVideoElement) {
+  const priority = Number(video.dataset.homeMediaPriority ?? 0);
+  return Number.isFinite(priority) ? priority : 0;
 }
 
 function distanceFromViewportCentre(video: HTMLVideoElement) {
@@ -61,13 +63,6 @@ export function HomeV4MediaDirector() {
       navigatorHints.connection?.effectiveType === "2g" ||
       navigatorHints.connection?.effectiveType === "slow-2g";
     let formInteraction = false;
-    let guideMode: HomeGuideMode =
-      document.documentElement.dataset.homeGuideMode === "paused"
-        ? "paused"
-        : document.documentElement.dataset.homeGuideMode === "guided"
-          ? "guided"
-          : "manual";
-
     function mediaBudget() {
       return 1;
     }
@@ -88,6 +83,8 @@ export function HomeV4MediaDirector() {
             video.dataset.homeMediaState !== "failed",
         )
         .sort(([videoA, ratioA], [videoB, ratioB]) => {
+          const priorityDelta = playbackPriority(videoB) - playbackPriority(videoA);
+          if (priorityDelta !== 0) return priorityDelta;
           if (Math.abs(ratioA - ratioB) > 0.04) return ratioB - ratioA;
           return distanceFromViewportCentre(videoA) - distanceFromViewportCentre(videoB);
         })
@@ -276,12 +273,6 @@ export function HomeV4MediaDirector() {
       syncAll();
     }
 
-    function onGuideMode(event: Event) {
-      const nextMode = (event as CustomEvent<{ mode?: HomeGuideMode }>).detail?.mode;
-      if (nextMode) guideMode = nextMode;
-      syncAll();
-    }
-
     function onViewportProfileChange() {
       tracked.forEach((video) => {
         const bounds = video.getBoundingClientRect();
@@ -314,7 +305,6 @@ export function HomeV4MediaDirector() {
     }
 
     document.addEventListener("visibilitychange", onVisibilityChange);
-    window.addEventListener(HOME_GUIDE_MODE_EVENT, onGuideMode as EventListener);
     window.addEventListener("resize", onViewportProfileChange, { passive: true });
     homeRoot.addEventListener("focusin", onFocusIn);
     homeRoot.addEventListener("focusout", onFocusOut);
@@ -325,7 +315,6 @@ export function HomeV4MediaDirector() {
       playbackObserver.disconnect();
       prewarmObserver.disconnect();
       document.removeEventListener("visibilitychange", onVisibilityChange);
-      window.removeEventListener(HOME_GUIDE_MODE_EVENT, onGuideMode as EventListener);
       window.removeEventListener("resize", onViewportProfileChange);
       homeRoot.removeEventListener("focusin", onFocusIn);
       homeRoot.removeEventListener("focusout", onFocusOut);

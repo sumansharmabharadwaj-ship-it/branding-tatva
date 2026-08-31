@@ -4,13 +4,16 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { LinkButton } from "@/components/Button";
+import { TrackedLink } from "@/components/TrackedLink";
 import { consultation } from "@/data/site";
 import {
   SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
+  SITUATION_TO_PACKAGE,
   isServicesSituation,
   readCompletedHomeDiagnosis,
+  servicesContactHrefForSituation,
   type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
@@ -120,6 +123,10 @@ export function FinalInvitation() {
   }, []);
 
   const invitation = INVITATIONS[situation];
+  const selectedSituation = situation === "default" ? null : situation;
+  const selectedPackage = selectedSituation ? SITUATION_TO_PACKAGE[selectedSituation] : null;
+  const contactHref = servicesContactHrefForSituation(selectedSituation, "call");
+  const writeHref = servicesContactHrefForSituation(selectedSituation, "write");
 
   return (
     <div
@@ -148,13 +155,32 @@ export function FinalInvitation() {
 
             <div className="final-invitation__actions">
               <LinkButton
-                href="/contact#call"
+                href={contactHref}
                 trackEvent="hero_booking_click"
-                trackProps={{ page: "home", position: "final_invitation", situation }}
+                trackProps={{
+                  page: "home",
+                  position: "final_invitation",
+                  situation,
+                  ...(selectedPackage ? { package: selectedPackage } : {}),
+                }}
               >
                 {consultation.actionLabel}
               </LinkButton>
-              <span>{consultation.minutes} minutes · honest feedback · no pitch deck</span>
+              <div className="final-invitation__action-note">
+                <span>{consultation.minutes} minutes · honest feedback · no pitch deck</span>
+                <TrackedLink
+                  href={writeHref}
+                  event="contact_route_selected"
+                  eventProps={{
+                    source: "home_final_invitation",
+                    route: "write_first",
+                    situation,
+                    ...(selectedPackage ? { package: selectedPackage } : {}),
+                  }}
+                >
+                  Prefer to write first <span aria-hidden="true">→</span>
+                </TrackedLink>
+              </div>
             </div>
           </div>
 

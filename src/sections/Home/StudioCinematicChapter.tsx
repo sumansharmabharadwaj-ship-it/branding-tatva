@@ -50,7 +50,7 @@ const DISCIPLINES = [
   {
     number: "03",
     name: "Strategy",
-    credential: "Founder-led direction",
+    credential: "Founder direction",
     verb: "makes both useful",
     title: "Make the insight usable long after the room goes quiet.",
     line: "Positioning, identity, website, content and campaigns move as one system led directly by Suman.",
@@ -204,9 +204,18 @@ export function StudioCinematicChapter() {
           <div className="studio-film__statement">
             <p>One mind · three disciplines</p>
             <h2 id="studio-film-title">
-              <span className={activeIndex === 0 ? "is-active" : undefined}>Psychology <em>reads people.</em></span>
-              <span className={activeIndex === 1 ? "is-active" : undefined}>Literature <em>shapes meaning.</em></span>
-              <span className={activeIndex === 2 ? "is-active" : undefined}>Strategy <em>makes both useful.</em></span>
+              <AnimatePresence mode="sync" initial={false}>
+                <motion.span
+                  key={active.name}
+                  className="is-active"
+                  initial={reducedMotion ? false : { opacity: 0, y: 10, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={reducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(3px)" }}
+                  transition={{ duration: reducedMotion ? 0 : 0.42, ease: EASE }}
+                >
+                  {active.name} <em>{active.verb}.</em>
+                </motion.span>
+              </AnimatePresence>
             </h2>
           </div>
 
@@ -229,22 +238,37 @@ export function StudioCinematicChapter() {
               </div>
               <h3>{active.title}</h3>
               <p>{active.line}</p>
-              <div className="studio-film__synthesis" aria-label={`${active.name} from human signal to brand decision`}>
-                <div>
-                  <span>Human signal</span>
-                  <strong>{active.signal}</strong>
-                </div>
-                <div>
-                  <span>{active.name} move</span>
-                  <strong>{active.move}</strong>
-                </div>
-                <div>
-                  <span>Brand decision</span>
-                  <strong>{active.decision}</strong>
-                </div>
-              </div>
+              <ol className="studio-film__synthesis" aria-label={`${active.name} from human signal to brand decision`}>
+                {[
+                  ["Human signal", active.signal],
+                  [`${active.name} move`, active.move],
+                  ["Brand decision", active.decision],
+                ].map(([label, value], index) => (
+                  <motion.li
+                    key={label}
+                    initial={reducedMotion ? false : { opacity: 0, y: 7 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: reducedMotion ? 0 : 0.4,
+                      delay: reducedMotion ? 0 : 0.07 + index * 0.07,
+                      ease: EASE,
+                    }}
+                  >
+                    <span className="studio-film__synthesis-number" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <div>
+                      <span>{label}</span>
+                      <strong>{value}</strong>
+                    </div>
+                  </motion.li>
+                ))}
+              </ol>
               <div className="studio-film__outcome"><span>What this produces</span><strong>{active.outcome}</strong></div>
-              <Link href={active.proofHref}>{active.proof} <span aria-hidden="true">→</span></Link>
+              <div className="studio-film__reading-actions">
+                <Link href={active.proofHref}>{active.proof} <span aria-hidden="true">→</span></Link>
+                <Link href="#decision">Use this lens on your question <span aria-hidden="true">↓</span></Link>
+              </div>
             </motion.article>
           </AnimatePresence>
         </div>

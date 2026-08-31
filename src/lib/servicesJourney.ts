@@ -42,6 +42,16 @@ export function servicesContactHref(packageSlug: PackageSlug) {
   return `/contact?package=${encodeURIComponent(packageSlug)}`;
 }
 
+export function servicesContactHrefForSituation(
+  situation: ServicesSituationId | null | undefined,
+  anchor?: "call" | "write",
+) {
+  const hash = anchor ? `#${anchor}` : "";
+  if (!situation) return `/contact${hash}`;
+  const packageSlug = SITUATION_TO_PACKAGE[situation];
+  return `/contact?package=${encodeURIComponent(packageSlug)}${hash}`;
+}
+
 export function packageSlugFromServicesContactParam(value: string | null): PackageSlug | null {
   return value && value in PACKAGE_TO_SITUATION ? (value as PackageSlug) : null;
 }

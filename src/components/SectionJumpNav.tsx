@@ -33,6 +33,9 @@ type SectionJumpNavProps = {
   // Light cinematic pages can keep an ivory navigation surface while the
   // established dark treatment remains the default everywhere else.
   tone?: "dark" | "light";
+  // Dense editorial frames can keep the rail as a quiet progress marker and
+  // reveal chapter names only when a visitor asks through hover or focus.
+  showActiveLabel?: boolean;
 };
 
 const SERVICES_CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
@@ -56,6 +59,7 @@ export function SectionJumpNav({
   hideOnLast = false,
   desktopMode,
   tone = "dark",
+  showActiveLabel = true,
 }: SectionJumpNavProps) {
   const pathname = usePathname();
   const isServicesRoute = pathname === "/services";
@@ -359,7 +363,7 @@ export function SectionJumpNav({
                       >
                         <span
                           className={`absolute right-[calc(100%+0.55rem)] whitespace-nowrap rounded-full border px-3 py-1.5 text-[0.58rem] font-medium uppercase tracking-[0.14em] shadow-elevation-lg backdrop-blur-md transition-[opacity,transform] duration-200 ${
-                            active
+                            active && showActiveLabel
                               ? lightTone
                                 ? "border-terracotta/30 bg-ivory/96 text-terracotta opacity-100"
                                 : "border-sandstone/35 bg-soil/96 text-sandstone opacity-100"
