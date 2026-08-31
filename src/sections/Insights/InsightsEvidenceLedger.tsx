@@ -22,6 +22,11 @@ import {
   readInsightsIntent,
   type InsightsIntentDetail,
 } from "@/lib/insights-intent";
+import {
+  clearInsightsEvidenceState,
+  readInsightsEvidenceState,
+  writeInsightsEvidenceState,
+} from "@/lib/insights-evidence-state";
 import { track } from "@/lib/analytics";
 
 export type EvidenceLayer = {
@@ -78,6 +83,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       if (nextIntent.origin !== "evidence-ledger") {
         priorReaderIntentRef.current = nextIntent;
         setMarkedSlugs([]);
+        clearInsightsEvidenceState();
       }
       setReaderIntent(nextIntent);
     }
@@ -87,11 +93,41 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       setReaderIntent(undefined);
       setMarkedSlugs([]);
       setFocusedIndex(0);
+      clearInsightsEvidenceState();
     }
 
     const initialIntent = readInsightsIntent();
     if (initialIntent?.origin !== "evidence-ledger") {
       priorReaderIntentRef.current = initialIntent;
+      clearInsightsEvidenceState();
+    } else {
+      const storedEvidence = readInsightsEvidenceState();
+      const markedSlugs = storedEvidence?.markedSlugs.filter((slug) =>
+        layers.some((layer) => layer.slug === slug),
+      );
+      const latestMarkedSlug = markedSlugs?.[markedSlugs.length - 1];
+      const latestMarkedLayer = latestMarkedSlug
+        ? layers.find((layer) => layer.slug === latestMarkedSlug)
+        : undefined;
+
+      if (
+        storedEvidence &&
+        markedSlugs?.length === storedEvidence.markedSlugs.length &&
+        latestMarkedLayer?.topicSlug === initialIntent.topicSlug
+      ) {
+        const focusedIndex = layers.findIndex(
+          (layer) => layer.slug === storedEvidence.focusedSlug,
+        );
+        setMarkedSlugs(markedSlugs);
+        setFocusedIndex(
+          focusedIndex >= 0
+            ? focusedIndex
+            : layers.findIndex((layer) => layer.slug === latestMarkedSlug),
+        );
+        priorReaderIntentRef.current = storedEvidence.priorIntent;
+      } else {
+        clearInsightsEvidenceState();
+      }
     }
 
     window.addEventListener(INSIGHTS_INTENT_EVENT, carryReaderIntent);
@@ -108,7 +144,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         releaseReaderIntent,
       );
     };
-  }, []);
+  }, [layers]);
 
   useEffect(() => {
     if (!readerIntent || markedCount > 0) return;
@@ -208,6 +244,17 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       : priorReaderIntentRef.current;
 
     setMarkedSlugs(nextMarkedSlugs);
+    if (nextMarkedSlugs.length > 0) {
+      writeInsightsEvidenceState({
+        markedSlugs: nextMarkedSlugs,
+        focusedSlug: isMarked
+          ? (nextLatestLayer?.slug ?? selectedLayer.slug)
+          : selectedLayer.slug,
+        priorIntent: priorReaderIntentRef.current,
+      });
+    } else {
+      clearInsightsEvidenceState();
+    }
     track("insights_evidence_layer_toggled", {
       layer: slug,
       state: isMarked ? "open" : "marked",
