@@ -493,19 +493,21 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
    remains identical. */
 @media (min-width: 1024px) and (max-height: 760px) {
   [data-authority-frame="true"] {
-    height: 100svh !important;
+    height: auto !important;
+    min-height: 100svh;
     justify-content: flex-start !important;
   }
 
   [data-authority-shell="true"] {
-    height: 100%;
+    height: auto;
+    min-height: 100svh;
     justify-content: flex-start !important;
-    padding: 4.15rem 1.5rem 0.4rem !important;
-    overflow: hidden;
+    padding: 4.75rem 1.5rem 2.5rem !important;
+    overflow: visible;
   }
 
   [data-authority-grid="true"] {
-    height: 100%;
+    height: auto;
     min-height: 0;
     grid-template-columns: minmax(15rem, 0.72fr) minmax(31rem, 1.28fr) !important;
     gap: 1.25rem !important;
@@ -513,25 +515,25 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
 
   [data-authority-copy="true"] h2 {
     margin-top: 0.25rem;
-    font-size: clamp(1.8rem, min(3.4vw, 6.8svh), 2.5rem) !important;
+    font-size: clamp(2rem, 3.4vw, 2.75rem) !important;
     line-height: 0.98;
   }
 
   [data-authority-copy="true"] > p:nth-of-type(2) {
-    margin-top: 0.55rem;
-    font-size: 0.64rem !important;
-    line-height: 1.35;
+    margin-top: 0.85rem;
+    font-size: 0.875rem !important;
+    line-height: 1.5;
   }
 
   [data-authority-copy="true"] > a {
-    margin-top: 0.55rem;
-    font-size: 0.6rem;
+    margin-top: 0.85rem;
+    font-size: 0.8rem;
   }
 
   [data-authority-diagram="true"] {
-    height: 100%;
+    height: auto;
     min-height: 0;
-    overflow: hidden;
+    overflow: visible;
   }
 
   [data-authority-wave="true"] {
@@ -540,13 +542,13 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
   }
 
   [data-authority-wave="true"] svg {
-    height: 2rem;
+    height: 2.5rem;
     margin-top: 0.1rem;
   }
 
   [data-authority-desktop-layer="true"] {
     gap: 0.65rem !important;
-    padding-block: 0.28rem !important;
+    padding-block: 0.5rem !important;
   }
 
   [data-authority-desktop-layer="true"] > span {
@@ -554,7 +556,7 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
   }
 
   [data-authority-desktop-layer="true"] > span > span:last-child {
-    font-size: 1.35rem !important;
+    font-size: 1.6rem !important;
   }
 
   [data-authority-desktop-layer="true"] > div {
@@ -563,24 +565,24 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
   }
 
   [data-authority-desktop-layer="true"] > div > svg {
-    width: 1rem;
-    height: 1rem;
+    width: 1.2rem;
+    height: 1.2rem;
   }
 
   [data-authority-desktop-layer="true"] > div p:first-child {
-    font-size: 1rem !important;
+    font-size: 1.3rem !important;
   }
 
   [data-authority-desktop-layer="true"] > div p:nth-child(2) {
-    margin-top: 0.08rem;
-    font-size: 0.58rem !important;
-    line-height: 1.25;
+    margin-top: 0.16rem;
+    font-size: 0.8rem !important;
+    line-height: 1.4;
   }
 
   [data-authority-desktop-layer="true"] > div p:nth-child(3) {
-    margin-top: 0.08rem;
-    font-size: 0.5rem !important;
-    line-height: 1.25;
+    margin-top: 0.16rem;
+    font-size: 0.75rem !important;
+    line-height: 1.4;
   }
 }
 
