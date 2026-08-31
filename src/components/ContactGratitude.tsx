@@ -236,6 +236,44 @@ export function ContactGratitude() {
         transition={{ duration: reducedMotion ? 0 : 0.68, ease: EASE_AIR }}
       />
 
+      <div aria-hidden="true" data-contact-gratitude-bloom>
+        {NOTES.map((note, index) => {
+          const received = (visitedNotes & (1 << index)) !== 0;
+
+          return (
+            <span
+              key={note.label}
+              data-contact-gratitude-bloom-arm
+              style={{ transform: `rotate(${index * 90 + 45}deg)` }}
+            >
+              <motion.span
+                data-contact-gratitude-bloom-petal
+                initial={false}
+                animate={{
+                  opacity: received ? 0.46 : 0.07,
+                  scaleY: received ? 1 : 0.22,
+                  y: received ? 0 : 14,
+                }}
+                transition={{
+                  duration: reducedMotion ? 0 : 0.78,
+                  ease: EASE_AIR,
+                  delay: reducedMotion || !received ? 0 : index * 0.035,
+                }}
+              />
+            </span>
+          );
+        })}
+        <motion.span
+          data-contact-gratitude-bloom-heart
+          initial={false}
+          animate={{
+            opacity: allNotesVisited ? 0.5 : 0.08 + visitedCount * 0.035,
+            scale: allNotesVisited ? 1 : 0.72 + visitedCount * 0.055,
+          }}
+          transition={{ duration: reducedMotion ? 0 : 0.9, ease: EASE_AIR }}
+        />
+      </div>
+
       <Container className="relative z-10 w-full">
         <div className="mx-auto flex max-w-[52rem] flex-col items-center text-center">
           <p className="text-[0.68rem] font-medium uppercase tracking-[0.26em] text-sandstone">

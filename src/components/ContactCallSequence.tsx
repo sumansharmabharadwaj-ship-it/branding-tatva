@@ -69,6 +69,7 @@ export function ContactCallSequence() {
                 type="button"
                 aria-label={step.full}
                 aria-current={active ? "step" : undefined}
+                data-contact-call-step={index}
                 onClick={() => choose(index)}
                 onFocus={() => choose(index)}
                 onMouseEnter={() => choose(index)}
@@ -93,8 +94,9 @@ export function ContactCallSequence() {
                   {active && isSequenceVisible && !prefersReducedMotion ? (
                     <motion.span
                       className="absolute -inset-1 rounded-full border border-sandstone/45"
-                      animate={{ scale: [0.82, 1.38], opacity: [0, 0.45, 0] }}
-                      transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
+                      initial={{ scale: 0.82, opacity: 0 }}
+                      animate={{ scale: 1.38, opacity: [0, 0.45, 0] }}
+                      transition={{ duration: 1.15, ease: "easeOut" }}
                     />
                   ) : null}
                   {String(index + 1).padStart(2, "0")}

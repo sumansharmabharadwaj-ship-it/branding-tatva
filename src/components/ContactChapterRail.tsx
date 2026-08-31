@@ -89,6 +89,7 @@ export function ContactChapterRail() {
         data-contact-chapter-rail
         data-visible={visible ? "true" : "false"}
         data-tone={activeChapter.tone}
+        data-active-index={visible ? activeIndex : undefined}
         aria-label="Contact chapters"
         aria-hidden={!visible}
       >
@@ -99,6 +100,7 @@ export function ContactChapterRail() {
               <li key={chapter.id} data-active={active ? "true" : "false"}>
                 <a
                   href={`#${chapter.id}`}
+                  aria-label={`Chapter ${index + 1} of ${CHAPTERS.length}: ${chapter.label}`}
                   aria-current={active ? "location" : undefined}
                   tabIndex={visible ? 0 : -1}
                   data-cursor-label={chapter.label}
