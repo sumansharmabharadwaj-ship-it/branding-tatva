@@ -165,6 +165,16 @@ const JUMP_ITEMS = [
   { href: "#book", label: "Book a diagnosis" },
 ];
 
+// The fixed chapter rail can carry the complete nine-part journey once the
+// visitor is moving. The opening needs a quicker read: four commercial acts
+// that explain the page before asking someone to process its full contents.
+const HERO_ACTS = [
+  { href: "#situation", number: "01", label: "Name the situation", note: "Find the real starting point" },
+  { href: "#offerings", number: "02", label: "See the system", note: "Inspect what the work covers" },
+  { href: "#proof", number: "03", label: "Follow the evidence", note: "Trace one decision into delivery" },
+  { href: "#book", number: "04", label: "Bring the problem", note: "Enter the Strategy Room prepared" },
+];
+
 // Ambient consolidation (Suman's review: "duplicated ambient effects",
 // "one motion language"): this page stacked twenty five atmosphere
 // layers — six shaders, particle fields, and the veil/handoff seams —
@@ -285,23 +295,26 @@ export default async function ServicesPage() {
                   </Magnetic>
                 </div>
               </Reveal>
-              {/* Editorial chapter index — the page's four acts listed
-                  the way a film lists chapters, replacing a row of
-                  generic pill buttons. Real navigation (same anchors
-                  as SectionJumpNav), presented with editorial weight. */}
+              {/* Four acts are enough to orient the opening frame. The
+                  complete nine-chapter rail takes over once the visitor
+                  moves, so the headline never has to compete with a table
+                  of contents before its argument has landed. */}
               <Reveal delay={0.1} className="hidden lg:block lg:pb-2">
-                <ol className="lg:min-w-52">
-                  {JUMP_ITEMS.map((item, i) => (
+                <ol aria-label="The Brand Strategy journey" className="lg:min-w-64">
+                  {HERO_ACTS.map((item) => (
                     <li key={item.href}>
                       <a
                         href={item.href}
-                        className="group flex items-baseline justify-end gap-3 border-b border-ivory/15 py-2.5 transition-colors duration-200 hover:border-ivory/40"
+                        className="group grid grid-cols-[auto_1fr] items-start gap-x-3 border-b border-ivory/15 py-3.5 text-left transition-colors duration-200 hover:border-ivory/45 focus-visible:border-ivory/60"
                       >
-                        <span className="font-display text-sm text-ivory/70 transition-colors duration-200 group-hover:text-sandstone">
-                          {String(i + 1).padStart(2, "0")}
+                        <span className="row-span-2 font-display text-sm text-sandstone/90 transition-colors duration-200 group-hover:text-sandstone">
+                          {item.number}
                         </span>
-                        <span className="text-sm tracking-wide text-ivory/90 transition-colors duration-200 group-hover:text-ivory">
+                        <span className="text-sm tracking-wide text-ivory transition-colors duration-200">
                           {item.label}
+                        </span>
+                        <span className="mt-1 text-[0.68rem] leading-snug tracking-[0.02em] text-ivory/60 transition-colors duration-200 group-hover:text-ivory/78">
+                          {item.note}
                         </span>
                       </a>
                     </li>
