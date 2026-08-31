@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/Container";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { packages } from "@/data/services";
-import { site } from "@/data/site";
+import { consultation, site } from "@/data/site";
 import { entityFacts } from "@/data/entityFacts";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
@@ -376,6 +376,24 @@ export function StrategyRoomCTA() {
             Remote projects led directly by Suman are available across {entityFacts.delivery.regions.slice(0, -1).join(", ")} and{" "}
             {entityFacts.delivery.regions.at(-1)}.
           </p>
+          <div data-strategy-room-agenda="true" className="mx-auto mt-7 max-w-2xl">
+            <p className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-sandstone/78">
+              Inside the diagnosis
+            </p>
+            <ol aria-label="What happens in the diagnosis" className="mt-3 grid gap-2.5 text-left sm:grid-cols-3">
+              {consultation.steps.map((item, index) => (
+                <li
+                  key={item}
+                  className="rounded-2xl border border-ivory/15 bg-[rgba(18,24,21,0.48)] px-4 py-3.5 backdrop-blur-md"
+                >
+                  <span className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/75">
+                    0{index + 1}
+                  </span>
+                  <p className="mt-2 text-sm leading-relaxed text-ivory/78">{item}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
         </motion.div>
 
         <div data-services-chapter-resolution="true" className="relative mt-8 min-h-[18rem]" aria-live="off">
