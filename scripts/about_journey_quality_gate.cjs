@@ -71,6 +71,10 @@ assert(
   "The copy dense evidence chapter can fade below the protected reading exposure.",
 );
 assert(
+  /id="about-resolution"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense closing chapter can fade below the protected reading exposure.",
+);
+assert(
   /\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*clamp\(5\.75rem,\s*10svh,\s*6\.5rem\);/.test(anchorContract) &&
     /@media \(max-width:\s*430px\)[\s\S]*?\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*calc\(5rem \+ env\(safe-area-inset-top,\s*0px\)\);/.test(anchorContract),
   "About chapter hashes can settle beneath the fixed header in a responsive state.",

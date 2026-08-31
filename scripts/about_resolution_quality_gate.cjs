@@ -35,19 +35,19 @@ assert(
   "Closing-record labels have fallen below the protected readable size.",
 );
 assert(
-  /\.recordStage dd\s*\{[^}]*font-size:\s*0\.6875rem;/.test(styles),
+  /\.recordStage dd\s*\{[^}]*font-size:\s*0\.75rem;/.test(styles),
   "Closing-record supporting copy has fallen below the protected readable size.",
 );
 assert(
-  /\.pathRail button > span:first-child\s*\{[^}]*font-size:\s*0\.55rem;/.test(styles),
+  /\.pathRail button > span:first-child\s*\{[^}]*font-size:\s*0\.6rem;/.test(styles),
   "Closing-route numbers have fallen below the protected reading floor.",
 );
 assert(
-  /\.pathRail small,\s*\n\.recordStage small,\s*\n\.recordStage dt,\s*\n\.staticPaths small,\s*\n\.footer p span\s*\{[^}]*font-size:\s*0\.55rem;/.test(styles),
+  /\.pathRail small,\s*\n\.recordStage small,\s*\n\.recordStage dt,\s*\n\.staticPaths small,\s*\n\.footer p span\s*\{[^}]*font-size:\s*0\.6rem;/.test(styles),
   "Closing-route and static-path labels have fallen below the protected reading floor.",
 );
 assert(
-  /\.frameMark\s*\{[^}]*font-size:\s*0\.55rem;/.test(styles),
+  /\.frameMark\s*\{[^}]*font-size:\s*0\.6rem;/.test(styles),
   "The closing cinematic frame mark has fallen below the protected reading floor.",
 );
 assert(
@@ -100,6 +100,11 @@ assert(
     /@media \(max-width: 1023px\) \{[\s\S]*?\.inner,[\s\S]*?padding-bottom:\s*calc\(7\.75rem \+ env\(safe-area-inset-bottom\)\);/.test(styles) &&
     /html\[data-consent-banner="visible"\][\s\S]*?padding-bottom:\s*calc\(11\.75rem \+ env\(safe-area-inset-bottom\)\);/.test(styles),
   "The final About actions can fall underneath the persistent mobile navigator or consent-banner stack.",
+);
+assert(
+  styles.includes(':global(html[data-consent-banner="visible"]) .footer') &&
+    styles.includes("padding-right: clamp(14rem, 18vw, 16rem);"),
+  "The final desktop actions can settle beneath the consent notice.",
 );
 assert(
   !memoryGate.includes('await client.send("DOM.enable")'),

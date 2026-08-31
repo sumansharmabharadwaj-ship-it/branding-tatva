@@ -169,7 +169,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <div id="about-resolution" data-about-film-scene data-about-chapter="resolution" data-scene-tone="light" data-scene-ending>
+        <div id="about-resolution" data-about-film-scene data-about-chapter="resolution" data-reading-scene data-scene-tone="light" data-scene-ending>
           <AboutResolution />
         </div>
       </main>
