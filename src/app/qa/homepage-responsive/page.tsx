@@ -73,6 +73,7 @@ export default async function HomepageResponsiveQa({
           width: `${preset.width}px`,
           maxWidth: preset.width <= 768 ? "100%" : "none",
           height: `${preset.height}px`,
+          boxSizing: "content-box",
           overflow: "hidden",
           border: "1px solid rgba(244,239,230,.45)",
           background: "#eee7db",
