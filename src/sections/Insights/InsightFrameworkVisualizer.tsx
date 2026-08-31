@@ -31,7 +31,7 @@ export function InsightFrameworkVisualizer({
   return (
     <section
       id="working-framework"
-      className="insight-framework scroll-mt-32 pt-20"
+      className="insight-framework insight-reading-chapter scroll-mt-32 pt-20"
       aria-labelledby="framework-heading"
       style={{ "--framework-accent": accent } as CSSProperties}
     >

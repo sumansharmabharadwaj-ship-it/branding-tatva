@@ -29,14 +29,68 @@ export function InsightCardMedia({
     const film = videoRef.current;
     const card = stage?.closest<HTMLElement>("a");
 
-    if (!stage || !film || !card || prefersReducedMotion) return;
+    if (!stage || !card) return;
+    if (prefersReducedMotion) {
+      setIsPlaying(false);
+      return;
+    }
     const activeFilm = film;
     const activeCard = card;
     const touchFirst = window.matchMedia("(hover: none), (pointer: coarse)");
     let pointerFrame = 0;
+    let scrollFrame = 0;
+    let previousScrollY = window.scrollY;
+    let previousScrollTime = performance.now();
 
     activeCard.dataset.cardMotion = "ready";
     activeCard.dataset.cardRevealed = "false";
+
+    function clamp(value: number, minimum = 0, maximum = 1) {
+      return Math.min(maximum, Math.max(minimum, value));
+    }
+
+    function renderScrollPosition() {
+      const rect = activeCard.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const cardCenter = rect.top + rect.height / 2;
+      const travelRange = Math.max(viewportHeight * 0.7, rect.height);
+      const position = clamp(
+        (cardCenter - viewportHeight / 2) / travelRange,
+        -1,
+        1,
+      );
+      const focus = 1 - Math.abs(position);
+      const currentScrollY = window.scrollY;
+      const currentTime = performance.now();
+      const elapsed = Math.max(16, currentTime - previousScrollTime);
+      const distance = currentScrollY - previousScrollY;
+      const velocity = clamp(Math.abs(distance) / elapsed / 1.35);
+
+      activeCard.style.setProperty("--card-scroll-focus", focus.toFixed(3));
+      activeCard.style.setProperty(
+        "--card-scroll-y",
+        `${(position * -8).toFixed(2)}px`,
+      );
+      activeCard.style.setProperty(
+        "--card-scroll-tilt",
+        `${(position * -0.7).toFixed(3)}deg`,
+      );
+      activeCard.style.setProperty(
+        "--card-scroll-velocity",
+        velocity.toFixed(3),
+      );
+      activeCard.dataset.cardFocus = focus >= 0.46 ? "true" : "false";
+      activeCard.dataset.cardDirection = distance < 0 ? "back" : "forward";
+
+      previousScrollY = currentScrollY;
+      previousScrollTime = currentTime;
+      scrollFrame = 0;
+    }
+
+    function requestScrollRender() {
+      if (scrollFrame) return;
+      scrollFrame = requestAnimationFrame(renderScrollPosition);
+    }
 
     function renderPointer(event: PointerEvent) {
       const rect = activeCard.getBoundingClientRect();
@@ -65,6 +119,7 @@ export function InsightCardMedia({
     }
 
     function playFilm() {
+      if (!activeFilm) return;
       // The sitewide VideoWarden gives an explicitly explored foreground film
       // priority over ambient section media. This keeps the explored card responsive and the interaction scoped. Add that intent before play so
       // its synchronous arbitration keeps this card alive.
@@ -80,6 +135,7 @@ export function InsightCardMedia({
     }
 
     function pauseFilm() {
+      if (!activeFilm) return;
       delete activeFilm.dataset.videoPriority;
       activeFilm.pause();
       setIsPlaying(false);
@@ -100,6 +156,7 @@ export function InsightCardMedia({
 
     function handleFilmRequest(event: Event) {
       if (
+        activeFilm &&
         event instanceof CustomEvent &&
         event.detail instanceof HTMLVideoElement &&
         event.detail !== activeFilm
@@ -108,7 +165,7 @@ export function InsightCardMedia({
       }
     }
 
-    const observer = touchFirst.matches
+    const observer = activeFilm && touchFirst.matches
       ? new IntersectionObserver(
           ([entry]) => {
             if (entry?.isIntersecting && entry.intersectionRatio >= 0.62) {
@@ -134,6 +191,9 @@ export function InsightCardMedia({
     );
 
     revealObserver.observe(activeCard);
+    renderScrollPosition();
+    window.addEventListener("scroll", requestScrollRender, { passive: true });
+    window.addEventListener("resize", requestScrollRender);
 
     if (observer) {
       observer.observe(stage);
@@ -144,30 +204,41 @@ export function InsightCardMedia({
     }
     activeCard.addEventListener("focus", playFilm);
     activeCard.addEventListener("blur", pauseFilm);
-    activeFilm.addEventListener("playing", handlePlaying);
-    activeFilm.addEventListener("pause", handlePause);
+    activeFilm?.addEventListener("playing", handlePlaying);
+    activeFilm?.addEventListener("pause", handlePause);
     window.addEventListener(CARD_FILM_REQUEST_EVENT, handleFilmRequest);
 
     return () => {
       observer?.disconnect();
       revealObserver.disconnect();
+      window.removeEventListener("scroll", requestScrollRender);
+      window.removeEventListener("resize", requestScrollRender);
       activeCard.removeEventListener("pointerenter", playFilm);
       activeCard.removeEventListener("pointermove", handlePointerMove);
       activeCard.removeEventListener("pointerleave", handlePointerLeave);
       activeCard.removeEventListener("focus", playFilm);
       activeCard.removeEventListener("blur", pauseFilm);
-      activeFilm.removeEventListener("playing", handlePlaying);
-      activeFilm.removeEventListener("pause", handlePause);
+      activeFilm?.removeEventListener("playing", handlePlaying);
+      activeFilm?.removeEventListener("pause", handlePause);
       window.removeEventListener(CARD_FILM_REQUEST_EVENT, handleFilmRequest);
       if (pointerFrame) cancelAnimationFrame(pointerFrame);
+      if (scrollFrame) cancelAnimationFrame(scrollFrame);
       delete activeCard.dataset.cardMotion;
       delete activeCard.dataset.cardRevealed;
+      delete activeCard.dataset.cardFocus;
+      delete activeCard.dataset.cardDirection;
       activeCard.style.removeProperty("--card-lens-x");
       activeCard.style.removeProperty("--card-lens-y");
       activeCard.style.removeProperty("--card-image-x");
       activeCard.style.removeProperty("--card-image-y");
-      delete activeFilm.dataset.videoPriority;
-      activeFilm.pause();
+      activeCard.style.removeProperty("--card-scroll-focus");
+      activeCard.style.removeProperty("--card-scroll-y");
+      activeCard.style.removeProperty("--card-scroll-tilt");
+      activeCard.style.removeProperty("--card-scroll-velocity");
+      if (activeFilm) {
+        delete activeFilm.dataset.videoPriority;
+        activeFilm.pause();
+      }
     };
   }, [prefersReducedMotion, video]);
 

@@ -285,7 +285,7 @@ export default async function InsightArticlePage({ params }: Props) {
             )}
             <div className="insight-article-hero__veil absolute inset-0" />
 
-            <Container className="relative">
+            <Container className="insight-article-hero__content relative">
               <nav
                 aria-label="Breadcrumb"
                 className="mb-8 flex flex-wrap items-center gap-2 text-xs text-ivory/65"
@@ -368,7 +368,7 @@ export default async function InsightArticlePage({ params }: Props) {
                     <section
                       id="key-takeaways"
                       aria-labelledby="takeaways-heading"
-                      className="scroll-mt-32 rounded-[1.5rem] border border-soil/10 bg-background-elevated p-6 shadow-elevation-sm sm:p-8"
+                      className="insight-reading-chapter insight-article-summary scroll-mt-32 rounded-[1.5rem] border border-soil/10 bg-background-elevated p-6 shadow-elevation-sm sm:p-8"
                     >
                       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay">
                         Five conclusions
@@ -407,7 +407,7 @@ export default async function InsightArticlePage({ params }: Props) {
                       <Reveal key={section.id}>
                         <section
                           id={section.id}
-                          className="insight-article-section scroll-mt-32 pt-16"
+                          className="insight-reading-chapter insight-article-section scroll-mt-32 pt-16"
                         >
                           <p
                             className="insight-article-section__kicker"
@@ -495,7 +495,7 @@ export default async function InsightArticlePage({ params }: Props) {
                     <section
                       id="frequent-questions"
                       aria-labelledby="faq-heading"
-                      className="scroll-mt-32 pt-20"
+                      className="insight-reading-chapter scroll-mt-32 pt-20"
                     >
                       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
                         Before you use it
@@ -533,7 +533,7 @@ export default async function InsightArticlePage({ params }: Props) {
                       <section
                         id="research-sources"
                         aria-labelledby="research-sources-heading"
-                        className="scroll-mt-32 pt-20"
+                        className="insight-reading-chapter scroll-mt-32 pt-20"
                       >
                         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
                           Research record
@@ -592,7 +592,7 @@ export default async function InsightArticlePage({ params }: Props) {
                   )}
 
                   <Reveal>
-                    <aside className="mt-16 grid gap-6 rounded-[1.5rem] border border-soil/10 bg-background-alt p-6 sm:grid-cols-[auto_1fr] sm:items-center sm:p-8">
+                    <aside className="insight-reading-chapter mt-16 grid gap-6 rounded-[1.5rem] border border-soil/10 bg-background-alt p-6 sm:grid-cols-[auto_1fr] sm:items-center sm:p-8">
                       <div
                         className="flex h-16 w-16 items-center justify-center rounded-full"
                         style={{ backgroundColor: `${color}16` }}
@@ -627,7 +627,7 @@ export default async function InsightArticlePage({ params }: Props) {
                     <InsightDecisionPath
                       pathway={pathway}
                       id="reading-next-step"
-                      className="mt-16 scroll-mt-32"
+                      className="insight-reading-chapter mt-16 scroll-mt-32"
                     />
                   </Reveal>
                 </div>
