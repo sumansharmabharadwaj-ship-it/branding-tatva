@@ -154,13 +154,15 @@ export const metadata: Metadata = {
 // to point at and no way back to booking except scrolling the whole
 // way. All nine anchors already exist and already carry scroll-mt-24.
 const JUMP_ITEMS = [
+  { href: "#services-opening", label: "Opening signal" },
   { href: "#situation", label: "Your situation" },
-  { href: "#offerings", label: "Services" },
-  { href: "#desire", label: "Packages" },
-  { href: "#proof", label: "Client proof" },
-  { href: "#authority", label: "Why it works" },
-  { href: "#audit", label: "Questions" },
-  { href: "#book", label: "Book a call" },
+  { href: "#offerings", label: "Six disciplines" },
+  { href: "#desire", label: "Package paths" },
+  { href: "#proof", label: "Verified outcome" },
+  { href: "#authority", label: "Brand foundation" },
+  { href: "#education", label: "Perception" },
+  { href: "#audit", label: "Recognition audit" },
+  { href: "#book", label: "Strategy room" },
 ];
 
 // Ambient consolidation (Suman's review: "duplicated ambient effects",
