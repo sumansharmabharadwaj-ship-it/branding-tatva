@@ -170,6 +170,7 @@ export function SituationPath() {
                 initial={prefersReducedMotion ? undefined : { opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                data-situation-carried="true"
                 className="mt-5 inline-flex items-center gap-2 rounded-full border border-sandstone/40 px-3.5 py-1.5 text-xs text-sandstone"
               >
                 <span aria-hidden="true">↺</span> Your earlier diagnosis is already here.
