@@ -71,7 +71,7 @@ export function AboutSplitHero({
   return (
     <section
       ref={ref}
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-soil pb-36 pt-24 sm:pb-0"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-soil pt-24"
       data-about-hero-active={heroInView}
     >
       {prefersReducedMotion ? (
@@ -110,7 +110,7 @@ export function AboutSplitHero({
       />
 
       <motion.div
-        className="relative z-10 flex flex-col items-center px-6 py-16 sm:py-24 text-center"
+        className="relative -top-20 z-10 flex flex-col items-center px-6 py-16 text-center sm:top-0 sm:py-24"
         style={prefersReducedMotion ? undefined : { opacity: contentOpacity }}
       >
         <Reveal>
