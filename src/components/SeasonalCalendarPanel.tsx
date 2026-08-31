@@ -128,7 +128,7 @@ export function SeasonalCalendarPanel() {
               type="button"
               onClick={() => setView(v)}
               aria-pressed={view === v}
-              className="relative rounded-full px-4 py-1.5 text-sm font-medium capitalize transition-colors duration-300"
+              className="relative inline-flex min-h-11 items-center justify-center rounded-full px-4 py-1.5 text-sm font-medium capitalize transition-colors duration-300"
               style={{ color: view === v ? "#27221E" : "rgba(244,239,230,0.9)" }}
             >
               {view === v && (
@@ -255,7 +255,7 @@ export function SeasonalCalendarPanel() {
           style={{ backgroundColor: element.color }}
           aria-haspopup="dialog"
           aria-controls="footer-booking-dialog"
-          className="shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-ivory"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium text-ivory"
         >
           Talk with Suman
         </motion.button>

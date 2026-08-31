@@ -86,7 +86,7 @@ export default async function BrandStudyPage({ params }: Props) {
           <MediaSlot fill={study.media?.masthead} scrim={0.8} posterPriority />
           <Container className="relative max-w-4xl">
             <Reveal>
-              <Link href="/insights" className="text-sm text-ivory/60 transition-colors hover:text-ivory">
+              <Link href="/insights" className="inline-flex min-h-11 items-center text-sm text-ivory/60 transition-colors hover:text-ivory">
                 ← All insights
               </Link>
               <p className="mt-8 text-sm font-medium uppercase tracking-[0.18em] text-ivory/70">Brand study</p>
