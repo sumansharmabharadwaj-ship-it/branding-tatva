@@ -459,6 +459,135 @@
     transition-delay: 150ms;
   }
 
+  /* Returning through the story reverses the camera grammar. The active
+     composition still resolves to the same stable layout; only its offstage
+     origin changes, so upward exploration feels like a deliberate rewind. */
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__header {
+    transform: translate3d(1.4rem, 0.35rem, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    :is(.brand-orbit__question, .brand-orbit__result) {
+    transform: translate3d(0, -1.1rem, 0) scale(0.975);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__header,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__header,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    .paths-film__header,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__header,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__topline,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__header,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__topline {
+    transform: translate3d(0, 0.8rem, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__lead {
+    transform: translate3d(1.7rem, 0, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__index-area {
+    transform: translate3d(-1.5rem, 0, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    .paths-film__answer {
+    transform: translate3d(-1.7rem, -0.7rem, 0) scale(0.985);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__statement {
+    transform: translate3d(1.55rem, 0, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__choices {
+    transform: translate3d(1.4rem, -0.65rem, 0) rotate(0.45deg);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__copy {
+    transform: translate3d(1.5rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    :is(.cost-film__rail, .cost-film__resolution) {
+    transform: translate3d(-1.7rem, 0, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__stage {
+    transform: translate3d(1rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    :is(.paths-film__lead, .paths-film__chooser) {
+    transform: translate3d(1.5rem, -0.7rem, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__reading {
+    transform: translate3d(-1.55rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__answer {
+    transform: translate3d(-1.4rem, -0.65rem, 0) rotate(-0.45deg);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__promise {
+    transform: translate3d(-1.5rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__stage {
+    transform: translate3d(0, -1.4rem, 0) scale(0.98);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__selector {
+    transform: translate3d(0, -1rem, 0) scaleX(0.94);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__footer {
+    transform: translate3d(0, -0.9rem, 0);
+  }
+
   /* Every chapter resolves to its authored, fully legible composition. */
   .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
     .brand-orbit__header,
