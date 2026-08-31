@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/Container";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
@@ -322,6 +323,16 @@ export function StrategyRoomCTA() {
                       <p id="strategy-calendar-description" className="mt-2 max-w-2xl text-sm leading-relaxed text-ivory/72">
                         Choose a time without losing the brief you have already prepared.
                       </p>
+                      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm leading-relaxed text-ivory/65">
+                        <span>Calendar not showing times? Send the decision directly.</span>
+                        <Link
+                          href="/contact"
+                          className="inline-flex min-h-11 items-center rounded-full border border-sandstone/35 px-4 py-2 font-medium text-ivory transition-colors hover:border-sandstone/65 hover:bg-sandstone/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                        >
+                          Open the contact room
+                          <span aria-hidden="true" className="ml-2">→</span>
+                        </Link>
+                      </div>
                     </div>
                     <button
                       ref={closeButtonRef}
