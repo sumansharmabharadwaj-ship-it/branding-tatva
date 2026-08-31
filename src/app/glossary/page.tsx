@@ -38,6 +38,7 @@ export default function GlossaryPage() {
             imagePosition="center"
             parallax
             playbackRate={0.9}
+            posterPriority
           />
           <div className="absolute inset-0 bg-soil/55" />
           <div className="absolute inset-0 bg-gradient-to-r from-soil via-soil/70 to-soil/20" />

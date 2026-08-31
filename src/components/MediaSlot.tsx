@@ -27,11 +27,14 @@ export function MediaSlot({
   fill,
   scrim = 0.82,
   parallax = true,
+  posterPriority = false,
 }: {
   fill?: SlotFill;
   /** How hard the section's own ground sits over the footage. */
   scrim?: number;
   parallax?: boolean;
+  /** Reserve eager poster loading for an above-the-fold media slot. */
+  posterPriority?: boolean;
 }) {
   if (!fill) return null;
 
@@ -43,6 +46,7 @@ export function MediaSlot({
         imagePosition={fill.position ?? "center"}
         parallax={parallax}
         playbackRate={fill.playbackRate ?? 1}
+        posterPriority={posterPriority}
       />
       <div aria-hidden="true" className="absolute inset-0" style={{ backgroundColor: `rgba(20,18,16,${scrim})` }} />
     </>

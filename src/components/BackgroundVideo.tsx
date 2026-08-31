@@ -42,7 +42,7 @@ export function BackgroundVideo({
   parallax = false,
   push = false,
   playbackRate = 1,
-  posterPriority = true,
+  posterPriority = false,
   managedByHomepage = false,
 }: {
   video: string;
@@ -73,9 +73,9 @@ export function BackgroundVideo({
   // An opt-in pace adjustment for generated or unusually slow ambient
   // clips. Existing sections remain at their encoded 1x speed.
   playbackRate?: number;
-  // Reduced-motion visitors receive the poster instead of video. Existing
-  // hero-like usages retain eager loading by default; known offscreen scenes
-  // can opt out so their posters do not compete with the page LCP image.
+  // Reduced-motion visitors receive the poster instead of video. Keep eager
+  // loading opt-in so a long page's offscreen scenes never compete with its
+  // LCP image; first-frame heroes declare posterPriority explicitly.
   posterPriority?: boolean;
   // Homepage scenes share one playback budget. When opted in, this component
   // keeps fade/source cleanup ownership while the page director owns play,
@@ -131,14 +131,10 @@ export function BackgroundVideo({
       playsInline
       aria-hidden="true"
       data-home-playback-rate={safePlaybackRate}
-      // Was the browser-default eager preload — a Lighthouse profile of
-      // Services caught every BackgroundVideo instance on the page
-      // (~27MB combined) downloading during initial load, competing
-      // with the LCP hero for bandwidth. metadata-only now; the
-      // offscreen-pause observer in useVideoFadeIn calls play() 25%
-      // before a video becomes visible, which starts its real download
-      // ahead of paint, with the poster covering the gap.
-      preload={managedByHomepage ? "none" : "metadata"}
+      // The viewport observer calls play() 25% before an offscreen scene
+      // arrives. Lower chapters and homepage-directed scenes avoid even
+      // metadata requests; explicit first-frame heroes keep metadata warm.
+      preload={posterPriority && !managedByHomepage ? "metadata" : "none"}
     >
       {videoMobile && (
         <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />

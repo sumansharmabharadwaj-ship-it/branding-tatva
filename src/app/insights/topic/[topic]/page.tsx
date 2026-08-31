@@ -234,7 +234,7 @@ export default async function InsightTopicPage({ params }: Props) {
       <main id="main-content" className="insights-topic-page">
         <header className="insights-topic-hero relative flex items-end overflow-hidden bg-soil pb-16 pt-36 sm:pb-20 sm:pt-44">
           {element?.video && (
-            <BackgroundVideo video={element.video} poster={element.image} />
+            <BackgroundVideo video={element.video} poster={element.image} posterPriority />
           )}
           <div className="absolute inset-0 bg-soil/50" />
           <div className="absolute inset-0 bg-gradient-to-t from-soil via-soil/30 to-transparent" />

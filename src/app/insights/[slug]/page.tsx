@@ -270,7 +270,7 @@ export default async function InsightArticlePage({ params }: Props) {
         <article>
           <header className="insight-article-hero relative flex items-end overflow-hidden bg-soil pb-14 pt-36 sm:pb-20 sm:pt-44">
             {post.heroVideo ? (
-              <BackgroundVideo video={post.heroVideo} poster={post.heroImage} />
+              <BackgroundVideo video={post.heroVideo} poster={post.heroImage} posterPriority />
             ) : (
               <Image
                 src={post.heroImage}

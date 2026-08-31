@@ -83,7 +83,7 @@ export default async function BrandStudyPage({ params }: Props) {
             remains data-driven so a study-specific film can replace any
             slot later without changing this template. */}
         <section className="relative overflow-hidden py-20 sm:py-28">
-          <MediaSlot fill={study.media?.masthead} scrim={0.8} />
+          <MediaSlot fill={study.media?.masthead} scrim={0.8} posterPriority />
           <Container className="relative max-w-4xl">
             <Reveal>
               <Link href="/insights" className="text-sm text-ivory/60 transition-colors hover:text-ivory">
