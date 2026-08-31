@@ -89,6 +89,9 @@ export function ServicesExperienceRuntime() {
     let frame = 0;
     let scrollSettleTimer = 0;
     let pointerFrame = 0;
+    let anchorAlignTimer = 0;
+    let anchorAlignAttempts = 0;
+    let anchorAlignCancelled = false;
     let pointerX = 0;
     let pointerY = 0;
     let lastScrollY = window.scrollY;
@@ -238,6 +241,52 @@ export function ServicesExperienceRuntime() {
       pendingAnchorIndex = index;
       publishChapter(index);
       scheduleProgress();
+      settleAnchorChapter(index);
+    }
+
+    function cancelAnchorAlignment() {
+      anchorAlignCancelled = true;
+      window.clearTimeout(anchorAlignTimer);
+      anchorAlignTimer = 0;
+    }
+
+    function onManualAnchorKey(event: KeyboardEvent) {
+      if (
+        event.key === "PageDown" ||
+        event.key === "PageUp" ||
+        event.key === "Home" ||
+        event.key === "End" ||
+        event.key === " " ||
+        event.key === "ArrowDown" ||
+        event.key === "ArrowUp"
+      ) {
+        cancelAnchorAlignment();
+      }
+    }
+
+    function alignAnchorChapter(index: number) {
+      if (anchorAlignCancelled) return;
+      const chapter = scenes[index];
+      if (!chapter) return;
+
+      const marginTop = Number.parseFloat(window.getComputedStyle(chapter).scrollMarginTop) || 0;
+      if (Math.abs(chapter.getBoundingClientRect().top - marginTop) > 1) {
+        const lenis = window.__lenisInstance;
+        if (lenis) lenis.scrollTo(chapter, { immediate: true });
+        else chapter.scrollIntoView({ behavior: "auto", block: "start" });
+      }
+
+      anchorAlignAttempts += 1;
+      if (anchorAlignAttempts < 6 && !anchorAlignCancelled) {
+        anchorAlignTimer = window.setTimeout(() => alignAnchorChapter(index), 280);
+      }
+    }
+
+    function settleAnchorChapter(index: number) {
+      window.clearTimeout(anchorAlignTimer);
+      anchorAlignCancelled = false;
+      anchorAlignAttempts = 0;
+      anchorAlignTimer = window.setTimeout(() => alignAnchorChapter(index), 0);
     }
 
     // One geometric focal line owns chapter state. Intersection ratios can
@@ -551,6 +600,7 @@ export function ServicesExperienceRuntime() {
     if (initialAnchorIndex >= 0) {
       pendingAnchorIndex = initialAnchorIndex;
       publishChapter(initialAnchorIndex);
+      settleAnchorChapter(initialAnchorIndex);
     } else {
       publishChapter(0);
     }
@@ -559,6 +609,9 @@ export function ServicesExperienceRuntime() {
     window.addEventListener("resize", scheduleProgress, { passive: true });
     window.addEventListener("pageshow", scheduleProgress);
     window.addEventListener("hashchange", publishAnchorChapter);
+    window.addEventListener("wheel", cancelAnchorAlignment, { passive: true });
+    window.addEventListener("touchmove", cancelAnchorAlignment, { passive: true });
+    window.addEventListener("keydown", onManualAnchorKey);
     servicesRoot.addEventListener("pointermove", onPointerMove, { passive: true });
     servicesRoot.addEventListener("pointerleave", onPointerLeave);
 
@@ -566,10 +619,14 @@ export function ServicesExperienceRuntime() {
       window.cancelAnimationFrame(frame);
       window.cancelAnimationFrame(pointerFrame);
       window.clearTimeout(scrollSettleTimer);
+      window.clearTimeout(anchorAlignTimer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);
       window.removeEventListener("hashchange", publishAnchorChapter);
+      window.removeEventListener("wheel", cancelAnchorAlignment);
+      window.removeEventListener("touchmove", cancelAnchorAlignment);
+      window.removeEventListener("keydown", onManualAnchorKey);
       servicesRoot.removeEventListener("pointermove", onPointerMove);
       servicesRoot.removeEventListener("pointerleave", onPointerLeave);
       delete document.documentElement.dataset.servicesExperience;
