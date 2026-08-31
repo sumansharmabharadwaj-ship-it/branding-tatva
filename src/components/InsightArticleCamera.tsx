@@ -10,21 +10,48 @@ export function InsightArticleCamera() {
 
   useEffect(() => {
     const root = document.querySelector<HTMLElement>(".insight-article-page");
-    const chapters = Array.from(
-      document.querySelectorAll<HTMLElement>(".insight-article-section"),
-    );
+    if (!root) return;
 
-    if (!root || chapters.length === 0) return;
     const articleRoot = root;
+    const observedChapters = new Set<HTMLElement>();
+
+    function readChapters() {
+      const chapters = Array.from(
+        articleRoot.querySelectorAll<HTMLElement>(".insight-article-section"),
+      );
+
+      chapters.forEach((chapter) => observedChapters.add(chapter));
+      return chapters;
+    }
+
+    function clearChapterMotion(chapter: HTMLElement) {
+      delete chapter.dataset.active;
+      chapter.style.removeProperty("--chapter-focus");
+      chapter.style.removeProperty("--chapter-progress");
+      chapter.style.removeProperty("--chapter-shift");
+      chapter.style.removeProperty("--chapter-velocity");
+      chapter.style.removeProperty("--chapter-pointer-x");
+      chapter.style.removeProperty("--chapter-pointer-y");
+    }
 
     if (prefersReducedMotion) {
-      chapters.forEach((chapter) => {
-        chapter.style.setProperty("--chapter-shift", "0px");
-        chapter.style.setProperty("--chapter-focus", "1");
-        chapter.style.setProperty("--chapter-progress", "1");
-        chapter.style.setProperty("--chapter-velocity", "0");
-      });
-      return;
+      function settleChapters() {
+        readChapters().forEach((chapter) => {
+          chapter.style.setProperty("--chapter-shift", "0px");
+          chapter.style.setProperty("--chapter-focus", "1");
+          chapter.style.setProperty("--chapter-progress", "1");
+          chapter.style.setProperty("--chapter-velocity", "0");
+        });
+      }
+
+      settleChapters();
+      const reducedMotionObserver = new MutationObserver(settleChapters);
+      reducedMotionObserver.observe(articleRoot, { childList: true, subtree: true });
+
+      return () => {
+        reducedMotionObserver.disconnect();
+        observedChapters.forEach(clearChapterMotion);
+      };
     }
 
     let frame = 0;
@@ -42,7 +69,7 @@ export function InsightArticleCamera() {
       articleRoot.style.setProperty("--reading-velocity", velocity.toFixed(3));
       previousY = currentY;
 
-      chapters.forEach((chapter) => {
+      readChapters().forEach((chapter) => {
         const rect = chapter.getBoundingClientRect();
         const center = rect.top + rect.height * 0.42;
         const distance = Math.abs(center - viewportHeight * 0.5);
@@ -97,11 +124,14 @@ export function InsightArticleCamera() {
     }
 
     render();
+    const chapterObserver = new MutationObserver(requestRender);
+    chapterObserver.observe(articleRoot, { childList: true, subtree: true });
     window.addEventListener("scroll", requestRender, { passive: true });
     window.addEventListener("resize", requestRender);
     document.addEventListener("pointermove", requestPointerRender, { passive: true });
 
     return () => {
+      chapterObserver.disconnect();
       window.removeEventListener("scroll", requestRender);
       window.removeEventListener("resize", requestRender);
       document.removeEventListener("pointermove", requestPointerRender);
@@ -109,15 +139,7 @@ export function InsightArticleCamera() {
       if (pointerFrame) window.cancelAnimationFrame(pointerFrame);
       delete articleRoot.dataset.readingDirection;
       articleRoot.style.removeProperty("--reading-velocity");
-      chapters.forEach((chapter) => {
-        delete chapter.dataset.active;
-        chapter.style.removeProperty("--chapter-focus");
-        chapter.style.removeProperty("--chapter-progress");
-        chapter.style.removeProperty("--chapter-shift");
-        chapter.style.removeProperty("--chapter-velocity");
-        chapter.style.removeProperty("--chapter-pointer-x");
-        chapter.style.removeProperty("--chapter-pointer-y");
-      });
+      observedChapters.forEach(clearChapterMotion);
     };
   }, [prefersReducedMotion]);
 
