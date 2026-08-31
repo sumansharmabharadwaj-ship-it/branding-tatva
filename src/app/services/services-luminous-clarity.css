@@ -188,6 +188,58 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     padding: 1rem;
   }
 
+  /* The first commercial decision must expose all three routes at once.
+     A compact tabbed instrument keeps the alternatives and the selected
+     answer inside one mobile reading frame, clear of the chapter rail. */
+  #situation {
+    padding-top: 1.5rem !important;
+    padding-bottom: calc(7.75rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  #situation [data-situation-grid="true"] {
+    gap: 0.85rem;
+  }
+
+  #situation [data-services-chapter-copy="true"] {
+    padding: 0.85rem;
+  }
+
+  #situation [data-services-chapter-copy="true"] h2 {
+    margin-top: 0.35rem;
+    font-size: clamp(1.55rem, 7.2vw, 1.85rem);
+    line-height: 1.04;
+  }
+
+  #situation [data-services-chapter-copy="true"] > p:nth-of-type(2) {
+    margin-top: 0.7rem;
+    font-size: 0.76rem;
+    line-height: 1.45;
+  }
+
+  #situation [data-services-chapter-copy="true"] > p:last-child:not(:nth-of-type(2)) {
+    margin-top: 0.55rem;
+  }
+
+  #situation [data-situation-mobile-deck="true"] {
+    min-height: 0;
+  }
+
+  #situation [data-situation-tab="true"] {
+    min-width: 0;
+  }
+
+  #situation [data-situation-detail="true"] {
+    margin-bottom: 0;
+  }
+
+  #situation [data-situation-route-action="true"] > div {
+    display: block;
+  }
+
+  #situation [data-situation-route-action="true"] a {
+    width: 100%;
+  }
+
   /* The carried route makes the Perception chapter more useful, but short
      laptop windows still need the complete market-state instrument in one
      frame. Compress only the surrounding rhythm; every decision and evidence

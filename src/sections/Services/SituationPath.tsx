@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
@@ -74,6 +74,7 @@ export function SituationPath() {
   const [preview, setPreview] = useState<ServicesSituationId>(FIRST_OPTION.id);
   const [carried, setCarried] = useState(false);
   const holdUntilRef = useRef(0);
+  const mobileTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
@@ -133,11 +134,28 @@ export function SituationPath() {
     setCarried(false);
   }
 
+  function moveMobileTab(event: KeyboardEvent<HTMLButtonElement>, currentIndex: number) {
+    let nextIndex = currentIndex;
+    if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % OPTIONS.length;
+    else if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + OPTIONS.length) % OPTIONS.length;
+    else if (event.key === "Home") nextIndex = 0;
+    else if (event.key === "End") nextIndex = OPTIONS.length - 1;
+    else return;
+
+    event.preventDefault();
+    const next = OPTIONS[nextIndex];
+    if (!next) return;
+    pick(next.id);
+    mobileTabRefs.current[nextIndex]?.focus();
+  }
+
   const displayed = selected ?? preview;
+  const displayedOption = OPTIONS.find((option) => option.id === displayed) ?? FIRST_OPTION;
+  const displayedPackage = packages.find((entry) => entry.slug === SITUATION_TO_PACKAGE[displayed]);
 
   return (
     <Container className="max-w-6xl">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-20">
+      <div data-situation-grid="true" className="grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-20">
         <div data-services-chapter-copy="true" className="lg:sticky lg:top-28 lg:self-start">
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Choose your situation</p>
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
@@ -160,7 +178,87 @@ export function SituationPath() {
           </AnimatePresence>
         </div>
 
-        <div data-services-chapter-instrument="true">
+        <div data-situation-mobile-deck="true" className="lg:hidden">
+          <div
+            role="tablist"
+            aria-label="Choose the situation closest to your brand"
+            className="grid grid-cols-3 gap-1.5 rounded-[1.2rem] border border-ivory/14 bg-[rgba(18,28,23,0.72)] p-1.5 backdrop-blur-xl"
+          >
+            {OPTIONS.map((option, index) => {
+              const isActive = displayed === option.id;
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  role="tab"
+                  id={`situation-tab-${option.id}`}
+                  aria-selected={isActive}
+                  aria-controls="situation-mobile-panel"
+                  tabIndex={isActive ? 0 : -1}
+                  data-situation-tab="true"
+                  ref={(node) => {
+                    mobileTabRefs.current[index] = node;
+                  }}
+                  onClick={() => pick(option.id)}
+                  onKeyDown={(event) => moveMobileTab(event, index)}
+                  className={`min-h-12 rounded-[0.9rem] border px-1.5 py-2 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone ${
+                    isActive
+                      ? "border-sandstone/45 bg-sandstone/[0.12] text-ivory"
+                      : "border-transparent text-ivory/58"
+                  }`}
+                >
+                  <span className="block text-[0.58rem] font-medium uppercase tracking-[0.12em] text-sandstone/80">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="mt-1 block font-display text-sm font-normal leading-none">
+                    {option.id === "idea" ? "Idea" : option.id === "reposition" ? "Reposition" : "Ongoing"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <AnimatePresence mode="wait" initial={false}>
+            {displayedPackage ? (
+              <motion.div
+                id="situation-mobile-panel"
+                key={displayed}
+                role="tabpanel"
+                aria-labelledby={`situation-tab-${displayed}`}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
+                data-situation-detail="true"
+                className="mt-2.5 rounded-[1.3rem] border-t-2 p-4 backdrop-blur-xl"
+                style={{ borderTopColor: displayedPackage.color, backgroundColor: "rgba(18,28,23,0.76)" }}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-display text-xl font-normal text-ivory">{displayedPackage.name}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-ivory/66">{displayedPackage.forWho}</p>
+                  </div>
+                  <span className="shrink-0 font-display text-sm text-sandstone" aria-hidden="true">
+                    {String(OPTIONS.findIndex((option) => option.id === displayed) + 1).padStart(2, "0")} / 03
+                  </span>
+                </div>
+                {!selected ? (
+                  <p className="mt-3 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-sandstone/78">
+                    Route currently in view
+                  </p>
+                ) : null}
+                <p className="mt-2.5 text-sm leading-relaxed text-ivory/88">{displayedOption.reason}</p>
+                <div data-situation-route-action="true" className="mt-4">
+                  <LinkButton href="#desire" className="min-h-11 w-full justify-center">
+                    See the {displayedPackage.name} path
+                  </LinkButton>
+                </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </div>
+
+        <div data-services-chapter-instrument="true" className="hidden lg:block">
           {OPTIONS.map((option, index) => {
             const isActive = displayed === option.id;
             const isCommitted = selected === option.id;
