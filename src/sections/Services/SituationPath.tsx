@@ -162,7 +162,7 @@ export function SituationPath() {
             Three starting points. One of them is yours.
           </h2>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/70">
-            Each starting point changes the order of decisions. The route closest to yours becomes the thread carried through the page.
+            Choose the closest truth. That route will order the work, package and proof that follow.
           </p>
           <AnimatePresence>
             {carried && (
@@ -172,7 +172,7 @@ export function SituationPath() {
                 exit={{ opacity: 0 }}
                 className="mt-5 inline-flex items-center gap-2 rounded-full border border-sandstone/40 px-3.5 py-1.5 text-xs text-sandstone"
               >
-                <span aria-hidden="true">↺</span> Carried forward from your earlier diagnosis.
+                <span aria-hidden="true">↺</span> Your earlier diagnosis is already here.
               </motion.p>
             )}
           </AnimatePresence>
@@ -235,19 +235,19 @@ export function SituationPath() {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="font-display text-xl font-normal text-ivory">{displayedPackage.name}</p>
-                    <p className="mt-1 text-xs leading-relaxed text-ivory/66">{displayedPackage.forWho}</p>
+                    <p data-situation-package-name="true" className="font-display text-xl font-normal text-ivory">{displayedPackage.name}</p>
+                    <p data-situation-package-for="true" className="mt-1 text-xs leading-relaxed text-ivory/66">{displayedPackage.forWho}</p>
                   </div>
                   <span className="shrink-0 font-display text-sm text-sandstone" aria-hidden="true">
                     {String(OPTIONS.findIndex((option) => option.id === displayed) + 1).padStart(2, "0")} / 03
                   </span>
                 </div>
                 {!selected ? (
-                  <p className="mt-3 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-sandstone/78">
+                  <p data-situation-route-status="true" className="mt-3 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-sandstone/78">
                     Route currently in view
                   </p>
                 ) : null}
-                <p className="mt-2.5 text-sm leading-relaxed text-ivory/88">{displayedOption.reason}</p>
+                <p data-situation-route-reason="true" className="mt-2.5 text-sm leading-relaxed text-ivory/88">{displayedOption.reason}</p>
                 <div data-situation-route-action="true" className="mt-4">
                   <LinkButton href="#desire" className="min-h-11 w-full justify-center">
                     See the {displayedPackage.name} path
