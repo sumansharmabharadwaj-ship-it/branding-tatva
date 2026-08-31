@@ -79,10 +79,7 @@ export function readInsightsIntent() {
   }
 }
 
-export function publishInsightsIntent(
-  detail: InsightsIntentDetail,
-  options?: { broadcast?: boolean },
-) {
+export function publishInsightsIntent(detail: InsightsIntentDetail) {
   if (typeof window === "undefined") return;
 
   try {
@@ -99,9 +96,7 @@ export function publishInsightsIntent(
     // A storage failure should never block the current-page interaction.
   }
 
-  if (options?.broadcast !== false) {
-    window.dispatchEvent(
-      new CustomEvent<InsightsIntentDetail>(INSIGHTS_INTENT_EVENT, { detail }),
-    );
-  }
+  window.dispatchEvent(
+    new CustomEvent<InsightsIntentDetail>(INSIGHTS_INTENT_EVENT, { detail }),
+  );
 }

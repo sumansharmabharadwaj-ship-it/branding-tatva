@@ -239,6 +239,7 @@ export function InsightsExplorer({
   const folioTrackRef = useRef<HTMLDivElement>(null);
   const folioCardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const restoredMobileCardIndexRef = useRef<number | null>(null);
+  const localArticleIntentRef = useRef<InsightsIntentDetail | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const preservesLibraryPlace = sectionId === "insights-library";
 
@@ -262,6 +263,11 @@ export function InsightsExplorer({
 
     function carryIntent(event: Event) {
       const { detail } = event as CustomEvent<InsightsIntentDetail>;
+      if (detail === localArticleIntentRef.current) {
+        localArticleIntentRef.current = null;
+        setCarriedIntent(detail);
+        return;
+      }
       applyIntent(detail);
     }
 
@@ -520,15 +526,14 @@ export function InsightsExplorer({
 
     if (!articleTopic) return;
 
-    publishInsightsIntent(
-      {
-        topicSlug: articleTopic.slug,
-        query: settledQuery,
-        label: articleTopic.name,
-        origin: "insights-article",
-      },
-      { broadcast: false },
-    );
+    const articleIntent: InsightsIntentDetail = {
+      topicSlug: articleTopic.slug,
+      query: settledQuery,
+      label: articleTopic.name,
+      origin: "insights-article",
+    };
+    localArticleIntentRef.current = articleIntent;
+    publishInsightsIntent(articleIntent);
   }
 
   function recoverWithQuery(nextQuery: string) {
