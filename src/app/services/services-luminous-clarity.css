@@ -664,13 +664,13 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     margin-top: 0.65rem;
   }
 
-  /* Perception is a diagnostic, so its answer needs to enter with the chapter.
-     The former two-row selector spent the mobile frame on navigation and left
-     the actual market state behind the fixed controls. Keep all four choices,
-     then compress the surrounding rhythm into one complete reading surface. */
+  /* Perception is a diagnostic, not a summary card. Phones keep all four
+     choices near the chapter entrance, then let the complete market state,
+     decision and evidence read in natural flow. The extra release after the
+     panel keeps its audit action clear of the fixed chapter controls. */
   #education {
     padding-top: 1.25rem !important;
-    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(10.5rem + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   #education [data-perception-system="true"] {
@@ -688,13 +688,9 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   }
 
   #education [data-perception-intro="true"] {
-    display: -webkit-box;
     margin-top: 0.45rem;
-    overflow: hidden;
-    font-size: 0.71rem;
-    line-height: 1.36;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    font-size: 0.78rem;
+    line-height: 1.45;
   }
 
   #education [data-perception-progress="true"] {
@@ -707,7 +703,7 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   }
 
   #education [data-perception-route="true"] > p:first-child {
-    font-size: 0.5rem;
+    font-size: 0.58rem;
     letter-spacing: 0.13em;
   }
 
@@ -729,7 +725,7 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
 
   #education [data-services-chapter-instrument="true"] > button {
     display: flex;
-    min-height: 3.25rem;
+    min-height: 3.65rem;
     flex-direction: column;
     justify-content: center;
     gap: 0.2rem;
@@ -738,16 +734,14 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   }
 
   #education [data-services-chapter-instrument="true"] > button > span:first-of-type {
-    font-size: 0.68rem;
+    font-size: 0.72rem;
   }
 
   #education [data-services-chapter-instrument="true"] > button > span:nth-of-type(2) {
     max-width: 100%;
-    overflow: hidden;
-    font-size: 0.69rem;
-    line-height: 1.1;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 0.75rem;
+    line-height: 1.08;
+    white-space: normal;
   }
 
   #education [data-services-chapter-instrument="true"] > button > span:last-of-type {
@@ -759,8 +753,8 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   }
 
   #education [data-perception-panel="true"] {
-    min-height: 18.75rem;
-    padding: 0.8rem;
+    min-height: 0;
+    padding: 1rem;
     opacity: 1 !important;
     transform: none !important;
   }
@@ -777,48 +771,42 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   }
 
   #education [data-perception-explanation="true"] {
-    display: -webkit-box;
-    margin-top: 0.45rem !important;
-    overflow: hidden;
-    font-size: 0.7rem !important;
-    line-height: 1.34 !important;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    margin-top: 0.6rem !important;
+    font-size: 0.78rem !important;
+    line-height: 1.45 !important;
   }
 
   #education [data-perception-evidence-grid="true"] {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.6rem;
-    margin-top: 0.55rem;
-    padding-top: 0.5rem;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding-top: 0.65rem;
   }
 
   #education [data-perception-evidence-grid="true"] > div:last-child {
-    border-left: 1px solid rgba(244, 239, 230, 0.12);
-    padding-left: 0.6rem;
+    border-top: 1px solid rgba(244, 239, 230, 0.12);
+    border-left: 0;
+    padding-top: 0.75rem;
+    padding-left: 0;
   }
 
   #education [data-perception-evidence-grid="true"] p:last-child {
-    display: -webkit-box;
     margin-top: 0.25rem;
-    overflow: hidden;
-    font-size: 0.66rem;
-    line-height: 1.32;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    font-size: 0.76rem;
+    line-height: 1.42;
   }
 
   #education [data-perception-system-result="true"] {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.5rem !important;
-    padding-top: 0.45rem !important;
+    gap: 0.55rem 0.75rem;
+    margin-top: 0.75rem !important;
+    padding-top: 0.65rem !important;
   }
 
   #education [data-perception-system-result="true"] > p:first-child {
-    display: none;
+    display: block;
   }
 
   #education [data-perception-system-result="true"] > p:last-child {
@@ -831,10 +819,12 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   }
 
   #education [data-perception-mobile-action="true"] {
-    grid-column: 1;
-    grid-row: 1;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    margin-top: 0.35rem;
     padding-inline: 0.8rem;
-    font-size: 0.72rem;
+    font-size: 0.78rem;
   }
 
   #proof [data-verified-outcome-phase] {
