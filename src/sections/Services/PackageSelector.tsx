@@ -364,9 +364,11 @@ export function PackageSelector() {
                   </ul>
                   <div data-package-actions="true" className="mt-4 flex flex-wrap gap-3">
                     {proof && (
-                      <LinkButton href={`/work/${proof.slug}`} variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10" >
-                        See it in action: {proof.title}
-                      </LinkButton>
+                      <div data-package-proof-action="true">
+                        <LinkButton href={`/work/${proof.slug}`} variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
+                          See it in action: {proof.title}
+                        </LinkButton>
+                      </div>
                     )}
                     <LinkButton href={servicesContactHref(activePackage.slug as PackageSlug)} style={{ backgroundColor: activePackage.color }}>
                       Start with {activePackage.name}

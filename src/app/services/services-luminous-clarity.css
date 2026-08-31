@@ -468,7 +468,7 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     font-size: 0.72rem;
     line-height: 1.35;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
   }
 
   #desire [data-package-details="true"] {
@@ -493,6 +493,10 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     display: grid;
     gap: 0.35rem;
     margin-top: 0.55rem;
+  }
+
+  #desire [data-package-proof-action="true"] {
+    display: none;
   }
 
   #desire [data-package-actions="true"] > div,
