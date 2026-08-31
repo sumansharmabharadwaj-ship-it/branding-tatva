@@ -2,6 +2,8 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { AnimatePresence, motion, useInView } from "framer-motion";
+import { ArrowDown } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 import type { ProcessStage } from "@/data/process";
 import {
@@ -383,7 +385,14 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                 ? `Your path begins at ${pathEntryStage.stage}`
                 : "The six decisions"}
             </span>
-            <span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>
+            <Link
+              href="#studio"
+              onClick={() => chooseStage(active, true)}
+              aria-label={`Carry Decision ${active + 1}, ${stage.stage}, into the thinking behind the work`}
+            >
+              Carry Decision {String(active + 1).padStart(2, "0")} forward
+              <ArrowDown size={13} strokeWidth={1.8} aria-hidden="true" />
+            </Link>
           </div>
           <div
             className="decision-flow__rail"

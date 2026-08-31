@@ -41,6 +41,7 @@ const valid = {
   completedAt: now - 1000,
 };
 assert(journey.completedHomeDiagnosisFrom(valid, now) === "idea", "Fresh completed diagnosis was rejected.");
+assert(journey.completedHomeDiagnosisFrom({ ...valid, origin: "home_evidence" }, now) === null, "Evidence browsing personalized the invitation as a completed diagnosis.");
 assert(journey.completedHomeDiagnosisFrom({ ...valid, origin: "home_paths" }, now) === null, "Path browsing personalized the invitation.");
 assert(journey.completedHomeDiagnosisFrom({ ...valid, origin: "services" }, now) === null, "Services browsing personalized the invitation.");
 assert(journey.completedHomeDiagnosisFrom({ ...valid, completedAt: now + 1 }, now) === null, "Future diagnosis was accepted.");

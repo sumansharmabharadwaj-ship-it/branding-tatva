@@ -14,6 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/Container";
 import { projects, type Project } from "@/data/projects";
 import {
@@ -34,13 +35,14 @@ const PROJECTS_BY_SLUG = new Map(projects.map((project) => [project.slug, projec
 const SITUATION_LABEL: Record<ServicesSituationId, string> = {
   idea: "New brand",
   reposition: "Repositioning",
-  ongoing: "Brand growth",
+  ongoing: "Repeatable system",
 };
 
 const PROOF_TO_SITUATION: Partial<Record<string, ServicesSituationId>> = {
   [SITUATION_TO_PROOF_SLUG.idea]: "idea",
   [SITUATION_TO_PROOF_SLUG.reposition]: "reposition",
   [SITUATION_TO_PROOF_SLUG.ongoing]: "ongoing",
+  "executive-springboard": "ongoing",
 };
 
 const DECISION: Record<string, { big: string; label: string }> = {
@@ -251,7 +253,7 @@ export function EvidenceWall() {
 
   function continueIntoPath() {
     if (!activeSituation) return;
-    publishServicesSituation(activeSituation, "home_paths");
+    publishServicesSituation(activeSituation, "home_evidence");
   }
 
   return (
@@ -384,13 +386,23 @@ export function EvidenceWall() {
                   onPointerEnter={prepareProjectFile}
                   onFocus={prepareProjectFile}
                 >
-                  Open the project record <span aria-hidden="true">↗</span>
+                  Open the project record
+                  <ArrowUpRight size={14} strokeWidth={1.8} aria-hidden="true" />
                 </button>
-                <Link href="#paths" onClick={continueIntoPath}>
-                  {activeSituation
-                    ? `Continue with the ${SITUATION_LABEL[activeSituation].toLowerCase()} path`
-                    : "See which engagement fits"}
-                  <span aria-hidden="true">→</span>
+                <Link
+                  className="evidence-cinematic__path-link"
+                  href="#paths"
+                  onClick={continueIntoPath}
+                >
+                  <span className="evidence-cinematic__path-link-copy">
+                    <small>{activeSituation ? "This case points toward" : "Next chapter"}</small>
+                    <strong>
+                      {activeSituation
+                        ? `${SITUATION_LABEL[activeSituation]} path`
+                        : "Choose your starting point"}
+                    </strong>
+                  </span>
+                  <ArrowDown size={15} strokeWidth={1.8} aria-hidden="true" />
                 </Link>
               </div>
             </motion.article>

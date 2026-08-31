@@ -133,6 +133,7 @@ assert(process.includes("aria-selected={committed}"), "Working-method hover chan
 assert(process.includes("tabIndex={committed ? 0 : -1}"), "Working-method hover moves the keyboard tab stop.");
 assert(process.includes("setActive(committedStage)"), "Working-method hover does not restore the visitor's committed decision.");
 assert(process.includes("data-path-entry-stage=") && process.includes("data-path-entry={pathEntry"), "Working method no longer distinguishes the visitor's original path entry from later exploration.");
+assert(process.includes('href="#studio"') && process.includes("chooseStage(active, true)"), "Working method can leave without committing the decision the visitor is currently reading.");
 assert(!process.includes("void video.play()") && !process.includes("video.pause()"), "Working method bypasses the shared one-film playback budget.");
 assert(process.includes('preload="none"') && process.includes('data-home-playback-rate="0.72"'), "Working-method film does not yield loading and pace to the homepage media director.");
 assert(processStyles.includes("@keyframes decisionFlowBeat"), "Working method has no bounded stage pulse.");
@@ -142,6 +143,7 @@ assert(evidence.includes("onFocus={() => choose(index)}"), "Selected-work cases 
 assert(evidence.includes("const committed = index === committedIndex"), "Selected-work previews replace the committed tab state.");
 assert(evidence.includes("aria-selected={committed}"), "Selected-work hover changes assistive selection state.");
 assert(evidence.includes("tabIndex={committed ? 0 : -1}"), "Selected-work hover moves the keyboard tab stop.");
+assert(evidence.includes('publishServicesSituation(activeSituation, "home_evidence")'), "Selected work cannot identify its path handoff as evidence led.");
 assert(evidence.includes("EVIDENCE_META[project.slug]?.type"), "Selected-work index does not distinguish measured performance from delivered systems.");
 assert(evidence.includes('dynamic(\n  () => loadProjectFile()') && evidence.includes("projectFileRequested ?"), "The project-file overlay is bundled before a visitor expresses intent to inspect it.");
 assert(evidence.includes("onPointerEnter={prepareProjectFile}") && evidence.includes("onFocus={prepareProjectFile}"), "The deferred project file is not prepared for pointer and keyboard intent.");
@@ -170,6 +172,8 @@ assert(mediaDirector.includes("const MIN_PLAYBACK_RATE = 0.65") && mediaDirector
 assert(backgroundVideo.includes("data-home-playback-rate={safePlaybackRate}"), "Background films do not publish their authored pace to the homepage media director.");
 assert(paths.includes('data-home-playback-rate="0.82"'), "Service-path film has lost its calm authored pace.");
 assert(paths.includes("const displayed = index === activeIndex"), "Service-path preview has no separate visual state.");
+assert(paths.includes('type CarriedPathSource = "diagnostic" | "evidence" | null'), "Service paths cannot preserve the source of a carried recommendation.");
+assert(paths.includes('data-proof-origin={carriedFrom === "evidence" && !isPreviewing ? "evidence" : "case"}'), "Evidence reasoning can remain attached to an unrelated path preview.");
 assert(paths.includes("aria-selected={committed}"), "Service-path hover replaces the committed recommendation.");
 assert(paths.includes("tabIndex={committed ? 0 : -1}"), "Service-path hover moves the keyboard tab stop.");
 assert(videoFadeIn.includes("playbackManagedExternally = false") && videoFadeIn.includes("if (!playbackManagedExternally)"), "Reusable video fade-in cannot yield playback without losing cleanup ownership.");

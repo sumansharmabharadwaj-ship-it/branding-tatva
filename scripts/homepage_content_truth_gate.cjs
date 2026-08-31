@@ -30,12 +30,12 @@ assert(!/M\.A\. Clinical Psychology|B\.A\.(?: Hons)? English Literature/.test(st
 assert(studio.includes('credential: "Applied psychology"') && studio.includes('credential: "Applied literature"'), "Claim-safe applied disciplines are missing.");
 assert(invitation.includes('import { consultation, site } from "@/data/site"'), "Final invitation duplicates the consultation contract.");
 assert(invitation.includes("consultation.actionLabel") && invitation.includes("consultation.minutes"), "Final invitation hardcodes duration or action copy.");
-assert(invitation.includes("consultation.fullSteps[activeCallStep]") && invitation.includes('role="tablist"') && invitation.includes('role="tabpanel"'), "The closing invitation no longer lets visitors inspect the real conversation before booking.");
+assert(invitation.includes("conversationSteps[activeCallStep]") && invitation.includes("consultation.fullSteps[0]") && invitation.includes("consultation.fullSteps[1]") && invitation.includes('role="tablist"') && invitation.includes('role="tabpanel"'), "The closing invitation no longer lets visitors inspect the real conversation before booking.");
 assert(invitation.includes("Clock3") && invitation.includes("Globe2") && invitation.includes("consultation.preparation"), "The closing invitation hides the booking duration, timezone behavior, or preparation fact.");
 assert(!invitation.includes("→"), "The closing invitation restored a text arrow instead of the shared icon language.");
 assert(!/three decisions|Commit the position|Build the first system|We will/i.test(invitation), "Final invitation promises completed strategy work on the first call.");
 assert(invitation.includes("SERVICES_SITUATION_STORAGE_KEY") && invitation.includes("window.localStorage.getItem"), "The closing invitation forgets a deliberately chosen service path.");
-assert(invitation.includes('detail?.origin === "home_diagnostic" || detail?.origin === "home_paths"'), "The closing invitation does not distinguish deliberate homepage choices from unrelated service events.");
+assert(invitation.includes('detail?.origin === "home_diagnostic"') && invitation.includes('detail?.origin === "home_evidence"') && invitation.includes('detail?.origin === "home_paths"'), "The closing invitation does not distinguish deliberate homepage choices from unrelated service events.");
 assert(!invitation.includes("Your diagnosis"), "The closing invitation overstates a selected path as a completed diagnosis.");
 assert((invitation.match(/\bthanks:/g) || []).length >= 5 && invitation.includes("{invitation.thanks}"), "Final invitation no longer closes with path-aware gratitude.");
 assert(invitation.includes('className="final-invitation__thread"') && invitation.includes('aria-hidden="true"'), "Final invitation has lost its quiet, decorative decision thread.");
@@ -79,7 +79,8 @@ assert(evidence.includes("projectsForSituation") && evidence.includes("Matched p
 assert(evidence.includes("project.slug !== primary.slug"), "Client proof can repeat its matched case in the supporting evidence index.");
 assert(evidence.includes("herbalcart") && evidence.includes("Delivered campaign reset"), "Repositioning proof is missing its factual delivered-work boundary.");
 assert(evidence.includes('href="#paths"'), "Client proof no longer hands the visitor into a matched service path.");
-assert(evidence.includes('publishServicesSituation(activeSituation, "home_paths")'), "Client proof selection no longer carries its matching path into the next chapter.");
+assert(evidence.includes('publishServicesSituation(activeSituation, "home_evidence")'), "Client proof selection no longer carries its matching path into the next chapter.");
+assert(evidence.includes('"executive-springboard": "ongoing"'), "A displayed client case can still fall back to an unrelated saved path.");
 assert(evidence.includes("setPreviewIndex(null)") && evidence.includes("Previewing project"), "Client-proof hover can replace a committed case instead of remaining a reversible preview.");
 assert(questions.includes("setPreviewIndex(null)") && questions.includes('isPreviewing ? "Preview"'), "Practical-answer hover can replace a committed question instead of remaining a reversible preview.");
 assert(invitation.includes('calendlyHrefForServicesPackage(`${site.calendlyUrl}/30min`, selectedPackage)'), "The closing calendar handoff drops the visitor's selected service package or exact session route.");
@@ -87,6 +88,7 @@ assert(!invitation.includes('servicesContactHrefForSituation(selectedSituation, 
 assert(invitation.includes('servicesContactHrefForSituation(selectedSituation, "write")'), "The closing invitation gives call-hesitant visitors no package-aware writing route.");
 assert(invitation.includes('{ package: selectedPackage }'), "The closing booking event drops its selected-package context.");
 assert(invitation.includes('event="contact_route_selected"') && invitation.includes('route: "write_first"'), "The closing writing route is not measurable as a distinct visitor choice.");
+assert(invitation.includes("conversationSteps") && invitation.includes("invitation.callClose") && invitation.includes("questionChoice.question") && invitation.includes("carriedLens.question"), "The closing conversation preview ignores the visitor's carried question, lens, or path.");
 assert(questions.includes("carryQuestionForward") && questions.includes("toQuestionChoice(selected, carriedLens)"), "The chosen practical question or its active lens disappears before the final invitation.");
 assert(homeQuestionJourney.includes("HOME_QUESTION_CHOICE_STORAGE_KEY") && homeQuestionJourney.includes("readHomeQuestionChoice"), "The chosen practical question cannot survive a reload or direct invitation entry.");
 assert(invitation.includes("HOME_QUESTION_CHOICE_EVENT") && invitation.includes("readHomeQuestionChoice()") && invitation.includes("questionChoice.question"), "The final invitation does not restore or receive the visitor's chosen practical question.");
@@ -97,9 +99,12 @@ assert(paths.includes('href="#process"'), "The chosen service path no longer con
 assert(paths.includes("See how Suman makes the decision") && paths.includes('data-path-state={isPreviewing ? "preview" : "chosen"}'), "The service path no longer makes its chosen or preview state and next method step explicit.");
 assert(paths.includes('publishServicesSituation(PATHS[index].situation, "home_paths")'), "The service-path handoff loses the visitor's chosen situation.");
 assert(paths.includes("setPreviewIndex(null)") && paths.includes("Previewing another starting point"), "Service-path hover can replace a committed choice instead of remaining a reversible preview.");
-assert(paths.includes('detail?.origin === "home_diagnostic"'), "The service-path label can misrepresent an intentional manual choice as a completed diagnosis.");
+assert(paths.includes('detail?.origin === "home_diagnostic"') && paths.includes('detail?.origin === "home_evidence"'), "The service-path chapter cannot distinguish diagnosis, evidence, and direct choices.");
+assert(paths.includes("This path follows the case you selected") && paths.includes("Why this path follows"), "The evidence recommendation reaches Paths without an explanation.");
 assert(process.includes("SITUATION_TO_STAGE") && process.includes("SERVICES_SITUATION_EVENT"), "The working method no longer opens at the decision relevant to the chosen path.");
 assert(process.includes("SITUATION_PATH_REASON") && process.includes("Path carried forward") && process.includes("Your path begins at"), "The working method no longer explains or preserves the visitor's path entry.");
+assert(process.includes('href="#studio"') && process.includes("chooseStage(active, true)"), "The working method no longer commits the visible decision before carrying it into the studio.");
+assert(process.includes("Carry Decision") && process.includes("forward"), "The working method has lost its explicit handoff into the thinking chapter.");
 assert(process.includes("publishHomeMethodDecision") && studio.includes("HOME_METHOD_DECISION_EVENT") && studio.includes("METHOD_TO_LENS"), "The working method decision no longer opens its relevant studio lens.");
 assert(experience.includes("rgba(238,224,198,0.88) 100%"), "Final invitation loses its reading surface over the dark film edge.");
 assert(/final-invitation__promise > p:first-child\s*\{[^}]*font-size: 0\.75rem/.test(invitationCss), "Final invitation utility text has returned below its readable size.");

@@ -51,6 +51,7 @@ type Invitation = {
   headline: string;
   body: string;
   thanks: string;
+  callClose: string;
   accent: string;
 };
 
@@ -61,6 +62,7 @@ const INVITATIONS: Record<Situation, Invitation> = {
     body:
       "The thirty minute call separates the visible symptom from the brand decision underneath it.",
     thanks: "Thank you for giving the problem your attention before spending money on the wrong answer.",
+    callClose: "You leave with the clearest decision to make first, without being pushed into a larger scope.",
     accent: "#95622D",
   },
   idea: {
@@ -69,6 +71,7 @@ const INVITATIONS: Record<Situation, Invitation> = {
     body:
       "Bring the category or buyer question. The call tests what must be decided before naming, identity, or launch work begins.",
     thanks: "Thank you for staying with the idea long enough to ask what it truly needs.",
+    callClose: "You leave knowing whether positioning, audience, or the first expression system should come first.",
     accent: "#A34F35",
   },
   reposition: {
@@ -77,6 +80,7 @@ const INVITATIONS: Record<Situation, Invitation> = {
     body:
       "Bring the contradiction buyers keep encountering. The call tests whether the position, message, identity, or consistency should change first.",
     thanks: "Thank you for looking at the mismatch before covering it with new design.",
+    callClose: "You leave knowing which contradiction to resolve before changing more of the brand.",
     accent: "#66724D",
   },
   ongoing: {
@@ -85,6 +89,7 @@ const INVITATIONS: Record<Situation, Invitation> = {
     body:
       "Bring the channel or campaign that needs the most correction. The call looks for the first written rule that would reduce the rework.",
     thanks: "Thank you for caring about the pattern, not only the next campaign.",
+    callClose: "You leave knowing which shared rule should steady the next channel or campaign.",
     accent: "#9B681D",
   },
 };
@@ -129,7 +134,11 @@ export function FinalInvitation() {
     function onSituation(event: Event) {
       const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
       if (
-        (detail?.origin === "home_diagnostic" || detail?.origin === "home_paths") &&
+        (
+          detail?.origin === "home_diagnostic" ||
+          detail?.origin === "home_evidence" ||
+          detail?.origin === "home_paths"
+        ) &&
         isServicesSituation(detail.situation)
       ) {
         setSituation(detail.situation);
@@ -178,6 +187,15 @@ export function FinalInvitation() {
   const selectedPackage = selectedSituation ? SITUATION_TO_PACKAGE[selectedSituation] : null;
   const bookingHref = calendlyHrefForServicesPackage(`${site.calendlyUrl}/30min`, selectedPackage);
   const writeHref = servicesContactHrefForSituation(selectedSituation, "write");
+  const conversationSteps = [
+    questionChoice
+      ? `You begin with the exact question carried from the page: ${questionChoice.question}`
+      : consultation.fullSteps[0],
+    carriedLens
+      ? `The ${carriedLens.name.toLowerCase()} lens tests one thing: ${carriedLens.question}`
+      : consultation.fullSteps[1],
+    invitation.callClose,
+  ] as const;
 
   function onCallStepKeyDown(
     event: KeyboardEvent<HTMLButtonElement>,
@@ -336,7 +354,7 @@ export function FinalInvitation() {
               </ol>
               <AnimatePresence mode="sync" initial={false}>
                 <motion.p
-                  key={activeCallStep}
+                  key={`${activeCallStep}-${questionChoice?.id ?? "open"}-${carriedLens?.name ?? "unframed"}-${situation}`}
                   id="final-invitation-step-detail"
                   role="tabpanel"
                   aria-labelledby={`final-invitation-step-${activeCallStep}`}
@@ -349,7 +367,7 @@ export function FinalInvitation() {
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 >
-                  {consultation.fullSteps[activeCallStep]}
+                  {conversationSteps[activeCallStep]}
                 </motion.p>
               </AnimatePresence>
             </div>

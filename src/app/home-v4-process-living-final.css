@@ -211,6 +211,40 @@ html body .home-v4 #process .decision-flow__selector-label {
   text-shadow: 0 2px 20px rgba(12, 28, 20, .46);
 }
 
+html body .home-v4 #process .decision-flow__selector-label > a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: .38rem;
+  margin: -.8rem -.8rem -.8rem 0;
+  padding: .8rem;
+  border-radius: 999px;
+  color: rgba(251, 246, 233, .94);
+  text-decoration: none;
+  text-shadow: 0 2px 20px rgba(12, 28, 20, .46);
+  transition:
+    color 260ms ease,
+    transform 320ms cubic-bezier(.22, 1, .36, 1),
+    background-color 260ms ease;
+}
+
+html body .home-v4 #process .decision-flow__selector-label > a:hover,
+html body .home-v4 #process .decision-flow__selector-label > a:focus-visible {
+  color: #fff9ec;
+  background: rgba(255, 249, 236, .1);
+  transform: translateY(-1px);
+}
+
+html body .home-v4 #process .decision-flow__selector-label > a svg {
+  flex: 0 0 auto;
+  transition: transform 320ms cubic-bezier(.22, 1, .36, 1);
+}
+
+html body .home-v4 #process .decision-flow__selector-label > a:hover svg,
+html body .home-v4 #process .decision-flow__selector-label > a:focus-visible svg {
+  transform: translateY(2px);
+}
+
 html body .home-v4 #process .decision-flow__rail {
   display: grid;
   overflow: visible;
@@ -413,6 +447,13 @@ html body .home-v4 #process .decision-flow[data-method-motion="ambient"] .decisi
     color: rgba(255, 249, 236, .86);
   }
 
+  html body .home-v4 #process .decision-flow__selector-label > a {
+    min-height: 2.75rem;
+    margin-block: -.7rem;
+    padding: .7rem .4rem;
+    text-align: right;
+  }
+
   html body .home-v4 #process .decision-flow__rail {
     display: grid;
     overflow: hidden;
@@ -534,6 +575,11 @@ html body .home-v4 #process .decision-flow[data-method-motion="ambient"] .decisi
   html body .home-v4 #process .decision-flow__rail button {
     min-height: 3.45rem;
   }
+
+  html body .home-v4 #process .decision-flow__selector-label > a {
+    min-height: 2.5rem;
+    padding-block: .55rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -545,6 +591,11 @@ html body .home-v4 #process .decision-flow[data-method-motion="ambient"] .decisi
   }
 
   html body .home-v4 #process .decision-flow__light {
+    transition: none;
+  }
+
+  html body .home-v4 #process .decision-flow__selector-label > a,
+  html body .home-v4 #process .decision-flow__selector-label > a svg {
     transition: none;
   }
 }

@@ -72,6 +72,7 @@ export function calendlyHrefForServicesPackage(baseHref: string, packageSlug: Pa
 
 export type ServicesSituationOrigin =
   | "home_diagnostic"
+  | "home_evidence"
   | "home_paths"
   | "services"
   | "services_package";

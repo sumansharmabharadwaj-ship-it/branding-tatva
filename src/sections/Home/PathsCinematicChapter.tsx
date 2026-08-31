@@ -35,6 +35,8 @@ const PATHS = [
     result: "A market position that makes later creative choices easier to judge.",
     tint: "#ad7336",
     proof: "MyShopInEurope chose craft and origin ahead of price before the platform entered the market.",
+    evidenceBridge:
+      "The case began before the market had a clear category signal. Foundation came before identity.",
   },
   {
     number: "02",
@@ -49,6 +51,8 @@ const PATHS = [
     result: "A brand that represents the business customers are buying today.",
     tint: "#667d63",
     proof: "HerbalCart moved from an accidental herbal frame to a modern supplement position.",
+    evidenceBridge:
+      "The case already had market activity. The immediate work was correcting the meaning buyers received.",
   },
   {
     number: "03",
@@ -63,6 +67,8 @@ const PATHS = [
     result: "A brand the team can use without returning every choice to the founder.",
     tint: "#bd8a3f",
     proof: "Dr. Haley Nutrition posted 48% less and earned 104% more followers per post.",
+    evidenceBridge:
+      "The case already had active channels. The next move was making every signal repeat one decision.",
   },
 ] as const satisfies ReadonlyArray<{
   number: string;
@@ -76,9 +82,11 @@ const PATHS = [
   result: string;
   tint: string;
   proof: string;
+  evidenceBridge: string;
 }>;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+type CarriedPathSource = "diagnostic" | "evidence" | null;
 const SITUATION_TO_INDEX: Record<ServicesSituationId, number> = {
   idea: 0,
   reposition: 1,
@@ -89,34 +97,39 @@ export function PathsCinematicChapter() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const [committedIndex, setCommittedIndex] = useState(0);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
-  const [carriedChoice, setCarriedChoice] = useState(false);
+  const [carriedFrom, setCarriedFrom] = useState<CarriedPathSource>(null);
   const activeIndex = previewIndex ?? committedIndex;
   const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
   const active = PATHS[activeIndex];
 
   useEffect(() => {
-    function applySituation(value: string | null, carried: boolean) {
+    function applySituation(value: string | null, source: CarriedPathSource) {
       if (!isServicesSituation(value)) return;
       setCommittedIndex(SITUATION_TO_INDEX[value]);
       setPreviewIndex(null);
-      setCarriedChoice(carried);
+      setCarriedFrom(source);
     }
 
     try {
       const completedDiagnosis = readCompletedHomeDiagnosis();
-      if (completedDiagnosis) applySituation(completedDiagnosis, true);
-      else applySituation(window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY), false);
+      if (completedDiagnosis) applySituation(completedDiagnosis, "diagnostic");
+      else applySituation(window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY), null);
     } catch {}
 
     function onSituation(event: Event) {
       const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
-      applySituation(detail?.situation ?? null, detail?.origin === "home_diagnostic");
+      const source = detail?.origin === "home_diagnostic"
+        ? "diagnostic"
+        : detail?.origin === "home_evidence"
+          ? "evidence"
+          : null;
+      applySituation(detail?.situation ?? null, source);
     }
 
     function onSituationCleared() {
       setCommittedIndex(0);
       setPreviewIndex(null);
-      setCarriedChoice(false);
+      setCarriedFrom(null);
     }
 
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
@@ -137,7 +150,7 @@ export function PathsCinematicChapter() {
     }
     setCommittedIndex(index);
     setPreviewIndex(null);
-    setCarriedChoice(false);
+    setCarriedFrom(null);
     publishServicesSituation(PATHS[index].situation, "home_paths");
   }
 
@@ -167,6 +180,7 @@ export function PathsCinematicChapter() {
     <section
       id="paths"
       data-active-path={active.situation}
+      data-path-origin={carriedFrom ?? "direct"}
       className="paths-film home-scene"
       aria-labelledby="paths-film-title"
       style={{ "--paths-film-accent": active.tint } as CSSProperties}
@@ -212,11 +226,13 @@ export function PathsCinematicChapter() {
             <div className="paths-film__chooser">
               <div className="paths-film__chooser-label">
                 <span>
-                  {carriedChoice
-                    ? "Your 30 second diagnosis is carried forward"
-                    : isPreviewing
-                      ? "Previewing another starting point"
-                      : "Choose your starting point"}
+                  {isPreviewing
+                    ? "Previewing another starting point"
+                    : carriedFrom === "diagnostic"
+                      ? "Your 30 second diagnosis is carried forward"
+                      : carriedFrom === "evidence"
+                        ? "This path follows the case you selected"
+                        : "Choose your starting point"}
                 </span>
                 <span>{active.choice}</span>
               </div>
@@ -292,7 +308,24 @@ export function PathsCinematicChapter() {
                   <dd>{active.result}</dd>
                 </div>
               </dl>
-              <p className="paths-film__proof">{active.proof}</p>
+              <AnimatePresence mode="sync" initial={false}>
+                <motion.p
+                  key={`${active.number}-${carriedFrom ?? "direct"}-${isPreviewing ? "preview" : "chosen"}`}
+                  className="paths-film__proof"
+                  data-proof-origin={carriedFrom === "evidence" && !isPreviewing ? "evidence" : "case"}
+                  initial={false}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -4, filter: "blur(2px)" }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
+                >
+                  {carriedFrom === "evidence" && !isPreviewing ? (
+                    <>
+                      <span>Why this path follows</span>
+                      {active.evidenceBridge}
+                    </>
+                  ) : active.proof}
+                </motion.p>
+              </AnimatePresence>
               <Link
                 className="paths-film__method-link"
                 href="#process"
