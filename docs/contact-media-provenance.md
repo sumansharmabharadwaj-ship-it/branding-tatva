@@ -18,11 +18,13 @@ The Contact page uses eight newly sourced Pexels clips under the Pexels License.
 | Speak card | https://www.pexels.com/video/close-up-of-tea-set-on-a-wooden-table-6540554/ | Tima Miroshnichenko | `bt-contact-original-speak.mp4` |
 | Write card | https://www.pexels.com/video/blank-paper-being-placed-6278837/ | Artem Podrez | `bt-contact-original-write-card.mp4` |
 | Write scene | https://www.pexels.com/video/rain-drops-of-the-window-6065020/ | Altea Alessandroni | `bt-contact-original-write-scene.mp4` |
-| Call scene | https://www.pexels.com/video/green-trees-near-the-house-5705252/ | Pavel Danilyuk | `bt-contact-original-call.mp4` |
+| Call scene | https://www.pexels.com/video/two-women-talking-5386505/ | KATRIN BOLOVTSOVA | `bt-contact-original-call.mp4` |
 | Gratitude scene | https://www.pexels.com/video/wildflowers-in-a-field-at-sunset-16380181/ | Allen Y | `bt-contact-original-gratitude.mp4` |
 
 ## Web treatment
 
 Each source was cut independently to an eight-second scene, converted to silent H.264/MP4 with fast-start metadata, and given a placement-specific grade. Posters are unique mid-scene frames. The five full-bleed scenes also receive dedicated portrait derivatives; the three pathway-card films retain their landscape aperture.
+
+The Call scene was replaced after an editorial relevance review. Its retired empty exterior gave no evidence of the founder-led conversation described by the chapter. The current film shows two people examining printed creative work together, with a separate portrait crop that preserves both participants on narrow screens.
 
 The Contact media gate rejects legacy Pexels/Pixabay paths, missing assets, repeated desktop placements, duplicate final-file hashes, shared posters, and audio streams.
