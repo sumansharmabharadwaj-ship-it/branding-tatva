@@ -83,6 +83,7 @@ assert(questions.includes("publishHomeQuestionChoice(decisions[committedIndex]")
 assert(invitation.includes("HOME_QUESTION_CHOICE_EVENT") && invitation.includes("questionChoice.question"), "The final invitation does not receive the visitor's chosen practical question.");
 assert(servicesJourney.includes('`/contact?package=${encodeURIComponent(packageSlug)}${hash}`'), "Package-aware contact links no longer preserve their requested chapter anchor.");
 assert(paths.includes('href="#process"'), "The chosen service path no longer continues into the working method.");
+assert(paths.includes("Continue into the working method") && paths.includes('data-path-state={isPreviewing ? "preview" : "chosen"}'), "The service path no longer makes its chosen or preview state and next method step explicit.");
 assert(paths.includes('publishServicesSituation(PATHS[index].situation, "home_paths")'), "The service-path handoff loses the visitor's chosen situation.");
 assert(paths.includes("setPreviewIndex(null)") && paths.includes("Previewing another starting point"), "Service-path hover can replace a committed choice instead of remaining a reversible preview.");
 assert(paths.includes('detail?.origin === "home_diagnostic"'), "The service-path label can misrepresent an intentional manual choice as a completed diagnosis.");

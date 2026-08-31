@@ -20,6 +20,7 @@ const diagnostic = read("src/sections/Home/HomeBrandHealthCheck.tsx");
 const diagnosticStyles = read("src/app/home-v4-orbit-redesign.css");
 const studio = read("src/sections/Home/StudioCinematicChapter.tsx");
 const studioStyles = read("src/app/home-v4-studio-living-final.css");
+const studioSynthesisStyles = read("src/app/home-v4-studio-synthesis-final.css");
 const process = read("src/sections/Process/RootSystem.tsx");
 const projectFile = read("src/sections/Home/ProjectFile.tsx");
 const processStyles = read("src/app/home-v4-process-living-final.css");
@@ -113,6 +114,10 @@ assert(studio.includes('window.addEventListener("scroll", scheduleScrollStage'),
 assert(studio.includes('manualModeRef.current === "focus"'), "Studio scroll can replace a keyboard-focused discipline.");
 assert(studio.includes('event.pointerType !== "mouse"'), "Studio hover preview can consume touch gestures.");
 assert(studio.includes("if (reducedMotion || !eligible.matches) return;"), "Studio scroll stages ignore motion or viewport eligibility.");
+assert(studio.includes("const [committedIndex, setCommittedIndex]"), "Studio previews have no stable committed discipline.");
+assert(studio.includes("aria-selected={committed}") && studio.includes("tabIndex={committed ? 0 : -1}"), "Studio hover changes the selected tab or keyboard stop.");
+assert(studio.includes('aria-live={manualModeRef.current === "focus" ? "polite" : "off"}'), "Studio scroll or pointer previews can interrupt assistive reading.");
+assert(studioSynthesisStyles.includes('button[data-studio-state="committed"]'), "Studio previews erase the visitor's committed visual anchor.");
 assert(/height:\s*148svh\s*!important/.test(studioStyles), "Studio has no bounded three-stage scroll runway.");
 assert(/#studio > \.studio-film\s*\{[^}]*position:\s*sticky\s*!important/s.test(studioStyles), "Studio film does not hold its one-screen composition while disciplines change.");
 assert(process.includes("const FINE_POINTER_QUERY"), "Working method has no fine-pointer motion boundary.");
@@ -147,6 +152,8 @@ assert(cost.includes('amount: 0.55, margin: "0px"'), "Hidden-cost sequencing beg
 assert(cost.includes('if (event.pointerType === "mouse") setInteractionHeld(true)'), "Hidden-cost consequences keep changing while visitors examine them.");
 assert(cost.includes('if (event.pointerType !== "mouse") return;'), "Hidden-cost hover preview can consume touch gestures.");
 assert(cost.includes("onFocus={() => choose(index)}"), "Hidden-cost stages do not commit from keyboard focus.");
+assert(cost.includes("sequencePaused") && cost.includes("aria-label={sequenceAction}"), "Hidden-cost ambient sequencing gives visitors no explicit playback control.");
+assert(cost.includes("aria-selected={committed}") && cost.includes("tabIndex={committed ? 0 : -1}"), "Hidden-cost hover preview replaces the committed keyboard selection.");
 assert(costStyles.includes("scaleX(var(--cost-progress))"), "Hidden cost has lost its accumulating memory trace.");
 assert(costStyles.includes('button[data-cost-state="past"]'), "Hidden cost no longer distinguishes remembered stages from upcoming stages.");
 assert(seamDirector.includes('window.addEventListener("scroll", schedule'), "Homepage seams no longer respond to visitor-controlled scroll.");

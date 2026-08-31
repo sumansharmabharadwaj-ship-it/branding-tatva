@@ -3,7 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Pause, Play, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -183,14 +183,23 @@ export function V4HiddenCostScene() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [committedIndex, setCommittedIndex] = useState(0);
   const [interactionHeld, setInteractionHeld] = useState(false);
+  const [sequencePaused, setSequencePaused] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
   const active = COST_STAGES[activeIndex];
+  const sequenceComplete = ambientCompleteRef.current;
   const ambientSequencing =
     !prefersReducedMotion &&
     inView &&
     pageVisible &&
     !interactionHeld &&
+    !sequencePaused &&
     !ambientCompleteRef.current;
+  const sequenceAction = sequenceComplete
+    ? "Replay sequence"
+    : sequencePaused
+      ? "Continue sequence"
+      : "Pause sequence";
+  const SequenceIcon = sequenceComplete ? RotateCcw : sequencePaused ? Play : Pause;
 
   useEffect(() => {
     function syncVisibility() {
@@ -226,6 +235,7 @@ export function V4HiddenCostScene() {
   function choose(index: number) {
     const next = (index + COST_STAGES.length) % COST_STAGES.length;
     ambientCompleteRef.current = true;
+    setSequencePaused(false);
     setCommittedIndex(next);
     setActiveIndex(next);
   }
@@ -237,6 +247,18 @@ export function V4HiddenCostScene() {
   function releasePreview() {
     setActiveIndex(committedIndex);
     setInteractionHeld(false);
+  }
+
+  function controlSequence() {
+    if (ambientCompleteRef.current) {
+      ambientCompleteRef.current = false;
+      setSequencePaused(false);
+      setCommittedIndex(0);
+      setActiveIndex(0);
+      return;
+    }
+
+    setSequencePaused((paused) => !paused);
   }
 
   function moveFromKeyboard(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
@@ -269,6 +291,7 @@ export function V4HiddenCostScene() {
       data-scroll-story="cost"
       data-active-cost={active.number}
       data-cost-motion={ambientSequencing ? "sequencing" : "held"}
+      data-cost-preview={activeIndex !== committedIndex ? "true" : undefined}
       className="cost-film"
       aria-labelledby="cost-film-title"
     >
@@ -304,7 +327,20 @@ export function V4HiddenCostScene() {
             <span>03</span>
             <p>The hidden cost</p>
           </div>
-          <p>{active.number} / 04</p>
+          <div className="cost-film__header-actions">
+            <p>{active.number} / 04</p>
+            {!prefersReducedMotion && (
+              <button
+                type="button"
+                className="cost-film__sequence-control"
+                aria-label={sequenceAction}
+                onClick={controlSequence}
+              >
+                <SequenceIcon size={14} aria-hidden="true" />
+                <span>{sequenceAction}</span>
+              </button>
+            )}
+          </div>
         </header>
 
         <div className="cost-film__story">
@@ -328,7 +364,6 @@ export function V4HiddenCostScene() {
             onPointerLeave={(event) => {
               if (event.pointerType === "mouse") setInteractionHeld(false);
             }}
-            onPointerDown={() => setInteractionHeld(true)}
             initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.44, ease: EASE }}
@@ -343,8 +378,9 @@ export function V4HiddenCostScene() {
         <div className="cost-film__lower">
           <div className="cost-film__rail" role="tablist" aria-label="Four moments in the cost of changing brand signals">
             {COST_STAGES.map((stage, index) => {
-              const selected = index === activeIndex;
-              const stageState = selected ? "active" : index < activeIndex ? "past" : "future";
+              const displayed = index === activeIndex;
+              const committed = index === committedIndex;
+              const stageState = displayed ? "active" : index < committedIndex ? "past" : "future";
               return (
                 <button
                   key={stage.number}
@@ -354,10 +390,10 @@ export function V4HiddenCostScene() {
                   type="button"
                   role="tab"
                   id={`cost-film-tab-${index}`}
-                  aria-selected={selected}
+                  aria-selected={committed}
                   aria-controls="cost-film-active-panel"
-                  tabIndex={selected ? 0 : -1}
-                  className={selected ? "is-active" : undefined}
+                  tabIndex={committed ? 0 : -1}
+                  className={displayed ? "is-active" : undefined}
                   data-cost-state={stageState}
                   data-cursor-label={stage.number}
                   onClick={() => choose(index)}
@@ -389,7 +425,7 @@ export function V4HiddenCostScene() {
               One position, repeated with care, lets every new signal strengthen the memory already there.
             </p>
             <Link href="#evidence" data-magnetic data-cursor-label="proof">
-              See the decision in practice <ArrowDownRight size={15} />
+              Inspect the proof next <ArrowDownRight size={15} />
             </Link>
           </div>
         </div>

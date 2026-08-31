@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown } from "lucide-react";
 import {
   useEffect,
   useState,
@@ -47,7 +48,7 @@ const PATHS = [
     route: "Decode / Retain / Reframe",
     result: "A clearer meaning that moves expectations forward.",
     tint: "#667d63",
-    proof: "HerbalCart turned a scattered campaign into one modern, supplement-first brand position.",
+    proof: "HerbalCart turned a scattered campaign into one modern supplement brand position.",
   },
   {
     number: "03",
@@ -212,10 +213,10 @@ export function PathsCinematicChapter() {
               <div className="paths-film__chooser-label">
                 <span>
                   {carriedChoice
-                    ? "Your 30-second diagnosis is carried forward"
+                    ? "Your 30 second diagnosis is carried forward"
                     : isPreviewing
                       ? "Previewing another starting point"
-                      : "Your starting point"}
+                      : "Choose your starting point"}
                 </span>
                 <span>{active.choice}</span>
               </div>
@@ -271,6 +272,7 @@ export function PathsCinematicChapter() {
               className="paths-film__answer"
               role="tabpanel"
               aria-labelledby={`path-film-tab-${active.number}`}
+              data-path-state={isPreviewing ? "preview" : "chosen"}
               data-home-reading-plane
               initial={false}
               animate={{ opacity: 1, y: 0 }}
@@ -291,8 +293,18 @@ export function PathsCinematicChapter() {
                 </div>
               </dl>
               <p className="paths-film__proof">{active.proof}</p>
-              <Link href="#process" onClick={() => choose(activeIndex)}>
-                The method for this path <span aria-hidden="true">↓</span>
+              <Link
+                className="paths-film__method-link"
+                href="#process"
+                onClick={() => choose(activeIndex)}
+              >
+                <span className="paths-film__method-link-copy">
+                  <small>Next chapter</small>
+                  Continue into the working method
+                </span>
+                <span className="paths-film__method-link-arrow" aria-hidden="true">
+                  <ArrowDown size={16} strokeWidth={1.8} />
+                </span>
               </Link>
             </motion.article>
           </AnimatePresence>

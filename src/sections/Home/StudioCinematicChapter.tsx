@@ -77,6 +77,7 @@ export function StudioCinematicChapter() {
   const manualModeRef = useRef<ManualMode>("none");
   const syncStageRef = useRef<() => void>(() => {});
   const [activeIndex, setActiveIndex] = useState(0);
+  const [committedIndex, setCommittedIndex] = useState(0);
   const active = DISCIPLINES[activeIndex];
 
   useEffect(() => {
@@ -97,6 +98,7 @@ export function StudioCinematicChapter() {
       const travel = Math.max(1, bounds.height - window.innerHeight);
       const progress = Math.min(1, Math.max(0, -bounds.top / travel));
       const next = Math.min(DISCIPLINES.length - 1, Math.floor(progress * DISCIPLINES.length));
+      setCommittedIndex((current) => current === next ? current : next);
       setActiveIndex((current) => current === next ? current : next);
     }
 
@@ -122,11 +124,12 @@ export function StudioCinematicChapter() {
 
   function choose(index: number) {
     manualModeRef.current = "none";
+    setCommittedIndex(index);
     setActiveIndex(index);
   }
 
   function previewFromPointer(event: ReactPointerEvent<HTMLButtonElement>, index: number) {
-    if (event.pointerType !== "mouse") return;
+    if (event.pointerType !== "mouse" || document.activeElement === event.currentTarget) return;
     manualModeRef.current = "pointer";
     setActiveIndex(index);
   }
@@ -134,18 +137,19 @@ export function StudioCinematicChapter() {
   function releasePointerPreview(event: ReactPointerEvent<HTMLButtonElement>) {
     if (manualModeRef.current !== "pointer" || document.activeElement === event.currentTarget) return;
     manualModeRef.current = "none";
-    syncStageRef.current();
+    setActiveIndex(committedIndex);
   }
 
   function previewFromFocus(index: number) {
     manualModeRef.current = "focus";
+    setCommittedIndex(index);
     setActiveIndex(index);
   }
 
   function releaseFocusPreview() {
     if (manualModeRef.current !== "focus") return;
     manualModeRef.current = "none";
-    syncStageRef.current();
+    setActiveIndex(committedIndex);
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -157,6 +161,7 @@ export function StudioCinematicChapter() {
     else return;
     event.preventDefault();
     manualModeRef.current = "focus";
+    setCommittedIndex(next);
     setActiveIndex(next);
     document.getElementById(`studio-film-tab-${next}`)?.focus();
   }
@@ -231,7 +236,7 @@ export function StudioCinematicChapter() {
               animate={{ opacity: 1, y: 0 }}
               exit={reducedMotion ? undefined : { opacity: 0, y: -6 }}
               transition={{ duration: reducedMotion ? 0 : 0.34, ease: EASE }}
-              aria-live="polite"
+              aria-live={manualModeRef.current === "focus" ? "polite" : "off"}
             >
               <div className="studio-film__reading-label">
                 <span>{active.number}</span><strong>{active.name}</strong><small>{active.credential}</small>
@@ -278,17 +283,19 @@ export function StudioCinematicChapter() {
             <div className="studio-film__selector-label"><span>Three disciplines · one decision system</span><span>{active.number} / 03</span></div>
             <div className="studio-film__chapters" role="tablist" aria-label="Explore Suman's three disciplines">
             {DISCIPLINES.map((discipline, index) => {
-              const selected = index === activeIndex;
+              const displayed = index === activeIndex;
+              const committed = index === committedIndex;
               return (
                 <button
                   key={discipline.name}
                   id={`studio-film-tab-${index}`}
                   type="button"
                   role="tab"
-                  aria-selected={selected}
+                  aria-selected={committed}
                   aria-controls="studio-film-panel"
-                  tabIndex={selected ? 0 : -1}
-                  className={selected ? "is-active" : undefined}
+                  tabIndex={committed ? 0 : -1}
+                  className={displayed ? "is-active" : undefined}
+                  data-studio-state={displayed ? "active" : committed ? "committed" : "idle"}
                   style={{ "--studio-chapter-accent": discipline.accent } as CSSProperties}
                   onClick={() => choose(index)}
                   onPointerEnter={(event) => previewFromPointer(event, index)}
