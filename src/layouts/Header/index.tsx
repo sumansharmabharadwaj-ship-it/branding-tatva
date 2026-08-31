@@ -172,7 +172,11 @@ export function Header({ transparent = false }: HeaderProps) {
             </Link>
 
             <div className="site-header__actions flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-5">
-              <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
+              {/* The complete label set needs a genuinely wide canvas. At
+                  laptop widths the CTA and always-available menu preserve
+                  every route without compressing the wordmark or allowing
+                  Brand Strategy & Systems to collide with its neighbours. */}
+              <nav aria-label="Primary" className="hidden items-center gap-7 2xl:flex">
                 {navigation
                   .filter((item) => item.href !== "/" && item.href !== "/contact")
                   .map((item) => {
@@ -199,7 +203,7 @@ export function Header({ transparent = false }: HeaderProps) {
                     );
                   })}
               </nav>
-              <span aria-hidden="true" className="hidden h-6 w-px bg-soil/20 lg:block" />
+              <span aria-hidden="true" className="hidden h-6 w-px bg-soil/20 2xl:block" />
               <Link
                 href="/contact"
                 className="group hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 py-2 text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300 sm:inline-flex"
