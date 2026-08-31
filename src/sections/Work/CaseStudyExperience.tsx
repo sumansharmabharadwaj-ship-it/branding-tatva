@@ -567,7 +567,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
             <div>
               <Reveal>
-                <Link href="/services#proof" className="link-underline text-xs font-medium uppercase tracking-[0.18em] text-white/60">
+                <Link href="/services#proof" className="link-underline inline-flex min-h-11 items-center text-xs font-medium uppercase tracking-[0.18em] text-white/60">
                   Client proof
                 </Link>
                 <div className="mt-5 flex flex-wrap gap-2">
@@ -649,7 +649,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
             </figure>
           )}
 
-          <a href="#result" className="mt-10 inline-flex w-fit items-center gap-2 text-sm text-white/65 transition-colors hover:text-white">
+          <a href="#result" className="mt-10 inline-flex min-h-11 w-fit items-center gap-2 text-sm text-white/65 transition-colors hover:text-white">
             See the result first <span aria-hidden="true">↓</span>
           </a>
         </Container>
@@ -718,7 +718,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
                         storyUserHoldUntilRef.current = Date.now() + STORY_USER_HOLD_MS;
                         setActiveChapter(index);
                       }}
-                      className="min-h-10 w-full rounded-full border text-[0.58rem] font-medium uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                      className="min-h-11 w-full rounded-full border text-[0.58rem] font-medium uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                       style={{
                         borderColor: activeChapter === index ? palette.accent : "rgba(255,255,255,0.16)",
                         backgroundColor: activeChapter === index ? `${palette.accent}22` : "transparent",
@@ -853,14 +853,14 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
                     <Link
                       key={service}
                       href={presentation.serviceHref}
-                      className="rounded-full border px-3 py-1.5 text-xs transition-colors hover:bg-white/10"
+                      className="inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 text-xs transition-colors hover:bg-white/10"
                       style={{ borderColor: `${palette.accent}66`, color: palette.secondary }}
                     >
                       {service}
                     </Link>
                   ))}
                 </div>
-                <Link href={presentation.serviceHref} className="link-underline mt-5 inline-flex items-center gap-2 text-sm font-medium" style={{ color: palette.secondary }}>
+                <Link href={presentation.serviceHref} className="link-underline mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-medium" style={{ color: palette.secondary }}>
                   Relevant service path: {presentation.serviceLabel} <span aria-hidden="true">→</span>
                 </Link>
               </div>
@@ -897,7 +897,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
               >
                 Discuss this brand problem
               </Link>
-              <Link href={presentation.serviceHref} className="link-underline text-sm font-medium text-white">
+              <Link href={presentation.serviceHref} className="link-underline inline-flex min-h-11 items-center text-sm font-medium text-white">
                 Explore {presentation.serviceLabel} <span aria-hidden="true">→</span>
               </Link>
             </div>
