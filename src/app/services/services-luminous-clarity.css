@@ -151,8 +151,11 @@
 
 #education [data-services-chapter-instrument="true"],
 #education [data-services-chapter-resolution="true"] {
-  border-color: rgba(244, 239, 230, 0.16);
-  background-color: rgba(16, 25, 21, 0.68);
+  border-color: rgba(244, 239, 230, 0.2);
+  background-color: rgba(16, 25, 21, 0.76);
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(244, 239, 230, 0.035);
 }
 
 /* The fixed rail belongs to the film, while its active label stays readable
@@ -666,7 +669,7 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
      the actual market state behind the fixed controls. Keep all four choices,
      then compress the surrounding rhythm into one complete reading surface. */
   #education {
-    padding-top: 2rem !important;
+    padding-top: 1.25rem !important;
     padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px)) !important;
   }
 
@@ -675,40 +678,47 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   }
 
   #education [data-services-chapter-copy="true"] {
-    padding: 0.8rem;
+    padding: 0.7rem 0.8rem;
   }
 
   #education [data-services-chapter-copy="true"] h2 {
-    margin-top: 0.3rem;
-    font-size: clamp(1.5rem, 7.1vw, 1.8rem);
+    margin-top: 0.2rem;
+    font-size: clamp(1.38rem, 6.7vw, 1.68rem);
     line-height: 1.04;
   }
 
-  #education [data-services-chapter-copy="true"] > p:nth-of-type(2) {
-    margin-top: 0.65rem;
-    font-size: 0.75rem;
-    line-height: 1.42;
+  #education [data-perception-intro="true"] {
+    display: -webkit-box;
+    margin-top: 0.45rem;
+    overflow: hidden;
+    font-size: 0.71rem;
+    line-height: 1.36;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
-  #education [data-services-chapter-copy="true"] > div[aria-hidden="true"] {
-    margin-top: 0.7rem;
-  }
-
-  #education [data-services-chapter-copy="true"] > a {
-    margin-top: 0.55rem;
-    min-height: 2.25rem;
-    font-size: 0.75rem;
+  #education [data-perception-progress="true"] {
+    display: none;
   }
 
   #education [data-perception-route="true"] {
-    margin-top: 0.65rem;
-    padding: 0.6rem 0.7rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.65rem;
+  }
+
+  #education [data-perception-route="true"] > p:first-child {
+    font-size: 0.5rem;
+    letter-spacing: 0.13em;
+  }
+
+  #education [data-perception-route="true"] > p:nth-child(2) {
+    margin-top: 0.15rem;
+    font-size: 0.98rem;
+    line-height: 1.08;
   }
 
   #education [data-perception-route="true"] > p:last-child {
-    margin-top: 0.2rem;
-    font-size: 0.68rem;
-    line-height: 1.35;
+    display: none;
   }
 
   #education [data-services-chapter-instrument="true"] {
@@ -749,54 +759,62 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   }
 
   #education [data-perception-panel="true"] {
-    min-height: 0;
-    padding: 1rem;
+    min-height: 18.75rem;
+    padding: 0.8rem;
     opacity: 1 !important;
     transform: none !important;
   }
 
   #education [data-perception-panel="true"] h3 {
-    margin-top: 0.45rem;
-    font-size: 2rem;
+    margin-top: 0.25rem;
+    font-size: 1.8rem;
   }
 
   #education [data-perception-panel="true"] h3 + p {
-    margin-top: 0.55rem;
-    font-size: 1.05rem;
-    line-height: 1.2;
+    margin-top: 0.35rem;
+    font-size: 0.96rem;
+    line-height: 1.16;
   }
 
-  #education [data-perception-panel="true"] h3 + p + p {
-    margin-top: 0.65rem;
-    font-size: 0.75rem;
-    line-height: 1.45;
+  #education [data-perception-explanation="true"] {
+    display: -webkit-box;
+    margin-top: 0.45rem !important;
+    overflow: hidden;
+    font-size: 0.7rem !important;
+    line-height: 1.34 !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   #education [data-perception-evidence-grid="true"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
-    margin-top: 0.75rem;
-    padding-top: 0.7rem;
+    gap: 0.6rem;
+    margin-top: 0.55rem;
+    padding-top: 0.5rem;
   }
 
   #education [data-perception-evidence-grid="true"] > div:last-child {
     border-left: 1px solid rgba(244, 239, 230, 0.12);
-    padding-left: 0.75rem;
+    padding-left: 0.6rem;
   }
 
   #education [data-perception-evidence-grid="true"] p:last-child {
-    margin-top: 0.35rem;
-    font-size: 0.7rem;
-    line-height: 1.4;
+    display: -webkit-box;
+    margin-top: 0.25rem;
+    overflow: hidden;
+    font-size: 0.66rem;
+    line-height: 1.32;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
-  #education [data-perception-evidence-grid="true"] + div {
-    margin-top: 0.7rem;
-    padding-top: 0.6rem;
+  #education [data-perception-system-result="true"] {
+    margin-top: 0.5rem !important;
+    padding-top: 0.45rem !important;
   }
 
-  #education [data-perception-evidence-grid="true"] + div > p:last-child {
-    font-size: 1rem;
+  #education [data-perception-system-result="true"] > p:last-child {
+    font-size: 0.94rem;
   }
 
   #proof [data-verified-outcome-phase] {

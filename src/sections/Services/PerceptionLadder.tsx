@@ -169,9 +169,9 @@ export function PerceptionLadder() {
         <div data-services-chapter-copy="true">
           <p className="text-sm font-medium uppercase tracking-wide text-[#C6CCB8]">Perception</p>
           <h2 className="mt-2 max-w-lg text-display-sm font-display font-normal text-ivory">
-            Four ways a market can hold—or lose—your brand.
+            Four ways a market can hold or lose your brand.
           </h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-ivory/78 sm:text-base">
+          <p data-perception-intro="true" className="mt-4 max-w-md text-sm leading-relaxed text-ivory/78 sm:text-base">
             A practical diagnostic, not a promise of a linear climb. Recognition, recall, and consideration are
             different states; each needs a different brand decision.
           </p>
@@ -196,7 +196,7 @@ export function PerceptionLadder() {
             ) : null}
           </AnimatePresence>
 
-          <div className="mt-7 flex items-center gap-3" aria-hidden="true">
+          <div data-perception-progress="true" className="mt-7 flex items-center gap-3" aria-hidden="true">
             <span className="font-display text-lg text-[#C6CCB8]">{String(activeIndex + 1).padStart(2, "0")}</span>
             <span className="relative h-px flex-1 overflow-hidden bg-ivory/14">
               <motion.span
@@ -210,7 +210,8 @@ export function PerceptionLadder() {
 
           <a
             href="#audit"
-            className="link-underline mt-7 inline-flex min-h-11 items-center gap-2 text-sm text-[#C6CCB8] transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A0A690]"
+            data-perception-audit-action="true"
+            className="link-underline mt-7 hidden min-h-11 items-center gap-2 text-sm text-[#C6CCB8] transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A0A690] sm:inline-flex"
           >
             Test which signals already hold
             <span aria-hidden="true">↓</span>
@@ -298,7 +299,7 @@ export function PerceptionLadder() {
               <p className="mt-4 max-w-lg font-display text-xl font-normal leading-snug text-[#C6CCB8] sm:text-2xl">
                 {activeRung.signal}
               </p>
-              <p className="mt-5 max-w-lg text-sm leading-relaxed text-ivory/82 sm:text-base">
+              <p data-perception-explanation="true" className="mt-5 max-w-lg text-sm leading-relaxed text-ivory/82 sm:text-base">
                 {activeRung.explanation}
               </p>
 
@@ -313,10 +314,19 @@ export function PerceptionLadder() {
                 </div>
               </div>
 
-              <div className="mt-5 flex flex-wrap items-baseline justify-between gap-3 border-t border-ivory/12 pt-4">
+              <div data-perception-system-result="true" className="mt-5 flex flex-wrap items-baseline justify-between gap-3 border-t border-ivory/12 pt-4">
                 <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/50">System to build</p>
                 <p className="font-display text-xl font-normal text-[#C6CCB8]">{activeRung.system}</p>
               </div>
+
+              <a
+                href="#audit"
+                data-perception-mobile-action="true"
+                className="mt-4 inline-flex min-h-11 w-full items-center justify-between rounded-full border border-[#A0A690]/45 bg-[rgba(198,204,184,0.12)] px-4 text-sm font-medium text-ivory transition-[border-color,background-color] hover:border-[#C6CCB8]/75 hover:bg-[rgba(198,204,184,0.18)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A0A690] sm:hidden"
+              >
+                Test which signals already hold
+                <span aria-hidden="true">↓</span>
+              </a>
             </motion.div>
           </AnimatePresence>
         </div>
