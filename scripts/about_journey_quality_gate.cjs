@@ -343,6 +343,13 @@ assert(
     /@media \(max-width: 900px\)[\s\S]*?padding-right:\s*0;/.test(convergenceStyles),
   "The chapter spine can overlap the Synthesis reading frame or leave a mobile gutter behind.",
 );
+assert(
+  convergenceStyles.includes(".signalCore") &&
+    convergenceStyles.includes("pointer-events: none;") &&
+    convergenceStyles.includes('.thread[data-thread="2"] button { translate:') &&
+    convergenceStyles.includes('.thread[data-thread="3"] button { translate:'),
+  "The centre seal can block the interactive Synthesis pairings.",
+);
 
 const protectedEvidenceType = [
   [".caseIdentity small, .caseIdentity em", 0.55],
