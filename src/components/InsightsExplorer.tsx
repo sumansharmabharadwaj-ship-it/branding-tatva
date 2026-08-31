@@ -255,6 +255,8 @@ export function InsightsExplorer({
 
   const folioCount = Math.max(1, Math.ceil(filteredPosts.length / POSTS_PER_FOLIO));
   const activeFolio = Math.min(folio.index, folioCount - 1);
+  const folioProgress =
+    folioCount > 1 ? (activeFolio / (folioCount - 1)) * 100 : 0;
   const firstPostIndex = activeFolio * POSTS_PER_FOLIO;
   const visiblePosts = filteredPosts.slice(
     firstPostIndex,
@@ -764,6 +766,11 @@ export function InsightsExplorer({
                 className="insights-library__pager"
                 role="group"
                 aria-label="Essay folios"
+                style={
+                  {
+                    "--folio-progress": `${folioProgress}%`,
+                  } as CSSProperties
+                }
               >
                 <button
                   type="button"
@@ -784,6 +791,25 @@ export function InsightsExplorer({
                   Next
                   <ArrowRight aria-hidden="true" className="h-4 w-4" />
                 </button>
+                <label className="insights-library__folio-depth">
+                  <span>Archive depth</span>
+                  <output>
+                    Essays {firstPostIndex + 1}–
+                    {firstPostIndex + visiblePosts.length}
+                  </output>
+                  <input
+                    type="range"
+                    min="1"
+                    max={folioCount}
+                    step="1"
+                    value={activeFolio + 1}
+                    onChange={(event) =>
+                      turnFolio(Number(event.currentTarget.value) - 1)
+                    }
+                    aria-label="Choose essay folio"
+                    aria-valuetext={`Folio ${activeFolio + 1} of ${folioCount}, essays ${firstPostIndex + 1} to ${firstPostIndex + visiblePosts.length}`}
+                  />
+                </label>
               </div>
             ) : null}
           </>
