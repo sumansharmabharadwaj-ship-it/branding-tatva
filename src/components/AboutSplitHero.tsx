@@ -71,7 +71,7 @@ export function AboutSplitHero({
   return (
     <section
       ref={ref}
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-soil pt-24"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-soil pb-36 pt-24 sm:pb-0"
       data-about-hero-active={heroInView}
     >
       {prefersReducedMotion ? (
