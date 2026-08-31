@@ -179,7 +179,7 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
 
 [data-contact-chapter-rail] a {
   display: flex;
-  min-height: 2.6rem;
+  min-height: 2.75rem;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
