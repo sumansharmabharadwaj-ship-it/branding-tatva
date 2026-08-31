@@ -343,7 +343,7 @@ function PerceptionVisual({
   secondary: string;
 }) {
   return (
-    <div className="grid h-full grid-cols-2 gap-3 p-4 sm:gap-5 sm:p-7">
+    <div className="grid h-full min-h-0 grid-cols-2 grid-rows-2 gap-2 p-3 sm:gap-5 sm:p-7">
       <motion.div
         className="flex flex-col justify-between rounded-2xl border border-white/15 bg-black/20 p-4 sm:p-5"
         animate={{ opacity: 1 - progress * 0.55, scale: 1 - progress * 0.03 }}
@@ -381,7 +381,7 @@ function AuthorityVisual({
         return (
           <motion.div
             key={artifact.label}
-            className="rounded-2xl border p-4 sm:p-5"
+            className="min-h-0 overflow-hidden rounded-xl border p-3 sm:rounded-2xl sm:p-5"
             animate={{ opacity: visible ? 1 : 0.34, y: visible ? 0 : 8 }}
             transition={{ duration: 0.55, ease: EASE }}
             style={{
@@ -392,8 +392,8 @@ function AuthorityVisual({
             <p className="text-[0.58rem] font-medium uppercase tracking-[0.14em]" style={{ color: visible ? accent : "rgba(255,255,255,0.42)" }}>
               {String(index + 1).padStart(2, "0")}
             </p>
-            <p className="mt-2 font-display text-xl text-white sm:text-2xl">{artifact.label}</p>
-            <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-white/60">{artifact.detail}</p>
+            <p className="mt-1 line-clamp-2 font-display text-base leading-tight text-white sm:mt-2 sm:text-2xl">{artifact.label}</p>
+            <p className="mt-2 hidden line-clamp-3 text-xs leading-relaxed text-white/60 sm:block">{artifact.detail}</p>
           </motion.div>
         );
       })}
