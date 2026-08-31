@@ -46,9 +46,9 @@
 .header > p {
   max-width: 42ch;
   margin: 0;
-  color: rgba(244, 239, 230, 0.7);
-  font-size: 0.76rem;
-  line-height: 1.62;
+  color: rgba(244, 239, 230, 0.8);
+  font-size: 0.82rem;
+  line-height: 1.58;
 }
 
 .interactiveExperience {
@@ -81,7 +81,7 @@
   align-items: center;
   gap: 0.08rem 0.62rem;
   background: transparent;
-  color: rgba(244, 239, 230, 0.44);
+  color: rgba(244, 239, 230, 0.58);
   text-align: left;
   transition: border-color 280ms ease, color 280ms ease, transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -109,7 +109,7 @@
 }
 
 .stageRail button[data-resolved="true"] > span { background: #d4b99a; color: #17221e; }
-.stageRail small { color: #d4b99a; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
+.stageRail small { color: #d4b99a; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
 .stageRail strong { font-family: var(--font-display), Georgia, serif; font-size: 1.12rem; font-weight: 400; line-height: 1; }
 .stageRail button i { position: absolute; right: 0; bottom: -1px; left: 0; height: 1px; overflow: hidden; background: rgba(244, 239, 230, 0.08); }
 .stageRail button b { display: block; width: 100%; height: 100%; background: #d4b99a; transform: scaleX(0); transform-origin: left; transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1); }
@@ -118,7 +118,7 @@
 .filmCamera {
   position: relative;
   width: 100%;
-  min-height: clamp(21rem, 47svh, 28rem);
+  min-height: clamp(20.5rem, 45svh, 26rem);
   perspective: 85rem;
   transform: rotateX(calc(var(--recognition-pointer-y) * -1.25deg)) rotateY(calc(var(--recognition-pointer-x) * 1.8deg)) rotateZ(calc(var(--scene-velocity, 0) * var(--scene-direction, 1) * 4deg));
   transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -155,7 +155,7 @@
   display: flex;
   justify-content: space-between;
   color: rgba(244, 239, 230, 0.2);
-  font-size: 0.55rem;
+  font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -173,10 +173,10 @@
   text-align: center;
 }
 
-.signalStage > small { color: #d4b99a; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.signalStage > small { color: #d4b99a; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
 .signalStage > p { max-width: 19ch; margin: 0.7rem 0 0; color: rgba(244, 239, 230, 0.72); font-family: var(--font-display), Georgia, serif; font-size: clamp(1.25rem, 2vw, 1.75rem); line-height: 1.06; }
 .signalStage > div { display: grid; margin-top: 1.1rem; justify-items: center; }
-.signalStage > div span { color: rgba(244, 239, 230, 0.44); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+.signalStage > div span { color: rgba(244, 239, 230, 0.58); font-size: 0.58rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
 .signalStage > div strong { color: #f4efe6; font-family: var(--font-display), Georgia, serif; font-size: clamp(3.4rem, 6.8vw, 6.8rem); font-weight: 400; letter-spacing: -0.06em; line-height: 0.78; text-shadow: 0 16px 42px rgba(3, 9, 6, 0.32); }
 
 .scrollStory[data-recognition-stage="1"] .recognitionChamber { border-radius: 46% 46% 1.25rem 1.25rem; }
@@ -208,8 +208,8 @@
 }
 
 .frameShift span,
-.frameShift strong { font-size: 0.56rem; line-height: 1.35; }
-.frameShift span { color: rgba(244, 239, 230, 0.54); }
+.frameShift strong { font-size: 0.62rem; line-height: 1.4; }
+.frameShift span { color: rgba(244, 239, 230, 0.66); }
 .frameShift strong { color: #f4efe6; font-weight: 650; text-align: right; }
 .frameShift i { height: 1px; background: #d4b99a; transform-origin: left; animation: resolveLine 5.8s ease-in-out infinite alternate; }
 
@@ -222,24 +222,24 @@
   animation-play-state: paused;
 }
 
-.recordSlot { min-height: clamp(21rem, 47svh, 28rem); perspective: 80rem; }
+.recordSlot { min-height: clamp(20.5rem, 45svh, 26rem); perspective: 80rem; }
 
 .record {
   display: flex;
   min-height: inherit;
   padding: clamp(1.15rem, 2vw, 1.65rem);
-  border: 1px solid rgba(244, 239, 230, 0.16);
+  border: 1px solid rgba(244, 239, 230, 0.22);
   border-radius: 1.25rem;
   flex-direction: column;
-  background: rgba(16, 27, 23, 0.72);
-  box-shadow: 0 24px 66px rgba(5, 12, 9, 0.2);
+  background: rgba(16, 27, 23, 0.82);
+  box-shadow: 0 26px 72px rgba(5, 12, 9, 0.3);
   backdrop-filter: blur(18px);
 }
 
 .recordKicker {
   margin: 0;
   color: #d4b99a;
-  font-size: 0.55rem;
+  font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -259,8 +259,8 @@
 .record dl > div { padding-right: 0.8rem; }
 .record dl > div + div { padding-left: 0.8rem; border-left: 1px solid rgba(244, 239, 230, 0.12); }
 .record dt,
-.proofRecord > span { color: #d4b99a; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
-.record dd { margin: 0.35rem 0 0; color: rgba(244, 239, 230, 0.72); font-size: 0.65rem; line-height: 1.48; }
+.proofRecord > span { color: #d4b99a; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
+.record dd { margin: 0.35rem 0 0; color: rgba(244, 239, 230, 0.8); font-size: 0.72rem; line-height: 1.5; }
 
 .proofRecord {
   margin-top: auto;
@@ -268,8 +268,8 @@
   border-top: 1px solid rgba(244, 239, 230, 0.12);
 }
 
-.proofRecord p { margin: 0.4rem 0 0; color: rgba(244, 239, 230, 0.84); font-size: 0.72rem; line-height: 1.5; }
-.proofRecord small { display: block; margin-top: 0.48rem; color: rgba(212, 185, 154, 0.67); font-size: 0.55rem; line-height: 1.4; }
+.proofRecord p { margin: 0.4rem 0 0; color: rgba(244, 239, 230, 0.9); font-size: 0.76rem; line-height: 1.5; }
+.proofRecord small { display: block; margin-top: 0.48rem; color: rgba(212, 185, 154, 0.78); font-size: 0.58rem; line-height: 1.4; }
 
 .record > a,
 .staticBody > a {
@@ -279,7 +279,7 @@
   align-items: center;
   gap: 0.35rem;
   color: #d4b99a;
-  font-size: 0.57rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -290,8 +290,8 @@
   grid-template-columns: auto minmax(1.5rem, 1fr) auto minmax(1.5rem, 1fr) auto auto;
   align-items: center;
   gap: 0.7rem;
-  color: rgba(244, 239, 230, 0.48);
-  font-size: 0.55rem;
+  color: rgba(244, 239, 230, 0.62);
+  font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -314,11 +314,20 @@
 .staticProof > small { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
 .staticLens { margin-top: clamp(1.2rem, 3.6svh, 2.2rem); color: #d4b99a; font-family: var(--font-display), Georgia, serif; font-size: clamp(2.55rem, 4vw, 4.4rem); font-weight: 400; letter-spacing: -0.05em; line-height: 0.82; }
 .staticLedger h3 { max-width: 17ch; margin: 0.85rem 0 0; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.15rem, 1.75vw, 1.65rem); font-weight: 400; line-height: 1.05; }
-.staticLedger article > p { max-width: 36ch; margin: 0.7rem 0 0; color: rgba(244, 239, 230, 0.62); font-size: 0.66rem; line-height: 1.5; }
+.staticLedger article > p { max-width: 36ch; margin: 0.7rem 0 0; color: rgba(244, 239, 230, 0.74); font-size: 0.74rem; line-height: 1.52; }
 .staticProof { display: grid; margin-top: auto; padding-top: 0.85rem; gap: 0.4rem; border-top: 1px solid rgba(244, 239, 230, 0.12); }
 .staticProof > small { color: rgba(212, 185, 154, 0.72); line-height: 1.45; }
-.staticProof > p { margin: 0; color: rgba(244, 239, 230, 0.78); font-size: 0.63rem; line-height: 1.5; }
-.staticProof > a { display: inline-flex; width: fit-content; margin-top: 0.35rem; align-items: center; gap: 0.35rem; color: #d4b99a; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.staticProof > p { margin: 0; color: rgba(244, 239, 230, 0.86); font-size: 0.72rem; line-height: 1.52; }
+.staticProof > a { display: inline-flex; width: fit-content; margin-top: 0.35rem; align-items: center; gap: 0.35rem; color: #d4b99a; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+
+@media (min-width: 981px) and (max-width: 1180px) {
+  .shell { padding-right: clamp(4.75rem, 8vw, 5.75rem); }
+  .interactiveExperience {
+    grid-template-columns: minmax(8rem, 0.34fr) minmax(18rem, 1fr) minmax(17.5rem, 0.82fr);
+    gap: clamp(0.8rem, 1.8vw, 1.4rem);
+  }
+  .stageRail button { min-height: 5.25rem; }
+}
 
 @media (min-width: 981px) and (prefers-reduced-motion: no-preference) {
   .scrollStory { height: 132svh; }
@@ -339,6 +348,12 @@
   .record > a { margin-top: 0.6rem; }
 }
 
+@media (min-width: 981px) {
+  :global(html[data-consent-banner="visible"]) .root {
+    padding-bottom: clamp(4.2rem, 7svh, 5rem);
+  }
+}
+
 @media (max-width: 980px) {
   .scrollStory { height: auto; }
   .shell { position: relative; top: auto; height: auto; }
@@ -354,10 +369,12 @@
     gap: 0;
     overflow-x: auto;
     overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
     scroll-padding-inline: 1rem;
     scrollbar-width: thin;
   }
   .staticLedger { width: max(100%, 62rem); }
+  .staticLedger article { scroll-snap-align: start; scroll-snap-stop: always; }
 }
 
 @media (max-width: 640px) {

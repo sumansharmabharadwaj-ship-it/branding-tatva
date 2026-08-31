@@ -259,23 +259,41 @@ assert(
 );
 
 const protectedPointOfViewType = [
-  [".stageRail small", 0.55],
-  [".ambientSequence", 0.55],
-  [".signalStage > small", 0.55],
-  [".signalStage > div span", 0.55],
-  [".recordKicker", 0.55],
-  [".record dt,\n.proofRecord > span", 0.55],
-  [".proofRecord small", 0.55],
-  [".recognitionLine", 0.55],
+  [".stageRail small", 0.58],
+  [".ambientSequence", 0.58],
+  [".signalStage > small", 0.58],
+  [".signalStage > div span", 0.58],
+  [".recordKicker", 0.58],
+  [".record dt,\n.proofRecord > span", 0.58],
+  [".record dd", 0.72],
+  [".proofRecord p", 0.76],
+  [".proofRecord small", 0.58],
+  [".recognitionLine", 0.58],
   [".staticLedgerHead small", 0.55],
   [".staticIndex small,\n.staticProof > small", 0.55],
-  [".staticProof > a", 0.55],
+  [".staticLedger article > p", 0.74],
+  [".staticProof > p", 0.72],
+  [".staticProof > a", 0.58],
 ];
 
 for (const [selector, minimum] of protectedPointOfViewType) {
   const size = fontSizeRem(pointOfViewStyles, selector);
   assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
 }
+assert(
+  /@media \(min-width: 981px\) and \(max-width: 1180px\)[\s\S]*?\.shell\s*\{\s*padding-right:/.test(pointOfViewStyles),
+  "The point-of-view chapter does not reserve room for the desktop chapter navigator at compact widths.",
+);
+assert(
+  pointOfViewStyles.includes("scroll-snap-type: inline mandatory;") &&
+    pointOfViewStyles.includes("scroll-snap-align: start;"),
+  "The touch recognition ledger lost its deliberate card-by-card resting points.",
+);
+assert(
+  pointOfViewStyles.includes(':global(html[data-consent-banner="visible"]) .root') &&
+    pointOfViewStyles.includes("padding-bottom: clamp(4.2rem, 7svh, 5rem);"),
+  "The point-of-view record can fall beneath the visible consent notice.",
+);
 
 const protectedAtlasType = [
   [".core small", 0.55],
