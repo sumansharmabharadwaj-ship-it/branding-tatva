@@ -507,7 +507,7 @@ export function InsightsExplorer({
                   });
                 }}
                 aria-pressed={topicSlug === "all"}
-                className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
+                className={`min-h-11 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
                   topicSlug === "all"
                     ? "border-soil bg-soil text-ivory"
                     : "border-border bg-transparent text-soil hover:border-soil/30"
@@ -525,7 +525,7 @@ export function InsightsExplorer({
                     type="button"
                     onClick={() => chooseTopic(topic)}
                     aria-pressed={active}
-                    className="rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition"
+                    className="min-h-11 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition"
                     style={{
                       borderColor: active ? color : "#D9CDBC",
                       backgroundColor: active ? `${color}18` : "transparent",
