@@ -104,7 +104,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <div id="about-convergence" className="bg-[#eee7db]" data-about-film-scene data-about-chapter="convergence" data-scene-tone="light">
+        <div id="about-convergence" className="bg-[#eee7db]" data-about-film-scene data-about-chapter="convergence" data-reading-scene data-scene-tone="light">
           <div data-about-film-plane>
             <Convergence />
           </div>

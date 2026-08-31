@@ -51,6 +51,10 @@ assert(
   "The copy dense origin chapter can fade below its protected reading exposure.",
 );
 assert(
+  /id="about-convergence"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense synthesis chapter can fade below the protected reading exposure.",
+);
+assert(
   /\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*clamp\(5\.75rem,\s*10svh,\s*6\.5rem\);/.test(anchorContract) &&
     /@media \(max-width:\s*430px\)[\s\S]*?\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*calc\(5rem \+ env\(safe-area-inset-top,\s*0px\)\);/.test(anchorContract),
   "About chapter hashes can settle beneath the fixed header in a responsive state.",
@@ -316,20 +320,29 @@ for (const [selector, minimum] of protectedAtlasType) {
 }
 
 const protectedConvergenceType = [
-  [".disciplineHeading small", 0.55],
-  [".discipline li span", 0.55],
-  [".thread button small", 0.55],
-  [".thread button strong", 0.55],
-  [".signalCore small", 0.55],
-  [".outputs span", 0.55],
-  [".tabs button span", 0.55],
-  [".mobileResolution small", 0.55],
+  [".disciplineHeading small", 0.6],
+  [".discipline > p", 0.76],
+  [".discipline li span", 0.58],
+  [".thread button small", 0.58],
+  [".thread button strong", 0.58],
+  [".signalCore small", 0.58],
+  [".outputs span", 0.58],
+  [".outputs p", 0.7],
+  [".tabs button span", 0.58],
+  [".mobileSynthesis > ol > li > div p", 0.76],
+  [".mobileResolution small", 0.58],
 ];
 
 for (const [selector, minimum] of protectedConvergenceType) {
   const size = fontSizeRem(convergenceStyles, selector);
   assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
 }
+assert(
+  convergenceStyles.includes("--convergence-navigation-gutter:") &&
+    convergenceStyles.includes("padding-right: var(--convergence-navigation-gutter);") &&
+    /@media \(max-width: 900px\)[\s\S]*?padding-right:\s*0;/.test(convergenceStyles),
+  "The chapter spine can overlap the Synthesis reading frame or leave a mobile gutter behind.",
+);
 
 const protectedEvidenceType = [
   [".caseIdentity small, .caseIdentity em", 0.55],
