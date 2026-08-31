@@ -13,6 +13,22 @@ const customRequire = (id) => id === "@/lib/analytics"
 new Function("module", "exports", "require", compiled)(moduleBox, moduleBox.exports, customRequire);
 const journey = moduleBox.exports;
 
+function loadTypeScriptModule(relative, resolveImport = require) {
+  const sourcePath = path.resolve(__dirname, `../${relative}`);
+  const output = ts.transpileModule(fs.readFileSync(sourcePath, "utf8"), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  const loaded = { exports: {} };
+  new Function("module", "exports", "require", output)(loaded, loaded.exports, resolveImport);
+  return loaded.exports;
+}
+
+const studioJourney = loadTypeScriptModule("src/lib/homeStudioJourney.ts");
+const questionJourney = loadTypeScriptModule(
+  "src/lib/homeQuestionJourney.ts",
+  (id) => id === "@/lib/homeStudioJourney" ? studioJourney : require(id),
+);
+
 function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
@@ -32,6 +48,7 @@ assert(journey.completedHomeDiagnosisFrom({ ...valid, completedAt: now - journey
 assert(journey.completedHomeDiagnosisFrom({ ...valid, packageSlug: "brand-clarity" }, now) === null, "Mismatched result package was accepted.");
 
 let stored = JSON.stringify(valid);
+let sessionStored = null;
 let dispatched = null;
 const dispatchedEvents = [];
 global.window = {
@@ -39,6 +56,11 @@ global.window = {
     getItem: () => stored,
     setItem: (_key, value) => { stored = value; },
     removeItem: () => { stored = null; },
+  },
+  sessionStorage: {
+    getItem: () => sessionStored,
+    setItem: (_key, value) => { sessionStored = value; },
+    removeItem: () => { sessionStored = null; },
   },
   dispatchEvent: (event) => {
     dispatched = event.detail;
@@ -56,6 +78,32 @@ stored = "idea";
 assert(journey.readCompletedHomeDiagnosis(now) === null, "Legacy string personalized the invitation.");
 stored = "{broken";
 assert(journey.readCompletedHomeDiagnosis(now) === null, "Corrupt storage personalized the invitation.");
+
+const selectedLens = studioJourney.HOME_STUDIO_LENSES[1];
+studioJourney.publishHomeStudioLens(selectedLens);
+assert(
+  studioJourney.readHomeStudioLens()?.name === "Literature",
+  "The carried studio lens failed reload recovery.",
+);
+const selectedQuestion = {
+  id: "existing-brand",
+  label: "Existing",
+  question: "Can you help an existing brand that already has an identity?",
+  lens: selectedLens,
+};
+questionJourney.publishHomeQuestionChoice(selectedQuestion);
+assert(
+  questionJourney.readHomeQuestionChoice()?.lens?.name === "Literature",
+  "The practical question lost its studio lens during reload recovery.",
+);
+sessionStored = "{broken";
+assert(
+  questionJourney.readHomeQuestionChoice() === null,
+  "Corrupt practical-question storage reached the final invitation.",
+);
+questionJourney.publishHomeQuestionChoice(null);
+assert(sessionStored === null, "Clearing the practical question left stale session context.");
+
 window.localStorage.setItem = () => { throw new Error("blocked"); };
 journey.publishCompletedHomeDiagnosis("reposition");
 assert(dispatched?.origin === "home_diagnostic" && dispatched?.situation === "reposition", "Blocked storage prevented in-session personalization.");

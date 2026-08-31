@@ -443,7 +443,7 @@
     box-shadow: inset 3px 0 0 #e2b55a;
   }
 
-  .home-v4 .questions-editorial__choices button i {
+  .home-v4 .questions-editorial__choices button svg {
     display: inline;
   }
 }

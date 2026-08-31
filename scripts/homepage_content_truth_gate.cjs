@@ -20,6 +20,7 @@ const diagnostic = read("src/sections/Home/HomeBrandHealthCheck.tsx");
 const evidence = read("src/sections/Home/EvidenceWall.tsx");
 const methodCss = read("src/app/home-v4-process-living-final.css");
 const servicesJourney = read("src/lib/servicesJourney.ts");
+const homeQuestionJourney = read("src/lib/homeQuestionJourney.ts");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -29,6 +30,9 @@ assert(!/M\.A\. Clinical Psychology|B\.A\.(?: Hons)? English Literature/.test(st
 assert(studio.includes('credential: "Applied psychology"') && studio.includes('credential: "Applied literature"'), "Claim-safe applied disciplines are missing.");
 assert(invitation.includes('import { consultation, site } from "@/data/site"'), "Final invitation duplicates the consultation contract.");
 assert(invitation.includes("consultation.actionLabel") && invitation.includes("consultation.minutes"), "Final invitation hardcodes duration or action copy.");
+assert(invitation.includes("consultation.fullSteps[activeCallStep]") && invitation.includes('role="tablist"') && invitation.includes('role="tabpanel"'), "The closing invitation no longer lets visitors inspect the real conversation before booking.");
+assert(invitation.includes("Clock3") && invitation.includes("Globe2") && invitation.includes("consultation.preparation"), "The closing invitation hides the booking duration, timezone behavior, or preparation fact.");
+assert(!invitation.includes("→"), "The closing invitation restored a text arrow instead of the shared icon language.");
 assert(!/three decisions|Commit the position|Build the first system|We will/i.test(invitation), "Final invitation promises completed strategy work on the first call.");
 assert(invitation.includes("SERVICES_SITUATION_STORAGE_KEY") && invitation.includes("window.localStorage.getItem"), "The closing invitation forgets a deliberately chosen service path.");
 assert(invitation.includes('detail?.origin === "home_diagnostic" || detail?.origin === "home_paths"'), "The closing invitation does not distinguish deliberate homepage choices from unrelated service events.");
@@ -60,7 +64,11 @@ assert(questions.includes('track("faq_opened"') && questions.includes('source: "
 assert(!faqs.includes("Brand Beginning work") && !faqs.includes("Brand Elevation work"), "Homepage practical answers restored retired offer names.");
 assert(faqs.includes("The exact implementation depends on the agreed scope."), "Homepage practical answers overstate implementation beyond the agreed scope.");
 assert(!studio.includes("↗"), "Studio proof uses an external-link arrow for an internal route.");
-assert(studio.includes('href="#decision"') && studio.includes("Use this lens on your question"), "Studio no longer hands its active discipline into the visitor's practical question.");
+assert(studio.includes('href="#decision"') && studio.includes("Carry {active.name} into your question") && studio.includes("publishHomeStudioLens"), "Studio no longer hands its active discipline into the visitor's practical question.");
+assert(questions.includes("HOME_STUDIO_LENS_EVENT") && questions.includes("carriedLens.question"), "Practical questions no longer receive the active studio lens.");
+assert(questions.includes("LENS_READINGS") && questions.includes('aria-pressed={selected}') && questions.includes("publishHomeStudioLens(lens)"), "Practical answers no longer let visitors apply or change a studio lens.");
+assert(questions.includes("HOME_METHOD_DECISION_EVENT") && questions.includes('origin !== "method_selection"'), "A changed working-method decision can leave a stale studio lens attached to the final question.");
+assert(questions.includes("resetDecisionThread = false") && questions.includes("applySituation(detail?.situation ?? null, true)"), "Reloading a known path clears the visitor's restored question before the final invitation can read it.");
 assert(!paths.includes("↗"), "Service path uses an external-link arrow for an internal route.");
 assert(!diagnostic.includes("↗"), "Diagnostic result uses an external-link arrow for an internal route.");
 assert(diagnostic.includes('href="#evidence"'), "Diagnostic no longer carries its result into client proof.");
@@ -79,8 +87,11 @@ assert(!invitation.includes('servicesContactHrefForSituation(selectedSituation, 
 assert(invitation.includes('servicesContactHrefForSituation(selectedSituation, "write")'), "The closing invitation gives call-hesitant visitors no package-aware writing route.");
 assert(invitation.includes('{ package: selectedPackage }'), "The closing booking event drops its selected-package context.");
 assert(invitation.includes('event="contact_route_selected"') && invitation.includes('route: "write_first"'), "The closing writing route is not measurable as a distinct visitor choice.");
-assert(questions.includes("publishHomeQuestionChoice(decisions[committedIndex]"), "The chosen practical question disappears before the final invitation.");
-assert(invitation.includes("HOME_QUESTION_CHOICE_EVENT") && invitation.includes("questionChoice.question"), "The final invitation does not receive the visitor's chosen practical question.");
+assert(questions.includes("carryQuestionForward") && questions.includes("toQuestionChoice(selected, carriedLens)"), "The chosen practical question or its active lens disappears before the final invitation.");
+assert(homeQuestionJourney.includes("HOME_QUESTION_CHOICE_STORAGE_KEY") && homeQuestionJourney.includes("readHomeQuestionChoice"), "The chosen practical question cannot survive a reload or direct invitation entry.");
+assert(invitation.includes("HOME_QUESTION_CHOICE_EVENT") && invitation.includes("readHomeQuestionChoice()") && invitation.includes("questionChoice.question"), "The final invitation does not restore or receive the visitor's chosen practical question.");
+assert(invitation.includes("HOME_STUDIO_LENS_EVENT") && invitation.includes("questionChoice?.lens ?? studioLens") && invitation.includes("carriedLens.question"), "The final invitation drops the lens used to frame the visitor's question.");
+assert(invitation.includes("{ question: questionChoice.id }") && invitation.includes("{ lens: carriedLens.name }"), "Closing conversion events lose the visitor's question or studio lens context.");
 assert(servicesJourney.includes('`/contact?package=${encodeURIComponent(packageSlug)}${hash}`'), "Package-aware contact links no longer preserve their requested chapter anchor.");
 assert(paths.includes('href="#process"'), "The chosen service path no longer continues into the working method.");
 assert(paths.includes("Continue into the working method") && paths.includes('data-path-state={isPreviewing ? "preview" : "chosen"}'), "The service path no longer makes its chosen or preview state and next method step explicit.");
@@ -89,13 +100,19 @@ assert(paths.includes("setPreviewIndex(null)") && paths.includes("Previewing ano
 assert(paths.includes('detail?.origin === "home_diagnostic"'), "The service-path label can misrepresent an intentional manual choice as a completed diagnosis.");
 assert(process.includes("SITUATION_TO_STAGE") && process.includes("SERVICES_SITUATION_EVENT"), "The working method no longer opens at the decision relevant to the chosen path.");
 assert(process.includes("SITUATION_PATH_REASON") && process.includes("Path carried forward") && process.includes("Your path begins at"), "The working method no longer explains or preserves the visitor's path entry.");
+assert(process.includes("publishHomeMethodDecision") && studio.includes("HOME_METHOD_DECISION_EVENT") && studio.includes("METHOD_TO_LENS"), "The working method decision no longer opens its relevant studio lens.");
 assert(experience.includes("rgba(238,224,198,0.88) 100%"), "Final invitation loses its reading surface over the dark film edge.");
 assert(/final-invitation__promise > p:first-child\s*\{[^}]*font-size: 0\.75rem/.test(invitationCss), "Final invitation utility text has returned below its readable size.");
 assert(invitationLivingCss.includes("var(--invitation-accent)"), "Final invitation no longer carries the selected path into its visual language.");
+assert(invitationLivingCss.includes("var(--invitation-lens-accent)"), "Final invitation no longer carries the selected studio lens into its visual language.");
+assert(invitationLivingCss.includes('li[data-step-active="true"] button') && invitationLivingCss.includes("final-invitation__step-detail"), "The closing conversation preview loses its committed step or readable detail treatment.");
 assert(invitationLivingCss.includes("grid-template-columns: repeat(3, minmax(0, 1fr));"), "Final invitation stacks its complete promise beyond the mobile reading frame.");
 assert(invitationLivingCss.includes("env(safe-area-inset-bottom, 0px)"), "Final invitation can collide with mobile browser or device chrome.");
+assert(invitationLivingCss.includes("max-height: 1050px") && invitationLivingCss.includes("max-width: 12.5ch") && invitationLivingCss.includes("margin-top: 0.8rem !important"), "Final invitation can push the carried question or booking action below a standard desktop frame.");
 assert(questionsCss.includes("min-height: 3.5rem"), "Practical-answer mobile choices have fallen below the authored touch target.");
 assert(questionsCss.includes("justify-content: space-between"), "Practical-answer continuation is difficult to recognise on mobile.");
+assert(questionsCss.includes("min-height: 2.75rem") && questionsCss.includes("--question-lens-accent"), "Practical-answer lenses lose touch comfort or their visual continuity on mobile.");
+assert(questionsCss.includes("max-height: 1050px") && questionsCss.includes("max-width: 18ch") && questionsCss.includes("margin-top: .65rem"), "Practical answers can push their continuation action below a standard desktop reading frame.");
 assert(methodCss.includes("background: rgba(28, 47, 37, .68);"), "Method selector has lost its stable contrast surface.");
 assert(methodCss.includes("font-size: clamp(.875rem, 1vw, 1rem);"), "Method supporting copy has returned below its desktop reading size.");
 

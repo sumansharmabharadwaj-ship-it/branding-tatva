@@ -2,7 +2,19 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import {
+  HOME_METHOD_DECISION_EVENT,
+  readHomeMethodDecision,
+  type HomeMethodDecision,
+  type HomeMethodDecisionDetail,
+  type HomeMethodStage,
+} from "@/lib/homeMethodJourney";
+import {
+  HOME_STUDIO_LENSES,
+  publishHomeStudioLens,
+} from "@/lib/homeStudioJourney";
 import {
   useEffect,
   useRef,
@@ -24,11 +36,12 @@ const DISCIPLINES = [
     move: "Name the hidden tension.",
     decision: "Build the position around the belief that must change.",
     outcome: "Audience tension + perception map",
+    questionFrame: HOME_STUDIO_LENSES[0].question,
     proof: "Applied in HerbalCart",
     proofHref: "/work/herbalcart",
     video: "/videos/pexels-fog-sunrise.mp4",
     poster: "/images/pexels-fog-sunrise-poster.jpg",
-    accent: "#a86645",
+    accent: HOME_STUDIO_LENSES[0].accent,
   },
   {
     number: "02",
@@ -37,15 +50,16 @@ const DISCIPLINES = [
     verb: "shapes meaning",
     title: "Turn a strategic choice into language people can carry.",
     line: "Voice, narrative, rhythm and symbolism give the idea a form people can recognise, repeat and remember.",
-    signal: "The strategy is understood, but not remembered.",
+    signal: "The strategy makes sense in the room, then leaves no memory.",
     move: "Give the choice rhythm, metaphor and voice.",
     decision: "Turn the position into a story people can repeat.",
     outcome: "Verbal identity + narrative spine",
+    questionFrame: HOME_STUDIO_LENSES[1].question,
     proof: "Applied in MyShopInEurope",
     proofHref: "/work/myshopineurope",
     video: "/videos/pexels-studio-morning-light.mp4",
     poster: "/images/pexels-studio-morning-light-poster.jpg",
-    accent: "#527687",
+    accent: HOME_STUDIO_LENSES[1].accent,
   },
   {
     number: "03",
@@ -58,16 +72,43 @@ const DISCIPLINES = [
     move: "Set one governing decision.",
     decision: "Align identity, website, content and campaigns to it.",
     outcome: "A brand system that keeps moving",
+    questionFrame: HOME_STUDIO_LENSES[2].question,
     proof: "Applied in Dr. Haley Nutrition",
     proofHref: "/work/dr-haley-nutrition",
     video: "/videos/pexels-aspen-sunburst.mp4",
     poster: "/images/pexels-aspen-sunburst-poster.jpg",
-    accent: "#9c6f26",
+    accent: HOME_STUDIO_LENSES[2].accent,
   },
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const STUDIO_SCROLL_QUERY = "(min-width: 1101px) and (min-height: 700px) and (pointer: fine)";
+const METHOD_TO_LENS: Record<HomeMethodStage, { index: number; bridge: string }> = {
+  Question: {
+    index: 0,
+    bridge: "Psychology separates a real belief from the language a business feels expected to use.",
+  },
+  Decode: {
+    index: 0,
+    bridge: "Psychology reads behaviour and perception before the room settles for opinion.",
+  },
+  Architect: {
+    index: 2,
+    bridge: "Strategy turns evidence into one position that governs every later choice.",
+  },
+  Signal: {
+    index: 1,
+    bridge: "Literature gives the position rhythm, voice and symbols people can remember.",
+  },
+  Influence: {
+    index: 1,
+    bridge: "Literature keeps the same meaning intact across public expression.",
+  },
+  Compound: {
+    index: 2,
+    bridge: "Strategy governs the signals that keep earning recognition after launch.",
+  },
+};
 
 type ManualMode = "none" | "pointer" | "focus";
 
@@ -75,10 +116,44 @@ export function StudioCinematicChapter() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const manualModeRef = useRef<ManualMode>("none");
+  const methodLensIndexRef = useRef(0);
   const syncStageRef = useRef<() => void>(() => {});
   const [activeIndex, setActiveIndex] = useState(0);
   const [committedIndex, setCommittedIndex] = useState(0);
+  const [carriedMethodDecision, setCarriedMethodDecision] = useState<HomeMethodDecision | null>(null);
   const active = DISCIPLINES[activeIndex];
+  const methodMatch = carriedMethodDecision
+    ? METHOD_TO_LENS[carriedMethodDecision.stage]
+    : null;
+  const matchedLensIndex = methodMatch?.index ?? null;
+  const activeMatchesMethod = matchedLensIndex === activeIndex;
+
+  useEffect(() => {
+    function applyDecision(decision: HomeMethodDecision | null) {
+      setCarriedMethodDecision(decision);
+      if (!decision) {
+        methodLensIndexRef.current = 0;
+        return;
+      }
+      const next = METHOD_TO_LENS[decision.stage].index;
+      methodLensIndexRef.current = next;
+      manualModeRef.current = "none";
+      setCommittedIndex(next);
+      setActiveIndex(next);
+    }
+
+    applyDecision(readHomeMethodDecision());
+
+    function onMethodDecision(event: Event) {
+      const detail = (event as CustomEvent<HomeMethodDecisionDetail>).detail;
+      applyDecision(detail?.decision ?? null);
+    }
+
+    window.addEventListener(HOME_METHOD_DECISION_EVENT, onMethodDecision as EventListener);
+    return () => {
+      window.removeEventListener(HOME_METHOD_DECISION_EVENT, onMethodDecision as EventListener);
+    };
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -97,7 +172,8 @@ export function StudioCinematicChapter() {
       const bounds = runwayElement.getBoundingClientRect();
       const travel = Math.max(1, bounds.height - window.innerHeight);
       const progress = Math.min(1, Math.max(0, -bounds.top / travel));
-      const next = Math.min(DISCIPLINES.length - 1, Math.floor(progress * DISCIPLINES.length));
+      const offset = Math.min(DISCIPLINES.length - 1, Math.floor(progress * DISCIPLINES.length));
+      const next = (methodLensIndexRef.current + offset) % DISCIPLINES.length;
       setCommittedIndex((current) => current === next ? current : next);
       setActiveIndex((current) => current === next ? current : next);
     }
@@ -173,6 +249,7 @@ export function StudioCinematicChapter() {
       aria-labelledby="studio-film-title"
       data-scroll-story="studio-disciplines"
       data-studio-stage={active.number}
+      data-method-lens={matchedLensIndex === null ? undefined : DISCIPLINES[matchedLensIndex].name}
       style={{ "--studio-film-accent": active.accent } as CSSProperties}
     >
       <div className="studio-film__media" aria-hidden="true">
@@ -239,10 +316,16 @@ export function StudioCinematicChapter() {
               aria-live={manualModeRef.current === "focus" ? "polite" : "off"}
             >
               <div className="studio-film__reading-label">
-                <span>{active.number}</span><strong>{active.name}</strong><small>{active.credential}</small>
+                <span>{active.number}</span>
+                <strong>{active.name}</strong>
+                <small>
+                  {activeMatchesMethod && carriedMethodDecision
+                    ? `From ${carriedMethodDecision.stage}`
+                    : active.credential}
+                </small>
               </div>
               <h3>{active.title}</h3>
-              <p>{active.line}</p>
+              <p>{activeMatchesMethod && methodMatch ? methodMatch.bridge : active.line}</p>
               <ol className="studio-film__synthesis" aria-label={`${active.name} from human signal to brand decision`}>
                 {[
                   ["Human signal", active.signal],
@@ -271,8 +354,20 @@ export function StudioCinematicChapter() {
               </ol>
               <div className="studio-film__outcome"><span>What this produces</span><strong>{active.outcome}</strong></div>
               <div className="studio-film__reading-actions">
-                <Link href={active.proofHref}>{active.proof} <span aria-hidden="true">→</span></Link>
-                <Link href="#decision">Use this lens on your question <span aria-hidden="true">↓</span></Link>
+                <Link href={active.proofHref}>
+                  {active.proof} <ArrowRight size={15} strokeWidth={1.8} aria-hidden="true" />
+                </Link>
+                <Link
+                  href="#decision"
+                  onClick={() => publishHomeStudioLens({
+                    name: active.name,
+                    question: active.questionFrame,
+                    accent: active.accent,
+                  })}
+                >
+                  Carry {active.name} into your question
+                  <ArrowDown size={15} strokeWidth={1.8} aria-hidden="true" />
+                </Link>
               </div>
             </motion.article>
           </AnimatePresence>
@@ -280,11 +375,19 @@ export function StudioCinematicChapter() {
 
         <div className="studio-film__footer">
           <div className="studio-film__selector">
-            <div className="studio-film__selector-label"><span>Three disciplines · one decision system</span><span>{active.number} / 03</span></div>
+            <div className="studio-film__selector-label">
+              <span>
+                {carriedMethodDecision && matchedLensIndex !== null
+                  ? `${carriedMethodDecision.stage} · ${DISCIPLINES[matchedLensIndex].name} lens`
+                  : "Three disciplines · one decision system"}
+              </span>
+              <span>{active.number} / 03</span>
+            </div>
             <div className="studio-film__chapters" role="tablist" aria-label="Explore Suman's three disciplines">
             {DISCIPLINES.map((discipline, index) => {
               const displayed = index === activeIndex;
               const committed = index === committedIndex;
+              const matched = index === matchedLensIndex;
               return (
                 <button
                   key={discipline.name}
@@ -296,6 +399,8 @@ export function StudioCinematicChapter() {
                   tabIndex={committed ? 0 : -1}
                   className={displayed ? "is-active" : undefined}
                   data-studio-state={displayed ? "active" : committed ? "committed" : "idle"}
+                  data-method-match={matched ? "true" : undefined}
+                  aria-label={`${discipline.name}: ${discipline.verb}${matched && carriedMethodDecision ? `, matched to ${carriedMethodDecision.stage}` : ""}`}
                   style={{ "--studio-chapter-accent": discipline.accent } as CSSProperties}
                   onClick={() => choose(index)}
                   onPointerEnter={(event) => previewFromPointer(event, index)}
@@ -304,13 +409,21 @@ export function StudioCinematicChapter() {
                   onBlur={releaseFocusPreview}
                   onKeyDown={(event) => onKeyDown(event, index)}
                 >
-                  <span>{discipline.number}</span><strong>{discipline.name}</strong><small>{discipline.verb}</small>
+                  <span>{discipline.number}</span>
+                  <strong>{discipline.name}</strong>
+                  <small>
+                    {matched && carriedMethodDecision
+                      ? `For ${carriedMethodDecision.stage}`
+                      : discipline.verb}
+                  </small>
                 </button>
               );
             })}
             </div>
           </div>
-          <Link href="/about" className="studio-film__about">Meet the strategist <span aria-hidden="true">→</span></Link>
+          <Link href="/about" className="studio-film__about">
+            Meet the strategist <ArrowRight size={15} strokeWidth={1.8} aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </section>

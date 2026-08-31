@@ -14,8 +14,26 @@ import {
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
 import { track } from "@/lib/analytics";
-import { publishHomeQuestionChoice } from "@/lib/homeQuestionJourney";
+import {
+  HOME_METHOD_DECISION_EVENT,
+  type HomeMethodDecisionDetail,
+} from "@/lib/homeMethodJourney";
+import {
+  publishHomeQuestionChoice,
+  type HomeQuestionChoice,
+} from "@/lib/homeQuestionJourney";
+import {
+  clearHomeStudioLens,
+  HOME_STUDIO_LENS_EVENT,
+  HOME_STUDIO_LENSES,
+  publishHomeStudioLens,
+  readHomeStudioLens,
+  type HomeStudioLens,
+  type HomeStudioLensDetail,
+  type HomeStudioLensName,
+} from "@/lib/homeStudioJourney";
 import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState, type CSSProperties, type KeyboardEvent } from "react";
 
@@ -66,14 +84,52 @@ const SITUATION_TO_QUESTION: Record<ServicesSituationId, number> = {
 const SITUATION_LABEL: Record<ServicesSituationId, string> = {
   idea: "New brand",
   reposition: "Repositioning",
-  ongoing: "Brand growth",
+  ongoing: "Repeatable system",
 };
+type QuestionId = (typeof QUESTIONS)[number]["id"];
+
+const LENS_READINGS: Record<HomeStudioLensName, Record<QuestionId, string>> = {
+  Psychology: {
+    "new-brand": "Find the belief people need before a name or identity can earn trust.",
+    "existing-brand": "Locate the gap between what the business has become and what people still assume it is.",
+    implementation: "Every output should reinforce the same perception, so the strategy can leave the document.",
+    timing: "Leave enough room to hear hesitation, test language, and decide with evidence.",
+    remote: "Make uncertainty, language, and decision patterns visible across every conversation.",
+  },
+  Literature: {
+    "new-brand": "Give the new brand one idea clear enough to survive every retelling.",
+    "existing-brand": "Find the story the current identity carries after the business has outgrown it.",
+    implementation: "Use voice, symbols, and rhythm to give the position a form people can repeat.",
+    timing: "Give the central idea enough time to be found, tested, and edited.",
+    remote: "Use shared language to keep meaning coherent across screens, documents, and decisions.",
+  },
+  Strategy: {
+    "new-brand": "Resolve category, audience, and offer into one governing position before launch.",
+    "existing-brand": "Decide whether the system needs repair, repositioning, or a stronger centre.",
+    implementation: "Define which outputs must carry the governing position into the market.",
+    timing: "Let dependencies and decision speed shape the sequence more honestly than a fixed estimate.",
+    remote: "Keep responsibilities, approvals, and the governing decision visible across distance.",
+  },
+};
+
+function toQuestionChoice(
+  decision: (typeof QUESTIONS)[number] & { answer: string },
+  lens: HomeStudioLens | null,
+): HomeQuestionChoice {
+  return {
+    id: decision.id,
+    label: decision.label,
+    question: decision.question,
+    lens,
+  };
+}
 
 export function HomeQuestionsScene() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const [committedIndex, setCommittedIndex] = useState(0);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
+  const [carriedLens, setCarriedLens] = useState<HomeStudioLens | null>(null);
   const decisions = useMemo(
     () => QUESTIONS.map((item) => ({
       ...item,
@@ -85,17 +141,24 @@ export function HomeQuestionsScene() {
   const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
   const active = decisions[activeIndex] ?? decisions[0];
   const matchedToSituation = carriedSituation !== null && SITUATION_TO_QUESTION[carriedSituation] === activeIndex;
+  const lensReading = carriedLens
+    ? LENS_READINGS[carriedLens.name][active.id]
+    : null;
   const sceneStyle = {
     "--question-progress": (activeIndex + 1) / decisions.length,
+    "--question-lens-accent": carriedLens?.accent ?? "#9e672b",
   } as CSSProperties;
 
   useEffect(() => {
-    function applySituation(value: string | null) {
+    function applySituation(value: string | null, resetDecisionThread = false) {
       if (!isServicesSituation(value)) return;
       setCarriedSituation(value);
       setCommittedIndex(SITUATION_TO_QUESTION[value]);
       setPreviewIndex(null);
-      publishHomeQuestionChoice(null);
+      if (resetDecisionThread) {
+        publishHomeQuestionChoice(null);
+        clearHomeStudioLens();
+      }
     }
 
     try {
@@ -106,7 +169,7 @@ export function HomeQuestionsScene() {
 
     function onSituation(event: Event) {
       const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
-      applySituation(detail?.situation ?? null);
+      applySituation(detail?.situation ?? null, true);
     }
 
     function onSituationCleared() {
@@ -114,6 +177,7 @@ export function HomeQuestionsScene() {
       setCommittedIndex(0);
       setPreviewIndex(null);
       publishHomeQuestionChoice(null);
+      clearHomeStudioLens();
     }
 
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
@@ -124,6 +188,31 @@ export function HomeQuestionsScene() {
         onSituation as EventListener,
       );
       window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
+    };
+  }, []);
+
+  useEffect(() => {
+    setCarriedLens(readHomeStudioLens());
+
+    function onStudioLens(event: Event) {
+      const detail = (event as CustomEvent<HomeStudioLensDetail>).detail;
+      setCarriedLens(detail?.lens ?? null);
+      publishHomeQuestionChoice(null);
+    }
+
+    function onMethodDecision(event: Event) {
+      const detail = (event as CustomEvent<HomeMethodDecisionDetail>).detail;
+      if (detail?.decision?.origin !== "method_selection") return;
+      setCarriedLens(null);
+      clearHomeStudioLens();
+      publishHomeQuestionChoice(null);
+    }
+
+    window.addEventListener(HOME_STUDIO_LENS_EVENT, onStudioLens as EventListener);
+    window.addEventListener(HOME_METHOD_DECISION_EVENT, onMethodDecision as EventListener);
+    return () => {
+      window.removeEventListener(HOME_STUDIO_LENS_EVENT, onStudioLens as EventListener);
+      window.removeEventListener(HOME_METHOD_DECISION_EVENT, onMethodDecision as EventListener);
     };
   }, []);
 
@@ -140,7 +229,24 @@ export function HomeQuestionsScene() {
     }
     setCommittedIndex(index);
     setPreviewIndex(null);
-    publishHomeQuestionChoice(decisions[index] ?? decisions[0]);
+    publishHomeQuestionChoice(
+      toQuestionChoice(decisions[index] ?? decisions[0], carriedLens),
+    );
+  }
+
+  function chooseLens(lens: HomeStudioLens) {
+    setCarriedLens(lens);
+    publishHomeStudioLens(lens);
+    publishHomeQuestionChoice(
+      toQuestionChoice(decisions[committedIndex] ?? decisions[0], lens),
+    );
+  }
+
+  function carryQuestionForward() {
+    const selected = decisions[activeIndex] ?? decisions[0];
+    setCommittedIndex(activeIndex);
+    setPreviewIndex(null);
+    publishHomeQuestionChoice(toQuestionChoice(selected, carriedLens));
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -161,6 +267,7 @@ export function HomeQuestionsScene() {
       aria-labelledby="home-questions-title"
       data-question-state={active.id}
       data-question-preview={isPreviewing ? active.id : undefined}
+      data-question-lens={carriedLens?.name.toLowerCase()}
       style={sceneStyle}
     >
       <BackgroundVideo
@@ -177,6 +284,7 @@ export function HomeQuestionsScene() {
             <p>
               08 · Before we work together
               {carriedSituation ? ` · ${SITUATION_LABEL[carriedSituation]}` : ""}
+              {carriedLens ? ` · ${carriedLens.name} lens` : ""}
             </p>
             <h2 id="home-questions-title">The questions that come next.<br /><em>Answered plainly.</em></h2>
           </div>
@@ -217,7 +325,7 @@ export function HomeQuestionsScene() {
                 >
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <strong>{decision.label}</strong>
-                  <i aria-hidden="true">→</i>
+                  <ArrowRight size={16} strokeWidth={1.8} aria-hidden="true" />
                 </button>
               );
             })}
@@ -251,11 +359,56 @@ export function HomeQuestionsScene() {
                 </span>
                 <strong>{active.signal}</strong>
               </div>
+
+              <div className="questions-editorial__lens-reader">
+                <div className="questions-editorial__lens-toolbar">
+                  <span>Read this answer through</span>
+                  <div role="group" aria-label="Read the answer through a studio lens">
+                    {HOME_STUDIO_LENSES.map((lens) => {
+                      const selected = lens.name === carriedLens?.name;
+                      return (
+                        <button
+                          key={lens.name}
+                          type="button"
+                          aria-pressed={selected}
+                          data-lens-selected={selected ? "true" : undefined}
+                          style={{ "--lens-choice-accent": lens.accent } as CSSProperties}
+                          onClick={() => chooseLens(lens)}
+                        >
+                          {lens.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <AnimatePresence mode="sync" initial={false}>
+                  <motion.div
+                    key={carriedLens ? `${carriedLens.name}-${active.id}` : `open-${active.id}`}
+                    className="questions-editorial__lens-reading"
+                    initial={false}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    exit={reducedMotion ? undefined : { opacity: 0, y: -5, filter: "blur(3px)" }}
+                    transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE }}
+                  >
+                    <small>
+                      {carriedLens
+                        ? `${carriedLens.name} asks · ${carriedLens.question}`
+                        : "One answer · three useful readings"}
+                    </small>
+                    <strong>
+                      {lensReading ?? "Choose a lens to expose the decision beneath the practical detail."}
+                    </strong>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
               <Link
                 href="#invitation"
-                onClick={() => publishHomeQuestionChoice(decisions[committedIndex] ?? decisions[0])}
+                onClick={carryQuestionForward}
               >
-                A conversation about this <span aria-hidden="true">↓</span>
+                Carry this question into the conversation
+                <ArrowDown size={16} strokeWidth={1.8} aria-hidden="true" />
               </Link>
             </motion.article>
           </AnimatePresence>

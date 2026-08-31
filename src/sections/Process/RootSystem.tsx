@@ -5,6 +5,10 @@ import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 import type { ProcessStage } from "@/data/process";
 import {
+  clearHomeMethodDecision,
+  publishHomeMethodDecision,
+} from "@/lib/homeMethodJourney";
+import {
   SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
@@ -125,6 +129,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       setActive(situationStage);
       setCommittedStage(situationStage);
       setManualHoldUntil(Date.now() + MANUAL_HOLD_MS);
+      publishHomeMethodDecision(situationStage, "path_entry");
       firstBeatRef.current = true;
     }
 
@@ -144,6 +149,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       setActive(0);
       setCommittedStage(0);
       setManualHoldUntil(0);
+      clearHomeMethodDecision();
       firstBeatRef.current = true;
     }
 
@@ -234,6 +240,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       firstBeatRef.current = true;
       setManualHoldUntil(Date.now() + MANUAL_HOLD_MS);
       setCommittedStage(next);
+      publishHomeMethodDecision(next, "method_selection");
     }
     setActive(next);
   }

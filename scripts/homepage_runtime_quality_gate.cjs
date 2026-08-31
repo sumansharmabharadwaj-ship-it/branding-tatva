@@ -115,6 +115,7 @@ assert(studio.includes('manualModeRef.current === "focus"'), "Studio scroll can 
 assert(studio.includes('event.pointerType !== "mouse"'), "Studio hover preview can consume touch gestures.");
 assert(studio.includes("if (reducedMotion || !eligible.matches) return;"), "Studio scroll stages ignore motion or viewport eligibility.");
 assert(studio.includes("const [committedIndex, setCommittedIndex]"), "Studio previews have no stable committed discipline.");
+assert(studio.includes("methodLensIndexRef.current + offset") && studio.includes("data-method-match={matched"), "Studio scroll no longer begins from or preserves the lens matched to the working method.");
 assert(studio.includes("aria-selected={committed}") && studio.includes("tabIndex={committed ? 0 : -1}"), "Studio hover changes the selected tab or keyboard stop.");
 assert(studio.includes('aria-live={manualModeRef.current === "focus" ? "polite" : "off"}'), "Studio scroll or pointer previews can interrupt assistive reading.");
 assert(studioSynthesisStyles.includes('button[data-studio-state="committed"]'), "Studio previews erase the visitor's committed visual anchor.");
@@ -188,6 +189,8 @@ assert(finalInvitation.includes('event="calendar_opened"'), "Direct homepage boo
 assert(finalInvitation.includes('target="_blank"') && finalInvitation.includes('rel="noopener noreferrer"'), "Closing invitation does not disclose a safe external calendar handoff.");
 assert(finalInvitation.includes("servicesContactHrefForSituation(selectedSituation, \"write\")"), "Closing invitation has lost its lower-pressure writing route.");
 assert(finalInvitation.includes("consultation.preparation"), "Closing invitation does not reduce preparation anxiety before booking.");
+assert(finalInvitation.includes("onCallStepKeyDown") && finalInvitation.includes('aria-selected={activeCallStep === index}') && finalInvitation.includes('tabIndex={activeCallStep === index ? 0 : -1}'), "Closing invitation conversation steps have lost their keyboard selection contract.");
+assert(finalInvitation.includes("duration: prefersReducedMotion ? 0 : 0.36"), "Closing invitation conversation detail ignores reduced motion.");
 assert(videoBreak.includes("managedByHomepage = false") && videoBreak.includes('managedByHomepage ? "none"'), "Closing film cannot yield playback to the homepage controller.");
 assert(experience.includes("managedByHomepage") && experience.includes("homePlaybackRate={0.84}"), "Closing invitation film does not use the shared calm playback contract.");
 assert(decisionStyles.includes(".home-v4-chapter--decision + .home-v4-handoff--mist"), "Closing chapter seam no longer matches the rendered mist handoff.");
