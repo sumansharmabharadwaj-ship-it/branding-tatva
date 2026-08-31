@@ -258,6 +258,88 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     padding: 1rem;
   }
 
+  /* Authority is a complete explanation, not a teaser. On a phone the
+     decorative wave previously pushed the first layer below the chapter and
+     consent controls, so direct chapter links arrived before the answer was
+     visible. Keep the signal label, then spend the frame on the interactive
+     layer itself. */
+  #authority [data-authority-shell="true"] {
+    padding-top: 1.75rem;
+    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  #authority [data-authority-grid="true"] {
+    gap: 1rem;
+  }
+
+  #authority [data-authority-copy="true"] {
+    padding: 0.85rem;
+  }
+
+  #authority [data-authority-copy="true"] h2 {
+    margin-top: 0.35rem;
+    font-size: clamp(1.55rem, 7.4vw, 1.9rem);
+    line-height: 1.04;
+  }
+
+  #authority [data-authority-copy="true"] > p:nth-of-type(2) {
+    margin-top: 0.9rem;
+    line-height: 1.45;
+  }
+
+  #authority [data-authority-copy="true"] > a {
+    margin-top: 0.65rem;
+    font-size: 0.75rem;
+    line-height: 1.35;
+  }
+
+  #authority [data-authority-mobile-deck="true"] {
+    margin-top: 0;
+  }
+
+  #authority [data-authority-mobile-deck="true"] > div:first-child {
+    padding-bottom: 0.6rem;
+  }
+
+  #authority [data-authority-mobile-deck="true"] > div:first-child svg {
+    display: none;
+  }
+
+  #authority [data-authority-mobile-deck="true"] [role="tablist"] {
+    margin-top: 0.65rem;
+  }
+
+  #authority [data-authority-layer-tab="true"] {
+    min-height: 2.75rem;
+    padding-block: 0.45rem;
+  }
+
+  #authority [data-authority-mobile-deck="true"] > div:nth-child(3) {
+    min-height: 13.25rem;
+    margin-top: 0.65rem;
+  }
+
+  #authority [data-authority-layer-panel="true"] {
+    padding: 1rem;
+  }
+
+  #authority [data-authority-layer-panel="true"] h3 {
+    font-size: 1.75rem;
+  }
+
+  #authority [data-authority-layer-panel="true"] > p:first-of-type {
+    margin-top: 1rem;
+  }
+
+  #authority [data-authority-layer-panel="true"] > p:last-of-type {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
+  #authority [data-authority-mobile-controls="true"] {
+    margin-top: 0.65rem;
+  }
+
   #proof [data-verified-outcome-phase] {
     border-radius: 1.5rem;
     padding: 1.15rem;
