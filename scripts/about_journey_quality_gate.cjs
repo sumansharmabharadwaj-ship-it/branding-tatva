@@ -59,6 +59,10 @@ assert(
   "The copy dense brand-system chapter can fade below the protected reading exposure.",
 );
 assert(
+  /id="about-principles"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense working-standards chapter can fade below the protected reading exposure.",
+);
+assert(
   /\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*clamp\(5\.75rem,\s*10svh,\s*6\.5rem\);/.test(anchorContract) &&
     /@media \(max-width:\s*430px\)[\s\S]*?\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*calc\(5rem \+ env\(safe-area-inset-top,\s*0px\)\);/.test(anchorContract),
   "About chapter hashes can settle beneath the fixed header in a responsive state.",
@@ -384,19 +388,24 @@ for (const [selector, minimum] of protectedEvidenceType) {
 }
 
 const protectedStandardsType = [
-  [".instrumentTopline", 0.55],
-  [".gateTrack button small", 0.55],
-  [".gateTrack button em", 0.55],
-  [".testStatement span,\n.testResult dt,\n.testStamp small", 0.55],
-  [".testResult dd", 0.7],
-  [".instrumentFooter > div span", 0.55],
-  [".verdict", 0.55],
+  [".instrumentTopline", 0.6],
+  [".gateTrack button small", 0.6],
+  [".gateTrack button em", 0.58],
+  [".testStatement span,\n.testResult dt,\n.testStamp small", 0.6],
+  [".testResult dd", 0.76],
+  [".instrumentFooter > div span", 0.58],
+  [".verdict", 0.58],
 ];
 
 for (const [selector, minimum] of protectedStandardsType) {
   const size = fontSizeRem(standardsStyles, selector);
   assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
 }
+assert(
+  standardsStyles.includes(':global(html[data-consent-banner="visible"]) .root') &&
+    standardsStyles.includes("padding-bottom: calc(clamp(4.75rem, 8svh, 5.75rem) + env(safe-area-inset-bottom, 0px));"),
+  "The Working Standards evidence-policy action can settle beneath the consent notice.",
+);
 
 const protectedWorkingDirectlyType = [
   [".headerAside > div", 0.56],

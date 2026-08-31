@@ -125,7 +125,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section id="about-principles" className="relative overflow-clip bg-[#e9e0d2]" data-about-chapter="principles" data-about-film-scene data-scene-tone="light">
+        <section id="about-principles" className="relative overflow-clip bg-[#e9e0d2]" data-about-chapter="principles" data-about-film-scene data-reading-scene data-scene-tone="light">
           <div className="absolute inset-0" data-about-film-background>
             <BackgroundVideo
               video="/videos/generated/bt-about-behaviours-mossbreath.mp4"
