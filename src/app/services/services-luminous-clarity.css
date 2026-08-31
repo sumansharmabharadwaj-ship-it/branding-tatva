@@ -507,8 +507,8 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   }
 
   #desire [data-package-actions="true"] a {
-    min-height: 2.35rem;
-    padding: 0.45rem 0.65rem;
+    min-height: 2.75rem;
+    padding: 0.55rem 0.65rem;
     font-size: 0.69rem;
   }
 
