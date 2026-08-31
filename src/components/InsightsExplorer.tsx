@@ -240,6 +240,7 @@ export function InsightsExplorer({
   const folioCardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const restoredMobileCardIndexRef = useRef<number | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const preservesLibraryPlace = sectionId === "insights-library";
 
   const libraryVisuals = useMemo(
     () => buildInsightEditorialVisuals(posts),
@@ -271,7 +272,9 @@ export function InsightsExplorer({
     window.addEventListener(INSIGHTS_INTENT_EVENT, carryIntent);
     window.addEventListener(INSIGHTS_INTENT_CLEARED_EVENT, releaseIntent);
     const initialIntent = readInsightsIntent();
-    const restoredLibrary = readInsightsLibraryState();
+    const restoredLibrary = preservesLibraryPlace
+      ? readInsightsLibraryState()
+      : undefined;
     const hasValidLibraryTopic =
       restoredLibrary?.topicSlug === "all" ||
       topics.some((topic) => topic.slug === restoredLibrary?.topicSlug);
@@ -307,7 +310,7 @@ export function InsightsExplorer({
       window.removeEventListener(INSIGHTS_INTENT_EVENT, carryIntent);
       window.removeEventListener(INSIGHTS_INTENT_CLEARED_EVENT, releaseIntent);
     };
-  }, [topics]);
+  }, [preservesLibraryPlace, topics]);
 
   const filteredPosts = useMemo(() => {
     const cleanQuery = deferredQuery.trim().toLowerCase();
@@ -415,7 +418,7 @@ export function InsightsExplorer({
       } ${filteredPosts.length === 1 ? "essay" : "essays"}`;
 
   useEffect(() => {
-    if (!hasRestoredLibraryState) return;
+    if (!hasRestoredLibraryState || !preservesLibraryPlace) return;
 
     writeInsightsLibraryState({
       query,
@@ -427,6 +430,7 @@ export function InsightsExplorer({
     activeFolio,
     hasRestoredLibraryState,
     mobileCardIndex,
+    preservesLibraryPlace,
     query,
     topicSlug,
   ]);
@@ -505,12 +509,14 @@ export function InsightsExplorer({
   function carryArticleIntent(post: InsightCardPost, cardIndex: number) {
     const articleTopic = topics.find((topic) => topic.slug === post.topicSlug);
 
-    writeInsightsLibraryState({
-      query,
-      topicSlug,
-      folio: activeFolio,
-      mobileCardIndex: cardIndex,
-    });
+    if (preservesLibraryPlace) {
+      writeInsightsLibraryState({
+        query,
+        topicSlug,
+        folio: activeFolio,
+        mobileCardIndex: cardIndex,
+      });
+    }
 
     if (!articleTopic) return;
 
