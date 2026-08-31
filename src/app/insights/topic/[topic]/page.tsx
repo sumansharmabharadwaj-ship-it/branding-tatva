@@ -25,6 +25,7 @@ import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { TopicDiagnosticScene } from "@/sections/Insights/TopicDiagnosticScene";
+// This route renders InsightsExplorer directly, so it owns the shared explorer styles.
 import "../../../insights-cinematic.css";
 import "../insights-topic-cinematic.css";
 
