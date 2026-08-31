@@ -290,15 +290,15 @@ export default async function InsightArticlePage({ params }: Props) {
                 aria-label="Breadcrumb"
                 className="mb-8 flex flex-wrap items-center gap-2 text-xs text-ivory/65"
               >
-                <Link href="/" className="transition hover:text-ivory">
+                <Link href="/" className="inline-flex min-h-11 items-center transition hover:text-ivory">
                   Home
                 </Link>
                 <span aria-hidden="true">/</span>
-                <InsightsLibraryReturnLink className="transition hover:text-ivory" />
+                <InsightsLibraryReturnLink className="inline-flex min-h-11 items-center transition hover:text-ivory" />
                 <span aria-hidden="true">/</span>
                 <Link
                   href={`/insights/topic/${post.topicSlug}`}
-                  className="transition hover:text-ivory"
+                  className="inline-flex min-h-11 items-center transition hover:text-ivory"
                 >
                   {topic?.name}
                 </Link>
@@ -615,7 +615,7 @@ export default async function InsightArticlePage({ params }: Props) {
                         </p>
                         <Link
                           href="/about"
-                          className="link-underline mt-4 inline-block text-sm font-medium text-soil"
+                          className="link-underline mt-4 inline-flex min-h-11 items-center text-sm font-medium text-soil"
                         >
                           Why Suman works this way <span aria-hidden="true">→</span>
                         </Link>

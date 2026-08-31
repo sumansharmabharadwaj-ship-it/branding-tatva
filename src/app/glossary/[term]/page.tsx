@@ -89,13 +89,13 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
           <Container className="relative max-w-2xl">
             <Reveal>
               <nav aria-label="Breadcrumb" className="text-xs uppercase tracking-[0.15em] text-ivory/60">
-                <Link href="/insights" className="link-underline">
+                <Link href="/insights" className="link-underline inline-flex min-h-11 items-center">
                   Insights
                 </Link>
                 <span aria-hidden="true" className="mx-2">
                   /
                 </span>
-                <Link href="/glossary" className="link-underline">
+                <Link href="/glossary" className="link-underline inline-flex min-h-11 items-center">
                   Glossary
                 </Link>
               </nav>
@@ -142,14 +142,14 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                 </ul>
                 <div className="mt-6 flex flex-col gap-2 text-sm">
                   {article && (
-                    <Link href={`/insights/${article.slug}`} className="link-underline inline-flex items-center gap-2 text-clay">
+                    <Link href={`/insights/${article.slug}`} className="link-underline inline-flex min-h-11 items-center gap-2 text-clay">
                       Read Suman&apos;s guide: {article.title} <span aria-hidden="true">→</span>
                     </Link>
                   )}
-                  <Link href="/services#offerings" className="link-underline inline-flex items-center gap-2 text-clay">
+                  <Link href="/services#offerings" className="link-underline inline-flex min-h-11 items-center gap-2 text-clay">
                     See how Suman handles this decision <span aria-hidden="true">→</span>
                   </Link>
-                  <Link href="/services#proof" className="link-underline inline-flex items-center gap-2 text-clay">
+                  <Link href="/services#proof" className="link-underline inline-flex min-h-11 items-center gap-2 text-clay">
                     Read the project evidence <span aria-hidden="true">→</span>
                   </Link>
                 </div>
@@ -167,7 +167,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                       <li key={s.slug}>
                         <Link
                           href={`/glossary/${s.slug}`}
-                          className="inline-block rounded-full border border-border px-4 py-1.5 text-sm text-foreground-secondary transition-colors duration-300 hover:border-clay hover:text-clay"
+                          className="inline-flex min-h-11 items-center rounded-full border border-border px-4 py-1.5 text-sm text-foreground-secondary transition-colors duration-300 hover:border-clay hover:text-clay"
                         >
                           {s.term}
                         </Link>
