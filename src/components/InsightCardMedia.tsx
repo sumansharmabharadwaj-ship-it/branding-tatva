@@ -66,7 +66,7 @@ export function InsightCardMedia({
 
     function playFilm() {
       // The sitewide VideoWarden gives an explicitly explored foreground film
-      // priority over ambient section media. This keeps the explored card responsive. Add that intent before play so
+      // priority over ambient section media. This keeps the explored card responsive and the interaction scoped. Add that intent before play so
       // its synchronous arbitration keeps this card alive.
       activeFilm.dataset.videoPriority = "foreground";
       window.dispatchEvent(
