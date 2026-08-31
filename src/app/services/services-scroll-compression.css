@@ -636,3 +636,52 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
     transition: none;
   }
 }
+
+/* The footer control is an equal reduced-motion path, not a lighter visual
+   theme. Release every pinned scene and expose its final readable state just
+   as the operating-system preference does. */
+:root[data-motion="reduced"] [data-services-scroll-scene] > [data-background-video-stage="true"],
+:root[data-motion="reduced"] [data-services-scroll-scene] > [data-textured-media-stage="true"],
+:root[data-motion="reduced"] [data-services-scroll-scene] > [data-services-content-plane="true"],
+:root[data-motion="reduced"] [data-services-scroll-scene] > [data-textured-content-plane="true"],
+:root[data-motion="reduced"] [data-services-scroll-scene] [data-services-chapter-copy="true"],
+:root[data-motion="reduced"] [data-services-scroll-scene] [data-services-chapter-instrument="true"],
+:root[data-motion="reduced"] [data-services-scroll-scene] [data-services-chapter-resolution="true"],
+:root[data-motion="reduced"] [data-authority-media-plane="true"],
+:root[data-motion="reduced"] [data-authority-copy="true"],
+:root[data-motion="reduced"] [data-authority-desktop-layer="true"],
+:root[data-motion="reduced"] [data-authority-wave="true"] g {
+  transform: none !important;
+  clip-path: none !important;
+  opacity: 1 !important;
+  transition: none !important;
+  will-change: auto !important;
+}
+
+:root[data-motion="reduced"] [data-services-hero-media="true"],
+:root[data-motion="reduced"] [data-services-hero-heading="true"],
+:root[data-motion="reduced"] [data-services-hero-index="true"] {
+  transform: none !important;
+  opacity: 1 !important;
+  will-change: auto;
+}
+
+:root[data-motion="reduced"] [data-services-hero-fragments="true"],
+:root[data-motion="reduced"] [data-services-hero-aperture="true"],
+:root[data-motion="reduced"] [data-services-scroll-scene] > [data-services-scene-signal="true"] {
+  display: none;
+}
+
+:root[data-motion="reduced"] #authority > div:first-child {
+  height: auto !important;
+}
+
+:root[data-motion="reduced"] #authority > div:first-child > div:first-child {
+  position: relative !important;
+  top: auto !important;
+  height: auto !important;
+}
+
+html[data-motion="reduced"][data-services-experience="active"] nav[aria-label="Jump to section"]:not([data-section-jump-nav-mobile="true"]):not([data-section-jump-nav-desktop-mode="rail"])::after {
+  transition: none;
+}

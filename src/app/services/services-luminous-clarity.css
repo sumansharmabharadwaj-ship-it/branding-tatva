@@ -842,3 +842,11 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     filter: brightness(1.08) saturate(0.78) contrast(0.98);
   }
 }
+
+:root[data-motion="reduced"] #main-content [data-background-video-stage="true"],
+:root[data-motion="reduced"] #authority [data-authority-media-plane="true"] [data-background-video-stage="true"],
+:root[data-motion="reduced"] #book [data-textured-media-stage="true"],
+:root[data-motion="reduced"] #services-opening > img,
+:root[data-motion="reduced"] #services-opening > video {
+  filter: brightness(1.08) saturate(0.78) contrast(0.98);
+}

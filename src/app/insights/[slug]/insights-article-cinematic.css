@@ -1001,3 +1001,46 @@
     transition-duration: 0.01ms;
   }
 }
+
+/* Keep the in-site Reduced control behaviorally identical to the OS setting:
+   no content may wait for a scroll reveal after motion is disabled. */
+:root[data-motion="reduced"] .insight-card-media__poster,
+:root[data-motion="reduced"] .insight-card-media__film,
+:root[data-motion="reduced"] .insight-article-section,
+:root[data-motion="reduced"] .insight-article-section::before,
+:root[data-motion="reduced"] .insight-article-section__kicker::after,
+:root[data-motion="reduced"] .insight-article-section > h2,
+:root[data-motion="reduced"] .insight-article-section > div,
+:root[data-motion="reduced"] .insight-article-section > ul,
+:root[data-motion="reduced"] .insight-article-section > blockquote,
+:root[data-motion="reduced"] .insight-article-section > aside,
+:root[data-motion="reduced"] .insight-article-section > div > p,
+:root[data-motion="reduced"] .insight-article-section > ul > li,
+:root[data-motion="reduced"] .insight-article-section__kicker span {
+  transition-duration: 0.01ms;
+  transform: none;
+}
+
+:root[data-motion="reduced"] .insight-article-section > div > p,
+:root[data-motion="reduced"] .insight-article-section > ul > li,
+:root[data-motion="reduced"] .insight-article-section > blockquote,
+:root[data-motion="reduced"] .insight-article-section > aside {
+  opacity: 1;
+}
+
+:root[data-motion="reduced"] .insight-framework__rings span {
+  animation: none;
+}
+
+:root[data-motion="reduced"] .insight-framework__steps button,
+:root[data-motion="reduced"] .insight-framework__steps i,
+:root[data-motion="reduced"] .insight-framework__controls button,
+:root[data-motion="reduced"] .insight-article-hero__framework-link strong,
+:root[data-motion="reduced"] .insight-reading-rail__items a,
+:root[data-motion="reduced"] .insight-reading-rail__progress,
+:root[data-motion="reduced"] .insight-reading-index__progress,
+:root[data-motion="reduced"] .insight-reading-index__moves a,
+:root[data-motion="reduced"] .insight-reading-index__all a,
+:root[data-motion="reduced"] .insight-reading-index__all a > span {
+  transition-duration: 0.01ms;
+}

@@ -92,3 +92,8 @@
     transform: scaleX(1);
   }
 }
+
+:global(html[data-motion="reduced"]) .root[data-running="true"] .track i {
+  animation: none;
+  transform: scaleX(1);
+}
