@@ -112,7 +112,7 @@ export default function ContactPage() {
                 >
                   Tell me what your brand needs people to understand.
                 </SplitReveal>
-                <p className="mt-4 max-w-lg text-ivory/80">
+                <p data-contact-hero-intro className="mt-4 max-w-lg text-ivory/80">
                   Bring the gap between what the business means and what people currently understand. Positioning, voice, identity, or something harder to name.
                 </p>
                 <div

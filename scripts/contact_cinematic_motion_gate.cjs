@@ -75,9 +75,15 @@ const cssContracts = [
   ['html[data-motion="reduced"]', "explicit reduced-motion styling is missing"],
   ["@media (prefers-reduced-motion: reduce)", "system reduced-motion styling is missing"],
   ["@media (max-width: 639px) and (max-height: 820px)", "short-phone fit protection is missing"],
+  ["[data-contact-film] .contact-hero-film", "short-phone hero frame protection is missing"],
+  ["[data-contact-film] [data-contact-hero-intro]", "short-phone hero copy protection is missing"],
+  ["grid-template-columns: repeat(2, minmax(0, 1fr))", "short-phone hero choices no longer share one row"],
 ];
 
 for (const [expected, message] of cssContracts) requireText(css, expected, message);
+
+requireText(page, "data-contact-hero-intro", "Contact hero introduction is no longer addressable for short-phone fit");
+requireText(page, "data-contact-hero-direct", "Contact hero direct routes are missing from the full layout");
 
 forbidPattern(
   css,

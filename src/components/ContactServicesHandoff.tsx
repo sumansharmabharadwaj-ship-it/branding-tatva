@@ -24,7 +24,7 @@ export function ContactHeroBookingLink() {
       data-cursor-label="Book a session"
       className="inline-flex min-h-12 items-center justify-center rounded-full bg-ivory px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
     >
-      Book a {site.consultationMinutes} minute session
+      Book {site.consultationMinutes} minutes
       <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
     </TrackedLink>
   );
